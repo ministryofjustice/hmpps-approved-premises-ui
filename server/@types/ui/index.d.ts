@@ -261,6 +261,12 @@ export interface ReferenceData {
   serviceScope: string
 }
 
+export interface Cas1ReferenceData {
+  id: string
+  name: string
+  isActive: boolean
+}
+
 export interface MappaUi extends Mappa {
   status?: RiskEnvelopeStatus
 }

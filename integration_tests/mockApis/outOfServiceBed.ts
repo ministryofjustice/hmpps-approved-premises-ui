@@ -1,4 +1,4 @@
-import { SuperAgentRequest } from 'superagent'
+import { Response, SuperAgentRequest } from 'superagent'
 
 import {
   Cas1OutOfServiceBed as OutOfServiceBed,
@@ -8,11 +8,14 @@ import {
 } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import { bedspaceConflictResponseBody, errorStub } from './utils'
+import { outOfServiceBedReasons } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
 import paths from '../../server/paths/api'
 
 const headers = { 'Content-Type': 'application/json;charset=UTF-8' }
 
 export default {
+  stubOutOfServiceBedReasons: (): Promise<Response> => stubFor(outOfServiceBedReasons),
+
   stubOutOfServiceBedCreate: ({ premisesId, outOfServiceBed }): SuperAgentRequest =>
     stubFor({
       request: {

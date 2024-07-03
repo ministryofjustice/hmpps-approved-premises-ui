@@ -24,9 +24,11 @@ export default class OutOfServiceBedsController {
       const { premisesId, bedId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
+      const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
       return res.render('v2Manage/outOfServiceBeds/new', {
         premisesId,
         bedId,
+        outOfServiceBedReasons,
         errors,
         errorSummary,
         errorTitle,

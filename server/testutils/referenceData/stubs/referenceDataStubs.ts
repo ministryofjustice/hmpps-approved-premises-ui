@@ -5,6 +5,7 @@ import moveOnCategoriesJson from './move-on-categories.json'
 import destinationProvidersJson from './destination-providers.json'
 import cancellationReasonsJson from './cancellation-reasons.json'
 import lostBedReasonsJson from './lost-bed-reasons.json'
+import outOfServiceBedReasonsJson from './cas1/out-of-service-bed-reasons.json'
 import keyWorkersJson from './keyworkers.json'
 import probationRegionsJson from './probation-regions.json'
 
@@ -78,6 +79,20 @@ const lostBedReasons = {
   },
 }
 
+const outOfServiceBedReasons = {
+  request: {
+    method: 'GET',
+    url: '/cas1/reference-data/out-of-service-bed-reasons',
+  },
+  response: {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    jsonBody: outOfServiceBedReasonsJson,
+  },
+}
+
 const keyWorkers = {
   request: {
     method: 'GET',
@@ -111,6 +126,7 @@ export {
   destinationProviders,
   cancellationReasons,
   lostBedReasons,
+  outOfServiceBedReasons,
   keyWorkers,
   probationRegions,
 }

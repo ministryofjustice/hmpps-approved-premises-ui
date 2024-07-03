@@ -74,6 +74,7 @@ import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory, { apAreaFactory, probationRegionFactory } from './referenceData'
+import cas1ReferenceDataFactory from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
 import roomFactory from './room'
@@ -124,6 +125,7 @@ export {
   bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
+  cas1ReferenceDataFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,

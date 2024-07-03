@@ -14,6 +14,7 @@ buildAppInsightsClient()
 import HmppsAuthClient from './hmppsAuthClient'
 import PremisesClient from './premisesClient'
 import ReferenceDataClient from './referenceDataClient'
+import Cas1ReferenceDataClient from './cas1ReferenceDataClient'
 import PersonClient from './personClient'
 import UserClient from './userClient'
 
@@ -39,6 +40,8 @@ export const dataAccess = () => ({
   bookingClientBuilder: ((token: string) => new BookingClient(token)) as RestClientBuilder<BookingClient>,
   referenceDataClientBuilder: ((token: string) =>
     new ReferenceDataClient(token)) as RestClientBuilder<ReferenceDataClient>,
+  cas1ReferenceDataClientBuilder: ((token: string) =>
+    new Cas1ReferenceDataClient(token)) as RestClientBuilder<Cas1ReferenceDataClient>,
   lostBedClientBuilder: ((token: string) => new LostBedClient(token)) as RestClientBuilder<LostBedClient>,
   outOfServiceBedClientBuilder: ((token: string) =>
     new OutOfServiceBedClient(token)) as RestClientBuilder<OutOfServiceBedClient>,
@@ -61,6 +64,7 @@ export {
   AppealClient,
   BedClient,
   BookingClient,
+  Cas1ReferenceDataClient,
   PremisesClient,
   HmppsAuthClient,
   RestClientBuilder,

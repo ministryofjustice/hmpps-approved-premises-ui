@@ -19,6 +19,7 @@ import { signIn } from '../signIn'
 context('OutOfServiceBeds', () => {
   beforeEach(() => {
     cy.task('reset')
+    cy.task('stubOutOfServiceBedReasons')
   })
 
   it('should allow me to create a out of service bed', () => {

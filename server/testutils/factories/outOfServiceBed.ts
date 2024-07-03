@@ -8,7 +8,7 @@ import {
   Cas1OutOfServiceBedRevision as OutOfServiceBedRevision,
 } from '../../@types/shared'
 
-import referenceDataFactory from './referenceData'
+import cas1ReferenceDataFactory from './cas1ReferenceData'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
 
@@ -21,7 +21,7 @@ export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
   room: namedIdFactory.build(),
   premises: namedIdFactory.build(),
   apArea: namedIdFactory.build(),
-  reason: referenceDataFactory.outOfServiceBedReason().build(),
+  reason: cas1ReferenceDataFactory.outOfServiceBedReason().build(),
   referenceNumber: faker.helpers.arrayElement([faker.string.uuid(), undefined]),
   notes: faker.helpers.arrayElement([faker.lorem.sentence(), undefined]),
   daysLostCount: faker.number.int({ min: 1, max: 100 }),
@@ -52,7 +52,7 @@ export const newOutOfServiceBedFactory = Factory.define<NewOutOfServiceBed>(() =
     'endDate-month': endDate.getMonth().toString(),
     'endDate-year': endDate.getFullYear().toString(),
     referenceNumber: faker.string.uuid(),
-    reason: referenceDataFactory.lostBedReasons().build().id,
+    reason: cas1ReferenceDataFactory.outOfServiceBedReason().build().id,
     serviceName: 'approved-premises',
   }
 })
@@ -80,7 +80,7 @@ export const outOfServiceBedRevisionFactory = Factory.define<OutOfServiceBedRevi
     ] as const),
     startDate: DateFormats.dateObjToIsoDate(faker.date.past()),
     endDate: DateFormats.dateObjToIsoDate(faker.date.future()),
-    reason: referenceDataFactory.lostBedReasons().build(),
+    reason: cas1ReferenceDataFactory.outOfServiceBedReason().build(),
     referenceNumber: faker.number.int({ min: 1000, max: 99999 }).toString(),
     notes: faker.lorem.sentences(2),
   }
