@@ -198,7 +198,7 @@ export default class OutOfServiceBedsController {
             notes: req.body.notes,
           })
 
-          req.flash('success', 'Bed cancelled')
+          req.flash('success', 'Out of service bed removed')
 
           return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
         }
@@ -224,7 +224,7 @@ export default class OutOfServiceBedsController {
       try {
         await this.outOfServiceBedService.cancelOutOfServiceBed(req.user.token, id, premisesId, { notes })
 
-        req.flash('success', 'Bed cancelled')
+        req.flash('success', 'Out of service bed removed')
 
         return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       } catch (error) {
