@@ -46,6 +46,9 @@
   "reason": {
     "empty": "You must choose a valid reason"
   },
+  "notes": {
+    "empty": "You must provide detail on why the bed is out of service"
+  },
   "confirm": {
     "empty": "You must confirm if you want to withdraw this placement request"
   },
