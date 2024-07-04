@@ -6,6 +6,7 @@ import { DateFormats } from '../../utils/dateUtils'
 
 import UserFactory from './user'
 import { apAreaFactory } from './referenceData'
+import { personSummaryFactory } from './person'
 
 export default Factory.define<Task>(() => ({
   id: faker.string.uuid(),
@@ -19,4 +20,5 @@ export default Factory.define<Task>(() => ({
   crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
   apArea: apAreaFactory.build(),
   outcomeRecordedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+  personSummary: personSummaryFactory.build(),
 }))
