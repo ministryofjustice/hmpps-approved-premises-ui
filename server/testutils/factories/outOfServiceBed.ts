@@ -5,10 +5,12 @@ import {
   NewCas1OutOfServiceBed as NewOutOfServiceBed,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
+  Cas1OutOfServiceBedRevision as OutOfServiceBedRevision,
 } from '../../@types/shared'
 
 import referenceDataFactory from './referenceData'
 import { DateFormats } from '../../utils/dateUtils'
+import userFactory from './user'
 
 export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
   id: faker.string.uuid(),
@@ -26,6 +28,7 @@ export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
   temporality: faker.helpers.arrayElement(['past', 'current', 'future'] as const),
   status: faker.helpers.arrayElement(['active', 'cancelled'] as const),
   cancellation: undefined,
+  revisionHistory: outOfServiceBedRevisionFactory.buildList(3),
 }))
 
 const namedIdFactory = Factory.define<NamedId>(() => ({
@@ -59,5 +62,26 @@ export const outOfServiceBedCancellationFactory = Factory.define<OutOfServiceBed
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
     id: faker.string.uuid(),
     notes: faker.lorem.sentence(),
+  }
+})
+
+export const outOfServiceBedRevisionFactory = Factory.define<OutOfServiceBedRevision>(() => {
+  return {
+    id: faker.string.uuid(),
+    updatedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+    updatedBy: userFactory.build(),
+    revisionType: faker.helpers.arrayElements([
+      'created',
+      'updatedStartDate',
+      'updatedEndDate',
+      'updatedReferenceNumber',
+      'updatedReason',
+      'updatedNotes',
+    ] as const),
+    outOfServiceFrom: DateFormats.dateObjToIsoDate(faker.date.past()),
+    outOfServiceTo: DateFormats.dateObjToIsoDate(faker.date.future()),
+    reason: referenceDataFactory.lostBedReasons().build(),
+    referenceNumber: faker.number.int({ min: 1000, max: 99999 }).toString(),
+    notes: faker.lorem.sentences(2),
   }
 })
