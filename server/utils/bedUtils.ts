@@ -6,6 +6,7 @@ import {
   SummaryListItem,
   SummaryListWithCard,
   TableCell,
+  UserDetails,
 } from '../@types/ui'
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
@@ -13,8 +14,8 @@ import { linkTo, sentenceCase } from './utils'
 
 export class InvalidOverbookingDataException extends Error {}
 
-export const bedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
-  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId)])
+export const bedTableRows = (beds: Array<BedSummary>, premisesId: string, user?: UserDetails) => {
+  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId, user)])
 }
 
 export const bedNameCell = (item: { name: string }): TableCell => ({ text: item.name })
@@ -23,7 +24,7 @@ export const roomNameCell = (item: { roomName: string }): TableCell => ({ text: 
 
 export const statusCell = (bed: BedSummary): TableCell => ({ text: sentenceCase(bed.status) })
 
-export const actionCell = (bed: BedSummary, premisesId: string): TableCell => ({
+export const actionCell = (bed: BedSummary, premisesId: string, _user?: UserDetails): TableCell => ({
   html: bedLink(bed, premisesId),
 })
 

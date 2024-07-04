@@ -6,6 +6,7 @@ import {
   bedOccupancyEntryLostBedUiFactory,
   bedOccupancyEntryOverbookingUiFactory,
   bedSummaryFactory,
+  userDetailsFactory,
 } from '../testutils/factories'
 import {
   InvalidOverbookingDataException,
@@ -64,19 +65,25 @@ describe('bedUtils', () => {
   })
 
   describe('actionCell', () => {
-    it('returns a link to manage the room', () => {
-      expect(actionCell(bed, premisesId)).toEqual({
-        html: bedLink(bed, premisesId),
+    describe('when the user does NOT have the FUTURE_MANAGER role', () => {
+      const user = userDetailsFactory.build({ roles: ['manager'] })
+
+      it('returns a "V1" link to manage the room', () => {
+        expect(actionCell(bed, premisesId, user)).toEqual({
+          html: bedLink(bed, premisesId),
+        })
       })
     })
   })
 
   describe('roomsTableRows', () => {
+    const user = userDetailsFactory.build({ roles: ['manager'] })
+
     it('returns the table rows given the rooms', () => {
       const beds = [bed]
 
-      expect(bedTableRows(beds, premisesId)).toEqual([
-        [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId)],
+      expect(bedTableRows(beds, premisesId, user)).toEqual([
+        [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId, user)],
       ])
     })
   })
