@@ -13,6 +13,7 @@ import {
   OutOfServiceBedIndexPage,
   OutOfServiceBedShowPage,
 } from '../../pages/v2Manage/outOfServiceBeds'
+import BedShowPage from '../../pages/v2Manage/bed/bedShow'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
 
@@ -22,29 +23,31 @@ context('OutOfServiceBeds', () => {
     cy.task('stubOutOfServiceBedReasons')
   })
 
-  it('should allow me to create a out of service bed', () => {
+  it('should allow me to create an out of service bed', () => {
     const premises = extendedPremisesSummaryFactory.build()
     cy.task('stubPremisesSummary', premises)
-    const fullPremises = premisesFactory.build({ id: premises.id })
-    cy.task('stubSinglePremises', fullPremises)
 
-    // Given I am signed in as a future manager
-    signIn(['future_manager'])
-
-    // When I navigate to the out of service bed form
     const outOfServiceBed = outOfServiceBedFactory.build({
       startDate: '2022-02-11',
       endDate: '2022-03-11',
     })
     cy.task('stubOutOfServiceBedCreate', { premisesId: premises.id, outOfServiceBed })
 
+    // stub ultimate API call when redirecting to bed page
+    const bedDetail = bedDetailFactory.build({ id: outOfServiceBed.bed.id })
+    cy.task('stubBed', { premisesId: premises.id, bedDetail })
+
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
+
+    // When I navigate to the out of service bed form
     const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
 
     // And I fill out the form
     page.completeForm(outOfServiceBed)
     page.clickSubmit()
 
-    // Then a out of service bed should have been created in the API
+    // Then a POST to the API should be made to create the OOSB record
     cy.task('verifyOutOfServiceBedCreate', {
       premisesId: premises.id,
       outOfServiceBed,
@@ -56,10 +59,14 @@ context('OutOfServiceBeds', () => {
       expect(requestBody.endDate).equal(outOfServiceBed.endDate)
       expect(requestBody.notes).equal(outOfServiceBed.notes)
       expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
+      expect(requestBody.reason).equal(outOfServiceBed.reason.id)
     })
 
-    // And I should be navigated to the premises detail page and see the confirmation message
-    page.shouldShowBanner('The out of service bed has been recorded')
+    // And I should be redirected to the v2 bed page
+    const v2BedPage = Page.verifyOnPage(BedShowPage)
+
+    // And I should see the confirmation message
+    v2BedPage.shouldShowBanner('The out of service bed has been recorded')
   })
 
   it('should show errors', () => {

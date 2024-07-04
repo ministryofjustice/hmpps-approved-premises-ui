@@ -66,6 +66,18 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   }
 }
 
+export const v2BedActions = (bed: BedDetail, premisesId: string) => {
+  return {
+    items: [
+      {
+        text: 'Create out of service bed record',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
+      },
+    ],
+  }
+}
+
 const bedLinkForUser = (bed: BedSummary, premisesId: string, user?: UserDetails): string => {
   if (user && user.roles?.includes('future_manager')) {
     return v2BedLink(bed, premisesId)

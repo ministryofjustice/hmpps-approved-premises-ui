@@ -23,7 +23,7 @@ export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
   apArea: namedIdFactory.build(),
   reason: cas1ReferenceDataFactory.outOfServiceBedReason().build(),
   referenceNumber: faker.helpers.arrayElement([faker.string.uuid(), undefined]),
-  notes: faker.helpers.arrayElement([faker.lorem.sentence(), undefined]),
+  notes: faker.lorem.sentence(),
   daysLostCount: faker.number.int({ min: 1, max: 100 }),
   temporality: faker.helpers.arrayElement(['past', 'current', 'future'] as const),
   status: faker.helpers.arrayElement(['active', 'cancelled'] as const),

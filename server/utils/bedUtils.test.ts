@@ -25,6 +25,7 @@ import {
   statusRow,
   title,
   v1BedLink,
+  v2BedActions,
   v2BedLink,
 } from './bedUtils'
 import { DateFormats } from './dateUtils'
@@ -181,6 +182,20 @@ describe('bedUtils', () => {
             text: 'Create out of service bed record',
             classes: 'govuk-button--secondary',
             href: paths.lostBeds.new({ premisesId, bedId: bedDetail.id }),
+          },
+        ],
+      })
+    })
+  })
+
+  describe('v2BedActions', () => {
+    it('returns the actions for the V2 bed manage page', () => {
+      expect(v2BedActions(bedDetail, premisesId)).toEqual({
+        items: [
+          {
+            text: 'Create out of service bed record',
+            classes: 'govuk-button--secondary',
+            href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
           },
         ],
       })
