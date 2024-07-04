@@ -1,3 +1,4 @@
+import { UserDetails } from '@approved-premises/ui'
 import paths from '../paths/manage'
 import {
   apCharacteristicPairFactory,
@@ -13,7 +14,6 @@ import {
   actionCell,
   bedActions,
   bedDetails,
-  bedLink,
   bedNameCell,
   bedTableRows,
   characteristicsRow,
@@ -24,6 +24,8 @@ import {
   statusCell,
   statusRow,
   title,
+  v1BedLink,
+  v2BedLink,
 } from './bedUtils'
 import { DateFormats } from './dateUtils'
 
@@ -65,12 +67,32 @@ describe('bedUtils', () => {
   })
 
   describe('actionCell', () => {
+    describe('when the user has the FUTURE_MANAGER role', () => {
+      const user = userDetailsFactory.build({ roles: ['future_manager'] })
+
+      it('returns a "V2" link to manage the room', () => {
+        expect(actionCell(bed, premisesId, user)).toEqual({
+          html: v2BedLink(bed, premisesId),
+        })
+      })
+    })
+
     describe('when the user does NOT have the FUTURE_MANAGER role', () => {
       const user = userDetailsFactory.build({ roles: ['manager'] })
 
       it('returns a "V1" link to manage the room', () => {
         expect(actionCell(bed, premisesId, user)).toEqual({
-          html: bedLink(bed, premisesId),
+          html: v1BedLink(bed, premisesId),
+        })
+      })
+    })
+
+    describe('when no user is given', () => {
+      const undefinedUser: UserDetails = undefined
+
+      it('returns a "V1" link to manage the room', () => {
+        expect(actionCell(bed, premisesId, undefinedUser)).toEqual({
+          html: v1BedLink(bed, premisesId),
         })
       })
     })
