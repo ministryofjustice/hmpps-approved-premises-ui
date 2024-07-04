@@ -62,7 +62,7 @@ export default class OutOfServiceBedService {
   async getAllOutOfServiceBeds({
     token,
     page = 1,
-    sortBy = 'outOfServiceFrom',
+    sortBy = 'startDate',
     sortDirection = 'asc',
     temporality = 'current',
     premisesId,

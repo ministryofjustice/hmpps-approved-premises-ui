@@ -120,7 +120,7 @@ describe('OutOfServiceBedService', () => {
 
       expect(outOfServiceBedClient.get).toHaveBeenCalledWith({
         page: 1,
-        sortBy: 'outOfServiceFrom',
+        sortBy: 'startDate',
         sortDirection: 'asc',
         temporality: 'current',
       })
@@ -137,7 +137,7 @@ describe('OutOfServiceBedService', () => {
       outOfServiceBedClient.update.mockResolvedValue(outOfServiceBed)
 
       const outOfServiceBedUpdateData = {
-        startDate: outOfServiceBed.outOfServiceFrom,
+        startDate: outOfServiceBed.startDate,
         endDate,
         reason: outOfServiceBed.reason.id,
         referenceNumber: outOfServiceBed.referenceNumber,

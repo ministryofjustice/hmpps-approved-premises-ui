@@ -19,8 +19,8 @@ export class OutOfServiceBedCreatePage extends Page {
   }
 
   public completeForm(outOfServiceBed: OutOfServiceBed): void {
-    const startDate = new Date(Date.parse(outOfServiceBed.outOfServiceFrom))
-    const endDate = new Date(Date.parse(outOfServiceBed.outOfServiceTo))
+    const startDate = new Date(Date.parse(outOfServiceBed.startDate))
+    const endDate = new Date(Date.parse(outOfServiceBed.endDate))
 
     cy.get('input[name="startDate-day"]').type(String(startDate.getDate()))
     cy.get('input[name="startDate-month"]').type(String(startDate.getMonth() + 1))
@@ -44,7 +44,7 @@ export class OutOfServiceBedCreatePage extends Page {
     conflictingEntityType: 'booking' | 'lost-bed',
   ): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
-      ['outOfServiceFrom', 'outOfServiceTo'],
+      ['startDate', 'endDate'],
       conflictingEntity,
       conflictingEntityType,
     )

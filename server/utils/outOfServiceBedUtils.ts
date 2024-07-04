@@ -23,8 +23,8 @@ export const allOutOfServiceBedsTableHeaders = (
     sortHeader<OutOfServiceBedSortField>('Premises', 'premisesName', sortBy, sortDirection, hrefPrefix),
     sortHeader<OutOfServiceBedSortField>('Room', 'roomName', sortBy, sortDirection, hrefPrefix),
     sortHeader<OutOfServiceBedSortField>('Bed', 'bedName', sortBy, sortDirection, hrefPrefix),
-    sortHeader<OutOfServiceBedSortField>('Start date', 'outOfServiceFrom', sortBy, sortDirection, hrefPrefix),
-    sortHeader<OutOfServiceBedSortField>('End date', 'outOfServiceTo', sortBy, sortDirection, hrefPrefix),
+    sortHeader<OutOfServiceBedSortField>('Start date', 'startDate', sortBy, sortDirection, hrefPrefix),
+    sortHeader<OutOfServiceBedSortField>('End date', 'endDate', sortBy, sortDirection, hrefPrefix),
     sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Ref number',
@@ -42,8 +42,8 @@ export const allOutOfServiceBedsTableRows = (beds: Array<OutOfServiceBed>) => {
       textValue(bed.premises.name),
       textValue(bed.room.name),
       textValue(bed.bed.name),
-      textValue(DateFormats.isoDateToUIDate(bed.outOfServiceFrom, { format: 'short' })),
-      textValue(DateFormats.isoDateToUIDate(bed.outOfServiceTo, { format: 'short' })),
+      textValue(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
+      textValue(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
       textValue(bed.reason.name),
       referenceNumberCell(bed.referenceNumber),
       textValue(bed.daysLostCount.toString()),
@@ -90,8 +90,8 @@ export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesI
     const rows = [
       textValue(bed.bed.name),
       textValue(bed.room.name),
-      textValue(bed.outOfServiceFrom),
-      textValue(bed.outOfServiceTo),
+      textValue(bed.startDate),
+      textValue(bed.endDate),
       textValue(bed.reason.name),
       referenceNumberCell(bed.referenceNumber),
     ]
@@ -112,8 +112,8 @@ export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): Ta
 export const outOfServiceBedCountForToday = (outOfServiceBeds: Array<OutOfServiceBed>): number => {
   return outOfServiceBeds.filter(outOfServiceBed =>
     isWithinInterval(Date.now(), {
-      start: DateFormats.isoToDateObj(outOfServiceBed.outOfServiceFrom),
-      end: DateFormats.isoToDateObj(outOfServiceBed.outOfServiceTo),
+      start: DateFormats.isoToDateObj(outOfServiceBed.startDate),
+      end: DateFormats.isoToDateObj(outOfServiceBed.endDate),
     }),
   ).length
 }

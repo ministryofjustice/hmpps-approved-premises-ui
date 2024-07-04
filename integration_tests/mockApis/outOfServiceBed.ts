@@ -68,7 +68,7 @@ export default {
   stubOutOfServiceBedsList: ({
     outOfServiceBeds,
     page = 1,
-    sortBy = 'outOfServiceFrom',
+    sortBy = 'startDate',
     sortDirection = 'asc',
     temporality = 'current',
   }): SuperAgentRequest =>
@@ -155,7 +155,7 @@ export default {
     ).body.requests,
   verifyOutOfServiceBedsDashboard: async ({
     page = '1',
-    sortBy = 'outOfServiceFrom',
+    sortBy = 'startDate',
     sortDirection = 'asc',
   }: {
     page: string

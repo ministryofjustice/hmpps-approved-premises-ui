@@ -32,8 +32,8 @@ context('OutOfServiceBeds', () => {
 
     // When I navigate to the out of service bed form
     const outOfServiceBed = outOfServiceBedFactory.build({
-      outOfServiceFrom: '2022-02-11',
-      outOfServiceTo: '2022-03-11',
+      startDate: '2022-02-11',
+      endDate: '2022-03-11',
     })
     cy.task('stubOutOfServiceBedCreate', { premisesId: premises.id, outOfServiceBed })
 
@@ -51,8 +51,8 @@ context('OutOfServiceBeds', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.outOfServiceFrom).equal(outOfServiceBed.outOfServiceFrom)
-      expect(requestBody.outOfServiceTo).equal(outOfServiceBed.outOfServiceTo)
+      expect(requestBody.startDate).equal(outOfServiceBed.startDate)
+      expect(requestBody.endDate).equal(outOfServiceBed.endDate)
       expect(requestBody.notes).equal(outOfServiceBed.notes)
       expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
     })
@@ -74,13 +74,13 @@ context('OutOfServiceBeds', () => {
     // And I miss required fields
     cy.task('stubOutOfServiceBedErrors', {
       premisesId: premises.id,
-      params: ['outOfServiceFrom', 'outOfServiceTo', 'referenceNumber'],
+      params: ['startDate', 'endDate', 'referenceNumber'],
     })
 
     page.clickSubmit()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['outOfServiceFrom', 'outOfServiceTo', 'referenceNumber'])
+    page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'referenceNumber'])
   })
 
   it('should show an error when there are booking conflicts', () => {
@@ -95,8 +95,8 @@ context('OutOfServiceBeds', () => {
     // When I navigate to the out of service bed form
 
     const outOfServiceBed = outOfServiceBedFactory.build({
-      outOfServiceFrom: '2022-02-11',
-      outOfServiceTo: '2022-03-11',
+      startDate: '2022-02-11',
+      endDate: '2022-03-11',
     })
     cy.task('stubOutOfServiceBedConflictError', {
       premisesId: premises.id,
@@ -161,9 +161,9 @@ context('OutOfServiceBeds', () => {
       outOfServiceBedShowPage.shouldShowOutOfServiceBedDetail()
 
       // // When I fill in the form and submit
-      const newOutOfServiceTo = '2023-10-12'
+      const newEndDate = '2023-10-12'
       const newNote = 'example'
-      outOfServiceBedShowPage.completeForm(newOutOfServiceTo, newNote)
+      outOfServiceBedShowPage.completeForm(newEndDate, newNote)
       outOfServiceBedShowPage.clickSubmit()
 
       // // Then I am taken back to the list of out of service beds
@@ -177,8 +177,8 @@ context('OutOfServiceBeds', () => {
         expect(requests).to.have.length(1)
         const requestBody = JSON.parse(requests[0].body)
 
-        expect(requestBody.outOfServiceFrom).equal(outOfServiceBed.outOfServiceFrom)
-        expect(requestBody.outOfServiceTo).equal(newOutOfServiceTo)
+        expect(requestBody.startDate).equal(outOfServiceBed.startDate)
+        expect(requestBody.endDate).equal(newEndDate)
         expect(requestBody.notes).equal(newNote)
         expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
       })
@@ -201,7 +201,7 @@ context('OutOfServiceBeds', () => {
         premisesId,
         params: [
           {
-            propertyName: `$.outOfServiceTo`,
+            propertyName: `$.endDate`,
             errorType: 'empty',
           },
         ],
@@ -215,7 +215,7 @@ context('OutOfServiceBeds', () => {
       outOfServiceBedShowPage.clickSubmit()
 
       // Then I should see an error message
-      outOfServiceBedShowPage.shouldShowErrorMessagesForFields(['outOfServiceTo'])
+      outOfServiceBedShowPage.shouldShowErrorMessagesForFields(['endDate'])
     })
 
     it('should allow me to cancel a out of service bed', () => {
@@ -349,12 +349,12 @@ context('OutOfServiceBeds', () => {
       shouldSortByField('bedName')
     })
 
-    it('supports sorting by outOfServiceFrom', () => {
-      shouldSortByField('outOfServiceFrom')
+    it('supports sorting by startDate', () => {
+      shouldSortByField('startDate')
     })
 
-    it('supports sorting by outOfServiceTo', () => {
-      shouldSortByField('outOfServiceTo')
+    it('supports sorting by endDate', () => {
+      shouldSortByField('endDate')
     })
 
     it('supports sorting by reason', () => {
@@ -397,7 +397,7 @@ context('OutOfServiceBeds', () => {
 
     // Then the API should have received a request for the sort
     cy.task('verifyOutOfServiceBedsDashboard', { page: '1', sortBy: field, sortDirection: 'asc' }).then(requests => {
-      expect(requests).to.have.length(field === 'outOfServiceFrom' ? 2 : 1)
+      expect(requests).to.have.length(field === 'startDate' ? 2 : 1)
     })
 
     // And the page should show the sorted items

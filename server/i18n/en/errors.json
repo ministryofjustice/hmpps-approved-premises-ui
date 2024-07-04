@@ -95,20 +95,10 @@
     "invalid": "The start date is an invalid date",
     "conflict": "This bedspace is not available for these dates"
   },
-  "outOfServiceFrom": {
-    "empty": "You must enter a start date",
-    "invalid": "The start date is an invalid date",
-    "conflict": "This bedspace is not available for these dates"
-  },
   "endDate": {
     "empty": "You must enter a end date",
     "invalid": "The end date is an invalid date",
     "beforeStartDate": "The end date must be before the start date",
-    "conflict": "This bedspace is not available for these dates"
-  },
-  "outOfServiceTo": {
-    "empty": "You must enter an end date",
-    "invalid": "The end date is an invalid date",
     "conflict": "This bedspace is not available for these dates"
   },
   "referenceNumber": { "empty": "You must enter a reference number" },

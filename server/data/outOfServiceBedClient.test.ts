@@ -161,7 +161,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
       const notes = 'note'
 
       const outOfServiceBedUpdateData: UpdateOutOfServiceBed = {
-        startDate: outOfServiceBed.outOfServiceFrom,
+        startDate: outOfServiceBed.startDate,
         endDate,
         reason: outOfServiceBed.reason.id,
         referenceNumber: outOfServiceBed.referenceNumber,
