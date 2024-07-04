@@ -210,6 +210,7 @@ export type { Problem } from './models/Problem';
 export type { PropertyStatus } from './models/PropertyStatus';
 export type { Reallocation } from './models/Reallocation';
 export type { ReferralHistoryNote } from './models/ReferralHistoryNote';
+export type { ReferralHistoryNoteMessageDetails } from './models/ReferralHistoryNoteMessageDetails';
 export type { ReferralHistorySystemNote } from './models/ReferralHistorySystemNote';
 export type { ReferralHistoryUserNote } from './models/ReferralHistoryUserNote';
 export type { ReferralRejectionReason } from './models/ReferralRejectionReason';
