@@ -1,6 +1,6 @@
 import { SelectOption } from '@approved-premises/ui'
 import { ApprovedPremisesUserRole, ApprovedPremisesUser as User, UserQualification } from '../../@types/shared'
-import { qualificationDictionary } from './roleCheckboxes'
+import { RolesInUse, qualificationDictionary } from './roleCheckboxes'
 
 export const userSummaryListItems = (user: User) => [
   {
@@ -45,13 +45,12 @@ export const userSummaryListItems = (user: User) => [
   },
 ]
 
-const userRoles: Record<ApprovedPremisesUserRole, string> = {
+const userRoles: Record<RolesInUse, string> = {
   assessor: 'Assessor',
   matcher: 'Matcher',
   manager: 'Manager',
   workflow_manager: 'Workflow manager',
   cru_member: 'CRU member',
-  applicant: 'Applicant',
   role_admin: 'Role admin',
   report_viewer: 'Report viewer',
   excluded_from_assess_allocation: 'Excluded from assess allocation',
@@ -61,6 +60,7 @@ const userRoles: Record<ApprovedPremisesUserRole, string> = {
   legacy_manager: 'Legacy manager',
   future_manager: 'Future manager',
 }
+
 export const userRolesSelectOptions = (
   selectedOption: ApprovedPremisesUserRole | undefined | null,
 ): Array<SelectOption> => {
