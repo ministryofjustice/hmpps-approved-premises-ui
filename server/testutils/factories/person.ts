@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { FullPerson, RestrictedPerson } from '@approved-premises/api'
+import type { FullPerson, PersonSummary, RestrictedPerson } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 export const fullPersonFactory = Factory.define<FullPerson>(() => ({
@@ -21,4 +21,9 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
   crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
   type: 'RestrictedPerson',
+}))
+
+export const personSummaryFactory = Factory.define<PersonSummary>(() => ({
+  crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
+  personType: faker.helpers.arrayElement(['FullPersonSummary', 'RestrictedPersonSummary', 'UnknownPersonSummary']),
 }))

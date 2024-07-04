@@ -41,7 +41,8 @@ export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
   excluded_from_placement_application_allocation: { label: 'Stop placement request allocations' },
 }
 
-type UnusedRoles = 'applicant'
+type UnusedRoles = 'applicant' | 'janitor'
+export type RolesInUse = Exclude<UserRole, UnusedRoles>
 
 type RolesForCheckboxes = Exclude<UserRole, AllocationRole | UnusedRoles>
 
@@ -52,7 +53,7 @@ export type RoleLabelDictionary = { [K in RolesForCheckboxes]: RoleLabel }
 export type AllocationRoleLabelDictionary = { [K in AllocationRolesForCheckboxes]: RoleLabel }
 type AllocationRolesForCheckboxes = Exclude<UserRole, RolesForCheckboxes | UnusedRoles>
 
-export const roles: ReadonlyArray<UserRole> = [
+export const roles: ReadonlyArray<RolesInUse> = [
   'role_admin',
   'assessor',
   'manager',
