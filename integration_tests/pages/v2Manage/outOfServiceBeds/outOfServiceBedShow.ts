@@ -21,7 +21,9 @@ export class OutOfServiceBedShowPage extends Page {
     this.assertDefinition('Bed number', this.outOfServiceBed.bed.name)
     this.assertDefinition('Start date', DateFormats.isoDateToUIDate(this.outOfServiceBed.startDate, { format: 'long' }))
     this.assertDefinition('End date', DateFormats.isoDateToUIDate(this.outOfServiceBed.endDate, { format: 'long' }))
-    this.assertDefinition('Reference number', this.outOfServiceBed.referenceNumber)
+    if (this.outOfServiceBed.referenceNumber) {
+      this.assertDefinition('Reference number', this.outOfServiceBed.referenceNumber)
+    }
   }
 
   public completeForm(endDate: OutOfServiceBed['endDate'], notes: OutOfServiceBed['notes']): void {

@@ -63,7 +63,7 @@ export const outOfServiceBedTableHeaders = (user: UserDetails) => {
       text: 'Room',
     },
     {
-      text: 'Out of service from',
+      text: 'Start date',
     },
     {
       text: 'Out of service until',

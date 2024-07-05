@@ -5,7 +5,7 @@ import {
 } from '../../../server/testutils/factories'
 
 import BedShowPage from '../../pages/v2Manage/bed/bedShow'
-import { OutOfServiceBedCreatePage } from '../../pages/manage/outOfServiceBeds'
+import { OutOfServiceBedCreatePage } from '../../pages/v2Manage/outOfServiceBeds'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
 

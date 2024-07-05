@@ -30,9 +30,13 @@ export class OutOfServiceBedCreatePage extends Page {
     cy.get('input[name="endDate-month"]').type(String(endDate.getMonth() + 1))
     cy.get('input[name="endDate-year"]').type(String(endDate.getFullYear()))
 
-    cy.get('input[name="outOfServiceBed[referenceNumber]"]').type(outOfServiceBed.referenceNumber)
+    if (outOfServiceBed.referenceNumber) {
+      cy.get('input[name="outOfServiceBed[referenceNumber]"]').type(outOfServiceBed.referenceNumber)
+    }
 
-    cy.get('[name="outOfServiceBed[notes]"]').type(outOfServiceBed.notes)
+    if (outOfServiceBed.notes) {
+      cy.get('[name="outOfServiceBed[notes]"]').type(outOfServiceBed.notes)
+    }
   }
 
   public clickSubmit(): void {

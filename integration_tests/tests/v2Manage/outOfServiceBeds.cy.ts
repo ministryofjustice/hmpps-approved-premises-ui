@@ -9,12 +9,12 @@ import {
 
 import {
   OutOfServiceBedCreatePage,
+  OutOfServiceBedIndexPage,
   OutOfServiceBedListPage,
   OutOfServiceBedShowPage,
-} from '../../pages/manage/outOfServiceBeds'
+} from '../../pages/v2Manage/outOfServiceBeds'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
-import { OutOfServiceBedIndexPage } from '../../pages/v2Manage/outOfServiceBeds'
 
 context('OutOfServiceBeds', () => {
   beforeEach(() => {
