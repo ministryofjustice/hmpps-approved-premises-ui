@@ -226,6 +226,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)
   njkEnv.addFilter('kebabCase', kebabCase)
+  njkEnv.addFilter('addCommasToList', (arg, notLastItem) => (notLastItem ? `${arg}, ` : arg))
+
   njkEnv.addFilter('linebreaksToParagraphs', linebreaksToParagraphs)
 
   njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)

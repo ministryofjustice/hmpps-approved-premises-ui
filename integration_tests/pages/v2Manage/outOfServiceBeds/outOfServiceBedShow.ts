@@ -35,4 +35,8 @@ export class OutOfServiceBedShowPage extends Page {
       cy.get('li').contains(characteristic.name)
     })
   }
+
+  clickTab(tab: 'Details' | 'Timeline'): void {
+    cy.get('.moj-sub-navigation__link').contains(tab).click()
+  }
 }
