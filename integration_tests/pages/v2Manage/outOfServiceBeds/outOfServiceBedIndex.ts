@@ -44,7 +44,12 @@ export class OutOfServiceBedIndexPage extends Page {
               cy.get('a').should(
                 'have.attr',
                 'href',
-                paths.v2Manage.outOfServiceBeds.show({ id: item.id, premisesId: item.premises.id, bedId: item.bed.id }),
+                paths.v2Manage.outOfServiceBeds.show({
+                  id: item.id,
+                  premisesId: item.premises.id,
+                  bedId: item.bed.id,
+                  tab: 'details',
+                }),
               )
             })
         })

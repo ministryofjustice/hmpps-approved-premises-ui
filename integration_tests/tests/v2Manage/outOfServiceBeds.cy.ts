@@ -1,5 +1,6 @@
 import DashboardPage from '../../pages/dashboard'
 import {
+  bedDetailFactory,
   bookingFactory,
   extendedPremisesSummaryFactory,
   outOfServiceBedCancellationFactory,
@@ -119,16 +120,22 @@ context('OutOfServiceBeds', () => {
     signIn(['future_manager'])
 
     // And I have created a out of service bed
+    const bed = { name: 'abc', id: '123' }
     const premises = premisesFactory.build()
-    const outOfServiceBed = outOfServiceBedFactory.build()
+    const outOfServiceBed = outOfServiceBedFactory.build({ bed })
+    const bedDetail = bedDetailFactory.build({ id: bed.id })
 
     cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
+    cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // And I visit that out of service bed's show page
     const page = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
-    // Then I should see the details of that out of service bed
+    // Then I should see the latest details of that out of service bed
     page.shouldShowOutOfServiceBedDetail()
+
+    // And I should see the bed characteristics
+    page.shouldShowCharacteristics(bedDetail)
   })
 
   describe('managing out of service beds', () => {
