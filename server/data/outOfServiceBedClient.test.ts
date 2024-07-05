@@ -105,10 +105,11 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
   })
 
   describe('get', () => {
-    it('makes a request to the outOfServiceBeds endpoint with a page number, sort and filter options', async () => {
+    it('makes a request to the outOfServiceBeds endpoint with a page number, perPage, sort and filter options', async () => {
       const outOfServiceBeds = outOfServiceBedFactory.buildList(2)
 
       const pageNumber = 3
+      const perPage = 20
       const sortBy = 'roomName'
       const sortDirection = 'asc'
       const temporality = 'future'
@@ -120,7 +121,14 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.manage.outOfServiceBeds.index({}),
-          query: { page: pageNumber.toString(), sortBy, sortDirection, temporality, apAreaId },
+          query: {
+            page: pageNumber.toString(),
+            sortBy,
+            sortDirection,
+            temporality,
+            apAreaId,
+            perPage: perPage.toString(),
+          },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -129,9 +137,9 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
           status: 200,
           body: outOfServiceBeds,
           headers: {
-            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalPages': '5',
             'X-Pagination-TotalResults': '100',
-            'X-Pagination-PageSize': '10',
+            'X-Pagination-PageSize': '20',
           },
         },
       })
@@ -142,14 +150,15 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         sortDirection,
         temporality,
         apAreaId,
+        perPage,
       })
 
       expect(result).toEqual({
         data: outOfServiceBeds,
         pageNumber: pageNumber.toString(),
-        totalPages: '10',
+        totalPages: '5',
         totalResults: '100',
-        pageSize: '10',
+        pageSize: '20',
       })
     })
   })

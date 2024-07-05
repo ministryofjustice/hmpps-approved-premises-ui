@@ -1,6 +1,11 @@
 import { SuperAgentRequest } from 'superagent'
 
-import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField, SortDirection } from '@approved-premises/api'
+import {
+  Cas1OutOfServiceBed as OutOfServiceBed,
+  Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
+  SortDirection,
+  Temporality,
+} from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import { bedspaceConflictResponseBody, errorStub } from './utils'
 import paths from '../../server/paths/api'
@@ -52,30 +57,51 @@ export default {
       },
     }),
 
-  stubOutOfServiceBedsListForAPremises: ({ premisesId, outOfServiceBeds }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
-      },
-      response: {
-        status: 200,
-        headers,
-        jsonBody: outOfServiceBeds,
-      },
-    }),
-
   stubOutOfServiceBedsList: ({
     outOfServiceBeds,
+    premisesId,
     page = 1,
-    sortBy = 'startDate',
-    sortDirection = 'asc',
+    sortBy,
+    sortDirection,
     temporality = 'current',
-  }): SuperAgentRequest =>
-    stubFor({
+    perPage = 10,
+  }: {
+    outOfServiceBeds: Array<OutOfServiceBed>
+    premisesId?: string
+    page: number
+    temporality?: string
+    sortBy?: OutOfServiceBedSortField
+    sortDirection?: SortDirection
+    perPage?: number
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page.toString(),
+      },
+
+      temporality: {
+        equalTo: temporality,
+      },
+    } as Record<string, unknown>
+
+    if (premisesId) {
+      queryParameters.premisesId = { equalTo: premisesId }
+    }
+    if (sortBy) {
+      queryParameters.sortBy = { equalTo: sortBy }
+    }
+    if (sortDirection) {
+      queryParameters.sortDirection = { equalTo: sortDirection }
+    }
+    if (perPage) {
+      queryParameters.perPage = { equalTo: perPage.toString() }
+    }
+
+    return stubFor({
       request: {
         method: 'GET',
-        url: `${paths.manage.outOfServiceBeds.index.pattern}?page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}&temporality=${temporality}`,
+        urlPathPattern: paths.manage.outOfServiceBeds.index.pattern,
+        queryParameters,
       },
       response: {
         status: 200,
@@ -87,7 +113,8 @@ export default {
         },
         jsonBody: outOfServiceBeds,
       },
-    }),
+    })
+  },
 
   stubOutOfServiceBed: ({ premisesId, outOfServiceBed }): SuperAgentRequest =>
     stubFor({
@@ -154,29 +181,48 @@ export default {
       })
     ).body.requests,
   verifyOutOfServiceBedsDashboard: async ({
-    page = '1',
-    sortBy = 'startDate',
-    sortDirection = 'asc',
+    page = 1,
+    sortBy,
+    sortDirection,
+    temporality = 'current',
+    premisesId,
+    perPage = 10,
   }: {
-    page: string
+    page: number
     sortBy: OutOfServiceBedSortField
     sortDirection: SortDirection
-  }) =>
-    (
-      await getMatchingRequests({
-        method: 'GET',
-        urlPathPattern: paths.manage.outOfServiceBeds.index({}),
-        queryParameters: {
-          page: {
-            equalTo: page,
-          },
-          sortBy: {
-            equalTo: sortBy,
-          },
-          sortDirection: {
-            equalTo: sortDirection,
-          },
-        },
-      })
-    ).body.requests,
+    temporality: Temporality
+    premisesId: string
+    perPage?: number
+  }) => {
+    const queryParameters = {
+      page: {
+        equalTo: page.toString(),
+      },
+      temporality: {
+        equalTo: temporality,
+      },
+    } as Record<string, unknown>
+
+    if (premisesId) {
+      queryParameters.premisesId = { equalTo: premisesId }
+    }
+    if (sortBy) {
+      queryParameters.sortBy = { equalTo: sortBy }
+    }
+    if (sortDirection) {
+      queryParameters.sortDirection = { equalTo: sortDirection }
+    }
+    if (perPage) {
+      queryParameters.perPage = { equalTo: perPage.toString() }
+    }
+
+    const requests = await getMatchingRequests({
+      method: 'GET',
+      urlPathPattern: paths.manage.outOfServiceBeds.index.pattern,
+      queryParameters,
+    })
+
+    return requests.body.requests
+  },
 }

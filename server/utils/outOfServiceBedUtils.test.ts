@@ -169,7 +169,7 @@ describe('outOfServiceBedUtils', () => {
 
   describe('outOfServiceBedCountForToday', () => {
     it('returns the correct number of out of service beds for today', () => {
-      const outOfServiceBedsForToday = [...Array(getRandomInt(1, 10))].map(() =>
+      const outOfServiceBedsForToday = [...Array(getRandomInt(2, 10))].map(() =>
         outOfServiceBedFactory.build({
           startDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
           endDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
@@ -190,7 +190,7 @@ describe('outOfServiceBedUtils', () => {
 
       expect(
         outOfServiceBedCountForToday([...outOfServiceBedsForToday, ...futureOutOfServiceBeds, ...pastOutOfServiceBeds]),
-      ).toEqual(outOfServiceBedsForToday.length)
+      ).toEqual(`${outOfServiceBedsForToday.length} beds`)
     })
   })
 })

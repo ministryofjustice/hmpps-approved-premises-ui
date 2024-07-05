@@ -20,7 +20,7 @@ export default class OutOfServiceBedsController {
       const { premisesId, bedId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
-      return res.render('outOfServiceBeds/new', {
+      return res.render('v2Manage/outOfServiceBeds/new', {
         premisesId,
         bedId,
         errors,
@@ -74,17 +74,37 @@ export default class OutOfServiceBedsController {
 
   premisesIndex(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
+      const { temporality, premisesId } = req.params as { temporality: Temporality; premisesId: string }
 
-      const outOfServiceBeds = await this.outOfServiceBedService.getOutOfServiceBedsForAPremises(
-        req.user.token,
-        premisesId,
+      if (!['current', 'future', 'historic'].includes(temporality)) {
+        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
+      }
+
+      const { pageNumber, hrefPrefix } = getPaginationDetails<OutOfServiceBedSortField>(
+        req,
+        paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality }),
+        {
+          temporality,
+          premisesId,
+        },
       )
 
-      return res.render('outOfServiceBeds/premisesIndex', {
-        outOfServiceBeds,
+      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds({
+        token: req.user.token,
+        premisesId,
+        temporality,
+        page: pageNumber,
+        perPage: 50,
+      })
+
+      return res.render('v2Manage/outOfServiceBeds/premisesIndex', {
+        outOfServiceBeds: outOfServiceBeds.data,
         pageHeading: 'Manage out of service beds',
         premisesId,
+        temporality,
+        pageNumber: Number(outOfServiceBeds.pageNumber),
+        totalPages: Number(outOfServiceBeds.totalPages),
+        hrefPrefix,
       })
     }
   }
@@ -122,7 +142,7 @@ export default class OutOfServiceBedsController {
         apAreaId,
       })
 
-      return res.render('outOfServiceBeds/index', {
+      return res.render('v2Manage/outOfServiceBeds/index', {
         pageHeading: 'View out of service beds',
         outOfServiceBeds: outOfServiceBeds.data,
         pageNumber: Number(outOfServiceBeds.pageNumber),
@@ -146,7 +166,7 @@ export default class OutOfServiceBedsController {
 
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
 
-      return res.render('outOfServiceBeds/show', {
+      return res.render('v2Manage/outOfServiceBeds/show', {
         errors,
         errorSummary,
         outOfServiceBed,
@@ -172,14 +192,14 @@ export default class OutOfServiceBedsController {
 
           req.flash('success', 'Bed cancelled')
 
-          return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId }))
+          return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
         }
 
         await this.outOfServiceBedService.updateOutOfServiceBed(req.user.token, id, premisesId, req.body)
 
         req.flash('success', 'Bed updated')
 
-        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId }))
+        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       } catch (error) {
         const redirectPath = req.headers.referer
 
@@ -198,7 +218,7 @@ export default class OutOfServiceBedsController {
 
         req.flash('success', 'Bed cancelled')
 
-        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId }))
+        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
