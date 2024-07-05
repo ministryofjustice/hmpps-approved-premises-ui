@@ -161,8 +161,7 @@ export default class OutOfServiceBedsController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const activeTab = req.params.tab
-      const { premisesId, bedId, id } = req.params
+      const { premisesId, bedId, id, tab = 'details' } = req.params
       const referrer = req.headers.referer
 
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
@@ -174,7 +173,7 @@ export default class OutOfServiceBedsController {
         bedId,
         id,
         referrer,
-        activeTab,
+        activeTab: tab,
         characteristics,
       })
     }

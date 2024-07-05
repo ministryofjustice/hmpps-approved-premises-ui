@@ -1,0 +1,66 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro outOfServiceBedDetails(outOfServiceBed, characteristics)%}
+  {% set characteristicsHtml%}
+  <ul>
+    {% for characteristic in characteristics %}
+      <li>{{characteristic.name}}</li>
+    {% endfor %}
+  </ul>
+  {%endset%}
+  {{
+        govukSummaryList({
+          rows: [
+            {
+              key: {
+                text: "Start date"
+              },
+              value: {
+                text: formatDate(outOfServiceBed.revisionHistory[0].startDate, {format: 'long'})
+              }
+            },
+            {
+              key: {
+                text: "End date"
+              },
+              value: {
+                text: formatDate(outOfServiceBed.revisionHistory[0].endDate, {format: 'long'})
+              }
+            },
+            {
+              key: {
+                text: "Reason"
+              },
+              value: {
+                text: outOfServiceBed.revisionHistory[0].reason.name
+              }
+            },
+            {
+              key: {
+                text: "Reference number"
+              },
+              value: {
+                text: outOfServiceBed.revisionHistory[0].referenceNumber
+              }
+            },
+            {
+              key: {
+                text: "Additional information"
+              },
+              value: {
+                text: outOfServiceBed.revisionHistory[0].notes
+              }
+            },
+            {
+              key: {
+                text: "Characteristics"
+              },
+              value: {
+                html: characteristicsHtml
+              }
+            }
+          ]
+        })
+      }}
+
+{% endmacro %}

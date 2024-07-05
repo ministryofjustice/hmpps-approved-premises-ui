@@ -1,20 +1,14 @@
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% from "./partials/_bedDetails.njk" import outOfServiceBedDetails %}
+{% from "./partials/_timeline.njk" import outOfServiceBedTimeline %}
 
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
-
-{% set characteristicsHtml%}
-<ul>
-  {% for characteristic in characteristics %}
-    <li>{{characteristic.name}}</li>
-  {% endfor %}
-</ul>
-{%endset%}
 
 {% block beforeContent %}
   {% if referrer %}
@@ -60,71 +54,11 @@
         })
       }}
 
-      {{
-        govukSummaryList({
-          rows: [
-            {
-              key: {
-                text: "Start date"
-              },
-              value: {
-                text: formatDate(outOfServiceBed.revisionHistory[0].startDate, {format: 'long'})
-              }
-            },
-            {
-              key: {
-                text: "End date"
-              },
-              value: {
-                text: formatDate(outOfServiceBed.revisionHistory[0].endDate, {format: 'long'})
-              }
-            },
-            {
-              key: {
-                text: "Reason"
-              },
-              value: {
-                text: outOfServiceBed.revisionHistory[0].reason.name
-              }
-            },
-            {
-              key: {
-                text: "End date"
-              },
-              value: {
-                text: formatDate(outOfServiceBed.endDate, {format: 'long'})
-              }
-            },
-
-            {
-              key: {
-                text: "Reference number"
-              },
-              value: {
-                text: outOfServiceBed.revisionHistory[0].referenceNumber
-              }
-            },
-            {
-              key: {
-                text: "Additional information"
-              },
-              value: {
-                text: outOfServiceBed.revisionHistory[0].notes
-              }
-            },
-            {
-              key: {
-                text: "Characteristics"
-              },
-              value: {
-                html: characteristicsHtml
-              }
-            }
-          ]
-        })
-      }}
-
-      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+      {% if activeTab === 'timeline' %}
+        {{outOfServiceBedTimeline(outOfServiceBed.revisionHistory)}}
+      {% else %}
+        {{outOfServiceBedDetails(outOfServiceBed, characteristics)}}
+      {% endif %}
 
     </div>
   </div>
