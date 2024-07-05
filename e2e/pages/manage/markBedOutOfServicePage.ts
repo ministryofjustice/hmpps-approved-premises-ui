@@ -12,17 +12,14 @@ export class MarkBedOutOfServicePage extends BasePage {
 
   async enterStartDate() {
     const aDateNextYear = addYears(new Date(), 1)
+    await this.page.getByRole('group', { name: 'Start date' }).getByLabel('Day').fill(getDate(aDateNextYear).toString())
     await this.page
-      .getByRole('group', { name: 'Out of service from' })
-      .getByLabel('Day')
-      .fill(getDate(aDateNextYear).toString())
-    await this.page
-      .getByRole('group', { name: 'Out of service from' })
+      .getByRole('group', { name: 'Start date' })
       .getByLabel('Month')
       .fill(getMonth(aDateNextYear).toString())
       .toString()
     await this.page
-      .getByRole('group', { name: 'Out of service from' })
+      .getByRole('group', { name: 'Start date' })
       .getByLabel('Year')
       .fill(getYear(aDateNextYear).toString())
   }

@@ -85,7 +85,7 @@ describe('outOfServiceBedUtils', () => {
           text: 'Room',
         },
         {
-          text: 'Out of service from',
+          text: 'Start date',
         },
         {
           text: 'Out of service until',
@@ -113,7 +113,7 @@ describe('outOfServiceBedUtils', () => {
           text: 'Room',
         },
         {
-          text: 'Out of service from',
+          text: 'Start date',
         },
         {
           text: 'Out of service until',
