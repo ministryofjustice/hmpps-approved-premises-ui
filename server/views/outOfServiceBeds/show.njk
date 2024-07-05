@@ -54,7 +54,7 @@
                 text: "Out of service from"
               },
               value: {
-                text: formatDate(outOfServiceBed.outOfServiceFrom, {format: 'long'})
+                text: formatDate(outOfServiceBed.startDate, {format: 'long'})
               }
             },
             {
@@ -62,7 +62,7 @@
                 text: "Out of service to"
               },
               value: {
-                text: formatDate(outOfServiceBed.outOfServiceTo, {format: 'long'})
+                text: formatDate(outOfServiceBed.endDate, {format: 'long'})
               }
             },
 
@@ -82,16 +82,16 @@
 
       <form action="{{ paths.v2Manage.outOfServiceBeds.update({ id: outOfServiceBed.id, bedId: outOfServiceBed.bedId, premisesId: premisesId }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="outOfServiceFrom" value="{{ outOfServiceBed.outOfServiceFrom }}"/>
+        <input type="hidden" name="startDate" value="{{ outOfServiceBed.startDate }}"/>
         <input type="hidden" name="referenceNumber" value="{{ outOfServiceBed.referenceNumber }}"/>
 
         {{ showErrorSummary(errorSummary, errorTitle) }}
 
         {{ govukDateInput({
-        id: "outOfServiceTo",
-        namePrefix: "outOfServiceTo",
-        items: dateFieldValues('outOfServiceTo', errors),
-        errorMessage: errors.outOfServiceTo,
+        id: "endDate",
+        namePrefix: "endDate",
+        items: dateFieldValues('endDate', errors),
+        errorMessage: errors.endDate,
         hint: {
         text: "For example, 27 3 2007"
         },

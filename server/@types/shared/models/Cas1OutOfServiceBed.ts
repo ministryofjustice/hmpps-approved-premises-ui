@@ -11,8 +11,8 @@ import type { Temporality } from './Temporality';
 export type Cas1OutOfServiceBed = {
     id: string;
     createdAt: string;
-    outOfServiceFrom: string;
-    outOfServiceTo: string;
+    startDate: string;
+    endDate: string;
     bed: NamedId;
     room: NamedId;
     premises: NamedId;

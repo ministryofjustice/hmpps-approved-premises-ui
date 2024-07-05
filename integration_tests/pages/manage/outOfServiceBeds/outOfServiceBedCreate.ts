@@ -19,16 +19,16 @@ export class OutOfServiceBedCreatePage extends Page {
   }
 
   public completeForm(outOfServiceBed: OutOfServiceBed): void {
-    const outOfServiceFrom = new Date(Date.parse(outOfServiceBed.outOfServiceFrom))
-    const outOfServiceTo = new Date(Date.parse(outOfServiceBed.outOfServiceTo))
+    const startDate = new Date(Date.parse(outOfServiceBed.startDate))
+    const endDate = new Date(Date.parse(outOfServiceBed.endDate))
 
-    cy.get('input[name="outOfServiceFrom-day"]').type(String(outOfServiceFrom.getDate()))
-    cy.get('input[name="outOfServiceFrom-month"]').type(String(outOfServiceFrom.getMonth() + 1))
-    cy.get('input[name="outOfServiceFrom-year"]').type(String(outOfServiceFrom.getFullYear()))
+    cy.get('input[name="startDate-day"]').type(String(startDate.getDate()))
+    cy.get('input[name="startDate-month"]').type(String(startDate.getMonth() + 1))
+    cy.get('input[name="startDate-year"]').type(String(startDate.getFullYear()))
 
-    cy.get('input[name="outOfServiceTo-day"]').type(String(outOfServiceTo.getDate()))
-    cy.get('input[name="outOfServiceTo-month"]').type(String(outOfServiceTo.getMonth() + 1))
-    cy.get('input[name="outOfServiceTo-year"]').type(String(outOfServiceTo.getFullYear()))
+    cy.get('input[name="endDate-day"]').type(String(endDate.getDate()))
+    cy.get('input[name="endDate-month"]').type(String(endDate.getMonth() + 1))
+    cy.get('input[name="endDate-year"]').type(String(endDate.getFullYear()))
 
     if (outOfServiceBed.referenceNumber) {
       cy.get('input[name="outOfServiceBed[referenceNumber]"]').type(outOfServiceBed.referenceNumber)
@@ -48,7 +48,7 @@ export class OutOfServiceBedCreatePage extends Page {
     conflictingEntityType: 'booking' | 'lost-bed',
   ): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
-      ['outOfServiceFrom', 'outOfServiceTo'],
+      ['startDate', 'endDate'],
       conflictingEntity,
       conflictingEntityType,
     )

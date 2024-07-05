@@ -10,7 +10,7 @@ export class MarkBedOutOfServicePage extends BasePage {
     return new MarkBedOutOfServicePage(page)
   }
 
-  async enterOutOfServiceFromDate() {
+  async enterStartDate() {
     const aDateNextYear = addYears(new Date(), 1)
     await this.page
       .getByRole('group', { name: 'Out of service from' })
@@ -27,15 +27,15 @@ export class MarkBedOutOfServicePage extends BasePage {
       .fill(getYear(aDateNextYear).toString())
   }
 
-  async enterOutOfServiceToDate() {
+  async enterEndDate() {
     await this.page.getByRole('group', { name: 'End date' }).getByLabel('Day').fill('1')
     await this.page.getByRole('group', { name: 'End date' }).getByLabel('Month').fill('2')
     await this.page.getByRole('group', { name: 'End date' }).getByLabel('Year').fill('2025')
   }
 
   async completeForm() {
-    await this.enterOutOfServiceFromDate()
-    await this.enterOutOfServiceToDate()
+    await this.enterStartDate()
+    await this.enterEndDate()
     await this.checkRadio('Planned Refurbishment')
     await this.page.getByLabel('Work order reference number').fill('123456789')
     await this.page

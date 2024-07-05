@@ -27,8 +27,8 @@ describe('outOfServiceBedUtils', () => {
         sortHeader<OutOfServiceBedSortField>('Premises', 'premisesName', sortBy, sortDirection, hrefPrefix),
         sortHeader<OutOfServiceBedSortField>('Room', 'roomName', sortBy, sortDirection, hrefPrefix),
         sortHeader<OutOfServiceBedSortField>('Bed', 'bedName', sortBy, sortDirection, hrefPrefix),
-        sortHeader<OutOfServiceBedSortField>('Start date', 'outOfServiceFrom', sortBy, sortDirection, hrefPrefix),
-        sortHeader<OutOfServiceBedSortField>('End date', 'outOfServiceTo', sortBy, sortDirection, hrefPrefix),
+        sortHeader<OutOfServiceBedSortField>('Start date', 'startDate', sortBy, sortDirection, hrefPrefix),
+        sortHeader<OutOfServiceBedSortField>('End date', 'endDate', sortBy, sortDirection, hrefPrefix),
         sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Ref number',
@@ -50,8 +50,8 @@ describe('outOfServiceBedUtils', () => {
           { text: outOfServiceBed.premises.name },
           { text: outOfServiceBed.room.name },
           { text: outOfServiceBed.bed.name },
-          { text: DateFormats.isoDateToUIDate(outOfServiceBed.outOfServiceFrom, { format: 'short' }) },
-          { text: DateFormats.isoDateToUIDate(outOfServiceBed.outOfServiceTo, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'short' }) },
           { text: outOfServiceBed.reason.name },
           { text: outOfServiceBed.referenceNumber || 'Not provided' },
           { text: outOfServiceBed.daysLostCount.toString() },
@@ -139,8 +139,8 @@ describe('outOfServiceBedUtils', () => {
         [
           { text: outOfServiceBed.bed.name },
           { text: outOfServiceBed.room.name },
-          { text: outOfServiceBed.outOfServiceFrom },
-          { text: outOfServiceBed.outOfServiceTo },
+          { text: outOfServiceBed.startDate },
+          { text: outOfServiceBed.endDate },
           { text: outOfServiceBed.reason.name },
           { text: outOfServiceBed.referenceNumber || 'Not provided' },
           actionCell(outOfServiceBed, premisesId),
@@ -156,8 +156,8 @@ describe('outOfServiceBedUtils', () => {
         [
           { text: outOfServiceBed.bed.name },
           { text: outOfServiceBed.room.name },
-          { text: outOfServiceBed.outOfServiceFrom },
-          { text: outOfServiceBed.outOfServiceTo },
+          { text: outOfServiceBed.startDate },
+          { text: outOfServiceBed.endDate },
           { text: outOfServiceBed.reason.name },
           { text: outOfServiceBed.referenceNumber || 'Not provided' },
         ],
@@ -171,20 +171,20 @@ describe('outOfServiceBedUtils', () => {
     it('returns the correct number of out of service beds for today', () => {
       const outOfServiceBedsForToday = [...Array(getRandomInt(1, 10))].map(() =>
         outOfServiceBedFactory.build({
-          outOfServiceFrom: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
-          outOfServiceTo: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
+          startDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
+          endDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
         }),
       )
       const futureOutOfServiceBeds = [...Array(getRandomInt(1, 10))].map(() =>
         outOfServiceBedFactory.build({
-          outOfServiceFrom: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
-          outOfServiceTo: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
+          startDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
+          endDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
         }),
       )
       const pastOutOfServiceBeds = [...Array(getRandomInt(1, 10))].map(() =>
         outOfServiceBedFactory.build({
-          outOfServiceFrom: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
-          outOfServiceTo: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
+          startDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
+          endDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
         }),
       )
 

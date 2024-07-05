@@ -31,10 +31,10 @@
         <p> Provide details of beds that are out of service within your AP estate</p>
 
         {{ govukDateInput({
-        id: "outOfServiceFrom",
-        namePrefix: "outOfServiceFrom",
-        items: dateFieldValues('outOfServiceFrom', errors),
-        errorMessage: errors.outOfServiceFrom,
+        id: "startDate",
+        namePrefix: "startDate",
+        items: dateFieldValues('startDate', errors),
+        errorMessage: errors.startDate,
         fieldset: {
           legend: {
             text: "Out of service from",
@@ -44,10 +44,10 @@
       }) }}
 
         {{ govukDateInput({
-        id: "outOfServiceTo",
-        namePrefix: "outOfServiceTo",
-        items: dateFieldValues('outOfServiceTo', errors),
-        errorMessage: errors.outOfServiceTo,
+        id: "endDate",
+        namePrefix: "endDate",
+        items: dateFieldValues('endDate', errors),
+        errorMessage: errors.endDate,
         fieldset: {
           legend: {
             text: "Out of service to",

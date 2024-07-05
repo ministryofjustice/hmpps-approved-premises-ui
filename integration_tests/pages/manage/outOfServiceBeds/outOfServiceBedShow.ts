@@ -21,19 +21,19 @@ export class OutOfServiceBedShowPage extends Page {
     this.assertDefinition('Bed number', this.outOfServiceBed.bed.name)
     this.assertDefinition(
       'Out of service from',
-      DateFormats.isoDateToUIDate(this.outOfServiceBed.outOfServiceFrom, { format: 'long' }),
+      DateFormats.isoDateToUIDate(this.outOfServiceBed.startDate, { format: 'long' }),
     )
     this.assertDefinition(
       'Out of service to',
-      DateFormats.isoDateToUIDate(this.outOfServiceBed.outOfServiceTo, { format: 'long' }),
+      DateFormats.isoDateToUIDate(this.outOfServiceBed.endDate, { format: 'long' }),
     )
     if (this.outOfServiceBed.referenceNumber) {
       this.assertDefinition('Reference number', this.outOfServiceBed.referenceNumber)
     }
   }
 
-  public completeForm(endDateString: OutOfServiceBed['outOfServiceTo'], notes: OutOfServiceBed['notes']): void {
-    super.completeDateInputs('outOfServiceTo', endDateString)
+  public completeForm(endDateString: OutOfServiceBed['endDate'], notes: OutOfServiceBed['notes']): void {
+    super.completeDateInputs('endDate', endDateString)
 
     cy.get('textarea[name="notes"]').type(String(notes))
   }
