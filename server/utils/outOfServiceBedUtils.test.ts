@@ -1,10 +1,11 @@
 import { add, sub } from 'date-fns'
-import { outOfServiceBedFactory, userDetailsFactory } from '../testutils/factories'
+import { outOfServiceBedFactory, outOfServiceBedRevisionFactory, userDetailsFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
   actionCell,
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
+  bedRevisionDetails,
   outOfServiceBedCountForToday,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
@@ -194,6 +195,61 @@ describe('outOfServiceBedUtils', () => {
       ).toEqual(`${outOfServiceBedsForToday.length} beds`)
     })
   })
+
+  describe('bedRevisionDetails', () => {
+    it('adds a formatted start date the summary list', () => {
+      const startDate = new Date(2024, 2, 1)
+      const revision = outOfServiceBedRevisionFactory.build({
+        startDate: DateFormats.dateObjToIsoDate(startDate),
+      })
+
+      expect(bedRevisionDetails(revision)).toEqual(
+        expect.arrayContaining([
+          { key: { text: 'Start date' }, value: { text: DateFormats.dateObjtoUIDate(startDate) } },
+        ]),
+      )
+    })
+
+    it('adds a formatted end date the summary list', () => {
+      const endDate = new Date(2024, 2, 1)
+      const revision = outOfServiceBedRevisionFactory.build({
+        endDate: DateFormats.dateObjToIsoDate(endDate),
+      })
+
+      expect(bedRevisionDetails(revision)).toEqual(
+        expect.arrayContaining([{ key: { text: 'End date' }, value: { text: DateFormats.dateObjtoUIDate(endDate) } }]),
+      )
+    })
+
+    it('adds a reason the summary list', () => {
+      const revision = outOfServiceBedRevisionFactory.build({
+        reason: { id: 'reasonId', name: 'reasonName' },
+      })
+
+      expect(bedRevisionDetails(revision)).toEqual(
+        expect.arrayContaining([{ key: { text: 'Reason' }, value: { text: revision.reason.name } }]),
+      )
+    })
+
+    it('adds a reference the summary list', () => {
+      const revision = outOfServiceBedRevisionFactory.build({
+        referenceNumber: '123',
+      })
+
+      expect(bedRevisionDetails(revision)).toEqual(
+        expect.arrayContaining([{ key: { text: 'Reference number' }, value: { text: revision.referenceNumber } }]),
+      )
+    })
+
+    it('adds a notes item to the summary list', () => {
+      const revision = outOfServiceBedRevisionFactory.build({ notes: 'some note' })
+
+      expect(bedRevisionDetails(revision)).toEqual(
+        expect.arrayContaining([{ key: { text: 'Notes' }, value: { text: 'some note' } }]),
+      )
+    })
+  })
+
   describe('sortOutOfServiceBedRevisionsByUpdatedAt', () => {
     it('sorts revisions by updatedAt in descending order', () => {
       const revisions = [

@@ -22,6 +22,13 @@
         <p class="moj-timeline__date">
           <time datetime="{{revision.updatedAt}}">{{formatDateTime(revision.updatedAt)}}</time>
         </p>
+        <div class="moj-timeline__description">
+          {{
+            govukSummaryList({
+              rows:OutOfServiceBedUtils.bedRevisionDetails(revision)
+            })
+          }}
+        </div>
       </div>
     {% endfor %}
   </div>

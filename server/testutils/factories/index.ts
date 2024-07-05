@@ -59,6 +59,7 @@ import {
   newOutOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
+  outOfServiceBedRevisionFactory,
 } from './outOfServiceBed'
 import paginatedResponseFactory from './paginatedResponse'
 import { fullPersonFactory as personFactory, restrictedPersonFactory } from './person'
@@ -148,6 +149,7 @@ export {
   oasysSelectionFactory,
   outOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
+  outOfServiceBedRevisionFactory,
   newOutOfServiceBedFactory,
   paginatedResponseFactory,
   personFactory,

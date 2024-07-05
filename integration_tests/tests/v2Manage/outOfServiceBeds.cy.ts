@@ -135,6 +135,12 @@ context('OutOfServiceBeds', () => {
 
     // And I should see the bed characteristics
     page.shouldShowCharacteristics(bedDetail)
+
+    // When I click the 'Timeline' tab
+    page.clickTab('Timeline')
+
+    // Then I should see the timeline of that out of service bed's revision
+    page.shouldShowTimeline()
   })
 
   describe('CRU Member lists all OOS beds', () => {
