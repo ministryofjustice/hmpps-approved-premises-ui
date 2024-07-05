@@ -9,11 +9,14 @@ import {
 import paths from '../../paths/manage'
 import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
-import OutOfServiceBedService from '../../services/outOfServiceBedService'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { OutOfServiceBedService, PremisesService } from '../../services'
 
 export default class OutOfServiceBedsController {
-  constructor(private readonly outOfServiceBedService: OutOfServiceBedService) {}
+  constructor(
+    private readonly outOfServiceBedService: OutOfServiceBedService,
+    private readonly premisesService: PremisesService,
+  ) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -158,20 +161,21 @@ export default class OutOfServiceBedsController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId, id } = req.params
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-
+      const activeTab = req.params.tab
+      const { premisesId, bedId, id } = req.params
       const referrer = req.headers.referer
 
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
+      const { characteristics } = await this.premisesService.getBed(req.user.token, premisesId, bedId)
 
       return res.render('v2Manage/outOfServiceBeds/show', {
-        errors,
-        errorSummary,
         outOfServiceBed,
         premisesId,
+        bedId,
+        id,
         referrer,
-        ...userInput,
+        activeTab,
+        characteristics,
       })
     }
   }
@@ -223,7 +227,7 @@ export default class OutOfServiceBedsController {
           req,
           res,
           error as Error,
-          paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id }),
+          paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'details' }),
         )
       }
     }

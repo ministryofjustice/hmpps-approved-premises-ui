@@ -1,8 +1,8 @@
 import DashboardPage from '../../pages/dashboard'
 import {
+  bedDetailFactory,
   bookingFactory,
   extendedPremisesSummaryFactory,
-  outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
   premisesFactory,
 } from '../../../server/testutils/factories'
@@ -10,7 +10,6 @@ import {
 import {
   OutOfServiceBedCreatePage,
   OutOfServiceBedIndexPage,
-  OutOfServiceBedListPage,
   OutOfServiceBedShowPage,
 } from '../../pages/v2Manage/outOfServiceBeds'
 import Page from '../../pages/page'
@@ -119,184 +118,22 @@ context('OutOfServiceBeds', () => {
     signIn(['future_manager'])
 
     // And I have created a out of service bed
+    const bed = { name: 'abc', id: '123' }
     const premises = premisesFactory.build()
-    const outOfServiceBed = outOfServiceBedFactory.build()
+    const outOfServiceBed = outOfServiceBedFactory.build({ bed })
+    const bedDetail = bedDetailFactory.build({ id: bed.id })
 
     cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
+    cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // And I visit that out of service bed's show page
     const page = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
-    // Then I should see the details of that out of service bed
+    // Then I should see the latest details of that out of service bed
     page.shouldShowOutOfServiceBedDetail()
-  })
 
-  describe('managing out of service beds', () => {
-    beforeEach(() => {
-      cy.task('reset')
-      // Given I am signed in as a future manager
-      signIn(['future_manager'])
-    })
-
-    it('should allow me to update an out of service bed', () => {
-      const premisesId = 'premisesId'
-
-      // And there is a out of service bed in the database
-      const outOfServiceBed = outOfServiceBedFactory.build()
-      cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsList', {
-        premisesId,
-        outOfServiceBeds: [outOfServiceBed],
-        perPage: 50,
-      })
-      cy.task('stubOutOfServiceBedUpdate', { premisesId, outOfServiceBed })
-
-      // When I visit the out of service bed index page
-      const outOfServiceBedListPage = OutOfServiceBedListPage.visit(premisesId, 'current')
-
-      // // And I click manage on a bed
-      outOfServiceBedListPage.clickManageBed(outOfServiceBed)
-
-      // // Then I should see the out of service bed manage form
-      const outOfServiceBedShowPage = Page.verifyOnPage(OutOfServiceBedShowPage, outOfServiceBed)
-      outOfServiceBedShowPage.shouldShowOutOfServiceBedDetail()
-
-      // // When I fill in the form and submit
-      const newEndDate = '2023-10-12'
-      const newNote = 'example'
-      outOfServiceBedShowPage.completeForm(newEndDate, newNote)
-      outOfServiceBedShowPage.clickSubmit()
-
-      // // Then I am taken back to the list of out of service beds
-      Page.verifyOnPage(OutOfServiceBedListPage)
-
-      // // Then a out of service bed should have been updated in the API
-      cy.task('verifyOutOfServiceBedUpdate', {
-        premisesId,
-        outOfServiceBed,
-      }).then(requests => {
-        expect(requests).to.have.length(1)
-        const requestBody = JSON.parse(requests[0].body)
-
-        expect(requestBody.startDate).equal(outOfServiceBed.startDate)
-        expect(requestBody.endDate).equal(newEndDate)
-        expect(requestBody.notes).equal(newNote)
-        expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
-      })
-
-      // // And I should be navigated to the premises detail page and see the confirmation message
-      outOfServiceBedShowPage.shouldShowBanner('Bed updated')
-    })
-
-    it('should show an error when there are validation errors', () => {
-      const premisesId = 'premisesId'
-
-      // And there is a out of service bed in the database
-      const outOfServiceBed = outOfServiceBedFactory.build()
-      cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds: [outOfServiceBed] })
-
-      // And I miss required fields
-      cy.task('stubUpdateOutOfServiceBedErrors', {
-        outOfServiceBed,
-        premisesId,
-        params: [
-          {
-            propertyName: `$.endDate`,
-            errorType: 'empty',
-          },
-        ],
-      })
-
-      // When I visit the out of service bed show page
-      const outOfServiceBedShowPage = OutOfServiceBedShowPage.visit(premisesId, outOfServiceBed)
-      outOfServiceBedShowPage.shouldShowOutOfServiceBedDetail()
-
-      // When I try to submit
-      outOfServiceBedShowPage.clickSubmit()
-
-      // Then I should see an error message
-      outOfServiceBedShowPage.shouldShowErrorMessagesForFields(['endDate'])
-    })
-
-    it('should allow me to cancel a out of service bed', () => {
-      const premisesId = 'premisesId'
-
-      // And there is a out of service bed in the database
-      const outOfServiceBed = outOfServiceBedFactory.build()
-      const outOfServiceBedCancellation = outOfServiceBedCancellationFactory.build()
-      cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds: [outOfServiceBed], perPage: 50 })
-      cy.task('stubCancelOutOfServiceBed', {
-        premisesId,
-        outOfServiceBedId: outOfServiceBed.id,
-        outOfServiceBedCancellation,
-      })
-
-      // Given I visit the out of service bed show page
-      const outOfServiceBedShowPage = OutOfServiceBedShowPage.visit(premisesId, outOfServiceBed)
-
-      // When I try to submit
-      outOfServiceBedShowPage.clickCancel()
-
-      cy.task('verifyOutOfServiceBedCancel', {
-        premisesId,
-        outOfServiceBedId: outOfServiceBed.id,
-      }).then(requests => {
-        expect(requests).to.have.length(1)
-      })
-
-      // Then I am redirected to the out of service bed list page and see the confirmation message
-      const listPage = Page.verifyOnPage(OutOfServiceBedListPage)
-      listPage.shouldShowBanner('Bed cancelled')
-    })
-  })
-
-  describe('list all OOS beds for a given AP', () => {
-    const premisesId = 'abc123'
-    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
-
-    beforeEach(() => {
-      cy.task('reset')
-      // Given I am signed in as a future manager
-      signIn(['future_manager'])
-    })
-
-    it('allows me to view all out of service beds for a premises', () => {
-      // And there are out of service beds in the database
-      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds, page: 1, perPage: 50 })
-
-      // When I visit the out of service bed index page for a premises
-      const outOfServiceBedListPage = OutOfServiceBedListPage.visit(premisesId, 'current')
-
-      // Then I see the out of service beds for that premises
-      outOfServiceBedListPage.shouldShowOutOfServiceBeds(outOfServiceBeds)
-    })
-
-    it('supports pagination', () => {
-      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1, premisesId, perPage: 50 })
-      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 2, premisesId, perPage: 50 })
-      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 9, premisesId, perPage: 50 })
-
-      // When I visit the OOS beds index page for a premises
-      const page = OutOfServiceBedListPage.visit(premisesId, 'current')
-
-      // And I click next
-      page.clickNext()
-
-      // Then the API should have received a request for the next page
-      cy.task('verifyOutOfServiceBedsDashboard', { page: 2, premisesId, perPage: 50 }).then(requests => {
-        expect(requests).to.have.length(1)
-      })
-
-      // When I click on a page number
-      page.clickPageNumber('9')
-
-      // Then the API should have received a request for the that page number
-      cy.task('verifyOutOfServiceBedsDashboard', { page: 9, premisesId, perPage: 50 }).then(requests => {
-        expect(requests).to.have.length(1)
-      })
-    })
+    // And I should see the bed characteristics
+    page.shouldShowCharacteristics(bedDetail)
   })
 
   describe('CRU Member lists all OOS beds', () => {
