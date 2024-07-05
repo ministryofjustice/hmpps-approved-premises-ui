@@ -1,6 +1,8 @@
 import ListPage from '../../pages/tasks/listPage'
 
-import { apAreaFactory, assessmentTaskFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
+import { apAreaFactory, userFactory } from '../../../server/testutils/factories'
+import { restrictedPersonSummaryTaskFactory } from '../../../server/testutils/factories/task'
+import { restrictedPersonSummaryAssessmentTaskFactory } from '../../../server/testutils/factories/assessmentTask'
 
 context('Task Allocation', () => {
   const users = userFactory.buildList(5)
@@ -19,9 +21,9 @@ context('Task Allocation', () => {
     // Given I am logged in
     cy.signIn()
 
-    const allocatedTasks = taskFactory.buildList(5)
-    const unallocatedTasks = taskFactory.buildList(5, { allocatedToStaffMember: undefined })
-    const completedTasks = assessmentTaskFactory.buildList(5)
+    const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(5)
+    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(5, { allocatedToStaffMember: undefined })
+    const completedTasks = restrictedPersonSummaryAssessmentTaskFactory.buildList(5)
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasks,
@@ -73,10 +75,10 @@ context('Task Allocation', () => {
     // Given I am logged in
     cy.signIn()
 
-    const allocatedTasksPage1 = taskFactory.buildList(10)
-    const allocatedTasksPage2 = taskFactory.buildList(10)
-    const allocatedTasksPage9 = taskFactory.buildList(10)
-    const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+    const allocatedTasksPage1 = restrictedPersonSummaryTaskFactory.buildList(10)
+    const allocatedTasksPage2 = restrictedPersonSummaryTaskFactory.buildList(10)
+    const allocatedTasksPage9 = restrictedPersonSummaryTaskFactory.buildList(10)
+    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksPage1,
@@ -133,7 +135,7 @@ context('Task Allocation', () => {
     // Given I am logged in
     cy.signIn()
 
-    const tasks = taskFactory.buildList(10)
+    const tasks = restrictedPersonSummaryTaskFactory.buildList(10)
 
     cy.task('stubGetAllTasks', {
       tasks,
@@ -219,9 +221,9 @@ context('Task Allocation', () => {
       // Given I am logged in
       cy.signIn()
 
-      const allocatedTasks = taskFactory.buildList(10)
-      const allocatedTasksFiltered = taskFactory.buildList(1)
-      const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+      const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
+      const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1)
+      const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
       cy.task('stubGetAllTasks', {
         tasks: allocatedTasks,
@@ -263,9 +265,9 @@ context('Task Allocation', () => {
     // Given I am logged in
     cy.signIn()
 
-    const allocatedTasks = taskFactory.buildList(10)
-    const allocatedTasksFiltered = taskFactory.buildList(1)
-    const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+    const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
+    const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1)
+    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
     cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1', apAreaId: apArea.id })
 
@@ -309,9 +311,11 @@ context('Task Allocation', () => {
     // Given I am logged in
     cy.signIn()
 
-    const allocatedTasks = taskFactory.buildList(10)
-    const unallocatedTasks = taskFactory.buildList(10, { allocatedToStaffMember: undefined })
-    const unallocatedTasksFiltered = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+    const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
+    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10, { allocatedToStaffMember: undefined })
+    const unallocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1, {
+      allocatedToStaffMember: undefined,
+    })
 
     cy.task('stubGetAllTasks', {
       tasks: unallocatedTasks,
@@ -352,10 +356,10 @@ context('Task Allocation', () => {
     // Given I am signed in
     cy.signIn()
 
-    const allocatedTasks = taskFactory.buildList(1)
-    const allocatedTasksFiltered = taskFactory.buildList(10)
-    const allocatedTasksFilteredPage2 = taskFactory.buildList(10)
-    const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+    const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1)
+    const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(10)
+    const allocatedTasksFilteredPage2 = restrictedPersonSummaryTaskFactory.buildList(10)
+    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasks,
@@ -431,7 +435,7 @@ context('Task Allocation', () => {
         sortDirection: 'asc',
         apAreaId: apArea.id,
       })
-      const completedTasks = assessmentTaskFactory.buildList(5)
+      const completedTasks = restrictedPersonSummaryAssessmentTaskFactory.buildList(5)
       cy.task('stubGetAllTasks', {
         tasks: [...completedTasks],
         allocatedFilter: 'allocated',
