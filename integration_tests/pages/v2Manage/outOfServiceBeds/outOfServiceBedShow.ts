@@ -35,18 +35,4 @@ export class OutOfServiceBedShowPage extends Page {
       cy.get('li').contains(characteristic.name)
     })
   }
-
-  public completeForm(endDate: OutOfServiceBed['endDate'], notes: OutOfServiceBed['notes']): void {
-    super.completeDateInputs('endDate', endDate)
-
-    cy.get('textarea[name="notes"]').type(String(notes))
-  }
-
-  clickSubmit(): void {
-    cy.get('button[name="submit"]').click()
-  }
-
-  clickCancel(): void {
-    cy.get('button').contains('Cancel out of service bed').click()
-  }
 }
