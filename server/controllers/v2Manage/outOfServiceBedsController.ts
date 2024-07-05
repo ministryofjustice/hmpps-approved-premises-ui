@@ -126,7 +126,6 @@ export default class OutOfServiceBedsController {
         req,
         paths.v2Manage.outOfServiceBeds.index({ temporality }),
         {
-          temporality,
           premisesId,
           apAreaId,
         },
