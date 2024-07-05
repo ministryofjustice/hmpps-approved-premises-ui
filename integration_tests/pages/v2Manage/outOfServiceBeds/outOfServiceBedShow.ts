@@ -24,11 +24,16 @@ export class OutOfServiceBedShowPage extends Page {
 
   shouldShowOutOfServiceBedDetail(): void {
     const latestRevision = this.outOfServiceBed.revisionHistory[0]
-    this.assertDefinition('Start date', DateFormats.isoDateToUIDate(latestRevision.startDate, { format: 'long' }))
-    this.assertDefinition('End date', DateFormats.isoDateToUIDate(latestRevision.endDate, { format: 'long' }))
-    this.assertDefinition('Reason', latestRevision.reason.name)
-    this.assertDefinition('Reference number', latestRevision.referenceNumber)
-    this.assertDefinition('Additional information', latestRevision.notes)
+
+    if (latestRevision.startDate) {
+      this.assertDefinition('Start date', DateFormats.isoDateToUIDate(latestRevision.startDate, { format: 'long' }))
+    }
+    if (latestRevision.endDate) {
+      this.assertDefinition('End date', DateFormats.isoDateToUIDate(latestRevision.endDate, { format: 'long' }))
+    }
+    if (latestRevision.reason) this.assertDefinition('Reason', latestRevision.reason.name)
+    if (latestRevision.referenceNumber) this.assertDefinition('Reference number', latestRevision.referenceNumber)
+    if (latestRevision.notes) this.assertDefinition('Additional information', latestRevision.notes)
   }
 
   shouldShowCharacteristics(bed: BedDetail): void {
