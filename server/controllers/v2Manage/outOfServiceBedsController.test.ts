@@ -6,7 +6,6 @@ import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { PaginatedResponse } from '@approved-premises/ui'
 import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import { SanitisedError } from '../../sanitisedError'
-import OutOfServiceBedService from '../../services/outOfServiceBedService'
 import OutOfServiceBedsController from './outOfServiceBedsController'
 import {
   catchValidationErrorOrPropogate,
@@ -16,12 +15,14 @@ import {
 
 import paths from '../../paths/manage'
 import {
+  bedDetailFactory,
   outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
   paginatedResponseFactory,
 } from '../../testutils/factories'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
+import { OutOfServiceBedService, PremisesService } from '../../services'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -36,8 +37,9 @@ describe('OutOfServiceBedsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const outOfServiceBedService = createMock<OutOfServiceBedService>({})
+  const premisesService = createMock<PremisesService>({})
 
-  const outOfServiceBedController = new OutOfServiceBedsController(outOfServiceBedService)
+  const outOfServiceBedController = new OutOfServiceBedsController(outOfServiceBedService, premisesService)
   const premisesId = 'premisesId'
   const outOfServiceBed = outOfServiceBedFactory.build()
 
@@ -162,6 +164,10 @@ describe('OutOfServiceBedsController', () => {
 
   describe('show', () => {
     it('shows the outOfService bed', async () => {
+      const activeTab = 'details'
+      const bed = bedDetailFactory.build({ id: outOfServiceBed.bed.id })
+      premisesService.getBed.mockResolvedValue(bed)
+
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
       when(outOfServiceBedService.getOutOfServiceBed)
@@ -170,17 +176,29 @@ describe('OutOfServiceBedsController', () => {
 
       const requestHandler = outOfServiceBedController.show()
 
-      request.params = {
-        ...request.params,
-        bedId: outOfServiceBed.bed.id,
-      }
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'v2Manage/outOfServiceBeds/show',
-        expect.objectContaining({ outOfServiceBed }),
+      await requestHandler(
+        {
+          ...request,
+          params: {
+            premisesId,
+            bedId: outOfServiceBed.bed.id,
+            id: outOfServiceBed.id,
+            tab: 'details',
+          },
+        },
+        response,
+        next,
       )
+
+      expect(response.render).toHaveBeenCalledWith('v2Manage/outOfServiceBeds/show', {
+        outOfServiceBed,
+        premisesId,
+        bedId: bed.id,
+        id: outOfServiceBed.id,
+        referrer,
+        activeTab,
+        characteristics: bed.characteristics,
+      })
     })
   })
 
