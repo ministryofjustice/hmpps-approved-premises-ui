@@ -1,10 +1,11 @@
 import {
+  Cas1OutOfServiceBedRevision,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   Premises,
   SortDirection,
 } from '@approved-premises/api'
-import { TableCell, UserDetails } from '@approved-premises/ui'
+import { SummaryList, SummaryListItem, TableCell, UserDetails } from '@approved-premises/ui'
 
 import { isWithinInterval } from 'date-fns'
 import paths from '../paths/manage'
@@ -130,3 +131,50 @@ const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
       attributes: { 'data-cy-bedId': bed.bed.id },
     },
   )
+
+export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): SummaryList['rows'] => {
+  const summaryListItems: Array<SummaryListItem> = []
+
+  if (revision.startDate) {
+    summaryListItems.push({
+      key: textValue('Start date'),
+      value: textValue(DateFormats.isoDateToUIDate(revision.startDate, { format: 'long' })),
+    })
+  }
+
+  if (revision.endDate) {
+    summaryListItems.push({
+      key: textValue('End date'),
+      value: textValue(DateFormats.isoDateToUIDate(revision.endDate, { format: 'long' })),
+    })
+  }
+
+  if (revision.reason) {
+    summaryListItems.push({
+      key: textValue('Reason'),
+      value: textValue(revision.reason.name),
+    })
+  }
+
+  if (revision.referenceNumber) {
+    summaryListItems.push({
+      key: textValue('Reference number'),
+      value: textValue(revision.referenceNumber),
+    })
+  }
+
+  if (revision.notes) {
+    summaryListItems.push({
+      key: textValue('Notes'),
+      value: textValue(revision.notes),
+    })
+  }
+
+  return summaryListItems
+}
+
+export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1OutOfServiceBedRevision>) => {
+  return revisions.sort((a, b) => {
+    return a.updatedAt > b.updatedAt ? -1 : 1
+  })
+}

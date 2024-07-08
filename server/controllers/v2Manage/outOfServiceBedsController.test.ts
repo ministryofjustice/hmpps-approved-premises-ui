@@ -171,7 +171,7 @@ describe('OutOfServiceBedsController', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
       when(outOfServiceBedService.getOutOfServiceBed)
-        .calledWith(request.user.token, request.params.premisesId, request.params.id)
+        .calledWith(request.user.token, premisesId, outOfServiceBed.id)
         .mockResolvedValue(outOfServiceBed)
 
       const requestHandler = outOfServiceBedController.show()

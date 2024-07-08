@@ -1,0 +1,35 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro outOfServiceBedTimeline(outOfServiceBedRevisions)%}
+  <div class="moj-timeline">
+    {% for revision in outOfServiceBedRevisions %}
+      <div class="moj-timeline__item">
+        <div class="moj-timeline__header">
+          <h3 class="moj-timeline__title">
+            {%for type in revision.revisionType %}
+              {{type | sentenceCase | addCommasToList(loop.revindex0) }}
+              {%endfor%}
+            </h3>
+
+            {% if revision.updatedBy %}
+              <p class="moj-timeline__byline">by {{revision.updatedBy.name}}</p>
+              {% if revision.updatedBy.email %}
+                <p class="moj-timeline__byline">{{revision.updatedBy.email}}</p>
+              {%endif%}
+            {%endif%}
+        </div>
+
+        <p class="moj-timeline__date">
+          <time datetime="{{revision.updatedAt}}">{{formatDateTime(revision.updatedAt)}}</time>
+        </p>
+        <div class="moj-timeline__description">
+          {{
+            govukSummaryList({
+              rows:OutOfServiceBedUtils.bedRevisionDetails(revision)
+            })
+          }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}

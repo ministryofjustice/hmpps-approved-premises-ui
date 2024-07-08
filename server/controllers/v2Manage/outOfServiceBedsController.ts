@@ -11,6 +11,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { OutOfServiceBedService, PremisesService } from '../../services'
+import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
 
 export default class OutOfServiceBedsController {
   constructor(
@@ -161,11 +162,13 @@ export default class OutOfServiceBedsController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const activeTab = req.params.tab
-      const { premisesId, bedId, id } = req.params
+      const { premisesId, bedId, id, tab = 'details' } = req.params
       const referrer = req.headers.referer
 
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
+
+      outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
+
       const { characteristics } = await this.premisesService.getBed(req.user.token, premisesId, bedId)
 
       return res.render('v2Manage/outOfServiceBeds/show', {
@@ -174,7 +177,7 @@ export default class OutOfServiceBedsController {
         bedId,
         id,
         referrer,
-        activeTab,
+        activeTab: tab,
         characteristics,
       })
     }
