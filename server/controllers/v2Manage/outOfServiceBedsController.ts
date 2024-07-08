@@ -11,6 +11,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { OutOfServiceBedService, PremisesService } from '../../services'
+import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
 
 export default class OutOfServiceBedsController {
   constructor(
@@ -165,6 +166,9 @@ export default class OutOfServiceBedsController {
       const referrer = req.headers.referer
 
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
+
+      outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
+
       const { characteristics } = await this.premisesService.getBed(req.user.token, premisesId, bedId)
 
       return res.render('v2Manage/outOfServiceBeds/show', {

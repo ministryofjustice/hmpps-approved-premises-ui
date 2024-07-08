@@ -130,3 +130,8 @@ const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
       attributes: { 'data-cy-bedId': bed.bed.id },
     },
   )
+export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1OutOfServiceBedRevision>) => {
+  return revisions.sort((a, b) => {
+    return a.updatedAt > b.updatedAt ? -1 : 1
+  })
+}

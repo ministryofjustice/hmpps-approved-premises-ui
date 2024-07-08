@@ -6,7 +6,7 @@ import {
   outOfServiceBedFactory,
   premisesFactory,
 } from '../../../server/testutils/factories'
-
+import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../../server/utils/outOfServiceBedUtils'
 import {
   OutOfServiceBedCreatePage,
   OutOfServiceBedIndexPage,
@@ -121,6 +121,7 @@ context('OutOfServiceBeds', () => {
     const bed = { name: 'abc', id: '123' }
     const premises = premisesFactory.build()
     const outOfServiceBed = outOfServiceBedFactory.build({ bed })
+    outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
     const bedDetail = bedDetailFactory.build({ id: bed.id })
 
     cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })

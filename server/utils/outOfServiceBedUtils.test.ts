@@ -9,6 +9,7 @@ import {
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   referenceNumberCell,
+  sortOutOfServiceBedRevisionsByUpdatedAt,
 } from './outOfServiceBedUtils'
 import { getRandomInt } from './utils'
 import { ApprovedPremisesUserRole, Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
@@ -191,6 +192,18 @@ describe('outOfServiceBedUtils', () => {
       expect(
         outOfServiceBedCountForToday([...outOfServiceBedsForToday, ...futureOutOfServiceBeds, ...pastOutOfServiceBeds]),
       ).toEqual(`${outOfServiceBedsForToday.length} beds`)
+    })
+  })
+  describe('sortOutOfServiceBedRevisionsByUpdatedAt', () => {
+    it('sorts revisions by updatedAt in descending order', () => {
+      const revisions = [
+        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-01T00:00:00Z' }),
+        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-02T00:00:00Z' }),
+        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-03T00:00:00Z' }),
+      ]
+      const sortedRevisions = sortOutOfServiceBedRevisionsByUpdatedAt(revisions)
+
+      expect(sortedRevisions).toEqual([revisions[0], revisions[1], revisions[2]])
     })
   })
 })
