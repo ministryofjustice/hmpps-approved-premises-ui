@@ -1,9 +1,11 @@
-import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
+import { LostBedReason, Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
 import OutOfServiceBedService from './outOfServiceBedService'
 import OutOfServiceBedClient from '../data/outOfServiceBedClient'
+import Cas1ReferenceDataClient from '../data/cas1ReferenceDataClient'
 
 import {
+  cas1ReferenceDataFactory,
   newOutOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
@@ -11,20 +13,23 @@ import {
 } from '../testutils/factories'
 
 jest.mock('../data/outOfServiceBedClient.ts')
-jest.mock('../data/referenceDataClient.ts')
+jest.mock('../data/cas1ReferenceDataClient.ts')
 
 describe('OutOfServiceBedService', () => {
   const outOfServiceBedClient = new OutOfServiceBedClient(null) as jest.Mocked<OutOfServiceBedClient>
+  const cas1ReferenceDataClient = new Cas1ReferenceDataClient(null) as jest.Mocked<Cas1ReferenceDataClient>
 
   const OutOfServiceBedClientFactory = jest.fn()
+  const Cas1ReferenceDataClientFactory = jest.fn()
 
-  const service = new OutOfServiceBedService(OutOfServiceBedClientFactory)
+  const service = new OutOfServiceBedService(OutOfServiceBedClientFactory, Cas1ReferenceDataClientFactory)
 
   const premisesId = 'premisesId'
 
   beforeEach(() => {
     jest.resetAllMocks()
     OutOfServiceBedClientFactory.mockReturnValue(outOfServiceBedClient)
+    Cas1ReferenceDataClientFactory.mockReturnValue(cas1ReferenceDataClient)
   })
 
   describe('createOutOfServiceBed', () => {
@@ -40,6 +45,21 @@ describe('OutOfServiceBedService', () => {
       expect(postedOutOfServiceBed).toEqual(outOfServiceBed)
       expect(OutOfServiceBedClientFactory).toHaveBeenCalledWith(token)
       expect(outOfServiceBedClient.create).toHaveBeenCalledWith(premisesId, newOutOfServiceBed)
+    })
+  })
+
+  describe('getOutOfServiceBedReasons', () => {
+    it('returns the list of reasons retrieved from the CAS1 reference data endpoint', async () => {
+      const token = 'SOME_TOKEN'
+      const stubbedReferenceData = cas1ReferenceDataFactory.outOfServiceBedReason().buildList(5) as Array<LostBedReason>
+
+      cas1ReferenceDataClient.getReferenceData.mockResolvedValue(stubbedReferenceData)
+
+      const retrievedReasons = await service.getOutOfServiceBedReasons(token)
+
+      expect(retrievedReasons).toEqual(stubbedReferenceData)
+      expect(Cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenLastCalledWith('out-of-service-bed-reasons')
     })
   })
 

@@ -166,7 +166,7 @@ test('Change placement dates', async ({ page, person, legacyManager }) => {
   await confirmationPage.shouldShowBookingChangeSuccessMessage()
 })
 
-test('Mark a bed as lost', async ({ page, legacyManager }) => {
+test('Mark a bed as out of service', async ({ page, legacyManager }) => {
   // Given I am signed in as a legacy manager
   await signIn(page, legacyManager)
 

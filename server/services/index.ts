@@ -31,6 +31,7 @@ export const services = () => {
     appealClientBuilder,
     approvedPremisesClientBuilder,
     bookingClientBuilder,
+    cas1ReferenceDataClientBuilder,
     referenceDataClientBuilder,
     lostBedClientBuilder,
     outOfServiceBedClientBuilder,
@@ -56,7 +57,10 @@ export const services = () => {
   const departureService = new DepartureService(bookingClientBuilder, referenceDataClientBuilder)
   const cancellationService = new CancellationService(bookingClientBuilder, referenceDataClientBuilder)
   const lostBedService = new LostBedService(lostBedClientBuilder, referenceDataClientBuilder)
-  const outOfServiceBedService = new OutOfServiceBedService(outOfServiceBedClientBuilder)
+  const outOfServiceBedService = new OutOfServiceBedService(
+    outOfServiceBedClientBuilder,
+    cas1ReferenceDataClientBuilder,
+  )
   const applicationService = new ApplicationService(applicationClientBuilder)
   const assessmentService = new AssessmentService(assessmentClientBuilder)
   const taskService = new TaskService(taskClientBuilder)

@@ -34,9 +34,8 @@ export class OutOfServiceBedCreatePage extends Page {
       cy.get('input[name="outOfServiceBed[referenceNumber]"]').type(outOfServiceBed.referenceNumber)
     }
 
-    if (outOfServiceBed.notes) {
-      cy.get('[name="outOfServiceBed[notes]"]').type(outOfServiceBed.notes)
-    }
+    cy.get(`input[name="outOfServiceBed[reason]"][value="${outOfServiceBed.reason.id}"]`).check()
+    cy.get('[name="outOfServiceBed[notes]"]').type(outOfServiceBed.notes)
   }
 
   public clickSubmit(): void {

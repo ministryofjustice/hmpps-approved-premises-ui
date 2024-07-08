@@ -6,6 +6,7 @@ import {
   SummaryListItem,
   SummaryListWithCard,
   TableCell,
+  UserDetails,
 } from '../@types/ui'
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
@@ -13,8 +14,8 @@ import { linkTo, sentenceCase } from './utils'
 
 export class InvalidOverbookingDataException extends Error {}
 
-export const bedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
-  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId)])
+export const bedTableRows = (beds: Array<BedSummary>, premisesId: string, user?: UserDetails) => {
+  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId, user)])
 }
 
 export const bedNameCell = (item: { name: string }): TableCell => ({ text: item.name })
@@ -23,8 +24,8 @@ export const roomNameCell = (item: { roomName: string }): TableCell => ({ text: 
 
 export const statusCell = (bed: BedSummary): TableCell => ({ text: sentenceCase(bed.status) })
 
-export const actionCell = (bed: BedSummary, premisesId: string): TableCell => ({
-  html: bedLink(bed, premisesId),
+export const actionCell = (bed: BedSummary, premisesId: string, user?: UserDetails): TableCell => ({
+  html: bedLinkForUser(bed, premisesId, user),
 })
 
 export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => {
@@ -65,8 +66,27 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   }
 }
 
-export const bedLink = (bed: BedSummary, premisesId: string): string =>
-  linkTo(
+export const v2BedActions = (bed: BedDetail, premisesId: string) => {
+  return {
+    items: [
+      {
+        text: 'Create out of service bed record',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
+      },
+    ],
+  }
+}
+
+const bedLinkForUser = (bed: BedSummary, premisesId: string, user?: UserDetails): string => {
+  if (user && user.roles?.includes('future_manager')) {
+    return v2BedLink(bed, premisesId)
+  }
+  return v1BedLink(bed, premisesId)
+}
+
+export const v1BedLink = (bed: BedSummary, premisesId: string): string => {
+  return linkTo(
     paths.premises.beds.show,
     { bedId: bed.id, premisesId },
     {
@@ -75,6 +95,19 @@ export const bedLink = (bed: BedSummary, premisesId: string): string =>
       attributes: { 'data-cy-bedId': bed.id },
     },
   )
+}
+
+export const v2BedLink = (bed: BedSummary, premisesId: string): string => {
+  return linkTo(
+    paths.v2Manage.premises.beds.show,
+    { bedId: bed.id, premisesId },
+    {
+      text: 'Manage',
+      hiddenText: `bed ${bed.name}`,
+      attributes: { 'data-cy-bedId': bed.id },
+    },
+  )
+}
 
 export const encodeOverbooking = (overbooking: BedOccupancyOverbookingEntryUi): string => {
   const json = JSON.stringify(overbooking)

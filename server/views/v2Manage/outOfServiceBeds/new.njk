@@ -56,6 +56,19 @@
         }
       }) }}
 
+        {{ govukRadios({
+        idPrefix: "reason",
+        name: "outOfServiceBed[reason]",
+        fieldset: {
+          legend: {
+            text: "What is the reason for marking this bed as out of service?",
+            classes: "govuk-fieldset__legend--s"
+          }
+        },
+        items: convertObjectsToRadioItems(outOfServiceBedReasons, 'name', 'id', 'outOfServiceBed[reason]'),
+        errorMessage: errors.reason
+      }) }}
+
         {{ govukInput({
         label: {
           text: "Work order reference number"
@@ -63,12 +76,14 @@
         classes: "govuk-input--width-6",
         id: "referenceNumber",
         name: "outOfServiceBed[referenceNumber]",
+        value: outOfServiceBed.referenceNumber,
         errorMessage: errors.referenceNumber
       }) }}
 
         {{ govukTextarea({
         id: "notes",
         name: "outOfServiceBed[notes]",
+        value: outOfServiceBed.notes,
         label: {
           text: "Provide  detail about why the bed is out of service. If FM works are required you should update this record with any progress on that work.",
           classes: "govuk-fieldset__legend--s"
