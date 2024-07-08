@@ -24,6 +24,10 @@ export const reportInputLabels = {
     text: 'Raw Requests for Placement for Performance Hub',
     hint: 'A raw data extract for requests for placements created or withdrawn within the month. Does not include any PII.',
   },
+  placementMatchingOutcomesV2: {
+    text: 'Raw Placement Matching Outcomes Reports (V2)',
+    hint: 'A raw data extract to help identify placement matching outcomes. This downloads placement requests based on the Expected Arrival Date. Does not include any PII.',
+  },
 } as const
 
 export type ReportType = (keyof typeof reportInputLabels)[number]
