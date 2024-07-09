@@ -34,5 +34,9 @@ describe('Updating an out of service bed', () => {
 
     // Then I should be taken to the OoS bed update page
     const updatePage = Page.verifyOnPage(OutOfServiceBedUpdatePage, outOfServiceBed)
+
+    // And it should show the details of the bed from the OoS bed record
+    updatePage.shouldShowOutOfServiceBedDetails(outOfServiceBed)
+    updatePage.formShouldBePrepopulated()
   })
 })

@@ -341,6 +341,10 @@ export default abstract class Page {
     cy.get(`#${id}`).clear()
   }
 
+  verifyTextInputContentsById(id: string, value: string): void {
+    cy.get(`#${id}`).should('have.value', value)
+  }
+
   clearAndCompleteTextInputById(id: string, text: string): void {
     this.getTextInputByIdAndClear(id)
     this.getTextInputByIdAndEnterDetails(id, text)
@@ -470,6 +474,10 @@ export default abstract class Page {
 
   shouldHaveSelectText(id: string, text: string): void {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
+  }
+
+  shouldBeSelected(id: string): void {
+    cy.get(`[value="${id}"]`).should('be.checked')
   }
 
   shouldShowApplicationTimeline(timelineEvents: Array<TimelineEvent>, index: number = 0) {
