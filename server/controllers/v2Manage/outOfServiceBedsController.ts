@@ -148,7 +148,7 @@ export default class OutOfServiceBedsController {
       })
 
       return res.render('v2Manage/outOfServiceBeds/index', {
-        pageHeading: 'View out of service beds',
+        pageHeading: 'Out of service beds',
         outOfServiceBeds: outOfServiceBeds.data,
         pageNumber: Number(outOfServiceBeds.pageNumber),
         totalPages: Number(outOfServiceBeds.totalPages),

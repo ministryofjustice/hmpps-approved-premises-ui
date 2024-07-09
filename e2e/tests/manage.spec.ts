@@ -296,5 +296,5 @@ test('View all out of service beds', async ({ page, cruMember }) => {
   dashboard.clickOutOfServiceBeds()
 
   // Then I am taken to the out of service beds page
-  await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
+  await OutOfServiceBedsPage.initialize(page, 'Out of service beds')
 })
