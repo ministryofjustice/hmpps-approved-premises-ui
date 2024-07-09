@@ -11,12 +11,10 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {% if referrer %}
-    {{ govukBackLink({
+  {{ govukBackLink({
       text: "Back",
-      href: referrer
+      href: paths.v2Manage.outOfServiceBeds.index({temporality: 'current'})
     }) }}
-  {% endif %}
 {% endblock %}
 
 {% block content %}
