@@ -7,7 +7,7 @@ import { sentenceCase } from '../../../../server/utils/utils'
 
 export class OutOfServiceBedShowPage extends Page {
   constructor(private readonly outOfServiceBed: OutOfServiceBed) {
-    super('View out of service bed record')
+    super('Out of service bed record')
   }
 
   static visit(premisesId: Premises['id'], outOfServiceBed: OutOfServiceBed): OutOfServiceBedShowPage {
