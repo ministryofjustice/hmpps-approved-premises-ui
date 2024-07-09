@@ -6,13 +6,13 @@ import paths from '../../../../server/paths/manage'
 import { bedDetails } from '../../../../server/utils/bedUtils'
 
 export default class BedShowPage extends Page {
-  constructor() {
-    super('View bed information')
+  constructor(private readonly bedName: string) {
+    super(`Bed ${bedName}`)
   }
 
   static visit(premisesId: Premises['id'], bed: BedDetail): BedShowPage {
     cy.visit(paths.v2Manage.premises.beds.show({ premisesId, bedId: bed.id }))
-    return new BedShowPage()
+    return new BedShowPage(bed.name)
   }
 
   shouldShowPremisesName(premisesName: string): void {

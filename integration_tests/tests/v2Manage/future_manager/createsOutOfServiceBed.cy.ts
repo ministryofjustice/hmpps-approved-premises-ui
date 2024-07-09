@@ -17,6 +17,7 @@ context('OutOfServiceBeds', () => {
   })
 
   it('should allow me to create an out of service bed', () => {
+    const bedName = '12 - 2'
     const premises = extendedPremisesSummaryFactory.build()
     cy.task('stubPremisesSummary', premises)
 
@@ -27,7 +28,7 @@ context('OutOfServiceBeds', () => {
     cy.task('stubOutOfServiceBedCreate', { premisesId: premises.id, outOfServiceBed })
 
     // stub ultimate API call when redirecting to bed page
-    const bedDetail = bedDetailFactory.build({ id: outOfServiceBed.bed.id })
+    const bedDetail = bedDetailFactory.build({ id: outOfServiceBed.bed.id, name: bedName })
     cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // Given I am signed in as a future manager
@@ -56,7 +57,7 @@ context('OutOfServiceBeds', () => {
     })
 
     // And I should be redirected to the v2 bed page
-    const v2BedPage = Page.verifyOnPage(BedShowPage)
+    const v2BedPage = Page.verifyOnPage(BedShowPage, bedName)
 
     // And I should see the confirmation message
     v2BedPage.shouldShowBanner('The out of service bed has been recorded')

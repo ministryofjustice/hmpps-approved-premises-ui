@@ -38,7 +38,7 @@ describe('V2BedsController', () => {
       expect(response.render).toHaveBeenCalledWith('v2Manage/premises/beds/show', {
         bed,
         premises,
-        pageHeading: 'View bed information',
+        pageHeading: `Bed ${bed.name}`,
         backLink: paths.premises.beds.index({ premisesId: premises.id }),
       })
 
@@ -56,7 +56,7 @@ describe('V2BedsController', () => {
       expect(response.render).toHaveBeenCalledWith('v2Manage/premises/beds/show', {
         bed,
         premises,
-        pageHeading: 'View bed information',
+        pageHeading: `Bed ${bed.name}`,
         backLink: paths.premises.calendar({ premisesId: premises.id }),
       })
 

@@ -23,7 +23,7 @@ export default class V2BedsController {
       return res.render('v2Manage/premises/beds/show', {
         bed,
         premises,
-        pageHeading: 'View bed information',
+        pageHeading: `Bed ${bed.name}`,
         backLink,
       })
     }
