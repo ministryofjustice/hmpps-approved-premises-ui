@@ -4,6 +4,7 @@
 
 {% from "./partials/_bedDetails.njk" import outOfServiceBedDetails %}
 {% from "./partials/_timeline.njk" import outOfServiceBedTimeline %}
+{% from "./partials/_pageHeading.njk" import outOfServiceBedPageHeading %}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -24,7 +25,7 @@
       {{
           mojIdentityBar({
             title: {
-              html: '<span class="govuk-caption-l">' + outOfServiceBed.premises.name + '</span><span class="govuk-caption-l">Room ' + outOfServiceBed.room.name + ' | Bed ' + outOfServiceBed.bed.name + '</span> <h1 class="govuk-heading-l">Out of service bed record</h1>'
+              html: outOfServiceBedPageHeading('Out of service bed record', outOfServiceBed)
             },
             menus: [{
               items: [
