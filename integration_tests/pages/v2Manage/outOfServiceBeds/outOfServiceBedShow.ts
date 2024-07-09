@@ -74,4 +74,8 @@ export class OutOfServiceBedShowPage extends Page {
   clickTab(tab: 'Details' | 'Timeline'): void {
     cy.get('.moj-sub-navigation__link').contains(tab).click()
   }
+
+  clickUpdateRecord(): void {
+    cy.get('a').contains('Update record').click()
+  }
 }
