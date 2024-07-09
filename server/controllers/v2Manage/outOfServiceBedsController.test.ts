@@ -14,12 +14,7 @@ import {
 } from '../../utils/validation'
 
 import paths from '../../paths/manage'
-import {
-  bedDetailFactory,
-  outOfServiceBedCancellationFactory,
-  outOfServiceBedFactory,
-  paginatedResponseFactory,
-} from '../../testutils/factories'
+import { bedDetailFactory, outOfServiceBedFactory, paginatedResponseFactory } from '../../testutils/factories'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
 import { OutOfServiceBedService, PremisesService } from '../../services'
@@ -311,102 +306,6 @@ describe('OutOfServiceBedsController', () => {
       await requestHandler(indexRequest, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
-    })
-  })
-
-  describe('update', () => {
-    it('updates a outOfService bed and redirects to the outOfService beds index page', async () => {
-      outOfServiceBedService.updateOutOfServiceBed.mockResolvedValue(outOfServiceBed)
-
-      const requestHandler = outOfServiceBedController.update()
-
-      request.params = {
-        premisesId,
-        id: outOfServiceBed.bed.id,
-      }
-
-      request.body = {
-        'endDate-year': 2022,
-        'endDate-month': 9,
-        'endDate-day': 22,
-        notes: 'a note',
-        startDate: outOfServiceBed.startDate,
-        reason: outOfServiceBed.reason.id,
-        referenceNumber: outOfServiceBed.referenceNumber,
-        submit: '',
-      }
-
-      await requestHandler(request, response, next)
-
-      expect(outOfServiceBedService.updateOutOfServiceBed).toHaveBeenCalledWith(
-        request.user.token,
-        outOfServiceBed.bed.id,
-        request.params.premisesId,
-        request.body,
-      )
-      expect(request.flash).toHaveBeenCalledWith('success', 'Bed updated')
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.outOfServiceBeds.premisesIndex({
-          premisesId: request.params.premisesId,
-          temporality: 'current',
-        }),
-      )
-    })
-
-    describe('when there are errors', () => {
-      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
-        const err = new Error()
-
-        outOfServiceBedService.updateOutOfServiceBed.mockImplementation(() => {
-          throw err
-        })
-
-        const requestHandler = outOfServiceBedController.update()
-
-        await requestHandler(request, response, next)
-
-        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(request, { ...response }, err, referrer)
-      })
-    })
-
-    describe('if "cancel" is "1" ', () => {
-      it('updates a outOfService bed and redirects to the outOfService beds index page', async () => {
-        const cancellation = outOfServiceBedCancellationFactory.build()
-        outOfServiceBedService.cancelOutOfServiceBed.mockResolvedValue(cancellation)
-
-        const requestHandler = outOfServiceBedController.cancel()
-
-        const notes = 'a note'
-
-        request.params = {
-          premisesId,
-          id: cancellation.id,
-          bedId: 'bedId',
-        }
-
-        request.body = {
-          notes,
-          cancel: '1',
-        }
-
-        await requestHandler(request, response, next)
-
-        expect(outOfServiceBedService.cancelOutOfServiceBed).toHaveBeenCalledWith(
-          token,
-          cancellation.id,
-          request.params.premisesId,
-          {
-            notes,
-          },
-        )
-        expect(request.flash).toHaveBeenCalledWith('success', 'Out of service bed removed')
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.v2Manage.outOfServiceBeds.premisesIndex({
-            premisesId: request.params.premisesId,
-            temporality: 'current',
-          }),
-        )
-      })
     })
   })
 

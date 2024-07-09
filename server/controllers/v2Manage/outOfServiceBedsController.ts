@@ -186,37 +186,6 @@ export default class OutOfServiceBedsController {
     }
   }
 
-  update(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      const { premisesId, id } = req.params
-
-      const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
-      req.body.endDate = endDate
-
-      try {
-        if (req.body.cancel === '1') {
-          await this.outOfServiceBedService.cancelOutOfServiceBed(req.user.token, id, premisesId, {
-            notes: req.body.notes,
-          })
-
-          req.flash('success', 'Out of service bed removed')
-
-          return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
-        }
-
-        await this.outOfServiceBedService.updateOutOfServiceBed(req.user.token, id, premisesId, req.body)
-
-        req.flash('success', 'Bed updated')
-
-        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
-      } catch (error) {
-        const redirectPath = req.headers.referer
-
-        return catchValidationErrorOrPropogate(req, res, error as Error, redirectPath)
-      }
-    }
-  }
-
   cancel(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, bedId, id } = req.params
