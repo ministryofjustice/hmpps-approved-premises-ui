@@ -3,10 +3,10 @@ import {
   outOfServiceBedFactory,
   outOfServiceBedRevisionFactory,
   premisesFactory,
-} from '../../../server/testutils/factories'
-import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../../server/utils/outOfServiceBedUtils'
-import { OutOfServiceBedShowPage } from '../../pages/v2Manage/outOfServiceBeds'
-import { signIn } from '../signIn'
+} from '../../../../server/testutils/factories'
+import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../../../server/utils/outOfServiceBedUtils'
+import { OutOfServiceBedShowPage } from '../../../pages/v2Manage/outOfServiceBeds'
+import { signIn } from '../../signIn'
 
 context('OutOfServiceBeds', () => {
   beforeEach(() => {
