@@ -200,6 +200,7 @@ describe('OutOfServiceBedsController', () => {
         referrer,
         activeTab,
         characteristics: bed.characteristics,
+        pageTitle: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
       })
     })
   })
