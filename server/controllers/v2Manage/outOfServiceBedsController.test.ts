@@ -282,7 +282,7 @@ describe('OutOfServiceBedsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('v2Manage/outOfServiceBeds/index', {
         outOfServiceBeds: paginatedResponse.data,
-        pageHeading: 'View out of service beds',
+        pageHeading: 'Out of service beds',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,

@@ -6,7 +6,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 
 export class OutOfServiceBedIndexPage extends Page {
   constructor() {
-    super('View out of service beds')
+    super('Out of service beds')
   }
 
   static visit(temporality: Temporality): OutOfServiceBedIndexPage {
