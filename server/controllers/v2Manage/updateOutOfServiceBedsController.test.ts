@@ -9,8 +9,13 @@ import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController
 import { DateFormats } from '../../utils/dateUtils'
 import { UpdateCas1OutOfServiceBed } from '../../@types/shared'
 import paths from '../../paths/manage'
-import { catchValidationErrorOrPropogate, generateConflictErrorAndRedirect } from '../../utils/validation'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateConflictErrorAndRedirect,
+} from '../../utils/validation'
 import { SanitisedError } from '../../sanitisedError'
+import { ErrorsAndUserInput } from '../../@types/ui'
 
 jest.mock('../../utils/validation')
 
@@ -41,6 +46,12 @@ describe('updateOutOfServiceBedController', () => {
     when(outOfServiceBedService.getOutOfServiceBed)
       .calledWith(request.user.token, premisesId, outOfServiceBed.id)
       .mockResolvedValue(outOfServiceBed)
+
+    when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue({
+      errors: {},
+      errorSummary: [],
+      userInput: {},
+    })
   })
 
   describe('new', () => {
@@ -92,6 +103,24 @@ describe('updateOutOfServiceBedController', () => {
         expect.objectContaining({
           ...DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate'),
           ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
+        }),
+      )
+    })
+
+    it('renders the form with errors and user input if theres an error', async () => {
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+
+      const requestHandler = updateOutOfServiceBedController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          errors: errorsAndUserInput.errors,
+          errorSummary: errorsAndUserInput.errorSummary,
+          ...errorsAndUserInput.userInput,
         }),
       )
     })

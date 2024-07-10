@@ -2,7 +2,11 @@ import type { Request, RequestHandler, Response } from 'express'
 import { OutOfServiceBedService, PremisesService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
 
-import { catchValidationErrorOrPropogate, generateConflictErrorAndRedirect } from '../../utils/validation'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateConflictErrorAndRedirect,
+} from '../../utils/validation'
 import paths from '../../paths/manage'
 import { SanitisedError } from '../../sanitisedError'
 
@@ -15,6 +19,7 @@ export default class OutOfServiceBedsController {
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, bedId, id } = req.params
+      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
@@ -28,6 +33,10 @@ export default class OutOfServiceBedsController {
         outOfServiceBed,
         ...DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate'),
         ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
+        errors,
+        errorSummary,
+        errorTitle,
+        ...userInput,
       })
     }
   }
