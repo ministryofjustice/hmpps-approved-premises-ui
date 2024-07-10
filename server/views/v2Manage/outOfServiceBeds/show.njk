@@ -54,6 +54,7 @@
       }}
 
       {% if activeTab === 'timeline' %}
+        {% include "../../_messages.njk" %}
         {{outOfServiceBedTimeline(outOfServiceBed.revisionHistory)}}
       {% else %}
         {{outOfServiceBedDetails(outOfServiceBed, characteristics)}}

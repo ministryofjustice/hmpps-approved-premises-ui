@@ -7,6 +7,12 @@ import { outOfServiceBedFactory } from '../../testutils/factories'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
 
 import { DateFormats } from '../../utils/dateUtils'
+import { UpdateCas1OutOfServiceBed } from '../../@types/shared'
+import paths from '../../paths/manage'
+import { catchValidationErrorOrPropogate, generateConflictErrorAndRedirect } from '../../utils/validation'
+import { SanitisedError } from '../../sanitisedError'
+
+jest.mock('../../utils/validation')
 
 describe('updateOutOfServiceBedController', () => {
   const token = 'SOME_TOKEN'
@@ -88,6 +94,126 @@ describe('updateOutOfServiceBedController', () => {
           ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
         }),
       )
+    })
+  })
+
+  describe('create', () => {
+    const startDateFromInputs = DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate')
+    const endDateFromInputs = DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate')
+
+    const outOfServiceBedUpdate: UpdateCas1OutOfServiceBed = {
+      startDate: startDateFromInputs.startDate,
+      endDate: endDateFromInputs.endDate,
+      reason: outOfServiceBed.reason.id,
+      notes: outOfServiceBed.notes,
+      referenceNumber: outOfServiceBed.referenceNumber,
+    }
+
+    it('calls the OoS bed service "update" method with the correct parameters', async () => {
+      const requestBody = {
+        outOfServiceBed: { ...outOfServiceBedUpdate },
+        ...startDateFromInputs,
+        ...endDateFromInputs,
+      }
+
+      request.body = requestBody
+
+      const requestHandler = updateOutOfServiceBedController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(outOfServiceBedService.updateOutOfServiceBed).toHaveBeenCalledWith(
+        token,
+        outOfServiceBed.id,
+        premisesId,
+        outOfServiceBedUpdate,
+      )
+    })
+
+    it('redirects to the show page with a success message if the update is successful', async () => {
+      const requestBody = {
+        outOfServiceBed: { ...outOfServiceBedUpdate },
+        ...startDateFromInputs,
+        ...endDateFromInputs,
+      }
+
+      request.body = requestBody
+
+      const requestHandler = updateOutOfServiceBedController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.v2Manage.outOfServiceBeds.show({
+          premisesId,
+          bedId: outOfServiceBed.bed.id,
+          id: outOfServiceBed.id,
+          tab: 'timeline',
+        }),
+      )
+      expect(request.flash).toHaveBeenCalledWith('success', expect.any(String))
+    })
+
+    describe('when errors are raised', () => {
+      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
+        const requestBody = {
+          outOfServiceBed: { ...outOfServiceBedUpdate },
+          ...startDateFromInputs,
+          ...endDateFromInputs,
+        }
+
+        request.body = requestBody
+
+        const requestHandler = updateOutOfServiceBedController.create()
+
+        const err = new Error()
+
+        outOfServiceBedService.updateOutOfServiceBed.mockRejectedValue(err)
+
+        await requestHandler(request, response, next)
+
+        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          err,
+          paths.v2Manage.outOfServiceBeds.update({
+            premisesId,
+            bedId: outOfServiceBed.bed.id,
+            id: outOfServiceBed.id,
+          }),
+        )
+      })
+
+      it('should call generateConflictErrorAndRedirect if the error is a 409', async () => {
+        const requestBody = {
+          outOfServiceBed: { ...outOfServiceBedUpdate },
+          ...startDateFromInputs,
+          ...endDateFromInputs,
+        }
+
+        request.body = requestBody
+
+        const requestHandler = updateOutOfServiceBedController.create()
+        const err = createMock<SanitisedError>({ status: 409, data: 'some data' })
+
+        outOfServiceBedService.updateOutOfServiceBed.mockRejectedValue(err)
+
+        await requestHandler(request, response, next)
+
+        expect(generateConflictErrorAndRedirect).toHaveBeenCalledWith(
+          { ...request },
+          { ...response },
+          premisesId,
+          ['startDate', 'endDate'],
+          err,
+          paths.v2Manage.outOfServiceBeds.update({
+            premisesId,
+            bedId: outOfServiceBed.bed.id,
+            id: outOfServiceBed.id,
+          }),
+          outOfServiceBed.bed.id,
+        )
+      })
     })
   })
 })

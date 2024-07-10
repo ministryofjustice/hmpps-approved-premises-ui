@@ -71,6 +71,10 @@ export class OutOfServiceBedShowPage extends Page {
     })
   }
 
+  shouldShowUpdateConfirmationMessage() {
+    this.shouldShowBanner('The out of service bed record has been updated')
+  }
+
   clickTab(tab: 'Details' | 'Timeline'): void {
     cy.get('.moj-sub-navigation__link').contains(tab).click()
   }

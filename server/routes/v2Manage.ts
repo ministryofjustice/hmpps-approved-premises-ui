@@ -116,6 +116,16 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
     allowedRoles: ['future_manager'],
   })
+  post(paths.v2Manage.outOfServiceBeds.update.pattern, v2UpdateOutOfServiceBedsController.create(), {
+    auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
+    allowedRoles: ['future_manager'],
+    redirectAuditEventSpecs: [
+      {
+        path: paths.lostBeds.show.pattern,
+        auditEvent: 'CREATE_UPDATE_LOST_BED_FAILURE',
+      },
+    ],
+  })
   get(paths.v2Manage.outOfServiceBeds.show.pattern, v2OutOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
     allowedRoles: ['future_manager'],
