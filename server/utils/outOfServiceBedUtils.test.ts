@@ -253,9 +253,9 @@ describe('outOfServiceBedUtils', () => {
   describe('sortOutOfServiceBedRevisionsByUpdatedAt', () => {
     it('sorts revisions by updatedAt in descending order', () => {
       const revisions = [
-        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-01T00:00:00Z' }),
         outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-02T00:00:00Z' }),
         outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-03T00:00:00Z' }),
+        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-01T00:00:00Z' }),
       ]
       const sortedRevisions = sortOutOfServiceBedRevisionsByUpdatedAt(revisions)
 
