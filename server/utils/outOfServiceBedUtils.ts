@@ -178,3 +178,24 @@ export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1Out
     return a.updatedAt > b.updatedAt ? -1 : 1
   })
 }
+
+export const overwriteOoSBedWithUserInput = (userInput: Record<string, unknown>, outOfServiceBed: OutOfServiceBed) => {
+  ;['startDate', 'endDate'].forEach(key => {
+    if (userInput[key]) {
+      outOfServiceBed[key] = userInput[key]
+    }
+  })
+
+  if (userInput.outOfServiceBed && (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber) {
+    outOfServiceBed.referenceNumber = (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber
+  }
+
+  if (
+    (userInput?.outOfServiceBed as Record<string, string>)?.reason &&
+    typeof (userInput.outOfServiceBed as Record<string, string>)?.reason === 'string'
+  ) {
+    outOfServiceBed.reason.id = (userInput.outOfServiceBed as Record<string, string>).reason
+  }
+
+  return outOfServiceBed
+}

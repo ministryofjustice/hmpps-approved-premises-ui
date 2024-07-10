@@ -9,6 +9,7 @@ import {
 } from '../../utils/validation'
 import paths from '../../paths/manage'
 import { SanitisedError } from '../../sanitisedError'
+import { overwriteOoSBedWithUserInput } from '../../utils/outOfServiceBedUtils'
 
 export default class OutOfServiceBedsController {
   constructor(
@@ -24,19 +25,21 @@ export default class OutOfServiceBedsController {
       const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
 
+      const outOfServiceBedWithUserInput = overwriteOoSBedWithUserInput(userInput, outOfServiceBed)
+
       res.render('v2Manage/outOfServiceBeds/update', {
         pageHeading: 'updateOutOfServiceBedsController',
         premisesId,
         bedId,
         id,
         outOfServiceBedReasons,
-        outOfServiceBed,
-        ...DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate'),
-        ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
+        ...DateFormats.isoDateToDateInputs(outOfServiceBedWithUserInput.startDate, 'startDate'),
+        ...DateFormats.isoDateToDateInputs(outOfServiceBedWithUserInput.endDate, 'endDate'),
         errors,
         errorSummary,
         errorTitle,
         ...userInput,
+        outOfServiceBed: outOfServiceBedWithUserInput,
       })
     }
   }

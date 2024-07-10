@@ -9,6 +9,7 @@ import {
   outOfServiceBedCountForToday,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
+  overwriteOoSBedWithUserInput,
   referenceNumberCell,
   sortOutOfServiceBedRevisionsByUpdatedAt,
 } from './outOfServiceBedUtils'
@@ -261,6 +262,38 @@ describe('outOfServiceBedUtils', () => {
       const sortedRevisions = sortOutOfServiceBedRevisionsByUpdatedAt(unsortedRevisions)
 
       expect(sortedRevisions).toEqual([latestDate, middleDate, earliestDate])
+    })
+  })
+
+  describe('overwriteOoSBedWithUserInput', () => {
+    it.each(['startDate', 'endDate'])('overwrites %s with user input', key => {
+      const userInput = { [key]: 'new value' }
+      const outOfServiceBed = outOfServiceBedFactory.build()
+
+      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual({
+        ...outOfServiceBed,
+        [key]: 'new value',
+      })
+    })
+
+    it('overwrites the reason ID if there is a reason in the userInput', () => {
+      const userInput = { outOfServiceBed: { reason: 'new reason' } }
+      const outOfServiceBed = outOfServiceBedFactory.build()
+
+      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual(
+        expect.objectContaining({
+          reason: expect.objectContaining({ id: 'new reason' }),
+        }),
+      )
+    })
+
+    it('overwrites the reference number if there is a reason in the userInput', () => {
+      const userInput = { outOfServiceBed: { referenceNumber: 'new reason' } }
+      const outOfServiceBed = outOfServiceBedFactory.build()
+
+      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual(
+        expect.objectContaining({ referenceNumber: 'new reason' }),
+      )
     })
   })
 })

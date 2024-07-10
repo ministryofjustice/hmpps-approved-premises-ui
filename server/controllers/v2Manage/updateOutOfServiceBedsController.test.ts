@@ -16,6 +16,7 @@ import {
 } from '../../utils/validation'
 import { SanitisedError } from '../../sanitisedError'
 import { ErrorsAndUserInput } from '../../@types/ui'
+import * as OoSBedUtils from '../../utils/outOfServiceBedUtils'
 
 jest.mock('../../utils/validation')
 
@@ -123,6 +124,55 @@ describe('updateOutOfServiceBedController', () => {
           ...errorsAndUserInput.userInput,
         }),
       )
+    })
+
+    it('renders the form with errors and user input if theres an error', async () => {
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+
+      const requestHandler = updateOutOfServiceBedController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          errors: errorsAndUserInput.errors,
+          errorSummary: errorsAndUserInput.errorSummary,
+          ...errorsAndUserInput.userInput,
+        }),
+      )
+    })
+
+    describe('if there is an error for a field', () => {
+      it('overwrites the pre-existing OoS bed record when there is more recent user input ', async () => {
+        const errorsAndUserInput = createMock<ErrorsAndUserInput>({
+          userInput: {
+            startDate: '2025-06-01',
+            endDate: '2025-06-01',
+            referenceNumber: 'new reference number',
+          },
+        })
+        when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+
+        const spy = jest
+          .spyOn(OoSBedUtils, 'overwriteOoSBedWithUserInput')
+          .mockReturnValue({ ...outOfServiceBed, ...errorsAndUserInput.userInput })
+
+        const requestHandler = updateOutOfServiceBedController.new()
+
+        await requestHandler(request, response, next)
+
+        expect(spy).toHaveBeenCalledWith(errorsAndUserInput.userInput, outOfServiceBed)
+        expect(response.render).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({
+            startDate: errorsAndUserInput.userInput.startDate,
+            endDate: errorsAndUserInput.userInput.endDate,
+            referenceNumber: errorsAndUserInput.userInput.referenceNumber,
+          }),
+        )
+      })
     })
   })
 
