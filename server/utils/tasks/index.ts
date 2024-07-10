@@ -18,6 +18,7 @@ import {
 } from './listTable'
 import { userTableHeader, userTableRows } from './usersTable'
 import paths from '../../paths/apply'
+import { isPlacementApplicationTask } from './assertions'
 
 type GroupedTasks = {
   allocated: Array<Task>
@@ -38,8 +39,16 @@ const groupByAllocation = (tasks: Array<Task>) => {
   return result
 }
 
+const getArrivalDate = (task: Task, application: Application) => {
+  if (isPlacementApplicationTask(task) && task.placementDates && task.placementDates.length > 0) {
+    return task.placementDates[0].expectedArrival
+  }
+
+  return arrivalDateFromApplication(application)
+}
+
 const taskSummary = (task: Task, application: Application): Array<SummaryListItem> => {
-  const arrivalDate = arrivalDateFromApplication(application)
+  const arrivalDate = getArrivalDate(task, application)
 
   const summary = [
     {
