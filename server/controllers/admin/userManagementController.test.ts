@@ -5,7 +5,7 @@ import { ApAreaService, UserService } from '../../services'
 
 import UserManagementController from './userManagementController'
 import { qualifications, roles } from '../../utils/users'
-import { apAreaFactory, paginatedResponseFactory, userFactory } from '../../testutils/factories'
+import { apAreaFactory, paginatedResponseFactory, userDetailsFactory, userFactory } from '../../testutils/factories'
 import paths from '../../paths/admin'
 import { PaginatedResponse } from '../../@types/ui'
 import { ApprovedPremisesUser } from '../../@types/shared'
@@ -16,8 +16,8 @@ jest.mock('../../utils/getPaginationDetails')
 describe('UserManagementController', () => {
   const token = 'SOME_TOKEN'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  const response: DeepMocked<Response> = createMock<Response>({})
+  const request: DeepMocked<Request> = createMock<Request>({ user: { token }, session: {} })
+  const response = createMock<Response>({ locals: { user: { token } } })
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   let userManagementController: UserManagementController
@@ -292,7 +292,10 @@ describe('UserManagementController', () => {
         qualifications: ['emergency'],
         roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
       }
+      request.session.user = user
+      const userDetails = userDetailsFactory.build()
       userService.getUserById.mockResolvedValue(user)
+      userService.getActingUser.mockResolvedValue(userDetails)
       const flash = jest.fn()
 
       const requestHandler = userManagementController.update()
@@ -317,6 +320,7 @@ describe('UserManagementController', () => {
       })
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.edit({ id: user.id }))
       expect(flash).toHaveBeenCalledWith('success', 'User updated')
+      expect(response.locals.user.roles).toEqual(userDetails.roles)
     })
   })
 
