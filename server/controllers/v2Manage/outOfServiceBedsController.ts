@@ -181,7 +181,7 @@ export default class OutOfServiceBedsController {
         referrer,
         activeTab: tab,
         characteristics,
-        pageTitle: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
+        pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
       })
     }
   }
