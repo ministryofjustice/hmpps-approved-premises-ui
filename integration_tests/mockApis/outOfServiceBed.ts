@@ -43,22 +43,9 @@ export default {
     }),
 
   stubUpdateOutOfServiceBedErrors: ({ outOfServiceBed, premisesId, params }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'PUT',
-        url: paths.manage.premises.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id }),
-      },
-      response: {
-        status: 400,
-        headers,
-        jsonBody: {
-          type: 'https://example.net/validation-error',
-          title: 'Invalid request parameters',
-          code: 400,
-          'invalid-params': params,
-        },
-      },
-    }),
+    stubFor(
+      errorStub(params, paths.manage.premises.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id }), 'PUT'),
+    ),
 
   stubOutOfServiceBedsList: ({
     outOfServiceBeds,

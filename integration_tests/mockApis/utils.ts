@@ -13,7 +13,7 @@ const getCombinations = (arr: Array<string>) => {
   return result.sort((a, b) => b.length - a.length)
 }
 
-const errorStub = (fields: Array<string>, pattern: string) => {
+const errorStub = (fields: Array<string>, pattern: string, method: 'PUT' | 'POST' = 'POST') => {
   const bodyPatterns = fields.map(field => {
     return {
       matchesJsonPath: {
@@ -32,7 +32,7 @@ const errorStub = (fields: Array<string>, pattern: string) => {
 
   return {
     request: {
-      method: 'POST',
+      method,
       urlPathPattern: pattern,
       bodyPatterns,
     },

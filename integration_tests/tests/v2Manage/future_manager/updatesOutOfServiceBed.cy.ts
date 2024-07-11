@@ -73,4 +73,28 @@ describe('Updating an out of service bed', () => {
     // And I should see a flash message informing me that the OoS bed has been updated
     showPage.shouldShowUpdateConfirmationMessage()
   })
+
+  const dateFields = ['startDate', 'endDate']
+  dateFields.forEach(dateField => {
+    it(`shows when the ${dateField} field is empty`, () => {
+      const bed: NamedId = { name: 'bed', id: '123' }
+      const premises = extendedPremisesSummaryFactory.build()
+      const outOfServiceBed = outOfServiceBedFactory.build({
+        bed,
+      })
+
+      // Given I am updating an out of service bed
+      cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
+      cy.task('stubUpdateOutOfServiceBedErrors', { premisesId: premises.id, outOfServiceBed, params: [dateField] })
+
+      const updatePage = OutOfServiceBedUpdatePage.visit(premises.id, outOfServiceBed)
+
+      // When I submit the form with no date
+      updatePage.clearDateInputs(dateField)
+      updatePage.clickSubmit()
+
+      // Then I see an error
+      updatePage.shouldShowErrorMessagesForFields([dateField])
+    })
+  })
 })

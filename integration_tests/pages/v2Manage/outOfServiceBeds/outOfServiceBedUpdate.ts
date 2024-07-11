@@ -1,7 +1,15 @@
 import Page from '../../page'
 import { Cas1OutOfServiceBed as OutOfServiceBed } from '../../../../server/@types/shared'
+import paths from '../../../../server/paths/manage'
 
 export class OutOfServiceBedUpdatePage extends Page {
+  static visit(premisesId: string, outOfServiceBed: OutOfServiceBed): OutOfServiceBedUpdatePage {
+    cy.visit(
+      paths.v2Manage.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id, bedId: outOfServiceBed.bed.id }),
+    )
+    return new OutOfServiceBedUpdatePage(outOfServiceBed)
+  }
+
   constructor(private readonly outOfServiceBed: OutOfServiceBed) {
     super('Update out of service bed record')
   }
