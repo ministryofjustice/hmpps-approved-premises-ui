@@ -175,6 +175,6 @@ export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): Summa
 
 export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1OutOfServiceBedRevision>) => {
   return revisions.sort((a, b) => {
-    return a.updatedAt < b.updatedAt ? -1 : 1
+    return a.updatedAt > b.updatedAt ? -1 : 1
   })
 }
