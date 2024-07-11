@@ -252,14 +252,15 @@ describe('outOfServiceBedUtils', () => {
 
   describe('sortOutOfServiceBedRevisionsByUpdatedAt', () => {
     it('sorts revisions by updatedAt in descending order', () => {
-      const revisions = [
-        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-02T00:00:00Z' }),
-        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-03T00:00:00Z' }),
-        outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-01T00:00:00Z' }),
-      ]
-      const sortedRevisions = sortOutOfServiceBedRevisionsByUpdatedAt(revisions)
+      const earliestDate = outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-01T00:00:00Z' })
+      const middleDate = outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-02T00:00:00Z' })
+      const latestDate = outOfServiceBedRevisionFactory.build({ updatedAt: '2024-01-03T00:00:00Z' })
 
-      expect(sortedRevisions).toEqual([revisions[0], revisions[1], revisions[2]])
+      const unsortedRevisions = [earliestDate, latestDate, middleDate]
+
+      const sortedRevisions = sortOutOfServiceBedRevisionsByUpdatedAt(unsortedRevisions)
+
+      expect(sortedRevisions).toEqual([latestDate, middleDate, earliestDate])
     })
   })
 })
