@@ -4,6 +4,8 @@ import {
   ApprovedPremisesAssessment as Assessment,
   Document,
   FullPerson,
+  Cas1OutOfServiceBed as OutOfServiceBed,
+  Cas1OutOfServiceBedRevision as OutOfServiceBedRevision,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
@@ -339,6 +341,10 @@ export default abstract class Page {
     cy.get(`#${id}`).clear()
   }
 
+  verifyTextInputContentsById(id: string, value: string): void {
+    cy.get(`#${id}`).should('have.value', value)
+  }
+
   clearAndCompleteTextInputById(id: string, text: string): void {
     this.getTextInputByIdAndClear(id)
     this.getTextInputByIdAndEnterDetails(id, text)
@@ -470,6 +476,10 @@ export default abstract class Page {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
   }
 
+  shouldBeSelected(id: string): void {
+    cy.get(`[value="${id}"]`).should('be.checked')
+  }
+
   shouldShowApplicationTimeline(timelineEvents: Array<TimelineEvent>, index: number = 0) {
     const sortedTimelineEvents = timelineEvents.sort((a, b) => {
       return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
@@ -510,5 +520,38 @@ export default abstract class Page {
       cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
       this.assertDefinition('Prison', person.prisonName)
     })
+  }
+
+  shouldShowOutOfServiceBedDetails(bedDetails: OutOfServiceBed | OutOfServiceBedRevision) {
+    if (bedDetails.startDate) {
+      cy.get('.govuk-summary-list__key').should('contain', 'Start date')
+      cy.get('.govuk-summary-list__value').should(
+        'contain',
+        DateFormats.isoDateToUIDate(bedDetails.startDate, { format: 'long' }),
+      )
+    }
+
+    if (bedDetails.endDate) {
+      cy.get('.govuk-summary-list__key').should('contain', 'End date')
+      cy.get('.govuk-summary-list__value').should(
+        'contain',
+        DateFormats.isoDateToUIDate(bedDetails.endDate, { format: 'long' }),
+      )
+    }
+
+    if (bedDetails.reason) {
+      cy.get('.govuk-summary-list__key').should('contain', 'Reason')
+      cy.get('.govuk-summary-list__value').should('contain', bedDetails.reason.name)
+    }
+
+    if (bedDetails.referenceNumber) {
+      cy.get('.govuk-summary-list__key').should('contain', 'Reference number')
+      cy.get('.govuk-summary-list__value').should('contain', bedDetails.referenceNumber)
+    }
+
+    if (bedDetails.notes) {
+      cy.get('.govuk-summary-list__key').should('contain', 'Notes')
+      cy.get('.govuk-summary-list__value').should('contain', bedDetails.notes)
+    }
   }
 }

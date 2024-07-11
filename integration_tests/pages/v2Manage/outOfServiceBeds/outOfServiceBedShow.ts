@@ -65,42 +65,21 @@ export class OutOfServiceBedShowPage extends Page {
           cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[i].updatedAt))
 
           // Revision details
-          if (timelineEvents[i].startDate) {
-            cy.get('.govuk-summary-list__key').should('contain', 'Start date')
-            cy.get('.govuk-summary-list__value').should(
-              'contain',
-              DateFormats.isoDateToUIDate(timelineEvents[i].startDate, { format: 'long' }),
-            )
-          }
-
-          if (timelineEvents[i].endDate) {
-            cy.get('.govuk-summary-list__key').should('contain', 'End date')
-            cy.get('.govuk-summary-list__value').should(
-              'contain',
-              DateFormats.isoDateToUIDate(timelineEvents[i].endDate, { format: 'long' }),
-            )
-          }
-
-          if (timelineEvents[i].reason) {
-            cy.get('.govuk-summary-list__key').should('contain', 'Reason')
-            cy.get('.govuk-summary-list__value').should('contain', timelineEvents[i].reason.name)
-          }
-
-          if (timelineEvents[i].referenceNumber) {
-            cy.get('.govuk-summary-list__key').should('contain', 'Reference number')
-            cy.get('.govuk-summary-list__value').should('contain', timelineEvents[i].referenceNumber)
-          }
-
-          if (timelineEvents[i].notes) {
-            cy.get('.govuk-summary-list__key').should('contain', 'Notes')
-            cy.get('.govuk-summary-list__value').should('contain', timelineEvents[i].notes)
-          }
+          this.shouldShowOutOfServiceBedDetails(timelineEvents[i])
         })
       })
     })
   }
 
+  shouldShowUpdateConfirmationMessage() {
+    this.shouldShowBanner('The out of service bed record has been updated')
+  }
+
   clickTab(tab: 'Details' | 'Timeline'): void {
     cy.get('.moj-sub-navigation__link').contains(tab).click()
+  }
+
+  clickUpdateRecord(): void {
+    cy.get('a').contains('Update record').click()
   }
 }

@@ -1,0 +1,5 @@
+{% macro outOfServiceBedPageHeading(title, outOfServiceBed)%}
+    <span class="govuk-caption-l">{{outOfServiceBed.premises.name}}</span>
+    <span class="govuk-caption-l">Room {{outOfServiceBed.room.name}} | Bed {{outOfServiceBed.bed.name}}</span>
+    <h1 class="govuk-heading-l">{{title}}</h1>
+    {%endmacro%}

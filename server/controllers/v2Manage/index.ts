@@ -3,6 +3,7 @@
 import V2PremisesController from './premises/premisesController'
 import V2BedsController from './premises/bedsController'
 import V2OutOfServiceBedsController from './outOfServiceBedsController'
+import V2UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
 
 import type { Services } from '../../services'
 
@@ -13,12 +14,17 @@ export const controllers = (services: Services) => {
     services.outOfServiceBedService,
     services.premisesService,
   )
+  const v2UpdateOutOfServiceBedsController = new V2UpdateOutOfServiceBedsController(
+    services.outOfServiceBedService,
+    services.premisesService,
+  )
 
   return {
     v2PremisesController,
     v2BedsController,
     v2OutOfServiceBedsController,
+    v2UpdateOutOfServiceBedsController,
   }
 }
 
-export { V2PremisesController, V2BedsController, V2OutOfServiceBedsController }
+export { V2PremisesController, V2BedsController, V2OutOfServiceBedsController, V2UpdateOutOfServiceBedsController }
