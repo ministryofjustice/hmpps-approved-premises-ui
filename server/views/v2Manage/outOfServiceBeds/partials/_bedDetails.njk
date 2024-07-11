@@ -9,8 +9,6 @@
   </ul>
   {%endset%}
 
-  {% set latestRevision = outOfServiceBed.revisionHistory[0] %}
-
   {{
         govukSummaryList({
           rows: [
@@ -19,7 +17,7 @@
                 text: "Start date"
               },
               value: {
-                text: formatDate(latestRevision.startDate, {format: 'long'}) if latestRevision.startDate else "None supplied"
+                text: formatDate(outOfServiceBed.startDate, {format: 'long'}) if outOfServiceBed.startDate else "None supplied"
               }
             },
             {
@@ -27,7 +25,7 @@
                 text: "End date"
               },
               value: {
-                text: formatDate(latestRevision.endDate, {format: 'long'}) if latestRevision.startDate else "None supplied"
+                text: formatDate(outOfServiceBed.endDate, {format: 'long'}) if outOfServiceBed.startDate else "None supplied"
               }
             },
             {
@@ -35,7 +33,7 @@
                 text: "Reason"
               },
               value: {
-                text: latestRevision.reason.name if latestRevision.reason.name else "None supplied"
+                text: outOfServiceBed.reason.name if outOfServiceBed.reason.name else "None supplied"
               }
             },
             {
@@ -43,7 +41,7 @@
                 text: "Reference number"
               },
               value: {
-                text: latestRevision.referenceNumber if latestRevision.referenceNumber else "None supplied"
+                text: outOfServiceBed.referenceNumber if outOfServiceBed.referenceNumber else "None supplied"
               }
             },
             {
@@ -51,7 +49,7 @@
                 text: "Additional information"
               },
               value: {
-                text: latestRevision.notes if latestRevision.notes else "None supplied"
+                text: outOfServiceBed.notes if outOfServiceBed.notes else "None supplied"
               }
             },
             {

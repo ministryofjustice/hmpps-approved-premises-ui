@@ -23,17 +23,19 @@ export class OutOfServiceBedShowPage extends Page {
   }
 
   shouldShowOutOfServiceBedDetail(): void {
-    const latestRevision = this.outOfServiceBed.revisionHistory[0]
-
-    if (latestRevision.startDate) {
-      this.assertDefinition('Start date', DateFormats.isoDateToUIDate(latestRevision.startDate, { format: 'long' }))
+    if (this.outOfServiceBed.startDate) {
+      this.assertDefinition(
+        'Start date',
+        DateFormats.isoDateToUIDate(this.outOfServiceBed.startDate, { format: 'long' }),
+      )
     }
-    if (latestRevision.endDate) {
-      this.assertDefinition('End date', DateFormats.isoDateToUIDate(latestRevision.endDate, { format: 'long' }))
+    if (this.outOfServiceBed.endDate) {
+      this.assertDefinition('End date', DateFormats.isoDateToUIDate(this.outOfServiceBed.endDate, { format: 'long' }))
     }
-    if (latestRevision.reason) this.assertDefinition('Reason', latestRevision.reason.name)
-    if (latestRevision.referenceNumber) this.assertDefinition('Reference number', latestRevision.referenceNumber)
-    if (latestRevision.notes) this.assertDefinition('Additional information', latestRevision.notes)
+    if (this.outOfServiceBed.reason) this.assertDefinition('Reason', this.outOfServiceBed.reason.name)
+    if (this.outOfServiceBed.referenceNumber)
+      this.assertDefinition('Reference number', this.outOfServiceBed.referenceNumber)
+    if (this.outOfServiceBed.notes) this.assertDefinition('Additional information', this.outOfServiceBed.notes)
   }
 
   shouldShowCharacteristics(bed: BedDetail): void {
