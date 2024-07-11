@@ -17,6 +17,7 @@ import paths from '../../paths/manage'
 import { bedDetailFactory, outOfServiceBedFactory, paginatedResponseFactory } from '../../testutils/factories'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
+import { translateCharacteristic } from '../../utils/characteristicsUtils'
 import { OutOfServiceBedService, PremisesService } from '../../services'
 
 jest.mock('../../utils/validation')
@@ -163,6 +164,9 @@ describe('OutOfServiceBedsController', () => {
     it('shows the outOfService bed', async () => {
       const activeTab = 'details'
       const bed = bedDetailFactory.build({ id: outOfServiceBed.bed.id })
+      const translatedCharacteristics = bed.characteristics.map(characteristic =>
+        translateCharacteristic(characteristic),
+      )
       premisesService.getBed.mockResolvedValue(bed)
 
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
@@ -194,7 +198,7 @@ describe('OutOfServiceBedsController', () => {
         id: outOfServiceBed.id,
         referrer,
         activeTab,
-        characteristics: bed.characteristics,
+        characteristics: translatedCharacteristics,
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
       })
     })

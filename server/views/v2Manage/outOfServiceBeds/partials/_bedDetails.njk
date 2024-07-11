@@ -3,8 +3,8 @@
 {% macro outOfServiceBedDetails(outOfServiceBed, characteristics)%}
   {% set characteristicsHtml%}
   <ul>
-    {% for characteristic in characteristics %}
-      <li>{{characteristic.name}}</li>
+    {% for translatedCharacteristicName in characteristics %}
+      <li>{{translatedCharacteristicName}}</li>
     {% endfor %}
   </ul>
   {%endset%}

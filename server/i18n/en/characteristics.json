@@ -1,0 +1,23 @@
+{
+  "isSingle": "Single room",
+  "isFullyFm": "All furnishings and bedding supplied by FM",
+  "hasCrib7Bedding": "Crib 7 rated bedding",
+  "hasSmokeDetector": "Smoke/heat detector",
+  "isTopFloorVulnerable": "On top floor and vulnerable",
+  "isGroundFloorNrOffice": "On ground floor close to office",
+  "hasNearbySprinkler": "Near to sprinkler",
+  "isArsonSuitable": "Suitable for arson risks",
+  "isArsonDesignated": "Designated arson room",
+  "hasArsonInsuranceConditions": "Not insured for arson risk",
+  "isSuitedForSexOffenders": "Suitable for sex offenders",
+  "hasEnSuite": "En suite",
+  "isWheelchairAccessible": "Can be accessed in wheelchair",
+  "hasWideDoor": "Door 90cm or wider",
+  "hasStepFreeAccess": "Step-free access",
+  "hasFixedMobilityAids": "Mobility aids",
+  "hasTurningSpace": "Turning space (1.5m x 1.5m)",
+  "hasCallForAssistance": "Personal / fall alarm",
+  "isWheelchairDesignated": "Designated wheelchair room",
+  "isStepFreeDesignated": "Designated step-free",
+  "isGroundFloor": "Ground floor"
+}
