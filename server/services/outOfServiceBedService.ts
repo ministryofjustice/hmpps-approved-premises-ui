@@ -78,7 +78,7 @@ export default class OutOfServiceBedService {
     page = 1,
     temporality = 'current',
     sortBy,
-    sortDirection,
+    sortDirection = 'asc',
     premisesId,
     apAreaId,
     perPage = 10,

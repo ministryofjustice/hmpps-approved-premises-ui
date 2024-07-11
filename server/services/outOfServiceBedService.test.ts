@@ -133,7 +133,7 @@ describe('OutOfServiceBedService', () => {
       })
     })
 
-    it('uses default values for page, temporality and perPage', async () => {
+    it('uses default values for page, temporality, sortDirection and perPage', async () => {
       const response = paginatedResponseFactory.build({
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
@@ -145,6 +145,7 @@ describe('OutOfServiceBedService', () => {
         page: 1,
         temporality: 'current',
         perPage: 10,
+        sortDirection: 'asc',
       })
     })
   })
