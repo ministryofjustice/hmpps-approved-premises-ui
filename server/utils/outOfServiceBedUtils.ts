@@ -180,12 +180,6 @@ export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1Out
 }
 
 export const overwriteOoSBedWithUserInput = (userInput: Record<string, unknown>, outOfServiceBed: OutOfServiceBed) => {
-  ;['startDate', 'endDate'].forEach(key => {
-    if (userInput[key]) {
-      outOfServiceBed[key] = userInput[key]
-    }
-  })
-
   if (userInput.outOfServiceBed && (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber) {
     outOfServiceBed.referenceNumber = (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber
   }
