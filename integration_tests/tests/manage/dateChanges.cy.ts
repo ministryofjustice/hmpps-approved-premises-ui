@@ -101,4 +101,23 @@ context('Date Changes', () => {
     // And the back link should be populated correctly
     dateChangePage.shouldHaveCorrectBacklink()
   })
+
+  it('show errors when the user chooses to change a date, but does not change dates', () => {
+    const bookingDateChange = bookingFactory.build({ arrivalDate: '2023-01-01', departureDate: '2023-03-02' })
+    // And I have a booking for a premises
+    cy.task('stubBookingGet', { premisesId: premises.id, booking: bookingDateChange })
+    cy.task('stubDateChange', { premisesId: premises.id, bookingId: bookingDateChange.id })
+
+    // And I visit the date change page
+    const dateChangePage = NewDateChangePage.visit(premises.id, bookingDateChange.id)
+
+    // And I change the date of my booking
+    dateChangePage.completeForm('2023-01-01', '2023-03-02')
+    dateChangePage.clickSubmit()
+
+    // Then I should see errors
+    dateChangePage.shouldShowErrorMessagesForFields(['datesToChange'], {
+      datesToChange: 'You must change the selected dates to submit',
+    })
+  })
 })

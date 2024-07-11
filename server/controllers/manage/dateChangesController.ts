@@ -73,6 +73,21 @@ export default class DateChangeController {
           }
         })
 
+        if (payload.newArrivalDate || payload.newDepartureDate) {
+          const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
+          const datesNotChanged =
+            payload.newArrivalDate === booking.arrivalDate || payload.newDepartureDate === booking.departureDate
+          if (datesNotChanged) {
+            addErrorMessageToFlash(req, 'You must change the selected dates to submit', 'datesToChange')
+            return res.redirect(
+              paths.bookings.dateChanges.new({
+                bookingId,
+                premisesId,
+              }),
+            )
+          }
+        }
+
         if (emptyDates.length) {
           const errorData = emptyDates.map((key: keyof NewDateChange) => ({
             propertyName: `$.${key}`,
