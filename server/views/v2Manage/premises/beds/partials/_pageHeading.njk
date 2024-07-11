@@ -1,0 +1,7 @@
+{% macro bedPageHeading(title, bed, premises)%}
+  <span class="govuk-caption-l">
+    <a href="{{paths.v2Manage.premises.show({premisesId: premises.id})}}">{{premises.name}}</a>
+  </span>
+  <h1 class="govuk-heading-l">
+    <span class="govuk-caption-l">Room {{bed.roomName}}</span>{{title}}</h1>
+  {%endmacro%}
