@@ -101,7 +101,7 @@
   "endDate": {
     "empty": "You must enter a end date",
     "invalid": "The end date is an invalid date",
-    "beforeStartDate": "The end date must be before the start date",
+    "beforeStartDate": "The end date must be after the start date",
     "conflict": "This bedspace is not available for these dates"
   },
   "referenceNumber": { "empty": "You must enter a reference number" },
