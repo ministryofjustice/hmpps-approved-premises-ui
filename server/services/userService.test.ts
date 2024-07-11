@@ -7,6 +7,7 @@ import { PaginatedResponse } from '../@types/ui'
 import { ApprovedPremisesUser } from '../@types/shared'
 import ReferenceDataClient from '../data/referenceDataClient'
 import { convertToTitleCase } from '../utils/utils'
+import { userProfileFactory } from '../testutils/factories/user'
 
 jest.mock('../data/userClient')
 jest.mock('../data/referenceDataClient.ts')
@@ -17,7 +18,8 @@ describe('User service', () => {
   const userClient: jest.Mocked<UserClient> = new UserClient(null) as jest.Mocked<UserClient>
   const userClientFactory = jest.fn()
   const referenceDataClientFactory = jest.fn()
-  const userProfile = userFactory.build({ roles: ['workflow_manager', 'assessor'] })
+  const approvedPremisesUser = userFactory.build({ roles: ['workflow_manager', 'assessor'] })
+  const userProfile = userProfileFactory.build({ user: approvedPremisesUser })
   const referenceDataClient = new ReferenceDataClient(null) as jest.Mocked<ReferenceDataClient>
 
   let userService: UserService
@@ -37,12 +39,12 @@ describe('User service', () => {
     it('retrieves and populates information from the API', async () => {
       const result = await userService.getActingUser(token)
 
-      expect(result.name).toEqual(userProfile.deliusUsername)
-      expect(result.id).toEqual(userProfile.id)
-      expect(result.displayName).toEqual(convertToTitleCase(userProfile.name))
-      expect(result.roles).toEqual(userProfile.roles)
-      expect(result.active).toEqual(userProfile.isActive)
-      expect(result.apArea).toEqual(userProfile.apArea)
+      expect(result.name).toEqual(approvedPremisesUser.deliusUsername)
+      expect(result.id).toEqual(approvedPremisesUser.id)
+      expect(result.displayName).toEqual(convertToTitleCase(approvedPremisesUser.name))
+      expect(result.roles).toEqual(approvedPremisesUser.roles)
+      expect(result.active).toEqual(approvedPremisesUser.isActive)
+      expect(result.apArea).toEqual(approvedPremisesUser.apArea)
     })
   })
 

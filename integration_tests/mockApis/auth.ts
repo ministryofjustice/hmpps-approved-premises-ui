@@ -2,11 +2,12 @@ import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
 import { faker } from '@faker-js/faker'
 
-import { ApArea, User, ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
+import { ApArea, ProfileResponse, ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
 
 import { getMatchingRequests, stubFor } from './setup'
 import tokenVerification from './tokenVerification'
 import { apAreaFactory, userFactory } from '../../server/testutils/factories'
+import { userProfileFactory } from '../../server/testutils/factories/user'
 
 const createToken = () => {
   const payload = {
@@ -124,18 +125,18 @@ const token = () =>
 
 export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
 
-const stubProfile = (user: User) =>
+const stubProfile = (profile: ProfileResponse) =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/profile',
+      urlPattern: '/profile/v2',
     },
     response: {
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: user,
+      jsonBody: profile,
     },
   })
 
@@ -145,15 +146,18 @@ export default {
   stubSignIn: (): Promise<[Response, Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
   stubAuthUser: (
-    args: { name?: string; userId?: string; roles?: Array<UserRole>; apArea?: ApArea } = {},
+    args: { name?: string; userId?: string; roles?: Array<UserRole>; apArea?: ApArea; profile?: ProfileResponse } = {},
   ): Promise<Response> =>
     stubProfile(
-      userFactory.build({
-        name: args.name || faker.person.fullName(),
-        id: args.userId || defaultUserId,
-        roles: args.roles || [],
-        apArea: args.apArea || apAreaFactory.build(),
-        isActive: true,
-      }),
+      args.profile ||
+        userProfileFactory.build({
+          user: userFactory.build({
+            name: args.name || faker.person.fullName(),
+            id: args.userId || defaultUserId,
+            roles: args.roles || [],
+            apArea: args.apArea || apAreaFactory.build(),
+            isActive: true,
+          }),
+        }),
     ),
 }

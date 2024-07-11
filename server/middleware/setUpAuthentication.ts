@@ -15,6 +15,10 @@ export default function setUpAuth(): Router {
   router.use(passport.session())
   router.use(flash())
 
+  router.get('/deliusMissingStaffDetails', (req, res) => {
+    return res.render('deliusMissingStaffDetails', { hideNav: true })
+  })
+
   router.get('/autherror', (req, res) => {
     res.status(401)
     if (req.session.messages) {
