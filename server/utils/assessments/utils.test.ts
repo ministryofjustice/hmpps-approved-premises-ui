@@ -413,7 +413,7 @@ describe('utils', () => {
   })
 
   describe('assessmentsTabItems', () => {
-    it.each([['workflow_manager'], ['matcher']])(
+    it.each([['workflow_manager'], ['matcher'], ['assessor']])(
       `returns the all assessment tab items for user with role %s`,
       (role: ApprovedPremisesUserRole) => {
         const user = userDetailsFactory.build({ roles: [role] })
@@ -443,7 +443,7 @@ describe('utils', () => {
       },
     )
   })
-  it('returns the all assessment tab items except requests for placement for user with out roles workflow_manager and matcher ', () => {
+  it('returns the all assessment tab items except requests for placement for user with out roles workflow_manager, matcher or assessor', () => {
     const user = userDetailsFactory.build({ roles: ['manager'] })
 
     expect(assessmentsTabItems(user)).toEqual([

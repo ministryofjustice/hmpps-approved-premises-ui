@@ -203,7 +203,7 @@ const assessmentsTabItems = (user: UserDetails, activeTab?: string): Array<TabIt
     active: activeTab === 'requests_for_placement',
   }
 
-  if (hasRole(user, 'workflow_manager') || hasRole(user, 'matcher')) {
+  if (hasRole(user, 'workflow_manager') || hasRole(user, 'matcher') || hasRole(user, 'assessor')) {
     tabItems.splice(1, 0, requestForPlacementTabItem)
   }
 
