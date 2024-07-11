@@ -38,6 +38,9 @@ context('OutOfServiceBeds', () => {
       // And I should see the bed characteristics
       page.shouldShowCharacteristics(bedDetail)
 
+      // And I should see links to the premises and bed in the page heading
+      page.shouldLinkToPremisesAndBed(outOfServiceBed)
+
       // When I click the 'Timeline' tab
       page.clickTab('Timeline')
 
