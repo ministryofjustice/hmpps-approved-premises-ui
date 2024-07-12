@@ -85,4 +85,18 @@ export class OutOfServiceBedShowPage extends Page {
   clickUpdateRecord(): void {
     cy.get('a').contains('Update record').click()
   }
+
+  shouldLinkToPremisesAndBed(outOfServiceBed: OutOfServiceBed) {
+    cy.get('a')
+      .contains(outOfServiceBed.premises.name)
+      .should('have.attr', 'href', paths.v2Manage.premises.show({ premisesId: outOfServiceBed.premises.id }))
+
+    cy.get('a')
+      .contains(outOfServiceBed.bed.name)
+      .should(
+        'have.attr',
+        'href',
+        paths.v2Manage.premises.beds.show({ premisesId: outOfServiceBed.premises.id, bedId: outOfServiceBed.bed.id }),
+      )
+  }
 }
