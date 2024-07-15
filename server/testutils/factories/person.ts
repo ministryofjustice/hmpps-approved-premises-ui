@@ -2,10 +2,12 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { FullPerson, PersonSummary, RestrictedPerson } from '@approved-premises/api'
+import { FullPersonSummary } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
+export const getCrn = () => `C${faker.number.int({ min: 100000, max: 999999 })}`
 export const fullPersonFactory = Factory.define<FullPerson>(() => ({
-  crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
+  crn: getCrn(),
   name: faker.person.fullName(),
   dateOfBirth: DateFormats.dateObjToIsoDate(faker.date.past()),
   sex: faker.helpers.arrayElement(['Male', 'Female', 'Other', 'Prefer not to say']),
@@ -19,11 +21,22 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
 }))
 
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
-  crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
+  crn: getCrn(),
   type: 'RestrictedPerson',
 }))
 
 export const personSummaryFactory = Factory.define<PersonSummary>(() => ({
-  crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
+  crn: getCrn(),
   personType: faker.helpers.arrayElement(['FullPersonSummary', 'RestrictedPersonSummary', 'UnknownPersonSummary']),
+}))
+
+export const restrictedPersonSummaryFactory = Factory.define<PersonSummary>(() => ({
+  crn: getCrn(),
+  personType: 'RestrictedPersonSummary',
+}))
+
+export const fullPersonSummaryFactory = Factory.define<FullPersonSummary>(() => ({
+  crn: getCrn(),
+  personType: 'FullPersonSummary',
+  name: faker.person.fullName(),
 }))

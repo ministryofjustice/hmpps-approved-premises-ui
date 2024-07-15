@@ -4,12 +4,13 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { PersonRisks, RiskEnvelopeStatus, RiskTierLevel } from '@approved-premises/api'
 import { RiskLevel, TierLetter, TierNumber } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
+import { getCrn } from './person'
 
 const riskLevels: Array<RiskLevel> = ['Low', 'Medium', 'High', 'Very High']
 const riskEnvelopeStatuses: Array<RiskEnvelopeStatus> = ['retrieved', 'not_found', 'error']
 
 export default Factory.define<PersonRisks>(() => ({
-  crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
+  crn: getCrn(),
   roshRisks: roshRisksFactory.build(),
   mappa: mappaFactory.build(),
   flags: flagsFactory.build(),

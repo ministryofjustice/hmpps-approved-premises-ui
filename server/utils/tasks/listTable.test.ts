@@ -28,6 +28,7 @@ import { TaskSortField } from '../../@types/shared'
 import paths from '../../paths/tasks'
 import { daysUntilDueCell } from '../tableUtils'
 import { TaskStatusTag } from './statusTag'
+import { fullPersonSummaryFactory } from '../../testutils/factories/person'
 
 describe('table', () => {
   beforeEach(() => {
@@ -197,16 +198,52 @@ describe('table', () => {
   })
 
   describe('nameAnchorCell', () => {
-    it('returns the cell when there is a person present in the task', () => {
+    it('returns the name when the person summary is FullPersonSummary  in the task', () => {
+      const personSummary = fullPersonSummaryFactory.build()
       const task = taskFactory.build({
         taskType: 'Assessment',
+        personSummary,
       })
       expect(nameAnchorCell(task)).toEqual({
         html: linkTo(
           paths.tasks.show,
           { id: task.id, taskType: kebabCase(task.taskType) },
           {
-            text: task.personName,
+            text: personSummary.name,
+            attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+          },
+        ),
+      })
+    })
+    it('returns the Limited Access Offender (LAO) CRN when the person summary is RestrictedPersonSummary in the task', () => {
+      const personSummary = fullPersonSummaryFactory.build({ personType: 'RestrictedPersonSummary' })
+      const task = taskFactory.build({
+        taskType: 'Assessment',
+        personSummary,
+      })
+      expect(nameAnchorCell(task)).toEqual({
+        html: linkTo(
+          paths.tasks.show,
+          { id: task.id, taskType: kebabCase(task.taskType) },
+          {
+            text: `LAO CRN: ${personSummary.crn}`,
+            attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+          },
+        ),
+      })
+    })
+    it('returns the not found CRN when the person summary is UnknownPersonSummary  in the task', () => {
+      const personSummary = fullPersonSummaryFactory.build({ personType: 'UnknownPersonSummary' })
+      const task = taskFactory.build({
+        taskType: 'Assessment',
+        personSummary,
+      })
+      expect(nameAnchorCell(task)).toEqual({
+        html: linkTo(
+          paths.tasks.show,
+          { id: task.id, taskType: kebabCase(task.taskType) },
+          {
+            text: `Not Found CRN: ${personSummary.crn}`,
             attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
           },
         ),

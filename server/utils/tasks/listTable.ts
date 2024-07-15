@@ -1,6 +1,8 @@
 import { isAssessmentTask, isPlacementApplicationTask, isPlacementRequestTask } from './assertions'
 import {
   AssessmentDecision,
+  FullPersonSummary,
+  PersonSummary,
   PlacementApplicationDecision,
   PlacementRequestTaskOutcome,
   SortDirection,
@@ -89,9 +91,22 @@ const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name,
 })
 
+const getPersonName = (personSummary: PersonSummary): string => {
+  switch (personSummary.personType) {
+    case 'FullPersonSummary':
+      return (personSummary as FullPersonSummary).name
+    case 'RestrictedPersonSummary':
+      return `LAO CRN: ${personSummary.crn}`
+    case 'UnknownPersonSummary':
+      return `Not Found CRN: ${personSummary.crn}`
+    default:
+      return ''
+  }
+}
+
 const nameAnchorCell = (task: Task): TableCell => ({
   html: linkTo(paths.tasks.show, taskParams(task), {
-    text: task.personName,
+    text: getPersonName(task.personSummary),
     attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
   }),
 })
@@ -102,7 +117,6 @@ const apAreaCell = (task: Task): TableCell => ({
 
 const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows: Array<TableRow> = []
-
   tasks.forEach(task => {
     rows.push([
       nameAnchorCell(task),
