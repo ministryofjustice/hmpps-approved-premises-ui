@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
+import { ApplicationService, PlacementApplicationService, PlacementRequestService } from '../../services'
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
@@ -8,7 +8,6 @@ export default class PlacementRequestsController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly placementApplicationService: PlacementApplicationService,
-    private readonly taskService: TaskService,
     private readonly applicationService: ApplicationService,
   ) {}
 

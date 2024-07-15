@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
 
-import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
+import { ApplicationService, PlacementApplicationService, PlacementRequestService } from '../../services'
 import {
   apAreaFactory,
   applicationFactory,
@@ -33,7 +33,6 @@ describe('PlacementRequestsController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const placementApplicationService = createMock<PlacementApplicationService>({})
-  const taskService = createMock<TaskService>({})
   const applicationService = createMock<ApplicationService>({})
 
   let placementRequestsController: PlacementRequestsController
@@ -42,7 +41,6 @@ describe('PlacementRequestsController', () => {
     placementRequestsController = new PlacementRequestsController(
       placementRequestService,
       placementApplicationService,
-      taskService,
       applicationService,
     )
   })
