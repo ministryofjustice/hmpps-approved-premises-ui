@@ -44,4 +44,9 @@ export class PremisesPage extends BasePage {
     await this.clickActions()
     await this.page.getByRole('menuitem', { name: 'Create a placement' }).click()
   }
+
+  async viewOutOfServiceBedRecords() {
+    await this.page.getByRole('button', { name: 'Actions' }).click()
+    await this.page.getByRole('menuitem', { name: 'Manage out of service bed records' }).click()
+  }
 }

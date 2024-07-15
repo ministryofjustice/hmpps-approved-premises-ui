@@ -1,3 +1,6 @@
+import { faker } from '@faker-js/faker/locale/en_GB'
+import { OutOfServiceBedsPremisesListPage } from '../pages/manage/v2OutOfServiceBedsIndexPage'
+import { OutOfServiceBedPage } from '../pages/manage/v2OutOfServiceBedPage'
 import { test } from '../test'
 import { visitDashboard } from '../steps/apply'
 import { PremisesListPage } from '../pages/manage/premisesListPage'
@@ -6,6 +9,7 @@ import { BedsPage } from '../pages/manage/bedsPage'
 import { V2BedPage } from '../pages/manage/v2BedPage'
 import { V2MarkBedAsOutOfServicePage } from '../pages/manage/v2MarkBedAsOutOfServicePage'
 import { signIn } from '../steps/signIn'
+import { UpdateOutOfServiceBedPage } from '../pages/manage/v2UpdateOutOfServiceBedPage'
 
 test.describe.configure({ mode: 'parallel' })
 
@@ -49,4 +53,58 @@ test('Future manager marks a bed as out of service in the V2 Manage area', async
 
   // And I see the success message on the 'history' pane of the bed page
   await revisitedV2BedPage.showsOutOfServiceBedRecordedSuccessMessage()
+})
+
+test('Future manager updates an out of service bed', async ({ page, futureManager }) => {
+  // Given I am signed in as a future manager
+  await signIn(page, futureManager)
+
+  // And I am on the list of premises page
+  const dashboard = await visitDashboard(page)
+  await dashboard.clickManage()
+  const premisesListPage = await PremisesListPage.initialize(page, 'List of Approved Premises')
+
+  // When choose to view the detail of a particular premises
+  await premisesListPage.choosePremises(premisesName)
+
+  // Then I should see the premises page
+  const premisesPage = await PremisesPage.initialize(page, premisesName)
+
+  // When I choose to manage its out of service beds
+  await premisesPage.viewOutOfServiceBedRecords()
+
+  // Then I should see the out of service beds list page for the premises
+  const manageOOSBedsPage = await OutOfServiceBedsPremisesListPage.initialize(page)
+
+  // When I select the 'future' tab and select the out of service bed created earlier
+  await manageOOSBedsPage.selectFutureTab()
+  await manageOOSBedsPage.selectOutOfServiceBed()
+
+  // Then I should see the out of service bed page
+  const outOfServiceBedPage = await OutOfServiceBedPage.initialize(page)
+
+  // When I select 'Update record'
+  await outOfServiceBedPage.selectUpdateRecord()
+
+  // Then I should see the update out of service bed record page
+  const updateOOSBedPage = await UpdateOutOfServiceBedPage.initialize(page)
+
+  // When I update the out of service bed record
+  const uniqueReferenceNumber = faker.string.uuid()
+  const update = {
+    referenceNumber: uniqueReferenceNumber,
+    additionalInformation: `Additional information about update ${uniqueReferenceNumber}`,
+  }
+  await updateOOSBedPage.updateBed(update)
+  await updateOOSBedPage.clickSave()
+
+  // Then I should see the out of service bed timeline page with the updated details
+  const outOfServiceBedPage2 = await OutOfServiceBedPage.initialize(page)
+  await outOfServiceBedPage2.shouldShowUpdatedDetails(update)
+
+  // When I select the details tab
+  await outOfServiceBedPage2.selectDetails()
+
+  // Then I should see the updated details
+  await outOfServiceBedPage2.shouldShowUpdatedDetails(update)
 })
