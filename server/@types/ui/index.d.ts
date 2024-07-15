@@ -29,7 +29,6 @@ import {
   PlacementApplication,
   PlacementApplicationTask,
   PlacementCriteria,
-  PlacementRequest,
   PlacementRequestStatus,
   PlacementRequestTask,
   ReleaseTypeOption,
@@ -331,8 +330,6 @@ export interface GroupedApplications {
   requestedFurtherInformation: Array<ApplicationSummary>
   submitted: Array<ApplicationSummary>
 }
-
-export type GroupedPlacementRequests = Record<PlacementRequestStatus, Array<PlacementRequest>>
 
 export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask | PlacementRequestTask
 

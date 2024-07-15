@@ -1,8 +1,4 @@
-import {
-  GroupedPlacementRequests,
-  PaginatedResponse,
-  PlacementRequestDashboardSearchOptions,
-} from '@approved-premises/ui'
+import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import {
   NewBookingNotMade,
   NewPlacementRequestBooking,
@@ -18,24 +14,6 @@ import { WithdrawPlacementRequestReason } from '../@types/shared/models/Withdraw
 
 export default class PlacementRequestService {
   constructor(private readonly placementRequestClientFactory: RestClientBuilder<PlacementRequestClient>) {}
-
-  async getAll(token: string): Promise<GroupedPlacementRequests> {
-    const placementRequestClient = this.placementRequestClientFactory(token)
-
-    const results = {
-      notMatched: [],
-      unableToMatch: [],
-      matched: [],
-    } as GroupedPlacementRequests
-
-    const placementRequests = await placementRequestClient.all()
-
-    placementRequests.forEach(placementRequest => {
-      results[placementRequest.status].push(placementRequest)
-    })
-
-    return results
-  }
 
   async getDashboard(
     token: string,
