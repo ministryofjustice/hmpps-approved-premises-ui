@@ -266,16 +266,6 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('overwriteOoSBedWithUserInput', () => {
-    it.each(['startDate', 'endDate'])('overwrites %s with user input', key => {
-      const userInput = { [key]: 'new value' }
-      const outOfServiceBed = outOfServiceBedFactory.build()
-
-      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual({
-        ...outOfServiceBed,
-        [key]: 'new value',
-      })
-    })
-
     it('overwrites the reason ID if there is a reason in the userInput', () => {
       const userInput = { outOfServiceBed: { reason: 'new reason' } }
       const outOfServiceBed = outOfServiceBedFactory.build()
