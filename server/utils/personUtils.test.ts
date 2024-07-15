@@ -1,5 +1,12 @@
 import { fullPersonFactory, restrictedPersonFactory } from '../testutils/factories/person'
-import { isApplicableTier, isFullPerson, laoName, nameOrPlaceholderCopy, tierBadge } from './personUtils'
+import {
+  isApplicableTier,
+  isFullPerson,
+  isUnknownPerson,
+  laoName,
+  nameOrPlaceholderCopy,
+  tierBadge,
+} from './personUtils'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
@@ -79,6 +86,16 @@ describe('personUtils', () => {
     it('does not include limited access offender text if showLaoLabel true and person is not restricted to others', () => {
       const person = fullPersonFactory.build({ isRestricted: false })
       expect(nameOrPlaceholderCopy(person, 'the person', true)).toEqual(person.name)
+    })
+  })
+
+  describe('isUnknownPerson', () => {
+    it('returns true if the person is a Unknown person', () => {
+      expect(isUnknownPerson(fullPersonFactory.build({ type: 'UnknownPerson' }))).toEqual(true)
+    })
+
+    it('returns false if the person is not Unknown person', () => {
+      expect(isUnknownPerson(restrictedPersonFactory.build())).toEqual(false)
     })
   })
 })

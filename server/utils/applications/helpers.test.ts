@@ -2,7 +2,7 @@ import { when } from 'jest-when'
 import { applicationSummaryFactory, personFactory } from '../../testutils/factories'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import paths from '../../paths/apply'
-import { isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
+import { isFullPerson, isUnknownPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 
 jest.mock('../personUtils')
 
@@ -32,6 +32,16 @@ describe('helpers', () => {
       const person = personFactory.build()
 
       when(isFullPerson).calledWith(person).mockReturnValue(false)
+
+      expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`LAO CRN: ${person.crn}`))
+    })
+
+    it('returns an LAO Not Found for person type Unknown', () => {
+      const applicationSummary = applicationSummaryFactory.build()
+      const person = personFactory.build()
+
+      when(isFullPerson).calledWith(person).mockReturnValue(false)
+      when(isUnknownPerson).calledWith(person).mockReturnValue(false)
 
       expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`LAO CRN: ${person.crn}`))
     })
