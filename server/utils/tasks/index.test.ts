@@ -6,6 +6,7 @@ import { arrivalDateFromApplication } from '../applications/arrivalDateFromAppli
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
+import placementApplicationTask from '../../testutils/factories/placementApplicationTask'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -154,6 +155,70 @@ describe('index', () => {
             },
             value: {
               text: task.allocatedToStaffMember.name,
+            },
+          },
+        ])
+      })
+    })
+    describe('when taskType is placementApplication, arrival date should be derived from placementDates', () => {
+      const placementApplication = placementApplicationTask.build()
+
+      it('returns the summary list when the assessment has a staff member allocated', () => {
+        expect(taskSummary(placementApplication, application)).toEqual([
+          {
+            key: {
+              text: 'Name',
+            },
+            value: {
+              text: (application.person as FullPerson).name,
+            },
+          },
+          {
+            key: {
+              text: 'CRN',
+            },
+            value: {
+              text: application.person.crn,
+            },
+          },
+          {
+            key: {
+              text: 'Arrival date',
+            },
+            value: {
+              text: DateFormats.isoDateToUIDate(placementApplication.placementDates[0].expectedArrival),
+            },
+          },
+          {
+            key: {
+              text: 'Application Type',
+            },
+            value: {
+              text: getApplicationType(application),
+            },
+            actions: {
+              items: [
+                {
+                  href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
+                  text: 'View timeline',
+                },
+              ],
+            },
+          },
+          {
+            key: {
+              text: 'AP Area',
+            },
+            value: {
+              text: application.apArea.name,
+            },
+          },
+          {
+            key: {
+              text: 'Currently allocated to',
+            },
+            value: {
+              text: placementApplication.allocatedToStaffMember.name,
             },
           },
         ])
