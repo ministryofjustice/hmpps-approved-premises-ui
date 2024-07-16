@@ -24,7 +24,6 @@ test.describe.configure({ mode: 'parallel' })
 
 const premisesName = 'Test AP 10'
 const apArea = 'South West & South Central'
-const roomName = 'Bed 101 - 1'
 
 const navigateToPremisesPage = async (page: Page, { filterPremisesPage } = { filterPremisesPage: false }) => {
   // Given I visit the dashboard
@@ -188,7 +187,7 @@ test('Mark a bed as out of service', async ({ page, legacyManager }) => {
   await bedsPage.viewAvailableBed()
 
   // Then I should be able to mark a bed as out of service
-  const bedPage = await BedPage.initialize(page, roomName)
+  const bedPage = await BedPage.initialize(page, 'Manage beds')
   await bedPage.clickMarkBedAsOutOfService()
 
   // When I fill in and submit the form
