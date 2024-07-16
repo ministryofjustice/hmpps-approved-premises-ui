@@ -347,6 +347,32 @@ describe('TasksController', () => {
       expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, task.applicationId)
     })
 
+    it('fetches the application and a list of qualified users for Placement Application task', async () => {
+      const placementApplication = taskFactory.build({ taskType: 'PlacementApplication' })
+      const placementApplicationTaskWrapper = taskWrapperFactory.build({ task: placementApplication })
+      taskService.find.mockResolvedValue(placementApplicationTaskWrapper)
+      const requestHandler = tasksController.show()
+      request.params.taskType = 'placement-request'
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('tasks/show', {
+        pageHeading: `Reallocate Request for Placement`,
+        application,
+        task: placementApplicationTaskWrapper.task,
+        users: placementApplicationTaskWrapper.users,
+        errors: {},
+        errorSummary: [],
+        apAreas,
+        apAreaId: '',
+        qualification: '',
+      })
+
+      expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType, {
+        apAreaId: '',
+      })
+    })
+
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
