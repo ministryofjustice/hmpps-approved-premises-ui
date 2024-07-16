@@ -22,6 +22,7 @@ generic-service:
     FLIPT_ENABLED: true
     FLIPT_URL: 'https://feature-flags-dev.hmpps.service.justice.gov.uk'
     FLIPT_NAMESPACE: 'community-accommodation'
+    ENABLE_V2_MATCH: true
 
   allowlist: null
 
