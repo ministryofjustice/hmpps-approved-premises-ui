@@ -2,10 +2,17 @@ import Page from '../page'
 
 import { FullPerson, PlacementRequestDetail } from '../../../server/@types/shared'
 import { assessmentSummary, documentSummary, matchingInformationSummary } from '../../../server/utils/placementRequests'
+import paths from '../../../server/paths/admin'
 
 export default class PlacementRequestPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
     super((placementRequest.person as FullPerson).name)
+  }
+
+  static visit(placementRequest: PlacementRequestDetail) {
+    cy.visit(paths.admin.placementRequests.show({ id: placementRequest.id }))
+
+    return new PlacementRequestPage(placementRequest)
   }
 
   shouldShowAssessmentDetails() {
@@ -52,6 +59,10 @@ export default class PlacementRequestPage extends Page {
   }
 
   clickSearch() {
-    cy.get('a').contains('Search').click()
+    cy.get('a').contains('Search for a space').click()
+  }
+
+  clickActions() {
+    cy.get('button').contains('Actions').click()
   }
 }

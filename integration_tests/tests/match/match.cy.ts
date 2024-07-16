@@ -1,8 +1,6 @@
 import { addDays, weeksToDays } from 'date-fns'
 import SuccessPage from '../../pages/match/successPage'
 import ConfirmationPage from '../../pages/match/confirmationPage'
-import PlacementRequestPage from '../../pages/match/placementRequestPage'
-import ListPage from '../../pages/match/listPlacementRequestsPage'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
@@ -11,31 +9,32 @@ import {
   bedSearchResultsFactory,
   personFactory,
   placementRequestDetailFactory,
-  placementRequestTaskFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
-import { DateFormats } from '../../../server/utils/dateUtils'
 import { PlacementCriteria } from '../../../server/@types/shared/models/PlacementCriteria'
+import { signIn } from '../signIn'
 import { mapPlacementRequestToBedSearchParams } from '../../../server/utils/placementRequests/utils'
-import { FullPerson } from '../../../server/@types/shared'
+import { DateFormats } from '../../../server/utils/dateUtils'
+import ListPage from '../../pages/admin/placementApplications/listPage'
 
 context('Placement Requests', () => {
   beforeEach(() => {
+    process.env.ENABLE_V2_MATCH = 'true'
+
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
-
-    // Given I am logged in
-    cy.signIn()
+    cy.task('stubApAreaReferenceData')
   })
 
-  it('allows me to search for available rooms', () => {
-    // Given there is a placement request waiting for me to match
-    const person = personFactory.build()
+  it('allows me to search for an available space', () => {
+    // Given I am signed in as a cru_member
+    signIn(['cru_member'])
 
+    // And there is a placement request waiting for me to match
+    const person = personFactory.build()
     const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders'] as Array<PlacementCriteria>
     const desirableCriteria = ['isCatered', 'hasEnSuite'] as Array<PlacementCriteria>
-
     const placementRequest = placementRequestDetailFactory.build({
       person,
       status: 'notMatched',
@@ -43,43 +42,15 @@ context('Placement Requests', () => {
       essentialCriteria,
       desirableCriteria,
     })
-
-    const placementRequestTask = placementRequestTaskFactory.build({
-      id: placementRequest.id,
-      placementRequestStatus: placementRequest.status,
-    })
-
     const firstBedSearchParameters = bedSearchParametersUiFactory.build({
       requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
     })
-
     const bedSearchResults = bedSearchResultsFactory.build()
-
-    cy.task('stubTasks', [placementRequestTask])
     cy.task('stubBedSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubBookingFromPlacementRequest', placementRequest)
 
-    // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit()
-
-    // And I click on a placement request
-    listPage.clickFindBed(placementRequest)
-
-    // Then I should be taken to the placement request's page
-    const showPage = Page.verifyOnPage(PlacementRequestPage, placementRequest)
-
-    // And I should see the placement request information
-    showPage.shouldShowAssessmentDetails()
-    showPage.shouldShowMatchingInformationSummary()
-    showPage.shouldShowDocuments()
-    showPage.shouldShowPreviousCancellations()
-
-    // When I click on the search button
-    showPage.clickSearch()
-
-    // Then I should be taken to the search page
-    const searchPage = Page.verifyOnPage(SearchPage, person.name)
+    // When I visit the search page
+    const searchPage = SearchPage.visit(placementRequest)
 
     // Then I should see the essential criteria
     searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
@@ -95,11 +66,12 @@ context('Placement Requests', () => {
     searchPage.shouldDisplaySearchResults(bedSearchResults, firstBedSearchParameters)
     numberOfSearches += 1
 
+    // Given I want to search for a different space
+    // When I enter new details on the search screen
     const newSearchParameters = bedSearchParametersUiFactory.build({
       requiredCharacteristics: [desirableCriteria[0], desirableCriteria[1]],
     })
 
-    // When I enter details on the search page
     searchPage.changeSearchParameters(newSearchParameters)
     searchPage.clickSubmit()
     numberOfSearches += 1
@@ -107,7 +79,7 @@ context('Placement Requests', () => {
     // Then I should see the search results
     Page.verifyOnPage(SearchPage, person.name)
 
-    // Then I should still see the essential criteria
+    // And I should still see the essential criteria
     searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
 
     // And the new desirable criteria should be selected
@@ -155,37 +127,24 @@ context('Placement Requests', () => {
   })
 
   it('allows me to make a booking', () => {
+    signIn(['cru_member'])
+
     // Given there is a placement request waiting for me to match
     const placementRequest = placementRequestDetailFactory.build({
       status: 'notMatched',
       person: personFactory.build(),
-    })
-    const placementRequestTask = placementRequestTaskFactory.build({
-      id: placementRequest.id,
-      placementRequestStatus: placementRequest.status,
     })
     const bedSearchResults = bedSearchResultsFactory.build()
 
     const bedSearchParameters = mapPlacementRequestToBedSearchParams(placementRequest)
     const duration = Number(bedSearchParameters.durationWeeks) * 7 + Number(bedSearchParameters.durationDays)
 
-    cy.task('stubTasks', [placementRequestTask])
     cy.task('stubBedSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubBookingFromPlacementRequest', placementRequest)
 
-    // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit()
-
-    // And I click on a placement request
-    listPage.clickFindBed(placementRequest)
-
-    // And I click on the search button
-    const showPage = new PlacementRequestPage(placementRequest)
-    showPage.clickSearch()
-
-    // And I click to book a room
-    const searchPage = new SearchPage((placementRequest.person as FullPerson).name)
+    const searchPage = SearchPage.visit(placementRequest)
+    // When I click to book the first space
     searchPage.clickSearchResult(bedSearchResults.results[0])
 
     // Then I should be shown the confirmation page
@@ -217,44 +176,34 @@ context('Placement Requests', () => {
   })
 
   it('allows me to mark a placement request as unable to match', () => {
+    signIn(['cru_member'])
+
     // Given there is a placement request waiting for me to match
     const placementRequest = placementRequestDetailFactory.build({
       status: 'notMatched',
       person: personFactory.build(),
     })
-    const placementRequestTask = placementRequestTaskFactory.build({
-      id: placementRequest.id,
-      placementRequestStatus: placementRequest.status,
-    })
+
     const bedSearchResults = bedSearchResultsFactory.build()
 
-    cy.task('stubTasks', [placementRequestTask])
     cy.task('stubBedSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubBookingFromPlacementRequest', placementRequest)
     cy.task('stubUnableToMatchPlacementRequest', placementRequest)
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
 
-    // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit()
-
-    // And I click on a placement request
-    listPage.clickFindBed(placementRequest)
-
-    // And I click on the search button
-    const showPage = new PlacementRequestPage(placementRequest)
-    showPage.clickSearch()
-
-    // Given I am unable to match the placement request to a bed
-    const searchPage = new SearchPage((placementRequest.person as FullPerson).name)
+    // When I visit the search
+    const searchPage = SearchPage.visit(placementRequest)
+    // And I declare that I do not see a suitable space
     searchPage.clickUnableToMatch()
 
-    // When I complete the form and click submit
+    // Then I am able to complete a form to explain why I the spaces weren't suitable
     const unableToMatchPage = new UnableToMatchPage()
+
+    // When I complete the form
     unableToMatchPage.completeForm()
     unableToMatchPage.clickSubmit()
 
     // Then I should see a success message on the list page
     Page.verifyOnPage(ListPage)
-    listPage.shouldShowBanner('Placement request marked unable to match')
   })
 })
