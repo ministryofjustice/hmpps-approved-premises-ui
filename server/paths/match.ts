@@ -29,9 +29,6 @@ export default {
       confirm: placementRequestBookingsPath.path('confirm'),
       create: placementRequestBookingsPath,
     },
-    beds: {
-      search: placementRequestPath.path('beds/search'),
-    },
   },
   v2Match,
 }
