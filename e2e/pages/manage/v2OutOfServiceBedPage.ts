@@ -12,7 +12,7 @@ export class OutOfServiceBedPage extends BasePage {
   }
 
   async shouldShowUpdatedDetails(update: Record<string, string>) {
-    await expect(this.page.getByText(update.referenceNumber)).toBeVisible()
+    await expect(this.page.getByText(update.referenceNumber, { exact: true })).toBeVisible()
     await expect(this.page.getByText(update.additionalInformation)).toBeVisible()
   }
 
