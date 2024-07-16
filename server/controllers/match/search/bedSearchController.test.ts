@@ -30,7 +30,7 @@ describe('bedSearchController', () => {
 
   let bedsController: BedsController
 
-  const formPath = matchPaths.placementRequests.beds.search({ id: placementRequestDetail.id })
+  const formPath = matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id })
 
   beforeEach(() => {
     jest.resetAllMocks()

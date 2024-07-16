@@ -41,7 +41,7 @@ export default class BedSearchController {
         placementRequest,
         tier,
         selectedDesirableCriteria,
-        formPath: matchPaths.placementRequests.beds.search({ id: placementRequest.id }),
+        formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         ...params,
         ...startDateObjFromParams(params),
       })
