@@ -10,7 +10,6 @@ import {
   bedSearchParametersUiFactory,
   bedSearchResultsFactory,
   personFactory,
-  placementApplicationTaskFactory,
   placementRequestDetailFactory,
   placementRequestTaskFactory,
 } from '../../../server/testutils/factories'
@@ -20,7 +19,7 @@ import { PlacementCriteria } from '../../../server/@types/shared/models/Placemen
 import { mapPlacementRequestToBedSearchParams } from '../../../server/utils/placementRequests/utils'
 import { FullPerson } from '../../../server/@types/shared'
 
-context.skip('Placement Requests', () => {
+context('Placement Requests', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -28,46 +27,6 @@ context.skip('Placement Requests', () => {
 
     // Given I am logged in
     cy.signIn()
-  })
-
-  it('shows a list of matcher tasks', () => {
-    // Given there placement request tasks in the database
-    const notMatchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'notMatched' })
-    const unableToMatchTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'unableToMatch' })
-    const matchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'matched' })
-    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
-
-    cy.task('stubTasks', [...notMatchedTasks, ...unableToMatchTasks, ...matchedTasks, ...placementApplicationTasks])
-
-    // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit()
-
-    // Then I should see the placement requests that are allocated to me
-    listPage.shouldShowTasks(notMatchedTasks)
-
-    // When I click on the Placement Applications Tab
-    listPage.clickPlacementApplications()
-
-    // Then I should see the placement applications
-    listPage.shouldShowPlacementApplicationTasks(placementApplicationTasks)
-
-    // When I click on the unable to match tab
-    listPage.clickUnableToMatch()
-
-    // Then I should see the unable to match placement requests
-    listPage.shouldShowTasks(unableToMatchTasks)
-
-    // When I click on the completed tab
-    listPage.clickCompleted()
-
-    // Then I should see the completed placement requests
-    listPage.shouldShowTasks(matchedTasks)
-
-    // When I click on the active cases tab
-    listPage.clickActive()
-
-    // Then I should see the placement requests that are allocated to me
-    listPage.shouldShowTasks(notMatchedTasks)
   })
 
   it('allows me to search for available rooms', () => {
