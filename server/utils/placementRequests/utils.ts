@@ -39,7 +39,7 @@ export const formatReleaseType = (placementRequest: PlacementRequest) => allRele
 
 export const searchButton = (placementRequest: PlacementRequest) =>
   linkTo(
-    paths.placementRequests.beds.search,
+    paths.v2Match.placementRequests.search.spaces,
     { id: placementRequest.id },
     { text: 'Search', attributes: { class: 'govuk-button' } },
   )
