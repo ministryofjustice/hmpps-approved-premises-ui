@@ -5,7 +5,6 @@ import assessPaths from '../../paths/assess'
 import applyPaths from '../../paths/apply'
 import managePaths from '../../paths/manage'
 import taskPaths from '../../paths/tasks'
-import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
 import { retrieveFeatureFlag } from '../retrieveFeatureFlag'
@@ -39,13 +38,6 @@ export const sections = {
     description: 'Re-allocate assessment and matching tasks to manage staff workloads',
     shortTitle: 'Task allocation',
     href: taskPaths.tasks.index({}),
-  },
-  match: {
-    id: 'match',
-    title: 'Match people to Approved Premises placements',
-    description: "Allocate cases to suitable Approved Premises based on a person's needs",
-    shortTitle: 'Match',
-    href: matchPaths.placementRequests.index({}),
   },
   cruDashboard: {
     id: 'cruDashboard',

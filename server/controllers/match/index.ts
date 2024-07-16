@@ -7,12 +7,11 @@ import BookingsController from './placementRequests/bookingsController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { placementApplicationService, placementRequestService, bedService, taskService, applicationService } = services
+  const { placementApplicationService, placementRequestService, bedService, applicationService } = services
 
   const placementRequestController = new PlacementRequestController(
     placementRequestService,
     placementApplicationService,
-    taskService,
     applicationService,
   )
   const bedController = new BedSearchController(bedService, placementRequestService)
