@@ -43,7 +43,7 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.v2Manage.premises.beds.show.pattern, v2BedsController.show(), {
     auditEvent: 'SHOW_BED',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['future_manager', 'cru_member'],
   })
   get(paths.v2Manage.premises.beds.overbookings.show.pattern, bedsController.overbookings(), {
     auditEvent: 'SHOW_OVERBOOKINGS',
@@ -95,7 +95,7 @@ export default function routes(controllers: Controllers, router: Router, service
   // Out of service beds
   get(paths.v2Manage.outOfServiceBeds.new.pattern, v2OutOfServiceBedsController.new(), {
     auditEvent: 'NEW_OUT_OF_SERVICE_BED',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['future_manager', 'cru_member'],
   })
   post(paths.v2Manage.outOfServiceBeds.create.pattern, v2OutOfServiceBedsController.create(), {
     auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
@@ -105,19 +105,19 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'CREATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['future_manager', 'cru_member'],
   })
   get(paths.v2Manage.outOfServiceBeds.premisesIndex.pattern, v2OutOfServiceBedsController.premisesIndex(), {
     auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['future_manager', 'cru_member'],
   })
   get(paths.v2Manage.outOfServiceBeds.update.pattern, v2UpdateOutOfServiceBedsController.new(), {
     auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['future_manager', 'cru_member'],
   })
   post(paths.v2Manage.outOfServiceBeds.update.pattern, v2UpdateOutOfServiceBedsController.create(), {
     auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['future_manager', 'cru_member'],
     redirectAuditEventSpecs: [
       {
         path: paths.lostBeds.show.pattern,
@@ -127,7 +127,7 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.v2Manage.outOfServiceBeds.show.pattern, v2OutOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['future_manager', 'cru_member'],
   })
   get(paths.v2Manage.outOfServiceBeds.index.pattern, v2OutOfServiceBedsController.index(), {
     auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
