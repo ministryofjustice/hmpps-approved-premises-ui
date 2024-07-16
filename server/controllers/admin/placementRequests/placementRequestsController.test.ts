@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
 
-import { ApAreaService, FeatureFlagService, PlacementRequestService } from '../../../services'
+import { PlacementRequestService } from '../../../services'
 import { userDetailsFactory } from '../../../testutils/factories'
 import placementRequestDetail from '../../../testutils/factories/placementRequestDetail'
 
@@ -20,18 +20,12 @@ describe('PlacementRequestsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
-  const apAreaService = createMock<ApAreaService>({})
-  const featureFlagService = createMock<FeatureFlagService>({})
 
   let placementRequestsController: PlacementRequestsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    placementRequestsController = new PlacementRequestsController(
-      placementRequestService,
-      apAreaService,
-      featureFlagService,
-    )
+    placementRequestsController = new PlacementRequestsController(placementRequestService)
   })
 
   describe('show', () => {

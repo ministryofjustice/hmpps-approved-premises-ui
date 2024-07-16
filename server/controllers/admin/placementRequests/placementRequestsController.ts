@@ -1,12 +1,8 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApAreaService, FeatureFlagService, PlacementRequestService } from '../../../services'
+import { PlacementRequestService } from '../../../services'
 
 export default class PlacementRequestsController {
-  constructor(
-    private readonly placementRequestService: PlacementRequestService,
-    private readonly apAreaService: ApAreaService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly placementRequestService: PlacementRequestService) {}
 
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
