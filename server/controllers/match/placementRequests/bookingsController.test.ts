@@ -14,6 +14,7 @@ import { encodeBedSearchResult, placementDates } from '../../../utils/matchUtils
 import { NewBookingNotMade } from '../../../@types/shared'
 
 import matchPaths from '../../../paths/match'
+import adminPaths from '../../../paths/admin'
 
 describe('BookingsController', () => {
   const token = 'SOME_TOKEN'
@@ -112,7 +113,7 @@ describe('BookingsController', () => {
       await requestHandler({ ...request, params: { id: placementRequestId }, body, flash }, response, next)
 
       expect(flash).toHaveBeenCalledWith('success', 'Placement request marked unable to match')
-      expect(response.redirect).toHaveBeenCalledWith(`${matchPaths.placementRequests.index.pattern}#unable-to-match`)
+      expect(response.redirect).toHaveBeenCalledWith(adminPaths.admin.placementRequests.index({}))
       expect(placementRequestService.bookingNotMade).toHaveBeenCalledWith(token, placementRequestId, body)
     })
   })

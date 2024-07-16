@@ -1,7 +1,8 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { decodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
 import { PlacementRequestService } from '../../../services'
-import paths from '../../../paths/match'
+import matchPaths from '../../../paths/match'
+import adminPaths from '../../../paths/admin'
 
 interface ConfirmRequest extends Request {
   params: { id: string }
@@ -53,7 +54,7 @@ export default class BookingsController {
 
   bookingNotMade(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const confirmPath = paths.placementRequests.bookingNotMade.create({ id: req.params.id })
+      const confirmPath = matchPaths.placementRequests.bookingNotMade.create({ id: req.params.id })
 
       return res.render('match/placementRequests/bookings/unable-to-match', {
         pageHeading: 'Unable to match',
@@ -67,7 +68,7 @@ export default class BookingsController {
       await this.placementRequestService.bookingNotMade(req.user.token, req.params.id, { notes: req.body.notes })
       req.flash('success', 'Placement request marked unable to match')
 
-      return res.redirect(`${paths.placementRequests.index({})}#unable-to-match`)
+      return res.redirect(adminPaths.admin.placementRequests.index({}))
     }
   }
 }
