@@ -36,7 +36,7 @@ export default class BedSearchController {
       const selectedDesirableCriteria = [...placementRequest.desirableCriteria, ...params.requiredCharacteristics]
 
       res.render('match/search', {
-        pageHeading: 'Find a bed',
+        pageHeading: 'Find a space',
         bedSearchResults,
         placementRequest,
         tier,

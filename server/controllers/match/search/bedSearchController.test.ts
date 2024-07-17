@@ -52,7 +52,7 @@ describe('bedSearchController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a bed',
+          pageHeading: 'Find a space',
           bedSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: [],
@@ -74,7 +74,7 @@ describe('bedSearchController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a bed',
+          pageHeading: 'Find a space',
           bedSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: [placementRequestDetail.desirableCriteria[0]],
@@ -100,7 +100,7 @@ describe('bedSearchController', () => {
         await requestHandler(request, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a bed',
+          pageHeading: 'Find a space',
           bedSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: placementRequestDetail.essentialCriteria,
