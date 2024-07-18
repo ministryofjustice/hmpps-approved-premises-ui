@@ -33,6 +33,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Future manager',
     hint: 'For digital team use only',
   },
+  janitor: {
+    label: 'Janitor',
+    hint: 'janitor',
+  },
 }
 
 export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
@@ -41,7 +45,7 @@ export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
   excluded_from_placement_application_allocation: { label: 'Stop placement request allocations' },
 }
 
-type UnusedRoles = 'applicant' | 'janitor'
+type UnusedRoles = 'applicant'
 export type RolesInUse = Exclude<UserRole, UnusedRoles>
 
 type RolesForCheckboxes = Exclude<UserRole, AllocationRole | UnusedRoles>
@@ -67,6 +71,7 @@ export const roles: ReadonlyArray<RolesInUse> = [
   'report_viewer',
   'future_manager',
   'legacy_manager',
+  'janitor',
 ]
 
 export const allocationRoles = [

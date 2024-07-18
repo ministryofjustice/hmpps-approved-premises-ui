@@ -24,6 +24,10 @@ export const test = base.extend<TestOptions>({
     { username: process.env.CAS1_E2E_CRU_MEMBER_USERNAME, password: process.env.CAS1_E2E_CRU_MEMBER_PASSWORD },
     { option: true },
   ],
+  janitor: [
+    { username: process.env.CAS1_E2E_JANITOR_USERNAME, password: process.env.CAS1_E2E_JANITOR_PASSWORD },
+    { option: true },
+  ],
   futureManager: [
     { username: process.env.CAS1_E2E_FUTURE_MANAGER_USERNAME, password: process.env.CAS1_E2E_FUTURE_MANAGER_PASSWORD },
     { option: true },
