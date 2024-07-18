@@ -41,7 +41,7 @@ export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
   excluded_from_placement_application_allocation: { label: 'Stop placement request allocations' },
 }
 
-type UnusedRoles = 'applicant' | 'janitor'
+type UnusedRoles = 'applicant' | 'janitor' | 'user_manager'
 export type RolesInUse = Exclude<UserRole, UnusedRoles>
 
 type RolesForCheckboxes = Exclude<UserRole, AllocationRole | UnusedRoles>
