@@ -7,11 +7,11 @@ import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
 export default {
-  stubBedSearch: (args: { bedSearchResults: BedSearchResult }): SuperAgentRequest =>
+  stubSpaceSearch: (args: { bedSearchResults: BedSearchResult }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
-        url: paths.match.findBeds.pattern,
+        url: paths.match.findSpaces.pattern,
       },
       response: {
         status: 200,
@@ -24,7 +24,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: paths.match.findBeds.pattern,
+        url: paths.match.findSpaces.pattern,
       })
     ).body.requests,
 

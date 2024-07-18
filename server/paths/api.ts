@@ -174,7 +174,7 @@ export default {
     },
   },
   match: {
-    findBeds: path('/beds/search'),
+    findSpaces: path('/beds/search'),
   },
   tasks: {
     index: tasksPaths.index,

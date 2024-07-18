@@ -58,7 +58,7 @@
 		<div class="govuk-grid-row">
 			<div class="govuk-width-container">
 				<div class="govuk-grid-column-full">
-					<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
+					<h2 class="govuk-heading-m">{{spaceSearchResults.resultsBedCount}} matching beds in {{spaceSearchResults.resultsRoomCount}} rooms in {{spaceSearchResults.resultsPremisesCount}} premises</h2>
 				</div>
 			</div>
 		</div>
@@ -215,7 +215,7 @@
 						</div>
 					</form>
 
-					{% for bedSearchResult in bedSearchResults.results %}
+					{% for bedSearchResult in spaceSearchResults.results %}
 						{{ govukSummaryList({
 					card: {
 						title: {

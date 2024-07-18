@@ -1,16 +1,16 @@
-import BedClient from './bedClient'
+import SpaceClient from './spaceClient'
 import paths from '../paths/api'
 
 import { bedSearchParametersFactory, bedSearchResultsFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 
-describeClient('BedClient', provider => {
-  let bedClient: BedClient
+describeClient('SpaceClient', provider => {
+  let spaceClient: SpaceClient
 
   const token = 'SOME_TOKEN'
 
   beforeEach(() => {
-    bedClient = new BedClient(token)
+    spaceClient = new SpaceClient(token)
   })
 
   describe('search', () => {
@@ -20,10 +20,10 @@ describeClient('BedClient', provider => {
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get details of available beds matching the crieteria',
+        uponReceiving: 'A request to get details of available spacess matching the crieteria',
         withRequest: {
           method: 'POST',
-          path: paths.match.findBeds.pattern,
+          path: paths.match.findSpaces.pattern,
           body: payload,
           headers: {
             authorization: `Bearer ${token}`,
@@ -35,7 +35,7 @@ describeClient('BedClient', provider => {
         },
       })
 
-      const result = await bedClient.search(payload)
+      const result = await spaceClient.search(payload)
 
       expect(result).toEqual(bedSearchResult)
     })

@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import BedsController from './bedSearchController'
+import SpaceSearchController from './spaceSearchController'
 import { bedSearchResultsFactory, placementRequestDetailFactory } from '../../../testutils/factories'
 
-import { BedService, PlacementRequestService } from '../../../services'
+import { PlacementRequestService, SpaceService } from '../../../services'
 import { startDateObjFromParams } from '../../../utils/matchUtils'
 import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRequests/utils'
 
@@ -12,10 +12,10 @@ import matchPaths from '../../../paths/match'
 
 jest.mock('../../../utils/matchUtils')
 
-describe('bedSearchController', () => {
+describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
   const placementRequestDetail = placementRequestDetailFactory.build()
-  const bedSearchResults = bedSearchResultsFactory.build()
+  const spaceSearchResults = bedSearchResultsFactory.build()
 
   const request: DeepMocked<Request> = createMock<Request>({
     params: { id: placementRequestDetail.id },
@@ -25,19 +25,19 @@ describe('bedSearchController', () => {
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
-  const bedService = createMock<BedService>({})
+  const spaceService = createMock<SpaceService>({})
   const placementRequestService = createMock<PlacementRequestService>({})
 
-  let bedsController: BedsController
+  let spaceSearchController: SpaceSearchController
 
   const formPath = matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id })
 
   beforeEach(() => {
     jest.resetAllMocks()
-    bedsController = new BedsController(bedService, placementRequestService)
+    spaceSearchController = new SpaceSearchController(spaceService, placementRequestService)
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
-    bedService.search.mockResolvedValue(bedSearchResults)
+    spaceService.search.mockResolvedValue(spaceSearchResults)
     ;(startDateObjFromParams as jest.Mock).mockReturnValue({ startDate: placementRequestDetail.expectedArrival })
   })
 
@@ -47,13 +47,13 @@ describe('bedSearchController', () => {
         const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
         const body = { durationWeeks: '2', requiredCharacteristics: [] as Array<string> }
 
-        const requestHandler = bedsController.search()
+        const requestHandler = spaceSearchController.search()
 
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a space',
-          bedSearchResults,
+          spaceSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: [],
           tier: placementRequestDetail.risks.tier.value.level,
@@ -61,7 +61,7 @@ describe('bedSearchController', () => {
           ...query,
           ...body,
         })
-        expect(bedService.search).toHaveBeenCalledWith(token, { ...query, ...body })
+        expect(spaceService.search).toHaveBeenCalledWith(token, { ...query, ...body })
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       })
 
@@ -69,13 +69,13 @@ describe('bedSearchController', () => {
         const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
         const body = { requiredCharacteristics: placementRequestDetail.desirableCriteria[0] }
 
-        const requestHandler = bedsController.search()
+        const requestHandler = spaceSearchController.search()
 
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a space',
-          bedSearchResults,
+          spaceSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: [placementRequestDetail.desirableCriteria[0]],
           tier: placementRequestDetail.risks.tier.value.level,
@@ -83,7 +83,7 @@ describe('bedSearchController', () => {
           ...query,
           requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
         })
-        expect(bedService.search).toHaveBeenCalledWith(token, {
+        expect(spaceService.search).toHaveBeenCalledWith(token, {
           ...query,
           ...{
             requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
@@ -96,19 +96,19 @@ describe('bedSearchController', () => {
     describe('no body params are sent', () => {
       it('it should render the search template by searching with the placement request variables ', async () => {
         const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
-        const requestHandler = bedsController.search()
+        const requestHandler = spaceSearchController.search()
         await requestHandler(request, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a space',
-          bedSearchResults,
+          spaceSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: placementRequestDetail.essentialCriteria,
           tier: placementRequestDetail.risks.tier.value.level,
           formPath,
           ...query,
         })
-        expect(bedService.search).toHaveBeenCalledWith(token, query)
+        expect(spaceService.search).toHaveBeenCalledWith(token, query)
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       })
     })
