@@ -80,72 +80,31 @@
 							<div class="moj-filter__header">
 								<h2 class="govuk-heading-m">Filters</h2>
 							</div>
-							<div class="moj-filter__content">
-								<div class="moj-filter__selected">
-									<div class="moj-filter__selected-heading">
-										<div class="moj-filter__heading-title">
-											<h2 class="govuk-heading-m">Selected Filters</h2>
-										</div>
-									</div>
-									{% for title, items in MatchUtils.groupedEssentialCriteria(placementRequest.essentialCriteria) %}
-										<h3 class="govuk-heading-s govuk-!-margin-bottom-0">{{ title }}</h3>
 
-										<ul class="moj-filter-tags">
-											{% for item in items %}
-												<li>
-													<span class="moj-filter__tag">{{item}}</span>
-												</li>
-											{% endfor %}
-										</ul>
-									{% endfor %}
+							<div class="space-search-inputs">
 
-								</div>
-							</div>
-						</div>
-
-						{% for title, items in MatchUtils.groupedCheckboxes(selectedDesirableCriteria) %}
-							{{
-								govukCheckboxes({
-									name: 'requiredCharacteristics',
-									classes: "govuk-checkboxes--small",
-									fieldset: {
-										legend: {
-											text: title,
-											isPageHeading: false,
-											classes: 'govuk-fieldset__legend--s'
-										}
-									},
-									items: items
-								})
-							}}
-						{% endfor %}
-					</div>
-
-					<div class="govuk-grid-column-two-thirds">
-
-						<div class="bed-search-inputs">
-
-							{{ govukDateInput({
-								id: "startDate",
-								namePrefix: "startDate",
+								{{ govukDateInput({
+								id: "availableFrom",
+								namePrefix: "availableFrom",
 								fieldset: {
 								legend: {
-									text: "Expected arrival",
+									text: "Available from",
 									classes: "govuk-fieldset__legend--s"
 									}
 								},
-								items: dateFieldValues('startDate', errors),
-								errorMessage: errors.startDate
+								items: dateFieldValues('availableFrom', errors),
+								errorMessage: errors.availableFrom
 							}) }}
 
-							{% call govukFieldset({
+								{% call govukFieldset({
 								legend: {
 									text: "Length of stay",
 									classes: "govuk-fieldset__legend--s"
-								}
+								},
+								classes: 'govuk-!-margin-bottom-3'
 							}) %}
 
-							{{
+								{{
 								govukInput(
 									{
 										classes: "govuk-input--width-2",
@@ -163,12 +122,12 @@
 								)
 							}}
 
-							{{
+								{{
 								govukInput(
 									{
 										classes: "govuk-input--width-2",
 										id: "durationDays",
-       							name: "durationDays",
+       									name: "durationDays",
 										formGroup: {
 											classes: "govuk-form-group--inline"
 										},
@@ -181,42 +140,53 @@
 								)
 							}}
 
-							{% endcall %}
+								{% endcall %}
 
-							{{ govukInput({
+								{{ govukInput({
 								id: "postcodeDistrict",
 								name: "postcodeDistrict",
 								value: postcodeDistrict,
 								label: {
-								text: "Preferred location"
+									text: "Preferred location",
+									classes: "govuk-fieldset__legend--s"
+
 								},
 								classes: "govuk-input--width-3"
 							}) }}
 
-							{{ govukInput({
-								id: "maxDistanceMiles",
-								name: "maxDistanceMiles",
-								value: maxDistanceMiles,
-								label: {
-								text: "Radius"
-								},
-								classes: "govuk-input--width-3",
-								suffix: {
-									text: "miles"
-								}
-							}) }}
+								{% for title, items in MatchUtils.groupedCheckboxes(selectedDesirableCriteria) %}
+									{{
+								govukCheckboxes({
+									name: 'requiredCharacteristics',
+									classes: "govuk-checkboxes--small",
+									fieldset: {
+										legend: {
+											text: title,
+											isPageHeading: false,
+											classes: 'govuk-fieldset__legend--s'
+										}
+									},
+									items: items
+								})
+							}}
+								{% endfor %}
 
-							<div class="button">
-								{{ govukButton({
+								<div class="button">
+									{{ govukButton({
 									text: "Update",
 									preventDoubleClick: true
 								}) }}
+								</div>
 							</div>
 						</div>
-					</form>
+					</div>
 
-					{% for bedSearchResult in spaceSearchResults.results %}
-						{{ govukSummaryList({
+				</form>
+				<div class="govuk-grid-column-two-thirds">
+
+					<div>
+						{% for bedSearchResult in spaceSearchResults.results %}
+							{{ govukSummaryList({
 					card: {
 						title: {
 							html: MatchUtils.summaryCardHeader({bedSearchResult: bedSearchResult, placementRequestId: placementRequest.id, startDate: startDate, durationDays: durationDays, durationWeeks: durationWeeks})
@@ -224,15 +194,16 @@
 					},
 					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
 				}) }}
-					{% endfor %}
+						{% endfor %}
 
-					<h3 class="govuk-heading-m">Mark this case as unable to match</h3>
-					<p>If there are no suitable results for your search, mark this case as unable to match.</p>
-					{{ govukButton({
+						<h3 class="govuk-heading-m">Mark this case as unable to match</h3>
+						<p>If there are no suitable results for your search, mark this case as unable to match.</p>
+						{{ govukButton({
 						text: "Unable to match",
 						href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}),
 						preventDoubleClick: true
 					}) }}
+					</div>
 				</div>
 			</div>
 		</div>

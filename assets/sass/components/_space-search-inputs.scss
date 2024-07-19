@@ -1,7 +1,8 @@
-.bed-search-inputs {
+.space-search-inputs {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  flex-direction: column;
+  @include govuk-responsive-padding(2);
+
   .govuk-form-group {
     margin-top: auto;
   }
