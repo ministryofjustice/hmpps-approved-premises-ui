@@ -10,7 +10,7 @@ import {
   personFactory,
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
-import { encodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
+import { encodeSpaceSearchResult, placementDates } from '../../../utils/matchUtils'
 import { NewBookingNotMade } from '../../../@types/shared'
 
 import matchPaths from '../../../paths/match'
@@ -41,7 +41,7 @@ describe('BookingsController', () => {
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 
       const query = {
-        bedSearchResult: encodeBedSearchResult(bedSearchResult),
+        bedSearchResult: encodeSpaceSearchResult(bedSearchResult),
         startDate: '2022-01-01',
         duration: '4',
       }

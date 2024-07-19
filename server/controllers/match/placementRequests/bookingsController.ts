@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { decodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
+import { decodeSpaceSearchResult, placementDates } from '../../../utils/matchUtils'
 import { PlacementRequestService } from '../../../services'
 import matchPaths from '../../../paths/match'
 import adminPaths from '../../../paths/admin'
@@ -20,7 +20,7 @@ export default class BookingsController {
   confirm(): TypedRequestHandler<Request, Response> {
     return async (req: ConfirmRequest, res: Response) => {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const bedSearchResult = decodeBedSearchResult(req.query.bedSearchResult)
+      const bedSearchResult = decodeSpaceSearchResult(req.query.bedSearchResult)
 
       res.render('match/placementRequests/bookings/confirm', {
         pageHeading: 'Confirm booking',
