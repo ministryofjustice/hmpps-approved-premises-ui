@@ -18,7 +18,7 @@ import AssessmentService from './assessmentService'
 import TaskService from './taskService'
 import PlacementRequestService from './placementRequestService'
 import PlacementApplicationService from './placementApplicationService'
-import BedService from './bedService'
+import SpaceService from './spaceService'
 import ReportService from './reportService'
 import ApAreaService from './apAreaService'
 import AppealService from './appealService'
@@ -66,7 +66,7 @@ export const services = () => {
   const taskService = new TaskService(taskClientBuilder)
   const placementRequestService = new PlacementRequestService(placementRequestClientBuilder)
   const placementApplicationService = new PlacementApplicationService(placementApplicationClientBuilder)
-  const bedService = new BedService(bedClientBuilder)
+  const spaceService = new SpaceService(bedClientBuilder)
   const reportService = new ReportService(reportClientBuilder)
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
   const featureFlagService = new FeatureFlagService()
@@ -89,7 +89,7 @@ export const services = () => {
     taskService,
     placementRequestService,
     placementApplicationService,
-    bedService,
+    spaceService,
     reportService,
     apAreaService,
     featureFlagService,
@@ -115,7 +115,7 @@ export {
   TaskService,
   PlacementRequestService,
   PlacementApplicationService,
-  BedService,
+  SpaceService,
   ReportService,
   ApAreaService,
   FeatureFlagService,

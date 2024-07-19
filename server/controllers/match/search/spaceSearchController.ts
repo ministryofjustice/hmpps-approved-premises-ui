@@ -4,14 +4,14 @@ import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRe
 import { BedSearchParametersUi } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
-import BedService from '../../../services/bedService'
+import SpaceService from '../../../services/spaceService'
 
 import { startDateObjFromParams } from '../../../utils/matchUtils'
 import { objectIfNotEmpty } from '../../../utils/utils'
 
 export default class BedSearchController {
   constructor(
-    private readonly bedService: BedService,
+    private readonly spaceService: SpaceService,
     private readonly placementRequestService: PlacementRequestService,
   ) {}
 
@@ -31,13 +31,13 @@ export default class BedSearchController {
       params.startDate = startDateObjFromParams(params).startDate
       params.requiredCharacteristics = [params.requiredCharacteristics].flat()
 
-      const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
+      const spaceSearchResults = await this.spaceService.search(req.user.token, params as BedSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
       const selectedDesirableCriteria = [...placementRequest.desirableCriteria, ...params.requiredCharacteristics]
 
       res.render('match/search', {
         pageHeading: 'Find a space',
-        bedSearchResults,
+        spaceSearchResults,
         placementRequest,
         tier,
         selectedDesirableCriteria,

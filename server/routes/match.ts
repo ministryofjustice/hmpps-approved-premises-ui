@@ -12,7 +12,7 @@ import actions from './utils'
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { get, post } = actions(router, services.auditService)
 
-  const { placementRequestController, bedController, placementRequestBookingsController } = controllers
+  const { placementRequestController, spaceSearchController, placementRequestBookingsController } = controllers
 
   get(paths.placementRequests.show.pattern, placementRequestController.show(), { auditEvent: 'SHOW_PLACEMENT_REQUEST' })
 
@@ -25,8 +25,10 @@ export default function routes(controllers: Controllers, router: Router, service
     { auditEvent: 'CREATE_BOOKING_NOT_MADE' },
   )
 
-  get(paths.v2Match.placementRequests.search.spaces.pattern, bedController.search(), { auditEvent: 'SPACE_SEARCH' })
-  post(paths.v2Match.placementRequests.search.spaces.pattern, bedController.search(), {
+  get(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
+    auditEvent: 'SPACE_SEARCH',
+  })
+  post(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
     auditEvent: 'SPACE_SEARCH',
   })
 

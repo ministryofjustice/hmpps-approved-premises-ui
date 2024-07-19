@@ -46,7 +46,8 @@ context('Placement Requests', () => {
       requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
     })
     const bedSearchResults = bedSearchResultsFactory.build()
-    cy.task('stubBedSearch', { bedSearchResults })
+
+    cy.task('stubSpaceSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
 
     // When I visit the search page
@@ -139,7 +140,7 @@ context('Placement Requests', () => {
     const bedSearchParameters = mapPlacementRequestToBedSearchParams(placementRequest)
     const duration = Number(bedSearchParameters.durationWeeks) * 7 + Number(bedSearchParameters.durationDays)
 
-    cy.task('stubBedSearch', { bedSearchResults })
+    cy.task('stubSpaceSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubBookingFromPlacementRequest', placementRequest)
 
@@ -186,7 +187,7 @@ context('Placement Requests', () => {
 
     const bedSearchResults = bedSearchResultsFactory.build()
 
-    cy.task('stubBedSearch', { bedSearchResults })
+    cy.task('stubSpaceSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubUnableToMatchPlacementRequest', placementRequest)
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })

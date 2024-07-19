@@ -1,25 +1,25 @@
 /* istanbul ignore file */
 
 import PlacementRequestController from './placementRequestsController'
-import BedSearchController from './search/bedSearchController'
+import SpaceSearchController from './search/spaceSearchController'
 import BookingsController from './placementRequests/bookingsController'
 
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { placementApplicationService, placementRequestService, bedService, applicationService } = services
+  const { placementApplicationService, placementRequestService, spaceService, applicationService } = services
 
   const placementRequestController = new PlacementRequestController(
     placementRequestService,
     placementApplicationService,
     applicationService,
   )
-  const bedController = new BedSearchController(bedService, placementRequestService)
+  const spaceSearchController = new SpaceSearchController(spaceService, placementRequestService)
   const placementRequestBookingsController = new BookingsController(placementRequestService)
 
   return {
     placementRequestController,
-    bedController,
+    spaceSearchController,
     placementRequestBookingsController,
   }
 }
