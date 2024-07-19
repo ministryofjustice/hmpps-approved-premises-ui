@@ -1,13 +1,13 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { BedDetail, BedSearchResult, BedSummary } from '@approved-premises/api'
+import type { BedDetail, BedSummary, Cas1SpaceSearchResults as SpaceSearchResults } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from './setup'
 
 import paths from '../../server/paths/api'
 
 export default {
-  stubSpaceSearch: (args: { bedSearchResults: BedSearchResult }): SuperAgentRequest =>
+  stubSpaceSearch: (spaceSearchResults: SpaceSearchResults): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -16,7 +16,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.bedSearchResults,
+        jsonBody: spaceSearchResults,
       },
     }),
 

@@ -1,5 +1,10 @@
-import { BedSearchParametersUi, TextItem } from '@approved-premises/ui'
-import { BedSearchResult, BedSearchResults, PlacementCriteria, PlacementRequestDetail } from '@approved-premises/api'
+import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
+import {
+  Cas1SpaceSearchResult,
+  Cas1SpaceSearchResults,
+  PlacementCriteria,
+  PlacementRequestDetail,
+} from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
@@ -34,14 +39,14 @@ export default class SearchPage extends Page {
     })
   }
 
-  shouldDisplaySearchResults(bedSearchResults: BedSearchResults, searchParams: BedSearchParametersUi): void {
-    cy.get('h2').contains(`${bedSearchResults.resultsBedCount} Approved Premises found`)
+  shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults): void {
+    cy.get('h2').contains(`${spaceSearchResults.resultsCount} Approved Premises found`)
 
-    bedSearchResults.results.forEach(result => {
+    spaceSearchResults.results.forEach(result => {
       cy.contains('div', result.premises.name)
         .parent('div')
         .within(() => {
-          const tableRows = summaryCardRows(result, searchParams.requiredCharacteristics)
+          const tableRows = summaryCardRows(result)
           tableRows.forEach(row => {
             cy.contains('dt', (row.key as TextItem).text)
               .parent('div')
@@ -53,11 +58,11 @@ export default class SearchPage extends Page {
     })
   }
 
-  clickSearchResult(bedSearchResult: BedSearchResult): void {
-    cy.get('a').contains(bedSearchResult.bed.name).click()
+  clickSearchResult(spaceSearchResult: Cas1SpaceSearchResult): void {
+    cy.get('a').contains(spaceSearchResult.premises.id).click()
   }
 
-  changeSearchParameters(newSearchParameters: BedSearchParametersUi): void {
+  changeSearchParameters(newSearchParameters: SpaceSearchParametersUi): void {
     this.clearDateInputs('startDate')
     this.completeDateInputs('startDate', newSearchParameters.startDate)
 

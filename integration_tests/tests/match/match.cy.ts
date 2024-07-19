@@ -6,9 +6,9 @@ import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   bedSearchParametersUiFactory,
-  bedSearchResultsFactory,
   personFactory,
   placementRequestDetailFactory,
+  spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { PlacementCriteria } from '../../../server/@types/shared/models/PlacementCriteria'
@@ -42,12 +42,10 @@ context('Placement Requests', () => {
       essentialCriteria,
       desirableCriteria,
     })
-    const firstBedSearchParameters = bedSearchParametersUiFactory.build({
-      requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
-    })
-    const bedSearchResults = bedSearchResultsFactory.build()
 
-    cy.task('stubSpaceSearch', { bedSearchResults })
+    const spaceSearchResults = spaceSearchResultsFactory.build()
+
+    cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
 
     // When I visit the search page
@@ -64,7 +62,7 @@ context('Placement Requests', () => {
 
     // And I should see the search results
     let numberOfSearches = 0
-    searchPage.shouldDisplaySearchResults(bedSearchResults, firstBedSearchParameters)
+    searchPage.shouldDisplaySearchResults(spaceSearchResults)
     numberOfSearches += 1
 
     // Given I want to search for a different space
@@ -135,24 +133,28 @@ context('Placement Requests', () => {
       status: 'notMatched',
       person: personFactory.build(),
     })
-    const bedSearchResults = bedSearchResultsFactory.build()
+    const spaceSearchResults = spaceSearchResultsFactory.build()
 
     const bedSearchParameters = mapPlacementRequestToBedSearchParams(placementRequest)
     const duration = Number(bedSearchParameters.durationWeeks) * 7 + Number(bedSearchParameters.durationDays)
 
-    cy.task('stubSpaceSearch', { bedSearchResults })
+    cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubBookingFromPlacementRequest', placementRequest)
 
     const searchPage = SearchPage.visit(placementRequest)
     // When I click to book the first space
-    searchPage.clickSearchResult(bedSearchResults.results[0])
+    searchPage.clickSearchResult(spaceSearchResults.results[0])
 
     // Then I should be shown the confirmation page
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
 
     // And the confirmation page should contain the details of my booking
-    confirmationPage.shouldShowConfirmationDetails(bedSearchResults.results[0], bedSearchParameters.startDate, duration)
+    confirmationPage.shouldShowConfirmationDetails(
+      spaceSearchResults.results[0],
+      bedSearchParameters.startDate,
+      duration,
+    )
 
     // When I click on the confirm button
     confirmationPage.clickConfirm()
@@ -167,7 +169,7 @@ context('Placement Requests', () => {
       const body = JSON.parse(requests[0].body)
 
       expect(body).to.contain({
-        bedId: bedSearchResults.results[0].bed.id,
+        bedId: spaceSearchResults.results[0].premises.id,
         arrivalDate: bedSearchParameters.startDate,
         departureDate: DateFormats.dateObjToIsoDate(
           addDays(DateFormats.isoToDateObj(bedSearchParameters.startDate), duration),
@@ -185,9 +187,9 @@ context('Placement Requests', () => {
       person: personFactory.build(),
     })
 
-    const bedSearchResults = bedSearchResultsFactory.build()
+    const spaceSearchResults = spaceSearchResultsFactory.build()
 
-    cy.task('stubSpaceSearch', { bedSearchResults })
+    cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubUnableToMatchPlacementRequest', placementRequest)
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
