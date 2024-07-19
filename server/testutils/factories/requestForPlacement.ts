@@ -42,6 +42,14 @@ export default Factory.define<RequestForPlacement>(() => ({
         "Has the person's access or healthcare needs changed since the application was assessed?": 'No',
         "Has the person's location factors changed since the application was assessed?": 'No',
       },
+      {
+        'Dates of placement': [
+          {
+            'When will the person arrive?': 'Wed 22 Jan 2025',
+            'How long should the Approved Premises placement last?': '12 weeks',
+          },
+        ],
+      },
     ],
   },
   requestReviewedAt: faker.date.past().toISOString(),
