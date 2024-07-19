@@ -2,7 +2,6 @@ import { addDays, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
-  Cas1SpaceSearchResults,
   CharacteristicPair,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../@types/shared'
@@ -16,6 +15,7 @@ import {
   placementRequirementCriteriaLabels,
   specialistApTypeCriteriaLabels,
 } from './placementCriteriaUtils'
+import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 type PlacementDates = {
   placementLength: number
@@ -181,55 +181,48 @@ export const placementLengthRow = (length: number) => ({
   },
 })
 
-export const summaryCardRows = (
-  spaceSearchResult: SpaceSearchResult,
-  requiredCharacteristics: Array<string>,
-): Array<SummaryListItem> => {
+export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeArea: string): Array<SummaryListItem> => {
   return [
-    townRow(bedSearchResult),
-    addressRow(bedSearchResult),
-    bedCountRow(bedSearchResult),
+    apTypeRow(spaceSearchResult),
+    addressRow(spaceSearchResult),
+    townRow(spaceSearchResult),
+    distanceRow(spaceSearchResult, postcodeArea),
   ]
 }
 
-export const townRow = (bedSearchResult: BedSearchResult) => ({
+export const apTypeRow = (spaceSearchResult: SpaceSearchResult) => ({
+  key: {
+    text: 'Type of AP',
+  },
+  value: {
+    text: apTypeLabels[spaceSearchResult.premises.apType],
+  },
+})
+
+export const townRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Town',
   },
   value: {
-    text: bedSearchResult.premises.town,
+    text: spaceSearchResult.premises.town,
   },
 })
 
-export const addressRow = (bedSearchResult: BedSearchResult) => ({
+export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Address',
   },
   value: {
-    text: `${bedSearchResult.premises.addressLine1} ${bedSearchResult.premises.addressLine2}`,
-  },
-})
-  },
-})
-
-export const additionalCharacteristicsRow = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string> = [],
-) => ({
-  key: {
-    text: 'Additional characteristics',
-  },
-  value: {
-    html: unmatchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
+    text: `${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}`,
   },
 })
 
-export const bedCountRow = (bedSearchResult: BedSearchResult) => ({
+export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => ({
   key: {
-    text: 'Bed count',
+    text: 'Distance',
   },
   value: {
-    text: bedSearchResult.premises.bedCount.toString(),
+    text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
   },
 })
 

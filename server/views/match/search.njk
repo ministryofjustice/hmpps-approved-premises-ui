@@ -187,13 +187,22 @@
 					<div>
 						{% for bedSearchResult in spaceSearchResults.results %}
 							{{ govukSummaryList({
-					card: {
-						title: {
-							html: MatchUtils.summaryCardHeader({bedSearchResult: bedSearchResult, placementRequestId: placementRequest.id, startDate: startDate, durationDays: durationDays, durationWeeks: durationWeeks})
-						}
-					},
-					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
-				}) }}
+								card: {
+									title: {
+										text: spaceSearchResult.premises.name
+									},
+									actions: {
+										items: [
+											{
+												href: MatchUtils.summaryCardLink({spaceSearchResult: spaceSearchResult, placementRequestId: placementRequest.id, startDate: startDate, durationDays: durationDays, durationWeeks: durationWeeks}),
+												text: "View spaces",
+												visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
+											}
+										]
+								}
+								},
+								rows: MatchUtils.summaryCardRows(spaceSearchResult, postcodeArea)
+							}) }}
 						{% endfor %}
 
 						<h3 class="govuk-heading-m">Mark this case as unable to match</h3>

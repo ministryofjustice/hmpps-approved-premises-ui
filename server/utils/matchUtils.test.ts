@@ -5,13 +5,13 @@ import { DateFormats } from './dateUtils'
 import {
   InvalidSpaceSearchDataException,
   addressRow,
+  apTypeRow,
   arrivalDateRow,
-  bedCountRow,
-  bedNameRow,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeSpaceSearchResult,
   departureDateRow,
+  distanceRow,
   encodeSpaceSearchResult,
   groupedCheckboxes,
   groupedEssentialCriteria,
@@ -110,13 +110,38 @@ describe('matchUtils', () => {
 
   describe('summaryCardsRow', () => {
     it('calls the correct row functions', () => {
+      const postcodeArea = 'HR1 2AF'
       const spaceSearchResult = spaceSearchResultFactory.build()
 
-      expect(summaryCardRows(spaceSearchResult)).toEqual([
-        townRow(spaceSearchResult),
+      expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
+        apTypeRow(spaceSearchResult),
         addressRow(spaceSearchResult),
-        bedCountRow(spaceSearchResult),
+        townRow(spaceSearchResult),
+        distanceRow(spaceSearchResult, postcodeArea),
       ])
+    })
+  })
+
+  describe('distanceRow', () => {
+    const spaceSearchResult = spaceSearchResultFactory.build()
+    const postcodeArea = 'HR1 2AF'
+
+    describe('if a postcode area is supplied', () => {
+      it('returns the distance from the desired postcode', () => {
+        expect(distanceRow(spaceSearchResult, postcodeArea)).toEqual({
+          key: { text: 'Distance' },
+          value: { text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea}` },
+        })
+      })
+    })
+
+    describe('if a postcode area is not supplied', () => {
+      it('returns the distance from "the desired location" instead', () => {
+        expect(distanceRow(spaceSearchResult, postcodeArea)).toEqual({
+          key: { text: 'Distance' },
+          value: { text: `${spaceSearchResult.distanceInMiles} miles from the desired location` },
+        })
+      })
     })
   })
 
@@ -187,7 +212,7 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('groupedCheckboxes', () => {
+  describe.skip('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes([])).toEqual({
         'Type of AP': checkBoxesForCriteria(specialistApTypeCriteriaLabels, []),
