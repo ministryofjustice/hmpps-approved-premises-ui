@@ -35,9 +35,7 @@ export default class SearchPage extends Page {
   }
 
   shouldDisplaySearchResults(bedSearchResults: BedSearchResults, searchParams: BedSearchParametersUi): void {
-    cy.get('h2').contains(
-      `${bedSearchResults.resultsBedCount} matching beds in ${bedSearchResults.resultsRoomCount} rooms in ${bedSearchResults.resultsPremisesCount} premises`,
-    )
+    cy.get('h2').contains(`${bedSearchResults.resultsBedCount} Approved Premises found`)
 
     bedSearchResults.results.forEach(result => {
       cy.contains('div', result.premises.name)
