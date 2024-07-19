@@ -1,8 +1,6 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
-  BedSearchResult,
-  CharacteristicPair,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../@types/shared'
 import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
@@ -47,17 +45,6 @@ export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string
   return `<ul class="govuk-list">${characteristics
     .map(characteristicPair => `<li>${placementCriteriaLabels[characteristicPair]}</li>`)
     .join('')}</ul>`
-}
-
-export const matchedCharacteristics = (
-  actualCharacteristics: Array<CharacteristicPair>,
-  requiredCharacteristics: Array<string>,
-) => {
-  const characteristics = requiredCharacteristics.filter(characteristic =>
-    actualCharacteristics.map(c => c.propertyName).includes(characteristic),
-  )
-
-  return mapSearchParamCharacteristicsForUi(characteristics)
 }
 
 export const encodeSpaceSearchResult = (spaceSearchResult: SpaceSearchResult): string => {
@@ -115,7 +102,7 @@ export const summaryCardHeader = ({
     {
       text: spaceSearchResult.premises.name,
       query: {
-        bedSearchResult: encodeSpaceSearchResult(spaceSearchResult),
+        spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
         startDate,
         duration,
       },
@@ -124,11 +111,11 @@ export const summaryCardHeader = ({
 }
 
 export const confirmationSummaryCardRows = (
-  bedSearchResult: BedSearchResult,
+  spaceSearchResult: SpaceSearchResult,
   dates: PlacementDates,
 ): Array<SummaryListItem> => {
   return [
-    premisesNameRow(bedSearchResult),
+    premisesNameRow(spaceSearchResult),
     arrivalDateRow(dates.startDate),
     departureDateRow(dates.endDate),
     placementLengthRow(dates.placementLength),

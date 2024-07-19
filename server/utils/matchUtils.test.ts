@@ -310,7 +310,7 @@ describe('matchUtils', () => {
         {
           text: spaceSearchResult.premises.name,
           query: {
-            bedSearchResult: encodeSpaceSearchResult(spaceSearchResult),
+            spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
             startDate,
             duration: String(Number(durationWeeks) * 7 + Number(durationDays)),
           },
