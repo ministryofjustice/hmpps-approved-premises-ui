@@ -58,17 +58,6 @@ export const matchedCharacteristics = (
   return mapSearchParamCharacteristicsForUi(characteristics)
 }
 
-export const unmatchedCharacteristics = (
-  actualCharacteristics: Array<CharacteristicPair>,
-  requiredCharacteristics: Array<string>,
-) => {
-  const characteristics = actualCharacteristics
-    .map(c => c.propertyName)
-    .filter(characteristic => !requiredCharacteristics.includes(characteristic))
-
-  return mapSearchParamCharacteristicsForUi(characteristics)
-}
-
 export const encodeBedSearchResult = (bedSearchResult: BedSearchResult): string => {
   const json = JSON.stringify(bedSearchResult)
 
@@ -197,8 +186,6 @@ export const summaryCardRows = (
   return [
     townRow(bedSearchResult),
     addressRow(bedSearchResult),
-    matchedCharacteristicsRow(bedSearchResult, requiredCharacteristics),
-    additionalCharacteristicsRow(bedSearchResult, requiredCharacteristics),
     bedCountRow(bedSearchResult),
   ]
 }
@@ -220,16 +207,6 @@ export const addressRow = (bedSearchResult: BedSearchResult) => ({
     text: `${bedSearchResult.premises.addressLine1} ${bedSearchResult.premises.addressLine2}`,
   },
 })
-
-export const matchedCharacteristicsRow = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string> = [],
-) => ({
-  key: {
-    text: 'Matched characteristics',
-  },
-  value: {
-    html: matchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
   },
 })
 

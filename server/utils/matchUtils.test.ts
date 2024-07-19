@@ -1,6 +1,5 @@
 import paths from '../paths/match'
 import {
-  apCharacteristicPairFactory,
   bedSearchParametersFactory,
   bedSearchParametersUiFactory,
   bedSearchResultFactory,
@@ -8,7 +7,6 @@ import {
 import { DateFormats } from './dateUtils'
 import {
   InvalidBedSearchDataException,
-  additionalCharacteristicsRow,
   addressRow,
   arrivalDateRow,
   bedCountRow,
@@ -22,8 +20,6 @@ import {
   groupedEssentialCriteria,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
-  matchedCharacteristics,
-  matchedCharacteristicsRow,
   placementDates,
   placementLength,
   placementLengthRow,
@@ -33,7 +29,6 @@ import {
   summaryCardHeader,
   summaryCardRows,
   townRow,
-  unmatchedCharacteristics,
 } from './matchUtils'
 import {
   offenceAndRiskCriteriaLabels,
@@ -95,36 +90,6 @@ describe('matchUtils', () => {
     jest.clearAllMocks()
   })
 
-  describe('matchedCharacteristics', () => {
-    it('returns a list of the matched characteristics', () => {
-      const actualCharacteristics = [
-        apCharacteristicPairFactory.build({ propertyName: 'isSemiSpecialistMentalHealth' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isPIPE' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isCatered' }),
-      ]
-      const requiredCharacteristics = ['isPIPE', 'isCatered']
-
-      expect(matchedCharacteristics(actualCharacteristics, requiredCharacteristics)).toEqual(
-        mapSearchParamCharacteristicsForUi(['isPIPE', 'isCatered']),
-      )
-    })
-  })
-
-  describe('unmatchedCharacteristics', () => {
-    it('returns a list of the unmatched characteristics', () => {
-      const actualCharacteristics = [
-        apCharacteristicPairFactory.build({ propertyName: 'isSemiSpecialistMentalHealth' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isPIPE' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isCatered' }),
-      ]
-      const requiredCharacteristics = ['isPIPE']
-
-      expect(unmatchedCharacteristics(actualCharacteristics, requiredCharacteristics)).toEqual(
-        mapSearchParamCharacteristicsForUi(['isSemiSpecialistMentalHealth', 'isCatered']),
-      )
-    })
-  })
-
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
       const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
@@ -148,14 +113,12 @@ describe('matchUtils', () => {
 
   describe('summaryCardsRow', () => {
     it('calls the correct row functions', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
-      const searchParams = bedSearchParametersFactory.build()
-      expect(summaryCardRows(bedSearchResult, searchParams.requiredCharacteristics)).toEqual([
-        townRow(bedSearchResult),
-        addressRow(bedSearchResult),
-        matchedCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
-        additionalCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
-        bedCountRow(bedSearchResult),
+      const spaceSearchResult = spaceSearchResultFactory.build()
+
+      expect(summaryCardRows(spaceSearchResult)).toEqual([
+        townRow(spaceSearchResult),
+        addressRow(spaceSearchResult),
+        bedCountRow(spaceSearchResult),
       ])
     })
   })
