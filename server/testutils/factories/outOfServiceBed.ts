@@ -1,7 +1,6 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import {
-  NamedId,
   NewCas1OutOfServiceBed as NewOutOfServiceBed,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
@@ -11,6 +10,7 @@ import {
 import cas1ReferenceDataFactory from './cas1ReferenceData'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
+import namedIdFactory from './namedId'
 
 export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
   id: faker.string.uuid(),
@@ -29,11 +29,6 @@ export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
   status: faker.helpers.arrayElement(['active', 'cancelled'] as const),
   cancellation: undefined,
   revisionHistory: outOfServiceBedRevisionFactory.buildList(3),
-}))
-
-const namedIdFactory = Factory.define<NamedId>(() => ({
-  id: faker.string.uuid(),
-  name: faker.lorem.word(),
 }))
 
 export const newOutOfServiceBedFactory = Factory.define<NewOutOfServiceBed>(() => {
