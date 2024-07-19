@@ -1,5 +1,5 @@
 import { PlacementRequest } from '@approved-premises/api'
-import { BedSearchParametersUi } from '@approved-premises/ui'
+import { SpaceSearchParametersUi } from '@approved-premises/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { createQueryString, linkTo } from '../utils'
 
@@ -20,7 +20,7 @@ export const mapPlacementRequestToBedSearchParams = ({
   person,
   applicationId,
   assessmentId,
-}: PlacementRequest): BedSearchParametersUi => {
+}: PlacementRequest): SpaceSearchParametersUi => {
   const daysAndWeeks = daysToWeeksAndDays(duration)
   return {
     durationDays: String(daysAndWeeks.days),

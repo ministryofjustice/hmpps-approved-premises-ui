@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRequests/utils'
-import { BedSearchParametersUi } from '../../../@types/ui'
+import { SpaceSearchParametersUi } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
@@ -20,8 +20,8 @@ export default class BedSearchController {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
       const searchParams = mapPlacementRequestToBedSearchParams(placementRequest)
 
-      const query = objectIfNotEmpty<BedSearchParametersUi>(searchParams)
-      const body = objectIfNotEmpty<BedSearchParametersUi>(req.body)
+      const query = objectIfNotEmpty<SpaceSearchParametersUi>(searchParams)
+      const body = objectIfNotEmpty<SpaceSearchParametersUi>(req.body)
 
       const params = {
         ...query,
@@ -31,7 +31,7 @@ export default class BedSearchController {
       params.startDate = startDateObjFromParams(params).startDate
       params.requiredCharacteristics = [params.requiredCharacteristics].flat()
 
-      const spaceSearchResults = await this.spaceService.search(req.user.token, params as BedSearchParametersUi)
+      const spaceSearchResults = await this.spaceService.search(req.user.token, params as SpaceSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
       const selectedDesirableCriteria = [...placementRequest.desirableCriteria, ...params.requiredCharacteristics]
 

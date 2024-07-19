@@ -401,7 +401,7 @@ type ContingencyPlanQuestion = {
 
 export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
 
-export interface BedSearchParametersUi {
+export interface SpaceSearchParametersUi {
   durationDays: string
   durationWeeks: string
   maxDistanceMiles: string
