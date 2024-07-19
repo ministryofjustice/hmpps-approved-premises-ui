@@ -1,10 +1,10 @@
 import SpaceClient from './spaceClient'
 import paths from '../paths/api'
 
-import { bedSearchParametersFactory, bedSearchResultsFactory } from '../testutils/factories'
-import describeClient from '../testutils/describeClient'
+import { spaceSearchParametersFactory, spaceSearchResultsFactory } from '../testutils/factories'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
-describeClient('SpaceClient', provider => {
+describeCas1NamespaceClient('SpaceClient', provider => {
   let spaceClient: SpaceClient
 
   const token = 'SOME_TOKEN'
@@ -14,13 +14,13 @@ describeClient('SpaceClient', provider => {
   })
 
   describe('search', () => {
-    it('makes a post request to the beds search endpoint', async () => {
-      const bedSearchResult = bedSearchResultsFactory.build()
-      const payload = bedSearchParametersFactory.build()
+    it('makes a post request to the space search endpoint', async () => {
+      const spaceSearchResult = spaceSearchResultsFactory.build()
+      const payload = spaceSearchParametersFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get details of available spacess matching the crieteria',
+        uponReceiving: 'A request to get details of available spaces matching the crieteria',
         withRequest: {
           method: 'POST',
           path: paths.match.findSpaces.pattern,
@@ -31,13 +31,13 @@ describeClient('SpaceClient', provider => {
         },
         willRespondWith: {
           status: 200,
-          body: bedSearchResult,
+          body: spaceSearchResult,
         },
       })
 
       const result = await spaceClient.search(payload)
 
-      expect(result).toEqual(bedSearchResult)
+      expect(result).toEqual(spaceSearchResult)
     })
   })
 })

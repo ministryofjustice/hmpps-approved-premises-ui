@@ -32,6 +32,7 @@ const apiSpecs = {
     curl -s "${openAPIUrl}" |
     sed -E 's@/premises@/cas1/premises@g' |
     sed -E 's@ /out-of-service-beds@ /cas1/out-of-service-beds@g' |
+    sed -E 's@/spaces@/cas1/spaces@g' |
     sed -E 's@ /reference-data@ /cas1/reference-data@g' |
     sed -E 's@/reports@/cas1/reports@g' > ${apiSpecPaths.cas1Spec}
   fi`,
