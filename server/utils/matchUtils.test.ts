@@ -290,21 +290,27 @@ describe('matchUtils', () => {
 
   describe('summaryCardHeader', () => {
     it('returns a link to the confirm page with the premises name and bed', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
+      const spaceSearchResult = spaceSearchResultFactory.build()
       const placementRequestId = '123'
       const startDate = '2022-01-01'
       const durationWeeks = '4'
       const durationDays = '1'
 
-      summaryCardHeader({ bedSearchResult, placementRequestId, startDate, durationDays, durationWeeks })
+      summaryCardHeader({
+        spaceSearchResult,
+        placementRequestId,
+        startDate,
+        durationDays,
+        durationWeeks,
+      })
 
       expect(linkTo).toHaveBeenCalledWith(
         paths.placementRequests.bookings.confirm,
         { id: placementRequestId },
         {
-          text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
+          text: spaceSearchResult.premises.name,
           query: {
-            bedSearchResult: encodeSpaceSearchResult(bedSearchResult),
+            bedSearchResult: encodeSpaceSearchResult(spaceSearchResult),
             startDate,
             duration: String(Number(durationWeeks) * 7 + Number(durationDays)),
           },
@@ -315,16 +321,15 @@ describe('matchUtils', () => {
 
   describe('confirmationSummaryCardRows', () => {
     it('should call the correct row functions', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
+      const spaceSearchResult = spaceSearchResultFactory.build()
       const dates = {
         startDate: '2022-01-01',
         endDate: '2022-01-15',
         placementLength: 2,
       }
 
-      expect(confirmationSummaryCardRows(bedSearchResult, dates)).toEqual([
-        premisesNameRow(bedSearchResult),
-        bedNameRow(bedSearchResult),
+      expect(confirmationSummaryCardRows(spaceSearchResult, dates)).toEqual([
+        premisesNameRow(spaceSearchResult),
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),

@@ -94,13 +94,13 @@ export const placementDates = (startDateString: string, lengthInDays: string): P
 }
 
 export const summaryCardHeader = ({
-  bedSearchResult,
+  spaceSearchResult,
   placementRequestId,
   startDate,
   durationWeeks,
   durationDays,
 }: {
-  bedSearchResult: BedSearchResult
+  spaceSearchResult: SpaceSearchResult
   placementRequestId: string
   startDate: string
   durationDays: string
@@ -113,9 +113,9 @@ export const summaryCardHeader = ({
       id: placementRequestId,
     },
     {
-      text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
+      text: spaceSearchResult.premises.name,
       query: {
-        bedSearchResult: encodeSpaceSearchResult(bedSearchResult),
+        bedSearchResult: encodeSpaceSearchResult(spaceSearchResult),
         startDate,
         duration,
       },
@@ -129,28 +129,18 @@ export const confirmationSummaryCardRows = (
 ): Array<SummaryListItem> => {
   return [
     premisesNameRow(bedSearchResult),
-    bedNameRow(bedSearchResult),
     arrivalDateRow(dates.startDate),
     departureDateRow(dates.endDate),
     placementLengthRow(dates.placementLength),
   ]
 }
 
-export const premisesNameRow = (bedSearchResult: BedSearchResult) => ({
+export const premisesNameRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Approved Premises',
   },
   value: {
-    text: bedSearchResult.premises.name,
-  },
-})
-
-export const bedNameRow = (bedSearchResult: BedSearchResult) => ({
-  key: {
-    text: 'Bed',
-  },
-  value: {
-    text: bedSearchResult.bed.name,
+    text: spaceSearchResult.premises.name,
   },
 })
 
