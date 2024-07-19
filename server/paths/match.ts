@@ -1,10 +1,24 @@
 import { path } from 'static-path'
 
+const v2MatchPath = path('/match')
+const v2PlacementRequestsPath = v2MatchPath.path('placement-requests')
+const v2PlacementRequestPath = v2PlacementRequestsPath.path(':id')
+const v2PlacementRequestSearchPath = v2PlacementRequestPath.path('space-search')
+
+const v2Match = {
+  placementRequests: {
+    search: {
+      spaces: v2PlacementRequestSearchPath.path('new'),
+    },
+  },
+}
+
 const placementRequestsPath = path('/placement-requests')
 const placementRequestPath = placementRequestsPath.path(':id')
 const placementRequestBookingsPath = placementRequestPath.path('bookings')
 const newPlacementRequestPath = placementRequestsPath.path('new')
 const bookingNotMadePath = placementRequestPath.path('booking-not-made')
+
 export default {
   placementRequests: {
     index: placementRequestsPath,
@@ -15,8 +29,6 @@ export default {
       confirm: placementRequestBookingsPath.path('confirm'),
       create: placementRequestBookingsPath,
     },
-    beds: {
-      search: placementRequestPath.path('beds/search'),
-    },
   },
+  v2Match,
 }

@@ -25,8 +25,10 @@ export default function routes(controllers: Controllers, router: Router, service
     { auditEvent: 'CREATE_BOOKING_NOT_MADE' },
   )
 
-  get(paths.placementRequests.beds.search.pattern, bedController.search(), { auditEvent: 'BED_SEARCH' })
-  post(paths.placementRequests.beds.search.pattern, bedController.search(), { auditEvent: 'BED_SEARCH' })
+  get(paths.v2Match.placementRequests.search.spaces.pattern, bedController.search(), { auditEvent: 'SPACE_SEARCH' })
+  post(paths.v2Match.placementRequests.search.spaces.pattern, bedController.search(), {
+    auditEvent: 'SPACE_SEARCH',
+  })
 
   get(paths.placementRequests.bookings.confirm.pattern, placementRequestBookingsController.confirm())
   post(paths.placementRequests.bookings.create.pattern, placementRequestBookingsController.create(), {

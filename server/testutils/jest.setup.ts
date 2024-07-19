@@ -7,16 +7,12 @@ import { diffStringsUnified } from 'jest-diff'
 
 export {}
 
-type ManageAction = {
-  text: string
-  classes: string
-  href: string
-}
+type Action = IdentityBarMenuItem
 
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toContainManageAction(expected: ManageAction): R
+      toContainAction(expected: Action): R
       toContainMenuItem(expected: IdentityBarMenuItem): R
       toMatchStringIgnoringWhitespace(expected: string): R
       toMatchOpenAPISpec({ cas1Namespace }: { cas1Namespace: boolean }): R
@@ -51,19 +47,19 @@ const apiSpecs = {
 }
 
 expect.extend({
-  toContainManageAction(actions, argument) {
+  toContainAction(actions, argument) {
     const pass = this.equals(actions, expect.arrayContaining([expect.objectContaining(argument)]))
 
     if (pass) {
       return {
         message: () =>
-          `expected ${this.utils.printReceived(actions)} not to contain manage action ${this.utils.printExpected(argument)}`,
+          `expected ${this.utils.printReceived(actions)} not to contain action ${this.utils.printExpected(argument)}`,
         pass: true,
       }
     }
     return {
       message: () =>
-        `expected ${this.utils.printReceived(actions)} to contain manage action ${this.utils.printExpected(argument)}`,
+        `expected ${this.utils.printReceived(actions)} to contain action ${this.utils.printExpected(argument)}`,
       pass: false,
     }
   },

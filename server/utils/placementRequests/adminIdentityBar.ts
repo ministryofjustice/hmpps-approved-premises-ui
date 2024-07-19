@@ -2,9 +2,11 @@ import { PlacementRequestDetail } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem } from '../../@types/ui'
 
 import managePaths from '../../paths/manage'
+import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
 import { nameOrPlaceholderCopy } from '../personUtils'
+import config from '../../config'
 
 export const adminIdentityBar = (placementRequest: PlacementRequestDetail): IdentityBar => {
   const identityBar: IdentityBar = {
@@ -36,11 +38,23 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
       },
     ]
   }
-  return [
-    {
+
+  let createPlacementAction: { href: string; text: 'Create placement' | 'Search for a space' }
+
+  if (config.flags.v2MatchEnabled === 'true' || config.flags.v2MatchEnabled === true) {
+    createPlacementAction = {
+      href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+      text: 'Search for a space',
+    }
+  } else {
+    createPlacementAction = {
       href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
       text: 'Create placement',
-    },
+    }
+  }
+
+  return [
+    createPlacementAction,
     {
       href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
       text: 'Withdraw request for placement',

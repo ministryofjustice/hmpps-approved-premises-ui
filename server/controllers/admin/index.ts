@@ -20,11 +20,7 @@ export const controllers = (services: Services) => {
     featureFlagService,
     applicationService,
   } = services
-  const adminPlacementRequestsController = new AdminPlacementRequestsController(
-    placementRequestService,
-    apAreaService,
-    featureFlagService,
-  )
+  const adminPlacementRequestsController = new AdminPlacementRequestsController(placementRequestService)
   const cruDashboardController = new CruDashboardController(
     placementRequestService,
     apAreaService,

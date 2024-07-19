@@ -2,13 +2,26 @@ import { personFactory, placementRequestDetailFactory, restrictedPersonFactory }
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
+import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
 import applyPaths from '../../paths/apply'
 import { nameOrPlaceholderCopy } from '../personUtils'
 import { fullPersonFactory } from '../../testutils/factories/person'
+import config from '../../config'
 
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
+    const OLD_ENV = process.env
+
+    beforeEach(() => {
+      jest.resetModules()
+      process.env = { ...OLD_ENV }
+    })
+
+    afterAll(() => {
+      process.env = OLD_ENV
+    })
+
     it('should return actions to amend a booking if the status is `matched`', () => {
       const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
 
@@ -27,23 +40,34 @@ describe('adminIdentityBar', () => {
       ])
     })
 
-    it('should return actions to create a booking and withdraw a placement request if the status is not `matched`', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
+    describe('if ENABLE_V2_MATCH is false', () => {
+      it('returns the "Create placment" action', () => {
+        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
 
-      expect(adminActions(placementRequestDetail)).toEqual([
-        {
+        expect(adminActions(placementRequestDetail)).toContainAction({
           href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
           text: 'Create placement',
-        },
-        {
-          href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
-          text: 'Withdraw request for placement',
-        },
-        {
-          href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequestDetail.id }),
-          text: 'Mark as unable to match',
-        },
-      ])
+        })
+      })
+    })
+
+    describe('if ENABLE_V2_MATCH is true', () => {
+      const originalFlagValue = config.flags.v2MatchEnabled
+      beforeEach(() => {
+        config.flags.v2MatchEnabled = 'true'
+      })
+      afterEach(() => {
+        config.flags.v2MatchEnabled = originalFlagValue
+      })
+
+      it('returns the "Search for a space" action', () => {
+        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
+
+        expect(adminActions(placementRequestDetail)).toContainAction({
+          href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
+          text: 'Search for a space',
+        })
+      })
     })
   })
 

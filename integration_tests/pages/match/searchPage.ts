@@ -1,13 +1,23 @@
 import { BedSearchParametersUi, TextItem } from '@approved-premises/ui'
-import { BedSearchResult, BedSearchResults, PlacementCriteria } from '@approved-premises/api'
+import { BedSearchResult, BedSearchResults, PlacementCriteria, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
 import { placementCriteriaLabels } from '../../../server/utils/placementCriteriaUtils'
+import paths from '../../../server/paths/match'
+import { isFullPerson } from '../../../server/utils/personUtils'
 
 export default class SearchPage extends Page {
   constructor(name: string) {
     super(name)
+  }
+
+  static visit(placementRequest: PlacementRequestDetail) {
+    if (!isFullPerson(placementRequest.person))
+      throw Error('This test requires a FullPerson attached to the PlacementRequestDetail to work')
+
+    cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
+    return new SearchPage(placementRequest.person.name)
   }
 
   shouldShowEssentialCriteria(criteria: Array<PlacementCriteria>) {

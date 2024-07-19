@@ -30,7 +30,7 @@ describe('bedSearchController', () => {
 
   let bedsController: BedsController
 
-  const formPath = matchPaths.placementRequests.beds.search({ id: placementRequestDetail.id })
+  const formPath = matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id })
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -52,7 +52,7 @@ describe('bedSearchController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a bed',
+          pageHeading: 'Find a space',
           bedSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: [],
@@ -74,7 +74,7 @@ describe('bedSearchController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a bed',
+          pageHeading: 'Find a space',
           bedSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: [placementRequestDetail.desirableCriteria[0]],
@@ -100,7 +100,7 @@ describe('bedSearchController', () => {
         await requestHandler(request, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a bed',
+          pageHeading: 'Find a space',
           bedSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: placementRequestDetail.essentialCriteria,

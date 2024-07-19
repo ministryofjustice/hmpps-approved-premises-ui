@@ -9,7 +9,7 @@ describe('premisesActions', () => {
     const premises = premisesFactory.build()
 
     it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
@@ -17,7 +17,7 @@ describe('premisesActions', () => {
     })
 
     it('does NOT include the VIEW CALENDAR action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'View calendar',
         classes: 'govuk-button--secondary',
         href: paths.premises.calendar({ premisesId: premises.id }),
@@ -25,7 +25,7 @@ describe('premisesActions', () => {
     })
 
     it('includes the CREATE PLACEMENT action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'Create a placement',
         classes: 'govuk-button--secondary',
         href: paths.bookings.new({ premisesId: premises.id }),
@@ -33,7 +33,7 @@ describe('premisesActions', () => {
     })
 
     it('includes the MANAGE BEDS action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
         href: paths.premises.beds.index({ premisesId: premises.id }),
@@ -46,7 +46,7 @@ describe('premisesActions', () => {
     const premises = premisesFactory.build()
 
     it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
@@ -54,7 +54,7 @@ describe('premisesActions', () => {
     })
 
     it('includes the MANAGE BEDS action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
         href: paths.premises.beds.index({ premisesId: premises.id }),
@@ -62,7 +62,7 @@ describe('premisesActions', () => {
     })
 
     it('does NOT include the VIEW CALENDAR action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'View calendar',
         classes: 'govuk-button--secondary',
         href: paths.premises.calendar({ premisesId: premises.id }),
@@ -70,7 +70,7 @@ describe('premisesActions', () => {
     })
 
     it('does NOT include the CREATE PLACEMENT action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Create a placement',
         classes: 'govuk-button--secondary',
         href: paths.bookings.new({ premisesId: premises.id }),
@@ -83,7 +83,7 @@ describe('premisesActions', () => {
     const premises = premisesFactory.build()
 
     it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
@@ -91,7 +91,7 @@ describe('premisesActions', () => {
     })
 
     it('does include the MANAGE BEDS action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
         href: paths.premises.beds.index({ premisesId: premises.id }),
@@ -99,7 +99,7 @@ describe('premisesActions', () => {
     })
 
     it('includes the VIEW CALENDAR action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'View calendar',
         classes: 'govuk-button--secondary',
         href: paths.premises.calendar({ premisesId: premises.id }),
@@ -107,7 +107,7 @@ describe('premisesActions', () => {
     })
 
     it('does NOT include the CREATE PLACEMENT action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Create a placement',
         classes: 'govuk-button--secondary',
         href: paths.bookings.new({ premisesId: premises.id }),
@@ -120,7 +120,7 @@ describe('premisesActions', () => {
     const premises = premisesFactory.build()
 
     it('includes the MANAGE BEDS action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
         href: paths.premises.beds.index({ premisesId: premises.id }),
@@ -128,7 +128,7 @@ describe('premisesActions', () => {
     })
 
     it('does NOT include the VIEW CALENDAR action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'View calendar',
         classes: 'govuk-button--secondary',
         href: paths.premises.calendar({ premisesId: premises.id }),
@@ -136,7 +136,7 @@ describe('premisesActions', () => {
     })
 
     it('does NOT include the CREATE PLACEMENT action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Create a placement',
         classes: 'govuk-button--secondary',
         href: paths.bookings.new({ premisesId: premises.id }),
@@ -144,7 +144,7 @@ describe('premisesActions', () => {
     })
 
     it('includes the "v2 out of service beds" action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
@@ -157,7 +157,7 @@ describe('premisesActions', () => {
     const premises = premisesFactory.build()
 
     it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+      expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
@@ -165,7 +165,7 @@ describe('premisesActions', () => {
     })
 
     it('includes the "manage beds" action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+      expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
         href: paths.premises.beds.index({ premisesId: premises.id }),
