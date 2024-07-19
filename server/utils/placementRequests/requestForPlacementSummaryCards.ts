@@ -12,6 +12,8 @@ export class RequestForPlacementSummaryCards {
 
   private actionItems: Array<SummaryListActionItem> = []
 
+  private unusedQuestions = ['Dates of placement']
+
   constructor(
     private readonly requestForPlacement: RequestForPlacement,
     private readonly applicationId: Application['id'],
@@ -23,7 +25,8 @@ export class RequestForPlacementSummaryCards {
     const pageResponses = this.requestForPlacement?.document?.[taskName]
 
     pageResponses?.forEach((pageResponse: PageResponse) => {
-      const questionsAndAnswers = Object.entries(pageResponse)
+      const allQuestionsAndAnswers = Object.entries(pageResponse)
+      const questionsAndAnswers = allQuestionsAndAnswers.filter(([key]) => !this.unusedQuestions.includes(key))
 
       questionsAndAnswers.forEach(([question, answer]) => {
         const value =
