@@ -11,7 +11,7 @@ export class V2MarkBedAsOutOfServicePage extends BasePage {
       await expect(page.locator('h1')).toContainText(title)
     }
     const instance = new V2MarkBedAsOutOfServicePage(page)
-    instance.startDate = faker.date.soon({ days: 600 })
+    instance.startDate = faker.date.soon({ days: 1200 })
     return instance
   }
 
