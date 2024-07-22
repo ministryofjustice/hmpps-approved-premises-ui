@@ -11,6 +11,7 @@ import type {
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import type TasklistPage from '../form-pages/tasklistPage'
+import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
 import ApplicationService from './applicationService'
 import ApplicationClient from '../data/applicationClient'
@@ -25,11 +26,9 @@ import {
   documentFactory,
   noteFactory,
   paginatedResponseFactory,
-  placementApplicationFactory,
   requestForPlacementFactory,
   withdrawableFactory,
 } from '../testutils/factories'
-import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 import withdrawablesFactory from '../testutils/factories/withdrawablesFactory'
 
@@ -419,21 +418,6 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.timeline).toHaveBeenCalledWith(id)
-    })
-  })
-
-  describe('getPlacementApplications', () => {
-    it('calls the client with the id and the token and returns the result', async () => {
-      const id = 'some-uuid'
-      const placementApplications = placementApplicationFactory.buildList(1)
-      applicationClient.placementApplications.mockResolvedValue(placementApplications)
-
-      const result = await service.getPlacementApplications(token, id)
-
-      expect(result).toEqual(placementApplications)
-
-      expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.placementApplications).toHaveBeenCalledWith(id)
     })
   })
 
