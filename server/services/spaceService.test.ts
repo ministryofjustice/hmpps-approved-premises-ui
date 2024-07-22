@@ -1,5 +1,5 @@
 import SpaceClient from '../data/spaceClient'
-import { bedSearchParametersUiFactory, bedSearchResultsFactory } from '../testutils/factories'
+import { bedSearchParametersUiFactory, spaceSearchResultsFactory } from '../testutils/factories'
 import SpaceService from './spaceService'
 
 jest.mock('../data/spaceClient.ts')
@@ -19,7 +19,7 @@ describe('spaceService', () => {
 
   describe('search', () => {
     it('calls the all method on the space client', async () => {
-      const bedSearchResults = bedSearchResultsFactory.build()
+      const bedSearchResults = spaceSearchResultsFactory.build()
       const params = bedSearchParametersUiFactory.build()
       spaceClient.search.mockResolvedValue(bedSearchResults)
 

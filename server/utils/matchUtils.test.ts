@@ -92,10 +92,8 @@ describe('matchUtils', () => {
       const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
-        ...uiParams,
-        durationDays: 15,
+        durationInDays: 15,
         maxDistanceMiles: Number(uiParams.maxDistanceMiles),
-        serviceName: 'approved-premises',
       })
     })
   })

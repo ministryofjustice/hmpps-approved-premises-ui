@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import SpaceSearchController from './spaceSearchController'
-import { bedSearchResultsFactory, placementRequestDetailFactory } from '../../../testutils/factories'
+import { placementRequestDetailFactory, spaceSearchResultsFactory } from '../../../testutils/factories'
 
 import { PlacementRequestService, SpaceService } from '../../../services'
 import { startDateObjFromParams } from '../../../utils/matchUtils'
@@ -15,7 +15,7 @@ jest.mock('../../../utils/matchUtils')
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
   const placementRequestDetail = placementRequestDetailFactory.build()
-  const spaceSearchResults = bedSearchResultsFactory.build()
+  const spaceSearchResults = spaceSearchResultsFactory.build()
 
   const request: DeepMocked<Request> = createMock<Request>({
     params: { id: placementRequestDetail.id },

@@ -10,7 +10,7 @@ npm run lint
 
 echo "==> Pulling the latest type from the API repo"
 
-npm run generate-types
+# npm run generate-types
 
 echo "==> Typechecking the code"
 
