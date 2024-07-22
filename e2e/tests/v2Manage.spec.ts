@@ -58,14 +58,14 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
 }
 
 test('Future manager marks a bed as out of service in the V2 Manage area', async ({ page, futureManager }) => {
-  markABedAsOutOfService(page, futureManager)
+  await markABedAsOutOfService(page, futureManager)
 })
 
 test('Future manager updates an out of service bed', async ({ page, futureManager }) => {
   // Given I am signed in as a future manager
   await signIn(page, futureManager)
   // And there is an Out of Service bed
-  markABedAsOutOfService(page, futureManager)
+  await markABedAsOutOfService(page, futureManager)
 
   // And I am on the list of premises page
   const dashboard = await visitDashboard(page)
