@@ -23,7 +23,7 @@ import {
   premisesNameRow,
   selectedEssentialCriteria,
   startDateObjFromParams,
-  summaryCardHeader,
+  summaryCardLink,
   summaryCardRows,
   townRow,
 } from './matchUtils'
@@ -33,7 +33,7 @@ import {
   placementRequirementCriteriaLabels,
   specialistApTypeCriteriaLabels,
 } from './placementCriteriaUtils'
-import { linkTo } from './utils'
+import { createQueryString } from './utils'
 
 jest.mock('./utils.ts')
 jest.mock('./placementCriteriaUtils', () => ({
@@ -286,15 +286,16 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('summaryCardHeader', () => {
+  describe('summaryCardLink', () => {
     it('returns a link to the confirm page with the premises name and bed', () => {
       const spaceSearchResult = spaceSearchResultFactory.build()
       const placementRequestId = '123'
       const startDate = '2022-01-01'
       const durationWeeks = '4'
       const durationDays = '1'
+      const durationInDays = Number(durationWeeks) * 7 + Number(durationDays)
 
-      summaryCardHeader({
+      summaryCardLink({
         spaceSearchResult,
         placementRequestId,
         startDate,
@@ -302,17 +303,15 @@ describe('matchUtils', () => {
         durationWeeks,
       })
 
-      expect(linkTo).toHaveBeenCalledWith(
-        paths.placementRequests.bookings.confirm,
-        { id: placementRequestId },
-        {
-          text: spaceSearchResult.premises.name,
-          query: {
+      expect(
+        `${paths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
+          {
             spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
             startDate,
-            duration: String(Number(durationWeeks) * 7 + Number(durationDays)),
+            durationInDays,
           },
-        },
+          { addQueryPrefix: true },
+        )}`,
       )
     })
   })

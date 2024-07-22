@@ -43,8 +43,9 @@ export default class SearchPage extends Page {
     cy.get('h2').contains(`${spaceSearchResults.resultsCount} Approved Premises found`)
 
     spaceSearchResults.results.forEach(result => {
-      cy.contains('div', result.premises.name)
-        .parent('div')
+      cy.contains('h2', result.premises.name)
+        .parent()
+        .parent()
         .within(() => {
           const tableRows = summaryCardRows(result)
           tableRows.forEach(row => {

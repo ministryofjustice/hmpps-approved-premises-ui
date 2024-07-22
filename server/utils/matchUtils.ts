@@ -5,7 +5,7 @@ import {
 } from '../@types/shared'
 import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
-import { linkTo } from './utils'
+import { createQueryString, linkTo } from './utils'
 import matchPaths from '../paths/match'
 import {
   offenceAndRiskCriteriaLabels,
@@ -85,7 +85,7 @@ export const placementDates = (startDateString: string, lengthInDays: string): P
   }
 }
 
-export const summaryCardHeader = ({
+export const summaryCardLink = ({
   spaceSearchResult,
   placementRequestId,
   startDate,
@@ -99,20 +99,14 @@ export const summaryCardHeader = ({
   durationWeeks: string
 }): string => {
   const duration = String(Number(durationWeeks) * 7 + Number(durationDays))
-  return linkTo(
-    matchPaths.placementRequests.bookings.confirm,
+  return `${matchPaths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
     {
-      id: placementRequestId,
+      spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
+      startDate,
+      duration,
     },
-    {
-      text: spaceSearchResult.premises.name,
-      query: {
-        spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
-        startDate,
-        duration,
-      },
-    },
-  )
+    { addQueryPrefix: true },
+  )}`
 }
 
 export const confirmationSummaryCardRows = (
