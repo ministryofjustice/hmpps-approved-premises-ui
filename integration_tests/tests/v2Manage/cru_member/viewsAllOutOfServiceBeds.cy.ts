@@ -71,7 +71,7 @@ describe('CRU Member lists all OOS beds', () => {
     cy.task('stubOutOfServiceBedsList', {
       outOfServiceBeds: historicBeds,
       page: 1,
-      temporality: 'historic',
+      temporality: 'past',
     })
 
     // Given I'm on the out of service beds index page

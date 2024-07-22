@@ -83,7 +83,7 @@ export default class OutOfServiceBedsController {
     return async (req: Request, res: Response) => {
       const { temporality, premisesId } = req.params as { temporality: Temporality; premisesId: string }
 
-      if (!['current', 'future', 'historic'].includes(temporality)) {
+      if (!['current', 'future', 'past'].includes(temporality)) {
         return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       }
 
@@ -120,7 +120,7 @@ export default class OutOfServiceBedsController {
     return async (req: Request, res: Response) => {
       const { temporality } = req.params as { temporality: Temporality }
 
-      if (!['current', 'future', 'historic'].includes(temporality)) {
+      if (!['current', 'future', 'past'].includes(temporality)) {
         return res.redirect(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
       }
 
