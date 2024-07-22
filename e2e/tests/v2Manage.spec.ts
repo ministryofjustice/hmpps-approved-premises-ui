@@ -62,9 +62,7 @@ test('Future manager marks a bed as out of service in the V2 Manage area', async
 })
 
 test('Future manager updates an out of service bed', async ({ page, futureManager }) => {
-  // Given I am signed in as a future manager
-  await signIn(page, futureManager)
-  // And there is an Out of Service bed
+  // Given there is an Out of Service bed
   await markABedAsOutOfService(page, futureManager)
 
   // And I am on the list of premises page
