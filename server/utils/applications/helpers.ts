@@ -8,7 +8,9 @@ export const createNameAnchorElement = (
   { linkInProgressApplications }: { linkInProgressApplications: boolean } = { linkInProgressApplications: true },
 ) => {
   if (!linkInProgressApplications && applicationSummary.status === 'started') {
-    return textValue(nameOrPlaceholderCopy(person, isUnknownPerson(person) ? 'LAO: Not Found' : `LAO: ${person.crn}`))
+    return textValue(
+      nameOrPlaceholderCopy(person, isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO: ${person.crn}`),
+    )
   }
 
   return isFullPerson(person)
@@ -17,7 +19,7 @@ export const createNameAnchorElement = (
           person.name
         }</a>`,
       )
-    : textValue(isUnknownPerson(person) ? 'LAO CRN: Not Found' : `LAO CRN: ${person.crn}`)
+    : textValue(isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO CRN: ${person.crn}`)
 }
 
 export const textValue = (value: string) => {

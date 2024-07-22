@@ -1,5 +1,5 @@
 import { when } from 'jest-when'
-import { applicationSummaryFactory, personFactory } from '../../testutils/factories'
+import { applicationSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import paths from '../../paths/apply'
 import { isFullPerson, isUnknownPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
@@ -38,12 +38,12 @@ describe('helpers', () => {
 
     it('returns an LAO Not Found for person type Unknown', () => {
       const applicationSummary = applicationSummaryFactory.build()
-      const person = personFactory.build()
+      const person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
 
       when(isFullPerson).calledWith(person).mockReturnValue(false)
-      when(isUnknownPerson).calledWith(person).mockReturnValue(false)
+      when(isUnknownPerson).calledWith(person).mockReturnValue(true)
 
-      expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`LAO CRN: ${person.crn}`))
+      expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Not Found CRN: ${person.crn}`))
     })
 
     it('returns nameOrPlaceholder copy when an application is in progress and linkInProgressApplications is false', () => {

@@ -120,7 +120,7 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
 
   if ('person' in item && item.person && !isFullPerson(item.person)) {
     return {
-      text: isUnknownPerson(item.person) ? 'LAO: Not Found' : `LAO: ${item.person.crn}`,
+      text: isUnknownPerson(item.person) ? `Not Found CRN: ${item.person.crn}` : `LAO: ${item.person.crn}`,
     }
   }
 

@@ -114,7 +114,7 @@ describe('tableUtils', () => {
       unknownPersonTask.person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
 
       expect(nameCell(unknownPersonTask)).toEqual({
-        text: `LAO: Not Found`,
+        text: `Not Found CRN: ${unknownPersonTask.person.crn}`,
       })
     })
   })
