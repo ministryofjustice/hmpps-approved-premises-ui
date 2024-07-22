@@ -93,7 +93,6 @@ describe('matchUtils', () => {
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
         durationInDays: 15,
-        maxDistanceMiles: Number(uiParams.maxDistanceMiles),
       })
     })
   })
