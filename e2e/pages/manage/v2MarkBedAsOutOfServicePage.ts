@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test'
-import { getDate, getMonth, getYear } from 'date-fns'
+import { addDays, getDate, getMonth, getYear } from 'date-fns'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { BasePage } from '../basePage'
 
@@ -11,27 +11,33 @@ export class V2MarkBedAsOutOfServicePage extends BasePage {
       await expect(page.locator('h1')).toContainText(title)
     }
     const instance = new V2MarkBedAsOutOfServicePage(page)
-    instance.startDate = faker.date.soon({ days: 600 })
+    instance.startDate = faker.date.soon({ days: 1200 })
     return instance
   }
 
   endDate() {
-    const endDate = new Date(this.startDate)
-    endDate.setDate(endDate.getDate() + 2)
+    const endDate = addDays(this.startDate, 2)
+
     return endDate
   }
 
   async enterOutOfServiceFromDate() {
     const { startDate } = this
     await this.page.getByRole('group', { name: 'Start date' }).getByLabel('Day').fill(getDate(startDate).toString())
-    await this.page.getByRole('group', { name: 'Start date' }).getByLabel('Month').fill(getMonth(startDate).toString())
+    await this.page
+      .getByRole('group', { name: 'Start date' })
+      .getByLabel('Month')
+      .fill((getMonth(startDate) + 1).toString())
     await this.page.getByRole('group', { name: 'Start date' }).getByLabel('Year').fill(getYear(startDate).toString())
   }
 
   async enterOutOfServiceToDate() {
     const endDate = this.endDate()
     await this.page.getByRole('group', { name: 'End date' }).getByLabel('Day').fill(getDate(endDate).toString())
-    await this.page.getByRole('group', { name: 'End date' }).getByLabel('Month').fill(getMonth(endDate).toString())
+    await this.page
+      .getByRole('group', { name: 'End date' })
+      .getByLabel('Month')
+      .fill((getMonth(endDate) + 1).toString())
     await this.page.getByRole('group', { name: 'End date' }).getByLabel('Year').fill(getYear(endDate).toString())
   }
 
