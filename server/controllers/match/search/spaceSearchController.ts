@@ -29,7 +29,6 @@ export default class BedSearchController {
       }
 
       params.startDate = startDateObjFromParams(params).startDate
-      params.requiredCharacteristics = [params.requiredCharacteristics].flat()
 
       const spaceSearchResults = await this.spaceService.search(req.user.token, params as SpaceSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'

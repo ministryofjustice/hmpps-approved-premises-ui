@@ -71,9 +71,6 @@
 					<input type="hidden" name="startDate" value="{{startDate}}"/>
 					<input type="hidden" name="applicationId" value="{{applicationId}}"/>
 					<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
-					{% for requiredCharacteristic in placementRequest.essentialCriteria %}
-						<input type="hidden" name="requiredCharacteristics[]" value="{{requiredCharacteristic}}"/>
-					{% endfor %}
 
 					<div class="govuk-grid-column-one-third">
 						<div class="moj-filter">
