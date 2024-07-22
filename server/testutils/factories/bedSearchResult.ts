@@ -38,7 +38,6 @@ const premisesSummaryFactory = Factory.define<BedSearchResult['premises']>(() =>
 export const apCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({
   name: faker.lorem.sentence(),
   propertyName: faker.helpers.arrayElement(placementCriteria),
-  premises: faker.company.name(),
 }))
 
 const roomSummaryFactory = Factory.define<BedSearchResult['room']>(() => ({
