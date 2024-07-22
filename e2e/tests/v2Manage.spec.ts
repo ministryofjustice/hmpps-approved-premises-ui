@@ -1,4 +1,6 @@
 import { faker } from '@faker-js/faker/locale/en_GB'
+import { UserLoginDetails } from '@approved-premises/e2e'
+import { Page } from '@playwright/test'
 import { OutOfServiceBedsPremisesListPage } from '../pages/manage/v2OutOfServiceBedsIndexPage'
 import { OutOfServiceBedPage } from '../pages/manage/v2OutOfServiceBedPage'
 import { test } from '../test'
@@ -15,7 +17,7 @@ test.describe.configure({ mode: 'parallel' })
 
 const premisesName = 'Test AP 10'
 
-test('Future manager marks a bed as out of service in the V2 Manage area', async ({ page, futureManager }) => {
+const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetails) => {
   // Given I am signed in as a future manager
   await signIn(page, futureManager)
 
@@ -53,11 +55,17 @@ test('Future manager marks a bed as out of service in the V2 Manage area', async
 
   // And I see the success message on the 'history' pane of the bed page
   await revisitedV2BedPage.showsOutOfServiceBedRecordedSuccessMessage()
+}
+
+test('Future manager marks a bed as out of service in the V2 Manage area', async ({ page, futureManager }) => {
+  markABedAsOutOfService(page, futureManager)
 })
 
 test('Future manager updates an out of service bed', async ({ page, futureManager }) => {
   // Given I am signed in as a future manager
   await signIn(page, futureManager)
+  // And there is an Out of Service bed
+  markABedAsOutOfService(page, futureManager)
 
   // And I am on the list of premises page
   const dashboard = await visitDashboard(page)
