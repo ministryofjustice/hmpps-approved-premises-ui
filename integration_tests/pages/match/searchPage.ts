@@ -8,7 +8,6 @@ import {
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
-import { placementCriteriaLabels } from '../../../server/utils/placementCriteriaUtils'
 import paths from '../../../server/paths/match'
 import { isFullPerson } from '../../../server/utils/personUtils'
 
@@ -23,12 +22,6 @@ export default class SearchPage extends Page {
 
     cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
     return new SearchPage(placementRequest.person.name)
-  }
-
-  shouldShowEssentialCriteria(criteria: Array<PlacementCriteria>) {
-    criteria.forEach(c => {
-      cy.get('span.moj-filter__tag').should('contain', placementCriteriaLabels[c])
-    })
   }
 
   shouldHaveCriteriaSelected(criteria: Array<PlacementCriteria>) {

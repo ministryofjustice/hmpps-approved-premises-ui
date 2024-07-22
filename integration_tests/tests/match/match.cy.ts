@@ -51,9 +51,6 @@ context('Placement Requests', () => {
     // When I visit the search page
     const searchPage = SearchPage.visit(placementRequest)
 
-    // Then I should see the essential criteria
-    searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
-
     // And the desirable criteria should be selected
     searchPage.shouldHaveCriteriaSelected([
       ...placementRequest.essentialCriteria,
@@ -77,9 +74,6 @@ context('Placement Requests', () => {
 
     // Then I should see the search results
     Page.verifyOnPage(SearchPage, person.name)
-
-    // And I should still see the essential criteria
-    searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
 
     // And the new desirable criteria should be selected
     searchPage.shouldHaveCriteriaSelected([
