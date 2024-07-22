@@ -20,7 +20,7 @@ export const bedSearchParametersUiFactory = Factory.define<SpaceSearchParameters
   maxDistanceMiles: faker.number.int({ min: 1, max: 100 }).toString(),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   postcodeDistrict: 'SW11',
-  requiredCharacteristics: faker.helpers.arrayElements(placementCriteria),
+  requiredCharacteristics: 'pipe',
   crn: 'ABC123',
   applicationId: faker.string.uuid(),
   assessmentId: faker.string.uuid(),

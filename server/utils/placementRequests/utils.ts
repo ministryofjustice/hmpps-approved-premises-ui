@@ -12,14 +12,8 @@ import { TabItem } from '../tasks/listTable'
 
 export const mapPlacementRequestToBedSearchParams = ({
   duration,
-  essentialCriteria,
-  desirableCriteria,
   expectedArrival,
   location,
-  radius,
-  person,
-  applicationId,
-  assessmentId,
 }: PlacementRequest): SpaceSearchParametersUi => {
   const daysAndWeeks = daysToWeeksAndDays(duration)
   return {
@@ -27,11 +21,7 @@ export const mapPlacementRequestToBedSearchParams = ({
     durationWeeks: String(daysAndWeeks.weeks),
     startDate: expectedArrival,
     postcodeDistrict: location,
-    maxDistanceMiles: radius.toString(),
-    crn: person.crn,
-    applicationId,
-    assessmentId,
-    requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
+    requiredCharacteristics: 'normal',
   }
 }
 
