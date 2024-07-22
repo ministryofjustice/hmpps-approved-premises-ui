@@ -86,11 +86,11 @@ context('Premises', () => {
     page.shouldShowAPArea(fullPremises.apArea.name)
     page.shouldShowPremisesDetail()
 
-    // And I should see all the bookings for that premises listed
-    page.shouldShowBookings(bookingsArrivingToday, bookingsLeavingToday, bookingsArrivingSoon, bookingsDepartingSoon)
+    // And I should NOT see all the bookings for that premises listed
+    page.shouldNotShowBookings()
 
-    // And I should see all the current residents for that premises listed
-    page.shouldShowCurrentResidents(bookingsDepartingSoon)
+    // And I should NOT see all the current residents for that premises listed
+    page.shouldNotShowCurrentResidents()
 
     // And I should see the overcapacity banner showing the dates that the AP is overcapacity
     page.shouldShowOvercapacityMessage(overcapacityStartDate.date, overcapacityEndDate.date)

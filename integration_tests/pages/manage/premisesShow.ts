@@ -47,6 +47,13 @@ export default class PremisesShowPage extends Page {
       .should('contain', this.premises.availableBedsForToday)
   }
 
+  shouldNotShowBookings(): void {
+    cy.get('a').contains('Arriving Today').should('not.exist')
+    cy.get('a').contains('Departing Today').should('not.exist')
+    cy.get('a').contains('Upcoming Arrivals').should('not.exist')
+    cy.get('a').contains('Upcoming Departures').should('not.exist')
+  }
+
   shouldShowBookings(
     bookingsArrivingToday: Array<PremisesBooking>,
     bookingsLeavingToday: Array<PremisesBooking>,
@@ -83,6 +90,10 @@ export default class PremisesShowPage extends Page {
             .should('have.attr', 'href', paths.bookings.show({ premisesId: this.premises.id, bookingId: item.id }))
         })
     })
+  }
+
+  shouldNotShowCurrentResidents() {
+    cy.get('h2').contains('Current residents').should('not.exist')
   }
 
   shouldShowCurrentResidents(currentResidents: Array<PremisesBooking>) {
