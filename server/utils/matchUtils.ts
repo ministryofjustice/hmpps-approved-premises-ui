@@ -27,8 +27,8 @@ export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementReq
 
 const groupedCriteria = {
   apType: { title: 'Type of AP', options: specialistApTypeCriteriaLabels },
-  placementRequirements: { title: 'Placement Requirements', options: placementRequirementCriteriaLabels },
-  offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskCriteriaLabels },
+  offenceAndRisk: { title: 'Risks and offences', options: offenceAndRiskCriteriaLabels },
+  accessNeeds: { title: 'Placement criteria', options: placementRequirementCriteriaLabels },
 }
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
