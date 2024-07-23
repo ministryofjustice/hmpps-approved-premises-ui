@@ -10,7 +10,6 @@ import arrivalFactory from './arrival'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
-import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
 import bedSummaryFactory from './bedSummary'
 import bedDetailFactory from './bedDetail'
 import {
@@ -123,8 +122,6 @@ export {
   bedOccupancyRangeFactoryUi,
   bedOccupancyRangeFactory,
   bedOccupancyEntryOverbookingUiFactory,
-  bedSearchParametersFactory,
-  bedSearchParametersUiFactory,
   bedSearchResultFactory,
   bedSearchResultsFactory,
   bookingAppealTask,
