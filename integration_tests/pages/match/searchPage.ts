@@ -1,10 +1,5 @@
 import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
-import {
-  Cas1SpaceSearchResult,
-  Cas1SpaceSearchResults,
-  PlacementCriteria,
-  PlacementRequestDetail,
-} from '@approved-premises/api'
+import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
@@ -22,13 +17,6 @@ export default class SearchPage extends Page {
 
     cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
     return new SearchPage(placementRequest.person.name)
-  }
-
-  shouldHaveCriteriaSelected(criteria: Array<PlacementCriteria>) {
-    // cy.get('input:checked[type="checkbox"][name="requiredCharacteristics"]').should('have.length', criteria.length)
-    // criteria.forEach(c => {
-    //   cy.get(`input[name="requiredCharacteristics"][value="${c}"]`).should('be.checked')
-    // })
   }
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults): void {

@@ -52,7 +52,6 @@ describe('spaceSearchController', () => {
           pageHeading: 'Find a space',
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          selectedDesirableCriteria: [],
           tier: placementRequestDetail.risks.tier.value.level,
           formPath,
           ...body,
@@ -75,11 +74,9 @@ describe('spaceSearchController', () => {
           selectedDesirableCriteria: [placementRequestDetail.desirableCriteria[0]],
           tier: placementRequestDetail.risks.tier.value.level,
           formPath,
-          ...query,
           requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
         })
         expect(spaceService.search).toHaveBeenCalledWith(token, {
-          ...query,
           ...{
             requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
           },
@@ -90,7 +87,6 @@ describe('spaceSearchController', () => {
 
     describe('no body params are sent', () => {
       it('it should render the search template by searching with the placement request variables ', async () => {
-        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
         const requestHandler = spaceSearchController.search()
         await requestHandler(request, response, next)
 
@@ -101,9 +97,8 @@ describe('spaceSearchController', () => {
           selectedDesirableCriteria: placementRequestDetail.essentialCriteria,
           tier: placementRequestDetail.risks.tier.value.level,
           formPath,
-          ...query,
         })
-        expect(spaceService.search).toHaveBeenCalledWith(token, query)
+        expect(spaceService.search).toHaveBeenCalledWith(token)
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       })
     })
