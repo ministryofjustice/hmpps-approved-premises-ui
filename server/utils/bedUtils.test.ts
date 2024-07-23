@@ -26,7 +26,9 @@ import {
   title,
   v1BedLink,
   v2BedActions,
+  v2BedDetails,
   v2BedLink,
+  v2BedTableRows,
 } from './bedUtils'
 import { DateFormats } from './dateUtils'
 
@@ -111,6 +113,18 @@ describe('bedUtils', () => {
     })
   })
 
+  describe('v2BedRows', () => {
+    const user = userDetailsFactory.build({ roles: ['manager'] })
+
+    it('returns the table rows given the rooms', () => {
+      const beds = [bed]
+
+      expect(v2BedTableRows(beds, premisesId, user)).toEqual([
+        [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId, user)],
+      ])
+    })
+  })
+
   describe('statusRow', () => {
     it('returns the status of an available room in sentence case', () => {
       bedDetail.status = 'available'
@@ -161,6 +175,12 @@ describe('bedUtils', () => {
   describe('bedDetails', () => {
     it('returns details for a bed', () => {
       expect(bedDetails(bedDetail)).toEqual([statusRow(bedDetail), characteristicsRow(bedDetail)])
+    })
+  })
+
+  describe('v2BedDetails', () => {
+    it('returns details for a bed', () => {
+      expect(v2BedDetails(bedDetail)).toEqual([characteristicsRow(bedDetail)])
     })
   })
 

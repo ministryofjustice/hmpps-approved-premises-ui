@@ -37,7 +37,7 @@ export default function routes(controllers: Controllers, router: Router, service
   })
 
   // Beds
-  get(paths.v2Manage.premises.beds.index.pattern, bedsController.index(), {
+  get(paths.v2Manage.premises.beds.index.pattern, v2BedsController.index(), {
     auditEvent: 'LIST_BEDS',
     allowedRoles: ['future_manager'],
   })

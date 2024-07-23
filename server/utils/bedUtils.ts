@@ -28,8 +28,16 @@ export const actionCell = (bed: BedSummary, premisesId: string, user?: UserDetai
   html: bedLinkForUser(bed, premisesId, user),
 })
 
+export const v2BedTableRows = (beds: Array<BedSummary>, premisesId: string, user?: UserDetails) => {
+  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId, user)])
+}
+
 export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => {
   return [statusRow(bed), characteristicsRow(bed)]
+}
+
+export const v2BedDetails = (bed: BedDetail): Array<SummaryListItem> => {
+  return [characteristicsRow(bed)]
 }
 
 export const statusRow = (bed: BedDetail): SummaryListItem => ({

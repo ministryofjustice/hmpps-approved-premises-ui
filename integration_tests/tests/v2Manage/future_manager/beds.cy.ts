@@ -27,25 +27,25 @@ context('Beds', () => {
     // Given I am signed in as a workflow manager
     signIn(['future_manager'])
 
-    // When I visit the rooms page
-    const bedsPage = V2BedsListPage.visit(premisesId)
+    // When I visit the V2 beds page
+    const v2BedsPage = V2BedsListPage.visit(premisesId)
 
-    // Then I should see all of the rooms listed
-    bedsPage.shouldShowBeds(bedSummaries, premisesId)
+    // Then I should see all of the beds listed
+    v2BedsPage.shouldShowBeds(bedSummaries, premisesId)
 
     // When I click on a bed
-    bedsPage.clickBed(bedDetail)
+    v2BedsPage.clickBed(bedDetail)
 
     // Then I should be taken to the bed page
     Page.verifyOnPage(V2BedShowPage, bedDetail.name)
 
-    // Give I'm on the bed page
-    const bedPage = V2BedShowPage.visit(premisesId, bedDetail)
+    // Given I'm on the V2 bed page
+    const v2BedPage = V2BedShowPage.visit(premisesId, bedDetail)
 
     // Then I should see the room details
-    bedPage.shouldShowBedDetails(bedDetail)
+    v2BedPage.shouldShowBedDetails(bedDetail)
 
     // And I should see a link to the premises
-    bedPage.shouldLinkToPremises(premises)
+    v2BedPage.shouldLinkToPremises(premises)
   })
 })

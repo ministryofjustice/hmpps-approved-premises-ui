@@ -119,11 +119,11 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['future_manager'] })
     const premises = premisesFactory.build()
 
-    it('includes the MANAGE BEDS action', () => {
+    it('includes the V2 MANAGE BEDS action', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
-        href: paths.premises.beds.index({ premisesId: premises.id }),
+        href: paths.v2Manage.premises.beds.index({ premisesId: premises.id }),
       })
     })
 
