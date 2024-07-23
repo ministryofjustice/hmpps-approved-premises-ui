@@ -404,13 +404,9 @@ export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, C
 export interface SpaceSearchParametersUi {
   durationDays: string
   durationWeeks: string
-  maxDistanceMiles: string
   startDate: string
   postcodeDistrict: string
-  requiredCharacteristics: Array<PlacementCriteria>
-  crn: string
-  applicationId: string
-  assessmentId: string
+  apType: ApType
 }
 
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
