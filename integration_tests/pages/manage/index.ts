@@ -5,6 +5,7 @@ import LostBedCreatePage from './lostBedCreate'
 import LostBedListPage from './lostBedList'
 import LostBedShowPage from './lostBedShow'
 import PremisesListPage from './premisesList'
+import V2PremisesListPage from './v2PremisesList'
 import PremisesShowPage from './premisesShow'
 import WithdrawConfirmPage from './withdrawConfirm'
 import UnableToMatchPage from './unableToMatch'
@@ -44,4 +45,5 @@ export {
   NewDateChangePage,
   WithdrawConfirmPage,
   UnableToMatchPage,
+  V2PremisesListPage,
 }

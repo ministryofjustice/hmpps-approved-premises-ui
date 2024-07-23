@@ -1,5 +1,5 @@
 import { userDetailsFactory } from '../../testutils/factories'
-import { hasRole, managerRoles, sections, sectionsForUser } from './homePageDashboard'
+import { hasRole, sections, sectionsForUser } from './homePageDashboard'
 
 describe('homePageDashboard', () => {
   describe('hasRole', () => {
@@ -29,20 +29,37 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.assess])
     })
 
-    it.each(managerRoles)('should return Apply and Manage sections for a user with a %s role', managerRole => {
-      const user = userDetailsFactory.build({ roles: [managerRole] })
+    it('should return Apply section for a user with the manager role', () => {
+      const user = userDetailsFactory.build({ roles: ['manager'] })
 
       expect(sectionsForUser(user)).toContain(sections.apply)
+    })
+
+    it('should return v1 Manage section for a user with the manager role and no future_manager role', () => {
+      const user = userDetailsFactory.build({ roles: ['manager'] })
+
       expect(sectionsForUser(user)).toContain(sections.manage)
     })
 
-    it('should return Apply, Workflow, Placement Request and CRU dashboard sections for a user with a workflow manager role', () => {
+    it('should return V2 Manage section for a user with the future_manager role', () => {
+      const user = userDetailsFactory.build({ roles: ['future_manager'] })
+
+      expect(sectionsForUser(user)).toContain(sections.v2Manage)
+    })
+
+    it('should return ONLY the v2 Manage section for a user with BOTH manager role and the future_manager role', () => {
+      const user = userDetailsFactory.build({ roles: ['manager', 'future_manager'] })
+
+      expect(sectionsForUser(user)).toContain(sections.v2Manage)
+      expect(sectionsForUser(user)).not.toContain(sections.manage)
+    })
+
+    it('should return Apply, Workflow, CRU dashboard sections for a user with a workflow manager role', () => {
       const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
 
       expect(sectionsForUser(user)).toContain(sections.apply)
       expect(sectionsForUser(user)).toContain(sections.workflow)
       expect(sectionsForUser(user)).toContain(sections.cruDashboard)
-      expect(sectionsForUser(user)).toContain(sections.manage)
     })
 
     it('should return Apply sections for a user with a matcher role', () => {

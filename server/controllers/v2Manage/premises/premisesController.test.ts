@@ -1,10 +1,15 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { PremisesService } from '../../../services'
+import { ApAreaService, PremisesService } from '../../../services'
 import V2PremisesController from './premisesController'
 
-import { extendedPremisesSummaryFactory, premisesFactory } from '../../../testutils/factories'
+import {
+  apAreaFactory,
+  extendedPremisesSummaryFactory,
+  premisesFactory,
+  premisesSummaryFactory,
+} from '../../../testutils/factories'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -15,7 +20,8 @@ describe('V2PremisesController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
-  const premisesController = new V2PremisesController(premisesService)
+  const apAreaService = createMock<ApAreaService>({})
+  const premisesController = new V2PremisesController(premisesService, apAreaService)
 
   beforeEach(() => {
     request = createMock<Request>({ user: { token }, params: { premisesId } })
@@ -40,6 +46,50 @@ describe('V2PremisesController', () => {
       })
 
       expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, premisesId)
+    })
+  })
+
+  describe('index', () => {
+    it('should render the template with the premises and areas', async () => {
+      const premisesSummaries = premisesSummaryFactory.buildList(1)
+
+      const apAreas = apAreaFactory.buildList(1)
+
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
+      premisesService.getAll.mockResolvedValue(premisesSummaries)
+
+      const requestHandler = premisesController.index()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/index', {
+        premisesSummaries,
+        areas: apAreas,
+        selectedArea: '',
+      })
+
+      expect(premisesService.getAll).toHaveBeenCalledWith(token, undefined)
+      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+    })
+
+    it('should call the premises service with the AP area ID if supplied', async () => {
+      const areaId = 'ap-area-id'
+      const premisesSummaries = premisesSummaryFactory.buildList(1)
+      const areas = apAreaFactory.buildList(1)
+
+      apAreaService.getApAreas.mockResolvedValue(areas)
+      premisesService.getAll.mockResolvedValue(premisesSummaries)
+
+      const requestHandler = premisesController.index()
+      await requestHandler({ ...request, body: { selectedArea: areaId } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/index', {
+        premisesSummaries,
+        areas,
+        selectedArea: areaId,
+      })
+
+      expect(premisesService.getAll).toHaveBeenCalledWith(token, areaId)
+      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
     })
   })
 })

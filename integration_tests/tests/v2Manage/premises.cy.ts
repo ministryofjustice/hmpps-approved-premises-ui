@@ -6,7 +6,8 @@ import {
   premisesSummaryFactory,
 } from '../../../server/testutils/factories'
 
-import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
+import DashboardPage from '../../pages/dashboard'
+import { PremisesShowPage, V2PremisesListPage } from '../../pages/manage'
 
 import { signIn } from '../signIn'
 import { fullPersonFactory } from '../../../server/testutils/factories/person'
@@ -25,10 +26,10 @@ context('Premises', () => {
       cy.task('stubApAreaReferenceData')
 
       // When I visit the premises page
-      const page = PremisesListPage.visit({ v2: true })
+      const v2PremisesListPage = V2PremisesListPage.visit()
 
       // Then I should see all of the premises listed
-      page.shouldShowPremises(premises)
+      v2PremisesListPage.shouldShowPremises(premises)
     })
   })
 
@@ -67,30 +68,42 @@ context('Premises', () => {
     })
 
     const premisesId = '123'
-
+    const premisesName = 'Hope House'
     const premises = extendedPremisesSummaryFactory.build({
       dateCapacities: [overcapacityStartDate, overcapacityEndDate],
       bookings,
       id: premisesId,
     })
 
-    const fullPremises = premisesFactory.build({ id: premisesId })
+    const allPremises = [premisesSummaryFactory.build({ name: premisesName, id: premisesId })]
+    cy.task('stubAllPremises', allPremises)
+    cy.task('stubApAreaReferenceData')
+
+    const fullPremises = premisesFactory.build({ id: premisesId, name: premisesName })
 
     cy.task('stubPremisesSummary', premises)
     cy.task('stubSinglePremises', fullPremises)
 
-    // When I visit the premises page
-    const page = PremisesShowPage.visit(premises, { v2: true })
+    // Given I'm on the dashboard
+    const dashboard = DashboardPage.visit()
+
+    // When I navigate to the v2 premises list
+    dashboard.followLinkTo('Manage an Approved Premises')
+    const premisesListPage = new V2PremisesListPage()
+
+    // And I navigate to the particular v2 premises page
+    premisesListPage.followLinkToPremisesNamed(premisesName)
+    const page = new PremisesShowPage(premises)
 
     // Then I should see the premises details shown
     page.shouldShowAPArea(fullPremises.apArea.name)
     page.shouldShowPremisesDetail()
 
-    // And I should see all the bookings for that premises listed
-    page.shouldShowBookings(bookingsArrivingToday, bookingsLeavingToday, bookingsArrivingSoon, bookingsDepartingSoon)
+    // And I should NOT see all the bookings for that premises listed
+    page.shouldNotShowBookings()
 
-    // And I should see all the current residents for that premises listed
-    page.shouldShowCurrentResidents(bookingsDepartingSoon)
+    // And I should NOT see all the current residents for that premises listed
+    page.shouldNotShowCurrentResidents()
 
     // And I should see the overcapacity banner showing the dates that the AP is overcapacity
     page.shouldShowOvercapacityMessage(overcapacityStartDate.date, overcapacityEndDate.date)

@@ -32,6 +32,14 @@ export const sections = {
     shortTitle: 'Manage',
     href: managePaths.premises.index({}),
   },
+  v2Manage: {
+    id: 'v2Manage',
+    title: 'Manage an Approved Premises',
+    description:
+      'Manage arrivals, departures and out of service beds. View current and upcoming occupancy at an Approved Premises.',
+    shortTitle: 'Manage',
+    href: managePaths.v2Manage.premises.index({}),
+  },
   workflow: {
     id: 'workflow',
     title: 'Manage task allocations',
@@ -76,6 +84,7 @@ export const sections = {
     href: managePaths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }),
   },
 }
+
 export const managerRoles: ReadonlyArray<UserRole> = [
   'workflow_manager',
   'manager',
@@ -98,8 +107,12 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.assess)
   }
 
-  if (managerRoles.some(role => hasRole(user, role))) {
+  if (hasRole(user, 'manager') && !hasRole(user, 'future_manager')) {
     items.push(sections.manage)
+  }
+
+  if (hasRole(user, 'future_manager')) {
+    items.push(sections.v2Manage)
   }
 
   if (hasRole(user, 'workflow_manager')) {

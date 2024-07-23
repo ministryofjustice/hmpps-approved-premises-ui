@@ -18,4 +18,8 @@ export default class DashboardPage extends Page {
   shouldNotShowCard(service: string) {
     cy.get(`[data-cy-card-service="${service}"]`).should('not.exist')
   }
+
+  followLinkTo(dashboardLink: string) {
+    cy.get('a').contains(dashboardLink).click()
+  }
 }
