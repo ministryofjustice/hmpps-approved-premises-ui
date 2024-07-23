@@ -52,7 +52,7 @@ context('Placement Requests', () => {
 
     // And I should see the search results
     let numberOfSearches = 0
-    searchPage.shouldDisplaySearchResults(spaceSearchResults)
+    searchPage.shouldDisplaySearchResults(spaceSearchResults, placementRequest.location)
     numberOfSearches += 1
 
     // Given I want to search for a different space
@@ -67,7 +67,7 @@ context('Placement Requests', () => {
     Page.verifyOnPage(SearchPage, person.name)
 
     // And the new desirable criteria should be selected
-    // searchPage.shouldHaveCriteriaSelected([...placementRequest.essentialCriteria])
+    searchPage.shouldShowSearchParametersInInputs(newSearchParameters)
 
     // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {

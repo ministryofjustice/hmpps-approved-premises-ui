@@ -20,6 +20,6 @@ export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParamete
   durationDays: faker.number.int({ min: 1, max: 70 }).toString(),
   durationWeeks: faker.number.int({ min: 1, max: 12 }).toString(),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
-  postcodeDistrict: faker.helpers.arrayElement(postcodeAreas),
   apType: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
+  targetPostcodeDistrict: faker.helpers.arrayElement(postcodeAreas),
 }))

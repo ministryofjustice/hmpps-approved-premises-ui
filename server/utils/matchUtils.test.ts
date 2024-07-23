@@ -114,7 +114,7 @@ describe('matchUtils', () => {
           riskCharacteristics: [],
         },
         startDate: uiParams.startDate,
-        targetPostcodeDistrict: uiParams.postcodeDistrict,
+        targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
       })
     })
   })
@@ -156,7 +156,7 @@ describe('matchUtils', () => {
 
     describe('if a postcode area is not supplied', () => {
       it('returns the distance from "the desired location" instead', () => {
-        expect(distanceRow(spaceSearchResult, postcodeArea)).toEqual({
+        expect(distanceRow(spaceSearchResult)).toEqual({
           key: { text: 'Distance' },
           value: { text: `${spaceSearchResult.distanceInMiles} miles from the desired location` },
         })

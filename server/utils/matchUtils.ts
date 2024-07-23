@@ -29,6 +29,7 @@ export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementReq
 export const mapPlacementRequestForSpaceSearch = (placementRequest: PlacementRequest) => {
   return {
     startDate: placementRequest.expectedArrival,
+    postcodeArea: placementRequest.location,
   }
 }
 

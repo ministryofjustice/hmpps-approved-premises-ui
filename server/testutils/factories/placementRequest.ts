@@ -6,6 +6,7 @@ import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import userFactory from './user'
 import bookingSummary from './bookingSummary'
+import postcodeAreas from '../../etc/postcodeAreas.json'
 
 export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
   const essentialCriteria = faker.helpers.arrayElements(placementCriteria)
@@ -16,7 +17,7 @@ export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
     type: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap']),
     expectedArrival: DateFormats.dateObjToIsoDate(faker.date.soon()),
     duration: faker.number.int({ min: 1, max: 12 }),
-    location: 'NE1',
+    location: faker.helpers.arrayElement(postcodeAreas),
     radius: faker.number.int({ min: 1, max: 50 }),
     essentialCriteria,
     desirableCriteria,

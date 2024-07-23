@@ -50,6 +50,7 @@ describe('spaceSearchController', () => {
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a space',
+          targetPostcodeDistrict: placementRequestDetail.location,
           spaceSearchResults,
           placementRequest: placementRequestDetail,
           tier: placementRequestDetail.risks.tier.value.level,
@@ -73,6 +74,8 @@ describe('spaceSearchController', () => {
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: [placementRequestDetail.desirableCriteria[0]],
           tier: placementRequestDetail.risks.tier.value.level,
+          startDate: placementRequestDetail.expectedArrival,
+          targetPostcodeDistrict: placementRequestDetail.location,
           formPath,
           requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
         })
@@ -92,6 +95,7 @@ describe('spaceSearchController', () => {
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a space',
+          targetPostcodeDistrict: placementRequestDetail.location,
           spaceSearchResults,
           placementRequest: placementRequestDetail,
           selectedDesirableCriteria: placementRequestDetail.essentialCriteria,

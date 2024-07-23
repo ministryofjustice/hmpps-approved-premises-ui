@@ -5,6 +5,7 @@ import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
 import { mapPlacementRequestForSpaceSearch, startDateObjFromParams } from '../../../utils/matchUtils'
+import { objectIfNotEmpty } from '../../../utils/utils'
 
 export default class BedSearchController {
   constructor(
@@ -18,14 +19,21 @@ export default class BedSearchController {
 
       const spaceSearchResults = await this.spaceService.search(req.user.token, req.body as SpaceSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
-      const { startDate } = mapPlacementRequestForSpaceSearch(placementRequest)
+      const detailsFromPlacementRequest = mapPlacementRequestForSpaceSearch(placementRequest)
+
+      const params = {
+        ...objectIfNotEmpty<SpaceSearchParametersUi>(detailsFromPlacementRequest),
+        ...objectIfNotEmpty<SpaceSearchParametersUi>(req.body),
+      }
+
       res.render('match/search', {
         pageHeading: 'Find a space',
         spaceSearchResults,
         placementRequest,
         tier,
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
-        stateDate: startDateObjFromParams(req.body),
+        startDate: startDateObjFromParams(params).startDate,
+        ...params,
       })
     }
   }

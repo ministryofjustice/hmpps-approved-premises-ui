@@ -19,7 +19,7 @@ export default class SearchPage extends Page {
     return new SearchPage(placementRequest.person.name)
   }
 
-  shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults): void {
+  shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {
     cy.get('h2').contains(`${spaceSearchResults.resultsCount} Approved Premises found`)
 
     spaceSearchResults.results.forEach(result => {
@@ -27,7 +27,7 @@ export default class SearchPage extends Page {
         .parent()
         .parent()
         .within(() => {
-          const tableRows = summaryCardRows(result)
+          const tableRows = summaryCardRows(result, targetPostcodeDistrict)
           tableRows.forEach(row => {
             cy.contains('dt', (row.key as TextItem).text)
               .parent('div')
@@ -52,9 +52,20 @@ export default class SearchPage extends Page {
     this.getTextInputByIdAndClear('durationWeeks')
     this.getTextInputByIdAndEnterDetails('durationWeeks', newSearchParameters.durationWeeks.toString())
 
-    this.getTextInputByIdAndClear('postcodeDistrict')
-    this.getTextInputByIdAndEnterDetails('postcodeDistrict', newSearchParameters.postcodeDistrict)
+    this.getTextInputByIdAndClear('targetPostcodeDistrict')
+    this.getTextInputByIdAndEnterDetails('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
+  }
+
+  shouldShowSearchParametersInInputs(newSearchParameters: SpaceSearchParametersUi): void {
+    this.dateInputsShouldContainDate('availableFrom', newSearchParameters.startDate)
+    this.verifyTextInputContentsById('durationDays', newSearchParameters.durationDays.toString())
+    this.verifyTextInputContentsById('durationWeeks', newSearchParameters.durationWeeks.toString())
+    this.verifyTextInputContentsById('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
+
+    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
+      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).should('be.checked')
+    })
   }
 
   clickUnableToMatch(): void {
