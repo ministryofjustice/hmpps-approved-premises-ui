@@ -93,9 +93,13 @@ export default class TasksController {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
+      const pageHeading =
+        task.taskType === 'PlacementApplication'
+          ? 'Reallocate Request for Placement'
+          : `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`
 
       res.render('tasks/show', {
-        pageHeading: `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`,
+        pageHeading,
         application,
         task,
         users,
