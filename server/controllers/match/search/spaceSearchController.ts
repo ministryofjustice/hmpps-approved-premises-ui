@@ -4,6 +4,7 @@ import { SpaceSearchParametersUi } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
+import { startDateObjFromParams } from '../../../utils/matchUtils'
 
 export default class BedSearchController {
   constructor(
@@ -24,6 +25,7 @@ export default class BedSearchController {
         placementRequest,
         tier,
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+        stateDate: startDateObjFromParams(req.body),
       })
     }
   }
