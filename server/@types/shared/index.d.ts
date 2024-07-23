@@ -27,6 +27,7 @@ export type { ApprovedPremisesBedSearchParameters } from './models/ApprovedPremi
 export type { ApprovedPremisesBedSearchResult } from './models/ApprovedPremisesBedSearchResult';
 export type { ApprovedPremisesSummary } from './models/ApprovedPremisesSummary';
 export type { ApprovedPremisesUser } from './models/ApprovedPremisesUser';
+export type { ApprovedPremisesUserPermission } from './models/ApprovedPremisesUserPermission';
 export type { ApprovedPremisesUserRole } from './models/ApprovedPremisesUserRole';
 export type { ApType } from './models/ApType';
 export type { ArrayOfOASysOffenceDetailsQuestions } from './models/ArrayOfOASysOffenceDetailsQuestions';

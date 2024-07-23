@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1SpaceRiskCharacteristic = 'atRiskOfExploitation' | 'arson' | 'posesSexualRiskToAdults' | 'posesSexualRiskToChildren' | 'posesNonSexualRiskToChildren';
+export type Cas1SpaceRiskCharacteristic = 'atRiskOfExploitation' | 'arson' | 'hateBasedOffences' | 'posesSexualRiskToAdults' | 'posesSexualRiskToChildren' | 'posesNonSexualRiskToChildren';
