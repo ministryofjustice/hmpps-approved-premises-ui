@@ -90,6 +90,14 @@ describe('matchUtils', () => {
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
         durationInDays: 15,
+        requirements: {
+          apType: uiParams.apType,
+          gender: 'male',
+          needCharacteristics: [],
+          riskCharacteristics: [],
+        },
+        startDate: uiParams.startDate,
+        targetPostcodeDistrict: uiParams.postcodeDistrict,
       })
     })
   })

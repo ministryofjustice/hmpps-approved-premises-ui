@@ -1,5 +1,4 @@
 import { PlacementRequest } from '@approved-premises/api'
-import { SpaceSearchParametersUi } from '@approved-premises/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { createQueryString, linkTo } from '../utils'
 
@@ -7,22 +6,8 @@ import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import pathsAdmin from '../../paths/admin'
 import { placementLength } from '../matchUtils'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { TabItem } from '../tasks/listTable'
-
-export const mapPlacementRequestToSpaceSearchParams = ({
-  duration,
-  expectedArrival,
-  location,
-}: PlacementRequest): SpaceSearchParametersUi => {
-  const daysAndWeeks = daysToWeeksAndDays(duration)
-  return {
-    durationDays: String(daysAndWeeks.days),
-    durationWeeks: String(daysAndWeeks.weeks),
-    startDate: expectedArrival,
-    postcodeDistrict: location,
-  }
-}
 
 export const formatReleaseType = (placementRequest: PlacementRequest) => allReleaseTypes[placementRequest.releaseType]
 

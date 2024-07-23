@@ -1,12 +1,5 @@
-import { personFactory, placementRequestFactory } from '../../testutils/factories'
-import {
-  assessmentLink,
-  formatReleaseType,
-  mapPlacementRequestToSpaceSearchParams,
-  placementRequestTabItems,
-  searchButton,
-  withdrawalMessage,
-} from './utils'
+import { placementRequestFactory } from '../../testutils/factories'
+import { assessmentLink, formatReleaseType, placementRequestTabItems, searchButton, withdrawalMessage } from './utils'
 import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
@@ -32,29 +25,6 @@ describe('utils', () => {
         { id: placementRequest.id },
         { text: 'Search', attributes: { class: 'govuk-button' } },
       )
-    })
-  })
-
-  describe('mapPlacementRequestToBedSearchParams', () => {
-    it('transforms a placement request into bed search params', () => {
-      const person = personFactory.build()
-      const placementRequest = placementRequestFactory.build({
-        duration: 15,
-        radius: 100,
-        person,
-      })
-
-      expect(mapPlacementRequestToSpaceSearchParams(placementRequest)).toEqual({
-        durationWeeks: '2',
-        durationDays: '1',
-        startDate: placementRequest.expectedArrival,
-        postcodeDistrict: placementRequest.location,
-        maxDistanceMiles: '100',
-        crn: person.crn,
-        applicationId: placementRequest.applicationId,
-        assessmentId: placementRequest.assessmentId,
-        requiredCharacteristics: [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria],
-      })
     })
   })
 

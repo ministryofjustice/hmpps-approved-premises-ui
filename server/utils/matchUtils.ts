@@ -5,7 +5,7 @@ import {
 } from '../@types/shared'
 import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
-import { createQueryString, linkTo } from './utils'
+import { createQueryString } from './utils'
 import matchPaths from '../paths/match'
 import {
   offenceAndRiskCriteriaLabels,
@@ -33,13 +33,15 @@ export const mapPlacementRequestForSpaceSearch = (placementRequest: PlacementReq
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
   const durationInDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
+
   return {
-    startDate: '20-2-24',
-    targetPostcodeDistrict: '',
+    startDate: query.startDate,
+    targetPostcodeDistrict: query.postcodeDistrict,
     requirements: {
-      apType: 'esap',
-      gender: 'male',
+      apType: query.apType,
+      needCharacteristics: [],
       riskCharacteristics: [],
+      gender: 'male',
     },
     durationInDays,
   }

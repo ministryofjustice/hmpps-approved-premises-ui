@@ -29,7 +29,6 @@ import {
   PersonAcctAlert,
   PlacementApplication,
   PlacementApplicationTask,
-  PlacementCriteria,
   PlacementRequestStatus,
   PlacementRequestTask,
   ReleaseTypeOption,

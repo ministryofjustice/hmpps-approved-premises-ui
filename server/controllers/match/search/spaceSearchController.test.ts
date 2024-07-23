@@ -5,8 +5,6 @@ import SpaceSearchController from './spaceSearchController'
 import { placementRequestDetailFactory, spaceSearchResultsFactory } from '../../../testutils/factories'
 
 import { PlacementRequestService, SpaceService } from '../../../services'
-import { startDateObjFromParams } from '../../../utils/matchUtils'
-import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
 
 import matchPaths from '../../../paths/match'
 
@@ -44,7 +42,6 @@ describe('spaceSearchController', () => {
   describe('search', () => {
     describe('body params are sent', () => {
       it('it should render the search template with body params taking precedence over the placement request params', async () => {
-        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
         const body = { durationWeeks: '2', requiredCharacteristics: [] as Array<string> }
 
         const requestHandler = spaceSearchController.search()
@@ -58,15 +55,13 @@ describe('spaceSearchController', () => {
           selectedDesirableCriteria: [],
           tier: placementRequestDetail.risks.tier.value.level,
           formPath,
-          ...query,
           ...body,
         })
-        expect(spaceService.search).toHaveBeenCalledWith(token, { ...query, ...body })
+        expect(spaceService.search).toHaveBeenCalledWith(token, body)
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       })
 
       it('should handle when a single selectedRequiredCharacteristic is sent', async () => {
-        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
         const body = { requiredCharacteristics: placementRequestDetail.desirableCriteria[0] }
 
         const requestHandler = spaceSearchController.search()
