@@ -56,8 +56,8 @@ export default class SearchPage extends Page {
   }
 
   changeSearchParameters(newSearchParameters: SpaceSearchParametersUi): void {
-    this.clearDateInputs('startDate')
-    this.completeDateInputs('startDate', newSearchParameters.startDate)
+    this.clearDateInputs('availableFrom')
+    this.completeDateInputs('availableFrom', newSearchParameters.startDate)
 
     this.getTextInputByIdAndClear('durationDays')
     this.getTextInputByIdAndEnterDetails('durationDays', newSearchParameters.durationDays.toString())
@@ -66,8 +66,6 @@ export default class SearchPage extends Page {
 
     this.getTextInputByIdAndClear('postcodeDistrict')
     this.getTextInputByIdAndEnterDetails('postcodeDistrict', newSearchParameters.postcodeDistrict)
-    this.getTextInputByIdAndClear('maxDistanceMiles')
-    this.getTextInputByIdAndEnterDetails('maxDistanceMiles', newSearchParameters.maxDistanceMiles.toString())
     cy.get('[type="checkbox"]').uncheck()
 
     newSearchParameters.requiredCharacteristics.forEach(characteristic => {
