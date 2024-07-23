@@ -4,7 +4,7 @@ import { SpaceSearchParametersUi } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
-import { startDateObjFromParams } from '../../../utils/matchUtils'
+import { mapPlacementRequestForSpaceSearch, startDateObjFromParams } from '../../../utils/matchUtils'
 
 export default class BedSearchController {
   constructor(
@@ -18,7 +18,7 @@ export default class BedSearchController {
 
       const spaceSearchResults = await this.spaceService.search(req.user.token, req.body as SpaceSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
-
+      const { startDate } = mapPlacementRequestForSpaceSearch(placementRequest)
       res.render('match/search', {
         pageHeading: 'Find a space',
         spaceSearchResults,

@@ -1,5 +1,9 @@
 import paths from '../paths/match'
-import { spaceSearchParametersUiFactory, spaceSearchResultFactory } from '../testutils/factories'
+import {
+  placementRequestDetailFactory,
+  spaceSearchParametersUiFactory,
+  spaceSearchResultFactory,
+} from '../testutils/factories'
 
 import { DateFormats } from './dateUtils'
 import {
@@ -14,6 +18,7 @@ import {
   distanceRow,
   encodeSpaceSearchResult,
   groupedCheckboxes,
+  mapPlacementRequestForSpaceSearch,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
   placementDates,
@@ -82,6 +87,18 @@ jest.mock('./placementCriteriaUtils', () => ({
 describe('matchUtils', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  describe('mapPlacementRequestForSpaceSearch', () => {
+    it('returns the expectedArrival as startDate', () => {
+      const placementRequest = placementRequestDetailFactory.build()
+
+      expect(mapPlacementRequestForSpaceSearch(placementRequest)).toEqual(
+        expect.objectContaining({
+          startDate: placementRequest.expectedArrival,
+        }),
+      )
+    })
   })
 
   describe('mapUiParamsForApi', () => {

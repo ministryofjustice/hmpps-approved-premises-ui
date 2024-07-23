@@ -1,5 +1,6 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
+  PlacementRequest,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../@types/shared'
