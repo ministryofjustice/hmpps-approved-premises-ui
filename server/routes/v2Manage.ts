@@ -13,7 +13,6 @@ export default function routes(controllers: Controllers, router: Router, service
 
   const {
     dateChangesController,
-    premisesController,
     bookingsController,
     bookingExtensionsController,
     bedsController,
@@ -24,11 +23,11 @@ export default function routes(controllers: Controllers, router: Router, service
   } = controllers
 
   // Premises
-  get(paths.v2Manage.premises.index.pattern, premisesController.index(), {
+  get(paths.v2Manage.premises.index.pattern, v2PremisesController.index(), {
     auditEvent: 'LIST_PREMISES',
     allowedRoles: ['future_manager'],
   })
-  post(paths.v2Manage.premises.index.pattern, premisesController.index(), {
+  post(paths.v2Manage.premises.index.pattern, v2PremisesController.index(), {
     auditEvent: 'FILTER_PREMISES',
     allowedRoles: ['future_manager'],
   })
