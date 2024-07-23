@@ -11,6 +11,7 @@ import {
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 import { linkTo, sentenceCase } from './utils'
+import { translateCharacteristic } from './characteristicsUtils'
 
 export class InvalidOverbookingDataException extends Error {}
 
@@ -49,7 +50,7 @@ export const characteristicsRow = (bed: BedDetail): SummaryListItem => ({
   key: { text: 'Characteristics' },
   value: {
     html: `<ul class="govuk-list govuk-list--bullet">
-  ${bed.characteristics.map(characteristic => `<li>${sentenceCase(characteristic.propertyName)}</li>`).join(' ')}</ul>`,
+  ${bed.characteristics.map(characteristic => `<li>${translateCharacteristic(characteristic)}</li>`).join(' ')}</ul>`,
   },
 })
 
