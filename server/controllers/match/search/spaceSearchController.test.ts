@@ -8,8 +8,6 @@ import { PlacementRequestService, SpaceService } from '../../../services'
 
 import matchPaths from '../../../paths/match'
 
-jest.mock('../../../utils/matchUtils')
-
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
   const placementRequestDetail = placementRequestDetailFactory.build()
@@ -36,7 +34,6 @@ describe('spaceSearchController', () => {
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     spaceService.search.mockResolvedValue(spaceSearchResults)
-    ;(startDateObjFromParams as jest.Mock).mockReturnValue({ startDate: placementRequestDetail.expectedArrival })
   })
 
   describe('search', () => {
@@ -54,6 +51,7 @@ describe('spaceSearchController', () => {
           spaceSearchResults,
           placementRequest: placementRequestDetail,
           tier: placementRequestDetail.risks.tier.value.level,
+          startDate: placementRequestDetail.expectedArrival,
           formPath,
           ...body,
         })
@@ -72,18 +70,12 @@ describe('spaceSearchController', () => {
           pageHeading: 'Find a space',
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          selectedDesirableCriteria: [placementRequestDetail.desirableCriteria[0]],
           tier: placementRequestDetail.risks.tier.value.level,
           startDate: placementRequestDetail.expectedArrival,
           targetPostcodeDistrict: placementRequestDetail.location,
           formPath,
-          requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
         })
-        expect(spaceService.search).toHaveBeenCalledWith(token, {
-          ...{
-            requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
-          },
-        })
+        expect(spaceService.search).toHaveBeenCalledWith(token, {})
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       })
     })
@@ -98,11 +90,11 @@ describe('spaceSearchController', () => {
           targetPostcodeDistrict: placementRequestDetail.location,
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          selectedDesirableCriteria: placementRequestDetail.essentialCriteria,
           tier: placementRequestDetail.risks.tier.value.level,
+          startDate: placementRequestDetail.expectedArrival,
           formPath,
         })
-        expect(spaceService.search).toHaveBeenCalledWith(token)
+        expect(spaceService.search).toHaveBeenCalledWith(token, {})
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       })
     })
