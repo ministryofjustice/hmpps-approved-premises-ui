@@ -93,7 +93,7 @@ import premisesSearchResultSummaryFactory from './premisesSearchResultSummary'
 import spaceBookingFactory from './spaceBooking'
 import spaceBookingRequirementsFactory from './spaceBookingRequirements'
 import spaceCategoryAvailabilityFactory from './spaceAvailability'
-import spaceSearchParametersFactory from './spaceSearchParameters'
+import spaceSearchParametersFactory, { spaceSearchParametersUiFactory } from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
 
@@ -197,6 +197,7 @@ export {
   spaceBookingRequirementsFactory,
   spaceCategoryAvailabilityFactory,
   spaceSearchParametersFactory,
+  spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
 }

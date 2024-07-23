@@ -1,19 +1,19 @@
-import { addDays, weeksToDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import SuccessPage from '../../pages/match/successPage'
 import ConfirmationPage from '../../pages/match/confirmationPage'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
-  bedSearchParametersUiFactory,
   personFactory,
   placementRequestDetailFactory,
+  spaceSearchParametersUiFactory,
   spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { PlacementCriteria } from '../../../server/@types/shared/models/PlacementCriteria'
 import { signIn } from '../signIn'
-import { mapPlacementRequestToBedSearchParams } from '../../../server/utils/placementRequests/utils'
+import { mapPlacementRequestToSpaceSearchParams } from '../../../server/utils/placementRequests/utils'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 
@@ -64,9 +64,7 @@ context('Placement Requests', () => {
 
     // Given I want to search for a different space
     // When I enter new details on the search screen
-    const newSearchParameters = bedSearchParametersUiFactory.build({
-      requiredCharacteristics: [desirableCriteria[0], desirableCriteria[1]],
-    })
+    const newSearchParameters = spaceSearchParametersUiFactory.build()
 
     searchPage.changeSearchParameters(newSearchParameters)
     searchPage.clickSubmit()
@@ -76,10 +74,7 @@ context('Placement Requests', () => {
     Page.verifyOnPage(SearchPage, person.name)
 
     // And the new desirable criteria should be selected
-    searchPage.shouldHaveCriteriaSelected([
-      ...placementRequest.essentialCriteria,
-      ...newSearchParameters.requiredCharacteristics,
-    ])
+    searchPage.shouldHaveCriteriaSelected([...placementRequest.essentialCriteria])
 
     // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
@@ -129,7 +124,7 @@ context('Placement Requests', () => {
     })
     const spaceSearchResults = spaceSearchResultsFactory.build()
 
-    const bedSearchParameters = mapPlacementRequestToBedSearchParams(placementRequest)
+    const bedSearchParameters = mapPlacementRequestToSpaceSearchParams(placementRequest)
     const duration = Number(bedSearchParameters.durationWeeks) * 7 + Number(bedSearchParameters.durationDays)
 
     cy.task('stubSpaceSearch', spaceSearchResults)
