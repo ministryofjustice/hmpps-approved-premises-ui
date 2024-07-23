@@ -2,7 +2,7 @@ import { personFactory, placementRequestFactory } from '../../testutils/factorie
 import {
   assessmentLink,
   formatReleaseType,
-  mapPlacementRequestToBedSearchParams,
+  mapPlacementRequestToSpaceSearchParams,
   placementRequestTabItems,
   searchButton,
   withdrawalMessage,
@@ -44,7 +44,7 @@ describe('utils', () => {
         person,
       })
 
-      expect(mapPlacementRequestToBedSearchParams(placementRequest)).toEqual({
+      expect(mapPlacementRequestToSpaceSearchParams(placementRequest)).toEqual({
         durationWeeks: '2',
         durationDays: '1',
         startDate: placementRequest.expectedArrival,

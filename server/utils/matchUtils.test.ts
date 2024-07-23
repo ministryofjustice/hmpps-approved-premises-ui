@@ -1,5 +1,5 @@
 import paths from '../paths/match'
-import { bedSearchParametersUiFactory, spaceSearchResultFactory } from '../testutils/factories'
+import { spaceSearchParametersUiFactory, spaceSearchResultFactory } from '../testutils/factories'
 
 import { DateFormats } from './dateUtils'
 import {
@@ -89,7 +89,7 @@ describe('matchUtils', () => {
 
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
-      const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
+      const uiParams = spaceSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
         durationInDays: 15,

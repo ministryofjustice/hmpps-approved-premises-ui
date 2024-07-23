@@ -6,7 +6,7 @@ import { placementRequestDetailFactory, spaceSearchResultsFactory } from '../../
 
 import { PlacementRequestService, SpaceService } from '../../../services'
 import { startDateObjFromParams } from '../../../utils/matchUtils'
-import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRequests/utils'
+import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
 
 import matchPaths from '../../../paths/match'
 
@@ -44,7 +44,7 @@ describe('spaceSearchController', () => {
   describe('search', () => {
     describe('body params are sent', () => {
       it('it should render the search template with body params taking precedence over the placement request params', async () => {
-        const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
+        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
         const body = { durationWeeks: '2', requiredCharacteristics: [] as Array<string> }
 
         const requestHandler = spaceSearchController.search()
@@ -66,7 +66,7 @@ describe('spaceSearchController', () => {
       })
 
       it('should handle when a single selectedRequiredCharacteristic is sent', async () => {
-        const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
+        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
         const body = { requiredCharacteristics: placementRequestDetail.desirableCriteria[0] }
 
         const requestHandler = spaceSearchController.search()
@@ -95,7 +95,7 @@ describe('spaceSearchController', () => {
 
     describe('no body params are sent', () => {
       it('it should render the search template by searching with the placement request variables ', async () => {
-        const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
+        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
         const requestHandler = spaceSearchController.search()
         await requestHandler(request, response, next)
 

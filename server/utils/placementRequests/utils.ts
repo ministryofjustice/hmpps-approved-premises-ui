@@ -10,7 +10,7 @@ import { placementLength } from '../matchUtils'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { TabItem } from '../tasks/listTable'
 
-export const mapPlacementRequestToBedSearchParams = ({
+export const mapPlacementRequestToSpaceSearchParams = ({
   duration,
   expectedArrival,
   location,
