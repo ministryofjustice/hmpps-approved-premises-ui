@@ -67,10 +67,6 @@ export default class SearchPage extends Page {
     this.getTextInputByIdAndClear('postcodeDistrict')
     this.getTextInputByIdAndEnterDetails('postcodeDistrict', newSearchParameters.postcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
-
-    newSearchParameters.requiredCharacteristics.forEach(characteristic => {
-      this.checkCheckboxByNameAndValue('requiredCharacteristics', characteristic)
-    })
   }
 
   clickUnableToMatch(): void {

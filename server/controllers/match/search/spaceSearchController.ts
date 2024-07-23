@@ -32,14 +32,12 @@ export default class BedSearchController {
 
       const spaceSearchResults = await this.spaceService.search(req.user.token, params as SpaceSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
-      const selectedDesirableCriteria = [...placementRequest.desirableCriteria, ...params.requiredCharacteristics]
 
       res.render('match/search', {
         pageHeading: 'Find a space',
         spaceSearchResults,
         placementRequest,
         tier,
-        selectedDesirableCriteria,
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         ...params,
         ...startDateObjFromParams(params),

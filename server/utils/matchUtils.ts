@@ -25,10 +25,10 @@ export class InvalidSpaceSearchDataException extends Error {}
 
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
-const groupedCriteria = {
-  apType: { title: 'Type of AP', options: specialistApTypeCriteriaLabels },
-  offenceAndRisk: { title: 'Risks and offences', options: offenceAndRiskCriteriaLabels },
-  accessNeeds: { title: 'AP & room characteristics', options: placementRequirementCriteriaLabels },
+export const mapPlacementRequestForSpaceSearch = (placementRequest: PlacementRequest) => {
+  return {
+    startDate: placementRequest.expectedArrival,
+  }
 }
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
@@ -211,21 +211,10 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
-export const groupedEssentialCriteria = (essentialCriteria: Array<string>) => {
-  return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
-    const selectedCriteria = selectedEssentialCriteria(groupedCriteria[k].options, essentialCriteria)
-    if (selectedCriteria.length) {
-      return {
-        ...obj,
-        [`${groupedCriteria[k].title}`]: selectedCriteria,
-      }
-    }
-    return obj
-  }, {})
-}
-
-export const selectedEssentialCriteria = (criteria: Record<string, string>, selectedCriteria: Array<string>) => {
-  return selectedCriteria.filter(key => key in criteria).map(key => criteria[key])
+const groupedCriteria = {
+  apType: { title: 'Type of AP', options: specialistApTypeCriteriaLabels },
+  offenceAndRisk: { title: 'Risks and offences', options: offenceAndRiskCriteriaLabels },
+  accessNeeds: { title: 'AP & room characteristics', options: placementRequirementCriteriaLabels },
 }
 
 export const groupedCheckboxes = (selectedValues: Array<string>) => {

@@ -14,14 +14,12 @@ import {
   distanceRow,
   encodeSpaceSearchResult,
   groupedCheckboxes,
-  groupedEssentialCriteria,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
   placementDates,
   placementLength,
   placementLengthRow,
   premisesNameRow,
-  selectedEssentialCriteria,
   startDateObjFromParams,
   summaryCardLink,
   summaryCardRows,
@@ -29,7 +27,6 @@ import {
 } from './matchUtils'
 import {
   offenceAndRiskCriteriaLabels,
-  placementCriteriaLabels,
   placementRequirementCriteriaLabels,
   specialistApTypeCriteriaLabels,
 } from './placementCriteriaUtils'
@@ -209,34 +206,12 @@ describe('matchUtils', () => {
     })
   })
 
-  describe.skip('groupedCheckboxes', () => {
+  describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes([])).toEqual({
         'Type of AP': checkBoxesForCriteria(specialistApTypeCriteriaLabels, []),
-        'Placement Requirements': checkBoxesForCriteria(placementRequirementCriteriaLabels, []),
-        'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskCriteriaLabels, []),
-      })
-    })
-  })
-
-  describe('selectedEssentialCriteria', () => {
-    it('returns the translated selected essential criteria as an array', () => {
-      const criteria = {
-        foo: 'Foo',
-        bar: 'Bar',
-        baz: 'Baz',
-      }
-      expect(selectedEssentialCriteria(criteria, ['foo', 'fizz', 'buzz', 'bar'])).toEqual(['Foo', 'Bar'])
-    })
-  })
-
-  describe('groupedEssentialCriteria', () => {
-    it('groups criteria by their category, removing any empty criteria', () => {
-      const essentialCriteria = ['isPIPE', 'isRecoveryFocussed', 'isSuitableForVulnerable']
-
-      expect(groupedEssentialCriteria(essentialCriteria)).toEqual({
-        'Type of AP': [placementCriteriaLabels.isPIPE],
-        'Risks and offences to consider': [placementCriteriaLabels.isSuitableForVulnerable],
+        'Risks and offences': checkBoxesForCriteria(offenceAndRiskCriteriaLabels, []),
+        'AP & room characteristics': checkBoxesForCriteria(placementRequirementCriteriaLabels, []),
       })
     })
   })

@@ -21,7 +21,6 @@ export const mapPlacementRequestToSpaceSearchParams = ({
     durationWeeks: String(daysAndWeeks.weeks),
     startDate: expectedArrival,
     postcodeDistrict: location,
-    requiredCharacteristics: 'normal',
   }
 }
 
