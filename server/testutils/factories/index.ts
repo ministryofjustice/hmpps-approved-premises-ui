@@ -89,6 +89,14 @@ import premisesBookingFactory from './premisesBooking'
 import bookingPremisesSummaryFactory from './bookingPremisesSummary'
 import withdrawableFactory from './withdrawableFactory'
 import cancellationReasonFactory from './cancellationReason'
+import newSpaceBookingFactory from './newSpaceBooking'
+import premisesSearchResultSummaryFactory from './premisesSearchResultSummary'
+import spaceBookingFactory from './spaceBooking'
+import spaceBookingRequirementsFactory from './spaceBookingRequirements'
+import spaceCategoryAvailabilityFactory from './spaceAvailability'
+import spaceSearchParametersFactory from './spaceSearchParameters'
+import spaceSearchResultFactory from './spaceSearchResult'
+import spaceSearchResultsFactory from './spaceSearchResults'
 
 export {
   acctAlertFactory,
@@ -186,4 +194,12 @@ export {
   userWithWorkloadFactory,
   withdrawableFactory,
   cancellationReasonFactory,
+  newSpaceBookingFactory,
+  premisesSearchResultSummaryFactory,
+  spaceBookingFactory,
+  spaceBookingRequirementsFactory,
+  spaceCategoryAvailabilityFactory,
+  spaceSearchParametersFactory,
+  spaceSearchResultFactory,
+  spaceSearchResultsFactory,
 }
