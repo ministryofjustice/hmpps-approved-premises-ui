@@ -28,4 +28,11 @@ export default class V2BedsListPage extends Page {
     cy.get('.moj-button-menu__toggle-button').click()
     cy.get('a').contains('Manage out of service beds').click()
   }
+
+  shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId: Premises['id']): void {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.get(
+      `a[href="${paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' })}"]`,
+    ).contains('Manage out of service beds')
+  }
 }

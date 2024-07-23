@@ -33,6 +33,9 @@ context('Beds', () => {
     // Then I should see all of the beds listed
     v2BedsPage.shouldShowBeds(bedSummaries, premisesId)
 
+    // And I should have a link to view all of this premises' out-of-service beds
+    v2BedsPage.shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId)
+
     // When I click on a bed
     v2BedsPage.clickBed(bedDetail)
 

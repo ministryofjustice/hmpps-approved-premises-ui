@@ -26,7 +26,7 @@
           items: [ {
             text: "Manage out of service beds",
             classes: "govuk-button--secondary",
-            href: paths.lostBeds.index({premisesId: premisesId})
+            href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'})
           }]
         }]
         })
