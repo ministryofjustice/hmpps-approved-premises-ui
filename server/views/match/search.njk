@@ -151,7 +151,7 @@
 								classes: "govuk-input--width-3"
 							}) }}
 
-								{% for title, items in MatchUtils.groupedCheckboxes([]) %}
+								{# {% for title, items in MatchUtils.groupedCheckboxes([]) %}
 									{{
 								govukCheckboxes({
 									name: 'requiredCharacteristics',
@@ -166,7 +166,7 @@
 									items: items
 								})
 							}}
-								{% endfor %}
+								{% endfor %} #}
 
 								<div class="button">
 									{{ govukButton({
