@@ -83,7 +83,7 @@ test('Future manager updates an out of service bed', async ({ page, futureManage
   await premisesPage.viewOutOfServiceBedRecords()
 
   // Then I should see the out of service beds list page for the premises
-  const manageOOSBedsPage = await OutOfServiceBedsPremisesListPage.initialize(page)
+  const manageOOSBedsPage = await OutOfServiceBedsPremisesListPage.initialize(page, premisesName)
 
   // When I select the 'future' tab and select the out of service bed created earlier
   await manageOOSBedsPage.selectFutureTab()

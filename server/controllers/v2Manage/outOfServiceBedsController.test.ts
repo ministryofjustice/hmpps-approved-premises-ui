@@ -14,7 +14,12 @@ import {
 } from '../../utils/validation'
 
 import paths from '../../paths/manage'
-import { bedDetailFactory, outOfServiceBedFactory, paginatedResponseFactory } from '../../testutils/factories'
+import {
+  bedDetailFactory,
+  outOfServiceBedFactory,
+  paginatedResponseFactory,
+  premisesFactory,
+} from '../../testutils/factories'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
 import { translateCharacteristic } from '../../utils/characteristicsUtils'
@@ -219,15 +224,20 @@ describe('OutOfServiceBedsController', () => {
       outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
+      const premises = premisesFactory.build({ name: 'Hope House' })
+      when(premisesService.find).calledWith(request.user.token, premisesId).mockResolvedValue(premises)
+
       const req = { ...request, query: { premisesId }, params: { temporality } }
 
       const requestHandler = outOfServiceBedController.premisesIndex()
       await requestHandler({ ...req, params: { premisesId, temporality } }, response, next)
 
+      expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
+
       expect(response.render).toHaveBeenCalledWith('v2Manage/outOfServiceBeds/premisesIndex', {
         outOfServiceBeds: paginatedResponse.data,
-        pageHeading: 'Manage out of service beds',
-        premisesId,
+        pageHeading: 'Out of service beds',
+        premises: { id: premisesId, name: 'Hope House' },
         hrefPrefix: paginationDetails.hrefPrefix,
         temporality,
         pageNumber: Number(paginatedResponse.pageNumber),

@@ -104,10 +104,12 @@ export default class OutOfServiceBedsController {
         perPage: 50,
       })
 
+      const premises = await this.premisesService.find(req.user.token, premisesId)
+
       return res.render('v2Manage/outOfServiceBeds/premisesIndex', {
         outOfServiceBeds: outOfServiceBeds.data,
-        pageHeading: 'Manage out of service beds',
-        premisesId,
+        pageHeading: 'Out of service beds',
+        premises: { id: premisesId, name: premises.name },
         temporality,
         pageNumber: Number(outOfServiceBeds.pageNumber),
         totalPages: Number(outOfServiceBeds.totalPages),
