@@ -204,43 +204,6 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('checkBoxesForCriteria', () => {
-    it('returns an array of checkboxes with the selectedValues selected and any empty values removed', () => {
-      const options = {
-        isESAP: 'ESAP',
-        isIAP: 'IAP',
-        isSemiSpecialistMentalHealth: 'Semi specialist mental health',
-      }
-      const result = checkBoxesForCriteria(options, ['isESAP', 'isIAP'])
-
-      expect(result).toEqual([
-        {
-          checked: true,
-          id: 'isESAP',
-          text: 'ESAP',
-          value: 'isESAP',
-        },
-        { text: 'IAP', value: 'isIAP', id: 'isIAP', checked: true },
-        {
-          checked: false,
-          id: 'isSemiSpecialistMentalHealth',
-          text: 'Semi specialist mental health',
-          value: 'isSemiSpecialistMentalHealth',
-        },
-      ])
-    })
-  })
-
-  describe('groupedCheckboxes', () => {
-    it('returns checkboxes grouped by category', () => {
-      expect(groupedCheckboxes([])).toEqual({
-        'Type of AP': checkBoxesForCriteria(specialistApTypeCriteriaLabels, []),
-        'Risks and offences': checkBoxesForCriteria(offenceAndRiskCriteriaLabels, []),
-        'AP & room characteristics': checkBoxesForCriteria(placementRequirementCriteriaLabels, []),
-      })
-    })
-  })
-
   describe('encodeSpaceSearchResult', () => {
     it('encodes a space search result to Base64', () => {
       const spaceSearchResult = spaceSearchResultFactory.build()
