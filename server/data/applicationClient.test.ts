@@ -8,7 +8,6 @@ import {
   assessmentFactory,
   documentFactory,
   noteFactory,
-  placementApplicationFactory,
   requestForPlacementFactory,
   timelineEventFactory,
   withdrawableFactory,
@@ -452,36 +451,6 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.timeline(applicationId)
-    })
-  })
-
-  describe('placementApplications', () => {
-    it('calls the placement applications endpoint with the application ID and includeInitialRequestForPlacement=true', async () => {
-      const applicationId = 'applicationId'
-      const placementApplications = placementApplicationFactory.buildList(1)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for the placement applications of an application',
-        withRequest: {
-          method: 'GET',
-          path: paths.applications.placementApplications({ id: applicationId }),
-          query: {
-            includeInitialRequestForPlacement: 'true',
-          },
-
-          headers: {
-            authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: placementApplications,
-        },
-      })
-
-      await applicationClient.placementApplications(applicationId)
     })
   })
 
