@@ -1,4 +1,4 @@
-import { groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
+import { getFormattedNameAndEmail, groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
 import { FullPerson } from '../../@types/shared'
 import { applicationFactory, taskFactory, userFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -7,6 +7,8 @@ import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
 import placementApplicationTask from '../../testutils/factories/placementApplicationTask'
+import { applicationUserDetailsFactory } from '../../testutils/factories/application'
+import { sentenceCase } from '../utils'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -26,7 +28,15 @@ describe('index', () => {
 
   describe('taskSummary', () => {
     const task = taskFactory.build()
-    const application = applicationFactory.build({ person: fullPersonFactory.build() })
+    const applicantUserDetails = applicationUserDetailsFactory.build()
+    const caseManagerUserDetails = applicationUserDetailsFactory.build()
+    const application = applicationFactory.build({
+      person: fullPersonFactory.build(),
+      applicantUserDetails,
+      caseManagerUserDetails,
+      caseManagerIsNotApplicant: true,
+    })
+    application.genderForAp = 'male'
 
     describe('when the application contains an arrival date', () => {
       beforeEach(() => {
@@ -90,6 +100,18 @@ describe('index', () => {
             value: {
               text: task.allocatedToStaffMember.name,
             },
+          },
+          {
+            key: { text: 'Applicant' },
+            value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
+          },
+          {
+            key: { text: 'Case Manager' },
+            value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
+          },
+          {
+            key: { text: 'Gender for AP' },
+            value: { text: sentenceCase(application.genderForAp) },
           },
         ])
       })
@@ -157,6 +179,18 @@ describe('index', () => {
               text: task.allocatedToStaffMember.name,
             },
           },
+          {
+            key: { text: 'Applicant' },
+            value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
+          },
+          {
+            key: { text: 'Case Manager' },
+            value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
+          },
+          {
+            key: { text: 'Gender for AP' },
+            value: { text: sentenceCase(application.genderForAp) },
+          },
         ])
       })
     })
@@ -220,6 +254,18 @@ describe('index', () => {
             value: {
               text: placementApplication.allocatedToStaffMember.name,
             },
+          },
+          {
+            key: { text: 'Applicant' },
+            value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
+          },
+          {
+            key: { text: 'Case Manager' },
+            value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
+          },
+          {
+            key: { text: 'Gender for AP' },
+            value: { text: sentenceCase(application.genderForAp) },
           },
         ])
       })

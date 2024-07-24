@@ -12,6 +12,8 @@ import {
   userWithWorkloadFactory,
 } from '../../../server/testutils/factories'
 import { qualificationFactory } from '../../../server/testutils/factories/user'
+import { applicationUserDetailsFactory } from '../../../server/testutils/factories/application'
+import { fullPersonFactory } from '../../../server/testutils/factories/person'
 
 context('Task Allocation', () => {
   beforeEach(() => {
@@ -28,7 +30,17 @@ context('Task Allocation', () => {
     const selectedUser = users[0]
 
     // And there is an allocated task
-    const application = applicationFactory.withReleaseDate().build({ apType: 'pipe', isWomensApplication: false })
+    const applicantUserDetails = applicationUserDetailsFactory.build()
+    const caseManagerUserDetails = applicationUserDetailsFactory.build()
+    const application = applicationFactory.build({
+      person: fullPersonFactory.build(),
+      applicantUserDetails,
+      caseManagerUserDetails,
+      caseManagerIsNotApplicant: true,
+      apType: 'pipe',
+      isWomensApplication: false,
+    })
+    application.genderForAp = 'male'
     const task = taskFactory.build({
       allocatedToStaffMember: userFactory.build(),
       applicationId: application.id,
