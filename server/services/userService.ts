@@ -30,6 +30,7 @@ export default class UserService {
       name: user.deliusUsername,
       id: user.id,
       displayName: convertToTitleCase(user.name),
+      permissions: user.permissions,
       roles: user.roles,
       active: user.isActive,
       apArea: user.apArea,

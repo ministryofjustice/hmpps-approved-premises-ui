@@ -1,5 +1,5 @@
 import { userDetailsFactory } from '../../testutils/factories'
-import { hasRole, sections, sectionsForUser } from './homePageDashboard'
+import { hasPermission, hasRole, sections, sectionsForUser } from './homePageDashboard'
 
 describe('homePageDashboard', () => {
   describe('hasRole', () => {
@@ -16,6 +16,20 @@ describe('homePageDashboard', () => {
     })
   })
 
+  describe('hasPermission', () => {
+    it('returns true when the user has the permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_view_assigned_assessments'] })
+
+      expect(hasPermission(user, ['cas1_view_assigned_assessments'])).toEqual(true)
+    })
+
+    it('returns false when the user does not have the permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_view_assigned_assessments'] })
+
+      expect(hasPermission(user, ['cas1_process_an_appeal'])).toEqual(false)
+    })
+  })
+
   describe('sectionsForUser', () => {
     it('should return Apply for a user with no roles', () => {
       const user = userDetailsFactory.build({ roles: [] })
@@ -23,8 +37,8 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply])
     })
 
-    it('should return Apply and Assess sections for a user with an assessor role', () => {
-      const user = userDetailsFactory.build({ roles: ['assessor'] })
+    it('should return Apply and Assess sections for a user with cas1 view assigned assessments permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_view_assigned_assessments'] })
 
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.assess])
     })
@@ -68,9 +82,10 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply])
     })
 
-    it('should return all except match sections for a user with all roles', () => {
+    it('should return all except match sections for a user with all roles and user permissions', () => {
       const user = userDetailsFactory.build({
         roles: ['assessor', 'manager', 'matcher', 'workflow_manager', 'report_viewer'],
+        permissions: ['cas1_view_assigned_assessments'],
       })
 
       expect(sectionsForUser(user)).toEqual([

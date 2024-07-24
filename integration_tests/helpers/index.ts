@@ -2,6 +2,7 @@ import { add } from 'date-fns'
 import {
   AnyValue,
   ApprovedPremisesApplication,
+  ApprovedPremisesUserPermission,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
@@ -93,8 +94,8 @@ const updateApplicationReleaseDate = (data: AnyValue) => {
   }
 }
 
-const signInWithRoles = (roles: Array<UserRole>) => {
-  cy.task('stubAuthUser', { roles })
+const signInWithRolesAndPermissions = (roles: Array<UserRole>, permissions?: Array<ApprovedPremisesUserPermission>) => {
+  cy.task('stubAuthUser', { roles, permissions })
   cy.signIn()
 }
 
@@ -108,5 +109,5 @@ export {
   updateApplicationReleaseDate,
   shouldShowTableRows,
   uiObjectValue,
-  signInWithRoles,
+  signInWithRolesAndPermissions,
 }

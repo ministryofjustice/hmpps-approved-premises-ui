@@ -78,9 +78,11 @@ describe('applicationIdentityBar', () => {
       })
     })
 
-    it('should return an appeals link when userRoles includes appeals_manager and the application has been rejected', () => {
+    it('should return an appeals link when user has cas1 process an appeal permission and the application has been rejected', () => {
       const application = applicationFactory.build({ status: 'rejected', createdByUserId: userId })
-      expect(applicationMenuItems(application, fromPartial({ roles: ['appeals_manager'], id: userId }))).toEqual([
+      expect(
+        applicationMenuItems(application, fromPartial({ permissions: ['cas1_process_an_appeal'], id: userId })),
+      ).toEqual([
         {
           text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
@@ -100,9 +102,11 @@ describe('applicationIdentityBar', () => {
       ])
     })
 
-    it('should not return an appeals link when userRoles includes appeals_manager and the application has not been rejected', () => {
+    it('should not return an appeals link when user has cas1 process an appeal permission and the application has not been rejected', () => {
       const application = applicationFactory.build({ status: 'assesmentInProgress', createdByUserId: userId })
-      expect(applicationMenuItems(application, fromPartial({ roles: ['appeals_manager'], id: userId }))).toEqual([
+      expect(
+        applicationMenuItems(application, fromPartial({ permissions: ['cas1_process_an_appeal'], id: userId })),
+      ).toEqual([
         {
           text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
@@ -114,9 +118,9 @@ describe('applicationIdentityBar', () => {
       ])
     })
 
-    it('should not return an appeals link when userRoles does not include appeals_manager and the application has been rejected', () => {
+    it('should not return an appeals link when user does not have cas1 process an appeal permission and the application has been rejected', () => {
       const application = applicationFactory.build({ status: 'rejected', createdByUserId: userId })
-      expect(applicationMenuItems(application, fromPartial({ roles: ['assessor'], id: userId }))).toEqual([
+      expect(applicationMenuItems(application, fromPartial({ permissions: [], id: userId }))).toEqual([
         {
           text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
