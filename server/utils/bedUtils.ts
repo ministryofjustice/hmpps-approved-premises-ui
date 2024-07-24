@@ -11,6 +11,7 @@ import {
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 import { linkTo, sentenceCase } from './utils'
+import { translateCharacteristic } from './characteristicsUtils'
 
 export class InvalidOverbookingDataException extends Error {}
 
@@ -28,8 +29,16 @@ export const actionCell = (bed: BedSummary, premisesId: string, user?: UserDetai
   html: bedLinkForUser(bed, premisesId, user),
 })
 
+export const v2BedTableRows = (beds: Array<BedSummary>, premisesId: string, user?: UserDetails) => {
+  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId, user)])
+}
+
 export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => {
   return [statusRow(bed), characteristicsRow(bed)]
+}
+
+export const v2BedDetails = (bed: BedDetail): Array<SummaryListItem> => {
+  return [characteristicsRow(bed)]
 }
 
 export const statusRow = (bed: BedDetail): SummaryListItem => ({
@@ -41,7 +50,7 @@ export const characteristicsRow = (bed: BedDetail): SummaryListItem => ({
   key: { text: 'Characteristics' },
   value: {
     html: `<ul class="govuk-list govuk-list--bullet">
-  ${bed.characteristics.map(characteristic => `<li>${sentenceCase(characteristic.propertyName)}</li>`).join(' ')}</ul>`,
+  ${bed.characteristics.map(characteristic => `<li>${translateCharacteristic(characteristic)}</li>`).join(' ')}</ul>`,
   },
 })
 

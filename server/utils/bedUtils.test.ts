@@ -26,9 +26,12 @@ import {
   title,
   v1BedLink,
   v2BedActions,
+  v2BedDetails,
   v2BedLink,
+  v2BedTableRows,
 } from './bedUtils'
 import { DateFormats } from './dateUtils'
+import { translateCharacteristic } from './characteristicsUtils'
 
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
@@ -111,6 +114,18 @@ describe('bedUtils', () => {
     })
   })
 
+  describe('v2BedRows', () => {
+    const user = userDetailsFactory.build({ roles: ['manager'] })
+
+    it('returns the table rows given the rooms', () => {
+      const beds = [bed]
+
+      expect(v2BedTableRows(beds, premisesId, user)).toEqual([
+        [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId, user)],
+      ])
+    })
+  })
+
   describe('statusRow', () => {
     it('returns the status of an available room in sentence case', () => {
       bedDetail.status = 'available'
@@ -141,18 +156,21 @@ describe('bedUtils', () => {
   })
 
   describe('characteristicsRow', () => {
-    it('returns a list of characteristics', () => {
-      bedDetail.characteristics = [
-        apCharacteristicPairFactory.build({ propertyName: 'hasStepFreeAccessToCommunalAreas' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isSuitedForSexOffenders' }),
-      ]
+    it('returns a list of translated characteristics', () => {
+      const characteristic1 = apCharacteristicPairFactory.build({ propertyName: 'hasStepFreeAccessToCommunalAreas' })
+      const characteristic2 = apCharacteristicPairFactory.build({ propertyName: 'isSuitedForSexOffenders' })
+
+      const translatedCharacteristic1 = translateCharacteristic(characteristic1)
+      const translatedCharacteristic2 = translateCharacteristic(characteristic2)
+
+      bedDetail.characteristics = [characteristic1, characteristic2]
 
       expect(characteristicsRow(bedDetail)).toEqual({
         key: { text: 'Characteristics' },
         value: {
           html:
             '<ul class="govuk-list govuk-list--bullet">\n' +
-            '  <li>Has step free access to communal areas</li> <li>Is suited for sex offenders</li></ul>',
+            `  <li>${translatedCharacteristic1}</li> <li>${translatedCharacteristic2}</li></ul>`,
         },
       })
     })
@@ -161,6 +179,12 @@ describe('bedUtils', () => {
   describe('bedDetails', () => {
     it('returns details for a bed', () => {
       expect(bedDetails(bedDetail)).toEqual([statusRow(bedDetail), characteristicsRow(bedDetail)])
+    })
+  })
+
+  describe('v2BedDetails', () => {
+    it('returns details for a bed', () => {
+      expect(v2BedDetails(bedDetail)).toEqual([characteristicsRow(bedDetail)])
     })
   })
 

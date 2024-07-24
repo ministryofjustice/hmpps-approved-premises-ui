@@ -3,7 +3,7 @@ import { BedDetail, BedSummary, Premises } from '../../../../server/@types/share
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { bedTableRows } from '../../../../server/utils/bedUtils'
+import { v2BedTableRows } from '../../../../server/utils/bedUtils'
 
 export default class V2BedsListPage extends Page {
   constructor() {
@@ -16,7 +16,7 @@ export default class V2BedsListPage extends Page {
   }
 
   shouldShowBeds(beds: Array<BedSummary>, premisesId: Premises['id']): void {
-    const rows = bedTableRows(beds, premisesId)
+    const rows = v2BedTableRows(beds, premisesId)
     this.shouldContainTableRows(rows)
   }
 
@@ -27,5 +27,12 @@ export default class V2BedsListPage extends Page {
   clickManageOutOfServiceBeds(): void {
     cy.get('.moj-button-menu__toggle-button').click()
     cy.get('a').contains('Manage out of service beds').click()
+  }
+
+  shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId: Premises['id']): void {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.get(
+      `a[href="${paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' })}"]`,
+    ).contains('Manage out of service beds')
   }
 }

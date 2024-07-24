@@ -3,7 +3,7 @@ import { BedDetail, ExtendedPremisesSummary, Premises } from '../../../../server
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { bedDetails } from '../../../../server/utils/bedUtils'
+import { v2BedDetails } from '../../../../server/utils/bedUtils'
 
 export default class V2BedShowPage extends Page {
   constructor(private readonly bedName: string) {
@@ -18,7 +18,7 @@ export default class V2BedShowPage extends Page {
   shouldShowBedDetails(bed: BedDetail): void {
     cy.get('h1').contains(bed.roomName)
     cy.get('h1').contains(bed.name)
-    const details = bedDetails(bed)
+    const details = v2BedDetails(bed)
     this.shouldContainSummaryListItems(details)
   }
 
