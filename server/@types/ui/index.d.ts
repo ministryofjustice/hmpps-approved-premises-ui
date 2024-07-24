@@ -21,6 +21,7 @@ import {
   BedOccupancyOpenEntry,
   BedOccupancyRange,
   Booking,
+  Cas1SpaceSearchParameters,
   Document,
   FlagsEnvelope,
   Mappa,
@@ -404,8 +405,8 @@ export interface SpaceSearchParametersUi {
   durationDays: string
   durationWeeks: string
   startDate: string
-  postcodeDistrict: string
-  apType: ApType
+  targetPostcodeDistrict: string
+  requirements: Cas1SpaceSearchParameters['requirements']
 }
 
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
