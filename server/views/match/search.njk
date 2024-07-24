@@ -150,23 +150,25 @@
 								},
 								classes: "govuk-input--width-3"
 							}) }}
-
-								{# {% for title, items in MatchUtils.groupedCheckboxes([]) %}
+								{% for inputName, inputDetails in MatchUtils.matchPageCheckboxes %}
+									{% set context = fetchContext()%}
+									{% set formattedInputName = 'requirements[' + inputName + ']' %}
 									{{
-								govukCheckboxes({
-									name: 'requiredCharacteristics',
-									classes: "govuk-checkboxes--small",
-									fieldset: {
-										legend: {
-											text: title,
-											isPageHeading: false,
-											classes: 'govuk-fieldset__legend--s'
-										}
-									},
-									items: items
-								})
-							}}
-								{% endfor %} #}
+										govukCheckboxes({
+											name: formattedInputName + '[]', 
+											id: inputName,
+											classes: "govuk-checkboxes--small",
+											fieldset: {
+												legend: {
+													text: inputDetails.label,
+													isPageHeading: false,
+													classes: 'govuk-fieldset__legend--s'
+												}
+											},
+											items:  convertKeyValuePairToCheckBoxItems(inputDetails.options, context['requirements'][inputName] + '[]')
+									}) }}
+
+								{% endfor %}
 
 								<div class="button">
 									{{ govukButton({
@@ -198,7 +200,7 @@
 										]
 								}
 								},
-								rows: MatchUtils.summaryCardRows(spaceSearchResult, postcodeArea)
+								rows: MatchUtils.summaryCardRows(spaceSearchResult, targetPostcodeDistrict)
 							}) }}
 						{% endfor %}
 

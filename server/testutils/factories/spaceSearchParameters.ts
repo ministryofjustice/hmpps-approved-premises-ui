@@ -20,6 +20,17 @@ export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParamete
   durationDays: faker.number.int({ min: 1, max: 70 }).toString(),
   durationWeeks: faker.number.int({ min: 1, max: 12 }).toString(),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
-  apType: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
   targetPostcodeDistrict: faker.helpers.arrayElement(postcodeAreas),
+  requirements: {
+    apTypes: faker.helpers.arrayElements(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
+    needCharacteristics: faker.helpers.arrayElements(['single', 'enSuite', 'wheelchair', 'limitedMobility', 'catered']),
+    riskCharacteristics: faker.helpers.arrayElements([
+      'atRiskOfExploitation',
+      'arson',
+      'posesSexualRiskToAdults',
+      'posesSexualRiskToChildren',
+      'posesNonSexualRiskToChildren',
+    ]),
+    genders: faker.helpers.arrayElements(['male', 'female']),
+  },
 }))

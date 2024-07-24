@@ -167,6 +167,12 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       return convertKeyValuePairToRadioItems(items, checkedItem)
     },
   )
+  njkEnv.addGlobal(
+    'convertKeyValuePairToCheckBoxItems',
+    function sendConvertKeyValuePairToCheckBoxItems(items: Record<string, string>, checkedItems: Array<string>) {
+      return FormUtils.convertKeyValuePairToCheckBoxItems(items, checkedItems)
+    },
+  )
 
   njkEnv.addGlobal(
     'placementRequirementsTable',

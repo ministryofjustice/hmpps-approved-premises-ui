@@ -1,5 +1,10 @@
 import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
-import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
+import {
+  Cas1SpaceSearchParameters,
+  Cas1SpaceSearchResult,
+  Cas1SpaceSearchResults,
+  PlacementRequestDetail,
+} from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
@@ -55,6 +60,10 @@ export default class SearchPage extends Page {
     this.getTextInputByIdAndClear('targetPostcodeDistrict')
     this.getTextInputByIdAndEnterDetails('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
+
+    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
+      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).check()
+    })
   }
 
   shouldShowSearchParametersInInputs(newSearchParameters: SpaceSearchParametersUi): void {
@@ -70,5 +79,16 @@ export default class SearchPage extends Page {
 
   clickUnableToMatch(): void {
     cy.get('.govuk-button').contains('Unable to match').click()
+  }
+
+  private iterateThroughRequirements(
+    allRequirements: Cas1SpaceSearchParameters['requirements'],
+    callback: (requirement: string, requirementCategory: string) => void,
+  ): void {
+    Object.entries(allRequirements).forEach(([requirementCategory, requirements]) => {
+      requirements.forEach(requirement => {
+        callback(requirement, requirementCategory)
+      })
+    })
   }
 }

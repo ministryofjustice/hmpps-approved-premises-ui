@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns'
+import { addDays, weeksToDays } from 'date-fns'
 import SuccessPage from '../../pages/match/successPage'
 import ConfirmationPage from '../../pages/match/confirmationPage'
 import SearchPage from '../../pages/match/searchPage'
@@ -11,10 +11,10 @@ import {
   spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
-import { PlacementCriteria } from '../../../server/@types/shared/models/PlacementCriteria'
 import { signIn } from '../signIn'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ListPage from '../../pages/admin/placementApplications/listPage'
+import { Cas1SpaceSearchParameters } from '../../../server/@types/shared'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -32,16 +32,8 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders'] as Array<PlacementCriteria>
-    const desirableCriteria = ['isCatered', 'hasEnSuite'] as Array<PlacementCriteria>
-    const placementRequest = placementRequestDetailFactory.build({
-      person,
-      status: 'notMatched',
-      duration: 15,
-      essentialCriteria,
-      desirableCriteria,
-    })
 
+    const placementRequest = placementRequestDetailFactory.build({ person })
     const spaceSearchResults = spaceSearchResultsFactory.build()
 
     cy.task('stubSpaceSearch', spaceSearchResults)
@@ -72,32 +64,26 @@ context('Placement Requests', () => {
     // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
-      // const initialSearchRequestBody = JSON.parse(requests[0].body)
-      // const secondSearchRequestBody = JSON.parse(requests[1].body)
-      // // And the first request to the API should contain the criteria from the placement request
-      // expect(initialSearchRequestBody).to.contain({
-      //   durationDays: placementRequest.duration,
-      //   startDate: placementRequest.expectedArrival,
-      //   postcodeDistrict: placementRequest.location,
-      //   maxDistanceMiles: placementRequest.radius,
-      // })
-      // expect(initialSearchRequestBody.requiredCharacteristics).to.have.members([
-      //   ...placementRequest.essentialCriteria,
-      //   ...placementRequest.desirableCriteria,
-      // ])
-      // // And the second request to the API should contain the new criteria I submitted
-      // const durationDays =
-      //   weeksToDays(Number(newSearchParameters.durationWeeks)) + Number(newSearchParameters.durationDays)
-      // expect(secondSearchRequestBody).to.contain({
-      //   durationDays,
-      //   startDate: newSearchParameters.startDate,
-      //   postcodeDistrict: newSearchParameters.postcodeDistrict,
-      //   maxDistanceMiles: Number(newSearchParameters.maxDistanceMiles),
-      // })
-      // expect(secondSearchRequestBody.requiredCharacteristics).to.have.members([
-      //   ...placementRequest.essentialCriteria,
-      //   ...newSearchParameters.requiredCharacteristics,
-      // ])
+      const secondSearchRequestBody: Cas1SpaceSearchParameters = JSON.parse(requests[1].body)
+
+      // And the second request to the API should contain the new criteria I submitted
+      const durationInDays =
+        weeksToDays(Number(newSearchParameters.durationWeeks)) + Number(newSearchParameters.durationDays)
+
+      expect(secondSearchRequestBody).to.contain({
+        durationInDays,
+        startDate: newSearchParameters.startDate,
+        targetPostcodeDistrict: newSearchParameters.targetPostcodeDistrict,
+      })
+
+      expect(secondSearchRequestBody.requirements.apTypes).to.contain.members(newSearchParameters.requirements.apTypes)
+      expect(secondSearchRequestBody.requirements.needCharacteristics).to.contain.members(
+        newSearchParameters.requirements.needCharacteristics,
+      )
+      expect(secondSearchRequestBody.requirements.riskCharacteristics).to.contain.members(
+        newSearchParameters.requirements.riskCharacteristics,
+      )
+      expect(secondSearchRequestBody.requirements.genders).to.contain.members(newSearchParameters.requirements.genders)
     })
   })
 

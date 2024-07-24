@@ -1,6 +1,7 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
-  ApType,
+  Cas1SpaceNeedCharacteristic,
+  Cas1SpaceRiskCharacteristic,
   PlacementRequest,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
@@ -9,12 +10,6 @@ import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '.
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
 import { createQueryString } from './utils'
 import matchPaths from '../paths/match'
-import {
-  offenceAndRiskCriteriaLabels,
-  placementCriteriaLabels,
-  placementRequirementCriteriaLabels,
-  specialistApTypeCriteriaLabels,
-} from './placementCriteriaUtils'
 import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 type PlacementDates = {
@@ -30,7 +25,7 @@ export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementReq
 export const mapPlacementRequestForSpaceSearch = (placementRequest: PlacementRequest) => {
   return {
     startDate: placementRequest.expectedArrival,
-    postcodeArea: placementRequest.location,
+    targetPostcodeDistrict: placementRequest.location,
   }
 }
 
@@ -39,12 +34,9 @@ export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchPa
 
   return {
     startDate: query.startDate,
-    targetPostcodeDistrict: query.postcodeDistrict,
+    targetPostcodeDistrict: query.targetPostcodeDistrict,
     requirements: {
-      apType: query.apType,
-      needCharacteristics: [],
-      riskCharacteristics: [],
-      gender: 'male',
+      ...query.requirements,
     },
     durationInDays,
   }
@@ -216,12 +208,41 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
-export const apTypeCheckboxes = (selectedApTypes: Array<ApType>) => {
-  return Object.keys(apTypeLabels).map((apType: ApType) => {
-    return {
-      value: apType,
-      text: apTypeLabels[apType],
-      checked: selectedApTypes.includes(apType),
-    }
-  })
+const needCharacteristicsLabels: Record<Cas1SpaceNeedCharacteristic, string> = {
+  single: 'Single room',
+  enSuite: 'En-suite room',
+  wheelchair: 'Wheelchair accessible',
+  limitedMobility: 'Limited mobility access',
+  catered: 'No stairs',
+}
+
+const riskCharacteristicsLabels: Record<Cas1SpaceRiskCharacteristic, string> = {
+  atRiskOfExploitation: 'At risk of criminal exploitation',
+  arson: 'Poses an arson risk',
+  hateBasedOffences: 'Has committed hate-based offences',
+  posesSexualRiskToAdults: 'Poses a sexual risk to adults',
+  posesSexualRiskToChildren: 'Poses a sexual risk to children',
+  posesNonSexualRiskToChildren: 'Poses a non-sexual risk to children',
+}
+
+export const matchPageCheckboxes = {
+  apTypes: {
+    label: 'AP Type',
+    options: apTypeLabels,
+  },
+  needCharacteristics: {
+    label: 'Need characteristics',
+    options: needCharacteristicsLabels,
+  },
+  riskCharacteristics: {
+    label: 'Risk characteristics',
+    options: riskCharacteristicsLabels,
+  },
+  genders: {
+    label: 'Gender',
+    options: {
+      male: 'Male',
+      female: 'Female',
+    },
+  },
 }
