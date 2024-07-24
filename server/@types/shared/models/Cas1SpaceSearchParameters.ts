@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
+import type { Cas1SpaceSearchRequirements } from './Cas1SpaceSearchRequirements';
 export type Cas1SpaceSearchParameters = {
     /**
      * The date the space is required from
@@ -16,6 +16,6 @@ export type Cas1SpaceSearchParameters = {
      * The 'target' location, in the form of a postcode district
      */
     targetPostcodeDistrict: string;
-    requirements: Cas1SpaceBookingRequirements;
+    requirements: Cas1SpaceSearchRequirements;
 };
 

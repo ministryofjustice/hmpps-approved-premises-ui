@@ -100,6 +100,7 @@ export type { Cas1SpaceCategory } from './models/Cas1SpaceCategory';
 export type { Cas1SpaceNeedCharacteristic } from './models/Cas1SpaceNeedCharacteristic';
 export type { Cas1SpaceRiskCharacteristic } from './models/Cas1SpaceRiskCharacteristic';
 export type { Cas1SpaceSearchParameters } from './models/Cas1SpaceSearchParameters';
+export type { Cas1SpaceSearchRequirements } from './models/Cas1SpaceSearchRequirements';
 export type { Cas1SpaceSearchResult } from './models/Cas1SpaceSearchResult';
 export type { Cas1SpaceSearchResults } from './models/Cas1SpaceSearchResults';
 export type { Cas2Application } from './models/Cas2Application';
