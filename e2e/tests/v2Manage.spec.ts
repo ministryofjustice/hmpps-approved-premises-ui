@@ -7,7 +7,7 @@ import { test } from '../test'
 import { visitDashboard } from '../steps/apply'
 import { PremisesListPage } from '../pages/manage/premisesListPage'
 import { PremisesPage } from '../pages/manage/premisesPage'
-import { BedsPage } from '../pages/manage/bedsPage'
+import { V2BedsPage } from '../pages/manage/v2BedsPage'
 import { V2BedPage } from '../pages/manage/v2BedPage'
 import { V2MarkBedAsOutOfServicePage } from '../pages/manage/v2MarkBedAsOutOfServicePage'
 import { signIn } from '../steps/signIn'
@@ -34,10 +34,10 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
 
   // When I choose to manage its beds
   await premisesPage.viewRooms()
-  const manageBedsPage = await BedsPage.initialize(page, 'Manage beds')
+  const manageBedsPage = await V2BedsPage.initialize(page, 'Manage beds')
 
   // And I pick a particular bed to manage
-  await manageBedsPage.viewAvailableBed()
+  await manageBedsPage.viewBed()
 
   // Then I see the V2 Bed page
   const v2BedPage = await V2BedPage.initialize(page, premisesName)
