@@ -113,6 +113,7 @@ export default class OutOfServiceBedsController {
         temporality,
         pageNumber: Number(outOfServiceBeds.pageNumber),
         totalPages: Number(outOfServiceBeds.totalPages),
+        totalResults: Number(outOfServiceBeds.totalResults),
         hrefPrefix,
       })
     }

@@ -15,4 +15,8 @@ export class OutOfServiceBedsPremisesListPage extends BasePage {
   async selectOutOfServiceBed() {
     await this.page.getByRole('link', { name: 'View' }).first().click()
   }
+
+  async showsTotalOutOfServiceBedsMatchingFilters() {
+    await expect(this.page.getByText('Total out of service beds matching filters')).toBeVisible()
+  }
 }

@@ -33,10 +33,10 @@
           classes: 'govuk-summary-list--no-border',
           rows: [            {
               key: {
-                text: "Current out of service beds"
+                text: "Total out of service beds matching filters"
               },
               value: {
-                text: OutOfServiceBedUtils.outOfServiceBedCountForToday(outOfServiceBeds)
+                text: OutOfServiceBedUtils.outOfServiceBedCount(totalResults)
               }
             }
           ]

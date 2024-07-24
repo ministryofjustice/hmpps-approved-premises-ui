@@ -242,7 +242,9 @@ describe('OutOfServiceBedsController', () => {
         temporality,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
+        totalResults: Number(paginatedResponse.totalResults),
       })
+
       expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith({
         token,
         page: paginationDetails.pageNumber,

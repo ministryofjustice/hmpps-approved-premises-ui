@@ -7,7 +7,6 @@ import {
 } from '@approved-premises/api'
 import { SummaryList, SummaryListItem, TableCell, UserDetails } from '@approved-premises/ui'
 
-import { isWithinInterval } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { hasRole } from './users'
@@ -110,15 +109,8 @@ export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): Ta
   html: bedLink(bed, premisesId),
 })
 
-export const outOfServiceBedCountForToday = (outOfServiceBeds: Array<OutOfServiceBed>): string => {
-  const count = outOfServiceBeds.filter(outOfServiceBed =>
-    isWithinInterval(Date.now(), {
-      start: DateFormats.isoToDateObj(outOfServiceBed.startDate),
-      end: DateFormats.isoToDateObj(outOfServiceBed.endDate),
-    }),
-  ).length
-
-  return count === 1 ? '1 bed' : `${count} beds`
+export const outOfServiceBedCount = (totalResults: number): string => {
+  return totalResults === 1 ? '1 bed' : `${totalResults} beds`
 }
 
 const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
