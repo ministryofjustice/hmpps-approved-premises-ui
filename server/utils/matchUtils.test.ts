@@ -17,7 +17,6 @@ import {
   distanceRow,
   encodeSpaceSearchResult,
   mapPlacementRequestForSpaceSearch,
-  mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
   placementDates,
   placementLength,
@@ -31,51 +30,6 @@ import {
 import { createQueryString } from './utils'
 
 jest.mock('./utils.ts')
-jest.mock('./placementCriteriaUtils', () => ({
-  specialistApTypeCriteriaLabels: {
-    isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
-    isESAP: 'Enhanced Security AP (ESAP)',
-  },
-  placementRequirementCriteriaLabels: {
-    isWheelchairDesignated: 'Wheelchair accessible',
-    isSingle: 'Single room',
-    isStepFreeDesignated: 'Step-free access',
-    isCatered: 'Catering required',
-    hasEnSuite: 'En-suite bathroom',
-    isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
-    isArsonDesignated: 'Designated arson room',
-  },
-  offenceAndRiskCriteriaLabels: {
-    isSuitableForVulnerable: 'Vulnerable to exploitation',
-    acceptsSexOffenders: 'Sexual offences against an adult',
-    acceptsChildSexOffenders: 'Sexual offences against children',
-    acceptsNonSexualChildOffenders: 'Non sexual offences against children',
-    acceptsHateCrimeOffenders: 'Hate based offences',
-    isArsonSuitable: 'Arson offences',
-  },
-  placementCriteriaLabels: {
-    isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
-    isESAP: 'Enhanced Security AP (ESAP)',
-    isRecoveryFocussed: 'Recovery Focused Approved Premises (RFAP)',
-    isSemiSpecialistMentalHealth: 'Semi-specialist mental health',
-    isSuitableForVulnerable: 'Vulnerable to exploitation',
-    acceptsSexOffenders: 'Sexual offences against an adult',
-    acceptsChildSexOffenders: 'Sexual offences against children',
-    acceptsNonSexualChildOffenders: 'Non sexual offences against children',
-    acceptsHateCrimeOffenders: 'Hate based offences',
-    isWheelchairDesignated: 'Wheelchair accessible',
-    isSingle: 'Single room',
-    isStepFreeDesignated: 'Step-free access',
-    isCatered: 'Catering required',
-    hasEnSuite: 'En-suite bathroom',
-    isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
-    isArsonSuitable: 'Arson offences',
-    hasBrailleSignage: 'Braille signage',
-    hasTactileFlooring: 'Tactile flooring',
-    hasHearingLoop: 'Hearing loop',
-    isArsonDesignated: 'Designated arson room',
-  },
-}))
 
 describe('matchUtils', () => {
   beforeEach(() => {
@@ -106,14 +60,6 @@ describe('matchUtils', () => {
         startDate: uiParams.startDate,
         targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
       })
-    })
-  })
-
-  describe('mapSearchParamCharacteristicsForUi', () => {
-    it('it returns the search results characteristics names in a list', () => {
-      expect(mapSearchParamCharacteristicsForUi(['isPIPE'])).toEqual(
-        '<ul class="govuk-list"><li>Psychologically Informed Planned Environment (PIPE)</li></ul>',
-      )
     })
   })
 

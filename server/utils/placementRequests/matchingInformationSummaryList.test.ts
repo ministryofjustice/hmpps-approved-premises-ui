@@ -1,6 +1,10 @@
 import { placementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
-import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
-import { matchingInformationSummary, placementRequirementsRow, preferredApsRow } from './matchingInformationSummaryList'
+import {
+  mapSearchParamCharacteristicsForUi,
+  matchingInformationSummary,
+  placementRequirementsRow,
+  preferredApsRow,
+} from './matchingInformationSummaryList'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 import { HtmlItem, SummaryListItem } from '../../@types/ui'
 
@@ -67,6 +71,14 @@ describe('matchingInformationSummaryList', () => {
           placementRequirementsRow(placementRequest, 'desirable'),
         ],
       })
+    })
+  })
+
+  describe('mapSearchParamCharacteristicsForUi', () => {
+    it('it returns the search results characteristics names in a list', () => {
+      expect(mapSearchParamCharacteristicsForUi(['isPIPE'])).toEqual(
+        '<ul class="govuk-list"><li>Psychologically Informed Planned Environment (PIPE)</li></ul>',
+      )
     })
   })
 

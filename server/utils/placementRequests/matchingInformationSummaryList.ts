@@ -1,8 +1,8 @@
 import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { sentenceCase } from '../utils'
-import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
+import { placementCriteriaLabels } from '../placementCriteriaUtils'
 
 export const matchingInformationSummary = (placementRequest: PlacementRequestDetail): SummaryListWithCard => {
   const rows = []
@@ -49,6 +49,12 @@ export const preferredApsRow = (placementRequest: PlacementRequestDetail): Summa
   }
 
   return undefined
+}
+
+export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
+  return `<ul class="govuk-list">${characteristics
+    .map(characteristicPair => `<li>${placementCriteriaLabels[characteristicPair]}</li>`)
+    .join('')}</ul>`
 }
 
 export const placementRequirementsRow = (

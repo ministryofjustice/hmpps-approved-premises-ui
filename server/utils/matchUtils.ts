@@ -42,12 +42,6 @@ export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchPa
   }
 }
 
-export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
-  return `<ul class="govuk-list">${characteristics
-    .map(characteristicPair => `<li>${placementCriteriaLabels[characteristicPair]}</li>`)
-    .join('')}</ul>`
-}
-
 export const encodeSpaceSearchResult = (spaceSearchResult: SpaceSearchResult): string => {
   const json = JSON.stringify(spaceSearchResult)
 
