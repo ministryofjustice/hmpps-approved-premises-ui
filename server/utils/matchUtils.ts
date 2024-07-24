@@ -1,5 +1,6 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
+  ApType,
   PlacementRequest,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
@@ -213,4 +214,14 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   }
 
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
+}
+
+export const apTypeCheckboxes = (selectedApTypes: Array<ApType>) => {
+  return Object.keys(apTypeLabels).map((apType: ApType) => {
+    return {
+      value: apType,
+      text: apTypeLabels[apType],
+      checked: selectedApTypes.includes(apType),
+    }
+  })
 }

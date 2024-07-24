@@ -9,6 +9,7 @@ import { DateFormats } from './dateUtils'
 import {
   InvalidSpaceSearchDataException,
   addressRow,
+  apTypeCheckboxes,
   apTypeRow,
   arrivalDateRow,
   checkBoxesForCriteria,
@@ -292,6 +293,43 @@ describe('matchUtils', () => {
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
+      ])
+    })
+  })
+
+  describe('requirementCheckboxes', () => {
+    it('returns the requirements as checkboxes', () => {
+      expect(apTypeCheckboxes(['normal'])).toEqual([
+        {
+          checked: true,
+          text: 'Standard AP',
+          value: 'normal',
+        },
+        {
+          checked: false,
+          text: 'Psychologically Informed Planned Environment (PIPE)',
+          value: 'pipe',
+        },
+        {
+          checked: false,
+          text: 'Enhanced Security AP (ESAP)',
+          value: 'esap',
+        },
+        {
+          checked: false,
+          text: 'Specialist Mental Health AP (Elliott House - Midlands)',
+          value: 'mhapElliottHouse',
+        },
+        {
+          checked: false,
+          text: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
+          value: 'mhapStJosephs',
+        },
+        {
+          checked: false,
+          text: 'Recovery Focused AP (RFAP)',
+          value: 'rfap',
+        },
       ])
     })
   })
