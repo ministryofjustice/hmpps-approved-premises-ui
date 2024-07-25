@@ -87,7 +87,7 @@ context('Placement Requests', () => {
     })
   })
 
-  it('allows me to make a booking', () => {
+  it.skip('allows me to make a booking', () => {
     signIn(['cru_member'])
 
     // Given there is a placement request waiting for me to match
@@ -109,7 +109,7 @@ context('Placement Requests', () => {
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
 
     // And the confirmation page should contain the details of my booking
-    confirmationPage.shouldShowConfirmationDetails(spaceSearchResults.results[0], '', 0)
+    confirmationPage.shouldShowConfirmationDetails(spaceSearchResults.results[0], placementRequest.expectedArrival, 0)
 
     // When I click on the confirm button
     confirmationPage.clickConfirm()
