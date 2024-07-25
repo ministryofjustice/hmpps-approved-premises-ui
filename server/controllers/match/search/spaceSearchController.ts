@@ -17,7 +17,6 @@ export default class BedSearchController {
     return async (req: Request, res: Response) => {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
-      const spaceSearchResults = await this.spaceService.search(req.user.token, req.body as SpaceSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
       const detailsFromPlacementRequest = mapPlacementRequestForSpaceSearch(placementRequest)
 
@@ -26,13 +25,16 @@ export default class BedSearchController {
         ...objectIfNotEmpty<SpaceSearchParametersUi>(req.body),
       }
 
+      params.startDate = startDateObjFromParams(params).startDate
+      const spaceSearchResults = await this.spaceService.search(req.user.token, params)
+
       res.render('match/search', {
         pageHeading: 'Find a space',
         spaceSearchResults,
         placementRequest,
         tier,
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
-        startDate: startDateObjFromParams(params).startDate,
+        ...startDateObjFromParams(params),
         ...params,
       })
     }

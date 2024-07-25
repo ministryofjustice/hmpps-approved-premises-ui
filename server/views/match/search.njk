@@ -81,16 +81,16 @@
 							<div class="space-search-inputs">
 
 								{{ govukDateInput({
-								id: "availableFrom",
-								namePrefix: "availableFrom",
+								id: "startDate",
+								namePrefix: "startDate",
 								fieldset: {
 								legend: {
 									text: "Available from",
 									classes: "govuk-fieldset__legend--s"
 									}
 								},
-								items: dateFieldValues('availableFrom', errors),
-								errorMessage: errors.availableFrom
+								items: dateFieldValues('startDate', errors),
+								errorMessage: errors.startDate
 							}) }}
 
 								{% call govukFieldset({
