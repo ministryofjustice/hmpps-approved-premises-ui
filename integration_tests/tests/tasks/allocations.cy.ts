@@ -41,10 +41,12 @@ context('Task Allocation', () => {
       isWomensApplication: false,
     })
     application.genderForAp = 'male'
+
     const task = taskFactory.build({
       allocatedToStaffMember: userFactory.build(),
       applicationId: application.id,
       taskType: 'Assessment',
+      probationDeliveryUnit: { id: '2', name: 'East Sussex (includes Brighton and Hove)' },
     })
 
     const restrictedPerson = personFactory.build({ isRestricted: true })
@@ -58,6 +60,7 @@ context('Task Allocation', () => {
       allocatedToStaffMember: userFactory.build(),
       applicationId: applicationForRestrictedPerson.id,
       taskType: 'Assessment',
+      probationDeliveryUnit: { id: '1', name: 'East Sussex (includes Brighton and Hove)' },
     })
 
     const tasks = [task, taskWithRestrictedPerson]
