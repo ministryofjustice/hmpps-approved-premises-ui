@@ -136,6 +136,13 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
     })
   }
 
+  if (task.probationDeliveryUnit) {
+    summary.push({
+      key: { text: 'Applicant PDU' },
+      value: { text: task.probationDeliveryUnit.name },
+    })
+  }
+
   return summary
 }
 

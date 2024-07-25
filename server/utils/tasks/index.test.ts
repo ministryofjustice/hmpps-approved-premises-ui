@@ -37,6 +37,7 @@ describe('index', () => {
       caseManagerIsNotApplicant: true,
     })
     application.genderForAp = 'male'
+    task.probationDeliveryUnit = { id: '1', name: 'test' }
 
     describe('when the application contains an arrival date', () => {
       beforeEach(() => {
@@ -112,6 +113,10 @@ describe('index', () => {
           {
             key: { text: 'Gender for AP' },
             value: { text: sentenceCase(application.genderForAp) },
+          },
+          {
+            key: { text: 'Applicant PDU' },
+            value: { text: 'test' },
           },
         ])
       })
@@ -191,11 +196,16 @@ describe('index', () => {
             key: { text: 'Gender for AP' },
             value: { text: sentenceCase(application.genderForAp) },
           },
+          {
+            key: { text: 'Applicant PDU' },
+            value: { text: 'test' },
+          },
         ])
       })
     })
     describe('when taskType is placementApplication, arrival date should be derived from placementDates', () => {
       const placementApplication = placementApplicationTask.build()
+      placementApplication.probationDeliveryUnit = { id: '1', name: 'test' }
 
       it('returns the summary list when the assessment has a staff member allocated', () => {
         expect(taskSummary(placementApplication, application)).toEqual([
@@ -266,6 +276,10 @@ describe('index', () => {
           {
             key: { text: 'Gender for AP' },
             value: { text: sentenceCase(application.genderForAp) },
+          },
+          {
+            key: { text: 'Applicant PDU' },
+            value: { text: 'test' },
           },
         ])
       })
