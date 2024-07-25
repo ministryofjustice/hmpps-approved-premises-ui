@@ -2,6 +2,8 @@ import { addDays, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
+  Cas1SpaceNeedCharacteristic,
+  Cas1SpaceRiskCharacteristic,
   CharacteristicPair,
 } from '../@types/shared'
 import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
@@ -299,4 +301,21 @@ export const checkBoxesForCriteria = (criteria: Record<string, string>, selected
       checked: selectedValues.includes(criterion),
     }))
     .filter(item => item.text.length > 0)
+}
+
+export const needCharacteristicsLabels: Record<Cas1SpaceNeedCharacteristic, string> = {
+  single: 'Single room',
+  enSuite: 'En-suite room',
+  wheelchair: 'Wheelchair accessible',
+  limitedMobility: 'Limited mobility access',
+  catered: 'No stairs',
+}
+
+export const riskCharacteristicsLabels: Record<Cas1SpaceRiskCharacteristic, string> = {
+  atRiskOfExploitation: 'At risk of criminal exploitation',
+  arson: 'Poses an arson risk',
+  hateBasedOffences: 'Has committed hate-based offences',
+  posesSexualRiskToAdults: 'Poses a sexual risk to adults',
+  posesSexualRiskToChildren: 'Poses a sexual risk to children',
+  posesNonSexualRiskToChildren: 'Poses a non-sexual risk to children',
 }
