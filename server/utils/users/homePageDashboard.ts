@@ -8,6 +8,7 @@ import taskPaths from '../../paths/tasks'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
 import { retrieveFeatureFlag } from '../retrieveFeatureFlag'
+import { ApprovedPremisesPermission } from '../../@types/shared/models/ApprovedPremisesPermission'
 
 export const sections = {
   apply: {
@@ -96,6 +97,10 @@ export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
 }
 
+export const hasPermission = (user: UserDetails, requiredPermissions: Array<ApprovedPremisesPermission>): boolean => {
+  return (user.permissions || []).filter(userPermission => requiredPermissions.includes(userPermission)).length >= 1
+}
+
 export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
   const items = [sections.apply]
 
@@ -103,7 +108,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.personalTimeline)
   }
 
-  if (hasRole(user, 'assessor')) {
+  if (hasPermission(user, ['cas1_view_assigned_assessments'])) {
     items.push(sections.assess)
   }
 

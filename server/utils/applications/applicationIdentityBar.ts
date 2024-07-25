@@ -2,6 +2,7 @@ import { ApprovedPremisesApplication as Application, FullPerson } from '../../@t
 import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 import paths from '../../paths/apply'
 import { ApplicationStatusTag } from './statusTag'
+import { hasPermission } from '../users'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
   let heading = (application.person as FullPerson).name
@@ -35,7 +36,7 @@ export const applicationMenuItems = (application: Application, user: UserDetails
     })
   }
 
-  if (user.roles.includes('appeals_manager') && application.status === 'rejected') {
+  if (hasPermission(user, ['cas1_process_an_appeal']) && application.status === 'rejected') {
     items.push({
       text: 'Process an appeal',
       href: paths.applications.appeals.new({ id: application.id }),

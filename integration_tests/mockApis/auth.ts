@@ -2,7 +2,12 @@ import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
 import { faker } from '@faker-js/faker'
 
-import { ApArea, ProfileResponse, ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
+import {
+  ApArea,
+  ApprovedPremisesUserPermission,
+  ProfileResponse,
+  ApprovedPremisesUserRole as UserRole,
+} from '../../server/@types/shared'
 
 import { getMatchingRequests, stubFor } from './setup'
 import tokenVerification from './tokenVerification'
@@ -146,7 +151,14 @@ export default {
   stubSignIn: (): Promise<[Response, Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
   stubAuthUser: (
-    args: { name?: string; userId?: string; roles?: Array<UserRole>; apArea?: ApArea; profile?: ProfileResponse } = {},
+    args: {
+      name?: string
+      userId?: string
+      roles?: Array<UserRole>
+      apArea?: ApArea
+      profile?: ProfileResponse
+      permissions?: Array<ApprovedPremisesUserPermission>
+    } = {},
   ): Promise<Response> =>
     stubProfile(
       args.profile ||
@@ -155,6 +167,7 @@ export default {
             name: args.name || faker.person.fullName(),
             id: args.userId || defaultUserId,
             roles: args.roles || [],
+            permissions: args.permissions || [],
             apArea: args.apArea || apAreaFactory.build(),
             isActive: true,
           }),

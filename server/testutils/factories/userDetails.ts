@@ -10,5 +10,6 @@ export default Factory.define<UserDetails>(() => ({
   displayName: faker.person.fullName(),
   active: true,
   roles: [],
+  permissions: [],
   apArea: apAreaFactory.build(),
 }))

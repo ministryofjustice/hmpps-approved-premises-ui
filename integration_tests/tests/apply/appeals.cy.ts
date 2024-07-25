@@ -9,7 +9,7 @@ context('Appeals', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser', { roles: ['appeals_manager'] })
+    cy.task('stubAuthUser', { roles: ['appeals_manager'], permissions: ['cas1_process_an_appeal'] })
 
     // Given I am logged in
     cy.signIn()
