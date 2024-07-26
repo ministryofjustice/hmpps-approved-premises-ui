@@ -6,7 +6,7 @@ import {
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
   ApprovedPremisesAssessment,
-  ApprovedPremisesPermission,
+  ApprovedPremisesUserPermission,
   ApprovedPremisesUserRole,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
@@ -370,7 +370,7 @@ export type UserDetails = {
   name: string
   displayName: string
   roles: Array<UserRole>
-  permissions: Array<ApprovedPremisesPermission>
+  permissions: Array<ApprovedPremisesUserPermission>
   active: boolean
   apArea: ApArea
 }
