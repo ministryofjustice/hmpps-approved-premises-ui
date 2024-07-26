@@ -1,0 +1,47 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block content %}
+  <div class="govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+        <h2 class="govuk-heading-m">{{ placementRequest.person.name }}</h2>
+
+        {{
+          govukSummaryList({
+            classes: 'govuk-summary-list--no-border',
+					  rows: MatchUtils.spaceBookingSummaryCardRows(premisesName, apType, dates, placementRequest.gender, essentialCharacteristics, desirableCharacteristics)
+				  })
+        }}
+
+        <p>This booking will be sent to {{ premisesName }} Approved Premises for confirmation.</p>
+
+        <form action="{{ paths.v2Match.placementRequests.spaceBookings.create({ id: placementRequest.id }) }}" method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+          <input type="hidden" name="arrivalDate" value="{{ dates.startDate }}"/>
+          <input type="hidden" name="departureDate" value="{{ dates.endDate }}"/>
+          <input type="hidden" name="premisesId" value="{{ premisesId }}"/>
+          <input type="hidden" name="placementRequestId" value="{{ placementRequest.id }}"/>
+          <input type="hidden" name="apType" value="{{ apType }}"/>
+          <input type="hidden" name="essentialCharacteristics" value="{{ essentialCharacteristics }}"/>
+          <input type="hidden" name="desirableCharacteristics" value="{{ desirableCharacteristics }}"/>
+          <input type="hidden" name="gender" value="{{ placementRequest.gender }}"/>
+          <input type="hidden" name="premisesName" value="{{ premisesName }}"/>
+          <input type="hidden" name="personName" value="{{ placementRequest.person.name }}"/>
+
+          {{ govukButton({
+            text: "Confirm and submit",
+            preventDoubleClick: true
+          }) }}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
