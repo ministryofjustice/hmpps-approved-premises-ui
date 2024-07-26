@@ -20,7 +20,7 @@ generic-service:
     FLIPT_ENABLED: true
     FLIPT_URL: 'https://feature-flags-preprod.hmpps.service.justice.gov.uk'
     FLIPT_NAMESPACE: 'community-accommodation'
-    ENABLE_V2_MATCH: false
+    ENABLE_V2_MATCH: true
 
   namespace_secrets:
     sqs-hmpps-audit-secret:
