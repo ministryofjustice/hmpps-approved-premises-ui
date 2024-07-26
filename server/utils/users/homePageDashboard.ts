@@ -8,7 +8,7 @@ import taskPaths from '../../paths/tasks'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
 import { retrieveFeatureFlag } from '../retrieveFeatureFlag'
-import { ApprovedPremisesPermission } from '../../@types/shared/models/ApprovedPremisesPermission'
+import { ApprovedPremisesUserPermission } from '../../@types/shared/models/ApprovedPremisesUserPermission'
 
 export const sections = {
   apply: {
@@ -97,7 +97,10 @@ export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
 }
 
-export const hasPermission = (user: UserDetails, requiredPermissions: Array<ApprovedPremisesPermission>): boolean => {
+export const hasPermission = (
+  user: UserDetails,
+  requiredPermissions: Array<ApprovedPremisesUserPermission>,
+): boolean => {
   return (user.permissions || []).filter(userPermission => requiredPermissions.includes(userPermission)).length >= 1
 }
 
