@@ -118,8 +118,11 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.v2Manage)
   }
 
-  if (hasRole(user, 'workflow_manager')) {
+  if (hasPermission(user, ['cas1_view_manage_tasks'])) {
     items.push(sections.workflow)
+  }
+
+  if (hasPermission(user, ['cas1_view_cru_dashboard'])) {
     items.push(sections.cruDashboard)
   }
 
@@ -131,7 +134,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.userManagement)
   }
 
-  if (hasRole(user, 'cru_member')) {
+  if (hasPermission(user, ['cas1_view_out_of_service_beds'])) {
     items.push(sections.outOfServiceBeds)
   }
 
