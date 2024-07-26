@@ -1,20 +1,22 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
-  Cas1SpaceCharacteristic,
+  ApType,
+  Gender,
   PlacementCriteria,
+  Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../@types/shared'
 import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
-import { createQueryString } from './utils'
+import { createQueryString, sentenceCase } from './utils'
 import matchPaths from '../paths/match'
-import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import {
   offenceAndRiskCriteriaLabels,
   placementCriteriaLabels,
   placementRequirementCriteriaLabels,
 } from './placementCriteriaUtils'
+import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 type PlacementDates = {
   placementLength: number
@@ -106,19 +108,61 @@ export const confirmationSummaryCardRows = (
   dates: PlacementDates,
 ): Array<SummaryListItem> => {
   return [
-    premisesNameRow(spaceSearchResult),
+    premisesNameRow(spaceSearchResult.premises.name),
     arrivalDateRow(dates.startDate),
     departureDateRow(dates.endDate),
     placementLengthRow(dates.placementLength),
   ]
 }
 
-export const premisesNameRow = (spaceSearchResult: SpaceSearchResult) => ({
+export const spaceBookingSummaryCardRows = (
+  premisesName: string,
+  apType: ApType,
+  dates: PlacementDates,
+  gender: Gender,
+  essentialCharacteristics: Array<PlacementCriteria>,
+  desirableCharacteristics: Array<PlacementCriteria>,
+): Array<SummaryListItem> => {
+  return [
+    premisesNameRow(premisesName),
+    apTypeRow(apType),
+    arrivalDateRow(dates.startDate),
+    departureDateRow(dates.endDate),
+    placementLengthRow(dates.placementLength),
+    genderRow(gender),
+    essentialCharacteristicsRow(essentialCharacteristics),
+    desirableCharacteristicsRow(desirableCharacteristics),
+  ]
+}
+
+export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<SpaceCharacteristic> => {
+  return requirements.filter(
+    requirement =>
+      ![
+        'isPIPE',
+        'isESAP',
+        'isRecoveryFocussed',
+        'isMHAPElliottHouse',
+        'isMHAPStJosephs',
+        'isSemiSpecialistMentalHealth',
+      ].includes(requirement),
+  ) as Array<SpaceCharacteristic>
+}
+
+export const requirementsHtmlString = (requirements: Array<PlacementCriteria>): string => {
+  let htmlString = ''
+  requirements.forEach(requirement => {
+    htmlString += `<li>${placementCriteriaLabels[requirement]}</li>`
+  })
+  return `<ul class="govuk-list">${htmlString}</ul>`
+}
+
+export const premisesNameRow = (premisesName: string) => ({
   key: {
     text: 'Approved Premises',
   },
   value: {
-    text: spaceSearchResult.premises.name,
+    text: premisesName,
   },
 })
 
@@ -151,19 +195,19 @@ export const placementLengthRow = (length: number) => ({
 
 export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeArea: string): Array<SummaryListItem> => {
   return [
-    apTypeRow(spaceSearchResult),
+    apTypeRow(spaceSearchResult.premises.apType),
     addressRow(spaceSearchResult),
     townRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
   ]
 }
 
-export const apTypeRow = (spaceSearchResult: SpaceSearchResult) => ({
+export const apTypeRow = (apType: ApType) => ({
   key: {
     text: 'Type of AP',
   },
   value: {
-    text: apTypeLabels[spaceSearchResult.premises.apType],
+    text: apTypeLabels[apType],
   },
 })
 
@@ -191,6 +235,33 @@ export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?:
   },
   value: {
     text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
+  },
+})
+
+export const genderRow = (gender: Gender) => ({
+  key: {
+    text: 'Gender',
+  },
+  value: {
+    text: sentenceCase(gender),
+  },
+})
+
+export const essentialCharacteristicsRow = (essentialCharacteristics: Array<PlacementCriteria>) => ({
+  key: {
+    text: 'Essential characteristics',
+  },
+  value: {
+    html: requirementsHtmlString(essentialCharacteristics),
+  },
+})
+
+export const desirableCharacteristicsRow = (desirableCharacteristics: Array<PlacementCriteria>) => ({
+  key: {
+    text: 'Desirable characteristics',
+  },
+  value: {
+    html: requirementsHtmlString(desirableCharacteristics),
   },
 })
 

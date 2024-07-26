@@ -1,21 +1,26 @@
+import { PlacementCriteria } from '@approved-premises/api'
 import paths from '../paths/match'
-import { spaceSearchParametersUiFactory, spaceSearchResultFactory } from '../testutils/factories'
-import { placementCriteria } from '../testutils/factories/placementRequest'
-
+import {
+  placementRequestDetailFactory,
+  spaceSearchParametersUiFactory,
+  spaceSearchResultFactory,
+} from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
   InvalidSpaceSearchDataException,
   addressRow,
-  apTypeCriteria,
   apTypeRow,
   arrivalDateRow,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeSpaceSearchResult,
   departureDateRow,
+  desirableCharacteristicsRow,
   distanceRow,
   encodeSpaceSearchResult,
-  filterPlacementCriteriaToSpaceCharacteristics,
+  essentialCharacteristicsRow,
+  filterOutAPTypes,
+  genderRow,
   groupedCheckboxes,
   groupedCriteria,
   mapSearchParamCharacteristicsForUi,
@@ -24,11 +29,14 @@ import {
   placementLength,
   placementLengthRow,
   premisesNameRow,
+  requirementsHtmlString,
+  spaceBookingSummaryCardRows,
   startDateObjFromParams,
   summaryCardLink,
   summaryCardRows,
   townRow,
 } from './matchUtils'
+import { placementCriteriaLabels } from './placementCriteriaUtils'
 import { createQueryString } from './utils'
 
 jest.mock('./utils.ts')
@@ -67,7 +75,7 @@ describe('matchUtils', () => {
       const spaceSearchResult = spaceSearchResultFactory.build()
 
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
-        apTypeRow(spaceSearchResult),
+        apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
         townRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
@@ -269,7 +277,7 @@ describe('matchUtils', () => {
       }
 
       expect(confirmationSummaryCardRows(spaceSearchResult, dates)).toEqual([
-        premisesNameRow(spaceSearchResult),
+        premisesNameRow(spaceSearchResult.premises.name),
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
@@ -277,23 +285,70 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('filterPlacementCriteriaToSpaceCharacteristics', () => {
-    it('removes characteristics related to the AP Type', () => {
-      expect(filterPlacementCriteriaToSpaceCharacteristics([...placementCriteria, ...apTypeCriteria])).toEqual(
-        expect.arrayContaining([
-          'acceptsHateCrimeOffenders',
-          'isSuitableForVulnerable',
-          'isWheelchairDesignated',
-          'isSingle',
-          'isStepFreeDesignated',
-          'acceptsChildSexOffenders',
-          'isCatered',
-          'hasEnSuite',
-          'isSuitedForSexOffenders',
-          'acceptsSexOffenders',
-          'acceptsNonSexualChildOffenders',
-          'isArsonSuitable',
-        ]),
+  describe('spaceBookingSummaryCardRows', () => {
+    it('should call the correct row functions', () => {
+      const premisesName = 'Hope House'
+      const gender = 'male'
+      const apType = 'pipe'
+      const dates = {
+        startDate: '2022-01-01',
+        endDate: '2022-01-15',
+        placementLength: 2,
+      }
+      const essentialCharacteristics: Array<PlacementCriteria> = ['hasTactileFlooring']
+      const desirableCharacteristics: Array<PlacementCriteria> = ['hasBrailleSignage']
+
+      expect(
+        spaceBookingSummaryCardRows(
+          premisesName,
+          apType,
+          dates,
+          gender,
+          essentialCharacteristics,
+          desirableCharacteristics,
+        ),
+      ).toEqual([
+        premisesNameRow(premisesName),
+        apTypeRow(apType),
+        arrivalDateRow(dates.startDate),
+        departureDateRow(dates.endDate),
+        placementLengthRow(dates.placementLength),
+        genderRow(gender),
+        essentialCharacteristicsRow(essentialCharacteristics),
+        desirableCharacteristicsRow(desirableCharacteristics),
+      ])
+    })
+  })
+
+  describe('filterOutAPTypes', () => {
+    it('should exclude requirements related to premises type', () => {
+      const requirements: Array<PlacementCriteria> = [
+        'isPIPE',
+        'isESAP',
+        'isMHAPStJosephs',
+        'isRecoveryFocussed',
+        'hasBrailleSignage',
+        'hasTactileFlooring',
+        'hasHearingLoop',
+      ]
+      const expected = ['hasBrailleSignage', 'hasTactileFlooring', 'hasHearingLoop']
+
+      expect(filterOutAPTypes(requirements)).toEqual(expected)
+    })
+  })
+
+  describe('requirementsHtmlString', () => {
+    it('should return correctly formatted HTML strings for essential and desirable criteria', () => {
+      const placementRequest = placementRequestDetailFactory.build({
+        essentialCriteria: ['hasHearingLoop', 'isStepFreeDesignated'],
+        desirableCriteria: ['isArsonDesignated'],
+      })
+
+      expect(requirementsHtmlString(placementRequest.essentialCriteria)).toEqual(
+        `<ul class="govuk-list"><li>${placementCriteriaLabels.hasHearingLoop}</li><li>${placementCriteriaLabels.isStepFreeDesignated}</li></ul>`,
+      )
+      expect(requirementsHtmlString(placementRequest.desirableCriteria)).toEqual(
+        `<ul class="govuk-list"><li>${placementCriteriaLabels.isArsonDesignated}</li></ul>`,
       )
     })
   })
