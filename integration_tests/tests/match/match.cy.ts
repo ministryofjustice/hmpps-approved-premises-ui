@@ -1,22 +1,20 @@
-import { addDays, weeksToDays } from 'date-fns'
-import SuccessPage from '../../pages/match/successPage'
-import ConfirmationPage from '../../pages/match/confirmationPage'
+import { weeksToDays } from 'date-fns'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   personFactory,
   placementRequestDetailFactory,
+  spaceBookingFactory,
+  spaceBookingRequirementsFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
-import { mapPlacementRequestToSpaceSearchParams } from '../../../server/utils/placementRequests/utils'
-import { DateFormats } from '../../../server/utils/dateUtils'
 import ListPage from '../../pages/admin/placementApplications/listPage'
-import { Cas1SpaceSearchParameters } from '../../../server/@types/shared'
-import { filterOutAPTypes } from '../../../server/utils/matchUtils'
+import { Cas1SpaceSearchParameters, PlacementCriteria } from '../../../server/@types/shared'
+import { filterOutAPTypes, placementDates } from '../../../server/utils/matchUtils'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 
 context('Placement Requests', () => {
@@ -103,55 +101,64 @@ context('Placement Requests', () => {
     })
   })
 
-  it.skip('allows me to make a booking', () => {
+  it('allows me to book a space', () => {
+    // Given I am signed in as a cru_member
     signIn(['cru_member'])
 
-    // Given there is a placement request waiting for me to match
+    const premisesName = 'Hope House'
+    const premisesId = 'abc123'
+    const apType = 'normal'
+    const duration = 15
+    const startDate = '2024-07-23'
+    const { endDate } = placementDates(startDate, duration.toString())
+
+    // And there is a placement request waiting for me to match
+    const person = personFactory.build()
+    const essentialCharacteristics: Array<PlacementCriteria> = ['acceptsHateCrimeOffenders']
+    const desirableCharacteristics: Array<PlacementCriteria> = ['isCatered', 'hasEnSuite']
     const placementRequest = placementRequestDetailFactory.build({
+      person,
       status: 'notMatched',
-      person: personFactory.build(),
-    })
-    const spaceSearchResults = spaceSearchResultsFactory.build()
-
-    const bedSearchParameters = mapPlacementRequestToSpaceSearchParams(placementRequest)
-    const duration = Number(bedSearchParameters.durationWeeks) * 7 + Number(bedSearchParameters.durationDays)
-
-    cy.task('stubSpaceSearch', spaceSearchResults)
-    cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubBookingFromPlacementRequest', placementRequest)
-
-    const searchPage = SearchPage.visit(placementRequest)
-    // When I click to book the first space
-    searchPage.clickSearchResult(spaceSearchResults.results[0])
-
-    // Then I should be shown the confirmation page
-    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-
-    // And the confirmation page should contain the details of my booking
-    confirmationPage.shouldShowConfirmationDetails(
-      spaceSearchResults.results[0],
-      bedSearchParameters.startDate,
       duration,
-    )
+      essentialCriteria: essentialCharacteristics,
+      desirableCriteria: desirableCharacteristics,
+    })
 
-    // When I click on the confirm button
-    confirmationPage.clickConfirm()
+    // When I visit the 'Book a space' page
+    cy.task('stubPlacementRequest', placementRequest)
+    const page = BookASpacePage.visit(placementRequest, startDate, duration, premisesName, premisesId, apType)
 
-    // Then I should see a success message
-    Page.verifyOnPage(SuccessPage)
+    // Then I should see the details of the space I am booking
+    page.shouldShowBookingDetails(placementRequest, startDate, duration, apType)
+
+    // And when I complete the form
+    const requirements = spaceBookingRequirementsFactory.build({ apType, gender: placementRequest.gender })
+    const spaceBooking = spaceBookingFactory.build({ requirements })
+    cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
+    page.clickSubmit()
+
+    // Then I should be redirected to the 'Matched' tab
+    const cruDashboard = Page.verifyOnPage(ListPage)
+
+    // And I should see a success message
+    cruDashboard.shouldShowSpaceBookingConfirmation(premisesName, person.name)
 
     // And the booking details should have been sent to the API
-    cy.task('verifyBookingFromPlacementRequest', placementRequest).then(requests => {
+    cy.task('verifySpaceBookingCreate', placementRequest).then(requests => {
       expect(requests).to.have.length(1)
-
       const body = JSON.parse(requests[0].body)
 
-      expect(body).to.contain({
-        bedId: spaceSearchResults.results[0].premises.id,
-        arrivalDate: bedSearchParameters.startDate,
-        departureDate: DateFormats.dateObjToIsoDate(
-          addDays(DateFormats.isoToDateObj(bedSearchParameters.startDate), duration),
-        ),
+      expect(body).to.deep.equal({
+        arrivalDate: startDate,
+        departureDate: endDate,
+        premisesId,
+        placementRequestId: placementRequest.id,
+        requirements: {
+          ...spaceBooking.requirements,
+          essentialCharacteristics: placementRequest.essentialCriteria,
+          desirableCharacteristics: placementRequest.desirableCriteria,
+        },
       })
     })
   })

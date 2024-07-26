@@ -23,6 +23,7 @@ import placementApplication from './integration_tests/mockApis/placementApplicat
 import beds from './integration_tests/mockApis/beds'
 import spaceSearch from './integration_tests/mockApis/spaces'
 import moveBooking from './integration_tests/mockApis/moveBooking'
+import spaceBookings from './integration_tests/mockApis/spaceBooking'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -62,6 +63,7 @@ export default defineConfig({
         ...spaceSearch,
         ...moveBooking,
         ...reports,
+        ...spaceBookings,
         stubJourney,
       })
     },
