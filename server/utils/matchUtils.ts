@@ -7,8 +7,9 @@ import {
 } from '../@types/shared'
 import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
-import { linkTo } from './utils'
+import { createQueryString } from './utils'
 import matchPaths from '../paths/match'
+import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import {
   offenceAndRiskCriteriaLabels,
   placementCriteriaLabels,
@@ -83,64 +84,48 @@ export const placementDates = (startDateString: string, lengthInDays: string): P
   }
 }
 
-export const summaryCardHeader = ({
-  bedSearchResult,
+export const summaryCardLink = ({
+  spaceSearchResult,
   placementRequestId,
   startDate,
   durationWeeks,
   durationDays,
 }: {
-  bedSearchResult: BedSearchResult
+  spaceSearchResult: SpaceSearchResult
   placementRequestId: string
   startDate: string
   durationDays: string
   durationWeeks: string
 }): string => {
   const duration = String(Number(durationWeeks) * 7 + Number(durationDays))
-  return linkTo(
-    matchPaths.placementRequests.bookings.confirm,
+  return `${matchPaths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
     {
-      id: placementRequestId,
+      spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
+      startDate,
+      duration,
     },
-    {
-      text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
-      query: {
-        bedSearchResult: encodeBedSearchResult(bedSearchResult),
-        startDate,
-        duration,
-      },
-    },
-  )
+    { addQueryPrefix: true },
+  )}`
 }
 
 export const confirmationSummaryCardRows = (
-  bedSearchResult: BedSearchResult,
+  spaceSearchResult: SpaceSearchResult,
   dates: PlacementDates,
 ): Array<SummaryListItem> => {
   return [
-    premisesNameRow(bedSearchResult),
-    bedNameRow(bedSearchResult),
+    premisesNameRow(spaceSearchResult),
     arrivalDateRow(dates.startDate),
     departureDateRow(dates.endDate),
     placementLengthRow(dates.placementLength),
   ]
 }
 
-export const premisesNameRow = (bedSearchResult: BedSearchResult) => ({
+export const premisesNameRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Approved Premises',
   },
   value: {
-    text: bedSearchResult.premises.name,
-  },
-})
-
-export const bedNameRow = (bedSearchResult: BedSearchResult) => ({
-  key: {
-    text: 'Bed',
-  },
-  value: {
-    text: bedSearchResult.bed.name,
+    text: spaceSearchResult.premises.name,
   },
 })
 
@@ -171,67 +156,48 @@ export const placementLengthRow = (length: number) => ({
   },
 })
 
-export const summaryCardRows = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string>,
-): Array<SummaryListItem> => {
+export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeArea: string): Array<SummaryListItem> => {
   return [
-    townRow(bedSearchResult),
-    addressRow(bedSearchResult),
-    matchedCharacteristicsRow(bedSearchResult, requiredCharacteristics),
-    additionalCharacteristicsRow(bedSearchResult, requiredCharacteristics),
-    bedCountRow(bedSearchResult),
+    apTypeRow(spaceSearchResult),
+    addressRow(spaceSearchResult),
+    townRow(spaceSearchResult),
+    distanceRow(spaceSearchResult, postcodeArea),
   ]
 }
 
-export const townRow = (bedSearchResult: BedSearchResult) => ({
+export const apTypeRow = (spaceSearchResult: SpaceSearchResult) => ({
+  key: {
+    text: 'Type of AP',
+  },
+  value: {
+    text: apTypeLabels[spaceSearchResult.premises.apType],
+  },
+})
+
+export const townRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Town',
   },
   value: {
-    text: bedSearchResult.premises.town,
+    text: spaceSearchResult.premises.town,
   },
 })
 
-export const addressRow = (bedSearchResult: BedSearchResult) => ({
+export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Address',
   },
   value: {
-    text: `${bedSearchResult.premises.addressLine1} ${bedSearchResult.premises.addressLine2}`,
+    text: `${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}`,
   },
 })
 
-export const matchedCharacteristicsRow = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string> = [],
-) => ({
+export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => ({
   key: {
-    text: 'Matched characteristics',
+    text: 'Distance',
   },
   value: {
-    html: matchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
-  },
-})
-
-export const additionalCharacteristicsRow = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string> = [],
-) => ({
-  key: {
-    text: 'Additional characteristics',
-  },
-  value: {
-    html: unmatchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
-  },
-})
-
-export const bedCountRow = (bedSearchResult: BedSearchResult) => ({
-  key: {
-    text: 'Bed count',
-  },
-  value: {
-    text: bedSearchResult.premises.bedCount.toString(),
+    text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
   },
 })
 

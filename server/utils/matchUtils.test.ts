@@ -7,9 +7,8 @@ import {
   InvalidSpaceSearchDataException,
   addressRow,
   apTypeCriteria,
+  apTypeRow,
   arrivalDateRow,
-  bedCountRow,
-  bedNameRow,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeSpaceSearchResult,
@@ -20,24 +19,16 @@ import {
   filterPlacementCriteriaToSpaceCharacteristics,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
-  matchedCharacteristics,
-  matchedCharacteristicsRow,
   placementDates,
   placementLength,
   placementLengthRow,
   premisesNameRow,
   startDateObjFromParams,
-  summaryCardHeader,
+  summaryCardLink,
   summaryCardRows,
   townRow,
 } from './matchUtils'
-import {
-  offenceAndRiskCriteriaLabels,
-  placementCriteriaLabels,
-  placementRequirementCriteriaLabels,
-  specialistApTypeCriteriaLabels,
-} from './placementCriteriaUtils'
-import { linkTo } from './utils'
+import { createQueryString } from './utils'
 
 jest.mock('./utils.ts')
 jest.mock('./placementCriteriaUtils', () => ({
@@ -116,15 +107,38 @@ describe('matchUtils', () => {
 
   describe('summaryCardsRow', () => {
     it('calls the correct row functions', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
-      const searchParams = bedSearchParametersFactory.build()
-      expect(summaryCardRows(bedSearchResult, searchParams.requiredCharacteristics)).toEqual([
-        townRow(bedSearchResult),
-        addressRow(bedSearchResult),
-        matchedCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
-        additionalCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
-        bedCountRow(bedSearchResult),
+      const postcodeArea = 'HR1 2AF'
+      const spaceSearchResult = spaceSearchResultFactory.build()
+
+      expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
+        apTypeRow(spaceSearchResult),
+        addressRow(spaceSearchResult),
+        townRow(spaceSearchResult),
+        distanceRow(spaceSearchResult, postcodeArea),
       ])
+    })
+  })
+
+  describe('distanceRow', () => {
+    const spaceSearchResult = spaceSearchResultFactory.build()
+    const postcodeArea = 'HR1 2AF'
+
+    describe('if a postcode area is supplied', () => {
+      it('returns the distance from the desired postcode', () => {
+        expect(distanceRow(spaceSearchResult, postcodeArea)).toEqual({
+          key: { text: 'Distance' },
+          value: { text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea}` },
+        })
+      })
+    })
+
+    describe('if a postcode area is not supplied', () => {
+      it('returns the distance from "the desired location" instead', () => {
+        expect(distanceRow(spaceSearchResult)).toEqual({
+          key: { text: 'Distance' },
+          value: { text: `${spaceSearchResult.distanceInMiles} miles from the desired location` },
+        })
+      })
     })
   })
 
@@ -256,43 +270,47 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('summaryCardHeader', () => {
+  describe('summaryCardLink', () => {
     it('returns a link to the confirm page with the premises name and bed', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
+      const spaceSearchResult = spaceSearchResultFactory.build()
       const placementRequestId = '123'
       const startDate = '2022-01-01'
       const durationWeeks = '4'
       const durationDays = '1'
+      const durationInDays = Number(durationWeeks) * 7 + Number(durationDays)
 
-      summaryCardHeader({ bedSearchResult, placementRequestId, startDate, durationDays, durationWeeks })
+      summaryCardLink({
+        spaceSearchResult,
+        placementRequestId,
+        startDate,
+        durationDays,
+        durationWeeks,
+      })
 
-      expect(linkTo).toHaveBeenCalledWith(
-        paths.placementRequests.bookings.confirm,
-        { id: placementRequestId },
-        {
-          text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
-          query: {
-            bedSearchResult: encodeBedSearchResult(bedSearchResult),
+      expect(
+        `${paths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
+          {
+            spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
             startDate,
-            duration: String(Number(durationWeeks) * 7 + Number(durationDays)),
+            durationInDays,
           },
-        },
+          { addQueryPrefix: true },
+        )}`,
       )
     })
   })
 
   describe('confirmationSummaryCardRows', () => {
     it('should call the correct row functions', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
+      const spaceSearchResult = spaceSearchResultFactory.build()
       const dates = {
         startDate: '2022-01-01',
         endDate: '2022-01-15',
         placementLength: 2,
       }
 
-      expect(confirmationSummaryCardRows(bedSearchResult, dates)).toEqual([
-        premisesNameRow(bedSearchResult),
-        bedNameRow(bedSearchResult),
+      expect(confirmationSummaryCardRows(spaceSearchResult, dates)).toEqual([
+        premisesNameRow(spaceSearchResult),
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),

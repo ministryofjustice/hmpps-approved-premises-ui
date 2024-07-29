@@ -78,11 +78,9 @@
 								<h2 class="govuk-heading-m">Filters</h2>
 							</div>
 
-					<div class="govuk-grid-column-two-thirds">
+							<div class="govuk-grid-column-two-thirds">
 
-						<div class="bed-search-inputs">
-
-							{{ govukDateInput({
+								{{ govukDateInput({
 								id: "startDate",
 								namePrefix: "startDate",
 								fieldset: {
@@ -95,14 +93,14 @@
 								errorMessage: errors.startDate
 							}) }}
 
-							{% call govukFieldset({
+								{% call govukFieldset({
 								legend: {
 									text: "Length of stay",
 									classes: "govuk-fieldset__legend--s"
 								}
 							}) %}
 
-							{{
+								{{
 								govukInput(
 									{
 										classes: "govuk-input--width-2",
@@ -120,7 +118,7 @@
 								)
 							}}
 
-							{{
+								{{
 								govukInput(
 									{
 										classes: "govuk-input--width-2",
@@ -138,9 +136,9 @@
 								)
 							}}
 
-							{% endcall %}
+								{% endcall %}
 
-							{{ govukInput({
+								{{ govukInput({
 								id: "postcodeDistrict",
 								name: "postcodeDistrict",
 								value: postcodeDistrict,
@@ -150,7 +148,7 @@
 								classes: "govuk-input--width-3"
 							}) }}
 
-							{{ govukInput({
+								{{ govukInput({
 								id: "maxDistanceMiles",
 								name: "maxDistanceMiles",
 								value: maxDistanceMiles,
@@ -163,35 +161,49 @@
 								}
 							}) }}
 
-							<div class="button">
-								{{ govukButton({
+								<div class="button">
+									{{ govukButton({
 									text: "Update",
 									preventDoubleClick: true
 								}) }}
+								</div>
 							</div>
 						</div>
-					</form>
+					</div>
+				</form>
 
-					{% for bedSearchResult in spaceSearchResults.results %}
-						{{ govukSummaryList({
-					card: {
-						title: {
-							html: MatchUtils.summaryCardHeader({bedSearchResult: bedSearchResult, placementRequestId: placementRequest.id, startDate: startDate, durationDays: durationDays, durationWeeks: durationWeeks})
-						}
-					},
-					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
-				}) }}
-					{% endfor %}
+				<div class="govuk-grid-column-two-thirds">
 
-					<h3 class="govuk-heading-m">Mark this case as unable to match</h3>
-					<p>If there are no suitable results for your search, mark this case as unable to match.</p>
-					{{ govukButton({
+					<div>
+						{% for spaceSearchResult in spaceSearchResults.results %}
+							{{ govukSummaryList({
+								card: {
+									title: {
+										text: spaceSearchResult.premises.name
+									},
+									actions: {
+										items: [
+											{
+												href: MatchUtils.summaryCardLink({spaceSearchResult: spaceSearchResult, placementRequestId: placementRequest.id, startDate: startDate, durationDays: durationDays, durationWeeks: durationWeeks}),
+												text: "View spaces",
+												visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
+											}
+										]
+								}
+								},
+								rows: MatchUtils.summaryCardRows(spaceSearchResult, targetPostcodeDistrict)
+							}) }}
+						{% endfor %}
+
+						<h3 class="govuk-heading-m">Mark this case as unable to match</h3>
+						<p>If there are no suitable results for your search, mark this case as unable to match.</p>
+						{{ govukButton({
 						text: "Unable to match",
 						href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}),
 						preventDoubleClick: true
 					}) }}
+					</div>
 				</div>
 			</div>
-		</div>
 
-	{% endblock %}
+		{% endblock %}
