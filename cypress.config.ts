@@ -20,7 +20,8 @@ import users from './integration_tests/mockApis/users'
 import tasks from './integration_tests/mockApis/tasks'
 import placementRequests from './integration_tests/mockApis/placementRequests'
 import placementApplication from './integration_tests/mockApis/placementApplication'
-import bedSearch from './integration_tests/mockApis/beds'
+import beds from './integration_tests/mockApis/beds'
+import spaceSearch from './integration_tests/mockApis/spaces'
 import moveBooking from './integration_tests/mockApis/moveBooking'
 
 export default defineConfig({
@@ -57,7 +58,8 @@ export default defineConfig({
         ...tasks,
         ...placementRequests,
         ...placementApplication,
-        ...bedSearch,
+        ...beds,
+        ...spaceSearch,
         ...moveBooking,
         ...reports,
         stubJourney,

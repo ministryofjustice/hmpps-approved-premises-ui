@@ -1,33 +1,12 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { BedDetail, BedSearchResult, BedSummary } from '@approved-premises/api'
+import type { BedDetail, BedSummary } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from './setup'
+import { stubFor } from './setup'
 
 import paths from '../../server/paths/api'
 
 export default {
-  stubSpaceSearch: (args: { bedSearchResults: BedSearchResult }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'POST',
-        url: paths.match.findSpaces.pattern,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.bedSearchResults,
-      },
-    }),
-
-  verifySearchSubmit: async () =>
-    (
-      await getMatchingRequests({
-        method: 'POST',
-        url: paths.match.findSpaces.pattern,
-      })
-    ).body.requests,
-
   stubBeds: (args: { premisesId: string; bedSummaries: Array<BedSummary> }): SuperAgentRequest =>
     stubFor({
       request: {

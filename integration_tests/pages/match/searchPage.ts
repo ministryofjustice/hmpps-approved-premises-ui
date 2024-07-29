@@ -1,9 +1,13 @@
-import { BedSearchParametersUi, TextItem } from '@approved-premises/ui'
-import { BedSearchResult, BedSearchResults, PlacementCriteria, PlacementRequestDetail } from '@approved-premises/api'
+import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
+import {
+  Cas1SpaceSearchParameters,
+  Cas1SpaceSearchResult,
+  Cas1SpaceSearchResults,
+  PlacementRequestDetail,
+} from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
-import { placementCriteriaLabels } from '../../../server/utils/placementCriteriaUtils'
 import paths from '../../../server/paths/match'
 import { isFullPerson } from '../../../server/utils/personUtils'
 
@@ -20,30 +24,15 @@ export default class SearchPage extends Page {
     return new SearchPage(placementRequest.person.name)
   }
 
-  shouldShowEssentialCriteria(criteria: Array<PlacementCriteria>) {
-    criteria.forEach(c => {
-      cy.get('span.moj-filter__tag').should('contain', placementCriteriaLabels[c])
-    })
-  }
+  shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {
+    cy.get('h2').contains(`${spaceSearchResults.resultsCount} Approved Premises found`)
 
-  shouldHaveCriteriaSelected(criteria: Array<PlacementCriteria>) {
-    cy.get('input:checked[type="checkbox"][name="requiredCharacteristics"]').should('have.length', criteria.length)
-
-    criteria.forEach(c => {
-      cy.get(`input[name="requiredCharacteristics"][value="${c}"]`).should('be.checked')
-    })
-  }
-
-  shouldDisplaySearchResults(bedSearchResults: BedSearchResults, searchParams: BedSearchParametersUi): void {
-    cy.get('h2').contains(
-      `${bedSearchResults.resultsBedCount} matching beds in ${bedSearchResults.resultsRoomCount} rooms in ${bedSearchResults.resultsPremisesCount} premises`,
-    )
-
-    bedSearchResults.results.forEach(result => {
-      cy.contains('div', result.premises.name)
-        .parent('div')
+    spaceSearchResults.results.forEach(result => {
+      cy.contains('h2', result.premises.name)
+        .parent()
+        .parent()
         .within(() => {
-          const tableRows = summaryCardRows(result, searchParams.requiredCharacteristics)
+          const tableRows = summaryCardRows(result, targetPostcodeDistrict)
           tableRows.forEach(row => {
             cy.contains('dt', (row.key as TextItem).text)
               .parent('div')
@@ -55,11 +44,11 @@ export default class SearchPage extends Page {
     })
   }
 
-  clickSearchResult(bedSearchResult: BedSearchResult): void {
-    cy.get('a').contains(bedSearchResult.bed.name).click()
+  clickSearchResult(spaceSearchResult: Cas1SpaceSearchResult): void {
+    cy.get('a').contains(spaceSearchResult.premises.id).click()
   }
 
-  changeSearchParameters(newSearchParameters: BedSearchParametersUi): void {
+  changeSearchParameters(newSearchParameters: SpaceSearchParametersUi): void {
     this.clearDateInputs('startDate')
     this.completeDateInputs('startDate', newSearchParameters.startDate)
 
@@ -68,18 +57,38 @@ export default class SearchPage extends Page {
     this.getTextInputByIdAndClear('durationWeeks')
     this.getTextInputByIdAndEnterDetails('durationWeeks', newSearchParameters.durationWeeks.toString())
 
-    this.getTextInputByIdAndClear('postcodeDistrict')
-    this.getTextInputByIdAndEnterDetails('postcodeDistrict', newSearchParameters.postcodeDistrict)
-    this.getTextInputByIdAndClear('maxDistanceMiles')
-    this.getTextInputByIdAndEnterDetails('maxDistanceMiles', newSearchParameters.maxDistanceMiles.toString())
+    this.getTextInputByIdAndClear('targetPostcodeDistrict')
+    this.getTextInputByIdAndEnterDetails('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
 
-    newSearchParameters.requiredCharacteristics.forEach(characteristic => {
-      this.checkCheckboxByNameAndValue('requiredCharacteristics', characteristic)
+    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
+      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).check()
+    })
+  }
+
+  shouldShowSearchParametersInInputs(newSearchParameters: SpaceSearchParametersUi): void {
+    this.dateInputsShouldContainDate('startDate', newSearchParameters.startDate)
+    this.verifyTextInputContentsById('durationDays', newSearchParameters.durationDays.toString())
+    this.verifyTextInputContentsById('durationWeeks', newSearchParameters.durationWeeks.toString())
+    this.verifyTextInputContentsById('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
+
+    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
+      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).should('be.checked')
     })
   }
 
   clickUnableToMatch(): void {
     cy.get('.govuk-button').contains('Unable to match').click()
+  }
+
+  private iterateThroughRequirements(
+    allRequirements: Cas1SpaceSearchParameters['requirements'],
+    callback: (requirement: string, requirementCategory: string) => void,
+  ): void {
+    Object.entries(allRequirements).forEach(([requirementCategory, requirements]) => {
+      requirements.forEach(requirement => {
+        callback(requirement, requirementCategory)
+      })
+    })
   }
 }

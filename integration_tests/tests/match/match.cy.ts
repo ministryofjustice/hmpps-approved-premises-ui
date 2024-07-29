@@ -5,17 +5,18 @@ import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
-  bedSearchParametersUiFactory,
-  bedSearchResultsFactory,
   personFactory,
   placementRequestDetailFactory,
+  spaceSearchParametersUiFactory,
+  spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
-import { PlacementCriteria } from '../../../server/@types/shared/models/PlacementCriteria'
 import { signIn } from '../signIn'
-import { mapPlacementRequestToBedSearchParams } from '../../../server/utils/placementRequests/utils'
+import { mapPlacementRequestToSpaceSearchParams } from '../../../server/utils/placementRequests/utils'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ListPage from '../../pages/admin/placementApplications/listPage'
+import { Cas1SpaceSearchParameters } from '../../../server/@types/shared'
+import { filterPlacementCriteriaToSpaceCharacteristics } from '../../../server/utils/matchUtils'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -33,19 +34,8 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders'] as Array<PlacementCriteria>
-    const desirableCriteria = ['isCatered', 'hasEnSuite'] as Array<PlacementCriteria>
-    const placementRequest = placementRequestDetailFactory.build({
-      person,
-      status: 'notMatched',
-      duration: 15,
-      essentialCriteria,
-      desirableCriteria,
-    })
-    const firstBedSearchParameters = bedSearchParametersUiFactory.build({
-      requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
-    })
-    const bedSearchResults = bedSearchResultsFactory.build()
+    const placementRequest = placementRequestDetailFactory.build({ person })
+    const spaceSearchResults = spaceSearchResultsFactory.build()
 
     cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
@@ -53,26 +43,14 @@ context('Placement Requests', () => {
     // When I visit the search page
     const searchPage = SearchPage.visit(placementRequest)
 
-    // Then I should see the essential criteria
-    searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
-
-    // And the desirable criteria should be selected
-    searchPage.shouldHaveCriteriaSelected([
-      ...placementRequest.essentialCriteria,
-      ...placementRequest.desirableCriteria,
-    ])
-
     // And I should see the search results
     let numberOfSearches = 0
-    searchPage.shouldDisplaySearchResults(bedSearchResults, firstBedSearchParameters)
+    searchPage.shouldDisplaySearchResults(spaceSearchResults, placementRequest.location)
     numberOfSearches += 1
 
     // Given I want to search for a different space
     // When I enter new details on the search screen
-    const newSearchParameters = bedSearchParametersUiFactory.build({
-      requiredCharacteristics: [desirableCriteria[0], desirableCriteria[1]],
-    })
-
+    const newSearchParameters = spaceSearchParametersUiFactory.build()
     searchPage.changeSearchParameters(newSearchParameters)
     searchPage.clickSubmit()
     numberOfSearches += 1
@@ -80,50 +58,47 @@ context('Placement Requests', () => {
     // Then I should see the search results
     Page.verifyOnPage(SearchPage, person.name)
 
-    // And I should still see the essential criteria
-    searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
-
-    // And the new desirable criteria should be selected
-    searchPage.shouldHaveCriteriaSelected([
-      ...placementRequest.essentialCriteria,
-      ...newSearchParameters.requiredCharacteristics,
-    ])
+    // And the new search criteria should be selected
+    searchPage.shouldShowSearchParametersInInputs(newSearchParameters)
 
     // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
-
       const initialSearchRequestBody = JSON.parse(requests[0].body)
-      const secondSearchRequestBody = JSON.parse(requests[1].body)
+      const secondSearchRequestBody: Cas1SpaceSearchParameters = JSON.parse(requests[1].body)
 
-      // And the first request to the API should contain the criteria from the placement request
-      expect(initialSearchRequestBody).to.contain({
-        durationDays: placementRequest.duration,
-        startDate: placementRequest.expectedArrival,
-        postcodeDistrict: placementRequest.location,
-        maxDistanceMiles: placementRequest.radius,
-      })
-
-      expect(initialSearchRequestBody.requiredCharacteristics).to.have.members([
-        ...placementRequest.essentialCriteria,
+      const filteredPlacementCriteria = filterPlacementCriteriaToSpaceCharacteristics([
         ...placementRequest.desirableCriteria,
+        ...placementRequest.essentialCriteria,
       ])
 
+      // And the first request to the API should contain the criteria from the placement request
+      expect(initialSearchRequestBody).to.deep.equal({
+        durationInDays: placementRequest.duration,
+        startDate: placementRequest.expectedArrival,
+        targetPostcodeDistrict: placementRequest.location,
+        requirements: {
+          apTypes: [placementRequest.type],
+          genders: [placementRequest.gender],
+          spaceCharacteristics: filteredPlacementCriteria,
+        },
+      })
+
       // And the second request to the API should contain the new criteria I submitted
-      const durationDays =
+      const durationInDays =
         weeksToDays(Number(newSearchParameters.durationWeeks)) + Number(newSearchParameters.durationDays)
 
       expect(secondSearchRequestBody).to.contain({
-        durationDays,
+        durationInDays,
         startDate: newSearchParameters.startDate,
-        postcodeDistrict: newSearchParameters.postcodeDistrict,
-        maxDistanceMiles: Number(newSearchParameters.maxDistanceMiles),
+        targetPostcodeDistrict: newSearchParameters.targetPostcodeDistrict,
       })
 
-      expect(secondSearchRequestBody.requiredCharacteristics).to.have.members([
-        ...placementRequest.essentialCriteria,
-        ...newSearchParameters.requiredCharacteristics,
-      ])
+      expect(secondSearchRequestBody.requirements.apTypes).to.contain.members(newSearchParameters.requirements.apTypes)
+      expect(secondSearchRequestBody.requirements.spaceCharacteristics).to.contain.members(
+        newSearchParameters.requirements.spaceCharacteristics,
+      )
+      expect(secondSearchRequestBody.requirements.genders).to.contain.members(newSearchParameters.requirements.genders)
     })
   })
 
