@@ -3,13 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApType } from './ApType';
-import type { Cas1SpaceNeedCharacteristic } from './Cas1SpaceNeedCharacteristic';
-import type { Cas1SpaceRiskCharacteristic } from './Cas1SpaceRiskCharacteristic';
+import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { Gender } from './Gender';
 export type Cas1SpaceSearchRequirements = {
     apTypes?: Array<ApType>;
-    needCharacteristics?: Array<Cas1SpaceNeedCharacteristic>;
-    riskCharacteristics?: Array<Cas1SpaceRiskCharacteristic>;
+    spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
     genders?: Array<Gender>;
 };
 

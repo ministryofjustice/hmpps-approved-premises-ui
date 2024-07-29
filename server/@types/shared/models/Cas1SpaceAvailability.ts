@@ -2,11 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Cas1SpaceNeedCharacteristic } from './Cas1SpaceNeedCharacteristic';
-import type { Cas1SpaceRiskCharacteristic } from './Cas1SpaceRiskCharacteristic';
+import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 export type Cas1SpaceAvailability = {
-    needCharacteristics?: Array<Cas1SpaceNeedCharacteristic>;
-    riskCharacteristics?: Array<Cas1SpaceRiskCharacteristic>;
+    spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
     durationInDays?: number;
 };
 
