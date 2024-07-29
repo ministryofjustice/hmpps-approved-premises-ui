@@ -1,9 +1,17 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Cas1SpaceSearchParameters } from '@approved-premises/api'
+import type { Cas1SpaceSearchParameters, Cas1SpaceSearchRequirements } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import spaceBookingRequirements from './spaceBookingRequirements'
+import { spaceCharacteristics } from './spaceBookingRequirements'
+
+const spaceBookingRequirements = Factory.define<Cas1SpaceSearchRequirements>(() => {
+  return {
+    apType: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
+    spaceCharacteristics: faker.helpers.arrayElements(spaceCharacteristics),
+    gender: faker.helpers.arrayElement(['male', 'female']),
+  }
+})
 
 export default Factory.define<Cas1SpaceSearchParameters>(() => {
   return {
