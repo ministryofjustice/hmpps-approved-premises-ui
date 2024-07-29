@@ -26,12 +26,10 @@ import {
   placementLength,
   placementLengthRow,
   premisesNameRow,
-  selectedEssentialCriteria,
   startDateObjFromParams,
   summaryCardHeader,
   summaryCardRows,
   townRow,
-  unmatchedCharacteristics,
 } from './matchUtils'
 import {
   offenceAndRiskCriteriaLabels,
@@ -91,36 +89,6 @@ jest.mock('./placementCriteriaUtils', () => ({
 describe('matchUtils', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-  })
-
-  describe('matchedCharacteristics', () => {
-    it('returns a list of the matched characteristics', () => {
-      const actualCharacteristics = [
-        apCharacteristicPairFactory.build({ propertyName: 'isSemiSpecialistMentalHealth' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isPIPE' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isCatered' }),
-      ]
-      const requiredCharacteristics = ['isPIPE', 'isCatered']
-
-      expect(matchedCharacteristics(actualCharacteristics, requiredCharacteristics)).toEqual(
-        mapSearchParamCharacteristicsForUi(['isPIPE', 'isCatered']),
-      )
-    })
-  })
-
-  describe('unmatchedCharacteristics', () => {
-    it('returns a list of the unmatched characteristics', () => {
-      const actualCharacteristics = [
-        apCharacteristicPairFactory.build({ propertyName: 'isSemiSpecialistMentalHealth' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isPIPE' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isCatered' }),
-      ]
-      const requiredCharacteristics = ['isPIPE']
-
-      expect(unmatchedCharacteristics(actualCharacteristics, requiredCharacteristics)).toEqual(
-        mapSearchParamCharacteristicsForUi(['isSemiSpecialistMentalHealth', 'isCatered']),
-      )
-    })
   })
 
   describe('mapUiParamsForApi', () => {
@@ -229,32 +197,17 @@ describe('matchUtils', () => {
 
   describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
-      expect(groupedCheckboxes([])).toEqual({
-        'Type of AP': checkBoxesForCriteria(specialistApTypeCriteriaLabels, []),
-        'Placement Requirements': checkBoxesForCriteria(placementRequirementCriteriaLabels, []),
-        'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskCriteriaLabels, []),
-      })
-    })
-  })
-
-  describe('selectedEssentialCriteria', () => {
-    it('returns the translated selected essential criteria as an array', () => {
-      const criteria = {
-        foo: 'Foo',
-        bar: 'Bar',
-        baz: 'Baz',
-      }
-      expect(selectedEssentialCriteria(criteria, ['foo', 'fizz', 'buzz', 'bar'])).toEqual(['Foo', 'Bar'])
-    })
-  })
-
-  describe('groupedEssentialCriteria', () => {
-    it('groups criteria by their category, removing any empty criteria', () => {
-      const essentialCriteria = ['isPIPE', 'isRecoveryFocussed', 'isSuitableForVulnerable']
-
-      expect(groupedEssentialCriteria(essentialCriteria)).toEqual({
-        'Type of AP': [placementCriteriaLabels.isPIPE],
-        'Risks and offences to consider': [placementCriteriaLabels.isSuitableForVulnerable],
+      expect(groupedCheckboxes()).toEqual({
+        'AP type': { inputName: 'apTypes' },
+        'Risks and offences': {
+          inputName: 'spaceCharacteristics',
+        },
+        'AP & room characteristics': {
+          inputName: 'spaceCharacteristics',
+        },
+        Gender: {
+          inputName: 'genders',
+        },
       })
     })
   })

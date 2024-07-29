@@ -55,7 +55,6 @@ describe('spaceSearchController', () => {
           pageHeading: 'Find a space',
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          selectedDesirableCriteria: [],
           tier: placementRequestDetail.risks.tier.value.level,
           formPath,
           ...query,

@@ -71,55 +71,12 @@
 					<input type="hidden" name="startDate" value="{{startDate}}"/>
 					<input type="hidden" name="applicationId" value="{{applicationId}}"/>
 					<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
-					{% for requiredCharacteristic in placementRequest.essentialCriteria %}
-						<input type="hidden" name="requiredCharacteristics[]" value="{{requiredCharacteristic}}"/>
-					{% endfor %}
 
 					<div class="govuk-grid-column-one-third">
 						<div class="moj-filter">
 							<div class="moj-filter__header">
 								<h2 class="govuk-heading-m">Filters</h2>
 							</div>
-							<div class="moj-filter__content">
-								<div class="moj-filter__selected">
-									<div class="moj-filter__selected-heading">
-										<div class="moj-filter__heading-title">
-											<h2 class="govuk-heading-m">Selected Filters</h2>
-										</div>
-									</div>
-									{% for title, items in MatchUtils.groupedEssentialCriteria(placementRequest.essentialCriteria) %}
-										<h3 class="govuk-heading-s govuk-!-margin-bottom-0">{{ title }}</h3>
-
-										<ul class="moj-filter-tags">
-											{% for item in items %}
-												<li>
-													<span class="moj-filter__tag">{{item}}</span>
-												</li>
-											{% endfor %}
-										</ul>
-									{% endfor %}
-
-								</div>
-							</div>
-						</div>
-
-						{% for title, items in MatchUtils.groupedCheckboxes(selectedDesirableCriteria) %}
-							{{
-								govukCheckboxes({
-									name: 'requiredCharacteristics',
-									classes: "govuk-checkboxes--small",
-									fieldset: {
-										legend: {
-											text: title,
-											isPageHeading: false,
-											classes: 'govuk-fieldset__legend--s'
-										}
-									},
-									items: items
-								})
-							}}
-						{% endfor %}
-					</div>
 
 					<div class="govuk-grid-column-two-thirds">
 

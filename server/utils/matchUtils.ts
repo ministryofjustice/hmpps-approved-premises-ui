@@ -1,7 +1,6 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
   Cas1SpaceCharacteristic,
-  CharacteristicPair,
   PlacementCriteria,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
@@ -49,28 +48,6 @@ export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string
   return `<ul class="govuk-list">${characteristics
     .map(characteristicPair => `<li>${placementCriteriaLabels[characteristicPair]}</li>`)
     .join('')}</ul>`
-}
-
-export const matchedCharacteristics = (
-  actualCharacteristics: Array<CharacteristicPair>,
-  requiredCharacteristics: Array<string>,
-) => {
-  const characteristics = requiredCharacteristics.filter(characteristic =>
-    actualCharacteristics.map(c => c.propertyName).includes(characteristic),
-  )
-
-  return mapSearchParamCharacteristicsForUi(characteristics)
-}
-
-export const unmatchedCharacteristics = (
-  actualCharacteristics: Array<CharacteristicPair>,
-  requiredCharacteristics: Array<string>,
-) => {
-  const characteristics = actualCharacteristics
-    .map(c => c.propertyName)
-    .filter(characteristic => !requiredCharacteristics.includes(characteristic))
-
-  return mapSearchParamCharacteristicsForUi(characteristics)
 }
 
 export const encodeSpaceSearchResult = (spaceSearchResult: SpaceSearchResult): string => {
@@ -268,21 +245,6 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
-export const groupedEssentialCriteria = (essentialCriteria: Array<string>) => {
-  return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
-    const selectedCriteria = selectedEssentialCriteria(groupedCriteria[k].options, essentialCriteria)
-    if (selectedCriteria.length) {
-      return {
-        ...obj,
-        [`${groupedCriteria[k].title}`]: selectedCriteria,
-      }
-    }
-    return obj
-  }, {})
-}
-
-export const selectedEssentialCriteria = (criteria: Record<string, string>, selectedCriteria: Array<string>) => {
-  return selectedCriteria.filter(key => key in criteria).map(key => criteria[key])
 }
 
 export const groupedCheckboxes = (selectedValues: Array<string>) => {
