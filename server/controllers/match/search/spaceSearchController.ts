@@ -30,8 +30,8 @@ export default class BedSearchController {
 
       params.startDate = startDateObjFromParams(params).startDate
 
-      const spaceSearchResults = await this.spaceService.search(req.user.token, params as BedSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
+      const spaceSearchResults = await this.spaceService.search(req.user.token, params)
 
       res.render('match/search', {
         pageHeading: 'Find a space',

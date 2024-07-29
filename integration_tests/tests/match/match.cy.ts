@@ -47,7 +47,7 @@ context('Placement Requests', () => {
     })
     const bedSearchResults = bedSearchResultsFactory.build()
 
-    cy.task('stubSpaceSearch', { bedSearchResults })
+    cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
 
     // When I visit the search page
@@ -185,9 +185,9 @@ context('Placement Requests', () => {
       person: personFactory.build(),
     })
 
-    const bedSearchResults = bedSearchResultsFactory.build()
+    const spaceSearchResults = spaceSearchResultsFactory.build()
 
-    cy.task('stubSpaceSearch', { bedSearchResults })
+    cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubUnableToMatchPlacementRequest', placementRequest)
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
