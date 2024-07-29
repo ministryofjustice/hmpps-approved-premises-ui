@@ -6,7 +6,7 @@ import { bedSearchResultsFactory, placementRequestDetailFactory } from '../../..
 
 import { PlacementRequestService, SpaceService } from '../../../services'
 import { startDateObjFromParams } from '../../../utils/matchUtils'
-import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRequests/utils'
+import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
 
 import matchPaths from '../../../paths/match'
 
@@ -42,7 +42,7 @@ describe('spaceSearchController', () => {
   describe('search', () => {
     describe('body params are sent', () => {
       it('it should render the search template with body params taking precedence over the placement request params', async () => {
-        const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
+        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
         const body = { durationWeeks: '2', requiredCharacteristics: [] as Array<string> }
 
         const requestHandler = spaceSearchController.search()

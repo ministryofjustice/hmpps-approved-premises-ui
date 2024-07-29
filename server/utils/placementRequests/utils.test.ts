@@ -2,7 +2,7 @@ import { personFactory, placementRequestFactory } from '../../testutils/factorie
 import {
   assessmentLink,
   formatReleaseType,
-  mapPlacementRequestToBedSearchParams,
+  mapPlacementRequestToSpaceSearchParams,
   placementRequestTabItems,
   searchButton,
   withdrawalMessage,
@@ -10,9 +10,36 @@ import {
 import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
-import { DateFormats } from '../dateUtils'
+import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { filterPlacementCriteriaToSpaceCharacteristics } from '../matchUtils'
 
 describe('utils', () => {
+  describe('mapPlacementRequestToBedSearchParams', () => {
+    it('transforms a placement request into bed search params', () => {
+      const person = personFactory.build()
+      const placementRequest = placementRequestFactory.build({
+        duration: 15,
+        radius: 100,
+        person,
+      })
+
+      expect(mapPlacementRequestToSpaceSearchParams(placementRequest)).toEqual({
+        durationWeeks: daysToWeeksAndDays(placementRequest.duration).weeks.toString(),
+        durationDays: daysToWeeksAndDays(placementRequest.duration).days.toString(),
+        startDate: placementRequest.expectedArrival,
+        targetPostcodeDistrict: placementRequest.location,
+        requirements: {
+          spaceCharacteristics: filterPlacementCriteriaToSpaceCharacteristics([
+            ...placementRequest.desirableCriteria,
+            ...placementRequest.essentialCriteria,
+          ]),
+          apTypes: [placementRequest.type],
+          genders: [placementRequest.gender],
+        },
+      })
+    })
+  })
+
   describe('formatReleaseType', () => {
     it('formats a release type in a human-readable format', () => {
       const placementRequest = placementRequestFactory.build({ releaseType: 'rotl' })
@@ -32,29 +59,6 @@ describe('utils', () => {
         { id: placementRequest.id },
         { text: 'Search', attributes: { class: 'govuk-button' } },
       )
-    })
-  })
-
-  describe('mapPlacementRequestToBedSearchParams', () => {
-    it('transforms a placement request into bed search params', () => {
-      const person = personFactory.build()
-      const placementRequest = placementRequestFactory.build({
-        duration: 15,
-        radius: 100,
-        person,
-      })
-
-      expect(mapPlacementRequestToBedSearchParams(placementRequest)).toEqual({
-        durationWeeks: '2',
-        durationDays: '1',
-        startDate: placementRequest.expectedArrival,
-        postcodeDistrict: placementRequest.location,
-        maxDistanceMiles: '100',
-        crn: person.crn,
-        applicationId: placementRequest.applicationId,
-        assessmentId: placementRequest.assessmentId,
-        requiredCharacteristics: [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria],
-      })
     })
   })
 

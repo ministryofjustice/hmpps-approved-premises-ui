@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRequests/utils'
-import { BedSearchParametersUi } from '../../../@types/ui'
+import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
+import { SpaceSearchParametersUi } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
@@ -18,7 +18,7 @@ export default class BedSearchController {
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const searchParams = mapPlacementRequestToBedSearchParams(placementRequest)
+      const searchParams = mapPlacementRequestToSpaceSearchParams(placementRequest)
 
       const query = objectIfNotEmpty<SpaceSearchParametersUi>(searchParams)
       const body = objectIfNotEmpty<SpaceSearchParametersUi>(req.body)
