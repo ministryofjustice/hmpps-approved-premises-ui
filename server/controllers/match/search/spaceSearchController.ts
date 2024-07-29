@@ -20,8 +20,8 @@ export default class BedSearchController {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
       const searchParams = mapPlacementRequestToBedSearchParams(placementRequest)
 
-      const query = objectIfNotEmpty<BedSearchParametersUi>(searchParams)
-      const body = objectIfNotEmpty<BedSearchParametersUi>(req.body)
+      const query = objectIfNotEmpty<SpaceSearchParametersUi>(searchParams)
+      const body = objectIfNotEmpty<SpaceSearchParametersUi>(req.body)
 
       const params = {
         ...query,

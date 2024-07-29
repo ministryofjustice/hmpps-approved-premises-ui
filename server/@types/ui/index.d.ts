@@ -21,6 +21,7 @@ import {
   BedOccupancyOpenEntry,
   BedOccupancyRange,
   Booking,
+  Cas1SpaceSearchParameters,
   Document,
   FlagsEnvelope,
   Mappa,
@@ -29,7 +30,6 @@ import {
   PersonAcctAlert,
   PlacementApplication,
   PlacementApplicationTask,
-  PlacementCriteria,
   PlacementRequestStatus,
   PlacementRequestTask,
   ReleaseTypeOption,
@@ -401,16 +401,12 @@ type ContingencyPlanQuestion = {
 
 export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
 
-export interface BedSearchParametersUi {
+export interface SpaceSearchParametersUi {
   durationDays: string
   durationWeeks: string
-  maxDistanceMiles: string
   startDate: string
-  postcodeDistrict: string
-  requiredCharacteristics: Array<PlacementCriteria>
-  crn: string
-  applicationId: string
-  assessmentId: string
+  targetPostcodeDistrict: string
+  requirements: Cas1SpaceSearchParameters['requirements']
 }
 
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
