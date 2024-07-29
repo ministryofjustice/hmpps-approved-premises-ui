@@ -10,8 +10,6 @@ import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRe
 
 import matchPaths from '../../../paths/match'
 
-jest.mock('../../../utils/matchUtils')
-
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
   const placementRequestDetail = placementRequestDetailFactory.build()
@@ -63,53 +61,31 @@ describe('spaceSearchController', () => {
         expect(spaceService.search).toHaveBeenCalledWith(token, { ...query, ...body })
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       })
-
-      it('should handle when a single selectedRequiredCharacteristic is sent', async () => {
-        const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
-        const body = { requiredCharacteristics: placementRequestDetail.desirableCriteria[0] }
-
-        const requestHandler = spaceSearchController.search()
-
-        await requestHandler({ ...request, body }, response, next)
-
-        expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a space',
-          spaceSearchResults,
-          placementRequest: placementRequestDetail,
-          selectedDesirableCriteria: [placementRequestDetail.desirableCriteria[0]],
-          tier: placementRequestDetail.risks.tier.value.level,
-          formPath,
-          ...query,
-          requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
-        })
-        expect(spaceService.search).toHaveBeenCalledWith(token, {
-          ...query,
-          ...{
-            requiredCharacteristics: [placementRequestDetail.desirableCriteria[0]],
-          },
-        })
-        expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
-      })
     })
+  })
 
-    describe('no body params are sent', () => {
-      it('it should render the search template by searching with the placement request variables ', async () => {
-        const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
-        const requestHandler = spaceSearchController.search()
-        await requestHandler(request, response, next)
+  describe('no body params are sent', () => {
+    it('it should render the search template by searching with the placement request variables ', async () => {
+      const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
+      const requestHandler = spaceSearchController.search()
+      await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('match/search', {
+      expect(response.render).toHaveBeenCalledWith(
+        'match/search',
+        expect.objectContaining({
           pageHeading: 'Find a space',
+          targetPostcodeDistrict: placementRequestDetail.location,
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          selectedDesirableCriteria: placementRequestDetail.essentialCriteria,
           tier: placementRequestDetail.risks.tier.value.level,
+          startDate: placementRequestDetail.expectedArrival,
           formPath,
           ...query,
-        })
-        expect(spaceService.search).toHaveBeenCalledWith(token, query)
-        expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
-      })
+          ...mapPlacementRequestToSpaceSearchParams(placementRequestDetail),
+        }),
+      )
+      expect(spaceService.search).toHaveBeenCalledWith(token, query)
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
   })
 })

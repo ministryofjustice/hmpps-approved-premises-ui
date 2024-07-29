@@ -14,9 +14,10 @@ import {
   decodeSpaceSearchResult,
   departureDateRow,
   distanceRow,
-  groupedCheckboxes,
-  groupedEssentialCriteria,
+  encodeSpaceSearchResult,
   filterPlacementCriteriaToSpaceCharacteristics,
+  groupedCheckboxes,
+  groupedCriteria,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
   placementDates,
@@ -31,51 +32,6 @@ import {
 import { createQueryString } from './utils'
 
 jest.mock('./utils.ts')
-jest.mock('./placementCriteriaUtils', () => ({
-  specialistApTypeCriteriaLabels: {
-    isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
-    isESAP: 'Enhanced Security AP (ESAP)',
-  },
-  placementRequirementCriteriaLabels: {
-    isWheelchairDesignated: 'Wheelchair accessible',
-    isSingle: 'Single room',
-    isStepFreeDesignated: 'Step-free access',
-    isCatered: 'Catering required',
-    hasEnSuite: 'En-suite bathroom',
-    isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
-    isArsonDesignated: 'Designated arson room',
-  },
-  offenceAndRiskCriteriaLabels: {
-    isSuitableForVulnerable: 'Vulnerable to exploitation',
-    acceptsSexOffenders: 'Sexual offences against an adult',
-    acceptsChildSexOffenders: 'Sexual offences against children',
-    acceptsNonSexualChildOffenders: 'Non sexual offences against children',
-    acceptsHateCrimeOffenders: 'Hate based offences',
-    isArsonSuitable: 'Arson offences',
-  },
-  placementCriteriaLabels: {
-    isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
-    isESAP: 'Enhanced Security AP (ESAP)',
-    isRecoveryFocussed: 'Recovery Focused Approved Premises (RFAP)',
-    isSemiSpecialistMentalHealth: 'Semi-specialist mental health',
-    isSuitableForVulnerable: 'Vulnerable to exploitation',
-    acceptsSexOffenders: 'Sexual offences against an adult',
-    acceptsChildSexOffenders: 'Sexual offences against children',
-    acceptsNonSexualChildOffenders: 'Non sexual offences against children',
-    acceptsHateCrimeOffenders: 'Hate based offences',
-    isWheelchairDesignated: 'Wheelchair accessible',
-    isSingle: 'Single room',
-    isStepFreeDesignated: 'Step-free access',
-    isCatered: 'Catering required',
-    hasEnSuite: 'En-suite bathroom',
-    isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
-    isArsonSuitable: 'Arson offences',
-    hasBrailleSignage: 'Braille signage',
-    hasTactileFlooring: 'Tactile flooring',
-    hasHearingLoop: 'Hearing loop',
-    isArsonDesignated: 'Designated arson room',
-  },
-}))
 
 describe('matchUtils', () => {
   beforeEach(() => {
@@ -212,15 +168,18 @@ describe('matchUtils', () => {
   describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes()).toEqual({
-        'AP type': { inputName: 'apTypes' },
+        'AP type': { inputName: 'apTypes', items: groupedCriteria.apTypes.items },
         'Risks and offences': {
           inputName: 'spaceCharacteristics',
+          items: groupedCriteria.offenceAndRisk.items,
         },
         'AP & room characteristics': {
           inputName: 'spaceCharacteristics',
+          items: groupedCriteria.accessNeeds.items,
         },
         Gender: {
           inputName: 'genders',
+          items: groupedCriteria.genders.items,
         },
       })
     })

@@ -14,7 +14,6 @@ import {
   offenceAndRiskCriteriaLabels,
   placementCriteriaLabels,
   placementRequirementCriteriaLabels,
-  specialistApTypeCriteriaLabels,
 } from './placementCriteriaUtils'
 
 type PlacementDates = {
@@ -26,12 +25,6 @@ type PlacementDates = {
 export class InvalidSpaceSearchDataException extends Error {}
 
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
-
-const groupedCriteria = {
-  apType: { title: 'Type of AP', options: specialistApTypeCriteriaLabels },
-  placementRequirements: { title: 'Placement Requirements', options: placementRequirementCriteriaLabels },
-  offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskCriteriaLabels },
-}
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
   const durationInDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
@@ -211,18 +204,45 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
+export const groupedCriteria = {
+  apTypes: {
+    title: 'AP type',
+    items: apTypeLabels,
+    inputName: 'apTypes',
+  },
+  offenceAndRisk: {
+    title: 'Risks and offences',
+    items: offenceAndRiskCriteriaLabels,
+    inputName: 'spaceCharacteristics',
+  },
+  accessNeeds: {
+    title: 'AP & room characteristics',
+    items: placementRequirementCriteriaLabels,
+    inputName: 'spaceCharacteristics',
+  },
+  genders: {
+    title: 'Gender',
+    items: {
+      male: 'Male',
+      female: 'Female',
+    },
+    inputName: 'genders',
+  },
 }
 
-export const groupedCheckboxes = (selectedValues: Array<string>) => {
+export const groupedCheckboxes = () => {
   return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
     return {
       ...obj,
-      [`${groupedCriteria[k].title}`]: checkBoxesForCriteria(groupedCriteria[k].options, selectedValues),
+      [`${groupedCriteria[k].title}`]: {
+        inputName: groupedCriteria[k].inputName,
+        items: groupedCriteria[k].items,
+      },
     }
   }, {})
 }
 
-export const checkBoxesForCriteria = (criteria: Record<string, string>, selectedValues: Array<string>) => {
+export const checkBoxesForCriteria = (criteria: Record<string, string>, selectedValues: Array<string> = []) => {
   return Object.keys(criteria)
     .map(criterion => ({
       id: criterion,

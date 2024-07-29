@@ -148,18 +148,24 @@
 								classes: "govuk-input--width-3"
 							}) }}
 
-								{{ govukInput({
-								id: "maxDistanceMiles",
-								name: "maxDistanceMiles",
-								value: maxDistanceMiles,
-								label: {
-								text: "Radius"
-								},
-								classes: "govuk-input--width-3",
-								suffix: {
-									text: "miles"
-								}
-							}) }}
+									{% for title, details in MatchUtils.groupedCheckboxes() %}
+										{% set context = fetchContext() %}
+
+										{{
+											govukCheckboxes({
+												name: 'requirements[' + details.inputName + '][]',
+												classes: "govuk-checkboxes--small",
+												fieldset: {
+													legend: {
+														text: title,
+														isPageHeading: false,
+														classes: 'govuk-fieldset__legend--s'
+													}
+												},
+												items: MatchUtils.checkBoxesForCriteria(details.items, context['requirements'][details.inputName])
+											})
+										}}
+									{% endfor %}
 
 								<div class="button">
 									{{ govukButton({
