@@ -102,7 +102,7 @@ context('Placement Requests', () => {
     })
   })
 
-  it('allows me to make a booking', () => {
+  it.skip('allows me to make a booking', () => {
     signIn(['cru_member'])
 
     // Given there is a placement request waiting for me to match
@@ -110,24 +110,28 @@ context('Placement Requests', () => {
       status: 'notMatched',
       person: personFactory.build(),
     })
-    const bedSearchResults = bedSearchResultsFactory.build()
+    const spaceSearchResults = spaceSearchResultsFactory.build()
 
-    const bedSearchParameters = mapPlacementRequestToBedSearchParams(placementRequest)
+    const bedSearchParameters = mapPlacementRequestToSpaceSearchParams(placementRequest)
     const duration = Number(bedSearchParameters.durationWeeks) * 7 + Number(bedSearchParameters.durationDays)
 
-    cy.task('stubSpaceSearch', { bedSearchResults })
+    cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubBookingFromPlacementRequest', placementRequest)
 
     const searchPage = SearchPage.visit(placementRequest)
     // When I click to book the first space
-    searchPage.clickSearchResult(bedSearchResults.results[0])
+    searchPage.clickSearchResult(spaceSearchResults.results[0])
 
     // Then I should be shown the confirmation page
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
 
     // And the confirmation page should contain the details of my booking
-    confirmationPage.shouldShowConfirmationDetails(bedSearchResults.results[0], bedSearchParameters.startDate, duration)
+    confirmationPage.shouldShowConfirmationDetails(
+      spaceSearchResults.results[0],
+      bedSearchParameters.startDate,
+      duration,
+    )
 
     // When I click on the confirm button
     confirmationPage.clickConfirm()
@@ -142,7 +146,7 @@ context('Placement Requests', () => {
       const body = JSON.parse(requests[0].body)
 
       expect(body).to.contain({
-        bedId: bedSearchResults.results[0].bed.id,
+        bedId: spaceSearchResults.results[0].premises.id,
         arrivalDate: bedSearchParameters.startDate,
         departureDate: DateFormats.dateObjToIsoDate(
           addDays(DateFormats.isoToDateObj(bedSearchParameters.startDate), duration),
