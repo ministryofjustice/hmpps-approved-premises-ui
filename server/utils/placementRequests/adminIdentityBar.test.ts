@@ -81,13 +81,26 @@ describe('adminIdentityBar', () => {
       `)
     })
 
-    it('should return Limited Access Offender if the person has no name', () => {
+    it('should return Not Found if the person is unknown person', () => {
       const placementRequestDetailWithRestrictedAccessOffender = placementRequestDetailFactory.build()
-      placementRequestDetailWithRestrictedAccessOffender.person = restrictedPersonFactory.build()
+      placementRequestDetailWithRestrictedAccessOffender.person = restrictedPersonFactory.build({
+        type: 'UnknownPerson',
+      })
 
       expect(title(placementRequestDetailWithRestrictedAccessOffender)).toMatchStringIgnoringWhitespace(`
       <span class="govuk-caption-l">Placement request</span>
-      <h1 class="govuk-heading-l">Limited Access Offender</h1>
+      <h1 class="govuk-heading-l">Not Found CRN: ${placementRequestDetailWithRestrictedAccessOffender.person.crn}</h1>
+      `)
+    })
+
+    it('should return Limited Access Offender if the person has no name', () => {
+      const placementRequestDetailWithRestrictedAccessOffender = placementRequestDetailFactory.build()
+      const person = personFactory.build({ isRestricted: true })
+      placementRequestDetailWithRestrictedAccessOffender.person = person
+
+      expect(title(placementRequestDetailWithRestrictedAccessOffender)).toMatchStringIgnoringWhitespace(`
+      <span class="govuk-caption-l">Placement request</span>
+      <h1 class="govuk-heading-l"> ${person.name}</h1>
       `)
     })
 

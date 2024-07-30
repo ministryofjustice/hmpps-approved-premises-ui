@@ -5,7 +5,7 @@ import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
-import { nameOrPlaceholderCopy } from '../personUtils'
+import { isUnknownPerson, nameOrPlaceholderCopy } from '../personUtils'
 import config from '../../config'
 
 export const adminIdentityBar = (placementRequest: PlacementRequestDetail): IdentityBar => {
@@ -67,7 +67,11 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
 }
 
 export const title = (placementRequest: PlacementRequestDetail) => {
-  let heading = nameOrPlaceholderCopy(placementRequest.person, 'Limited Access Offender')
+  const { person } = placementRequest
+  let heading = nameOrPlaceholderCopy(
+    person,
+    isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO: ${person.crn}`,
+  )
   if (placementRequest.isWithdrawn) {
     heading += `<strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>`
   }
