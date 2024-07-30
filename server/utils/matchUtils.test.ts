@@ -1,15 +1,13 @@
 import paths from '../paths/match'
-import {
-  apCharacteristicPairFactory,
-  bedSearchParametersFactory,
-  bedSearchParametersUiFactory,
-  bedSearchResultFactory,
-} from '../testutils/factories'
+import { spaceSearchParametersUiFactory, spaceSearchResultFactory } from '../testutils/factories'
+import { placementCriteria } from '../testutils/factories/placementRequest'
+
 import { DateFormats } from './dateUtils'
 import {
   InvalidBedSearchDataException,
   additionalCharacteristicsRow,
   addressRow,
+  apTypeCriteria,
   arrivalDateRow,
   bedCountRow,
   bedNameRow,
@@ -20,6 +18,7 @@ import {
   encodeBedSearchResult,
   groupedCheckboxes,
   groupedEssentialCriteria,
+  filterPlacementCriteriaToSpaceCharacteristics,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
   matchedCharacteristics,
@@ -344,6 +343,27 @@ describe('matchUtils', () => {
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
       ])
+    })
+  })
+
+  describe('filterPlacementCriteriaToSpaceCharacteristics', () => {
+    it('removes characteristics related to the AP Type', () => {
+      expect(filterPlacementCriteriaToSpaceCharacteristics([...placementCriteria, ...apTypeCriteria])).toEqual(
+        expect.arrayContaining([
+          'acceptsHateCrimeOffenders',
+          'isSuitableForVulnerable',
+          'isWheelchairDesignated',
+          'isSingle',
+          'isStepFreeDesignated',
+          'acceptsChildSexOffenders',
+          'isCatered',
+          'hasEnSuite',
+          'isSuitedForSexOffenders',
+          'acceptsSexOffenders',
+          'acceptsNonSexualChildOffenders',
+          'isArsonSuitable',
+        ]),
+      )
     })
   })
 })

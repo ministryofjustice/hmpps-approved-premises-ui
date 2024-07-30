@@ -2,7 +2,9 @@ import { addDays, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
+  Cas1SpaceCharacteristic,
   CharacteristicPair,
+  PlacementCriteria,
 } from '../@types/shared'
 import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
@@ -299,4 +301,19 @@ export const checkBoxesForCriteria = (criteria: Record<string, string>, selected
       checked: selectedValues.includes(criterion),
     }))
     .filter(item => item.text.length > 0)
+}
+
+export const apTypeCriteria: Array<PlacementCriteria> = [
+  'isPIPE',
+  'isESAP',
+  'isMHAPStJosephs',
+  'isMHAPElliottHouse',
+  'isRecoveryFocussed',
+  'isSemiSpecialistMentalHealth',
+] as const
+
+export const filterPlacementCriteriaToSpaceCharacteristics = (
+  placementCriteria: Array<PlacementCriteria>,
+): Array<Cas1SpaceCharacteristic> => {
+  return placementCriteria.filter(criteria => !apTypeCriteria.includes(criteria)) as Array<Cas1SpaceCharacteristic>
 }
