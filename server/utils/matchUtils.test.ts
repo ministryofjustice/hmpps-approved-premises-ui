@@ -126,13 +126,15 @@ describe('matchUtils', () => {
 
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
-      const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
+      const uiParams = spaceSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
-        ...uiParams,
-        durationDays: 15,
-        maxDistanceMiles: Number(uiParams.maxDistanceMiles),
-        serviceName: 'approved-premises',
+        durationInDays: 15,
+        requirements: {
+          ...uiParams.requirements,
+        },
+        startDate: uiParams.startDate,
+        targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
       })
     })
   })

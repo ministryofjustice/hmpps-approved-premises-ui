@@ -1,12 +1,12 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
-  ApprovedPremisesBedSearchParameters as BedSearchParameters,
-  BedSearchResult,
   Cas1SpaceCharacteristic,
   CharacteristicPair,
   PlacementCriteria,
+  Cas1SpaceSearchParameters as SpaceSearchParameters,
+  Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../@types/shared'
-import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
+import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
 import { linkTo } from './utils'
 import matchPaths from '../paths/match'
@@ -33,13 +33,15 @@ const groupedCriteria = {
   offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskCriteriaLabels },
 }
 
-export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => {
-  const durationDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
+export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
+  const durationInDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
   return {
-    ...query,
-    durationDays,
-    maxDistanceMiles: Number(query.maxDistanceMiles),
-    serviceName: 'approved-premises',
+    startDate: query.startDate,
+    targetPostcodeDistrict: query.targetPostcodeDistrict,
+    requirements: {
+      ...query.requirements,
+    },
+    durationInDays,
   }
 }
 
