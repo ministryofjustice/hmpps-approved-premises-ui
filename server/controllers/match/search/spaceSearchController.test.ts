@@ -9,9 +9,7 @@ import {
 } from '../../../testutils/factories'
 
 import { PlacementRequestService, SpaceService } from '../../../services'
-import { startDateObjFromParams } from '../../../utils/matchUtils'
 import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
-
 import matchPaths from '../../../paths/match'
 
 describe('spaceSearchController', () => {
@@ -40,7 +38,6 @@ describe('spaceSearchController', () => {
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     spaceService.search.mockResolvedValue(spaceSearchResults)
-    ;(startDateObjFromParams as jest.Mock).mockReturnValue({ startDate: placementRequestDetail.expectedArrival })
   })
 
   describe('search', () => {
@@ -58,6 +55,7 @@ describe('spaceSearchController', () => {
           spaceSearchResults,
           placementRequest: placementRequestDetail,
           tier: placementRequestDetail.risks.tier.value.level,
+          startDate: placementRequestDetail.expectedArrival,
           formPath,
           ...query,
           ...body,
