@@ -23,7 +23,7 @@ type PlacementDates = {
   endDate: string
 }
 
-export class InvalidBedSearchDataException extends Error {}
+export class InvalidSpaceSearchDataException extends Error {}
 
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
@@ -73,21 +73,21 @@ export const unmatchedCharacteristics = (
   return mapSearchParamCharacteristicsForUi(characteristics)
 }
 
-export const encodeBedSearchResult = (bedSearchResult: BedSearchResult): string => {
-  const json = JSON.stringify(bedSearchResult)
+export const encodeSpaceSearchResult = (spaceSearchResult: SpaceSearchResult): string => {
+  const json = JSON.stringify(spaceSearchResult)
 
   return Buffer.from(json).toString('base64')
 }
 
-export const decodeBedSearchResult = (string: string): BedSearchResult => {
+export const decodeSpaceSearchResult = (string: string): SpaceSearchResult => {
   const json = Buffer.from(string, 'base64').toString('utf-8')
   const obj = JSON.parse(json)
 
-  if ('premises' in obj && 'room' in obj && 'bed' in obj) {
-    return obj as BedSearchResult
+  if ('premises' in obj) {
+    return obj as SpaceSearchResult
   }
 
-  throw new InvalidBedSearchDataException()
+  throw new InvalidSpaceSearchDataException()
 }
 
 export const placementLength = (lengthInDays: number): string => {

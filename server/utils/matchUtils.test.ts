@@ -4,8 +4,7 @@ import { placementCriteria } from '../testutils/factories/placementRequest'
 
 import { DateFormats } from './dateUtils'
 import {
-  InvalidBedSearchDataException,
-  additionalCharacteristicsRow,
+  InvalidSpaceSearchDataException,
   addressRow,
   apTypeCriteria,
   arrivalDateRow,
@@ -13,9 +12,9 @@ import {
   bedNameRow,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
-  decodeBedSearchResult,
+  decodeSpaceSearchResult,
   departureDateRow,
-  encodeBedSearchResult,
+  distanceRow,
   groupedCheckboxes,
   groupedEssentialCriteria,
   filterPlacementCriteriaToSpaceCharacteristics,
@@ -260,28 +259,28 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('encodeBedSearchResult', () => {
-    it('encodes a bed search result to Base64', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
+  describe('encodeSpaceSearchResult', () => {
+    it('encodes a space search result to Base64', () => {
+      const spaceSearchResult = spaceSearchResultFactory.build()
 
-      expect(encodeBedSearchResult(bedSearchResult)).toEqual(
-        Buffer.from(JSON.stringify(bedSearchResult)).toString('base64'),
+      expect(encodeSpaceSearchResult(spaceSearchResult)).toEqual(
+        Buffer.from(JSON.stringify(spaceSearchResult)).toString('base64'),
       )
     })
   })
 
-  describe('decodeBedSearchResult', () => {
-    it('decodes a Base64 encoded bed search result', () => {
-      const bedSearchResult = bedSearchResultFactory.build()
-      const encodedResult = encodeBedSearchResult(bedSearchResult)
+  describe('decodeSpaceSearchResult', () => {
+    it('decodes a Base64 encoded space search result', () => {
+      const spaceSearchResult = spaceSearchResultFactory.build()
+      const encodedResult = encodeSpaceSearchResult(spaceSearchResult)
 
-      expect(decodeBedSearchResult(encodedResult)).toEqual(bedSearchResult)
+      expect(decodeSpaceSearchResult(encodedResult)).toEqual(spaceSearchResult)
     })
 
-    it('throws an error if the object is not a bed search result', () => {
+    it('throws an error if the object is not a space search result', () => {
       const obj = Buffer.from('{"foo":"bar"}').toString('base64')
 
-      expect(() => decodeBedSearchResult(obj)).toThrowError(InvalidBedSearchDataException)
+      expect(() => decodeSpaceSearchResult(obj)).toThrowError(InvalidSpaceSearchDataException)
     })
   })
 
