@@ -47,7 +47,7 @@ describe('spaceSearchController', () => {
     describe('body params are sent', () => {
       it('it should render the search template with body params taking precedence over the placement request params', async () => {
         const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
-        const body = { durationWeeks: '2', requiredCharacteristics: [] as Array<string> }
+        const body = spaceSearchParametersUiFactory.build()
 
         const requestHandler = spaceSearchController.search()
 
