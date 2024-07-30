@@ -6,7 +6,6 @@ import logger from '../../logger'
 
 export const featureFlagsToUse: Array<FeatureFlag> = [
   'allow-sufficient-information-request-without-confirmation',
-  'show-search-by-CRN-timeline-navigation',
 ]
 export const throttleTime = 15 * 1000
 
