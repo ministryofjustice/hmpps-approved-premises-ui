@@ -5,6 +5,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -16,45 +17,10 @@
 		<div class="govuk-width-container">
 			<div class="govuk-grid-column-full">
 				<h1 class="govuk-heading-m">{{placementRequest.person.name}}</h1>
-				<div class="search-identity-table govuk-body">
-					<dl class="search-identity-table__column">
-						<dt>
-							<strong>Tier</strong>
-						</dt>
-						<dd>{{ tier }}</dd>
-
-						<dt>
-							<strong>CRN</strong>
-						</dt>
-						<dd>{{placementRequest.person.crn}}</dd>
-
-						<dt>
-							<strong>DOB</strong>
-						</dt>
-						<dd>{{placementRequest.person.dateOfBirth}}</dd>
-
-						<dt>
-							<strong>Expected arrival date</strong>
-						</dt>
-						<dd>{{formatDate(startDate)}}</dd>
-					</dl>
-
-					<dl class="search-identity-table__column">
-						<dt>
-							<strong>Assessment</strong>
-						</dt>
-						<dd>
-							{{ PlacementRequestUtils.assessmentLink(placementRequest, 'View', 'Assessment') | safe }}
-						</dd>
-						<dt>
-							<strong>Application</strong>
-						</dt>
-						<dd>
-							{{ PlacementRequestUtils.applicationLink(placementRequest, 'View', 'Application') | safe }}
-						</dd>
-					</dl>
-				</div>
-				<hr/>
+				{{ govukSummaryList({
+					rows: MatchUtils.placementRequestSummaryListForMatching(placementRequest) 
+				})
+				}}
 			</div>
 		</div>
 		<div class="govuk-grid-row">

@@ -1,7 +1,9 @@
-import { PlacementCriteria } from '@approved-premises/api'
+import { ApType, ApprovedPremisesApplication, PlacementCriteria } from '@approved-premises/api'
+import { when } from 'jest-when'
 import paths from '../paths/match'
 import {
   placementRequestDetailFactory,
+  premisesFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
 } from '../testutils/factories'
@@ -12,6 +14,7 @@ import {
   apTypeLabelsForRadioInput,
   apTypeRow,
   arrivalDateRow,
+  calculateDepartureDate,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeSpaceSearchResult,
@@ -24,11 +27,14 @@ import {
   genderRow,
   groupedCheckboxes,
   groupedCriteria,
+  lengthOfStayRow,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
   placementDates,
   placementLength,
   placementLengthRow,
+  placementRequestSummaryListForMatching,
+  postcodeRow,
   premisesNameRow,
   requirementsHtmlString,
   spaceBookingSummaryCardRows,
@@ -40,10 +46,13 @@ import {
 import { placementCriteriaLabels } from './placementCriteriaUtils'
 import { createQueryString } from './utils'
 import * as formUtils from './formUtils'
-import { ApType } from '../@types/shared'
 import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import { placementRequirementsRow, preferredApsRow } from './placementRequests/matchingInformationSummaryList'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from './retrieveQuestionResponseFromFormArtifact'
+import PreferredAps from '../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
 
 jest.mock('./utils.ts')
+jest.mock('./retrieveQuestionResponseFromFormArtifact')
 
 describe('matchUtils', () => {
   beforeEach(() => {
@@ -407,6 +416,39 @@ describe('matchUtils', () => {
         },
       ])
       expect(radioButtonUtilSpy).toHaveBeenCalledWith(apTypeLabels, apType)
+    })
+  })
+
+  describe('placementRequestSummaryListForMatching', () => {
+    it('returns the rows for a placement request', () => {
+      const placementRequest = placementRequestDetailFactory.build()
+
+      expect(placementRequestSummaryListForMatching(placementRequest)).toEqual([
+        arrivalDateRow(placementRequest.expectedArrival),
+        departureDateRow(
+          DateFormats.dateObjToIsoDate(
+            calculateDepartureDate(placementRequest.expectedArrival, placementRequest.duration),
+          ),
+        ),
+        lengthOfStayRow(placementRequest.duration),
+        postcodeRow(placementRequest.location),
+        apTypeRow(placementRequest.type),
+        placementRequirementsRow(placementRequest, 'essential'),
+        placementRequirementsRow(placementRequest, 'desirable'),
+      ])
+    })
+
+    it('adds the preferred APs if they exist', () => {
+      const placementRequest = placementRequestDetailFactory.build()
+      const preferredAps = premisesFactory.buildList(1)
+
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(placementRequest.application as ApprovedPremisesApplication, PreferredAps, 'selectedAps')
+        .mockReturnValue(preferredAps)
+
+      expect(placementRequestSummaryListForMatching(placementRequest)).toEqual(
+        expect.arrayContaining([preferredApsRow(placementRequest)]),
+      )
     })
   })
 })

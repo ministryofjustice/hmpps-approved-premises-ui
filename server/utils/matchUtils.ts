@@ -3,6 +3,7 @@ import {
   ApType,
   Gender,
   PlacementCriteria,
+  PlacementRequestDetail,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
@@ -17,6 +18,7 @@ import {
   placementRequirementCriteriaLabels,
 } from './placementCriteriaUtils'
 import { apTypeLabels } from './apTypeLabels'
+import { convertKeyValuePairToRadioItems } from './formUtils'
 
 type PlacementDates = {
   placementLength: number
@@ -315,4 +317,49 @@ export const checkBoxesForCriteria = (criteria: Record<string, string>, selected
 
 export const apTypeLabelsForRadioInput = (selectedValue: ApType) => {
   return convertKeyValuePairToRadioItems(apTypeLabels, selectedValue)
+}
+
+export const lengthOfStayRow = (lengthInDays: number) => ({
+  key: {
+    text: 'Length of stay',
+  },
+  value: {
+    text: placementLength(lengthInDays),
+  },
+})
+
+export const postcodeRow = (postcodeDistrict: PlacementRequestDetail['location']) => ({
+  key: {
+    text: 'Postcode',
+  },
+  value: {
+    text: postcodeDistrict,
+  },
+})
+
+export const calculateDepartureDate = (startDate: string, lengthInDays: number): Date => {
+  return addDays(DateFormats.isoToDateObj(startDate), lengthInDays)
+}
+
+export const placementRequestSummaryListForMatching = (placementRequest: PlacementRequestDetail) => {
+  const rows: Array<SummaryListItem> = [
+    arrivalDateRow(placementRequest.expectedArrival),
+    departureDateRow(
+      DateFormats.dateObjToIsoDate(calculateDepartureDate(placementRequest.expectedArrival, placementRequest.duration)),
+    ),
+    lengthOfStayRow(placementRequest.duration),
+    postcodeRow(placementRequest.location),
+    apTypeRow(placementRequest.type),
+  ]
+
+  const preferredAps = preferredApsRow(placementRequest)
+
+  if (preferredAps) {
+    rows.push(preferredAps)
+  }
+
+  rows.push(placementRequirementsRow(placementRequest, 'essential'))
+  rows.push(placementRequirementsRow(placementRequest, 'desirable'))
+
+  return rows
 }
