@@ -10,7 +10,6 @@ import arrivalFactory from './arrival'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
-import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
 import bedSummaryFactory from './bedSummary'
 import bedDetailFactory from './bedDetail'
 import {
@@ -94,7 +93,7 @@ import premisesSearchResultSummaryFactory from './premisesSearchResultSummary'
 import spaceBookingFactory from './spaceBooking'
 import spaceBookingRequirementsFactory from './spaceBookingRequirements'
 import spaceCategoryAvailabilityFactory from './spaceAvailability'
-import spaceSearchParametersFactory from './spaceSearchParameters'
+import spaceSearchParametersFactory, { spaceSearchParametersUiFactory } from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
 
@@ -123,8 +122,6 @@ export {
   bedOccupancyRangeFactoryUi,
   bedOccupancyRangeFactory,
   bedOccupancyEntryOverbookingUiFactory,
-  bedSearchParametersFactory,
-  bedSearchParametersUiFactory,
   bedSearchResultFactory,
   bedSearchResultsFactory,
   bookingAppealTask,
@@ -200,6 +197,7 @@ export {
   spaceBookingRequirementsFactory,
   spaceCategoryAvailabilityFactory,
   spaceSearchParametersFactory,
+  spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
 }

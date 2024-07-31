@@ -1,7 +1,10 @@
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { ApprovedPremisesBedSearchParameters as BedSearchParameters, BedSearchResults } from '../@types/shared'
+import {
+  Cas1SpaceSearchParameters as SpaceSearchParameters,
+  Cas1SpaceSearchResults as SpaceSearchResults,
+} from '../@types/shared'
 
 export default class SpaceClient {
   restClient: RestClient
@@ -10,10 +13,10 @@ export default class SpaceClient {
     this.restClient = new RestClient('spaceClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async search(params: BedSearchParameters): Promise<BedSearchResults> {
+  async search(params: SpaceSearchParameters): Promise<SpaceSearchResults> {
     return (await this.restClient.post({
-      path: `${paths.match.findSpaces.pattern}`,
-      data: { ...params, serviceName: 'approved-premises' },
-    })) as Promise<BedSearchResults>
+      path: paths.match.findSpaces.pattern,
+      data: { ...params },
+    })) as Promise<SpaceSearchResults>
   }
 }

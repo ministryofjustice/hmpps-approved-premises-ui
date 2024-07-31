@@ -1,18 +1,19 @@
 import { addDays, weeksToDays } from 'date-fns'
 import {
-  ApprovedPremisesBedSearchParameters as BedSearchParameters,
-  BedSearchResult,
-  CharacteristicPair,
+  Cas1SpaceCharacteristic,
+  PlacementCriteria,
+  Cas1SpaceSearchParameters as SpaceSearchParameters,
+  Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../@types/shared'
-import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
+import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
-import { linkTo } from './utils'
+import { createQueryString } from './utils'
 import matchPaths from '../paths/match'
+import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import {
   offenceAndRiskCriteriaLabels,
   placementCriteriaLabels,
   placementRequirementCriteriaLabels,
-  specialistApTypeCriteriaLabels,
 } from './placementCriteriaUtils'
 
 type PlacementDates = {
@@ -21,23 +22,19 @@ type PlacementDates = {
   endDate: string
 }
 
-export class InvalidBedSearchDataException extends Error {}
+export class InvalidSpaceSearchDataException extends Error {}
 
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
-const groupedCriteria = {
-  apType: { title: 'Type of AP', options: specialistApTypeCriteriaLabels },
-  placementRequirements: { title: 'Placement Requirements', options: placementRequirementCriteriaLabels },
-  offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskCriteriaLabels },
-}
-
-export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => {
-  const durationDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
+export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
+  const durationInDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
   return {
-    ...query,
-    durationDays,
-    maxDistanceMiles: Number(query.maxDistanceMiles),
-    serviceName: 'approved-premises',
+    startDate: query.startDate,
+    targetPostcodeDistrict: query.targetPostcodeDistrict,
+    requirements: {
+      ...query.requirements,
+    },
+    durationInDays,
   }
 }
 
@@ -47,43 +44,21 @@ export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string
     .join('')}</ul>`
 }
 
-export const matchedCharacteristics = (
-  actualCharacteristics: Array<CharacteristicPair>,
-  requiredCharacteristics: Array<string>,
-) => {
-  const characteristics = requiredCharacteristics.filter(characteristic =>
-    actualCharacteristics.map(c => c.propertyName).includes(characteristic),
-  )
-
-  return mapSearchParamCharacteristicsForUi(characteristics)
-}
-
-export const unmatchedCharacteristics = (
-  actualCharacteristics: Array<CharacteristicPair>,
-  requiredCharacteristics: Array<string>,
-) => {
-  const characteristics = actualCharacteristics
-    .map(c => c.propertyName)
-    .filter(characteristic => !requiredCharacteristics.includes(characteristic))
-
-  return mapSearchParamCharacteristicsForUi(characteristics)
-}
-
-export const encodeBedSearchResult = (bedSearchResult: BedSearchResult): string => {
-  const json = JSON.stringify(bedSearchResult)
+export const encodeSpaceSearchResult = (spaceSearchResult: SpaceSearchResult): string => {
+  const json = JSON.stringify(spaceSearchResult)
 
   return Buffer.from(json).toString('base64')
 }
 
-export const decodeBedSearchResult = (string: string): BedSearchResult => {
+export const decodeSpaceSearchResult = (string: string): SpaceSearchResult => {
   const json = Buffer.from(string, 'base64').toString('utf-8')
   const obj = JSON.parse(json)
 
-  if ('premises' in obj && 'room' in obj && 'bed' in obj) {
-    return obj as BedSearchResult
+  if ('premises' in obj) {
+    return obj as SpaceSearchResult
   }
 
-  throw new InvalidBedSearchDataException()
+  throw new InvalidSpaceSearchDataException()
 }
 
 export const placementLength = (lengthInDays: number): string => {
@@ -102,64 +77,48 @@ export const placementDates = (startDateString: string, lengthInDays: string): P
   }
 }
 
-export const summaryCardHeader = ({
-  bedSearchResult,
+export const summaryCardLink = ({
+  spaceSearchResult,
   placementRequestId,
   startDate,
   durationWeeks,
   durationDays,
 }: {
-  bedSearchResult: BedSearchResult
+  spaceSearchResult: SpaceSearchResult
   placementRequestId: string
   startDate: string
   durationDays: string
   durationWeeks: string
 }): string => {
   const duration = String(Number(durationWeeks) * 7 + Number(durationDays))
-  return linkTo(
-    matchPaths.placementRequests.bookings.confirm,
+  return `${matchPaths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
     {
-      id: placementRequestId,
+      spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
+      startDate,
+      duration,
     },
-    {
-      text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
-      query: {
-        bedSearchResult: encodeBedSearchResult(bedSearchResult),
-        startDate,
-        duration,
-      },
-    },
-  )
+    { addQueryPrefix: true },
+  )}`
 }
 
 export const confirmationSummaryCardRows = (
-  bedSearchResult: BedSearchResult,
+  spaceSearchResult: SpaceSearchResult,
   dates: PlacementDates,
 ): Array<SummaryListItem> => {
   return [
-    premisesNameRow(bedSearchResult),
-    bedNameRow(bedSearchResult),
+    premisesNameRow(spaceSearchResult),
     arrivalDateRow(dates.startDate),
     departureDateRow(dates.endDate),
     placementLengthRow(dates.placementLength),
   ]
 }
 
-export const premisesNameRow = (bedSearchResult: BedSearchResult) => ({
+export const premisesNameRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Approved Premises',
   },
   value: {
-    text: bedSearchResult.premises.name,
-  },
-})
-
-export const bedNameRow = (bedSearchResult: BedSearchResult) => ({
-  key: {
-    text: 'Bed',
-  },
-  value: {
-    text: bedSearchResult.bed.name,
+    text: spaceSearchResult.premises.name,
   },
 })
 
@@ -190,67 +149,48 @@ export const placementLengthRow = (length: number) => ({
   },
 })
 
-export const summaryCardRows = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string>,
-): Array<SummaryListItem> => {
+export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeArea: string): Array<SummaryListItem> => {
   return [
-    townRow(bedSearchResult),
-    addressRow(bedSearchResult),
-    matchedCharacteristicsRow(bedSearchResult, requiredCharacteristics),
-    additionalCharacteristicsRow(bedSearchResult, requiredCharacteristics),
-    bedCountRow(bedSearchResult),
+    apTypeRow(spaceSearchResult),
+    addressRow(spaceSearchResult),
+    townRow(spaceSearchResult),
+    distanceRow(spaceSearchResult, postcodeArea),
   ]
 }
 
-export const townRow = (bedSearchResult: BedSearchResult) => ({
+export const apTypeRow = (spaceSearchResult: SpaceSearchResult) => ({
+  key: {
+    text: 'Type of AP',
+  },
+  value: {
+    text: apTypeLabels[spaceSearchResult.premises.apType],
+  },
+})
+
+export const townRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Town',
   },
   value: {
-    text: bedSearchResult.premises.town,
+    text: spaceSearchResult.premises.town,
   },
 })
 
-export const addressRow = (bedSearchResult: BedSearchResult) => ({
+export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Address',
   },
   value: {
-    text: `${bedSearchResult.premises.addressLine1} ${bedSearchResult.premises.addressLine2}`,
+    text: `${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}`,
   },
 })
 
-export const matchedCharacteristicsRow = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string> = [],
-) => ({
+export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => ({
   key: {
-    text: 'Matched characteristics',
+    text: 'Distance',
   },
   value: {
-    html: matchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
-  },
-})
-
-export const additionalCharacteristicsRow = (
-  bedSearchResult: BedSearchResult,
-  requiredCharacteristics: Array<string> = [],
-) => ({
-  key: {
-    text: 'Additional characteristics',
-  },
-  value: {
-    html: unmatchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
-  },
-})
-
-export const bedCountRow = (bedSearchResult: BedSearchResult) => ({
-  key: {
-    text: 'Bed count',
-  },
-  value: {
-    text: bedSearchResult.premises.bedCount.toString(),
+    text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
   },
 })
 
@@ -264,33 +204,45 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
-export const groupedEssentialCriteria = (essentialCriteria: Array<string>) => {
-  return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
-    const selectedCriteria = selectedEssentialCriteria(groupedCriteria[k].options, essentialCriteria)
-    if (selectedCriteria.length) {
-      return {
-        ...obj,
-        [`${groupedCriteria[k].title}`]: selectedCriteria,
-      }
-    }
-    return obj
-  }, {})
+export const groupedCriteria = {
+  apTypes: {
+    title: 'AP type',
+    items: apTypeLabels,
+    inputName: 'apTypes',
+  },
+  offenceAndRisk: {
+    title: 'Risks and offences',
+    items: offenceAndRiskCriteriaLabels,
+    inputName: 'spaceCharacteristics',
+  },
+  accessNeeds: {
+    title: 'AP & room characteristics',
+    items: placementRequirementCriteriaLabels,
+    inputName: 'spaceCharacteristics',
+  },
+  genders: {
+    title: 'Gender',
+    items: {
+      male: 'Male',
+      female: 'Female',
+    },
+    inputName: 'genders',
+  },
 }
 
-export const selectedEssentialCriteria = (criteria: Record<string, string>, selectedCriteria: Array<string>) => {
-  return selectedCriteria.filter(key => key in criteria).map(key => criteria[key])
-}
-
-export const groupedCheckboxes = (selectedValues: Array<string>) => {
+export const groupedCheckboxes = () => {
   return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
     return {
       ...obj,
-      [`${groupedCriteria[k].title}`]: checkBoxesForCriteria(groupedCriteria[k].options, selectedValues),
+      [`${groupedCriteria[k].title}`]: {
+        inputName: groupedCriteria[k].inputName,
+        items: groupedCriteria[k].items,
+      },
     }
   }, {})
 }
 
-export const checkBoxesForCriteria = (criteria: Record<string, string>, selectedValues: Array<string>) => {
+export const checkBoxesForCriteria = (criteria: Record<string, string>, selectedValues: Array<string> = []) => {
   return Object.keys(criteria)
     .map(criterion => ({
       id: criterion,
@@ -299,4 +251,19 @@ export const checkBoxesForCriteria = (criteria: Record<string, string>, selected
       checked: selectedValues.includes(criterion),
     }))
     .filter(item => item.text.length > 0)
+}
+
+export const apTypeCriteria: Array<PlacementCriteria> = [
+  'isPIPE',
+  'isESAP',
+  'isMHAPStJosephs',
+  'isMHAPElliottHouse',
+  'isRecoveryFocussed',
+  'isSemiSpecialistMentalHealth',
+] as const
+
+export const filterPlacementCriteriaToSpaceCharacteristics = (
+  placementCriteria: Array<PlacementCriteria>,
+): Array<Cas1SpaceCharacteristic> => {
+  return placementCriteria.filter(criteria => !apTypeCriteria.includes(criteria)) as Array<Cas1SpaceCharacteristic>
 }
