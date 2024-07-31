@@ -9,6 +9,7 @@ import { DateFormats } from './dateUtils'
 import {
   InvalidSpaceSearchDataException,
   addressRow,
+  apTypeLabelsForRadioInput,
   apTypeRow,
   arrivalDateRow,
   checkBoxesForCriteria,
@@ -38,6 +39,9 @@ import {
 } from './matchUtils'
 import { placementCriteriaLabels } from './placementCriteriaUtils'
 import { createQueryString } from './utils'
+import * as formUtils from './formUtils'
+import { ApType } from '../@types/shared'
+import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 jest.mock('./utils.ts')
 
@@ -53,7 +57,9 @@ describe('matchUtils', () => {
       expect(mapUiParamsForApi(uiParams)).toEqual({
         durationInDays: 15,
         requirements: {
-          ...uiParams.requirements,
+          apTypes: [uiParams.requirements.apType],
+          genders: [uiParams.requirements.gender],
+          spaceCharacteristics: uiParams.requirements.spaceCharacteristics,
         },
         startDate: uiParams.startDate,
         targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
@@ -345,6 +351,62 @@ describe('matchUtils', () => {
       expect(requirementsHtmlString(placementRequest.desirableCriteria)).toEqual(
         `<ul class="govuk-list"><li>${placementCriteriaLabels.isArsonDesignated}</li></ul>`,
       )
+    })
+  })
+
+  describe('apTypeLabelsForRadioInput', () => {
+    it('calls the function to create the radio items with the expected arguments', () => {
+      const radioButtonUtilSpy = jest.spyOn(formUtils, 'convertKeyValuePairToRadioItems')
+
+      const apType: ApType = 'esap'
+
+      const result = apTypeLabelsForRadioInput(apType)
+
+      expect(result).toEqual([
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Standard AP',
+          value: 'normal',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Psychologically Informed Planned Environment (PIPE)',
+          value: 'pipe',
+        },
+        {
+          checked: true,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Enhanced Security AP (ESAP)',
+          value: 'esap',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Recovery Focused AP (RFAP)',
+          value: 'rfap',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Specialist Mental Health AP (Elliott House - Midlands)',
+          value: 'mhapElliottHouse',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
+          value: 'mhapStJosephs',
+        },
+      ])
+      expect(radioButtonUtilSpy).toHaveBeenCalledWith(apTypeLabels, apType)
     })
   })
 })

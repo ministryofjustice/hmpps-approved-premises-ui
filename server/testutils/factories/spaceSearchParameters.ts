@@ -33,9 +33,9 @@ export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParamete
     startDate: startDateInputsValues.startDate,
     targetPostcodeDistrict: faker.helpers.arrayElement(postcodeAreas),
     requirements: {
-      apTypes: faker.helpers.arrayElements(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
+      apType: faker.helpers.arrayElement(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
       spaceCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
-      genders: faker.helpers.arrayElements(['male', 'female']),
+      gender: faker.helpers.arrayElement(['male', 'female']),
     },
     ...startDateInputsValues,
   }

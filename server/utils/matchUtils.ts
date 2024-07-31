@@ -34,7 +34,9 @@ export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchPa
     startDate: query.startDate,
     targetPostcodeDistrict: query.targetPostcodeDistrict,
     requirements: {
-      ...query.requirements,
+      apTypes: [query.requirements.apType],
+      genders: [query.requirements.gender],
+      spaceCharacteristics: query.requirements.spaceCharacteristics,
     },
     durationInDays,
   }
@@ -309,4 +311,8 @@ export const checkBoxesForCriteria = (criteria: Record<string, string>, selected
       checked: selectedValues.includes(criterion),
     }))
     .filter(item => item.text.length > 0)
+}
+
+export const apTypeLabelsForRadioInput = (selectedValue: ApType) => {
+  return convertKeyValuePairToRadioItems(apTypeLabels, selectedValue)
 }

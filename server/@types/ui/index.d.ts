@@ -21,9 +21,9 @@ import {
   BedOccupancyOpenEntry,
   BedOccupancyRange,
   Booking,
-  Cas1SpaceSearchParameters,
   Document,
   FlagsEnvelope,
+  Gender,
   Mappa,
   OASysSection,
   Person,
@@ -36,6 +36,7 @@ import {
   RiskTier,
   RiskTierLevel,
   RoshRisks,
+  Cas1SpaceCharacteristic as SpaceCharacteristic,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
@@ -406,7 +407,11 @@ export interface SpaceSearchParametersUi {
   durationWeeks: string
   startDate: string
   targetPostcodeDistrict: string
-  requirements: Cas1SpaceSearchParameters['requirements']
+  requirements: {
+    apType: ApType
+    gender: Gender
+    spaceCharacteristics: Array<SpaceCharacteristic>
+  }
 }
 
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>

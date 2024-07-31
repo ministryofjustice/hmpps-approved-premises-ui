@@ -56,6 +56,9 @@ export default class SearchPage extends Page {
     this.getTextInputByIdAndEnterDetails('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
 
+    this.checkRadioByNameAndValue('requirements[apType]', newSearchParameters.requirements.apType)
+    this.checkRadioByNameAndValue('requirements[gender]', newSearchParameters.requirements.gender)
+
     newSearchParameters.requirements.spaceCharacteristics.forEach(requirement => {
       cy.get(`input[name="requirements[spaceCharacteristics][]"][value="${requirement}"]`).check()
     })
@@ -66,6 +69,9 @@ export default class SearchPage extends Page {
     this.verifyTextInputContentsById('durationDays', newSearchParameters.durationDays.toString())
     this.verifyTextInputContentsById('durationWeeks', newSearchParameters.durationWeeks.toString())
     this.verifyTextInputContentsById('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
+
+    cy.get(`input[name="requirements[apType]"][value="${newSearchParameters.requirements.apType}"]`)
+    cy.get(`input[name="requirements[gender]"][value="${newSearchParameters.requirements.gender}"]`)
 
     newSearchParameters.requirements.spaceCharacteristics.forEach(requirement => {
       cy.get(`input[name="requirements[spaceCharacteristics][]"][value="${requirement}"]`).should('be.checked')

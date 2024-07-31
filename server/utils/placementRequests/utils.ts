@@ -27,8 +27,8 @@ export const mapPlacementRequestToSpaceSearchParams = ({
     targetPostcodeDistrict: location,
     requirements: {
       spaceCharacteristics: filterOutAPTypes([...desirableCriteria, ...essentialCriteria]),
-      apTypes: [type],
-      genders: [gender],
+      apType: type,
+      gender,
     },
   }
 }

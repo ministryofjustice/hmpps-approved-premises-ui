@@ -33,8 +33,8 @@ describe('utils', () => {
             ...placementRequest.desirableCriteria,
             ...placementRequest.essentialCriteria,
           ]),
-          apTypes: [placementRequest.type],
-          genders: [placementRequest.gender],
+          apType: placementRequest.type,
+          gender: placementRequest.gender,
         },
       })
     })

@@ -93,11 +93,11 @@ context('Placement Requests', () => {
         targetPostcodeDistrict: newSearchParameters.targetPostcodeDistrict,
       })
 
-      expect(secondSearchRequestBody.requirements.apTypes).to.contain.members(newSearchParameters.requirements.apTypes)
+      expect(secondSearchRequestBody.requirements.apTypes).to.contain.members([newSearchParameters.requirements.apType])
       expect(secondSearchRequestBody.requirements.spaceCharacteristics).to.contain.members(
         newSearchParameters.requirements.spaceCharacteristics,
       )
-      expect(secondSearchRequestBody.requirements.genders).to.contain.members(newSearchParameters.requirements.genders)
+      expect(secondSearchRequestBody.requirements.genders).to.contain.members([newSearchParameters.requirements.gender])
     })
   })
 

@@ -4,10 +4,12 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% extends "../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
+{% set context = fetchContext() %}
 
 {% block content %}
 	<div class="govuk-grid-row">
@@ -150,10 +152,21 @@
 								classes: "govuk-input--width-3"
 							}) }}
 
-									{% for title, details in MatchUtils.groupedCheckboxes() %}
-										{% set context = fetchContext() %}
+								{{ govukRadios({
+									name: "requirements[apType]",
+									classes: "govuk-radios--small",
+									fieldset: {
+										legend: {
+											text: 'AP Type',
+											classes: 'govuk-fieldset__legend--s',
+											isPageHeading: false
+										}
+									},
+									items: MatchUtils.apTypeLabelsForRadioInput(context['requirements']['apType'])
+								}) }}
 
-										{{
+								{% for title, details in MatchUtils.groupedCheckboxes() %}
+									{{
 											govukCheckboxes({
 												name: 'requirements[' + details.inputName + '][]',
 												classes: "govuk-checkboxes--small",
@@ -167,7 +180,21 @@
 												items: MatchUtils.checkBoxesForCriteria(details.items, context['requirements'][details.inputName])
 											})
 										}}
-									{% endfor %}
+								{% endfor %}
+
+								{{ govukRadios({
+									name: "requirements[gender]",
+									classes: "govuk-radios--small",
+									value: requirements.gender,
+									fieldset: {
+										legend: {
+											text: 'Gender',
+											classes: 'govuk-fieldset__legend--s',
+											isPageHeading: false
+										}
+									},
+									items: [{value: 'male', text: 'Male' }, {value: 'female', text: 'Female' }]
+								}) }}
 
 								<div class="button">
 									{{ govukButton({
