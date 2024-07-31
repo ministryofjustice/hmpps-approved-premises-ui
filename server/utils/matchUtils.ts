@@ -276,11 +276,6 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
 }
 
 export const groupedCriteria = {
-  apTypes: {
-    title: 'AP type',
-    items: apTypeLabels,
-    inputName: 'apTypes',
-  },
   offenceAndRisk: {
     title: 'Risks and offences',
     items: offenceAndRiskCriteriaLabels,
@@ -290,14 +285,6 @@ export const groupedCriteria = {
     title: 'AP & room characteristics',
     items: placementRequirementCriteriaLabels,
     inputName: 'spaceCharacteristics',
-  },
-  genders: {
-    title: 'Gender',
-    items: {
-      male: 'Male',
-      female: 'Female',
-    },
-    inputName: 'genders',
   },
 }
 

@@ -176,7 +176,6 @@ describe('matchUtils', () => {
   describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes()).toEqual({
-        'AP type': { inputName: 'apTypes', items: groupedCriteria.apTypes.items },
         'Risks and offences': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.offenceAndRisk.items,
@@ -184,10 +183,6 @@ describe('matchUtils', () => {
         'AP & room characteristics': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.accessNeeds.items,
-        },
-        Gender: {
-          inputName: 'genders',
-          items: groupedCriteria.genders.items,
         },
       })
     })

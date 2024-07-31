@@ -1,10 +1,5 @@
 import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
-import {
-  Cas1SpaceSearchParameters,
-  Cas1SpaceSearchResult,
-  Cas1SpaceSearchResults,
-  PlacementRequestDetail,
-} from '@approved-premises/api'
+import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
@@ -61,8 +56,8 @@ export default class SearchPage extends Page {
     this.getTextInputByIdAndEnterDetails('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
 
-    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
-      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).check()
+    newSearchParameters.requirements.spaceCharacteristics.forEach(requirement => {
+      cy.get(`input[name="requirements[spaceCharacteristics][]"][value="${requirement}"]`).check()
     })
   }
 
@@ -72,23 +67,12 @@ export default class SearchPage extends Page {
     this.verifyTextInputContentsById('durationWeeks', newSearchParameters.durationWeeks.toString())
     this.verifyTextInputContentsById('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
 
-    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
-      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).should('be.checked')
+    newSearchParameters.requirements.spaceCharacteristics.forEach(requirement => {
+      cy.get(`input[name="requirements[spaceCharacteristics][]"][value="${requirement}"]`).should('be.checked')
     })
   }
 
   clickUnableToMatch(): void {
     cy.get('.govuk-button').contains('Unable to match').click()
-  }
-
-  private iterateThroughRequirements(
-    allRequirements: Cas1SpaceSearchParameters['requirements'],
-    callback: (requirement: string, requirementCategory: string) => void,
-  ): void {
-    Object.entries(allRequirements).forEach(([requirementCategory, requirements]) => {
-      requirements.forEach(requirement => {
-        callback(requirement, requirementCategory)
-      })
-    })
   }
 }
