@@ -8,7 +8,7 @@ import {
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../@types/shared'
-import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
+import { KeyDetailsArgs, ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
 import { DateFormats, daysToWeeksAndDays } from './dateUtils'
 import { createQueryString, sentenceCase } from './utils'
 import matchPaths from '../paths/match'
@@ -19,6 +19,8 @@ import {
 } from './placementCriteriaUtils'
 import { apTypeLabels } from './apTypeLabels'
 import { convertKeyValuePairToRadioItems } from './formUtils'
+import { textValue } from './applications/helpers'
+import { isFullPerson } from './personUtils'
 
 type PlacementDates = {
   placementLength: number
@@ -362,4 +364,30 @@ export const placementRequestSummaryListForMatching = (placementRequest: Placeme
   rows.push(placementRequirementsRow(placementRequest, 'desirable'))
 
   return rows
+}
+
+export const keyDetails = (placementRequest: PlacementRequestDetail): KeyDetailsArgs => {
+  const { person } = placementRequest
+  if (!isFullPerson(person)) throw Error('Restricted person')
+  return {
+    header: {
+      key: 'Name',
+      value: person.name,
+      showKey: false,
+    },
+    items: [
+      {
+        key: textValue('CRN'),
+        value: textValue(person.crn),
+      },
+      {
+        key: textValue('Tier'),
+        value: textValue(placementRequest?.risks?.tier?.value?.level || 'Not available'),
+      },
+      {
+        key: textValue('Date of birth'),
+        value: textValue(DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })),
+      },
+    ],
+  }
 }

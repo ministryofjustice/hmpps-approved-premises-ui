@@ -1,9 +1,11 @@
-import { ApType, ApprovedPremisesApplication, PlacementCriteria } from '@approved-premises/api'
+import { ApType, ApprovedPremisesApplication, FullPerson, PlacementCriteria } from '@approved-premises/api'
 import { when } from 'jest-when'
 import paths from '../paths/match'
 import {
+  personFactory,
   placementRequestDetailFactory,
   premisesFactory,
+  restrictedPersonFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
 } from '../testutils/factories'
@@ -27,6 +29,7 @@ import {
   genderRow,
   groupedCheckboxes,
   groupedCriteria,
+  keyDetails,
   lengthOfStayRow,
   mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
@@ -46,10 +49,11 @@ import {
 import { placementCriteriaLabels } from './placementCriteriaUtils'
 import { createQueryString } from './utils'
 import * as formUtils from './formUtils'
-import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { placementRequirementsRow, preferredApsRow } from './placementRequests/matchingInformationSummaryList'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from './retrieveQuestionResponseFromFormArtifact'
 import PreferredAps from '../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
+import { apTypeLabels } from './apTypeLabels'
+import { textValue } from './applications/helpers'
 
 jest.mock('./utils.ts')
 jest.mock('./retrieveQuestionResponseFromFormArtifact')
@@ -449,6 +453,47 @@ describe('matchUtils', () => {
       expect(placementRequestSummaryListForMatching(placementRequest)).toEqual(
         expect.arrayContaining([preferredApsRow(placementRequest)]),
       )
+    })
+  })
+
+  describe('keyDetails', () => {
+    it('should return the key details for a placement request', () => {
+      const person = personFactory.build({ type: 'FullPerson' })
+      const placementRequest = placementRequestDetailFactory.build({ person })
+
+      const details = keyDetails(placementRequest)
+
+      expect(details).toEqual({
+        header: {
+          key: 'Name',
+          value: (placementRequest.person as FullPerson).name,
+          showKey: false,
+        },
+        items: [
+          {
+            key: textValue('CRN'),
+            value: textValue(placementRequest.person.crn),
+          },
+          {
+            key: textValue('Tier'),
+            value: textValue(placementRequest?.risks?.tier?.value?.level || 'Not available'),
+          },
+          {
+            key: textValue('Date of birth'),
+            value: textValue(
+              DateFormats.isoDateToUIDate((placementRequest.person as FullPerson).dateOfBirth, { format: 'short' }),
+            ),
+          },
+        ],
+      })
+    })
+
+    it('should throw an error if the person is not a full person', () => {
+      const restrictedPerson = restrictedPersonFactory.build()
+      const placementRequest = placementRequestDetailFactory.build()
+      placementRequest.person = restrictedPerson
+
+      expect(() => keyDetails(placementRequest)).toThrow('Restricted person')
     })
   })
 })

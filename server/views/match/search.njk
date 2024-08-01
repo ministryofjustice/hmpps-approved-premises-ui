@@ -7,7 +7,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% extends "../partials/layout.njk" %}
+{% extends "./layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set context = fetchContext() %}
