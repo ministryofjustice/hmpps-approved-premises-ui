@@ -48,12 +48,12 @@ import {
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { createQueryString } from '../utils'
 import * as formUtils from '../formUtils'
-import { placementRequirementsRow } from '../placementRequests/matchingInformationSummaryList'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
 import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
+import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
 jest.mock('../utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')

@@ -21,8 +21,8 @@ import { apTypeLabels } from '../apTypeLabels'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
 import { textValue } from '../applications/helpers'
 import { isFullPerson } from '../personUtils'
-import { placementRequirementsRow } from '../placementRequests/matchingInformationSummaryList'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
+import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
 type PlacementDates = {
   placementLength: number

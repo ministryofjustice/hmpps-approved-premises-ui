@@ -1,7 +1,7 @@
-import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
-import { sentenceCase } from '../utils'
-import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
+import { PlacementRequestDetail } from '@approved-premises/api'
+import { SummaryListWithCard } from '@approved-premises/ui'
+import { preferredApsRow } from './preferredApsRow'
+import { placementRequirementsRow } from './placementRequirementsRow'
 
 export const matchingInformationSummary = (placementRequest: PlacementRequestDetail): SummaryListWithCard => {
   const rows = []
@@ -33,20 +33,5 @@ export const matchingInformationSummary = (placementRequest: PlacementRequestDet
       },
     },
     rows,
-  }
-}
-
-export const placementRequirementsRow = (
-  placementRequest: PlacementRequest,
-  type: 'desirable' | 'essential',
-): SummaryListItem => {
-  const criteria = type === 'essential' ? placementRequest.essentialCriteria : placementRequest.desirableCriteria
-  return {
-    key: {
-      text: `${sentenceCase(type)} Criteria`,
-    },
-    value: {
-      html: mapSearchParamCharacteristicsForUi(criteria),
-    },
   }
 }
