@@ -50,10 +50,13 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
   await v2MarkBedAsOutOfServicePage.completeForm()
   await v2MarkBedAsOutOfServicePage.clickSave()
 
+  // If there is a booking conflict then add 3 days to the start date and try again
+  await v2MarkBedAsOutOfServicePage.ensureNoBookingConflict()
+
   // Then I am redirected back to the V2 bed page
   const revisitedV2BedPage = await V2BedPage.initialize(page, premisesName)
 
-  // And I see the success message on the 'history' pane of the bed page
+  // // And I see the success message on the 'history' pane of the bed page
   await revisitedV2BedPage.showsOutOfServiceBedRecordedSuccessMessage()
 }
 

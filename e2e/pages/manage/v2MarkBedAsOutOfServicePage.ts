@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test'
-import { addDays, getDate, getMonth, getYear } from 'date-fns'
+import { addDays, addMonths, getDate, getMonth, getYear } from 'date-fns'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { BasePage } from '../basePage'
 
@@ -11,7 +11,7 @@ export class V2MarkBedAsOutOfServicePage extends BasePage {
       await expect(page.locator('h1')).toContainText(title)
     }
     const instance = new V2MarkBedAsOutOfServicePage(page)
-    instance.startDate = faker.date.soon({ days: 1200 })
+    instance.startDate = faker.date.soon({ days: 12000 })
     return instance
   }
 
@@ -51,5 +51,23 @@ export class V2MarkBedAsOutOfServicePage extends BasePage {
         'Provide  detail about why the bed is out of service. If FM works are required you should update this record with any progress on that work.',
       )
       .fill('Reasons for bed being out of service')
+  }
+
+  async isBedNotAvailableMessageVisible(): Promise<boolean> {
+    return this.page.getByRole('heading', { name: 'This bedspace is not available for the dates entered' }).isVisible()
+  }
+
+  async addMonthsToStartDate(numberOfMonths: number) {
+    this.startDate = addMonths(this.startDate, numberOfMonths)
+  }
+
+  async ensureNoBookingConflict() {
+    if (await this.isBedNotAvailableMessageVisible()) {
+      await this.addMonthsToStartDate(1)
+      await this.completeForm()
+      await this.clickSave()
+
+      await this.ensureNoBookingConflict()
+    }
   }
 }
