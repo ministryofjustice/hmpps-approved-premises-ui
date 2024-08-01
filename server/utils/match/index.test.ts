@@ -31,7 +31,6 @@ import {
   groupedCriteria,
   keyDetails,
   lengthOfStayRow,
-  mapSearchParamCharacteristicsForUi,
   mapUiParamsForApi,
   placementDates,
   placementLength,
@@ -77,14 +76,6 @@ describe('matchUtils', () => {
         startDate: uiParams.startDate,
         targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
       })
-    })
-  })
-
-  describe('mapSearchParamCharacteristicsForUi', () => {
-    it('it returns the search results characteristics names in a list', () => {
-      expect(mapSearchParamCharacteristicsForUi(['isPIPE'])).toEqual(
-        '<ul class="govuk-list"><li>Psychologically Informed Planned Environment (PIPE)</li></ul>',
-      )
     })
   })
 
