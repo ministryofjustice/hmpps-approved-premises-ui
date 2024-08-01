@@ -2,7 +2,6 @@ import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { sentenceCase } from '../utils'
 import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
-import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 
 export const matchingInformationSummary = (placementRequest: PlacementRequestDetail): SummaryListWithCard => {
   const rows = []
@@ -35,20 +34,6 @@ export const matchingInformationSummary = (placementRequest: PlacementRequestDet
     },
     rows,
   }
-}
-
-export const preferredApsRow = (placementRequest: PlacementRequestDetail): SummaryListItem | undefined => {
-  const premises = getPreferredApsFromApplication(placementRequest)
-
-  if (premises.length) {
-    const apList = premises.map(p => `<li>${p.name}</li>`)
-    return {
-      key: { text: 'Preferred APs' },
-      value: { html: `<ol class="govuk-list govuk-list--number">${apList.join('')}</ol>` },
-    }
-  }
-
-  return undefined
 }
 
 export const placementRequirementsRow = (
