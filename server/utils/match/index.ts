@@ -24,6 +24,8 @@ import { isFullPerson } from '../personUtils'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
+export { placementDates } from './placementDates'
+
 type PlacementDates = {
   placementLength: number
   startDate: string
@@ -67,18 +69,6 @@ export const decodeSpaceSearchResult = (string: string): SpaceSearchResult => {
 
 export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
-}
-
-export const placementDates = (startDateString: string, lengthInDays: string): PlacementDates => {
-  const days = Number(lengthInDays)
-  const startDate = DateFormats.isoToDateObj(startDateString)
-  const endDate = addDays(startDate, days)
-
-  return {
-    placementLength: days,
-    startDate: DateFormats.dateObjToIsoDate(startDate),
-    endDate: DateFormats.dateObjToIsoDate(endDate),
-  }
 }
 
 export const summaryCardLink = ({
