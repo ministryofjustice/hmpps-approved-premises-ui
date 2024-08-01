@@ -6,11 +6,19 @@
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% extends "./layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set context = fetchContext() %}
+
+{% block beforeContent %}
+	{{ govukBackLink({
+		text: "Back to dashboard",
+		href: paths.admin.placementRequests.show({id: placementRequest.id})
+	}) }}
+{% endblock %}
 
 {% block content %}
 	<div class="govuk-grid-row">
