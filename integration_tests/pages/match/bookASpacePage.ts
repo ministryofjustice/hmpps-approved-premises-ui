@@ -8,7 +8,7 @@ import {
   filterOutAPTypes,
   placementDates,
   placementLength as placementLengthInDaysAndWeeks,
-} from '../../../server/utils/matchUtils'
+} from '../../../server/utils/match'
 import { placementCriteriaLabels } from '../../../server/utils/placementCriteriaUtils'
 import { apTypeLabels } from '../../../server/utils/apTypeLabels'
 

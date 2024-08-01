@@ -2,7 +2,7 @@ import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
 import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
-import { summaryCardRows } from '../../../server/utils/matchUtils'
+import { summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
 import { isFullPerson } from '../../../server/utils/personUtils'
 

@@ -7,20 +7,21 @@ import {
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
-} from '../@types/shared'
-import { KeyDetailsArgs, ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
-import { DateFormats, daysToWeeksAndDays } from './dateUtils'
-import { createQueryString, sentenceCase } from './utils'
-import matchPaths from '../paths/match'
+} from '../../@types/shared'
+import { KeyDetailsArgs, ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../../@types/ui'
+import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { createQueryString, sentenceCase } from '../utils'
+import matchPaths from '../../paths/match'
 import {
   offenceAndRiskCriteriaLabels,
   placementCriteriaLabels,
   placementRequirementCriteriaLabels,
-} from './placementCriteriaUtils'
-import { apTypeLabels } from './apTypeLabels'
-import { convertKeyValuePairToRadioItems } from './formUtils'
-import { textValue } from './applications/helpers'
-import { isFullPerson } from './personUtils'
+} from '../placementCriteriaUtils'
+import { apTypeLabels } from '../apTypeLabels'
+import { convertKeyValuePairToRadioItems } from '../formUtils'
+import { textValue } from '../applications/helpers'
+import { isFullPerson } from '../personUtils'
+import { placementRequirementsRow, preferredApsRow } from '../placementRequests/matchingInformationSummaryList'
 
 type PlacementDates = {
   placementLength: number

@@ -1,5 +1,5 @@
 import { ApprovedPremisesSummary, PlacementRequestDetail } from '../../../../server/@types/shared'
-import { placementDates } from '../../../../server/utils/matchUtils'
+import { placementDates } from '../../../../server/utils/match'
 import Page from '../../page'
 
 export default class CreatePlacementPage extends Page {

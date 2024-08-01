@@ -6,7 +6,7 @@ import { createQueryString, linkTo } from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import pathsAdmin from '../../paths/admin'
-import { filterOutAPTypes, placementLength } from '../matchUtils'
+import { filterOutAPTypes, placementLength } from '../match'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { TabItem } from '../tasks/listTable'
 

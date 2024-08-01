@@ -11,7 +11,7 @@ import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { filterOutAPTypes } from '../matchUtils'
+import { filterOutAPTypes } from '../match'
 
 describe('utils', () => {
   describe('mapPlacementRequestToBedSearchParams', () => {

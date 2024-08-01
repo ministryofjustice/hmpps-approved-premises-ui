@@ -3,7 +3,7 @@ import { PlacementRequestService, PremisesService } from '../../../services'
 import paths from '../../../paths/admin'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
-import { placementDates } from '../../../utils/matchUtils'
+import { placementDates } from '../../../utils/match'
 
 export default class PlacementRequestsController {
   constructor(

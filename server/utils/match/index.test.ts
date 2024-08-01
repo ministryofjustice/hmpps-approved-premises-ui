@@ -1,6 +1,6 @@
 import { ApType, ApprovedPremisesApplication, FullPerson, PlacementCriteria } from '@approved-premises/api'
 import { when } from 'jest-when'
-import paths from '../paths/match'
+import paths from '../../paths/match'
 import {
   personFactory,
   placementRequestDetailFactory,
@@ -8,8 +8,8 @@ import {
   restrictedPersonFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
-} from '../testutils/factories'
-import { DateFormats } from './dateUtils'
+} from '../../testutils/factories'
+import { DateFormats } from '../dateUtils'
 import {
   InvalidSpaceSearchDataException,
   addressRow,
@@ -45,18 +45,18 @@ import {
   summaryCardLink,
   summaryCardRows,
   townRow,
-} from './matchUtils'
-import { placementCriteriaLabels } from './placementCriteriaUtils'
-import { createQueryString } from './utils'
-import * as formUtils from './formUtils'
-import { placementRequirementsRow, preferredApsRow } from './placementRequests/matchingInformationSummaryList'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from './retrieveQuestionResponseFromFormArtifact'
-import PreferredAps from '../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
-import { apTypeLabels } from './apTypeLabels'
-import { textValue } from './applications/helpers'
+} from '.'
+import { placementCriteriaLabels } from '../placementCriteriaUtils'
+import { createQueryString } from '../utils'
+import * as formUtils from '../formUtils'
+import { placementRequirementsRow, preferredApsRow } from '../placementRequests/matchingInformationSummaryList'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
+import { apTypeLabels } from '../apTypeLabels'
+import { textValue } from '../applications/helpers'
 
-jest.mock('./utils.ts')
-jest.mock('./retrieveQuestionResponseFromFormArtifact')
+jest.mock('../utils')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('matchUtils', () => {
   beforeEach(() => {

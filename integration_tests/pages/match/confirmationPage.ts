@@ -1,6 +1,6 @@
 import { Cas1SpaceSearchResult as SpaceSearchResult } from '@approved-premises/api'
 import Page from '../page'
-import { confirmationSummaryCardRows, placementDates } from '../../../server/utils/matchUtils'
+import { confirmationSummaryCardRows, placementDates } from '../../../server/utils/match'
 
 export default class ConfirmationPage extends Page {
   constructor() {

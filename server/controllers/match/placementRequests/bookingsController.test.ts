@@ -10,7 +10,7 @@ import {
   personFactory,
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
-import { encodeSpaceSearchResult, placementDates } from '../../../utils/matchUtils'
+import { encodeSpaceSearchResult, placementDates } from '../../../utils/match'
 import { NewBookingNotMade } from '../../../@types/shared'
 
 import matchPaths from '../../../paths/match'

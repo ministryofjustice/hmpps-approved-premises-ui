@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response, TypedRequestHandler } from 'express'
 import { ApType, NewCas1SpaceBooking as NewSpaceBooking } from '@approved-premises/api'
 import { PlacementRequestService, SpaceService } from '../../../services'
-import { filterOutAPTypes, placementDates } from '../../../utils/matchUtils'
+import { filterOutAPTypes, placementDates } from '../../../utils/match'
 import { catchValidationErrorOrPropogate } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'

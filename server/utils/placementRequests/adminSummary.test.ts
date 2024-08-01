@@ -4,7 +4,7 @@ import { placementRequestDetailFactory } from '../../testutils/factories'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
-import { placementLength } from '../matchUtils'
+import { placementLength } from '../match'
 import { adminSummary, apTypeCell, releaseTypeCell } from './adminSummary'
 import paths from '../../paths/apply'
 

@@ -11,7 +11,7 @@ import {
   spaceBookingFactory,
   spaceBookingRequirementsFactory,
 } from '../../../testutils/factories'
-import { filterOutAPTypes, placementDates } from '../../../utils/matchUtils'
+import { filterOutAPTypes, placementDates } from '../../../utils/match'
 import paths from '../../../paths/admin'
 
 describe('SpaceBookingsController', () => {

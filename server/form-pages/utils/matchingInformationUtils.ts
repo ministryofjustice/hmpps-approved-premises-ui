@@ -1,7 +1,7 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
 import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
-import { placementDates } from '../../utils/matchUtils'
+import { placementDates } from '../../utils/match'
 import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
 import {

@@ -14,7 +14,7 @@ import Page from '../../pages/page'
 import { signIn } from '../signIn'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import { Cas1SpaceSearchParameters, PlacementCriteria } from '../../../server/@types/shared'
-import { filterOutAPTypes, placementDates } from '../../../server/utils/matchUtils'
+import { filterOutAPTypes, placementDates } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 
 context('Placement Requests', () => {
