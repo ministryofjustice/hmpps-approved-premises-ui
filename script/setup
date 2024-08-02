@@ -16,3 +16,6 @@ if [ ! -f .env.test ]; then
 fi
 
 script/bootstrap
+
+echo "==> Build app..."
+npm run build
