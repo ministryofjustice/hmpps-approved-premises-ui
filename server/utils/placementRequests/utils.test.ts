@@ -10,7 +10,7 @@ import {
 import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { filterOutAPTypes } from '../match'
 
 describe('utils', () => {
@@ -24,8 +24,7 @@ describe('utils', () => {
       })
 
       expect(mapPlacementRequestToSpaceSearchParams(placementRequest)).toEqual({
-        durationWeeks: daysToWeeksAndDays(placementRequest.duration).weeks.toString(),
-        durationDays: daysToWeeksAndDays(placementRequest.duration).days.toString(),
+        durationInDays: placementRequest.duration.toString(),
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,
         requirements: {

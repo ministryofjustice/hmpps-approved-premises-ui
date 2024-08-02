@@ -47,11 +47,6 @@ export default class SearchPage extends Page {
     this.clearDateInputs('startDate')
     this.completeDateInputs('startDate', newSearchParameters.startDate)
 
-    this.getTextInputByIdAndClear('durationDays')
-    this.getTextInputByIdAndEnterDetails('durationDays', newSearchParameters.durationDays.toString())
-    this.getTextInputByIdAndClear('durationWeeks')
-    this.getTextInputByIdAndEnterDetails('durationWeeks', newSearchParameters.durationWeeks.toString())
-
     this.getTextInputByIdAndClear('targetPostcodeDistrict')
     this.getTextInputByIdAndEnterDetails('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
@@ -66,8 +61,6 @@ export default class SearchPage extends Page {
 
   shouldShowSearchParametersInInputs(newSearchParameters: SpaceSearchParametersUi): void {
     this.dateInputsShouldContainDate('startDate', newSearchParameters.startDate)
-    this.verifyTextInputContentsById('durationDays', newSearchParameters.durationDays.toString())
-    this.verifyTextInputContentsById('durationWeeks', newSearchParameters.durationWeeks.toString())
     this.verifyTextInputContentsById('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
 
     cy.get(`input[name="requirements[apType]"][value="${newSearchParameters.requirements.apType}"]`)

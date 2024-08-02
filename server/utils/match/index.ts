@@ -1,4 +1,4 @@
-import { addDays, weeksToDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import {
   ApType,
   Gender,
@@ -37,7 +37,6 @@ export class InvalidSpaceSearchDataException extends Error {}
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
-  const durationInDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
   return {
     startDate: query.startDate,
     targetPostcodeDistrict: query.targetPostcodeDistrict,
@@ -46,7 +45,7 @@ export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchPa
       genders: [query.requirements.gender],
       spaceCharacteristics: query.requirements.spaceCharacteristics,
     },
-    durationInDays,
+    durationInDays: Number(query.durationInDays),
   }
 }
 

@@ -28,10 +28,9 @@ export default Factory.define<Cas1SpaceSearchParameters>(() => {
 export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParametersUi>(() => {
   const startDateInputsValues = DateFormats.dateObjectToDateInputs(faker.date.soon(), 'startDate')
   return {
-    durationDays: faker.number.int({ min: 1, max: 70 }).toString(),
-    durationWeeks: faker.number.int({ min: 1, max: 12 }).toString(),
     startDate: startDateInputsValues.startDate,
     targetPostcodeDistrict: faker.helpers.arrayElement(postcodeAreas),
+    durationInDays: faker.number.int({ max: 100, min: 1 }).toString(),
     requirements: {
       apType: faker.helpers.arrayElement(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
       spaceCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),

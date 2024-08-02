@@ -7,7 +7,7 @@ import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import pathsAdmin from '../../paths/admin'
 import { filterOutAPTypes, placementLength } from '../match'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { TabItem } from '../tasks/listTable'
 
 export const mapPlacementRequestToSpaceSearchParams = ({
@@ -19,12 +19,10 @@ export const mapPlacementRequestToSpaceSearchParams = ({
   type,
   gender,
 }: PlacementRequest): SpaceSearchParametersUi => {
-  const daysAndWeeks = daysToWeeksAndDays(duration)
   return {
-    durationDays: String(daysAndWeeks.days),
-    durationWeeks: String(daysAndWeeks.weeks),
     startDate: expectedArrival,
     targetPostcodeDistrict: location,
+    durationInDays: duration.toString(),
     requirements: {
       spaceCharacteristics: filterOutAPTypes([...desirableCriteria, ...essentialCriteria]),
       apType: type,

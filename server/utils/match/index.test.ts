@@ -64,10 +64,10 @@ describe('matchUtils', () => {
 
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
-      const uiParams = spaceSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
+      const uiParams = spaceSearchParametersUiFactory.build()
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
-        durationInDays: 15,
+        durationInDays: Number(uiParams.durationInDays),
         requirements: {
           apTypes: [uiParams.requirements.apType],
           genders: [uiParams.requirements.gender],

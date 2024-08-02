@@ -60,52 +60,6 @@
 								errorMessage: errors.startDate
 							}) }}
 
-								{% call govukFieldset({
-								legend: {
-									text: "Length of stay",
-									classes: "govuk-fieldset__legend--s"
-								},
-								classes: 'govuk-!-margin-bottom-3'
-							}) %}
-
-								{{
-								govukInput(
-									{
-										classes: "govuk-input--width-2",
-										id: "durationWeeks",
-       							name: "durationWeeks",
-										formGroup: {
-											classes: "govuk-form-group--inline"
-										},
-										label: {
-											text: "Weeks"
-										},
-										value: durationWeeks
-									},
-									context
-								)
-							}}
-
-								{{
-								govukInput(
-									{
-										classes: "govuk-input--width-2",
-										id: "durationDays",
-       							name: "durationDays",
-										formGroup: {
-											classes: "govuk-form-group--inline"
-										},
-										label: {
-											text: "Days"
-										},
-										value: durationDays
-									},
-									context
-								)
-							}}
-
-								{% endcall %}
-
 									{{ govukInput({
 								id: "targetPostcodeDistrict",
 								name: "targetPostcodeDistrict",
