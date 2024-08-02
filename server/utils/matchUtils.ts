@@ -252,18 +252,3 @@ export const checkBoxesForCriteria = (criteria: Record<string, string>, selected
     }))
     .filter(item => item.text.length > 0)
 }
-
-export const apTypeCriteria: Array<PlacementCriteria> = [
-  'isPIPE',
-  'isESAP',
-  'isMHAPStJosephs',
-  'isMHAPElliottHouse',
-  'isRecoveryFocussed',
-  'isSemiSpecialistMentalHealth',
-] as const
-
-export const filterPlacementCriteriaToSpaceCharacteristics = (
-  placementCriteria: Array<PlacementCriteria>,
-): Array<Cas1SpaceCharacteristic> => {
-  return placementCriteria.filter(criteria => !apTypeCriteria.includes(criteria)) as Array<Cas1SpaceCharacteristic>
-}

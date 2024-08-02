@@ -6,7 +6,7 @@ import { createQueryString, linkTo } from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import pathsAdmin from '../../paths/admin'
-import { filterPlacementCriteriaToSpaceCharacteristics, placementLength } from '../matchUtils'
+import { filterOutAPTypes, placementLength } from '../matchUtils'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { TabItem } from '../tasks/listTable'
 
@@ -26,7 +26,7 @@ export const mapPlacementRequestToSpaceSearchParams = ({
     startDate: expectedArrival,
     targetPostcodeDistrict: location,
     requirements: {
-      spaceCharacteristics: filterPlacementCriteriaToSpaceCharacteristics([...desirableCriteria, ...essentialCriteria]),
+      spaceCharacteristics: filterOutAPTypes([...desirableCriteria, ...essentialCriteria]),
       apTypes: [type],
       genders: [gender],
     },

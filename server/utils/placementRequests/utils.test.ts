@@ -11,7 +11,7 @@ import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { filterPlacementCriteriaToSpaceCharacteristics } from '../matchUtils'
+import { filterOutAPTypes } from '../matchUtils'
 
 describe('utils', () => {
   describe('mapPlacementRequestToBedSearchParams', () => {
@@ -29,7 +29,7 @@ describe('utils', () => {
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,
         requirements: {
-          spaceCharacteristics: filterPlacementCriteriaToSpaceCharacteristics([
+          spaceCharacteristics: filterOutAPTypes([
             ...placementRequest.desirableCriteria,
             ...placementRequest.essentialCriteria,
           ]),
