@@ -16,7 +16,7 @@ import {
   placementCriteriaLabels,
   placementRequirementCriteriaLabels,
 } from './placementCriteriaUtils'
-import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import { apTypeLabels } from './apTypeLabels'
 
 type PlacementDates = {
   placementLength: number

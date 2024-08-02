@@ -4,18 +4,10 @@ import { ApType } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
 import { convertArrayToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
+import { apTypeLabels } from '../../../../utils/apTypeLabels'
 
 // The ordering of AP types is meaningful to users
 export const apTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap', 'rfap', 'mhapElliottHouse', 'mhapStJosephs']
-
-export const apTypeLabels: Record<ApType, string> = {
-  normal: 'Standard AP',
-  pipe: 'Psychologically Informed Planned Environment (PIPE)',
-  esap: 'Enhanced Security AP (ESAP)',
-  mhapElliottHouse: 'Specialist Mental Health AP (Elliott House - Midlands)',
-  mhapStJosephs: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
-  rfap: 'Recovery Focused AP (RFAP)',
-}
 
 @Page({ name: 'ap-type', bodyProperties: ['type'] })
 export default class SelectApType implements TasklistPage {

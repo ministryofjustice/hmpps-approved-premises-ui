@@ -1,4 +1,4 @@
-import { apTypeLabels } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import { apTypeLabels } from '../apTypeLabels'
 import { ApType, ReleaseTypeOption } from '../../@types/shared'
 import { placementRequestDetailFactory } from '../../testutils/factories'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'

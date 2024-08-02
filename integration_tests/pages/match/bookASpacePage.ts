@@ -3,7 +3,6 @@ import Page from '../page'
 import paths from '../../../server/paths/match'
 import { createQueryString, sentenceCase } from '../../../server/utils/utils'
 import { isFullPerson } from '../../../server/utils/personUtils'
-import { apTypeLabels } from '../../../server/form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import {
   filterOutAPTypes,
@@ -11,6 +10,7 @@ import {
   placementLength as placementLengthInDaysAndWeeks,
 } from '../../../server/utils/matchUtils'
 import { placementCriteriaLabels } from '../../../server/utils/placementCriteriaUtils'
+import { apTypeLabels } from '../../../server/utils/apTypeLabels'
 
 export default class BookASpacePage extends Page {
   constructor(premisesName: string) {
