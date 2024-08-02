@@ -9,4 +9,5 @@ export const allReleaseTypes: ReleaseTypeOptions = {
   not_applicable: 'Not Applicable',
   extendedDeterminateLicence: 'Licence (Extended Determinate sentence)',
   paroleDirectedLicence: 'Licence (Parole directed)',
+  reReleasedPostRecall: 'Re-released post recall',
 }

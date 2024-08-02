@@ -70,6 +70,7 @@ describe('pendingPlacementRequestTable', () => {
         { selected: false, text: 'Not Applicable', value: 'not_applicable' },
         { selected: false, text: 'Licence (Extended Determinate sentence)', value: 'extendedDeterminateLicence' },
         { selected: false, text: 'Licence (Parole directed)', value: 'paroleDirectedLicence' },
+        { selected: false, text: 'Re-released post recall', value: 'reReleasedPostRecall' },
       ])
     })
   })

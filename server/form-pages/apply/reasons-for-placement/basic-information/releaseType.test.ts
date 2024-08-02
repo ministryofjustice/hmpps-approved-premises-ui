@@ -44,7 +44,7 @@ describe('ReleaseType', () => {
         const items = new ReleaseType({}, application).items()
 
         expect(new Set(items.map(item => item.value))).toEqual(
-          new Set(['licence', 'rotl', 'hdc', 'pss', 'paroleDirectedLicence']),
+          new Set(['licence', 'rotl', 'hdc', 'pss', 'paroleDirectedLicence', 'reReleasedPostRecall']),
         )
       })
 
