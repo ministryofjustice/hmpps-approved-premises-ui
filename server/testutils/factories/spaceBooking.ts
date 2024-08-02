@@ -20,6 +20,6 @@ export default Factory.define<Cas1SpaceBooking>(() => {
     bookedBy: userFactory.build(),
     arrivalDate: DateFormats.dateObjToIsoDate(startDate),
     departureDate: DateFormats.dateObjToIsoDate(endDate),
-    createdAt: DateFormats.dateObjToIsoDate(faker.date.recent()),
+    createdAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   }
 })
