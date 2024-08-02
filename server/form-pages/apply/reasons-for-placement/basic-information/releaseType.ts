@@ -84,7 +84,14 @@ export default class ReleaseType implements TasklistPage {
 
   getReleaseTypes(sessionSentenceType: SentenceTypeResponse): PossibleReleaseTypeOptions {
     if (sessionSentenceType === 'standardDeterminate') {
-      return pick(selectableReleaseTypes, ['licence', 'paroleDirectedLicence', 'rotl', 'hdc', 'pss'])
+      return pick(selectableReleaseTypes, [
+        'licence',
+        'paroleDirectedLicence',
+        'rotl',
+        'hdc',
+        'pss',
+        'reReleasedPostRecall',
+      ])
     }
     if (sessionSentenceType === 'life' || sessionSentenceType === 'ipp') {
       return pick(selectableReleaseTypes, ['rotl', 'licence'])
