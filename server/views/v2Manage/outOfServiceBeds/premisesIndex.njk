@@ -13,7 +13,7 @@
 {% block beforeContent %}
   {{ govukBackLink({
 		text: "Back",
-		href: paths.v2Manage.premises.beds.index({ premisesId: premisesId })
+		href: paths.v2Manage.premises.beds.index({ premisesId: premises.id })
 	}) }}
 {% endblock %}
 
@@ -22,6 +22,10 @@
     <div class="govuk-grid-column-full-width">
       {% include "../../_messages.njk" %}
 
+      <span class="govuk-caption-l">
+        <a href="{{paths.v2Manage.premises.show({premisesId: premises.id})}}">{{premises.name}}</a>
+      </span>
+
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
       {{
@@ -29,10 +33,10 @@
           classes: 'govuk-summary-list--no-border',
           rows: [            {
               key: {
-                text: "Current out of service beds"
+                text: "Total out of service beds matching filters"
               },
               value: {
-                text: OutOfServiceBedUtils.outOfServiceBedCountForToday(outOfServiceBeds)
+                text: OutOfServiceBedUtils.outOfServiceBedCount(totalResults)
               }
             }
           ]
@@ -44,15 +48,15 @@
           label: 'Sub navigation',
           items: [{
               text: 'Current',
-              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'}),
+              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'current'}),
               active: temporality === 'current'
             }, {
               text: 'Future',
-              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'future'}),
+              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'future'}),
               active: temporality === 'future'
             }, {
               text: 'Historic',
-              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'past'}),
+              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'past'}),
               active: temporality === 'past'
           }]
         })
@@ -65,7 +69,7 @@
             caption: "Out of service",
             captionClasses: "govuk-table__caption--m",
             head: OutOfServiceBedUtils.outOfServiceBedTableHeaders(user),
-            rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premisesId, user)
+            rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premises.id, user)
           })
         }}
 

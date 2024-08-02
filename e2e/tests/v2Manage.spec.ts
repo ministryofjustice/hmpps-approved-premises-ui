@@ -83,7 +83,10 @@ test('Future manager updates an out of service bed', async ({ page, futureManage
   await premisesPage.viewOutOfServiceBedRecords()
 
   // Then I should see the out of service beds list page for the premises
-  const manageOOSBedsPage = await OutOfServiceBedsPremisesListPage.initialize(page)
+  const manageOOSBedsPage = await OutOfServiceBedsPremisesListPage.initialize(page, premisesName)
+
+  // And I should see the count of total OOSBs matching my filters (not limited to page max)
+  await manageOOSBedsPage.showsTotalOutOfServiceBedsMatchingFilters()
 
   // When I select the 'future' tab and select the out of service bed created earlier
   await manageOOSBedsPage.selectFutureTab()

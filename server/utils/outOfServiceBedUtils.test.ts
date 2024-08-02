@@ -1,4 +1,3 @@
-import { add, sub } from 'date-fns'
 import { outOfServiceBedFactory, outOfServiceBedRevisionFactory, userDetailsFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
@@ -6,14 +5,13 @@ import {
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
   bedRevisionDetails,
-  outOfServiceBedCountForToday,
+  outOfServiceBedCount,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   overwriteOoSBedWithUserInput,
   referenceNumberCell,
   sortOutOfServiceBedRevisionsByUpdatedAt,
 } from './outOfServiceBedUtils'
-import { getRandomInt } from './utils'
 import { ApprovedPremisesUserRole, Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
 import { sortHeader } from './sortHeader'
 
@@ -170,30 +168,23 @@ describe('outOfServiceBedUtils', () => {
     })
   })
 
-  describe('outOfServiceBedCountForToday', () => {
-    it('returns the correct number of out of service beds for today', () => {
-      const outOfServiceBedsForToday = [...Array(getRandomInt(2, 10))].map(() =>
-        outOfServiceBedFactory.build({
-          startDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
-          endDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
-        }),
-      )
-      const futureOutOfServiceBeds = [...Array(getRandomInt(1, 10))].map(() =>
-        outOfServiceBedFactory.build({
-          startDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
-          endDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
-        }),
-      )
-      const pastOutOfServiceBeds = [...Array(getRandomInt(1, 10))].map(() =>
-        outOfServiceBedFactory.build({
-          startDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
-          endDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
-        }),
-      )
+  describe('outOfServiceBedCount', () => {
+    describe('when the count is 0', () => {
+      it('returns a plural string', () => {
+        expect(outOfServiceBedCount(0)).toEqual('0 beds')
+      })
+    })
 
-      expect(
-        outOfServiceBedCountForToday([...outOfServiceBedsForToday, ...futureOutOfServiceBeds, ...pastOutOfServiceBeds]),
-      ).toEqual(`${outOfServiceBedsForToday.length} beds`)
+    describe('when the count is 1', () => {
+      it('returns a singular string', () => {
+        expect(outOfServiceBedCount(1)).toEqual('1 bed')
+      })
+    })
+
+    describe('when the count is 2', () => {
+      it('returns a plural string', () => {
+        expect(outOfServiceBedCount(2)).toEqual('2 beds')
+      })
     })
   })
 
