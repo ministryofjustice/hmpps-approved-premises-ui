@@ -16,7 +16,8 @@ import { mapPlacementRequestToSpaceSearchParams } from '../../../server/utils/pl
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import { Cas1SpaceSearchParameters } from '../../../server/@types/shared'
-import { filterPlacementCriteriaToSpaceCharacteristics } from '../../../server/utils/matchUtils'
+import { filterOutAPTypes } from '../../../server/utils/matchUtils'
+import BookASpacePage from '../../pages/match/bookASpacePage'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -67,7 +68,7 @@ context('Placement Requests', () => {
       const initialSearchRequestBody = JSON.parse(requests[0].body)
       const secondSearchRequestBody: Cas1SpaceSearchParameters = JSON.parse(requests[1].body)
 
-      const filteredPlacementCriteria = filterPlacementCriteriaToSpaceCharacteristics([
+      const filteredPlacementCriteria = filterOutAPTypes([
         ...placementRequest.desirableCriteria,
         ...placementRequest.essentialCriteria,
       ])
