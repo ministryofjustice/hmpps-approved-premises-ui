@@ -4,19 +4,15 @@ import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
-import { isFullPerson } from '../../../server/utils/personUtils'
 
 export default class SearchPage extends Page {
-  constructor(name: string) {
-    super(name)
+  constructor() {
+    super('Find a space in an Approved Premises')
   }
 
   static visit(placementRequest: PlacementRequestDetail) {
-    if (!isFullPerson(placementRequest.person))
-      throw Error('This test requires a FullPerson attached to the PlacementRequestDetail to work')
-
     cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
-    return new SearchPage(placementRequest.person.name)
+    return new SearchPage()
   }
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {

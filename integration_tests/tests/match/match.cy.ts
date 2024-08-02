@@ -55,7 +55,7 @@ context('Placement Requests', () => {
     numberOfSearches += 1
 
     // Then I should see the search results
-    Page.verifyOnPage(SearchPage, person.name)
+    Page.verifyOnPage(SearchPage)
 
     // And the new search criteria should be selected
     searchPage.shouldShowSearchParametersInInputs(newSearchParameters)
