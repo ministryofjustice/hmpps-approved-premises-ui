@@ -22,6 +22,7 @@ const stubFindUser = (args: { user: User; id: string }) =>
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
+        'x-cas-user-version': '321',
       },
       jsonBody: args.user,
     },
@@ -114,6 +115,7 @@ const stubUsers = (args: {
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
+        'x-cas-user-version': '123',
         'X-Pagination-TotalPages': '10',
         'X-Pagination-TotalResults': '100',
         'X-Pagination-PageSize': '10',
@@ -249,6 +251,7 @@ const stubApAreaReferenceData = (
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
+        'x-cas-user-version': '123',
       },
       jsonBody: apAreas,
     },

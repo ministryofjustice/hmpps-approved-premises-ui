@@ -6,6 +6,7 @@ import populateCurrentUser from './populateCurrentUser'
 import { userDetailsFactory } from '../testutils/factories'
 import logger from '../../logger'
 import { DeliusAccountMissingStaffDetailsError } from '../services/userService'
+import inMemoryStore from '../inMemoryStore'
 
 jest.mock('../../logger')
 
@@ -44,10 +45,25 @@ describe('populateCurrentUser', () => {
     expect(next).toHaveBeenCalled()
   })
 
-  it('should fetch the user from the session if present', async () => {
+  it('should populate the current user from the API if the user version not equals to user version in inMemoryStore', async () => {
+    ;(userService.getActingUser as jest.Mock).mockResolvedValue(user)
+    request.session.user = user
+    const middleware = populateCurrentUser(userService)
+
+    await middleware(request, response, next)
+
+    expect(request.session.user).toEqual(user)
+    expect(response.locals.user).toEqual({ ...response.locals.user, ...user })
+
+    expect(userService.getActingUser).toHaveBeenCalledWith(token)
+    expect(next).toHaveBeenCalled()
+  })
+
+  it('should fetch the user from the session if present and the user version matched the value in the inMemoryStore', async () => {
     const middleware = populateCurrentUser(userService)
 
     request.session.user = user
+    inMemoryStore.userVersion = user.version.toString()
 
     await middleware(request, response, next)
 

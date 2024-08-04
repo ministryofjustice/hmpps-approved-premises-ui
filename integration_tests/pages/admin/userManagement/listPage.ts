@@ -51,4 +51,8 @@ export default class ListPage extends Page {
   clickApplyFilter(): void {
     cy.get('button').contains('Apply filters').click()
   }
+
+  shouldShowReportsMenu(): void {
+    cy.get('a').contains('Reports')
+  }
 }

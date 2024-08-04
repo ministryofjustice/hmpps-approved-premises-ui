@@ -335,4 +335,27 @@ context('User management', () => {
     // Then the page should show the results for the second page
     page.shouldShowUsers(usersForResultsPage2)
   })
+
+  it('retrieve the updated user from api if version not matched to user in session and shows the new role added report viewer', () => {
+    // Given there are users in the DB
+    const users = userFactory.buildList(10, { roles: ['assessor'] })
+    const user = userFactory.build({ version: 345, roles: ['report_viewer'] })
+    const roles = ['manager', 'matcher', 'workflow_manager']
+    cy.task('stubFindUser', { user, id: users[0].id })
+    cy.task('stubUsers', { users })
+    cy.task('stubApAreaReferenceData')
+    cy.task('stubAuthUser', { roles })
+
+    // When I visit the list page
+    const listPage = ListPage.visit()
+
+    // Then I should see the users and their details
+    listPage.shouldShowUsers(users)
+
+    // And I click on user
+    listPage.clickUser(users[0].name)
+
+    // Then I should see the user with new report role
+    listPage.shouldShowReportsMenu()
+  })
 })

@@ -374,6 +374,7 @@ export type UserDetails = {
   permissions: Array<ApprovedPremisesUserPermission>
   active: boolean
   apArea: ApArea
+  version: number
 }
 
 export type PartnerAgencyDetails = {

@@ -35,6 +35,7 @@ export default class UserService {
       roles: user.roles,
       active: user.isActive,
       apArea: user.apArea,
+      version: user.version,
     }
   }
 
