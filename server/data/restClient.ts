@@ -83,7 +83,6 @@ export default class RestClient {
         .set({ ...this.defaultHeaders, ...headers })
         .responseType(responseType)
         .timeout(this.timeoutConfig())
-
       return raw ? result : result.body
     } catch (error) {
       const sanitisedError = sanitiseError(error as UnsanitisedError)

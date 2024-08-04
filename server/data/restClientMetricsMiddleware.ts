@@ -4,6 +4,7 @@ import { Socket } from 'net'
 import promClient from 'prom-client'
 import { Response, SuperAgentRequest } from 'superagent'
 import UrlValueParser from 'url-value-parser'
+import inMemoryStore from '../inMemoryStore'
 
 const requestHistogram = new promClient.Histogram({
   name: 'http_client_requests_seconds',
@@ -33,6 +34,7 @@ function restClientMetricsMiddleware(agent: SuperAgentRequest) {
     req.on('response', (res: Response, err: Error) => {
       res.on('end', () => {
         const responseTime = Date.now() - startTime
+        inMemoryStore.userVersion = res.headers['x-cas-user-version']
         requestHistogram.labels(hostname, req.method, normalizedPath, String(res.statusCode)).observe(responseTime)
       })
     })
