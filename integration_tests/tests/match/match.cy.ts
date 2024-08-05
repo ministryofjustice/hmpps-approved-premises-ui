@@ -42,6 +42,9 @@ context('Placement Requests', () => {
     // When I visit the search page
     const searchPage = SearchPage.visit(placementRequest)
 
+    // Then I should see the details of the case I am matching
+    searchPage.shouldShowCaseDetails(placementRequest)
+
     // And I should see the search results
     let numberOfSearches = 0
     searchPage.shouldDisplaySearchResults(spaceSearchResults, placementRequest.location)
