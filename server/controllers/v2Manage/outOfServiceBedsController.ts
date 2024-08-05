@@ -10,7 +10,7 @@ import paths from '../../paths/manage'
 import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { OutOfServiceBedService, PremisesService } from '../../services'
+import { ApAreaService, OutOfServiceBedService, PremisesService } from '../../services'
 import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
 import { translateCharacteristic } from '../../utils/characteristicsUtils'
 
@@ -18,6 +18,7 @@ export default class OutOfServiceBedsController {
   constructor(
     private readonly outOfServiceBedService: OutOfServiceBedService,
     private readonly premisesService: PremisesService,
+    private readonly apAreaService: ApAreaService,
   ) {}
 
   new(): RequestHandler {
@@ -122,14 +123,34 @@ export default class OutOfServiceBedsController {
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { temporality } = req.params as { temporality: Temporality }
+      const apAreas = await this.apAreaService.getApAreas(req.user.token)
+      let premises = await this.premisesService.getAll(req.user.token)
+      let { apAreaId = '', premisesId = '' } = req.query as {
+        apAreaId: string
+        premisesId: string
+      }
 
+      let disablePremisesSelect = true
+
+      const allPremises = premises
       if (!['current', 'future', 'past'].includes(temporality)) {
         return res.redirect(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
       }
 
-      const { premisesId, apAreaId } = req.query as {
-        premisesId: string
-        apAreaId: string
+      if (apAreaId) {
+        if (apAreaId !== 'all') {
+          const apAreaSelected = apAreas.find(apArea => apArea.id === apAreaId)
+          premises = premises.filter(item => item.apArea === apAreaSelected.name)
+          disablePremisesSelect = false
+        }
+      }
+
+      if (premisesId === 'all') {
+        premisesId = ''
+      }
+
+      if (apAreaId === 'all') {
+        apAreaId = ''
       }
 
       const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<OutOfServiceBedSortField>(
@@ -162,6 +183,10 @@ export default class OutOfServiceBedsController {
         temporality,
         premisesId,
         apAreaId,
+        apAreas,
+        premises,
+        disablePremisesSelect,
+        allPremises,
       })
     }
   }

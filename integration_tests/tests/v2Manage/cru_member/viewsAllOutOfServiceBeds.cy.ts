@@ -1,17 +1,49 @@
-import { outOfServiceBedFactory } from '../../../../server/testutils/factories'
+import { apAreaFactory, outOfServiceBedFactory, premisesSummaryFactory } from '../../../../server/testutils/factories'
 import DashboardPage from '../../../pages/dashboard'
 import Page from '../../../pages/page'
 import { OutOfServiceBedIndexPage } from '../../../pages/v2Manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
 
 describe('CRU Member lists all OOS beds', () => {
+  const apArea1 = apAreaFactory.build({
+    id: 'ap-area-1-id',
+    name: 'Test Area 1',
+  })
+
+  const apArea2 = apAreaFactory.build({
+    id: 'ap-area-2-id',
+    name: 'Test Area 2',
+  })
+
+  const premises1 = premisesSummaryFactory.build({
+    apArea: apArea1.name,
+    name: 'Premises 1',
+    id: 'premises-1-id',
+  })
+
+  const premises2 = premisesSummaryFactory.build({
+    apArea: apArea1.name,
+    name: 'Premises 2',
+  })
+
+  const premises3 = premisesSummaryFactory.build({
+    apArea: apArea2.name,
+    name: 'Premises 3',
+  })
+
+  const allPremises = [premises1, premises2, premises3]
+
   beforeEach(() => {
     cy.task('reset')
     // Given I am signed in as a CRU Member
     signIn(['cru_member'])
+    cy.task('stubApAreaReferenceData', { apArea: apArea1, additionalAreas: [apArea2] })
+    cy.task('stubAllPremises', allPremises)
   })
 
-  const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
+  const outOfServiceBeds = outOfServiceBedFactory.buildList(10, {
+    apArea: apArea1,
+  })
 
   it('allows me to view all out of service beds', () => {
     cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
@@ -55,8 +87,8 @@ describe('CRU Member lists all OOS beds', () => {
   })
 
   it('allows me to filter by temporality', () => {
-    const futureBeds = outOfServiceBedFactory.buildList(3)
-    const historicBeds = outOfServiceBedFactory.buildList(3)
+    const futureBeds = outOfServiceBedFactory.buildList(3, { apArea: apArea1 })
+    const historicBeds = outOfServiceBedFactory.buildList(3, { apArea: apArea1 })
 
     cy.task('stubOutOfServiceBedsList', {
       outOfServiceBeds,
@@ -116,6 +148,49 @@ describe('CRU Member lists all OOS beds', () => {
 
   it('supports sorting by daysLost', () => {
     shouldSortByField('daysLost')
+  })
+
+  it(`supports filtering`, () => {
+    cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
+    // Given I am on the dashboard
+    const dashboardPage = DashboardPage.visit()
+
+    // When I click the 'Out of service beds' tile
+    dashboardPage.shouldShowCard('outOfServiceBeds')
+    cy.get('a').contains('View out of service beds').click()
+
+    // Then I should be taken to the out of service beds index page
+    const page = Page.verifyOnPage(OutOfServiceBedIndexPage)
+
+    // When I filter by AP area and Premises Name
+    page.getSelectInputByIdAndSelectAnEntry('apAreaId', apArea1.name)
+    page.getSelectInputByIdAndSelectAnEntry('premisesId', premises1.name)
+    page.clickApplyFilter()
+
+    // Then the API should receive a request with the correct query parameters
+    cy.task('verifyOutOfServiceBedsDashboard', {
+      premisesId: premises1.id,
+      temporality: 'current',
+      page: 1,
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+      const { apAreaId, premisesId } = requests[0].queryParams
+      expect(apAreaId.values).to.deep.equal([apArea1.id])
+      expect(premisesId.values).to.deep.equal([premises1.id])
+    })
+
+    const historicBeds = outOfServiceBedFactory.buildList(3, { apArea: apArea1 })
+    cy.task('stubOutOfServiceBedsList', {
+      outOfServiceBeds: historicBeds,
+      page: 1,
+      temporality: 'past',
+    })
+    // And when I click the 'historic' tab
+    page.clickTab('Historic')
+
+    // Then the page should retain the ap area and premises filter
+    page.shouldHaveSelectText('apAreaId', apArea1.name)
+    page.shouldHaveSelectText('premisesId', premises1.name)
   })
 })
 
