@@ -1,7 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% extends "../../../partials/layout.njk" %}
+{% extends "../../layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -10,8 +10,6 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-
-        <h2 class="govuk-heading-m">{{ placementRequest.person.name }}</h2>
 
         {{
           govukSummaryList({
