@@ -2,8 +2,10 @@ import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
 import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
-import { summaryCardRows } from '../../../server/utils/match'
+import { placementRequestSummaryListForMatching, summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
+import { isFullPerson } from '../../../server/utils/personUtils'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class SearchPage extends Page {
   constructor() {
@@ -13,6 +15,29 @@ export default class SearchPage extends Page {
   static visit(placementRequest: PlacementRequestDetail) {
     cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
     return new SearchPage()
+  }
+
+  shouldShowCaseDetails(placementRequest: PlacementRequestDetail): void {
+    this.shouldShowKeyPersonDetails(placementRequest)
+    this.shouldShowMatchingDetails(placementRequest)
+  }
+
+  shouldShowKeyPersonDetails(placementRequest: PlacementRequestDetail) {
+    cy.get('.prisoner-info').within(() => {
+      const { person } = placementRequest
+      if (!isFullPerson(person)) throw new Error('test requires a Full Person')
+
+      cy.get('span').contains(person.name)
+      cy.get('span').contains(`CRN: ${person.crn}`)
+      cy.get('span').contains(`Tier: ${placementRequest?.risks?.tier?.value.level}`)
+      cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)
+    })
+  }
+
+  shouldShowMatchingDetails(placementRequest: PlacementRequestDetail) {
+    cy.get('.govuk-details').within(() => {
+      this.shouldContainSummaryListItems(placementRequestSummaryListForMatching(placementRequest))
+    })
   }
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {

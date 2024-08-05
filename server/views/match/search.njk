@@ -50,8 +50,9 @@
 						<input type="hidden" name="durationInDays" value="{{placementRequest.duration}}"/>
 
 						<div class="moj-filter">
-							<h2 class="govuk-heading-m">Filters</h2>
-							<div class="moj-filter__header govuk-!-padding-left-2"></div>
+							<div class="moj-filter__header govuk-!-padding-left-2">
+								<h2 class="govuk-heading-m">Filters</h2>
+							</div>
 							<div class="space-search-inputs">
 
 								{{ govukDateInput({
@@ -67,7 +68,7 @@
 								errorMessage: errors.startDate
 							}) }}
 
-									{{ govukInput({
+								{{ govukInput({
 								id: "targetPostcodeDistrict",
 								name: "targetPostcodeDistrict",
 								value: targetPostcodeDistrict,
