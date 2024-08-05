@@ -7,6 +7,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% extends "./layout-with-details.njk" %}
 
@@ -25,10 +26,12 @@
 		<div class="govuk-width-container">
 			<div class="govuk-grid-column-full">
 				<h1 class="govuk-heading-m">{{placementRequest.person.name}}</h1>
+				{% call govukDetails({summaryText: "Matching details", open: true}) %}
 				{{ govukSummaryList({
 					rows: MatchUtils.placementRequestSummaryListForMatching(placementRequest) 
 				})
 				}}
+				{%endcall%}
 			</div>
 		</div>
 		<div class="govuk-grid-row">
@@ -47,9 +50,8 @@
 						<input type="hidden" name="durationInDays" value="{{placementRequest.duration}}"/>
 
 						<div class="moj-filter">
-								<h2 class="govuk-heading-m">Filters</h2>
-							<div class="moj-filter__header govuk-!-padding-left-2">
-							</div>
+							<h2 class="govuk-heading-m">Filters</h2>
+							<div class="moj-filter__header govuk-!-padding-left-2"></div>
 							<div class="space-search-inputs">
 
 								{{ govukDateInput({
