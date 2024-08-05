@@ -1,27 +1,18 @@
 import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
-import {
-  Cas1SpaceSearchParameters,
-  Cas1SpaceSearchResult,
-  Cas1SpaceSearchResults,
-  PlacementRequestDetail,
-} from '@approved-premises/api'
+import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
-import { summaryCardRows } from '../../../server/utils/matchUtils'
+import { summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
-import { isFullPerson } from '../../../server/utils/personUtils'
 
 export default class SearchPage extends Page {
-  constructor(name: string) {
-    super(name)
+  constructor() {
+    super('Find a space in an Approved Premises')
   }
 
   static visit(placementRequest: PlacementRequestDetail) {
-    if (!isFullPerson(placementRequest.person))
-      throw Error('This test requires a FullPerson attached to the PlacementRequestDetail to work')
-
     cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
-    return new SearchPage(placementRequest.person.name)
+    return new SearchPage()
   }
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {
@@ -52,43 +43,31 @@ export default class SearchPage extends Page {
     this.clearDateInputs('startDate')
     this.completeDateInputs('startDate', newSearchParameters.startDate)
 
-    this.getTextInputByIdAndClear('durationDays')
-    this.getTextInputByIdAndEnterDetails('durationDays', newSearchParameters.durationDays.toString())
-    this.getTextInputByIdAndClear('durationWeeks')
-    this.getTextInputByIdAndEnterDetails('durationWeeks', newSearchParameters.durationWeeks.toString())
-
     this.getTextInputByIdAndClear('targetPostcodeDistrict')
     this.getTextInputByIdAndEnterDetails('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
     cy.get('[type="checkbox"]').uncheck()
 
-    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
-      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).check()
+    this.checkRadioByNameAndValue('requirements[apType]', newSearchParameters.requirements.apType)
+    this.checkRadioByNameAndValue('requirements[gender]', newSearchParameters.requirements.gender)
+
+    newSearchParameters.requirements.spaceCharacteristics.forEach(requirement => {
+      cy.get(`input[name="requirements[spaceCharacteristics][]"][value="${requirement}"]`).check()
     })
   }
 
   shouldShowSearchParametersInInputs(newSearchParameters: SpaceSearchParametersUi): void {
     this.dateInputsShouldContainDate('startDate', newSearchParameters.startDate)
-    this.verifyTextInputContentsById('durationDays', newSearchParameters.durationDays.toString())
-    this.verifyTextInputContentsById('durationWeeks', newSearchParameters.durationWeeks.toString())
     this.verifyTextInputContentsById('targetPostcodeDistrict', newSearchParameters.targetPostcodeDistrict)
 
-    this.iterateThroughRequirements(newSearchParameters.requirements, (requirement, requirementCategory) => {
-      cy.get(`input[name="requirements[${requirementCategory}][]"][value="${requirement}"]`).should('be.checked')
+    cy.get(`input[name="requirements[apType]"][value="${newSearchParameters.requirements.apType}"]`)
+    cy.get(`input[name="requirements[gender]"][value="${newSearchParameters.requirements.gender}"]`)
+
+    newSearchParameters.requirements.spaceCharacteristics.forEach(requirement => {
+      cy.get(`input[name="requirements[spaceCharacteristics][]"][value="${requirement}"]`).should('be.checked')
     })
   }
 
   clickUnableToMatch(): void {
     cy.get('.govuk-button').contains('Unable to match').click()
-  }
-
-  private iterateThroughRequirements(
-    allRequirements: Cas1SpaceSearchParameters['requirements'],
-    callback: (requirement: string, requirementCategory: string) => void,
-  ): void {
-    Object.entries(allRequirements).forEach(([requirementCategory, requirements]) => {
-      requirements.forEach(requirement => {
-        callback(requirement, requirementCategory)
-      })
-    })
   }
 }

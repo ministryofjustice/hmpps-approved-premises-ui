@@ -1,0 +1,7 @@
+{% from "../components/keyDetails/macro.njk" import keyDetails %}
+{% extends "../partials/layout.njk" %}
+
+{% block header %}
+    {{ super() }}
+    {{ keyDetails(MatchUtils.keyDetails(placementRequest)) }}
+{% endblock %}

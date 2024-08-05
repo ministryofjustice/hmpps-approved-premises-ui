@@ -4,55 +4,34 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
-{% extends "../partials/layout.njk" %}
+{% extends "./layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
+{% set context = fetchContext() %}
+
+{% block beforeContent %}
+	{{ govukBackLink({
+		text: "Back to dashboard",
+		href: paths.admin.placementRequests.show({id: placementRequest.id})
+	}) }}
+{% endblock %}
 
 {% block content %}
 	<div class="govuk-grid-row">
 		<div class="govuk-width-container">
 			<div class="govuk-grid-column-full">
-				<h1 class="govuk-heading-m">{{placementRequest.person.name}}</h1>
-				<div class="search-identity-table govuk-body">
-					<dl class="search-identity-table__column">
-						<dt>
-							<strong>Tier</strong>
-						</dt>
-						<dd>{{ tier }}</dd>
-
-						<dt>
-							<strong>CRN</strong>
-						</dt>
-						<dd>{{placementRequest.person.crn}}</dd>
-
-						<dt>
-							<strong>DOB</strong>
-						</dt>
-						<dd>{{placementRequest.person.dateOfBirth}}</dd>
-
-						<dt>
-							<strong>Expected arrival date</strong>
-						</dt>
-						<dd>{{formatDate(startDate)}}</dd>
-					</dl>
-
-					<dl class="search-identity-table__column">
-						<dt>
-							<strong>Assessment</strong>
-						</dt>
-						<dd>
-							{{ PlacementRequestUtils.assessmentLink(placementRequest, 'View', 'Assessment') | safe }}
-						</dd>
-						<dt>
-							<strong>Application</strong>
-						</dt>
-						<dd>
-							{{ PlacementRequestUtils.applicationLink(placementRequest, 'View', 'Application') | safe }}
-						</dd>
-					</dl>
-				</div>
-				<hr/>
+				<h1 class="govuk-heading-l">Find a space in an Approved Premises</h1>
+				{% call govukDetails({summaryText: "Matching details", open: true}) %}
+				{{ govukSummaryList({
+					rows: MatchUtils.placementRequestSummaryListForMatching(placementRequest) 
+				})
+				}}
+				{%endcall%}
 			</div>
 		</div>
 		<div class="govuk-grid-row">
@@ -68,17 +47,12 @@
 				<div class="govuk-grid-column-one-third">
 					<form action="{{formPath}}" method="post">
 						<input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-						<input type="hidden" name="crn" value="{{crn}}"/>
-						<input type="hidden" name="startDate" value="{{startDate}}"/>
-						<input type="hidden" name="applicationId" value="{{applicationId}}"/>
-						<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
+						<input type="hidden" name="durationInDays" value="{{placementRequest.duration}}"/>
 
 						<div class="moj-filter">
-							<div class="moj-filter__header">
-								<h2 class="govuk-heading-m">Filters</h2>
-							</div>
-
-							<div class="govuk-grid-column-two-thirds">
+							<h2 class="govuk-heading-m">Filters</h2>
+							<div class="moj-filter__header govuk-!-padding-left-2"></div>
+							<div class="space-search-inputs">
 
 								{{ govukDateInput({
 								id: "startDate",
@@ -93,52 +67,6 @@
 								errorMessage: errors.startDate
 							}) }}
 
-								{% call govukFieldset({
-								legend: {
-									text: "Length of stay",
-									classes: "govuk-fieldset__legend--s"
-								},
-								classes: 'govuk-!-margin-bottom-3'
-							}) %}
-
-								{{
-								govukInput(
-									{
-										classes: "govuk-input--width-2",
-										id: "durationWeeks",
-       							name: "durationWeeks",
-										formGroup: {
-											classes: "govuk-form-group--inline"
-										},
-										label: {
-											text: "Weeks"
-										},
-										value: durationWeeks
-									},
-									context
-								)
-							}}
-
-								{{
-								govukInput(
-									{
-										classes: "govuk-input--width-2",
-										id: "durationDays",
-       							name: "durationDays",
-										formGroup: {
-											classes: "govuk-form-group--inline"
-										},
-										label: {
-											text: "Days"
-										},
-										value: durationDays
-									},
-									context
-								)
-							}}
-
-								{% endcall %}
-
 									{{ govukInput({
 								id: "targetPostcodeDistrict",
 								name: "targetPostcodeDistrict",
@@ -151,10 +79,21 @@
 								classes: "govuk-input--width-3"
 							}) }}
 
-									{% for title, details in MatchUtils.groupedCheckboxes() %}
-										{% set context = fetchContext() %}
+								{{ govukRadios({
+									name: "requirements[apType]",
+									classes: "govuk-radios--small",
+									fieldset: {
+										legend: {
+											text: 'AP Type',
+											classes: 'govuk-fieldset__legend--s',
+											isPageHeading: false
+										}
+									},
+									items: MatchUtils.apTypeLabelsForRadioInput(context['requirements']['apType'])
+								}) }}
 
-										{{
+								{% for title, details in MatchUtils.groupedCheckboxes() %}
+									{{
 											govukCheckboxes({
 												name: 'requirements[' + details.inputName + '][]',
 												classes: "govuk-checkboxes--small",
@@ -168,7 +107,21 @@
 												items: MatchUtils.checkBoxesForCriteria(details.items, context['requirements'][details.inputName])
 											})
 										}}
-									{% endfor %}
+								{% endfor %}
+
+								{{ govukRadios({
+									name: "requirements[gender]",
+									classes: "govuk-radios--small",
+									value: requirements.gender,
+									fieldset: {
+										legend: {
+											text: 'Gender',
+											classes: 'govuk-fieldset__legend--s',
+											isPageHeading: false
+										}
+									},
+									items: [{value: 'male', text: 'Male' }, {value: 'female', text: 'Female' }]
+								}) }}
 
 								<div class="button">
 									{{ govukButton({

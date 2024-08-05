@@ -1,10 +1,10 @@
-import { apTypeLabels } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import { apTypeLabels } from '../apTypeLabels'
 import { PlacementRequestDetail } from '../../@types/shared'
 import { SummaryList, SummaryListItem } from '../../@types/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
-import { placementDates, placementLength } from '../matchUtils'
+import { placementDates, placementLength } from '../match'
 import paths from '../../paths/apply'
 
 export const adminSummary = (placementRequest: PlacementRequestDetail): SummaryList => {

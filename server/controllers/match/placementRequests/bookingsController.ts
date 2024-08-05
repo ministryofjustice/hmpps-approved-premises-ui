@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { decodeSpaceSearchResult, placementDates } from '../../../utils/matchUtils'
+import { decodeSpaceSearchResult, placementDates } from '../../../utils/match'
 import { PlacementRequestService } from '../../../services'
 import matchPaths from '../../../paths/match'
 import adminPaths from '../../../paths/admin'

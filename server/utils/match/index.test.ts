@@ -1,16 +1,22 @@
-import { PlacementCriteria } from '@approved-premises/api'
-import paths from '../paths/match'
+import { ApType, ApprovedPremisesApplication, FullPerson, PlacementCriteria } from '@approved-premises/api'
+import { when } from 'jest-when'
+import paths from '../../paths/match'
 import {
+  personFactory,
   placementRequestDetailFactory,
+  premisesFactory,
+  restrictedPersonFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
-} from '../testutils/factories'
-import { DateFormats } from './dateUtils'
+} from '../../testutils/factories'
+import { DateFormats } from '../dateUtils'
 import {
   InvalidSpaceSearchDataException,
   addressRow,
+  apTypeLabelsForRadioInput,
   apTypeRow,
   arrivalDateRow,
+  calculateDepartureDate,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeSpaceSearchResult,
@@ -23,11 +29,13 @@ import {
   genderRow,
   groupedCheckboxes,
   groupedCriteria,
-  mapSearchParamCharacteristicsForUi,
+  keyDetails,
+  lengthOfStayRow,
   mapUiParamsForApi,
-  placementDates,
   placementLength,
   placementLengthRow,
+  placementRequestSummaryListForMatching,
+  postcodeRow,
   premisesNameRow,
   requirementsHtmlString,
   spaceBookingSummaryCardRows,
@@ -35,11 +43,19 @@ import {
   summaryCardLink,
   summaryCardRows,
   townRow,
-} from './matchUtils'
-import { placementCriteriaLabels } from './placementCriteriaUtils'
-import { createQueryString } from './utils'
+} from '.'
+import { placementCriteriaLabels } from '../placementCriteriaUtils'
+import { createQueryString } from '../utils'
+import * as formUtils from '../formUtils'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
+import { apTypeLabels } from '../apTypeLabels'
+import { textValue } from '../applications/helpers'
+import { preferredApsRow } from '../placementRequests/preferredApsRow'
+import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
-jest.mock('./utils.ts')
+jest.mock('../utils')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('matchUtils', () => {
   beforeEach(() => {
@@ -48,24 +64,18 @@ describe('matchUtils', () => {
 
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
-      const uiParams = spaceSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
+      const uiParams = spaceSearchParametersUiFactory.build()
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
-        durationInDays: 15,
+        durationInDays: Number(uiParams.durationInDays),
         requirements: {
-          ...uiParams.requirements,
+          apTypes: [uiParams.requirements.apType],
+          genders: [uiParams.requirements.gender],
+          spaceCharacteristics: uiParams.requirements.spaceCharacteristics,
         },
         startDate: uiParams.startDate,
         targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
       })
-    })
-  })
-
-  describe('mapSearchParamCharacteristicsForUi', () => {
-    it('it returns the search results characteristics names in a list', () => {
-      expect(mapSearchParamCharacteristicsForUi(['isPIPE'])).toEqual(
-        '<ul class="govuk-list"><li>Psychologically Informed Planned Environment (PIPE)</li></ul>',
-      )
     })
   })
 
@@ -176,7 +186,6 @@ describe('matchUtils', () => {
   describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes()).toEqual({
-        'AP type': { inputName: 'apTypes', items: groupedCriteria.apTypes.items },
         'Risks and offences': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.offenceAndRisk.items,
@@ -184,10 +193,6 @@ describe('matchUtils', () => {
         'AP & room characteristics': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.accessNeeds.items,
-        },
-        Gender: {
-          inputName: 'genders',
-          items: groupedCriteria.genders.items,
         },
       })
     })
@@ -221,19 +226,6 @@ describe('matchUtils', () => {
   describe('placementLength', () => {
     it('formats the number of days as weeks', () => {
       expect(placementLength(16)).toEqual('2 weeks, 2 days')
-    })
-  })
-
-  describe('placementDates', () => {
-    it('returns formatted versions of the placement dates and durations', () => {
-      const startDate = '2022-01-01'
-      const lengthInDays = '4'
-
-      expect(placementDates(startDate, lengthInDays)).toEqual({
-        startDate: '2022-01-01',
-        endDate: '2022-01-05',
-        placementLength: 4,
-      })
     })
   })
 
@@ -350,6 +342,136 @@ describe('matchUtils', () => {
       expect(requirementsHtmlString(placementRequest.desirableCriteria)).toEqual(
         `<ul class="govuk-list"><li>${placementCriteriaLabels.isArsonDesignated}</li></ul>`,
       )
+    })
+  })
+
+  describe('apTypeLabelsForRadioInput', () => {
+    it('calls the function to create the radio items with the expected arguments', () => {
+      const radioButtonUtilSpy = jest.spyOn(formUtils, 'convertKeyValuePairToRadioItems')
+
+      const apType: ApType = 'esap'
+
+      const result = apTypeLabelsForRadioInput(apType)
+
+      expect(result).toEqual([
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Standard AP',
+          value: 'normal',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Psychologically Informed Planned Environment (PIPE)',
+          value: 'pipe',
+        },
+        {
+          checked: true,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Enhanced Security AP (ESAP)',
+          value: 'esap',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Recovery Focused AP (RFAP)',
+          value: 'rfap',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Specialist Mental Health AP (Elliott House - Midlands)',
+          value: 'mhapElliottHouse',
+        },
+        {
+          checked: false,
+          conditional: undefined,
+          hint: undefined,
+          text: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
+          value: 'mhapStJosephs',
+        },
+      ])
+      expect(radioButtonUtilSpy).toHaveBeenCalledWith(apTypeLabels, apType)
+    })
+  })
+
+  describe('placementRequestSummaryListForMatching', () => {
+    it('returns the rows for a placement request', () => {
+      const placementRequest = placementRequestDetailFactory.build()
+
+      expect(placementRequestSummaryListForMatching(placementRequest)).toEqual([
+        arrivalDateRow(placementRequest.expectedArrival),
+        departureDateRow(
+          DateFormats.dateObjToIsoDate(
+            calculateDepartureDate(placementRequest.expectedArrival, placementRequest.duration),
+          ),
+        ),
+        lengthOfStayRow(placementRequest.duration),
+        postcodeRow(placementRequest.location),
+        apTypeRow(placementRequest.type),
+        placementRequirementsRow(placementRequest, 'essential'),
+        placementRequirementsRow(placementRequest, 'desirable'),
+      ])
+    })
+
+    it('adds the preferred APs if they exist', () => {
+      const placementRequest = placementRequestDetailFactory.build()
+      const preferredAps = premisesFactory.buildList(1)
+
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(placementRequest.application as ApprovedPremisesApplication, PreferredAps, 'selectedAps')
+        .mockReturnValue(preferredAps)
+
+      expect(placementRequestSummaryListForMatching(placementRequest)).toEqual(
+        expect.arrayContaining([preferredApsRow(placementRequest)]),
+      )
+    })
+  })
+
+  describe('keyDetails', () => {
+    it('should return the key details for a placement request', () => {
+      const person = personFactory.build({ type: 'FullPerson' })
+      const placementRequest = placementRequestDetailFactory.build({ person })
+
+      const details = keyDetails(placementRequest)
+
+      expect(details).toEqual({
+        header: {
+          key: 'Name',
+          value: (placementRequest.person as FullPerson).name,
+          showKey: false,
+        },
+        items: [
+          {
+            key: textValue('CRN'),
+            value: textValue(placementRequest.person.crn),
+          },
+          {
+            key: textValue('Tier'),
+            value: textValue(placementRequest?.risks?.tier?.value?.level || 'Not available'),
+          },
+          {
+            key: textValue('Date of birth'),
+            value: textValue(
+              DateFormats.isoDateToUIDate((placementRequest.person as FullPerson).dateOfBirth, { format: 'short' }),
+            ),
+          },
+        ],
+      })
+    })
+
+    it('should throw an error if the person is not a full person', () => {
+      const restrictedPerson = restrictedPersonFactory.build()
+      const placementRequest = placementRequestDetailFactory.build()
+      placementRequest.person = restrictedPerson
+
+      expect(() => keyDetails(placementRequest)).toThrow('Restricted person')
     })
   })
 })

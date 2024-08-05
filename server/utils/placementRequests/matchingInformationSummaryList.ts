@@ -1,8 +1,7 @@
-import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
-import { sentenceCase } from '../utils'
-import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
-import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
+import { PlacementRequestDetail } from '@approved-premises/api'
+import { SummaryListWithCard } from '@approved-premises/ui'
+import { preferredApsRow } from './preferredApsRow'
+import { placementRequirementsRow } from './placementRequirementsRow'
 
 export const matchingInformationSummary = (placementRequest: PlacementRequestDetail): SummaryListWithCard => {
   const rows = []
@@ -34,34 +33,5 @@ export const matchingInformationSummary = (placementRequest: PlacementRequestDet
       },
     },
     rows,
-  }
-}
-
-export const preferredApsRow = (placementRequest: PlacementRequestDetail): SummaryListItem | undefined => {
-  const premises = getPreferredApsFromApplication(placementRequest)
-
-  if (premises.length) {
-    const apList = premises.map(p => `<li>${p.name}</li>`)
-    return {
-      key: { text: 'Preferred APs' },
-      value: { html: `<ol class="govuk-list govuk-list--number">${apList.join('')}</ol>` },
-    }
-  }
-
-  return undefined
-}
-
-export const placementRequirementsRow = (
-  placementRequest: PlacementRequest,
-  type: 'desirable' | 'essential',
-): SummaryListItem => {
-  const criteria = type === 'essential' ? placementRequest.essentialCriteria : placementRequest.desirableCriteria
-  return {
-    key: {
-      text: `${sentenceCase(type)} Criteria`,
-    },
-    value: {
-      html: mapSearchParamCharacteristicsForUi(criteria),
-    },
   }
 }

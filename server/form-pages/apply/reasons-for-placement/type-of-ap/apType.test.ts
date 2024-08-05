@@ -2,7 +2,8 @@ import { ApType } from '@approved-premises/api'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { convertArrayToRadioItems } from '../../../../utils/formUtils'
 
-import SelectApType, { apTypeHintText, apTypeLabels, apTypes } from './apType'
+import SelectApType, { apTypeHintText, apTypes } from './apType'
+import { apTypeLabels } from '../../../../utils/apTypeLabels'
 
 jest.mock('../../../../utils/formUtils')
 

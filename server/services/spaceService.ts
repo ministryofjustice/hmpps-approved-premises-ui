@@ -6,7 +6,7 @@ import {
 import { SpaceSearchParametersUi } from '../@types/ui'
 import { RestClientBuilder } from '../data'
 import SpaceClient from '../data/spaceClient'
-import { mapUiParamsForApi } from '../utils/matchUtils'
+import { mapUiParamsForApi } from '../utils/match'
 
 export default class SpaceService {
   constructor(private readonly spaceClientFactory: RestClientBuilder<SpaceClient>) {}

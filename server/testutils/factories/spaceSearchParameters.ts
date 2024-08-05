@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { Cas1SpaceSearchParameters, Cas1SpaceSearchRequirements } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import { filterOutAPTypes } from '../../utils/matchUtils'
+import { filterOutAPTypes } from '../../utils/match'
 import { placementCriteria } from './placementRequest'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { SpaceSearchParametersUi } from '../../@types/ui'
@@ -28,14 +28,13 @@ export default Factory.define<Cas1SpaceSearchParameters>(() => {
 export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParametersUi>(() => {
   const startDateInputsValues = DateFormats.dateObjectToDateInputs(faker.date.soon(), 'startDate')
   return {
-    durationDays: faker.number.int({ min: 1, max: 70 }).toString(),
-    durationWeeks: faker.number.int({ min: 1, max: 12 }).toString(),
     startDate: startDateInputsValues.startDate,
     targetPostcodeDistrict: faker.helpers.arrayElement(postcodeAreas),
+    durationInDays: faker.number.int({ max: 100, min: 1 }).toString(),
     requirements: {
-      apTypes: faker.helpers.arrayElements(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
+      apType: faker.helpers.arrayElement(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
       spaceCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
-      genders: faker.helpers.arrayElements(['male', 'female']),
+      gender: faker.helpers.arrayElement(['male', 'female']),
     },
     ...startDateInputsValues,
   }

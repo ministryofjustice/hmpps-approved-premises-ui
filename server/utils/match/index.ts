@@ -1,22 +1,30 @@
-import { addDays, weeksToDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import {
   ApType,
   Gender,
   PlacementCriteria,
+  PlacementRequestDetail,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
-} from '../@types/shared'
-import { ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../@types/ui'
-import { DateFormats, daysToWeeksAndDays } from './dateUtils'
-import { createQueryString, sentenceCase } from './utils'
-import matchPaths from '../paths/match'
+} from '../../@types/shared'
+import { KeyDetailsArgs, ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../../@types/ui'
+import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { createQueryString, sentenceCase } from '../utils'
+import matchPaths from '../../paths/match'
 import {
   offenceAndRiskCriteriaLabels,
   placementCriteriaLabels,
   placementRequirementCriteriaLabels,
-} from './placementCriteriaUtils'
-import { apTypeLabels } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+} from '../placementCriteriaUtils'
+import { apTypeLabels } from '../apTypeLabels'
+import { convertKeyValuePairToRadioItems } from '../formUtils'
+import { textValue } from '../applications/helpers'
+import { isFullPerson } from '../personUtils'
+import { preferredApsRow } from '../placementRequests/preferredApsRow'
+import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
+
+export { placementDates } from './placementDates'
 
 type PlacementDates = {
   placementLength: number
@@ -29,21 +37,16 @@ export class InvalidSpaceSearchDataException extends Error {}
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
-  const durationInDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
   return {
     startDate: query.startDate,
     targetPostcodeDistrict: query.targetPostcodeDistrict,
     requirements: {
-      ...query.requirements,
+      apTypes: [query.requirements.apType],
+      genders: [query.requirements.gender],
+      spaceCharacteristics: query.requirements.spaceCharacteristics,
     },
-    durationInDays,
+    durationInDays: Number(query.durationInDays),
   }
-}
-
-export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
-  return `<ul class="govuk-list">${characteristics
-    .map(characteristicPair => `<li>${placementCriteriaLabels[characteristicPair]}</li>`)
-    .join('')}</ul>`
 }
 
 export const encodeSpaceSearchResult = (spaceSearchResult: SpaceSearchResult): string => {
@@ -65,18 +68,6 @@ export const decodeSpaceSearchResult = (string: string): SpaceSearchResult => {
 
 export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
-}
-
-export const placementDates = (startDateString: string, lengthInDays: string): PlacementDates => {
-  const days = Number(lengthInDays)
-  const startDate = DateFormats.isoToDateObj(startDateString)
-  const endDate = addDays(startDate, days)
-
-  return {
-    placementLength: days,
-    startDate: DateFormats.dateObjToIsoDate(startDate),
-    endDate: DateFormats.dateObjToIsoDate(endDate),
-  }
 }
 
 export const summaryCardLink = ({
@@ -276,11 +267,6 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
 }
 
 export const groupedCriteria = {
-  apTypes: {
-    title: 'AP type',
-    items: apTypeLabels,
-    inputName: 'apTypes',
-  },
   offenceAndRisk: {
     title: 'Risks and offences',
     items: offenceAndRiskCriteriaLabels,
@@ -290,14 +276,6 @@ export const groupedCriteria = {
     title: 'AP & room characteristics',
     items: placementRequirementCriteriaLabels,
     inputName: 'spaceCharacteristics',
-  },
-  genders: {
-    title: 'Gender',
-    items: {
-      male: 'Male',
-      female: 'Female',
-    },
-    inputName: 'genders',
   },
 }
 
@@ -322,4 +300,79 @@ export const checkBoxesForCriteria = (criteria: Record<string, string>, selected
       checked: selectedValues.includes(criterion),
     }))
     .filter(item => item.text.length > 0)
+}
+
+export const apTypeLabelsForRadioInput = (selectedValue: ApType) => {
+  return convertKeyValuePairToRadioItems(apTypeLabels, selectedValue)
+}
+
+export const lengthOfStayRow = (lengthInDays: number) => ({
+  key: {
+    text: 'Length of stay',
+  },
+  value: {
+    text: placementLength(lengthInDays),
+  },
+})
+
+export const postcodeRow = (postcodeDistrict: PlacementRequestDetail['location']) => ({
+  key: {
+    text: 'Postcode',
+  },
+  value: {
+    text: postcodeDistrict,
+  },
+})
+
+export const calculateDepartureDate = (startDate: string, lengthInDays: number): Date => {
+  return addDays(DateFormats.isoToDateObj(startDate), lengthInDays)
+}
+
+export const placementRequestSummaryListForMatching = (placementRequest: PlacementRequestDetail) => {
+  const rows: Array<SummaryListItem> = [
+    arrivalDateRow(placementRequest.expectedArrival),
+    departureDateRow(
+      DateFormats.dateObjToIsoDate(calculateDepartureDate(placementRequest.expectedArrival, placementRequest.duration)),
+    ),
+    lengthOfStayRow(placementRequest.duration),
+    postcodeRow(placementRequest.location),
+    apTypeRow(placementRequest.type),
+  ]
+
+  const preferredAps = preferredApsRow(placementRequest)
+
+  if (preferredAps) {
+    rows.push(preferredAps)
+  }
+
+  rows.push(placementRequirementsRow(placementRequest, 'essential'))
+  rows.push(placementRequirementsRow(placementRequest, 'desirable'))
+
+  return rows
+}
+
+export const keyDetails = (placementRequest: PlacementRequestDetail): KeyDetailsArgs => {
+  const { person } = placementRequest
+  if (!isFullPerson(person)) throw Error('Restricted person')
+  return {
+    header: {
+      key: 'Name',
+      value: person.name,
+      showKey: false,
+    },
+    items: [
+      {
+        key: textValue('CRN'),
+        value: textValue(person.crn),
+      },
+      {
+        key: textValue('Tier'),
+        value: textValue(placementRequest?.risks?.tier?.value?.level || 'Not available'),
+      },
+      {
+        key: textValue('Date of birth'),
+        value: textValue(DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })),
+      },
+    ],
+  }
 }

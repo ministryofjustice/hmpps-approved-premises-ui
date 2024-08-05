@@ -21,9 +21,9 @@ import {
   BedOccupancyOpenEntry,
   BedOccupancyRange,
   Booking,
-  Cas1SpaceSearchParameters,
   Document,
   FlagsEnvelope,
+  Gender,
   Mappa,
   OASysSection,
   Person,
@@ -36,6 +36,7 @@ import {
   RiskTier,
   RiskTierLevel,
   RoshRisks,
+  Cas1SpaceCharacteristic as SpaceCharacteristic,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
@@ -402,11 +403,14 @@ type ContingencyPlanQuestion = {
 export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
 
 export interface SpaceSearchParametersUi {
-  durationDays: string
-  durationWeeks: string
   startDate: string
   targetPostcodeDistrict: string
-  requirements: Cas1SpaceSearchParameters['requirements']
+  durationInDays: string
+  requirements: {
+    apType: ApType
+    gender: Gender
+    spaceCharacteristics: Array<SpaceCharacteristic>
+  }
 }
 
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
