@@ -14,13 +14,5 @@ export default Factory.define<NewCas1SpaceBooking>(() => {
     premisesId: faker.string.uuid(),
     placementRequestId: faker.string.uuid(),
     requirements: spaceBookingRequirementsFactory.build(),
-    spaceCategories: faker.helpers.arrayElements([
-      'standard',
-      'arson',
-      'wheelchair',
-      'sexOffender',
-      'enSuite',
-      'single',
-    ]),
   }
 })

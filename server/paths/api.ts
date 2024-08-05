@@ -96,6 +96,10 @@ const clarificationNotePaths = {
   notes: assessPaths.singleAssessment.path('notes'),
 }
 
+const spaceBookingPaths = {
+  create: cas1NamespacePath.path('/placement-requests/:id/space-bookings'),
+}
+
 export default {
   manage: {
     premises: {
@@ -194,6 +198,9 @@ export default {
     bookingNotMade: placementRequestPath.path('booking-not-made'),
     withdrawal: {
       create: placementRequestPath.path('withdrawal'),
+    },
+    spaceBookings: {
+      create: spaceBookingPaths.create,
     },
   },
   placementApplications: {

@@ -1,3 +1,8 @@
+import {
+  NewCas1SpaceBooking as NewSpaceBooking,
+  PlacementRequest,
+  Cas1SpaceBooking as SpaceBooking,
+} from '@approved-premises/api'
 import { SpaceSearchParametersUi } from '../@types/ui'
 import { RestClientBuilder } from '../data'
 import SpaceClient from '../data/spaceClient'
@@ -11,5 +16,15 @@ export default class SpaceService {
 
     const spaces = await spaceClient.search(mapUiParamsForApi(params))
     return spaces
+  }
+
+  async createSpaceBooking(
+    token: string,
+    id: PlacementRequest['id'],
+    newSpaceBooking: NewSpaceBooking,
+  ): Promise<SpaceBooking> {
+    const spaceClient = this.spaceClientFactory(token)
+
+    return spaceClient.createSpaceBooking(id, newSpaceBooking)
   }
 }

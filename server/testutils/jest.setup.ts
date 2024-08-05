@@ -34,6 +34,7 @@ const apiSpecs = {
     sed -E 's@ /out-of-service-beds@ /cas1/out-of-service-beds@g' |
     sed -E 's@/spaces@/cas1/spaces@g' |
     sed -E 's@ /reference-data@ /cas1/reference-data@g' |
+    sed -E 's@ /placement-requests@ /cas1/placement-requests@g' |
     sed -E 's@/reports@/cas1/reports@g' > ${apiSpecPaths.cas1Spec}
   fi`,
     specPath: apiSpecPaths.cas1Spec,

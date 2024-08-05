@@ -24,6 +24,10 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
+  shouldShowSpaceBookingConfirmation(premisesName: string, personName: string) {
+    this.shouldShowBanner(`Space booked for ${personName} in ${premisesName}`)
+  }
+
   shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>, status?: PlacementRequestStatus): void {
     const tableRows = dashboardTableRows(placementRequests, status)
     const rowItems = tableRowsToArrays(tableRows)

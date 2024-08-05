@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { Cas1SpaceSearchParameters, Cas1SpaceSearchRequirements } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import { filterPlacementCriteriaToSpaceCharacteristics } from '../../utils/matchUtils'
+import { filterOutAPTypes } from '../../utils/matchUtils'
 import { placementCriteria } from './placementRequest'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { SpaceSearchParametersUi } from '../../@types/ui'
@@ -11,7 +11,7 @@ import { SpaceSearchParametersUi } from '../../@types/ui'
 const spaceBookingRequirements = Factory.define<Cas1SpaceSearchRequirements>(() => {
   return {
     apType: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
-    spaceCharacteristics: faker.helpers.arrayElements(filterPlacementCriteriaToSpaceCharacteristics(placementCriteria)),
+    spaceCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
     gender: faker.helpers.arrayElement(['male', 'female']),
   }
 })
@@ -34,9 +34,7 @@ export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParamete
     targetPostcodeDistrict: faker.helpers.arrayElement(postcodeAreas),
     requirements: {
       apTypes: faker.helpers.arrayElements(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
-      spaceCharacteristics: faker.helpers.arrayElements(
-        filterPlacementCriteriaToSpaceCharacteristics(placementCriteria),
-      ),
+      spaceCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
       genders: faker.helpers.arrayElements(['male', 'female']),
     },
     ...startDateInputsValues,
