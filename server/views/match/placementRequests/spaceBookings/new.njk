@@ -15,8 +15,25 @@
 
         {{
           govukSummaryList({
+            card: {
+              title: {
+                text: "Premises details"
+              }
+            },
             classes: 'govuk-summary-list--no-border',
-					  rows: MatchUtils.spaceBookingSummaryCardRows(premisesName, apType, dates, placementRequest.gender, essentialCharacteristics, desirableCharacteristics)
+					  rows: MatchUtils.spaceBookingPremisesSummaryCardRows(premisesName, apType)
+				  })
+        }}
+
+        {{
+          govukSummaryList({
+            card: {
+              title: {
+                text: "Booking requirements"
+              }
+            },
+            classes: 'govuk-summary-list--no-border',
+					  rows: MatchUtils.spaceBookingPersonNeedsSummaryCardRows(dates, placementRequest.gender, essentialCharacteristics, desirableCharacteristics)
 				  })
         }}
 
