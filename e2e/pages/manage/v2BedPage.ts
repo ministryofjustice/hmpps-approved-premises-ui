@@ -8,10 +8,6 @@ export class V2BedPage extends BasePage {
     return new V2BedPage(page)
   }
 
-  async clickActions() {
-    await this.page.getByRole('button', { name: 'Actions' }).click()
-  }
-
   async clickMarkBedAsOutOfService() {
     await this.clickActions()
     await this.page.getByRole('menuitem', { name: 'Create out of service bed record' }).click()

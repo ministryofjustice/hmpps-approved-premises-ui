@@ -9,10 +9,6 @@ export class PlacementPage extends BasePage {
     return new PlacementPage(page)
   }
 
-  async clickActions() {
-    await this.page.getByRole('button', { name: 'Actions' }).click()
-  }
-
   async clickMarkNotArrived() {
     await this.clickActions()
     await this.page.getByRole('menuitem', { name: 'Mark as not arrived' }).click()

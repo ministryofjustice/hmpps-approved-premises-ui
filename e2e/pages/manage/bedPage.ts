@@ -9,10 +9,6 @@ export class BedPage extends BasePage {
     return new BedPage(page)
   }
 
-  async clickActions() {
-    await this.page.getByRole('button', { name: 'Actions' }).click()
-  }
-
   async clickBookBed() {
     await this.clickActions()
     await this.page.getByRole('menuitem', { name: 'Create a placement' }).click()
