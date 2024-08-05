@@ -38,7 +38,8 @@ import {
   postcodeRow,
   premisesNameRow,
   requirementsHtmlString,
-  spaceBookingSummaryCardRows,
+  spaceBookingPersonNeedsSummaryCardRows,
+  spaceBookingPremisesSummaryCardRows,
   startDateObjFromParams,
   summaryCardLink,
   summaryCardRows,
@@ -277,11 +278,10 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('spaceBookingSummaryCardRows', () => {
+  describe('spaceBookingPersonNeedsSummaryCardRows', () => {
     it('should call the correct row functions', () => {
-      const premisesName = 'Hope House'
       const gender = 'male'
-      const apType = 'pipe'
+
       const dates = {
         startDate: '2022-01-01',
         endDate: '2022-01-15',
@@ -291,23 +291,26 @@ describe('matchUtils', () => {
       const desirableCharacteristics: Array<PlacementCriteria> = ['hasBrailleSignage']
 
       expect(
-        spaceBookingSummaryCardRows(
-          premisesName,
-          apType,
-          dates,
-          gender,
-          essentialCharacteristics,
-          desirableCharacteristics,
-        ),
+        spaceBookingPersonNeedsSummaryCardRows(dates, gender, essentialCharacteristics, desirableCharacteristics),
       ).toEqual([
-        premisesNameRow(premisesName),
-        apTypeRow(apType),
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
         genderRow(gender),
         essentialCharacteristicsRow(essentialCharacteristics),
         desirableCharacteristicsRow(desirableCharacteristics),
+      ])
+    })
+  })
+
+  describe('spaceBookingPremisesSummaryCardRows', () => {
+    it('should call the correct row functions', () => {
+      const premisesName = 'Hope House'
+      const apType = 'pipe'
+
+      expect(spaceBookingPremisesSummaryCardRows(premisesName, apType)).toEqual([
+        premisesNameRow(premisesName),
+        apTypeRow(apType),
       ])
     })
   })

@@ -106,17 +106,17 @@ export const confirmationSummaryCardRows = (
   ]
 }
 
-export const spaceBookingSummaryCardRows = (
-  premisesName: string,
-  apType: ApType,
+export const spaceBookingPremisesSummaryCardRows = (premisesName: string, apType: ApType): Array<SummaryListItem> => {
+  return [premisesNameRow(premisesName), apTypeRow(apType)]
+}
+
+export const spaceBookingPersonNeedsSummaryCardRows = (
   dates: PlacementDates,
   gender: Gender,
   essentialCharacteristics: Array<PlacementCriteria>,
   desirableCharacteristics: Array<PlacementCriteria>,
 ): Array<SummaryListItem> => {
   return [
-    premisesNameRow(premisesName),
-    apTypeRow(apType),
     arrivalDateRow(dates.startDate),
     departureDateRow(dates.endDate),
     placementLengthRow(dates.placementLength),

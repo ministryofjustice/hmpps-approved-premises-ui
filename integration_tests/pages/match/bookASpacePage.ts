@@ -2,7 +2,6 @@ import { ApType, PlacementDates, PlacementRequestDetail, Premises } from '@appro
 import Page from '../page'
 import paths from '../../../server/paths/match'
 import { createQueryString, sentenceCase } from '../../../server/utils/utils'
-import { isFullPerson } from '../../../server/utils/personUtils'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import {
   filterOutAPTypes,
@@ -38,7 +37,6 @@ export default class BookASpacePage extends Page {
     apType: ApType,
   ): void {
     const { endDate, placementLength } = placementDates(startDate, duration.toString())
-    cy.get('h2').contains(isFullPerson(placementRequest.person) && placementRequest.person.name)
     cy.get('dd').contains(apTypeLabels[apType])
     cy.get('dd').contains(DateFormats.isoDateToUIDate(startDate))
     cy.get('dd').contains(DateFormats.isoDateToUIDate(endDate))
