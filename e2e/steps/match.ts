@@ -3,8 +3,11 @@ import { TestOptions } from '@approved-premises/e2e'
 import { visitDashboard } from './apply'
 import { ConfirmPage, ConfirmationPage } from '../pages/match'
 import { CruDashboard } from '../pages/match/cruDashboard'
-import { E2EDatesOfPlacement } from './assess'
+import { E2EDatesOfPlacement, E2EPlacementCharacteristics } from './assess'
 import { PlacementRequestPage } from '../pages/workflow'
+import { Premises } from '../../server/@types/shared'
+import { ApTypeLabel } from '../../server/utils/apTypeLabels'
+import { SearchScreen } from '../pages/match/searchScreen'
 
 export const confirmBooking = async (page: Page) => {
   const confirmPage = new ConfirmPage(page)
@@ -23,6 +26,10 @@ export const matchAndBookApplication = async ({
   duration,
   isParole,
   applicationDate,
+  apType,
+  preferredAps,
+  placementCharacteristics,
+  preferredPostcode,
 }: {
   page: Page
   person: TestOptions['person']
@@ -30,6 +37,10 @@ export const matchAndBookApplication = async ({
   duration: string
   isParole: boolean
   applicationDate: string
+  apType: ApTypeLabel
+  preferredAps: Array<Premises['name']>
+  preferredPostcode: string
+  placementCharacteristics: E2EPlacementCharacteristics
 }) => {
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
@@ -49,4 +60,33 @@ export const matchAndBookApplication = async ({
   })
 
   const placementRequestPage = new PlacementRequestPage(page)
+
+  // And I click the 'Search for a space' button
+  await placementRequestPage.clickSearchForASpace()
+
+  // Then I should see the search screen
+  const searchScreen = new SearchScreen(page)
+
+  // Should show details
+  searchScreen.shouldShowApplicationDetails({
+    preferredAps,
+    datesOfPlacement,
+    duration,
+    apType,
+    preferredPostcode,
+    placementCharacteristics,
+  })
+
+  // And I click the 'Update' button
+  await searchScreen.clickUpdate()
+
+  // Should show details again
+  searchScreen.shouldShowApplicationDetails({
+    preferredAps,
+    datesOfPlacement,
+    duration,
+    apType,
+    preferredPostcode,
+    placementCharacteristics,
+  })
 }

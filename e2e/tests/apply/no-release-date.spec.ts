@@ -13,7 +13,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
   assessor,
 }) => {
   await signIn(page, assessor)
-  const id = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, false)
+  const { id } = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, false)
   await assessApplication({ page, assessor, person }, id)
   await startAndCreatePlacementApplication({ page }, id)
   await withdrawPlacementApplication(page, id)
