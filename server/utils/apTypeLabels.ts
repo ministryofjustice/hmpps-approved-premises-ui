@@ -7,4 +7,6 @@ export const apTypeLabels: Record<ApType, string> = {
   rfap: 'Recovery Focused AP (RFAP)',
   mhapElliottHouse: 'Specialist Mental Health AP (Elliott House - Midlands)',
   mhapStJosephs: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
-}
+} as const
+
+export type ApTypeLabel = (typeof apTypeLabels)[ApType]

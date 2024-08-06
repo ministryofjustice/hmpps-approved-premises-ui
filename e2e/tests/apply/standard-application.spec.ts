@@ -12,14 +12,24 @@ test('Apply, assess, match and book an application for an Approved Premises with
   oasysSections,
 }) => {
   await signIn(page, assessor)
-  const id = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, true, true)
-  const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id)
+  const { id, apType, preferredAps, preferredPostcode } = await createApplication(
+    { page, person, oasysSections, applicationType: 'standard' },
+    true,
+    true,
+  )
+  const { datesOfPlacement, duration, placementCharacteristics } = await assessApplication(
+    { page, assessor, person },
+    id,
+  )
   await matchAndBookApplication({
     page,
     person,
+    apType,
+    preferredAps,
     datesOfPlacement,
     duration,
-
+    preferredPostcode,
+    placementCharacteristics,
     isParole: false,
     applicationDate: DateFormats.dateObjtoUIDate(new Date(), { format: 'short' }),
   })

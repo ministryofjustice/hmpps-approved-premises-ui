@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import { Premises } from '../../server/@types/shared'
 
 export class BasePage {
   constructor(public readonly page: Page) {}
@@ -64,14 +65,16 @@ export class BasePage {
     await this.page.getByLabel('Year', { exact: true }).first().fill(year)
   }
 
-  async selectFirstPremises(legend: string) {
+  async selectFirstPremises(legend: string): Promise<Premises['name']> {
     await this.page
       .getByRole('group', { name: legend })
       .getByRole('combobox', { name: 'Select an area' })
       .selectOption({ index: 1 })
-    await this.page
+    const selectedPremises = await this.page
       .getByRole('group', { name: legend })
       .getByRole('combobox', { name: 'Select a premises' })
       .selectOption({ index: 1 })
+
+    return selectedPremises[0]
   }
 }

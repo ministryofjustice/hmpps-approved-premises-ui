@@ -11,6 +11,6 @@ test('Request further information on an Application, adds it and proceeds with t
   assessor,
 }) => {
   await signIn(page, assessor)
-  const id = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, false)
+  const { id } = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, false)
   await requestAndAddAdditionalInformation({ page, assessor, person }, id)
 })
