@@ -15,7 +15,7 @@ export class ListPage extends BasePage {
     const nextLink = this.page.getByRole('link', { name: 'Next' })
 
     try {
-      await expect(assessmentRow).toBeVisible()
+      await expect(assessmentRow).toBeVisible({ timeout: 1000 })
       await assessmentRow.click()
     } catch (err) {
       try {
