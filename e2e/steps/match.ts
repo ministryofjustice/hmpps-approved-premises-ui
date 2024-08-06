@@ -30,10 +30,7 @@ export const shouldShowBookingConfirmation = async (page: Page) => {
   await confirmationPage.shouldShowSuccessMessage()
 }
 
-export const matchAndBookApplication = async (
-  { page, user, person }: { page: Page; user: TestOptions['user']; person: TestOptions['person'] },
-  id: string,
-) => {
+export const matchAndBookApplication = async ({ page, person }: { page: Page; person: TestOptions['person'] }) => {
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
 
