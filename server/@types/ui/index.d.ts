@@ -181,7 +181,7 @@ export interface SummaryListActions {
 
 export interface SummaryListItem {
   key: TextItem | HtmlItem
-  value: TextItem | HtmlItem
+  value: (TextItem | HtmlItem) & { classes?: string }
   actions?: SummaryListActions
 }
 
