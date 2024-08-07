@@ -17,8 +17,4 @@ test('Apply, assess, match and book an application for an Approved Premises with
   await assessApplication({ page, assessor, person }, id)
   await startAndCreatePlacementApplication({ page }, id)
   await withdrawPlacementApplication(page, id)
-
-  // Skip match until it's back
-  // await reviewAndApprovePlacementApplication({ page, user }, id)
-  // TODO: Match and book once approval is done
 })
