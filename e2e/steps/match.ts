@@ -1,23 +1,7 @@
 import { Page } from '@playwright/test'
 import { TestOptions } from '@approved-premises/e2e'
 import { visitDashboard } from './apply'
-import { ConfirmPage, ConfirmationPage, DetailsPage, ListPage, ResultsPage } from '../pages/match'
-
-export const searchForBed = async (page: Page, personName: string) => {
-  const dashboard = await visitDashboard(page)
-  await dashboard.clickMatch()
-
-  const listPage = new ListPage(page)
-  await listPage.clickFirstPlacementRequest(personName)
-
-  const detailsPage = new DetailsPage(page)
-  await detailsPage.clickSearch()
-}
-
-export const chooseBed = async (page: Page) => {
-  const resultsPage = new ResultsPage(page)
-  await resultsPage.chooseBed()
-}
+import { ConfirmPage, ConfirmationPage } from '../pages/match'
 
 export const confirmBooking = async (page: Page) => {
   const confirmPage = new ConfirmPage(page)
@@ -35,12 +19,6 @@ export const matchAndBookApplication = async ({ page, person }: { page: Page; pe
 
   // And I click the link to the CRU Dashboard
   await dashboard.clickCruDashboard()
-
-  // And I search for a bed
-  await searchForBed(page, person.name)
-
-  // And I select a matching bed
-  await chooseBed(page)
 
   // And I confirm my booking
   await confirmBooking(page)
