@@ -1,8 +1,9 @@
 import ListPage from '../../pages/tasks/listPage'
 
-import { apAreaFactory, userFactory } from '../../../server/testutils/factories'
+import { apAreaFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
 import { restrictedPersonSummaryTaskFactory } from '../../../server/testutils/factories/task'
 import { restrictedPersonSummaryAssessmentTaskFactory } from '../../../server/testutils/factories/assessmentTask'
+import { fullPersonSummaryFactory } from '../../../server/testutils/factories/person'
 
 context('Task Allocation', () => {
   const users = userFactory.buildList(5)
@@ -17,7 +18,7 @@ context('Task Allocation', () => {
     cy.task('stubApAreaReferenceData', { apArea, additionalAreas: [additionalArea] })
   })
 
-  it('shows a list of tasks', () => {
+  it('shows a list of tasks for LAO', () => {
     // Given I am logged in
     cy.signIn()
 
@@ -69,6 +70,49 @@ context('Task Allocation', () => {
     // And the tasks that are completed
     listPage.clickTab('Completed')
     listPage.shouldShowCompletedTasks(completedTasks)
+  })
+
+  it('shows a list of tasks', () => {
+    // Given I am logged in
+    cy.signIn()
+
+    const allocatedTasks = taskFactory.buildList(1, { personSummary: fullPersonSummaryFactory.build() })
+    const unallocatedTasks = taskFactory.buildList(1, {
+      allocatedToStaffMember: undefined,
+      personSummary: fullPersonSummaryFactory.build(),
+    })
+
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasks,
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      apAreaId: apArea.id,
+    })
+
+    cy.task('stubGetAllTasks', {
+      tasks: [...unallocatedTasks],
+      allocatedFilter: 'unallocated',
+      page: '1',
+      sortDirection: 'asc',
+      apAreaId: apArea.id,
+    })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+
+    // Then I should see the tasks that are allocated
+    listPage.shouldShowAllocatedTasks()
+
+    // And I should see the allocated to user select option
+    listPage.shouldShowAllocatedToUserFilter()
+
+    // And the tasks that are unallocated
+    listPage.clickTab('Unallocated')
+    listPage.shouldShowUnallocatedTasks()
+
+    // And I should not see the allocated to user select option
+    listPage.shouldNotShowAllocatedToUserFilter()
   })
 
   it('supports pagination', () => {

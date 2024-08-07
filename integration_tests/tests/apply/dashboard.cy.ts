@@ -3,6 +3,7 @@ import {
   applicationSummaryFactory,
   placementApplicationFactory,
   requestForPlacementFactory,
+  restrictedPersonFactory,
 } from '../../../server/testutils/factories'
 import { applicationSuitableStatuses } from '../../../server/utils/applications/utils'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
@@ -58,6 +59,24 @@ context('All applications', () => {
 
     // Then I should see the applications for that page
     page3.shouldShowApplications()
+  })
+
+  it('lists all applications for lao', () => {
+    // Given I am logged in
+    cy.signIn()
+
+    // Given there is a page of application
+    const page1Applications = applicationSummaryFactory.buildList(1)
+
+    page1Applications[0].person = restrictedPersonFactory.build()
+
+    cy.task('stubAllApplications', { applications: page1Applications, page: '1' })
+
+    // When I access the applications dashboard
+    const page1 = DashboardPage.visit(page1Applications)
+
+    // Then I should see the first result
+    page1.shouldShowApplications()
   })
 
   it('supports sorting by tier', () => {
