@@ -44,6 +44,7 @@ export default defineConfig<TestOptions>({
         person: {
           name: 'Aadland Bertrand',
           crn: 'X320741',
+          tier: 'D2',
         },
         indexOffenceRequired: true,
         oasysSections: [
