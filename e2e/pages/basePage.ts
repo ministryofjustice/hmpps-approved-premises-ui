@@ -28,7 +28,7 @@ export class BasePage {
   }
 
   async checkRadio(label: string) {
-    await this.page.getByLabel(label, { exact: true }).check()
+    await this.page.getByLabel(label, { exact: true }).click()
   }
 
   async checkRadioInGroup(group: string, label: string) {
