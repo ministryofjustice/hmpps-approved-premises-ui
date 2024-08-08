@@ -12,5 +12,6 @@ export type ApprovedPremisesUser = (User & {
     roles: Array<ApprovedPremisesUserRole>;
     permissions?: Array<ApprovedPremisesUserPermission>;
     apArea: ApArea;
+    version?: number;
 });
 
