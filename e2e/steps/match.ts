@@ -2,7 +2,6 @@ import { Page } from '@playwright/test'
 import { TestOptions } from '@approved-premises/e2e'
 import { visitDashboard } from './apply'
 import { ConfirmPage, ConfirmationPage, DetailsPage, ListPage, ResultsPage } from '../pages/match'
-import { assignPlacementRequestToMe } from './workflow'
 
 export const searchForBed = async (page: Page, personName: string) => {
   const dashboard = await visitDashboard(page)
@@ -34,8 +33,6 @@ export const matchAndBookApplication = async ({ page, person }: { page: Page; pe
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
 
-  // And I allocate the placement request to myself
-  await assignPlacementRequestToMe(dashboard, page, user.name, id)
 
   // And I search for a bed
   await searchForBed(page, person.name)
