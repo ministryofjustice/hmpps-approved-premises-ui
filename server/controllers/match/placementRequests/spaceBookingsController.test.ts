@@ -84,7 +84,6 @@ describe('SpaceBookingsController', () => {
         arrivalDate: newSpaceBooking.arrivalDate,
         departureDate: newSpaceBooking.departureDate,
         premisesId: newSpaceBooking.premisesId,
-        placementRequestId: id,
         apType: newSpaceBooking.requirements.apType,
         essentialCharacteristics: newSpaceBooking.requirements.essentialCharacteristics.toString(),
         desirableCharacteristics: newSpaceBooking.requirements.desirableCharacteristics.toString(),
