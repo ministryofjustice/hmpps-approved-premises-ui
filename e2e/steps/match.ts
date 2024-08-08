@@ -33,6 +33,8 @@ export const matchAndBookApplication = async ({ page, person }: { page: Page; pe
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
 
+  // And I click the link to the CRU Dashboard
+  await dashboard.clickCruDashboard()
 
   // And I search for a bed
   await searchForBed(page, person.name)
