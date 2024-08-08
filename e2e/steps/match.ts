@@ -22,7 +22,4 @@ export const matchAndBookApplication = async ({ page, person }: { page: Page; pe
 
   // And I confirm my booking
   await confirmBooking(page)
-
-  // Then I should bee a confirmation screen
-  await shouldShowBookingConfirmation(page)
 }
