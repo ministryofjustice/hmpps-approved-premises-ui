@@ -59,6 +59,7 @@ const userRoles: Record<RolesInUse, string> = {
   appeals_manager: 'Appeals manager',
   legacy_manager: 'Legacy manager',
   future_manager: 'Future manager',
+  janitor: 'Janitor',
 }
 
 export const userRolesSelectOptions = (
