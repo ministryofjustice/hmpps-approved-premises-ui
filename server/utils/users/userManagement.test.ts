@@ -130,6 +130,11 @@ describe('userRolesSelectOptions', () => {
         text: 'Future manager',
         value: 'future_manager',
       },
+      {
+        selected: false,
+        text: 'Janitor',
+        value: 'janitor',
+      },
     ])
   })
 
@@ -164,6 +169,11 @@ describe('userRolesSelectOptions', () => {
         selected: false,
         text: 'Future manager',
         value: 'future_manager',
+      },
+      {
+        selected: false,
+        text: 'Janitor',
+        value: 'janitor',
       },
     ])
   })
