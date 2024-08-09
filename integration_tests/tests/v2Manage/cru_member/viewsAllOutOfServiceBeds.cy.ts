@@ -9,6 +9,7 @@ describe('CRU Member lists all OOS beds', () => {
     cy.task('reset')
     // Given I am signed in as a CRU Member
     signIn(['cru_member'])
+    cy.task('stubApAreaReferenceData')
   })
 
   const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
