@@ -13,4 +13,5 @@ export type ApprovedPremisesUserPermission =
   | 'cas1_assess_application'
   | 'cas1_assess_appealed_application'
   | 'cas1_booking_create'
+  | 'cas1_booking_withdraw'
   | 'cas1_adhoc_booking_create';

@@ -5,9 +5,10 @@ import paths from '../../paths/manage'
 
 describe('bookingUtils bookingActions by role', () => {
   describe('bookingActionsByRole', () => {
-    describe('when the user has the "workflow_manager" role', () => {
+    describe('when the user has the "workflow_manager" and the "cas1_booking_withdraw" permission role', () => {
       const user = userDetailsFactory.build({
         roles: ['workflow_manager'],
+        permissions: ['cas1_booking_withdraw'],
       })
       const booking = bookingFactory.build()
 
@@ -194,9 +195,10 @@ describe('bookingUtils bookingActions by role', () => {
       })
     })
 
-    describe('when the user has the "future_manager" role', () => {
+    describe('when the user has the "future_manager" role and the "cas1_booking_withdraw" permission', () => {
       const user = userDetailsFactory.build({
         roles: ['future_manager'],
+        permissions: ['cas1_booking_withdraw'],
       })
 
       describe('when booking has NOT arrived', () => {

@@ -27,7 +27,7 @@ export const adminActions = (
   user: UserDetails,
 ): Array<IdentityBarMenuItem> => {
   if (placementRequest.status === 'matched') {
-    return [
+    const matchedActions = [
       {
         href: managePaths.bookings.dateChanges.new({
           premisesId: placementRequest?.booking?.premisesId || '',
@@ -35,11 +35,14 @@ export const adminActions = (
         }),
         text: 'Amend placement',
       },
-      {
+    ]
+    if (hasPermission(user, ['cas1_booking_withdraw'])) {
+      matchedActions.push({
         href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
         text: 'Withdraw placement',
-      },
-    ]
+      })
+    }
+    return matchedActions
   }
 
   const actions = [

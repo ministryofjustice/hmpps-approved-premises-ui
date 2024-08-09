@@ -36,6 +36,22 @@ describe('adminIdentityBar', () => {
           }),
           text: 'Amend placement',
         },
+      ])
+    })
+
+    it('should return actions to amend and withdraw a booking if the status is `matched` and user has the withdraw permission ', () => {
+      const userId = 'some-id'
+      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
+      const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_withdraw' as const], id: userId }
+
+      expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
+        {
+          href: managePaths.bookings.dateChanges.new({
+            premisesId: placementRequestDetail.booking?.premisesId || '',
+            bookingId: placementRequestDetail.booking?.id || '',
+          }),
+          text: 'Amend placement',
+        },
         {
           href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
           text: 'Withdraw placement',
