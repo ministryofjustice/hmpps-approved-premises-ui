@@ -27,9 +27,16 @@ describe('reportUtils', () => {
         },
         {
           value: 'lostBeds',
-          text: 'Lost beds',
+          text: 'Lost beds (no longer in use)',
           hint: {
-            text: 'A report on all lost beds for that month and how long they were unavailable for.',
+            text: 'This report provides information on lost beds recorded before out of service beds functionality was enabled. This will be removed in the near future.',
+          },
+        },
+        {
+          value: 'outOfServiceBeds',
+          text: 'Out of service beds',
+          hint: {
+            text: 'A report of all out of service beds within the month and how long they were unavailable for.',
           },
         },
         {
