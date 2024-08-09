@@ -12,8 +12,12 @@ export const reportInputLabels = {
     hint: 'A raw data extract to help identify placement matching outcomes. This downloads Match requests based on the Expected Arrival Date.',
   },
   lostBeds: {
-    text: 'Lost beds',
-    hint: 'A report on all lost beds for that month and how long they were unavailable for.',
+    text: 'Lost beds (no longer in use)',
+    hint: 'This report provides information on lost beds recorded before out of service beds functionality was enabled. This will be removed in the near future.',
+  },
+  outOfServiceBeds: {
+    text: 'Out of service beds',
+    hint: 'A report of all out of service beds within the month and how long they were unavailable for.',
   },
   dailyMetrics: { text: 'Daily metrics', hint: 'Counts of key actions across the service grouped by day.' },
   applicationsV2: {
