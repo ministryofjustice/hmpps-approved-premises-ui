@@ -6,6 +6,7 @@ import populateCurrentUser from './populateCurrentUser'
 import { userDetailsFactory } from '../testutils/factories'
 import logger from '../../logger'
 import { DeliusAccountMissingStaffDetailsError } from '../services/userService'
+import inMemoryStore from '../inMemoryStore'
 
 jest.mock('../../logger')
 
@@ -48,6 +49,7 @@ describe('populateCurrentUser', () => {
     const middleware = populateCurrentUser(userService)
 
     request.session.user = user
+    inMemoryStore.userVersion = user.version.toString()
 
     await middleware(request, response, next)
 
