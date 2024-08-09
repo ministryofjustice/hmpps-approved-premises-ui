@@ -26,7 +26,7 @@ export default class V2BedsController {
       if (req.headers.referer?.match(/calendar/)) {
         backLink = paths.premises.calendar({ premisesId })
       } else {
-        backLink = paths.premises.beds.index({ premisesId })
+        backLink = paths.v2Manage.premises.beds.index({ premisesId })
       }
 
       const bed = await this.premisesService.getBed(req.user.token, premisesId, req.params.bedId)
