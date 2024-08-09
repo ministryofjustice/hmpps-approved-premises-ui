@@ -9,7 +9,7 @@ export class ReportsPage extends BasePage {
   }
 
   async downloadLostBedsReports({ month, year }: { month: string; year: string }) {
-    await this.checkRadio('Lost beds')
+    await this.checkRadio('Lost beds (no longer in use)')
     return this.downloadReports({ month, year })
   }
 
