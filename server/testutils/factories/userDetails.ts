@@ -12,4 +12,5 @@ export default Factory.define<UserDetails>(() => ({
   roles: [],
   permissions: [],
   apArea: apAreaFactory.build(),
+  version: faker.number.int(),
 }))
