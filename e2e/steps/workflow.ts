@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
 import { TestOptions } from '@approved-premises/e2e'
 import { DashboardPage } from '../pages/dashboardPage'
-import { AssessmentPage, ListPage, PlacementRequestPage } from '../pages/workflow'
+import { AssessmentPage, ListPage } from '../pages/workflow'
 
 export const assessmentShouldHaveCorrectDeadlineAndAllocatedUser = async (
   dashboard: DashboardPage,
@@ -27,20 +27,4 @@ export const assignAssessmentToMe = async (
 
   const assessmentPage = new AssessmentPage(page)
   await assessmentPage.selectStaffMember(userName)
-}
-
-export const assignPlacementRequestToMe = async (
-  dashboard: DashboardPage,
-  page: Page,
-  userName: string,
-  id: string,
-) => {
-  await dashboard.clickWorkflow()
-
-  const workflowListPage = new ListPage(page)
-  await workflowListPage.choosePlacementRequestWithId(id)
-
-  const placementRequestPage = new PlacementRequestPage(page)
-  await placementRequestPage.selectStaffMember(userName)
-  await placementRequestPage.clickSubmit()
 }

@@ -146,24 +146,40 @@ export const addMatchingInformation = async (page: Page) => {
 
   await matchingInformationPage.checkRadio('Standard AP')
 
-  await matchingInformationPage.checkRequirement('Is wheelchair designated', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Is single', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Is step free designated', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Is catered', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Has en suite', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Is suited for sex offenders', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Is arson designated', 'notRelevant')
+  const relevantRisksAndOffences = ['Is arson suitable']
+  const irrelevantRisksAndOffences = [
+    'Accepts sex offenders',
+    'Accepts non sexual child offenders',
+    'Is suitable for vulnerable',
+    'Accepts child sex offenders',
+    'Accepts hate crime offenders',
+    'Is arson designated',
+  ]
 
-  await matchingInformationPage.checkRequirement('Is suitable for vulnerable', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Accepts sex offenders', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Accepts child sex offenders', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Accepts non sexual child offenders', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Accepts hate crime offenders', 'notRelevant')
-  await matchingInformationPage.checkRequirement('Is arson suitable', 'notRelevant')
+  const essentialCharacteristics = ['Is wheelchair designated', 'Is single']
 
+  const desirableCharacteristics = ['Is catered', 'Has en suite']
+
+  const irrelevantCharacteristics = ['Is step free designated']
+
+  await matchingInformationPage.checkListOfRequirements(relevantRisksAndOffences, 'relevant')
+  await matchingInformationPage.checkListOfRequirements(irrelevantRisksAndOffences, 'notRelevant')
+  await matchingInformationPage.checkListOfRequirements(essentialCharacteristics, 'essential')
+  await matchingInformationPage.checkListOfRequirements(desirableCharacteristics, 'desirable')
+  await matchingInformationPage.checkListOfRequirements(irrelevantCharacteristics, 'notRelevant')
+
+  // Agree to the dates of placement
   await matchingInformationPage.checkRadio('Yes')
 
+  const [startDate, endDate] = (await page.locator('.dates-of-placement').textContent()).split(' - ') as [
+    string,
+    string,
+  ]
+  const duration = await page.locator('.placement-duration').textContent()
+
   await matchingInformationPage.clickSubmit()
+
+  return { datesOfPlacement: { startDate, endDate }, duration, essentialCharacteristics, desirableCharacteristics }
 }
 
 export const checkAssessAnswers = async (page: Page) => {
@@ -182,6 +198,16 @@ export const submitAssessment = async (page: Page) => {
 export const shouldSeeAssessmentConfirmationScreen = async (page: Page) => {
   const confirmationPage = new ConfirmationPage(page)
   await confirmationPage.shouldShowSuccessMessage()
+}
+
+export type E2EDatesOfPlacement = {
+  startDate: string
+  endDate: string
+}
+
+export type E2EPlacementCharacteristics = {
+  essentialCharacteristics: Array<string>
+  desirableCharacteristics: Array<string>
 }
 
 export const assessApplication = async (
@@ -247,8 +273,18 @@ export const assessApplication = async (
   await makeDecision(page, { acceptApplication })
 
   // And I provide matching information if application is accepted
+  let datesOfPlacement: undefined | E2EDatesOfPlacement
+  let duration: undefined | string
+  let placementCharacteristics: E2EPlacementCharacteristics
   if (acceptApplication) {
-    await addMatchingInformation(page)
+    const matchingInformation = await addMatchingInformation(page)
+
+    datesOfPlacement = matchingInformation.datesOfPlacement
+    duration = matchingInformation.duration
+    placementCharacteristics = {
+      essentialCharacteristics: matchingInformation.essentialCharacteristics,
+      desirableCharacteristics: matchingInformation.desirableCharacteristics,
+    }
   }
 
   // And I check my answers
@@ -259,6 +295,8 @@ export const assessApplication = async (
 
   // Then I should see a confirmation screen
   await shouldSeeAssessmentConfirmationScreen(page)
+
+  return { datesOfPlacement, duration, placementCharacteristics }
 }
 
 export const requestAndAddAdditionalInformation = async (

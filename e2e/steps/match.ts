@@ -1,24 +1,13 @@
 import { Page } from '@playwright/test'
 import { TestOptions } from '@approved-premises/e2e'
 import { visitDashboard } from './apply'
-import { ConfirmPage, ConfirmationPage, DetailsPage, ListPage, ResultsPage } from '../pages/match'
-import { assignPlacementRequestToMe } from './workflow'
-
-export const searchForBed = async (page: Page, personName: string) => {
-  const dashboard = await visitDashboard(page)
-  await dashboard.clickMatch()
-
-  const listPage = new ListPage(page)
-  await listPage.clickFirstPlacementRequest(personName)
-
-  const detailsPage = new DetailsPage(page)
-  await detailsPage.clickSearch()
-}
-
-export const chooseBed = async (page: Page) => {
-  const resultsPage = new ResultsPage(page)
-  await resultsPage.chooseBed()
-}
+import { ConfirmPage, ConfirmationPage } from '../pages/match'
+import { CruDashboard } from '../pages/match/cruDashboard'
+import { E2EDatesOfPlacement, E2EPlacementCharacteristics } from './assess'
+import { PlacementRequestPage } from '../pages/workflow'
+import { Premises } from '../../server/@types/shared'
+import { ApTypeLabel } from '../../server/utils/apTypeLabels'
+import { SearchScreen } from '../pages/match/searchScreen'
 
 export const confirmBooking = async (page: Page) => {
   const confirmPage = new ConfirmPage(page)
@@ -30,25 +19,74 @@ export const shouldShowBookingConfirmation = async (page: Page) => {
   await confirmationPage.shouldShowSuccessMessage()
 }
 
-export const matchAndBookApplication = async (
-  { page, user, person }: { page: Page; user: TestOptions['user']; person: TestOptions['person'] },
-  id: string,
-) => {
+export const matchAndBookApplication = async ({
+  page,
+  person,
+  datesOfPlacement,
+  duration,
+  isParole,
+  applicationDate,
+  apType,
+  preferredAps,
+  placementCharacteristics,
+  preferredPostcode,
+}: {
+  page: Page
+  person: TestOptions['person']
+  datesOfPlacement: E2EDatesOfPlacement
+  duration: string
+  isParole: boolean
+  applicationDate: string
+  apType: ApTypeLabel
+  preferredAps: Array<Premises['name']>
+  preferredPostcode: string
+  placementCharacteristics: E2EPlacementCharacteristics
+}) => {
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
 
-  // And I allocate the placement request to myself
-  await assignPlacementRequestToMe(dashboard, page, user.name, id)
+  // And I click the link to the CRU Dashboard
+  await dashboard.clickCruDashboard()
 
-  // And I search for a bed
-  await searchForBed(page, person.name)
+  const cruDashboard = new CruDashboard(page)
 
-  // And I select a matching bed
-  await chooseBed(page)
+  // And I select the placement request
+  cruDashboard.selectPlacementRequest({
+    applicationDate,
+    person,
+    arrivalDate: datesOfPlacement.startDate,
+    isParole,
+    lengthOfStay: duration,
+  })
 
-  // And I confirm my booking
-  await confirmBooking(page)
+  const placementRequestPage = new PlacementRequestPage(page)
 
-  // Then I should bee a confirmation screen
-  await shouldShowBookingConfirmation(page)
+  // And I click the 'Search for a space' button
+  await placementRequestPage.clickSearchForASpace()
+
+  // Then I should see the search screen
+  const searchScreen = new SearchScreen(page)
+
+  // Should show details
+  searchScreen.shouldShowApplicationDetails({
+    preferredAps,
+    datesOfPlacement,
+    duration,
+    apType,
+    preferredPostcode,
+    placementCharacteristics,
+  })
+
+  // And I click the 'Update' button
+  await searchScreen.clickUpdate()
+
+  // Should show details again
+  searchScreen.shouldShowApplicationDetails({
+    preferredAps,
+    datesOfPlacement,
+    duration,
+    apType,
+    preferredPostcode,
+    placementCharacteristics,
+  })
 }

@@ -107,7 +107,6 @@ export const reviewAndApprovePlacementApplication = async (
   await assignPlacementApplicationToMe(dashboard, page, user.name, applicationId)
 
   await visitDashboard(page)
-  await dashboard.clickMatch()
 
   const listPage = new MatchListPage(page)
   await listPage.clickPlacementApplications()

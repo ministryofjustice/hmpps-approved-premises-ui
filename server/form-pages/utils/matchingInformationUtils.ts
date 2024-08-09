@@ -231,7 +231,9 @@ const defaultMatchingInformationValues = (
 const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplication): SummaryList => {
   const duration = placementDurationFromApplication(application)
   const formattedDuration = DateFormats.formatDuration(daysToWeeksAndDays(duration))
-  const rows = [{ key: { text: 'Placement duration' }, value: { text: formattedDuration } }]
+  const rows: SummaryList['rows'] = [
+    { key: { text: 'Placement duration' }, value: { text: formattedDuration, classes: 'placement-duration' } },
+  ]
 
   const knownReleaseDate = retrieveQuestionResponseFromFormArtifact(application, ReleaseDate, 'knowReleaseDate')
 
@@ -249,7 +251,10 @@ const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplicatio
     const placementDatesObject = placementDates(placementStartDate, duration.toString())
     const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
     const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
-    rows.push({ key: { text: 'Dates of placement' }, value: { text: `${formattedStartDate} - ${formattedEndDate}` } })
+    rows.push({
+      key: { text: 'Dates of placement' },
+      value: { text: `${formattedStartDate} - ${formattedEndDate}`, classes: 'dates-of-placement' },
+    })
   }
   return {
     rows,
