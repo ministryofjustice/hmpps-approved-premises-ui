@@ -60,7 +60,7 @@ context('Placement Requests', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    signIn(['workflow_manager'], ['cas1_booking_create'])
+    signIn(['workflow_manager'], ['cas1_booking_create', 'cas1_booking_withdraw'])
 
     application = addResponseToFormArtifact(application, {
       task: 'location-factors',
