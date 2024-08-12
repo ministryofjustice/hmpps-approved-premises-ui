@@ -1,7 +1,6 @@
-import { SpaceSearchParametersUi, TextItem } from '@approved-premises/ui'
+import { SpaceSearchParametersUi } from '@approved-premises/ui'
 import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
-import { uiObjectValue } from '../../helpers'
 import { placementRequestSummaryListForMatching, summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
 import { isFullPerson } from '../../../server/utils/personUtils'
@@ -49,13 +48,7 @@ export default class SearchPage extends Page {
         .parent()
         .within(() => {
           const tableRows = summaryCardRows(result, targetPostcodeDistrict)
-          tableRows.forEach(row => {
-            cy.contains('dt', (row.key as TextItem).text)
-              .parent('div')
-              .within(() => {
-                cy.get('dd').should('contain', uiObjectValue(row.value))
-              })
-          })
+          this.shouldContainSummaryListItems(tableRows)
         })
     })
   }
