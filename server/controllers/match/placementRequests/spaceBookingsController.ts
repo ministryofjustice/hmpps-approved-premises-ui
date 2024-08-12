@@ -8,7 +8,7 @@ import matchPaths from '../../../paths/match'
 
 interface NewRequest extends Request {
   params: { id: string }
-  query: { startDate: string; duration: string; premisesName: string; premisesId: string; apType: ApType }
+  query: { startDate: string; durationDays: string; premisesName: string; premisesId: string; apType: ApType }
 }
 
 export default class {
@@ -20,7 +20,7 @@ export default class {
   new(): TypedRequestHandler<Request, Response> {
     return async (req: NewRequest, res: Response) => {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const { startDate, duration, premisesName, premisesId, apType } = req.query
+      const { startDate, durationDays, premisesName, premisesId, apType } = req.query
 
       res.render('match/placementRequests/spaceBookings/new', {
         pageHeading: `Book space in ${premisesName}`,
@@ -28,7 +28,7 @@ export default class {
         premisesName,
         premisesId,
         apType,
-        dates: placementDates(startDate, duration),
+        dates: placementDates(startDate, durationDays),
         essentialCharacteristics: filterOutAPTypes(placementRequest.essentialCriteria),
         desirableCharacteristics: filterOutAPTypes(placementRequest.desirableCriteria),
       })

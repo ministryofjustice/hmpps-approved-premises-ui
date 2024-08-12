@@ -71,24 +71,27 @@ export const placementLength = (lengthInDays: number): string => {
 }
 
 export const summaryCardLink = ({
-  spaceSearchResult,
   placementRequestId,
+  premisesName,
+  premisesId,
+  apType,
   startDate,
-  durationWeeks,
   durationDays,
 }: {
-  spaceSearchResult: SpaceSearchResult
   placementRequestId: string
+  premisesName: string
+  premisesId: string
+  apType: string
   startDate: string
   durationDays: string
-  durationWeeks: string
 }): string => {
-  const duration = String(Number(durationWeeks) * 7 + Number(durationDays))
-  return `${matchPaths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
+  return `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
     {
-      spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
+      premisesName,
+      premisesId,
+      apType,
       startDate,
-      duration,
+      durationDays,
     },
     { addQueryPrefix: true },
   )}`

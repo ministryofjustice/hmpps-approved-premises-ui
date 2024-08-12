@@ -146,7 +146,7 @@
 									actions: {
 										items: [
 											{
-												href: MatchUtils.summaryCardLink({spaceSearchResult: spaceSearchResult, placementRequestId: placementRequest.id, startDate: startDate, durationDays: durationDays, durationWeeks: durationWeeks}),
+												href: MatchUtils.summaryCardLink({placementRequestId: placementRequest.id, premisesName: spaceSearchResult.premises.name, premisesId: spaceSearchResult.premises.id, apType: spaceSearchResult.premises.apType, startDate: startDate, durationDays: durationInDays}),
 												text: "View spaces",
 												visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
 											}
