@@ -25,7 +25,6 @@ import { setUpSentryErrorHandler, setUpSentryRequestHandler } from './middleware
 import routes from './routes'
 import type { Controllers } from './controllers'
 import type { Services } from './services'
-import { setupFeatureFlags } from './middleware/setupFeatureFlags'
 
 export default function createApp(controllers: Controllers, services: Services): express.Application {
   const app = express()
@@ -52,7 +51,6 @@ export default function createApp(controllers: Controllers, services: Services):
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services))
-  app.use(setupFeatureFlags(services))
   app.use((req, res, next) => {
     res.locals.infoMessages = req.flash('info')
     res.locals.successMessages = req.flash('success')
