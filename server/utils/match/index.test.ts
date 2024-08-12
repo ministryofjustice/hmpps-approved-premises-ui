@@ -113,6 +113,13 @@ describe('matchUtils', () => {
         })
       })
     })
+
+    it('returns the distance to one decimal place', () => {
+      expect(distanceRow({ ...spaceSearchResult, distanceInMiles: 1.234567 })).toEqual({
+        key: { text: 'Distance' },
+        value: { text: `1.2 miles from the desired location` },
+      })
+    })
   })
 
   describe('startDateFromParams', () => {

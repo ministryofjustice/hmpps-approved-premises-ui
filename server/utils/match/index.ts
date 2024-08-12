@@ -216,14 +216,17 @@ export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   },
 })
 
-export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => ({
-  key: {
-    text: 'Distance',
-  },
-  value: {
-    text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
-  },
-})
+export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => {
+  const roundedDistanceInMiles = Math.round(spaceSearchResult.distanceInMiles * 10) / 10
+  return {
+    key: {
+      text: 'Distance',
+    },
+    value: {
+      text: `${roundedDistanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
+    },
+  }
+}
 
 export const genderRow = (gender: Gender) => ({
   key: {
