@@ -154,7 +154,6 @@ context('Placement Requests', () => {
         arrivalDate: startDate,
         departureDate: endDate,
         premisesId,
-        placementRequestId: placementRequest.id,
         requirements: {
           ...spaceBooking.requirements,
           essentialCharacteristics: placementRequest.essentialCriteria,

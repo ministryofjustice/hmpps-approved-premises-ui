@@ -43,7 +43,6 @@ export default class {
         arrivalDate: body.arrivalDate,
         departureDate: body.departureDate,
         premisesId: body.premisesId,
-        placementRequestId: req.params.id,
         requirements: {
           apType: body.apType,
           essentialCharacteristics: body.essentialCharacteristics.split(','),

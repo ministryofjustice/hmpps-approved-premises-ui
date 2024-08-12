@@ -77,7 +77,7 @@ describe('SpaceBookingsController', () => {
       const premisesName = 'Hope House'
       const id = 'placement-request-id'
       const requirements = spaceBookingRequirementsFactory.build()
-      const newSpaceBooking = newSpaceBookingFactory.build({ placementRequestId: id, requirements })
+      const newSpaceBooking = newSpaceBookingFactory.build({ requirements })
       const spaceBooking = spaceBookingFactory.build()
 
       const body = {
