@@ -282,7 +282,7 @@ export const groupedCriteria = {
     inputName: 'spaceCharacteristics',
   },
   accessNeeds: {
-    title: 'AP & room characteristics',
+    title: 'Access needs and additional features',
     items: placementRequirementCriteriaLabels,
     inputName: 'spaceCharacteristics',
   },

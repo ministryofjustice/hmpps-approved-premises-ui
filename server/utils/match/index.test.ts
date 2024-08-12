@@ -198,7 +198,7 @@ describe('matchUtils', () => {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.offenceAndRisk.items,
         },
-        'AP & room characteristics': {
+        'Access needs and additional features': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.accessNeeds.items,
         },
