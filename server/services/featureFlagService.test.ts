@@ -45,13 +45,15 @@ describe('FeatureFlagService', () => {
           when(mockClient.evaluation.boolean)
             .calledWith({
               namespaceKey: featureFlagService.namespaceKey,
-              flagKey: 'show-search-by-CRN-timeline-navigation',
+              flagKey: 'allow-sufficient-information-request-without-confirmation',
               entityId: '',
               context: {},
             })
             .mockResolvedValue(booleanEvaluationResponse)
 
-          const response = await featureFlagService.getBooleanFlag('show-search-by-CRN-timeline-navigation')
+          const response = await featureFlagService.getBooleanFlag(
+            'allow-sufficient-information-request-without-confirmation',
+          )
           expect(response).toEqual(enabled)
         },
       )
@@ -60,7 +62,7 @@ describe('FeatureFlagService', () => {
         when(mockClient.evaluation.boolean)
           .calledWith({
             namespaceKey: featureFlagService.namespaceKey,
-            flagKey: 'show-search-by-CRN-timeline-navigation',
+            flagKey: 'allow-sufficient-information-request-without-confirmation',
             entityId: '',
             context: {},
           })
@@ -68,7 +70,9 @@ describe('FeatureFlagService', () => {
             throw new Error('Feature flag not found')
           })
 
-        const response = await featureFlagService.getBooleanFlag('show-search-by-CRN-timeline-navigation')
+        const response = await featureFlagService.getBooleanFlag(
+          'allow-sufficient-information-request-without-confirmation',
+        )
 
         expect(response).toEqual(false)
         expect(logger.error).toHaveBeenCalledWith(
@@ -84,7 +88,9 @@ describe('FeatureFlagService', () => {
     })
 
     it('should return true', async () => {
-      const response = await featureFlagService.getBooleanFlag('show-search-by-CRN-timeline-navigation')
+      const response = await featureFlagService.getBooleanFlag(
+        'allow-sufficient-information-request-without-confirmation',
+      )
       expect(response).toEqual(true)
     })
   })

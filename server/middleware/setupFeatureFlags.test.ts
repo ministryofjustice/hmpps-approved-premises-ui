@@ -64,11 +64,13 @@ describe('retrieveFlag', () => {
 
   it('returns false and logs error if the service errors', async () => {
     when(featureFlagService.getBooleanFlag)
-      .calledWith('show-search-by-CRN-timeline-navigation')
+      .calledWith('allow-sufficient-information-request-without-confirmation')
       .mockRejectedValue(new Error('oh no'))
     const loggerSpy = jest.spyOn(logger, 'error')
 
-    expect(await retrieveFlag('show-search-by-CRN-timeline-navigation', featureFlagService)).toBe(false)
+    expect(await retrieveFlag('allow-sufficient-information-request-without-confirmation', featureFlagService)).toBe(
+      false,
+    )
 
     expect(loggerSpy).toHaveBeenCalledWith(
       'Error retrieving feature flag show-search-by-CRN-timeline-navigation',
@@ -77,9 +79,11 @@ describe('retrieveFlag', () => {
   })
 
   it('returns true if the request to the service resolves', async () => {
-    when(featureFlagService.getBooleanFlag).calledWith('show-search-by-CRN-timeline-navigation').mockResolvedValue(true)
+    when(featureFlagService.getBooleanFlag)
+      .calledWith('allow-sufficient-information-request-without-confirmation')
+      .mockResolvedValue(true)
 
-    const result = await retrieveFlag('show-search-by-CRN-timeline-navigation', featureFlagService)
+    const result = await retrieveFlag('allow-sufficient-information-request-without-confirmation', featureFlagService)
 
     expect(result).toBe(true)
   })
