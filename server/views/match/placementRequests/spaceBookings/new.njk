@@ -1,9 +1,17 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% extends "../../layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+		text: "Back",
+		href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id })
+	}) }}
+{% endblock %}
 
 {% block content %}
   <div class="govuk-width-container">
