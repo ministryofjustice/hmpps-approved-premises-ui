@@ -1,21 +1,14 @@
-import { fromPartial } from '@total-typescript/shoehorn'
 import { when } from 'jest-when'
-import { createMock } from '@golevelup/ts-jest'
-import { AssessmentService } from '../../../../services'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
-import SufficientInformation, { Body } from './sufficientInformation'
+import SufficientInformation from './sufficientInformation'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { retrieveFeatureFlag } from '../../../../utils/retrieveFeatureFlag'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
-jest.mock('../../../../utils/retrieveFeatureFlag')
 
 describe('SufficientInformation', () => {
   const assessment = assessmentFactory.build()
-  const assessmentService = createMock<AssessmentService>({})
-  const query = 'some text'
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -31,63 +24,6 @@ describe('SufficientInformation', () => {
     it('should set the body', () => {
       const page = new SufficientInformation({ sufficientInformation: 'yes' }, assessment)
       expect(page.body).toEqual({ sufficientInformation: 'yes' })
-    })
-  })
-
-  describe('initialize', () => {
-    it('should initialize the page and not create a note when the body is not present', async () => {
-      const body: Body = {}
-      const page = await SufficientInformation.initialize(body, assessment, 'token', fromPartial({ assessmentService }))
-
-      expect(page.body).toEqual(body)
-      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
-    })
-
-    it('should initialize the page and not create a note when sufficient information is yes', async () => {
-      const body: Body = { sufficientInformation: 'yes' }
-      const page = await SufficientInformation.initialize(body, assessment, 'token', fromPartial({ assessmentService }))
-
-      expect(page.body).toEqual(body)
-      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
-    })
-
-    it('should initialize the page and create a note when sufficientInformation is no and the page has not already been completed', async () => {
-      const body: Body = { sufficientInformation: 'no', query }
-
-      when(retrieveFeatureFlag)
-        .calledWith('allow-sufficient-information-request-without-confirmation')
-        .mockReturnValue(true)
-
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(assessment, SufficientInformation, 'sufficientInformation')
-        .mockReturnValue(undefined)
-
-      const page = await SufficientInformation.initialize(body, assessment, 'token', fromPartial({ assessmentService }))
-
-      expect(page.body).toEqual(body)
-      expect(assessmentService.createClarificationNote).toHaveBeenCalledWith('token', assessment.id, { query })
-    })
-
-    it('should initialize the page and not create a note when dontShowConfirmationPage is false', async () => {
-      const body: Body = { sufficientInformation: 'no', query }
-
-      const page = await SufficientInformation.initialize(body, assessment, 'token', fromPartial({ assessmentService }))
-
-      expect(page.body).toEqual(body)
-      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
-    })
-
-    it('should initialize the page and not create a note when sufficientInformation is no and the page has already been completed', async () => {
-      const body: Body = { sufficientInformation: 'no', query }
-
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(assessment, SufficientInformation, 'sufficientInformation')
-        .mockReturnValue('no')
-
-      const page = await SufficientInformation.initialize(body, assessment, 'token', fromPartial({ assessmentService }))
-
-      expect(page.body).toEqual(body)
-      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
     })
   })
 
