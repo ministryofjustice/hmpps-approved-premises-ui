@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApAreaService, ApplicationService, FeatureFlagService, PlacementRequestService } from '../../services'
+import { ApAreaService, ApplicationService, PlacementRequestService } from '../../services'
 import {
   ApplicationSortField,
   PlacementRequestRequestType,
@@ -16,7 +16,6 @@ export default class CruDashboardController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly apAreaService: ApAreaService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly applicationService: ApplicationService,
   ) {}
 

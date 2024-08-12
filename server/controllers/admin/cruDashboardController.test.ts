@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import CruDashboardController from './cruDashboardController'
 
-import { ApAreaService, ApplicationService, FeatureFlagService, PlacementRequestService } from '../../services'
+import { ApAreaService, ApplicationService, PlacementRequestService } from '../../services'
 import {
   apAreaFactory,
   applicationSummaryFactory,
@@ -25,7 +25,6 @@ import { getPaginationDetails } from '../../utils/getPaginationDetails'
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
 jest.mock('../../utils/getPaginationDetails')
-jest.mock('../../middleware/setupFeatureFlags')
 
 describe('CruDashboardController', () => {
   const token = 'SOME_TOKEN'
@@ -37,19 +36,13 @@ describe('CruDashboardController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const apAreaService = createMock<ApAreaService>({})
-  const featureFlagService = createMock<FeatureFlagService>({})
   const applicationService = createMock<ApplicationService>({})
 
   let cruDashboardController: CruDashboardController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    cruDashboardController = new CruDashboardController(
-      placementRequestService,
-      apAreaService,
-      featureFlagService,
-      applicationService,
-    )
+    cruDashboardController = new CruDashboardController(placementRequestService, apAreaService, applicationService)
   })
 
   describe('index', () => {
