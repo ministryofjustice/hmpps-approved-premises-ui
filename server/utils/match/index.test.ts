@@ -17,6 +17,7 @@ import {
   apTypeRow,
   arrivalDateRow,
   calculateDepartureDate,
+  characteristicsRow,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeSpaceSearchResult,
@@ -88,6 +89,7 @@ describe('matchUtils', () => {
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
+        characteristicsRow(spaceSearchResult),
       ])
     })
   })

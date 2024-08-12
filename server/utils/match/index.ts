@@ -192,6 +192,7 @@ export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeAr
     apTypeRow(spaceSearchResult.premises.apType),
     addressRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
+    characteristicsRow(spaceSearchResult),
   ]
 }
 
@@ -215,6 +216,15 @@ export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
            ${spaceSearchResult.premises?.postcode}</p>`,
   },
 })
+
+export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
+  return {
+    key: { text: 'Characteristics' },
+    value: {
+      html: `<ul class="govuk-list govuk-list--bullet">${spaceSearchResult.premises.premisesCharacteristics.map(characteristic => `<li>${characteristic.name}</li>`).join(' ')}</ul>`,
+    },
+  }
+}
 
 export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => {
   const roundedDistanceInMiles = Math.round(spaceSearchResult.distanceInMiles * 10) / 10
