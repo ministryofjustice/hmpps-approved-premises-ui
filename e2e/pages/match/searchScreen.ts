@@ -53,7 +53,7 @@ export class SearchScreen extends BasePage {
 
   async shouldShowDatesOfPlacement({ startDate, endDate }: E2EDatesOfPlacement, duration: string) {
     ;[startDate, endDate, duration].forEach(async date => {
-      await this.page.locator('.govuk-details').getByText(date).isVisible()
+      if (date) await this.page.locator('.govuk-details').getByText(date).isVisible()
     })
   }
 

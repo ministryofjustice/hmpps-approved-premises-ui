@@ -22,16 +22,18 @@ export class CruDashboard extends BasePage {
     applicationDate: string
     isParole: boolean
   }) {
+    const columns = [person.name, person.tier, lengthOfStay, applicationDate, isParole ? 'Parole' : 'Standard release']
+
+    if (arrivalDate) {
+      columns.push(arrivalDate)
+    }
+
     const placementRequestRow = this.page
       .getByRole('row')
       .filter({
         has:
-          this.page.getByRole('cell', { name: person.name }) &&
-          this.page.getByRole('cell', { name: person.tier }) &&
-          this.page.getByRole('cell', { name: arrivalDate }) &&
-          this.page.getByRole('cell', { name: lengthOfStay }) &&
-          this.page.getByRole('cell', { name: applicationDate }) &&
-          this.page.getByRole('cell', { name: isParole ? 'Parole' : 'Standard release' }),
+          columns.every(column => this.page.getByRole('cell', { name: column })) &&
+          this.page.getByRole('cell', { name: columns[columns.length] }),
       })
       .first()
     await placementRequestRow.getByRole('link').click()
