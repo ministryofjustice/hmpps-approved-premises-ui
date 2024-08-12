@@ -191,7 +191,6 @@ export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeAr
   return [
     apTypeRow(spaceSearchResult.premises.apType),
     addressRow(spaceSearchResult),
-    townRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
   ]
 }
@@ -205,21 +204,15 @@ export const apTypeRow = (apType: ApType) => ({
   },
 })
 
-export const townRow = (spaceSearchResult: SpaceSearchResult) => ({
-  key: {
-    text: 'Town',
-  },
-  value: {
-    text: spaceSearchResult.premises.town,
-  },
-})
-
 export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Address',
   },
   value: {
-    text: `${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}`,
+    html: `<p>
+           ${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}<br/>
+           ${spaceSearchResult.premises?.town}<br/>
+           ${spaceSearchResult.premises?.postcode}</p>`,
   },
 })
 

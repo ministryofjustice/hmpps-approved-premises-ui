@@ -43,7 +43,6 @@ import {
   startDateObjFromParams,
   summaryCardLink,
   summaryCardRows,
-  townRow,
 } from '.'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { createQueryString } from '../utils'
@@ -88,7 +87,6 @@ describe('matchUtils', () => {
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
-        townRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
       ])
     })
