@@ -36,7 +36,7 @@ describe('SpaceBookingsController', () => {
       const person = personFactory.build({ name: 'John Wayne' })
       const placementRequestDetail = placementRequestDetailFactory.build({ person })
       const startDate = '2024-07-26'
-      const duration = '40'
+      const durationDays = '40'
       const premisesName = 'Hope House'
       const premisesId = 'abc123'
       const apType = 'esap'
@@ -45,7 +45,7 @@ describe('SpaceBookingsController', () => {
 
       const query = {
         startDate,
-        duration,
+        durationDays,
         premisesName,
         premisesId,
         apType,
@@ -63,7 +63,7 @@ describe('SpaceBookingsController', () => {
         premisesName,
         premisesId,
         apType,
-        dates: placementDates(startDate, duration),
+        dates: placementDates(startDate, durationDays),
         essentialCharacteristics: filterOutAPTypes(placementRequestDetail.essentialCriteria),
         desirableCharacteristics: filterOutAPTypes(placementRequestDetail.desirableCriteria),
       })

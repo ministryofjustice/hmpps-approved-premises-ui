@@ -19,12 +19,12 @@ export default class BookASpacePage extends Page {
   static visit(
     placementRequest: PlacementRequestDetail,
     startDate: string,
-    duration: PlacementDates['duration'],
+    durationDays: PlacementDates['duration'],
     premisesName: Premises['name'],
     premisesId: Premises['id'],
     apType: ApType,
   ) {
-    const queryString = createQueryString({ startDate, duration, premisesName, premisesId, apType })
+    const queryString = createQueryString({ startDate, durationDays, premisesName, premisesId, apType })
     const path = `${paths.v2Match.placementRequests.spaceBookings.new({ id: placementRequest.id })}?${queryString}`
     cy.visit(path)
     return new BookASpacePage(premisesName)

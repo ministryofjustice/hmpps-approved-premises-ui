@@ -232,25 +232,30 @@ describe('matchUtils', () => {
 
   describe('summaryCardLink', () => {
     it('returns a link to the confirm page with the premises name and bed', () => {
-      const spaceSearchResult = spaceSearchResultFactory.build()
       const placementRequestId = '123'
+      const premisesName = 'Hope House'
+      const premisesId = 'abc'
+      const apType = 'pipe'
       const startDate = '2022-01-01'
       const durationWeeks = '4'
       const durationDays = '1'
       const durationInDays = Number(durationWeeks) * 7 + Number(durationDays)
 
       summaryCardLink({
-        spaceSearchResult,
         placementRequestId,
+        premisesName,
+        premisesId,
+        apType,
         startDate,
         durationDays,
-        durationWeeks,
       })
 
       expect(
         `${paths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
           {
-            spaceSearchResult: encodeSpaceSearchResult(spaceSearchResult),
+            premisesName,
+            premisesId,
+            apType,
             startDate,
             durationInDays,
           },

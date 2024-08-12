@@ -109,9 +109,9 @@ context('Placement Requests', () => {
     const premisesName = 'Hope House'
     const premisesId = 'abc123'
     const apType = 'normal'
-    const duration = 15
+    const durationDays = 15
     const startDate = '2024-07-23'
-    const { endDate } = placementDates(startDate, duration.toString())
+    const { endDate } = placementDates(startDate, durationDays.toString())
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
@@ -120,17 +120,17 @@ context('Placement Requests', () => {
     const placementRequest = placementRequestDetailFactory.build({
       person,
       status: 'notMatched',
-      duration,
+      duration: durationDays,
       essentialCriteria: essentialCharacteristics,
       desirableCriteria: desirableCharacteristics,
     })
 
     // When I visit the 'Book a space' page
     cy.task('stubPlacementRequest', placementRequest)
-    const page = BookASpacePage.visit(placementRequest, startDate, duration, premisesName, premisesId, apType)
+    const page = BookASpacePage.visit(placementRequest, startDate, durationDays, premisesName, premisesId, apType)
 
     // Then I should see the details of the space I am booking
-    page.shouldShowBookingDetails(placementRequest, startDate, duration, apType)
+    page.shouldShowBookingDetails(placementRequest, startDate, durationDays, apType)
 
     // And when I complete the form
     const requirements = spaceBookingRequirementsFactory.build({ apType, gender: placementRequest.gender })
