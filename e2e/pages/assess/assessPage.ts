@@ -9,7 +9,18 @@ export class AssessPage extends BasePage {
     return new AssessPage(page)
   }
 
+  checkListOfRequirements(
+    requirements: Array<string>,
+    relevancy: 'essential' | 'desirable' | 'notRelevant' | 'relevant',
+  ) {
+    return Promise.all(
+      requirements.map(async requirement => {
+        await this.checkRequirement(requirement, relevancy)
+      }),
+    )
+  }
+
   async checkRequirement(requirement: string, status: string) {
-    await this.page.getByLabel(`${requirement} ${status}`, { exact: true }).check()
+    await this.checkRadio(`${requirement} ${status}`)
   }
 }

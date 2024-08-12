@@ -17,8 +17,8 @@ export class DashboardPage extends BasePage {
     await this.page.getByRole('link', { name: 'Assess Approved Premises applications' }).click()
   }
 
-  async clickMatch() {
-    await this.page.getByRole('link', { name: 'Match people to Approved Premises placements' }).click()
+  async clickCruDashboard() {
+    await this.page.getByRole('link', { name: 'CRU Dashboard' }).click()
   }
 
   async clickManage() {

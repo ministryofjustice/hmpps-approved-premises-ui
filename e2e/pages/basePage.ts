@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import { Premises } from '../../server/@types/shared'
 
 export class BasePage {
   constructor(public readonly page: Page) {}
@@ -19,12 +20,16 @@ export class BasePage {
     await this.page.getByRole('button', { name: 'Withdraw' }).click()
   }
 
+  async clickActions() {
+    await this.page.getByRole('button', { name: 'Actions' }).click()
+  }
+
   async fillField(label: string, value: string) {
     await this.page.getByRole('textbox', { name: label }).fill(value)
   }
 
   async checkRadio(label: string) {
-    await this.page.getByLabel(label, { exact: true }).check()
+    await this.page.getByLabel(label, { exact: true }).click()
   }
 
   async checkRadioInGroup(group: string, label: string) {
@@ -60,14 +65,16 @@ export class BasePage {
     await this.page.getByLabel('Year', { exact: true }).first().fill(year)
   }
 
-  async selectFirstPremises(legend: string) {
+  async selectFirstPremises(legend: string): Promise<Premises['name']> {
     await this.page
       .getByRole('group', { name: legend })
       .getByRole('combobox', { name: 'Select an area' })
       .selectOption({ index: 1 })
-    await this.page
+    const selectedPremises = await this.page
       .getByRole('group', { name: legend })
       .getByRole('combobox', { name: 'Select a premises' })
       .selectOption({ index: 1 })
+
+    return selectedPremises[0]
   }
 }

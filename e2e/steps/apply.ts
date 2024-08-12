@@ -16,6 +16,7 @@ import { BasePage } from '../pages/basePage'
 import { ShowPage } from '../pages/apply/showPage'
 import { assessmentShouldHaveCorrectDeadlineAndAllocatedUser } from './workflow'
 import { SelectIndexOffencePage } from '../pages/apply/selectIndexOffencePage'
+import { Premises } from '../../server/@types/shared'
 
 export const visitDashboard = async (page: Page): Promise<DashboardPage> => {
   const dashboard = new DashboardPage(page)
@@ -156,12 +157,16 @@ export const completeBasicInformationTask = async (
 }
 
 export const completeTypeOfApTask = async (page: Page) => {
+  const typeOfAp = 'Standard AP'
+
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Type of AP required')
 
   const typeOfApPage = await ApplyPage.initialize(page, `Which type of AP does the person require?`)
   await typeOfApPage.checkRadio('Standard AP')
   await typeOfApPage.clickSave()
+
+  return typeOfAp
 }
 
 export const completeOasysImportTask = async (page: Page, oasysSections: Array<string>) => {
@@ -239,14 +244,17 @@ export const completePrisonNotesTask = async (page: Page) => {
   await prisonInformationPage.clickSave()
 }
 
-export const completeLocationFactorsTask = async (page: Page) => {
+export const completeLocationFactorsTask = async (
+  page: Page,
+): Promise<{ preferredAps: Array<Premises['name']>; preferredPostcode: string }> => {
+  const preferredPostcode = 'B71'
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Describe location factors')
 
   const locationFactorsPage = await ApplyPage.initialize(page, 'Location factors')
   await locationFactorsPage.fillField(
     'What is the preferred postcode area for the Approved Premises (AP) placement?',
-    'B71',
+    preferredPostcode,
   )
   await locationFactorsPage.fillField('Give details of why this postcode area would benefit the person', 'Some text')
   await locationFactorsPage.checkRadioInGroup(
@@ -258,12 +266,14 @@ export const completeLocationFactorsTask = async (page: Page) => {
 
   const preferredApsPage = await ApplyPage.initialize(page, 'Select a preferred AP')
 
-  await preferredApsPage.selectFirstPremises('First choice AP')
-  await preferredApsPage.selectFirstPremises('Second choice AP')
-  await preferredApsPage.selectFirstPremises('Third choice AP')
-  await preferredApsPage.selectFirstPremises('Fourth choice AP')
+  const firstChoiceAp = await preferredApsPage.selectFirstPremises('First choice AP')
+  const secondChoiceAp = await preferredApsPage.selectFirstPremises('Second choice AP')
+  const thirdChoiceAp = await preferredApsPage.selectFirstPremises('Third choice AP')
+  const fourthChoiceAp = await preferredApsPage.selectFirstPremises('Fourth choice AP')
 
   preferredApsPage.clickSave()
+
+  return { preferredAps: [firstChoiceAp, secondChoiceAp, thirdChoiceAp, fourthChoiceAp], preferredPostcode }
 }
 
 export const completeAccessCulturalAndHealthcareTask = async (page: Page) => {
@@ -462,7 +472,7 @@ export const createApplication = async (
   await completeBasicInformationTask(page, withReleaseDate, applicationType, testMappaFlow)
 
   // And I complete the Type of AP Task
-  await completeTypeOfApTask(page)
+  const apType = await completeTypeOfApTask(page)
 
   // And I complete the Oasys Import Task
   await completeOasysImportTask(page, oasysSections)
@@ -474,7 +484,7 @@ export const createApplication = async (
   await completePrisonNotesTask(page)
 
   // And I complete the Location Factors Task
-  await completeLocationFactorsTask(page)
+  const { preferredAps, preferredPostcode } = await completeLocationFactorsTask(page)
 
   // And I complete the Access, Cultural and Healthcare Task
   await completeAccessCulturalAndHealthcareTask(page)
@@ -499,7 +509,7 @@ export const createApplication = async (
 
   const url = page.url()
 
-  return url.match(/applications\/(.+)\//)[1]
+  return { id: url.match(/applications\/(.+)\//)[1], preferredAps, apType, preferredPostcode }
 }
 
 export const withdrawAnApplicationBeforeSubmission = async (page: Page, applicationId: string) => {
