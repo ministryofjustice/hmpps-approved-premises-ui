@@ -12,7 +12,6 @@ export default Factory.define<NewCas1SpaceBooking>(() => {
     arrivalDate: DateFormats.dateObjToIsoDate(startDate),
     departureDate: DateFormats.dateObjToIsoDate(endDate),
     premisesId: faker.string.uuid(),
-    placementRequestId: faker.string.uuid(),
     requirements: spaceBookingRequirementsFactory.build(),
   }
 })
