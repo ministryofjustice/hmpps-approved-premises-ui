@@ -2,9 +2,7 @@ import { ClientTokenAuthentication, FliptClient } from '@flipt-io/flipt'
 import config from '../config'
 import logger from '../../logger'
 
-export type FeatureFlag =
-  | 'allow-sufficient-information-request-without-confirmation'
-  | 'show-search-by-CRN-timeline-navigation'
+export type FeatureFlag = 'allow-sufficient-information-request-without-confirmation'
 
 export default class FeatureFlagService {
   fliptClient: FliptClient | null
