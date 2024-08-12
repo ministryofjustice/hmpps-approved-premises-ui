@@ -31,16 +31,17 @@ describe('homePageDashboard', () => {
   })
 
   describe('sectionsForUser', () => {
-    it('should return Apply for a user with no roles', () => {
+    const defaultSections = [sections.apply, sections.personalTimeline]
+    it('should return Apply and the timeline for a user with no roles', () => {
       const user = userDetailsFactory.build({ roles: [] })
 
-      expect(sectionsForUser(user)).toEqual([sections.apply])
+      expect(sectionsForUser(user)).toEqual(defaultSections)
     })
 
     it('should return Apply and Assess sections for a user with cas1 view assigned assessments permission', () => {
       const user = userDetailsFactory.build({ permissions: ['cas1_view_assigned_assessments'] })
 
-      expect(sectionsForUser(user)).toEqual([sections.apply, sections.assess])
+      expect(sectionsForUser(user)).toEqual([...defaultSections, sections.assess])
     })
 
     it('should return Apply section for a user with the manager role', () => {
@@ -79,7 +80,7 @@ describe('homePageDashboard', () => {
     it('should return Apply sections for a user with a matcher role', () => {
       const user = userDetailsFactory.build({ roles: ['matcher'] })
 
-      expect(sectionsForUser(user)).toEqual([sections.apply])
+      expect(sectionsForUser(user)).toEqual([...defaultSections])
     })
 
     it('should return all except match sections for a user with all roles and user permissions', () => {
@@ -89,7 +90,7 @@ describe('homePageDashboard', () => {
       })
 
       expect(sectionsForUser(user)).toEqual([
-        sections.apply,
+        ...defaultSections,
         sections.assess,
         sections.manage,
         sections.workflow,
@@ -101,7 +102,7 @@ describe('homePageDashboard', () => {
     it('should return the user management section for a user with a role admin role', () => {
       const user = userDetailsFactory.build({ roles: ['role_admin'] })
 
-      expect(sectionsForUser(user)).toEqual([sections.apply, sections.userManagement])
+      expect(sectionsForUser(user)).toEqual([...defaultSections, sections.userManagement])
     })
 
     it('should return the out of service beds section for a user with a CRU Member role', () => {
