@@ -7,10 +7,8 @@ import { itShouldHavePreviousValue } from '../../../shared-examples'
 import SufficientInformation, { Body } from './sufficientInformation'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { retrieveFeatureFlag } from '../../../../utils/retrieveFeatureFlag'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
-jest.mock('../../../../utils/retrieveFeatureFlag')
 
 describe('SufficientInformation', () => {
   const assessment = assessmentFactory.build()
@@ -54,10 +52,6 @@ describe('SufficientInformation', () => {
     it('should initialize the page and create a note when sufficientInformation is no and the page has not already been completed', async () => {
       const body: Body = { sufficientInformation: 'no', query }
 
-      when(retrieveFeatureFlag)
-        .calledWith('allow-sufficient-information-request-without-confirmation')
-        .mockReturnValue(true)
-
       when(retrieveOptionalQuestionResponseFromFormArtifact)
         .calledWith(assessment, SufficientInformation, 'sufficientInformation')
         .mockReturnValue(undefined)
@@ -66,15 +60,6 @@ describe('SufficientInformation', () => {
 
       expect(page.body).toEqual(body)
       expect(assessmentService.createClarificationNote).toHaveBeenCalledWith('token', assessment.id, { query })
-    })
-
-    it('should initialize the page and not create a note when dontShowConfirmationPage is false', async () => {
-      const body: Body = { sufficientInformation: 'no', query }
-
-      const page = await SufficientInformation.initialize(body, assessment, 'token', fromPartial({ assessmentService }))
-
-      expect(page.body).toEqual(body)
-      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
     })
 
     it('should initialize the page and not create a note when sufficientInformation is no and the page has already been completed', async () => {

@@ -6,7 +6,6 @@ import { sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { retrieveFeatureFlag } from '../../../../utils/retrieveFeatureFlag'
 
 export type Body = { sufficientInformation?: YesOrNo; query?: string }
 
@@ -26,9 +25,7 @@ export default class SufficientInformation implements TasklistPage {
   constructor(
     public body: Body,
     private readonly assessment: Assessment,
-  ) {
-    this.dontShowConfirmationPage = retrieveFeatureFlag('allow-sufficient-information-request-without-confirmation')
-  }
+  ) {}
 
   static async initialize(
     body: Body,
@@ -36,11 +33,9 @@ export default class SufficientInformation implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ): Promise<SufficientInformation> {
-    const dontShowConfirmationPage = retrieveFeatureFlag('allow-sufficient-information-request-without-confirmation')
-
     const page = new SufficientInformation(body, assessment)
 
-    if (dontShowConfirmationPage && page.body.sufficientInformation === 'no' && !page.previouslyRequested()) {
+    if (page.body.sufficientInformation === 'no' && !page.previouslyRequested()) {
       await dataServices.assessmentService.createClarificationNote(token, assessment.id, { query: body.query })
     }
 
