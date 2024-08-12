@@ -22,7 +22,6 @@ import SpaceService from './spaceService'
 import ReportService from './reportService'
 import ApAreaService from './apAreaService'
 import AppealService from './appealService'
-import FeatureFlagService from './featureFlagService'
 
 import config, { AuditConfig } from '../config'
 
@@ -69,7 +68,6 @@ export const services = () => {
   const spaceService = new SpaceService(bedClientBuilder)
   const reportService = new ReportService(reportClientBuilder)
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
-  const featureFlagService = new FeatureFlagService()
 
   return {
     appealService,
@@ -92,7 +90,6 @@ export const services = () => {
     spaceService,
     reportService,
     apAreaService,
-    featureFlagService,
   }
 }
 
@@ -118,5 +115,4 @@ export {
   SpaceService,
   ReportService,
   ApAreaService,
-  FeatureFlagService,
 }
