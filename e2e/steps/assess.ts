@@ -171,10 +171,12 @@ export const addMatchingInformation = async (page: Page) => {
   // Agree to the dates of placement
   await matchingInformationPage.checkRadio('Yes')
 
-  const [startDate, endDate] = (await page.locator('.dates-of-placement').textContent()).split(' - ') as [
-    string,
-    string,
-  ]
+  let startDate
+  let endDate
+
+  if (await page.locator('.dates-of-placement').isVisible()) {
+    ;[startDate, endDate] = (await page.locator('.dates-of-placement').textContent()).split(' - ') as [string, string]
+  }
   const duration = await page.locator('.placement-duration').textContent()
 
   await matchingInformationPage.clickSubmit()
