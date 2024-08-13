@@ -7,6 +7,7 @@ export type ApprovedPremisesUserPermission =
   | 'cas1_view_cru_dashboard'
   | 'cas1_view_manage_tasks'
   | 'cas1_view_out_of_service_beds'
+  | 'cas1_out_of_service_bed_create'
   | 'cas1_process_an_appeal'
   | 'cas1_assess_placement_application'
   | 'cas1_assess_placement_request'

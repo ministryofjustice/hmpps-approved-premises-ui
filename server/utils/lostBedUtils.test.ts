@@ -22,8 +22,8 @@ describe('lostBedUtils', () => {
   })
 
   describe('lostBedTableHeaders', () => {
-    it('returns table headers for a workflow manager', () => {
-      const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
+    it('returns table headers for a user with cas1 out of service bed create permission', () => {
+      const user = userDetailsFactory.build({ roles: [], permissions: ['cas1_out_of_service_bed_create'] })
 
       expect(lostBedTableHeaders(user)).toEqual([
         {
@@ -80,8 +80,8 @@ describe('lostBedUtils', () => {
     const lostBed = lostBedFactory.build()
     const premisesId = 'premisesId'
 
-    it('returns table rows for a workflow manager', () => {
-      const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
+    it('returns table rows for a user with create out of service bed permission', () => {
+      const user = userDetailsFactory.build({ roles: [], permissions: ['cas1_out_of_service_bed_create'] })
 
       const expectedRows = [
         [
@@ -98,8 +98,8 @@ describe('lostBedUtils', () => {
       expect(rows).toEqual(expectedRows)
     })
 
-    it('returns table rows for a non workflow manager', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
+    it('returns table rows for a user without create out of service bed permission', () => {
+      const user = userDetailsFactory.build({ roles: [], permissions: [] })
       const expectedRows = [
         [
           { text: lostBed.bedName },
