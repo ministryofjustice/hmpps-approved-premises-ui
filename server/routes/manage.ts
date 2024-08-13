@@ -137,7 +137,8 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.lostBeds.new.pattern, lostBedsController.new(), {
     auditEvent: 'NEW_LOST_BED',
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager', 'future_manager'],
+    allowedRoles: [],
+    allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
   post(paths.lostBeds.create.pattern, lostBedsController.create(), {
     auditEvent: 'CREATE_LOST_BED_SUCCESS',
@@ -147,10 +148,19 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'CREATE_LOST_BED_FAILURE',
       },
     ],
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
+    allowedRoles: [],
+    allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
-  get(paths.lostBeds.index.pattern, lostBedsController.index(), { auditEvent: 'LIST_LOST_BEDS' })
-  get(paths.lostBeds.show.pattern, lostBedsController.show(), { auditEvent: 'SHOW_LOST_BED' })
+  get(paths.lostBeds.index.pattern, lostBedsController.index(), {
+    auditEvent: 'LIST_LOST_BEDS',
+    allowedRoles: [],
+    allowedPermissions: ['cas1_view_out_of_service_beds'],
+  })
+  get(paths.lostBeds.show.pattern, lostBedsController.show(), {
+    auditEvent: 'SHOW_LOST_BED',
+    allowedRoles: [],
+    allowedPermissions: ['cas1_view_out_of_service_beds'],
+  })
   post(paths.lostBeds.update.pattern, lostBedsController.update(), {
     auditEvent: 'UPDATE_LOST_BED_SUCCESS',
     auditBodyParams: ['cancel'],
@@ -160,7 +170,8 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'UPDATE_LOST_BED_FAILURE',
       },
     ],
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
+    allowedRoles: [],
+    allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
 
   get(paths.bookings.moves.new.pattern, moveBedsController.new(), {
