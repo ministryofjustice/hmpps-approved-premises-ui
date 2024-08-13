@@ -23,14 +23,6 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     })
   }
 
-  if (user.roles?.includes('workflow_manager') && !user.roles?.includes('future_manager')) {
-    actions.push({
-      text: 'Create a placement',
-      classes: 'govuk-button--secondary',
-      href: paths.bookings.new({ premisesId: premises.id }),
-    })
-  }
-
   if (user.roles?.includes('manager')) {
     actions.push({
       text: 'View calendar',

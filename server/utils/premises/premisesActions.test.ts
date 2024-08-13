@@ -24,28 +24,6 @@ describe('premisesActions', () => {
       })
     })
 
-    describe('if the user doesnt have the future_manager role', () => {
-      it('includes the CREATE PLACEMENT action', () => {
-        expect(premisesActions(user, premises)).toContainAction({
-          text: 'Create a placement',
-          classes: 'govuk-button--secondary',
-          href: paths.bookings.new({ premisesId: premises.id }),
-        })
-      })
-    })
-
-    describe('if the user does have the future_manager role', () => {
-      it('does not include the CREATE PLACEMENT action', () => {
-        expect(
-          premisesActions(userDetails.build({ roles: ['workflow_manager', 'future_manager'] }), premises),
-        ).not.toContainAction({
-          text: 'Create a placement',
-          classes: 'govuk-button--secondary',
-          href: paths.bookings.new({ premisesId: premises.id }),
-        })
-      })
-    })
-
     it('includes the MANAGE BEDS action', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
