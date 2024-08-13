@@ -23,7 +23,7 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     })
   }
 
-  if (user.roles?.includes('workflow_manager')) {
+  if (user.roles?.includes('workflow_manager') && !user.roles?.includes('future_manager')) {
     actions.push({
       text: 'Create a placement',
       classes: 'govuk-button--secondary',
