@@ -17,6 +17,7 @@ import {
   apTypeRow,
   arrivalDateRow,
   calculateDepartureDate,
+  characteristicsRow,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeSpaceSearchResult,
@@ -43,7 +44,6 @@ import {
   startDateObjFromParams,
   summaryCardLink,
   summaryCardRows,
-  townRow,
 } from '.'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { createQueryString } from '../utils'
@@ -88,8 +88,8 @@ describe('matchUtils', () => {
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
-        townRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
+        characteristicsRow(spaceSearchResult),
       ])
     })
   })
@@ -113,6 +113,13 @@ describe('matchUtils', () => {
           key: { text: 'Distance' },
           value: { text: `${spaceSearchResult.distanceInMiles} miles from the desired location` },
         })
+      })
+    })
+
+    it('returns the distance to one decimal place', () => {
+      expect(distanceRow({ ...spaceSearchResult, distanceInMiles: 1.234567 })).toEqual({
+        key: { text: 'Distance' },
+        value: { text: `1.2 miles from the desired location` },
       })
     })
   })
@@ -191,7 +198,7 @@ describe('matchUtils', () => {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.offenceAndRisk.items,
         },
-        'AP & room characteristics': {
+        'Access needs and additional features': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.accessNeeds.items,
         },

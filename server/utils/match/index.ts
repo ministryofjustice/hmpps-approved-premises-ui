@@ -191,8 +191,8 @@ export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeAr
   return [
     apTypeRow(spaceSearchResult.premises.apType),
     addressRow(spaceSearchResult),
-    townRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
+    characteristicsRow(spaceSearchResult),
   ]
 }
 
@@ -205,32 +205,38 @@ export const apTypeRow = (apType: ApType) => ({
   },
 })
 
-export const townRow = (spaceSearchResult: SpaceSearchResult) => ({
-  key: {
-    text: 'Town',
-  },
-  value: {
-    text: spaceSearchResult.premises.town,
-  },
-})
-
 export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
     text: 'Address',
   },
   value: {
-    text: `${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}`,
+    html: `<p>
+           ${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}<br/>
+           ${spaceSearchResult.premises?.town}<br/>
+           ${spaceSearchResult.premises?.postcode}</p>`,
   },
 })
 
-export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => ({
-  key: {
-    text: 'Distance',
-  },
-  value: {
-    text: `${spaceSearchResult.distanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
-  },
-})
+export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
+  return {
+    key: { text: 'Characteristics' },
+    value: {
+      html: `<ul class="govuk-list govuk-list--bullet">${spaceSearchResult.premises.premisesCharacteristics.map(characteristic => `<li>${characteristic.name}</li>`).join(' ')}</ul>`,
+    },
+  }
+}
+
+export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => {
+  const roundedDistanceInMiles = Math.round(spaceSearchResult.distanceInMiles * 10) / 10
+  return {
+    key: {
+      text: 'Distance',
+    },
+    value: {
+      text: `${roundedDistanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
+    },
+  }
+}
 
 export const genderRow = (gender: Gender) => ({
   key: {
@@ -276,7 +282,7 @@ export const groupedCriteria = {
     inputName: 'spaceCharacteristics',
   },
   accessNeeds: {
-    title: 'AP & room characteristics',
+    title: 'Access needs and additional features',
     items: placementRequirementCriteriaLabels,
     inputName: 'spaceCharacteristics',
   },

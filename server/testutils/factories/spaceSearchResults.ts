@@ -6,7 +6,7 @@ import spaceSearchParameters from './spaceSearchParameters'
 import spaceSearchResult from './spaceSearchResult'
 
 export default Factory.define<Cas1SpaceSearchResults>(() => {
-  const numberOfResults = faker.number.int({ min: 1, max: 50 })
+  const numberOfResults = faker.number.int({ min: 1, max: 10 })
   return {
     searchCriteria: spaceSearchParameters.build(),
     resultsCount: numberOfResults,
