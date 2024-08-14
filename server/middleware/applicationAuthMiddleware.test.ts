@@ -52,12 +52,12 @@ describe('applicationAuthMiddleware', () => {
     const user = userDetailsFactory.build({ permissions: ['cas1_booking_create'] })
     const response = createMock<Response>({ locals: { user } })
 
-    const auditedhandler = applicationAuthMiddleware(handler, {
-      allowedRoles: ['manager', 'matcher'],
+    const auditedHandler = applicationAuthMiddleware(handler, {
+      allowedRoles: [],
       allowedPermissions: ['cas1_booking_withdraw', 'cas1_process_an_appeal', 'cas1_booking_create'],
     })
 
-    await auditedhandler(request, response, next)
+    await auditedHandler(request, response, next)
 
     expect(handler).toHaveBeenCalledWith(request, response, next)
   })

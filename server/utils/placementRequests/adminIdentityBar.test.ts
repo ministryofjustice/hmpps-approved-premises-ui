@@ -1,5 +1,10 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { personFactory, placementRequestDetailFactory, restrictedPersonFactory } from '../../testutils/factories'
+import {
+  personFactory,
+  placementRequestDetailFactory,
+  restrictedPersonFactory,
+  userDetailsFactory,
+} from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
@@ -26,7 +31,7 @@ describe('adminIdentityBar', () => {
     it('should return actions to amend a booking if the status is `matched`', () => {
       const userId = 'some-id'
       const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
-      const user = { roles: ['appeals_manager' as const], id: userId }
+      const user = userDetailsFactory.build({ roles: ['appeals_manager'], id: userId })
 
       expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
         {
@@ -76,7 +81,7 @@ describe('adminIdentityBar', () => {
         const userId = 'some-id'
         const user = { roles: ['appeals_manager' as const], id: userId }
 
-        expect(adminActions(placementRequestDetail, fromPartial(user))).toNotContainAction({
+        expect(adminActions(placementRequestDetail, fromPartial(user))).not.toContainAction({
           href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
           text: 'Create placement',
         })
@@ -106,9 +111,13 @@ describe('adminIdentityBar', () => {
       it('does not return the "Search for a space" action when user does not have cas1 booking create permission', () => {
         const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
         const userId = 'some-id'
-        const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_create' as const], id: userId }
+        const user = {
+          roles: ['appeals_manager' as const],
+          permissions: ['cas1_booking_withdraw' as const],
+          id: userId,
+        }
 
-        expect(adminActions(placementRequestDetail, fromPartial(user))).toNotContainAction({
+        expect(adminActions(placementRequestDetail, fromPartial(user))).not.toContainAction({
           href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
           text: 'Search for a space',
         })

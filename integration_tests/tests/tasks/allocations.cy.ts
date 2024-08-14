@@ -77,9 +77,9 @@ context('Task Allocation', () => {
     cy.task('stubApAreaReferenceData', { apArea })
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
 
-    // And I am logged in as a workflow manager
+    // And I am logged in with the cas1 view manage tasks permission
     const me = userFactory.build({ apArea })
-    cy.task('stubAuthUser', { roles: ['workflow_manager'], userId: me.id, apArea: me.apArea })
+    cy.task('stubAuthUser', { roles: [], permissions: ['cas1_view_manage_tasks'], userId: me.id, apArea: me.apArea })
     cy.signIn()
 
     // When I visit the task list page

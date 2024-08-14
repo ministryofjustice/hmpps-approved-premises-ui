@@ -13,7 +13,6 @@ declare global {
   namespace jest {
     interface Matchers<R> {
       toContainAction(expected: Action): R
-      toNotContainAction(notExpected: Action): R
       toContainMenuItem(expected: IdentityBarMenuItem): R
       toMatchStringIgnoringWhitespace(expected: string): R
       toMatchOpenAPISpec({ cas1Namespace }: { cas1Namespace: boolean }): R
@@ -64,25 +63,6 @@ expect.extend({
       message: () =>
         `expected ${this.utils.printReceived(actions)} to contain action ${this.utils.printExpected(argument)}`,
       pass: false,
-    }
-  },
-})
-
-expect.extend({
-  toNotContainAction(actions, argument) {
-    const fail = this.equals(actions, expect.arrayContaining([expect.objectContaining(argument)]))
-
-    if (fail) {
-      return {
-        message: () =>
-          `expected ${this.utils.printReceived(actions)} not to contain action ${this.utils.printExpected(argument)}`,
-        pass: fail,
-      }
-    }
-    return {
-      message: () =>
-        `expected ${this.utils.printReceived(actions)} to contain action ${this.utils.printExpected(argument)}`,
-      pass: true,
     }
   },
 })
