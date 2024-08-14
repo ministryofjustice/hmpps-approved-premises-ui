@@ -9,7 +9,10 @@ export const createNameAnchorElement = (
 ) => {
   if (!linkInProgressApplications && applicationSummary.status === 'started') {
     return textValue(
-      nameOrPlaceholderCopy(person, isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO: ${person.crn}`),
+      nameOrPlaceholderCopy(
+        person,
+        isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO CRN: ${person.crn}`,
+      ),
     )
   }
 
