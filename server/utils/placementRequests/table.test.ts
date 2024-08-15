@@ -49,7 +49,10 @@ describe('tableUtils', () => {
       expect(linkTo).toHaveBeenCalledWith(
         matchPaths.placementRequests.show,
         { id: task.id },
-        { text: task.personName, attributes: { 'data-cy-placementRequestId': task.id } },
+        {
+          text: task.personName,
+          attributes: { 'data-cy-placementRequestId': task.id, 'data-cy-applicationId': task.applicationId },
+        },
       )
     })
 
@@ -63,7 +66,10 @@ describe('tableUtils', () => {
         { id: placementRequest.id },
         {
           text: laoName(placementRequest.person as FullPerson),
-          attributes: { 'data-cy-placementRequestId': placementRequest.id },
+          attributes: {
+            'data-cy-placementRequestId': placementRequest.id,
+            'data-cy-applicationId': placementRequest.applicationId,
+          },
         },
       )
     })
@@ -104,7 +110,10 @@ describe('tableUtils', () => {
         { id: restrictedPersonTask.id },
         {
           text: laoName(restrictedPersonTask.person as FullPerson),
-          attributes: { 'data-cy-placementRequestId': restrictedPersonTask.id },
+          attributes: {
+            'data-cy-placementRequestId': restrictedPersonTask.id,
+            'data-cy-applicationId': restrictedPersonTask.applicationId,
+          },
         },
       )
     })
