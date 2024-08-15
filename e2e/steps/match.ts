@@ -1,11 +1,9 @@
 import { Page } from '@playwright/test'
-import { TestOptions } from '@approved-premises/e2e'
 import { visitDashboard } from './apply'
 import { ConfirmPage, ConfirmationPage } from '../pages/match'
-import { CruDashboard } from '../pages/match/cruDashboard'
 import { E2EDatesOfPlacement, E2EPlacementCharacteristics } from './assess'
-import { PlacementRequestPage } from '../pages/workflow'
-import { Premises } from '../../server/@types/shared'
+import { ListPage, PlacementRequestPage } from '../pages/workflow'
+import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'
 import { SearchScreen } from '../pages/match/searchScreen'
 
@@ -20,23 +18,19 @@ export const shouldShowBookingConfirmation = async (page: Page) => {
 }
 
 export const matchAndBookApplication = async ({
+  applicationId,
   page,
-  person,
   datesOfPlacement,
   duration,
-  isParole,
-  applicationDate,
   apType,
   preferredAps,
   placementCharacteristics,
   preferredPostcode,
 }: {
+  applicationId: Application['id']
   page: Page
-  person: TestOptions['person']
   datesOfPlacement: E2EDatesOfPlacement
   duration: string
-  isParole: boolean
-  applicationDate: string
   apType: ApTypeLabel
   preferredAps: Array<Premises['name']>
   preferredPostcode: string
@@ -48,16 +42,10 @@ export const matchAndBookApplication = async ({
   // And I click the link to the CRU Dashboard
   await dashboard.clickCruDashboard()
 
-  const cruDashboard = new CruDashboard(page)
+  let cruDashboard = new ListPage(page)
 
   // And I select the placement request
-  cruDashboard.selectPlacementRequest({
-    applicationDate,
-    person,
-    arrivalDate: datesOfPlacement.startDate,
-    isParole,
-    lengthOfStay: duration,
-  })
+  cruDashboard.choosePlacementApplicationWithId(applicationId)
 
   const placementRequestPage = new PlacementRequestPage(page)
 
