@@ -6,6 +6,7 @@ import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'
 import { SearchScreen } from '../pages/match/searchScreen'
+import { BookingScreen } from '../pages/match/bookingScreen'
 
 export const confirmBooking = async (page: Page) => {
   const confirmPage = new ConfirmPage(page)
@@ -77,4 +78,20 @@ export const matchAndBookApplication = async ({
     preferredPostcode,
     placementCharacteristics,
   })
+
+  // And I select an AP
+  const premisesName = await searchScreen.retrieveFirstAPName()
+  await searchScreen.selectFirstAP()
+
+  // Then I should see the booking screen for that AP
+  const bookingScreen = await BookingScreen.initialize(page, premisesName)
+
+  // Should show the booking details
+  await bookingScreen.shouldShowDatesOfPlacement(datesOfPlacement)
+
+  // And I confirm the booking
+  await bookingScreen.clickConfirm()
+
+  // Then I should see the CRU dashboard matched tab
+  cruDashboard = new ListPage(page)
 }
