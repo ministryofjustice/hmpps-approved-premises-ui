@@ -181,5 +181,4 @@ test:e2e:local:ui
 
 ## Feature flags
 
-We use [Flipt](http://flipt.io) for feature flags. See https://github.com/ministryofjustice/hmpps-approved-premises-ui/blob/main/doc/how-to/add-a-feature-flag.md
-for more details
+We currently use environment variables for feature flags.
