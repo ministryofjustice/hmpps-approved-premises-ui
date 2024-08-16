@@ -51,7 +51,7 @@
 
 						<div class="moj-filter">
 							<div class="moj-filter__header govuk-!-padding-left-2">
-								<h2 class="govuk-heading-m">Filters</h2>
+								<h3 class="govuk-heading-m">Filters</h2>
 							</div>
 							<div class="space-search-inputs">
 
@@ -141,8 +141,9 @@
 							{{ govukSummaryList({
 								card: {
 									title: {
-										text: spaceSearchResult.premises.name
-									},
+										text: spaceSearchResult.premises.name,
+										headingLevel: 3
+										},
 									actions: {
 										items: [
 											{

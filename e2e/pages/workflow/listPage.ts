@@ -63,13 +63,26 @@ export class ListPage extends BasePage {
   }
 
   async choosePlacementApplicationWithId(id: string) {
-    const assessmentRows = this.page.getByRole('row').filter({ has: this.page.getByText('Placement application') })
-
-    await assessmentRows
+    const placementApplication = this.page
+      .getByRole('row')
       .filter({ has: this.page.locator(`[data-cy-applicationId="${id}"]`) })
       .first()
       .getByRole('link')
-      .click()
+
+    const nextLink = this.page.getByRole('link', { name: 'Next' })
+
+    try {
+      await expect(placementApplication).toBeVisible({ timeout: 1000 })
+      await placementApplication.click()
+    } catch (err) {
+      try {
+        await expect(nextLink).toBeVisible()
+      } catch {
+        throw err
+      }
+      await nextLink.click()
+      await this.choosePlacementApplicationWithId(id)
+    }
   }
 
   async chooseFirstAssessment() {

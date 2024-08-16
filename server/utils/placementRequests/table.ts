@@ -104,7 +104,10 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
       html: linkTo(
         matchPaths.placementRequests.show,
         { id: item.id },
-        { text: item.personName, attributes: { 'data-cy-placementRequestId': item.id } },
+        {
+          text: item.personName,
+          attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
+        },
       ),
     }
   }
@@ -113,7 +116,10 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
       html: linkTo(
         adminPaths.admin.placementRequests.show,
         { id: item.id },
-        { text: laoName(item.person), attributes: { 'data-cy-placementRequestId': item.id } },
+        {
+          text: laoName(item.person),
+          attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
+        },
       ),
     }
   }

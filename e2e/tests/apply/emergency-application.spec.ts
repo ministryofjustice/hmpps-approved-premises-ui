@@ -3,7 +3,6 @@ import { createApplication } from '../../steps/apply'
 import { assessApplication } from '../../steps/assess'
 import { signIn } from '../../steps/signIn'
 import { matchAndBookApplication } from '../../steps/match'
-import { DateFormats } from '../../../server/utils/dateUtils'
 
 test('Apply, assess, match and book an emergency application for an Approved Premises', async ({
   page,
@@ -27,12 +26,10 @@ test('Apply, assess, match and book an emergency application for an Approved Pre
   )
 
   await matchAndBookApplication({
+    applicationId: id,
     page,
-    person,
     datesOfPlacement,
     duration,
-    isParole: false,
-    applicationDate: DateFormats.dateObjtoUIDate(new Date(), { format: 'short' }),
     placementCharacteristics,
     apType,
     preferredAps,

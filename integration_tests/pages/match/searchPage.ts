@@ -43,7 +43,7 @@ export default class SearchPage extends Page {
     cy.get('h2').contains(`${spaceSearchResults.resultsCount} Approved Premises found`)
 
     spaceSearchResults.results.forEach(result => {
-      cy.contains('h2', result.premises.name)
+      cy.contains('h3', result.premises.name)
         .parent()
         .parent()
         .within(() => {

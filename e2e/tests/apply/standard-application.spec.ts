@@ -3,7 +3,6 @@ import { createApplication } from '../../steps/apply'
 import { assessApplication } from '../../steps/assess'
 import { signIn } from '../../steps/signIn'
 import { matchAndBookApplication } from '../../steps/match'
-import { DateFormats } from '../../../server/utils/dateUtils'
 
 test('Apply, assess, match and book an application for an Approved Premises with a release date', async ({
   page,
@@ -22,15 +21,13 @@ test('Apply, assess, match and book an application for an Approved Premises with
     id,
   )
   await matchAndBookApplication({
+    applicationId: id,
     page,
-    person,
     apType,
     preferredAps,
     datesOfPlacement,
     duration,
     preferredPostcode,
     placementCharacteristics,
-    isParole: false,
-    applicationDate: DateFormats.dateObjtoUIDate(new Date(), { format: 'short' }),
   })
 })

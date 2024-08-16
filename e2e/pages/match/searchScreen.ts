@@ -15,6 +15,10 @@ export class SearchScreen extends BasePage {
     await this.page.getByRole('button', { name: 'Update' }).click()
   }
 
+  async selectFirstAP() {
+    await this.page.getByRole('link', { name: 'View spaces' }).first().click()
+  }
+
   shouldShowApplicationDetails({
     preferredAps,
     datesOfPlacement,
@@ -68,5 +72,9 @@ export class SearchScreen extends BasePage {
     desirableCharacteristics.forEach(async characteristic => {
       await this.page.locator('.govuk-details').getByText(characteristic).isVisible()
     })
+  }
+
+  async retrieveFirstAPName(): Promise<Premises['name']> {
+    return this.page.locator('.govuk-summary-card__title').first().innerText()
   }
 }
