@@ -16,21 +16,16 @@ test('Apply, assess, match and book an emergency application for an Approved Pre
     { page, person, oasysSections, applicationType: 'emergency' },
     true,
   )
-  const { datesOfPlacement, duration, placementCharacteristics } = await assessApplication(
-    { page, assessor, person },
-    id,
-    {
-      applicationType: 'emergency',
-      allocatedUser: emergencyApplicationUser,
-    },
-  )
+  const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id, {
+    applicationType: 'emergency',
+    allocatedUser: emergencyApplicationUser,
+  })
 
   await matchAndBookApplication({
     applicationId: id,
     page,
     datesOfPlacement,
     duration,
-    placementCharacteristics,
     apType,
     preferredAps,
     preferredPostcode,
