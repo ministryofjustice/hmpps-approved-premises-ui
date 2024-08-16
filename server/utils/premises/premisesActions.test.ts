@@ -5,7 +5,7 @@ import userDetails from '../../testutils/factories/userDetails'
 
 describe('premisesActions', () => {
   describe('for users with the role "workflow_manager"', () => {
-    const user = userDetails.build({ roles: ['workflow_manager'], permissions: ['cas1_adhoc_booking_create'] })
+    const user = userDetails.build({ roles: ['workflow_manager'] })
     const premises = premisesFactory.build()
 
     it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {

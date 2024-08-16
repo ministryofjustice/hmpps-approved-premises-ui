@@ -1,10 +1,4 @@
-import { fromPartial } from '@total-typescript/shoehorn'
-import {
-  personFactory,
-  placementRequestDetailFactory,
-  restrictedPersonFactory,
-  userDetailsFactory,
-} from '../../testutils/factories'
+import { personFactory, placementRequestDetailFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
@@ -29,27 +23,9 @@ describe('adminIdentityBar', () => {
     })
 
     it('should return actions to amend a booking if the status is `matched`', () => {
-      const userId = 'some-id'
       const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
-      const user = userDetailsFactory.build({ roles: ['appeals_manager'], id: userId })
 
-      expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
-        {
-          href: managePaths.bookings.dateChanges.new({
-            premisesId: placementRequestDetail.booking?.premisesId || '',
-            bookingId: placementRequestDetail.booking?.id || '',
-          }),
-          text: 'Amend placement',
-        },
-      ])
-    })
-
-    it('should return actions to amend and withdraw a booking if the status is `matched` and user has the withdraw permission ', () => {
-      const userId = 'some-id'
-      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
-      const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_withdraw' as const], id: userId }
-
-      expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
+      expect(adminActions(placementRequestDetail)).toEqual([
         {
           href: managePaths.bookings.dateChanges.new({
             premisesId: placementRequestDetail.booking?.premisesId || '',
@@ -65,23 +41,10 @@ describe('adminIdentityBar', () => {
     })
 
     describe('if ENABLE_V2_MATCH is false', () => {
-      it('returns the "Create placement" action', () => {
+      it('returns the "Create placment" action', () => {
         const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_create' as const], id: userId }
 
-        expect(adminActions(placementRequestDetail, fromPartial(user))).toContainAction({
-          href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
-          text: 'Create placement',
-        })
-      })
-
-      it('does not return the "Create placement" action when user does not have cas1 booking create permission', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = { roles: ['appeals_manager' as const], id: userId }
-
-        expect(adminActions(placementRequestDetail, fromPartial(user))).not.toContainAction({
+        expect(adminActions(placementRequestDetail)).toContainAction({
           href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
           text: 'Create placement',
         })
@@ -99,25 +62,8 @@ describe('adminIdentityBar', () => {
 
       it('returns the "Search for a space" action', () => {
         const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_create' as const], id: userId }
 
-        expect(adminActions(placementRequestDetail, fromPartial(user))).toContainAction({
-          href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
-          text: 'Search for a space',
-        })
-      })
-
-      it('does not return the "Search for a space" action when user does not have cas1 booking create permission', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = {
-          roles: ['appeals_manager' as const],
-          permissions: ['cas1_booking_withdraw' as const],
-          id: userId,
-        }
-
-        expect(adminActions(placementRequestDetail, fromPartial(user))).not.toContainAction({
+        expect(adminActions(placementRequestDetail)).toContainAction({
           href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
           text: 'Search for a space',
         })
@@ -177,23 +123,19 @@ ${nameOrPlaceholderCopy(placementRequestDetail.person)}
   describe('adminIdentityBar', () => {
     it('should return the admin identity bar', () => {
       const placementRequestDetail = placementRequestDetailFactory.build()
-      const userId = 'some-id'
-      const user = { roles: ['appeals_manager' as const], id: userId }
 
-      expect(adminIdentityBar(placementRequestDetail, fromPartial(user))).toEqual({
+      expect(adminIdentityBar(placementRequestDetail)).toEqual({
         title: {
           html: title(placementRequestDetail),
         },
-        menus: [{ items: adminActions(placementRequestDetail, fromPartial(user)) }],
+        menus: [{ items: adminActions(placementRequestDetail) }],
       })
     })
 
     it('should return the bar without a menu if the placement request has been withdrawn', () => {
       const placementRequestDetail = placementRequestDetailFactory.build({ isWithdrawn: true })
-      const userId = 'some-id'
-      const user = { roles: ['appeals_manager' as const], id: userId }
 
-      expect(adminIdentityBar(placementRequestDetail, fromPartial(user))).toEqual({
+      expect(adminIdentityBar(placementRequestDetail)).toEqual({
         title: {
           html: title(placementRequestDetail),
         },

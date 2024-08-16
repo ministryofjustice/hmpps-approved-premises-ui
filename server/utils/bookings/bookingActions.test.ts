@@ -7,7 +7,6 @@ describe('bookingUtils bookingActions', () => {
   describe('behaviour not linked to roles', () => {
     const user = userDetailsFactory.build({
       roles: ['workflow_manager', 'manager', 'legacy_manager'],
-      permissions: ['cas1_booking_withdraw'],
     })
 
     it('should return null when the booking is cancelled, departed or did not arrive', () => {

@@ -4,7 +4,7 @@ import { TableCell, UserDetails } from '@approved-premises/ui'
 import { isWithinInterval } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
-import { hasPermission } from './users'
+import { hasRole } from './users'
 import { DateFormats } from './dateUtils'
 
 export const lostBedTableHeaders = (user: UserDetails) => {
@@ -29,7 +29,7 @@ export const lostBedTableHeaders = (user: UserDetails) => {
     },
   ]
 
-  if (hasPermission(user, ['cas1_out_of_service_bed_create'])) {
+  if (hasRole(user, 'workflow_manager')) {
     headers.push({
       text: 'Manage',
     })
@@ -49,7 +49,7 @@ export const lostBedTableRows = (beds: Array<LostBed>, premisesId: string, user:
       referenceNumberCell(bed.referenceNumber),
     ]
 
-    if (hasPermission(user, ['cas1_out_of_service_bed_create'])) {
+    if (hasRole(user, 'workflow_manager')) {
       rows.push(actionCell(bed, premisesId))
     }
 

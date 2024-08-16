@@ -31,8 +31,8 @@ context('OutOfServiceBeds', () => {
     const bedDetail = bedDetailFactory.build({ id: outOfServiceBed.bed.id, name: bedName })
     cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
-    // Given I am signed in with permissions to view and create out of service beds
-    signIn([], ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'])
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
 
     // When I navigate to the out of service bed form
     const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
@@ -64,8 +64,8 @@ context('OutOfServiceBeds', () => {
   })
 
   it('should show errors', () => {
-    // Given I am signed in with permission to create an out of service bed
-    signIn([], ['cas1_out_of_service_bed_create'])
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
 
     // And a out of service bed is available
     const premises = premisesFactory.build()
@@ -86,8 +86,8 @@ context('OutOfServiceBeds', () => {
   })
 
   it('should show an error when there are booking conflicts', () => {
-    // Given I am signed in with permission to create an out of service bed
-    signIn([], ['cas1_out_of_service_bed_create'])
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
 
     const premises = extendedPremisesSummaryFactory.build()
     const conflictingBooking = bookingFactory.build()

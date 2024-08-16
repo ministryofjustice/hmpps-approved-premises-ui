@@ -19,8 +19,8 @@ context('Beds', () => {
   })
 
   it('should allow me to visit a bed from the bed list page and mark it out of service', () => {
-    // Given I am signed in as a workflow manager and with permission to create out of service bed
-    signIn(['workflow_manager'], ['cas1_out_of_service_bed_create'])
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
 
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId)
@@ -54,8 +54,8 @@ context('Beds', () => {
     cy.task('stubLostBedsList', { premisesId, lostBeds: [lostBed] })
     cy.task('stubLostBedUpdate', { premisesId, lostBed })
 
-    // And I am signed in with permission to view out of service beds
-    signIn([], ['cas1_view_out_of_service_beds'])
+    // And I am signed in as a workflow manager
+    signIn(['workflow_manager'])
 
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId)
