@@ -17,15 +17,11 @@ test('Apply, assess, match and book an short notice application for an Approved 
     true,
     true,
   )
-  const { duration, datesOfPlacement, placementCharacteristics } = await assessApplication(
-    { page, assessor, person },
-    id,
-    {
-      applicationType: 'shortNotice',
-      acceptApplication: true,
-      allocatedUser: emergencyApplicationUser,
-    },
-  )
+  const { duration, datesOfPlacement } = await assessApplication({ page, assessor, person }, id, {
+    applicationType: 'shortNotice',
+    acceptApplication: true,
+    allocatedUser: emergencyApplicationUser,
+  })
 
   await matchAndBookApplication({
     applicationId: id,
@@ -35,6 +31,5 @@ test('Apply, assess, match and book an short notice application for an Approved 
     datesOfPlacement,
     duration,
     preferredPostcode,
-    placementCharacteristics,
   })
 })

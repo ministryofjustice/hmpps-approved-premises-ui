@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
 import { visitDashboard } from './apply'
 import { ConfirmPage, ConfirmationPage } from '../pages/match'
-import { E2EDatesOfPlacement, E2EPlacementCharacteristics } from './assess'
+import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'
@@ -25,7 +25,6 @@ export const matchAndBookApplication = async ({
   duration,
   apType,
   preferredAps,
-  placementCharacteristics,
   preferredPostcode,
 }: {
   applicationId: Application['id']
@@ -35,7 +34,6 @@ export const matchAndBookApplication = async ({
   apType: ApTypeLabel
   preferredAps: Array<Premises['name']>
   preferredPostcode: string
-  placementCharacteristics: E2EPlacementCharacteristics
 }) => {
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
@@ -63,7 +61,6 @@ export const matchAndBookApplication = async ({
     duration,
     apType,
     preferredPostcode,
-    placementCharacteristics,
   })
 
   // And I click the 'Update' button
@@ -76,7 +73,6 @@ export const matchAndBookApplication = async ({
     duration,
     apType,
     preferredPostcode,
-    placementCharacteristics,
   })
 
   // And I select an AP
