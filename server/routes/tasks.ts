@@ -12,11 +12,7 @@ export default function routes(controllers: Controllers, router: Router, service
 
   const { tasksController, allocationsController } = controllers
 
-  get(paths.tasks.index.pattern, tasksController.index(), {
-    auditEvent: 'LIST_TASKS',
-    allowedRoles: [],
-    allowedPermissions: ['cas1_view_manage_tasks'],
-  })
+  get(paths.tasks.index.pattern, tasksController.index(), { auditEvent: 'LIST_TASKS' })
   get(paths.tasks.show.pattern, tasksController.show(), { auditEvent: 'SHOW_TASK' })
   post(paths.tasks.allocations.create.pattern, allocationsController.create(), {
     auditEvent: 'REALLOCATE_TASK_SUCCESS',

@@ -69,10 +69,12 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).not.toContain(sections.manage)
     })
 
-    it('should return Apply for a user with a workflow manager role', () => {
+    it('should return Apply, Workflow, CRU dashboard sections for a user with a workflow manager role', () => {
       const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
 
       expect(sectionsForUser(user)).toContain(sections.apply)
+      expect(sectionsForUser(user)).toContain(sections.workflow)
+      expect(sectionsForUser(user)).toContain(sections.cruDashboard)
     })
 
     it('should return Apply sections for a user with a matcher role', () => {
@@ -84,7 +86,7 @@ describe('homePageDashboard', () => {
     it('should return all except match sections for a user with all roles and user permissions', () => {
       const user = userDetailsFactory.build({
         roles: ['assessor', 'manager', 'matcher', 'workflow_manager', 'report_viewer'],
-        permissions: ['cas1_view_assigned_assessments', 'cas1_view_cru_dashboard', 'cas1_view_manage_tasks'],
+        permissions: ['cas1_view_assigned_assessments'],
       })
 
       expect(sectionsForUser(user)).toEqual([
@@ -103,22 +105,10 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([...defaultSections, sections.userManagement])
     })
 
-    it('should return the cru section for a user with the cas1 view cru dashboard permission', () => {
-      const user = userDetailsFactory.build({ permissions: ['cas1_view_cru_dashboard'] })
-
-      expect(sectionsForUser(user)).toEqual(expect.arrayContaining([sections.cruDashboard]))
-    })
-
-    it('should return the out of service beds section for a user with the cas1 view out of service beds permission', () => {
-      const user = userDetailsFactory.build({ permissions: ['cas1_view_out_of_service_beds'] })
+    it('should return the out of service beds section for a user with a CRU Member role', () => {
+      const user = userDetailsFactory.build({ roles: ['cru_member'] })
 
       expect(sectionsForUser(user)).toEqual(expect.arrayContaining([sections.outOfServiceBeds]))
-    })
-
-    it('should return the workflow section for a user with the cas1 view manage tasks permission', () => {
-      const user = userDetailsFactory.build({ permissions: ['cas1_view_manage_tasks'] })
-
-      expect(sectionsForUser(user)).toEqual(expect.arrayContaining([sections.workflow]))
     })
 
     it('should not return duplicates where multiple roles contain the same sections', () => {

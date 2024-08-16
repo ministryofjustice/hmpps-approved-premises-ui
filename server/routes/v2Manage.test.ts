@@ -56,11 +56,10 @@ describe('v2Manage routes', () => {
     expect(getSpy).toHaveBeenCalledWith(paths.v2Manage.premises.beds.show.pattern, v2BedsController.show(), {
       auditEvent: 'SHOW_BED',
       allowedRoles: ['future_manager', 'cru_member'],
-      allowedPermissions: ['cas1_out_of_service_bed_create'],
     })
   })
 
-  it('should allow a user with permission cas1 out of service bed create to access the new out of service bed view', () => {
+  it('should allow a user with role cru_member to access the new out of service bed view', () => {
     v2ManageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(
@@ -68,13 +67,12 @@ describe('v2Manage routes', () => {
       v2OutOfServiceBedsController.new(),
       {
         auditEvent: 'NEW_OUT_OF_SERVICE_BED',
-        allowedRoles: [],
-        allowedPermissions: ['cas1_out_of_service_bed_create'],
+        allowedRoles: ['future_manager', 'cru_member'],
       },
     )
   })
 
-  it('should allow a user with permission cas1 out of service bed create to create an out of service bed', () => {
+  it('should allow a user with role cru_member to create an out of service bed', () => {
     v2ManageRoutes(controllers, router, services)
 
     expect(postSpy).toHaveBeenCalledWith(
@@ -88,13 +86,12 @@ describe('v2Manage routes', () => {
             auditEvent: 'CREATE_OUT_OF_SERVICE_BED_FAILURE',
           },
         ],
-        allowedRoles: [],
-        allowedPermissions: ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'],
+        allowedRoles: ['future_manager', 'cru_member'],
       },
     )
   })
 
-  it('should allow a user with permission cas1 view out of service beds to view out of service beds for a premises', () => {
+  it('should allow a user with role cru_member to view out of service beds for a premises', () => {
     v2ManageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(
@@ -102,13 +99,12 @@ describe('v2Manage routes', () => {
       v2OutOfServiceBedsController.premisesIndex(),
       {
         auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
-        allowedRoles: [],
-        allowedPermissions: ['cas1_view_out_of_service_beds'],
+        allowedRoles: ['future_manager', 'cru_member'],
       },
     )
   })
 
-  it('should allow a user with permission cas1 view out of service beds to to access the update out of service bed view', () => {
+  it('should allow a user with role cru_member to access the update out of service bed view', () => {
     v2ManageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(
@@ -116,13 +112,12 @@ describe('v2Manage routes', () => {
       v2UpdateOutOfServiceBedsController.new(),
       {
         auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
-        allowedRoles: [],
-        allowedPermissions: ['cas1_view_out_of_service_beds'],
+        allowedRoles: ['future_manager', 'cru_member'],
       },
     )
   })
 
-  it('should allow a user with with permission cas1 out of service bed create to update an out of service bed', () => {
+  it('should allow a user with role cru_member to update an out of service bed', () => {
     v2ManageRoutes(controllers, router, services)
 
     expect(postSpy).toHaveBeenCalledWith(
@@ -130,8 +125,7 @@ describe('v2Manage routes', () => {
       v2UpdateOutOfServiceBedsController.create(),
       {
         auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
-        allowedRoles: [],
-        allowedPermissions: ['cas1_out_of_service_bed_create'],
+        allowedRoles: ['future_manager', 'cru_member'],
         redirectAuditEventSpecs: [
           {
             path: paths.lostBeds.show.pattern,
@@ -142,7 +136,7 @@ describe('v2Manage routes', () => {
     )
   })
 
-  it('should allow a user with permission cas1 view out of service beds to view an out of service bed', () => {
+  it('should allow a user with role cru_member to view an out of service bed', () => {
     v2ManageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(
@@ -150,13 +144,12 @@ describe('v2Manage routes', () => {
       v2OutOfServiceBedsController.show(),
       {
         auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
-        allowedRoles: [],
-        allowedPermissions: ['cas1_view_out_of_service_beds'],
+        allowedRoles: ['future_manager', 'cru_member'],
       },
     )
   })
 
-  it('should allow users with permission cas1 view out of service beds to view all out of service beds', () => {
+  it('should allow users with role cru_member to view all out of service beds', () => {
     v2ManageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(
@@ -164,8 +157,7 @@ describe('v2Manage routes', () => {
       v2OutOfServiceBedsController.index(),
       {
         auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
-        allowedRoles: [],
-        allowedPermissions: ['cas1_view_out_of_service_beds'],
+        allowedRoles: ['cru_member'],
       },
     )
   })

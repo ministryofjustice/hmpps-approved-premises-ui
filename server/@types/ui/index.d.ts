@@ -478,7 +478,6 @@ export type MiddlewareSpec = {
   redirectAuditEventSpecs?: Array<RedirectAuditEventSpec>
   additionalMetadata?: Record<string, string>
   allowedRoles?: Array<ApprovedPremisesUserRole>
-  allowedPermissions?: Array<ApprovedPremisesUserPermission>
 }
 
 export type PlacementRequestDashboardSearchOptions = {

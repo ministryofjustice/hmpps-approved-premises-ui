@@ -16,8 +16,8 @@ context('OutOfServiceBeds', () => {
 
   describe('for a new out of service bed with all nullable fields present in the initial OoS bed revision', () => {
     it('should show a out of service bed', () => {
-      // Given I am signed in with permission to view out of service beds
-      signIn([], ['cas1_view_out_of_service_beds'])
+      // Given I am signed in as a future manager
+      signIn(['future_manager'])
 
       // And I have created a out of service bed
       const bed = { name: 'abc', id: '123' }
@@ -51,8 +51,8 @@ context('OutOfServiceBeds', () => {
 
   describe('for a legacy "lost bed" records migrated with all nullable fields not present in the initial OoS bed revision', () => {
     it('should show a out of service bed', () => {
-      // Given I am signed in with permission to view out of service beds
-      signIn([], ['cas1_view_out_of_service_beds'])
+      // Given I am signed in as a future manager
+      signIn(['future_manager'])
 
       // And I have created a out of service bed
       const bed = { name: 'abc', id: '123' }

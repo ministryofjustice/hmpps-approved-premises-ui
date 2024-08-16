@@ -15,8 +15,8 @@ context('LostBed', () => {
     cy.task('reset')
     cy.task('stubLostBedReferenceData')
 
-    // Given I am signed in with permission to view and create an out of service bed(s)
-    signIn([], ['cas1_view_out_of_service_beds', 'cas1_out_of_service_bed_create'])
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
   })
 
   it('should allow me to create a lost bed', () => {

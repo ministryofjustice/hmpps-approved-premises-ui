@@ -22,7 +22,7 @@ context('Cancellation', () => {
     cy.task('stubCancellationReferenceData')
 
     // Given I am signed in
-    signIn(['workflow_manager', 'manager'], ['cas1_booking_withdraw'])
+    signIn(['workflow_manager', 'manager'])
   })
 
   it('should allow me to create a cancellation through the withdrawal flow for bookings with an applicationId', () => {
