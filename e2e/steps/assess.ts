@@ -146,26 +146,23 @@ export const addMatchingInformation = async (page: Page) => {
 
   await matchingInformationPage.checkRadio('Standard AP')
 
-  const relevantRisksAndOffences = ['Is arson suitable']
+  const relevantRisksAndOffences = ['Accepts hate crime offenders', 'Accepts non sexual child offenders']
   const irrelevantRisksAndOffences = [
     'Accepts sex offenders',
-    'Accepts non sexual child offenders',
     'Is suitable for vulnerable',
     'Accepts child sex offenders',
-    'Accepts hate crime offenders',
     'Is arson designated',
+    'Is arson suitable',
   ]
 
-  const essentialCharacteristics = ['Is wheelchair designated', 'Is single']
+  const essentialCharacteristics = ['Is catered', 'Has en suite']
 
-  const desirableCharacteristics = ['Is catered', 'Has en suite']
-
-  const irrelevantCharacteristics = ['Is step free designated']
+  const desirableCharacteristics: Array<string> = []
+  const irrelevantCharacteristics = ['Is step free designated', 'Is wheelchair designated', 'Is single']
 
   await matchingInformationPage.checkListOfRequirements(relevantRisksAndOffences, 'relevant')
   await matchingInformationPage.checkListOfRequirements(irrelevantRisksAndOffences, 'notRelevant')
   await matchingInformationPage.checkListOfRequirements(essentialCharacteristics, 'essential')
-  await matchingInformationPage.checkListOfRequirements(desirableCharacteristics, 'desirable')
   await matchingInformationPage.checkListOfRequirements(irrelevantCharacteristics, 'notRelevant')
 
   // Agree to the dates of placement
