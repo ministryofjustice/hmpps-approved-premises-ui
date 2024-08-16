@@ -70,11 +70,16 @@ export class BasePage {
       .getByRole('group', { name: legend })
       .getByRole('combobox', { name: 'Select an area' })
       .selectOption({ index: 1 })
-    const selectedPremises = await this.page
+    await this.page
       .getByRole('group', { name: legend })
       .getByRole('combobox', { name: 'Select a premises' })
       .selectOption({ index: 1 })
 
-    return selectedPremises[0]
+    const premisesNames = await this.page
+      .getByRole('group', { name: legend })
+      .getByRole('combobox', { name: 'Select a premises' })
+      .innerText()
+
+    return premisesNames.split('\n')[1]
   }
 }
