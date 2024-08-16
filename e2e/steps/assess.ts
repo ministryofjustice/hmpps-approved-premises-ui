@@ -204,11 +204,6 @@ export type E2EDatesOfPlacement = {
   endDate: string
 }
 
-export type E2EPlacementCharacteristics = {
-  essentialCharacteristics: Array<string>
-  desirableCharacteristics: Array<string>
-}
-
 export const assessApplication = async (
   { page, assessor, person }: { page: Page; assessor: TestOptions['assessor']; person: TestOptions['person'] },
   applicationId: string,
@@ -274,16 +269,11 @@ export const assessApplication = async (
   // And I provide matching information if application is accepted
   let datesOfPlacement: undefined | E2EDatesOfPlacement
   let duration: undefined | string
-  let placementCharacteristics: E2EPlacementCharacteristics
   if (acceptApplication) {
     const matchingInformation = await addMatchingInformation(page)
 
     datesOfPlacement = matchingInformation.datesOfPlacement
     duration = matchingInformation.duration
-    placementCharacteristics = {
-      essentialCharacteristics: matchingInformation.essentialCharacteristics,
-      desirableCharacteristics: matchingInformation.desirableCharacteristics,
-    }
   }
 
   // And I check my answers
@@ -295,7 +285,7 @@ export const assessApplication = async (
   // Then I should see a confirmation screen
   await shouldSeeAssessmentConfirmationScreen(page)
 
-  return { datesOfPlacement, duration, placementCharacteristics }
+  return { datesOfPlacement, duration }
 }
 
 export const requestAndAddAdditionalInformation = async (
