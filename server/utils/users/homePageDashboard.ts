@@ -7,7 +7,6 @@ import managePaths from '../../paths/manage'
 import taskPaths from '../../paths/tasks'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
-import { retrieveFeatureFlag } from '../retrieveFeatureFlag'
 import { ApprovedPremisesUserPermission } from '../../@types/shared/models/ApprovedPremisesUserPermission'
 
 export const sections = {
@@ -105,11 +104,7 @@ export const hasPermission = (
 }
 
 export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
-  const items = [sections.apply]
-
-  if (retrieveFeatureFlag('show-search-by-CRN-timeline-navigation')) {
-    items.push(sections.personalTimeline)
-  }
+  const items = [sections.apply, sections.personalTimeline]
 
   if (hasPermission(user, ['cas1_view_assigned_assessments'])) {
     items.push(sections.assess)

@@ -113,8 +113,6 @@ context('Assess', () => {
   })
 
   it('allows me to create and update a clarification note', function test() {
-    const testConfirmationPage = false
-
     let assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(this.assessment, {
       task: 'sufficient-information',
       page: 'sufficient-information',
@@ -123,16 +121,13 @@ context('Assess', () => {
         query: 'clarification note text',
       },
     })
-
-    if (testConfirmationPage) {
-      addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
-        task: 'sufficient-information',
-        page: 'sufficient-information-confirm',
-        keyValuePairs: {
-          confirm: 'yes',
-        },
-      })
-    }
+    addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
+      task: 'sufficient-information',
+      page: 'sufficient-information-confirm',
+      keyValuePairs: {
+        confirm: 'yes',
+      },
+    })
 
     assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
       task: 'sufficient-information',
@@ -158,7 +153,7 @@ context('Assess', () => {
     assessHelper.startAssessment()
 
     // And I add a clarification note
-    assessHelper.addClarificationNote({ testConfirmationPage: false })
+    assessHelper.addClarificationNote()
 
     cy.task('verifyClarificationNoteCreate', assessmentNeedingClarification)
       .then(requests => {
@@ -202,7 +197,6 @@ context('Assess', () => {
   })
 
   it('should allow me to reject an application where I have not received the correct information', function test() {
-    const testConfirmationPage = false
     let assessment = addResponsesToFormArtifact<Assessment>(this.assessment, {
       task: 'sufficient-information',
       page: 'sufficient-information',
@@ -212,15 +206,13 @@ context('Assess', () => {
       },
     })
 
-    if (testConfirmationPage) {
-      addResponsesToFormArtifact<Assessment>(assessment, {
-        task: 'sufficient-information',
-        page: 'sufficient-information-confirm',
-        keyValuePairs: {
-          confirm: 'yes',
-        },
-      })
-    }
+    addResponsesToFormArtifact<Assessment>(assessment, {
+      task: 'sufficient-information',
+      page: 'sufficient-information-confirm',
+      keyValuePairs: {
+        confirm: 'yes',
+      },
+    })
 
     assessment = addResponsesToFormArtifact<Assessment>(assessment, {
       task: 'sufficient-information',
@@ -247,7 +239,7 @@ context('Assess', () => {
 
     // And I add a clarification note
     assessHelper
-      .addClarificationNote({ testConfirmationPage })
+      .addClarificationNote()
       .then(() => {
         const listPage = Page.verifyOnPage(ListPage)
 

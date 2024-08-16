@@ -40,12 +40,9 @@ export interface AuditConfig {
   logErrors: boolean
 }
 
-const fliptEnabled = get('FLIPT_ENABLED', false)
-
 export default {
   https: production,
   staticResourceCacheDuration: 20,
-  fliptEnabled,
   flags: {
     oasysDisabled: process.env.OASYS_DISABLED || false,
     v2MatchEnabled: process.env.ENABLE_V2_MATCH || false,
@@ -101,11 +98,6 @@ export default {
       queueUrl: get('AUDIT_SQS_QUEUE_URL', ''),
       serviceName: get('AUDIT_SERVICE_NAME', 'approved-premises-ui'),
       logErrors: false,
-    },
-    flipt: {
-      url: get('FLIPT_URL', null, fliptEnabled ? requiredInProduction : null),
-      token: get('FLIPT_TOKEN', null, fliptEnabled ? requiredInProduction : null),
-      namespace: get('FLIPT_NAMESPACE', null, fliptEnabled ? requiredInProduction : null),
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
