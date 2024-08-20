@@ -15,15 +15,17 @@ import {
 
 import paths from '../../paths/manage'
 import {
+  apAreaFactory,
   bedDetailFactory,
   outOfServiceBedFactory,
   paginatedResponseFactory,
   premisesFactory,
+  premisesSummaryFactory,
 } from '../../testutils/factories'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
 import { translateCharacteristic } from '../../utils/characteristicsUtils'
-import { OutOfServiceBedService, PremisesService } from '../../services'
+import { ApAreaService, OutOfServiceBedService, PremisesService } from '../../services'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -39,9 +41,14 @@ describe('OutOfServiceBedsController', () => {
 
   const outOfServiceBedService = createMock<OutOfServiceBedService>({})
   const premisesService = createMock<PremisesService>({})
+  const apAreaService = createMock<ApAreaService>({})
 
-  const outOfServiceBedController = new OutOfServiceBedsController(outOfServiceBedService, premisesService)
-  const premisesId = 'premisesId'
+  const outOfServiceBedController = new OutOfServiceBedsController(
+    outOfServiceBedService,
+    premisesService,
+    apAreaService,
+  )
+  let premisesId = 'premisesId'
   const outOfServiceBed = outOfServiceBedFactory.build()
 
   beforeEach(() => {
@@ -276,11 +283,19 @@ describe('OutOfServiceBedsController', () => {
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
       const paginationDetails = {
-        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index.pattern}?${createQueryString({ temporality, apAreaId, premisesId })}`,
+        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index.pattern}?${createQueryString({
+          temporality,
+          apAreaId,
+          premisesId,
+        })}`,
         pageNumber: 1,
         sortBy: 'roomName',
         sortDirection: 'desc',
       }
+
+      const premises = premisesSummaryFactory.buildList(3)
+      const allPremises = premises
+      const apAreas = apAreaFactory.buildList(3)
 
       outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
@@ -302,6 +317,10 @@ describe('OutOfServiceBedsController', () => {
         temporality,
         apAreaId,
         premisesId,
+        disablePremisesSelect: false,
+        premises,
+        allPremises,
+        apAreas,
       })
       expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith({
         token,
@@ -315,13 +334,118 @@ describe('OutOfServiceBedsController', () => {
     })
 
     it('redirects to the current temporality if a stray temporal URL parameter is entered', async () => {
-      const indexRequest = { ...request, params: { temporality: '123' } }
+      const apAreaId = 'abc'
+      const indexRequest = { ...request, params: { temporality: '123' }, query: { premisesId, apAreaId } }
 
       const requestHandler = outOfServiceBedController.index()
 
       await requestHandler(indexRequest, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
+    })
+
+    it('if value of Ap Areas and Premises is all empty string is passed to the api for both', async () => {
+      const temporality = 'current'
+      premisesId = 'all'
+      const apAreaId = 'all'
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: outOfServiceBedFactory.buildList(1),
+      }) as PaginatedResponse<OutOfServiceBed>
+      const paginationDetails = {
+        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index.pattern}?${createQueryString({
+          temporality,
+          premisesId,
+        })}`,
+        pageNumber: 1,
+        sortBy: 'roomName',
+        sortDirection: 'desc',
+      }
+
+      outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+
+      const indexRequest = { ...request, params: { temporality }, query: { apAreaId, premisesId } }
+
+      const requestHandler = outOfServiceBedController.index()
+
+      await requestHandler(indexRequest, response, next)
+
+      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith({
+        token,
+        page: paginationDetails.pageNumber,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        temporality,
+        apAreaId: '',
+        premisesId: '',
+      })
+    })
+
+    it('calls api with correct parameters and renders filter Premises', async () => {
+      const temporality = 'current'
+
+      const apArea1 = apAreaFactory.build({
+        id: 'ap-area-1-id',
+      })
+
+      const apArea2 = apAreaFactory.build({
+        id: 'ap-area-2-id',
+      })
+
+      const allApAreas = [apArea1, apArea2]
+
+      const premises1 = premisesSummaryFactory.build({
+        apArea: apArea1.name,
+      })
+
+      const premises2 = premisesSummaryFactory.build({
+        apArea: apArea1.name,
+      })
+
+      const premises3 = premisesSummaryFactory.build({
+        apArea: apArea2.name,
+      })
+
+      const allPremises = [premises1, premises2, premises3]
+
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: outOfServiceBedFactory.buildList(1, {
+          apArea: apArea1,
+        }),
+      }) as PaginatedResponse<OutOfServiceBed>
+
+      apAreaService.getApAreas.mockResolvedValue(allApAreas)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      premisesService.getAll.mockResolvedValue(allPremises)
+
+      outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue({})
+
+      const indexRequest = { ...request, params: { temporality }, query: { apAreaId: apArea1.id } }
+
+      const requestHandler = outOfServiceBedController.index()
+
+      await requestHandler(indexRequest, response, next)
+
+      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith(
+        expect.objectContaining({
+          apAreaId: apArea1.id,
+          premisesId: '',
+        }),
+      )
+
+      expect(response.render).toHaveBeenCalledWith(
+        'v2Manage/outOfServiceBeds/index',
+        expect.objectContaining({
+          premises: [premises1, premises2],
+          premisesId: '',
+          apAreaId: apArea1.id,
+          apAreas: allApAreas,
+          disablePremisesSelect: false,
+          allPremises,
+        }),
+      )
     })
   })
 

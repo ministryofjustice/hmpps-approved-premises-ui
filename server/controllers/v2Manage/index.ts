@@ -13,6 +13,7 @@ export const controllers = (services: Services) => {
   const v2OutOfServiceBedsController = new V2OutOfServiceBedsController(
     services.outOfServiceBedService,
     services.premisesService,
+    services.apAreaService,
   )
   const v2UpdateOutOfServiceBedsController = new V2UpdateOutOfServiceBedsController(
     services.outOfServiceBedService,
