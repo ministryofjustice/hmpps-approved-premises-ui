@@ -40,7 +40,6 @@ const roleFactory = Factory.define<UserRole>(() =>
   faker.helpers.arrayElement([
     'assessor',
     'matcher',
-    'manager',
     'workflow_manager',
     'applicant',
     'role_admin',

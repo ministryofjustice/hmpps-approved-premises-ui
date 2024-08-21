@@ -8,13 +8,11 @@ export type Qualification = (typeof qualifications)[number]
 export const roles = [
   'Administrator',
   'Assessor',
-  'Manage an Approved Premises',
   'Matcher',
   'Workflow manager',
   'Appeals manager',
   'Report viewer',
   'Future manager',
-  'Legacy manager',
   'Stop assessment allocations',
   'Stop match allocations',
   'Stop placement request allocations',

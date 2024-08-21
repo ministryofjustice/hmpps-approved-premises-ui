@@ -4,10 +4,6 @@ import { CheckBoxItem } from '../../../@types/ui'
 export const roleLabelDictionary: RoleLabelDictionary = {
   role_admin: { label: 'Administrator' },
   assessor: { label: 'Assessor', hint: 'Assess Approved Premises applications' },
-  manager: {
-    label: 'Manage an Approved Premises (AP)',
-    hint: 'Mark arrivals, departures, and manage placements at an AP',
-  },
   matcher: { label: 'Matcher', hint: 'Match a person to a suitable AP for placement' },
   workflow_manager: {
     label: 'Workflow manager',
@@ -25,10 +21,6 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Report Viewer',
     hint: 'View and download reports',
   },
-  legacy_manager: {
-    label: 'Legacy manager',
-    hint: 'Manage an approved premises',
-  },
   future_manager: {
     label: 'Future manager',
     hint: 'For digital team use only',
@@ -45,7 +37,7 @@ export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
   excluded_from_placement_application_allocation: { label: 'Stop placement request allocations' },
 }
 
-type UnusedRoles = 'applicant' | 'user_manager'
+type UnusedRoles = 'applicant' | 'user_manager' | 'manager' | 'legacy_manager'
 export type RolesInUse = Exclude<UserRole, UnusedRoles>
 
 type RolesForCheckboxes = Exclude<UserRole, AllocationRole | UnusedRoles>
@@ -60,7 +52,6 @@ type AllocationRolesForCheckboxes = Exclude<UserRole, RolesForCheckboxes | Unuse
 export const roles: ReadonlyArray<RolesInUse> = [
   'role_admin',
   'assessor',
-  'manager',
   'matcher',
   'workflow_manager',
   'cru_member',
@@ -70,7 +61,6 @@ export const roles: ReadonlyArray<RolesInUse> = [
   'appeals_manager',
   'report_viewer',
   'future_manager',
-  'legacy_manager',
   'janitor',
 ]
 
@@ -80,7 +70,7 @@ export const allocationRoles = [
   'excluded_from_placement_application_allocation',
 ] as const
 
-export const unusedRoles = ['applicant'] as const
+export const unusedRoles = ['applicant', 'manager', 'legacy_manager'] as const
 
 export type AllocationRole = (typeof allocationRoles)[number]
 

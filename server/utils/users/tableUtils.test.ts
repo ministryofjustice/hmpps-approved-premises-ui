@@ -80,7 +80,6 @@ describe('tableUtils', () => {
         roles: [
           'assessor',
           'matcher',
-          'manager',
           'workflow_manager',
           'role_admin',
 
@@ -90,7 +89,7 @@ describe('tableUtils', () => {
         ],
       })
       expect(roleCell(user)).toEqual({
-        text: 'Assessor, Matcher, Manage an Approved Premises (AP), Workflow manager, Administrator',
+        text: 'Assessor, Matcher, Workflow manager, Administrator',
       })
     })
   })
@@ -101,7 +100,6 @@ describe('tableUtils', () => {
         roles: [
           'assessor',
           'matcher',
-          'manager',
           'workflow_manager',
           'applicant',
           'role_admin',
