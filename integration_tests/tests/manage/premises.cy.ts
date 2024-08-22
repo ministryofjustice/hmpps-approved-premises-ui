@@ -5,11 +5,10 @@ import {
   dateCapacityFactory,
   extendedPremisesSummaryFactory,
   premisesBookingFactory,
-  premisesSummaryFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-import { CalendarPage, PremisesListPage, PremisesShowPage } from '../../pages/manage'
+import { CalendarPage, PremisesShowPage } from '../../pages/manage'
 import OverbookingPage from '../../pages/manage/overbooking'
 import { signIn } from '../signIn'
 import { fullPersonFactory } from '../../../server/testutils/factories/person'
@@ -17,23 +16,6 @@ import { fullPersonFactory } from '../../../server/testutils/factories/person'
 context('Premises', () => {
   beforeEach(() => {
     cy.task('reset')
-  })
-
-  describe('list', () => {
-    it('should list all premises', () => {
-      // Given I am logged in as legacy manager
-      signIn(['legacy_manager'])
-
-      const premises = premisesSummaryFactory.buildList(5)
-      cy.task('stubAllPremises', premises)
-      cy.task('stubApAreaReferenceData')
-
-      // When I visit the premises page
-      const page = PremisesListPage.visit()
-
-      // Then I should see all of the premises listed
-      page.shouldShowPremises(premises)
-    })
   })
 
   it('should show a single premises', () => {
