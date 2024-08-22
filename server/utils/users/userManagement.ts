@@ -48,7 +48,6 @@ export const userSummaryListItems = (user: User) => [
 const userRoles: Record<RolesInUse, string> = {
   assessor: 'Assessor',
   matcher: 'Matcher',
-  manager: 'Manager',
   workflow_manager: 'Workflow manager',
   cru_member: 'CRU member',
   role_admin: 'Role admin',
@@ -57,7 +56,6 @@ const userRoles: Record<RolesInUse, string> = {
   excluded_from_match_allocation: 'Excluded from match allocation',
   excluded_from_placement_application_allocation: 'Excluded from placement application allocation',
   appeals_manager: 'Appeals manager',
-  legacy_manager: 'Legacy manager',
   future_manager: 'Future manager',
   janitor: 'Janitor',
 }

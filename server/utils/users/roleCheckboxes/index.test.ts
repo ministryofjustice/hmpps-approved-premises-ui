@@ -8,14 +8,14 @@ describe('roleCheckboxUtils', () => {
           [
             'assessor',
             'matcher',
-            'manager',
+            'janitor',
             'excluded_from_assess_allocation',
             'excluded_from_match_allocation',
             'excluded_from_placement_application_allocation',
           ],
           { returnOnlyAllocationRoles: false },
         ),
-      ).toEqual(['assessor', 'matcher', 'manager'])
+      ).toEqual(['assessor', 'matcher', 'janitor'])
     })
 
     it('when passed returnOnlyAllocationRoles = false filters out the non-allocation preferences roles', () => {
@@ -24,7 +24,7 @@ describe('roleCheckboxUtils', () => {
           [
             'assessor',
             'matcher',
-            'manager',
+            'janitor',
             'excluded_from_assess_allocation',
             'excluded_from_match_allocation',
             'excluded_from_placement_application_allocation',
@@ -42,23 +42,23 @@ describe('roleCheckboxUtils', () => {
   describe('roleCheckboxItem', () => {
     it('returns a checkbox object without a hint ', () => {
       expect(
-        roleCheckboxItem('manager', { manager: { label: 'test label' } } as RoleLabelDictionary, ['manager']),
+        roleCheckboxItem('janitor', { janitor: { label: 'test label' } } as RoleLabelDictionary, ['janitor']),
       ).toEqual({
         checked: true,
         text: 'test label',
-        value: 'manager',
+        value: 'janitor',
       })
     })
 
     it('returns a checkbox object with a hint', () => {
       expect(
-        roleCheckboxItem('manager', { manager: { label: 'test label', hint: 'test hint' } } as RoleLabelDictionary, [
-          'manager',
+        roleCheckboxItem('janitor', { janitor: { label: 'test label', hint: 'test hint' } } as RoleLabelDictionary, [
+          'janitor',
         ]),
       ).toEqual({
         checked: true,
         text: 'test label',
-        value: 'manager',
+        value: 'janitor',
         hint: { text: 'test hint' },
       })
     })

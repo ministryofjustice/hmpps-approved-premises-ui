@@ -103,7 +103,6 @@ describe('userRolesSelectOptions', () => {
       { selected: true, text: 'All roles', value: '' },
       { selected: false, text: 'Assessor', value: 'assessor' },
       { selected: false, text: 'Matcher', value: 'matcher' },
-      { selected: false, text: 'Manager', value: 'manager' },
       { selected: false, text: 'Workflow manager', value: 'workflow_manager' },
       { selected: false, text: 'CRU member', value: 'cru_member' },
       { selected: false, text: 'Role admin', value: 'role_admin' },
@@ -119,11 +118,6 @@ describe('userRolesSelectOptions', () => {
         selected: false,
         text: 'Appeals manager',
         value: 'appeals_manager',
-      },
-      {
-        selected: false,
-        text: 'Legacy manager',
-        value: 'legacy_manager',
       },
       {
         selected: false,
@@ -143,7 +137,6 @@ describe('userRolesSelectOptions', () => {
       { selected: false, text: 'All roles', value: '' },
       { selected: true, text: 'Assessor', value: 'assessor' },
       { selected: false, text: 'Matcher', value: 'matcher' },
-      { selected: false, text: 'Manager', value: 'manager' },
       { selected: false, text: 'Workflow manager', value: 'workflow_manager' },
       { selected: false, text: 'CRU member', value: 'cru_member' },
       { selected: false, text: 'Role admin', value: 'role_admin' },
@@ -159,11 +152,6 @@ describe('userRolesSelectOptions', () => {
         selected: false,
         text: 'Appeals manager',
         value: 'appeals_manager',
-      },
-      {
-        selected: false,
-        text: 'Legacy manager',
-        value: 'legacy_manager',
       },
       {
         selected: false,

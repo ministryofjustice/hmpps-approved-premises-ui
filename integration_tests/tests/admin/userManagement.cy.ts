@@ -22,7 +22,7 @@ context('User management', () => {
     // Given there are users in the DB
     const users = userFactory.buildList(10, { roles: ['assessor'] })
     const user = users[0]
-    const roles = ['manager', 'matcher', 'workflow_manager']
+    const roles = ['matcher', 'workflow_manager']
     cy.task('stubFindUser', { user, id: user.id })
     cy.task('stubUsers', { users })
     cy.task('stubApAreaReferenceData')
@@ -47,7 +47,7 @@ context('User management', () => {
 
     // When I update the user's roles and qualifications
     const updatedRoles = {
-      roles: ['manager', 'matcher', 'workflow_manager'] as const,
+      roles: ['matcher', 'workflow_manager'] as const,
       allocationRoles: [
         'excluded_from_assess_allocation',
         'excluded_from_match_allocation',
