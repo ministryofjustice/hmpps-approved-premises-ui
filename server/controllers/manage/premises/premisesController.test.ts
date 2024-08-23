@@ -85,6 +85,7 @@ describe('PremisesController', () => {
       expect(response.render).toHaveBeenCalledWith('premises/show', {
         premises,
         bookings: premises.bookings,
+        premisesId: request.params.premisesId,
       })
 
       expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, premisesId)

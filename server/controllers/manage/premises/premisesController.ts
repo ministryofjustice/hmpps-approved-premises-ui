@@ -32,6 +32,7 @@ export default class PremisesController {
       return res.render('premises/show', {
         premises,
         bookings: premises.bookings,
+        premisesId: req.params.premisesId,
       })
     }
   }
