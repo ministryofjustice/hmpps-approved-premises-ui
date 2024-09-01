@@ -74,7 +74,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of all users without pagination',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             roles: '',
           },
@@ -100,7 +100,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of all users without pagination',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             roles: 'applicant,assessor',
           },
@@ -130,7 +130,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of users',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             page: '1',
             sortBy: 'name',
@@ -169,7 +169,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of users',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             page: '2',
             sortBy: 'name',
@@ -208,7 +208,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of users',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             page: '1',
             sortBy: 'name',
@@ -247,7 +247,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of users with roles',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             roles: 'assessor,matcher',
             page: '1',
@@ -287,7 +287,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of users with qualifications',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             qualifications: 'pipe,womens',
             page: '1',
@@ -327,7 +327,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of users with roles and qualifications',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             roles: 'assessor,matcher',
             qualifications: 'pipe,womens',

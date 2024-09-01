@@ -6,6 +6,7 @@ import {
   ApprovedPremisesUserRole as UserRole,
   UserRolesAndQualifications,
   UserSortField,
+  type UserSummary,
 } from '@approved-premises/api'
 import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
@@ -43,7 +44,7 @@ export default class UserService {
     return client.getActingUser(id)
   }
 
-  async getUserList(token: string, roles: Array<UserRole> = []): Promise<Array<User>> {
+  async getUserList(token: string, roles: Array<UserRole> = []): Promise<Array<UserSummary>> {
     const client = this.userClientFactory(token)
     return client.getUserList(roles)
   }

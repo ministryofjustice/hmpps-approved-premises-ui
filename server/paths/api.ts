@@ -229,6 +229,7 @@ export default {
   },
   users: {
     index: usersPath,
+    summary: usersPath.path('summary'),
     search: usersPath.path('search'),
     searchDelius: usersPath.path('delius'),
     show: usersPath.path(':id'),
