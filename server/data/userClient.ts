@@ -6,6 +6,7 @@ import type {
   ApprovedPremisesUserRole as UserRole,
   UserRolesAndQualifications,
   UserSortField,
+  UserSummary,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
@@ -28,8 +29,8 @@ export default class UserClient {
     return (await this.restClient.get({ path: paths.users.v2profile({}) })) as ProfileResponse
   }
 
-  async getUserList(roles: Array<UserRole> = []): Promise<Array<User>> {
-    return this.restClient.get({ path: paths.users.index({}), query: { roles: roles.join(',') } }) as Promise<
+  async getUserList(roles: Array<UserRole> = []): Promise<Array<UserSummary>> {
+    return this.restClient.get({ path: paths.users.summary({}), query: { roles: roles.join(',') } }) as Promise<
       Array<User>
     >
   }
