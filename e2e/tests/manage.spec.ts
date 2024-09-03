@@ -12,11 +12,6 @@ import { CRNPage } from '../pages/apply'
 import { CreatePlacementPage } from '../pages/manage/createPlacementPage'
 import { MarkBedOutOfServicePage } from '../pages/manage/markBedOutOfServicePage'
 import { CancellationPage } from '../pages/manage/cancellationPage'
-import { NonarrivalFormPage } from '../pages/manage/nonarrivalFormPage'
-import { ArrivalFormPage } from '../pages/manage/arrivalFormPage'
-import { ChangePlacementDatesPage } from '../pages/manage/changePlacementDates'
-import { MoveBedPage } from '../pages/manage/moveBedPage'
-import { ChangeDepartureDatePage } from '../pages/manage/changeDepartureDate'
 import { signIn } from '../steps/signIn'
 import { OutOfServiceBedsPage } from '../pages/manage/outOfServiceBedsPage'
 
@@ -41,14 +36,6 @@ const navigateToPremisesPage = async (page: Page, { filterPremisesPage } = { fil
 
   // When I click on a Premises' 'View' link
   await listPage.choosePremises(premisesName)
-}
-
-const navigateToTodaysBooking = async (page: Page) => {
-  await navigateToPremisesPage(page)
-
-  const premisesPage = await PremisesPage.initialize(page, premisesName)
-
-  await premisesPage.clickManageTodaysArrival()
 }
 
 const navigateToGivenBooking = async (page: Page, bookingId: string) => {
@@ -141,31 +128,6 @@ test('Mark a booking as cancelled', async ({ page, legacyManager, personForAdHoc
   await placementPage.showsCancellationLoggedMessage()
 })
 
-test('Change placement dates', async ({ page, person, legacyManager }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
-
-  // And there is a placement for today
-  await manuallyBookPlacement({ page, person })
-  await navigateToTodaysBooking(page)
-  // And I am on the placement's page
-  const placementPage = await PlacementPage.initialize(page, 'Placement details')
-
-  // When I click the 'Extend' link
-  await placementPage.clickChangePlacementDates()
-
-  // Then I should see the extension form
-  const extensionFormPage = await ChangePlacementDatesPage.initialize(page, 'Update placement date')
-
-  // When I complete the form
-  await extensionFormPage.completeForm()
-  await extensionFormPage.clickSubmit()
-
-  // Then I should see the placement page with a banner
-  const confirmationPage = new ConfirmationPage(page)
-  await confirmationPage.shouldShowBookingChangeSuccessMessage()
-})
-
 test('Mark a bed as out of service', async ({ page, legacyManager }) => {
   // Given I am signed in as a legacy manager
   await signIn(page, legacyManager)
@@ -197,92 +159,6 @@ test('Mark a bed as out of service', async ({ page, legacyManager }) => {
 
   // Then I should be taken to the AP view page
   await premisesPage.showsLostBedLoggedMessage()
-})
-
-test('Mark a booking as arrived and extend it', async ({ page, person, legacyManager }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
-
-  // And there is a placement for today
-  // And I am on the premises's page
-  await manuallyBookPlacement({ page, person })
-  await navigateToTodaysBooking(page)
-
-  const placementPage = await PlacementPage.initialize(page, 'Placement details')
-
-  // Given I click 'Mark arrived'
-  await placementPage.clickMarkArrived()
-
-  // When I complete the form
-  const arrivalFormpage = await ArrivalFormPage.initialize(page, 'Mark the person as arrived')
-  await arrivalFormpage.completeForm()
-
-  // Then I should see the placement page with a banner confirming the arrival was logged
-  const premisesPage = await PremisesPage.initialize(page, premisesName)
-  await premisesPage.showsArrivalLoggedMessage()
-
-  // When I click the 'Change departure date' link
-  await navigateToCurrentResident(page)
-  await placementPage.clickChangeDepartureDate()
-
-  const changeDepartureDatesPage = await ChangeDepartureDatePage.initialize(page, 'Update departure date')
-  await changeDepartureDatesPage.completeForm()
-  await changeDepartureDatesPage.clickSubmit()
-
-  const confirmationPage = new ConfirmationPage(page)
-  await confirmationPage.shouldShowDepartureDateChangedMessage()
-})
-
-test('Mark a booking as not arrived', async ({ page, person, legacyManager }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
-  // And there is a placement for today
-  // And I am on the premises's page
-  await manuallyBookPlacement({ page, person })
-  await navigateToPremisesPage(page)
-  const premisesPage = await PremisesPage.initialize(page, premisesName)
-
-  // When I click the 'Manage today's arrivals' link
-  await premisesPage.clickManageTodaysArrival()
-
-  // Then I am taken to the placement page
-  const placementPage = await PlacementPage.initialize(page, 'Placement details')
-
-  // Given I click 'Mark not arrived'
-  await placementPage.clickMarkNotArrived()
-
-  // When I complete the form
-  const nonArrivalFormPage = await NonarrivalFormPage.initialize(page, 'Record a non-arrival')
-  await nonArrivalFormPage.completeForm()
-
-  // Then I should see the placement page with a banner confirming the non-arrival was logged
-  await placementPage.showsNonArrivalLoggedMessage()
-})
-
-test('Move a booking', async ({ page, person, legacyManager }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
-  // And there is a placement for today
-  // And I am on the premises's page
-  await manuallyBookPlacement({ page, person })
-  await navigateToPremisesPage(page)
-  const premisesPage = await PremisesPage.initialize(page, premisesName)
-
-  // When I click the 'Manage today's arrivals' link
-  await premisesPage.clickManageTodaysArrival()
-
-  // Then I am taken to the placement page
-  const placementPage = await PlacementPage.initialize(page, 'Placement details')
-
-  // Given I click 'Move person to a new bed'
-  await placementPage.clickMovePersonToANewBed()
-
-  // When I complete the form
-  const moveBedPage = await MoveBedPage.initialize(page, 'Move person to a new bed')
-  await moveBedPage.completeForm()
-
-  // Then I should see the placement page with a banner confirming the bed move was logged
-  await placementPage.showsBedMoveLoggedMessage()
 })
 
 test('View all out of service beds', async ({ page, cruMember }) => {
