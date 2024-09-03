@@ -2,4 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type AssessmentSortField = 'name' | 'crn' | 'arrivalDate' | 'status' | 'createdAt' | 'dueAt' | 'probationDeliveryUnitName';
+export type UserSummary = {
+    id: string;
+    name: string;
+};
+
