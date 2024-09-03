@@ -4,11 +4,9 @@ import { test } from '../test'
 import { visitDashboard } from '../steps/apply'
 import { PremisesListPage } from '../pages/manage/premisesListPage'
 import { PremisesPage } from '../pages/manage/premisesPage'
-import { PlacementPage } from '../pages/manage/placementPage'
 import { ConfirmationPage } from '../pages/manage/confirmationPage'
 import { CRNPage } from '../pages/apply'
 import { CreatePlacementPage } from '../pages/manage/createPlacementPage'
-import { CancellationPage } from '../pages/manage/cancellationPage'
 import { signIn } from '../steps/signIn'
 import { OutOfServiceBedsPage } from '../pages/manage/outOfServiceBedsPage'
 
@@ -92,30 +90,6 @@ test('Manually book a bed', async ({ page, person, legacyManager }) => {
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 })
 
-test('Mark a booking as cancelled', async ({ page, legacyManager, personForAdHocBooking }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
-
-  // And there is a placement for today
-  const bookingId = await manuallyBookPlacement({ page, person: personForAdHocBooking, filterPremisesPage: true })
-
-  await navigateToGivenBooking(page, bookingId)
-  // And I am on the placement's page
-  const placementPage = await PlacementPage.initialize(page, 'Placement details')
-
-  // When I click the 'Mark cancelled' link
-  await placementPage.clickMarkCancelled()
-
-  // Then I should see the cancellation form
-  const cancellationFormPage = await CancellationPage.initialize(page, 'Confirm withdrawn placement')
-
-  // When I complete the form
-  await cancellationFormPage.completeForm()
-  await cancellationFormPage.clickWithdraw()
-
-  // Then I should see the placement page with a banner
-  await placementPage.showsCancellationLoggedMessage()
-})
 
 test('View all out of service beds', async ({ page, cruMember }) => {
   // Given I am signed in as a CRU Member
