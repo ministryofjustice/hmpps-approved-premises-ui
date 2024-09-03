@@ -5,12 +5,9 @@ import { visitDashboard } from '../steps/apply'
 import { PremisesListPage } from '../pages/manage/premisesListPage'
 import { PremisesPage } from '../pages/manage/premisesPage'
 import { PlacementPage } from '../pages/manage/placementPage'
-import { BedsPage } from '../pages/manage/bedsPage'
-import { BedPage } from '../pages/manage/bedPage'
 import { ConfirmationPage } from '../pages/manage/confirmationPage'
 import { CRNPage } from '../pages/apply'
 import { CreatePlacementPage } from '../pages/manage/createPlacementPage'
-import { MarkBedOutOfServicePage } from '../pages/manage/markBedOutOfServicePage'
 import { CancellationPage } from '../pages/manage/cancellationPage'
 import { signIn } from '../steps/signIn'
 import { OutOfServiceBedsPage } from '../pages/manage/outOfServiceBedsPage'
@@ -44,14 +41,6 @@ const navigateToGivenBooking = async (page: Page, bookingId: string) => {
   const premisesPage = await PremisesPage.initialize(page, premisesName)
 
   await premisesPage.clickGivenBooking(bookingId)
-}
-
-const navigateToCurrentResident = async (page: Page) => {
-  await navigateToPremisesPage(page)
-
-  const premisesPage = await PremisesPage.initialize(page, premisesName)
-
-  await premisesPage.clickManageCurrentResident()
 }
 
 const manuallyBookPlacement = async ({
@@ -126,39 +115,6 @@ test('Mark a booking as cancelled', async ({ page, legacyManager, personForAdHoc
 
   // Then I should see the placement page with a banner
   await placementPage.showsCancellationLoggedMessage()
-})
-
-test('Mark a bed as out of service', async ({ page, legacyManager }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
-
-  // And I am on the list of premises page
-  const dashboard = await visitDashboard(page)
-  await dashboard.clickManage()
-  const listPage = await PremisesListPage.initialize(page, 'List of Approved Premises')
-
-  // When I click on a Premises' 'View' link
-  await listPage.choosePremises(premisesName)
-
-  // Then I should see the premises view page
-  const premisesPage = await PremisesPage.initialize(page, premisesName)
-
-  // When I view a premises room
-  await premisesPage.viewRooms()
-  const bedsPage = await BedsPage.initialize(page, 'Manage beds')
-  await bedsPage.viewAvailableBed()
-
-  // Then I should be able to mark a bed as out of service
-  const bedPage = await BedPage.initialize(page, 'Manage beds')
-  await bedPage.clickMarkBedAsOutOfService()
-
-  // When I fill in and submit the form
-  const markBedOutOfServicePage = await MarkBedOutOfServicePage.initialize(page, 'Mark a bed as out of service')
-  await markBedOutOfServicePage.completeForm()
-  await markBedOutOfServicePage.clickSave()
-
-  // Then I should be taken to the AP view page
-  await premisesPage.showsLostBedLoggedMessage()
 })
 
 test('View all out of service beds', async ({ page, cruMember }) => {
