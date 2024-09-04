@@ -182,3 +182,15 @@ test:e2e:local:ui
 ## Feature flags
 
 We currently use environment variables for feature flags.
+
+## Updating API Schema Types
+
+The following script can be used to update the local type models (defined in server/@types). These are pulled from the approved-premises open-api definitions on the main branch 
+
+```
+/script/generate-types
+```
+
+There is also a github workflow that will automatically generate PRs to update the local model whenever the API open api definition is changed.
+
+Once the script has been ran, manual updates may be required to the factories defined in testutils/factories to add any new fields
