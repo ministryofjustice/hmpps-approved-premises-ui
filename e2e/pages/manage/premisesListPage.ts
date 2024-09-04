@@ -12,8 +12,4 @@ export class PremisesListPage extends BasePage {
   async choosePremises(premisesName: string) {
     await this.page.getByRole('link', { name: `View about ${premisesName}`, exact: true }).click()
   }
-
-  async filterPremises(apArea: string) {
-    await this.page.getByLabel('Areas').selectOption({ label: apArea })
-  }
 }
