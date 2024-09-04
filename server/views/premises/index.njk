@@ -1,65 +1,12 @@
-{% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
 {% extends "../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - Home" %}
+{% set pageTitle = applicationName + " - This page has been moved" %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
-
-      <h1 class="govuk-heading-l">List of Approved Premises</h1>
-    </div>
-
-    <form action="{{ paths.premises.index({}) }}" method="post">
-      <div class="govuk-grid-column-one-quarter">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-
-        {{ govukSelect({
-              label: {
-              text: "Areas",
-              classes: "govuk-label--s"
-              },
-              classes: "govuk-input--width-20",
-              id: "selectedArea",
-              name: "selectedArea",
-              items: convertObjectsToSelectOptions(areas, 'All areas', 'name', 'id', 'selectedArea', '', context)
-          }) }}
-      </div>
-
-      <div class="govuk-grid-column-one-quarter">
-        {{ govukButton({
-                  "text": "Apply filter",
-                  "type": "submit",
-                  classes: "govuk-!-margin-top-6",
-                  preventDoubleClick: true
-              }) }}
-      </div>
-    </form>
-
-    <div class="govuk-grid-column-full-width">
-      {{
-      govukTable({
-        captionClasses: "govuk-table__caption--m",
-        firstCellIsHeader: true,
-        head: [
-          {
-            text: "Name"
-          },
-          {
-            text: "Code"
-          },
-          {
-            text: "Number of beds"
-          },
-          {
-            html: '<span class="govuk-visually-hidden">Actions</span>'
-          }
-        ],
-        rows: PremisesUtils.premisesTableRows(premisesSummaries)
-      })
-    }}
+      <h1 class="govuk-heading-l">This page has been moved</h1>
+      <p class="govuk-body"><a class="govuk-link" href="{{paths.v2Manage.premises.index({})}}">Please click this link to go to the new location</a></p>
     </div>
   </div>
 {% endblock %}

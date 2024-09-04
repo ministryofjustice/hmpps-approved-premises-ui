@@ -12,7 +12,7 @@
       <h1 class="govuk-heading-l">List of Approved Premises</h1>
     </div>
 
-    <form action="{{ paths.premises.index({}) }}" method="post">
+    <form action="{{ paths.v2Manage.premises.index({}) }}" method="post">
       <div class="govuk-grid-column-one-quarter">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
