@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1SpaceBookingSummarySortField = 'personName' | 'canonicalArrivalDate' | 'canonicalDepartureDate' | 'keyworkerName' | 'tier';
+export type Cas1SpaceBookingSummarySortField = 'personName' | 'canonicalArrivalDate' | 'canonicalDepartureDate' | 'keyWorkerName' | 'tier';
