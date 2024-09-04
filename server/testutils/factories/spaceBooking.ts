@@ -18,8 +18,11 @@ export default Factory.define<Cas1SpaceBooking>(() => {
     premises: namedIdFactory.build(),
     apArea: namedIdFactory.build(),
     bookedBy: userFactory.build(),
-    arrivalDate: DateFormats.dateObjToIsoDate(startDate),
-    departureDate: DateFormats.dateObjToIsoDate(endDate),
+    expectedArrivalDate: DateFormats.dateObjToIsoDate(startDate),
+    expectedDepartureDate: DateFormats.dateObjToIsoDate(endDate),
+    canonicalArrivalDate: DateFormats.dateObjToIsoDate(startDate),
+    canonicalDepartureDate: DateFormats.dateObjToIsoDate(endDate),
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
+    otherBookingsInPremises: [],
   }
 })
