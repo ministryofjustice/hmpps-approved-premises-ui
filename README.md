@@ -126,9 +126,25 @@ npm run test:e2e:ui
 
 ### Running locally against your `local` development environment
 
+#### API Setup
+
+In hmpps-approved-premises-api/src/main/resources/application-local.yml update the feature-flags section to appear as follows:
+
+```shell
+    feature-flags:
+      use-ap-and-delius-to-update-users: false
+      cas1-appeal-manager-can-assess-applications: false
+```
+
+Start the API via ap-tools and then run this from the API project to populate out of service bed reasons
+
+```script/run_migration_job update_cas1_out_of_service_bed_reasons```
+
 #### Environment variables
 
-You will need to have the following **environment variables** in your local `.env` file:
+You will need to have the following **environment variables** in your local `.env` file.
+
+NOTIFY_API_KEY will need updating (speak to colleagues). All other defaults should work out of the box.
 
 ```
 API_CLIENT_ID=approved-premises-ui
@@ -143,11 +159,9 @@ CAS1_E2E_CRU_MEMBER_PASSWORD=secret
 CAS1_E2E_CRU_MEMBER_USERNAME=SHEILAHANCOCKNPS
 CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=BERNARD.BEAKS
 CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO="JIM SNOW"
-CAS1_E2E_FUTURE_MANAGER_PASSWORD=*REDACTED*
+CAS1_E2E_FUTURE_MANAGER_PASSWORD=secret
 CAS1_E2E_FUTURE_MANAGER_USERNAME=APPROVEDPREMISESTESTUSER
 CAS1_E2E_LEGACY_MANAGER_PASSWORD=secret
-CAS1_E2E_LEGACY_MANAGER_PASSWORD=secret
-CAS1_E2E_LEGACY_MANAGER_USERNAME=JIMSNOWLDAP
 CAS1_E2E_LEGACY_MANAGER_USERNAME=JIMSNOWLDAP
 CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN=X320811
 CAS1_E2E_REPORT_VIEWER_PASSWORD=secret
@@ -156,7 +170,7 @@ CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD=secret
 CAS1_E2E_USER_WITHOUT_ROLES_USERNAME=JIMSNOWLDAP
 HMPPS_AUTH_EXTERNAL_URL=http://localhost:9091/auth
 HMPPS_AUTH_NAME=AP_USER TEST_1
-HMPPS_AUTH_PASSWORD=*REDACTED*
+HMPPS_AUTH_PASSWORD=secret
 HMPPS_AUTH_URL=http://localhost:9091/auth
 HMPPS_AUTH_USERNAME=AP_USER_TEST_1
 NOTIFY_API_KEY=*REDACTED*
@@ -178,6 +192,8 @@ With UI:
 test:e2e:local:ui
 # -> npx playwright test --config ./e2e/playwright.config.ts --project=local --ui
 ```
+
+When running with UI it may select 'setupLocal' project by default. Click on projects and select 'local' too to see all tests
 
 ## Feature flags
 
