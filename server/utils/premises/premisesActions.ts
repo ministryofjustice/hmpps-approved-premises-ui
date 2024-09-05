@@ -1,6 +1,7 @@
 import type { Premises } from '@approved-premises/api'
 import { UserDetails } from '@approved-premises/ui'
 import paths from '../../paths/manage'
+import { hasPermission } from '../users'
 
 export const premisesActions = (user: UserDetails, premises: Premises) => {
   const actions = []
@@ -23,7 +24,7 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     })
   }
 
-  if (user.roles?.includes('workflow_manager') && !user.roles?.includes('future_manager')) {
+  if (hasPermission(user, ['cas1_adhoc_booking_create'])) {
     actions.push({
       text: 'Create a placement',
       classes: 'govuk-button--secondary',

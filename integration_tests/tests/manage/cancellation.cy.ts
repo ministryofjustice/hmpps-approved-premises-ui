@@ -18,7 +18,7 @@ context('Cancellation', () => {
     cy.task('stubCancellationReferenceData')
 
     // Given I am signed in
-    signIn(['workflow_manager', 'manager'])
+    signIn(['workflow_manager', 'manager'], ['cas1_booking_withdraw'])
   })
 
   it('should allow me to create a cancellation with a reason of "other" ', () => {

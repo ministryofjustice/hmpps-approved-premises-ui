@@ -6,8 +6,8 @@ import { signIn } from '../../signIn'
 describe('Future Manager lists all OOS beds for a particular premises', () => {
   beforeEach(() => {
     cy.task('reset')
-    // Given I am signed in as a Future Manager
-    signIn(['future_manager'])
+    // Given I am signed in with permission to view out of service beds
+    signIn([], ['cas1_view_out_of_service_beds'])
   })
 
   const outOfServiceBeds = outOfServiceBedFactory.buildList(10)

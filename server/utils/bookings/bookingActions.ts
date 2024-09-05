@@ -1,14 +1,15 @@
 import type { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
 
-import type { Booking, ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
+import type { Booking } from '@approved-premises/api'
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
+import { hasPermission } from '../users'
 
 export const bookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
-  if (user.roles?.includes('workflow_manager')) return v1BookingActions(user.roles, booking)
-  if (user.roles?.includes('manager')) return v1BookingActions(user.roles, booking)
-  if (user.roles?.includes('legacy_manager')) return v1BookingActions(user.roles, booking)
-  if (user.roles?.includes('future_manager')) return v2BookingActions(booking)
+  if (user.roles?.includes('workflow_manager')) return v1BookingActions(user, booking)
+  if (user.roles?.includes('manager')) return v1BookingActions(user, booking)
+  if (user.roles?.includes('legacy_manager')) return v1BookingActions(user, booking)
+  if (user.roles?.includes('future_manager')) return v2BookingActions(user, booking)
   return []
 }
 
@@ -77,10 +78,10 @@ class MenuItems {
   }
 }
 
-export const v2BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
+export const v2BookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
   const menuItems = new MenuItems(booking)
 
-  if (booking.status === 'awaiting-arrival')
+  if (booking.status === 'awaiting-arrival' && hasPermission(user, ['cas1_booking_withdraw']))
     return [
       {
         items: [menuItems.item('withdrawPlacement')],
@@ -90,38 +91,39 @@ export const v2BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
   return []
 }
 
-export const v1BookingActions = (roles: Array<UserRole>, booking: Booking): Array<IdentityBarMenu> => {
+export const v1BookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
   const menuItems = new MenuItems(booking)
+  const usersRoles = user.roles
 
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
     const items = []
 
-    if (roles.includes('manager') || roles.includes('legacy_manager')) {
+    if (usersRoles.includes('manager') || usersRoles.includes('legacy_manager')) {
       items.push(menuItems.item('movePerson'))
     }
 
     if (booking.status === 'awaiting-arrival') {
-      if (roles.includes('manager')) {
+      if (usersRoles.includes('manager')) {
         items.push(menuItems.item('markAsArrived'))
         items.push(menuItems.item('markAsNotArrived'))
       }
-      if (roles.includes('workflow_manager')) {
+      if (hasPermission(user, ['cas1_booking_withdraw'])) {
         items.push(menuItems.item('withdrawPlacement'))
       }
 
-      if (roles.includes('manager') || roles.includes('legacy_manager')) {
+      if (usersRoles.includes('manager') || usersRoles.includes('legacy_manager')) {
         items.push(menuItems.item('changeDates'))
       }
     }
 
     if (booking.status === 'arrived') {
-      if (roles.includes('manager')) {
+      if (usersRoles.includes('manager')) {
         items.push(menuItems.item('logDeparture'))
       }
 
       items.push(menuItems.item('updateDepartureDate'))
 
-      if (roles.includes('workflow_manager')) {
+      if (hasPermission(user, ['cas1_booking_withdraw'])) {
         items.push(menuItems.item('withdrawPlacement'))
       }
     }

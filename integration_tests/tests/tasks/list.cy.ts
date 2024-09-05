@@ -3,6 +3,7 @@ import ListPage from '../../pages/tasks/listPage'
 import { apAreaFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
 import { restrictedPersonSummaryTaskFactory } from '../../../server/testutils/factories/task'
 import { restrictedPersonSummaryAssessmentTaskFactory } from '../../../server/testutils/factories/assessmentTask'
+import paths from '../../../server/paths/tasks'
 import { fullPersonSummaryFactory } from '../../../server/testutils/factories/person'
 
 context('Task Allocation', () => {
@@ -16,6 +17,21 @@ context('Task Allocation', () => {
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubAuthUser', { apArea })
     cy.task('stubApAreaReferenceData', { apArea, additionalAreas: [additionalArea] })
+
+    const me = userFactory.build({ apArea })
+    cy.task('stubAuthUser', { roles: [], permissions: ['cas1_view_manage_tasks'], userId: me.id, apArea: me.apArea })
+  })
+
+  it('returns unauthorised if user does not have the cas1 view manage task permission', () => {
+    // Given I am logged in without the required permissions
+    const me = userFactory.build({ apArea })
+    cy.task('stubAuthUser', { roles: [], permissions: [], userId: me.id, apArea: me.apArea })
+    cy.signIn()
+
+    const path = paths.tasks.index({})
+    cy.request({ url: path, failOnStatusCode: false }).should(response => {
+      expect(response.status).to.eq(401)
+    })
   })
 
   it('shows a list of tasks for LAO', () => {

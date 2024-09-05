@@ -13,7 +13,7 @@ describe('Updating an out of service bed', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubOutOfServiceBedReasons')
-    signIn(['future_manager'])
+    signIn([], ['cas1_view_out_of_service_beds', 'cas1_out_of_service_bed_create'])
   })
 
   it('should allow me to update an out of service bed', () => {
