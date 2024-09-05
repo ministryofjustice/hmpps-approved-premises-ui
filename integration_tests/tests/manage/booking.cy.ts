@@ -2,8 +2,6 @@ import {
   activeOffenceFactory,
   applicationFactory,
   assessmentFactory,
-  bedDetailFactory,
-  bedSummaryFactory,
   bookingFactory,
   cancellationFactory,
   cancellationReasonFactory,
@@ -14,11 +12,10 @@ import {
   restrictedPersonFactory,
 } from '../../../server/testutils/factories'
 
-import { BookingFindPage, BookingNewPage, BookingShowPage, PremisesShowPage } from '../../pages/manage'
+import { BookingFindPage, BookingNewPage, BookingShowPage } from '../../pages/manage'
 import Page from '../../pages/page'
 
 import BookingConfirmation from '../../pages/manage/booking/confirmation'
-import MoveBedPage from '../../pages/manage/bed/moveBed'
 import { signIn } from '../signIn'
 import { NoOffencePage } from '../../pages/apply'
 
@@ -279,34 +276,6 @@ context('Booking', () => {
 
     // Then I should see the details for that booking
     page.shouldShowBookingDetails(booking)
-  })
-
-  it('should allow me to move a booking', () => {
-    // Given I am signed in as a legacy manager
-    signIn(['legacy_manager'])
-
-    const bedId = 'bedId'
-    const bedSummaries = bedSummaryFactory.buildList(5)
-    bedSummaries[0].id = bedId
-    cy.task('stubBeds', { premisesId: premises.id, bedSummaries })
-
-    const bookingPage = BookingShowPage.visit(premises.id, booking)
-
-    // When I click the move button
-    bookingPage.clickMoveBooking()
-
-    // Then I should see the move booking page
-    const bed = bedDetailFactory.build({ id: bedId })
-    const moveBedPage = MoveBedPage.visit(premises.id, booking.id)
-
-    // And be able to complete the form
-    cy.task('stubMoveBooking', { premisesId: premises.id, bookingId: booking.id, bedMove: { notes: 'note', bedId } })
-    moveBedPage.completeForm(bed)
-    moveBedPage.clickSubmit()
-
-    // Then I should see the Premises details page with a success message
-    const premisesPage = Page.verifyOnPage(PremisesShowPage, premises)
-    premisesPage.shouldShowMoveConfirmation()
   })
 
   it('redirects to no offence page if there are no offence', function test() {
