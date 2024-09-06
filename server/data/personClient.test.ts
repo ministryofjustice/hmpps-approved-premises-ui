@@ -125,6 +125,7 @@ describeClient('PersonClient', provider => {
           path: paths.people.prisonCaseNotes({ crn }),
           headers: {
             authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {

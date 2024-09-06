@@ -333,6 +333,7 @@ const urlTypeForUi = (type: TimelineEventUrlType) => {
     assessment: 'assessment',
     booking: 'placement',
     assessmentAppeal: 'appeal',
+    cas1SpaceBooking: 'placement',
   }
   return translations[type]
 }
