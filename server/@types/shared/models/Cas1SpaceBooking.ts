@@ -10,6 +10,8 @@ import type { Person } from './Person';
 import type { User } from './User';
 export type Cas1SpaceBooking = {
     id: string;
+    applicationId: string;
+    assessmentId: string;
     person: Person;
     tier?: string;
     requirements: Cas1SpaceBookingRequirements;
@@ -29,7 +31,7 @@ export type Cas1SpaceBooking = {
      */
     canonicalDepartureDate: string;
     createdAt: string;
-    keyWorker?: Cas1KeyWorkerAllocation;
-    otherBookingsInPremises: Array<Cas1SpaceBookingDates>;
+    keyWorkerAllocation?: Cas1KeyWorkerAllocation;
+    otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;
 };
 
