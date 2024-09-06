@@ -128,14 +128,6 @@ npm run test:e2e:ui
 
 #### API Setup
 
-In hmpps-approved-premises-api/src/main/resources/application-local.yml update the feature-flags section to appear as follows:
-
-```shell
-    feature-flags:
-      use-ap-and-delius-to-update-users: false
-      cas1-appeal-manager-can-assess-applications: false
-```
-
 Start the API via ap-tools and then run this from the API project to populate out of service bed reasons
 
 ```script/run_migration_job update_cas1_out_of_service_bed_reasons```
@@ -151,16 +143,16 @@ API_CLIENT_ID=approved-premises-ui
 APPROVED_PREMISES_API_URL=http://localhost:8080
 CAS1_E2E_ADMINISTRATOR_PASSWORD=secret
 CAS1_E2E_ADMINISTRATOR_USERNAME=JIMSNOWLDAP
-CAS1_E2E_ASSESSOR_EMAIL=jim.snow@example.digital.justice.gov.uk
-CAS1_E2E_ASSESSOR_NAME="JIM SNOW"
+CAS1_E2E_ASSESSOR_EMAIL=jim.snow@justice.gov.uk
+CAS1_E2E_ASSESSOR_NAME="Test Jim Snow"
 CAS1_E2E_ASSESSOR_PASSWORD=secret
 CAS1_E2E_ASSESSOR_USERNAME=JIMSNOWLDAP
 CAS1_E2E_CRU_MEMBER_PASSWORD=secret
-CAS1_E2E_CRU_MEMBER_USERNAME=SHEILAHANCOCKNPS
-CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=BERNARD.BEAKS
-CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO="JIM SNOW"
+CAS1_E2E_CRU_MEMBER_USERNAME=LAOFULLACCESS
+CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=john-smith
+CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO="Test Jim Snow"
 CAS1_E2E_FUTURE_MANAGER_PASSWORD=secret
-CAS1_E2E_FUTURE_MANAGER_USERNAME=APPROVEDPREMISESTESTUSER
+CAS1_E2E_FUTURE_MANAGER_USERNAME=LAOFULLACCESS
 CAS1_E2E_LEGACY_MANAGER_PASSWORD=secret
 CAS1_E2E_LEGACY_MANAGER_USERNAME=JIMSNOWLDAP
 CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN=X320811
@@ -168,13 +160,35 @@ CAS1_E2E_REPORT_VIEWER_PASSWORD=secret
 CAS1_E2E_REPORT_VIEWER_USERNAME=JIMSNOWLDAP
 CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD=secret
 CAS1_E2E_USER_WITHOUT_ROLES_USERNAME=JIMSNOWLDAP
+CAS1_E2E_CHECK_EMAILS=false
 HMPPS_AUTH_EXTERNAL_URL=http://localhost:9091/auth
 HMPPS_AUTH_NAME=AP_USER TEST_1
-HMPPS_AUTH_PASSWORD=secret
+HMPPS_AUTH_PASSWORD=*REDACTED*
 HMPPS_AUTH_URL=http://localhost:9091/auth
 HMPPS_AUTH_USERNAME=AP_USER_TEST_1
 NOTIFY_API_KEY=*REDACTED*
 SYSTEM_CLIENT_ID=approved-premises-api
+ENABLE_V2_MATCH=true
+```
+
+#### Testing Email Locally
+
+When testing locally emails will not be enabled by default. To enable this behaviour:
+
+1. Update .env, changing:
+
+```
+CAS1_E2E_CHECK_EMAILS=true
+NOTIFY_API_KEY=set to the local-e2e test key (speak to collegues)
+```
+
+2. In the api project, update application-local.yml, adding the following:
+
+```
+notify:
+  mode: TEST_AND_GUEST_LIST
+  api-key: aforementioned NOTIFY_API_KEY value
+  guest-list-api-key: aforementioned NOTIFY_API_KEY value
 ```
 
 #### CLI commands
@@ -182,14 +196,14 @@ SYSTEM_CLIENT_ID=approved-premises-api
 Headless:
 
 ```bash
-test:e2e:local
+npm run test:e2e:local
 # -> npx playwright test --config ./e2e/playwright.config.ts --project=local
 ```
 
 With UI:
 
 ```bash
-test:e2e:local:ui
+npm run test:e2e:local:ui
 # -> npx playwright test --config ./e2e/playwright.config.ts --project=local --ui
 ```
 
