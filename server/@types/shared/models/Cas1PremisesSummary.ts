@@ -11,5 +11,13 @@ export type Cas1PremisesSummary = {
      * The total number of spaces in this premises
      */
     bedCount?: number;
+    /**
+     * The total number of spaces available right now
+     */
+    availableBeds?: number;
+    /**
+     * The total number of out of service beds
+     */
+    outOfServiceBeds?: number;
 };
 
