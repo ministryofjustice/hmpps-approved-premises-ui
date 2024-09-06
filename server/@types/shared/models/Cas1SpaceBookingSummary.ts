@@ -19,6 +19,6 @@ export type Cas1SpaceBookingSummary = {
      * Risk rating tier level of corresponding application
      */
     tier?: string;
-    keyWorker?: Cas1KeyWorkerAllocation;
+    keyWorkerAllocation?: Cas1KeyWorkerAllocation;
 };
 
