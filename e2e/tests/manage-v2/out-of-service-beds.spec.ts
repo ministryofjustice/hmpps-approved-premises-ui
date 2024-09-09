@@ -12,6 +12,7 @@ import { V2BedPage } from '../../pages/manage/v2BedPage'
 import { V2MarkBedAsOutOfServicePage } from '../../pages/manage/v2MarkBedAsOutOfServicePage'
 import { signIn } from '../../steps/signIn'
 import { UpdateOutOfServiceBedPage } from '../../pages/manage/v2UpdateOutOfServiceBedPage'
+import { OutOfServiceBedsPage } from '../../pages/manage/outOfServiceBedsPage'
 
 test.describe.configure({ mode: 'parallel' })
 
@@ -59,6 +60,20 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
   // // And I see the success message on the 'history' pane of the bed page
   await revisitedV2BedPage.showsOutOfServiceBedRecordedSuccessMessage()
 }
+
+test('View all out of service beds', async ({ page, cruMember }) => {
+  // Given I am signed in as a CRU Member
+  await signIn(page, cruMember)
+
+  // And I am on the dashboard page
+  const dashboard = await visitDashboard(page)
+
+  // And I click the 'View out of service beds' tile
+  dashboard.clickOutOfServiceBeds()
+
+  // Then I am taken to the out of service beds page
+  await OutOfServiceBedsPage.initialize(page, 'Out of service beds')
+})
 
 test('Future manager marks a bed as out of service in the V2 Manage area', async ({ page, futureManager }) => {
   await markABedAsOutOfService(page, futureManager)
