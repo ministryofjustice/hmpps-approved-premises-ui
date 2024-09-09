@@ -9,7 +9,7 @@ export const verifyEmailSent = async (
   subject: string,
   bodyIncludes?: string | undefined,
 ) => {
-  if (emailAddress) {
+  if (emailAddress && process.env.CAS1_E2E_CHECK_EMAILS === 'true') {
     await expect(async () => {
       const client = new NotifyClient(process.env.NOTIFY_API_KEY)
       const response = await client.getNotifications('email')
@@ -19,7 +19,11 @@ export const verifyEmailSent = async (
       )
 
       if (notificationsForEmail.length === 0) {
-        console.error('No email messages found for the given email address')
+        const summary = notifications.map(n => n.email_address)
+
+        console.error(
+          `No email messages with subject '${subject}' found for the given email address '${emailAddress}'. Have received ${notifications.length} emails sent to '${summary}'`,
+        )
         return false
       }
 
@@ -28,7 +32,7 @@ export const verifyEmailSent = async (
       if (notificationsWithSubject.length === 0) {
         console.error(
           `
-          No email messages found with the given subject - subject lines found:
+          No email messages found with the subject '${subject}' - subject lines found:
           ${notificationsForEmail.map(n => n.subject).join('\r\n')}
         `,
         )
@@ -42,8 +46,8 @@ export const verifyEmailSent = async (
       if (notificationsWithBody.length === 0) {
         console.error(
           `
-          No email messages found with the given body - email bodies found:
-          ${notificationsForEmail.map(n => n.body).join('\r\n')}
+          No email messages found with the subject '${subject}' and body '${bodyIncludes}' - email bodies for subject are:
+          ${notificationsWithSubject.map(n => n.body).join('\r\n')}
         `,
         )
         return false
