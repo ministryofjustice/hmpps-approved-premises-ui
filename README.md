@@ -126,12 +126,6 @@ npm run test:e2e:ui
 
 ### Running locally against your `local` development environment
 
-#### API Setup
-
-Start the API via ap-tools and then run this from the API project to populate out of service bed reasons
-
-```script/run_migration_job update_cas1_out_of_service_bed_reasons```
-
 #### Environment variables
 
 You will need to have the following **environment variables** in your local `.env` file.
