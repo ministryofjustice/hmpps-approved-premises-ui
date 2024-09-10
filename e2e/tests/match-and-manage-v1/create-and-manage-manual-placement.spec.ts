@@ -85,16 +85,14 @@ const manuallyBookPlacement = async ({
   return bookingId()
 }
 
-test('Manually create a placement', async ({ page, person, legacyManager }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
+test('Manually create a placement', async ({ page, person, cruMember }) => {
+  await signIn(page, cruMember)
 
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 })
 
-test('Cancel a manually created placement', async ({ page, legacyManager, personForAdHocBooking }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
+test('Cancel a manually created placement', async ({ page, cruMember, personForAdHocBooking }) => {
+  await signIn(page, cruMember)
 
   // And there is a placement for today
   const bookingId = await manuallyBookPlacement({ page, person: personForAdHocBooking, filterPremisesPage: true })
@@ -117,9 +115,8 @@ test('Cancel a manually created placement', async ({ page, legacyManager, person
   await placementPage.showsCancellationLoggedMessage()
 })
 
-test('Change placement dates', async ({ page, person, legacyManager }) => {
-  // Given I am signed in as a legacy manager
-  await signIn(page, legacyManager)
+test('Change placement dates', async ({ page, person, cruMember }) => {
+  await signIn(page, cruMember)
 
   const bookingId = await manuallyBookPlacement({ page, person })
 
