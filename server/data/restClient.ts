@@ -3,7 +3,7 @@
 import { Readable } from 'stream'
 import superagent from 'superagent'
 import Agent, { HttpsAgent } from 'agentkeepalive'
-import type { Response } from 'express'
+import { Response } from 'express'
 
 import logger from '../../logger'
 import sanitiseError from '../sanitisedError'
@@ -75,6 +75,10 @@ export default class RestClient {
         .agent(this.agent)
         .use(restClientMetricsMiddleware)
         .retry(2, (err, res) => {
+          if (res && res.statusCode === 503) {
+            logger.info('Received 503, Not retrying')
+            return false
+          }
           if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
@@ -128,6 +132,10 @@ export default class RestClient {
         .auth(this.token, { type: 'bearer' })
         .use(restClientMetricsMiddleware)
         .retry(2, (err, res) => {
+          if (res && res.statusCode === 503) {
+            logger.info('Received 503, Not retrying')
+            return false
+          }
           if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
@@ -161,6 +169,10 @@ export default class RestClient {
         .auth(this.token, { type: 'bearer' })
         .use(restClientMetricsMiddleware)
         .retry(2, (err, res) => {
+          if (res && res.statusCode === 503) {
+            logger.info('Received 503, Not retrying')
+            return false
+          }
           if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })

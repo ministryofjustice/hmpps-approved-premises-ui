@@ -79,6 +79,20 @@ describe('restClient', () => {
 
       expect(nock.isDone()).toBeTruthy()
     })
+    it('should not retry for 503', async () => {
+      fakeApprovedPremisesApi.get('/some/path').reply(503)
+
+      const loggerSpy = jest.spyOn(logger, 'info')
+      try {
+        await restClient.get({ path: '/some/path' })
+      } catch (error) {
+        expect(error.message).toEqual('Service Unavailable')
+      }
+
+      expect(loggerSpy).toHaveBeenCalledWith('Get using user credentials: calling premisesClient: /some/path ')
+      expect(loggerSpy).toHaveBeenCalledWith('Received 503, Not retrying')
+      nock.cleanAll()
+    })
   })
 
   describe('post', () => {
