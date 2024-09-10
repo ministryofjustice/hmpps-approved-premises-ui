@@ -62,12 +62,12 @@ export const adminActions = (
         href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         text: 'Search for a space',
       })
-    } else {
-      actions.unshift({
-        href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
-        text: 'Create placement',
-      })
     }
+
+    actions.unshift({
+      href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
+      text: 'Create placement',
+    })
   }
 
   return actions
