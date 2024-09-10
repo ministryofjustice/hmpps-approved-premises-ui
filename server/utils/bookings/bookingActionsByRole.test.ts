@@ -69,9 +69,10 @@ describe('bookingUtils bookingActions by role', () => {
       })
     })
 
-    describe('when the user has the "manager" role', () => {
+    describe('when the user has the "manager" role and "cas1_booking_change_dates" permission', () => {
       const user = userDetailsFactory.build({
         roles: ['manager'],
+        permissions: ['cas1_booking_change_dates'],
       })
       const booking = bookingFactory.build()
 
@@ -132,9 +133,10 @@ describe('bookingUtils bookingActions by role', () => {
       })
     })
 
-    describe('when the user has the "legacy_manager" role', () => {
+    describe('when the user has the "legacy_manager" role and "cas1_booking_change_dates" permission', () => {
       const user = userDetailsFactory.build({
         roles: ['legacy_manager'],
+        permissions: ['cas1_booking_change_dates'],
       })
       const booking = bookingFactory.build()
 
@@ -190,6 +192,25 @@ describe('bookingUtils bookingActions by role', () => {
               premisesId: arrivedBooking.premises.id,
               bookingId: arrivedBooking.id,
             }),
+          })
+        })
+      })
+    })
+
+    describe('when the user has the "future_manager" role and the "cas1_booking_change_dates" permission', () => {
+      const user = userDetailsFactory.build({
+        roles: ['future_manager'],
+        permissions: ['cas1_booking_change_dates'],
+      })
+
+      describe('when booking has NOT arrived', () => {
+        const booking = bookingFactory.build()
+
+        it('includes the CHANGE DATES action', () => {
+          expect(bookingActions(user, booking)).toContainMenuItem({
+            text: 'Change placement dates',
+            classes: 'govuk-button--secondary',
+            href: paths.bookings.dateChanges.new({ premisesId: booking?.premises.id, bookingId: booking?.id }),
           })
         })
       })
