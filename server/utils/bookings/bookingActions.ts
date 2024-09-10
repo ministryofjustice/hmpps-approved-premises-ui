@@ -81,12 +81,23 @@ class MenuItems {
 export const v2BookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
   const menuItems = new MenuItems(booking)
 
-  if (booking.status === 'awaiting-arrival' && hasPermission(user, ['cas1_booking_withdraw']))
+  if (booking.status === 'awaiting-arrival') {
+    const items = []
+
+    if (hasPermission(user, ['cas1_booking_withdraw'])) {
+      items.push(menuItems.item('withdrawPlacement'))
+    }
+
+    if (hasPermission(user, ['cas1_booking_change_dates'])) {
+      items.push(menuItems.item('changeDates'))
+    }
+
     return [
       {
-        items: [menuItems.item('withdrawPlacement')],
+        items,
       },
     ]
+  }
 
   return []
 }
@@ -111,7 +122,7 @@ export const v1BookingActions = (user: UserDetails, booking: Booking): Array<Ide
         items.push(menuItems.item('withdrawPlacement'))
       }
 
-      if (usersRoles.includes('manager') || usersRoles.includes('legacy_manager')) {
+      if (hasPermission(user, ['cas1_booking_change_dates'])) {
         items.push(menuItems.item('changeDates'))
       }
     }
