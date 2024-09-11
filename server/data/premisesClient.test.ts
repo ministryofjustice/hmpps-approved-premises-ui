@@ -50,31 +50,6 @@ describeClient('PremisesClient', provider => {
     })
   })
 
-  describe('find', () => {
-    const premises = premisesFactory.build()
-
-    it('should get a single premises', async () => {
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get a single premises',
-        withRequest: {
-          method: 'GET',
-          path: paths.premises.show({ premisesId: premises.id }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: premises,
-        },
-      })
-
-      const output = await premisesClient.find(premises.id)
-      expect(output).toEqual(premises)
-    })
-  })
-
   describe('capacity', () => {
     const premisesId = 'premisesId'
     const premisesCapacityItems = dateCapacityFactory.buildList(5)

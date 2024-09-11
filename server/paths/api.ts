@@ -26,6 +26,7 @@ const managePaths = {
   premises: {
     index: premisesPath.path('summary'),
     show: singlePremisesPath,
+    cas1Show: cas1SinglePremisesPath,
   },
   lostBeds: {
     create: lostBedsPath,
@@ -141,6 +142,7 @@ export default {
       dateChange: managePaths.bookings.dateChange,
     },
     calendar: managePaths.premises.show.path('calendar'),
+    cas1Show: managePaths.premises.cas1Show,
   },
   bookings: {
     bookingWithoutPremisesPath: managePaths.bookings.bookingWithoutPremisesPath,
