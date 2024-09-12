@@ -73,9 +73,10 @@ describe('SpaceBookingsController', () => {
 
   describe('create', () => {
     it.each([
-      ["empty", { essentialCharacteristics: [], desirableCharacteristics: [] }],
-      ["populated", {}]]
-    )('should call the createSpaceBooking method on the spaceService and redirect the user to the CRU dashboard with characteristics %1',
+      ['empty', { essentialCharacteristics: [], desirableCharacteristics: [] }],
+      ['populated', {}],
+    ])(
+      'should call the createSpaceBooking method on the spaceService and redirect the user to the CRU dashboard with characteristics %1',
       async (text, requirementsOverride) => {
         const personName = 'John Doe'
         const premisesName = 'Hope House'
@@ -106,7 +107,7 @@ describe('SpaceBookingsController', () => {
         expect(spaceService.createSpaceBooking).toHaveBeenCalledWith(token, id, newSpaceBooking)
         expect(flash).toHaveBeenCalledWith('success', `Space booked for ${personName} in ${premisesName}`)
         expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
-      }
+      },
     )
   })
 })
