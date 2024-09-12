@@ -14,8 +14,8 @@ export const auditMiddleware = (
   if (auditEventSpec) {
     const redirectMatchers: Array<RedirectAuditMatcher> = auditEventSpec.redirectAuditEventSpecs?.map(
       ({ path, auditEvent: redirectAuditEvent }) => {
-        const keys: Array<Key> = []
-        return { auditEvent: redirectAuditEvent, keys, regExp: pathToRegexp(path, keys) }
+        const parsedRegex = pathToRegexp(path)
+        return { auditEvent: redirectAuditEvent, keys: parsedRegex.keys, regExp: parsedRegex.regexp }
       },
     )
 
