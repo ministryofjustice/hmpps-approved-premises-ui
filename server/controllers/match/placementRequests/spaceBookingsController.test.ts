@@ -72,36 +72,41 @@ describe('SpaceBookingsController', () => {
   })
 
   describe('create', () => {
-    it('should call the createSpaceBooking method on the spaceService and redirect the user to the CRU dashboard', async () => {
-      const personName = 'John Doe'
-      const premisesName = 'Hope House'
-      const id = 'placement-request-id'
-      const requirements = spaceBookingRequirementsFactory.build()
-      const newSpaceBooking = newSpaceBookingFactory.build({ requirements })
-      const spaceBooking = spaceBookingFactory.build()
+    it.each([
+      ["empty", { essentialCharacteristics: [], desirableCharacteristics: [] }],
+      ["populated", {}]]
+    )('should call the createSpaceBooking method on the spaceService and redirect the user to the CRU dashboard with characteristics %1',
+      async (text, requirementsOverride) => {
+        const personName = 'John Doe'
+        const premisesName = 'Hope House'
+        const id = 'placement-request-id'
+        const requirements = spaceBookingRequirementsFactory.build(requirementsOverride)
+        const newSpaceBooking = newSpaceBookingFactory.build({ requirements })
+        const spaceBooking = spaceBookingFactory.build()
 
-      const body = {
-        arrivalDate: newSpaceBooking.arrivalDate,
-        departureDate: newSpaceBooking.departureDate,
-        premisesId: newSpaceBooking.premisesId,
-        apType: newSpaceBooking.requirements.apType,
-        essentialCharacteristics: newSpaceBooking.requirements.essentialCharacteristics.toString(),
-        desirableCharacteristics: newSpaceBooking.requirements.desirableCharacteristics.toString(),
-        gender: newSpaceBooking.requirements.gender,
-        personName,
-        premisesName,
+        const body = {
+          arrivalDate: newSpaceBooking.arrivalDate,
+          departureDate: newSpaceBooking.departureDate,
+          premisesId: newSpaceBooking.premisesId,
+          apType: newSpaceBooking.requirements.apType,
+          essentialCharacteristics: newSpaceBooking.requirements.essentialCharacteristics.toString(),
+          desirableCharacteristics: newSpaceBooking.requirements.desirableCharacteristics.toString(),
+          gender: newSpaceBooking.requirements.gender,
+          personName,
+          premisesName,
+        }
+        const params = { id }
+
+        spaceService.createSpaceBooking.mockResolvedValue(spaceBooking)
+        const flash = jest.fn()
+
+        const requestHandler = spaceBookingsController.create()
+        await requestHandler({ ...request, flash, params, body }, response, next)
+
+        expect(spaceService.createSpaceBooking).toHaveBeenCalledWith(token, id, newSpaceBooking)
+        expect(flash).toHaveBeenCalledWith('success', `Space booked for ${personName} in ${premisesName}`)
+        expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
       }
-      const params = { id }
-
-      spaceService.createSpaceBooking.mockResolvedValue(spaceBooking)
-      const flash = jest.fn()
-
-      const requestHandler = spaceBookingsController.create()
-      await requestHandler({ ...request, flash, params, body }, response, next)
-
-      expect(spaceService.createSpaceBooking).toHaveBeenCalledWith(token, id, newSpaceBooking)
-      expect(flash).toHaveBeenCalledWith('success', `Space booked for ${personName} in ${premisesName}`)
-      expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
-    })
+    )
   })
 })
