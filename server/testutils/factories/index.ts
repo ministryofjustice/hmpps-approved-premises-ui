@@ -96,6 +96,7 @@ import spaceCategoryAvailabilityFactory from './spaceAvailability'
 import spaceSearchParametersFactory, { spaceSearchParametersUiFactory } from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
+import cas1PremisesSummaryFactory from './cas1PremisesSummary'
 
 export {
   acctAlertFactory,
@@ -200,4 +201,5 @@ export {
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
+  cas1PremisesSummaryFactory,
 }

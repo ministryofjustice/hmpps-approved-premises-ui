@@ -6,8 +6,8 @@ import V2PremisesController from './premisesController'
 
 import {
   apAreaFactory,
+  cas1PremisesSummaryFactory,
   extendedPremisesSummaryFactory,
-  premisesFactory,
   premisesSummaryFactory,
 } from '../../../testutils/factories'
 
@@ -30,7 +30,7 @@ describe('V2PremisesController', () => {
 
   describe('show', () => {
     it('should return the premises detail to the template', async () => {
-      const fullPremises = premisesFactory.build()
+      const fullPremises = cas1PremisesSummaryFactory.build()
       const premises = extendedPremisesSummaryFactory.build()
 
       premisesService.getPremisesDetails.mockResolvedValue(premises)

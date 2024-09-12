@@ -2,8 +2,8 @@ import type {
   ApprovedPremisesSummary,
   BedDetail,
   BedSummary,
+  Cas1PremisesSummary,
   ExtendedPremisesSummary,
-  Premises,
   Room,
   StaffMember,
 } from '@approved-premises/api'
@@ -65,7 +65,7 @@ export default class PremisesService {
     return room
   }
 
-  async find(token: string, id: string): Promise<Premises> {
+  async find(token: string, id: string): Promise<Cas1PremisesSummary> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.find(id)
 

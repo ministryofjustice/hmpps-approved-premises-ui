@@ -4,8 +4,8 @@ import {
   bedDetailFactory,
   bedOccupancyRangeFactory,
   bedSummaryFactory,
+  cas1PremisesSummaryFactory,
   extendedPremisesSummaryFactory,
-  premisesFactory,
   premisesSummaryFactory,
   roomFactory,
   staffMemberFactory,
@@ -136,7 +136,7 @@ describe('PremisesService', () => {
 
   describe('find', () => {
     it('fetches the premises from the client', async () => {
-      const premises = premisesFactory.build()
+      const premises = cas1PremisesSummaryFactory.build()
       premisesClient.find.mockResolvedValue(premises)
 
       const result = await service.find(token, premises.id)
