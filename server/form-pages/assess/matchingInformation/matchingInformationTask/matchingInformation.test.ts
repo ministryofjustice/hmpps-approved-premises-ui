@@ -78,8 +78,8 @@ describe('MatchingInformation', () => {
       const page = new MatchingInformation({}, assessment)
 
       expect(page.errors()).toEqual({
-        isStepFreeDesignated: 'You must specify a preference for step-free access',
-        hasEnSuite: 'You must specify a preference for en-suite bathroom',
+        isStepFreeDesignated: 'You must specify a preference for limited mobility',
+        hasEnSuite: 'You must specify a preference for en-suite (room)',
         lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
       })
     })
@@ -104,17 +104,17 @@ describe('MatchingInformation', () => {
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
         'Designated arson room': 'Essential',
         'Room suitable for a person with sexual offences': 'Not relevant',
-        'Wheelchair accessible': 'Essential',
-        'Single room': 'Desirable',
-        'Step-free access': 'Desirable',
-        'Catering required': 'Not relevant',
-        'En-suite bathroom': 'Not relevant',
-        'Vulnerable to exploitation': 'Relevant',
-        'Sexual offences against an adult': 'Relevant',
-        'Sexual offences against children': 'Relevant',
+        'Wheelchair needs': 'Essential',
+        'Single (room)': 'Desirable',
+        'Limited mobility': 'Desirable',
+        'Catered (property)': 'Not relevant',
+        'En-suite (room)': 'Not relevant',
+        'At risk of criminal exploitation': 'Relevant',
+        'Poses sexual risk to adults': 'Relevant',
+        'Poses risk to children': 'Relevant',
         'Non sexual offences against children': 'Relevant',
-        'Hate based offences': 'Relevant',
-        'Arson offences': 'Relevant',
+        'Has committed hate-based offences': 'Relevant',
+        'Poses arson risk': 'Relevant',
         'Do you agree with the suggested length of stay?': 'Yes',
         'Information for Central Referral Unit (CRU) manager': 'Some info',
       })
