@@ -192,7 +192,7 @@ export const generateConflictBespokeError = (
 
   const link =
     conflictingEntityType === ConflictingEntityType.lostBed && bedId
-      ? `<a href="${paths.v2Manage.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: conflictingEntityId, tab: 'details' })}">existing out of service beds record</a>`
+      ? `<a href="${paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id: conflictingEntityId, tab: 'details' })}">existing out of service beds record</a>`
       : `<a href="${paths.bookings.show({
           premisesId,
           bookingId: conflictingEntityId,
