@@ -213,6 +213,7 @@ workflows:
             branches:
               only:
                 - main
+                - feature/APS-1298-update-space-search-for-user-research
       - hmpps/deploy_env:
           name: deploy_dev
           env: 'dev'
