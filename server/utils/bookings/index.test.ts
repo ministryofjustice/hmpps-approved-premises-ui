@@ -196,9 +196,9 @@ describe('bookingUtils', () => {
   })
 
   describe('generateConflictBespokeError', () => {
-    const bookingId = 'bookingId'
-    const bedId = 'bedId'
-    const lostBedId = 'lostBedId'
+    const bookingId = 'booking-id'
+    const bedId = 'bed-id'
+    const lostBedId = 'lost-bed-id'
 
     it('generates a bespoke error when there is a conflicting booking', () => {
       const err = {
@@ -220,22 +220,23 @@ describe('bookingUtils', () => {
       })
     })
 
-    it('generates a bespoke error when there is a conflicting lost bed', () => {
+    it('generates a bespoke error when there is a conflicting out-of-service bed', () => {
       const err = {
         data: {
-          detail: `Conflicting Lost Bed: ${lostBedId}`,
+          detail: `Conflicting out-of-service bed: ${lostBedId}`,
         },
       }
 
       expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'plural', bedId)).toEqual({
-        errorTitle: 'This bedspace is not available for the dates entered',
+        errorTitle: 'Out of service bed record cannot be created for the dates entered',
         errorSummary: [
           {
-            html: `They conflict with an <a href="${paths.lostBeds.show({
+            html: `They conflict with an <a href="${paths.v2Manage.outOfServiceBeds.show({
               premisesId,
               bedId,
               id: lostBedId,
-            })}">existing lost bed</a>`,
+              tab: 'details',
+            })}">existing out of service beds record</a>`,
           },
         ],
       })
