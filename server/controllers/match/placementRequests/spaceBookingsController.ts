@@ -45,8 +45,8 @@ export default class {
         premisesId: body.premisesId,
         requirements: {
           apType: body.apType,
-          essentialCharacteristics: body.essentialCharacteristics.split(','),
-          desirableCharacteristics: body.desirableCharacteristics.split(','),
+          essentialCharacteristics: body.essentialCharacteristics ? body.essentialCharacteristics.split(',') : [],
+          desirableCharacteristics: body.desirableCharacteristics ? body.desirableCharacteristics.split(',') : [],
           gender: body.gender,
         },
       }
