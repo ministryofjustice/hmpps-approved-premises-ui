@@ -4,7 +4,6 @@ import {
   Gender,
   PlacementCriteria,
   PlacementRequestDetail,
-  Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../../@types/shared'
