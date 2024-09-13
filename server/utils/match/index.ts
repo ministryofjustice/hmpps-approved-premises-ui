@@ -25,6 +25,7 @@ import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
 export { placementDates } from './placementDates'
+export { filterOutAPTypes } from './util'
 
 type PlacementDates = {
   placementLength: number
