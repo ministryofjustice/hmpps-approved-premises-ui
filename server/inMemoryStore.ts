@@ -1,8 +1,13 @@
+import { UserDetails } from '@approved-premises/ui'
+
 interface InMemoryStore {
-  userVersion: string
+  users: Record<UserDetails['id'], UserDetails['version']>
 }
-// will be used for data storage from api response that needed to be used later in the app
+
+// the in-memory store can be used for data that needs to persist across several sessions,
+// or where the session store cannot be used.
 const inMemoryStore: InMemoryStore = {
-  userVersion: '',
+  users: {},
 }
+
 export default inMemoryStore

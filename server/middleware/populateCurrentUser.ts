@@ -1,5 +1,4 @@
 import { RequestHandler } from 'express'
-import { UserDetails } from '@approved-premises/ui'
 import logger from '../../logger'
 
 import UserService, { DeliusAccountMissingStaffDetailsError } from '../services/userService'
@@ -9,13 +8,19 @@ export default function populateCurrentUser(userService: UserService): RequestHa
   return async (req, res, next) => {
     try {
       if (res.locals.user) {
-        let user: UserDetails | undefined = req.session.user || res.locals.user
-        if (!inMemoryStore.userVersion || user?.version?.toString() !== inMemoryStore.userVersion) {
+        let { user } = req.session
+
+        if (!user || user.version !== inMemoryStore.users[user.id]) {
+          const currentVersion = user?.version
           user = await userService.getActingUser(res.locals.user.token)
-          logger.info(`****** Updated user via API ****** from ${inMemoryStore.userVersion}  to ${user?.version}`)
+          req.session.user = user
+          if (user) {
+            logger.info(
+              `Updated user from API${currentVersion !== user.version ? ` (version: ${currentVersion} -> ${user.version})` : ''}`,
+            )
+          }
         }
 
-        req.session.user = user
         res.locals.user = { ...user, ...res.locals.user }
 
         if (!user) {

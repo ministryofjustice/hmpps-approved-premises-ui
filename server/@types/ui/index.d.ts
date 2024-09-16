@@ -45,6 +45,7 @@ import {
 interface TasklistPage {
   body: Record<string, unknown>
 }
+
 interface PersonService {}
 
 // A utility type that allows us to define an object with a date attribute split into
@@ -374,7 +375,7 @@ export type UserDetails = {
   permissions: Array<ApprovedPremisesUserPermission>
   active: boolean
   apArea: ApArea
-  version: number
+  version: string
 }
 
 export type PartnerAgencyDetails = {
