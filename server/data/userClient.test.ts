@@ -1,5 +1,5 @@
 import UserClient from './userClient'
-import { userFactory } from '../testutils/factories'
+import { userFactory, userSummaryFactory } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
@@ -66,7 +66,7 @@ describeClient('UserClient', provider => {
   })
 
   describe('getUserList', () => {
-    const users = userFactory.buildList(4)
+    const users = userSummaryFactory.buildList(4)
 
     it('should return all users without pagination', async () => {
       provider.addInteraction({
@@ -74,7 +74,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of all users without pagination',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             roles: '',
           },
@@ -100,7 +100,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a list of all users without pagination',
         withRequest: {
           method: 'GET',
-          path: paths.users.index({}),
+          path: paths.users.summary({}),
           query: {
             roles: 'applicant,assessor',
           },

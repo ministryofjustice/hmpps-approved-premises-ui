@@ -1,20 +1,20 @@
 import ListPage from '../../pages/tasks/listPage'
 
-import { apAreaFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
+import { apAreaFactory, taskFactory, userFactory, userSummaryFactory } from '../../../server/testutils/factories'
 import { restrictedPersonSummaryTaskFactory } from '../../../server/testutils/factories/task'
 import { restrictedPersonSummaryAssessmentTaskFactory } from '../../../server/testutils/factories/assessmentTask'
 import paths from '../../../server/paths/tasks'
 import { fullPersonSummaryFactory } from '../../../server/testutils/factories/person'
 
 context('Task Allocation', () => {
-  const users = userFactory.buildList(5)
+  const users = userSummaryFactory.buildList(5)
   const apArea = apAreaFactory.build()
   const additionalArea = apAreaFactory.build()
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
+    cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubAuthUser', { apArea })
     cy.task('stubApAreaReferenceData', { apArea, additionalAreas: [additionalArea] })
 

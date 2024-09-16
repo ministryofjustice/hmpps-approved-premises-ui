@@ -81,7 +81,7 @@ import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
 import { applicationTimelineFactory, personalTimelineFactory, timelineEventFactory } from './timeline'
-import userFactory, { userWithWorkloadFactory } from './user'
+import userFactory, { userSummaryFactory, userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
 import premisesBookingFactory from './premisesBooking'
@@ -188,6 +188,7 @@ export {
   tierEnvelopeFactory,
   timelineEventFactory,
   userFactory,
+  userSummaryFactory,
   userDetailsFactory,
   userWithWorkloadFactory,
   withdrawableFactory,
