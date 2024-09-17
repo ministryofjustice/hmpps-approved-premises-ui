@@ -30,7 +30,7 @@ export default class BedspaceConflictErrorComponent {
     if (conflictingEntityType === 'booking') {
       Page.verifyOnPage(BookingShowPage, [this.premisesId, conflictingEntity as Booking])
     } else {
-      Page.verifyOnPage(OutOfServiceBedShowPage, this.premisesId, conflictingEntity as OutOfServiceBed)
+      Page.verifyOnPage(OutOfServiceBedShowPage, this.premisesId, conflictingEntity as Cas1OutOfServiceBed)
     }
 
     cy.go('back')
