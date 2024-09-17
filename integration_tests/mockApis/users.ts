@@ -3,6 +3,7 @@ import {
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
+  UserSummary,
 } from '@approved-premises/api'
 import QueryString from 'qs'
 import { Response } from 'superagent'
@@ -31,6 +32,25 @@ const stubUserList = (args: { users: Array<User>; roles: Array<UserRole> }) => {
     request: {
       method: 'GET',
       urlPathPattern: paths.users.index.pattern,
+      queryParameters: {
+        roles: { equalTo: args.roles.join(',') },
+      },
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.users,
+    },
+  })
+}
+
+const stubUserSummaryList = (args: { users: Array<UserSummary>; roles: Array<UserRole> }) => {
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: paths.users.summary.pattern,
       queryParameters: {
         roles: { equalTo: args.roles.join(',') },
       },
@@ -247,6 +267,7 @@ export default {
   stubFindUser,
   stubUsers,
   stubUserList,
+  stubUserSummaryList,
   stubUserUpdate,
   stubUserSearch,
   stubUserDelete,

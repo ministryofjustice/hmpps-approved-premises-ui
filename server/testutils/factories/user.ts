@@ -6,6 +6,7 @@ import type {
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
+  UserSummary,
   UserWithWorkload,
 } from '@approved-premises/api'
 import { apAreaFactory } from './referenceData'
@@ -22,6 +23,11 @@ const userFactory = Factory.define<User>(() => ({
   service: 'ApprovedPremises',
   isActive: true,
   apArea: apAreaFactory.build(),
+}))
+
+export const userSummaryFactory = Factory.define<UserSummary>(() => ({
+  name: faker.person.fullName(),
+  id: faker.string.uuid(),
 }))
 
 export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ params }) => ({
