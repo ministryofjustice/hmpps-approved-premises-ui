@@ -1,5 +1,6 @@
 import type { Booking } from '@approved-premises/api'
 
+import { EntityType } from '../../server/@types/ui'
 import { getMatchingRequests, stubFor } from './setup'
 import { bedspaceConflictResponseBody, errorStub } from './utils'
 import paths from '../../server/paths/api'
@@ -22,7 +23,7 @@ export default {
   stubBookingCreateConflictError: (args: {
     premisesId: string
     conflictingEntityId: string
-    conflictingEntityType: 'booking' | 'lost-bed'
+    conflictingEntityType: EntityType
   }) =>
     stubFor({
       request: {

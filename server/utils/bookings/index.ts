@@ -18,10 +18,11 @@ import { isFullPerson, laoName } from '../personUtils'
 import { convertObjectsToRadioItems } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
 import { bookingActions, v1BookingActions, v2BookingActions } from './bookingActions'
+import { EntityType } from '../../@types/ui'
 
 const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
-type ConflictingEntityType = 'booking' | 'lostBed'
+type ConflictingEntityType = EntityType
 
 type ParsedConflictError = {
   conflictingEntityId: string
@@ -182,13 +183,13 @@ export const generateConflictBespokeError = (
   const { conflictingEntityId, conflictingEntityType } = parseConflictError(detail)
 
   const title = (
-    conflictingEntityType === 'lostBed'
+    conflictingEntityType === 'lost-bed'
       ? 'Out of service bed record cannot be created for the $date$ entered'
       : 'This bedspace is not available for the $date$ entered'
   ).replace('$date$', datesGrammaticalNumber === 'plural' ? 'dates' : 'date')
 
   const link =
-    conflictingEntityType === 'lostBed' && bedId
+    conflictingEntityType === 'lost-bed' && bedId
       ? `<a href="${paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id: conflictingEntityId, tab: 'details' })}">existing out of service beds record</a>`
       : `<a href="${paths.bookings.show({
           premisesId,
@@ -206,7 +207,7 @@ const parseConflictError = (detail: string): ParsedConflictError => {
    *    e.g. "An out-of-service bed already exists for dates from 2024-10-01 to 2024-10-14 which overlaps with the desired dates: 220a71da-bf5c-424d-94ff-254ecac5b857"
    */
   const [message, conflictingEntityId] = detail.split(':').map((s: string) => s.trim())
-  const conflictingEntityType = message.includes('out-of-service bed') ? 'lostBed' : 'booking'
+  const conflictingEntityType = message.includes('out-of-service bed') ? 'lost-bed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
 }
 

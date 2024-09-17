@@ -1,4 +1,5 @@
 import { LostBed } from '@approved-premises/api'
+import { EntityType } from '../../server/@types/ui'
 
 const getCombinations = (arr: Array<string>) => {
   const result: Array<Array<string>> = []
@@ -51,7 +52,7 @@ const errorStub = (fields: Array<string>, pattern: string, method: 'PUT' | 'POST
   }
 }
 
-const bedspaceConflictResponseBody = (entityId: string | LostBed, entityType: 'booking' | 'lost-bed') => ({
+const bedspaceConflictResponseBody = (entityId: string | LostBed, entityType: EntityType) => ({
   title: 'Conflict',
   status: 409,
   detail: `${entityType === 'booking' ? 'Booking' : 'out-of-service bed'}: ${entityId}`,

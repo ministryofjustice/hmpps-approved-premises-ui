@@ -3,6 +3,7 @@ import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
 import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
+import { EntityType } from '../../../../server/@types/ui'
 
 export class OutOfServiceBedCreatePage extends Page {
   private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
@@ -44,7 +45,7 @@ export class OutOfServiceBedCreatePage extends Page {
 
   shouldShowDateConflictErrorMessages(
     conflictingEntity: Booking | OutOfServiceBed,
-    conflictingEntityType: 'booking' | 'lost-bed',
+    conflictingEntityType: EntityType,
   ): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
       ['startDate', 'endDate'],
