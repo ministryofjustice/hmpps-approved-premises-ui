@@ -21,10 +21,7 @@ import { bookingActions, v1BookingActions, v2BookingActions } from './bookingAct
 
 const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
-enum ConflictingEntityType {
-  booking,
-  lostBed,
-}
+type ConflictingEntityType = 'booking' | 'lostBed'
 
 type ParsedConflictError = {
   conflictingEntityId: string
@@ -185,13 +182,13 @@ export const generateConflictBespokeError = (
   const { conflictingEntityId, conflictingEntityType } = parseConflictError(detail)
 
   const title = (
-    conflictingEntityType === ConflictingEntityType.lostBed
+    conflictingEntityType === 'lostBed'
       ? 'Out of service bed record cannot be created for the $date$ entered'
       : 'This bedspace is not available for the $date$ entered'
   ).replace('$date$', datesGrammaticalNumber === 'plural' ? 'dates' : 'date')
 
   const link =
-    conflictingEntityType === ConflictingEntityType.lostBed && bedId
+    conflictingEntityType === 'lostBed' && bedId
       ? `<a href="${paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id: conflictingEntityId, tab: 'details' })}">existing out of service beds record</a>`
       : `<a href="${paths.bookings.show({
           premisesId,
@@ -208,10 +205,9 @@ const parseConflictError = (detail: string): ParsedConflictError => {
    *  @param detail - string is text containing the entity id at the end preceded by ': '
    *    e.g. "An out-of-service bed already exists for dates from 2024-10-01 to 2024-10-14 which overlaps with the desired dates: 220a71da-bf5c-424d-94ff-254ecac5b857"
    */
-  const matchResult = /([0-9a-z-]*)$/.exec(detail)
-  const conflictingEntityId = matchResult && matchResult[1]
+  const conflictingEntityId = detail.split(': ').at(-1)
   const isOutOfServiceBedEntity = /(?:lost bed)|(?:out-of-service bed)/i.test(detail)
-  const conflictingEntityType = isOutOfServiceBedEntity ? ConflictingEntityType.lostBed : ConflictingEntityType.booking
+  const conflictingEntityType = isOutOfServiceBedEntity ? 'lostBed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
 }
 

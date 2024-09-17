@@ -1,6 +1,5 @@
 import {
   bedDetailFactory,
-  bookingFactory,
   extendedPremisesSummaryFactory,
   outOfServiceBedFactory,
   premisesFactory,
@@ -85,25 +84,33 @@ context('OutOfServiceBeds', () => {
     page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason', 'notes'])
   })
 
-  it('should show an error when there are booking conflicts', () => {
+  it('should show an error when there are out of service bed conflicts', () => {
     // Given I am signed in with permission to create an out of service bed
-    signIn([], ['cas1_out_of_service_bed_create'])
+    signIn([], ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'])
 
+    const bed = { name: 'abc', id: '123' }
     const premises = extendedPremisesSummaryFactory.build()
-    const conflictingBooking = bookingFactory.build()
+    const conflictingOutOfServiceBed = outOfServiceBedFactory.build({
+      bed,
+      startDate: '2022-02-11',
+      endDate: '2022-03-11',
+    })
+
     cy.task('stubPremisesSummary', premises)
-    cy.task('stubBookingGet', { premisesId: premises.id, booking: conflictingBooking })
+    cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed: conflictingOutOfServiceBed })
+    const bedDetail = bedDetailFactory.build({ id: bed.id })
+    cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // When I navigate to the out of service bed form
-
     const outOfServiceBed = outOfServiceBedFactory.build({
+      bed,
       startDate: '2022-02-11',
       endDate: '2022-03-11',
     })
     cy.task('stubOutOfServiceBedConflictError', {
       premisesId: premises.id,
-      conflictingEntityId: conflictingBooking.id,
-      conflictingEntityType: 'booking',
+      conflictingEntityId: conflictingOutOfServiceBed.id,
+      conflictingEntityType: 'lost-bed',
     })
 
     const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
@@ -113,6 +120,6 @@ context('OutOfServiceBeds', () => {
     page.clickSubmit()
 
     // Then I should see an error message
-    page.shouldShowDateConflictErrorMessages(conflictingBooking, 'booking')
+    page.shouldShowDateConflictErrorMessages(conflictingOutOfServiceBed, 'lost-bed')
   })
 })

@@ -223,7 +223,7 @@ describe('bookingUtils', () => {
     it('generates a bespoke error when there is a conflicting out-of-service bed', () => {
       const err = {
         data: {
-          detail: `Conflicting out-of-service bed: ${lostBedId}`,
+          detail: `An out-of-service bed already exists for dates from 2024-10-05 to 2024-10-20 which overlaps with the desired dates: ${lostBedId}`,
         },
       }
 

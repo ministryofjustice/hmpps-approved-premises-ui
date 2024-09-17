@@ -54,7 +54,7 @@ const errorStub = (fields: Array<string>, pattern: string, method: 'PUT' | 'POST
 const bedspaceConflictResponseBody = (entityId: string | LostBed, entityType: 'booking' | 'lost-bed') => ({
   title: 'Conflict',
   status: 409,
-  detail: `${entityType === 'booking' ? 'Booking' : 'Lost Bed'}: ${entityId}`,
+  detail: `${entityType === 'booking' ? 'Booking' : 'out-of-service bed'}: ${entityId}`,
 })
 
 export { getCombinations, errorStub, bedspaceConflictResponseBody }
