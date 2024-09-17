@@ -21,7 +21,7 @@ export default function populateCurrentUser(userService: UserService): RequestHa
           }
         }
 
-        res.locals.user = { ...user, ...res.locals.user }
+        res.locals.user = { ...res.locals.user, ...user }
 
         if (!user) {
           logger.info('No user available')

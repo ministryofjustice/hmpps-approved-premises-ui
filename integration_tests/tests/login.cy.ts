@@ -5,6 +5,7 @@ import AuthManageDetailsPage from '../pages/authManageDetails'
 import { userProfileFactory } from '../../server/testutils/factories/user'
 import { userFactory } from '../../server/testutils/factories'
 import DeliusMissingStaffDetails from '../pages/deliusMissingStaffDetails'
+import ShowPage from '../pages/admin/userManagement/showPage'
 
 context('SignIn', () => {
   beforeEach(() => {
@@ -75,5 +76,36 @@ context('SignIn', () => {
     cy.task('stubAuthUser', { name: 'J. Smith', profile })
     cy.signIn()
     Page.verifyOnPage(DeliusMissingStaffDetails)
+  })
+
+  it('refreshes user details from the API if an API call returns a changed user version', () => {
+    const newUserVersion = '987654321'
+    const authUser = userFactory.build({ roles: ['role_admin'] })
+
+    // Given I log in with an admin user without reporter role
+    cy.task('stubAuthUser', { ...authUser })
+    cy.signIn()
+
+    // And I view the dashboard
+    let dashboardPage = Page.verifyOnPage(DashboardPage)
+    dashboardPage.shouldNotShowCard('reports')
+
+    // When my user roles have been updated
+    cy.task('stubAuthUser', { ...authUser, roles: ['role_admin', 'report_viewer'] })
+    cy.task('stubFindUser', { user: authUser, id: authUser.id, userVersion: newUserVersion })
+
+    // And I visit a page that calls the API
+    const userPage = ShowPage.visit(authUser.id)
+
+    // Then I see no change for the current page load
+    userPage.shouldShowMenuItem('Reports', false)
+
+    // When I visit another page
+    userPage.clickMenuItem('Home')
+
+    dashboardPage = Page.verifyOnPage(DashboardPage)
+
+    // Then the updated user roles have been fetched from the API
+    dashboardPage.shouldShowCard('reports')
   })
 })
