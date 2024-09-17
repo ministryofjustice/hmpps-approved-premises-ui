@@ -205,9 +205,8 @@ const parseConflictError = (detail: string): ParsedConflictError => {
    *  @param detail - string is text containing the entity id at the end preceded by ': '
    *    e.g. "An out-of-service bed already exists for dates from 2024-10-01 to 2024-10-14 which overlaps with the desired dates: 220a71da-bf5c-424d-94ff-254ecac5b857"
    */
-  const conflictingEntityId = detail.split(': ').at(-1)
-  const isOutOfServiceBedEntity = /(?:lost bed)|(?:out-of-service bed)/i.test(detail)
-  const conflictingEntityType = isOutOfServiceBedEntity ? 'lostBed' : 'booking'
+  const [message, conflictingEntityId] = detail.split(':').map((s: string) => s.trim())
+  const conflictingEntityType = message.includes('out-of-service bed') ? 'lostBed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
 }
 
