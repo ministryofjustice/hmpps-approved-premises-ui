@@ -42,7 +42,7 @@ export default class UserService {
   async getUserById(token: string, id: string): Promise<User> {
     const client = this.userClientFactory(token)
 
-    return client.getActingUser(id)
+    return client.getUser(id)
   }
 
   async getUserList(token: string, roles: Array<UserRole> = []): Promise<Array<UserSummary>> {

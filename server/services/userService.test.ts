@@ -53,13 +53,13 @@ describe('User service', () => {
       const id = 'SOME_ID'
       const user = userFactory.build()
 
-      userClient.getActingUser.mockResolvedValue(user)
+      userClient.getUser.mockResolvedValue(user)
 
       const result = await userService.getUserById(token, id)
 
       expect(result).toEqual(user)
 
-      expect(userClient.getActingUser).toHaveBeenCalledWith(id)
+      expect(userClient.getUser).toHaveBeenCalledWith(id)
     })
   })
 
