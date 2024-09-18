@@ -2,6 +2,7 @@ import type { ActiveOffence, Booking, FullPerson, LostBed } from '@approved-prem
 import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
 import Page, { PageElement } from '../../page'
 import paths from '../../../../server/paths/manage'
+import { EntityType } from '../../../../server/@types/ui'
 
 export default class BookingNewPage extends Page {
   private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
@@ -80,10 +81,7 @@ export default class BookingNewPage extends Page {
     cy.get(`input[name="eventNumber"][value="${offence.deliusEventNumber}"]`).click()
   }
 
-  shouldShowDateConflictErrorMessages(
-    conflictingEntity: Booking | LostBed,
-    conflictingEntityType: 'booking' | 'lost-bed',
-  ): void {
+  shouldShowDateConflictErrorMessages(conflictingEntity: Booking | LostBed, conflictingEntityType: EntityType): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
       ['arrivalDate', 'departureDate'],
       conflictingEntity,

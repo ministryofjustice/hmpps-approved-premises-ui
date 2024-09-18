@@ -6,6 +6,7 @@ import { getMatchingRequests, stubFor } from './setup'
 import { bedspaceConflictResponseBody, errorStub } from './utils'
 import { lostBedReasons } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
 import paths from '../../server/paths/api'
+import { EntityType } from '../../server/@types/ui'
 
 export default {
   stubLostBedCreate: (args: { premisesId: string; lostBed: LostBed }): SuperAgentRequest =>
@@ -86,7 +87,7 @@ export default {
   stubLostBedConflictError: (args: {
     premisesId: string
     conflictingEntityId: string
-    conflictingEntityType: 'booking' | 'lost-bed'
+    conflictingEntityType: EntityType
   }) =>
     stubFor({
       request: {

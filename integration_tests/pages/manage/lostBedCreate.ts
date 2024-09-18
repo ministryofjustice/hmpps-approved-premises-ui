@@ -3,6 +3,7 @@ import paths from '../../../server/paths/manage'
 
 import Page from '../page'
 import BedspaceConflictErrorComponent from '../../components/bedspaceConflictErrorComponent'
+import { EntityType } from '../../../server/@types/ui'
 
 export default class LostBedCreatePage extends Page {
   private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
@@ -41,10 +42,7 @@ export default class LostBedCreatePage extends Page {
     cy.get('[name="lostBed[submit]"]').click()
   }
 
-  shouldShowDateConflictErrorMessages(
-    conflictingEntity: Booking | LostBed,
-    conflictingEntityType: 'booking' | 'lost-bed',
-  ): void {
+  shouldShowDateConflictErrorMessages(conflictingEntity: Booking | LostBed, conflictingEntityType: EntityType): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
       ['startDate', 'endDate'],
       conflictingEntity,

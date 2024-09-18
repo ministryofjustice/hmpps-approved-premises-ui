@@ -18,12 +18,15 @@ import { isFullPerson, laoName } from '../personUtils'
 import { convertObjectsToRadioItems } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
 import { bookingActions, v1BookingActions, v2BookingActions } from './bookingActions'
+import { EntityType } from '../../@types/ui'
 
 const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
+type ConflictingEntityType = EntityType
+
 type ParsedConflictError = {
   conflictingEntityId: string
-  conflictingEntityType: 'booking' | 'lost-bed'
+  conflictingEntityType: ConflictingEntityType
 }
 
 export { bookingActions, v1BookingActions, v2BookingActions }
@@ -179,33 +182,32 @@ export const generateConflictBespokeError = (
   const { detail } = err.data as { detail: string }
   const { conflictingEntityId, conflictingEntityType } = parseConflictError(detail)
 
-  const title =
-    datesGrammaticalNumber === 'plural'
-      ? 'This bedspace is not available for the dates entered'
-      : 'This bedspace is not available for the date entered'
+  const title = (
+    conflictingEntityType === 'lost-bed'
+      ? 'Out of service bed record cannot be created for the $date$ entered'
+      : 'This bedspace is not available for the $date$ entered'
+  ).replace('$date$', datesGrammaticalNumber === 'plural' ? 'dates' : 'date')
 
   const link =
     conflictingEntityType === 'lost-bed' && bedId
-      ? `<a href="${paths.lostBeds.show({
-          premisesId,
-          bedId,
-          id: conflictingEntityId,
-        })}">existing lost bed</a>`
+      ? `<a href="${paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id: conflictingEntityId, tab: 'details' })}">existing out of service beds record</a>`
       : `<a href="${paths.bookings.show({
           premisesId,
           bookingId: conflictingEntityId,
         })}">existing booking</a>`
-
   const message = datesGrammaticalNumber === 'plural' ? `They conflict with an ${link}` : `It conflicts with an ${link}`
 
   return { errorTitle: title, errorSummary: [{ html: message }] }
 }
 
 const parseConflictError = (detail: string): ParsedConflictError => {
-  const detailWords = detail.split(' ')
-  const conflictingEntityId = detailWords[detailWords.length - 1]
-  const conflictingEntityType = detail.includes('Lost Bed') ? 'lost-bed' : 'booking'
-
+  /**
+   *  Return the entity type and id by parsing an error detail string
+   *  @param detail - string is text containing the entity id at the end preceded by ': '
+   *    e.g. "An out-of-service bed already exists for dates from 2024-10-01 to 2024-10-14 which overlaps with the desired dates: 220a71da-bf5c-424d-94ff-254ecac5b857"
+   */
+  const [message, conflictingEntityId] = detail.split(':').map((s: string) => s.trim())
+  const conflictingEntityType = message.includes('out-of-service bed') ? 'lost-bed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
 }
 

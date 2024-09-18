@@ -513,3 +513,5 @@ export type KeyDetailsArgs = {
 export type TaskSearchQualification = Exclude<UserQualification, 'lao'>
 
 export type BackwardsCompatibleApplyApType = ApType | 'standard'
+
+export type EntityType = 'booking' | 'lost-bed'
