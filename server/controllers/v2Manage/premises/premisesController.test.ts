@@ -4,12 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ApAreaService, PremisesService } from '../../../services'
 import V2PremisesController from './premisesController'
 
-import {
-  apAreaFactory,
-  cas1PremisesSummaryFactory,
-  extendedPremisesSummaryFactory,
-  premisesSummaryFactory,
-} from '../../../testutils/factories'
+import { apAreaFactory, cas1PremisesSummaryFactory, premisesSummaryFactory } from '../../../testutils/factories'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -30,22 +25,18 @@ describe('V2PremisesController', () => {
 
   describe('show', () => {
     it('should return the premises detail to the template', async () => {
-      const fullPremises = cas1PremisesSummaryFactory.build()
-      const premises = extendedPremisesSummaryFactory.build()
+      const premisesSummary = cas1PremisesSummaryFactory.build()
 
-      premisesService.getPremisesDetails.mockResolvedValue(premises)
-      premisesService.find.mockResolvedValue(fullPremises)
+      premisesService.find.mockResolvedValue(premisesSummary)
 
       const requestHandler = premisesController.show()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('v2Manage/premises/show', {
-        premises,
-        bookings: premises.bookings,
-        apArea: fullPremises.apArea,
+        premises: premisesSummary,
       })
 
-      expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
     })
   })
 

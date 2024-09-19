@@ -1,8 +1,8 @@
 import type {
   ApprovedPremisesSummary,
   BedOccupancyRange,
+  Cas1PremisesSummary,
   DateCapacity,
-  ExtendedPremisesSummary,
   ApprovedPremisesSummary as PremisesSummary,
 } from '@approved-premises/api'
 import { BedOccupancyRangeUi, SelectGroup, SummaryList } from '@approved-premises/ui'
@@ -93,7 +93,7 @@ export const mapApiOccupancyEntryToUiOccupancyEntry = async (
   } as BedOccupancyRangeUi
 }
 
-export const summaryListForPremises = (premises: ExtendedPremisesSummary): SummaryList => {
+export const summaryListForPremises = (premises: Cas1PremisesSummary): SummaryList => {
   return {
     rows: [
       {
@@ -110,7 +110,7 @@ export const summaryListForPremises = (premises: ExtendedPremisesSummary): Summa
       },
       {
         key: textValue('Available Beds'),
-        value: textValue(premises.availableBedsForToday.toString()),
+        value: textValue(premises.availableBeds.toString()),
       },
     ],
   }

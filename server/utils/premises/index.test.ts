@@ -2,7 +2,7 @@ import { BedOccupancyEntryUi } from '@approved-premises/ui'
 import {
   bedOccupancyEntryFactory,
   bedOccupancyRangeFactory,
-  extendedPremisesSummaryFactory,
+  cas1PremisesSummaryFactory,
   premisesSummaryFactory,
 } from '../../testutils/factories'
 import {
@@ -167,11 +167,11 @@ describe('premisesUtils', () => {
 
   describe('summaryListForPremises', () => {
     it('should return a summary of a premises', () => {
-      const premises = extendedPremisesSummaryFactory.build({
+      const premises = cas1PremisesSummaryFactory.build({
         apCode: '123',
         postcode: 'SW1A 1AA',
         bedCount: 20,
-        availableBedsForToday: 12,
+        availableBeds: 12,
       })
 
       expect(summaryListForPremises(premises)).toEqual({
