@@ -63,8 +63,7 @@ export default {
     },
   },
   premises: {
-    show: premisesSingle,
-    cas1Show: cas1PremisesSingle,
+    show: cas1PremisesSingle,
     index: premises.path('summary'),
     capacity: premisesSingle.path('capacity'),
     summary: premisesSingle.path('summary'),

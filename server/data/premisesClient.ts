@@ -29,7 +29,7 @@ export default class PremisesClient {
   }
 
   async find(id: string): Promise<Cas1PremisesSummary> {
-    return (await this.restClient.get({ path: paths.premises.cas1Show({ premisesId: id }) })) as Cas1PremisesSummary
+    return (await this.restClient.get({ path: paths.premises.show({ premisesId: id }) })) as Cas1PremisesSummary
   }
 
   async capacity(id: string): Promise<Array<DateCapacity>> {
