@@ -90,7 +90,7 @@ describe('DescribeLocationFactors', () => {
         'Give details of why this postcode area would benefit the person': 'Positive Factors',
         'What is the preferred postcode area for the Approved Premises (AP) placement?': 'E17',
         'Are there any restrictions linked to placement location?': 'Yes',
-        'Provide details of any restraining orders, exclusion zones or other location based licence conditions. You must also provide an exclusion zone map in the ‘attach required documents’ screen.':
+        'Upload any exclusion zone maps to NDelius. You cannot upload these to the service.':
           'Some restriction detail',
         'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?':
           'Yes',

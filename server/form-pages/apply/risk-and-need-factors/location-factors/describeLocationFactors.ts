@@ -35,7 +35,7 @@ export default class DescribeLocationFactors implements TasklistPage {
     positiveFactors: 'Give details of why this postcode area would benefit the person',
     restrictions: 'Are there any restrictions linked to placement location?',
     restrictionDetail:
-      'Provide details of any restraining orders, exclusion zones or other location based licence conditions. You must also provide an exclusion zone map in the ‘attach required documents’ screen.',
+      'Upload any exclusion zone maps to NDelius. You cannot upload these to the service.',
     alternativeRadiusAccepted:
       'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?',
     alternativeRadius: 'Choose the maximum radius (in miles)',
