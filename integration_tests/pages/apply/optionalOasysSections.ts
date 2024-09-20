@@ -19,9 +19,10 @@ export default class OptionalOasysSectionsPage extends ApplyPage {
     oasysSectionsLinkedToReoffending.forEach(oasysSection => {
       this.checkCheckboxByNameAndValue('needsLinkedToReoffending', oasysSection.section.toString())
     })
-
     otherOasysSections.forEach(oasysSection => {
-      this.checkRadioByNameAndValue('otherNeeds', oasysSection.section.toString())
+      if (![4, 5].includes(oasysSection.section))
+        this.checkRadioByNameAndValue('otherNeeds', oasysSection.section.toString())
+      else this.radioByNameAndValueShouldNotExist('otherNeeds', oasysSection.section.toString())
     })
   }
 }

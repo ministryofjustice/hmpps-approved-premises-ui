@@ -104,6 +104,10 @@ export default abstract class Page {
     cy.get('.govuk-notification-banner').contains(copy)
   }
 
+  radioByNameAndValueShouldNotExist(name: string, option: string): void {
+    cy.get(`input[name = "${name}"][value = "${option}"]`).should('not.exist')
+  }
+
   getLabel(labelName: string): void {
     cy.get('label').should('contain', labelName)
   }

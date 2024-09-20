@@ -34,6 +34,8 @@ export default class OptionalOasysSections implements TasklistPage {
 
   oasysSuccess: boolean = false
 
+  oasysSectionsToExclude: number[] = [4,5]
+
   constructor(public body: Partial<Body>) {}
 
   static async initialize(
@@ -50,7 +52,13 @@ export default class OptionalOasysSections implements TasklistPage {
       const allNeedsLinkedToReoffending = oasysSelections.filter(
         section => !section.linkedToHarm && section.linkedToReOffending,
       )
-      const allOtherNeeds = oasysSelections.filter(section => !section.linkedToHarm && !section.linkedToReOffending)
+      // APS-1246 UI to remove sections 4 and 5 - finance and education
+      const allOtherNeeds = oasysSelections.filter(
+        section =>
+          !section.linkedToHarm &&
+          !section.linkedToReOffending &&
+          !page.oasysSectionsToExclude.includes(section.section),
+      )
 
       if (body.needsLinkedToReoffending) {
         page.body.needsLinkedToReoffending = OptionalOasysSections.getSelectedNeeds(
