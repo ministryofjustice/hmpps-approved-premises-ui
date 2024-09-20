@@ -15,6 +15,9 @@ import { logToSentry } from '../../logger'
 
 export type Constructor<T> = new (body: unknown) => T
 
+// Questions excluded from UI as part of AP-1246
+const excludedQuestions: Array<string> = ['4.9', '5.9']
+
 export const getOasysSections = async <T extends OasysPage>(
   body: Record<string, unknown>,
   application: ApprovedPremisesApplication,
@@ -48,13 +51,15 @@ export const getOasysSections = async <T extends OasysPage>(
     }
   }
 
-  const summaries = sortOasysImportSummaries(oasysSections[sectionName]).map(question => {
-    const answer = body[answerKey]?.[question.questionNumber] || question.answer
-    return {
-      ...question,
-      answer,
-    }
-  })
+  const summaries = sortOasysImportSummaries(oasysSections[sectionName])
+    .map(question => {
+      const answer = body[answerKey]?.[question.questionNumber] || question.answer
+      return {
+        ...question,
+        answer,
+      }
+    })
+    .filter(question => !excludedQuestions.includes(question.questionNumber))
 
   const page = new constructor(body)
 

@@ -34,8 +34,7 @@ export default class DescribeLocationFactors implements TasklistPage {
     postcodeArea: 'What is the preferred postcode area for the Approved Premises (AP) placement?',
     positiveFactors: 'Give details of why this postcode area would benefit the person',
     restrictions: 'Are there any restrictions linked to placement location?',
-    restrictionDetail:
-      'Upload any exclusion zone maps to NDelius. You cannot upload these to the service.',
+    restrictionDetail: 'Upload any exclusion zone maps to NDelius. You cannot upload these to the service.',
     alternativeRadiusAccepted:
       'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?',
     alternativeRadius: 'Choose the maximum radius (in miles)',

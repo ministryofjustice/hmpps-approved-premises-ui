@@ -34,7 +34,7 @@ export default class OptionalOasysSections implements TasklistPage {
 
   oasysSuccess: boolean = false
 
-  oasysSectionsToExclude: number[] = [4,5]
+  oasysSectionsToExclude: Array<number> = [4, 5]
 
   constructor(public body: Partial<Body>) {}
 
