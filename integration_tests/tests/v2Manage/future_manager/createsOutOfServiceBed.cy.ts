@@ -1,5 +1,6 @@
 import {
   bedDetailFactory,
+  cas1PremisesSummaryFactory,
   extendedPremisesSummaryFactory,
   outOfServiceBedFactory,
   premisesFactory,
@@ -17,8 +18,8 @@ context('OutOfServiceBeds', () => {
 
   it('should allow me to create an out of service bed', () => {
     const bedName = '12 - 2'
-    const premises = extendedPremisesSummaryFactory.build()
-    cy.task('stubPremisesSummary', premises)
+    const premises = cas1PremisesSummaryFactory.build()
+    cy.task('stubSinglePremises', premises)
 
     const outOfServiceBed = outOfServiceBedFactory.build({
       startDate: '2022-02-11',

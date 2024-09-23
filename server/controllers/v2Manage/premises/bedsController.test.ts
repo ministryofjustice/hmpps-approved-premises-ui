@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { bedDetailFactory, bedSummaryFactory, extendedPremisesSummaryFactory } from '../../../testutils/factories'
+import { bedDetailFactory, bedSummaryFactory, cas1PremisesSummaryFactory } from '../../../testutils/factories'
 import paths from '../../../paths/manage'
 
 describe('V2BedsController', () => {
@@ -18,14 +18,14 @@ describe('V2BedsController', () => {
 
   describe('show', () => {
     const bed = bedDetailFactory.build()
-    const premises = extendedPremisesSummaryFactory.build()
+    const premises = cas1PremisesSummaryFactory.build()
     const bedId = 'bedId'
 
     beforeEach(() => {
       request.params.premisesId = premises.id
       request.params.bedId = bedId
       premisesService.getBed.mockResolvedValue(bed)
-      premisesService.getPremisesDetails.mockResolvedValue(premises)
+      premisesService.find.mockResolvedValue(premises)
     })
 
     it('should return the bed to the template', async () => {
@@ -43,7 +43,7 @@ describe('V2BedsController', () => {
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)
-      expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, premises.id)
+      expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
     })
 
     it('should return the bed to the template with a link back to the calendar', async () => {
@@ -61,7 +61,7 @@ describe('V2BedsController', () => {
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)
-      expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, premises.id)
+      expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
     })
   })
 
