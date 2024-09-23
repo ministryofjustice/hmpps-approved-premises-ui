@@ -16,7 +16,7 @@ import { logToSentry } from '../../logger'
 export type Constructor<T> = new (body: unknown) => T
 
 // Questions excluded from UI as part of AP-1246
-const excludedQuestions: Array<string> = ['4.9', '5.9']
+export const oasysSectionsToExclude: Array<number> = [4, 5]
 
 export const getOasysSections = async <T extends OasysPage>(
   body: Record<string, unknown>,
@@ -59,7 +59,7 @@ export const getOasysSections = async <T extends OasysPage>(
         answer,
       }
     })
-    .filter(question => !excludedQuestions.includes(question.questionNumber))
+    .filter(question => !oasysSectionsToExclude.includes(question.sectionNumber))
 
   const page = new constructor(body)
 

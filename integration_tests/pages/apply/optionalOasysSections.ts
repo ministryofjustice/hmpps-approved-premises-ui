@@ -1,5 +1,6 @@
 import { ApprovedPremisesApplication, OASysSection } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
+import { oasysSectionsToExclude } from '../../../server/utils/oasysImportUtils'
 
 import ApplyPage from './applyPage'
 
@@ -20,7 +21,7 @@ export default class OptionalOasysSectionsPage extends ApplyPage {
       this.checkCheckboxByNameAndValue('needsLinkedToReoffending', oasysSection.section.toString())
     })
     otherOasysSections.forEach(oasysSection => {
-      if (![4, 5].includes(oasysSection.section))
+      if (!oasysSectionsToExclude.includes(oasysSection.section))
         this.checkRadioByNameAndValue('otherNeeds', oasysSection.section.toString())
       else this.radioByNameAndValueShouldNotExist('otherNeeds', oasysSection.section.toString())
     })
