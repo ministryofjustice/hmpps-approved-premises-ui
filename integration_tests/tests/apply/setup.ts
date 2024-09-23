@@ -12,7 +12,7 @@ import { defaultUserId } from '../../mockApis/auth'
 export const setup = () => {
   cy.task('reset')
   cy.task('stubSignIn')
-  cy.task('stubAuthUser', { userId: defaultUserId })
+  cy.task('stubAuthUser', { id: defaultUserId })
 
   // Given I am logged in
   cy.signIn()

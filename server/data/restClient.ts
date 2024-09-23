@@ -12,6 +12,7 @@ import type { UnsanitisedError } from '../sanitisedError'
 import { restClientMetricsMiddleware } from './restClientMetricsMiddleware'
 import { createQueryString } from '../utils/utils'
 import { PaginatedResponse } from '../@types/ui'
+import { userVersionMiddleware } from './userVersionMiddleware'
 
 interface GetRequest {
   path?: string
@@ -74,6 +75,7 @@ export default class RestClient {
         .get(`${this.apiUrl()}${path}`)
         .agent(this.agent)
         .use(restClientMetricsMiddleware)
+        .use(userVersionMiddleware)
         .retry(2, (err, res) => {
           if (res && res.statusCode === 503) {
             logger.info('Received 503, Not retrying')
@@ -87,7 +89,6 @@ export default class RestClient {
         .set({ ...this.defaultHeaders, ...headers })
         .responseType(responseType)
         .timeout(this.timeoutConfig())
-
       return raw ? result : result.body
     } catch (error) {
       const sanitisedError = sanitiseError(error as UnsanitisedError)
@@ -111,6 +112,7 @@ export default class RestClient {
         .delete(`${this.apiUrl()}${path}`)
         .agent(this.agent)
         .use(restClientMetricsMiddleware)
+        .use(userVersionMiddleware)
         .auth(this.token, { type: 'bearer' })
         .set({ ...this.defaultHeaders })
         .timeout(this.timeoutConfig())
@@ -131,6 +133,7 @@ export default class RestClient {
         .agent(this.agent)
         .auth(this.token, { type: 'bearer' })
         .use(restClientMetricsMiddleware)
+        .use(userVersionMiddleware)
         .retry(2, (err, res) => {
           if (res && res.statusCode === 503) {
             logger.info('Received 503, Not retrying')
@@ -168,6 +171,7 @@ export default class RestClient {
         .agent(this.agent)
         .auth(this.token, { type: 'bearer' })
         .use(restClientMetricsMiddleware)
+        .use(userVersionMiddleware)
         .retry(2, (err, res) => {
           if (res && res.statusCode === 503) {
             logger.info('Received 503, Not retrying')
@@ -236,6 +240,7 @@ export default class RestClient {
         .send(this.filterBlanksFromData(data))
         .agent(this.agent)
         .use(restClientMetricsMiddleware)
+        .use(userVersionMiddleware)
         .auth(this.token, { type: 'bearer' })
         .set({ ...this.defaultHeaders, ...headers })
         .responseType(responseType)

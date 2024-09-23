@@ -6,6 +6,7 @@ import populateCurrentUser from './populateCurrentUser'
 import { userDetailsFactory } from '../testutils/factories'
 import logger from '../../logger'
 import { DeliusAccountMissingStaffDetailsError } from '../services/userService'
+import inMemoryStore from '../inMemoryStore'
 
 jest.mock('../../logger')
 
@@ -26,7 +27,10 @@ describe('populateCurrentUser', () => {
     request = createMock<Request>({})
     response = createMock<Response>({ locals: { user: { token } } })
     next = jest.fn()
+  })
 
+  afterEach(() => {
+    inMemoryStore.users = {}
     jest.resetAllMocks()
   })
 
@@ -37,24 +41,43 @@ describe('populateCurrentUser', () => {
 
     await middleware(request, response, next)
 
+    expect(userService.getActingUser).toHaveBeenCalledWith(token)
+
     expect(request.session.user).toEqual(user)
     expect(response.locals.user).toEqual({ ...response.locals.user, ...user })
 
-    expect(userService.getActingUser).toHaveBeenCalledWith(token)
     expect(next).toHaveBeenCalled()
   })
 
-  it('should fetch the user from the session if present', async () => {
-    const middleware = populateCurrentUser(userService)
-
+  it('should populate the current user from the API if the version hash has changed', async () => {
+    ;(userService.getActingUser as jest.Mock).mockResolvedValue(user)
+    inMemoryStore.users[user.id] = 'old-version'
     request.session.user = user
 
+    const middleware = populateCurrentUser(userService)
+
     await middleware(request, response, next)
+
+    expect(userService.getActingUser).toHaveBeenCalledWith(token)
 
     expect(request.session.user).toEqual(user)
     expect(response.locals.user).toEqual({ ...response.locals.user, ...user })
 
+    expect(next).toHaveBeenCalled()
+  })
+
+  it('should populate the current user from the session if the version hash has not changed', async () => {
+    request.session.user = user
+    inMemoryStore.users[user.id] = user.version
+
+    const middleware = populateCurrentUser(userService)
+    await middleware(request, response, next)
+
     expect(userService.getActingUser).not.toHaveBeenCalled()
+
+    expect(request.session.user).toEqual(user)
+    expect(response.locals.user).toEqual({ ...response.locals.user, ...user })
+
     expect(next).toHaveBeenCalled()
   })
 

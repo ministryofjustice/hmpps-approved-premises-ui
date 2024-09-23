@@ -34,7 +34,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getActingUser(id)
+      const output = await userClient.getUser(id)
       expect(output).toEqual(user)
     })
   })

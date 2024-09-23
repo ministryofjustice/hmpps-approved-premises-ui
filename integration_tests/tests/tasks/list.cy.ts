@@ -25,7 +25,7 @@ context('Task Allocation', () => {
   it('returns unauthorised if user does not have the cas1 view manage task permission', () => {
     // Given I am logged in without the required permissions
     const me = userFactory.build({ apArea })
-    cy.task('stubAuthUser', { roles: [], permissions: [], userId: me.id, apArea: me.apArea })
+    cy.task('stubAuthUser', { roles: [], permissions: [], id: me.id, apArea: me.apArea })
     cy.signIn()
 
     const path = paths.tasks.index({})

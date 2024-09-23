@@ -554,4 +554,12 @@ export default abstract class Page {
       cy.get('.govuk-summary-list__value').should('contain', bedDetails.notes)
     }
   }
+
+  shouldShowMenuItem(label: string, visible = true): void {
+    cy.get('[aria-label="Primary navigation"] a').should(visible ? 'contain' : 'not.contain', label)
+  }
+
+  clickMenuItem(label: string): void {
+    cy.get('[aria-label="Primary navigation"] a').contains(label).click()
+  }
 }

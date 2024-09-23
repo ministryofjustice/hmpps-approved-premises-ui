@@ -21,7 +21,7 @@ export default class UserClient {
     this.restClient = new RestClient('userClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async getActingUser(id: string): Promise<User> {
+  async getUser(id: string): Promise<User> {
     return (await this.restClient.get({ path: paths.users.show({ id }) })) as User
   }
 

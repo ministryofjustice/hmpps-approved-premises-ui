@@ -12,7 +12,7 @@ import paths from '../../server/paths/api'
 import { probationRegions } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
 import { apAreaFactory } from '../../server/testutils/factories'
 
-const stubFindUser = (args: { user: User; id: string }) =>
+const stubFindUser = (args: { user: User; id: string; userVersion?: string }) =>
   stubFor({
     request: {
       method: 'GET',
@@ -22,6 +22,8 @@ const stubFindUser = (args: { user: User; id: string }) =>
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
+        'x-cas-user-version': args.userVersion,
+        'x-cas-user-id': args.userVersion ? args.id : undefined,
       },
       jsonBody: args.user,
     },

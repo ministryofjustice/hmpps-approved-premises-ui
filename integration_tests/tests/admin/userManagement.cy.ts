@@ -1,4 +1,4 @@
-import { ApprovedPremisesUserRole, UserQualification } from '../../../server/@types/shared'
+import { ApprovedPremisesUserRole, UserQualification } from '@approved-premises/api'
 import paths from '../../../server/paths/admin'
 import { userFactory } from '../../../server/testutils/factories'
 import ConfirmDeletionPage from '../../pages/admin/userManagement/confirmDeletionPage'

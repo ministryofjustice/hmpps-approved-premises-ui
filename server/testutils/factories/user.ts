@@ -23,6 +23,7 @@ const userFactory = Factory.define<User>(() => ({
   service: 'ApprovedPremises',
   isActive: true,
   apArea: apAreaFactory.build(),
+  version: faker.number.int(),
 }))
 
 export const userSummaryFactory = Factory.define<UserSummary>(() => ({
