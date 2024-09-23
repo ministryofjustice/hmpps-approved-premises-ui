@@ -22,7 +22,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         uponReceiving: 'A request to get a single premises',
         withRequest: {
           method: 'GET',
-          path: paths.premises.cas1Show({ premisesId: premises.id }),
+          path: paths.premises.show({ premisesId: premises.id }),
           headers: {
             authorization: `Bearer ${sampleToken}`,
           },

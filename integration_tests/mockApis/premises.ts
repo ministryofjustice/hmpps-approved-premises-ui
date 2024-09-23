@@ -48,7 +48,7 @@ const stubSinglePremises = (premises: Premises) =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: `/cas1/premises/${premises.id}`,
+      urlPattern: paths.premises.show({ premisesId: premises.id }),
     },
     response: {
       status: 200,

@@ -1,244 +1,189 @@
 import { path } from 'static-path'
 
-const premisesPath = path('/premises')
-const singlePremisesPath = premisesPath.path(':premisesId')
+// CAS1 namespaced
+const cas1Namespace = path('/cas1')
 
-// CAS1 namespace
+const cas1Premises = cas1Namespace.path('premises')
+const cas1PremisesSingle = cas1Premises.path(':premisesId')
+const cas1LostBeds = cas1PremisesSingle.path('lost-beds')
+const cas1LostBedsSingle = cas1LostBeds.path(':id')
+const cas1LostBedsCancellations = cas1LostBedsSingle.path('cancellations')
+const cas1OutOfServiceBeds = cas1PremisesSingle.path('out-of-service-beds')
+const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 
-const cas1NamespacePath = path('/cas1')
-const cas1SinglePremisesPath = cas1NamespacePath.path('premises/:premisesId')
-const lostBedsPath = cas1SinglePremisesPath.path('lost-beds')
-const reportsPath = cas1NamespacePath.path('reports')
+const cas1SpaceBookings = cas1Namespace.path('/placement-requests/:id/space-bookings')
 
-// Manage V2 paths
-const v2ManagePremisesPath = cas1NamespacePath.path('/premises')
-const v2ManageSinglePremisesPath = v2ManagePremisesPath.path(':premisesId')
+const cas1Reports = cas1Namespace.path('reports')
 
-const outOfServiceBedsPath = v2ManageSinglePremisesPath.path('out-of-service-beds')
+// Non-namespaced
+const premises = path('/premises')
+const premisesSingle = premises.path(':premisesId')
+const beds = premisesSingle.path('beds')
+const rooms = premisesSingle.path('rooms')
+const booking = premisesSingle.path('bookings/:bookingId')
 
-const bedsPath = singlePremisesPath.path('beds')
+const profile = path('/profile')
 
-const bookingPath = singlePremisesPath.path('bookings/:bookingId')
+const applications = path('/applications')
+const applicationsSingle = applications.path(':id')
+const appeals = applicationsSingle.path('appeals')
 
-const profilePath = path('/profile')
+const people = path('/people')
+const person = people.path(':crn')
+const oasys = person.path('oasys')
 
-const managePaths = {
-  premises: {
-    index: premisesPath.path('summary'),
-    show: singlePremisesPath,
-    cas1Show: cas1SinglePremisesPath,
-  },
-  lostBeds: {
-    create: lostBedsPath,
-    index: lostBedsPath,
-    show: lostBedsPath.path(':id'),
-    update: lostBedsPath.path(':id'),
-    cancel: lostBedsPath.path(':id/cancellations'),
-  },
-  beds: {
-    index: bedsPath,
-    show: bedsPath.path(':bedId'),
-  },
-  rooms: singlePremisesPath.path('rooms'),
-  room: singlePremisesPath.path('rooms/:roomId'),
-  bookings: {
-    move: bookingPath.path('moves'),
-    dateChange: bookingPath.path('date-changes'),
-    bookingWithoutPremisesPath: path('/bookings/:bookingId'),
-  },
-}
+const users = path('/users')
 
-const applicationsPath = path('/applications')
-const singleApplicationPath = applicationsPath.path(':id')
+const tasks = path('/tasks')
+const taskSingle = tasks.path(':taskType/:id')
 
-const appealsPath = singleApplicationPath.path('appeals')
+const placementRequests = path('/placement-requests')
+const placementRequestsSingle = placementRequests.path(':id')
 
-const peoplePath = path('/people')
-const personPath = peoplePath.path(':crn')
-const oasysPath = personPath.path('oasys')
+const placementApplications = path('/placement-applications')
+const placementApplicationsSingle = placementApplications.path(':id')
 
-const usersPath = path('/users')
-
-const tasksPath = path('/tasks')
-const taskPath = tasksPath.path(':taskType/:id')
-
-const placementRequestsPath = path('/placement-requests')
-const placementRequestPath = placementRequestsPath.path(':id')
-
-const placementApplicationsPath = path('/placement-applications')
-const placementApplicationPath = placementApplicationsPath.path(':id')
-
-const tasksPaths = {
-  index: tasksPath,
-  show: taskPath,
-  allocations: {
-    create: taskPath.path('allocations'),
-  },
-}
-
-const applyPaths = {
-  applications: {
-    show: singleApplicationPath,
-    create: applicationsPath,
-    index: applicationsPath,
-    update: singleApplicationPath,
-    submission: singleApplicationPath.path('submission'),
-  },
-}
-
-const assessPaths = {
-  assessments: path('/assessments'),
-  singleAssessment: path('/assessments/:id'),
-  acceptance: path('/assessments/:id/acceptance'),
-  rejection: path('/assessments/:id/rejection'),
-}
-
-const clarificationNotePaths = {
-  notes: assessPaths.singleAssessment.path('notes'),
-}
-
-const spaceBookingPaths = {
-  create: cas1NamespacePath.path('/placement-requests/:id/space-bookings'),
-}
+const assessments = path('/assessments')
+const assessmentsSingle = assessments.path(':id')
+const assessmentsNotes = assessmentsSingle.path('notes')
 
 export default {
   manage: {
     premises: {
       outOfServiceBeds: {
-        create: outOfServiceBedsPath,
-        premisesIndex: outOfServiceBedsPath,
-        update: outOfServiceBedsPath.path(':id'),
-        show: outOfServiceBedsPath.path(':id'),
-        cancel: outOfServiceBedsPath.path(':id/cancellations'),
+        create: cas1OutOfServiceBeds,
+        premisesIndex: cas1OutOfServiceBeds,
+        update: cas1OutOfServiceBedsSingle,
+        show: cas1OutOfServiceBedsSingle,
+        cancel: cas1OutOfServiceBedsSingle.path('cancellations'),
       },
     },
     outOfServiceBeds: {
-      index: cas1NamespacePath.path('out-of-service-beds'),
+      index: cas1Namespace.path('out-of-service-beds'),
     },
   },
   premises: {
-    show: managePaths.premises.show,
-    index: managePaths.premises.index,
-    capacity: managePaths.premises.show.path('capacity'),
-    summary: managePaths.premises.show.path('summary'),
+    show: cas1PremisesSingle,
+    index: premises.path('summary'),
+    capacity: premisesSingle.path('capacity'),
+    summary: premisesSingle.path('summary'),
     lostBeds: {
-      create: managePaths.lostBeds.create,
-      index: managePaths.lostBeds.index,
-      update: managePaths.lostBeds.update,
-      show: managePaths.lostBeds.show,
-      cancel: managePaths.lostBeds.cancel,
+      create: cas1LostBeds,
+      index: cas1LostBeds,
+      update: cas1LostBedsSingle,
+      show: cas1LostBedsSingle,
+      cancel: cas1LostBedsCancellations,
     },
     staffMembers: {
-      index: managePaths.premises.show.path('staff'),
+      index: premisesSingle.path('staff'),
     },
     beds: {
-      index: managePaths.beds.index,
-      show: managePaths.beds.show,
+      index: beds,
+      show: beds.path(':bedId'),
     },
-    rooms: managePaths.rooms,
-    room: managePaths.room,
+    rooms,
+    room: rooms.path(':roomId'),
     bookings: {
-      move: managePaths.bookings.move,
-      dateChange: managePaths.bookings.dateChange,
+      move: booking.path('moves'),
+      dateChange: booking.path('date-changes'),
     },
-    calendar: managePaths.premises.show.path('calendar'),
-    cas1Show: managePaths.premises.cas1Show,
+    calendar: premisesSingle.path('calendar'),
   },
   bookings: {
-    bookingWithoutPremisesPath: managePaths.bookings.bookingWithoutPremisesPath,
+    bookingWithoutPremisesPath: path('/bookings/:bookingId'),
   },
   applications: {
-    show: applyPaths.applications.show,
-    index: applyPaths.applications.index,
-    all: applyPaths.applications.index.path('all'),
-    update: applyPaths.applications.update,
-    new: applyPaths.applications.create,
-    submission: applyPaths.applications.submission,
-    documents: applyPaths.applications.show.path('documents'),
-    assessment: applyPaths.applications.show.path('assessment'),
-    withdrawal: applyPaths.applications.show.path('withdrawal'),
-    timeline: applyPaths.applications.show.path('timeline'),
-    placementApplications: applyPaths.applications.show.path('placement-applications'),
-    requestsForPlacement: applyPaths.applications.show.path('requests-for-placement'),
-    addNote: applyPaths.applications.show.path('notes'),
-    withdrawables: applyPaths.applications.show.path('withdrawables'),
-    withdrawablesWithNotes: applyPaths.applications.show.path('withdrawablesWithNotes'),
+    show: applicationsSingle,
+    index: applications,
+    all: applications.path('all'),
+    update: applicationsSingle,
+    new: applications,
+    submission: applicationsSingle.path('submission'),
+    documents: applicationsSingle.path('documents'),
+    assessment: applicationsSingle.path('assessment'),
+    withdrawal: applicationsSingle.path('withdrawal'),
+    timeline: applicationsSingle.path('timeline'),
+    placementApplications: applicationsSingle.path('placement-applications'),
+    requestsForPlacement: applicationsSingle.path('requests-for-placement'),
+    addNote: applicationsSingle.path('notes'),
+    withdrawables: applicationsSingle.path('withdrawables'),
+    withdrawablesWithNotes: applicationsSingle.path('withdrawablesWithNotes'),
     appeals: {
-      show: appealsPath.path(':appealId'),
-      create: appealsPath,
+      show: appeals.path(':appealId'),
+      create: appeals,
     },
   },
   assessments: {
-    index: assessPaths.assessments,
-    show: assessPaths.singleAssessment,
-    update: assessPaths.singleAssessment,
-    acceptance: assessPaths.acceptance,
-    rejection: assessPaths.rejection,
+    index: assessments,
+    show: assessmentsSingle,
+    update: assessmentsSingle,
+    acceptance: assessmentsSingle.path('acceptance'),
+    rejection: assessmentsSingle.path('rejection'),
     clarificationNotes: {
-      create: clarificationNotePaths.notes,
-      update: clarificationNotePaths.notes.path(':clarificationNoteId'),
+      create: assessmentsNotes,
+      update: assessmentsNotes.path(':clarificationNoteId'),
     },
   },
   match: {
-    findSpaces: cas1NamespacePath.path('/spaces/search'),
+    findSpaces: cas1Namespace.path('spaces/search'),
   },
   tasks: {
-    index: tasksPaths.index,
+    index: tasks,
     type: {
-      index: tasksPaths.index.path(':taskType'),
+      index: tasks.path(':taskType'),
     },
-    show: tasksPaths.show,
+    show: taskSingle,
     allocations: {
-      create: tasksPaths.allocations.create,
+      create: taskSingle.path('allocations'),
     },
   },
   placementRequests: {
-    index: placementRequestsPath,
-    show: placementRequestPath,
-    dashboard: placementRequestsPath.path('dashboard'),
-    booking: placementRequestPath.path('booking'),
-    bookingNotMade: placementRequestPath.path('booking-not-made'),
+    index: placementRequests,
+    show: placementRequestsSingle,
+    dashboard: placementRequests.path('dashboard'),
+    booking: placementRequestsSingle.path('booking'),
+    bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
-      create: placementRequestPath.path('withdrawal'),
+      create: placementRequestsSingle.path('withdrawal'),
     },
     spaceBookings: {
-      create: spaceBookingPaths.create,
+      create: cas1SpaceBookings,
     },
   },
   placementApplications: {
-    update: placementApplicationPath,
-    create: placementApplicationsPath,
-    show: placementApplicationPath,
-    submit: placementApplicationPath.path('submission'),
-    submitDecision: placementApplicationPath.path('decision'),
-    withdraw: placementApplicationPath.path('withdraw'),
+    update: placementApplicationsSingle,
+    create: placementApplications,
+    show: placementApplicationsSingle,
+    submit: placementApplicationsSingle.path('submission'),
+    submitDecision: placementApplicationsSingle.path('decision'),
+    withdraw: placementApplicationsSingle.path('withdraw'),
   },
   people: {
     risks: {
-      show: personPath.path('risks'),
+      show: person.path('risks'),
     },
-    search: peoplePath.path('search'),
-    prisonCaseNotes: personPath.path('prison-case-notes'),
-    adjudications: personPath.path('adjudications'),
-    acctAlerts: personPath.path('acct-alerts'),
-    offences: personPath.path('offences'),
+    search: people.path('search'),
+    prisonCaseNotes: person.path('prison-case-notes'),
+    adjudications: person.path('adjudications'),
+    acctAlerts: person.path('acct-alerts'),
+    offences: person.path('offences'),
     documents: path('/documents/:crn/:documentId'),
     oasys: {
-      selection: oasysPath.path('selection'),
-      sections: oasysPath.path('sections'),
+      selection: oasys.path('selection'),
+      sections: oasys.path('sections'),
     },
-    timeline: personPath.path('timeline'),
+    timeline: person.path('timeline'),
   },
   users: {
-    index: usersPath,
-    summary: usersPath.path('summary'),
-    search: usersPath.path('search'),
-    searchDelius: usersPath.path('delius'),
-    show: usersPath.path(':id'),
-    profile: profilePath,
-    update: usersPath.path(':id'),
-    delete: usersPath.path(':id'),
-    v2profile: profilePath.path('/v2'),
+    index: users,
+    summary: users.path('summary'),
+    search: users.path('search'),
+    searchDelius: users.path('delius'),
+    show: users.path(':id'),
+    profile,
+    update: users.path(':id'),
+    delete: users.path(':id'),
+    v2profile: profile.path('v2'),
   },
-  reports: reportsPath.path(':reportName'),
+  reports: cas1Reports.path(':reportName'),
 }

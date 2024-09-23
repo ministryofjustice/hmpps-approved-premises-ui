@@ -30,7 +30,7 @@ export default class V2BedsController {
       }
 
       const bed = await this.premisesService.getBed(req.user.token, premisesId, req.params.bedId)
-      const premises = await this.premisesService.getPremisesDetails(req.user.token, premisesId)
+      const premises = await this.premisesService.find(req.user.token, premisesId)
 
       return res.render('v2Manage/premises/beds/show', {
         bed,
