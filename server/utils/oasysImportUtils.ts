@@ -6,6 +6,7 @@ import {
   OASysSection,
   OASysSections,
 } from '../@types/shared'
+
 import { SessionDataError } from './errors'
 import { escape } from './formUtils'
 import { mapApiPersonRisksForUi, sentenceCase } from './utils'
@@ -51,15 +52,18 @@ export const getOasysSections = async <T extends OasysPage>(
     }
   }
 
-  const summaries = sortOasysImportSummaries(oasysSections[sectionName])
-    .map(question => {
-      const answer = body[answerKey]?.[question.questionNumber] || question.answer
-      return {
-        ...question,
-        answer,
-      }
-    })
-    .filter(question => !oasysSectionsToExclude.includes(question.sectionNumber))
+  const rawSummaries =
+    sectionName === 'supportingInformation'
+      ? oasysSections.supportingInformation.filter(question => !oasysSectionsToExclude.includes(question.sectionNumber))
+      : oasysSections[sectionName]
+
+  const summaries = sortOasysImportSummaries(rawSummaries).map(question => {
+    const answer = body[answerKey]?.[question.questionNumber] || question.answer
+    return {
+      ...question,
+      answer,
+    }
+  })
 
   const page = new constructor(body)
 
