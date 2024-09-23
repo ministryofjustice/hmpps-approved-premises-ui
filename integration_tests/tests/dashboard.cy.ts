@@ -8,13 +8,13 @@ context('Dashboard', () => {
   })
 
   it('displays all services when a user has all roles and permissions', () => {
-    signInWithRolesAndPermissions(['assessor', 'manager'], ['cas1_view_assigned_assessments'])
+    signInWithRolesAndPermissions(['assessor', 'manager', 'future_manager'], ['cas1_view_assigned_assessments'])
 
     const dashboardPage = DashboardPage.visit()
 
     dashboardPage.shouldShowCard('apply')
     dashboardPage.shouldShowCard('assess')
-    dashboardPage.shouldShowCard('manage')
+    dashboardPage.shouldShowCard('v2Manage')
   })
 
   it('only displays the apply and assess services to users with "cas1_view_assigned_assessments" permission', () => {
@@ -25,7 +25,7 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('apply')
     dashboardPage.shouldShowCard('assess')
 
-    dashboardPage.shouldNotShowCard('manage')
+    dashboardPage.shouldNotShowCard('v2Manage')
   })
 
   it('only displays the apply service when someone has no roles', () => {
@@ -36,7 +36,7 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('apply')
 
     dashboardPage.shouldNotShowCard('assess')
-    dashboardPage.shouldNotShowCard('manage')
+    dashboardPage.shouldNotShowCard('v2Manage')
   })
 
   it('only displays the apply and manage services to managers', () => {
@@ -44,7 +44,7 @@ context('Dashboard', () => {
 
     const dashboardPage = DashboardPage.visit()
 
-    dashboardPage.shouldShowCard('manage')
+    dashboardPage.shouldShowCard('v2Manage')
     dashboardPage.shouldShowCard('apply')
 
     dashboardPage.shouldNotShowCard('assess')
@@ -59,6 +59,6 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('userManagement')
 
     dashboardPage.shouldNotShowCard('assess')
-    dashboardPage.shouldNotShowCard('manage')
+    dashboardPage.shouldNotShowCard('v2Manage')
   })
 })

@@ -91,7 +91,7 @@ const paths = {
 
 // Manage V2 paths
 const v2ManagePath = path('/manage')
-const v2PremisesPath = v2ManagePath.path('/premises')
+const v2PremisesPath = v2ManagePath.path('premises')
 const v2SinglePremisesPath = v2PremisesPath.path(':premisesId')
 const v2BookingsPath = v2SinglePremisesPath.path('bookings')
 const v2BookingPath = v2BookingsPath.path(':bookingId')
@@ -100,7 +100,7 @@ const v2DateChangesPath = v2BookingPath.path('date-changes')
 const v2ExtensionsPath = v2BookingPath.path('extensions')
 const outOfServiceBedsPath = v2SinglePremisesPath.path('beds/:bedId/out-of-service-beds')
 const outOfServiceBedPath = outOfServiceBedsPath.path(':id')
-const outOfServiceBedsIndexPath = v2ManagePath.path('/out-of-service-beds')
+const outOfServiceBedsIndexPath = v2ManagePath.path('out-of-service-beds')
 
 const v2Manage = {
   premises: {
@@ -110,9 +110,6 @@ const v2Manage = {
     beds: {
       index: v2BedsPath,
       show: v2BedsPath.path(':bedId'),
-      overbookings: {
-        show: v2BedsPath.path(':bedId').path('overbookings'),
-      },
     },
   },
   bookings: {

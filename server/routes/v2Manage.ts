@@ -15,7 +15,6 @@ export default function routes(controllers: Controllers, router: Router, service
     dateChangesController,
     bookingsController,
     bookingExtensionsController,
-    bedsController,
     v2PremisesController,
     v2BedsController,
     v2OutOfServiceBedsController,
@@ -45,10 +44,6 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SHOW_BED',
     allowedRoles: ['future_manager', 'cru_member'],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
-  })
-  get(paths.v2Manage.premises.beds.overbookings.show.pattern, bedsController.overbookings(), {
-    auditEvent: 'SHOW_OVERBOOKINGS',
-    allowedRoles: ['future_manager'],
   })
 
   // Bookings

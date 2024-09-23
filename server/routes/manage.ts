@@ -13,7 +13,6 @@ export default function routes(controllers: Controllers, router: Router, service
 
   const {
     dateChangesController,
-    premisesController,
     bookingsController,
     bookingExtensionsController,
     arrivalsController,
@@ -21,18 +20,24 @@ export default function routes(controllers: Controllers, router: Router, service
     departuresController,
     cancellationsController,
     lostBedsController,
-    bedsController,
     moveBedsController,
+    redirectController,
   } = controllers
 
-  get(paths.premises.index.pattern, premisesController.index(), { auditEvent: 'LIST_PREMISES' })
-  post(paths.premises.index.pattern, premisesController.index(), { auditEvent: 'FILTER_PREMISES' })
-  get(paths.premises.show.pattern, premisesController.show(), { auditEvent: 'SHOW_PREMISES' })
-  get(paths.premises.calendar.pattern, premisesController.calendar(), { auditEvent: 'SHOW_PREMISES_CALENDAR' })
-
-  get(paths.premises.beds.index.pattern, bedsController.index(), { auditEvent: 'LIST_BEDS' })
-  get(paths.premises.beds.show.pattern, bedsController.show(), { auditEvent: 'SHOW_BED' })
-  get(paths.premises.beds.overbookings.show.pattern, bedsController.overbookings(), { auditEvent: 'SHOW_OVERBOOKINGS' })
+  // Deprecated paths, redirect to v2 equivalent
+  get(paths.premises.index.pattern, redirectController.redirect(paths.v2Manage.premises.index), {
+    auditEvent: 'LIST_PREMISES_REDIRECT',
+  })
+  get(paths.premises.show.pattern, redirectController.redirect(paths.v2Manage.premises.show), {
+    auditEvent: 'SHOW_PREMISES_REDIRECT',
+  })
+  get(paths.premises.beds.index.pattern, redirectController.redirect(paths.v2Manage.premises.beds.index), {
+    auditEvent: 'LIST_BEDS_REDIRECT',
+  })
+  get(paths.premises.beds.show.pattern, redirectController.redirect(paths.v2Manage.premises.beds.show), {
+    auditEvent: 'SHOW_BED_REDIRECT',
+  })
+  // End deprecated paths
 
   get(paths.bookings.new.pattern, bookingsController.new(), {
     auditEvent: 'START_AD_HOC_BOOKING',
