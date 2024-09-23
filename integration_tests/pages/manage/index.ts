@@ -1,9 +1,6 @@
 import ArrivalCreatePage from './arrivalCreate'
 import CancellationCreatePage from './cancellationCreate'
 import DepartureCreatePage from './departureCreate'
-import LostBedCreatePage from './lostBedCreate'
-import LostBedListPage from './lostBedList'
-import LostBedShowPage from './lostBedShow'
 import V2PremisesListPage from './v2PremisesList'
 import PremisesShowPage from './premisesShow'
 import WithdrawConfirmPage from './withdrawConfirm'
@@ -24,9 +21,6 @@ export {
   ArrivalCreatePage,
   CancellationCreatePage,
   DepartureCreatePage,
-  LostBedCreatePage,
-  LostBedListPage,
-  LostBedShowPage,
   PremisesShowPage,
   BookingConfirmationPage,
   BookingFindPage,

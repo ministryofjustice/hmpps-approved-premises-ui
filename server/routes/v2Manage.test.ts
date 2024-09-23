@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import { BookingExtensionsController, BookingsController, PremisesController } from '../controllers/manage'
+import { BookingExtensionsController, BookingsController } from '../controllers/manage'
 import v2ManageRoutes from './v2Manage'
 import { type Controllers } from '../controllers'
 import { type Services } from '../services'
@@ -10,7 +10,6 @@ import {
   V2PremisesController,
   V2UpdateOutOfServiceBedsController,
 } from '../controllers/v2Manage'
-import BedsController from '../controllers/manage/premises/bedsController'
 import DateChangeController from '../controllers/manage/dateChangesController'
 import actions from './utils'
 import paths from '../paths/manage'
@@ -19,7 +18,6 @@ jest.mock('./utils')
 
 describe('v2Manage routes', () => {
   const router = Router()
-  const premisesController: DeepMocked<PremisesController> = createMock<PremisesController>({})
   const bookingExtensionsController: DeepMocked<BookingExtensionsController> = createMock<BookingExtensionsController>(
     {},
   )
@@ -30,17 +28,14 @@ describe('v2Manage routes', () => {
     createMock<V2OutOfServiceBedsController>({})
   const v2UpdateOutOfServiceBedsController: DeepMocked<V2UpdateOutOfServiceBedsController> =
     createMock<V2UpdateOutOfServiceBedsController>({})
-  const bedsController: DeepMocked<BedsController> = createMock<BedsController>({})
   const dateChangesController: DeepMocked<DateChangeController> = createMock<DateChangeController>({})
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
-    premisesController,
     bookingExtensionsController,
     bookingsController,
     v2BedsController,
     v2OutOfServiceBedsController,
     v2UpdateOutOfServiceBedsController,
-    bedsController,
     dateChangesController,
     v2PremisesController,
   })

@@ -1,4 +1,3 @@
-import { cas1PremisesSummaryFactory, premisesSummaryFactory } from '../../server/testutils/factories'
 import { signIn } from './signIn'
 
 context('Redirects', () => {
@@ -12,6 +11,15 @@ context('Redirects', () => {
     ['/premises/:premisesId', '/manage/premises/:premisesId'],
     ['/premises/:premisesId/beds', '/manage/premises/:premisesId/beds'],
     ['/premises/:premisesId/beds/:bedId', '/manage/premises/:premisesId/beds/:bedId'],
+    ['/premises/:premisesId/lost-beds', '/manage/premises/:premisesId/out-of-service-beds/current'],
+    [
+      '/premises/:premisesId/beds/:bedId/lost-beds/:id',
+      '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/:id/details',
+    ],
+    [
+      '/premises/:premisesId/beds/:bedId/lost-beds/new',
+      '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/new',
+    ],
   ]
 
   redirects.forEach(([from, to]) => {

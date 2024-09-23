@@ -19,7 +19,6 @@ export default function routes(controllers: Controllers, router: Router, service
     nonArrivalsController,
     departuresController,
     cancellationsController,
-    lostBedsController,
     moveBedsController,
     redirectController,
   } = controllers
@@ -37,6 +36,23 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.beds.show.pattern, redirectController.redirect(paths.v2Manage.premises.beds.show), {
     auditEvent: 'SHOW_BED_REDIRECT',
   })
+  get(
+    paths.lostBeds.index.pattern,
+    redirectController.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex, { temporality: 'current' }),
+    {
+      auditEvent: 'LIST_LOST_BEDS_REDIRECT',
+    },
+  )
+  get(paths.lostBeds.new.pattern, redirectController.redirect(paths.v2Manage.outOfServiceBeds.new), {
+    auditEvent: 'NEW_LOST_BED_REDIRECT',
+  })
+  get(
+    paths.lostBeds.show.pattern,
+    redirectController.redirect(paths.v2Manage.outOfServiceBeds.show, { tab: 'details' }),
+    {
+      auditEvent: 'SHOW_LOST_BED_REDIRECT',
+    },
+  )
   // End deprecated paths
 
   get(paths.bookings.new.pattern, bookingsController.new(), {
@@ -57,10 +73,10 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
+
   get(paths.bookings.confirm.pattern, bookingsController.confirm(), {
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
-
   get(paths.bookings.extensions.new.pattern, bookingExtensionsController.new(), {
     auditEvent: 'NEW_BOOKING_EXTENSION',
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
@@ -78,12 +94,13 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
-  get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
 
+  get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
   get(paths.bookings.arrivals.new.pattern, arrivalsController.new(), {
     auditEvent: 'NEW_ARRIVAL',
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
+
   post(paths.bookings.arrivals.create.pattern, arrivalsController.create(), {
     auditEvent: 'CREATE_ARRIVAL_SUCCESS',
     redirectAuditEventSpecs: [
@@ -94,11 +111,11 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
-
   get(paths.bookings.nonArrivals.new.pattern, nonArrivalsController.new(), {
     auditEvent: 'NEW_NON_ARRIVAL',
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
+
   post(paths.bookings.nonArrivals.create.pattern, nonArrivalsController.create(), {
     auditEvent: 'CREATE_NON_ARRIVAL_SUCCESS',
     redirectAuditEventSpecs: [
@@ -109,11 +126,11 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
-
   get(paths.bookings.cancellations.new.pattern, cancellationsController.new(), {
     auditEvent: 'NEW_CANCELLATION',
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
+
   post(paths.bookings.cancellations.create.pattern, cancellationsController.create(), {
     auditEvent: 'CREATE_CANCELLATION_SUCCESS',
     redirectAuditEventSpecs: [
@@ -124,11 +141,11 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
-
   get(paths.bookings.departures.new.pattern, departuresController.new(), {
     auditEvent: 'NEW_DEPARTURE',
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
+
   post(paths.bookings.departures.create.pattern, departuresController.create(), {
     auditEvent: 'CREATE_DEPARTURE_SUCCESS',
     redirectAuditEventSpecs: [
@@ -138,45 +155,6 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
-  })
-
-  get(paths.lostBeds.new.pattern, lostBedsController.new(), {
-    auditEvent: 'NEW_LOST_BED',
-    allowedRoles: [],
-    allowedPermissions: ['cas1_out_of_service_bed_create'],
-  })
-  post(paths.lostBeds.create.pattern, lostBedsController.create(), {
-    auditEvent: 'CREATE_LOST_BED_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.lostBeds.new.pattern,
-        auditEvent: 'CREATE_LOST_BED_FAILURE',
-      },
-    ],
-    allowedRoles: [],
-    allowedPermissions: ['cas1_out_of_service_bed_create'],
-  })
-  get(paths.lostBeds.index.pattern, lostBedsController.index(), {
-    auditEvent: 'LIST_LOST_BEDS',
-    allowedRoles: [],
-    allowedPermissions: ['cas1_view_out_of_service_beds'],
-  })
-  get(paths.lostBeds.show.pattern, lostBedsController.show(), {
-    auditEvent: 'SHOW_LOST_BED',
-    allowedRoles: [],
-    allowedPermissions: ['cas1_view_out_of_service_beds'],
-  })
-  post(paths.lostBeds.update.pattern, lostBedsController.update(), {
-    auditEvent: 'UPDATE_LOST_BED_SUCCESS',
-    auditBodyParams: ['cancel'],
-    redirectAuditEventSpecs: [
-      {
-        path: paths.lostBeds.show.pattern,
-        auditEvent: 'UPDATE_LOST_BED_FAILURE',
-      },
-    ],
-    allowedRoles: [],
-    allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
 
   get(paths.bookings.moves.new.pattern, moveBedsController.new(), {
