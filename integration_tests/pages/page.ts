@@ -19,6 +19,7 @@ import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
 import { SumbmittedApplicationSummaryCards } from '../../server/utils/applications/submittedApplicationSummaryCards'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
+import { oasysSectionsToExclude } from '../../server/utils/oasysImportUtils'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
@@ -102,6 +103,10 @@ export default abstract class Page {
 
   shouldShowBanner(copy: string): void {
     cy.get('.govuk-notification-banner').contains(copy)
+  }
+
+  radioByNameAndValueShouldNotExist(name: string, option: string): void {
+    cy.get(`input[name = "${name}"][value = "${option}"]`).should('not.exist')
   }
 
   getLabel(labelName: string): void {
@@ -210,15 +215,17 @@ export default abstract class Page {
 
   completeOasysImportQuestions(section, sectionName: string, oasysMissing: boolean): void {
     section.forEach(summary => {
-      cy.get('.govuk-label').contains(summary.label)
-      if (oasysMissing) {
-        cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`).type(
-          `${summary.questionNumber} content goes here`,
-        )
-      } else {
-        cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
-          .should('contain', summary.answer)
-          .type(`. With an extra comment ${summary.questionNumber}`)
+      if (!oasysSectionsToExclude.includes(summary.sectionNumber)) {
+        cy.get('.govuk-label').contains(summary.label)
+        if (oasysMissing) {
+          cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`).type(
+            `${summary.questionNumber} content goes here`,
+          )
+        } else {
+          cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
+            .should('contain', summary.answer)
+            .type(`. With an extra comment ${summary.questionNumber}`)
+        }
       }
     })
   }

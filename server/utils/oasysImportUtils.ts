@@ -6,6 +6,7 @@ import {
   OASysSection,
   OASysSections,
 } from '../@types/shared'
+
 import { SessionDataError } from './errors'
 import { escape } from './formUtils'
 import { mapApiPersonRisksForUi, sentenceCase } from './utils'
@@ -14,6 +15,9 @@ import oasysStubs from '../data/stubs/oasysStubs.json'
 import { logToSentry } from '../../logger'
 
 export type Constructor<T> = new (body: unknown) => T
+
+// Questions excluded from UI as part of AP-1246
+export const oasysSectionsToExclude: Array<number> = [4, 5]
 
 export const getOasysSections = async <T extends OasysPage>(
   body: Record<string, unknown>,
@@ -48,7 +52,12 @@ export const getOasysSections = async <T extends OasysPage>(
     }
   }
 
-  const summaries = sortOasysImportSummaries(oasysSections[sectionName]).map(question => {
+  const rawSummaries =
+    sectionName === 'supportingInformation'
+      ? oasysSections.supportingInformation.filter(question => !oasysSectionsToExclude.includes(question.sectionNumber))
+      : oasysSections[sectionName]
+
+  const summaries = sortOasysImportSummaries(rawSummaries).map(question => {
     const answer = body[answerKey]?.[question.questionNumber] || question.answer
     return {
       ...question,

@@ -6,6 +6,7 @@ import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../util
 import { ApprovedPremisesApplication, OASysSection } from '../../../../@types/shared'
 import { DataServices } from '../../../../@types/ui'
 import { sentenceCase } from '../../../../utils/utils'
+import { oasysSectionsToExclude } from '../../../../utils/oasysImportUtils'
 
 interface Response {
   needsLinkedToReoffending: Array<string> | string | Array<OASysSection>
@@ -50,7 +51,10 @@ export default class OptionalOasysSections implements TasklistPage {
       const allNeedsLinkedToReoffending = oasysSelections.filter(
         section => !section.linkedToHarm && section.linkedToReOffending,
       )
-      const allOtherNeeds = oasysSelections.filter(section => !section.linkedToHarm && !section.linkedToReOffending)
+      const allOtherNeeds = oasysSelections.filter(
+        section =>
+          !section.linkedToHarm && !section.linkedToReOffending && !oasysSectionsToExclude.includes(section.section),
+      )
 
       if (body.needsLinkedToReoffending) {
         page.body.needsLinkedToReoffending = OptionalOasysSections.getSelectedNeeds(

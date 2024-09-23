@@ -268,13 +268,19 @@ export default class ApplyHelper {
     })
     const oasysSelectionD = oasysSelectionFactory.needsNotLinkedToReoffending().build({
       section: 4,
-      name: 'thinking',
+      name: 'excluded',
+      linkedToHarm: false,
+      linkedToReOffending: false,
+    })
+    const oasysSelectionE = oasysSelectionFactory.needsNotLinkedToReoffending().build({
+      section: 6,
+      name: 'included',
       linkedToHarm: false,
       linkedToReOffending: false,
     })
 
     this.oasysSectionsLinkedToReoffending = [oasysSelectionA, oasysSelectionB]
-    this.otherOasysSections = [oasysSelectionC, oasysSelectionD]
+    this.otherOasysSections = [oasysSelectionC, oasysSelectionD, oasysSelectionE]
 
     const oasysSelection = [...this.oasysSectionsLinkedToReoffending, ...this.otherOasysSections]
 
