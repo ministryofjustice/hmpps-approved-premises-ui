@@ -20,6 +20,10 @@ context('Redirects', () => {
       '/premises/:premisesId/beds/:bedId/lost-beds/new',
       '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/new',
     ],
+    [
+      '/premises/:premisesId/bookings/:bookingId/date-changes/new',
+      '/manage/premises/:premisesId/bookings/:bookingId/date-changes/new',
+    ],
   ]
 
   redirects.forEach(([from, to]) => {

@@ -10,12 +10,8 @@ export default class NewDateChange extends Page {
     super('Update placement dates')
   }
 
-  static visit(premisesId: Premises['id'], bookingId: Booking['id'], { v2 } = { v2: false }): NewDateChange {
-    cy.visit(
-      v2
-        ? paths.v2Manage.bookings.dateChanges.new({ premisesId, bookingId })
-        : paths.bookings.dateChanges.new({ premisesId, bookingId }),
-    )
+  static visit(premisesId: Premises['id'], bookingId: Booking['id']): NewDateChange {
+    cy.visit(paths.v2Manage.bookings.dateChanges.new({ premisesId, bookingId }))
     return new NewDateChange(premisesId, bookingId)
   }
 

@@ -12,7 +12,6 @@ export default function routes(controllers: Controllers, router: Router, service
   const { get, post } = actions(router, services.auditService)
 
   const {
-    dateChangesController,
     bookingsController,
     bookingExtensionsController,
     arrivalsController,
@@ -53,6 +52,10 @@ export default function routes(controllers: Controllers, router: Router, service
       auditEvent: 'SHOW_LOST_BED_REDIRECT',
     },
   )
+  get(paths.bookings.dateChanges.new.pattern, redirectController.redirect(paths.v2Manage.bookings.dateChanges.new), {
+    auditEvent: 'NEW_DATE_CHANGE',
+    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
+  })
   // End deprecated paths
 
   get(paths.bookings.new.pattern, bookingsController.new(), {
@@ -167,21 +170,6 @@ export default function routes(controllers: Controllers, router: Router, service
       {
         path: paths.bookings.moves.new.pattern,
         auditEvent: 'BED_MOVE_FAILURE',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
-  })
-
-  get(paths.bookings.dateChanges.new.pattern, dateChangesController.new(), {
-    auditEvent: 'NEW_DATE_CHANGE',
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
-  })
-  post(paths.bookings.dateChanges.create.pattern, dateChangesController.create(), {
-    auditEvent: 'DATE_CHANGE_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.dateChanges.new.pattern,
-        auditEvent: 'DATE_CHANGE_FAILURE',
       },
     ],
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],

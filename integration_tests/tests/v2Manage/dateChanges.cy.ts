@@ -21,7 +21,7 @@ context('Date Changes', () => {
 
   it('shows an error if neither date is selected', () => {
     // And I visit the date change page
-    const dateChangePage = NewDateChangePage.visit(premises.id, booking.id, { v2: true })
+    const dateChangePage = NewDateChangePage.visit(premises.id, booking.id)
 
     // And I click submit without selecting any dates
     dateChangePage.clickSubmit()
@@ -36,7 +36,7 @@ context('Date Changes', () => {
     cy.task('stubDateChange', { premisesId: premises.id, bookingId: booking.id })
 
     // And I visit the date change page
-    const dateChangePage = NewDateChangePage.visit(premises.id, booking.id, { v2: true })
+    const dateChangePage = NewDateChangePage.visit(premises.id, booking.id)
 
     // And I change the date of my booking
     dateChangePage.completeForm('2023-01-01', '2023-03-02')

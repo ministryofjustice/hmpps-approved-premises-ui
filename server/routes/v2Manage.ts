@@ -55,7 +55,7 @@ export default function routes(controllers: Controllers, router: Router, service
   // Date changes
   get(paths.v2Manage.bookings.dateChanges.new.pattern, dateChangesController.new(), {
     auditEvent: 'NEW_DATE_CHANGE',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['workflow_manager', 'future_manager'],
   })
   post(paths.v2Manage.bookings.dateChanges.create.pattern, dateChangesController.create(), {
     auditEvent: 'DATE_CHANGE_SUCCESS',
@@ -65,7 +65,7 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'DATE_CHANGE_FAILURE',
       },
     ],
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['workflow_manager', 'future_manager'],
   })
 
   // Booking extensions
