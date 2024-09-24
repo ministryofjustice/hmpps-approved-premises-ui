@@ -57,11 +57,11 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_DATE_CHANGE',
     allowedRoles: ['future_manager'],
   })
-  post(paths.bookings.dateChanges.create.pattern, dateChangesController.create(), {
+  post(paths.v2Manage.bookings.dateChanges.create.pattern, dateChangesController.create(), {
     auditEvent: 'DATE_CHANGE_SUCCESS',
     redirectAuditEventSpecs: [
       {
-        path: paths.bookings.dateChanges.new.pattern,
+        path: paths.v2Manage.bookings.dateChanges.new.pattern,
         auditEvent: 'DATE_CHANGE_FAILURE',
       },
     ],
@@ -76,11 +76,11 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.v2Manage.bookings.extensions.create.pattern, bookingExtensionsController.create(), {
     redirectAuditEventSpecs: [
       {
-        path: paths.bookings.extensions.create.pattern,
+        path: paths.v2Manage.bookings.extensions.create.pattern,
         auditEvent: 'CREATE_BOOKING_EXTENSION_FAILURE',
       },
       {
-        path: paths.bookings.extensions.confirm.pattern,
+        path: paths.v2Manage.bookings.extensions.confirm.pattern,
         auditEvent: 'CREATE_BOOKING_EXTENSION_SUCCESS',
       },
     ],
@@ -121,8 +121,8 @@ export default function routes(controllers: Controllers, router: Router, service
     allowedPermissions: ['cas1_out_of_service_bed_create'],
     redirectAuditEventSpecs: [
       {
-        path: paths.lostBeds.show.pattern,
-        auditEvent: 'CREATE_UPDATE_LOST_BED_FAILURE',
+        path: paths.v2Manage.outOfServiceBeds.show.pattern,
+        auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
   })

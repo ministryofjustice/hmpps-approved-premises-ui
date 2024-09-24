@@ -129,8 +129,8 @@ describe('v2Manage routes', () => {
         allowedPermissions: ['cas1_out_of_service_bed_create'],
         redirectAuditEventSpecs: [
           {
-            path: paths.lostBeds.show.pattern,
-            auditEvent: 'CREATE_UPDATE_LOST_BED_FAILURE',
+            path: paths.v2Manage.outOfServiceBeds.show.pattern,
+            auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED_FAILURE',
           },
         ],
       },
