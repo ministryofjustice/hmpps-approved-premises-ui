@@ -71,7 +71,7 @@ export default class ApplicationsController {
 
   start(): RequestHandler {
     return (_req: Request, res: Response) => {
-      res.render('applications/start', {
+      res.render(process.env.ENABLE_WE === 'true' ? 'applications/start': 'applications/start-pre-we', {
         pageHeading: tasklistPageHeading,
       })
     }
