@@ -130,7 +130,7 @@
     "connect-flash": "^0.1.1",
     "connect-redis": "^7.0.0",
     "csurf": "^1.11.0",
-    "date-fns": "^3.0.0",
+    "date-fns": "^4.0.0",
     "dotenv": "^16.4.4",
     "express": "^4.21.0",
     "express-prom-bundle": "^7.0.0",
