@@ -48,7 +48,6 @@ export default defineConfig<TestOptions>({
         },
         indexOffenceRequired: true,
         oasysSections: [
-          '5. Finance',
           '6. Relationships',
           '7. Lifestyle',
           '10. Emotional',
