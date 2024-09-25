@@ -20,6 +20,7 @@ import { userTableHeader, userTableRows } from './usersTable'
 import paths from '../../paths/apply'
 import { isPlacementApplicationTask } from './assertions'
 import { sentenceCase } from '../utils'
+import { qualificationDictionary } from '../users'
 
 type GroupedTasks = {
   allocated: Array<Task>
@@ -149,20 +150,13 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
 const userQualificationsSelectOptions = (
   selectedOption: TaskSearchQualification | undefined | null,
 ): Array<SelectOption> => {
-  const qualificationDictionary: Record<TaskSearchQualification, string> = {
-    womens: "Women's APs",
-    emergency: 'Emergency APs',
-    esap: 'ESAP',
-    pipe: 'PIPE',
-    recovery_focused: 'Recovery-focused APs',
-    mental_health_specialist: 'Specialist Mental Health APs',
-  }
-
-  const options = Object.keys(qualificationDictionary).map(qualification => ({
-    text: qualificationDictionary[qualification],
-    value: qualification,
-    selected: qualification === selectedOption,
-  }))
+  const options = Object.keys(qualificationDictionary)
+    .filter(key => key !== 'lao')
+    .map(qualification => ({
+      text: qualificationDictionary[qualification],
+      value: qualification,
+      selected: qualification === selectedOption,
+    }))
 
   options.unshift({
     text: 'All qualifications',

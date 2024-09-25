@@ -85,7 +85,6 @@ export const qualifications: ReadonlyArray<UserQualification> = [
 
 export const qualificationDictionary: Record<UserQualification, string> = {
   lao: 'Limited access offenders',
-  womens: "Women's APs",
   emergency: 'Emergency APs',
   esap: 'ESAP',
   pipe: 'PIPE',

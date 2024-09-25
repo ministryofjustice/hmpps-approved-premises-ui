@@ -66,11 +66,11 @@ describe('userTableHeader', () => {
 describe('qualificationCell', () => {
   it('returns the qualifications in UI friendly format', () => {
     const user = userWithWorkloadFactory.build({
-      qualifications: ['pipe', 'emergency', 'esap', 'lao', 'womens', 'recovery_focused', 'mental_health_specialist'],
+      qualifications: ['pipe', 'emergency', 'esap', 'lao', 'recovery_focused', 'mental_health_specialist'],
     })
 
     expect(qualificationCell(user)).toEqual({
-      text: "PIPE, Emergency APs, ESAP, Limited access offenders, Women's APs, Recovery-focused APs, Specialist Mental Health APs",
+      text: 'PIPE, Emergency APs, ESAP, Limited access offenders, Recovery-focused APs, Specialist Mental Health APs',
     })
   })
 })

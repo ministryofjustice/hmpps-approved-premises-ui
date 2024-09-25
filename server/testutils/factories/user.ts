@@ -43,22 +43,31 @@ export const userProfileFactory = Factory.define<ProfileResponse>(() => ({
   user: userFactory.build(),
 }))
 
-const roleFactory = Factory.define<UserRole>(() =>
-  faker.helpers.arrayElement([
-    'assessor',
-    'matcher',
-    'workflow_manager',
-    'applicant',
-    'role_admin',
-    'report_viewer',
-    'excluded_from_assess_allocation',
-    'excluded_from_match_allocation',
-    'excluded_from_placement_application_allocation',
-  ]),
-)
+const userRoles: Array<UserRole> = [
+  'assessor',
+  'matcher',
+  'workflow_manager',
+  'applicant',
+  'role_admin',
+  'report_viewer',
+  'excluded_from_assess_allocation',
+  'excluded_from_match_allocation',
+  'excluded_from_placement_application_allocation',
+]
+
+const roleFactory = Factory.define<UserRole>(() => faker.helpers.arrayElement(userRoles))
+
+const userQualifications: Array<UserQualification> = [
+  'pipe',
+  'lao',
+  'emergency',
+  'esap',
+  'recovery_focused',
+  'mental_health_specialist',
+]
 
 export const qualificationFactory = Factory.define<UserQualification>(() =>
-  faker.helpers.arrayElement(['pipe', 'emergency', 'esap', 'lao', 'womens']),
+  faker.helpers.arrayElement(userQualifications),
 )
 
 export default userFactory

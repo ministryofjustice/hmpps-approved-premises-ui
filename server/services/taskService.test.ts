@@ -43,7 +43,7 @@ describe('taskService', () => {
         page: 1,
         apAreaId: 'testAreaId',
         taskTypes: ['PlacementApplication', 'Assessment'],
-        requiredQualification: 'womens',
+        requiredQualification: 'emergency',
         crnOrName: 'CRN123',
       })
 
@@ -64,7 +64,7 @@ describe('taskService', () => {
         sortDirection: 'asc',
         sortBy: 'createdAt',
         taskTypes: ['PlacementApplication', 'Assessment'],
-        requiredQualification: 'womens',
+        requiredQualification: 'emergency',
         crnOrName: 'CRN123',
         isCompleted: false,
       })
@@ -117,7 +117,7 @@ describe('taskService', () => {
         name: 'Midlands',
       }
 
-      const qualification: UserQualification = 'womens' as const
+      const qualification: UserQualification = 'emergency' as const
       const expectedUser = userWithWorkloadFactory.build({ apArea, qualifications: [qualification] })
       const users = [...userWithWorkloadFactory.buildList(2), expectedUser]
       const taskWrapper = taskWrapperFactory.build({ users })
@@ -143,7 +143,7 @@ describe('taskService', () => {
     })
 
     it('filters users result by only qualification', async () => {
-      const qualification: UserQualification = 'womens' as const
+      const qualification: UserQualification = 'emergency' as const
 
       const expectedUser = userWithWorkloadFactory.build({ qualifications: [qualification] })
       const anotherUser = userWithWorkloadFactory.build({ qualifications: ['pipe'] })

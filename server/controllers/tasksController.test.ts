@@ -110,7 +110,7 @@ describe('TasksController', () => {
       const apAreaId = '1234'
       const allocatedFilter = 'unallocated'
       const allocatedToUserId = '123'
-      const requiredQualification = 'womens'
+      const requiredQualification = 'emergency'
       const crnOrName = 'ABC123'
       const activeTab = 'unallocated'
 
@@ -244,7 +244,7 @@ describe('TasksController', () => {
       const apAreaId = '1234'
       const allocatedFilter = 'unallocated'
       const allocatedToUserId = '123'
-      const requiredQualification = 'womens'
+      const requiredQualification = 'emergency'
       const crnOrName = 'ABC123'
       const activeTab = 'completed'
 

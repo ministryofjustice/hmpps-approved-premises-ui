@@ -289,7 +289,7 @@ describeClient('UserClient', provider => {
           method: 'GET',
           path: paths.users.index({}),
           query: {
-            qualifications: 'pipe,womens',
+            qualifications: 'pipe,emergency',
             page: '1',
             sortBy: 'name',
             sortDirection: 'asc',
@@ -310,7 +310,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', [], ['pipe', 'womens'])
+      const output = await userClient.getUsers('', [], ['pipe', 'emergency'])
 
       expect(output).toEqual({
         data: users,
@@ -330,7 +330,7 @@ describeClient('UserClient', provider => {
           path: paths.users.index({}),
           query: {
             roles: 'assessor,matcher',
-            qualifications: 'pipe,womens',
+            qualifications: 'pipe,emergency',
             page: '1',
             sortBy: 'name',
             sortDirection: 'asc',
@@ -351,7 +351,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', ['assessor', 'matcher'], ['pipe', 'womens'])
+      const output = await userClient.getUsers('', ['assessor', 'matcher'], ['pipe', 'emergency'])
 
       expect(output).toEqual({
         data: users,
