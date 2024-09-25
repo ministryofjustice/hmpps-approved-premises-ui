@@ -1,4 +1,4 @@
-import { BedDetail, BedSummary } from '../@types/shared'
+import { BedDetail, BedSummary } from '@approved-premises/api'
 import {
   BedOccupancyBookingEntryUi,
   BedOccupancyLostBedEntryUi,
@@ -6,7 +6,6 @@ import {
   SummaryListItem,
   SummaryListWithCard,
   TableCell,
-  UserDetails,
 } from '../@types/ui'
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
@@ -15,26 +14,18 @@ import { translateCharacteristic } from './characteristicsUtils'
 
 export class InvalidOverbookingDataException extends Error {}
 
-export const bedTableRows = (beds: Array<BedSummary>, premisesId: string, user?: UserDetails) => {
-  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId, user)])
-}
-
 export const bedNameCell = (item: { name: string }): TableCell => ({ text: item.name })
 
 export const roomNameCell = (item: { roomName: string }): TableCell => ({ text: item.roomName })
 
 export const statusCell = (bed: BedSummary): TableCell => ({ text: sentenceCase(bed.status) })
 
-export const actionCell = (bed: BedSummary, premisesId: string, user?: UserDetails): TableCell => ({
-  html: bedLinkForUser(bed, premisesId, user),
+export const actionCell = (bed: BedSummary, premisesId: string): TableCell => ({
+  html: v2BedLink(bed, premisesId),
 })
 
-export const v2BedTableRows = (beds: Array<BedSummary>, premisesId: string, user?: UserDetails) => {
-  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId, user)])
-}
-
-export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => {
-  return [statusRow(bed), characteristicsRow(bed)]
+export const v2BedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
+  return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)])
 }
 
 export const v2BedDetails = (bed: BedDetail): Array<SummaryListItem> => {
@@ -85,25 +76,6 @@ export const v2BedActions = (bed: BedDetail, premisesId: string) => {
       },
     ],
   }
-}
-
-const bedLinkForUser = (bed: BedSummary, premisesId: string, user?: UserDetails): string => {
-  if (user && user.roles?.includes('future_manager')) {
-    return v2BedLink(bed, premisesId)
-  }
-  return v1BedLink(bed, premisesId)
-}
-
-export const v1BedLink = (bed: BedSummary, premisesId: string): string => {
-  return linkTo(
-    paths.premises.beds.show,
-    { bedId: bed.id, premisesId },
-    {
-      text: 'Manage',
-      hiddenText: `bed ${bed.name}`,
-      attributes: { 'data-cy-bedId': bed.id },
-    },
-  )
 }
 
 export const v2BedLink = (bed: BedSummary, premisesId: string): string => {

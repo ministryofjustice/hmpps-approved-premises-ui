@@ -45,7 +45,7 @@ export default class MoveBedsController {
         await this.bookingService.moveBooking(req.user.token, premisesId, bookingId, newMove)
 
         req.flash('success', 'Bed move logged')
-        res.redirect(paths.premises.show({ premisesId }))
+        res.redirect(paths.v2Manage.premises.show({ premisesId }))
       } catch (error) {
         catchValidationErrorOrPropogate(req, res, error as Error, paths.bookings.moves.new({ premisesId, bookingId }))
       }

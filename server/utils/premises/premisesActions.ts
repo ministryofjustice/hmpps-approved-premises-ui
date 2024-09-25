@@ -6,9 +6,7 @@ import { hasPermission } from '../users'
 export const premisesActions = (user: UserDetails, premises: Premises) => {
   const actions = []
 
-  const premisesBedsPath = user.roles?.includes('future_manager')
-    ? paths.v2Manage.premises.beds.index({ premisesId: premises.id })
-    : paths.premises.beds.index({ premisesId: premises.id })
+  const premisesBedsPath = paths.v2Manage.premises.beds.index({ premisesId: premises.id })
 
   actions.push({
     text: 'Manage beds',

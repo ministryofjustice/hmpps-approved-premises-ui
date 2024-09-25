@@ -45,24 +45,6 @@ describe('V2BedsController', () => {
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
     })
-
-    it('should return the bed to the template with a link back to the calendar', async () => {
-      const requestHandler = bedsController.show()
-
-      request.headers.referer = 'http://localhost/calendar'
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/beds/show', {
-        bed,
-        premises,
-        pageHeading: `Bed ${bed.name}`,
-        backLink: paths.premises.calendar({ premisesId: premises.id }),
-      })
-
-      expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)
-      expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
-    })
   })
 
   describe('index', () => {

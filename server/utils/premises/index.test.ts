@@ -10,7 +10,6 @@ import {
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
-  premisesTableRows,
   summaryListForPremises,
   v2PremisesTableRows,
 } from '.'
@@ -237,73 +236,6 @@ describe('premisesUtils', () => {
           ],
           label: 'Area 2',
         },
-      ])
-    })
-  })
-
-  describe('premisesTableRows', () => {
-    it('returns a table view of the premises', async () => {
-      const premises1 = premisesSummaryFactory.build({ name: 'XYZ' })
-      const premises2 = premisesSummaryFactory.build({ name: 'ABC' })
-      const premises3 = premisesSummaryFactory.build({ name: 'GHI' })
-
-      const premises = [premises1, premises2, premises3]
-
-      expect(premisesTableRows(premises)).toEqual([
-        [
-          {
-            text: premises2.name,
-          },
-          {
-            text: premises2.apCode,
-          },
-          {
-            text: premises2.bedCount.toString(),
-          },
-          {
-            html: linkTo(
-              paths.premises.show,
-              { premisesId: premises2.id },
-              { text: 'View', hiddenText: `about ${premises2.name}` },
-            ),
-          },
-        ],
-        [
-          {
-            text: premises3.name,
-          },
-          {
-            text: premises3.apCode,
-          },
-          {
-            text: premises3.bedCount.toString(),
-          },
-          {
-            html: linkTo(
-              paths.premises.show,
-              { premisesId: premises3.id },
-              { text: 'View', hiddenText: `about ${premises3.name}` },
-            ),
-          },
-        ],
-        [
-          {
-            text: premises1.name,
-          },
-          {
-            text: premises1.apCode,
-          },
-          {
-            text: premises1.bedCount.toString(),
-          },
-          {
-            html: linkTo(
-              paths.premises.show,
-              { premisesId: premises1.id },
-              { text: 'View', hiddenText: `about ${premises1.name}` },
-            ),
-          },
-        ],
       ])
     })
   })

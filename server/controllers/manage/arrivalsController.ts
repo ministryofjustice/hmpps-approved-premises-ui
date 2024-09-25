@@ -54,7 +54,7 @@ export default class ArrivalsController {
         await this.arrivalService.createArrival(req.user.token, premisesId, bookingId, arrival)
 
         req.flash('success', 'Arrival logged')
-        res.redirect(paths.premises.show({ premisesId }))
+        res.redirect(paths.v2Manage.premises.show({ premisesId }))
       } catch (error) {
         catchValidationErrorOrPropogate(
           req,

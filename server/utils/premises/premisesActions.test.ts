@@ -50,7 +50,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
-        href: paths.premises.beds.index({ premisesId: premises.id }),
+        href: paths.v2Manage.premises.beds.index({ premisesId: premises.id }),
       })
     })
   })
@@ -71,7 +71,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
-        href: paths.premises.beds.index({ premisesId: premises.id }),
+        href: paths.v2Manage.premises.beds.index({ premisesId: premises.id }),
       })
     })
 
@@ -108,7 +108,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
-        href: paths.premises.beds.index({ premisesId: premises.id }),
+        href: paths.v2Manage.premises.beds.index({ premisesId: premises.id }),
       })
     })
 
@@ -182,7 +182,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
-        href: paths.premises.beds.index({ premisesId: premises.id }),
+        href: paths.v2Manage.premises.beds.index({ premisesId: premises.id }),
       })
     })
   })

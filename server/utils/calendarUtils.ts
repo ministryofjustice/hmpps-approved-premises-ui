@@ -80,7 +80,7 @@ export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, start
 
 export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
   return `<tr class="${rowClass}" data-cy-bedId="${bedOccupancyRange.bedId}">
-    <th scope="row" class="${headerClass}"><a href="${paths.premises.beds.show({
+    <th scope="row" class="${headerClass}"><a href="${paths.v2Manage.premises.beds.show({
       premisesId,
       bedId: bedOccupancyRange.bedId,
     })}" class="govuk-link">${bedOccupancyRange.bedName}</a></th>

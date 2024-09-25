@@ -104,7 +104,7 @@ describe('bookingsController', () => {
           pageHeading: 'There are no offences for this person',
           bodyTextParam: 'a placement in an Approved Premises,',
           backTextParam: 'Approved Premises',
-          href: paths.premises.show({ premisesId }),
+          href: paths.v2Manage.premises.show({ premisesId }),
         })
       })
 

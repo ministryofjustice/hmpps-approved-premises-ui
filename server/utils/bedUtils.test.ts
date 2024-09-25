@@ -13,9 +13,7 @@ import {
   InvalidOverbookingDataException,
   actionCell,
   bedActions,
-  bedDetails,
   bedNameCell,
-  bedTableRows,
   characteristicsRow,
   decodeOverbooking,
   encodeOverbooking,
@@ -24,7 +22,6 @@ import {
   statusCell,
   statusRow,
   title,
-  v1BedLink,
   v2BedActions,
   v2BedDetails,
   v2BedLink,
@@ -71,57 +68,19 @@ describe('bedUtils', () => {
   })
 
   describe('actionCell', () => {
-    describe('when the user has the FUTURE_MANAGER role', () => {
-      const user = userDetailsFactory.build({ roles: ['future_manager'] })
-
-      it('returns a "V2" link to manage the room', () => {
-        expect(actionCell(bed, premisesId, user)).toEqual({
-          html: v2BedLink(bed, premisesId),
-        })
+    it('returns a link to manage the room', () => {
+      expect(actionCell(bed, premisesId)).toEqual({
+        html: v2BedLink(bed, premisesId),
       })
-    })
-
-    describe('when the user does NOT have the FUTURE_MANAGER role', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
-
-      it('returns a "V1" link to manage the room', () => {
-        expect(actionCell(bed, premisesId, user)).toEqual({
-          html: v1BedLink(bed, premisesId),
-        })
-      })
-    })
-
-    describe('when no user is given', () => {
-      const undefinedUser: UserDetails = undefined
-
-      it('returns a "V1" link to manage the room', () => {
-        expect(actionCell(bed, premisesId, undefinedUser)).toEqual({
-          html: v1BedLink(bed, premisesId),
-        })
-      })
-    })
-  })
-
-  describe('roomsTableRows', () => {
-    const user = userDetailsFactory.build({ roles: ['manager'] })
-
-    it('returns the table rows given the rooms', () => {
-      const beds = [bed]
-
-      expect(bedTableRows(beds, premisesId, user)).toEqual([
-        [roomNameCell(bed), bedNameCell(bed), statusCell(bed), actionCell(bed, premisesId, user)],
-      ])
     })
   })
 
   describe('v2BedRows', () => {
-    const user = userDetailsFactory.build({ roles: ['manager'] })
-
     it('returns the table rows given the rooms', () => {
       const beds = [bed]
 
-      expect(v2BedTableRows(beds, premisesId, user)).toEqual([
-        [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId, user)],
+      expect(v2BedTableRows(beds, premisesId)).toEqual([
+        [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)],
       ])
     })
   })
@@ -173,12 +132,6 @@ describe('bedUtils', () => {
             `  <li>${translatedCharacteristic1}</li> <li>${translatedCharacteristic2}</li></ul>`,
         },
       })
-    })
-  })
-
-  describe('bedDetails', () => {
-    it('returns details for a bed', () => {
-      expect(bedDetails(bedDetail)).toEqual([statusRow(bedDetail), characteristicsRow(bedDetail)])
     })
   })
 

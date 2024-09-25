@@ -21,14 +21,8 @@ export default class V2BedsController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId } = req.params
-      let backLink: string
 
-      if (req.headers.referer?.match(/calendar/)) {
-        backLink = paths.premises.calendar({ premisesId })
-      } else {
-        backLink = paths.v2Manage.premises.beds.index({ premisesId })
-      }
-
+      const backLink = paths.v2Manage.premises.beds.index({ premisesId })
       const bed = await this.premisesService.getBed(req.user.token, premisesId, req.params.bedId)
       const premises = await this.premisesService.find(req.user.token, premisesId)
 
