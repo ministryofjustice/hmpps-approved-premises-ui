@@ -60,7 +60,7 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
       {
         text: 'Create out of service bed record',
         classes: 'govuk-button--secondary',
-        href: paths.lostBeds.new({ premisesId, bedId: bed.id }),
+        href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
       },
     ],
   }
@@ -126,7 +126,7 @@ export const overbookingSummaryList = (
           visuallyHiddenText: `for ${cardTitle}`,
         }
       : {
-          href: paths.lostBeds.show({ premisesId, bedId, id: item.lostBedId }),
+          href: paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id: item.lostBedId, tab: 'details' }),
           text: 'Amend',
           visuallyHiddenText: 'lost bed entry',
         }
