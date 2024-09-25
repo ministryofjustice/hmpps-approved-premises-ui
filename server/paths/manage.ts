@@ -31,7 +31,6 @@ const paths = {
   premises: {
     index: premisesPath, // redirected
     show: singlePremisesPath, // redirected
-    capacity: singlePremisesPath.path('capacity'), // not implemented
     calendar: singlePremisesPath.path('calendar'), // not implemented, used in Calendar utils
     beds: {
       index: bedsPath, // redirected
@@ -85,7 +84,6 @@ const paths = {
     index: singlePremisesPath.path('lost-beds'), // redirected to v2
     show: lostBedsPath.path(':id'), // redirected to v2
     update: singlePremisesPath.path('lost-beds').path(':id'), // redirected to v2
-    cancel: singlePremisesPath.path('lost-beds').path(':id').path('cancellations'), // not implemented
   },
 }
 
@@ -106,7 +104,6 @@ const v2Manage = {
   premises: {
     index: v2PremisesPath,
     show: v2SinglePremisesPath,
-    capacity: v2SinglePremisesPath.path('capacity'),
     beds: {
       index: v2BedsPath,
       show: v2BedsPath.path(':bedId'),
@@ -131,7 +128,6 @@ const v2Manage = {
     index: outOfServiceBedsIndexPath.path(':temporality'),
     show: outOfServiceBedPath.path(':tab'),
     update: outOfServiceBedPath.path('update'),
-    cancel: singlePremisesPath.path('out-of-service-beds').path(':id').path('cancellations'),
   },
 }
 
