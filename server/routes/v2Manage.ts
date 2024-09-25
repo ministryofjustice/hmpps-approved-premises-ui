@@ -49,7 +49,7 @@ export default function routes(controllers: Controllers, router: Router, service
   // Bookings
   get(paths.v2Manage.bookings.show.pattern, bookingsController.show(), {
     auditEvent: 'SHOW_BOOKING',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['workflow_manager', 'future_manager'],
   })
 
   // Date changes
