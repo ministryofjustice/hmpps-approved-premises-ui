@@ -16,7 +16,6 @@ context('Redirects', () => {
       '/premises/:premisesId/beds/:bedId/lost-beds/:id',
       '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/:id/details',
     ],
-    ['/premises/:premisesId/lost-beds/:id', '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/:id/update'],
     [
       '/premises/:premisesId/beds/:bedId/lost-beds/new',
       '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/new',
