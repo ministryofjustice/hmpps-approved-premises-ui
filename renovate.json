@@ -1,4 +1,10 @@
 {
-  "extends": ["github>ministryofjustice/arn-renovate-config"],
-  "ignoreDeps": ["@playwright/test", "applicationinsights"]
+  "extends": [
+    "github>ministryofjustice/arn-renovate-config"
+  ],
+  "ignoreDeps": [
+    "@playwright/test",
+    "applicationinsights"
+  ],
+  "rebaseWhen": "conflicted"
 }
