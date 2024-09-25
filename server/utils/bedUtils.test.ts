@@ -1,4 +1,3 @@
-import { UserDetails } from '@approved-premises/ui'
 import paths from '../paths/manage'
 import {
   apCharacteristicPairFactory,
@@ -7,7 +6,6 @@ import {
   bedOccupancyEntryLostBedUiFactory,
   bedOccupancyEntryOverbookingUiFactory,
   bedSummaryFactory,
-  userDetailsFactory,
 } from '../testutils/factories'
 import {
   InvalidOverbookingDataException,

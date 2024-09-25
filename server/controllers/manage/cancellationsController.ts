@@ -28,7 +28,7 @@ export default class CancellationsController {
       if (booking?.applicationId) {
         backLink = `${applyPaths.applications.withdrawables.show({ id: booking.applicationId })}?selectedWithdrawableType=placement`
       } else {
-        backLink = paths.bookings.show({ premisesId, bookingId })
+        backLink = paths.v2Manage.bookings.show({ premisesId, bookingId })
       }
 
       res.render('cancellations/new', {

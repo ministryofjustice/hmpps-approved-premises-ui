@@ -48,7 +48,7 @@ export default class DeparturesController {
         await this.departureService.createDeparture(req.user.token, premisesId, bookingId, departure)
 
         req.flash('success', 'Departure recorded')
-        res.redirect(paths.bookings.show({ premisesId, bookingId }))
+        res.redirect(paths.v2Manage.bookings.show({ premisesId, bookingId }))
       } catch (error) {
         catchValidationErrorOrPropogate(
           req,

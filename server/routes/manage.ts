@@ -13,7 +13,6 @@ export default function routes(controllers: Controllers, router: Router, service
 
   const {
     bookingsController,
-    bookingExtensionsController,
     arrivalsController,
     nonArrivalsController,
     departuresController,
@@ -29,12 +28,14 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.show.pattern, redirectController.redirect(paths.v2Manage.premises.show), {
     auditEvent: 'SHOW_PREMISES_REDIRECT',
   })
+
   get(paths.premises.beds.index.pattern, redirectController.redirect(paths.v2Manage.premises.beds.index), {
     auditEvent: 'LIST_BEDS_REDIRECT',
   })
   get(paths.premises.beds.show.pattern, redirectController.redirect(paths.v2Manage.premises.beds.show), {
     auditEvent: 'SHOW_BED_REDIRECT',
   })
+
   get(
     paths.lostBeds.index.pattern,
     redirectController.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex, { temporality: 'current' }),
@@ -45,6 +46,9 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.lostBeds.new.pattern, redirectController.redirect(paths.v2Manage.outOfServiceBeds.new), {
     auditEvent: 'NEW_LOST_BED_REDIRECT',
   })
+  post(paths.lostBeds.create.pattern, redirectController.redirect(paths.v2Manage.outOfServiceBeds.create), {
+    auditEvent: 'CREATE_LOST_BED_REDIRECT',
+  })
   get(
     paths.lostBeds.show.pattern,
     redirectController.redirect(paths.v2Manage.outOfServiceBeds.show, { tab: 'details' }),
@@ -52,21 +56,51 @@ export default function routes(controllers: Controllers, router: Router, service
       auditEvent: 'SHOW_LOST_BED_REDIRECT',
     },
   )
-  get(paths.bookings.dateChanges.new.pattern, redirectController.redirect(paths.v2Manage.bookings.dateChanges.new), {
-    auditEvent: 'NEW_DATE_CHANGE',
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
+  post(paths.lostBeds.update.pattern, redirectController.redirect(paths.v2Manage.outOfServiceBeds.update), {
+    auditEvent: 'UPDATE_LOST_BED_REDIRECT',
   })
+
+  get(paths.bookings.show.pattern, redirectController.redirect(paths.v2Manage.bookings.show), {
+    auditEvent: 'SHOW_BOOKING_REDIRECT',
+  })
+
+  get(paths.bookings.dateChanges.new.pattern, redirectController.redirect(paths.v2Manage.bookings.dateChanges.new), {
+    auditEvent: 'NEW_DATE_CHANGE_REDIRECT',
+  })
+  post(
+    paths.bookings.dateChanges.create.pattern,
+    redirectController.redirect(paths.v2Manage.bookings.dateChanges.create),
+    {
+      auditEvent: 'CREATE_DATE_CHANGE_REDIRECT',
+    },
+  )
+
+  get(paths.bookings.extensions.new.pattern, redirectController.redirect(paths.v2Manage.bookings.extensions.new), {
+    auditEvent: 'NEW_BOOKING_EXTENSION_REDIRECT',
+  })
+  post(
+    paths.bookings.extensions.create.pattern,
+    redirectController.redirect(paths.v2Manage.bookings.extensions.create),
+    {
+      auditEvent: 'CREATE_BOOKING_EXTENSION_REDIRECT',
+    },
+  )
+  get(
+    paths.bookings.extensions.confirm.pattern,
+    redirectController.redirect(paths.v2Manage.bookings.extensions.confirm),
+  )
+
   // End deprecated paths
 
   get(paths.bookings.new.pattern, bookingsController.new(), {
     auditEvent: 'START_AD_HOC_BOOKING',
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
-  get(paths.bookings.show.pattern, bookingsController.show(), { auditEvent: 'SHOW_BOOKING' })
+
   post(paths.bookings.create.pattern, bookingsController.create(), {
     redirectAuditEventSpecs: [
       {
-        path: paths.bookings.show.pattern,
+        path: paths.v2Manage.bookings.show.pattern,
         auditEvent: 'CREATE_AD_HOC_BOOKING_FAILURE',
       },
       {
@@ -80,25 +114,7 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.bookings.confirm.pattern, bookingsController.confirm(), {
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
-  get(paths.bookings.extensions.new.pattern, bookingExtensionsController.new(), {
-    auditEvent: 'NEW_BOOKING_EXTENSION',
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
-  })
-  post(paths.bookings.extensions.create.pattern, bookingExtensionsController.create(), {
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.extensions.create.pattern,
-        auditEvent: 'CREATE_BOOKING_EXTENSION_FAILURE',
-      },
-      {
-        path: paths.bookings.extensions.confirm.pattern,
-        auditEvent: 'CREATE_BOOKING_EXTENSION_SUCCESS',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
-  })
 
-  get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
   get(paths.bookings.arrivals.new.pattern, arrivalsController.new(), {
     auditEvent: 'NEW_ARRIVAL',
     allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],

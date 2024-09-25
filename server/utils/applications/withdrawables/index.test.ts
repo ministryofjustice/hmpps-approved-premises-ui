@@ -101,7 +101,7 @@ describe('withdrawableTypeRadioOptions', () => {
           checked: false,
           hint: {
             html: linkTo(
-              managePaths.bookings.show,
+              managePaths.v2Manage.bookings.show,
               { bookingId: booking.id, premisesId: booking.premises.id },
               {
                 text: 'See placement details (opens in a new tab)',

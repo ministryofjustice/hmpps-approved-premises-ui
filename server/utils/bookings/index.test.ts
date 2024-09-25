@@ -56,7 +56,8 @@ describe('bookingUtils', () => {
     it('returns a link for a booking', () => {
       const booking = bookingFactory.build()
 
-      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
+      expect(manageBookingLink(premisesId, booking))
+        .toMatchStringIgnoringWhitespace(`<a href="${paths.v2Manage.bookings.show({
         premisesId,
         bookingId: booking.id,
       })}" data-cy-booking-id="${booking.id}">
@@ -70,7 +71,8 @@ describe('bookingUtils', () => {
     it('returns a link for a booking', () => {
       const booking = bookingFactory.build()
 
-      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
+      expect(manageBookingLink(premisesId, booking))
+        .toMatchStringIgnoringWhitespace(`<a href="${paths.v2Manage.bookings.show({
         premisesId,
         bookingId: booking.id,
       })}" data-cy-booking-id="${booking.id}">
@@ -211,7 +213,7 @@ describe('bookingUtils', () => {
         errorTitle: 'This bedspace is not available for the dates entered',
         errorSummary: [
           {
-            html: `They conflict with an <a href="${paths.bookings.show({
+            html: `They conflict with an <a href="${paths.v2Manage.bookings.show({
               premisesId,
               bookingId,
             })}">existing booking</a>`,
@@ -253,7 +255,7 @@ describe('bookingUtils', () => {
         errorTitle: 'This bedspace is not available for the date entered',
         errorSummary: [
           {
-            html: `It conflicts with an <a href="${paths.bookings.show({
+            html: `It conflicts with an <a href="${paths.v2Manage.bookings.show({
               premisesId,
               bookingId,
             })}">existing booking</a>`,

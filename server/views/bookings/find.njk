@@ -5,14 +5,14 @@
 
 {% extends "../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-     {{ govukBackLink({
-   		text: "Back",
-   		href: paths.premises.show({ premisesId: premisesId })
-   	}) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.v2Manage.premises.show({ premisesId: premisesId })
+    }) }}
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,7 @@
         <div class="govuk-grid-column-two-thirds">
             <h1>Create a placement</h1>
             <form action="{{ paths.people.find({ premisesId: premisesId }) }}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ showErrorSummary(errorSummary) }}
 
@@ -35,7 +35,7 @@
                     name: "crn",
                     value: crn,
                     errorMessage: errors.crn
-                    }) }}
+                }) }}
 
                 {{ govukButton({
                     name: 'search',

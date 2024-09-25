@@ -29,7 +29,7 @@ export const adminActions = (
   if (placementRequest.status === 'matched') {
     const matchedActions = [
       {
-        href: managePaths.bookings.dateChanges.new({
+        href: managePaths.v2Manage.bookings.dateChanges.new({
           premisesId: placementRequest?.booking?.premisesId || '',
           bookingId: placementRequest?.booking?.id || '',
         }),

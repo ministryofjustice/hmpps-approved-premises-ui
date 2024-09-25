@@ -41,7 +41,7 @@ export default class BookingExtensionsController {
         await this.bookingService.changeDepartureDate(req.user.token, premisesId, bookingId, bookingExtension)
 
         res.redirect(
-          paths.bookings.extensions.confirm({
+          paths.v2Manage.bookings.extensions.confirm({
             premisesId,
             bookingId,
           }),
@@ -51,7 +51,7 @@ export default class BookingExtensionsController {
           req,
           res,
           error as Error,
-          paths.bookings.extensions.new({
+          paths.v2Manage.bookings.extensions.new({
             premisesId,
             bookingId,
           }),

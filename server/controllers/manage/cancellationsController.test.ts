@@ -106,7 +106,7 @@ describe('cancellationsController', () => {
         premisesId,
         bookingId,
         booking: bookingWithoutAnApplication,
-        backLink: paths.bookings.show({ premisesId, bookingId }),
+        backLink: paths.v2Manage.bookings.show({ premisesId, bookingId }),
         cancellationReasons,
         pageHeading: 'Confirm withdrawn placement',
         errors: {},

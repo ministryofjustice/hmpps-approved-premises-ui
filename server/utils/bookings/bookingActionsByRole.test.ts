@@ -48,7 +48,7 @@ describe('bookingUtils bookingActions by role', () => {
         expect(bookingActions(user, booking)).not.toContainMenuItem({
           text: 'Change placement dates',
           classes: 'govuk-button--secondary',
-          href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+          href: paths.v2Manage.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
 
@@ -112,7 +112,7 @@ describe('bookingUtils bookingActions by role', () => {
         expect(bookingActions(user, booking)).toContainMenuItem({
           text: 'Change placement dates',
           classes: 'govuk-button--secondary',
-          href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+          href: paths.v2Manage.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
 
@@ -176,7 +176,7 @@ describe('bookingUtils bookingActions by role', () => {
         expect(bookingActions(user, booking)).toContainMenuItem({
           text: 'Change placement dates',
           classes: 'govuk-button--secondary',
-          href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+          href: paths.v2Manage.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
 
@@ -210,7 +210,7 @@ describe('bookingUtils bookingActions by role', () => {
           expect(bookingActions(user, booking)).toContainMenuItem({
             text: 'Change placement dates',
             classes: 'govuk-button--secondary',
-            href: paths.bookings.dateChanges.new({ premisesId: booking?.premises.id, bookingId: booking?.id }),
+            href: paths.v2Manage.bookings.dateChanges.new({ premisesId: booking?.premises.id, bookingId: booking?.id }),
           })
         })
       })

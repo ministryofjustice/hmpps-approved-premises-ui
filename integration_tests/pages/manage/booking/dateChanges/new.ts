@@ -39,6 +39,6 @@ export default class NewDateChange extends Page {
   shouldHaveCorrectBacklink(): void {
     cy.get('.govuk-back-link')
       .should('have.attr', 'href')
-      .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
+      .and('include', paths.v2Manage.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
   }
 }

@@ -99,7 +99,7 @@ describe('dateChangesController', () => {
         premisesId,
         bookingId,
         booking,
-        backLink: paths.bookings.show({ premisesId, bookingId }),
+        backLink: paths.v2Manage.bookings.show({ premisesId, bookingId }),
         pageHeading: 'Update placement dates',
         errors: {},
         errorSummary: [],
@@ -229,7 +229,7 @@ describe('dateChangesController', () => {
             request,
             response,
             new ErrorWithData({}),
-            paths.bookings.dateChanges.new({
+            paths.v2Manage.bookings.dateChanges.new({
               bookingId: request.params.bookingId,
               premisesId: request.params.premisesId,
             }),
@@ -260,7 +260,7 @@ describe('dateChangesController', () => {
           request,
           response,
           err,
-          paths.bookings.dateChanges.new({
+          paths.v2Manage.bookings.dateChanges.new({
             bookingId: request.params.bookingId,
             premisesId: request.params.premisesId,
           }),
@@ -292,7 +292,7 @@ describe('dateChangesController', () => {
           'datesToChange',
         )
         expect(response.redirect).toHaveBeenCalledWith(
-          paths.bookings.dateChanges.new({
+          paths.v2Manage.bookings.dateChanges.new({
             bookingId,
             premisesId,
           }),
@@ -324,7 +324,7 @@ describe('dateChangesController', () => {
           'datesToChange',
         )
         expect(response.redirect).toHaveBeenCalledWith(
-          paths.bookings.dateChanges.new({
+          paths.v2Manage.bookings.dateChanges.new({
             bookingId,
             premisesId,
           }),
@@ -357,7 +357,7 @@ describe('dateChangesController', () => {
           'datesToChange',
         )
         expect(response.redirect).toHaveBeenCalledWith(
-          paths.bookings.dateChanges.new({
+          paths.v2Manage.bookings.dateChanges.new({
             bookingId,
             premisesId,
           }),

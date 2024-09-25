@@ -134,7 +134,7 @@ describe('DeparturesController', () => {
       expect(request.flash).toHaveBeenCalledWith('success', 'Departure recorded')
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.bookings.show({ premisesId: request.params.premisesId, bookingId: request.params.bookingId }),
+        paths.v2Manage.bookings.show({ premisesId: request.params.premisesId, bookingId: request.params.bookingId }),
       )
     })
 

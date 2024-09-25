@@ -122,7 +122,7 @@ export const withdrawableRadioOptions = (
         checked: selectedWithdrawable === withdrawable.id,
         hint: {
           html: linkTo(
-            managePaths.bookings.show,
+            managePaths.v2Manage.bookings.show,
             { premisesId: booking.premises.id, bookingId: booking.id },
             {
               text: 'See placement details (opens in a new tab)',

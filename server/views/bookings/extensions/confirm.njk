@@ -10,39 +10,39 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({
-            titleText: pageHeading
+                titleText: pageHeading
             }) }}
             {{ govukSummaryList({
                 rows: [
-                   {
-                    key: {
+                    {
+                        key: {
                         text: "Name"
                     },
-                    value: {
+                        value: {
                         text: person.name
                     }
                     },
                     {
-                    key: {
+                        key: {
                         text: "CRN"
                     },
-                    value: {
+                        value: {
                         text: person.crn
                     }
                     },
                     {
-                    key: {
+                        key: {
                         text: "Arrival date"
                     },
-                    value: {
+                        value: {
                         text: formatDate(arrivalDate)
                     }
                     },
                     {
-                    key: {
+                        key: {
                         text: "New departure date"
                     },
-                    value: {
+                        value: {
                         text: formatDate(departureDate)
                     }
                     }
@@ -50,7 +50,7 @@
             }) }}
 
             <p class="govuk-body">
-                <a href="{{ paths.premises.show({ premisesId: premisesId }) }}">Back to dashboard</a>
+                <a href="{{ paths.v2Manage.premises.show({ premisesId: premisesId }) }}">Back to dashboard</a>
             </p>
         </div>
     </div>

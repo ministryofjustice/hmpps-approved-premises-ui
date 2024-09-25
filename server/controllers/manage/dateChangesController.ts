@@ -29,7 +29,7 @@ export default class DateChangeController {
       } else if (req.headers.referer) {
         backLink = req.headers.referer
       } else {
-        backLink = paths.bookings.show({ premisesId, bookingId })
+        backLink = paths.v2Manage.bookings.show({ premisesId, bookingId })
       }
 
       res.render('bookings/dateChanges/new', {
@@ -57,7 +57,7 @@ export default class DateChangeController {
         if (!datesToChange?.length) {
           addErrorMessageToFlash(req, 'You must select a date to change', 'datesToChange')
           return res.redirect(
-            paths.bookings.dateChanges.new({
+            paths.v2Manage.bookings.dateChanges.new({
               bookingId,
               premisesId,
             }),
@@ -80,7 +80,7 @@ export default class DateChangeController {
           if (datesNotChanged) {
             addErrorMessageToFlash(req, 'You must change the selected dates to submit', 'datesToChange')
             return res.redirect(
-              paths.bookings.dateChanges.new({
+              paths.v2Manage.bookings.dateChanges.new({
                 bookingId,
                 premisesId,
               }),
@@ -105,7 +105,7 @@ export default class DateChangeController {
           req,
           res,
           error as Error,
-          paths.bookings.dateChanges.new({
+          paths.v2Manage.bookings.dateChanges.new({
             bookingId,
             premisesId,
           }),

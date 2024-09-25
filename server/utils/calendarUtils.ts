@@ -102,7 +102,7 @@ export const labelForScheduleItem = (
   switch (bedOccupancyEntry.type) {
     case 'booking':
       label = bedOccupancyEntry.personName
-      link = paths.bookings.show({ premisesId, bookingId: bedOccupancyEntry.bookingId })
+      link = paths.v2Manage.bookings.show({ premisesId, bookingId: bedOccupancyEntry.bookingId })
       break
     case 'lost_bed':
       label = 'Out of Service'

@@ -14,40 +14,40 @@
 
 {% block beforeContent %}
     {{ govukBackLink({
-      text: "Back",
-	  href: paths.bookings.show({ premisesId: premisesId, bookingId: booking.id })
+        text: "Back",
+        href: paths.v2Manage.bookings.show({ premisesId: premisesId, bookingId: booking.id })
     }) }}
 {% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1>{{pageHeading}}</h1>
+            <h1>{{ pageHeading }}</h1>
 
-            <form action="{{ paths.bookings.departures.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <form action="{{ paths.bookings.departures.create({ premisesId: premisesId, bookingId: booking.id }) }}"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ govukSummaryList({
-                rows: [
-                   {
-                    key: {
-                        text: "Name"
-                    },
-                    value: {
-                        text: booking.person.name
-                    }
-                    },
-                    {
-                    key: {
-                        text: "CRN"
-                    },
-                    value: {
-                        text: booking.person.crn
-                    }
-                    }
+                    rows: [
+                        {
+                            key: {
+                            text: "Name"
+                        },
+                            value: {
+                            text: booking.person.name
+                        }
+                        },
+                        {
+                            key: {
+                            text: "CRN"
+                        },
+                            value: {
+                            text: booking.person.crn
+                        }
+                        }
                     ]
-            })
-            }}
+                }) }}
 
                 {{ showErrorSummary(errorSummary) }}
 
@@ -58,7 +58,7 @@
                         legend: {
                             text: "What is the departure date?",
                             classes: "govuk-fieldset__legend--m"
-                            }
+                        }
                     },
                     hint: {
                         text: "For example, 27 3 2007"
@@ -70,52 +70,53 @@
                 <label class="govuk-label govuk-label--m" for="dateTime-time">
                     What is the time of departure?
                 </label>
-                <input type="time" id="dateTime-time" name="dateTime-time" class="govuk-input govuk-input--width-5 govuk-!-margin-bottom-4">
+                <input type="time" id="dateTime-time" name="dateTime-time"
+                       class="govuk-input govuk-input--width-5 govuk-!-margin-bottom-4">
 
                 {{ govukRadios({
                     name: "departure[reasonId]",
                     id: "reason",
                     fieldset: {
                         legend: {
-                        text: "Departure reason",
-                        classes: "govuk-fieldset__legend--m"
+                            text: "Departure reason",
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     errorMessage: errors.reasonId,
                     items: convertObjectsToRadioItems(referenceData.departureReasons, 'name', 'id', 'departure[reason]')
-                    }) }}
+                }) }}
 
                 {{ govukRadios({
                     name: "departure[moveOnCategoryId]",
                     id: "moveOnCategory",
                     fieldset: {
                         legend: {
-                        text: "Move on category",
-                        classes: "govuk-fieldset__legend--m"
+                            text: "Move on category",
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     errorMessage: errors.moveOnCategoryId,
                     items: convertObjectsToRadioItems(referenceData.moveOnCategories, 'name', 'id', 'departure[moveOnCategory]')
-                    }) }}
+                }) }}
 
                 {{ govukRadios({
                     name: "departure[destinationProviderId]",
                     id: "destinationProviderId",
                     fieldset: {
                         legend: {
-                        text: "Destination provider",
-                        classes: "govuk-fieldset__legend--m"
+                            text: "Destination provider",
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     errorMessage: errors.destinationProviderId,
                     items: convertObjectsToRadioItems(referenceData.destinationProviders, 'name', 'id', 'departure[destinationProvider]')
-                    }) }}
+                }) }}
 
                 {{ govukTextarea({
                     name: "departure[notes]",
                     id: "notes",
                     label: {
-                    text: "Any other information"
+                        text: "Any other information"
                     }
                 }) }}
 

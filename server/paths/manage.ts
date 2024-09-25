@@ -29,63 +29,63 @@ const dateChangesPath = bookingPath.path('date-changes')
 
 const paths = {
   premises: {
-    index: premisesPath,
-    show: singlePremisesPath,
-    capacity: singlePremisesPath.path('capacity'),
-    calendar: singlePremisesPath.path('calendar'),
+    index: premisesPath, // redirected
+    show: singlePremisesPath, // redirected
+    capacity: singlePremisesPath.path('capacity'), // not implemented
+    calendar: singlePremisesPath.path('calendar'), // not implemented, used in Calendar utils
     beds: {
-      index: bedsPath,
-      show: bedsPath.path(':bedId'),
+      index: bedsPath, // redirected
+      show: bedsPath.path(':bedId'), // redirected
       overbookings: {
-        show: bedsPath.path(':bedId').path('overbookings'),
+        show: bedsPath.path(':bedId').path('overbookings'), // not implemented, used in Calendar utils
       },
     },
   },
   bookings: {
-    new: newBookingPath,
-    show: bookingPath,
-    create: newBookingPath,
-    confirm: bookingPath.path('confirmation'),
+    new: newBookingPath, // no v2 equivalent
+    show: bookingPath, // redirected to v2
+    create: newBookingPath, // no v2 equivalent
+    confirm: bookingPath.path('confirmation'), // no v2 equivalent
     dateChanges: {
-      new: dateChangesPath.path('new'),
-      create: dateChangesPath,
+      new: dateChangesPath.path('new'), // redirected to v2
+      create: dateChangesPath, // redirected to v2
     },
     extensions: {
-      new: extensionsPath.path('new'),
-      create: extensionsPath,
-      confirm: extensionsPath.path('confirmation'),
+      new: extensionsPath.path('new'), // redirected to v2
+      create: extensionsPath, // redirected to v2
+      confirm: extensionsPath.path('confirmation'), // redirected to v2
     },
     arrivals: {
-      new: arrivalsPath.path('new'),
-      create: arrivalsPath,
+      new: arrivalsPath.path('new'), // no v2 equivalent
+      create: arrivalsPath, // no v2 equivalent
     },
     nonArrivals: {
-      new: nonArrivalsPath.path('new'),
-      create: nonArrivalsPath,
+      new: nonArrivalsPath.path('new'), // no v2 equivalent
+      create: nonArrivalsPath, // no v2 equivalent
     },
     cancellations: {
-      new: cancellationsPath.path('new'),
-      create: cancellationsPath,
+      new: cancellationsPath.path('new'), // no v2 equivalent
+      create: cancellationsPath, // no v2 equivalent
     },
     departures: {
-      new: departuresPath.path('new'),
-      create: departuresPath,
+      new: departuresPath.path('new'), // no v2 equivalent
+      create: departuresPath, // no v2 equivalent
     },
     moves: {
-      new: movesPath.path('new'),
-      create: movesPath,
+      new: movesPath.path('new'), // no v2 equivalent
+      create: movesPath, // no v2 equivalent
     },
   },
   people: {
-    find: peoplePath,
+    find: peoplePath, // no v2 equivalent
   },
   lostBeds: {
-    new: lostBedsPath.path('new'),
-    create: lostBedsPath,
-    index: singlePremisesPath.path('lost-beds'),
-    show: lostBedsPath.path(':id'),
-    update: singlePremisesPath.path('lost-beds').path(':id'),
-    cancel: singlePremisesPath.path('lost-beds').path(':id').path('cancellations'),
+    new: lostBedsPath.path('new'), // redirected to v2
+    create: lostBedsPath, // redirected to v2
+    index: singlePremisesPath.path('lost-beds'), // redirected to v2
+    show: lostBedsPath.path(':id'), // redirected to v2
+    update: singlePremisesPath.path('lost-beds').path(':id'), // redirected to v2
+    cancel: singlePremisesPath.path('lost-beds').path(':id').path('cancellations'), // not implemented
   },
 }
 
