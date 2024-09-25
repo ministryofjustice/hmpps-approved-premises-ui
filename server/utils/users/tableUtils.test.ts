@@ -108,10 +108,10 @@ describe('tableUtils', () => {
           'excluded_from_match_allocation',
           'excluded_from_placement_application_allocation',
         ],
-        qualifications: ['emergency', 'esap', 'pipe', 'lao', 'womens'],
+        qualifications: ['emergency', 'esap', 'pipe', 'lao'],
       })
       expect(allocationCell(user)).toEqual({
-        text: "Stop assessment allocations, Stop match allocations, Stop placement request allocations, Emergency APs, ESAP, PIPE, Limited access offenders, Women's APs",
+        text: 'Stop assessment allocations, Stop match allocations, Stop placement request allocations, Emergency APs, ESAP, PIPE, Limited access offenders',
       })
     })
 

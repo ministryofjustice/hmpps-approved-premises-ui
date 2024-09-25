@@ -172,7 +172,6 @@ describe('userQualificationsSelectOptions', () => {
     expect(userQualificationsSelectOptions(null)).toEqual([
       { selected: true, text: 'All qualifications', value: '' },
       { selected: false, text: 'Limited access offenders', value: 'lao' },
-      { selected: false, text: "Women's APs", value: 'womens' },
       { selected: false, text: 'Emergency APs', value: 'emergency' },
       { selected: false, text: 'ESAP', value: 'esap' },
       { selected: false, text: 'PIPE', value: 'pipe' },
@@ -185,7 +184,6 @@ describe('userQualificationsSelectOptions', () => {
     expect(userQualificationsSelectOptions('lao')).toEqual([
       { selected: false, text: 'All qualifications', value: '' },
       { selected: true, text: 'Limited access offenders', value: 'lao' },
-      { selected: false, text: "Women's APs", value: 'womens' },
       { selected: false, text: 'Emergency APs', value: 'emergency' },
       { selected: false, text: 'ESAP', value: 'esap' },
       { selected: false, text: 'PIPE', value: 'pipe' },

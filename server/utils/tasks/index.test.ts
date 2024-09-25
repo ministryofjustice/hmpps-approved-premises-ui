@@ -290,7 +290,6 @@ describe('index', () => {
     it('should return select options for tiers with the all tiers option selected by default', () => {
       expect(userQualificationsSelectOptions(null)).toEqual([
         { selected: true, text: 'All qualifications', value: '' },
-        { selected: false, text: "Women's APs", value: 'womens' },
         { selected: false, text: 'Emergency APs', value: 'emergency' },
         { selected: false, text: 'ESAP', value: 'esap' },
         { selected: false, text: 'PIPE', value: 'pipe' },
@@ -300,10 +299,9 @@ describe('index', () => {
     })
 
     it('should return the selected status if provided', () => {
-      expect(userQualificationsSelectOptions('womens')).toEqual([
+      expect(userQualificationsSelectOptions('emergency')).toEqual([
         { selected: false, text: 'All qualifications', value: '' },
-        { selected: true, text: "Women's APs", value: 'womens' },
-        { selected: false, text: 'Emergency APs', value: 'emergency' },
+        { selected: true, text: 'Emergency APs', value: 'emergency' },
         { selected: false, text: 'ESAP', value: 'esap' },
         { selected: false, text: 'PIPE', value: 'pipe' },
         { selected: false, text: 'Recovery-focused APs', value: 'recovery_focused' },

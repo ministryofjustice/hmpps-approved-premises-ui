@@ -28,7 +28,7 @@ describeClient('taskClient', provider => {
       const apAreaId = 'ap-area-id'
       const userId = 'user-id'
       const taskTypes: Array<TaskType> = ['PlacementApplication', 'Assessment']
-      const requiredQualification = 'womens'
+      const requiredQualification = 'emergency'
       const crnOrName = 'CRN123'
 
       provider.addInteraction({

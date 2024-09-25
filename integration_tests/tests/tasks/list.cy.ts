@@ -267,7 +267,7 @@ context('Task Allocation', () => {
     },
     requiredQualification: {
       apiKey: 'requiredQualification',
-      value: 'womens',
+      value: 'emergency',
     },
     crnOrName: {
       apiKey: 'crnOrName',
