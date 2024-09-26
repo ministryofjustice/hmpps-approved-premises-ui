@@ -20,7 +20,6 @@ import UserClient from './userClient'
 
 import { createRedisClient } from './redisClient'
 import TokenStore from './tokenStore'
-import LostBedClient from './lostBedClient'
 import ApplicationClient from './applicationClient'
 import AssessmentClient from './assessmentClient'
 import TaskClient from './taskClient'
@@ -42,7 +41,6 @@ export const dataAccess = () => ({
     new ReferenceDataClient(token)) as RestClientBuilder<ReferenceDataClient>,
   cas1ReferenceDataClientBuilder: ((token: string) =>
     new Cas1ReferenceDataClient(token)) as RestClientBuilder<Cas1ReferenceDataClient>,
-  lostBedClientBuilder: ((token: string) => new LostBedClient(token)) as RestClientBuilder<LostBedClient>,
   outOfServiceBedClientBuilder: ((token: string) =>
     new OutOfServiceBedClient(token)) as RestClientBuilder<OutOfServiceBedClient>,
   personClient: ((token: string) => new PersonClient(token)) as RestClientBuilder<PersonClient>,
@@ -69,7 +67,6 @@ export {
   HmppsAuthClient,
   RestClientBuilder,
   ReferenceDataClient,
-  LostBedClient,
   OutOfServiceBedClient,
   PersonClient,
   ApplicationClient,
