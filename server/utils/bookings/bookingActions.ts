@@ -7,7 +7,6 @@ import { hasPermission } from '../users'
 
 export const bookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
   if (user.roles?.includes('workflow_manager')) return v1BookingActions(user, booking)
-  if (user.roles?.includes('legacy_manager')) return v1BookingActions(user, booking)
   if (user.roles?.includes('future_manager')) return v2BookingActions(user, booking)
   return []
 }
@@ -109,14 +108,9 @@ export const v2BookingActions = (user: UserDetails, booking: Booking): Array<Ide
 
 export const v1BookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
   const menuItems = new MenuItems(booking)
-  const usersRoles = user.roles
 
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
     const items = []
-
-    if (usersRoles.includes('legacy_manager')) {
-      items.push(menuItems.item('movePerson'))
-    }
 
     if (booking.status === 'awaiting-arrival') {
       if (hasPermission(user, ['cas1_booking_withdraw'])) {

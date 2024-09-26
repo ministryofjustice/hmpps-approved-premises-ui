@@ -6,7 +6,7 @@ import paths from '../../paths/manage'
 describe('bookingUtils bookingActions', () => {
   describe('behaviour not linked to roles', () => {
     const user = userDetailsFactory.build({
-      roles: ['workflow_manager', 'legacy_manager'],
+      roles: ['workflow_manager'],
       permissions: ['cas1_booking_withdraw'],
     })
 

@@ -76,7 +76,7 @@ export const sections = {
   },
 }
 
-export const managerRoles: ReadonlyArray<UserRole> = ['workflow_manager', 'future_manager', 'legacy_manager'] as const
+export const managerRoles: ReadonlyArray<UserRole> = ['workflow_manager', 'future_manager'] as const
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
