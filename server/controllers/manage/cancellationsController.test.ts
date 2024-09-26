@@ -51,9 +51,7 @@ describe('cancellationsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
-        apManager: false,
         premisesId,
-        bookingId,
         booking,
         backLink,
         cancellationReasons,
@@ -76,9 +74,7 @@ describe('cancellationsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
-        apManager: false,
         premisesId,
-        bookingId,
         booking,
         backLink,
         cancellationReasons,
@@ -102,9 +98,7 @@ describe('cancellationsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId }, headers: {} }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
-        apManager: false,
         premisesId,
-        bookingId,
         booking: bookingWithoutAnApplication,
         backLink: paths.bookings.show({ premisesId, bookingId }),
         cancellationReasons,

@@ -59,7 +59,7 @@ describe('placementApplicationWithdrawalReasons', () => {
 
   describe("when the user roles include 'workflow_manager'", () => {
     it('returns all the reasons for withdrawing a placement application', () => {
-      expect(placementApplicationWithdrawalReasons(['assessor', 'matcher', 'manager', 'workflow_manager'])).toEqual(
+      expect(placementApplicationWithdrawalReasons(['assessor', 'matcher', 'workflow_manager'])).toEqual(
         [
           placementNoLongerNeededDividerAndRadioItems,
           noCapacityDividerAndRadioItems,

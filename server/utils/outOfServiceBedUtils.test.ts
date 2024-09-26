@@ -103,8 +103,8 @@ describe('outOfServiceBedUtils', () => {
       ])
     })
 
-    it('returns table headers for a non workflow manager', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
+    it('returns table headers for a user who is not a manager', () => {
+      const user = userDetailsFactory.build({ roles: [] })
 
       expect(outOfServiceBedTableHeaders(user)).toEqual([
         {
@@ -151,8 +151,8 @@ describe('outOfServiceBedUtils', () => {
       expect(rows).toEqual(expectedRows)
     })
 
-    it('returns table rows for a non workflow manager', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
+    it('returns table rows for a user who is not a manager', () => {
+      const user = userDetailsFactory.build({ roles: [] })
       const expectedRows = [
         [
           { text: outOfServiceBed.bed.name },

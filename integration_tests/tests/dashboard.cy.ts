@@ -8,13 +8,27 @@ context('Dashboard', () => {
   })
 
   it('displays all services when a user has all roles and permissions', () => {
-    signInWithRolesAndPermissions(['assessor', 'manager', 'future_manager'], ['cas1_view_assigned_assessments'])
+    signInWithRolesAndPermissions(
+      ['assessor', 'future_manager', 'report_viewer', 'role_admin'],
+      [
+        'cas1_view_assigned_assessments',
+        'cas1_view_manage_tasks',
+        'cas1_view_cru_dashboard',
+        'cas1_view_out_of_service_beds',
+      ],
+    )
 
     const dashboardPage = DashboardPage.visit()
 
     dashboardPage.shouldShowCard('apply')
+    dashboardPage.shouldShowCard('timeline')
     dashboardPage.shouldShowCard('assess')
     dashboardPage.shouldShowCard('manage')
+    dashboardPage.shouldShowCard('workflow')
+    dashboardPage.shouldShowCard('cruDashboard')
+    dashboardPage.shouldShowCard('reports')
+    dashboardPage.shouldShowCard('userManagement')
+    dashboardPage.shouldShowCard('outOfServiceBeds')
   })
 
   it('only displays the apply and assess services to users with "cas1_view_assigned_assessments" permission', () => {
@@ -40,7 +54,7 @@ context('Dashboard', () => {
   })
 
   it('only displays the apply and manage services to managers', () => {
-    signInWithRolesAndPermissions(['manager'])
+    signInWithRolesAndPermissions(['future_manager'])
 
     const dashboardPage = DashboardPage.visit()
 

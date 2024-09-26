@@ -14,9 +14,11 @@ describe('roleCheckboxUtils', () => {
         checked: true,
       })
 
-      const result = rolesToCheckboxItems(['assessor', 'manager'], ['assessor'])
+      const result = rolesToCheckboxItems(['assessor', 'future_manager'], ['assessor'])
 
-      expect(filterAllocationRoles).toHaveBeenCalledWith(['assessor', 'manager'], { returnOnlyAllocationRoles: false })
+      expect(filterAllocationRoles).toHaveBeenCalledWith(['assessor', 'future_manager'], {
+        returnOnlyAllocationRoles: false,
+      })
       expect(roleCheckboxItem).toHaveBeenCalledWith('assessor', roleLabelDictionary, ['assessor'])
       expect(result).toEqual([
         {
@@ -39,9 +41,11 @@ describe('roleCheckboxUtils', () => {
         checked: true,
       })
 
-      const result = allocationRolesToCheckboxItems(['assessor', 'manager'], ['assessor'])
+      const result = allocationRolesToCheckboxItems(['assessor', 'future_manager'], ['assessor'])
 
-      expect(filterAllocationRoles).toHaveBeenCalledWith(['assessor', 'manager'], { returnOnlyAllocationRoles: true })
+      expect(filterAllocationRoles).toHaveBeenCalledWith(['assessor', 'future_manager'], {
+        returnOnlyAllocationRoles: true,
+      })
       expect(roleCheckboxItem).toHaveBeenCalledWith('assessor', allocationRoleLabelDictionary, ['assessor'])
       expect(result).toEqual([
         {

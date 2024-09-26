@@ -76,12 +76,7 @@ export const sections = {
   },
 }
 
-export const managerRoles: ReadonlyArray<UserRole> = [
-  'workflow_manager',
-  'manager',
-  'future_manager',
-  'legacy_manager',
-] as const
+export const managerRoles: ReadonlyArray<UserRole> = ['workflow_manager', 'future_manager', 'legacy_manager'] as const
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
@@ -101,7 +96,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.assess)
   }
 
-  if (hasRole(user, 'manager') || hasRole(user, 'future_manager')) {
+  if (hasRole(user, 'future_manager')) {
     items.push(sections.manage)
   }
 

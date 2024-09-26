@@ -44,26 +44,8 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([...defaultSections, sections.assess])
     })
 
-    it('should return Apply section for a user with the manager role', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
-
-      expect(sectionsForUser(user)).toContain(sections.apply)
-    })
-
-    it('should return manage section for a user with the manager role', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
-
-      expect(sectionsForUser(user)).toContain(sections.manage)
-    })
-
-    it('should return manage section for a user with the future_manager role', () => {
+    it('should return Manage section for a user with the future_manager role', () => {
       const user = userDetailsFactory.build({ roles: ['future_manager'] })
-
-      expect(sectionsForUser(user)).toContain(sections.manage)
-    })
-
-    it('should return manage section for a user with BOTH manager role and the future_manager role', () => {
-      const user = userDetailsFactory.build({ roles: ['manager', 'future_manager'] })
 
       expect(sectionsForUser(user)).toContain(sections.manage)
     })
@@ -82,7 +64,7 @@ describe('homePageDashboard', () => {
 
     it('should return all except match sections for a user with all roles and user permissions', () => {
       const user = userDetailsFactory.build({
-        roles: ['assessor', 'manager', 'future_manager', 'matcher', 'workflow_manager', 'report_viewer'],
+        roles: ['assessor', 'future_manager', 'matcher', 'workflow_manager', 'report_viewer'],
         permissions: ['cas1_view_assigned_assessments', 'cas1_view_cru_dashboard', 'cas1_view_manage_tasks'],
       })
 
