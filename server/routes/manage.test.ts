@@ -1,43 +1,61 @@
 import { Router } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import { BookingExtensionsController, BookingsController } from '../controllers/manage'
-import v2ManageRoutes from './v2Manage'
+import {
+  BedsController,
+  BookingExtensionsController,
+  BookingsController,
+  DeparturesController,
+  MoveBedsController,
+  NonArrivalsController,
+  OutOfServiceBedsController,
+  PremisesController,
+  UpdateOutOfServiceBedsController,
+} from '../controllers/manage'
+import manageRoutes from './manage'
 import { type Controllers } from '../controllers'
 import { type Services } from '../services'
-import {
-  V2BedsController,
-  V2OutOfServiceBedsController,
-  V2PremisesController,
-  V2UpdateOutOfServiceBedsController,
-} from '../controllers/v2Manage'
 import DateChangeController from '../controllers/manage/dateChangesController'
 import actions from './utils'
 import paths from '../paths/manage'
+import CancellationsController from '../controllers/manage/cancellationsController'
+import RedirectController from '../controllers/redirectController'
 
 jest.mock('./utils')
 
-describe('v2Manage routes', () => {
+describe('manage routes', () => {
   const router = Router()
   const bookingExtensionsController: DeepMocked<BookingExtensionsController> = createMock<BookingExtensionsController>(
     {},
   )
   const bookingsController: DeepMocked<BookingsController> = createMock<BookingsController>({})
-  const v2PremisesController: DeepMocked<V2PremisesController> = createMock<V2PremisesController>({})
-  const v2BedsController: DeepMocked<V2BedsController> = createMock<V2BedsController>({})
-  const v2OutOfServiceBedsController: DeepMocked<V2OutOfServiceBedsController> =
-    createMock<V2OutOfServiceBedsController>({})
-  const v2UpdateOutOfServiceBedsController: DeepMocked<V2UpdateOutOfServiceBedsController> =
-    createMock<V2UpdateOutOfServiceBedsController>({})
+  const premisesController: DeepMocked<PremisesController> = createMock<PremisesController>({})
+  const bedsController: DeepMocked<BedsController> = createMock<BedsController>({})
+  const outOfServiceBedsController: DeepMocked<OutOfServiceBedsController> = createMock<OutOfServiceBedsController>({})
+  const updateOutOfServiceBedsController: DeepMocked<UpdateOutOfServiceBedsController> =
+    createMock<UpdateOutOfServiceBedsController>({})
   const dateChangesController: DeepMocked<DateChangeController> = createMock<DateChangeController>({})
+
+  const arrivalsController: DeepMocked<DateChangeController> = createMock<DateChangeController>({})
+  const nonArrivalsController: DeepMocked<NonArrivalsController> = createMock<NonArrivalsController>({})
+  const departuresController: DeepMocked<DeparturesController> = createMock<DeparturesController>({})
+  const cancellationsController: DeepMocked<CancellationsController> = createMock<CancellationsController>({})
+  const moveBedsController: DeepMocked<MoveBedsController> = createMock<MoveBedsController>({})
+  const redirectController: DeepMocked<RedirectController> = createMock<RedirectController>({})
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
     bookingExtensionsController,
     bookingsController,
-    v2BedsController,
-    v2OutOfServiceBedsController,
-    v2UpdateOutOfServiceBedsController,
+    bedsController,
+    outOfServiceBedsController,
+    updateOutOfServiceBedsController,
     dateChangesController,
-    v2PremisesController,
+    premisesController,
+    arrivalsController,
+    nonArrivalsController,
+    departuresController,
+    cancellationsController,
+    moveBedsController,
+    redirectController,
   })
   const services: DeepMocked<Services> = createMock<Services>({})
 
@@ -46,9 +64,9 @@ describe('v2Manage routes', () => {
   ;(actions as jest.Mock).mockReturnValue({ get: getSpy, post: postSpy, put: jest.fn(), delete: jest.fn() })
 
   it('should allow a user with role cru_member to view a bed', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
-    expect(getSpy).toHaveBeenCalledWith(paths.premises.beds.show.pattern, v2BedsController.show(), {
+    expect(getSpy).toHaveBeenCalledWith(paths.premises.beds.show.pattern, bedsController.show(), {
       auditEvent: 'SHOW_BED',
       allowedRoles: ['future_manager', 'cru_member'],
       allowedPermissions: ['cas1_out_of_service_bed_create'],
@@ -56,9 +74,9 @@ describe('v2Manage routes', () => {
   })
 
   it('should allow a user with permission cas1 out of service bed create to access the new out of service bed view', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
-    expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.new.pattern, v2OutOfServiceBedsController.new(), {
+    expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.new(), {
       auditEvent: 'NEW_OUT_OF_SERVICE_BED',
       allowedRoles: [],
       allowedPermissions: ['cas1_out_of_service_bed_create'],
@@ -66,9 +84,9 @@ describe('v2Manage routes', () => {
   })
 
   it('should allow a user with permission cas1 out of service bed create to create an out of service bed', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
-    expect(postSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.create.pattern, v2OutOfServiceBedsController.create(), {
+    expect(postSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.create.pattern, outOfServiceBedsController.create(), {
       auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
       redirectAuditEventSpecs: [
         {
@@ -82,11 +100,11 @@ describe('v2Manage routes', () => {
   })
 
   it('should allow a user with permission cas1 view out of service beds to view out of service beds for a premises', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(
       paths.outOfServiceBeds.premisesIndex.pattern,
-      v2OutOfServiceBedsController.premisesIndex(),
+      outOfServiceBedsController.premisesIndex(),
       {
         auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
         allowedRoles: [],
@@ -96,25 +114,21 @@ describe('v2Manage routes', () => {
   })
 
   it('should allow a user with permission cas1 view out of service beds to to access the update out of service bed view', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
-    expect(getSpy).toHaveBeenCalledWith(
-      paths.outOfServiceBeds.update.pattern,
-      v2UpdateOutOfServiceBedsController.new(),
-      {
-        auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
-        allowedRoles: [],
-        allowedPermissions: ['cas1_view_out_of_service_beds'],
-      },
-    )
+    expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.update.pattern, updateOutOfServiceBedsController.new(), {
+      auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
+      allowedRoles: [],
+      allowedPermissions: ['cas1_view_out_of_service_beds'],
+    })
   })
 
   it('should allow a user with with permission cas1 out of service bed create to update an out of service bed', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
     expect(postSpy).toHaveBeenCalledWith(
       paths.outOfServiceBeds.update.pattern,
-      v2UpdateOutOfServiceBedsController.create(),
+      updateOutOfServiceBedsController.create(),
       {
         auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
         allowedRoles: [],
@@ -130,9 +144,9 @@ describe('v2Manage routes', () => {
   })
 
   it('should allow a user with permission cas1 view out of service beds to view an out of service bed', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
-    expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.show.pattern, v2OutOfServiceBedsController.show(), {
+    expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
       auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
       allowedRoles: [],
       allowedPermissions: ['cas1_view_out_of_service_beds'],
@@ -140,9 +154,9 @@ describe('v2Manage routes', () => {
   })
 
   it('should allow users with permission cas1 view out of service beds to view all out of service beds', () => {
-    v2ManageRoutes(controllers, router, services)
+    manageRoutes(controllers, router, services)
 
-    expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.index.pattern, v2OutOfServiceBedsController.index(), {
+    expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
       auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
       allowedRoles: [],
       allowedPermissions: ['cas1_view_out_of_service_beds'],

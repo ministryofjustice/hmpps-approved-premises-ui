@@ -1,22 +1,22 @@
-import { BedDetail, BedSummary, Premises } from '../../../../server/@types/shared'
+import { BedDetail, BedSummary, Premises } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { v2BedTableRows } from '../../../../server/utils/bedUtils'
+import { bedTableRows } from '../../../../server/utils/bedUtils'
 
-export default class V2BedsListPage extends Page {
+export default class BedsListPage extends Page {
   constructor() {
     super('Manage beds')
   }
 
-  static visit(premisesId: Premises['id']): V2BedsListPage {
+  static visit(premisesId: Premises['id']): BedsListPage {
     cy.visit(paths.premises.beds.index({ premisesId }))
-    return new V2BedsListPage()
+    return new BedsListPage()
   }
 
   shouldShowBeds(beds: Array<BedSummary>, premisesId: Premises['id']): void {
-    const rows = v2BedTableRows(beds, premisesId)
+    const rows = bedTableRows(beds, premisesId)
     this.shouldContainTableRows(rows)
   }
 

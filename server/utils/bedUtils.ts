@@ -21,14 +21,14 @@ export const roomNameCell = (item: { roomName: string }): TableCell => ({ text: 
 export const statusCell = (bed: BedSummary): TableCell => ({ text: sentenceCase(bed.status) })
 
 export const actionCell = (bed: BedSummary, premisesId: string): TableCell => ({
-  html: v2BedLink(bed, premisesId),
+  html: bedLink(bed, premisesId),
 })
 
-export const v2BedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
+export const bedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
   return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)])
 }
 
-export const v2BedDetails = (bed: BedDetail): Array<SummaryListItem> => {
+export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => {
   return [characteristicsRow(bed)]
 }
 
@@ -66,19 +66,7 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   }
 }
 
-export const v2BedActions = (bed: BedDetail, premisesId: string) => {
-  return {
-    items: [
-      {
-        text: 'Create out of service bed record',
-        classes: 'govuk-button--secondary',
-        href: paths.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
-      },
-    ],
-  }
-}
-
-export const v2BedLink = (bed: BedSummary, premisesId: string): string => {
+export const bedLink = (bed: BedSummary, premisesId: string): string => {
   return linkTo(
     paths.premises.beds.show,
     { bedId: bed.id, premisesId },

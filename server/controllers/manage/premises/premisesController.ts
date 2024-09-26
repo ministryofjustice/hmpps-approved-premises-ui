@@ -1,9 +1,9 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { ApArea } from '@approved-premises/api'
 import { ApAreaService, PremisesService } from '../../../services'
-import { ApArea } from '../../../@types/shared'
 
-export default class V2PremisesController {
+export default class PremisesController {
   constructor(
     private readonly premisesService: PremisesService,
     private readonly apAreaService: ApAreaService,
@@ -12,7 +12,7 @@ export default class V2PremisesController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
-      return res.render('v2Manage/premises/show', {
+      return res.render('manage/premises/show', {
         premises,
       })
     }
@@ -24,7 +24,7 @@ export default class V2PremisesController {
       const premisesSummaries = await this.premisesService.getAll(req.user.token, selectedArea)
       const areas = await this.apAreaService.getApAreas(req.user.token)
 
-      return res.render('v2Manage/premises/index', {
+      return res.render('manage/premises/index', {
         premisesSummaries,
         areas,
         selectedArea: selectedArea || '',

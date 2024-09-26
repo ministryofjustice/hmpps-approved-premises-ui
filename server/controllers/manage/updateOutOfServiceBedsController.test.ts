@@ -2,12 +2,13 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 
-import { OutOfServiceBedService, PremisesService } from '../../services'
+import { UpdateCas1OutOfServiceBed } from '@approved-premises/api'
+import { ErrorsAndUserInput } from '@approved-premises/ui'
+import { OutOfServiceBedService } from '../../services'
 import { outOfServiceBedFactory } from '../../testutils/factories'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
 
 import { DateFormats } from '../../utils/dateUtils'
-import { UpdateCas1OutOfServiceBed } from '../../@types/shared'
 import paths from '../../paths/manage'
 import {
   catchValidationErrorOrPropogate,
@@ -15,7 +16,6 @@ import {
   generateConflictErrorAndRedirect,
 } from '../../utils/validation'
 import { SanitisedError } from '../../sanitisedError'
-import { ErrorsAndUserInput } from '../../@types/ui'
 import * as OoSBedUtils from '../../utils/outOfServiceBedUtils'
 
 jest.mock('../../utils/validation')
@@ -28,9 +28,8 @@ describe('updateOutOfServiceBedController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const outOfServiceBedService = createMock<OutOfServiceBedService>({})
-  const premisesService = createMock<PremisesService>({})
 
-  const updateOutOfServiceBedController = new UpdateOutOfServiceBedsController(outOfServiceBedService, premisesService)
+  const updateOutOfServiceBedController = new UpdateOutOfServiceBedsController(outOfServiceBedService)
   const premisesId = 'premisesId'
   const outOfServiceBed = outOfServiceBedFactory.build()
 
@@ -68,7 +67,7 @@ describe('updateOutOfServiceBedController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
-        'v2Manage/outOfServiceBeds/update',
+        'manage/outOfServiceBeds/update',
         expect.objectContaining({
           premisesId: request.params.premisesId,
           bedId: request.params.bedId,
@@ -87,7 +86,7 @@ describe('updateOutOfServiceBedController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
-        'v2Manage/outOfServiceBeds/update',
+        'manage/outOfServiceBeds/update',
         expect.objectContaining({
           outOfServiceBed,
         }),
@@ -100,7 +99,7 @@ describe('updateOutOfServiceBedController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
-        'v2Manage/outOfServiceBeds/update',
+        'manage/outOfServiceBeds/update',
         expect.objectContaining({
           ...DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate'),
           ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),

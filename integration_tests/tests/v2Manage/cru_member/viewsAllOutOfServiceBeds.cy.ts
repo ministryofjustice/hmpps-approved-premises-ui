@@ -1,7 +1,7 @@
 import { apAreaFactory, outOfServiceBedFactory, premisesSummaryFactory } from '../../../../server/testutils/factories'
 import DashboardPage from '../../../pages/dashboard'
 import Page from '../../../pages/page'
-import { OutOfServiceBedIndexPage } from '../../../pages/v2Manage/outOfServiceBeds'
+import { OutOfServiceBedIndexPage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
 
 describe('CRU Member with permission to view out of service bed tile lists all OOS beds', () => {

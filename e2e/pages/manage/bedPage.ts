@@ -1,11 +1,11 @@
 import { Page, expect } from '@playwright/test'
 import { BasePage } from '../basePage'
 
-export class V2BedPage extends BasePage {
+export class BedPage extends BasePage {
   static async initialize(page: Page, premisesName: string) {
     await expect(page.locator('h1')).toContainText('Bed ')
     await expect(page.locator('.moj-identity-bar__title')).toContainText(premisesName)
-    return new V2BedPage(page)
+    return new BedPage(page)
   }
 
   async clickMarkBedAsOutOfService() {

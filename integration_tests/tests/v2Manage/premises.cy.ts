@@ -1,6 +1,6 @@
 import { cas1PremisesSummaryFactory, premisesSummaryFactory } from '../../../server/testutils/factories'
 
-import { PremisesShowPage, V2PremisesListPage } from '../../pages/manage'
+import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
 
 import { signIn } from '../signIn'
 
@@ -18,7 +18,7 @@ context('Premises', () => {
       cy.task('stubApAreaReferenceData')
 
       // When I visit the premises page
-      const v2PremisesListPage = V2PremisesListPage.visit()
+      const v2PremisesListPage = PremisesListPage.visit()
 
       // Then I should see all of the premises listed
       v2PremisesListPage.shouldShowPremises(premises)

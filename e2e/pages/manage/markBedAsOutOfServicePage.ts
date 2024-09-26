@@ -3,14 +3,14 @@ import { addDays, addMonths, getDate, getMonth, getYear } from 'date-fns'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { BasePage } from '../basePage'
 
-export class V2MarkBedAsOutOfServicePage extends BasePage {
+export class MarkBedAsOutOfServicePage extends BasePage {
   startDate: Date
 
   static async initialize(page: Page, title?: string) {
     if (title) {
       await expect(page.locator('h1')).toContainText(title)
     }
-    const instance = new V2MarkBedAsOutOfServicePage(page)
+    const instance = new MarkBedAsOutOfServicePage(page)
     instance.startDate = faker.date.soon({ days: 12000 })
     return instance
   }

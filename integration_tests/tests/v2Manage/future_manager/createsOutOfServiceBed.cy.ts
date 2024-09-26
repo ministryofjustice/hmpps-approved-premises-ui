@@ -5,9 +5,9 @@ import {
   outOfServiceBedFactory,
   premisesFactory,
 } from '../../../../server/testutils/factories'
-import BedShowPage from '../../../pages/v2Manage/bed/bedShow'
+import BedShowPage from '../../../pages/manage/bed/bedShow'
 import Page from '../../../pages/page'
-import { OutOfServiceBedCreatePage } from '../../../pages/v2Manage/outOfServiceBeds'
+import { OutOfServiceBedCreatePage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
 
 context('OutOfServiceBeds', () => {
@@ -56,11 +56,11 @@ context('OutOfServiceBeds', () => {
       expect(requestBody.reason).equal(outOfServiceBed.reason.id)
     })
 
-    // And I should be redirected to the v2 bed page
-    const v2BedPage = Page.verifyOnPage(BedShowPage, bedName)
+    // And I should be redirected to the bed page
+    const bedPage = Page.verifyOnPage(BedShowPage, bedName)
 
     // And I should see the confirmation message
-    v2BedPage.shouldShowBanner('The out of service bed has been recorded')
+    bedPage.shouldShowBanner('The out of service bed has been recorded')
   })
 
   it('should show errors', () => {

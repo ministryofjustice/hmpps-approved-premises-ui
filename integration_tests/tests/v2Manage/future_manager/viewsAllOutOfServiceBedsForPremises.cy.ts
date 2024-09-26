@@ -1,6 +1,6 @@
 import { outOfServiceBedFactory, premisesFactory } from '../../../../server/testutils/factories'
 import Page from '../../../pages/page'
-import { OutOfServiceBedPremisesIndexPage } from '../../../pages/v2Manage/outOfServiceBeds'
+import { OutOfServiceBedPremisesIndexPage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
 
 describe('Future Manager lists all OOS beds for a particular premises', () => {

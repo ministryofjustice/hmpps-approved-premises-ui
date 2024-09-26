@@ -1,5 +1,5 @@
+import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import Page from '../../page'
-import { Cas1OutOfServiceBed as OutOfServiceBed } from '../../../../server/@types/shared'
 import paths from '../../../../server/paths/manage'
 
 export class OutOfServiceBedUpdatePage extends Page {

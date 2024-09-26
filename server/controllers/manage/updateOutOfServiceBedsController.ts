@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { OutOfServiceBedService, PremisesService } from '../../services'
+import { OutOfServiceBedService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
 
 import {
@@ -11,11 +11,8 @@ import paths from '../../paths/manage'
 import { SanitisedError } from '../../sanitisedError'
 import { overwriteOoSBedWithUserInput } from '../../utils/outOfServiceBedUtils'
 
-export default class OutOfServiceBedsController {
-  constructor(
-    private readonly outOfServiceBedService: OutOfServiceBedService,
-    private readonly premisesService: PremisesService,
-  ) {}
+export default class UpdateOutOfServiceBedsController {
+  constructor(private readonly outOfServiceBedService: OutOfServiceBedService) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -27,7 +24,7 @@ export default class OutOfServiceBedsController {
 
       const outOfServiceBedWithUserInput = overwriteOoSBedWithUserInput(userInput, outOfServiceBed)
 
-      res.render('v2Manage/outOfServiceBeds/update', {
+      res.render('manage/outOfServiceBeds/update', {
         pageHeading: 'updateOutOfServiceBedsController',
         premisesId,
         bedId,

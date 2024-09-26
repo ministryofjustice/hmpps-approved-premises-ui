@@ -23,8 +23,8 @@ export const sections = {
     shortTitle: 'Assess',
     href: assessPaths.assessments.index({}),
   },
-  v2Manage: {
-    id: 'v2Manage',
+  manage: {
+    id: 'manage',
     title: 'Manage an Approved Premises',
     description:
       'Manage arrivals, departures and out of service beds. View current and upcoming occupancy at an Approved Premises.',
@@ -102,7 +102,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
   }
 
   if (hasRole(user, 'manager') || hasRole(user, 'future_manager')) {
-    items.push(sections.v2Manage)
+    items.push(sections.manage)
   }
 
   if (hasPermission(user, ['cas1_view_manage_tasks'])) {

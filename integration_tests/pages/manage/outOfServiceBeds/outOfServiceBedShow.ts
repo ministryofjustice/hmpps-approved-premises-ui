@@ -1,9 +1,9 @@
+import { BedDetail, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import { translateCharacteristic } from '../../../../server/utils/characteristicsUtils'
-import { BedDetail, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '../../../../server/@types/shared'
 import { sentenceCase } from '../../../../server/utils/utils'
 
 export class OutOfServiceBedShowPage extends Page {

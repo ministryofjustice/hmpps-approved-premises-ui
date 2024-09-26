@@ -1,9 +1,9 @@
 import type { Booking, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
+import { EntityType } from '@approved-premises/ui'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
 import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
-import { EntityType } from '../../../../server/@types/ui'
 
 export class OutOfServiceBedCreatePage extends Page {
   private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent

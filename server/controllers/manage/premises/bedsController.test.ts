@@ -35,7 +35,7 @@ describe('V2BedsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/beds/show', {
+      expect(response.render).toHaveBeenCalledWith('manage/premises/beds/show', {
         bed,
         premises,
         pageHeading: `Bed ${bed.name}`,
@@ -58,7 +58,7 @@ describe('V2BedsController', () => {
       const requestHandler = bedsController.index()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/beds/index', {
+      expect(response.render).toHaveBeenCalledWith('manage/premises/beds/index', {
         beds,
         premisesId,
         pageHeading: 'Manage beds',

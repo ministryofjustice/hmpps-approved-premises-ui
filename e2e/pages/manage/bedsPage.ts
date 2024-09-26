@@ -1,12 +1,12 @@
 import { Page, expect } from '@playwright/test'
 import { BasePage } from '../basePage'
 
-export class V2BedsPage extends BasePage {
+export class BedsPage extends BasePage {
   static async initialize(page: Page, title?: string) {
     if (title) {
       await expect(page.locator('h1')).toContainText(title)
     }
-    return new V2BedsPage(page)
+    return new BedsPage(page)
   }
 
   async viewBed() {

@@ -10,8 +10,8 @@ import {
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
+  premisesTableRows,
   summaryListForPremises,
-  v2PremisesTableRows,
 } from '.'
 import { addOverbookingsToSchedule } from '../addOverbookingsToSchedule'
 import { textValue } from '../applications/helpers'
@@ -240,15 +240,15 @@ describe('premisesUtils', () => {
     })
   })
 
-  describe('v2PremisesTableRows', () => {
-    it('returns a table view of the premises with links to the their V2 premises pages', async () => {
+  describe('premisesTableRows', () => {
+    it('returns a table view of the premises with links to the their premises pages', async () => {
       const premises1 = premisesSummaryFactory.build({ name: 'XYZ' })
       const premises2 = premisesSummaryFactory.build({ name: 'ABC' })
       const premises3 = premisesSummaryFactory.build({ name: 'GHI' })
 
       const premises = [premises1, premises2, premises3]
 
-      expect(v2PremisesTableRows(premises)).toEqual([
+      expect(premisesTableRows(premises)).toEqual([
         [
           {
             text: premises2.name,

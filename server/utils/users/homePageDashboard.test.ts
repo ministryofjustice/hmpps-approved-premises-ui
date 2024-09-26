@@ -50,22 +50,22 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toContain(sections.apply)
     })
 
-    it('should return v2 Manage section for a user with the manager role', () => {
+    it('should return manage section for a user with the manager role', () => {
       const user = userDetailsFactory.build({ roles: ['manager'] })
 
-      expect(sectionsForUser(user)).toContain(sections.v2Manage)
+      expect(sectionsForUser(user)).toContain(sections.manage)
     })
 
-    it('should return V2 Manage section for a user with the future_manager role', () => {
+    it('should return manage section for a user with the future_manager role', () => {
       const user = userDetailsFactory.build({ roles: ['future_manager'] })
 
-      expect(sectionsForUser(user)).toContain(sections.v2Manage)
+      expect(sectionsForUser(user)).toContain(sections.manage)
     })
 
-    it('should return v2 Manage section for a user with BOTH manager role and the future_manager role', () => {
+    it('should return manage section for a user with BOTH manager role and the future_manager role', () => {
       const user = userDetailsFactory.build({ roles: ['manager', 'future_manager'] })
 
-      expect(sectionsForUser(user)).toContain(sections.v2Manage)
+      expect(sectionsForUser(user)).toContain(sections.manage)
     })
 
     it('should return Apply for a user with a workflow manager role', () => {
@@ -89,7 +89,7 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([
         ...defaultSections,
         sections.assess,
-        sections.v2Manage,
+        sections.manage,
         sections.workflow,
         sections.cruDashboard,
         sections.reports,

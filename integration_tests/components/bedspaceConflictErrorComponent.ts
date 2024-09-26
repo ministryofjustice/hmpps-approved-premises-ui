@@ -1,9 +1,9 @@
 import type { Booking, Cas1OutOfServiceBed, LostBed } from '@approved-premises/api'
+import { EntityType } from '@approved-premises/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import Page from '../pages/page'
 import BookingShowPage from '../pages/manage/booking/show'
-import { OutOfServiceBedShowPage } from '../pages/v2Manage/outOfServiceBeds/outOfServiceBedShow'
-import { EntityType } from '../../server/@types/ui'
+import { OutOfServiceBedShowPage } from '../pages/manage/outOfServiceBeds/outOfServiceBedShow'
 
 export default class BedspaceConflictErrorComponent {
   constructor(

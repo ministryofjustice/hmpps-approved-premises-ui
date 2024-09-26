@@ -11,7 +11,10 @@ import {
   InvalidOverbookingDataException,
   actionCell,
   bedActions,
+  bedDetails,
+  bedLink,
   bedNameCell,
+  bedTableRows,
   characteristicsRow,
   decodeOverbooking,
   encodeOverbooking,
@@ -20,10 +23,6 @@ import {
   statusCell,
   statusRow,
   title,
-  v2BedActions,
-  v2BedDetails,
-  v2BedLink,
-  v2BedTableRows,
 } from './bedUtils'
 import { DateFormats } from './dateUtils'
 import { translateCharacteristic } from './characteristicsUtils'
@@ -68,16 +67,16 @@ describe('bedUtils', () => {
   describe('actionCell', () => {
     it('returns a link to manage the room', () => {
       expect(actionCell(bed, premisesId)).toEqual({
-        html: v2BedLink(bed, premisesId),
+        html: bedLink(bed, premisesId),
       })
     })
   })
 
-  describe('v2BedRows', () => {
+  describe('bedTableRows', () => {
     it('returns the table rows given the rooms', () => {
       const beds = [bed]
 
-      expect(v2BedTableRows(beds, premisesId)).toEqual([
+      expect(bedTableRows(beds, premisesId)).toEqual([
         [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)],
       ])
     })
@@ -133,9 +132,9 @@ describe('bedUtils', () => {
     })
   })
 
-  describe('v2BedDetails', () => {
+  describe('bedDetails', () => {
     it('returns details for a bed', () => {
-      expect(v2BedDetails(bedDetail)).toEqual([characteristicsRow(bedDetail)])
+      expect(bedDetails(bedDetail)).toEqual([characteristicsRow(bedDetail)])
     })
   })
 
@@ -152,20 +151,6 @@ describe('bedUtils', () => {
   describe('bedActions', () => {
     it('returns the actions for the bed manage page', () => {
       expect(bedActions(bedDetail, premisesId)).toEqual({
-        items: [
-          {
-            text: 'Create out of service bed record',
-            classes: 'govuk-button--secondary',
-            href: paths.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
-          },
-        ],
-      })
-    })
-  })
-
-  describe('v2BedActions', () => {
-    it('returns the actions for the V2 bed manage page', () => {
-      expect(v2BedActions(bedDetail, premisesId)).toEqual({
         items: [
           {
             text: 'Create out of service bed record',

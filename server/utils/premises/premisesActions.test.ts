@@ -8,7 +8,7 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['workflow_manager'], permissions: ['cas1_adhoc_booking_create'] })
     const premises = premisesFactory.build()
 
-    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+    it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
@@ -59,7 +59,7 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['legacy_manager'] })
     const premises = premisesFactory.build()
 
-    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+    it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
@@ -96,7 +96,7 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['manager'] })
     const premises = premisesFactory.build()
 
-    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+    it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
@@ -133,7 +133,7 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['future_manager'] })
     const premises = premisesFactory.build()
 
-    it('includes the V2 MANAGE BEDS action', () => {
+    it('includes the MANAGE BEDS action', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
@@ -157,7 +157,7 @@ describe('premisesActions', () => {
       })
     })
 
-    it('includes the "v2 out of service beds" action', () => {
+    it('includes the "out of service beds" action', () => {
       expect(premisesActions(user, premises)).toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
@@ -170,7 +170,7 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: [] })
     const premises = premisesFactory.build()
 
-    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+    it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',

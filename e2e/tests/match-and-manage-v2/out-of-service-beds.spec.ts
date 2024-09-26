@@ -1,17 +1,17 @@
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { UserLoginDetails } from '@approved-premises/e2e'
 import { Page } from '@playwright/test'
-import { OutOfServiceBedsPremisesListPage } from '../../pages/manage/v2OutOfServiceBedsIndexPage'
-import { OutOfServiceBedPage } from '../../pages/manage/v2OutOfServiceBedPage'
+import { OutOfServiceBedsPremisesListPage } from '../../pages/manage/outOfServiceBedsIndexPage'
+import { OutOfServiceBedPage } from '../../pages/manage/outOfServiceBedPage'
 import { test } from '../../test'
 import { visitDashboard } from '../../steps/apply'
 import { PremisesListPage } from '../../pages/manage/premisesListPage'
 import { PremisesPage } from '../../pages/manage/premisesPage'
-import { V2BedsPage } from '../../pages/manage/v2BedsPage'
-import { V2BedPage } from '../../pages/manage/v2BedPage'
-import { V2MarkBedAsOutOfServicePage } from '../../pages/manage/v2MarkBedAsOutOfServicePage'
+import { BedsPage } from '../../pages/manage/bedsPage'
+import { BedPage } from '../../pages/manage/bedPage'
+import { MarkBedAsOutOfServicePage } from '../../pages/manage/markBedAsOutOfServicePage'
 import { signIn } from '../../steps/signIn'
-import { UpdateOutOfServiceBedPage } from '../../pages/manage/v2UpdateOutOfServiceBedPage'
+import { UpdateOutOfServiceBedPage } from '../../pages/manage/updateOutOfServiceBedPage'
 import { OutOfServiceBedsPage } from '../../pages/manage/outOfServiceBedsPage'
 
 test.describe.configure({ mode: 'parallel' })
@@ -35,30 +35,30 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
 
   // When I choose to manage its beds
   await premisesPage.viewRooms()
-  const manageBedsPage = await V2BedsPage.initialize(page, 'Manage beds')
+  const manageBedsPage = await BedsPage.initialize(page, 'Manage beds')
 
   // And I pick a particular bed to manage
   await manageBedsPage.viewBed()
 
-  // Then I see the V2 Bed page
-  const v2BedPage = await V2BedPage.initialize(page, premisesName)
+  // Then I see the bed page
+  const bedPage = await BedPage.initialize(page, premisesName)
 
   // And I should be able to mark a bed as out of service
-  await v2BedPage.clickMarkBedAsOutOfService()
+  await bedPage.clickMarkBedAsOutOfService()
 
-  // When I fill in and submit the v2 Manage out-of-service-bed form
-  const v2MarkBedAsOutOfServicePage = await V2MarkBedAsOutOfServicePage.initialize(page, 'Mark a bed as out of service')
-  await v2MarkBedAsOutOfServicePage.completeForm()
-  await v2MarkBedAsOutOfServicePage.clickSave()
+  // When I fill in and submit the manage out-of-service-bed form
+  const markBedAsOutOfServicePage = await MarkBedAsOutOfServicePage.initialize(page, 'Mark a bed as out of service')
+  await markBedAsOutOfServicePage.completeForm()
+  await markBedAsOutOfServicePage.clickSave()
 
   // If there is a booking conflict then add 3 days to the start date and try again
-  await v2MarkBedAsOutOfServicePage.ensureNoBookingConflict()
+  await markBedAsOutOfServicePage.ensureNoBookingConflict()
 
-  // Then I am redirected back to the V2 bed page
-  const revisitedV2BedPage = await V2BedPage.initialize(page, premisesName)
+  // Then I am redirected back to the bed page
+  const revisitedBedPage = await BedPage.initialize(page, premisesName)
 
   // // And I see the success message on the 'history' pane of the bed page
-  await revisitedV2BedPage.showsOutOfServiceBedRecordedSuccessMessage()
+  await revisitedBedPage.showsOutOfServiceBedRecordedSuccessMessage()
 }
 
 test('View all out of service beds', async ({ page, cruMember }) => {
@@ -75,7 +75,7 @@ test('View all out of service beds', async ({ page, cruMember }) => {
   await OutOfServiceBedsPage.initialize(page, 'Out of service beds')
 })
 
-test('Future manager marks a bed as out of service in the V2 Manage area', async ({ page, futureManager }) => {
+test('Future manager marks a bed as out of service in the manage area', async ({ page, futureManager }) => {
   await markABedAsOutOfService(page, futureManager)
 })
 

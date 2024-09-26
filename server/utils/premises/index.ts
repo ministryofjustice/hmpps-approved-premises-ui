@@ -134,7 +134,7 @@ export const groupedSelectOptions = (
   }))
 }
 
-export const v2PremisesTableRows = (premisesSummaries: Array<PremisesSummary>) => {
+export const premisesTableRows = (premisesSummaries: Array<PremisesSummary>) => {
   return premisesSummaries
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((p: ApprovedPremisesSummary) => {

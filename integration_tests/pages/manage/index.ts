@@ -1,7 +1,7 @@
 import ArrivalCreatePage from './arrivalCreate'
 import CancellationCreatePage from './cancellationCreate'
 import DepartureCreatePage from './departureCreate'
-import V2PremisesListPage from './v2PremisesList'
+import PremisesListPage from './premisesList'
 import PremisesShowPage from './premisesShow'
 import WithdrawConfirmPage from './withdrawConfirm'
 import UnableToMatchPage from './unableToMatch'
@@ -32,5 +32,5 @@ export {
   NewDateChangePage,
   WithdrawConfirmPage,
   UnableToMatchPage,
-  V2PremisesListPage,
+  PremisesListPage,
 }

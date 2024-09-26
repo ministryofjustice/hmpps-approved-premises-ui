@@ -3,15 +3,15 @@ import type { ApprovedPremisesSummary as PremisesSummary, ProbationRegion } from
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 
-export default class V2PremisesListPage extends Page {
+export default class PremisesListPage extends Page {
   constructor() {
     super('Premises')
     this.checkPhaseBanner('Give us your feedback')
   }
 
-  static visit(): V2PremisesListPage {
+  static visit(): PremisesListPage {
     cy.visit(paths.premises.index({}))
-    return new V2PremisesListPage()
+    return new PremisesListPage()
   }
 
   shouldShowPremises(premises: Array<PremisesSummary>): void {

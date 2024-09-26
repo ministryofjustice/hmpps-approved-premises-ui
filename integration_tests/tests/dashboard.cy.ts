@@ -14,7 +14,7 @@ context('Dashboard', () => {
 
     dashboardPage.shouldShowCard('apply')
     dashboardPage.shouldShowCard('assess')
-    dashboardPage.shouldShowCard('v2Manage')
+    dashboardPage.shouldShowCard('manage')
   })
 
   it('only displays the apply and assess services to users with "cas1_view_assigned_assessments" permission', () => {
@@ -25,7 +25,7 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('apply')
     dashboardPage.shouldShowCard('assess')
 
-    dashboardPage.shouldNotShowCard('v2Manage')
+    dashboardPage.shouldNotShowCard('manage')
   })
 
   it('only displays the apply service when someone has no roles', () => {
@@ -36,7 +36,7 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('apply')
 
     dashboardPage.shouldNotShowCard('assess')
-    dashboardPage.shouldNotShowCard('v2Manage')
+    dashboardPage.shouldNotShowCard('manage')
   })
 
   it('only displays the apply and manage services to managers', () => {
@@ -44,7 +44,7 @@ context('Dashboard', () => {
 
     const dashboardPage = DashboardPage.visit()
 
-    dashboardPage.shouldShowCard('v2Manage')
+    dashboardPage.shouldShowCard('manage')
     dashboardPage.shouldShowCard('apply')
 
     dashboardPage.shouldNotShowCard('assess')
@@ -59,6 +59,6 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('userManagement')
 
     dashboardPage.shouldNotShowCard('assess')
-    dashboardPage.shouldNotShowCard('v2Manage')
+    dashboardPage.shouldNotShowCard('manage')
   })
 })

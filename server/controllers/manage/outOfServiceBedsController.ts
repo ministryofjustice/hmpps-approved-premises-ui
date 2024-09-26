@@ -27,7 +27,7 @@ export default class OutOfServiceBedsController {
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
-      return res.render('v2Manage/outOfServiceBeds/new', {
+      return res.render('manage/outOfServiceBeds/new', {
         premisesId,
         bedId,
         outOfServiceBedReasons,
@@ -107,7 +107,7 @@ export default class OutOfServiceBedsController {
 
       const premises = await this.premisesService.find(req.user.token, premisesId)
 
-      return res.render('v2Manage/outOfServiceBeds/premisesIndex', {
+      return res.render('manage/outOfServiceBeds/premisesIndex', {
         outOfServiceBeds: outOfServiceBeds.data,
         pageHeading: 'Out of service beds',
         premises: { id: premisesId, name: premises.name },
@@ -172,7 +172,7 @@ export default class OutOfServiceBedsController {
         apAreaId,
       })
 
-      return res.render('v2Manage/outOfServiceBeds/index', {
+      return res.render('manage/outOfServiceBeds/index', {
         pageHeading: 'Out of service beds',
         outOfServiceBeds: outOfServiceBeds.data,
         pageNumber: Number(outOfServiceBeds.pageNumber),
@@ -203,7 +203,7 @@ export default class OutOfServiceBedsController {
       const { characteristics } = await this.premisesService.getBed(req.user.token, premisesId, bedId)
       const translatedCharacteristics = characteristics.map(characteristic => translateCharacteristic(characteristic))
 
-      return res.render('v2Manage/outOfServiceBeds/show', {
+      return res.render('manage/outOfServiceBeds/show', {
         outOfServiceBed,
         premisesId,
         bedId,

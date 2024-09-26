@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { ApAreaService, PremisesService } from '../../../services'
-import V2PremisesController from './premisesController'
+import PremisesController from './premisesController'
 
 import { apAreaFactory, cas1PremisesSummaryFactory, premisesSummaryFactory } from '../../../testutils/factories'
 
@@ -16,7 +16,7 @@ describe('V2PremisesController', () => {
 
   const premisesService = createMock<PremisesService>({})
   const apAreaService = createMock<ApAreaService>({})
-  const premisesController = new V2PremisesController(premisesService, apAreaService)
+  const premisesController = new PremisesController(premisesService, apAreaService)
 
   beforeEach(() => {
     request = createMock<Request>({ user: { token }, params: { premisesId } })
@@ -32,7 +32,7 @@ describe('V2PremisesController', () => {
       const requestHandler = premisesController.show()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/show', {
+      expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
       })
 
@@ -52,7 +52,7 @@ describe('V2PremisesController', () => {
       const requestHandler = premisesController.index()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/index', {
+      expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
         premisesSummaries,
         areas: apAreas,
         selectedArea: '',
@@ -73,7 +73,7 @@ describe('V2PremisesController', () => {
       const requestHandler = premisesController.index()
       await requestHandler({ ...request, body: { selectedArea: areaId } }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('v2Manage/premises/index', {
+      expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
         premisesSummaries,
         areas,
         selectedArea: areaId,
