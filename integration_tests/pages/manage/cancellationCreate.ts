@@ -32,7 +32,7 @@ export default class CancellationCreatePage extends Page {
   shouldShowBacklinkToBooking(): void {
     cy.get('.govuk-back-link')
       .should('have.attr', 'href')
-      .and('include', paths.v2Manage.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
+      .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
   }
 
   shouldShowBackLinkToApplicationWithdraw(applicationId: string): void {

@@ -12,54 +12,50 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-      text: "Back",
-      href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'})
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'})
     }) }}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full-width">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full-width">
 
-      {{
-          mojIdentityBar({
-            title: {
-              html: outOfServiceBedPageHeading('Out of service bed record', outOfServiceBed)
-            },
-            menus: [{
-              items: [
-                {
-                  text: "Update record",
-                  href: paths.v2Manage.outOfServiceBeds.update({premisesId: premisesId, id: id, bedId: bedId})
-                }
-              ]
-            }]
-          })
-        }}
+            {{ mojIdentityBar({
+                title: {
+                    html: outOfServiceBedPageHeading('Out of service bed record', outOfServiceBed)
+                },
+                menus: [{
+                    items: [
+                        {
+                            text: "Update record",
+                            href: paths.outOfServiceBeds.update({premisesId: premisesId, id: id, bedId: bedId})
+                        }
+                    ]
+                }]
+            }) }}
 
-      {{
-        mojSubNavigation({
-          label: 'Sub navigation',
-          items: [{
-            text: 'Details',
-            href: paths.v2Manage.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }),
-            active: activeTab === 'details'
-          }, {
-            text: 'Timeline',
-            href: paths.v2Manage.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'timeline' }),
-            active: activeTab === 'timeline'
-          }]
-        })
-      }}
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: [{
+                    text: 'Details',
+                    href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }),
+                    active: activeTab === 'details'
+                }, {
+                    text: 'Timeline',
+                    href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'timeline' }),
+                    active: activeTab === 'timeline'
+                }]
+            }) }}
 
-      {% if activeTab === 'timeline' %}
-        {% include "../../_messages.njk" %}
-        {{outOfServiceBedTimeline(outOfServiceBed.revisionHistory)}}
-      {% else %}
-        {{outOfServiceBedDetails(outOfServiceBed, characteristics)}}
-      {% endif %}
+            {% if activeTab === 'timeline' %}
+                {% include "../../_messages.njk" %}
+                {{ outOfServiceBedTimeline(outOfServiceBed.revisionHistory) }}
+            {% else %}
+                {{ outOfServiceBedDetails(outOfServiceBed, characteristics) }}
+            {% endif %}
 
+        </div>
     </div>
-  </div>
 {% endblock %}

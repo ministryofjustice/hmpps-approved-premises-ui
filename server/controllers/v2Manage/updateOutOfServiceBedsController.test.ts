@@ -223,7 +223,7 @@ describe('updateOutOfServiceBedController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.outOfServiceBeds.show({
+        paths.outOfServiceBeds.show({
           premisesId,
           bedId: outOfServiceBed.bed.id,
           id: outOfServiceBed.id,
@@ -255,7 +255,7 @@ describe('updateOutOfServiceBedController', () => {
           request,
           response,
           err,
-          paths.v2Manage.outOfServiceBeds.update({
+          paths.outOfServiceBeds.update({
             premisesId,
             bedId: outOfServiceBed.bed.id,
             id: outOfServiceBed.id,
@@ -285,7 +285,7 @@ describe('updateOutOfServiceBedController', () => {
           premisesId,
           ['startDate', 'endDate'],
           err,
-          paths.v2Manage.outOfServiceBeds.update({
+          paths.outOfServiceBeds.update({
             premisesId,
             bedId: outOfServiceBed.bed.id,
             id: outOfServiceBed.id,

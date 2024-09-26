@@ -21,7 +21,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form action="{{ paths.v2Manage.bookings.dateChanges.create({ premisesId: premisesId, bookingId: booking.id }) }}"
+            <form action="{{ paths.bookings.dateChanges.create({ premisesId: premisesId, bookingId: booking.id }) }}"
                   method="post">
 
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

@@ -11,7 +11,7 @@ export default class NewDateChange extends Page {
   }
 
   static visit(premisesId: Premises['id'], bookingId: Booking['id']): NewDateChange {
-    cy.visit(paths.v2Manage.bookings.dateChanges.new({ premisesId, bookingId }))
+    cy.visit(paths.bookings.dateChanges.new({ premisesId, bookingId }))
     return new NewDateChange(premisesId, bookingId)
   }
 
@@ -39,6 +39,6 @@ export default class NewDateChange extends Page {
   shouldHaveCorrectBacklink(): void {
     cy.get('.govuk-back-link')
       .should('have.attr', 'href')
-      .and('include', paths.v2Manage.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
+      .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
   }
 }

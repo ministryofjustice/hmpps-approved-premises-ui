@@ -35,7 +35,7 @@ describe('adminIdentityBar', () => {
 
       expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
         {
-          href: managePaths.v2Manage.bookings.dateChanges.new({
+          href: managePaths.bookings.dateChanges.new({
             premisesId: placementRequestDetail.booking?.premisesId || '',
             bookingId: placementRequestDetail.booking?.id || '',
           }),
@@ -51,7 +51,7 @@ describe('adminIdentityBar', () => {
 
       expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
         {
-          href: managePaths.v2Manage.bookings.dateChanges.new({
+          href: managePaths.bookings.dateChanges.new({
             premisesId: placementRequestDetail.booking?.premisesId || '',
             bookingId: placementRequestDetail.booking?.id || '',
           }),

@@ -11,71 +11,65 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-		text: "Back",
-		href: paths.v2Manage.premises.beds.index({ premisesId: premises.id })
-	}) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.beds.index({ premisesId: premises.id })
+    }) }}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full-width">
-      {% include "../../_messages.njk" %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full-width">
+            {% include "../../_messages.njk" %}
 
-      <span class="govuk-caption-l">
-        <a href="{{paths.v2Manage.premises.show({premisesId: premises.id})}}">{{premises.name}}</a>
+            <span class="govuk-caption-l">
+        <a href="{{ paths.premises.show({premisesId: premises.id}) }}">{{ premises.name }}</a>
       </span>
 
-      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      {{
-        govukSummaryList({
-          classes: 'govuk-summary-list--no-border',
-          rows: [            {
-              key: {
-                text: "Total out of service beds matching filters"
-              },
-              value: {
-                text: OutOfServiceBedUtils.outOfServiceBedCount(totalResults)
-              }
-            }
-          ]
-        })
-      }}
+            {{ govukSummaryList({
+                classes: 'govuk-summary-list--no-border',
+                rows: [            {
+                    key: {
+                        text: "Total out of service beds matching filters"
+                    },
+                    value: {
+                        text: OutOfServiceBedUtils.outOfServiceBedCount(totalResults)
+                    }
+                }
+                ]
+            }) }}
 
-      {{
-        mojSubNavigation({
-          label: 'Sub navigation',
-          items: [{
-              text: 'Current',
-              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'current'}),
-              active: temporality === 'current'
-            }, {
-              text: 'Future',
-              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'future'}),
-              active: temporality === 'future'
-            }, {
-              text: 'Historic',
-              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'past'}),
-              active: temporality === 'past'
-          }]
-        })
-      }}
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: [{
+                    text: 'Current',
+                    href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'current'}),
+                    active: temporality === 'current'
+                }, {
+                    text: 'Future',
+                    href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'future'}),
+                    active: temporality === 'future'
+                }, {
+                    text: 'Historic',
+                    href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'past'}),
+                    active: temporality === 'past'
+                }]
+            }) }}
 
-      {% if outOfServiceBeds %}
+            {% if outOfServiceBeds %}
 
-        {{
-          govukTable({
-            caption: "Out of service",
-            captionClasses: "govuk-table__caption--m",
-            head: OutOfServiceBedUtils.outOfServiceBedTableHeaders(user),
-            rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premises.id, user)
-          })
-        }}
+                {{ govukTable({
+                    caption: "Out of service",
+                    captionClasses: "govuk-table__caption--m",
+                    head: OutOfServiceBedUtils.outOfServiceBedTableHeaders(user),
+                    rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premises.id, user)
+                }) }}
 
-        {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+                {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
 
-      {% endif %}
+            {% endif %}
+        </div>
     </div>
-  </div>
 {% endblock %}

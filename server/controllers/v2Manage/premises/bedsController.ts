@@ -22,7 +22,7 @@ export default class V2BedsController {
     return async (req: Request, res: Response) => {
       const { premisesId } = req.params
 
-      const backLink = paths.v2Manage.premises.beds.index({ premisesId })
+      const backLink = paths.premises.beds.index({ premisesId })
       const bed = await this.premisesService.getBed(req.user.token, premisesId, req.params.bedId)
       const premises = await this.premisesService.find(req.user.token, premisesId)
 

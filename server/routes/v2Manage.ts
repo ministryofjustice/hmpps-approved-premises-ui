@@ -22,46 +22,46 @@ export default function routes(controllers: Controllers, router: Router, service
   } = controllers
 
   // Premises
-  get(paths.v2Manage.premises.index.pattern, v2PremisesController.index(), {
+  get(paths.premises.index.pattern, v2PremisesController.index(), {
     auditEvent: 'LIST_PREMISES',
     allowedRoles: ['future_manager'],
   })
-  post(paths.v2Manage.premises.index.pattern, v2PremisesController.index(), {
+  post(paths.premises.index.pattern, v2PremisesController.index(), {
     auditEvent: 'FILTER_PREMISES',
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.premises.show.pattern, v2PremisesController.show(), {
+  get(paths.premises.show.pattern, v2PremisesController.show(), {
     auditEvent: 'SHOW_PREMISES',
     allowedRoles: ['future_manager'],
   })
 
   // Beds
-  get(paths.v2Manage.premises.beds.index.pattern, v2BedsController.index(), {
+  get(paths.premises.beds.index.pattern, v2BedsController.index(), {
     auditEvent: 'LIST_BEDS',
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.premises.beds.show.pattern, v2BedsController.show(), {
+  get(paths.premises.beds.show.pattern, v2BedsController.show(), {
     auditEvent: 'SHOW_BED',
     allowedRoles: ['future_manager', 'cru_member'],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
 
   // Bookings
-  get(paths.v2Manage.bookings.show.pattern, bookingsController.show(), {
+  get(paths.bookings.show.pattern, bookingsController.show(), {
     auditEvent: 'SHOW_BOOKING',
     allowedRoles: ['workflow_manager', 'future_manager'],
   })
 
   // Date changes
-  get(paths.v2Manage.bookings.dateChanges.new.pattern, dateChangesController.new(), {
+  get(paths.bookings.dateChanges.new.pattern, dateChangesController.new(), {
     auditEvent: 'NEW_DATE_CHANGE',
     allowedRoles: ['workflow_manager', 'future_manager'],
   })
-  post(paths.v2Manage.bookings.dateChanges.create.pattern, dateChangesController.create(), {
+  post(paths.bookings.dateChanges.create.pattern, dateChangesController.create(), {
     auditEvent: 'DATE_CHANGE_SUCCESS',
     redirectAuditEventSpecs: [
       {
-        path: paths.v2Manage.bookings.dateChanges.new.pattern,
+        path: paths.bookings.dateChanges.new.pattern,
         auditEvent: 'DATE_CHANGE_FAILURE',
       },
     ],
@@ -69,69 +69,69 @@ export default function routes(controllers: Controllers, router: Router, service
   })
 
   // Booking extensions
-  get(paths.v2Manage.bookings.extensions.new.pattern, bookingExtensionsController.new(), {
+  get(paths.bookings.extensions.new.pattern, bookingExtensionsController.new(), {
     auditEvent: 'NEW_BOOKING_EXTENSION',
     allowedRoles: ['future_manager'],
   })
-  post(paths.v2Manage.bookings.extensions.create.pattern, bookingExtensionsController.create(), {
+  post(paths.bookings.extensions.create.pattern, bookingExtensionsController.create(), {
     redirectAuditEventSpecs: [
       {
-        path: paths.v2Manage.bookings.extensions.create.pattern,
+        path: paths.bookings.extensions.create.pattern,
         auditEvent: 'CREATE_BOOKING_EXTENSION_FAILURE',
       },
       {
-        path: paths.v2Manage.bookings.extensions.confirm.pattern,
+        path: paths.bookings.extensions.confirm.pattern,
         auditEvent: 'CREATE_BOOKING_EXTENSION_SUCCESS',
       },
     ],
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
+  get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
 
   // Out of service beds
-  get(paths.v2Manage.outOfServiceBeds.new.pattern, v2OutOfServiceBedsController.new(), {
+  get(paths.outOfServiceBeds.new.pattern, v2OutOfServiceBedsController.new(), {
     auditEvent: 'NEW_OUT_OF_SERVICE_BED',
     allowedRoles: [],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
-  post(paths.v2Manage.outOfServiceBeds.create.pattern, v2OutOfServiceBedsController.create(), {
+  post(paths.outOfServiceBeds.create.pattern, v2OutOfServiceBedsController.create(), {
     auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
     redirectAuditEventSpecs: [
       {
-        path: paths.v2Manage.outOfServiceBeds.new.pattern,
+        path: paths.outOfServiceBeds.new.pattern,
         auditEvent: 'CREATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
     allowedRoles: [],
     allowedPermissions: ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'],
   })
-  get(paths.v2Manage.outOfServiceBeds.premisesIndex.pattern, v2OutOfServiceBedsController.premisesIndex(), {
+  get(paths.outOfServiceBeds.premisesIndex.pattern, v2OutOfServiceBedsController.premisesIndex(), {
     auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
     allowedRoles: [],
     allowedPermissions: ['cas1_view_out_of_service_beds'],
   })
-  get(paths.v2Manage.outOfServiceBeds.update.pattern, v2UpdateOutOfServiceBedsController.new(), {
+  get(paths.outOfServiceBeds.update.pattern, v2UpdateOutOfServiceBedsController.new(), {
     auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
     allowedRoles: [],
     allowedPermissions: ['cas1_view_out_of_service_beds'],
   })
-  post(paths.v2Manage.outOfServiceBeds.update.pattern, v2UpdateOutOfServiceBedsController.create(), {
+  post(paths.outOfServiceBeds.update.pattern, v2UpdateOutOfServiceBedsController.create(), {
     auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
     allowedRoles: [],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
     redirectAuditEventSpecs: [
       {
-        path: paths.v2Manage.outOfServiceBeds.show.pattern,
+        path: paths.outOfServiceBeds.show.pattern,
         auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
   })
-  get(paths.v2Manage.outOfServiceBeds.show.pattern, v2OutOfServiceBedsController.show(), {
+  get(paths.outOfServiceBeds.show.pattern, v2OutOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
     allowedRoles: [],
     allowedPermissions: ['cas1_view_out_of_service_beds'],
   })
-  get(paths.v2Manage.outOfServiceBeds.index.pattern, v2OutOfServiceBedsController.index(), {
+  get(paths.outOfServiceBeds.index.pattern, v2OutOfServiceBedsController.index(), {
     auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
     allowedRoles: [],
     allowedPermissions: ['cas1_view_out_of_service_beds'],

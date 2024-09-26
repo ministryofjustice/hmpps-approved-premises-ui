@@ -74,7 +74,7 @@ export const lostBedsCountForToday = (lostBeds: Array<LostBed>): number => {
 
 const bedLink = (bed: LostBed, premisesId: string): string =>
   linkTo(
-    paths.v2Manage.outOfServiceBeds.show,
+    paths.outOfServiceBeds.show,
     { id: bed.id, bedId: bed.bedId, premisesId, tab: 'details' },
     {
       text: 'Manage',

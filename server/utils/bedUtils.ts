@@ -60,7 +60,7 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
       {
         text: 'Create out of service bed record',
         classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
+        href: paths.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
       },
     ],
   }
@@ -72,7 +72,7 @@ export const v2BedActions = (bed: BedDetail, premisesId: string) => {
       {
         text: 'Create out of service bed record',
         classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
+        href: paths.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
       },
     ],
   }
@@ -80,7 +80,7 @@ export const v2BedActions = (bed: BedDetail, premisesId: string) => {
 
 export const v2BedLink = (bed: BedSummary, premisesId: string): string => {
   return linkTo(
-    paths.v2Manage.premises.beds.show,
+    paths.premises.beds.show,
     { bedId: bed.id, premisesId },
     {
       text: 'Manage',
@@ -126,7 +126,7 @@ export const overbookingSummaryList = (
           visuallyHiddenText: `for ${cardTitle}`,
         }
       : {
-          href: paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id: item.lostBedId, tab: 'details' }),
+          href: paths.outOfServiceBeds.show({ premisesId, bedId, id: item.lostBedId, tab: 'details' }),
           text: 'Amend',
           visuallyHiddenText: 'lost bed entry',
         }

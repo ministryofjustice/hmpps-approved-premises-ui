@@ -10,7 +10,7 @@ export default class DepartureDateChangeConfirmationPage extends Page {
   }
 
   static visit(premisesId: string, bookingId: string): DepartureDateChangeConfirmationPage {
-    cy.visit(paths.v2Manage.bookings.extensions.confirm({ premisesId, bookingId }))
+    cy.visit(paths.bookings.extensions.confirm({ premisesId, bookingId }))
     return new DepartureDateChangeConfirmationPage()
   }
 

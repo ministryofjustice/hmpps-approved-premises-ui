@@ -22,74 +22,73 @@ export default function routes(controllers: Controllers, router: Router, service
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
-  get(paths.premises.index.pattern, redirectController.redirect(paths.v2Manage.premises.index), {
+  get(paths.deprecated.premises.index.pattern, redirectController.redirect(paths.premises.index), {
     auditEvent: 'LIST_PREMISES_REDIRECT',
   })
-  get(paths.premises.show.pattern, redirectController.redirect(paths.v2Manage.premises.show), {
+  get(paths.deprecated.premises.show.pattern, redirectController.redirect(paths.premises.show), {
     auditEvent: 'SHOW_PREMISES_REDIRECT',
   })
 
-  get(paths.premises.beds.index.pattern, redirectController.redirect(paths.v2Manage.premises.beds.index), {
+  get(paths.deprecated.premises.beds.index.pattern, redirectController.redirect(paths.premises.beds.index), {
     auditEvent: 'LIST_BEDS_REDIRECT',
   })
-  get(paths.premises.beds.show.pattern, redirectController.redirect(paths.v2Manage.premises.beds.show), {
+  get(paths.deprecated.premises.beds.show.pattern, redirectController.redirect(paths.premises.beds.show), {
     auditEvent: 'SHOW_BED_REDIRECT',
   })
 
   get(
-    paths.lostBeds.index.pattern,
-    redirectController.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex, { temporality: 'current' }),
+    paths.deprecated.lostBeds.index.pattern,
+    redirectController.redirect(paths.outOfServiceBeds.premisesIndex, { temporality: 'current' }),
     {
       auditEvent: 'LIST_LOST_BEDS_REDIRECT',
     },
   )
-  get(paths.lostBeds.new.pattern, redirectController.redirect(paths.v2Manage.outOfServiceBeds.new), {
+  get(paths.deprecated.lostBeds.new.pattern, redirectController.redirect(paths.outOfServiceBeds.new), {
     auditEvent: 'NEW_LOST_BED_REDIRECT',
   })
-  post(paths.lostBeds.create.pattern, redirectController.redirect(paths.v2Manage.outOfServiceBeds.create), {
+  post(paths.deprecated.lostBeds.create.pattern, redirectController.redirect(paths.outOfServiceBeds.create), {
     auditEvent: 'CREATE_LOST_BED_REDIRECT',
   })
   get(
-    paths.lostBeds.show.pattern,
-    redirectController.redirect(paths.v2Manage.outOfServiceBeds.show, { tab: 'details' }),
+    paths.deprecated.lostBeds.show.pattern,
+    redirectController.redirect(paths.outOfServiceBeds.show, { tab: 'details' }),
     {
       auditEvent: 'SHOW_LOST_BED_REDIRECT',
     },
   )
-  post(paths.lostBeds.update.pattern, redirectController.redirect(paths.v2Manage.outOfServiceBeds.update), {
+  post(paths.deprecated.lostBeds.update.pattern, redirectController.redirect(paths.outOfServiceBeds.update), {
     auditEvent: 'UPDATE_LOST_BED_REDIRECT',
   })
 
-  get(paths.bookings.show.pattern, redirectController.redirect(paths.v2Manage.bookings.show), {
+  get(paths.deprecated.bookings.show.pattern, redirectController.redirect(paths.bookings.show), {
     auditEvent: 'SHOW_BOOKING_REDIRECT',
   })
 
-  get(paths.bookings.dateChanges.new.pattern, redirectController.redirect(paths.v2Manage.bookings.dateChanges.new), {
+  get(paths.deprecated.bookings.dateChanges.new.pattern, redirectController.redirect(paths.bookings.dateChanges.new), {
     auditEvent: 'NEW_DATE_CHANGE_REDIRECT',
   })
   post(
-    paths.bookings.dateChanges.create.pattern,
-    redirectController.redirect(paths.v2Manage.bookings.dateChanges.create),
+    paths.deprecated.bookings.dateChanges.create.pattern,
+    redirectController.redirect(paths.bookings.dateChanges.create),
     {
       auditEvent: 'CREATE_DATE_CHANGE_REDIRECT',
     },
   )
 
-  get(paths.bookings.extensions.new.pattern, redirectController.redirect(paths.v2Manage.bookings.extensions.new), {
+  get(paths.deprecated.bookings.extensions.new.pattern, redirectController.redirect(paths.bookings.extensions.new), {
     auditEvent: 'NEW_BOOKING_EXTENSION_REDIRECT',
   })
   post(
-    paths.bookings.extensions.create.pattern,
-    redirectController.redirect(paths.v2Manage.bookings.extensions.create),
+    paths.deprecated.bookings.extensions.create.pattern,
+    redirectController.redirect(paths.bookings.extensions.create),
     {
       auditEvent: 'CREATE_BOOKING_EXTENSION_REDIRECT',
     },
   )
   get(
-    paths.bookings.extensions.confirm.pattern,
-    redirectController.redirect(paths.v2Manage.bookings.extensions.confirm),
+    paths.deprecated.bookings.extensions.confirm.pattern,
+    redirectController.redirect(paths.bookings.extensions.confirm),
   )
-
   // End deprecated paths
 
   get(paths.bookings.new.pattern, bookingsController.new(), {
@@ -100,7 +99,7 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.bookings.create.pattern, bookingsController.create(), {
     redirectAuditEventSpecs: [
       {
-        path: paths.v2Manage.bookings.show.pattern,
+        path: paths.bookings.show.pattern,
         auditEvent: 'CREATE_AD_HOC_BOOKING_FAILURE',
       },
       {

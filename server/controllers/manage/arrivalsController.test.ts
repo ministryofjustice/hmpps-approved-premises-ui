@@ -129,9 +129,7 @@ describe('ArrivalsController', () => {
       )
 
       expect(request.flash).toHaveBeenCalledWith('success', 'Arrival logged')
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.premises.show({ premisesId: request.params.premisesId }),
-      )
+      expect(response.redirect).toHaveBeenCalledWith(paths.premises.show({ premisesId: request.params.premisesId }))
     })
 
     it('renders with errors if the API returns an error', async () => {

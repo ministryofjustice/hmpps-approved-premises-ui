@@ -15,7 +15,7 @@ export class OutOfServiceBedCreatePage extends Page {
   }
 
   static visit(premisesId: Premises['id'], bedId: OutOfServiceBed['id']): OutOfServiceBedCreatePage {
-    cy.visit(paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId }))
+    cy.visit(paths.outOfServiceBeds.new({ premisesId, bedId }))
     return new OutOfServiceBedCreatePage(premisesId)
   }
 

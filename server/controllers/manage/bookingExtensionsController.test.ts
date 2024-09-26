@@ -93,7 +93,7 @@ describe('bookingExtensionsController', () => {
       })
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.bookings.extensions.confirm({
+        paths.bookings.extensions.confirm({
           premisesId,
           bookingId: bookingExtension.bookingId,
         }),
@@ -121,7 +121,7 @@ describe('bookingExtensionsController', () => {
         request,
         response,
         err,
-        paths.v2Manage.bookings.extensions.new({
+        paths.bookings.extensions.new({
           premisesId,
           bookingId: bookingExtension.id,
         }),

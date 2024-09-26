@@ -97,9 +97,7 @@ describe('NonArrivalsController', () => {
         date: '2022-12-11',
       }
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.premises.show({ premisesId: request.params.premisesId }),
-      )
+      expect(response.redirect).toHaveBeenCalledWith(paths.premises.show({ premisesId: request.params.premisesId }))
 
       expect(request.flash).toHaveBeenCalledWith('success', 'Non-arrival logged')
       expect(nonArrivalService.createNonArrival).toHaveBeenCalledWith(

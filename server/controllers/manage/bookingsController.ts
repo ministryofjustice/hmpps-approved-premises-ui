@@ -43,7 +43,7 @@ export default class BookingsController {
               pageHeading: 'There are no offences for this person',
               bodyTextParam,
               backTextParam,
-              href: paths.v2Manage.premises.show({ premisesId }),
+              href: paths.premises.show({ premisesId }),
             })
           }
           return res.render(`bookings/new`, {

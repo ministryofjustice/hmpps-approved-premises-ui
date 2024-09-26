@@ -54,7 +54,7 @@ class MenuItems {
     changeDates: {
       text: 'Change placement dates',
       classes: 'govuk-button--secondary',
-      href: paths.v2Manage.bookings.dateChanges.new({
+      href: paths.bookings.dateChanges.new({
         premisesId: this.booking.premises.id,
         bookingId: this.booking.id,
       }),
@@ -67,7 +67,7 @@ class MenuItems {
     updateDepartureDate: {
       text: 'Update departure date',
       classes: 'govuk-button--secondary',
-      href: paths.v2Manage.bookings.extensions.new({
+      href: paths.bookings.extensions.new({
         premisesId: this.booking.premises.id,
         bookingId: this.booking.id,
       }),

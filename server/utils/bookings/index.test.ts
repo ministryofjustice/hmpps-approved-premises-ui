@@ -56,8 +56,7 @@ describe('bookingUtils', () => {
     it('returns a link for a booking', () => {
       const booking = bookingFactory.build()
 
-      expect(manageBookingLink(premisesId, booking))
-        .toMatchStringIgnoringWhitespace(`<a href="${paths.v2Manage.bookings.show({
+      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
         premisesId,
         bookingId: booking.id,
       })}" data-cy-booking-id="${booking.id}">
@@ -71,8 +70,7 @@ describe('bookingUtils', () => {
     it('returns a link for a booking', () => {
       const booking = bookingFactory.build()
 
-      expect(manageBookingLink(premisesId, booking))
-        .toMatchStringIgnoringWhitespace(`<a href="${paths.v2Manage.bookings.show({
+      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
         premisesId,
         bookingId: booking.id,
       })}" data-cy-booking-id="${booking.id}">
@@ -213,7 +211,7 @@ describe('bookingUtils', () => {
         errorTitle: 'This bedspace is not available for the dates entered',
         errorSummary: [
           {
-            html: `They conflict with an <a href="${paths.v2Manage.bookings.show({
+            html: `They conflict with an <a href="${paths.bookings.show({
               premisesId,
               bookingId,
             })}">existing booking</a>`,
@@ -233,7 +231,7 @@ describe('bookingUtils', () => {
         errorTitle: 'Out of service bed record cannot be created for the dates entered',
         errorSummary: [
           {
-            html: `They conflict with an <a href="${paths.v2Manage.outOfServiceBeds.show({
+            html: `They conflict with an <a href="${paths.outOfServiceBeds.show({
               premisesId,
               bedId,
               id: lostBedId,
@@ -255,7 +253,7 @@ describe('bookingUtils', () => {
         errorTitle: 'This bedspace is not available for the date entered',
         errorSummary: [
           {
-            html: `It conflicts with an <a href="${paths.v2Manage.bookings.show({
+            html: `It conflicts with an <a href="${paths.bookings.show({
               premisesId,
               bookingId,
             })}">existing booking</a>`,

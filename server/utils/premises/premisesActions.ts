@@ -6,7 +6,7 @@ import { hasPermission } from '../users'
 export const premisesActions = (user: UserDetails, premises: Premises) => {
   const actions = []
 
-  const premisesBedsPath = paths.v2Manage.premises.beds.index({ premisesId: premises.id })
+  const premisesBedsPath = paths.premises.beds.index({ premisesId: premises.id })
 
   actions.push({
     text: 'Manage beds',
@@ -18,7 +18,7 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     actions.push({
       text: 'Manage out of service bed records',
       classes: 'govuk-button--secondary',
-      href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
+      href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
     })
   }
 

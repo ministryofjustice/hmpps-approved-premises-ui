@@ -129,7 +129,7 @@ describe('OutOfServiceBedsController', () => {
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'The out of service bed has been recorded')
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.premises.beds.show({ premisesId: request.params.premisesId, bedId: outOfServiceBed.bed.id }),
+        paths.premises.beds.show({ premisesId: request.params.premisesId, bedId: outOfServiceBed.bed.id }),
       )
     })
 
@@ -147,7 +147,7 @@ describe('OutOfServiceBedsController', () => {
           request,
           response,
           err,
-          paths.v2Manage.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
+          paths.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
         )
       })
 
@@ -165,7 +165,7 @@ describe('OutOfServiceBedsController', () => {
           premisesId,
           ['startDate', 'endDate'],
           err,
-          paths.v2Manage.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
+          paths.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
           outOfServiceBed.bed.id,
         )
       })
@@ -224,7 +224,7 @@ describe('OutOfServiceBedsController', () => {
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
       const paginationDetails = {
-        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.premisesIndex.pattern}?${createQueryString({ temporality, premisesId })}`,
+        hrefPrefix: `${paths.outOfServiceBeds.premisesIndex.pattern}?${createQueryString({ temporality, premisesId })}`,
         pageNumber: 1,
       }
 
@@ -269,7 +269,7 @@ describe('OutOfServiceBedsController', () => {
       await requestHandler(indexRequest, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.outOfServiceBeds.premisesIndex({ temporality: 'current', premisesId }),
+        paths.outOfServiceBeds.premisesIndex({ temporality: 'current', premisesId }),
       )
     })
   })
@@ -283,7 +283,7 @@ describe('OutOfServiceBedsController', () => {
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
       const paginationDetails = {
-        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index.pattern}?${createQueryString({
+        hrefPrefix: `${paths.outOfServiceBeds.index.pattern}?${createQueryString({
           temporality,
           apAreaId,
           premisesId,
@@ -341,7 +341,7 @@ describe('OutOfServiceBedsController', () => {
 
       await requestHandler(indexRequest, response, next)
 
-      expect(response.redirect).toHaveBeenCalledWith(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
+      expect(response.redirect).toHaveBeenCalledWith(paths.outOfServiceBeds.index({ temporality: 'current' }))
     })
 
     it('if value of Ap Areas and Premises is all empty string is passed to the api for both', async () => {
@@ -352,7 +352,7 @@ describe('OutOfServiceBedsController', () => {
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
       const paginationDetails = {
-        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index.pattern}?${createQueryString({
+        hrefPrefix: `${paths.outOfServiceBeds.index.pattern}?${createQueryString({
           temporality,
           premisesId,
         })}`,
@@ -472,7 +472,7 @@ describe('OutOfServiceBedsController', () => {
       )
       expect(request.flash).toHaveBeenCalledWith('success', 'Out of service bed removed')
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.outOfServiceBeds.premisesIndex({
+        paths.outOfServiceBeds.premisesIndex({
           premisesId: request.params.premisesId,
           temporality: 'current',
         }),

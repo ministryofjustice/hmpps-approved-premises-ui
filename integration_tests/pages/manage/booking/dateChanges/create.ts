@@ -8,7 +8,7 @@ export default class DepartureDateChangePage extends Page {
   }
 
   static visit(premisesId: Premises['id'], bookingId: Booking['id']): DepartureDateChangePage {
-    cy.visit(paths.v2Manage.bookings.extensions.new({ premisesId, bookingId }))
+    cy.visit(paths.bookings.extensions.new({ premisesId, bookingId }))
     return new DepartureDateChangePage()
   }
 

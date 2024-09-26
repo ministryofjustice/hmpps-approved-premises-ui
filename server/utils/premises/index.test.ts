@@ -261,7 +261,7 @@ describe('premisesUtils', () => {
           },
           {
             html: linkTo(
-              paths.v2Manage.premises.show,
+              paths.premises.show,
               { premisesId: premises2.id },
               { text: 'View', hiddenText: `about ${premises2.name}` },
             ),
@@ -279,7 +279,7 @@ describe('premisesUtils', () => {
           },
           {
             html: linkTo(
-              paths.v2Manage.premises.show,
+              paths.premises.show,
               { premisesId: premises3.id },
               { text: 'View', hiddenText: `about ${premises3.name}` },
             ),
@@ -297,7 +297,7 @@ describe('premisesUtils', () => {
           },
           {
             html: linkTo(
-              paths.v2Manage.premises.show,
+              paths.premises.show,
               { premisesId: premises1.id },
               { text: 'View', hiddenText: `about ${premises1.name}` },
             ),

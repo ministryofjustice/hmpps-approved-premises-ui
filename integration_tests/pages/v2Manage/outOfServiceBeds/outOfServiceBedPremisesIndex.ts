@@ -10,14 +10,14 @@ export class OutOfServiceBedPremisesIndexPage extends Page {
   }
 
   static visit(premises: ApprovedPremises): OutOfServiceBedPremisesIndexPage {
-    cy.visit(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }))
+    cy.visit(paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }))
     return new OutOfServiceBedPremisesIndexPage(premises)
   }
 
   shouldProvideAHeadingLinkBackToPremisesPage(): void {
     cy.get('a')
       .contains(this.premises.name)
-      .should('have.attr', 'href', paths.v2Manage.premises.show({ premisesId: this.premises.id }))
+      .should('have.attr', 'href', paths.premises.show({ premisesId: this.premises.id }))
   }
 
   hasCountOfAllResultsMatchingFilter(): void {

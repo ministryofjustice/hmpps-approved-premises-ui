@@ -4,9 +4,7 @@ import paths from '../../../../server/paths/manage'
 
 export class OutOfServiceBedUpdatePage extends Page {
   static visit(premisesId: string, outOfServiceBed: OutOfServiceBed): OutOfServiceBedUpdatePage {
-    cy.visit(
-      paths.v2Manage.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id, bedId: outOfServiceBed.bed.id }),
-    )
+    cy.visit(paths.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id, bedId: outOfServiceBed.bed.id }))
     return new OutOfServiceBedUpdatePage(outOfServiceBed)
   }
 

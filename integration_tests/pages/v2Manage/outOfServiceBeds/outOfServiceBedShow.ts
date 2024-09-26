@@ -13,7 +13,7 @@ export class OutOfServiceBedShowPage extends Page {
 
   static visit(premisesId: Premises['id'], outOfServiceBed: OutOfServiceBed): OutOfServiceBedShowPage {
     cy.visit(
-      paths.v2Manage.outOfServiceBeds.show({
+      paths.outOfServiceBeds.show({
         premisesId,
         id: outOfServiceBed.id,
         bedId: outOfServiceBed.bed.id,
@@ -89,14 +89,14 @@ export class OutOfServiceBedShowPage extends Page {
   shouldLinkToPremisesAndBed(outOfServiceBed: OutOfServiceBed) {
     cy.get('a')
       .contains(outOfServiceBed.premises.name)
-      .should('have.attr', 'href', paths.v2Manage.premises.show({ premisesId: outOfServiceBed.premises.id }))
+      .should('have.attr', 'href', paths.premises.show({ premisesId: outOfServiceBed.premises.id }))
 
     cy.get('a')
       .contains(outOfServiceBed.bed.name)
       .should(
         'have.attr',
         'href',
-        paths.v2Manage.premises.beds.show({ premisesId: outOfServiceBed.premises.id, bedId: outOfServiceBed.bed.id }),
+        paths.premises.beds.show({ premisesId: outOfServiceBed.premises.id, bedId: outOfServiceBed.bed.id }),
       )
   }
 }

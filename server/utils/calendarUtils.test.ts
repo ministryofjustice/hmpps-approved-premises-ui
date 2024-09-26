@@ -136,7 +136,7 @@ describe('calendarUtils', () => {
 
       expect(bedRow(bedOccupancyRange, startDate, premisesId)).toMatchStringIgnoringWhitespace(
         `<tr class="${rowClass}" data-cy-bedId="${bedOccupancyRange.bedId}">
-        <th scope="row" class="${headerClass}"><a href="${paths.v2Manage.premises.beds.show({
+        <th scope="row" class="${headerClass}"><a href="${paths.premises.beds.show({
           premisesId,
           bedId: bedOccupancyRange.bedId,
         })}" class="govuk-link">${bedOccupancyRange.bedName}</a></th>

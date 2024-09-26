@@ -63,9 +63,9 @@ export default class OutOfServiceBedsController {
         await this.outOfServiceBedService.updateOutOfServiceBed(req.user.token, id, premisesId, outOfServiceBed)
 
         req.flash('success', 'The out of service bed record has been updated')
-        return res.redirect(paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'timeline' }))
+        return res.redirect(paths.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'timeline' }))
       } catch (error) {
-        const redirectPath = paths.v2Manage.outOfServiceBeds.update({ premisesId, bedId, id })
+        const redirectPath = paths.outOfServiceBeds.update({ premisesId, bedId, id })
 
         const knownError = error as SanitisedError
 

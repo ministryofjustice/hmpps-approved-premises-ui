@@ -10,7 +10,7 @@ export class OutOfServiceBedIndexPage extends Page {
   }
 
   static visit(temporality: Temporality): OutOfServiceBedIndexPage {
-    cy.visit(paths.v2Manage.outOfServiceBeds.index({ temporality }))
+    cy.visit(paths.outOfServiceBeds.index({ temporality }))
     return new OutOfServiceBedIndexPage()
   }
 
@@ -44,7 +44,7 @@ export class OutOfServiceBedIndexPage extends Page {
               cy.get('a').should(
                 'have.attr',
                 'href',
-                paths.v2Manage.outOfServiceBeds.show({
+                paths.outOfServiceBeds.show({
                   id: item.id,
                   premisesId: item.premises.id,
                   bedId: item.bed.id,

@@ -17,152 +17,149 @@
 {% set areaAndPremisesParam = '?apAreaId=' + apAreaId + '&premisesId=' + premisesId %}
 
 {% if disablePremisesSelect === true %}
-  {% set premisesItems = [
-    {
-    value: "selectApArea",
-    text: "Select an AP area"
-    }
-  ] %}
+    {% set premisesItems = [
+        {
+            value: "selectApArea",
+            text: "Select an AP area"
+        }
+    ] %}
 {% endif %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-		text: "Back",
-		href: '/'
-	}) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: '/'
+    }) }}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full-width">
-      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-      <div class="search-and-filter__wrapper">
-        <form action="{{ paths.v2Manage.outOfServiceBeds.index({temporality: temporality}) }}" method="get" id="osbFilters">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full-width">
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <div class="search-and-filter__wrapper">
+                <form action="{{ paths.outOfServiceBeds.index({temporality: temporality}) }}" method="get"
+                      id="osbFilters">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-              <h2 class="govuk-heading-m">Filters</h2>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <h2 class="govuk-heading-m">Filters</h2>
+                        </div>
+                    </div>
+
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-third">
+                            {{ govukSelect({
+                                label: {
+                                    text: "AP Area",
+                                    classes: "govuk-label--s"
+                                },
+                                classes: "govuk-input--width-20",
+                                id: "apAreaId",
+                                name: "apAreaId",
+                                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apAreaId', 'all', context)
+                            }) }}
+                        </div>
+                        <div class="govuk-grid-column-one-third">
+                            {{ govukSelect({
+                                label: {
+                                    text: "Premises Name",
+                                    classes: "govuk-label--s"
+                                },
+                                id: "premisesId",
+                                name: "premisesId",
+                                disabled: disablePremisesSelect,
+                                items: premisesItems
+                            }) }}
+                        </div>
+                        <div class="govuk-grid-column-one-third" id="submitbutton">
+                            {{ govukButton({
+                                "name": "submit",
+                                "text": "Apply filters",
+                                "classes": "search-and-filter__submit",
+                                "preventDoubleClick": true
+                            }) }}
+                        </div>
+                    </div>
+                </form>
             </div>
-          </div>
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
-              {{ govukSelect({
-                label: {
-                  text: "AP Area",
-                  classes: "govuk-label--s"
-                },
-                classes: "govuk-input--width-20",
-                id: "apAreaId",
-                name: "apAreaId",
-                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apAreaId', 'all', context)
-              }) }}
-            </div>
-            <div class="govuk-grid-column-one-third">
-              {{ govukSelect({
-                label: {
-                  text: "Premises Name",
-                  classes: "govuk-label--s"
-                },
-                id: "premisesId",
-                name: "premisesId",
-                disabled: disablePremisesSelect,
-                items: premisesItems
-              }) }}
-            </div>
-            <div class="govuk-grid-column-one-third" id="submitbutton">
-              {{ govukButton({
-                "name": "submit",
-                "text": "Apply filters",
-                "classes": "search-and-filter__submit",
-                "preventDoubleClick": true
-              }) }}
-            </div>
-          </div>
-        </form>
-      </div>
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: [{
+                    text: 'Current',
+                    href: paths.outOfServiceBeds.index({temporality: 'current'}) + areaAndPremisesParam,
+                    active: temporality === 'current'
+                }, {
+                    text: 'Future',
+                    href: paths.outOfServiceBeds.index({temporality: 'future'}) + areaAndPremisesParam,
+                    active: temporality === 'future'
+                }, {
+                    text: 'Historic',
+                    href: paths.outOfServiceBeds.index({temporality: 'past'}) + areaAndPremisesParam,
+                    active: temporality === 'past'
+                }]
+            }) }}
 
-      {{
-        mojSubNavigation({
-          label: 'Sub navigation',
-          items: [{
-              text: 'Current',
-              href: paths.v2Manage.outOfServiceBeds.index({temporality: 'current'}) + areaAndPremisesParam,
-              active: temporality === 'current'
-            }, {
-              text: 'Future',
-              href: paths.v2Manage.outOfServiceBeds.index({temporality: 'future'}) + areaAndPremisesParam,
-              active: temporality === 'future'
-            }, {
-              text: 'Historic',
-              href: paths.v2Manage.outOfServiceBeds.index({temporality: 'past'}) + areaAndPremisesParam,
-              active: temporality === 'past'
-          }]
-        })
-      }}
+            {% if outOfServiceBeds %}
 
-      {% if outOfServiceBeds %}
+                {{ govukTable({
+                    caption: "Out of service beds",
+                    captionClasses: "govuk-table__caption--m",
+                    head: OutOfServiceBedUtils.allOutOfServiceBedsTableHeaders(sortBy, sortDirection, hrefPrefix),
+                    rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds)
+                }) }}
 
-        {{
-          govukTable({
-            caption: "Out of service beds",
-            captionClasses: "govuk-table__caption--m",
-            head: OutOfServiceBedUtils.allOutOfServiceBedsTableHeaders(sortBy, sortDirection, hrefPrefix),
-            rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds)
-          })
-        }}
+                {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
 
-        {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
-
-      {% endif %}
+            {% endif %}
+        </div>
     </div>
-  </div>
 {% endblock %}
 
 {% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-      document.addEventListener('DOMContentLoaded', function () {
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+      document.addEventListener('DOMContentLoaded', function() {
         const allPremises = {{ allPremises | dump | safe }};
-        const apAreaSelect = document.getElementById('apAreaId');
-        const premisesSelect = document.getElementById('premisesId');
+        const apAreaSelect = document.getElementById('apAreaId')
+        const premisesSelect = document.getElementById('premisesId')
 
-        apAreaSelect.addEventListener('change', function () {
-          const selectedArea = apAreaSelect.options[apAreaSelect.selectedIndex].text;
-          premisesSelect.innerHTML = '';
+        apAreaSelect.addEventListener('change', function() {
+          const selectedArea = apAreaSelect.options[apAreaSelect.selectedIndex].text
+          premisesSelect.innerHTML = ''
 
           if (selectedArea === 'All areas') {
-            const disabledOption = document.createElement('option');
-            disabledOption.value = 'selectApArea';
-            disabledOption.text = 'Select an AP area';
-            premisesSelect.appendChild(disabledOption);
-            premisesSelect.disabled = true;
+            const disabledOption = document.createElement('option')
+            disabledOption.value = 'selectApArea'
+            disabledOption.text = 'Select an AP area'
+            premisesSelect.appendChild(disabledOption)
+            premisesSelect.disabled = true
           } else {
-            const filteredData = allPremises.filter(item => item.apArea === selectedArea);
+            const filteredData = allPremises.filter(item => item.apArea === selectedArea)
             if (filteredData.length > 0) {
 
-              premisesSelect.disabled = false;
+              premisesSelect.disabled = false
 
-              const defaultOption = document.createElement('option');
-              defaultOption.value = 'all';
-              defaultOption.text = 'All premises';
-              premisesSelect.appendChild(defaultOption);
+              const defaultOption = document.createElement('option')
+              defaultOption.value = 'all'
+              defaultOption.text = 'All premises'
+              premisesSelect.appendChild(defaultOption)
 
               filteredData.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.id;
-                option.text = item.name;
-                premisesSelect.appendChild(option);
-              });
+                const option = document.createElement('option')
+                option.value = item.id
+                option.text = item.name
+                premisesSelect.appendChild(option)
+              })
             } else {
-              premisesSelect.disabled = true;
-              const defaultOption = document.createElement('option');
-              defaultOption.value = '';
-              defaultOption.text = 'No premises available';
-              premisesSelect.appendChild(defaultOption);
+              premisesSelect.disabled = true
+              const defaultOption = document.createElement('option')
+              defaultOption.value = ''
+              defaultOption.text = 'No premises available'
+              premisesSelect.appendChild(defaultOption)
             }
           }
-        });
-      });
-  </script>
+        })
+      })
+    </script>
 {% endblock %}

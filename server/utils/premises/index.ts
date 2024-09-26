@@ -142,9 +142,7 @@ export const v2PremisesTableRows = (premisesSummaries: Array<PremisesSummary>) =
         textValue(p.name),
         textValue(p.apCode),
         textValue(p.bedCount.toString()),
-        htmlValue(
-          linkTo(paths.v2Manage.premises.show, { premisesId: p.id }, { text: 'View', hiddenText: `about ${p.name}` }),
-        ),
+        htmlValue(linkTo(paths.premises.show, { premisesId: p.id }, { text: 'View', hiddenText: `about ${p.name}` })),
       ]
     })
 }

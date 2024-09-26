@@ -10,7 +10,7 @@ export default class BookingShowPage extends Page {
   }
 
   static visit(premisesId: string, booking: Booking): BookingShowPage {
-    cy.visit(paths.v2Manage.bookings.show({ premisesId, bookingId: booking.id }))
+    cy.visit(paths.bookings.show({ premisesId, bookingId: booking.id }))
     return new BookingShowPage()
   }
 

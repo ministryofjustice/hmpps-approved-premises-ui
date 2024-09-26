@@ -44,7 +44,7 @@ export default class NonArrivalsController {
         await this.nonArrivalService.createNonArrival(req.user.token, premisesId, bookingId, nonArrival)
 
         req.flash('success', 'Non-arrival logged')
-        res.redirect(paths.v2Manage.premises.show({ premisesId }))
+        res.redirect(paths.premises.show({ premisesId }))
       } catch (error) {
         catchValidationErrorOrPropogate(
           req,

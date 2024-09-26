@@ -11,7 +11,7 @@ export default class V2BedsListPage extends Page {
   }
 
   static visit(premisesId: Premises['id']): V2BedsListPage {
-    cy.visit(paths.v2Manage.premises.beds.index({ premisesId }))
+    cy.visit(paths.premises.beds.index({ premisesId }))
     return new V2BedsListPage()
   }
 
@@ -31,8 +31,8 @@ export default class V2BedsListPage extends Page {
 
   shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId: Premises['id']): void {
     cy.get('.moj-button-menu__toggle-button').click()
-    cy.get(
-      `a[href="${paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' })}"]`,
-    ).contains('Manage out of service beds')
+    cy.get(`a[href="${paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' })}"]`).contains(
+      'Manage out of service beds',
+    )
   }
 }

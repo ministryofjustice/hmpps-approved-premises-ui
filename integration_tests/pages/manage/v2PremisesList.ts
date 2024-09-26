@@ -10,7 +10,7 @@ export default class V2PremisesListPage extends Page {
   }
 
   static visit(): V2PremisesListPage {
-    cy.visit(paths.v2Manage.premises.index({}))
+    cy.visit(paths.premises.index({}))
     return new V2PremisesListPage()
   }
 
@@ -24,7 +24,7 @@ export default class V2PremisesListPage extends Page {
           cy.get('td')
             .eq(2)
             .contains('View')
-            .should('have.attr', 'href', paths.v2Manage.premises.show({ premisesId: item.id }))
+            .should('have.attr', 'href', paths.premises.show({ premisesId: item.id }))
         })
     })
   }

@@ -77,7 +77,7 @@ export const bookingSummaryList = (booking: BookingSummary): SummaryListWithCard
 
 export const manageBookingLink = (premisesId: string, booking: Booking | PremisesBooking): string => {
   return booking.id && booking.person
-    ? `<a href="${paths.v2Manage.bookings.show({
+    ? `<a href="${paths.bookings.show({
         premisesId,
         bookingId: booking.id,
       })}" data-cy-booking-id="${booking.id}">
@@ -193,13 +193,13 @@ export const generateConflictBespokeError = (
 
   const link =
     conflictingEntityType === 'lost-bed' && bedId
-      ? `<a href="${paths.v2Manage.outOfServiceBeds.show({
+      ? `<a href="${paths.outOfServiceBeds.show({
           premisesId,
           bedId,
           id: conflictingEntityId,
           tab: 'details',
         })}">existing out of service beds record</a>`
-      : `<a href="${paths.v2Manage.bookings.show({
+      : `<a href="${paths.bookings.show({
           premisesId,
           bookingId: conflictingEntityId,
         })}">existing booking</a>`

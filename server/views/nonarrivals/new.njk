@@ -14,7 +14,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: paths.v2Manage.bookings.show({ premisesId: premisesId, bookingId: bookingId })
+        href: paths.bookings.show({ premisesId: premisesId, bookingId: bookingId })
     }) }}
 {% endblock %}
 

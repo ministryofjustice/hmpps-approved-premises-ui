@@ -31,7 +31,7 @@
                             {% if placementRequest.booking %}
                                 <p class="govuk-body">
                                     If needed, you can <a
-                                            href="{{ paths.v2Manage.bookings.dateChanges.new({ premisesId: placementRequest.booking.premisesId, bookingId: placementRequest.booking.id }) }}">change
+                                            href="{{ paths.bookings.dateChanges.new({ premisesId: placementRequest.booking.premisesId, bookingId: placementRequest.booking.id }) }}">change
                                         the arrival date</a> in the Approved Premises service.
                                 </p>
                             {% endif %}

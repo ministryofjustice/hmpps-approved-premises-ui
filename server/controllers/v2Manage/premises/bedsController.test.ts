@@ -39,7 +39,7 @@ describe('V2BedsController', () => {
         bed,
         premises,
         pageHeading: `Bed ${bed.name}`,
-        backLink: paths.v2Manage.premises.beds.index({ premisesId: premises.id }),
+        backLink: paths.premises.beds.index({ premisesId: premises.id }),
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)

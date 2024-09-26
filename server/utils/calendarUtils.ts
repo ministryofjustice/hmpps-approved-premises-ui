@@ -80,7 +80,7 @@ export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, start
 
 export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
   return `<tr class="${rowClass}" data-cy-bedId="${bedOccupancyRange.bedId}">
-    <th scope="row" class="${headerClass}"><a href="${paths.v2Manage.premises.beds.show({
+    <th scope="row" class="${headerClass}"><a href="${paths.premises.beds.show({
       premisesId,
       bedId: bedOccupancyRange.bedId,
     })}" class="govuk-link">${bedOccupancyRange.bedName}</a></th>
@@ -102,11 +102,11 @@ export const labelForScheduleItem = (
   switch (bedOccupancyEntry.type) {
     case 'booking':
       label = bedOccupancyEntry.personName
-      link = paths.v2Manage.bookings.show({ premisesId, bookingId: bedOccupancyEntry.bookingId })
+      link = paths.bookings.show({ premisesId, bookingId: bedOccupancyEntry.bookingId })
       break
     case 'lost_bed':
       label = 'Out of Service'
-      link = paths.v2Manage.outOfServiceBeds.show({
+      link = paths.outOfServiceBeds.show({
         bedId,
         premisesId,
         id: bedOccupancyEntry.lostBedId,

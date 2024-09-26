@@ -29,7 +29,7 @@ export const sections = {
     description:
       'Manage arrivals, departures and out of service beds. View current and upcoming occupancy at an Approved Premises.',
     shortTitle: 'Manage',
-    href: managePaths.v2Manage.premises.index({}),
+    href: managePaths.premises.index({}),
   },
   workflow: {
     id: 'workflow',
@@ -72,7 +72,7 @@ export const sections = {
     title: 'View out of service beds',
     description: 'View all currently out of service beds, across all Approved Premises.',
     shortTitle: 'Out of service beds',
-    href: managePaths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }),
+    href: managePaths.outOfServiceBeds.index({ temporality: 'current' }),
   },
 }
 

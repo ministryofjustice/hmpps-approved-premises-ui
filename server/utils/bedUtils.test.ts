@@ -156,7 +156,7 @@ describe('bedUtils', () => {
           {
             text: 'Create out of service bed record',
             classes: 'govuk-button--secondary',
-            href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
+            href: paths.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
           },
         ],
       })
@@ -170,7 +170,7 @@ describe('bedUtils', () => {
           {
             text: 'Create out of service bed record',
             classes: 'govuk-button--secondary',
-            href: paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
+            href: paths.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
           },
         ],
       })
@@ -256,7 +256,7 @@ describe('bedUtils', () => {
           actions: {
             items: [
               {
-                href: paths.v2Manage.outOfServiceBeds.show({
+                href: paths.outOfServiceBeds.show({
                   premisesId,
                   bedId,
                   id: lostBed.lostBedId,

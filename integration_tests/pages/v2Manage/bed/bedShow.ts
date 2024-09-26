@@ -11,7 +11,7 @@ export default class V2BedShowPage extends Page {
   }
 
   static visit(premisesId: Premises['id'], bed: BedDetail): V2BedShowPage {
-    cy.visit(paths.v2Manage.premises.beds.show({ premisesId, bedId: bed.id }))
+    cy.visit(paths.premises.beds.show({ premisesId, bedId: bed.id }))
     return new V2BedShowPage(bed.name)
   }
 
@@ -25,6 +25,6 @@ export default class V2BedShowPage extends Page {
   shouldLinkToPremises(premises: ExtendedPremisesSummary): void {
     cy.get('a')
       .contains(premises.name)
-      .should('have.attr', 'href', paths.v2Manage.premises.show({ premisesId: premises.id }))
+      .should('have.attr', 'href', paths.premises.show({ premisesId: premises.id }))
   }
 }

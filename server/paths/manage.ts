@@ -27,32 +27,75 @@ const bedsPath = singlePremisesPath.path('beds')
 
 const dateChangesPath = bookingPath.path('date-changes')
 
+const deprecated = {
+  premises: {
+    index: premisesPath,
+    show: singlePremisesPath,
+    beds: {
+      index: bedsPath,
+      show: bedsPath.path(':bedId'),
+    },
+  },
+  bookings: {
+    show: bookingPath,
+    dateChanges: {
+      new: dateChangesPath.path('new'),
+      create: dateChangesPath,
+    },
+    extensions: {
+      new: extensionsPath.path('new'),
+      create: extensionsPath,
+      confirm: extensionsPath.path('confirmation'),
+    },
+  },
+  lostBeds: {
+    new: lostBedsPath.path('new'),
+    create: lostBedsPath,
+    index: singlePremisesPath.path('lost-beds'),
+    show: lostBedsPath.path(':id'),
+    update: singlePremisesPath.path('lost-beds').path(':id'),
+  },
+}
+
+// Manage V2 paths
+const v2ManagePath = path('/manage')
+const v2PremisesPath = v2ManagePath.path('premises')
+const v2SinglePremisesPath = v2PremisesPath.path(':premisesId')
+const v2BookingsPath = v2SinglePremisesPath.path('bookings')
+const v2BookingPath = v2BookingsPath.path(':bookingId')
+const v2BedsPath = v2SinglePremisesPath.path('beds')
+const v2DateChangesPath = v2BookingPath.path('date-changes')
+const v2ExtensionsPath = v2BookingPath.path('extensions')
+const outOfServiceBedsPath = v2SinglePremisesPath.path('beds/:bedId/out-of-service-beds')
+const outOfServiceBedPath = outOfServiceBedsPath.path(':id')
+const outOfServiceBedsIndexPath = v2ManagePath.path('out-of-service-beds')
+
 const paths = {
   premises: {
-    index: premisesPath, // redirected
-    show: singlePremisesPath, // redirected
+    index: v2PremisesPath,
+    show: v2SinglePremisesPath,
     calendar: singlePremisesPath.path('calendar'), // not implemented, used in Calendar utils
     beds: {
-      index: bedsPath, // redirected
-      show: bedsPath.path(':bedId'), // redirected
+      index: v2BedsPath,
+      show: v2BedsPath.path(':bedId'),
       overbookings: {
         show: bedsPath.path(':bedId').path('overbookings'), // not implemented, used in Calendar utils
       },
     },
   },
   bookings: {
+    show: v2BookingsPath.path(':bookingId'),
     new: newBookingPath, // no v2 equivalent
-    show: bookingPath, // redirected to v2
     create: newBookingPath, // no v2 equivalent
     confirm: bookingPath.path('confirmation'), // no v2 equivalent
     dateChanges: {
-      new: dateChangesPath.path('new'), // redirected to v2
-      create: dateChangesPath, // redirected to v2
+      new: v2DateChangesPath.path('new'),
+      create: v2DateChangesPath,
     },
     extensions: {
-      new: extensionsPath.path('new'), // redirected to v2
-      create: extensionsPath, // redirected to v2
-      confirm: extensionsPath.path('confirmation'), // redirected to v2
+      new: v2ExtensionsPath.path('new'),
+      create: v2ExtensionsPath,
+      confirm: v2ExtensionsPath.path('confirmation'),
     },
     arrivals: {
       new: arrivalsPath.path('new'), // no v2 equivalent
@@ -78,49 +121,6 @@ const paths = {
   people: {
     find: peoplePath, // no v2 equivalent
   },
-  lostBeds: {
-    new: lostBedsPath.path('new'), // redirected to v2
-    create: lostBedsPath, // redirected to v2
-    index: singlePremisesPath.path('lost-beds'), // redirected to v2
-    show: lostBedsPath.path(':id'), // redirected to v2
-    update: singlePremisesPath.path('lost-beds').path(':id'), // redirected to v2
-  },
-}
-
-// Manage V2 paths
-const v2ManagePath = path('/manage')
-const v2PremisesPath = v2ManagePath.path('premises')
-const v2SinglePremisesPath = v2PremisesPath.path(':premisesId')
-const v2BookingsPath = v2SinglePremisesPath.path('bookings')
-const v2BookingPath = v2BookingsPath.path(':bookingId')
-const v2BedsPath = v2SinglePremisesPath.path('beds')
-const v2DateChangesPath = v2BookingPath.path('date-changes')
-const v2ExtensionsPath = v2BookingPath.path('extensions')
-const outOfServiceBedsPath = v2SinglePremisesPath.path('beds/:bedId/out-of-service-beds')
-const outOfServiceBedPath = outOfServiceBedsPath.path(':id')
-const outOfServiceBedsIndexPath = v2ManagePath.path('out-of-service-beds')
-
-const v2Manage = {
-  premises: {
-    index: v2PremisesPath,
-    show: v2SinglePremisesPath,
-    beds: {
-      index: v2BedsPath,
-      show: v2BedsPath.path(':bedId'),
-    },
-  },
-  bookings: {
-    show: v2BookingsPath.path(':bookingId'),
-    dateChanges: {
-      new: v2DateChangesPath.path('new'),
-      create: v2DateChangesPath,
-    },
-    extensions: {
-      new: v2ExtensionsPath.path('new'),
-      create: v2ExtensionsPath,
-      confirm: v2ExtensionsPath.path('confirmation'),
-    },
-  },
   outOfServiceBeds: {
     new: outOfServiceBedsPath.path('new'),
     create: outOfServiceBedsPath,
@@ -131,4 +131,4 @@ const v2Manage = {
   },
 }
 
-export default { ...paths, v2Manage }
+export default { deprecated, ...paths }

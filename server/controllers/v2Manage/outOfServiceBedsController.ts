@@ -57,9 +57,9 @@ export default class OutOfServiceBedsController {
         await this.outOfServiceBedService.createOutOfServiceBed(req.user.token, premisesId, outOfServiceBed)
 
         req.flash('success', 'The out of service bed has been recorded')
-        return res.redirect(paths.v2Manage.premises.beds.show({ premisesId, bedId }))
+        return res.redirect(paths.premises.beds.show({ premisesId, bedId }))
       } catch (error) {
-        const redirectPath = paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId })
+        const redirectPath = paths.outOfServiceBeds.new({ premisesId, bedId })
 
         const knownError = error as SanitisedError
 
@@ -85,12 +85,12 @@ export default class OutOfServiceBedsController {
       const { temporality, premisesId } = req.params as { temporality: Temporality; premisesId: string }
 
       if (!['current', 'future', 'past'].includes(temporality)) {
-        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
+        return res.redirect(paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       }
 
       const { pageNumber, hrefPrefix } = getPaginationDetails<OutOfServiceBedSortField>(
         req,
-        paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality }),
+        paths.outOfServiceBeds.premisesIndex({ premisesId, temporality }),
         {
           temporality,
           premisesId,
@@ -134,7 +134,7 @@ export default class OutOfServiceBedsController {
 
       const allPremises = premises
       if (!['current', 'future', 'past'].includes(temporality)) {
-        return res.redirect(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
+        return res.redirect(paths.outOfServiceBeds.index({ temporality: 'current' }))
       }
 
       if (apAreaId) {
@@ -155,7 +155,7 @@ export default class OutOfServiceBedsController {
 
       const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<OutOfServiceBedSortField>(
         req,
-        paths.v2Manage.outOfServiceBeds.index({ temporality }),
+        paths.outOfServiceBeds.index({ temporality }),
         {
           premisesId,
           apAreaId,
@@ -226,13 +226,13 @@ export default class OutOfServiceBedsController {
 
         req.flash('success', 'Out of service bed removed')
 
-        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
+        return res.redirect(paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'details' }),
+          paths.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'details' }),
         )
       }
     }
