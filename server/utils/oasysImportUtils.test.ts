@@ -329,13 +329,13 @@ describe('OASysImportUtils', () => {
   })
 
   describe('sectionCheckBoxes', () => {
-    it('it returns needs as checkbox items', () => {
-      const needLinkedToReoffendingA = oasysSelectionFactory
-        .needsLinkedToReoffending()
-        .build({ section: 1, name: 'emotional' })
-      const needLinkedToReoffendingB = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 2 })
-      const needLinkedToReoffendingC = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 3 })
+    const needLinkedToReoffendingA = oasysSelectionFactory
+      .needsLinkedToReoffending()
+      .build({ section: 1, name: 'emotional' })
+    const needLinkedToReoffendingB = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 2 })
+    const needLinkedToReoffendingC = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 3 })
 
+    it('it returns needs as checkbox items', () => {
       const items = sectionCheckBoxes(
         [needLinkedToReoffendingA, needLinkedToReoffendingB, needLinkedToReoffendingC],
         [needLinkedToReoffendingA],
@@ -356,6 +356,18 @@ describe('OASysImportUtils', () => {
           checked: false,
           text: `3. ${sentenceCase(needLinkedToReoffendingC.name)}`,
           value: '3',
+        },
+      ])
+    })
+
+    it('does not throw if some selected sections are null', () => {
+      const items = sectionCheckBoxes([needLinkedToReoffendingA], [null])
+
+      expect(items).toEqual([
+        {
+          checked: false,
+          text: `1. ${sentenceCase(needLinkedToReoffendingA.name)}`,
+          value: '1',
         },
       ])
     })

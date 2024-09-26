@@ -160,7 +160,10 @@ export const sectionCheckBoxes = (fullList: Array<OASysSection>, selectedList: A
     return {
       value: need.section.toString(),
       text: sectionAndName,
-      checked: selectedList.map(n => n.section).includes(need.section),
+      checked: selectedList
+        .filter(Boolean)
+        .map(n => n.section)
+        .includes(need.section),
     }
   })
 }
