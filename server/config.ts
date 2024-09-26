@@ -46,6 +46,7 @@ export default {
   flags: {
     oasysDisabled: process.env.OASYS_DISABLED || false,
     v2MatchEnabled: process.env.ENABLE_V2_MATCH || false,
+    weEnabled: process.env.ENABLE_WE === 'true' || false,
   },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {
