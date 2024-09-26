@@ -1,10 +1,17 @@
-import { UserDetails } from '../../@types/ui'
-import { hasRole, managerRoles } from './homePageDashboard'
-
-export * from './homePageDashboard'
-export * as tableUtils from './tableUtils'
-export * from './userManagement'
-export * from './roleCheckboxes'
-export * from './roleCheckboxes/rolesToCheckboxItems'
-
-export const hasManagerRole = (user: UserDetails) => managerRoles.some(role => hasRole(user, role))
+export {
+  hasRole,
+  hasManagerRole,
+  hasPermission,
+  qualificationDictionary,
+  roles,
+  qualifications,
+  AllocationRole,
+} from './roles'
+export { sectionsForUser } from './homePageDashboard'
+export { userSummaryListItems, userRolesSelectOptions, userQualificationsSelectOptions } from './userManagement'
+export {
+  rolesToCheckboxItems,
+  allocationRolesToCheckboxItems,
+  userQualificationsToCheckboxItems,
+} from './roleCheckboxes'
+export { managementDashboardTableHeader, managementDashboardTableRows } from './tableUtils'

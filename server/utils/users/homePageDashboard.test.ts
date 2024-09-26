@@ -1,35 +1,7 @@
 import { userDetailsFactory } from '../../testutils/factories'
-import { hasPermission, hasRole, sections, sectionsForUser } from './homePageDashboard'
+import { sections, sectionsForUser } from './homePageDashboard'
 
 describe('homePageDashboard', () => {
-  describe('hasRole', () => {
-    it('returns true when the user has the role', () => {
-      const user = userDetailsFactory.build({ roles: ['applicant'] })
-
-      expect(hasRole(user, 'applicant')).toEqual(true)
-    })
-
-    it('returns false when the user does not have the role', () => {
-      const user = userDetailsFactory.build({ roles: ['assessor'] })
-
-      expect(hasRole(user, 'applicant')).toEqual(false)
-    })
-  })
-
-  describe('hasPermission', () => {
-    it('returns true when the user has the permission', () => {
-      const user = userDetailsFactory.build({ permissions: ['cas1_view_assigned_assessments'] })
-
-      expect(hasPermission(user, ['cas1_view_assigned_assessments'])).toEqual(true)
-    })
-
-    it('returns false when the user does not have the permission', () => {
-      const user = userDetailsFactory.build({ permissions: ['cas1_view_assigned_assessments'] })
-
-      expect(hasPermission(user, ['cas1_process_an_appeal'])).toEqual(false)
-    })
-  })
-
   describe('sectionsForUser', () => {
     const defaultSections = [sections.apply, sections.personalTimeline]
     it('should return Apply and the timeline for a user with no roles', () => {

@@ -1,4 +1,3 @@
-import { ApprovedPremisesUserPermission, ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
 import { ServiceSection, UserDetails } from '@approved-premises/ui'
 
 import assessPaths from '../../paths/assess'
@@ -7,6 +6,7 @@ import managePaths from '../../paths/manage'
 import taskPaths from '../../paths/tasks'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
+import { hasPermission, hasRole } from './roles'
 
 export const sections = {
   apply: {
@@ -74,19 +74,6 @@ export const sections = {
     shortTitle: 'Out of service beds',
     href: managePaths.outOfServiceBeds.index({ temporality: 'current' }),
   },
-}
-
-export const managerRoles: ReadonlyArray<UserRole> = ['workflow_manager', 'future_manager'] as const
-
-export const hasRole = (user: UserDetails, role: UserRole): boolean => {
-  return (user.roles || []).includes(role)
-}
-
-export const hasPermission = (
-  user: UserDetails,
-  requiredPermissions: Array<ApprovedPremisesUserPermission>,
-): boolean => {
-  return (user.permissions || []).filter(userPermission => requiredPermissions.includes(userPermission)).length >= 1
 }
 
 export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
