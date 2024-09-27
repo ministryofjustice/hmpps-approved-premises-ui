@@ -72,7 +72,7 @@ export default class ApplicationsController {
 
   start(): RequestHandler {
     return (_req: Request, res: Response) => {
-      res.render(config.flags.weEnabled ? 'applications/start' : 'applications/start - pre - we', {
+      res.render(config.flags.weEnabled ? 'applications/start' : 'applications/start-pre-we', {
         pageHeading: tasklistPageHeading,
       })
     }
