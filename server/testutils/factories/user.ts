@@ -24,6 +24,8 @@ const userFactory = Factory.define<User>(() => ({
   isActive: true,
   apArea: apAreaFactory.build(),
   version: faker.number.int(),
+  cruManagementArea: { id: faker.string.uuid(), name: faker.location.state() },
+  cruManagementAreaDefault: { id: faker.string.uuid(), name: faker.location.state() },
 }))
 
 export const userSummaryFactory = Factory.define<UserSummary>(() => ({
