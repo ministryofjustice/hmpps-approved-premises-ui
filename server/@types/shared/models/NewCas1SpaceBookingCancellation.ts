@@ -2,4 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1SpaceBookingResidency = 'upcoming' | 'current' | 'historic';
+export type NewCas1SpaceBookingCancellation = {
+    occurredAt: string;
+    reasonId: string;
+    reasonNotes?: string;
+};
+

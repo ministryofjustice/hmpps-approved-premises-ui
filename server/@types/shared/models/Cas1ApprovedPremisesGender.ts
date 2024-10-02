@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1SpaceBookingResidency = 'upcoming' | 'current' | 'historic';
+export type Cas1ApprovedPremisesGender = 'man' | 'woman';

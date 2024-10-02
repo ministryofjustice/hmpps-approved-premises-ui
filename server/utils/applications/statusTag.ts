@@ -2,6 +2,7 @@ import { ApprovedPremisesApplicationStatus as ApplicationStatus } from '../../@t
 import { StatusTag, StatusTagOptions } from '../statusTag'
 
 export const APPLICATION_SUITABLE = 'Application suitable' as const
+
 export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
   static readonly statuses: Record<ApplicationStatus, string> = {
     started: 'Not submitted',
@@ -16,6 +17,7 @@ export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
     withdrawn: 'Application withdrawn',
     requestedFurtherInformation: 'Further information requested',
     pendingPlacementRequest: APPLICATION_SUITABLE,
+    expired: 'Application expired',
   }
 
   readonly applicationSuitableStatus: 'blue' = 'blue' as const
@@ -33,6 +35,7 @@ export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
     withdrawn: 'red',
     requestedFurtherInformation: 'yellow',
     pendingPlacementRequest: 'blue',
+    expired: 'red',
   }
 
   constructor(status: ApplicationStatus, options?: StatusTagOptions) {
