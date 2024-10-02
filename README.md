@@ -27,7 +27,7 @@ script/bootstrap
 
 ### Using AP Tools
 
-In order to spin up a full stack of a working API and other [dependent services](./docker-compose.yml) we recommend using [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
+In order to spin up a full stack of a working API and other dependent services use [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
 
 NB. The approach AP Tools takes solves a critical limitation for working in
 development. Due to how the frontend and API authenticate requests they both
