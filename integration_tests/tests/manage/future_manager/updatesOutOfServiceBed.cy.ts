@@ -1,4 +1,4 @@
-import { NamedId, UpdateCas1OutOfServiceBed } from '../../../../server/@types/shared'
+import { NamedId, UpdateCas1OutOfServiceBed } from '@approved-premises/api'
 import {
   bedDetailFactory,
   extendedPremisesSummaryFactory,
