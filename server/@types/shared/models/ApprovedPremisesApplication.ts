@@ -15,8 +15,16 @@ import type { PersonRisks } from './PersonRisks';
 import type { PersonStatus } from './PersonStatus';
 export type ApprovedPremisesApplication = (Application & {
     isWomensApplication?: boolean;
+    /**
+     * Use apType
+     * @deprecated
+     */
     isPipeApplication?: boolean;
     isEmergencyApplication?: boolean;
+    /**
+     * Use apType
+     * @deprecated
+     */
     isEsapApplication?: boolean;
     apType?: ApType;
     arrivalDate?: string;
