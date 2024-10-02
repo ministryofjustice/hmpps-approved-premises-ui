@@ -231,7 +231,7 @@ describe('bookingUtils', () => {
         errorTitle: 'Out of service bed record cannot be created for the dates entered',
         errorSummary: [
           {
-            html: `They conflict with an <a href="${paths.v2Manage.outOfServiceBeds.show({
+            html: `They conflict with an <a href="${paths.outOfServiceBeds.show({
               premisesId,
               bedId,
               id: lostBedId,

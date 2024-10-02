@@ -146,18 +146,3 @@ export const premisesTableRows = (premisesSummaries: Array<PremisesSummary>) => 
       ]
     })
 }
-
-export const v2PremisesTableRows = (premisesSummaries: Array<PremisesSummary>) => {
-  return premisesSummaries
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((p: ApprovedPremisesSummary) => {
-      return [
-        textValue(p.name),
-        textValue(p.apCode),
-        textValue(p.bedCount.toString()),
-        htmlValue(
-          linkTo(paths.v2Manage.premises.show, { premisesId: p.id }, { text: 'View', hiddenText: `about ${p.name}` }),
-        ),
-      ]
-    })
-}

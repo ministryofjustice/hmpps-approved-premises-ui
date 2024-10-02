@@ -1,4 +1,4 @@
-import { BedDetail, Premises } from '../../../../server/@types/shared'
+import { BedDetail, ExtendedPremisesSummary, Premises } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -6,31 +6,25 @@ import paths from '../../../../server/paths/manage'
 import { bedDetails } from '../../../../server/utils/bedUtils'
 
 export default class BedShowPage extends Page {
-  constructor() {
-    super('Manage beds')
+  constructor(private readonly bedName: string) {
+    super(`Bed ${bedName}`)
   }
 
-  static visit(premisesId: Premises['id'], bed: BedDetail, { v2 } = { v2: false }): BedShowPage {
-    cy.visit(
-      v2
-        ? paths.v2Manage.premises.beds.show({ premisesId, bedId: bed.id })
-        : paths.premises.beds.show({ premisesId, bedId: bed.id }),
-    )
-    return new BedShowPage()
+  static visit(premisesId: Premises['id'], bed: BedDetail): BedShowPage {
+    cy.visit(paths.premises.beds.show({ premisesId, bedId: bed.id }))
+    return new BedShowPage(bed.name)
   }
 
   shouldShowBedDetails(bed: BedDetail): void {
+    cy.get('h1').contains(bed.roomName)
+    cy.get('h1').contains(bed.name)
     const details = bedDetails(bed)
     this.shouldContainSummaryListItems(details)
   }
 
-  clickOutOfServiceBedOption() {
-    cy.get('.moj-button-menu__toggle-button').click()
-    cy.get('a').contains('Create out of service bed record').click()
-  }
-
-  clickCreateBookingOption() {
-    cy.get('.moj-button-menu__toggle-button').click()
-    cy.get('a').contains('Create a placement').click()
+  shouldLinkToPremises(premises: ExtendedPremisesSummary): void {
+    cy.get('a')
+      .contains(premises.name)
+      .should('have.attr', 'href', paths.premises.show({ premisesId: premises.id }))
   }
 }

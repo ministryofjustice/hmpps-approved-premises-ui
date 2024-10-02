@@ -1,17 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { encodeOverbooking } from '../../../utils/bedUtils'
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import {
-  bedDetailFactory,
-  bedOccupancyEntryOverbookingUiFactory,
-  bedSummaryFactory,
-} from '../../../testutils/factories'
+import { bedDetailFactory, bedSummaryFactory, cas1PremisesSummaryFactory } from '../../../testutils/factories'
 import paths from '../../../paths/manage'
 
-describe('BedsController', () => {
+describe('V2BedsController', () => {
   const token = 'SOME_TOKEN'
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
@@ -20,6 +15,37 @@ describe('BedsController', () => {
 
   const premisesService = createMock<PremisesService>({})
   const bedsController = new BedsController(premisesService)
+
+  describe('show', () => {
+    const bed = bedDetailFactory.build()
+    const premises = cas1PremisesSummaryFactory.build()
+    const bedId = 'bedId'
+
+    beforeEach(() => {
+      request.params.premisesId = premises.id
+      request.params.bedId = bedId
+      premisesService.getBed.mockResolvedValue(bed)
+      premisesService.find.mockResolvedValue(premises)
+    })
+
+    it('should return the bed to the template', async () => {
+      const requestHandler = bedsController.show()
+
+      request.headers.referer = 'http://localhost/'
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('manage/premises/beds/show', {
+        bed,
+        premises,
+        pageHeading: `Bed ${bed.name}`,
+        backLink: paths.premises.beds.index({ premisesId: premises.id }),
+      })
+
+      expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)
+      expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
+    })
+  })
 
   describe('index', () => {
     it('should return the beds to the template', async () => {
@@ -32,85 +58,13 @@ describe('BedsController', () => {
       const requestHandler = bedsController.index()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('premises/beds/index', {
+      expect(response.render).toHaveBeenCalledWith('manage/premises/beds/index', {
         beds,
         premisesId,
         pageHeading: 'Manage beds',
       })
 
       expect(premisesService.getBeds).toHaveBeenCalledWith(token, premisesId)
-    })
-  })
-
-  describe('show', () => {
-    const bed = bedDetailFactory.build()
-    const premisesId = 'premisesId'
-    const bedId = 'bedId'
-
-    beforeEach(() => {
-      request.params.premisesId = premisesId
-      request.params.bedId = bedId
-      premisesService.getBed.mockResolvedValue(bed)
-    })
-
-    it('should return the bed to the template', async () => {
-      const requestHandler = bedsController.show()
-
-      request.headers.referer = 'http://localhost/'
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('premises/beds/show', {
-        bed,
-        premisesId,
-        pageHeading: 'Manage beds',
-        backLink: paths.premises.beds.index({ premisesId }),
-      })
-
-      expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)
-    })
-
-    it('should return the bed to the template with a link back to the calendar', async () => {
-      const requestHandler = bedsController.show()
-
-      request.headers.referer = 'http://localhost/calendar'
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('premises/beds/show', {
-        bed,
-        premisesId,
-        pageHeading: 'Manage beds',
-        backLink: paths.premises.calendar({ premisesId }),
-      })
-
-      expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)
-    })
-  })
-
-  describe('overbookings', () => {
-    it('should return the bed and the overbookings to the template', async () => {
-      const bed = bedDetailFactory.build()
-      const overbooking = bedOccupancyEntryOverbookingUiFactory.build()
-      const premisesId = 'premisesId'
-      request.params.premisesId = premisesId
-      const bedId = 'bedId'
-      request.params.bedId = bedId
-      request.query.overbooking = encodeOverbooking(overbooking)
-
-      premisesService.getBed.mockResolvedValue(bed)
-
-      const requestHandler = bedsController.overbookings()
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('premises/beds/overbookings/show', {
-        bed,
-        premisesId,
-        overbooking,
-        pageHeading: 'Manage Overbookings',
-      })
-
-      expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)
     })
   })
 })

@@ -1,4 +1,4 @@
-import { ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
+import { ApprovedPremisesUserPermission, ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
 import { ServiceSection, UserDetails } from '@approved-premises/ui'
 
 import assessPaths from '../../paths/assess'
@@ -7,7 +7,6 @@ import managePaths from '../../paths/manage'
 import taskPaths from '../../paths/tasks'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
-import { ApprovedPremisesUserPermission } from '../../@types/shared/models/ApprovedPremisesUserPermission'
 
 export const sections = {
   apply: {
@@ -31,14 +30,6 @@ export const sections = {
       'Manage arrivals, departures and out of service beds. View current and upcoming occupancy at an Approved Premises.',
     shortTitle: 'Manage',
     href: managePaths.premises.index({}),
-  },
-  v2Manage: {
-    id: 'v2Manage',
-    title: 'Manage an Approved Premises',
-    description:
-      'Manage arrivals, departures and out of service beds. View current and upcoming occupancy at an Approved Premises.',
-    shortTitle: 'Manage',
-    href: managePaths.v2Manage.premises.index({}),
   },
   workflow: {
     id: 'workflow',
@@ -81,7 +72,7 @@ export const sections = {
     title: 'View out of service beds',
     description: 'View all currently out of service beds, across all Approved Premises.',
     shortTitle: 'Out of service beds',
-    href: managePaths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }),
+    href: managePaths.outOfServiceBeds.index({ temporality: 'current' }),
   },
 }
 
@@ -110,12 +101,8 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.assess)
   }
 
-  if (hasRole(user, 'manager') && !hasRole(user, 'future_manager')) {
+  if (hasRole(user, 'manager') || hasRole(user, 'future_manager')) {
     items.push(sections.manage)
-  }
-
-  if (hasRole(user, 'future_manager')) {
-    items.push(sections.v2Manage)
   }
 
   if (hasPermission(user, ['cas1_view_manage_tasks'])) {

@@ -9,7 +9,6 @@ import arrival from './integration_tests/mockApis/arrival'
 import nonArrival from './integration_tests/mockApis/nonArrival'
 import departure from './integration_tests/mockApis/departure'
 import cancellation from './integration_tests/mockApis/cancellation'
-import lostBed from './integration_tests/mockApis/lostBed'
 import outOfServiceBed from './integration_tests/mockApis/outOfServiceBed'
 import person from './integration_tests/mockApis/person'
 import reports from './integration_tests/mockApis/reports'
@@ -50,7 +49,6 @@ export default defineConfig({
         ...bookingExtension,
         ...departure,
         ...cancellation,
-        ...lostBed,
         ...outOfServiceBed,
         ...person,
         ...applications,

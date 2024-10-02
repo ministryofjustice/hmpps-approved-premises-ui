@@ -9,8 +9,8 @@ export default class PremisesListPage extends Page {
     this.checkPhaseBanner('Give us your feedback')
   }
 
-  static visit({ v2 } = { v2: false }): PremisesListPage {
-    cy.visit(v2 ? paths.v2Manage.premises.index({}) : paths.premises.index({}))
+  static visit(): PremisesListPage {
+    cy.visit(paths.premises.index({}))
     return new PremisesListPage()
   }
 
@@ -38,5 +38,13 @@ export default class PremisesListPage extends Page {
   filterPremisesByRegion(region: ProbationRegion['name']): void {
     cy.get('#region').select(region)
     this.clickSubmit()
+  }
+
+  followLinkToPremisesNamed(premisesName: string): void {
+    cy.contains(premisesName)
+      .parent()
+      .within(() => {
+        cy.get('a').contains('View').click()
+      })
   }
 }

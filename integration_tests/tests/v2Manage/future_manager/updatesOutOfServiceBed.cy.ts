@@ -6,7 +6,7 @@ import {
 } from '../../../../server/testutils/factories'
 import Page from '../../../pages/page'
 
-import { OutOfServiceBedShowPage, OutOfServiceBedUpdatePage } from '../../../pages/v2Manage/outOfServiceBeds'
+import { OutOfServiceBedShowPage, OutOfServiceBedUpdatePage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
 
 describe('Updating an out of service bed', () => {

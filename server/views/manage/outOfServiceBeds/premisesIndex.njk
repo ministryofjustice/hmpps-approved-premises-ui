@@ -1,0 +1,75 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.beds.index({ premisesId: premises.id })
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full-width">
+            {% include "../../_messages.njk" %}
+
+            <span class="govuk-caption-l">
+        <a href="{{ paths.premises.show({premisesId: premises.id}) }}">{{ premises.name }}</a>
+      </span>
+
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+            {{ govukSummaryList({
+                classes: 'govuk-summary-list--no-border',
+                rows: [            {
+                    key: {
+                        text: "Total out of service beds matching filters"
+                    },
+                    value: {
+                        text: OutOfServiceBedUtils.outOfServiceBedCount(totalResults)
+                    }
+                }
+                ]
+            }) }}
+
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: [{
+                    text: 'Current',
+                    href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'current'}),
+                    active: temporality === 'current'
+                }, {
+                    text: 'Future',
+                    href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'future'}),
+                    active: temporality === 'future'
+                }, {
+                    text: 'Historic',
+                    href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'past'}),
+                    active: temporality === 'past'
+                }]
+            }) }}
+
+            {% if outOfServiceBeds %}
+
+                {{ govukTable({
+                    caption: "Out of service",
+                    captionClasses: "govuk-table__caption--m",
+                    head: OutOfServiceBedUtils.outOfServiceBedTableHeaders(user),
+                    rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premises.id, user)
+                }) }}
+
+                {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

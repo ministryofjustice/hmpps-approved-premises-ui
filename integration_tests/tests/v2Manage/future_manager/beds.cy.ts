@@ -1,7 +1,7 @@
 import Page from '../../../pages/page'
 import { signIn } from '../../signIn'
-import V2BedsListPage from '../../../pages/v2Manage/bed/bedList'
-import V2BedShowPage from '../../../pages/v2Manage/bed/bedShow'
+import BedsListPage from '../../../pages/manage/bed/bedList'
+import BedShowPage from '../../../pages/manage/bed/bedShow'
 import { bedDetailFactory, bedSummaryFactory, cas1PremisesSummaryFactory } from '../../../../server/testutils/factories'
 
 context('Beds', () => {
@@ -23,28 +23,28 @@ context('Beds', () => {
     // Given I am signed in as a workflow manager
     signIn(['future_manager'])
 
-    // When I visit the V2 beds page
-    const v2BedsPage = V2BedsListPage.visit(premisesId)
+    // When I visit the beds page
+    const bedsPage = BedsListPage.visit(premisesId)
 
     // Then I should see all of the beds listed
-    v2BedsPage.shouldShowBeds(bedSummaries, premisesId)
+    bedsPage.shouldShowBeds(bedSummaries, premisesId)
 
     // And I should have a link to view all of this premises' out-of-service beds
-    v2BedsPage.shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId)
+    bedsPage.shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId)
 
     // When I click on a bed
-    v2BedsPage.clickBed(bedDetail)
+    bedsPage.clickBed(bedDetail)
 
     // Then I should be taken to the bed page
-    Page.verifyOnPage(V2BedShowPage, bedDetail.name)
+    Page.verifyOnPage(BedShowPage, bedDetail.name)
 
-    // Given I'm on the V2 bed page
-    const v2BedPage = V2BedShowPage.visit(premisesId, bedDetail)
+    // Given I'm on the bed page
+    const bedPage = BedShowPage.visit(premisesId, bedDetail)
 
     // Then I should see the room details
-    v2BedPage.shouldShowBedDetails(bedDetail)
+    bedPage.shouldShowBedDetails(bedDetail)
 
     // And I should see a link to the premises
-    v2BedPage.shouldLinkToPremises(premises)
+    bedPage.shouldLinkToPremises(premises)
   })
 })

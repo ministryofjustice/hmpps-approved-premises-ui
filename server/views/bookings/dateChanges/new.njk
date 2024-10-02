@@ -11,145 +11,147 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-		text: "Back",
-		href: backLink
-	}) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
 {% endblock %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.bookings.dateChanges.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form action="{{ paths.bookings.dateChanges.create({ premisesId: premisesId, bookingId: booking.id }) }}"
+                  method="post">
 
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="backLink" value="{{ backLink }}"/>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="backLink" value="{{ backLink }}" />
 
-        <h1>{{ pageHeading }}</h1>
+                <h1>{{ pageHeading }}</h1>
 
-        <p class="govuk-body">
-          Update the dates for this Approved Premises (AP) placement. These dates must have been confirmed by the receiving AP.
-        </p>
+                <p class="govuk-body">
+                    Update the dates for this Approved Premises (AP) placement. These dates must have been confirmed by
+                    the receiving AP.
+                </p>
 
-        {{ govukSummaryList({
-                rows: [
-                   {
-                    key: {
-                        text: "Name"
-                    },
-                    value: {
-                        text: booking.person.name
-                    }
-                    },
-                    {
-                    key: {
-                        text: "CRN"
-                    },
-                    value: {
-                        text: booking.person.crn
-                    }
-                    },
-                    {
-                    key: {
-                        text: "Current arrival date"
-                    },
-                    value: {
-                        text: formatDate(booking.arrivalDate)
-                    }
-                    },
-                    {
-                    key: {
-                        text: "Current departure date"
-                    },
-                    value: {
-                        text: formatDate(booking.departureDate)
-                    }
-                    },
-                    {
-                    key: {
-                        text: "Bed"
-                    },
-                    value: {
-                        text: booking.bed.name
-                    }
-                    }
-                ]
-            }) }}
-        {{ showErrorSummary(errorSummary) }}
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                            text: "Name"
+                        },
+                            value: {
+                            text: booking.person.name
+                        }
+                        },
+                        {
+                            key: {
+                            text: "CRN"
+                        },
+                            value: {
+                            text: booking.person.crn
+                        }
+                        },
+                        {
+                            key: {
+                            text: "Current arrival date"
+                        },
+                            value: {
+                            text: formatDate(booking.arrivalDate)
+                        }
+                        },
+                        {
+                            key: {
+                            text: "Current departure date"
+                        },
+                            value: {
+                            text: formatDate(booking.departureDate)
+                        }
+                        },
+                        {
+                            key: {
+                            text: "Bed"
+                        },
+                            value: {
+                            text: booking.bed.name
+                        }
+                        }
+                    ]
+                }) }}
+                {{ showErrorSummary(errorSummary) }}
 
-        {% set newArrivalDateHtml %}
-        {{ govukDateInput({
-                    id: "newArrivalDate",
-                    namePrefix: "newArrivalDate",
+                {% set newArrivalDateHtml %}
+                    {{ govukDateInput({
+                        id: "newArrivalDate",
+                        namePrefix: "newArrivalDate",
+                        fieldset: {
+                            legend: {
+                                text: "What is the new arrival date?",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        hint: {
+                            text: "For example, 27 3 2007"
+                        },
+                        items: dateFieldValues('newArrivalDate', errors),
+                        errorMessage: errors.newArrivalDate
+                    }) }}
+                {% endset -%}
+
+                {% set newDepartureDateHtml %}
+                    {{ govukDateInput({
+                        id: "newDepartureDate",
+                        namePrefix: "newDepartureDate",
+                        fieldset: {
+                            legend: {
+                                text: "What is the new departure date?",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        hint: {
+                            text: "For example, 27 3 2007"
+                        },
+                        items: dateFieldValues('newDepartureDate', errors),
+                        errorMessage: errors.newDepartureDate
+                    }) }}
+                {% endset -%}
+
+                {{ govukCheckboxes({
+                    name: "datesToChange[]",
                     fieldset: {
-                    legend: {
-                        text: "What is the new arrival date?",
-                        classes: "govuk-fieldset__legend--s"
+                        legend: {
+                            text: "What dates do you want to change?",
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
                     hint: {
-                    text: "For example, 27 3 2007"
+                        text: "Select all options that are relevant to you."
                     },
-                    items: dateFieldValues('newArrivalDate', errors),
-                    errorMessage: errors.newArrivalDate
-                }) }}
-        {% endset -%}
-
-        {% set newDepartureDateHtml %}
-        {{ govukDateInput({
-                    id: "newDepartureDate",
-                    namePrefix: "newDepartureDate",
-                    fieldset: {
-                    legend: {
-                        text: "What is the new departure date?",
-                        classes: "govuk-fieldset__legend--s"
+                    errorMessage: errors.datesToChange,
+                    items: [
+                        {
+                            value: "newArrivalDate",
+                            text: "Arrival Date",
+                            checked: ('newArrivalDate' in (datesToChange or [])),
+                            conditional: {
+                            html: newArrivalDateHtml
                         }
-                    },
-                    hint: {
-                    text: "For example, 27 3 2007"
-                    },
-                    items: dateFieldValues('newDepartureDate', errors),
-                    errorMessage: errors.newDepartureDate
+                        },
+                        {
+                            value: "newDepartureDate",
+                            text: "Departure Date",
+                            checked: ('newDepartureDate' in (datesToChange or [])),
+                            conditional: {
+                            html: newDepartureDateHtml
+                        }
+                        }
+                    ]
                 }) }}
-        {% endset -%}
 
-        {{ govukCheckboxes({
-          name: "datesToChange[]",
-          fieldset: {
-            legend: {
-              text: "What dates do you want to change?",
-              classes: "govuk-fieldset__legend--l"
-            }
-          },
-          hint: {
-            text: "Select all options that are relevant to you."
-          },
-          errorMessage: errors.datesToChange,
-          items: [
-            {
-              value: "newArrivalDate",
-              text: "Arrival Date",
-              checked: ('newArrivalDate' in (datesToChange or [])),
-              conditional: {
-                html: newArrivalDateHtml
-              }
-            },
-            {
-              value: "newDepartureDate",
-              text: "Departure Date",
-              checked: ('newDepartureDate' in (datesToChange or [])),
-              conditional: {
-                html: newDepartureDateHtml
-              }
-            }
-          ]
-        }) }}
-
-        {{ govukButton({
+                {{ govukButton({
                     text: "Submit",
                     preventDoubleClick: true
                 }) }}
-      </div>
+        </div>
     </div>
-  {% endblock %}
+{% endblock %}

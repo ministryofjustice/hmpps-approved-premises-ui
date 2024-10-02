@@ -115,7 +115,7 @@ export const outOfServiceBedCount = (totalResults: number): string => {
 
 const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
   linkTo(
-    paths.v2Manage.outOfServiceBeds.show,
+    paths.outOfServiceBeds.show,
     { id: bed.id, bedId: bed.bed.id, premisesId, tab: 'details' },
     {
       text: 'View',

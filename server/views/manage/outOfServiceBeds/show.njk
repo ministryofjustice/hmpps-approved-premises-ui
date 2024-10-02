@@ -1,0 +1,61 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% from "./partials/_bedDetails.njk" import outOfServiceBedDetails %}
+{% from "./partials/_timeline.njk" import outOfServiceBedTimeline %}
+{% from "./partials/_pageHeading.njk" import outOfServiceBedPageHeading %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'})
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full-width">
+
+            {{ mojIdentityBar({
+                title: {
+                    html: outOfServiceBedPageHeading('Out of service bed record', outOfServiceBed)
+                },
+                menus: [{
+                    items: [
+                        {
+                            text: "Update record",
+                            href: paths.outOfServiceBeds.update({premisesId: premisesId, id: id, bedId: bedId})
+                        }
+                    ]
+                }]
+            }) }}
+
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: [{
+                    text: 'Details',
+                    href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }),
+                    active: activeTab === 'details'
+                }, {
+                    text: 'Timeline',
+                    href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'timeline' }),
+                    active: activeTab === 'timeline'
+                }]
+            }) }}
+
+            {% if activeTab === 'timeline' %}
+                {% include "../../_messages.njk" %}
+                {{ outOfServiceBedTimeline(outOfServiceBed.revisionHistory) }}
+            {% else %}
+                {{ outOfServiceBedDetails(outOfServiceBed, characteristics) }}
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

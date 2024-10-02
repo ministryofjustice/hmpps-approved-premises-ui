@@ -37,13 +37,10 @@ import dateChangeFactory from './dateChange'
 import departureFactory from './departure'
 import documentFactory from './document'
 import extendedPremisesSummaryFactory from './extendedPremisesSummary'
-import lostBedFactory from './lostBed'
-import lostBedCancellationFactory from './lostBedCancellation'
 import newArrivalFactory from './newArrival'
 import newBookingFactory from './newBooking'
 import newCancellationFactory from './newCancellation'
 import newDepartureFactory from './newDeparture'
-import newLostBedFactory from './newLostBed'
 import newNonArrivalFactory from './newNonArrival'
 import {
   newPlacementRequestBookingConfirmationFactory,
@@ -140,15 +137,12 @@ export {
   departureFactory,
   documentFactory,
   extendedPremisesSummaryFactory,
-  lostBedFactory,
-  lostBedCancellationFactory,
   newArrivalFactory,
   newBookingFactory,
   newPlacementRequestBookingFactory,
   newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,
   newDepartureFactory,
-  newLostBedFactory,
   newNonArrivalFactory,
   newAppealFactory,
   nonArrivalFactory,

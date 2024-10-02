@@ -54,7 +54,10 @@ class MenuItems {
     changeDates: {
       text: 'Change placement dates',
       classes: 'govuk-button--secondary',
-      href: paths.bookings.dateChanges.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id }),
+      href: paths.bookings.dateChanges.new({
+        premisesId: this.booking.premises.id,
+        bookingId: this.booking.id,
+      }),
     },
     logDeparture: {
       text: 'Log departure',
@@ -64,7 +67,10 @@ class MenuItems {
     updateDepartureDate: {
       text: 'Update departure date',
       classes: 'govuk-button--secondary',
-      href: paths.bookings.extensions.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id }),
+      href: paths.bookings.extensions.new({
+        premisesId: this.booking.premises.id,
+        bookingId: this.booking.id,
+      }),
     },
     withdrawPlacement: {
       text: 'Withdraw placement',

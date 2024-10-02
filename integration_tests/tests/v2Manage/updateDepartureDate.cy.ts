@@ -31,7 +31,7 @@ context('Departure date', () => {
     cy.task('stubPremisesSummary', premises)
 
     // When I visit the booking extension page
-    const page = DepartureDateChangePage.visit(premises.id, booking.id, { v2: true })
+    const page = DepartureDateChangePage.visit(premises.id, booking.id)
 
     // And I fill in the extension form
     page.completeForm(newDepartureDate)
@@ -64,7 +64,7 @@ context('Departure date', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking: { ...booking, person: personFactory.build() } })
 
     // When I visit the booking extension page
-    const page = DepartureDateChangePage.visit(premises.id, booking.id, { v2: true })
+    const page = DepartureDateChangePage.visit(premises.id, booking.id)
 
     // And I don't enter details into the field
     cy.task('stubBookingExtensionErrors', {

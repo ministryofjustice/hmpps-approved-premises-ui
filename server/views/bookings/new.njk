@@ -16,9 +16,9 @@
 
 {% block beforeContent %}
     {{ govukBackLink({
-  		text: "Back",
-  		href: paths.premises.show({ premisesId: premisesId })
-  	}) }}
+        text: "Back",
+        href: paths.premises.show({ premisesId: premisesId })
+    }) }}
 {% endblock %}
 
 {% block content %}
@@ -26,49 +26,47 @@
         <div class="govuk-grid-column-two-thirds">
             {{ showErrorSummary(errorSummary, errorTitle) }}
 
-            <h1>{{pageHeading}}</h1>
+            <h1>{{ pageHeading }}</h1>
             <form action="{{ paths.bookings.create({ premisesId: premisesId, bedId: bedId }) }}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                <input type="hidden" name="crn" value="{{ crn }}"/>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="crn" value="{{ crn }}" />
 
                 {{ govukSummaryList({
-                rows: [
-                   {
-                    key: {
-                        text: "Name"
-                    },
-                    value: {
-                        text: name
-                    }
-                    },
-                    {
-                    key: {
-                        text: "CRN"
-                    },
-                    value: {
-                        text: crn
-                    }
-                    }
-                ]
+                    rows: [
+                        {
+                            key: {
+                            text: "Name"
+                        },
+                            value: {
+                            text: name
+                        }
+                        },
+                        {
+                            key: {
+                            text: "CRN"
+                        },
+                            value: {
+                            text: crn
+                        }
+                        }
+                    ]
                 }) }}
 
-                {{
-                    govukRadios({
-                        name: "eventNumber",
-                        id: "eventNumber",
-                        fieldset: {
-                            legend: {
-                                text: "Select an index offence",
-                                classes: "govuk-fieldset__legend--m"
-                            }
-                        },
-                        hint: {
-                            text: "Select the most relevant index offence for this person"
-                        },
-                        errorMessage: errors.eventNumber,
-                        items: OffenceUtils.offenceRadioItems(offences, eventNumber)
-                    })
-                }}
+                {{ govukRadios({
+                    name: "eventNumber",
+                    id: "eventNumber",
+                    fieldset: {
+                        legend: {
+                            text: "Select an index offence",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "Select the most relevant index offence for this person"
+                    },
+                    errorMessage: errors.eventNumber,
+                    items: OffenceUtils.offenceRadioItems(offences, eventNumber)
+                }) }}
 
                 {{ govukWarningText({
                     text: "If the required offence is not visible here, you will not be able to proceed with the booking until the offence has been added to NDelius",
@@ -95,13 +93,13 @@
                     id: "departureDate",
                     namePrefix: "departureDate",
                     fieldset: {
-                    legend: {
-                        text: "What is their expected departure date?",
-                        classes: "govuk-fieldset__legend--m"
+                        legend: {
+                            text: "What is their expected departure date?",
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     hint: {
-                    text: "For example, 27 3 2007"
+                        text: "For example, 27 3 2007"
                     },
                     items: dateFieldValues('departureDate', errors),
                     errorMessage: errors.departureDate

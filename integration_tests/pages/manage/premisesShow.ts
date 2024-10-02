@@ -9,7 +9,7 @@ export default class PremisesShowPage extends Page {
   }
 
   static visit(premises: Cas1PremisesSummary): PremisesShowPage {
-    cy.visit(paths.v2Manage.premises.show({ premisesId: premises.id }))
+    cy.visit(paths.premises.show({ premisesId: premises.id }))
     return new PremisesShowPage(premises)
   }
 

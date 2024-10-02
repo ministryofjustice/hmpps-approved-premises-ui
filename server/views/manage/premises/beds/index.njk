@@ -1,0 +1,62 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.show({ premisesId: premisesId })
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full-width">
+            {{ mojIdentityBar({
+                title: {
+                    html: "<h1>" + pageHeading + "</h1>"
+                },
+                menus: [{
+                    items: [ {
+                        text: "Manage out of service beds",
+                        classes: "govuk-button--secondary",
+                        href: paths.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'})
+                    }]
+                }]
+            }) }}
+
+            {{ govukTable({
+                captionClasses: "govuk-table__caption--m",
+                firstCellIsHeader: true,
+                head: [
+                    {
+                        text: "Room Name"
+                    },
+                    {
+                        text: "Bed Name"
+                    },
+                    {
+                        text: 'Action'
+                    }
+                ],
+                rows: BedUtils.bedTableRows(beds, premisesId, user)
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extraScripts %}
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+      new MOJFrontend.ButtonMenu({
+        container: $('.moj-button-menu'),
+        mq: '(min-width: 200em)',
+        buttonText: 'Actions',
+        menuClasses: 'moj-button-menu__wrapper--right',
+      })
+    </script>
+{% endblock %}

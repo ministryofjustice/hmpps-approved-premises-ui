@@ -5,7 +5,7 @@ import {
   premisesFactory,
 } from '../../../../server/testutils/factories'
 import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../../../server/utils/outOfServiceBedUtils'
-import { OutOfServiceBedShowPage } from '../../../pages/v2Manage/outOfServiceBeds'
+import { OutOfServiceBedShowPage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
 
 context('OutOfServiceBeds', () => {

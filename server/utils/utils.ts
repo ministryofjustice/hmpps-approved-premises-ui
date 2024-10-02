@@ -172,17 +172,6 @@ export const linebreaksToParagraphs = (text: string) =>
     .replace(/\r?\n/g, '<br />')}</p>`
 
 /**
- * Returns a random integer between min (inclusive) and max (inclusive).
- * The value is no lower than min (or the next integer greater than min
- * if min isn't an integer) and no greater than max (or the next integer
- * lower than max if max isn't an integer).
- * Using Math.round() will give you a non-uniform distribution!
- */
-export const getRandomInt = (min: number, max: number): number => {
-  return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min)
-}
-
-/**
  * Filters a record with the given keys from a master list of records
  * @param keys An array of keys to return from `lookup`
  * @param lookup A key/value of records

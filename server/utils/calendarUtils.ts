@@ -106,7 +106,12 @@ export const labelForScheduleItem = (
       break
     case 'lost_bed':
       label = 'Out of Service'
-      link = paths.lostBeds.show({ bedId, premisesId, id: bedOccupancyEntry.lostBedId })
+      link = paths.outOfServiceBeds.show({
+        bedId,
+        premisesId,
+        id: bedOccupancyEntry.lostBedId,
+        tab: 'details',
+      })
       break
     case 'overbooking':
       label = 'Overbooked'

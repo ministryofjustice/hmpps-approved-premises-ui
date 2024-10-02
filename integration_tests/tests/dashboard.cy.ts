@@ -8,7 +8,7 @@ context('Dashboard', () => {
   })
 
   it('displays all services when a user has all roles and permissions', () => {
-    signInWithRolesAndPermissions(['assessor', 'manager'], ['cas1_view_assigned_assessments'])
+    signInWithRolesAndPermissions(['assessor', 'manager', 'future_manager'], ['cas1_view_assigned_assessments'])
 
     const dashboardPage = DashboardPage.visit()
 

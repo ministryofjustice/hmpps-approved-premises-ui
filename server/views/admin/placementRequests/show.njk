@@ -7,72 +7,76 @@
 {% set pageTitle = applicationName + " - View Placement Request" %}
 
 {% block content %}
-  {% include "../../_messages.njk" %}
+    {% include "../../_messages.njk" %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container">
-      <div class="govuk-grid-column-full">
-        {{ mojIdentityBar(PlacementRequestUtils.adminIdentityBar(placementRequest, user)) }}
-      </div>
-    </div>
     <div class="govuk-grid-row">
-      <div class="govuk-width-container">
-        <div class="govuk-grid-column-two-thirds">
-          {% if placementRequest.isParole %}
-            {% set html %}
-            <p class="govuk-notification-banner__heading">
-                Parole board directed release
-              </p>
-            <p class="govuk-body">
-                The person's arrival date has been estimated as {{ formatDate(placementRequest.expectedArrival) }}.
-                This is 6 weeks after the parole board's date of decision.
-              </p>
-            {% if placementRequest.booking %}
-              <p class="govuk-body">
-                If needed, you can <a href="{{paths.bookings.dateChanges.new({ premisesId: placementRequest.booking.premisesId, bookingId: placementRequest.booking.id })}}">change the arrival date</a> in the Approved Premises service.
-              </p>
-            {% endif %}
-
-            {% endset %}
-
-            {{ govukNotificationBanner({
-              html: html
-            }) }}
-          {% endif %}
-
-          <ul class="govuk-list govuk-!-padding-bottom-3">
-            <li>
-              <a href="{{paths.applications.show({id: placementRequest.applicationId})}}">View application</a>
-              <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.applicationDate) }})</span>
-            </li>
-            <li>
-              <a href="{{paths.assessments.show({id: placementRequest.assessmentId})}}">View assessment</a>
-              <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.assessmentDate) }})</span>
-            </li>
-          </ul>
-
-          {{
-            govukSummaryList(PlacementRequestUtils.adminSummary(placementRequest))
-          }}
-
-          {{
-            govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest))
-          }}
-
-          {% if placementRequest.status === 'matched' %}
-            <h2 class="govuk-heading-m">Booked Placement</h2>
-            {{
-              govukSummaryList(BookingUtils.bookingSummaryList(placementRequest.booking))
-            }}
-          {% endif %}
+        <div class="govuk-width-container">
+            <div class="govuk-grid-column-full">
+                {{ mojIdentityBar(PlacementRequestUtils.adminIdentityBar(placementRequest, user)) }}
+            </div>
         </div>
-      </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-width-container">
+                <div class="govuk-grid-column-two-thirds">
+                    {% if placementRequest.isParole %}
+                        {% set html %}
+                            <p class="govuk-notification-banner__heading">
+                                Parole board directed release
+                            </p>
+                            <p class="govuk-body">
+                                The person's arrival date has been estimated
+                                as {{ formatDate(placementRequest.expectedArrival) }}.
+                                This is 6 weeks after the parole board's date of decision.
+                            </p>
+                            {% if placementRequest.booking %}
+                                <p class="govuk-body">
+                                    If needed, you can <a
+                                            href="{{ paths.bookings.dateChanges.new({ premisesId: placementRequest.booking.premisesId, bookingId: placementRequest.booking.id }) }}">change
+                                        the arrival date</a> in the Approved Premises service.
+                                </p>
+                            {% endif %}
+
+                        {% endset %}
+
+                        {{ govukNotificationBanner({
+                            html: html
+                        }) }}
+                    {% endif %}
+
+                    <ul class="govuk-list govuk-!-padding-bottom-3">
+                        <li>
+                            <a href="{{ paths.applications.show({id: placementRequest.applicationId}) }}">View
+                                application</a>
+                            <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.applicationDate) }})</span>
+                        </li>
+                        <li>
+                            <a href="{{ paths.assessments.show({id: placementRequest.assessmentId}) }}">View
+                                assessment</a>
+                            <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.assessmentDate) }})</span>
+                        </li>
+                    </ul>
+
+                    {{ govukSummaryList(PlacementRequestUtils.adminSummary(placementRequest)) }}
+
+                    {{ govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest)) }}
+
+                    {% if placementRequest.status === 'matched' %}
+                        <h2 class="govuk-heading-m">Booked Placement</h2>
+                        {{ govukSummaryList(BookingUtils.bookingSummaryList(placementRequest.booking)) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 {% endblock %}
 
 {% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    new MOJFrontend.ButtonMenu({container: $('.moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
-  </script>
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+      new MOJFrontend.ButtonMenu({
+        container: $('.moj-button-menu'),
+        mq: '(min-width: 200em)',
+        buttonText: 'Actions',
+        menuClasses: 'moj-button-menu__wrapper--right',
+      })
+    </script>
 {% endblock %}
