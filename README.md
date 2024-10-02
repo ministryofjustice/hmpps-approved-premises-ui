@@ -181,6 +181,54 @@ notify:
   guest-list-api-key: aforementioned NOTIFY_API_KEY value
 ```
 
+#### Running locally but using upstream dev services (emulate tests that run in 'dev')
+
+Start ap-tools as follows:
+
+```shell
+docker compose down --clear-databases
+ap-tools server start --local-ui --local-api-dev-upstream
+```
+
+Use this in .env
+
+```shell
+API_CLIENT_ID=approved-premises-ui
+APPROVED_PREMISES_API_URL=http://localhost:8080
+CAS1_E2E_ADMINISTRATOR_PASSWORD=doesntmatter
+CAS1_E2E_ADMINISTRATOR_USERNAME=AP_USER_TEST_2
+CAS1_E2E_ASSESSOR_EMAIL=stuart.harrison2+test1@digital.justice.gov.uk
+CAS1_E2E_ASSESSOR_NAME=AP_USER TEST_1
+CAS1_E2E_ASSESSOR_PASSWORD=doesntmatter
+CAS1_E2E_ASSESSOR_USERNAME=AP_USER_TEST_1
+CAS1_E2E_CRU_MEMBER_PASSWORD=doesntmatter
+CAS1_E2E_CRU_MEMBER_USERNAME=AP_USER_TEST_4
+CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=JOSEPHHOLLINSHEAD
+CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO=AP_USER TEST_1
+CAS1_E2E_FUTURE_MANAGER_PASSWORD=doesntmatter
+CAS1_E2E_FUTURE_MANAGER_USERNAME=AP_USER_TEST_4
+CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN=X349420
+CAS1_E2E_REPORT_VIEWER_PASSWORD=doesntmatter
+CAS1_E2E_REPORT_VIEWER_USERNAME=AP_USER_TEST_2
+CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD=doesntmatter
+CAS1_E2E_USER_WITHOUT_ROLES_USERNAME=AP_USER_TEST_1
+CAS1_E2E_CHECK_EMAILS=false
+HMPPS_AUTH_EXTERNAL_URL=http://localhost:9091/auth
+HMPPS_AUTH_NAME=AP_USER TEST_1
+HMPPS_AUTH_PASSWORD=*REDACTED*
+HMPPS_AUTH_URL=http://localhost:9091/auth
+HMPPS_AUTH_USERNAME=AP_USER_TEST_1
+SYSTEM_CLIENT_ID=approved-premises-api
+ENABLE_V2_MATCH=true
+```
+
+Then start using one of
+
+```
+npx playwright test --config ./e2e/playwright.config.ts  --project=local-dev-upstream
+npx playwright test --config ./e2e/playwright.config.ts  --project=local-dev-upstream --ui
+```
+
 #### CLI commands
 
 Headless:
