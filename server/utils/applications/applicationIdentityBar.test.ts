@@ -43,6 +43,20 @@ describe('applicationIdentityBar', () => {
         <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
+
+    it('should show a tag for an expired application', () => {
+      const person = personFactory.build()
+      const application = applicationFactory.build({ person, status: 'expired' })
+
+      expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
+        <h1 class="govuk-caption-l">heading</h1>
+        <h2 class="govuk-heading-l">
+          ${person.name}
+          <strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="expired">Expired application</strong>
+        </h2>
+        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
+      `)
+    })
   })
 
   describe('applicationMenuItems', () => {

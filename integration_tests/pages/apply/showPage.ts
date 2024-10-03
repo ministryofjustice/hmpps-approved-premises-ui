@@ -1,6 +1,7 @@
 import type {
   ApprovedPremisesApplication as Application,
   ApplicationTimelineNote,
+  ApprovedPremisesApplicationStatus,
   FullPerson,
   RequestForPlacement,
 } from '@approved-premises/api'
@@ -12,7 +13,7 @@ import Page from '../page'
 import { ApplicationShowPageTab, applicationShowPageTab } from '../../../server/utils/applications/utils'
 import paths from '../../../server/paths/apply'
 import { isFullPerson } from '../../../server/utils/personUtils'
-import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests/requestForPlacementSummaryCards'
+import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
@@ -60,7 +61,7 @@ export default class ShowPage extends Page {
   }
 
   shouldNotShowCreatePlacementButton() {
-    cy.get('Create request for placement').should('not.exist')
+    cy.contains('Create request for placement').should('not.exist')
   }
 
   shouldNotShowOfflineStatus() {
@@ -110,10 +111,6 @@ export default class ShowPage extends Page {
     this.shouldShowCheckYourAnswersResponses(this.application)
   }
 
-  shouldNotShowCreatePlacementRequestButton() {
-    cy.get('Create placement request').should('not.exist')
-  }
-
   clickTimelineTab() {
     cy.get('.moj-sub-navigation a').contains('Timeline').click()
   }
@@ -161,5 +158,9 @@ export default class ShowPage extends Page {
 
   showsNoteAddedConfirmationMessage() {
     this.shouldShowBanner('Note added')
+  }
+
+  shouldShowStatusTag(status: ApprovedPremisesApplicationStatus) {
+    cy.get(`.govuk-tag[data-cy-status="${status}"]`).should('exist')
   }
 }

@@ -67,8 +67,24 @@ context('show applications', () => {
     // Then I should see a read-only version of the application
     const showPage = ShowPage.visit(updatedApplication, 'application')
 
+    // And I should see a 'Withdrawn application' status tag
+    showPage.shouldShowStatusTag('withdrawn')
+
     // And I should see the application details
     showPage.shouldShowResponsesForUnsubmittedWithdrawnApplication()
+  })
+
+  it('shows a read-only version of an expired application', function test() {
+    // Given I have an expired application
+    const updatedApplication = { ...this.application, status: 'expired', document: undefined }
+    cy.task('stubApplicationGet', { application: updatedApplication })
+    cy.task('stubApplications', [updatedApplication])
+
+    // Then I should see a read-only version of the application
+    const showPage = ShowPage.visit(updatedApplication, 'application')
+
+    // And I should see an 'Expired application' status tag
+    showPage.shouldShowStatusTag('expired')
   })
 
   it('links to an assessment when an application has been assessed', function test() {
@@ -263,6 +279,6 @@ context('show applications', () => {
     const showPage = ShowPage.visit(application, 'placementRequests')
 
     // Then I should not see the "Create placement request" button
-    showPage.shouldNotShowCreatePlacementRequestButton()
+    showPage.shouldNotShowCreatePlacementButton()
   })
 })

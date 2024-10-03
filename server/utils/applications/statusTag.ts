@@ -17,10 +17,8 @@ export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
     withdrawn: 'Application withdrawn',
     requestedFurtherInformation: 'Further information requested',
     pendingPlacementRequest: APPLICATION_SUITABLE,
-    expired: 'Application expired',
+    expired: 'Expired application',
   }
-
-  readonly applicationSuitableStatus: 'blue' = 'blue' as const
 
   static readonly colours: Record<ApplicationStatus, string> = {
     started: 'blue',

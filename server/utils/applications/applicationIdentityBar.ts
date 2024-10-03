@@ -11,7 +11,7 @@ export const applicationTitle = (application: Application, pageHeading: string):
     heading += '<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>'
   }
 
-  if (application.status === 'withdrawn') {
+  if (application.status === 'withdrawn' || application.status === 'expired') {
     heading += new ApplicationStatusTag(application.status, { addLeftMargin: true }).html()
   }
 
