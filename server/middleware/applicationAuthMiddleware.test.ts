@@ -79,4 +79,21 @@ describe('applicationAuthMiddleware', () => {
     expect(response.status).toHaveBeenCalledWith(401)
     expect(response.render).toHaveBeenCalledWith('roleError')
   })
+
+  it('redirects with an error if the user does not have the role and no required permissions are specified', async () => {
+    const user = userDetailsFactory.build({ roles: [], permissions: ['cas1_adhoc_booking_create'] })
+    const response = createMock<Response>({ locals: { user } })
+
+    const loggerSpy = jest.spyOn(logger, 'error')
+
+    const auditedhandler = applicationAuthMiddleware(handler, {
+      allowedRoles: ['future_manager'],
+    })
+
+    await auditedhandler(request, response, next)
+
+    expect(loggerSpy).toHaveBeenCalledWith('User is not authorised to access this')
+    expect(response.status).toHaveBeenCalledWith(401)
+    expect(response.render).toHaveBeenCalledWith('roleError')
+  })
 })
