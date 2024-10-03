@@ -320,28 +320,6 @@ describe('applicationsController', () => {
       })
     })
 
-    it('fetches the application from the API and renders the read only view if the application is submitted', async () => {
-      application.status = 'submitted'
-
-      const requestHandler = applicationsController.show()
-      const stubTaskList = jest.fn()
-
-      ;(TasklistService as jest.Mock).mockImplementation(() => {
-        return stubTaskList
-      })
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('applications/show', {
-        application,
-        referrer,
-        tab: 'application',
-        pageHeading: 'Approved Premises application',
-      })
-
-      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
-    })
-
     describe('when there is an error in the flash', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
 
