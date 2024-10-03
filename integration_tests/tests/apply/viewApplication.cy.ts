@@ -79,6 +79,9 @@ context('show applications', () => {
     // And I should see a 'Withdrawn application' status tag
     showPage.shouldShowStatusTag('withdrawn')
 
+    // And I should see a link to the assessment with guidance
+    showPage.shouldShowAssessmentDetails()
+
     // And I should see the application details
     showPage.shouldShowResponsesForUnsubmittedWithdrawnApplication()
 
@@ -112,6 +115,9 @@ context('show applications', () => {
 
     // And I should see an 'Expired application' status tag
     showPage.shouldShowStatusTag('expired')
+
+    // And I should see a link to the assessment with guidance
+    showPage.shouldShowAssessmentDetails(true)
 
     // When I click the 'Request for placement' tab
     cy.task('stubApplicationRequestsForPlacement', {

@@ -72,14 +72,32 @@ export default class ShowPage extends Page {
     cy.get('.govuk-tag').contains('Offline application').should('exist')
   }
 
-  shouldShowAssessmentDetails() {
+  shouldShowAssessmentDetails(expired = false) {
     cy.get('.govuk-inset-text')
       .contains(
         `Application was ${this.application.assessmentDecision} on ${DateFormats.isoDateToUIDate(
           this.application.assessmentDecisionDate,
-        )}`,
+        )}.`,
       )
       .should('exist')
+
+    if (expired) {
+      cy.get('.govuk-inset-text')
+        .contains(
+          'Applications expire 12 months after being assessed as suitable. You cannot submit any new requests for placement.',
+        )
+        .should('exist')
+      cy.get('.govuk-inset-text')
+        .contains('You’ll need to submit a new application for this person to be assessed.')
+        .should('exist')
+    } else {
+      cy.get('.govuk-inset-text')
+        .contains(
+          'Applications expire 12 months after being assessed as ‘suitable’. You’ll then need to submit a new application for this person to be assessed.',
+        )
+        .should('exist')
+      cy.get('.govuk-inset-text').contains('Booked placements are unaffected.').should('exist')
+    }
 
     cy.get(`a[data-cy-assessmentId="${this.application.assessmentId}"]`).should('exist')
   }
@@ -123,10 +141,6 @@ export default class ShowPage extends Page {
     cy.get(`[data-cy-placement-application-id="${placementRequestId}"]`).within(() => {
       cy.get('a').contains('Withdraw').click()
     })
-  }
-
-  verifyOnTimelineTab() {
-    cy.get('a').contains('Placement').should('contain', '[aria-page="current"]')
   }
 
   shouldShowRequestsForPlacement(
