@@ -5,6 +5,7 @@ import Page from '../../pages/page'
 import { setup } from './setup'
 import {
   applicationFactory,
+  assessmentFactory,
   noteFactory,
   placementApplicationFactory,
   requestForPlacementFactory,
@@ -53,22 +54,80 @@ context('show applications', () => {
     showPage.shouldHaveWithdrawalLink()
 
     // When I click on the 'Timeline' tab
-    // Then I should see timeline page
     showPage.clickTimelineTab()
+
+    // Then I should see timeline page
     showPage.shouldShowApplicationTimeline(timeline)
   })
 
   it('shows a read-only version of an unsubmitted withdrawn application', function test() {
     // Given I have a withdrawn unsubmitted application
-    const updatedApplication = { ...this.application, status: 'withdrawn', document: undefined }
+    const assessmentDecision = assessmentFactory.build({ decision: 'accepted' })
+    const updatedApplication = {
+      ...this.application,
+      status: 'withdrawn',
+      document: undefined,
+      assessmentDecision: assessmentDecision.decision,
+      assessmentDecisionDate: assessmentDecision.createdAt,
+      assessmentId: assessmentDecision.id,
+    }
     cy.task('stubApplicationGet', { application: updatedApplication })
-    cy.task('stubApplications', [updatedApplication])
 
     // Then I should see a read-only version of the application
     const showPage = ShowPage.visit(updatedApplication, 'application')
 
+    // And I should see a 'Withdrawn application' status tag
+    showPage.shouldShowStatusTag('withdrawn')
+
+    // And I should see a link to the assessment with guidance
+    showPage.shouldShowAssessmentDetails()
+
     // And I should see the application details
     showPage.shouldShowResponsesForUnsubmittedWithdrawnApplication()
+
+    // When I click the 'Request for placement' tab
+    const requestsForPlacement = requestForPlacementFactory.buildList(1, { status: 'request_withdrawn' })
+    cy.task('stubApplicationRequestsForPlacement', {
+      applicationId: updatedApplication.id,
+      requestsForPlacement,
+    })
+    showPage.clickRequestAPlacementTab()
+
+    // Then I do not see the 'Create request for placement' button
+    showPage.shouldNotShowCreatePlacementButton()
+  })
+
+  it('shows a read-only version of an expired application', function test() {
+    // Given I have an expired application
+    const assessmentDecision = assessmentFactory.build({ decision: 'accepted' })
+    const updatedApplication = {
+      ...this.application,
+      status: 'expired',
+      document: undefined,
+      assessmentDecision: assessmentDecision.decision,
+      assessmentDecisionDate: assessmentDecision.createdAt,
+      assessmentId: assessmentDecision.id,
+    }
+    cy.task('stubApplicationGet', { application: updatedApplication })
+
+    // Then I should see a read-only version of the application
+    const showPage = ShowPage.visit(updatedApplication, 'application')
+
+    // And I should see an 'Expired application' status tag
+    showPage.shouldShowStatusTag('expired')
+
+    // And I should see a link to the assessment with guidance
+    showPage.shouldShowAssessmentDetails(true)
+
+    // When I click the 'Request for placement' tab
+    cy.task('stubApplicationRequestsForPlacement', {
+      applicationId: updatedApplication.id,
+      requestsForPlacement: [],
+    })
+    showPage.clickRequestAPlacementTab()
+
+    // Then I do not see the 'Create request for placement' button
+    showPage.shouldNotShowCreatePlacementButton()
   })
 
   it('links to an assessment when an application has been assessed', function test() {
@@ -245,24 +304,5 @@ context('show applications', () => {
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys('note')
     })
-  })
-
-  it('should not show the "Create placement request" button if the application is withdrawn', function test() {
-    const application = {
-      ...this.application,
-      status: 'withdrawn',
-    }
-
-    cy.task('stubApplicationGet', { application })
-    cy.task('stubApplications', [application])
-    cy.task('stubApplicationRequestsForPlacement', {
-      applicationId: application.id,
-      requestsForPlacement: [],
-    })
-    // Given I am on the placement requests view on the application show page
-    const showPage = ShowPage.visit(application, 'placementRequests')
-
-    // Then I should not see the "Create placement request" button
-    showPage.shouldNotShowCreatePlacementRequestButton()
   })
 })

@@ -14,65 +14,84 @@
 {% set mainClasses = "app-container govuk-body application--show" %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container">
-      <div class="govuk-grid-column-full">
-        {{ mojIdentityBar(ApplyUtils.applicationIdentityBar(application, pageHeading, user)) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container">
+            <div class="govuk-grid-column-full">
+                {{ mojIdentityBar(ApplyUtils.applicationIdentityBar(application, pageHeading, user)) }}
 
-        {% include "../_messages.njk" %}
+                {% include "../_messages.njk" %}
 
-        {% if application.assessmentDecision %}
-          {% set html %}
-          <p class="govuk-body">Application was {{ application.assessmentDecision }} on {{ formatDate(application.assessmentDecisionDate) }}</p>
-          <p class="govuk-body">
-            <a href="{{paths.assessments.show({id: application.assessmentId})}}" data-cy-assessmentId="{{ application.assessmentId }}">View assessment</a>
-          </p>
-          {% endset %}
+                {% if application.assessmentDecision %}
+                    {% set html %}
+                        <p class="govuk-body">Application was {{ application.assessmentDecision }}
+                            on {{ formatDate(application.assessmentDecisionDate) }}.</p>
 
-          {{ govukInsetText({
-          html: html
-        }) }}
-        {% endif %}
+                        {% if application.status === 'expired' %}
+                            <p class="govuk-body">Applications expire 12 months after being assessed as suitable. You
+                                cannot submit any new requests for placement.</p>
+                            <p class="govuk-body">You’ll need to submit a new application for this person to be
+                                assessed.</p>
+                        {% else %}
+                            <p class="govuk-body">Applications expire 12 months after being assessed as ‘suitable’.
+                                You’ll then need to submit a new application for this person to be assessed.</p>
+                            <p class="govuk-body">Booked placements are unaffected.</p>
+                        {% endif %}
 
-      </div>
+                        <p class="govuk-body">
+                            <a href="{{ paths.assessments.show({id: application.assessmentId}) }}"
+                               data-cy-assessmentId="{{ application.assessmentId }}">View assessment</a>
+                        </p>
+                    {% endset %}
 
-      <div class="govuk-grid-column-full">
-        {{ mojSubNavigation({
-        items: [{
-          text: 'Application',
-          href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.application),
-          active: tab === ApplyUtils.applicationShowPageTabs.application
-        }, {
-          text: 'Timeline',
-          href:  ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.timeline),
-          active: tab === ApplyUtils.applicationShowPageTabs.timeline
-        },
-        {
-          text: 'Request for placement',
-          href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.placementRequests),
-          active: tab === ApplyUtils.applicationShowPageTabs.placementRequests
-        }
-        ]
-      }) }}
-      </div>
+                    {{ govukInsetText({
+                        html: html
+                    }) }}
+                {% endif %}
 
-      <div class="govuk-grid-column-full">
-        {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
-          {{ timeline(ApplyUtils.mapApplicationTimelineEventsForUi(timelineEvents), application, csrfToken) }}
-        {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
-          {{ requestAPlacement(requestsForPlacement, application, user, csrfToken) }}
-        {% else %}
-          {{ applicationReadonlyView(application) }}
-        {% endif %}
-      </div>
+            </div>
+
+            <div class="govuk-grid-column-full">
+                {{ mojSubNavigation({
+                    items: [{
+                        text: 'Application',
+                        href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.application),
+                        active: tab === ApplyUtils.applicationShowPageTabs.application
+                    }, {
+                        text: 'Timeline',
+                        href:  ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.timeline),
+                        active: tab === ApplyUtils.applicationShowPageTabs.timeline
+                    },
+                        {
+                            text: 'Request for placement',
+                            href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.placementRequests),
+                            active: tab === ApplyUtils.applicationShowPageTabs.placementRequests
+                        }
+                    ]
+                }) }}
+            </div>
+
+            <div class="govuk-grid-column-full">
+                {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
+                    {{ timeline(ApplyUtils.mapApplicationTimelineEventsForUi(timelineEvents), application, csrfToken) }}
+                    {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
+                    {{ requestAPlacement(requestsForPlacement, application, user, csrfToken) }}
+                {% else %}
+                    {{ applicationReadonlyView(application) }}
+                {% endif %}
+            </div>
+        </div>
     </div>
-  </div>
 {% endblock %}
 
 {% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    if ($('.application-identity-bar .moj-button-menu').length) {
-      new MOJFrontend.ButtonMenu({container: $('.application-identity-bar .moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
-    }
-  </script>
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+      if ($('.application-identity-bar .moj-button-menu').length) {
+        new MOJFrontend.ButtonMenu({
+          container: $('.application-identity-bar .moj-button-menu'),
+          mq: '(min-width: 200em)',
+          buttonText: 'Actions',
+          menuClasses: 'moj-button-menu__wrapper--right',
+        })
+      }
+    </script>
 {% endblock %}

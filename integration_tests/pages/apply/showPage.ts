@@ -1,6 +1,7 @@
 import type {
   ApprovedPremisesApplication as Application,
   ApplicationTimelineNote,
+  ApprovedPremisesApplicationStatus,
   FullPerson,
   RequestForPlacement,
 } from '@approved-premises/api'
@@ -12,7 +13,7 @@ import Page from '../page'
 import { ApplicationShowPageTab, applicationShowPageTab } from '../../../server/utils/applications/utils'
 import paths from '../../../server/paths/apply'
 import { isFullPerson } from '../../../server/utils/personUtils'
-import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests/requestForPlacementSummaryCards'
+import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
@@ -60,7 +61,7 @@ export default class ShowPage extends Page {
   }
 
   shouldNotShowCreatePlacementButton() {
-    cy.get('Create request for placement').should('not.exist')
+    cy.contains('Create request for placement').should('not.exist')
   }
 
   shouldNotShowOfflineStatus() {
@@ -71,14 +72,32 @@ export default class ShowPage extends Page {
     cy.get('.govuk-tag').contains('Offline application').should('exist')
   }
 
-  shouldShowAssessmentDetails() {
+  shouldShowAssessmentDetails(expired = false) {
     cy.get('.govuk-inset-text')
       .contains(
         `Application was ${this.application.assessmentDecision} on ${DateFormats.isoDateToUIDate(
           this.application.assessmentDecisionDate,
-        )}`,
+        )}.`,
       )
       .should('exist')
+
+    if (expired) {
+      cy.get('.govuk-inset-text')
+        .contains(
+          'Applications expire 12 months after being assessed as suitable. You cannot submit any new requests for placement.',
+        )
+        .should('exist')
+      cy.get('.govuk-inset-text')
+        .contains('You’ll need to submit a new application for this person to be assessed.')
+        .should('exist')
+    } else {
+      cy.get('.govuk-inset-text')
+        .contains(
+          'Applications expire 12 months after being assessed as ‘suitable’. You’ll then need to submit a new application for this person to be assessed.',
+        )
+        .should('exist')
+      cy.get('.govuk-inset-text').contains('Booked placements are unaffected.').should('exist')
+    }
 
     cy.get(`a[data-cy-assessmentId="${this.application.assessmentId}"]`).should('exist')
   }
@@ -110,10 +129,6 @@ export default class ShowPage extends Page {
     this.shouldShowCheckYourAnswersResponses(this.application)
   }
 
-  shouldNotShowCreatePlacementRequestButton() {
-    cy.get('Create placement request').should('not.exist')
-  }
-
   clickTimelineTab() {
     cy.get('.moj-sub-navigation a').contains('Timeline').click()
   }
@@ -126,10 +141,6 @@ export default class ShowPage extends Page {
     cy.get(`[data-cy-placement-application-id="${placementRequestId}"]`).within(() => {
       cy.get('a').contains('Withdraw').click()
     })
-  }
-
-  verifyOnTimelineTab() {
-    cy.get('a').contains('Placement').should('contain', '[aria-page="current"]')
   }
 
   shouldShowRequestsForPlacement(
@@ -161,5 +172,9 @@ export default class ShowPage extends Page {
 
   showsNoteAddedConfirmationMessage() {
     this.shouldShowBanner('Note added')
+  }
+
+  shouldShowStatusTag(status: ApprovedPremisesApplicationStatus) {
+    cy.get(`.govuk-tag[data-cy-status="${status}"]`).should('exist')
   }
 }
