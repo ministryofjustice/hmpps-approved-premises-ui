@@ -9,7 +9,7 @@ import {
   filterAllocationRoles,
   qualificationDictionary,
   roleLabelDictionary,
-} from './roleCheckboxes'
+} from './roles'
 
 export const managementDashboardTableHeader = (
   sortBy: UserSortField | undefined = undefined,

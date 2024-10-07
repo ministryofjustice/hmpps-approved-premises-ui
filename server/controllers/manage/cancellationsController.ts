@@ -8,7 +8,6 @@ import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
-import { hasRole } from '../../utils/users'
 
 export default class CancellationsController {
   constructor(
@@ -32,9 +31,7 @@ export default class CancellationsController {
       }
 
       res.render('cancellations/new', {
-        apManager: hasRole(res.locals.user, 'manager'),
         premisesId,
-        bookingId,
         booking,
         backLink,
         cancellationReasons,

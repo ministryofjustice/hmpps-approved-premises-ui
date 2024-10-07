@@ -1,5 +1,5 @@
-import { userQualificationsSelectOptions, userRolesSelectOptions, userSummaryListItems } from '.'
 import { userFactory } from '../../testutils/factories'
+import { userQualificationsSelectOptions, userRolesSelectOptions, userSummaryListItems } from './userManagement'
 
 describe('UserUtils', () => {
   it('returns the correct objects in an array when all the expected data is present', () => {

@@ -1,6 +1,6 @@
 import { SelectOption } from '@approved-premises/ui'
 import { ApprovedPremisesUserRole, ApprovedPremisesUser as User, UserQualification } from '../../@types/shared'
-import { RolesInUse, qualificationDictionary } from './roleCheckboxes'
+import { RoleInUse, qualificationDictionary } from './roles'
 
 export const userSummaryListItems = (user: User) => [
   {
@@ -45,7 +45,7 @@ export const userSummaryListItems = (user: User) => [
   },
 ]
 
-const userRoles: Record<RolesInUse, string> = {
+const userRoles: Record<RoleInUse, string> = {
   assessor: 'Assessor',
   matcher: 'Matcher',
   workflow_manager: 'Workflow manager',

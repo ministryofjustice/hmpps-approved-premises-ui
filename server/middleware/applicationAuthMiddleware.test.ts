@@ -23,10 +23,10 @@ describe('applicationAuthMiddleware', () => {
   })
 
   it('returns the handler when there are allowedRoles specified and the user has one of those roles', async () => {
-    const user = userDetailsFactory.build({ roles: ['manager'] })
+    const user = userDetailsFactory.build({ roles: ['future_manager'] })
     const response = createMock<Response>({ locals: { user } })
 
-    const auditedhandler = applicationAuthMiddleware(handler, { allowedRoles: ['manager', 'matcher'] })
+    const auditedhandler = applicationAuthMiddleware(handler, { allowedRoles: ['future_manager', 'matcher'] })
 
     await auditedhandler(request, response, next)
 
@@ -39,7 +39,7 @@ describe('applicationAuthMiddleware', () => {
 
     const loggerSpy = jest.spyOn(logger, 'error')
 
-    const auditedhandler = applicationAuthMiddleware(handler, { allowedRoles: ['manager', 'matcher'] })
+    const auditedhandler = applicationAuthMiddleware(handler, { allowedRoles: ['future_manager', 'matcher'] })
 
     await auditedhandler(request, response, next)
 

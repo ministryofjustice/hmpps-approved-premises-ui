@@ -443,8 +443,9 @@ describe('utils', () => {
       },
     )
   })
+
   it('returns the all assessment tab items except requests for placement for user with out roles workflow_manager, matcher or assessor', () => {
-    const user = userDetailsFactory.build({ roles: ['manager'] })
+    const user = userDetailsFactory.build({ roles: ['future_manager'] })
 
     expect(assessmentsTabItems(user)).toEqual([
       {
