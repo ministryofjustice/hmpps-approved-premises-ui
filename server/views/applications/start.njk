@@ -15,6 +15,8 @@
 	}) }}
 {% endblock %}
 
+
+
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -22,9 +24,8 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         <h1>{{ pageHeading }}</h1>
 
-        <p class="govuk-body">Use this service to apply for a placement in an Approved Premises (AP) on behalf of a person on probation.</p>
-
-        <p class="govuk-!-font-weight-bold">This service is currently only available for applications to Male Approved Premises. Applications for females must continue to be made in nDelius until further notice.</p>
+        {% block introContent %}
+        <p class="govuk-body">Use this service to apply for a placement in an Approved Premises (AP) for men or women.</p>
 
         <p class="govuk-body">Approved Premises support the risk management of individuals who pose a very high / high risk of serious harm and have complex needs. When applying for an Approved Premises placement you must identify how the placement will contribute to risk management.</p>
 
@@ -33,6 +34,9 @@
         <p class="govuk-body">If a person is leaving prison, you should aim to complete your application 6 months before they are released, unless there are exceptional reasons such as a short sentence or a change in risk or other circumstances.</p>
 
         <p class="govuk-body">You can leave and return to your application at any time. Your progress will be saved.</p>
+
+
+        {% endblock %}
 
 
         <h2>Before you start</h2>

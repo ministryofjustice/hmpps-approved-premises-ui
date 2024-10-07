@@ -28,6 +28,7 @@ import { getResponses } from '../../utils/applications/getResponses'
 import { ApprovedPremisesApplicationSummary } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
+import config from '../../config'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
@@ -75,11 +76,22 @@ describe('applicationsController', () => {
 
   describe('start', () => {
     it('renders the start page', () => {
+      config.flags.weEnabled = true
       const requestHandler = applicationsController.start()
 
       requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/start', {
+        pageHeading: 'Apply for an Approved Premises (AP) placement',
+      })
+    })
+    it('renders the legacy (non WE) start page', () => {
+      config.flags.weEnabled = false
+      const requestHandler = applicationsController.start()
+
+      requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/start-pre-we', {
         pageHeading: 'Apply for an Approved Premises (AP) placement',
       })
     })
