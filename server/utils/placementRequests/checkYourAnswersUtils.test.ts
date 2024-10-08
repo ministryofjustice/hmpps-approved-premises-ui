@@ -90,7 +90,7 @@ describe('checkYourAnswersUtils', () => {
           actions: {
             items: [
               {
-                href: `/placement-applications/${application.id}/tasks/request-a-placement/pages/additional-documents`,
+                href: `/placement-applications/${placementApplication.id}/tasks/request-a-placement/pages/additional-documents`,
                 text: 'Change',
                 visuallyHiddenText: documents[0].fileName,
               },

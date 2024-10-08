@@ -1,6 +1,7 @@
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
+  Document,
 } from '@approved-premises/api'
 import { FormArtifact, HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
@@ -15,6 +16,8 @@ import { getResponseForPage } from './getResponseForPage'
 import { forPagesInTask } from './forPagesInTask'
 import { linebreaksToParagraphs } from '../utils'
 import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
+import AttachDocuments from '../../form-pages/apply/add-documents/attachDocuments'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
   reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)
@@ -55,37 +58,67 @@ const taskResponsesAsSummaryListItems = (
   return items
 }
 
+/**
+ * Return a list items from a document list for the check-your-answers page
+ * @param documents list of documents to render
+ * @param personCrn from application - used in document download path
+ * @param changePath - if defined, adds a 'change' link
+ * @param otherDocumentDetails - other documents text box contents
+ */
+export const getDocumentSummaryListItems = (
+  documents: Array<Document>,
+  personCrn: string,
+  changePath: string,
+  otherDocumentDetails: string,
+): Array<SummaryListItem> => {
+  const items: Array<SummaryListItem> = []
+
+  const getAction = (visuallyHiddenText = '') =>
+    changePath
+      ? {
+          actions: {
+            items: [
+              {
+                href: changePath,
+                text: 'Change',
+                ...(visuallyHiddenText ? { visuallyHiddenText } : {}),
+              },
+            ],
+          },
+        }
+      : {}
+
+  documents.forEach(document => {
+    const item: SummaryListItem = {
+      key: {
+        html: `<a href="/applications/people/${personCrn}/documents/${document.id}" data-cy-documentId="${document.id}">${document.fileName}</a>`,
+      },
+      value: { text: document?.description },
+      ...getAction(document.fileName),
+    }
+    items.push(item)
+  })
+  if (otherDocumentDetails?.length)
+    items.push({
+      key: { text: 'Tell us about any other relevant documents' },
+      value: { text: otherDocumentDetails },
+      ...getAction(),
+    })
+  return items
+}
+
 const attachDocumentsSummaryListItems = (
   application: Application,
   task: UiTask,
   pageName: string,
   showActions: boolean,
-) => {
-  const items: Array<SummaryListItem> = []
-
-  documentsFromApplication(application).forEach(document => {
-    const item: SummaryListItem = {
-      key: {
-        html: `<a href="/applications/people/${application.person.crn}/documents/${document.id}" data-cy-documentId="${document.id}">${document.fileName}</a>`,
-      },
-      value: { text: document?.description || '' },
-    }
-    if (showActions) {
-      item.actions = {
-        items: [
-          {
-            href: applyPaths.applications.pages.show({ task: task.id, page: pageName, id: application.id }),
-            text: 'Change',
-            visuallyHiddenText: document.fileName,
-          },
-        ],
-      }
-    }
-    items.push(item)
-  })
-
-  return items
-}
+) =>
+  getDocumentSummaryListItems(
+    documentsFromApplication(application),
+    application.person.crn,
+    showActions && applyPaths.applications.pages.show({ task: task.id, page: pageName, id: application.id }),
+    retrieveOptionalQuestionResponseFromFormArtifact(application, AttachDocuments, 'otherDocumentDetails'),
+  )
 
 export const summaryListItemForResponse = (
   key: string,

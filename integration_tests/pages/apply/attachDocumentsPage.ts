@@ -5,6 +5,8 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 
 import ApplyPage from './applyPage'
 
+const additionalDocumentDescription = 'Description for additional documents'
+
 export default class AttachDocumentsPage extends ApplyPage {
   documents: Array<Document>
 
@@ -16,7 +18,7 @@ export default class AttachDocumentsPage extends ApplyPage {
     application: ApprovedPremisesApplication,
   ) {
     super(
-      'Select any additional documents that are required to support your application',
+      'Select any relevant documents to support your application',
       application,
       'attach-required-documents',
       'attach-documents',
@@ -52,5 +54,6 @@ export default class AttachDocumentsPage extends ApplyPage {
       cy.get(textareaSelector).clear()
       cy.get(textareaSelector).type(d.description)
     })
+    cy.get(`textarea[name="otherDocumentDetails"]`).type(additionalDocumentDescription)
   }
 }

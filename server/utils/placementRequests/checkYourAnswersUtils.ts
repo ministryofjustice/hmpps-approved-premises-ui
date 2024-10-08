@@ -1,10 +1,13 @@
-import { ApprovedPremisesApplication as Application, Document, PlacementApplication } from '../../@types/shared'
-import { HtmlItem, SummaryListItem, TextItem } from '../../@types/ui'
+import { ApprovedPremisesApplication as Application, PlacementApplication } from '@approved-premises/api'
+import { HtmlItem, SummaryListItem, TextItem } from '@approved-premises/ui'
 import AdditionalDocuments from '../../form-pages/placement-application/request-a-placement/additionalDocuments'
 import paths from '../../paths/placementApplications'
-import { summaryListItemForResponse } from '../applications/summaryListUtils'
+import { getDocumentSummaryListItems, summaryListItemForResponse } from '../applications/summaryListUtils'
 import { getPage } from '../applications/getPage'
-import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import {
+  retrieveOptionalQuestionResponseFromFormArtifact,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../retrieveQuestionResponseFromFormArtifact'
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { datesOfPlacementItem } from './datesOfPlacementItem'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
@@ -122,35 +125,15 @@ export const attachDocumentsSummaryListItems = (
   taskName: string,
   pageName: string,
   showActions: boolean,
-) => {
-  const items: Array<SummaryListItem> = []
-
-  const documents = retrieveQuestionResponseFromFormArtifact(
-    placementApplication,
-    AdditionalDocuments,
-    'selectedDocuments',
-  ) as Array<Document>
-
-  documents.forEach(document => {
-    const item: SummaryListItem = {
-      key: {
-        html: `<a href="/applications/people/${application.person.crn}/documents/${document.id}" data-cy-documentId="${document.id}">${document.fileName}</a>`,
-      },
-      value: { text: document?.description || '' },
-    }
-    if (showActions) {
-      item.actions = {
-        items: [
-          {
-            href: paths.placementApplications.pages.show({ task: taskName, page: pageName, id: application.id }),
-            text: 'Change',
-            visuallyHiddenText: document.fileName,
-          },
-        ],
-      }
-    }
-    items.push(item)
-  })
-
-  return items
-}
+) =>
+  getDocumentSummaryListItems(
+    retrieveQuestionResponseFromFormArtifact(placementApplication, AdditionalDocuments, 'selectedDocuments'),
+    application.person.crn,
+    showActions &&
+      paths.placementApplications.pages.show({
+        task: taskName,
+        page: pageName,
+        id: placementApplication.id,
+      }),
+    retrieveOptionalQuestionResponseFromFormArtifact(placementApplication, AdditionalDocuments, 'otherDocumentDetails'),
+  )

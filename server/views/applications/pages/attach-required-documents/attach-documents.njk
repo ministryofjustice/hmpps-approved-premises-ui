@@ -5,10 +5,21 @@
 
 {% set columnClasses = "govuk-grid-column-full applications--pages--attach-documents" %}
 
+  {% set textboxLabel %}
+    <p class="govuk-body">If there are any other relevant documents that you would like the assessor to know about, add details here.</p>
+    <p class="govuk-body">Please include</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>file name</li>
+      <li>description of document </li>
+      <li>location in NDelius</li>
+    </ul>
+  {% endset %}
+
 {% block questions %}
   <h1 class="govuk-heading-l">{{page.title}}</h1> 
   
-  <p>You can select some documents to import from NDelius to support your application. </p>
+  <p>Select relevant documents to support your application.</p>
+  <p>You must upload the previous conviction document. You may select up to 4 other relevant documents to import from NDelius to support your application. </p>
   <p>Not all documents are available to import.</p>
 
   <p class="applications--pages--attach-document__results">Showing <b>{{ page.documents | length }}</b> documents</p>
@@ -36,6 +47,20 @@
     ],
     rows: AttachDocumentsUtils.tableRows(page.documents, page.body.selectedDocuments, page.application, errors)
   }) }}
+
+
+  {{
+    formPageTextarea(
+      {
+        fieldName: "otherDocumentDetails",
+        label: {
+        html: textboxLabel
+        }
+      },
+      fetchContext()
+    )
+  }}
+
   {% if page.documents.length === 0 %}
       <p class="govuk-body">No documents have been imported from Delius</p>
   {% endif %}

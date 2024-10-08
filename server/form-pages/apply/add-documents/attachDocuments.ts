@@ -4,19 +4,23 @@ import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
+const maxDocumentsToUpload = 5
+
 type AttachDocumentsBody = {
   selectedDocuments?: Array<Document>
+  otherDocumentDetails?: string
 }
 
 type AttachDocumentsResponse = {
   selectedDocuments?: Array<Document>
   documentIds?: Array<string> | string
   documentDescriptions?: Record<string, string>
+  otherDocumentDetails?: string
 }
 
-@Page({ name: 'attach-documents', bodyProperties: ['selectedDocuments'] })
+@Page({ name: 'attach-documents', bodyProperties: ['selectedDocuments', 'otherDocumentDetails'] })
 export default class AttachDocuments implements TasklistPage {
-  title = 'Select any additional documents that are required to support your application'
+  title = 'Select any relevant documents to support your application'
 
   documents: Array<Document> | undefined
 
@@ -46,7 +50,7 @@ export default class AttachDocuments implements TasklistPage {
             }
           })
 
-    const page = new AttachDocuments({ selectedDocuments }, application)
+    const page = new AttachDocuments({ ...body, selectedDocuments }, application)
     page.documents = documents
 
     return page
@@ -68,23 +72,26 @@ export default class AttachDocuments implements TasklistPage {
         'N/A': 'No documents attached',
       }
     }
-
     this.body.selectedDocuments.forEach(d => {
       response[d.fileName] = d.description || 'No description'
     })
-
     return response
   }
 
   errors() {
     const errors: TaskListErrors<this> = {}
-
-    this.body.selectedDocuments.forEach(document => {
-      if (!document.description) {
-        errors[`selectedDocuments_${document.id}`] =
-          `You must enter a description for the document '${document.fileName}'`
-      }
-    })
+    if (this.body.selectedDocuments.length > maxDocumentsToUpload) {
+      errors[`selectedDocuments_${this.body.selectedDocuments[maxDocumentsToUpload].id}`] =
+        `You can only select ${maxDocumentsToUpload} documents, remove ${this.body.selectedDocuments.length - maxDocumentsToUpload} to continue.`
+    }
+    if (!Object.keys(errors).length) {
+      this.body.selectedDocuments.forEach(document => {
+        if (!document.description) {
+          errors[`selectedDocuments_${document.id}`] =
+            `You must enter a description for the document '${document.fileName}'`
+        }
+      })
+    }
 
     return errors
   }
