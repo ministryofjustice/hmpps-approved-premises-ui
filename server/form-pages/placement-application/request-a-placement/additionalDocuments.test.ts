@@ -112,9 +112,7 @@ describe('additionalDocuments', () => {
       })
     })
     it('should return an error if the user has selected more than 5 documents', () => {
-      const selectedDocuments = Array(6)
-        .fill(null)
-        .map((_, idx) => documentFactory.build({ fileName: `file${idx}.pdf`, description: 'document description' }))
+      const selectedDocuments = documentFactory.buildList(6)
       const page = new AdditionalDocuments({ selectedDocuments }, placementApplication)
       expect(page.errors()).toEqual({
         [`selectedDocuments_${selectedDocuments[5].id}`]: `You can only select 5 documents, remove 1 to continue.`,

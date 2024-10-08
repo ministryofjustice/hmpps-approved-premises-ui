@@ -37,7 +37,6 @@ export default class AdditionalDocuments extends Page {
       cy.get(textareaSelector).clear()
       cy.get(textareaSelector).type(d.description)
     })
-    // Complete the additional text area
     cy.get(`textarea[name="otherDocumentDetails"]`).type(additionalDocumentDescription)
   }
 }

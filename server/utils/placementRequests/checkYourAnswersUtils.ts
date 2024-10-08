@@ -1,10 +1,13 @@
-import { ApprovedPremisesApplication as Application, Document, PlacementApplication } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application, PlacementApplication } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, TextItem } from '@approved-premises/ui'
 import AdditionalDocuments from '../../form-pages/placement-application/request-a-placement/additionalDocuments'
 import paths from '../../paths/placementApplications'
 import { getDocumentSummaryListItems, summaryListItemForResponse } from '../applications/summaryListUtils'
 import { getPage } from '../applications/getPage'
-import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import {
+  retrieveOptionalQuestionResponseFromFormArtifact,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../retrieveQuestionResponseFromFormArtifact'
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { datesOfPlacementItem } from './datesOfPlacementItem'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
@@ -122,31 +125,15 @@ export const attachDocumentsSummaryListItems = (
   taskName: string,
   pageName: string,
   showActions: boolean,
-) => {
-  const personCrn: string = application.person.crn
-  const changePath: string = showActions
-    ? paths.placementApplications.pages.show({
+) =>
+  getDocumentSummaryListItems(
+    retrieveQuestionResponseFromFormArtifact(placementApplication, AdditionalDocuments, 'selectedDocuments'),
+    application.person.crn,
+    showActions &&
+      paths.placementApplications.pages.show({
         task: taskName,
         page: pageName,
         id: placementApplication.id,
-      })
-    : undefined
-
-  const documents: Array<Document> = retrieveQuestionResponseFromFormArtifact(
-    placementApplication,
-    AdditionalDocuments,
-    'selectedDocuments',
+      }),
+    retrieveOptionalQuestionResponseFromFormArtifact(placementApplication, AdditionalDocuments, 'otherDocumentDetails'),
   )
-
-  let otherDocumentDetails: string
-  try {
-    otherDocumentDetails = retrieveQuestionResponseFromFormArtifact(
-      placementApplication,
-      AdditionalDocuments,
-      'otherDocumentDetails',
-    )
-  } catch {
-    // do nothing
-  }
-  return getDocumentSummaryListItems(documents, personCrn, changePath, otherDocumentDetails)
-}

@@ -93,7 +93,6 @@ export default class AdditionalDocuments implements TasklistPage {
         `You can only select ${maxDocumentsToUpload} documents, remove ${this.body.selectedDocuments.length - maxDocumentsToUpload} to continue.`
     }
     if (!Object.keys(errors).length) {
-      // Only check descriptions if number of docs is OK so that the user doesn't waste their time.
       this.body.selectedDocuments.forEach(document => {
         if (!document.description) {
           errors[`selectedDocuments_${document.id}`] =

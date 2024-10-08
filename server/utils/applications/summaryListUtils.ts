@@ -17,7 +17,7 @@ import { forPagesInTask } from './forPagesInTask'
 import { linebreaksToParagraphs } from '../utils'
 import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
 import AttachDocuments from '../../form-pages/apply/add-documents/attachDocuments'
-import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
   reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)
@@ -73,7 +73,7 @@ export const getDocumentSummaryListItems = (
 ): Array<SummaryListItem> => {
   const items: Array<SummaryListItem> = []
 
-  const getAction = (visuallyHiddenText = null as string) =>
+  const getAction = (visuallyHiddenText = '') =>
     changePath
       ? {
           actions: {
@@ -112,25 +112,13 @@ const attachDocumentsSummaryListItems = (
   task: UiTask,
   pageName: string,
   showActions: boolean,
-) => {
-  const personCrn: string = application.person.crn
-  const changePath: string = showActions
-    ? applyPaths.applications.pages.show({ task: task.id, page: pageName, id: application.id })
-    : undefined
-  let otherDocumentDetails: string
-  try {
-    otherDocumentDetails = retrieveQuestionResponseFromFormArtifact(
-      application,
-      AttachDocuments,
-      'otherDocumentDetails',
-    ) as string
-  } catch {
-    // Nothing to do here
-  }
-
-  const documents = documentsFromApplication(application)
-  return getDocumentSummaryListItems(documents, personCrn, changePath, otherDocumentDetails)
-}
+) =>
+  getDocumentSummaryListItems(
+    documentsFromApplication(application),
+    application.person.crn,
+    showActions && applyPaths.applications.pages.show({ task: task.id, page: pageName, id: application.id }),
+    retrieveOptionalQuestionResponseFromFormArtifact(application, AttachDocuments, 'otherDocumentDetails'),
+  )
 
 export const summaryListItemForResponse = (
   key: string,

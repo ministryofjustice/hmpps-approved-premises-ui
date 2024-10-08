@@ -124,10 +124,8 @@ describe('attachDocuments', () => {
         [`selectedDocuments_${selectedDocuments[1].id}`]: `You must enter a description for the document '${selectedDocuments[1].fileName}'`,
       })
     })
-    it('should return an error if the user has selected more than 5 documents', () => {
-      const selectedDocuments = Array(6)
-        .fill(null)
-        .map((_, idx) => documentFactory.build({ fileName: `file${idx}.pdf`, description: 'document description' }))
+    it('should return an error if the user has selected more than 5 documents, supressing checking of undefined descriptions', () => {
+      const selectedDocuments = documentFactory.buildList(6, { description: undefined })
       const page = new AttachDocuments({ selectedDocuments }, application)
       expect(page.errors()).toEqual({
         [`selectedDocuments_${selectedDocuments[5].id}`]: `You can only select 5 documents, remove 1 to continue.`,
