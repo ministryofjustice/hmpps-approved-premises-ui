@@ -24,7 +24,7 @@ export default class TaskService {
     sortBy,
     sortDirection,
     page = 1,
-    apAreaId = '',
+    cruManagementAreaId = '',
     taskTypes,
     requiredQualification,
     crnOrName,
@@ -36,7 +36,7 @@ export default class TaskService {
     sortBy: TaskSortField
     sortDirection: SortDirection
     page: number
-    apAreaId?: string
+    cruManagementAreaId?: string
     taskTypes?: Array<TaskType>
     requiredQualification?: TaskSearchQualification
     crnOrName?: string
@@ -44,10 +44,10 @@ export default class TaskService {
   }): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
-    const tasks = await taskClient.getAll({
+    return taskClient.getAll({
       allocatedFilter,
       allocatedToUserId,
-      apAreaId,
+      cruManagementAreaId,
       page,
       sortDirection,
       sortBy,
@@ -56,8 +56,6 @@ export default class TaskService {
       crnOrName,
       isCompleted,
     })
-
-    return tasks
   }
 
   async getMatchTasks(token: string): Promise<GroupedMatchTasks> {

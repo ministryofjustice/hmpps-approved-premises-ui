@@ -1,9 +1,12 @@
+import { Cas1CruManagementArea } from '@approved-premises/api'
 import TaskListPage from '../../pages/tasks/listPage'
 import AllocationsPage from '../../pages/tasks/allocationPage'
 import Page from '../../pages/page'
 
 import {
+  apAreaFactory,
   applicationFactory,
+  cruManagementAreaFactory,
   personFactory,
   reallocationFactory,
   taskFactory,
@@ -20,13 +23,15 @@ context('Task Allocation', () => {
     cy.task('reset')
     cy.task('stubSignIn')
 
-    const apArea = {
-      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
-      name: 'Midlands',
-    }
+    const apArea = apAreaFactory.build()
+    const cruManagementArea = cruManagementAreaFactory.build()
+    const cruManagementAreas: Array<Cas1CruManagementArea> = [
+      ...cruManagementAreaFactory.buildList(3),
+      cruManagementArea,
+    ]
     const qualifications = qualificationFactory.buildList(2)
     // Given there are some users in the database
-    const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ apArea, qualifications })]
+    const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ qualifications })]
     const selectedUser = users[0]
 
     // And there is an allocated task
@@ -70,17 +75,17 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementArea.id,
     })
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
     cy.task('stubApAreaReferenceData', { apArea })
+    cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
 
     // And I am logged in with the cas1 view manage tasks permission
-    const me = userFactory.build({ apArea })
-    cy.task('stubAuthUser', { roles: [], permissions: ['cas1_view_manage_tasks'], userId: me.id, apArea: me.apArea })
+    cy.task('stubAuthUser', { roles: [], permissions: ['cas1_view_manage_tasks'], cruManagementArea })
     cy.signIn()
 
     // When I visit the task list page
@@ -95,6 +100,7 @@ context('Task Allocation', () => {
     cy.wrap(application).as('application')
     cy.wrap(applicationForRestrictedPerson).as('applicationForRestrictedPerson')
     cy.wrap(apArea).as('apArea')
+    cy.wrap(cruManagementArea).as('cruManagementArea')
     cy.wrap(qualifications).as('qualification')
   })
 
@@ -193,8 +199,8 @@ context('Task Allocation', () => {
     allocationsPage.searchBy('apAreaId', this.apArea.id)
     allocationsPage.clickApplyFilter()
 
-    // Then I should be shown a list of users with that qualification and AP AreaId
-    expectedUsers = expectedUsers.filter(user => user.apArea.id === this.apArea.id)
+    // Then I should be shown a list of users with that qualification and CRU Management Area
+    expectedUsers = expectedUsers.filter(user => user.cruManagementArea.id === this.cruManagementArea.id)
     allocationsPage.shouldShowUserTable(expectedUsers, this.task)
   })
 

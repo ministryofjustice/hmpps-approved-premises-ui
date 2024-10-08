@@ -1,97 +1,98 @@
-{% set apAreaFilter %}
-  {{ govukSelect({
-    label: {
-      text: "AP Areas",
-      classes: "govuk-label--s"
-    },
-    id: "area",
-    name: "area",
-    items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', 'all', context)
-  }) }}
+{% set cruManagementAreaFilter %}
+    {{ govukSelect({
+        label: {
+            text: "AP Areas",
+            classes: "govuk-label--s"
+        },
+        id: "area",
+        name: "area",
+        items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementArea', 'all', context)
+    }) }}
 {% endset %}
 
 {% set allocatedUserFilter %}
-  {{ govukSelect({
-    label: {
-      text: "Allocated user",
-      classes: "govuk-label--s"
-    },
-    id: "allocatedToUserId",
-    name: "allocatedToUserId",
-    items: convertObjectsToSelectOptions(users, 'All users', 'name', 'id', 'allocatedToUserId', '', context)
-  }) }}
+    {{ govukSelect({
+        label: {
+            text: "Allocated user",
+            classes: "govuk-label--s"
+        },
+        id: "allocatedToUserId",
+        name: "allocatedToUserId",
+        items: convertObjectsToSelectOptions(users, 'All users', 'name', 'id', 'allocatedToUserId', '', context)
+    }) }}
 {% endset %}
 
 {% set qualificationsFilter %}
-  {{ govukSelect({
-    label: {
-      text: "Required qualification",
-      classes: "govuk-label--s"
-    },
-    id: "requiredQualification",
-    name: "requiredQualification",
-    items: TaskUtils.userQualificationsSelectOptions(requiredQualification)
-  }) }}
+    {{ govukSelect({
+        label: {
+            text: "Required qualification",
+            classes: "govuk-label--s"
+        },
+        id: "requiredQualification",
+        name: "requiredQualification",
+        items: TaskUtils.userQualificationsSelectOptions(requiredQualification)
+    }) }}
 {% endset %}
 
 {% set submitButton %}
-  {{ govukButton({
-      "name": "submit",
-      "text": "Apply filters",
-      "classes": "search-and-filter__submit",
-      preventDoubleClick: true
-  }) }}
+    {{ govukButton({
+        "name": "submit",
+        "text": "Apply filters",
+        "classes": "search-and-filter__submit",
+        preventDoubleClick: true
+    }) }}
 {% endset %}
 
 <div class="search-and-filter__wrapper">
-  <form action="{{ paths.tasks.index({}) }}" method="get">
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-    <input type="hidden" name="activeTab" value="{{ activeTab }}">
-    <input type="hidden" name="allocatedFilter" value="{{ allocatedFilter }}">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-quarter">
-        <h2 class="govuk-heading-m">Filters</h2>
-      </div>
-    </div>
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        <div class="govuk-form-group">
-          <label class="search-and-filter__crn-label--small" for="crnOrName">
-            CRN or Name
-          </label>
-          <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search" aria-describedby="crn-hint" value="{{ crnOrName }}">
+    <form action="{{ paths.tasks.index({}) }}" method="get">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <input type="hidden" name="activeTab" value="{{ activeTab }}">
+        <input type="hidden" name="allocatedFilter" value="{{ allocatedFilter }}">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-quarter">
+                <h2 class="govuk-heading-m">Filters</h2>
+            </div>
         </div>
-      </div>
-    </div>
-    {% if activeTab == 'allocated' or activeTab == 'completed' %}
-       <div class="govuk-grid-row">
-         <div class="govuk-grid-column-one-third">
-            {{ apAreaFilter | safe }}
-         </div>
-         <div class="govuk-grid-column-one-third">
-            {{ allocatedUserFilter | safe }}
-         </div>
-         <div class="govuk-grid-column-one-third">
-            {{ qualificationsFilter | safe }}
-         </div>
-       </div>
-       <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-          {{ submitButton | safe }}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-form-group">
+                    <label class="search-and-filter__crn-label--small" for="crnOrName">
+                        CRN or Name
+                    </label>
+                    <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search"
+                           aria-describedby="crn-hint" value="{{ crnOrName }}">
+                </div>
+            </div>
         </div>
-      </div>
-    {% elif activeTab == 'unallocated' %}
-       <div class="govuk-grid-row">
-         <div class="govuk-grid-column-one-third">
-            {{ apAreaFilter | safe }}
-         </div>
-         <div class="govuk-grid-column-one-third">
-            {{ qualificationsFilter | safe }}
-         </div>
-         <div class="govuk-grid-column-one-third">
-            {{ submitButton | safe }}
-         </div>
-       </div>
-    {% endif %}
-  </form>
+        {% if activeTab == 'allocated' or activeTab == 'completed' %}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-third">
+                    {{ cruManagementAreaFilter | safe }}
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    {{ allocatedUserFilter | safe }}
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    {{ qualificationsFilter | safe }}
+                </div>
+            </div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-third">
+                    {{ submitButton | safe }}
+                </div>
+            </div>
+            {% elif activeTab == 'unallocated' %}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-third">
+                    {{ cruManagementAreaFilter | safe }}
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    {{ qualificationsFilter | safe }}
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    {{ submitButton | safe }}
+                </div>
+            </div>
+        {% endif %}
+    </form>
 </div>

@@ -1,16 +1,12 @@
 import {
-  ApArea,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
   UserSummary,
 } from '@approved-premises/api'
 import QueryString from 'qs'
-import { Response } from 'superagent'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
-import { probationRegions } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
-import { apAreaFactory } from '../../server/testutils/factories'
 
 const stubFindUser = (args: { user: User; id: string; userVersion?: string }) =>
   stubFor({
@@ -225,38 +221,6 @@ const stubUserDelete = (args: { id: string }) =>
     },
   })
 
-const stubProbationRegionsReferenceData = (): Promise<Response> => stubFor(probationRegions)
-
-const stubApAreaReferenceData = (
-  {
-    apArea = null,
-    additionalAreas = [],
-  }: {
-    apArea: ApArea | null
-    additionalAreas: Array<ApArea>
-  } = { apArea: null, additionalAreas: [] },
-): Promise<Response> => {
-  const apAreas = [...additionalAreas.map(area => apAreaFactory.build(area)), ...apAreaFactory.buildList(10)]
-
-  if (apArea != null) {
-    apAreas.push(apAreaFactory.build(apArea))
-  }
-
-  return stubFor({
-    request: {
-      method: 'GET',
-      url: '/reference-data/ap-areas',
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: apAreas,
-    },
-  })
-}
-
 const verifyUserUpdate = async (userId: string) =>
   (
     await getMatchingRequests({
@@ -277,6 +241,4 @@ export default {
   stubNotFoundDeliusUserSearch,
   verifyUserUpdate,
   verifyUsersRequest,
-  stubProbationRegionsReferenceData,
-  stubApAreaReferenceData,
 }

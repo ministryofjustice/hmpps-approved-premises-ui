@@ -25,6 +25,7 @@ export const controllers = (services: Services) => {
     services.applicationService,
     services.apAreaService,
     services.userService,
+    services.cruManagementAreaService,
   )
   const allocationsController = new AllocationsController(services.taskService)
   const placementApplicationPagesController = new PagesController(
