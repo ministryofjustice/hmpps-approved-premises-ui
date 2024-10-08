@@ -111,8 +111,8 @@ describe('additionalDocuments', () => {
         [`selectedDocuments_${selectedDocuments[1].id}`]: `You must enter a description for the document '${selectedDocuments[1].fileName}'`,
       })
     })
-    it('should return an error if the user has selected more than 5 documents', () => {
-      const selectedDocuments = documentFactory.buildList(6)
+    it('should return an error if the user has selected more than 5 documents, supressing checking of undefined descriptions', () => {
+      const selectedDocuments = documentFactory.buildList(6, { description: undefined })
       const page = new AdditionalDocuments({ selectedDocuments }, placementApplication)
       expect(page.errors()).toEqual({
         [`selectedDocuments_${selectedDocuments[5].id}`]: `You can only select 5 documents, remove 1 to continue.`,
