@@ -1,7 +1,7 @@
 import { LostBedReason } from '@approved-premises/api'
 
 import Cas1ReferenceDataClient from './cas1ReferenceDataClient'
-import { cas1ReferenceDataFactory } from '../testutils/factories'
+import { cas1ReferenceDataFactory, cruManagementAreaFactory } from '../testutils/factories'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
 describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
@@ -41,6 +41,31 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
         const output = await cas1ReferenceDataClient.getReferenceData(key)
         expect(output).toEqual(data[key])
       })
+    })
+  })
+
+  describe('getCRUManagementAreas', () => {
+    it('should return an array of CRU management areas', async () => {
+      const cruManagementAreas = cruManagementAreaFactory.buildList(5)
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get CRU management areas`,
+        withRequest: {
+          method: 'GET',
+          path: `/cas1/reference-data/cru-management-areas`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: cruManagementAreas,
+        },
+      })
+
+      const output = await cas1ReferenceDataClient.getCRUManagementAreas()
+      expect(output).toEqual(cruManagementAreas)
     })
   })
 })
