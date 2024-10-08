@@ -75,18 +75,18 @@ describe('attachDocuments', () => {
     })
 
     it('returns the selected documents if they are already defined', async () => {
+      const body = {
+        selectedDocuments: [documents[0]],
+        otherDocumentDetails: 'Some description',
+      }
       const page = await AttachDocuments.initialize(
-        {
-          selectedDocuments: [documents[0]],
-        },
+        body,
         application,
         'SOME_TOKEN',
         fromPartial({ applicationService, personService }),
       )
 
-      expect(page.body).toEqual({
-        selectedDocuments: [documents[0]],
-      })
+      expect(page.body).toEqual(body)
       expect(page.documents).toEqual(documents)
     })
 
@@ -122,6 +122,15 @@ describe('attachDocuments', () => {
       const page = new AttachDocuments({ selectedDocuments }, application)
       expect(page.errors()).toEqual({
         [`selectedDocuments_${selectedDocuments[1].id}`]: `You must enter a description for the document '${selectedDocuments[1].fileName}'`,
+      })
+    })
+    it('should return an error if the user has selected more than 5 documents', () => {
+      const selectedDocuments = Array(6)
+        .fill(null)
+        .map((_, idx) => documentFactory.build({ fileName: `file${idx}.pdf`, description: 'document description' }))
+      const page = new AttachDocuments({ selectedDocuments }, application)
+      expect(page.errors()).toEqual({
+        [`selectedDocuments_${selectedDocuments[5].id}`]: `You can only select 5 documents, remove 1 to continue.`,
       })
     })
   })

@@ -111,6 +111,15 @@ describe('additionalDocuments', () => {
         [`selectedDocuments_${selectedDocuments[1].id}`]: `You must enter a description for the document '${selectedDocuments[1].fileName}'`,
       })
     })
+    it('should return an error if the user has selected more than 5 documents', () => {
+      const selectedDocuments = Array(6)
+        .fill(null)
+        .map((_, idx) => documentFactory.build({ fileName: `file${idx}.pdf`, description: 'document description' }))
+      const page = new AdditionalDocuments({ selectedDocuments }, placementApplication)
+      expect(page.errors()).toEqual({
+        [`selectedDocuments_${selectedDocuments[5].id}`]: `You can only select 5 documents, remove 1 to continue.`,
+      })
+    })
   })
 
   describe('response', () => {

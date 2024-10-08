@@ -421,7 +421,7 @@ export const completeAttachRequiredDocuments = async (page: Page) => {
 
   const requiredDocumentsPage = await ApplyPage.initialize(
     page,
-    'Select any additional documents that are required to support your application',
+    'Select any relevant documents to support your application',
   )
   await requiredDocumentsPage.clickSave()
 }

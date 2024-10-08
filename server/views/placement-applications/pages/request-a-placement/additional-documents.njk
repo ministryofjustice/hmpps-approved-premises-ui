@@ -5,11 +5,19 @@
 
 {% set columnClasses = "govuk-grid-column-full applications--pages--attach-documents" %}
 
+{% set textboxLabel %}
+  <p class="govuk-body">If there are any other relevant documents on Ndelius that you would like the assessor to know about, add details here.</p>
+  <p class="govuk-body">Please include</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>file name</li>
+    <li>description of document </li>
+  </ul>
+{% endset %}
+
 {% block questions %}
   <h1 class="govuk-heading-l">{{page.title}}</h1>
 
-  <p>These documents are imported from NDelius. </p>
-  <p>Select the parole report and any additional documents to support your request for a placement.</p>
+  <p>Select the parole report and parole directions (if available). You can select up to 5 relevant documents to support your request for placement. </p>
 
   <p class="applications--pages--attach-document__results">Showing <b>{{ page.documents | length }}</b> documents</p>
 
@@ -36,5 +44,17 @@
     ],
     rows: AttachDocumentsUtils.tableRows(page.documents, page.body.selectedDocuments, page.application, errors)
   }) }}
+
+  {{
+    formPageTextarea(
+      {
+        fieldName: "otherDocumentDetails",
+        label: {
+        html: textboxLabel
+        }
+      },
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

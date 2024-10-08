@@ -47,14 +47,14 @@ export const createPlacementApplication = async ({ page }: { page: Page }) => {
     'Why are you requesting a placement?',
     'Release on Temporary Licence (ROTL)',
   )
-  await reasonForPlacementPage.clickSubmit()
+  await reasonForPlacementPage.clickSave()
 
   const previousPlacementPage = new ApplyPage(page)
   await previousPlacementPage.checkRadioInGroup(
     'Has this person previously had a placement at an Approved Premises for ROTL?',
     'No',
   )
-  await previousPlacementPage.clickSubmit()
+  await previousPlacementPage.clickSave()
 
   const datePage = new ApplyPage(page)
   await datePage.fillReleaseDateField('standard')
@@ -82,7 +82,7 @@ export const createPlacementApplication = async ({ page }: { page: Page }) => {
     "Has the person's location factors changed since the application was assessed?",
     'No',
   )
-  await updatesToPlacementPage.clickSubmit()
+  await updatesToPlacementPage.clickSave()
 
   const checkYourAnswersPage = new ApplyPage(page)
   await checkYourAnswersPage.checkCheckBoxes([

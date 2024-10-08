@@ -2,6 +2,8 @@ import { Document } from '@approved-premises/api'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import Page from '../../page'
 
+const additionalDocumentDescription = 'Description for additional documents'
+
 export default class AdditionalDocuments extends Page {
   documents: Array<Document>
 
@@ -35,5 +37,7 @@ export default class AdditionalDocuments extends Page {
       cy.get(textareaSelector).clear()
       cy.get(textareaSelector).type(d.description)
     })
+    // Complete the additional text area
+    cy.get(`textarea[name="otherDocumentDetails"]`).type(additionalDocumentDescription)
   }
 }
