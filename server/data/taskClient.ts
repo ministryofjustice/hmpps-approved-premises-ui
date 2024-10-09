@@ -4,7 +4,7 @@ import RestClient from './restClient'
 import paths from '../paths/api'
 import {
   AllocatedFilter,
-  ApArea,
+  Cas1CruManagementArea,
   Reallocation,
   Task,
   TaskSortField,
@@ -22,7 +22,7 @@ export default class TaskClient {
 
   async getAll({
     allocatedFilter,
-    apAreaId,
+    cruManagementAreaId,
     allocatedToUserId,
     page,
     sortDirection,
@@ -33,7 +33,7 @@ export default class TaskClient {
     isCompleted = false,
   }: {
     allocatedFilter: AllocatedFilter
-    apAreaId: ApArea['id']
+    cruManagementAreaId: Cas1CruManagementArea['id']
     allocatedToUserId: string
     page: number
     sortDirection: string
@@ -54,7 +54,7 @@ export default class TaskClient {
         ...filters,
         allocatedFilter,
         allocatedToUserId,
-        apAreaId,
+        cruManagementAreaId,
         sortBy,
         sortDirection,
         requiredQualification,

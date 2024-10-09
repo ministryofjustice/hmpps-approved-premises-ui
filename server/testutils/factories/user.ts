@@ -10,6 +10,7 @@ import type {
   UserWithWorkload,
 } from '@approved-premises/api'
 import { apAreaFactory } from './referenceData'
+import { cruManagementAreaFactory } from './cas1ReferenceData'
 
 const userFactory = Factory.define<User>(() => ({
   name: faker.person.fullName(),
@@ -24,8 +25,8 @@ const userFactory = Factory.define<User>(() => ({
   isActive: true,
   apArea: apAreaFactory.build(),
   version: faker.number.int(),
-  cruManagementArea: { id: faker.string.uuid(), name: faker.location.state() },
-  cruManagementAreaDefault: { id: faker.string.uuid(), name: faker.location.state() },
+  cruManagementArea: cruManagementAreaFactory.build(),
+  cruManagementAreaDefault: cruManagementAreaFactory.build(),
 }))
 
 export const userSummaryFactory = Factory.define<UserSummary>(() => ({

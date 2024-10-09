@@ -21,6 +21,7 @@ import {
   BedOccupancyOpenEntry,
   BedOccupancyRange,
   Booking,
+  Cas1CruManagementArea,
   Document,
   FlagsEnvelope,
   Gender,
@@ -375,6 +376,7 @@ export type UserDetails = {
   permissions: Array<ApprovedPremisesUserPermission>
   active: boolean
   apArea: ApArea
+  cruManagementArea: Cas1CruManagementArea
   version: string
 }
 

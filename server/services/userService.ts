@@ -35,6 +35,7 @@ export default class UserService {
       roles: user.roles,
       active: user.isActive,
       apArea: user.apArea,
+      cruManagementArea: user.cruManagementArea,
       version: user.version.toString(),
     }
   }

@@ -1,6 +1,12 @@
 import ListPage from '../../pages/tasks/listPage'
 
-import { apAreaFactory, taskFactory, userFactory, userSummaryFactory } from '../../../server/testutils/factories'
+import {
+  apAreaFactory,
+  cruManagementAreaFactory,
+  taskFactory,
+  userFactory,
+  userSummaryFactory,
+} from '../../../server/testutils/factories'
 import { restrictedPersonSummaryTaskFactory } from '../../../server/testutils/factories/task'
 import { restrictedPersonSummaryAssessmentTaskFactory } from '../../../server/testutils/factories/assessmentTask'
 import paths from '../../../server/paths/tasks'
@@ -10,6 +16,7 @@ context('Task Allocation', () => {
   const users = userSummaryFactory.buildList(5)
   const apArea = apAreaFactory.build()
   const additionalArea = apAreaFactory.build()
+  const cruManagementAreas = cruManagementAreaFactory.buildList(5)
 
   beforeEach(() => {
     cy.task('reset')
@@ -17,9 +24,15 @@ context('Task Allocation', () => {
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubAuthUser', { apArea })
     cy.task('stubApAreaReferenceData', { apArea, additionalAreas: [additionalArea] })
+    cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
 
-    const me = userFactory.build({ apArea })
-    cy.task('stubAuthUser', { roles: [], permissions: ['cas1_view_manage_tasks'], userId: me.id, apArea: me.apArea })
+    const me = userFactory.build({ apArea, cruManagementArea: cruManagementAreas[0] })
+    cy.task('stubAuthUser', {
+      roles: [],
+      permissions: ['cas1_view_manage_tasks'],
+      userId: me.id,
+      cruManagementArea: cruManagementAreas[0],
+    })
   })
 
   it('returns unauthorised if user does not have the cas1 view manage task permission', () => {
@@ -47,7 +60,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     cy.task('stubGetAllTasks', {
@@ -55,7 +68,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     cy.task('stubGetAllTasks', {
@@ -64,7 +77,7 @@ context('Task Allocation', () => {
       page: '1',
       sortDirection: 'asc',
       isCompleted: 'true',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     // When I visit the tasks dashboard
@@ -103,7 +116,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     cy.task('stubGetAllTasks', {
@@ -111,7 +124,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     // When I visit the tasks dashboard
@@ -144,21 +157,21 @@ context('Task Allocation', () => {
       tasks: allocatedTasksPage1,
       allocatedFilter: 'allocated',
       page: '1',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksPage2,
       allocatedFilter: 'allocated',
       page: '2',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksPage9,
       allocatedFilter: 'allocated',
       page: '9',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     // When I visit the tasks dashboard
@@ -202,7 +215,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       sortDirection: 'asc',
       sortBy: 'createdAt',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     sortFields.forEach(sortField => {
@@ -212,7 +225,7 @@ context('Task Allocation', () => {
         page: '1',
         sortDirection: 'asc',
         sortBy: sortField,
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
       })
 
       cy.task('stubGetAllTasks', {
@@ -221,7 +234,7 @@ context('Task Allocation', () => {
         page: '1',
         sortDirection: 'desc',
         sortBy: sortField,
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
       })
     })
 
@@ -258,8 +271,8 @@ context('Task Allocation', () => {
 
   const filterOptions = {
     area: {
-      apiKey: 'apAreaId',
-      value: apArea.id,
+      apiKey: 'cruManagamentAreaId',
+      value: cruManagementAreas[0].id,
     },
     allocatedToUserId: {
       apiKey: 'allocatedToUserId',
@@ -289,7 +302,7 @@ context('Task Allocation', () => {
         tasks: allocatedTasks,
         allocatedFilter: 'allocated',
         page: '1',
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
       })
 
       // When I visit the tasks dashboard
@@ -304,7 +317,7 @@ context('Task Allocation', () => {
         allocatedFilter: 'allocated',
         page: '1',
         sortDirection: 'asc',
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
 
         [filterOptions[key].apiKey]: filterOptions[key].value,
       })
@@ -329,7 +342,12 @@ context('Task Allocation', () => {
     const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1)
     const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-    cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1', apAreaId: apArea.id })
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasks,
+      allocatedFilter: 'allocated',
+      page: '1',
+      cruManagementAreaId: cruManagementAreas[0].id,
+    })
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
@@ -337,13 +355,13 @@ context('Task Allocation', () => {
     // Then I should see the tasks that are allocated
     listPage.shouldShowAllocatedTasks()
 
-    // When I filter by region
+    // When I filter by CRU Management area
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFiltered,
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: additionalArea.id,
+      cruManagementAreaId: cruManagementAreas[1].id,
     })
 
     cy.task('stubGetAllTasks', {
@@ -351,10 +369,10 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: additionalArea.id,
+      cruManagementAreaId: cruManagementAreas[1].id,
     })
 
-    listPage.searchBy('area', additionalArea.id)
+    listPage.searchBy('area', cruManagementAreas[1].id)
     listPage.clickApplyFilter()
 
     // Then the page should show the results
@@ -364,7 +382,7 @@ context('Task Allocation', () => {
     listPage.clickTab('Unallocated')
 
     // Then the page should keep the area filter
-    listPage.shouldHaveSelectText('area', additionalArea.name)
+    listPage.shouldHaveSelectText('area', cruManagementAreas[1].name)
   })
 
   it('retains the unallocated filter when applying other filters', () => {
@@ -382,7 +400,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     // Given I am on the tasks dashboard filtering by the unallocated tab
@@ -401,10 +419,10 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
-    listPage.searchBy('area', apArea.id)
+    listPage.searchBy('area', cruManagementAreas[0].id)
     listPage.clickApplyFilter()
 
     // Then the status filter should be retained and allocated results should be shown
@@ -425,21 +443,21 @@ context('Task Allocation', () => {
       tasks: allocatedTasks,
       allocatedFilter: 'allocated',
       page: '1',
-      apAreaId: apArea.id,
+      cruManagementAreaId: cruManagementAreas[0].id,
     })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFiltered,
       allocatedFilter: 'allocated',
       page: '1',
-      apAreaId: '',
+      cruManagementAreaId: '',
     })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFilteredPage2,
       allocatedFilter: 'allocated',
       page: '2',
-      apAreaId: '',
+      cruManagementAreaId: '',
     })
 
     cy.task('stubGetAllTasks', {
@@ -448,7 +466,7 @@ context('Task Allocation', () => {
       sortDirection: 'asc',
       page: '1',
       sortBy: 'dueAt',
-      apAreaId: '',
+      cruManagementAreaId: '',
     })
 
     // When I visit the tasks dashboard
@@ -493,7 +511,7 @@ context('Task Allocation', () => {
         allocatedFilter: 'allocated',
         page: '1',
         sortDirection: 'asc',
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
       })
       const completedTasks = restrictedPersonSummaryAssessmentTaskFactory.buildList(5)
       cy.task('stubGetAllTasks', {
@@ -503,7 +521,7 @@ context('Task Allocation', () => {
         sortDirection: 'asc',
         sortBy: 'createdAt',
         isCompleted: 'true',
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
       })
       cy.task('stubGetAllTasks', {
         tasks: [...completedTasks],
@@ -512,7 +530,7 @@ context('Task Allocation', () => {
         sortDirection: 'asc',
         sortBy: sortField,
         isCompleted: 'true',
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
       })
       cy.task('stubGetAllTasks', {
         tasks: [...completedTasks],
@@ -521,7 +539,7 @@ context('Task Allocation', () => {
         sortDirection: 'desc',
         sortBy: sortField,
         isCompleted: 'true',
-        apAreaId: apArea.id,
+        cruManagementAreaId: cruManagementAreas[0].id,
       })
 
       // When I visit the tasks dashboard

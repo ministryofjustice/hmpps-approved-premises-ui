@@ -45,6 +45,7 @@ describe('User service', () => {
       expect(result.roles).toEqual(approvedPremisesUser.roles)
       expect(result.active).toEqual(approvedPremisesUser.isActive)
       expect(result.apArea).toEqual(approvedPremisesUser.apArea)
+      expect(result.cruManagementArea).toEqual(approvedPremisesUser.cruManagementArea)
     })
   })
 

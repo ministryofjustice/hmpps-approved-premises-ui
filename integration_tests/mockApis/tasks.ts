@@ -15,7 +15,7 @@ export default {
     page = '1',
     sortDirection = 'asc',
     sortBy = 'createdAt',
-    apAreaId = '',
+    cruManagementAreaId = '',
     types = [],
     isCompleted = 'false',
   }: {
@@ -25,7 +25,7 @@ export default {
     allocatedToUserId: string
     sortDirection: SortDirection
     sortBy: TaskSortField
-    apAreaId: string
+    cruManagementAreaId: string
     types: Array<TaskType>
     isCompleted: string
   }): SuperAgentRequest => {
@@ -36,8 +36,8 @@ export default {
       allocatedFilter: {
         equalTo: allocatedFilter,
       },
-      apAreaId: {
-        equalTo: apAreaId,
+      cruManagementAreaId: {
+        equalTo: cruManagementAreaId,
       },
 
       allocatedToUserId: {

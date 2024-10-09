@@ -41,7 +41,7 @@ describe('taskService', () => {
         sortBy: 'createdAt',
         sortDirection: 'asc',
         page: 1,
-        apAreaId: 'testAreaId',
+        cruManagementAreaId: 'testAreaId',
         taskTypes: ['PlacementApplication', 'Assessment'],
         requiredQualification: 'emergency',
         crnOrName: 'CRN123',
@@ -58,7 +58,7 @@ describe('taskService', () => {
       expect(taskClientFactory).toHaveBeenCalledWith(token)
       expect(taskClient.getAll).toHaveBeenCalledWith({
         allocatedFilter: 'allocated',
-        apAreaId: 'testAreaId',
+        cruManagementAreaId: 'testAreaId',
         allocatedToUserId: '',
         page: 1,
         sortDirection: 'asc',

@@ -20,6 +20,7 @@ import PlacementApplicationService from './placementApplicationService'
 import SpaceService from './spaceService'
 import ReportService from './reportService'
 import ApAreaService from './apAreaService'
+import CRUManagementAreaService from './cruManagementAreaService'
 import AppealService from './appealService'
 
 import config, { AuditConfig } from '../config'
@@ -65,6 +66,7 @@ export const services = () => {
   const spaceService = new SpaceService(bedClientBuilder)
   const reportService = new ReportService(reportClientBuilder)
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
+  const cruManagementAreaService = new CRUManagementAreaService(cas1ReferenceDataClientBuilder)
 
   return {
     appealService,
@@ -86,6 +88,7 @@ export const services = () => {
     spaceService,
     reportService,
     apAreaService,
+    cruManagementAreaService,
   }
 }
 
@@ -110,4 +113,5 @@ export {
   SpaceService,
   ReportService,
   ApAreaService,
+  CRUManagementAreaService,
 }

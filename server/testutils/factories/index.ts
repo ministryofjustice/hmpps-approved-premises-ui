@@ -70,7 +70,7 @@ import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory, { apAreaFactory, probationRegionFactory } from './referenceData'
-import cas1ReferenceDataFactory from './cas1ReferenceData'
+import cas1ReferenceDataFactory, { cruManagementAreaFactory } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
 import roomFactory from './room'
@@ -132,6 +132,7 @@ export {
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
+  cruManagementAreaFactory,
   dateChangeFactory,
   dateCapacityFactory,
   departureFactory,

@@ -25,7 +25,7 @@ describeClient('taskClient', provider => {
     it('makes a get request to the tasks endpoint', async () => {
       const tasks = taskFactory.buildList(2)
 
-      const apAreaId = 'ap-area-id'
+      const cruManagementAreaId = 'cru-management-area-id'
       const userId = 'user-id'
       const taskTypes: Array<TaskType> = ['PlacementApplication', 'Assessment']
       const requiredQualification = 'emergency'
@@ -39,7 +39,7 @@ describeClient('taskClient', provider => {
           path: paths.tasks.index.pattern,
           query: {
             allocatedFilter: 'allocated',
-            apAreaId,
+            cruManagementAreaId,
             allocatedToUserId: userId,
             page: '1',
             sortDirection: 'asc',
@@ -67,7 +67,7 @@ describeClient('taskClient', provider => {
 
       const result = await taskClient.getAll({
         allocatedFilter: 'allocated',
-        apAreaId,
+        cruManagementAreaId,
         allocatedToUserId: userId,
         page: 1,
         sortDirection: 'asc',

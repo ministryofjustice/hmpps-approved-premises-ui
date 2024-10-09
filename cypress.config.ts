@@ -23,6 +23,7 @@ import beds from './integration_tests/mockApis/beds'
 import spaceSearch from './integration_tests/mockApis/spaces'
 import moveBooking from './integration_tests/mockApis/moveBooking'
 import spaceBookings from './integration_tests/mockApis/spaceBooking'
+import referenceData from './integration_tests/mockApis/referenceData'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -62,6 +63,7 @@ export default defineConfig({
         ...moveBooking,
         ...reports,
         ...spaceBookings,
+        ...referenceData,
         stubJourney,
       })
     },

@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
-import { ApAreaService, ApplicationService, TaskService, UserService } from '../services'
+import { ApAreaService, ApplicationService, CRUManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
@@ -13,6 +13,7 @@ export default class TasksController {
     private readonly applicationService: ApplicationService,
     private readonly apAreaService: ApAreaService,
     private readonly userService: UserService,
+    private readonly cruManagementAreaService: CRUManagementAreaService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
@@ -23,7 +24,7 @@ export default class TasksController {
       const activeTab = req.query.activeTab || 'allocated'
       const isCompleted = activeTab === 'completed'
 
-      const apAreaId = req.query.area ? req.query.area : res.locals.user.apArea?.id
+      const cruManagementAreaId = req.query.area || res.locals.user.cruManagementArea?.id
       const allocatedToUserId = req.query.allocatedToUserId as string
       const requiredQualification = req.query.requiredQualification
         ? (req.query.requiredQualification as TaskSearchQualification)
@@ -38,7 +39,7 @@ export default class TasksController {
       } = getPaginationDetails<TaskSortField>(req, paths.tasks.index({}), {
         activeTab,
         allocatedFilter,
-        area: apAreaId,
+        area: cruManagementAreaId,
         allocatedToUserId,
         requiredQualification,
         crnOrName,
@@ -50,7 +51,7 @@ export default class TasksController {
         sortBy,
         sortDirection,
         page: pageNumber,
-        apAreaId: apAreaId === 'all' ? '' : apAreaId,
+        cruManagementAreaId: cruManagementAreaId === 'all' ? '' : cruManagementAreaId,
         taskTypes: ['PlacementApplication', 'Assessment'],
         allocatedToUserId,
         requiredQualification,
@@ -58,19 +59,19 @@ export default class TasksController {
         isCompleted,
       })
 
-      const apAreas = await this.apAreaService.getApAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCRUManagementAreas(req.user.token)
 
       res.render('tasks/index', {
         pageHeading: 'Task Allocation',
         tasks: tasks.data,
         allocatedFilter,
-        apAreas,
+        cruManagementAreas,
         pageNumber: Number(tasks.pageNumber),
         totalPages: Number(tasks.totalPages),
         hrefPrefix,
         sortBy,
         sortDirection,
-        apArea: apAreaId,
+        cruManagementArea: cruManagementAreaId,
         users,
         allocatedToUserId,
         requiredQualification,
