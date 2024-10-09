@@ -4,10 +4,10 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import CruDashboardController from './cruDashboardController'
 
-import { ApAreaService, ApplicationService, PlacementRequestService } from '../../services'
+import { ApplicationService, CRUManagementAreaService, PlacementRequestService } from '../../services'
 import {
-  apAreaFactory,
   applicationSummaryFactory,
+  cruManagementAreaFactory,
   paginatedResponseFactory,
   placementRequestFactory,
   userDetailsFactory,
@@ -35,14 +35,18 @@ describe('CruDashboardController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
-  const apAreaService = createMock<ApAreaService>({})
+  const cruManagementAreaService = createMock<CRUManagementAreaService>({})
   const applicationService = createMock<ApplicationService>({})
 
   let cruDashboardController: CruDashboardController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    cruDashboardController = new CruDashboardController(placementRequestService, apAreaService, applicationService)
+    cruDashboardController = new CruDashboardController(
+      placementRequestService,
+      cruManagementAreaService,
+      applicationService,
+    )
   })
 
   describe('index', () => {
@@ -57,15 +61,15 @@ describe('CruDashboardController', () => {
       sortDirection: 'desc',
     }
 
-    const apAreas = apAreaFactory.buildList(1)
+    const cruManagementAreas = cruManagementAreaFactory.buildList(5)
 
     beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
+      cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
     })
 
-    it('should render the placement requests template with the users AP area filtered by default', async () => {
+    it('should render the placement requests template with the users CRU management area filtered by default', async () => {
       const requestHandler = cruDashboardController.index()
 
       await requestHandler(request, response, next)
@@ -81,34 +85,34 @@ describe('CruDashboardController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
-        apAreas,
-        apArea: user.apArea.id,
+        cruManagementAreas,
+        cruManagementArea: user.cruManagementArea.id,
         requestType: undefined,
       })
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
-        { apAreaId: user.apArea.id, requestType: undefined, status: 'notMatched' },
+        { cruManagementAreaId: user.cruManagementArea.id, requestType: undefined, status: 'notMatched' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
       )
 
-      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+      expect(cruManagementAreaService.getCRUManagementAreas).toHaveBeenCalledWith(token)
 
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.cruDashboard.index({}), {
         status: 'notMatched',
-        apArea: user.apArea.id,
+        cruManagementArea: user.cruManagementArea.id,
       })
     })
 
     it('should handle the parameters', async () => {
       const requestHandler = cruDashboardController.index()
 
-      const apArea = 'some-ap-area-id'
+      const cruManagementArea = 'some-cru-management-area-id'
       const requestType = 'parole'
       const status = 'notMatched'
-      const filters = { status, requestType, apArea }
+      const filters = { status, requestType, cruManagementArea }
 
       const notMatchedRequest = { ...request, query: filters }
 
@@ -118,14 +122,14 @@ describe('CruDashboardController', () => {
         'admin/cruDashboard/index',
         expect.objectContaining({
           status,
-          apAreas,
-          apArea,
+          cruManagementAreas,
+          cruManagementArea,
         }),
       )
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
-        { requestType, status, apAreaId: apArea },
+        { requestType, status, cruManagementAreaId: cruManagementArea },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -137,8 +141,8 @@ describe('CruDashboardController', () => {
     it('should not send an area query in the request if the  if the query is "all"', async () => {
       const requestHandler = cruDashboardController.index()
 
-      const apArea = 'all'
-      const filters = { apArea }
+      const cruManagementArea = 'all'
+      const filters = { cruManagementArea }
       const requestWithQuery = { ...request, query: filters }
 
       await requestHandler(requestWithQuery, response, next)
@@ -151,14 +155,17 @@ describe('CruDashboardController', () => {
         paginationDetails.sortDirection,
       )
 
-      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', expect.objectContaining({ apArea }))
+      expect(response.render).toHaveBeenCalledWith(
+        'admin/cruDashboard/index',
+        expect.objectContaining({ cruManagementArea }),
+      )
     })
 
     it('should handle the pendingPlacement tab', async () => {
       const requestHandler = cruDashboardController.index()
 
-      const apArea = 'some-ap-area-id'
-      const filters = { apArea, status: 'pendingPlacement' }
+      const cruManagementArea = 'some-cru-management-area-id'
+      const filters = { cruManagementArea, status: 'pendingPlacement' }
       const requestWithQuery = { ...request, query: filters }
 
       const applications = applicationSummaryFactory.buildList(2)
@@ -174,7 +181,7 @@ describe('CruDashboardController', () => {
           paginationDetails.sortDirection as SortDirection,
           {
             status: 'pendingPlacementRequest',
-            apAreaId: apArea,
+            cruManagementAreaId: cruManagementArea,
           },
         )
         .mockResolvedValue(paginatedApplications)
@@ -192,8 +199,8 @@ describe('CruDashboardController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
-        apAreas,
-        apArea,
+        cruManagementAreas,
+        cruManagementArea,
       })
     })
   })

@@ -20,13 +20,17 @@ import paths from '../../../server/paths/apply'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('Withdrawals', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.task('stubSignIn')
+    cy.task('stubAuthUser')
+    cy.task('stubCRUManagementAreaReferenceData')
+  })
+
   describe('as a CRU user', () => {
     const userRoles: Array<ApprovedPremisesUserRole> = ['workflow_manager']
 
     beforeEach(() => {
-      cy.task('reset')
-      cy.task('stubSignIn')
-      cy.task('stubAuthUser')
       // Given I am logged in
       signIn(userRoles)
     })
@@ -172,10 +176,8 @@ context('Withdrawals', () => {
 
   describe('as a non-CRU user', () => {
     const userRoles: Array<ApprovedPremisesUserRole> = ['applicant']
+
     beforeEach(() => {
-      cy.task('reset')
-      cy.task('stubSignIn')
-      cy.task('stubAuthUser')
       // Given I am logged in
       signIn(userRoles)
     })

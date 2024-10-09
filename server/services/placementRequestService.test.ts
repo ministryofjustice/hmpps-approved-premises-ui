@@ -1,4 +1,4 @@
-import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
+import { PlacementRequest, PlacementRequestDetail, WithdrawPlacementRequestReason } from '@approved-premises/api'
 import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
@@ -9,7 +9,6 @@ import {
 } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
 import { PaginatedResponse } from '../@types/ui'
-import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 jest.mock('../data/placementRequestClient.ts')
 
@@ -30,7 +29,7 @@ describe('placementRequestService', () => {
     const defaultFilters: DashboardFilters = {
       status: 'notMatched',
       requestType: 'standardRelease',
-      apAreaId: '',
+      cruManagementAreaId: '',
     }
 
     it('calls the find method on the placementRequest client', async () => {

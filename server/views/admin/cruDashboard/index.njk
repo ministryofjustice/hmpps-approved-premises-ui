@@ -6,105 +6,101 @@
 
 {% from "./_navigation.njk" import navigation %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      {% include "../../_messages.njk" %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {% include "../../_messages.njk" %}
 
-      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      <p class="govuk-body">
-        {{ subheading }}
-      </p>
-      <div class="search-and-filter__wrapper">
-        <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get">
-          <input type="hidden" name="status" value="{{ status }}">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <p class="govuk-body">
+                {{ subheading }}
+            </p>
+            <div class="search-and-filter__wrapper">
+                <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get">
+                    <input type="hidden" name="status" value="{{ status }}">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-              <h2 class="govuk-heading-m">Filters</h2>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <h2 class="govuk-heading-m">Filters</h2>
+                        </div>
+                    </div>
+
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-third">
+                            {{ govukSelect({
+                                label: {
+                                    text: "AP Area",
+                                    classes: "govuk-label--s"
+                                },
+                                classes: "govuk-input--width-20",
+                                id: "cruManagementArea",
+                                name: "cruManagementArea",
+                                items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementArea', 'all', context)
+                            }) }}
+                        </div>
+                        {% if status != "pendingPlacement" %}
+                            <div class="govuk-grid-column-one-third">
+                                {{ govukSelect({
+                                    label: {
+                                        text: "Request type",
+                                        classes: "govuk-label--s"
+                                    },
+                                    id: "requestType",
+                                    name: "requestType",
+                                    items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', '', context)
+                                }) }}
+                            </div>
+                        {% endif %}
+                        {% if status === "pendingPlacement" %}
+                            <div class="govuk-grid-column-one-third">
+                                {{ govukSelect({
+                                    label: {
+                                        text: "Release type",
+                                        classes: "govuk-label--s"
+                                    },
+                                    id: "releaseType",
+                                    name: "releaseType",
+                                    items: ApplyUtils.releaseTypeSelectOptions(releaseType)
+                                }) }}
+                            </div>
+                        {% endif %}
+
+                        <div class="govuk-grid-column-one-third">
+                            {{ govukButton({
+                                "name": "submit",
+                                "text": "Apply filters",
+                                "classes": "search-and-filter__submit",
+                                "preventDoubleClick": true
+                            }) }}
+                        </div>
+                    </div>
+                </form>
             </div>
-          </div>
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
-              {{ govukSelect({
-                  label: {
-                    text: "AP Area",
-                    classes: "govuk-label--s"
-                  },
-                  classes: "govuk-input--width-20",
-                  id: "apArea",
-                  name: "apArea",
-                  items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', 'all', context)
+            {{ navigation(status, cruManagementArea, requestType) }}
+
+            {% if status == "pendingPlacement" %}
+                {{ govukTable({
+                    firstCellIsHeader: true,
+                    head: ApplyUtils.pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
+                    rows: ApplyUtils.pendingPlacementRequestTableRows(applications)
                 }) }}
-            </div>
-            {% if status != "pendingPlacement" %}
-              <div class="govuk-grid-column-one-third">
-                {{ govukSelect({
-                    label: {
-                    text: "Request type",
-                    classes: "govuk-label--s"
-                    },
-                    id: "requestType",
-                    name: "requestType",
-                    items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', '', context)
-                  }) }}
-              </div>
-            {% endif %}
-            {% if status === "pendingPlacement" %}
-              <div class="govuk-grid-column-one-third">
-                {{ govukSelect({
-                   label: {
-                   text: "Release type",
-                   classes: "govuk-label--s"
-                   },
-                   id: "releaseType",
-                   name: "releaseType",
-                   items: ApplyUtils.releaseTypeSelectOptions(releaseType)
-                 }) }}
-              </div>
+            {% else %}
+                {{ govukTable({
+                    firstCellIsHeader: true,
+                    head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
+                    rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests, status)
+                }) }}
             {% endif %}
 
-            <div class="govuk-grid-column-one-third">
-              {{ govukButton({
-                  "name": "submit",
-                  "text": "Apply filters",
-                  "classes": "search-and-filter__submit",
-                  "preventDoubleClick": true
-              }) }}
-            </div>
-          </div>
-        </form>
-      </div>
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
 
-      {{ navigation(status, apArea, requestType) }}
-
-      {% if status == "pendingPlacement" %}
-        {{
-          govukTable({
-              firstCellIsHeader: true,
-              head: ApplyUtils.pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
-              rows: ApplyUtils.pendingPlacementRequestTableRows(applications)
-            })
-        }}
-      {% else %}
-        {{
-          govukTable({
-              firstCellIsHeader: true,
-              head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
-              rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests, status)
-            })
-        }}
-      {% endif %}
-
-      {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
-
+        </div>
     </div>
-  </div>
 {% endblock %}

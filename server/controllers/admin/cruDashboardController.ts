@@ -1,7 +1,8 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApAreaService, ApplicationService, PlacementRequestService } from '../../services'
+import { ApplicationService, CRUManagementAreaService, PlacementRequestService } from '../../services'
 import {
   ApplicationSortField,
+  Cas1CruManagementArea,
   PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
@@ -15,13 +16,13 @@ import { getSearchOptions } from '../../utils/getSearchOptions'
 export default class CruDashboardController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
-    private readonly apAreaService: ApAreaService,
+    private readonly cruManagementAreaService: CRUManagementAreaService,
     private readonly applicationService: ApplicationService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const apAreas = await this.apAreaService.getApAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCRUManagementAreas(req.user.token)
       const viewArgs =
         req.query.status === 'pendingPlacement'
           ? await this.getPendingApplications(req, res)
@@ -29,7 +30,7 @@ export default class CruDashboardController {
 
       res.render('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
-        apAreas,
+        cruManagementAreas,
         ...viewArgs,
       })
     }
@@ -73,17 +74,18 @@ export default class CruDashboardController {
 
   private async getPendingApplications(req: Request, res: Response) {
     const { status } = req.query
-    const apAreaId = req.query.apArea ? req.query.apArea : res.locals.user.apArea?.id
+    const cruManagementArea: Cas1CruManagementArea['id'] | 'all' =
+      req.query.cruManagementArea || res.locals.user.cruManagementArea?.id
     const releaseType = req.query.releaseType as ReleaseTypeOption
 
     const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<ApplicationSortField>(
       req,
       adminPaths.admin.cruDashboard.index({}),
-      { status, apArea: apAreaId },
+      { status, cruManagementArea },
     )
     const applications = await this.applicationService.dashboard(req.user.token, pageNumber, sortBy, sortDirection, {
       status: 'pendingPlacementRequest',
-      apAreaId: apAreaId === 'all' ? undefined : apAreaId,
+      cruManagementAreaId: cruManagementArea === 'all' ? undefined : cruManagementArea,
       releaseType,
     })
 
@@ -97,27 +99,28 @@ export default class CruDashboardController {
       hrefPrefix,
       sortBy,
       sortDirection,
-      apArea: apAreaId,
+      cruManagementArea,
       releaseType,
     }
   }
 
   private async getPlacementRequests(req: Request, res: Response) {
     const status = (req.query.status ? req.query.status : 'notMatched') as PlacementRequestStatus
-    const apAreaId = req.query.apArea ? req.query.apArea : res.locals.user.apArea?.id
+    const cruManagementArea: Cas1CruManagementArea['id'] | 'all' =
+      req.query.cruManagementArea || res.locals.user.cruManagementArea?.id
     const requestType = req.query.requestType as PlacementRequestRequestType
 
     const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
       req,
       adminPaths.admin.cruDashboard.index({}),
-      { status, apArea: apAreaId, requestType },
+      { status, cruManagementArea, requestType },
     )
 
     const dashboard = await this.placementRequestService.getDashboard(
       req.user.token,
       {
         status,
-        apAreaId: apAreaId === 'all' ? undefined : apAreaId,
+        cruManagementAreaId: cruManagementArea === 'all' ? undefined : cruManagementArea,
         requestType,
       },
       pageNumber,
@@ -129,7 +132,7 @@ export default class CruDashboardController {
       placementRequests: dashboard.data,
       subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
       status,
-      apArea: apAreaId,
+      cruManagementArea,
       requestType,
       pageNumber: Number(dashboard.pageNumber),
       totalPages: Number(dashboard.totalPages),
