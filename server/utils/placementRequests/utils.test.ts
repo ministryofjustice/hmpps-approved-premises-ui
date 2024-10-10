@@ -87,25 +87,25 @@ describe('utils', () => {
 
   describe('placementRequestTabItems', () => {
     it('returns placement request tab items', () => {
-      expect(placementRequestTabItems('notMatched', 'apArea', 'parole')).toEqual([
+      expect(placementRequestTabItems('notMatched', 'cru-management-area-id', 'parole')).toEqual([
         {
           active: false,
           text: 'Pending Request for Placement',
-          href: `/admin/cru-dashboard?apArea=apArea&status=pendingPlacement`,
+          href: `/admin/cru-dashboard?cruManagementArea=cru-management-area-id&status=pendingPlacement`,
         },
         {
           active: true,
-          href: '/admin/cru-dashboard?apArea=apArea&requestType=parole',
+          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole',
           text: 'Ready to match',
         },
         {
           active: false,
-          href: '/admin/cru-dashboard?apArea=apArea&requestType=parole&status=unableToMatch',
+          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=unableToMatch',
           text: 'Unable to match',
         },
         {
           active: false,
-          href: '/admin/cru-dashboard?apArea=apArea&requestType=parole&status=matched',
+          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=matched',
           text: 'Matched',
         },
         {

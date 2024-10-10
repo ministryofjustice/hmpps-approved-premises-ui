@@ -1,3 +1,4 @@
+import { Cas1SpaceSearchParameters, PlacementCriteria } from '@approved-premises/api'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
@@ -13,7 +14,6 @@ import Page from '../../pages/page'
 import { signIn } from '../signIn'
 
 import ListPage from '../../pages/admin/placementApplications/listPage'
-import { Cas1SpaceSearchParameters, PlacementCriteria } from '../../../server/@types/shared'
 import { filterOutAPTypes, placementDates } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 
@@ -24,7 +24,7 @@ context('Placement Requests', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
-    cy.task('stubApAreaReferenceData')
+    cy.task('stubCRUManagementAreaReferenceData')
   })
 
   it('allows me to search for an available space', () => {

@@ -1,4 +1,3 @@
-import { Cas1CruManagementArea } from '@approved-premises/api'
 import TaskListPage from '../../pages/tasks/listPage'
 import AllocationsPage from '../../pages/tasks/allocationPage'
 import Page from '../../pages/page'
@@ -25,10 +24,6 @@ context('Task Allocation', () => {
 
     const apArea = apAreaFactory.build()
     const cruManagementArea = cruManagementAreaFactory.build()
-    const cruManagementAreas: Array<Cas1CruManagementArea> = [
-      ...cruManagementAreaFactory.buildList(3),
-      cruManagementArea,
-    ]
     const qualifications = qualificationFactory.buildList(2)
     // Given there are some users in the database
     const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ qualifications })]
@@ -80,7 +75,7 @@ context('Task Allocation', () => {
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
     cy.task('stubApAreaReferenceData', { apArea })
-    cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
+    cy.task('stubCRUManagementAreaReferenceData')
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
 

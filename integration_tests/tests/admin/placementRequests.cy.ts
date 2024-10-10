@@ -3,10 +3,10 @@ import ShowPage from '../../pages/admin/placementApplications/showPage'
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 
 import {
-  apAreaFactory,
   applicationFactory,
   applicationSummaryFactory,
   bookingFactory,
+  cruManagementAreaFactory,
   newCancellationFactory,
   placementRequestDetailFactory,
   placementRequestWithFullPersonFactory,
@@ -55,7 +55,7 @@ context('Placement Requests', () => {
 
   const preferredAps = premisesFactory.buildList(3)
 
-  const apArea = apAreaFactory.build()
+  const cruManagementAreas = cruManagementAreaFactory.buildList(5)
 
   beforeEach(() => {
     cy.task('reset')
@@ -82,7 +82,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', unmatchedPlacementRequest)
     cy.task('stubPlacementRequest', matchedPlacementRequest)
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
-    cy.task('stubApAreaReferenceData', { apArea })
+    cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
   })
 
   it('allows me to view a placement request', () => {
@@ -506,13 +506,12 @@ context('Placement Requests', () => {
       sortDirection: 'asc',
     })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
-    cy.task('stubApAreaReferenceData', { apArea })
 
     // Given I am on the placement request dashboard
     const listPage = ListPage.visit()
 
     // When I filter by AP area and request type
-    listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
+    listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[1].name)
     listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
     listPage.clickApplyFilters()
 
@@ -521,9 +520,9 @@ context('Placement Requests', () => {
       status: 'notMatched',
     }).then(requests => {
       expect(requests).to.have.length(2)
-      const { apAreaId, requestType } = requests[1].queryParams
+      const { cruManagementAreaId, requestType } = requests[1].queryParams
 
-      expect(apAreaId.values).to.deep.equal([apArea.id])
+      expect(cruManagementAreaId.values).to.deep.equal([cruManagementAreas[1].id])
       expect(requestType.values).to.deep.equal(['parole'])
     })
 
@@ -531,7 +530,7 @@ context('Placement Requests', () => {
     listPage.clickMatched()
 
     // Then the page should retain the area and request type filter
-    listPage.shouldHaveSelectText('apArea', apArea.name)
+    listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
     listPage.shouldHaveSelectText('requestType', 'Parole')
   })
 
@@ -546,13 +545,12 @@ context('Placement Requests', () => {
       sortBy: 'created_at',
       sortDirection: 'asc',
     })
-    cy.task('stubApAreaReferenceData', { apArea })
 
     // Given I am on the placement request dashboard filtering by the unableToMatch status
     const listPage = ListPage.visit('status=unableToMatch')
 
     // When I filter by AP area and request type
-    listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
+    listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[2].name)
     listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
     listPage.clickApplyFilters()
 
@@ -579,24 +577,24 @@ context('Placement Requests', () => {
     listPage.shouldNotShowRequestTypeFilter()
 
     // When I filter by AP area
-    const apAreaApplications = applicationSummaryFactory.buildList(2)
+    const areaApplications = applicationSummaryFactory.buildList(2)
     cy.task('stubAllApplications', {
-      applications: apAreaApplications,
+      applications: areaApplications,
       page: '1',
       sortDirection: 'asc',
-      searchOptions: { apAreaId: apArea.id, releaseType: 'rotl' },
+      searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
     })
-    listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
+    listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[3].name)
     listPage.getSelectInputByIdAndSelectAnEntry('releaseType', allReleaseTypes.rotl)
     listPage.clickApplyFilters()
 
     // Then I should see a list of applications with no placement requests for that area
-    listPage.shouldShowApplications(apAreaApplications)
+    listPage.shouldShowApplications(areaApplications)
 
     cy.task('verifyDashboardRequest', {
       status: 'pendingPlacementRequest',
       sortDirection: 'asc',
-      searchOptions: { apAreaId: apArea.id, releaseType: 'rotl' },
+      searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
     }).then(requests => {
       expect(requests).to.have.length(1)
     })

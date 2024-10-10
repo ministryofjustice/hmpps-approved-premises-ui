@@ -1,7 +1,7 @@
 import { Response } from 'superagent'
-import { ApArea } from '@approved-premises/api'
+import { ApArea, Cas1CruManagementArea } from '@approved-premises/api'
 import { stubFor } from './setup'
-import { apAreaFactory } from '../../server/testutils/factories'
+import { apAreaFactory, cruManagementAreaFactory } from '../../server/testutils/factories'
 
 export const stubApAreaReferenceData = (
   {
@@ -33,7 +33,11 @@ export const stubApAreaReferenceData = (
   })
 }
 
-export const stubCRUManagementAreaReferenceData = ({ cruManagementAreas }) => {
+export const stubCRUManagementAreaReferenceData = (
+  args: {
+    cruManagementAreas?: Array<Cas1CruManagementArea>
+  } = {},
+) => {
   return stubFor({
     request: {
       method: 'GET',
@@ -44,7 +48,7 @@ export const stubCRUManagementAreaReferenceData = ({ cruManagementAreas }) => {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: cruManagementAreas,
+      jsonBody: args.cruManagementAreas || cruManagementAreaFactory.buildList(5),
     },
   })
 }

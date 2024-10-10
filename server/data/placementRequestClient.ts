@@ -1,6 +1,6 @@
 import {
-  ApArea,
   BookingNotMade,
+  Cas1CruManagementArea,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
@@ -10,20 +10,20 @@ import {
   PlacementRequestSortField,
   PlacementRequestStatus,
   SortDirection,
+  WithdrawPlacementRequestReason,
 } from '@approved-premises/api'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
 import { normaliseCrn } from '../utils/normaliseCrn'
-import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
 
 export type DashboardFilters = {
   status?: PlacementRequestStatus
   requestType?: PlacementRequestRequestType | ''
-  apAreaId?: ApArea['id']
+  cruManagementAreaId?: Cas1CruManagementArea['id']
 }
 
 export default class PlacementRequestClient {
@@ -43,7 +43,7 @@ export default class PlacementRequestClient {
     allParams: DashboardQueryParams = {
       status: 'notMatched',
       requestType: '',
-      apAreaId: '',
+      cruManagementAreaId: '',
     },
     page = 1,
     sortBy: PlacementRequestSortField = 'created_at',

@@ -496,7 +496,7 @@ export type PlacementRequestDashboardSearchOptions = {
 export type ApplicationDashboardSearchOptions = {
   crnOrName?: string
   status?: ApprovedPremisesApplicationStatus | ReadonlyArray<ApprovedPremisesApplicationStatus>
-  apAreaId?: string
+  cruManagementAreaId?: Cas1CruManagementArea['id'] | 'all'
   releaseType?: ReleaseTypeOption
 }
 

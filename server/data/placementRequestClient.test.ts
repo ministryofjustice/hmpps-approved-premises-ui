@@ -1,3 +1,4 @@
+import { WithdrawPlacementRequestReason } from '@approved-premises/api'
 import PlacementRequestClient from './placementRequestClient'
 import paths from '../paths/api'
 
@@ -10,7 +11,6 @@ import {
 } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
-import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 describeClient('placementRequestClient', provider => {
   let placementRequestClient: PlacementRequestClient
@@ -85,7 +85,7 @@ describeClient('placementRequestClient', provider => {
     })
 
     it('makes a get request to the placementRequests dashboard endpoint for matched requests ', async () => {
-      const apAreaId = 'area-id'
+      const cruManagementAreaId = 'area-id'
       const requestType = 'standardRelease'
       const status = 'matched'
 
@@ -95,7 +95,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { page: '1', sortBy: 'created_at', sortDirection: 'asc', requestType, apAreaId, status },
+          query: { page: '1', sortBy: 'created_at', sortDirection: 'asc', requestType, cruManagementAreaId, status },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -111,7 +111,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard({ apAreaId, requestType, status })
+      const result = await placementRequestClient.dashboard({ cruManagementAreaId, requestType, status })
 
       expect(result).toEqual({
         data: placementRequests,
