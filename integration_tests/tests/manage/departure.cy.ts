@@ -33,6 +33,7 @@ context('Departures', () => {
     })
 
     cy.task('stubAllPremises', premises)
+    cy.task('stubCas1AllPremises', premises)
     cy.task('stubBookingGet', { premisesId: premises[0].id, booking })
     cy.task('stubDepartureCreate', { premisesId: premises[0].id, bookingId: booking.id, departure })
 
@@ -64,6 +65,7 @@ context('Departures', () => {
     const booking = bookingFactory.build()
 
     cy.task('stubAllPremises', premises)
+    cy.task('stubCas1AllPremises', premises)
     cy.task('stubBookingGet', { premisesId: premises[0].id, booking })
 
     // When I visit the departure page

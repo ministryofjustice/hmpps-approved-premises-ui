@@ -2,6 +2,7 @@ import {
   ApType,
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
+  FullPerson,
   TimelineEventUrlType,
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
@@ -40,6 +41,7 @@ import {
   getApplicationType,
   getSections,
   isInapplicable,
+  isWomensAp,
   lengthOfStayForUI,
   mapApplicationTimelineEventsForUi,
   mapPersonalTimelineForUi,
@@ -594,22 +596,36 @@ describe('utils', () => {
       expect(isInapplicable(application)).toEqual(false)
     })
 
-    it('should return true if the applicant has answered no to the shouldPersonBePlacedInMaleAp question', () => {
-      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
-
-      expect(isInapplicable(application)).toEqual(true)
-    })
-
-    it('should return false if the applicant has answered yes to the shouldPersonBePlacedInMaleAp question', () => {
-      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'yes' })
-
-      expect(isInapplicable(application)).toEqual(false)
-    })
-
     it('should return false if the applicant has not answered the isExceptionalCase question', () => {
       mockOptionalQuestionResponse({})
 
       expect(isInapplicable(application)).toEqual(false)
+    })
+  })
+
+  describe('isWomensAp', () => {
+    it(`should return true if the person from nDelius has a sex of 'Male'`, () => {
+      const application = applicationFactory.build()
+      const fp = application.person as FullPerson
+      fp.sex = 'Male'
+
+      expect(isWomensAp(application)).toEqual(false)
+    })
+    it(`should return false if the person from nDelius has a sex of 'Female'`, () => {
+      const application = applicationFactory.build()
+      const fp = application.person as FullPerson
+      fp.sex = 'Female'
+
+      expect(isWomensAp(application)).toEqual(true)
+    })
+
+    it('should return true if the person is Male but the applicant answered no to the shouldPersonBePlacedInMaleAp question', () => {
+      const application = applicationFactory.build()
+      const fp = application.person as FullPerson
+      fp.sex = 'Male'
+
+      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
+      expect(isWomensAp(application)).toEqual(true)
     })
   })
 

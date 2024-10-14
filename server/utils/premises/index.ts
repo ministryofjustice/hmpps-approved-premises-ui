@@ -134,6 +134,27 @@ export const groupedSelectOptions = (
   }))
 }
 
+export const groupCas1SummaryPremisesSelectOptions = (
+  premises: Array<Cas1PremisesSummary>,
+  context: Record<string, unknown>,
+  fieldName: string = 'premisesId',
+): Array<SelectGroup> => {
+  const apAreas = premises.reduce((map, { apArea }) => {
+    map[apArea.id] = apArea
+    return map
+  }, {})
+  return Object.values(apAreas).map(({ id, name }) => ({
+    label: name,
+    items: premises
+      .filter(item => item.apArea.id === id)
+      .map(item => ({
+        text: item.name,
+        value: item.id,
+        selected: context[fieldName] === item.id,
+      })),
+  }))
+}
+
 export const premisesTableRows = (premisesSummaries: Array<PremisesSummary>) => {
   return premisesSummaries
     .sort((a, b) => a.name.localeCompare(b.name))

@@ -17,7 +17,7 @@ export default class PlacementRequestsController {
       let { userInput } = errorsAndUserInput
       const { errors, errorSummary, errorTitle } = errorsAndUserInput
 
-      const premises = await this.premisesService.getAll(req.user.token)
+      const premises = await this.premisesService.getCas1All(req.user.token)
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
       if (!Object.keys(userInput).length) {

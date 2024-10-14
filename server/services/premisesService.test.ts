@@ -1,3 +1,4 @@
+import type { ManWoman } from '@approved-premises/ui'
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
@@ -59,6 +60,41 @@ describe('PremisesService', () => {
       premisesClient.all.mockResolvedValue([premisesB, premisesA])
 
       const result = await service.getAll(token)
+
+      expect(result).toEqual([premisesA, premisesB])
+    })
+  })
+
+  describe('getCas1All', () => {
+    it('calls the all method of the premises client and returns the response', async () => {
+      const premises = cas1PremisesSummaryFactory.buildList(2)
+      premisesClient.allCas1.mockResolvedValue(premises)
+
+      const result = await service.getCas1All(token)
+
+      expect(result).toEqual(premises)
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.allCas1).toHaveBeenCalled()
+    })
+
+    it('supports optional gender parameter', async () => {
+      const requestGender: ManWoman = 'man'
+      const premises = cas1PremisesSummaryFactory.buildList(2)
+
+      premisesClient.allCas1.mockResolvedValue(premises)
+      await service.getCas1All(token, requestGender)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.allCas1).toHaveBeenCalledWith(requestGender)
+    })
+
+    it('sorts the premises returned by name', async () => {
+      const premisesA = cas1PremisesSummaryFactory.build({ name: 'A' })
+      const premisesB = cas1PremisesSummaryFactory.build({ name: 'B' })
+
+      premisesClient.allCas1.mockResolvedValue([premisesB, premisesA])
+
+      const result = await service.getCas1All(token)
 
       expect(result).toEqual([premisesA, premisesB])
     })

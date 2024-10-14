@@ -6,12 +6,12 @@ import {
   applicationFactory,
   applicationSummaryFactory,
   bookingFactory,
+  cas1PremisesSummaryFactory,
   cruManagementAreaFactory,
   newCancellationFactory,
   placementRequestDetailFactory,
   placementRequestWithFullPersonFactory,
   premisesFactory,
-  premisesSummaryFactory,
   withdrawableFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
@@ -162,8 +162,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to create a booking', () => {
-    const premises = premisesSummaryFactory.buildList(3)
-    cy.task('stubAllPremises', premises)
+    const premises = cas1PremisesSummaryFactory.buildList(3)
+    cy.task('stubCas1AllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
 
     // When I visit the tasks dashboard
@@ -206,8 +206,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to amend a booking', () => {
-    const premises = premisesFactory.buildList(3)
-    cy.task('stubAllPremises', premises)
+    const premises = cas1PremisesSummaryFactory.buildList(3)
+    cy.task('stubCas1AllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
     cy.task('stubDateChange', {
       premisesId: matchedPlacementRequest.booking.premisesId,
@@ -257,10 +257,9 @@ context('Placement Requests', () => {
   })
 
   it('allows me to cancel a booking', () => {
-    const premises = premisesFactory.buildList(3)
-    const cancellation = newCancellationFactory.build()
+    const premises = cas1PremisesSummaryFactory.buildList(3)
+    cy.task('stubCas1AllPremises', premises)
     const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
-    cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
     cy.task('stubCancellationCreate', {
       premisesId: matchedPlacementRequest.booking.premisesId,

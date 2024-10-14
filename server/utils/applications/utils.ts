@@ -16,6 +16,7 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
+  FullPerson,
   PersonalTimeline,
   SortDirection,
   TimelineEvent,
@@ -185,12 +186,6 @@ const isInapplicable = (application: Application): boolean => {
     'agreedCaseWithManager',
   )
 
-  const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromFormArtifact(
-    application,
-    MaleAp,
-    'shouldPersonBePlacedInMaleAp',
-  )
-
   if (isExceptionalCase === 'no') {
     return true
   }
@@ -199,11 +194,17 @@ const isInapplicable = (application: Application): boolean => {
     return true
   }
 
-  if (shouldPersonBePlacedInMaleAp === 'no') {
-    return true
-  }
-
   return false
+}
+
+const isWomensAp = (application: Application): boolean => {
+  const { sex } = application.person as FullPerson
+  const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromFormArtifact(
+    application,
+    MaleAp,
+    'shouldPersonBePlacedInMaleAp',
+  )
+  return sex === 'Female' || shouldPersonBePlacedInMaleAp === 'no'
 }
 
 const tierQualificationPage = (application: Application) => {
@@ -430,6 +431,7 @@ export {
   arrivalDateFromApplication,
   getApplicationType,
   isInapplicable,
+  isWomensAp,
   mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
   mapPersonalTimelineForUi,

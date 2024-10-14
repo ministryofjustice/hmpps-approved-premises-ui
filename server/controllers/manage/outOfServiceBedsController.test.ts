@@ -394,16 +394,16 @@ describe('OutOfServiceBedsController', () => {
 
       const allApAreas = [apArea1, apArea2]
 
-      const premises1 = premisesSummaryFactory.build({
-        apArea: apArea1.name,
+      const premises1 = cas1PremisesSummaryFactory.build({
+        apArea: apArea1,
       })
 
-      const premises2 = premisesSummaryFactory.build({
-        apArea: apArea1.name,
+      const premises2 = cas1PremisesSummaryFactory.build({
+        apArea: apArea1,
       })
 
-      const premises3 = premisesSummaryFactory.build({
-        apArea: apArea2.name,
+      const premises3 = cas1PremisesSummaryFactory.build({
+        apArea: apArea2,
       })
 
       const allPremises = [premises1, premises2, premises3]
@@ -417,7 +417,7 @@ describe('OutOfServiceBedsController', () => {
       apAreaService.getApAreas.mockResolvedValue(allApAreas)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      premisesService.getAll.mockResolvedValue(allPremises)
+      premisesService.getCas1All.mockResolvedValue(allPremises)
 
       outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue({})

@@ -7,6 +7,7 @@ import type {
   Room,
   StaffMember,
 } from '@approved-premises/api'
+import type { ManWoman } from '@approved-premises/ui'
 import type { PremisesClient, RestClientBuilder } from '../data'
 
 import { mapApiOccupancyToUiOccupancy } from '../utils/premises'
@@ -15,6 +16,36 @@ export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
 
   async getAll(token: string, selectedAreaId = ''): Promise<Array<ApprovedPremisesSummary>> {
+    const premisesClient = this.premisesClientFactory(token)
+    const premises = await premisesClient.all(selectedAreaId)
+
+    return premises.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1
+      }
+      if (a.name > b.name) {
+        return 1
+      }
+      return 0
+    })
+  }
+
+  async getCas1All(token: string, gender: ManWoman = null): Promise<Array<Cas1PremisesSummary>> {
+    const premisesClient = this.premisesClientFactory(token)
+    const premises = await premisesClient.allCas1(gender)
+
+    return premises.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1
+      }
+      if (a.name > b.name) {
+        return 1
+      }
+      return 0
+    })
+  }
+
+  async getSummary(token: string, selectedAreaId = ''): Promise<Array<ApprovedPremisesSummary>> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.all(selectedAreaId)
 

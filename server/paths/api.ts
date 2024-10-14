@@ -65,6 +65,7 @@ export default {
   premises: {
     show: cas1PremisesSingle,
     index: premises.path('summary'),
+    indexCas1: cas1Premises.path('summary'),
     capacity: premisesSingle.path('capacity'),
     summary: premisesSingle.path('summary'),
     lostBeds: {

@@ -31,6 +31,7 @@ import Page from '../pages'
 import {
   acctAlertFactory,
   adjudicationFactory,
+  cas1PremisesSummaryFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
   documentFactory,
@@ -98,6 +99,7 @@ export default class ApplyHelper {
     this.stubPersonEndpoints()
     this.stubApplicationEndpoints()
     this.stubPremisesEndpoint()
+    this.stubCas1PremisesEndpoint()
     if (oasysMissing) {
       this.stubOasys404()
     } else {
@@ -212,6 +214,13 @@ export default class ApplyHelper {
     const premises2 = premisesSummaryFactory.build({ id: '2', apArea: 'area2' })
     const premises3 = premisesSummaryFactory.build({ id: '3', apArea: 'area3' })
     cy.task('stubAllPremises', [premises1, premises2, premises3])
+  }
+
+  private stubCas1PremisesEndpoint() {
+    const premises1 = cas1PremisesSummaryFactory.build({ id: '1', apArea: { id: 1, name: 'area1' } })
+    const premises2 = cas1PremisesSummaryFactory.build({ id: '2', apArea: { id: 2, name: 'area2' } })
+    const premises3 = cas1PremisesSummaryFactory.build({ id: '3', apArea: { id: 3, name: 'area3' } })
+    cy.task('stubCas1AllPremises', [premises1, premises2, premises3])
   }
 
   private stubPersonEndpoints() {

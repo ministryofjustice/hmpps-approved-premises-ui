@@ -3,6 +3,7 @@ import type { Response, SuperAgentRequest } from 'superagent'
 import type {
   BedOccupancyRange,
   Booking,
+  Cas1PremisesSummary,
   ExtendedPremisesSummary,
   Premises,
   ApprovedPremisesSummary as PremisesSummary,
@@ -28,6 +29,22 @@ const stubAllPremises = (premises: Array<PremisesSummary>) =>
       jsonBody: premises,
     },
   })
+
+const stubCas1AllPremises = (premises: Array<Cas1PremisesSummary>) => {
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/cas1/premises/summary.*',
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: premises,
+    },
+  })
+}
 
 const stubPremisesSummary = (premises: ExtendedPremisesSummary) =>
   stubFor({
@@ -61,6 +78,7 @@ const stubSinglePremises = (premises: Premises) =>
 
 export default {
   stubAllPremises,
+  stubCas1AllPremises,
   stubPremisesSummary,
   stubSinglePremises,
   stubPremisesWithBookings: (args: { premises: Premises; bookings: Array<Booking> }): Promise<[Response, Response]> =>

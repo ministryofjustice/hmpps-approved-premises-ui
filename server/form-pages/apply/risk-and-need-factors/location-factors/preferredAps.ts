@@ -1,5 +1,5 @@
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application, ApprovedPremises } from '../../../../@types/shared'
+import { ApprovedPremisesApplication as Application, Cas1PremisesSummary } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 
@@ -12,23 +12,31 @@ export type PreferredApsBody = {
   preferredAp3: string
   preferredAp4: string
   preferredAp5: string
-  selectedAps: Array<ApprovedPremises>
+  selectedAps: Array<Cas1PremisesSummary>
 }
 
 const preferredAps = new Array(5).fill('').map((_, i) => `preferredAp${i + 1}`)
 
+type SelectorAttributes = {
+  'data-premises-with-areas'?: boolean
+  'data-region-prompt'?: string
+}
 @Page({
   name: 'preferred-aps',
   bodyProperties: [...preferredAps, 'selectedAps'],
 })
 export default class PreferredAps implements TasklistPage {
-  title = 'Select a preferred AP'
+  title: string
 
-  allPremises: Array<ApprovedPremises> = []
+  allPremises: Array<Cas1PremisesSummary> = []
 
   preferredApOptions = preferredAps
 
   preferredApLabels = this.preferredApOptions.map((_, i) => `${numberToOrdinal(i)} choice AP`)
+
+  isWomensAp: boolean
+
+  selectorAttributes: SelectorAttributes
 
   body: PreferredApsBody
 
@@ -36,19 +44,18 @@ export default class PreferredAps implements TasklistPage {
 
   static async initialize(
     body: Record<string, unknown>,
-    _: Application,
+    application: Application,
     token: string,
     { premisesService }: DataServices,
   ) {
-    const allPremises = await premisesService.getAll(token)
+    const { isWomensApplication } = application
+    const allPremises = await premisesService.getCas1All(token, isWomensApplication ? 'woman' : 'man')
 
-    const selectedAps: Array<ApprovedPremises> = []
-
+    const selectedAps: Array<Cas1PremisesSummary> = []
     preferredAps.forEach(id => {
       const selectedAp = allPremises.find(premises => {
         return premises.id === body[id]
       })
-
       if (selectedAp) {
         selectedAps.push(selectedAp)
       }
@@ -57,9 +64,17 @@ export default class PreferredAps implements TasklistPage {
     body.selectedAps = selectedAps
 
     const page = new PreferredAps(body)
-
+    page.title = isWomensApplication
+      ? 'Select all preferred properties for your women’s AP application'
+      : 'Select a preferred AP'
+    page.isWomensAp = !isWomensApplication
+    page.selectorAttributes = isWomensApplication
+      ? {}
+      : {
+          'data-premises-with-areas': true,
+          'data-region-prompt': 'No preference',
+        }
     page.allPremises = allPremises
-
     return page
   }
 
@@ -73,7 +88,6 @@ export default class PreferredAps implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
-
     if (!this.body.preferredAp1) {
       errors.preferredAp1 = 'You must select one preferred Approved Premises'
     }
@@ -83,7 +97,6 @@ export default class PreferredAps implements TasklistPage {
 
   response() {
     const response = {}
-
     this.preferredApOptions.forEach((key, i) => {
       const apName = this.body.selectedAps.find(premises => premises.id === this.body[key])?.name
 

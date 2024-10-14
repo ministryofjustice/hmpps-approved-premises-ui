@@ -22,6 +22,7 @@ import {
   BedOccupancyRange,
   Booking,
   Cas1CruManagementArea,
+  Cas1PremisesSummary,
   Document,
   FlagsEnvelope,
   Gender,
@@ -285,6 +286,8 @@ export type GroupedListofBookings = {
   [K in 'arrivingToday' | 'departingToday' | 'upcomingArrivals' | 'upcomingDepartures']: Array<Booking>
 }
 
+export type ManWoman = 'man' | 'woman'
+
 export type DataServices = Partial<{
   personService: {
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
@@ -303,6 +306,7 @@ export type DataServices = Partial<{
   }
   premisesService: {
     getAll: (token: string) => Promise<Array<Premises>>
+    getCas1All: (token: string, gender: ManWoman) => Promise<Array<Cas1PremisesSummary>>
   }
   assessmentService: {
     createClarificationNote: (

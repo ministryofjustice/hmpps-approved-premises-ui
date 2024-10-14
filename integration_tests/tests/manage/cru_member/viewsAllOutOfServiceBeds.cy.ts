@@ -39,6 +39,7 @@ describe('CRU Member with permission to view out of service bed tile lists all O
     signIn(['cru_member'], ['cas1_view_out_of_service_beds'])
     cy.task('stubApAreaReferenceData', { apArea: apArea1, additionalAreas: [apArea2] })
     cy.task('stubAllPremises', allPremises)
+    cy.task('stubCas1AllPremises', allPremises)
   })
 
   const outOfServiceBeds = outOfServiceBedFactory.buildList(10, {

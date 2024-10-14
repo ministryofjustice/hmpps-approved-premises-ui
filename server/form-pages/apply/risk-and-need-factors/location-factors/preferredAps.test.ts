@@ -3,18 +3,18 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
 import PreferredAps from './preferredAps'
 import { PremisesService } from '../../../../services'
-import { applicationFactory, premisesFactory } from '../../../../testutils/factories'
+import { applicationFactory, cas1PremisesSummaryFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 describe('PreferredAps', () => {
   let premisesService: DeepMocked<PremisesService>
   const application = applicationFactory.build()
 
-  const ap1 = premisesFactory.build({ id: '1', name: 'AP 1' })
-  const ap2 = premisesFactory.build({ id: '2', name: 'AP 2' })
-  const ap3 = premisesFactory.build({ id: '3', name: 'AP 3' })
-  const ap4 = premisesFactory.build({ id: '4', name: 'AP 4' })
-  const ap5 = premisesFactory.build({ id: '5', name: 'AP 5' })
+  const ap1 = cas1PremisesSummaryFactory.build({ id: '1', name: 'AP 1' })
+  const ap2 = cas1PremisesSummaryFactory.build({ id: '2', name: 'AP 2' })
+  const ap3 = cas1PremisesSummaryFactory.build({ id: '3', name: 'AP 3' })
+  const ap4 = cas1PremisesSummaryFactory.build({ id: '4', name: 'AP 4' })
+  const ap5 = cas1PremisesSummaryFactory.build({ id: '5', name: 'AP 5' })
 
   const allAps = [ap1, ap2, ap3, ap4, ap5]
 
@@ -36,12 +36,12 @@ describe('PreferredAps', () => {
   })
 
   describe('initialize', () => {
-    const getAll = jest.fn().mockResolvedValue(allAps)
+    const getCas1All = jest.fn().mockResolvedValue(allAps)
     const token = 'token'
 
     beforeEach(() => {
       premisesService = createMock<PremisesService>({
-        getAll,
+        getCas1All,
       })
     })
 
@@ -49,7 +49,7 @@ describe('PreferredAps', () => {
       const page = await PreferredAps.initialize(body, application, token, fromPartial({ premisesService }))
 
       expect(page.allPremises).toEqual(allAps)
-      expect(getAll).toHaveBeenCalledWith(token)
+      expect(getCas1All).toHaveBeenCalledWith(token, application.isWomensApplication ? 'woman' : 'man')
     })
 
     it('should convert the selectedAps from strings to objects containing text and value properties', async () => {
