@@ -8,7 +8,6 @@ import {
   bookingFactory,
   cas1PremisesSummaryFactory,
   cruManagementAreaFactory,
-  newCancellationFactory,
   placementRequestDetailFactory,
   placementRequestWithFullPersonFactory,
   premisesFactory,
