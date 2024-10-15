@@ -22,6 +22,5 @@ export default class AccessNeedsFurtherQuestionsPage extends ApplyPage {
     this.checkRadioButtonFromPageBody('prescribedMedication')
     this.completeTextInputFromPageBody('prescribedMedicationDetail')
     this.checkRadioButtonFromPageBody('isPersonPregnant')
-    this.completeTextInputFromPageBody('additionalAdjustments')
   }
 }

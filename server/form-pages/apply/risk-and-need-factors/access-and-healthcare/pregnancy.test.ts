@@ -39,7 +39,7 @@ describe('AccessNeeds', () => {
 
   describe('next', () => {
     it('returns the correct next page', () => {
-      expect(new Pregnancy({}).next()).toBe('covid')
+      expect(new Pregnancy({}).next()).toBe('access-needs-additional-details')
     })
   })
 

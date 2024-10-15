@@ -1,0 +1,37 @@
+{% extends "../layout.njk" %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block questions %}
+    <h1 class="govuk-heading-l">{{ page.title }}</h1>
+
+    {% set hintHtml %}
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    What adjustments can be made?
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Step-free access for reduced mobility</li>
+                    <li>Wheelchair accessibility</li>
+                    <li>En-suite bedroom</li>
+                    <li>Signs in braille, tactile and directional flooring</li>
+                    <li>Hearing loop</li>
+                </ul>
+            </div>
+        </details>
+    {% endset %}
+
+    {{ formPageTextarea({
+        fieldName: "additionalAdjustments",
+        label: {
+            text: page.questions.additionalAdjustments + ' (optional)',
+            classes: "govuk-label--m"
+        },
+        hint: {
+            html: hintHtml
+        }
+    }, fetchContext()) }}
+
+{% endblock %}

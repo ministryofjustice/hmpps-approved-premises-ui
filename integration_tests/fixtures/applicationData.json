@@ -454,8 +454,7 @@
       "healthConditionsDetail": "Some detail",
       "prescribedMedication": "yes",
       "prescribedMedicationDetail": "Some detail",
-      "isPersonPregnant": "yes",
-      "additionalAdjustments": "Some detail"
+      "isPersonPregnant": "yes"
     },
     "pregnancy": {
       "expectedDeliveryDate": "2023-12-31",
@@ -467,6 +466,9 @@
       "otherPregnancyConsiderations": "yes",
       "otherPregnancyConsiderationsDetail": "some considerations",
       "childRemoved": "decisionPending"
+    },
+    "access-needs-additional-details": {
+      "additionalAdjustments": "Some detail"
     },
     "covid": {
       "boosterEligibility": "yes",

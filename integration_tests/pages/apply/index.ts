@@ -1,3 +1,4 @@
+import AccessNeedsAdditionalDetailsPage from './accessNeedsAdditionalDetails'
 import AccessNeedsFurtherQuestionsPage from './accessNeedsFurtherQuestions'
 import AccessNeedsPage from './accessNeeds'
 import AdditionalCircumstancesPage from './additionalCircumstances'
@@ -67,6 +68,7 @@ import VulnerabilityPage from './vulnerability'
 import NoOffencePage from './noOffence'
 
 export {
+  AccessNeedsAdditionalDetailsPage,
   AccessNeedsFurtherQuestionsPage,
   AccessNeedsPage,
   AdditionalCircumstancesPage,

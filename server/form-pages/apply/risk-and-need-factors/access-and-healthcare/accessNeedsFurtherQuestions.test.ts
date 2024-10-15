@@ -17,7 +17,6 @@ describe('AccessNeedsFurtherQuestions', () => {
     prescribedMedication: 'yes',
     prescribedMedicationDetail: 'Some detail',
     isPersonPregnant: 'yes',
-    additionalAdjustments: 'Adjustments',
   }
 
   beforeEach(() => {
@@ -41,7 +40,6 @@ describe('AccessNeedsFurtherQuestions', () => {
         prescribedMedication: 'yes',
         prescribedMedicationDetail: 'Some detail',
         isPersonPregnant: 'yes',
-        additionalAdjustments: 'Adjustments',
       })
     })
   })
@@ -58,8 +56,10 @@ describe('AccessNeedsFurtherQuestions', () => {
     describe('if the person is not pregnant', () => {
       const bodyPregnancyNo = { ...body, isPersonPregnant: 'no' as YesOrNo }
 
-      it('returns the covid page', () => {
-        expect(new AccessNeedsFurtherQuestions(bodyPregnancyNo, application).next()).toBe('covid')
+      it('returns the Access Needs Additional Details page', () => {
+        expect(new AccessNeedsFurtherQuestions(bodyPregnancyNo, application).next()).toBe(
+          'access-needs-additional-details',
+        )
       })
     })
   })
@@ -97,41 +97,13 @@ describe('AccessNeedsFurtherQuestions', () => {
       })
     })
 
-    it('should return errors if the person answered "yes" to pregancy healthcare questions but doesnt respond to pregnancy question', () => {
+    it('should return errors if the person answered "yes" to pregnancy healthcare questions but doesnt respond to pregnancy question', () => {
       ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['pregnancy'])
 
       const page = new AccessNeedsFurtherQuestions({ ...body, isPersonPregnant: undefined }, application)
       expect(page.errors()).toEqual({
         isPersonPregnant: `You must confirm if the person is pregnant`,
       })
-    })
-  })
-
-  describe('listOfNeeds', () => {
-    it('should return null when no needs are selected', () => {
-      const page = new AccessNeedsFurtherQuestions(body, application)
-
-      expect(page.listOfNeeds).toEqual(null)
-    })
-
-    it('should return a single need when one is selected', () => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['mobility'])
-
-      const page = new AccessNeedsFurtherQuestions(body, application)
-
-      expect(page.listOfNeeds).toEqual('mobility needs')
-    })
-
-    it('should return a list of needs', () => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue([
-        'learningDisability',
-        'neurodivergentConditions',
-        'healthcare',
-      ])
-
-      const page = new AccessNeedsFurtherQuestions(body, application)
-
-      expect(page.listOfNeeds).toEqual('learning disability, neurodivergent conditions or healthcare needs')
     })
   })
 
@@ -146,7 +118,6 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Does the person have any known health conditions?': 'Yes - Some detail',
         'Does the person have any prescribed medication?': 'Yes - Some detail',
         'Is the person pregnant?': 'Yes',
-        "Specify any additional details and adjustments required for the person's pregnancy needs": 'Adjustments',
       })
     })
 
@@ -159,7 +130,6 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Does the person require the use of a wheelchair?': 'Yes',
         'Does the person have any known health conditions?': 'Yes - Some detail',
         'Does the person have any prescribed medication?': 'Yes - Some detail',
-        "Specify any additional details and adjustments required for the person's mobility needs": 'Adjustments',
       })
     })
   })

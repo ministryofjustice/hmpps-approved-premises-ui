@@ -1,17 +1,16 @@
 import type { TaskListErrors, YesNoOrIDKWithDetail, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import { lowerCase, sentenceCase } from '../../../../utils/utils'
+import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetailForYes } from '../../../utils'
 
 import TasklistPage from '../../../tasklistPage'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import AccessNeeds, { AdditionalNeed, additionalNeeds } from './accessNeeds'
+import AccessNeeds, { AdditionalNeed } from './accessNeeds'
 
 export type AccessNeedsFurtherQuestionsBody = {
   needsWheelchair: YesOrNo
   isPersonPregnant?: YesOrNo
-  additionalAdjustments: string
 } & YesOrNoWithDetail<'healthConditions'> &
   YesNoOrIDKWithDetail<'prescribedMedication'>
 
@@ -24,7 +23,6 @@ export type AccessNeedsFurtherQuestionsBody = {
     'prescribedMedication',
     'prescribedMedicationDetail',
     'isPersonPregnant',
-    'additionalAdjustments',
   ],
 })
 export default class AccessNeedsFurtherQuestions implements TasklistPage {
@@ -37,7 +35,6 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     prescribedMedication: `Does the person have any prescribed medication?`,
     prescribedMedicationDetail: 'Provide details',
     isPersonPregnant: `Is the person pregnant?`,
-    additionalAdjustments: `Specify any additional details and adjustments required for the person's ${this.listOfNeeds}`,
   }
 
   yesToPregnancyHealthcareQuestion: boolean = this.answeredYesToPregnancyHealthcareQuestion()
@@ -52,27 +49,11 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
   }
 
   next() {
-    return this.body.isPersonPregnant === 'yes' ? 'pregnancy' : 'covid'
+    return this.body.isPersonPregnant === 'yes' ? 'pregnancy' : 'access-needs-additional-details'
   }
 
   public get additionalNeeds(): Array<AdditionalNeed> {
     return retrieveOptionalQuestionResponseFromFormArtifact(this.application, AccessNeeds, 'additionalNeeds')
-  }
-
-  public get listOfNeeds(): string {
-    const needs = this.additionalNeeds.map(need => additionalNeeds[need])
-
-    if (needs.length > 0) {
-      if (needs.length === 1) {
-        return lowerCase(`${needs[0]} needs`)
-      }
-
-      const lastNeed = needs.splice(-1)
-
-      return lowerCase(`${needs.join(', ')} or ${lastNeed} needs`)
-    }
-
-    return null
   }
 
   answeredYesToPregnancyHealthcareQuestion() {
@@ -89,8 +70,6 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
       response[this.questions.isPersonPregnant] = sentenceCase(this.body.isPersonPregnant)
     }
-
-    response[this.questions.additionalAdjustments] = this.body.additionalAdjustments
 
     return response
   }

@@ -88,7 +88,7 @@ export default class Pregnancy implements TasklistPage {
   }
 
   next(): string {
-    return 'covid'
+    return 'access-needs-additional-details'
   }
 
   previous(): string {
