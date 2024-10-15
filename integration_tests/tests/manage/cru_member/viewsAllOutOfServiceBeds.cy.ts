@@ -1,4 +1,8 @@
-import { apAreaFactory, outOfServiceBedFactory, premisesSummaryFactory } from '../../../../server/testutils/factories'
+import {
+  apAreaFactory,
+  cas1PremisesSummaryFactory,
+  outOfServiceBedFactory,
+} from '../../../../server/testutils/factories'
 import DashboardPage from '../../../pages/dashboard'
 import Page from '../../../pages/page'
 import { OutOfServiceBedIndexPage } from '../../../pages/manage/outOfServiceBeds'
@@ -15,19 +19,19 @@ describe('CRU Member with permission to view out of service bed tile lists all O
     name: 'Test Area 2',
   })
 
-  const premises1 = premisesSummaryFactory.build({
-    apArea: apArea1.name,
+  const premises1 = cas1PremisesSummaryFactory.build({
+    apArea: apArea1,
     name: 'Premises 1',
     id: 'premises-1-id',
   })
 
-  const premises2 = premisesSummaryFactory.build({
-    apArea: apArea1.name,
+  const premises2 = cas1PremisesSummaryFactory.build({
+    apArea: apArea1,
     name: 'Premises 2',
   })
 
-  const premises3 = premisesSummaryFactory.build({
-    apArea: apArea2.name,
+  const premises3 = cas1PremisesSummaryFactory.build({
+    apArea: apArea2,
     name: 'Premises 3',
   })
 
@@ -38,7 +42,6 @@ describe('CRU Member with permission to view out of service bed tile lists all O
     // Given I am signed in as a CRU Member with the permission to view the out of service beds tile
     signIn(['cru_member'], ['cas1_view_out_of_service_beds'])
     cy.task('stubApAreaReferenceData', { apArea: apArea1, additionalAreas: [apArea2] })
-    cy.task('stubAllPremises', allPremises)
     cy.task('stubCas1AllPremises', allPremises)
   })
 

@@ -135,7 +135,7 @@
             premisesSelect.appendChild(disabledOption)
             premisesSelect.disabled = true
           } else {
-            const filteredData = allPremises.filter(item => item.apArea === selectedArea)
+            const filteredData = allPremises.filter(item => item.apArea.name === selectedArea)
             if (filteredData.length > 0) {
 
               premisesSelect.disabled = false
