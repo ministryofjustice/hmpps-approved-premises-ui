@@ -19,45 +19,14 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.all(selectedAreaId)
 
-    return premises.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1
-      }
-      if (a.name > b.name) {
-        return 1
-      }
-      return 0
-    })
+    return premises.sort((a, b) => (a.name < b.name ? -1 : 1))
   }
 
   async getCas1All(token: string, gender: ManWoman = null): Promise<Array<Cas1PremisesSummary>> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.allCas1(gender)
 
-    return premises.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1
-      }
-      if (a.name > b.name) {
-        return 1
-      }
-      return 0
-    })
-  }
-
-  async getSummary(token: string, selectedAreaId = ''): Promise<Array<ApprovedPremisesSummary>> {
-    const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all(selectedAreaId)
-
-    return premises.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1
-      }
-      if (a.name > b.name) {
-        return 1
-      }
-      return 0
-    })
+    return premises.sort((a, b) => (a.name < b.name ? -1 : 1))
   }
 
   async getStaffMembers(token: string, premisesId: string): Promise<Array<StaffMember>> {
