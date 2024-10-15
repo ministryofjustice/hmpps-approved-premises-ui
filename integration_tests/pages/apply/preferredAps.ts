@@ -7,9 +7,8 @@ export default class PreferredAps extends ApplyPage {
   isWomensApplication: boolean
 
   constructor(application: ApprovedPremisesApplication) {
-    this.isWomensApplication = application.isWomensApplication
     super(
-      this.isWomensApplication
+      application.isWomensApplication
         ? 'Select all preferred properties for your women’s AP application'
         : 'Select a preferred AP',
       application,
@@ -21,6 +20,7 @@ export default class PreferredAps extends ApplyPage {
         page: 'describe-location-factors',
       }),
     )
+    this.isWomensApplication = application.isWomensApplication
   }
 
   completeForm() {

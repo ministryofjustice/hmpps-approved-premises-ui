@@ -8,6 +8,7 @@ import {
   bookingFactory,
   cas1PremisesSummaryFactory,
   cruManagementAreaFactory,
+  newCancellationFactory,
   placementRequestDetailFactory,
   placementRequestWithFullPersonFactory,
   premisesFactory,
@@ -257,6 +258,7 @@ context('Placement Requests', () => {
 
   it('allows me to cancel a booking', () => {
     const premises = cas1PremisesSummaryFactory.buildList(3)
+    const cancellation = newCancellationFactory.build()
     cy.task('stubCas1AllPremises', premises)
     const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
