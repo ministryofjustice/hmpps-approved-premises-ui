@@ -299,6 +299,25 @@ describe('formUtils', () => {
         },
       ])
     })
+
+    it('should separate the exclusive option', () => {
+      expect(convertKeyValuePairToCheckBoxItems(obj, [], true)).toEqual([
+        {
+          value: 'foo',
+          text: 'Foo',
+          checked: false,
+        },
+        {
+          divider: 'or',
+        },
+        {
+          value: 'bar',
+          text: 'Bar',
+          checked: false,
+          behaviour: 'exclusive',
+        },
+      ])
+    })
   })
 
   describe('convertKeyValuePairToRadioItems', () => {

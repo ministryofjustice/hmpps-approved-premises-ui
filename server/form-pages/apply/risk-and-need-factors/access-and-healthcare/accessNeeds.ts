@@ -129,7 +129,7 @@ export default class AccessNeeds implements TasklistPage {
   }
 
   needsCheckboxes() {
-    return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds as Array<AdditionalNeed>)
+    return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds as Array<AdditionalNeed>, true)
   }
 }
 

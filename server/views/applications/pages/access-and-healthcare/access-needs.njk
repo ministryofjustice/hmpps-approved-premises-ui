@@ -4,174 +4,154 @@
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">{{page.title}}</h1>
+    <h1 class="govuk-heading-l">{{ page.title }}</h1>
 
-  {{ formPageCheckboxes({
-      fieldName: "additionalNeeds",
-      hint: {
-        text: page.questions.needs.hint
-      },
-      fieldset: {
-        legend: {
-          text: page.questions.needs.question,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      items: page.needsCheckboxes()
+    {{ formPageCheckboxes({
+        fieldName: "additionalNeeds",
+        hint: {
+            text: page.questions.needs.hint
+        },
+        fieldset: {
+            legend: {
+                text: page.questions.needs.question,
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+        items: page.needsCheckboxes()
     }, fetchContext()) }}
 
-  {% set culturalNeeds %}
-  {{ formPageTextarea({
-      fieldName: 'religiousOrCulturalNeedsDetail',
-      spellcheck: false,
-      label: {
-        text: "Provide details"
-      }
-    },fetchContext()) }}
-  {% endset %}
+    {% set culturalNeeds %}
+        {{ formPageTextarea({
+            fieldName: 'religiousOrCulturalNeedsDetail',
+            spellcheck: false,
+            label: {
+                text: "Provide details"
+            }
+        }, fetchContext()) }}
+    {% endset %}
 
-  {{ formPageRadios({
-      fieldName: "religiousOrCulturalNeeds",
-      fieldset: {
-        legend: {
-          text: page.questions.religiousOrCulturalNeeds.question,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      items: [
-        {
-          value: "yes",
-          text: "Yes",
-          conditional: {
-            html: culturalNeeds
-          }
+    {{ formPageRadios({
+        fieldName: "religiousOrCulturalNeeds",
+        fieldset: {
+            legend: {
+                text: page.questions.religiousOrCulturalNeeds.question,
+                classes: "govuk-fieldset__legend--m"
+            }
         },
-        {
-          value: "no",
-          text: "No"
-        }
-      ]
-    },fetchContext()) }}
+        items: [
+            {
+                value: "yes",
+                text: "Yes",
+                conditional: {
+                html: culturalNeeds
+            }
+            },
+            {
+                value: "no",
+                text: "No"
+            }
+        ]
+    }, fetchContext()) }}
 
-  {% set needInterpreter %}
-  {{ formPageInput({
-        fieldName: "interpreterLanguage",
-        label: {
-          text: page.questions.interpreter.language
-        }
-      },fetchContext()) }}
-  {% endset -%}
+    {% set needInterpreter %}
+        {{ formPageInput({
+            fieldName: "interpreterLanguage",
+            label: {
+                text: page.questions.interpreter.language
+            }
+        }, fetchContext()) }}
+    {% endset -%}
 
-  {% set careAndSupportNeeds %}
-  {{ formPageTextarea({
-      fieldName: 'careAndSupportNeedsDetail',
-      label: {
-        text: page.questions.careAndSupportNeeds.hint
-      }
-      },fetchContext()) }}
-  {% endset %}
+    {% set careAndSupportNeeds %}
+        {{ formPageTextarea({
+            fieldName: 'careAndSupportNeedsDetail',
+            label: {
+                text: page.questions.careAndSupportNeeds.hint
+            }
+        }, fetchContext()) }}
+    {% endset %}
 
-  {{ formPageRadios({
-      fieldName: "careAndSupportNeeds",
-      fieldset: {
-        legend: {
-          text: page.questions.careAndSupportNeeds.question,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      items: [
-        {
-          value: "yes",
-          text: "Yes",
-          conditional: {
-            html: careAndSupportNeeds
-          }
+    {{ formPageRadios({
+        fieldName: "careAndSupportNeeds",
+        fieldset: {
+            legend: {
+                text: page.questions.careAndSupportNeeds.question,
+                classes: "govuk-fieldset__legend--m"
+            }
         },
-        {
-          value: "no",
-          text: "No"
-        }
-      ]
-    },fetchContext()) }}
+        items: [
+            {
+                value: "yes",
+                text: "Yes",
+                conditional: {
+                html: careAndSupportNeeds
+            }
+            },
+            {
+                value: "no",
+                text: "No"
+            }
+        ]
+    }, fetchContext()) }}
 
-  {% set bannerHTML %}
-  {% set html %}
-  <p>Upload Care Act assessments to NDelius. You cannot upload these within the service.</p>
-  {% endset %}
+    {% set bannerHTML %}
+        {% set html %}
+            <p>Upload Care Act assessments to NDelius. You cannot upload these within the service.</p>
+        {% endset %}
 
-  {{ govukNotificationBanner({
-        html: html
-    }) }}
-  {% endset -%}
+        {{ govukNotificationBanner({
+            html: html
+        }) }}
+    {% endset -%}
 
-  {{ formPageRadios({
+    {{ formPageRadios({
         fieldName: "needsInterpreter",
         fieldset: {
-          legend: {
-            text: page.questions.interpreter.question,
-            classes: "govuk-fieldset__legend--m"
-          }
+            legend: {
+                text: page.questions.interpreter.question,
+                classes: "govuk-fieldset__legend--m"
+            }
         },
         items: [
-          {
-            value: "yes",
-            text: "Yes",
-            conditional: {
-              html: needInterpreter
+            {
+                value: "yes",
+                text: "Yes",
+                conditional: {
+                html: needInterpreter
             }
-          },
-          {
-            value: "no",
-            text: "No"
-          }
+            },
+            {
+                value: "no",
+                text: "No"
+            }
         ]
-      },fetchContext()) }}
+    }, fetchContext()) }}
 
-  {{ formPageRadios({
+    {{ formPageRadios({
         fieldName: "careActAssessmentCompleted",
         fieldset: {
-          legend: {
-            text: page.questions.careActAssessmentCompleted,
-            classes: "govuk-fieldset__legend--m"
-          }
+            legend: {
+                text: page.questions.careActAssessmentCompleted,
+                classes: "govuk-fieldset__legend--m"
+            }
         },
         items: [
-          {
-            value: "yes",
-            text: "Yes",
-            conditional: {
-              html: bannerHTML
+            {
+                value: "yes",
+                text: "Yes",
+                conditional: {
+                html: bannerHTML
             }
-          },
-          {
-            value: "no",
-            text: "No"
-          },
-          {
-            value: "iDontKnow",
-            text: "I don't know"
-          }
+            },
+            {
+                value: "no",
+                text: "No"
+            },
+            {
+                value: "iDontKnow",
+                text: "I don't know"
+            }
         ]
-      },fetchContext()) }}
+    }, fetchContext()) }}
 
-{% endblock %}
-
-{% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    var none = document.querySelector('input[name="additionalNeeds"][value="none"]')
-    var checkBoxes = document.querySelectorAll('input[name="additionalNeeds"]:not([value="none"])')
-
-    none.addEventListener('change', function () {
-      if (this.checked) {
-        for (let i = 0; i < checkBoxes.length; i++) {
-          checkBoxes[i].checked = false
-          checkBoxes[i].setAttribute('disabled', true)
-        }
-      } else {
-        for (let i = 0; i < checkBoxes.length; i++) {
-          checkBoxes[i].removeAttribute('disabled')
-        }
-      }
-    });
-  </script>
 {% endblock %}

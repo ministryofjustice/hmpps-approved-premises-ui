@@ -110,7 +110,7 @@ describe('AccessNeeds', () => {
       const page = new AccessNeeds({ additionalNeeds: ['mobility', 'neurodivergentConditions'] })
 
       expect(page.needsCheckboxes()).toEqual(
-        convertKeyValuePairToCheckBoxItems(additionalNeeds, ['mobility', 'neurodivergentConditions']),
+        convertKeyValuePairToCheckBoxItems(additionalNeeds, ['mobility', 'neurodivergentConditions'], true),
       )
     })
   })
