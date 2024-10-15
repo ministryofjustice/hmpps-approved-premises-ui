@@ -40,6 +40,7 @@ import PlacementPurposePage from './placementPurpose'
 import PlacementStartPage from './placementDate'
 import PlansInPlacePage from './plansInPlace'
 import PreferredAps from './preferredAps'
+import PregnancyPage from './pregnancy'
 import PreviousPlacements from './previousPlacements'
 import ReasonForShortNoticePage from './reasonForShortNoticePage'
 import RehabilitativeInterventions from './rehabilitativeInterventions'
@@ -109,6 +110,7 @@ export {
   PlacementStartPage,
   PlansInPlacePage,
   PreferredAps,
+  PregnancyPage,
   PreviousPlacements,
   ReasonForShortNoticePage,
   RehabilitativeInterventions,

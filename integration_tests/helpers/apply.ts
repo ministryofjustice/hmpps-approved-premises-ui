@@ -838,11 +838,15 @@ export default class ApplyHelper {
     accessNeedsFurtherQuestionsPage.completeForm()
     accessNeedsFurtherQuestionsPage.clickSubmit()
 
+    const pregnancyPage = new ApplyPages.PregnancyPage(this.application)
+    pregnancyPage.completeForm()
+    pregnancyPage.clickSubmit()
+
     const covidPage = new ApplyPages.CovidPage(this.application)
     covidPage.completeForm()
     covidPage.clickSubmit()
 
-    this.pages.accessAndHealthcare = [accessNeedsPage, accessNeedsFurtherQuestionsPage, covidPage]
+    this.pages.accessAndHealthcare = [accessNeedsPage, accessNeedsFurtherQuestionsPage, pregnancyPage, covidPage]
 
     // Then I should be taken back to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)

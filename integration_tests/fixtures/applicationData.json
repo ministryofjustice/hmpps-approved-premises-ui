@@ -5,14 +5,27 @@
       "name": "Bob Smith",
       "phoneNumber": "01234567890",
       "area": "5e44b880-df20-4751-938f-a14be5fe609d",
-      "areas": [{ "id": "5e44b880-df20-4751-938f-a14be5fe609d", "name": "Greater Manchester" }],
-      "detailsToUpdate": ["phoneNumber", "emailAddress", "name", "area"],
+      "areas": [
+        {
+          "id": "5e44b880-df20-4751-938f-a14be5fe609d",
+          "name": "Greater Manchester"
+        }
+      ],
+      "detailsToUpdate": [
+        "phoneNumber",
+        "emailAddress",
+        "name",
+        "area"
+      ],
       "caseManagementResponsibility": "no",
       "userDetailsFromDelius": {
         "name": "Frank",
         "emailAddress": "frank@test.com",
         "phoneNumber": "01234567890",
-        "area": { "name": "Greater Manchester", "id": "5e44b880-df20-4751-938f-a14be5fe609d" }
+        "area": {
+          "name": "Greater Manchester",
+          "id": "5e44b880-df20-4751-938f-a14be5fe609d"
+        }
       }
     },
     "case-manager-information": {
@@ -69,7 +82,6 @@
     "sentence-type": {
       "sentenceType": "communityOrder"
     },
-
     "situation": {
       "situation": "riskManagement"
     },
@@ -84,7 +96,10 @@
       "startDateSameAsReleaseDate": "yes"
     },
     "placement-purpose": {
-      "placementPurposes": ["drugAlcoholMonitoring", "otherReason"],
+      "placementPurposes": [
+        "drugAlcoholMonitoring",
+        "otherReason"
+      ],
       "otherReason": "Reason"
     }
   },
@@ -102,8 +117,18 @@
   "oasys-import": {
     "optional-oasys-sections": {
       "needsLinkedToReoffending": [
-        { "section": 1, "name": "accommodation", "linkedToHarm": false, "linkedToReOffending": true },
-        { "section": 2, "name": "relationships", "linkedToHarm": false, "linkedToReOffending": true }
+        {
+          "section": 1,
+          "name": "accommodation",
+          "linkedToHarm": false,
+          "linkedToReOffending": true
+        },
+        {
+          "section": 2,
+          "name": "relationships",
+          "linkedToHarm": false,
+          "linkedToReOffending": true
+        }
       ],
       "otherNeeds": [
         {
@@ -250,14 +275,36 @@
       "response": "yes"
     },
     "date-of-offence": {
-      "arsonOffence": ["current"],
-      "hateCrime": ["previous"],
-      "nonSexualOffencesAgainstChildren": ["current", "previous"],
-      "contactSexualOffencesAgainstAdults": ["current", "previous"],
-      "nonContactSexualOffencesAgainstAdults": ["current", "previous"],
-      "contactSexualOffencesAgainstChildren": ["current", "previous"],
-      "nonContactSexualOffencesAgainstChildren": ["current", "previous"],
-      "otherSexualOffences": ["current", "previous"]
+      "arsonOffence": [
+        "current"
+      ],
+      "hateCrime": [
+        "previous"
+      ],
+      "nonSexualOffencesAgainstChildren": [
+        "current",
+        "previous"
+      ],
+      "contactSexualOffencesAgainstAdults": [
+        "current",
+        "previous"
+      ],
+      "nonContactSexualOffencesAgainstAdults": [
+        "current",
+        "previous"
+      ],
+      "contactSexualOffencesAgainstChildren": [
+        "current",
+        "previous"
+      ],
+      "nonContactSexualOffencesAgainstChildren": [
+        "current",
+        "previous"
+      ],
+      "otherSexualOffences": [
+        "current",
+        "previous"
+      ]
     },
     "rehabilitative-interventions": {
       "rehabilitativeInterventions": [
@@ -278,7 +325,10 @@
   },
   "prison-information": {
     "case-notes": {
-      "caseNoteIds": ["a30173ca-061f-42c9-a1a2-28c70b282d3f", "4a477187-b77f-4fcc-a919-43a6633ee868"],
+      "caseNoteIds": [
+        "a30173ca-061f-42c9-a1a2-28c70b282d3f",
+        "4a477187-b77f-4fcc-a919-43a6633ee868"
+      ],
       "selectedCaseNotes": [
         {
           "authorName": "Denise Collins",
@@ -363,16 +413,33 @@
       "preferredAp4": "",
       "preferredAp5": "",
       "selectedAps": [
-        { "text": "Ap One", "value": "1" },
-        { "text": "Ap Two", "value": "2" },
-        { "text": "Ap Three", "value": "3" },
-        { "text": "No preference", "value": "" }
+        {
+          "text": "Ap One",
+          "value": "1"
+        },
+        {
+          "text": "Ap Two",
+          "value": "2"
+        },
+        {
+          "text": "Ap Three",
+          "value": "3"
+        },
+        {
+          "text": "No preference",
+          "value": ""
+        }
       ]
     }
   },
   "access-and-healthcare": {
     "access-needs": {
-      "additionalNeeds": ["mobility", "learningDisability", "neurodivergentConditions", "pregnancy"],
+      "additionalNeeds": [
+        "mobility",
+        "learningDisability",
+        "neurodivergentConditions",
+        "pregnancy"
+      ],
       "religiousOrCulturalNeeds": "yes",
       "religiousOrCulturalNeedsDetail": "sunt at minus",
       "needsInterpreter": "yes",
@@ -388,6 +455,9 @@
       "prescribedMedication": "yes",
       "prescribedMedicationDetail": "Some detail",
       "isPersonPregnant": "yes",
+      "additionalAdjustments": "Some detail"
+    },
+    "pregnancy": {
       "expectedDeliveryDate": "2023-12-31",
       "expectedDeliveryDate-year": "2023",
       "expectedDeliveryDate-month": "12",
@@ -396,8 +466,7 @@
       "socialCareInvolvementDetail": "Some detail",
       "otherPregnancyConsiderations": "yes",
       "otherPregnancyConsiderationsDetail": "some considerations",
-      "childRemoved": "decisionPending",
-      "additionalAdjustments": "Some detail"
+      "childRemoved": "decisionPending"
     },
     "covid": {
       "boosterEligibility": "yes",
