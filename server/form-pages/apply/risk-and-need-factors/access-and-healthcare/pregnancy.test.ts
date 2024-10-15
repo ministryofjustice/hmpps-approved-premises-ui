@@ -85,8 +85,8 @@ describe('AccessNeeds', () => {
       const page = new Pregnancy(body)
 
       expect(page.response()).toEqual({
-        'Is there social care involvement?': 'Yes - Some detail',
         'What is their expected date of delivery?': DateFormats.dateAndTimeInputsToUiDate(body, 'expectedDeliveryDate'),
+        'Is there social care involvement?': 'Yes - Some detail',
         "Will the child be removed from the person's care at birth?": 'No',
         'Are there any pregnancy related issues relevant to placement?': 'Yes - Some detail',
       })

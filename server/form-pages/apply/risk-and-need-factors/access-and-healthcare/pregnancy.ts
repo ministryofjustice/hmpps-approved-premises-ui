@@ -21,13 +21,13 @@ export type PregnancyBody = {
 @Page({
   name: 'pregnancy',
   bodyProperties: [
-    'childRemoved',
     'expectedDeliveryDate',
     'expectedDeliveryDate-year',
     'expectedDeliveryDate-month',
     'expectedDeliveryDate-day',
     'socialCareInvolvement',
     'socialCareInvolvementDetail',
+    'childRemoved',
     'otherPregnancyConsiderations',
     'otherPregnancyConsiderationsDetail',
   ],
@@ -37,11 +37,11 @@ export default class Pregnancy implements TasklistPage {
 
   questions = {
     expectedDeliveryDate: 'What is their expected date of delivery?',
-    otherPregnancyConsiderationsDetail: 'Provide details',
     socialCareInvolvement: 'Is there social care involvement?',
     socialCareInvolvementDetail: 'Provide details',
-    otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
     childRemoved: `Will the child be removed from the person's care at birth?`,
+    otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
+    otherPregnancyConsiderationsDetail: 'Provide details',
   }
 
   constructor(private _body: Partial<PregnancyBody>) {}
@@ -98,8 +98,8 @@ export default class Pregnancy implements TasklistPage {
   response(): PageResponse {
     return {
       [this.questions.expectedDeliveryDate]: DateFormats.isoDateToUIDate(this.body.expectedDeliveryDate),
-      [this.questions.childRemoved]: sentenceCase(this.body.childRemoved),
       [this.questions.socialCareInvolvement]: yesNoOrDontKnowResponseWithDetail('socialCareInvolvement', this.body),
+      [this.questions.childRemoved]: sentenceCase(this.body.childRemoved),
       [this.questions.otherPregnancyConsiderations]: yesOrNoResponseWithDetailForYes(
         'otherPregnancyConsiderations',
         this.body,

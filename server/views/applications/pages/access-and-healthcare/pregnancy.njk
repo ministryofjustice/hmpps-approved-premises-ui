@@ -4,7 +4,7 @@
     <h1 class="govuk-heading-l">Access, cultural and healthcare needs</h1>
 
     <p>Provide details about the person's pregnancy</p>
-    
+
     {{ formPageDateInput(
         {
             fieldName: "expectedDeliveryDate",
@@ -18,33 +18,6 @@
         },
         fetchContext()
     ) }}
-
-    {{ formPageRadios({
-        fieldName: "childRemoved",
-        fieldset: {
-            legend: {
-                text: page.questions.childRemoved,
-                classes: "govuk-fieldset__legend--m"
-            }
-        },
-        hint: {
-            text: "This will help determine a person's move on plan. Someone cannot stay at an Approved Premises with a child."
-        },
-        items: [
-            {
-                value: "yes",
-                text: "Yes"
-            },
-            {
-                value: "no",
-                text: "No"
-            },
-            {
-                value: "decisionPending",
-                text: "Decision pending"
-            }
-        ]
-    }, fetchContext()) }}
 
     {% set socialCareInvolvementDetail %}
         {{ formPageTextarea({
@@ -74,6 +47,33 @@
             {
                 value: "no",
                 text: "No"
+            }
+        ]
+    }, fetchContext()) }}
+
+    {{ formPageRadios({
+        fieldName: "childRemoved",
+        fieldset: {
+            legend: {
+                text: page.questions.childRemoved,
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+        hint: {
+            text: "This will help determine a person's move on plan. Someone cannot stay at an Approved Premises with a child."
+        },
+        items: [
+            {
+                value: "yes",
+                text: "Yes"
+            },
+            {
+                value: "no",
+                text: "No"
+            },
+            {
+                value: "decisionPending",
+                text: "Decision pending"
             }
         ]
     }, fetchContext()) }}
