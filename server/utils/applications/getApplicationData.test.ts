@@ -139,6 +139,11 @@ describe('getApplicationData', () => {
         }),
       )
     })
+
+    it('returns correct data for a womens application', () => {
+      ;(isWomensApplication as jest.Mock).mockReturnValue(true)
+      expect(getApplicationSubmissionData(application)).toEqual(expect.objectContaining({ isWomensApplication: true }))
+    })
   })
 
   describe('getApplicationUpdateData', () => {
