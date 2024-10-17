@@ -4,9 +4,7 @@ import paths from '../../../server/paths/apply'
 import ApplyPage from './applyPage'
 
 export default class PreferredAps extends ApplyPage {
-  private readonly isWomensApplication: boolean
-
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(private readonly application: ApprovedPremisesApplication) {
     super(
       application.isWomensApplication
         ? 'Select all preferred properties for your women’s AP application'
@@ -20,11 +18,10 @@ export default class PreferredAps extends ApplyPage {
         page: 'describe-location-factors',
       }),
     )
-    this.isWomensApplication = application.isWomensApplication
   }
 
   completeForm() {
-    if (this.isWomensApplication) {
+    if (this.application.isWomensApplication) {
       this.selectSelectOptionFromPageBody('preferredAp1')
       this.selectSelectOptionFromPageBody('preferredAp2')
       this.selectSelectOptionFromPageBody('preferredAp3')
