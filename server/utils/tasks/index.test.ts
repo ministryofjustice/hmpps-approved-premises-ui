@@ -1,14 +1,12 @@
-import { getFormattedNameAndEmail, groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
-import { FullPerson } from '../../@types/shared'
-import { applicationFactory, taskFactory, userFactory } from '../../testutils/factories'
+import { groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
+import { type ApprovedPremisesApplication, FullPerson, Task } from '../../@types/shared'
+import { applicationFactory, placementDatesFactory, taskFactory, userFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
-import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
 import placementApplicationTask from '../../testutils/factories/placementApplicationTask'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
-import { sentenceCase } from '../utils'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -27,261 +25,162 @@ describe('index', () => {
   })
 
   describe('taskSummary', () => {
-    const task = taskFactory.build()
-    const applicantUserDetails = applicationUserDetailsFactory.build()
-    const caseManagerUserDetails = applicationUserDetailsFactory.build()
-    const application = applicationFactory.build({
-      person: fullPersonFactory.build(),
-      applicantUserDetails,
-      caseManagerUserDetails,
-      caseManagerIsNotApplicant: true,
+    let task: Task
+    let application: ApprovedPremisesApplication
+
+    beforeEach(() => {
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
+
+      application = applicationFactory.build({
+        person: fullPersonFactory.build(),
+        isWomensApplication: false,
+        applicantUserDetails: undefined,
+        caseManagerUserDetails: undefined,
+      })
+      task = taskFactory.build({
+        probationDeliveryUnit: undefined,
+        allocatedToStaffMember: undefined,
+      })
     })
-    application.genderForAp = 'male'
-    task.probationDeliveryUnit = { id: '1', name: 'test' }
+
+    describe('when the application and task have minimal details', () => {
+      it('renders a minimal summary list with defaults', () => {
+        expect(taskSummary(task, application)).toEqual([
+          {
+            key: { text: 'Name' },
+            value: { text: (application.person as FullPerson).name },
+          },
+          {
+            key: { text: 'CRN' },
+            value: { text: application.person.crn },
+          },
+          {
+            key: { text: 'Arrival date' },
+            value: { text: 'Not provided' },
+          },
+          {
+            key: { text: 'Application Type' },
+            value: { text: getApplicationType(application) },
+            actions: {
+              items: [
+                {
+                  href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
+                  text: 'View timeline',
+                },
+              ],
+            },
+          },
+          {
+            key: { text: 'AP Area' },
+            value: { text: application.apArea.name },
+          },
+          {
+            key: { text: 'Currently allocated to' },
+            value: { text: 'Unallocated' },
+          },
+          {
+            key: { text: 'Gender for AP' },
+            value: { text: 'Male' },
+          },
+        ])
+      })
+    })
+
+    describe("when the application is for the Women's Estate", () => {
+      beforeEach(() => {
+        application.isWomensApplication = true
+      })
+
+      it('renders the Gender for AP accordingly', () => {
+        expect(taskSummary(task, application)).toEqual(
+          expect.arrayContaining([
+            {
+              key: { text: 'Gender for AP' },
+              value: { text: 'Female' },
+            },
+          ]),
+        )
+      })
+    })
 
     describe('when the application contains an arrival date', () => {
       beforeEach(() => {
         ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
       })
 
-      it('returns the summary list when the assessment has a staff member allocated', () => {
-        expect(taskSummary(task, application)).toEqual([
-          {
-            key: {
-              text: 'Name',
+      it('renders the arrival date', () => {
+        expect(taskSummary(task, application)).toEqual(
+          expect.arrayContaining([
+            {
+              key: { text: 'Arrival date' },
+              value: { text: 'Sat 1 Jan 2022' },
             },
-            value: {
-              text: (application.person as FullPerson).name,
-            },
-          },
-          {
-            key: {
-              text: 'CRN',
-            },
-            value: {
-              text: application.person.crn,
-            },
-          },
-          {
-            key: {
-              text: 'Arrival date',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(arrivalDateFromApplication(application) as string),
-            },
-          },
-          {
-            key: {
-              text: 'Application Type',
-            },
-            value: {
-              text: getApplicationType(application),
-            },
-            actions: {
-              items: [
-                {
-                  href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
-                  text: 'View timeline',
-                },
-              ],
-            },
-          },
-          {
-            key: {
-              text: 'AP Area',
-            },
-            value: {
-              text: application.apArea.name,
-            },
-          },
-          {
-            key: {
-              text: 'Currently allocated to',
-            },
-            value: {
-              text: task.allocatedToStaffMember.name,
-            },
-          },
-          {
-            key: { text: 'Applicant' },
-            value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
-          },
-          {
-            key: { text: 'Case Manager' },
-            value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
-          },
-          {
-            key: { text: 'Gender for AP' },
-            value: { text: sentenceCase(application.genderForAp) },
-          },
-          {
-            key: { text: 'Applicant PDU' },
-            value: { text: 'test' },
-          },
-        ])
+          ]),
+        )
       })
     })
-    describe('when the application doesnt have an arrival date', () => {
+
+    describe('when the application has an applicant', () => {
+      const applicant = applicationUserDetailsFactory.build()
+
       beforeEach(() => {
-        ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
+        application.applicantUserDetails = applicant
       })
 
-      it('returns the summary list when the assessment has a staff member allocated', () => {
-        expect(taskSummary(task, application)).toEqual([
-          {
-            key: {
-              text: 'Name',
+      it('renders the applicant details', () => {
+        expect(taskSummary(task, application)).toEqual(
+          expect.arrayContaining([
+            {
+              key: { text: 'Applicant' },
+              value: { text: `${applicant.name} (${applicant.email})` },
             },
-            value: {
-              text: (application.person as FullPerson).name,
-            },
-          },
-          {
-            key: {
-              text: 'CRN',
-            },
-            value: {
-              text: application.person.crn,
-            },
-          },
-          {
-            key: {
-              text: 'Arrival date',
-            },
-            value: {
-              text: 'Not provided',
-            },
-          },
-          {
-            key: {
-              text: 'Application Type',
-            },
-            value: {
-              text: getApplicationType(application),
-            },
-            actions: {
-              items: [
-                {
-                  href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
-                  text: 'View timeline',
-                },
-              ],
-            },
-          },
-          {
-            key: {
-              text: 'AP Area',
-            },
-            value: {
-              text: application.apArea.name,
-            },
-          },
-          {
-            key: {
-              text: 'Currently allocated to',
-            },
-            value: {
-              text: task.allocatedToStaffMember.name,
-            },
-          },
-          {
-            key: { text: 'Applicant' },
-            value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
-          },
-          {
-            key: { text: 'Case Manager' },
-            value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
-          },
-          {
-            key: { text: 'Gender for AP' },
-            value: { text: sentenceCase(application.genderForAp) },
-          },
-          {
-            key: { text: 'Applicant PDU' },
-            value: { text: 'test' },
-          },
-        ])
+          ]),
+        )
       })
     })
-    describe('when taskType is placementApplication, arrival date should be derived from placementDates', () => {
-      const placementApplication = placementApplicationTask.build()
-      placementApplication.probationDeliveryUnit = { id: '1', name: 'test' }
 
-      it('returns the summary list when the assessment has a staff member allocated', () => {
-        expect(taskSummary(placementApplication, application)).toEqual([
-          {
-            key: {
-              text: 'Name',
+    describe('when there is a case manager that is not the applicant', () => {
+      const caseManager = applicationUserDetailsFactory.build()
+
+      beforeEach(() => {
+        application.caseManagerUserDetails = caseManager
+        application.caseManagerIsNotApplicant = true
+      })
+
+      it('renders the case manager details', () => {
+        expect(taskSummary(task, application)).toEqual(
+          expect.arrayContaining([
+            {
+              key: { text: 'Case Manager' },
+              value: { text: `${caseManager.name} (${caseManager.email})` },
             },
-            value: {
-              text: (application.person as FullPerson).name,
+          ]),
+        )
+      })
+    })
+
+    describe('when taskType is placementApplication with a PDU', () => {
+      const placementApplication = placementApplicationTask.build({
+        placementDates: [
+          placementDatesFactory.build({ expectedArrival: '2023-05-08' }),
+          placementDatesFactory.build({ expectedArrival: '2023-06-12' }),
+        ],
+        probationDeliveryUnit: { id: '1', name: 'test' },
+      })
+
+      it('renders Arrival date based on first placement date and PDU', () => {
+        expect(taskSummary(placementApplication, application)).toEqual(
+          expect.arrayContaining([
+            {
+              key: { text: 'Arrival date' },
+              value: { text: 'Mon 8 May 2023' },
             },
-          },
-          {
-            key: {
-              text: 'CRN',
+            {
+              key: { text: 'Applicant PDU' },
+              value: { text: 'test' },
             },
-            value: {
-              text: application.person.crn,
-            },
-          },
-          {
-            key: {
-              text: 'Arrival date',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(placementApplication.placementDates[0].expectedArrival),
-            },
-          },
-          {
-            key: {
-              text: 'Application Type',
-            },
-            value: {
-              text: getApplicationType(application),
-            },
-            actions: {
-              items: [
-                {
-                  href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
-                  text: 'View timeline',
-                },
-              ],
-            },
-          },
-          {
-            key: {
-              text: 'AP Area',
-            },
-            value: {
-              text: application.apArea.name,
-            },
-          },
-          {
-            key: {
-              text: 'Currently allocated to',
-            },
-            value: {
-              text: placementApplication.allocatedToStaffMember.name,
-            },
-          },
-          {
-            key: { text: 'Applicant' },
-            value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
-          },
-          {
-            key: { text: 'Case Manager' },
-            value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
-          },
-          {
-            key: { text: 'Gender for AP' },
-            value: { text: sentenceCase(application.genderForAp) },
-          },
-          {
-            key: { text: 'Applicant PDU' },
-            value: { text: 'test' },
-          },
-        ])
+          ]),
+        )
       })
     })
   })

@@ -19,7 +19,6 @@ import {
 import { userTableHeader, userTableRows } from './usersTable'
 import paths from '../../paths/apply'
 import { isPlacementApplicationTask } from './assertions'
-import { sentenceCase } from '../utils'
 import { qualificationDictionary } from '../users'
 
 type GroupedTasks = {
@@ -49,7 +48,7 @@ const getArrivalDate = (task: Task, application: Application) => {
   return arrivalDateFromApplication(application)
 }
 
-const getFormattedNameAndEmail = (name: string, email: string) => {
+const getFormattedNameAndEmail = (name: string, email?: string) => {
   if (email) {
     return `${name} (${email})`
   }
@@ -116,26 +115,24 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
     },
   ]
 
-  if (applicantUserDetails && applicantUserDetails.name) {
+  if (applicantUserDetails) {
     summary.push({
       key: { text: 'Applicant' },
       value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
     })
   }
 
-  if (caseManagerIsNotApplicant && caseManagerUserDetails.name) {
+  if (caseManagerIsNotApplicant && caseManagerUserDetails) {
     summary.push({
       key: { text: 'Case Manager' },
       value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
     })
   }
 
-  if (application.genderForAp) {
-    summary.push({
-      key: { text: 'Gender for AP' },
-      value: { text: sentenceCase(application.genderForAp) },
-    })
-  }
+  summary.push({
+    key: { text: 'Gender for AP' },
+    value: { text: application.isWomensApplication ? 'Female' : 'Male' },
+  })
 
   if (task.probationDeliveryUnit) {
     summary.push({
