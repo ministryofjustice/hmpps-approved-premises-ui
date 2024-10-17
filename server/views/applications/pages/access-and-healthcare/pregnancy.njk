@@ -1,0 +1,112 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+    <h1 class="govuk-heading-l">Access, cultural and healthcare needs</h1>
+
+    <p>Provide details about the person's pregnancy</p>
+
+    {{ formPageDateInput(
+        {
+            fieldName: "expectedDeliveryDate",
+            fieldset: {
+            legend: {
+                text: page.questions.expectedDeliveryDate,
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+            items: dateFieldValues('expectedDeliveryDate', errors)
+        },
+        fetchContext()
+    ) }}
+
+    {% set socialCareInvolvementDetail %}
+        {{ formPageTextarea({
+            fieldName: "socialCareInvolvementDetail",
+            label: {
+                text: page.questions.socialCareInvolvementDetail
+            }
+        }, fetchContext()) }}
+    {% endset -%}
+
+    {{ formPageRadios({
+        fieldName: "socialCareInvolvement",
+        fieldset: {
+            legend: {
+                text: page.questions.socialCareInvolvement,
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+        items: [
+            {
+                value: "yes",
+                text: "Yes",
+                conditional: {
+                html: socialCareInvolvementDetail
+            }
+            },
+            {
+                value: "no",
+                text: "No"
+            }
+        ]
+    }, fetchContext()) }}
+
+    {{ formPageRadios({
+        fieldName: "childRemoved",
+        fieldset: {
+            legend: {
+                text: page.questions.childRemoved,
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+        hint: {
+            text: "This will help determine a person's move on plan. Someone cannot stay at an Approved Premises with a child."
+        },
+        items: [
+            {
+                value: "yes",
+                text: "Yes"
+            },
+            {
+                value: "no",
+                text: "No"
+            },
+            {
+                value: "decisionPending",
+                text: "Decision pending"
+            }
+        ]
+    }, fetchContext()) }}
+
+    {% set otherPregnancyConsiderationsDetail %}
+        {{ formPageTextarea({
+            fieldName: "otherPregnancyConsiderationsDetail",
+            label: {
+                text: page.questions.otherPregnancyConsiderationsDetail
+            }
+        }, fetchContext()) }}
+    {% endset -%}
+
+    {{ formPageRadios({
+        fieldName: "otherPregnancyConsiderations",
+        fieldset: {
+            legend: {
+                text: page.questions.otherPregnancyConsiderations,
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+        items: [
+            {
+                value: "yes",
+                text: "Yes",
+                conditional: {
+                html: otherPregnancyConsiderationsDetail
+            }
+            },
+            {
+                value: "no",
+                text: "No"
+            }
+        ]
+    }, fetchContext()) }}
+{% endblock %}

@@ -108,14 +108,19 @@ export function convertKeyValuePairToRadioItems<T extends object>(
 export function convertKeyValuePairToCheckBoxItems<T extends object>(
   object: T,
   checkedItems: Array<string> = [],
+  exclusiveLastOption = false,
 ): Array<CheckBoxItem> {
-  return Object.keys(object).map(key => {
-    return {
-      value: key,
-      text: object[key],
-      checked: checkedItems.includes(key),
-    }
-  })
+  const items: Array<CheckBoxItem> = Object.keys(object).map(key => ({
+    value: key,
+    text: object[key],
+    checked: checkedItems.includes(key),
+  }))
+
+  if (exclusiveLastOption) {
+    items.splice(-1, 1, { divider: 'or' }, { ...items.at(-1), behaviour: 'exclusive' })
+  }
+
+  return items
 }
 
 export function convertArrayToRadioItems<T extends string>(

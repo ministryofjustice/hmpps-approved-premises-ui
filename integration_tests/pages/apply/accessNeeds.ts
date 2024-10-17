@@ -18,12 +18,12 @@ export default class AccessNeedsPage extends ApplyPage {
     this.checkCheckboxesFromPageBody('additionalNeeds')
   }
 
-  checkingAdditionalNeedsOtherDisablesOtherCheckBoxes() {
+  checkingAdditionalNeedsNoneDeselectsOtherCheckBoxes() {
     this.checkAdditionalNeedsBoxes()
 
     this.checkCheckboxByNameAndValue('additionalNeeds', 'none')
 
-    cy.get('input[name="additionalNeeds"]:not([value="none"])').should('be.disabled')
+    cy.get('input[name="additionalNeeds"]:not([value="none"])').should('not.be.checked')
 
     this.uncheckCheckboxbyNameAndValue('additionalNeeds', 'none')
   }
@@ -44,7 +44,7 @@ export default class AccessNeedsPage extends ApplyPage {
   }
 
   completeForm() {
-    this.checkingAdditionalNeedsOtherDisablesOtherCheckBoxes()
+    this.checkingAdditionalNeedsNoneDeselectsOtherCheckBoxes()
     this.checkAdditionalNeedsBoxes()
     this.completeReligiousOrCulturalNeedsSection()
     this.completeNeedsInterpreterSection()

@@ -1,3 +1,4 @@
+import AccessNeedsAdditionalDetailsPage from './accessNeedsAdditionalDetails'
 import AccessNeedsFurtherQuestionsPage from './accessNeedsFurtherQuestions'
 import AccessNeedsPage from './accessNeeds'
 import AdditionalCircumstancesPage from './additionalCircumstances'
@@ -40,6 +41,7 @@ import PlacementPurposePage from './placementPurpose'
 import PlacementStartPage from './placementDate'
 import PlansInPlacePage from './plansInPlace'
 import PreferredAps from './preferredAps'
+import PregnancyPage from './pregnancy'
 import PreviousPlacements from './previousPlacements'
 import ReasonForShortNoticePage from './reasonForShortNoticePage'
 import RehabilitativeInterventions from './rehabilitativeInterventions'
@@ -66,6 +68,7 @@ import VulnerabilityPage from './vulnerability'
 import NoOffencePage from './noOffence'
 
 export {
+  AccessNeedsAdditionalDetailsPage,
   AccessNeedsFurtherQuestionsPage,
   AccessNeedsPage,
   AdditionalCircumstancesPage,
@@ -109,6 +112,7 @@ export {
   PlacementStartPage,
   PlansInPlacePage,
   PreferredAps,
+  PregnancyPage,
   PreviousPlacements,
   ReasonForShortNoticePage,
   RehabilitativeInterventions,

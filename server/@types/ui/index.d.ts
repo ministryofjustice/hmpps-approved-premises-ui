@@ -142,6 +142,7 @@ export type CheckBoxItem =
       hint?: {
         text: string
       }
+      behaviour?: 'exclusive'
     }
   | CheckBoxDivider
 
