@@ -56,6 +56,9 @@ jobs:
       - run:
           name: Type check
           command: npm run typecheck
+      - run:
+          name: Shell scripts check
+          command: npm run shellcheck
       - persist_to_workspace:
           root: .
           paths:
