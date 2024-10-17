@@ -40,7 +40,6 @@ context('Task Allocation', () => {
       apType: 'pipe',
       isWomensApplication: false,
     })
-    application.genderForAp = 'male'
 
     const task = taskFactory.build({
       allocatedToStaffMember: userFactory.build(),
