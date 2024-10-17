@@ -4,7 +4,7 @@ import paths from '../../../server/paths/apply'
 import ApplyPage from './applyPage'
 
 export default class PreferredAps extends ApplyPage {
-  isWomensApplication: boolean
+  private readonly isWomensApplication: boolean
 
   constructor(application: ApprovedPremisesApplication) {
     super(
