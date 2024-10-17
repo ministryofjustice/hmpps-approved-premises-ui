@@ -124,7 +124,7 @@ export default class OutOfServiceBedsController {
     return async (req: Request, res: Response) => {
       const { temporality } = req.params as { temporality: Temporality }
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
-      let premises = await this.premisesService.getAll(req.user.token)
+      let premises = await this.premisesService.getCas1All(req.user.token)
       let { apAreaId = '', premisesId = '' } = req.query as {
         apAreaId: string
         premisesId: string
@@ -140,7 +140,7 @@ export default class OutOfServiceBedsController {
       if (apAreaId) {
         if (apAreaId !== 'all') {
           const apAreaSelected = apAreas.find(apArea => apArea.id === apAreaId)
-          premises = premises.filter(item => item.apArea === apAreaSelected.name)
+          premises = premises.filter(item => item.apArea.name === apAreaSelected.name)
           disablePremisesSelect = false
         }
       }

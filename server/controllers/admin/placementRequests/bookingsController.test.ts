@@ -5,9 +5,9 @@ import BookingsController from './bookingsController'
 
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
+  cas1PremisesSummaryFactory,
   newPlacementRequestBookingConfirmationFactory,
   placementRequestDetailFactory,
-  premisesSummaryFactory,
 } from '../../../testutils/factories'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ErrorsAndUserInput } from '../../../@types/ui'
@@ -35,11 +35,11 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('new', () => {
-    const premises = premisesSummaryFactory.buildList(2)
+    const premises = cas1PremisesSummaryFactory.buildList(2)
 
     beforeEach(() => {
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
-      premisesService.getAll.mockResolvedValue(premises)
+      premisesService.getCas1All.mockResolvedValue(premises)
     })
 
     it('should render the form with the premises and the placement request', async () => {
@@ -60,7 +60,7 @@ describe('PlacementRequestsController', () => {
         ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
       })
 
-      expect(premisesService.getAll).toHaveBeenCalledWith(token)
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
     })
 

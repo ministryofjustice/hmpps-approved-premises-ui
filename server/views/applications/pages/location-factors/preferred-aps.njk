@@ -8,33 +8,28 @@
   <h1 class="govuk-heading-l">
     {{ page.title }}
   </h1>
-
   {% for preferredAp in page.preferredApOptions %}
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
         {{page.preferredApLabels[loop.index0]}}
       </legend>
-
       {{
       formPageSelectWithOptgroup({
         label: {
           classes: "govuk-fieldset__legend--s",
           html: "Select a premises"
         },
-        attributes: {
-          "data-premises-with-areas": true,
-          "data-region-prompt": "No preference"
-        },
+        attributes:  page.selectorAttributes,
         prompt: "No preference",
         fieldName: preferredAp,
-        items: PremisesUtils.groupedSelectOptions(page.allPremises, fetchContext(), preferredAp)
+        items: PremisesUtils.groupCas1SummaryPremisesSelectOptions(page.allPremises, fetchContext(), preferredAp)
       })
     }}
 
     </fieldset>
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-    {%endfor%}
+  {%endfor%}
 
   {% endblock %}
 

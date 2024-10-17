@@ -48,7 +48,7 @@
             prompt: "Select a premises",
             id: "premisesId",
             name: "premisesId",
-            items: PremisesUtils.groupedSelectOptions(premises, fetchContext()),
+            items: PremisesUtils.groupCas1SummaryPremisesSelectOptions(premises, fetchContext()),
             errorMessage: errors.premisesId
           })
         }}

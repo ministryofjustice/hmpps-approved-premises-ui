@@ -15,6 +15,7 @@ context('Premises', () => {
     it('should list all premises', () => {
       const premises = premisesSummaryFactory.buildList(5)
       cy.task('stubAllPremises', premises)
+      cy.task('stubCas1AllPremises', premises)
       cy.task('stubApAreaReferenceData')
 
       // When I visit the premises page

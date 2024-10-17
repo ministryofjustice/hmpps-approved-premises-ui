@@ -8,7 +8,7 @@ import {
   mockQuestionResponse,
 } from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
-import { isInapplicable } from './utils'
+import { isInapplicable, isWomensApplication } from './utils'
 import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
 
@@ -54,6 +54,7 @@ describe('getApplicationData', () => {
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
+      ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({
         releaseType,
         sentenceType,
@@ -138,12 +139,18 @@ describe('getApplicationData', () => {
         }),
       )
     })
+
+    it('returns correct data for a womens application', () => {
+      ;(isWomensApplication as jest.Mock).mockReturnValue(true)
+      expect(getApplicationSubmissionData(application)).toEqual(expect.objectContaining({ isWomensApplication: true }))
+    })
   })
 
   describe('getApplicationUpdateData', () => {
     it('returns empty attributes for a new application', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
+      ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({})
 
       expect(getApplicationUpdateData(application)).toEqual({
@@ -168,6 +175,7 @@ describe('getApplicationData', () => {
     it('returns all the defined attributes', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2023-01-01')
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
+      ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({
         type: 'normal',
         releaseType: 'license',
