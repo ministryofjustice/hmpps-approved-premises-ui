@@ -61,7 +61,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         },
       })
 
-      const output = await premisesClient.allCas1(gender)
+      const output = await premisesClient.allCas1({ gender })
       expect(output).toEqual(premisesSummaries)
     })
   })

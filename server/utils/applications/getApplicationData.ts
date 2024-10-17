@@ -16,7 +16,7 @@ import {
 } from '../retrieveQuestionResponseFromFormArtifact'
 import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
-import { isInapplicable, isWomensAp } from './utils'
+import { isInapplicable, isWomensApplication } from './utils'
 import { BackwardsCompatibleApplyApType, FormArtifact } from '../../@types/ui'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 import Situation from '../../form-pages/apply/reasons-for-placement/basic-information/situation'
@@ -51,7 +51,6 @@ const firstClassFields = <T>(
   application: Application,
   retrieveQuestionResponse: QuestionResponseFunction,
 ): FirstClassFields<T> => {
-  const isWomensApplication = isWomensAp(application)
   const noticeType = noticeTypeFromApplication(application)
   const apTypeResponse = retrieveQuestionResponse(application, SelectApType, 'type') as BackwardsCompatibleApplyApType
   const apType = apTypeResponse === 'standard' ? 'normal' : apTypeResponse
@@ -68,7 +67,7 @@ const firstClassFields = <T>(
   const { reasonForShortNotice, reasonForShortNoticeOther } = reasonForShortNoticeDetails(application)
 
   return {
-    isWomensApplication,
+    isWomensApplication: isWomensApplication(application),
     apType,
     targetLocation,
     releaseType,

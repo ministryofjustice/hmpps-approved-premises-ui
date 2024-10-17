@@ -286,7 +286,12 @@ export type GroupedListofBookings = {
   [K in 'arrivingToday' | 'departingToday' | 'upcomingArrivals' | 'upcomingDepartures']: Array<Booking>
 }
 
-export type ManWoman = 'man' | 'woman'
+type ManWoman = 'man' | 'woman'
+
+export interface PremisesFilters {
+  gender?: ManWoman
+  apAreaId?: string
+}
 
 export type DataServices = Partial<{
   personService: {
@@ -306,7 +311,7 @@ export type DataServices = Partial<{
   }
   premisesService: {
     getAll: (token: string) => Promise<Array<Premises>>
-    getCas1All: (token: string, gender: ManWoman) => Promise<Array<Cas1PremisesSummary>>
+    getCas1All: (token: string, filters: PremisesFilters) => Promise<Array<Cas1PremisesSummary>>
   }
   assessmentService: {
     createClarificationNote: (

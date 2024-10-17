@@ -82,10 +82,10 @@ describe('PremisesService', () => {
       const premises = cas1PremisesSummaryFactory.buildList(2)
 
       premisesClient.allCas1.mockResolvedValue(premises)
-      await service.getCas1All(token, requestGender)
+      await service.getCas1All(token, { gender: requestGender })
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.allCas1).toHaveBeenCalledWith(requestGender)
+      expect(premisesClient.allCas1).toHaveBeenCalledWith({ gender: requestGender })
     })
 
     it('sorts the premises returned by name', async () => {

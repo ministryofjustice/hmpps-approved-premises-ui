@@ -34,8 +34,6 @@ export default class PreferredAps implements TasklistPage {
 
   preferredApLabels = this.preferredApOptions.map((_, i) => `${numberToOrdinal(i)} choice AP`)
 
-  isWomensAp: boolean
-
   selectorAttributes: SelectorAttributes
 
   body: PreferredApsBody
@@ -49,7 +47,7 @@ export default class PreferredAps implements TasklistPage {
     { premisesService }: DataServices,
   ) {
     const { isWomensApplication } = application
-    const allPremises = await premisesService.getCas1All(token, isWomensApplication ? 'woman' : 'man')
+    const allPremises = await premisesService.getCas1All(token, { gender: isWomensApplication ? 'woman' : 'man' })
 
     const selectedAps: Array<Cas1PremisesSummary> = []
     preferredAps.forEach(id => {
@@ -67,7 +65,6 @@ export default class PreferredAps implements TasklistPage {
     page.title = isWomensApplication
       ? 'Select all preferred properties for your women’s AP application'
       : 'Select a preferred AP'
-    page.isWomensAp = !isWomensApplication
     page.selectorAttributes = isWomensApplication
       ? {}
       : {

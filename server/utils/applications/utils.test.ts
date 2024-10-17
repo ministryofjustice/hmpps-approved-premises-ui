@@ -41,7 +41,7 @@ import {
   getApplicationType,
   getSections,
   isInapplicable,
-  isWomensAp,
+  isWomensApplication,
   lengthOfStayForUI,
   mapApplicationTimelineEventsForUi,
   mapPersonalTimelineForUi,
@@ -603,20 +603,20 @@ describe('utils', () => {
     })
   })
 
-  describe('isWomensAp', () => {
-    it(`should return true if the person from nDelius has a sex of 'Male'`, () => {
+  describe('isWomensApplication', () => {
+    it(`should return false if the person from NDelius has a sex of 'Male'`, () => {
       const application = applicationFactory.build()
       const fp = application.person as FullPerson
       fp.sex = 'Male'
 
-      expect(isWomensAp(application)).toEqual(false)
+      expect(isWomensApplication(application)).toEqual(false)
     })
-    it(`should return false if the person from nDelius has a sex of 'Female'`, () => {
+    it(`should return true if the person from NDelius has a sex of 'Female'`, () => {
       const application = applicationFactory.build()
       const fp = application.person as FullPerson
       fp.sex = 'Female'
 
-      expect(isWomensAp(application)).toEqual(true)
+      expect(isWomensApplication(application)).toEqual(true)
     })
 
     it('should return true if the person is Male but the applicant answered no to the shouldPersonBePlacedInMaleAp question', () => {
@@ -625,7 +625,7 @@ describe('utils', () => {
       fp.sex = 'Male'
 
       mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
-      expect(isWomensAp(application)).toEqual(true)
+      expect(isWomensApplication(application)).toEqual(true)
     })
   })
 

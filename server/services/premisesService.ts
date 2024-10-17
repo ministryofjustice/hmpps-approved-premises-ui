@@ -7,7 +7,7 @@ import type {
   Room,
   StaffMember,
 } from '@approved-premises/api'
-import type { ManWoman } from '@approved-premises/ui'
+import type { PremisesFilters } from '@approved-premises/ui'
 import type { PremisesClient, RestClientBuilder } from '../data'
 
 import { mapApiOccupancyToUiOccupancy } from '../utils/premises'
@@ -19,14 +19,14 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.all(selectedAreaId)
 
-    return premises.sort((a, b) => (a.name < b.name ? -1 : 1))
+    return premises.sort((a, b) => a.name.localeCompare(b.name))
   }
 
-  async getCas1All(token: string, gender: ManWoman = null): Promise<Array<Cas1PremisesSummary>> {
+  async getCas1All(token: string, filters: PremisesFilters = {}): Promise<Array<Cas1PremisesSummary>> {
     const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.allCas1(gender)
+    const premises = await premisesClient.allCas1(filters)
 
-    return premises.sort((a, b) => (a.name < b.name ? -1 : 1))
+    return premises.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   async getStaffMembers(token: string, premisesId: string): Promise<Array<StaffMember>> {

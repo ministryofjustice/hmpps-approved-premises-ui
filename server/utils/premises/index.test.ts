@@ -7,7 +7,6 @@ import {
 } from '../../testutils/factories'
 import {
   groupCas1SummaryPremisesSelectOptions,
-  groupedSelectOptions,
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
@@ -197,61 +196,17 @@ describe('premisesUtils', () => {
     })
   })
 
-  describe('groupedSelectOptions', () => {
-    const area1Premises = premisesSummaryFactory.buildList(2, { apArea: 'Area 1' })
-    const area2Premises = premisesSummaryFactory.buildList(2, { apArea: 'Area 2' })
-    const premises = [...area1Premises, ...area2Premises]
-
-    it('should group premises by region', () => {
-      expect(groupedSelectOptions(premises, { premisesId: area1Premises[1].id })).toEqual([
-        {
-          items: [
-            { selected: false, text: area1Premises[0].name, value: area1Premises[0].id },
-            { selected: true, text: area1Premises[1].name, value: area1Premises[1].id },
-          ],
-          label: 'Area 1',
-        },
-        {
-          items: [
-            { selected: false, text: area2Premises[0].name, value: area2Premises[0].id },
-            { selected: false, text: area2Premises[1].name, value: area2Premises[1].id },
-          ],
-          label: 'Area 2',
-        },
-      ])
-    })
-
-    it('should support a field name', () => {
-      expect(groupedSelectOptions(premises, { premises: area2Premises[1].id }, 'premises')).toEqual([
-        {
-          items: [
-            { selected: false, text: area1Premises[0].name, value: area1Premises[0].id },
-            { selected: false, text: area1Premises[1].name, value: area1Premises[1].id },
-          ],
-          label: 'Area 1',
-        },
-        {
-          items: [
-            { selected: false, text: area2Premises[0].name, value: area2Premises[0].id },
-            { selected: true, text: area2Premises[1].name, value: area2Premises[1].id },
-          ],
-          label: 'Area 2',
-        },
-      ])
-    })
-  })
-
   describe('groupCas1SummaryPremisesSelectOptions', () => {
     const area1Premises = cas1PremisesSummaryFactory.buildList(2, { apArea: { id: 'a1', name: 'Area 1' } })
     const area2Premises = cas1PremisesSummaryFactory.buildList(2, { apArea: { id: 'a2', name: 'Area 2' } })
     const premises = [...area1Premises, ...area2Premises]
 
-    it('should group premises by region', () => {
-      expect(groupCas1SummaryPremisesSelectOptions(premises, { premisesId: area1Premises[1].id })).toEqual([
+    it('should group premises by AP area', () => {
+      expect(groupCas1SummaryPremisesSelectOptions(premises, {})).toEqual([
         {
           items: [
             { selected: false, text: area1Premises[0].name, value: area1Premises[0].id },
-            { selected: true, text: area1Premises[1].name, value: area1Premises[1].id },
+            { selected: false, text: area1Premises[1].name, value: area1Premises[1].id },
           ],
           label: 'Area 1',
         },
@@ -265,23 +220,16 @@ describe('premisesUtils', () => {
       ])
     })
 
-    it('should support a field name', () => {
-      expect(groupCas1SummaryPremisesSelectOptions(premises, { premises: area2Premises[1].id }, 'premises')).toEqual([
-        {
-          items: [
-            { selected: false, text: area1Premises[0].name, value: area1Premises[0].id },
-            { selected: false, text: area1Premises[1].name, value: area1Premises[1].id },
-          ],
-          label: 'Area 1',
-        },
-        {
-          items: [
-            { selected: false, text: area2Premises[0].name, value: area2Premises[0].id },
-            { selected: true, text: area2Premises[1].name, value: area2Premises[1].id },
-          ],
-          label: 'Area 2',
-        },
-      ])
+    it('should select the option whose id maches the premisesId field in the context', () => {
+      expect(
+        groupCas1SummaryPremisesSelectOptions(premises, { premisesId: area1Premises[0].id })[0].items[0].selected,
+      ).toBeTruthy()
+    })
+    it('should select the option whose id maches the specified field in the context', () => {
+      expect(
+        groupCas1SummaryPremisesSelectOptions(premises, { premises: area2Premises[1].id }, 'premises')[1].items[1]
+          .selected,
+      ).toBeTruthy()
     })
   })
 

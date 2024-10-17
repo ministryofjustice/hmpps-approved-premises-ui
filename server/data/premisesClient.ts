@@ -9,7 +9,7 @@ import type {
   Room,
   StaffMember,
 } from '@approved-premises/api'
-import type { ManWoman } from '@approved-premises/ui'
+import type { PremisesFilters } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -29,11 +29,10 @@ export default class PremisesClient {
     })) as Array<PremisesSummary>
   }
 
-  async allCas1(gender: ManWoman = null): Promise<Array<Cas1PremisesSummary>> {
-    const query = gender ? { gender } : {}
+  async allCas1(filters: PremisesFilters): Promise<Array<Cas1PremisesSummary>> {
     return (await this.restClient.get({
       path: paths.premises.indexCas1({}),
-      query,
+      query: { ...filters },
     })) as Array<Cas1PremisesSummary>
   }
 

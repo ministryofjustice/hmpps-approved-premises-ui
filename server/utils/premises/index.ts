@@ -116,24 +116,6 @@ export const summaryListForPremises = (premises: Cas1PremisesSummary): SummaryLi
   }
 }
 
-export const groupedSelectOptions = (
-  premises: Array<ApprovedPremisesSummary>,
-  context: Record<string, unknown>,
-  fieldName: string = 'premisesId',
-): Array<SelectGroup> => {
-  const apAreas = [...new Set(premises.map(item => item.apArea))]
-  return apAreas.map(apArea => ({
-    label: apArea,
-    items: premises
-      .filter(item => item.apArea === apArea)
-      .map(item => ({
-        text: item.name,
-        value: item.id,
-        selected: context[fieldName] === item.id,
-      })),
-  }))
-}
-
 export const groupCas1SummaryPremisesSelectOptions = (
   premises: Array<Cas1PremisesSummary>,
   context: Record<string, unknown>,

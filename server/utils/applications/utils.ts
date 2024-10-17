@@ -197,7 +197,7 @@ const isInapplicable = (application: Application): boolean => {
   return false
 }
 
-const isWomensAp = (application: Application): boolean => {
+const isWomensApplication = (application: Application): boolean => {
   const { sex } = application.person as FullPerson
   const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromFormArtifact(
     application,
@@ -431,7 +431,7 @@ export {
   arrivalDateFromApplication,
   getApplicationType,
   isInapplicable,
-  isWomensAp,
+  isWomensApplication,
   mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
   mapPersonalTimelineForUi,

@@ -49,7 +49,7 @@ describe('PreferredAps', () => {
       const page = await PreferredAps.initialize(body, application, token, fromPartial({ premisesService }))
 
       expect(page.allPremises).toEqual(allAps)
-      expect(getCas1All).toHaveBeenCalledWith(token, application.isWomensApplication ? 'woman' : 'man')
+      expect(getCas1All).toHaveBeenCalledWith(token, { gender: application.isWomensApplication ? 'woman' : 'man' })
     })
 
     it('should convert the selectedAps from strings to objects containing text and value properties', async () => {
