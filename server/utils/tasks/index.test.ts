@@ -59,7 +59,7 @@ describe('index', () => {
             value: { text: 'Not provided' },
           },
           {
-            key: { text: 'Application Type' },
+            key: { text: 'Application type' },
             value: { text: getApplicationType(application) },
             actions: {
               items: [
@@ -71,7 +71,7 @@ describe('index', () => {
             },
           },
           {
-            key: { text: 'AP Area' },
+            key: { text: 'AP area' },
             value: { text: application.apArea.name },
           },
           {
@@ -151,7 +151,7 @@ describe('index', () => {
         expect(taskSummary(task, application)).toEqual(
           expect.arrayContaining([
             {
-              key: { text: 'Case Manager' },
+              key: { text: 'Case manager' },
               value: { text: `${caseManager.name} (${caseManager.email})` },
             },
           ]),

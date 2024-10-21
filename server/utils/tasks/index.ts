@@ -87,7 +87,7 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
     },
     {
       key: {
-        text: 'Application Type',
+        text: 'Application type',
       },
       value: {
         text: getApplicationType(application),
@@ -103,7 +103,7 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
     },
     {
       key: {
-        text: 'AP Area',
+        text: 'AP area',
       },
       value: {
         text: application.apArea?.name,
@@ -124,7 +124,7 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
 
   if (caseManagerIsNotApplicant && caseManagerUserDetails) {
     summary.push({
-      key: { text: 'Case Manager' },
+      key: { text: 'Case manager' },
       value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
     })
   }
