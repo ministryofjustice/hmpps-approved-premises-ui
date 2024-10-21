@@ -79,8 +79,8 @@ describe('index', () => {
             value: { text: 'Unallocated' },
           },
           {
-            key: { text: 'Gender for AP' },
-            value: { text: 'Male' },
+            key: { text: 'AP gender' },
+            value: { text: 'Men' },
           },
         ])
       })
@@ -91,12 +91,12 @@ describe('index', () => {
         application.isWomensApplication = true
       })
 
-      it('renders the Gender for AP accordingly', () => {
+      it('renders the AP gender accordingly', () => {
         expect(taskSummary(task, application)).toEqual(
           expect.arrayContaining([
             {
-              key: { text: 'Gender for AP' },
-              value: { text: 'Female' },
+              key: { text: 'AP gender' },
+              value: { text: 'Women' },
             },
           ]),
         )

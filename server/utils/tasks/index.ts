@@ -130,8 +130,8 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
   }
 
   summary.push({
-    key: { text: 'Gender for AP' },
-    value: { text: application.isWomensApplication ? 'Female' : 'Male' },
+    key: { text: 'AP gender' },
+    value: { text: application.isWomensApplication ? 'Women' : 'Men' },
   })
 
   if (task.probationDeliveryUnit) {
