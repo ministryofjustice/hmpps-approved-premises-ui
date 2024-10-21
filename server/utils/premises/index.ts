@@ -5,7 +5,7 @@ import type {
   DateCapacity,
   ApprovedPremisesSummary as PremisesSummary,
 } from '@approved-premises/api'
-import { BedOccupancyRangeUi, SelectGroup, SummaryList } from '@approved-premises/ui'
+import { BedOccupancyRangeUi, SelectGroup, SelectOption, SummaryList } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { addOverbookingsToSchedule } from '../addOverbookingsToSchedule'
 import { htmlValue, textValue } from '../applications/helpers'
@@ -136,6 +136,19 @@ export const groupCas1SummaryPremisesSelectOptions = (
       })),
   }))
 }
+
+export const cas1PremisesSummaryRadioOptions = (
+  premises: Array<Cas1PremisesSummary>,
+  context: Record<string, unknown>,
+  fieldName: string = 'premisesId',
+): Array<SelectOption> =>
+  premises.map(({ id, name, apArea }) => {
+    return {
+      value: id,
+      text: `${name} (${apArea.name})`,
+      selected: context[fieldName] === id,
+    }
+  })
 
 export const premisesTableRows = (premisesSummaries: Array<PremisesSummary>) => {
   return premisesSummaries
