@@ -45,6 +45,7 @@ export const qualifications: ReadonlyArray<UserQualification> = [
   'lao',
   'recovery_focused',
   'mental_health_specialist',
+  'womens',
 ]
 
 export type RoleLabel = { label: string; hint?: string }
@@ -98,6 +99,7 @@ export const qualificationDictionary: QualificationLabelDictionary = {
   pipe: 'PIPE',
   recovery_focused: 'Recovery-focused APs',
   mental_health_specialist: 'Specialist Mental Health APs',
+  womens: "Women's APs",
 }
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {

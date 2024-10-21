@@ -177,6 +177,7 @@ describe('userQualificationsSelectOptions', () => {
       { selected: false, text: 'PIPE', value: 'pipe' },
       { selected: false, text: 'Recovery-focused APs', value: 'recovery_focused' },
       { selected: false, text: 'Specialist Mental Health APs', value: 'mental_health_specialist' },
+      { selected: false, text: "Women's APs", value: 'womens' },
     ])
   })
 
@@ -189,6 +190,7 @@ describe('userQualificationsSelectOptions', () => {
       { selected: false, text: 'PIPE', value: 'pipe' },
       { selected: false, text: 'Recovery-focused APs', value: 'recovery_focused' },
       { selected: false, text: 'Specialist Mental Health APs', value: 'mental_health_specialist' },
+      { selected: false, text: "Women's APs", value: 'womens' },
     ])
   })
 })
