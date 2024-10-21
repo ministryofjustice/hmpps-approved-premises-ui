@@ -1,4 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import paths from '../../../paths/admin'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
@@ -17,8 +18,11 @@ export default class PlacementRequestsController {
       let { userInput } = errorsAndUserInput
       const { errors, errorSummary, errorTitle } = errorsAndUserInput
 
-      const premises = await this.premisesService.getCas1All(req.user.token)
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+      const { isWomensApplication } = placementRequest.application as ApprovedPremisesApplication
+      const premises = await this.premisesService.getCas1All(req.user.token, {
+        gender: isWomensApplication ? 'woman' : 'man',
+      })
 
       if (!Object.keys(userInput).length) {
         const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
@@ -30,7 +34,10 @@ export default class PlacementRequestsController {
       }
 
       res.render('admin/placementRequests/bookings/new', {
-        pageHeading: 'Record an Approved Premises (AP) placement',
+        pageHeading: isWomensApplication
+          ? `Record a women’s Approved Premises placement`
+          : 'Record an Approved Premises (AP) placement',
+        isWomensApplication,
         placementRequest,
         premises,
         errors,

@@ -6,6 +6,7 @@ import {
   premisesSummaryFactory,
 } from '../../testutils/factories'
 import {
+  cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
@@ -229,6 +230,30 @@ describe('premisesUtils', () => {
       expect(
         groupCas1SummaryPremisesSelectOptions(premises, { premises: area2Premises[1].id }, 'premises')[1].items[1]
           .selected,
+      ).toBeTruthy()
+    })
+  })
+
+  describe('cas1PremisesSummaryRadioOptions', () => {
+    const premises = cas1PremisesSummaryFactory.buildList(2)
+
+    it('should map premises summary list into a set of radio buttons', () => {
+      expect(cas1PremisesSummaryRadioOptions(premises, {})).toEqual([
+        {
+          text: `${premises[0].name} (${premises[0].apArea.name})`,
+          value: premises[0].id,
+          selected: false,
+        },
+        {
+          text: `${premises[1].name} (${premises[1].apArea.name})`,
+          value: premises[1].id,
+          selected: false,
+        },
+      ])
+    })
+    it('should select the option whose id maches the specfied field in the context', () => {
+      expect(
+        cas1PremisesSummaryRadioOptions(premises, { premises: premises[1].id }, 'premises')[1].selected,
       ).toBeTruthy()
     })
   })

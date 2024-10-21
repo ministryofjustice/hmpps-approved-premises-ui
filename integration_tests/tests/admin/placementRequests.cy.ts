@@ -27,41 +27,36 @@ import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeU
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('Placement Requests', () => {
-  let application = applicationFactory.build()
-  const unmatchedPlacementRequests = [
-    placementRequestWithFullPersonFactory.build({ applicationId: application.id }),
-    placementRequestWithFullPersonFactory.build({ isParole: true }),
-  ]
-  const matchedPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, { status: 'matched' })
-  const unableToMatchPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, {
-    status: 'unableToMatch',
-  })
+  const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
+    let application = applicationFactory.build(applicationData)
+    const unmatchedPlacementRequests = [
+      placementRequestWithFullPersonFactory.build({ applicationId: application.id }),
+      placementRequestWithFullPersonFactory.build({ isParole: true }),
+    ]
+    const matchedPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, { status: 'matched' })
+    const unableToMatchPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, {
+      status: 'unableToMatch',
+    })
 
-  const unmatchedPlacementRequest = placementRequestDetailFactory.build({
-    ...unmatchedPlacementRequests[0],
-    status: 'notMatched',
-    booking: undefined,
-  })
+    const unmatchedPlacementRequest = placementRequestDetailFactory.build({
+      ...unmatchedPlacementRequests[0],
+      status: 'notMatched',
+      booking: undefined,
+    })
 
-  const parolePlacementRequest = unmatchedPlacementRequests[1]
+    const parolePlacementRequest = unmatchedPlacementRequests[1]
 
-  const matchedPlacementRequest = placementRequestDetailFactory.build({ ...matchedPlacementRequests[1] })
-  const booking = bookingFactory.build({
-    applicationId: application.id,
-    premises: { id: matchedPlacementRequest.booking.premisesId },
-    id: matchedPlacementRequest.booking.id,
-  })
-  const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
+    const matchedPlacementRequest = placementRequestDetailFactory.build({ ...matchedPlacementRequests[1] })
+    const booking = bookingFactory.build({
+      applicationId: application.id,
+      premises: { id: matchedPlacementRequest.booking.premisesId },
+      id: matchedPlacementRequest.booking.id,
+    })
+    const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
 
-  const preferredAps = premisesFactory.buildList(3)
+    const preferredAps = premisesFactory.buildList(3)
 
-  const cruManagementAreas = cruManagementAreaFactory.buildList(5)
-
-  beforeEach(() => {
-    cy.task('reset')
-
-    signIn(['workflow_manager'], ['cas1_booking_create', 'cas1_booking_withdraw'])
-
+    const cruManagementAreas = cruManagementAreaFactory.buildList(5)
     application = addResponseToFormArtifact(application, {
       task: 'location-factors',
       page: 'preferred-aps',
@@ -83,9 +78,43 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', matchedPlacementRequest)
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
     cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
+
+    const cas1premises = cas1PremisesSummaryFactory.buildList(3)
+    cy.task('stubCas1AllPremises', cas1premises)
+    cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
+
+    return {
+      application,
+      unmatchedPlacementRequest,
+      unmatchedPlacementRequests,
+      parolePlacementRequest,
+      matchedPlacementRequest,
+      matchedPlacementRequests,
+      unableToMatchPlacementRequest,
+      unableToMatchPlacementRequests,
+      cruManagementAreas,
+      preferredAps,
+      booking,
+      cas1premises,
+    }
+  }
+
+  beforeEach(() => {
+    cy.task('reset')
+
+    signIn(['workflow_manager'], ['cas1_booking_create', 'cas1_booking_withdraw'])
   })
 
   it('allows me to view a placement request', () => {
+    const {
+      unmatchedPlacementRequest,
+      unmatchedPlacementRequests,
+      unableToMatchPlacementRequests,
+      matchedPlacementRequests,
+      preferredAps,
+      matchedPlacementRequest,
+      parolePlacementRequest,
+    } = stubArtifacts()
     // When I visit the tasks dashboard
     const listPage = ListPage.visit()
 
@@ -162,9 +191,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to create a booking', () => {
-    const premises = cas1PremisesSummaryFactory.buildList(3)
-    cy.task('stubCas1AllPremises', premises)
-    cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
+    const { unmatchedPlacementRequest, cas1premises } = stubArtifacts({ isWomensApplication: false })
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit()
@@ -185,7 +212,7 @@ context('Placement Requests', () => {
     createPage.dateInputsShouldBePrepopulated()
 
     // When I complete the form
-    createPage.completeForm('2022-01-01', '2022-02-01', premises[0])
+    createPage.completeForm('2022-01-01', '2022-02-01', cas1premises[0])
     createPage.clickSubmit()
 
     // Then I should see a confirmation message
@@ -198,7 +225,49 @@ context('Placement Requests', () => {
       const body = JSON.parse(requests[0].body)
 
       expect(body).to.contain({
-        premisesId: premises[0].id,
+        premisesId: cas1premises[0].id,
+        arrivalDate: '2022-01-01',
+        departureDate: '2022-02-01',
+      })
+    })
+  })
+
+  it('allows me to create a booking for the womens estate', () => {
+    const { unmatchedPlacementRequest, cas1premises } = stubArtifacts({ isWomensApplication: true })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // And I choose a placement request
+    listPage.clickPlacementRequest(unmatchedPlacementRequest)
+
+    // Then I should be taken to the placement request page
+    const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+
+    // When I click on the create booking button
+    showPage.clickCreateBooking()
+
+    // Then I should be on the create a booking page
+    const createPage = Page.verifyOnPage(CreatePlacementPage, unmatchedPlacementRequest)
+
+    // And the dates should be prepopulated
+    createPage.dateInputsShouldBePrepopulated()
+
+    // When I complete the form
+    createPage.completeForm('2022-01-01', '2022-02-01', cas1premises[0])
+    createPage.clickSubmit()
+
+    // Then I should see a confirmation message
+    showPage.shouldShowBanner('Placement created')
+
+    // And the booking details should have been sent to the API
+    cy.task('verifyBookingFromPlacementRequest', unmatchedPlacementRequest).then(requests => {
+      expect(requests).to.have.length(1)
+
+      const body = JSON.parse(requests[0].body)
+
+      expect(body).to.contain({
+        premisesId: cas1premises[0].id,
         arrivalDate: '2022-01-01',
         departureDate: '2022-02-01',
       })
@@ -206,9 +275,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to amend a booking', () => {
-    const premises = cas1PremisesSummaryFactory.buildList(3)
-    cy.task('stubCas1AllPremises', premises)
-    cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
+    const { matchedPlacementRequest } = stubArtifacts()
     cy.task('stubDateChange', {
       premisesId: matchedPlacementRequest.booking.premisesId,
       bookingId: matchedPlacementRequest.booking.id,
@@ -257,9 +324,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to cancel a booking', () => {
-    const premises = cas1PremisesSummaryFactory.buildList(3)
+    const { matchedPlacementRequest, booking } = stubArtifacts()
     const cancellation = newCancellationFactory.build()
-    cy.task('stubCas1AllPremises', premises)
     const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
     cy.task('stubCancellationCreate', {
@@ -328,6 +394,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to withdraw a placement request', () => {
+    const { matchedPlacementRequest, unmatchedPlacementRequest, application } = stubArtifacts()
     cy.task('stubPlacementRequestWithdrawal', unmatchedPlacementRequest)
     const withdrawable = withdrawableFactory.build({ id: unmatchedPlacementRequest.id, type: 'placement_request' })
     const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
@@ -368,6 +435,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to mark a placement request as unable to match', () => {
+    const { unmatchedPlacementRequest } = stubArtifacts()
     cy.task('stubPlacementRequestUnableToMatch', unmatchedPlacementRequest)
 
     // When I visit the tasks dashboard
@@ -398,6 +466,7 @@ context('Placement Requests', () => {
   })
 
   it('supports pagination', () => {
+    const { unmatchedPlacementRequests } = stubArtifacts()
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: unmatchedPlacementRequests,
       status: 'notMatched',
@@ -443,6 +512,7 @@ context('Placement Requests', () => {
     ] as const
   ).forEach(field => {
     it(`supports sorting by ${field}`, () => {
+      const { unmatchedPlacementRequests } = stubArtifacts()
       cy.task('stubPlacementRequestsDashboard', {
         placementRequests: unmatchedPlacementRequests,
         status: 'notMatched',
@@ -495,6 +565,8 @@ context('Placement Requests', () => {
   })
 
   it(`supports filtering`, () => {
+    const { unmatchedPlacementRequests, matchedPlacementRequests, unableToMatchPlacementRequests, cruManagementAreas } =
+      stubArtifacts()
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: [
         ...unmatchedPlacementRequests,
@@ -535,6 +607,8 @@ context('Placement Requests', () => {
   })
 
   it('retains the status filter when applying other filters', () => {
+    const { unmatchedPlacementRequests, matchedPlacementRequests, unableToMatchPlacementRequests, cruManagementAreas } =
+      stubArtifacts()
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: [
         ...unmatchedPlacementRequests,
@@ -559,6 +633,8 @@ context('Placement Requests', () => {
   })
 
   it('should list applications that have no placement request', () => {
+    const { cruManagementAreas } = stubArtifacts()
+
     const applications = applicationSummaryFactory.buildList(2)
 
     cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
@@ -601,6 +677,7 @@ context('Placement Requests', () => {
   })
   ;(['tier', 'releaseType'] as const).forEach(field => {
     it(`supports pending placement requests sorting by ${field}`, () => {
+      stubArtifacts()
       const applications = applicationSummaryFactory.buildList(2)
       cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
       cy.task('stubAllApplications', {

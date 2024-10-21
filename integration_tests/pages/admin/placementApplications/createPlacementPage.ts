@@ -1,10 +1,18 @@
-import { Cas1PremisesSummary, PlacementRequestDetail } from '../../../../server/@types/shared'
+import {
+  ApprovedPremisesApplication,
+  Cas1PremisesSummary,
+  PlacementRequestDetail,
+} from '../../../../server/@types/shared'
 import { placementDates } from '../../../../server/utils/match'
 import Page from '../../page'
 
 export default class CreatePlacementPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
-    super('Record an Approved Premises (AP) placement')
+    super(
+      (placementRequest.application as ApprovedPremisesApplication).isWomensApplication
+        ? `Record a women’s Approved Premises placement`
+        : 'Record an Approved Premises (AP) placement',
+    )
   }
 
   dateInputsShouldBePrepopulated(): void {
@@ -20,7 +28,11 @@ export default class CreatePlacementPage extends Page {
 
     this.clearDateInputs('departureDate')
     this.completeDateInputs('departureDate', endDate)
-    this.getSelectInputByIdAndSelectAnEntry('area0', premises.apArea.name)
-    this.getSelectInputByIdAndSelectAnEntry('premisesId', premises.id)
+    if (!(this.placementRequest.application as ApprovedPremisesApplication).isWomensApplication) {
+      this.getSelectInputByIdAndSelectAnEntry('area0', premises.apArea.name)
+      this.getSelectInputByIdAndSelectAnEntry('premisesId', premises.id)
+    } else {
+      this.checkRadioByNameAndValue('premisesId', premises.id)
+    }
   }
 }

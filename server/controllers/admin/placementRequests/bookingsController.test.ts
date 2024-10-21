@@ -1,8 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-
-import BookingsController from './bookingsController'
-
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   cas1PremisesSummaryFactory,
@@ -10,9 +9,11 @@ import {
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
-import { ErrorsAndUserInput } from '../../../@types/ui'
+
 import paths from '../../../paths/admin'
 import { DateFormats } from '../../../utils/dateUtils'
+
+import BookingsController from './bookingsController'
 
 jest.mock('../../../utils/validation')
 
@@ -38,12 +39,14 @@ describe('PlacementRequestsController', () => {
     const premises = cas1PremisesSummaryFactory.buildList(2)
 
     beforeEach(() => {
+      jest.resetAllMocks()
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
       premisesService.getCas1All.mockResolvedValue(premises)
     })
 
     it('should render the form with the premises and the placement request', async () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
+      ;(placementRequest.application as ApprovedPremisesApplication).isWomensApplication = false
 
       const requestHandler = bookingsController.new()
 
@@ -56,17 +59,43 @@ describe('PlacementRequestsController', () => {
         errors: {},
         errorSummary: [],
         errorTitle: undefined,
+        isWomensApplication: false,
         ...DateFormats.isoDateToDateInputs(placementRequest.expectedArrival, 'arrivalDate'),
         ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
       })
 
-      expect(premisesService.getCas1All).toHaveBeenCalledWith(token)
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { gender: 'man' })
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+    })
+
+    it(`should render the form for a women's AP with the premises and the placement request`, async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
+      ;(placementRequest.application as ApprovedPremisesApplication).isWomensApplication = true
+
+      const requestHandler = bookingsController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
+        pageHeading: `Record a women’s Approved Premises placement`,
+        premises,
+        placementRequest,
+        errors: {},
+        errorSummary: [],
+        errorTitle: undefined,
+        isWomensApplication: true,
+        ...DateFormats.isoDateToDateInputs(placementRequest.expectedArrival, 'arrivalDate'),
+        ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
+      })
+
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { gender: 'woman' })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
     })
 
     it('should render the form with the premises, the placement request and the errors when there is an error in the flash', async () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+      ;(placementRequest.application as ApprovedPremisesApplication).isWomensApplication = false
 
       const requestHandler = bookingsController.new()
 
@@ -79,6 +108,7 @@ describe('PlacementRequestsController', () => {
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         errorTitle: errorsAndUserInput.errorTitle,
+        isWomensApplication: false,
         ...errorsAndUserInput.userInput,
       })
     })

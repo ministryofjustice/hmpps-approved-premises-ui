@@ -6,6 +6,7 @@
 {% from "../../../components/formFields/form-page-input/macro.njk" import formPageInput %}
 {% from "../../../components/formFields/form-page-date-input/macro.njk" import formPageDateInput %}
 {% from "../../../components/formFields/selectWithOptgroup.njk" import govukSelectWithOptgroup %}
+{% from "../../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -19,6 +20,7 @@
 	}) }}
 {% endblock %}
 
+
 {% block content %}
   {% include "../../../_messages.njk" %}
 
@@ -30,28 +32,43 @@
           {{ pageHeading }}
         </h1>
 
+        {{ showErrorSummary(errorSummary) }}
+        {% if isWomensApplication %}
+          {{ 
+            formPageRadios(
+              {
+                fieldName: "premisesId",
+                fieldset: {
+                  legend: {
+                    text: "Select a property"
+                  }
+                },
+                items: PremisesUtils.cas1PremisesSummaryRadioOptions(premises,fetchContext())
+              },
+              fetchContext()
+            ) 
+          }}
+        {% else %}
         <p class="govuk-body">
           Provide details for an AP placement that has been confirmed by the receiving AP
         </p>
-
-        {{ showErrorSummary(errorSummary) }}
-
-        {{
-          govukSelectWithOptgroup({
-            label: {
-              classes: "govuk-fieldset__legend--m",
-              html: 'Select an Approved Premises'
-            },
-            attributes: {
-              "data-premises-with-areas": true
-            },
-            prompt: "Select a premises",
-            id: "premisesId",
-            name: "premisesId",
-            items: PremisesUtils.groupCas1SummaryPremisesSelectOptions(premises, fetchContext()),
-            errorMessage: errors.premisesId
-          })
-        }}
+          {{       
+            govukSelectWithOptgroup({
+              label: {
+                classes: "govuk-fieldset__legend--m",
+                html: 'Select an Approved Premises'
+              },
+              attributes: {
+                "data-premises-with-areas": true
+              },
+              prompt: "Select a premises",
+              id: "premisesId",
+              name: "premisesId",
+              items: PremisesUtils.groupCas1SummaryPremisesSelectOptions(premises, fetchContext()),
+              errorMessage: errors.premisesId
+            }) 
+          }}
+        {% endif %}
 
         {{
           formPageDateInput(
