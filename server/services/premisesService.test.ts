@@ -5,9 +5,9 @@ import {
   bedDetailFactory,
   bedOccupancyRangeFactory,
   bedSummaryFactory,
+  cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
   extendedPremisesSummaryFactory,
-  premisesSummaryFactory,
   roomFactory,
   staffMemberFactory,
 } from '../testutils/factories'
@@ -30,44 +30,9 @@ describe('PremisesService', () => {
     premisesClientFactory.mockReturnValue(premisesClient)
   })
 
-  describe('getAll', () => {
-    it('calls the all method of the premises client and returns the response', async () => {
-      const premises = premisesSummaryFactory.buildList(2)
-      premisesClient.all.mockResolvedValue(premises)
-
-      const result = await service.getAll(token)
-
-      expect(result).toEqual(premises)
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.all).toHaveBeenCalled()
-    })
-
-    it('supports optional region param', async () => {
-      const probationRegionId = 'test'
-      const premises = premisesSummaryFactory.buildList(1)
-
-      premisesClient.all.mockResolvedValue(premises)
-      await service.getAll(token, probationRegionId)
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.all).toHaveBeenCalledWith(probationRegionId)
-    })
-
-    it('sorts the premises returned by name', async () => {
-      const premisesA = premisesSummaryFactory.build({ name: 'A' })
-      const premisesB = premisesSummaryFactory.build({ name: 'B' })
-
-      premisesClient.all.mockResolvedValue([premisesB, premisesA])
-
-      const result = await service.getAll(token)
-
-      expect(result).toEqual([premisesA, premisesB])
-    })
-  })
-
   describe('getCas1All', () => {
     it('calls the all method of the premises client and returns the response', async () => {
-      const premises = cas1PremisesSummaryFactory.buildList(2)
+      const premises = cas1PremisesBasicSummaryFactory.buildList(2)
       premisesClient.allCas1.mockResolvedValue(premises)
 
       const result = await service.getCas1All(token)
@@ -79,7 +44,7 @@ describe('PremisesService', () => {
 
     it('supports optional gender parameter', async () => {
       const requestGender: ManWoman = 'man'
-      const premises = cas1PremisesSummaryFactory.buildList(2)
+      const premises = cas1PremisesBasicSummaryFactory.buildList(2)
 
       premisesClient.allCas1.mockResolvedValue(premises)
       await service.getCas1All(token, { gender: requestGender })
@@ -89,8 +54,8 @@ describe('PremisesService', () => {
     })
 
     it('sorts the premises returned by name', async () => {
-      const premisesA = cas1PremisesSummaryFactory.build({ name: 'A' })
-      const premisesB = cas1PremisesSummaryFactory.build({ name: 'B' })
+      const premisesA = cas1PremisesBasicSummaryFactory.build({ name: 'A' })
+      const premisesB = cas1PremisesBasicSummaryFactory.build({ name: 'B' })
 
       premisesClient.allCas1.mockResolvedValue([premisesB, premisesA])
 

@@ -1,6 +1,6 @@
 import {
   ApprovedPremisesApplication,
-  Cas1PremisesSummary,
+  Cas1PremisesBasicSummary,
   PlacementRequestDetail,
 } from '../../../../server/@types/shared'
 import { placementDates } from '../../../../server/utils/match'
@@ -22,7 +22,7 @@ export default class CreatePlacementPage extends Page {
     this.dateInputsShouldContainDate('departureDate', dates.endDate)
   }
 
-  completeForm(startDate: string, endDate: string, premises: Cas1PremisesSummary): void {
+  completeForm(startDate: string, endDate: string, premises: Cas1PremisesBasicSummary): void {
     this.clearDateInputs('arrivalDate')
     this.completeDateInputs('arrivalDate', startDate)
 

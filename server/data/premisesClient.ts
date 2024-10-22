@@ -2,6 +2,7 @@ import type {
   BedDetail,
   BedOccupancyRange,
   BedSummary,
+  Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
   DateCapacity,
   ExtendedPremisesSummary,
@@ -29,11 +30,11 @@ export default class PremisesClient {
     })) as Array<PremisesSummary>
   }
 
-  async allCas1(filters: PremisesFilters): Promise<Array<Cas1PremisesSummary>> {
+  async allCas1(filters: PremisesFilters): Promise<Array<Cas1PremisesBasicSummary>> {
     return (await this.restClient.get({
       path: paths.premises.indexCas1({}),
       query: { ...filters },
-    })) as Array<Cas1PremisesSummary>
+    })) as Array<Cas1PremisesBasicSummary>
   }
 
   async find(id: string): Promise<Cas1PremisesSummary> {

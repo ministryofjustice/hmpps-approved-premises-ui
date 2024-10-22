@@ -6,7 +6,7 @@ import {
   applicationFactory,
   applicationSummaryFactory,
   bookingFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesBasicSummaryFactory,
   cruManagementAreaFactory,
   newCancellationFactory,
   placementRequestDetailFactory,
@@ -79,7 +79,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
     cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
 
-    const cas1premises = cas1PremisesSummaryFactory.buildList(3)
+    const cas1premises = cas1PremisesBasicSummaryFactory.buildList(3)
     cy.task('stubCas1AllPremises', cas1premises)
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
 

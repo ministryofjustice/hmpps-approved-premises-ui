@@ -20,8 +20,11 @@ export default class PremisesController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const selectedArea = req.body.selectedArea as ApArea['id'] | undefined
-      const premisesSummaries = await this.premisesService.getAll(req.user.token, selectedArea)
+      const selectedArea = req.body.selectedArea as ApArea['id']
+      const premisesSummaries = await this.premisesService.getCas1All(
+        req.user.token,
+        selectedArea && { apAreaId: selectedArea },
+      )
       const areas = await this.apAreaService.getApAreas(req.user.token)
 
       return res.render('manage/premises/index', {

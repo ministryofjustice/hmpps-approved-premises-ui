@@ -7,5 +7,6 @@ import type { UserQualification } from './UserQualification';
 export type Cas1UpdateUser = {
     roles: Array<ApprovedPremisesUserRole>;
     qualifications: Array<UserQualification>;
+    cruManagementAreaOverrideId?: string;
 };
 

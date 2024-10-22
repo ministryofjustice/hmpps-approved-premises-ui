@@ -1,5 +1,5 @@
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application, Cas1PremisesSummary } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application, Cas1PremisesBasicSummary } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 
@@ -12,7 +12,7 @@ export type PreferredApsBody = {
   preferredAp3: string
   preferredAp4: string
   preferredAp5: string
-  selectedAps: Array<Cas1PremisesSummary>
+  selectedAps: Array<Cas1PremisesBasicSummary>
 }
 
 const preferredAps = new Array(5).fill('').map((_, i) => `preferredAp${i + 1}`)
@@ -28,7 +28,7 @@ type SelectorAttributes = {
 export default class PreferredAps implements TasklistPage {
   title: string
 
-  allPremises: Array<Cas1PremisesSummary> = []
+  allPremises: Array<Cas1PremisesBasicSummary> = []
 
   preferredApOptions = preferredAps
 
@@ -49,7 +49,7 @@ export default class PreferredAps implements TasklistPage {
     const { isWomensApplication } = application
     const allPremises = await premisesService.getCas1All(token, { gender: isWomensApplication ? 'woman' : 'man' })
 
-    const selectedAps: Array<Cas1PremisesSummary> = []
+    const selectedAps: Array<Cas1PremisesBasicSummary> = []
     preferredAps.forEach(id => {
       const selectedAp = allPremises.find(premises => {
         return premises.id === body[id]

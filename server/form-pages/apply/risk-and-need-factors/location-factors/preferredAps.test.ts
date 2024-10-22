@@ -3,18 +3,18 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
 import PreferredAps from './preferredAps'
 import { PremisesService } from '../../../../services'
-import { applicationFactory, cas1PremisesSummaryFactory } from '../../../../testutils/factories'
+import { applicationFactory, cas1PremisesBasicSummaryFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 describe('PreferredAps', () => {
   let premisesService: DeepMocked<PremisesService>
   const application = applicationFactory.build()
 
-  const ap1 = cas1PremisesSummaryFactory.build({ id: '1', name: 'AP 1' })
-  const ap2 = cas1PremisesSummaryFactory.build({ id: '2', name: 'AP 2' })
-  const ap3 = cas1PremisesSummaryFactory.build({ id: '3', name: 'AP 3' })
-  const ap4 = cas1PremisesSummaryFactory.build({ id: '4', name: 'AP 4' })
-  const ap5 = cas1PremisesSummaryFactory.build({ id: '5', name: 'AP 5' })
+  const ap1 = cas1PremisesBasicSummaryFactory.build({ id: '1', name: 'AP 1' })
+  const ap2 = cas1PremisesBasicSummaryFactory.build({ id: '2', name: 'AP 2' })
+  const ap3 = cas1PremisesBasicSummaryFactory.build({ id: '3', name: 'AP 3' })
+  const ap4 = cas1PremisesBasicSummaryFactory.build({ id: '4', name: 'AP 4' })
+  const ap5 = cas1PremisesBasicSummaryFactory.build({ id: '5', name: 'AP 5' })
 
   const allAps = [ap1, ap2, ap3, ap4, ap5]
 
