@@ -57,6 +57,7 @@ const userRoles: Record<RoleInUse, string> = {
   excluded_from_placement_application_allocation: 'Excluded from placement application allocation',
   appeals_manager: 'Appeals manager',
   future_manager: 'Future manager',
+  user_manager: 'User manager',
   janitor: 'Janitor',
 }
 
