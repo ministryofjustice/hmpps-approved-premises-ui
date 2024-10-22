@@ -3,7 +3,7 @@ import type { Response, SuperAgentRequest } from 'superagent'
 import type {
   BedOccupancyRange,
   Booking,
-  Cas1PremisesSummary,
+  Cas1PremisesBasicSummary,
   ExtendedPremisesSummary,
   Premises,
   ApprovedPremisesSummary as PremisesSummary,
@@ -30,7 +30,7 @@ const stubAllPremises = (premises: Array<PremisesSummary>) =>
     },
   })
 
-const stubCas1AllPremises = (premises: Array<Cas1PremisesSummary>) => {
+const stubCas1AllPremises = (premises: Array<Cas1PremisesBasicSummary>) => {
   return stubFor({
     request: {
       method: 'GET',

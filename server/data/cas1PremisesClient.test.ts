@@ -2,7 +2,7 @@ import PremisesClient from './premisesClient'
 import paths from '../paths/api'
 
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
-import { cas1PremisesSummaryFactory, premisesFactory } from '../testutils/factories'
+import { cas1PremisesBasicSummaryFactory, premisesFactory } from '../testutils/factories'
 
 describeCas1NamespaceClient('Cas1PremisesClient', provider => {
   let premisesClient: PremisesClient
@@ -41,7 +41,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
   describe('allCas1', () => {
     it('should get all premises', async () => {
       const gender = 'man'
-      const premisesSummaries = cas1PremisesSummaryFactory.buildList(5)
+      const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(5)
 
       provider.addInteraction({
         state: 'Server is healthy',

@@ -1,7 +1,7 @@
 import type {
-  ApprovedPremisesSummary,
   BedDetail,
   BedSummary,
+  Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
   ExtendedPremisesSummary,
   Room,
@@ -15,14 +15,7 @@ import { mapApiOccupancyToUiOccupancy } from '../utils/premises'
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
 
-  async getAll(token: string, selectedAreaId = ''): Promise<Array<ApprovedPremisesSummary>> {
-    const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all(selectedAreaId)
-
-    return premises.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  async getCas1All(token: string, filters: PremisesFilters = {}): Promise<Array<Cas1PremisesSummary>> {
+  async getCas1All(token: string, filters: PremisesFilters = {}): Promise<Array<Cas1PremisesBasicSummary>> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.allCas1(filters)
 

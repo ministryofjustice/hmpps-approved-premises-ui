@@ -1,9 +1,8 @@
 import type {
-  ApprovedPremisesSummary,
   BedOccupancyRange,
+  Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
   DateCapacity,
-  ApprovedPremisesSummary as PremisesSummary,
 } from '@approved-premises/api'
 import { BedOccupancyRangeUi, SelectGroup, SelectOption, SummaryList } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
@@ -117,7 +116,7 @@ export const summaryListForPremises = (premises: Cas1PremisesSummary): SummaryLi
 }
 
 export const groupCas1SummaryPremisesSelectOptions = (
-  premises: Array<Cas1PremisesSummary>,
+  premises: Array<Cas1PremisesBasicSummary>,
   context: Record<string, unknown>,
   fieldName: string = 'premisesId',
 ): Array<SelectGroup> => {
@@ -138,7 +137,7 @@ export const groupCas1SummaryPremisesSelectOptions = (
 }
 
 export const cas1PremisesSummaryRadioOptions = (
-  premises: Array<Cas1PremisesSummary>,
+  premises: Array<Cas1PremisesBasicSummary>,
   context: Record<string, unknown>,
   fieldName: string = 'premisesId',
 ): Array<SelectOption> =>
@@ -150,10 +149,10 @@ export const cas1PremisesSummaryRadioOptions = (
     }
   })
 
-export const premisesTableRows = (premisesSummaries: Array<PremisesSummary>) => {
+export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSummary>) => {
   return premisesSummaries
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map((p: ApprovedPremisesSummary) => {
+    .map((p: Cas1PremisesBasicSummary) => {
       return [
         textValue(p.name),
         textValue(p.apCode),

@@ -2,8 +2,8 @@ import { BedOccupancyEntryUi } from '@approved-premises/ui'
 import {
   bedOccupancyEntryFactory,
   bedOccupancyRangeFactory,
+  cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
-  premisesSummaryFactory,
 } from '../../testutils/factories'
 import {
   cas1PremisesSummaryRadioOptions,
@@ -198,8 +198,8 @@ describe('premisesUtils', () => {
   })
 
   describe('groupCas1SummaryPremisesSelectOptions', () => {
-    const area1Premises = cas1PremisesSummaryFactory.buildList(2, { apArea: { id: 'a1', name: 'Area 1' } })
-    const area2Premises = cas1PremisesSummaryFactory.buildList(2, { apArea: { id: 'a2', name: 'Area 2' } })
+    const area1Premises = cas1PremisesBasicSummaryFactory.buildList(2, { apArea: { id: 'a1', name: 'Area 1' } })
+    const area2Premises = cas1PremisesBasicSummaryFactory.buildList(2, { apArea: { id: 'a2', name: 'Area 2' } })
     const premises = [...area1Premises, ...area2Premises]
 
     it('should group premises by AP area', () => {
@@ -235,7 +235,7 @@ describe('premisesUtils', () => {
   })
 
   describe('cas1PremisesSummaryRadioOptions', () => {
-    const premises = cas1PremisesSummaryFactory.buildList(2)
+    const premises = cas1PremisesBasicSummaryFactory.buildList(2)
 
     it('should map premises summary list into a set of radio buttons', () => {
       expect(cas1PremisesSummaryRadioOptions(premises, {})).toEqual([
@@ -260,9 +260,9 @@ describe('premisesUtils', () => {
 
   describe('premisesTableRows', () => {
     it('returns a table view of the premises with links to the their premises pages', async () => {
-      const premises1 = premisesSummaryFactory.build({ name: 'XYZ' })
-      const premises2 = premisesSummaryFactory.build({ name: 'ABC' })
-      const premises3 = premisesSummaryFactory.build({ name: 'GHI' })
+      const premises1 = cas1PremisesSummaryFactory.build({ name: 'XYZ' })
+      const premises2 = cas1PremisesSummaryFactory.build({ name: 'ABC' })
+      const premises3 = cas1PremisesSummaryFactory.build({ name: 'GHI' })
 
       const premises = [premises1, premises2, premises3]
 

@@ -4,7 +4,11 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ApAreaService, PremisesService } from '../../../services'
 import PremisesController from './premisesController'
 
-import { apAreaFactory, cas1PremisesSummaryFactory, premisesSummaryFactory } from '../../../testutils/factories'
+import {
+  apAreaFactory,
+  cas1PremisesBasicSummaryFactory,
+  cas1PremisesSummaryFactory,
+} from '../../../testutils/factories'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -42,12 +46,12 @@ describe('V2PremisesController', () => {
 
   describe('index', () => {
     it('should render the template with the premises and areas', async () => {
-      const premisesSummaries = premisesSummaryFactory.buildList(1)
+      const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
 
       const apAreas = apAreaFactory.buildList(1)
 
       apAreaService.getApAreas.mockResolvedValue(apAreas)
-      premisesService.getAll.mockResolvedValue(premisesSummaries)
+      premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
       await requestHandler(request, response, next)
@@ -58,17 +62,17 @@ describe('V2PremisesController', () => {
         selectedArea: '',
       })
 
-      expect(premisesService.getAll).toHaveBeenCalledWith(token, undefined)
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, undefined)
       expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
     })
 
     it('should call the premises service with the AP area ID if supplied', async () => {
       const areaId = 'ap-area-id'
-      const premisesSummaries = premisesSummaryFactory.buildList(1)
+      const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
       const areas = apAreaFactory.buildList(1)
 
       apAreaService.getApAreas.mockResolvedValue(areas)
-      premisesService.getAll.mockResolvedValue(premisesSummaries)
+      premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
       await requestHandler({ ...request, body: { selectedArea: areaId } }, response, next)
@@ -79,7 +83,7 @@ describe('V2PremisesController', () => {
         selectedArea: areaId,
       })
 
-      expect(premisesService.getAll).toHaveBeenCalledWith(token, areaId)
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { apAreaId: areaId })
       expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
     })
   })

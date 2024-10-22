@@ -22,7 +22,7 @@ import {
   BedOccupancyRange,
   Booking,
   Cas1CruManagementArea,
-  Cas1PremisesSummary,
+  Cas1PremisesBasicSummary,
   Document,
   FlagsEnvelope,
   Gender,
@@ -311,8 +311,7 @@ export type DataServices = Partial<{
     getUserById: (token: string, id: string) => Promise<User>
   }
   premisesService: {
-    getAll: (token: string) => Promise<Array<Premises>>
-    getCas1All: (token: string, filters: PremisesFilters) => Promise<Array<Cas1PremisesSummary>>
+    getCas1All: (token: string, filters: PremisesFilters) => Promise<Array<Cas1PremisesBasicSummary>>
   }
   assessmentService: {
     createClarificationNote: (

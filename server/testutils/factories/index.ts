@@ -94,6 +94,7 @@ import spaceSearchParametersFactory, { spaceSearchParametersUiFactory } from './
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
 import cas1PremisesSummaryFactory from './cas1PremisesSummary'
+import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 
 export {
   acctAlertFactory,
@@ -128,6 +129,8 @@ export {
   bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
+  cas1PremisesBasicSummaryFactory,
+  cas1PremisesSummaryFactory,
   cas1ReferenceDataFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
@@ -197,5 +200,4 @@ export {
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
-  cas1PremisesSummaryFactory,
 }

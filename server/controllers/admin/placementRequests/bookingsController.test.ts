@@ -4,7 +4,7 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
-  cas1PremisesSummaryFactory,
+  cas1PremisesBasicSummaryFactory,
   newPlacementRequestBookingConfirmationFactory,
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
@@ -36,7 +36,7 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('new', () => {
-    const premises = cas1PremisesSummaryFactory.buildList(2)
+    const premises = cas1PremisesBasicSummaryFactory.buildList(2)
 
     beforeEach(() => {
       jest.resetAllMocks()
