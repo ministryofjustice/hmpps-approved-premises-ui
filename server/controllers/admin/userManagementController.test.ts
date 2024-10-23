@@ -1,11 +1,16 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApAreaService, UserService } from '../../services'
+import { ApAreaService, CruManagementAreaService, UserService } from '../../services'
 
 import UserManagementController from './userManagementController'
 import { qualifications, roles } from '../../utils/users'
-import { apAreaFactory, paginatedResponseFactory, userFactory } from '../../testutils/factories'
+import {
+  apAreaFactory,
+  cruManagementAreaFactory,
+  paginatedResponseFactory,
+  userFactory,
+} from '../../testutils/factories'
 import paths from '../../paths/admin'
 import { PaginatedResponse } from '../../@types/ui'
 import { ApprovedPremisesUser } from '../../@types/shared'
@@ -23,11 +28,13 @@ describe('UserManagementController', () => {
   let userManagementController: UserManagementController
   let userService: DeepMocked<UserService>
   let apAreaService: DeepMocked<ApAreaService>
+  let cruManagementAreaService: DeepMocked<CruManagementAreaService>
 
   beforeEach(() => {
     userService = createMock<UserService>()
     apAreaService = createMock<ApAreaService>()
-    userManagementController = new UserManagementController(userService, apAreaService)
+    cruManagementAreaService = createMock<CruManagementAreaService>()
+    userManagementController = new UserManagementController(userService, apAreaService, cruManagementAreaService)
     jest.resetAllMocks()
   })
 
@@ -257,9 +264,11 @@ describe('UserManagementController', () => {
 
   describe('edit', () => {
     it('renders an individual user page', async () => {
-      const user = userFactory.build()
+      const cruManagementAreas = cruManagementAreaFactory.buildList(2)
+      const user = userFactory.build({ cruManagementAreaOverride: undefined })
 
       userService.getUserById.mockResolvedValue(user)
+      cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
 
       const requestHandler = userManagementController.edit()
 
@@ -268,29 +277,89 @@ describe('UserManagementController', () => {
       await requestHandler(request, response, next)
 
       expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
+      expect(cruManagementAreaService.getCRUManagementAreas).toHaveBeenCalledWith(token)
       expect(response.render).toHaveBeenCalledWith('admin/users/edit', {
         pageHeading: 'Manage permissions',
         user,
         roles,
         qualifications,
+        cruManagementAreasOptions: [
+          {
+            text: 'None',
+            value: '',
+            selected: true,
+          },
+          {
+            text: cruManagementAreas[0].name,
+            value: cruManagementAreas[0].id,
+            selected: false,
+          },
+          {
+            text: cruManagementAreas[1].name,
+            value: cruManagementAreas[1].id,
+            selected: false,
+          },
+        ],
+      })
+    })
+
+    describe('when the user has a CRU management area assigned', () => {
+      it('renders the assigned CRU management area as selected', async () => {
+        const cruManagementAreas = cruManagementAreaFactory.buildList(2)
+        const user = userFactory.build({ cruManagementAreaOverride: cruManagementAreas[1] })
+
+        userService.getUserById.mockResolvedValue(user)
+        cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
+
+        const requestHandler = userManagementController.edit()
+
+        request.params = { id: user.id }
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith(
+          'admin/users/edit',
+          expect.objectContaining({
+            cruManagementAreasOptions: [
+              {
+                text: 'None',
+                value: '',
+                selected: false,
+              },
+              {
+                text: cruManagementAreas[0].name,
+                value: cruManagementAreas[0].id,
+                selected: false,
+              },
+              {
+                text: cruManagementAreas[1].name,
+                value: cruManagementAreas[1].id,
+                selected: true,
+              },
+            ],
+          }),
+        )
       })
     })
   })
 
   describe('update', () => {
-    it('updates the user with the selected roles and qualifications', async () => {
+    it('updates the user with the selected CRU management area, roles and qualifications', async () => {
       const user = userFactory.build({
         qualifications: [],
         roles: [],
+        cruManagementAreaOverride: undefined,
       })
       const updatedRoles = {
         allocationRoles: ['excluded_from_assess_allocation'],
         roles: ['assessor', 'matcher'],
       }
+      const updatedCRUManagementArea = cruManagementAreaFactory.build()
       const updatedUser = {
         ...user,
         qualifications: ['emergency'],
         roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
+        cruManagementAreaOverride: updatedCRUManagementArea,
       }
       const flash = jest.fn()
 
@@ -303,6 +372,7 @@ describe('UserManagementController', () => {
             roles: updatedRoles.roles,
             allocationPreferences: updatedRoles.allocationRoles,
             qualifications: updatedUser.qualifications,
+            cruManagementAreaOverrideId: updatedCRUManagementArea.id,
           },
           params: { id: user.id },
         },
@@ -313,6 +383,7 @@ describe('UserManagementController', () => {
       expect(userService.updateUser).toHaveBeenCalledWith(token, user.id, {
         roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
         qualifications: updatedUser.qualifications,
+        cruManagementAreaOverrideId: updatedCRUManagementArea.id,
       })
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.edit({ id: user.id }))
       expect(flash).toHaveBeenCalledWith('success', 'User updated')

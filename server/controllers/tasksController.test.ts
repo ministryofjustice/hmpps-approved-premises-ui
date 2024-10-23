@@ -14,7 +14,7 @@ import {
   userDetailsFactory,
   userFactory,
 } from '../testutils/factories'
-import { ApAreaService, ApplicationService, CRUManagementAreaService, TaskService, UserService } from '../services'
+import { ApAreaService, ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput, PaginatedResponse } from '../@types/ui'
 import paths from '../paths/api'
@@ -34,7 +34,7 @@ describe('TasksController', () => {
   const taskService = createMock<TaskService>({})
   const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({})
   const userService: DeepMocked<UserService> = createMock<UserService>({})
-  const cruManagementAreaService: DeepMocked<CRUManagementAreaService> = createMock<CRUManagementAreaService>({})
+  const cruManagementAreaService: DeepMocked<CruManagementAreaService> = createMock<CruManagementAreaService>({})
 
   let tasksController: TasksController
 

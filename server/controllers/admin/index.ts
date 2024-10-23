@@ -33,7 +33,11 @@ export const controllers = (services: Services) => {
   const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)
   const reportsController = new ReportsController(reportService)
   const placementRequestUnableToMatchController = new PlacementRequestUnableToMatchController(placementRequestService)
-  const userManagementController = new UserManagementController(services.userService, apAreaService)
+  const userManagementController = new UserManagementController(
+    services.userService,
+    apAreaService,
+    cruManagementAreaService,
+  )
   const deliusUserController = new DeliusUserController(services.userService)
 
   return {

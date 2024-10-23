@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -36,6 +37,16 @@
 
                 {{ govukSummaryList({
                     rows: UserUtils.userSummaryListItems(user)
+                }) }}
+
+                {{ govukSelect({
+                    label: {
+                        text: "CRU Management Area",
+                        classes: "govuk-label--m"
+                    },
+                    id: "cruManagementAreaOverrideId",
+                    name: "cruManagementAreaOverrideId",
+                    items: cruManagementAreasOptions
                 }) }}
 
                 {{ govukCheckboxes({

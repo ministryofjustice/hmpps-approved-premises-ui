@@ -1,10 +1,10 @@
 import type {
+  Cas1UpdateUser,
   ProfileResponse,
   SortDirection,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
-  UserRolesAndQualifications,
   UserSortField,
   UserSummary,
 } from '@approved-premises/api'
@@ -65,10 +65,10 @@ export default class UserClient {
     })
   }
 
-  async updateUser(userId: string, rolesAndQualifications: UserRolesAndQualifications): Promise<User> {
+  async updateUser(userId: string, data: Cas1UpdateUser): Promise<User> {
     return (await this.restClient.put({
       path: paths.users.update({ id: userId }),
-      data: rolesAndQualifications,
+      data,
     })) as User
   }
 

@@ -1,3 +1,4 @@
+import { Cas1UpdateUser } from '@approved-premises/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import UserClient from './userClient'
 import { userFactory } from '../testutils/factories'
@@ -43,7 +44,11 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
     it('should update a user', async () => {
       const user = userFactory.build()
 
-      const rolesAndQualifications = { roles: user.roles, qualifications: user.qualifications }
+      const updateUserData: Cas1UpdateUser = {
+        roles: user.roles,
+        qualifications: user.qualifications,
+        cruManagementAreaOverrideId: 'foo-id',
+      }
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -55,7 +60,7 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
           },
-          body: rolesAndQualifications,
+          body: updateUserData,
         },
         willRespondWith: {
           status: 200,
@@ -63,7 +68,7 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
         },
       })
 
-      const output = await userClient.updateUser(user.id, rolesAndQualifications)
+      const output = await userClient.updateUser(user.id, updateUserData)
       expect(output).toEqual(user)
     })
   })

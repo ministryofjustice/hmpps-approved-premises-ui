@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import CruDashboardController from './cruDashboardController'
 
-import { ApplicationService, CRUManagementAreaService, PlacementRequestService } from '../../services'
+import { ApplicationService, CruManagementAreaService, PlacementRequestService } from '../../services'
 import {
   applicationSummaryFactory,
   cruManagementAreaFactory,
@@ -35,7 +35,7 @@ describe('CruDashboardController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
-  const cruManagementAreaService = createMock<CRUManagementAreaService>({})
+  const cruManagementAreaService = createMock<CruManagementAreaService>({})
   const applicationService = createMock<ApplicationService>({})
 
   let cruDashboardController: CruDashboardController

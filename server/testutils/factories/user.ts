@@ -27,6 +27,7 @@ const userFactory = Factory.define<User>(() => ({
   version: faker.number.int(),
   cruManagementArea: cruManagementAreaFactory.build(),
   cruManagementAreaDefault: cruManagementAreaFactory.build(),
+  cruManagementAreaOverride: cruManagementAreaFactory.build(),
 }))
 
 export const userSummaryFactory = Factory.define<UserSummary>(() => ({

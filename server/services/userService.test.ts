@@ -120,6 +120,7 @@ describe('User service', () => {
       const result = await userService.updateUser(token, user.id, {
         roles: user.roles,
         qualifications: user.qualifications,
+        cruManagementAreaOverrideId: user.cruManagementAreaOverride.id,
       })
 
       expect(result).toEqual(user)
@@ -127,6 +128,7 @@ describe('User service', () => {
       expect(userClient.updateUser).toHaveBeenCalledWith(userId, {
         roles: user.roles,
         qualifications: user.qualifications,
+        cruManagementAreaOverrideId: user.cruManagementAreaOverride.id,
       })
     })
   })

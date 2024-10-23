@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
-import { ApAreaService, ApplicationService, CRUManagementAreaService, TaskService, UserService } from '../services'
+import { ApAreaService, ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
@@ -13,7 +13,7 @@ export default class TasksController {
     private readonly applicationService: ApplicationService,
     private readonly apAreaService: ApAreaService,
     private readonly userService: UserService,
-    private readonly cruManagementAreaService: CRUManagementAreaService,
+    private readonly cruManagementAreaService: CruManagementAreaService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
