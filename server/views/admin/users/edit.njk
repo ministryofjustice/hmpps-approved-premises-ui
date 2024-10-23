@@ -32,11 +32,11 @@
 
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-            <form action="{{ paths.admin.userManagement.update({id: user.id}) }}?_method=PUT" method="post">
+            <form action="{{ paths.admin.userManagement.update({id: updateUser.id}) }}?_method=PUT" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
                 {{ govukSummaryList({
-                    rows: UserUtils.userSummaryListItems(user)
+                    rows: UserUtils.userSummaryListItems(updateUser)
                 }) }}
 
                 {{ govukSelect({
@@ -60,7 +60,7 @@
                     hint: {
                         text: "Select all that apply"
                     },
-                    items: UserUtils.rolesToCheckboxItems(roles, user.roles)
+                    items: UserUtils.rolesToCheckboxItems(roles, updateUser.roles)
                 }) }}
 
                 {{ govukCheckboxes({
@@ -74,7 +74,7 @@
                     hint: {
                         html: allocationPreferencesHint
                     },
-                    items: UserUtils.allocationRolesToCheckboxItems(roles, user.roles)
+                    items: UserUtils.allocationRolesToCheckboxItems(roles, updateUser.roles)
                 }) }}
 
                 {{ govukCheckboxes({
@@ -88,7 +88,7 @@
                     hint: {
                         html: qualificationsHint
                     },
-                    items: UserUtils.userQualificationsToCheckboxItems(qualifications, user.qualifications)
+                    items: UserUtils.userQualificationsToCheckboxItems(qualifications, updateUser.qualifications)
                 }) }}
 
                 <div class="govuk-button-group">
@@ -100,7 +100,7 @@
 
                     {{ govukButton({
                         text: "Remove access",
-                        href: paths.admin.userManagement.confirmDelete({id: user.id}),
+                        href: paths.admin.userManagement.confirmDelete({id: updateUser.id}),
                         classes: "govuk-button--warning",
                         preventDoubleClick: true
                     }) }}

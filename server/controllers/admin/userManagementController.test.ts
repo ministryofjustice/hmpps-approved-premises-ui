@@ -265,22 +265,22 @@ describe('UserManagementController', () => {
   describe('edit', () => {
     it('renders an individual user page', async () => {
       const cruManagementAreas = cruManagementAreaFactory.buildList(2)
-      const user = userFactory.build({ cruManagementAreaOverride: undefined })
+      const updateUser = userFactory.build({ cruManagementAreaOverride: undefined })
 
-      userService.getUserById.mockResolvedValue(user)
+      userService.getUserById.mockResolvedValue(updateUser)
       cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
 
       const requestHandler = userManagementController.edit()
 
-      request.params = { id: user.id }
+      request.params = { id: updateUser.id }
 
       await requestHandler(request, response, next)
 
-      expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
+      expect(userService.getUserById).toHaveBeenCalledWith(token, updateUser.id)
       expect(cruManagementAreaService.getCRUManagementAreas).toHaveBeenCalledWith(token)
       expect(response.render).toHaveBeenCalledWith('admin/users/edit', {
         pageHeading: 'Manage permissions',
-        user,
+        updateUser,
         roles,
         qualifications,
         cruManagementAreasOptions: [
@@ -306,14 +306,14 @@ describe('UserManagementController', () => {
     describe('when the user has a CRU management area assigned', () => {
       it('renders the assigned CRU management area as selected', async () => {
         const cruManagementAreas = cruManagementAreaFactory.buildList(2)
-        const user = userFactory.build({ cruManagementAreaOverride: cruManagementAreas[1] })
+        const updateUser = userFactory.build({ cruManagementAreaOverride: cruManagementAreas[1] })
 
-        userService.getUserById.mockResolvedValue(user)
+        userService.getUserById.mockResolvedValue(updateUser)
         cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
 
         const requestHandler = userManagementController.edit()
 
-        request.params = { id: user.id }
+        request.params = { id: updateUser.id }
 
         await requestHandler(request, response, next)
 

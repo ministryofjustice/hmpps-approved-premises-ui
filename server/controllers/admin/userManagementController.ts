@@ -56,15 +56,15 @@ export default class UserController {
 
   edit(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const user = await this.userService.getUserById(req.user.token, req.params.id)
+      const updateUser = await this.userService.getUserById(req.user.token, req.params.id)
       const cruManagementAreas = await this.cruManagementAreaService.getCRUManagementAreas(req.user.token)
 
       res.render('admin/users/edit', {
         pageHeading: 'Manage permissions',
-        user,
+        updateUser,
         cruManagementAreasOptions: userCRUManagementAreasSelectOptions(
           cruManagementAreas,
-          user.cruManagementAreaOverride?.id,
+          updateUser.cruManagementAreaOverride?.id,
         ),
         roles,
         qualifications,

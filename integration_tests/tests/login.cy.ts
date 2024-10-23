@@ -93,19 +93,17 @@ context('SignIn', () => {
     // When my user roles have been updated
     cy.task('stubAuthUser', { ...authUser, roles: ['role_admin', 'report_viewer'] })
     cy.task('stubFindUser', { user: authUser, id: authUser.id, userVersion: newUserVersion })
+    cy.task('stubCruManagementAreaReferenceData')
 
     // And I visit a page that calls the API
     const userPage = ShowPage.visit(authUser.id)
 
-    // Then I see no change for the current page load
-    userPage.shouldShowMenuItem('Reports', false)
-
-    // When I visit another page
+    // Then I visit another page
     userPage.clickMenuItem('Home')
 
     dashboardPage = Page.verifyOnPage(DashboardPage)
 
-    // Then the updated user roles have been fetched from the API
+    // Then the updated user roles have been fetched from the API and the UI is updated
     dashboardPage.shouldShowCard('reports')
   })
 })
