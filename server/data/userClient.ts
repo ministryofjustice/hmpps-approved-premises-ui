@@ -26,7 +26,7 @@ export default class UserClient {
   }
 
   async getUserProfile(): Promise<ProfileResponse> {
-    return (await this.restClient.get({ path: paths.users.v2profile({}) })) as ProfileResponse
+    return (await this.restClient.get({ path: paths.users.profile({}) })) as ProfileResponse
   }
 
   async getUserList(roles: Array<UserRole> = []): Promise<Array<UserSummary>> {

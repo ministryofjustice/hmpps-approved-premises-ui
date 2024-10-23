@@ -13,8 +13,11 @@ declare global {
   namespace jest {
     interface Matchers<R> {
       toContainAction(expected: Action): R
+
       toContainMenuItem(expected: IdentityBarMenuItem): R
+
       toMatchStringIgnoringWhitespace(expected: string): R
+
       toMatchOpenAPISpec({ cas1Namespace }: { cas1Namespace: boolean }): R
     }
   }
@@ -35,7 +38,8 @@ const apiSpecs = {
     sed -E 's@/spaces@/cas1/spaces@g' |
     sed -E 's@ /reference-data@ /cas1/reference-data@g' |
     sed -E 's@ /placement-requests@ /cas1/placement-requests@g' |
-    sed -E 's@/reports@/cas1/reports@g' > ${apiSpecPaths.cas1Spec}
+    sed -E 's@/reports@/cas1/reports@g' |
+    sed -E 's@ /users@ /cas1/users@g' > ${apiSpecPaths.cas1Spec}
   fi`,
     specPath: apiSpecPaths.cas1Spec,
   },
