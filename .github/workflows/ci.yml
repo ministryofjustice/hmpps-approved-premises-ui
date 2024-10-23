@@ -77,10 +77,17 @@ jobs:
           npx nyc report -t ./coverage --reporter=text --reporter=text-summary
           npx nyc check-coverage -t ./coverage
 
-  # TODO: Split into parallel runs
   integration_test:
     name: "Integration testing 🧪"
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_index:
+          - 0
+          - 1
+          - 2
+          - 3
     steps:
       - name: Check out code
         uses: actions/checkout@v4.1.7
@@ -97,17 +104,37 @@ jobs:
       - name: Building source
         run: npm run build
 
-      - name: Running Integration tests
-        run: npm run test:integration
+      - uses: actions/download-artifact@v4
+        with:
+          name: junit-xml-reports
+          path: tmp/integration-tests-reports
+        continue-on-error: true
 
-      - name: Store Integration tests results
+      - uses: r7kamura/split-tests-by-timings@v0
+        id: split-tests
+        with:
+          reports: tmp/integration-tests-reports
+          glob: integration_tests/tests/**/*.cy.ts
+          index: ${{ matrix.ci_node_index }}
+          total: 4
+
+      - name: Running Integration tests
+        run: TEST_RUN_ARGS="--spec $(echo ${{ steps.split-tests.outputs.paths }} | sed -E 's/ /,/g')" npm run test:integration
+
+      - name: Store Integration tests reports
         uses: actions/upload-artifact@v4
         with:
-          name: integration-tests-results
-          path: test_results/integration
+          name: integration-tests-reports
+          path: test_results/cypress
+
+      - name: Store Integration tests videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-tests-videos
+          path: integration_tests/videos
 
       - name: Store Integration tests screenshots
         uses: actions/upload-artifact@v4
         with:
           name: integration-tests-screenshots
-          path: test_results/integration/screenshots
+          path: integration_tests/screenshots
