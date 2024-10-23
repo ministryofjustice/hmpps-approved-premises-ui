@@ -17,10 +17,11 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'appeals_manager',
   'report_viewer',
   'future_manager',
+  'user_manager',
   'janitor',
 ]
 
-export const unusedRoles = ['applicant', 'user_manager', 'manager', 'legacy_manager'] as const
+export const unusedRoles = ['applicant', 'manager', 'legacy_manager'] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
 
@@ -73,6 +74,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   },
   future_manager: {
     label: 'Future manager',
+    hint: 'For digital team use only',
+  },
+  user_manager: {
+    label: 'User manager',
     hint: 'For digital team use only',
   },
   janitor: {
