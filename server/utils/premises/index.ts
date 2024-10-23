@@ -111,6 +111,10 @@ export const summaryListForPremises = (premises: Cas1PremisesSummary): SummaryLi
         key: textValue('Available Beds'),
         value: textValue(premises.availableBeds.toString()),
       },
+      {
+        key: textValue('Out of Service Beds'),
+        value: textValue(premises.outOfServiceBeds.toString()),
+      },
     ],
   }
 }

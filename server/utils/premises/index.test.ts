@@ -172,6 +172,7 @@ describe('premisesUtils', () => {
         postcode: 'SW1A 1AA',
         bedCount: 20,
         availableBeds: 12,
+        outOfServiceBeds: 3,
       })
 
       expect(summaryListForPremises(premises)).toEqual({
@@ -191,6 +192,10 @@ describe('premisesUtils', () => {
           {
             key: textValue('Available Beds'),
             value: textValue('12'),
+          },
+          {
+            key: textValue('Out of Service Beds'),
+            value: textValue('3'),
           },
         ],
       })
