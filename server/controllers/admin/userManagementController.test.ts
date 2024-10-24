@@ -1,16 +1,11 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApAreaService, CruManagementAreaService, UserService } from '../../services'
+import { CruManagementAreaService, UserService } from '../../services'
 
 import UserManagementController from './userManagementController'
 import { qualifications, roles } from '../../utils/users'
-import {
-  apAreaFactory,
-  cruManagementAreaFactory,
-  paginatedResponseFactory,
-  userFactory,
-} from '../../testutils/factories'
+import { cruManagementAreaFactory, paginatedResponseFactory, userFactory } from '../../testutils/factories'
 import paths from '../../paths/admin'
 import { PaginatedResponse } from '../../@types/ui'
 import { ApprovedPremisesUser } from '../../@types/shared'
@@ -27,14 +22,12 @@ describe('UserManagementController', () => {
 
   let userManagementController: UserManagementController
   let userService: DeepMocked<UserService>
-  let apAreaService: DeepMocked<ApAreaService>
   let cruManagementAreaService: DeepMocked<CruManagementAreaService>
 
   beforeEach(() => {
     userService = createMock<UserService>()
-    apAreaService = createMock<ApAreaService>()
     cruManagementAreaService = createMock<CruManagementAreaService>()
-    userManagementController = new UserManagementController(userService, apAreaService, cruManagementAreaService)
+    userManagementController = new UserManagementController(userService, cruManagementAreaService)
     jest.resetAllMocks()
   })
 
@@ -89,15 +82,15 @@ describe('UserManagementController', () => {
       })
     })
 
-    it('should render the template with AP Areas based on the current user token', async () => {
-      const apAreas = apAreaFactory.buildList(1)
+    it('should render the template with CRU management areas based on the current user token', async () => {
+      const cruManagementAreas = cruManagementAreaFactory.buildList(3)
 
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
 
       const requestHandler = userManagementController.index()
       await requestHandler(request, response, next)
 
-      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
       expect(response.render).toHaveBeenCalledWith('admin/users/index', {
         pageHeading: 'User management dashboard',
         users,
@@ -106,11 +99,11 @@ describe('UserManagementController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
-        apAreas,
+        cruManagementAreas,
       })
     })
 
-    it('filters users by AP area', async () => {
+    it('filters users by CRU Management area', async () => {
       const requestWithQuery = { ...request, query: { area: '1234' } }
       const requestHandler = userManagementController.index()
 
