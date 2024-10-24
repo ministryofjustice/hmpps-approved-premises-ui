@@ -12,14 +12,8 @@ import CruDashboardController from './cruDashboardController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const {
-    placementRequestService,
-    premisesService,
-    reportService,
-    apAreaService,
-    cruManagementAreaService,
-    applicationService,
-  } = services
+  const { placementRequestService, premisesService, reportService, cruManagementAreaService, applicationService } =
+    services
   const adminPlacementRequestsController = new AdminPlacementRequestsController(placementRequestService)
   const cruDashboardController = new CruDashboardController(
     placementRequestService,
@@ -33,11 +27,7 @@ export const controllers = (services: Services) => {
   const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)
   const reportsController = new ReportsController(reportService)
   const placementRequestUnableToMatchController = new PlacementRequestUnableToMatchController(placementRequestService)
-  const userManagementController = new UserManagementController(
-    services.userService,
-    apAreaService,
-    cruManagementAreaService,
-  )
+  const userManagementController = new UserManagementController(services.userService, cruManagementAreaService)
   const deliusUserController = new DeliusUserController(services.userService)
 
   return {

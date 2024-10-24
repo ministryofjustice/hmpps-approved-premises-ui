@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
-import { ApAreaService, ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
+import { ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
@@ -11,7 +11,6 @@ export default class TasksController {
   constructor(
     private readonly taskService: TaskService,
     private readonly applicationService: ApplicationService,
-    private readonly apAreaService: ApAreaService,
     private readonly userService: UserService,
     private readonly cruManagementAreaService: CruManagementAreaService,
   ) {}
@@ -65,12 +64,12 @@ export default class TasksController {
         pageHeading: 'Task Allocation',
         tasks: tasks.data,
         allocatedFilter,
-        cruManagementAreas,
         pageNumber: Number(tasks.pageNumber),
         totalPages: Number(tasks.totalPages),
         hrefPrefix,
         sortBy,
         sortDirection,
+        cruManagementAreas,
         cruManagementArea: cruManagementAreaId,
         users,
         allocatedToUserId,
@@ -83,21 +82,22 @@ export default class TasksController {
 
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const apAreaId = (req.query.apAreaId as string) || ''
+      const cruManagementAreaId = (req.query.cruManagementAreaId as string) || ''
       const qualification = req.query.qualification as UserQualification
 
       const { task, users } = await this.taskService.find(req.user.token, req.params.id, req.params.taskType, {
-        apAreaId,
+        cruManagementAreaId,
         qualification,
       })
       const application = await this.applicationService.findApplication(req.user.token, task.applicationId)
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const apAreas = await this.apAreaService.getApAreas(req.user.token)
       const pageHeading =
         task.taskType === 'PlacementApplication'
           ? 'Reallocate Request for Placement'
           : `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`
+
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       res.render('tasks/show', {
         pageHeading,
@@ -106,8 +106,8 @@ export default class TasksController {
         users,
         errors,
         errorSummary,
-        apAreas,
-        apAreaId,
+        cruManagementAreas,
+        cruManagementAreaId,
         qualification: qualification || '',
         ...userInput,
       })

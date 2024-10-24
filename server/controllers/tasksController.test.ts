@@ -5,7 +5,6 @@ import { Task } from '@approved-premises/api'
 import { when } from 'jest-when'
 import TasksController from './tasksController'
 import {
-  apAreaFactory,
   applicationFactory,
   cruManagementAreaFactory,
   paginatedResponseFactory,
@@ -14,7 +13,7 @@ import {
   userDetailsFactory,
   userFactory,
 } from '../testutils/factories'
-import { ApAreaService, ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
+import { ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput, PaginatedResponse } from '../@types/ui'
 import paths from '../paths/api'
@@ -23,6 +22,7 @@ import { getPaginationDetails } from '../utils/getPaginationDetails'
 
 jest.mock('../utils/validation')
 jest.mock('../utils/getPaginationDetails')
+
 describe('TasksController', () => {
   const token = 'SOME_TOKEN'
 
@@ -32,7 +32,6 @@ describe('TasksController', () => {
 
   const applicationService = createMock<ApplicationService>({})
   const taskService = createMock<TaskService>({})
-  const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({})
   const userService: DeepMocked<UserService> = createMock<UserService>({})
   const cruManagementAreaService: DeepMocked<CruManagementAreaService> = createMock<CruManagementAreaService>({})
 
@@ -40,13 +39,7 @@ describe('TasksController', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    tasksController = new TasksController(
-      taskService,
-      applicationService,
-      apAreaService,
-      userService,
-      cruManagementAreaService,
-    )
+    tasksController = new TasksController(taskService, applicationService, userService, cruManagementAreaService)
   })
 
   describe('index', () => {
@@ -336,10 +329,10 @@ describe('TasksController', () => {
     const task = taskFactory.build({ taskType: 'PlacementRequest' })
     const taskWrapper = taskWrapperFactory.build({ task })
     const application = applicationFactory.build()
-    const apAreas = apAreaFactory.buildList(1)
+    const cruManagementAreas = cruManagementAreaFactory.buildList(3)
 
     beforeEach(() => {
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
       taskService.find.mockResolvedValue(taskWrapper)
       applicationService.findApplication.mockResolvedValue(application)
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
@@ -358,13 +351,13 @@ describe('TasksController', () => {
         users: taskWrapper.users,
         errors: {},
         errorSummary: [],
-        apAreas,
-        apAreaId: '',
+        cruManagementAreas,
+        cruManagementAreaId: '',
         qualification: '',
       })
 
       expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType, {
-        apAreaId: '',
+        cruManagementAreaId: '',
       })
       expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, task.applicationId)
     })
@@ -385,13 +378,13 @@ describe('TasksController', () => {
         users: placementApplicationTaskWrapper.users,
         errors: {},
         errorSummary: [],
-        apAreas,
-        apAreaId: '',
+        cruManagementAreas,
+        cruManagementAreaId: '',
         qualification: '',
       })
 
       expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType, {
-        apAreaId: '',
+        cruManagementAreaId: '',
       })
     })
 
@@ -409,8 +402,8 @@ describe('TasksController', () => {
         users: taskWrapper.users,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        apAreas,
-        apAreaId: '',
+        cruManagementAreas,
+        cruManagementAreaId: '',
         qualification: '',
         ...errorsAndUserInput.userInput,
       })
@@ -418,7 +411,7 @@ describe('TasksController', () => {
 
     it('should handle params and query parameters correctly', async () => {
       const params = { id: 'task-id', taskType: 'placement-request' }
-      const userFilters = { apAreaId: 'some-id', qualification: 'esap' }
+      const userFilters = { cruManagementAreaId: 'some-id', qualification: 'esap' }
       const requestWithQuery = { ...request, params, query: userFilters }
       const requestHandler = tasksController.show()
       await requestHandler(requestWithQuery, response, next)
@@ -430,8 +423,8 @@ describe('TasksController', () => {
         errorSummary: [],
         task: taskWrapper.task,
         users: taskWrapper.users,
-        apAreas,
-        apAreaId: userFilters.apAreaId,
+        cruManagementAreas,
+        cruManagementAreaId: userFilters.cruManagementAreaId,
         qualification: userFilters.qualification,
       })
 
