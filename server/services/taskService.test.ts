@@ -2,6 +2,7 @@ import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
 import { Task, UserQualification } from '../@types/shared'
 import TaskClient from '../data/taskClient'
 import {
+  cruManagementAreaFactory,
   paginatedResponseFactory,
   placementApplicationTaskFactory,
   placementRequestTaskFactory,
@@ -112,33 +113,30 @@ describe('taskService', () => {
     })
 
     it('filters users result by AP area and qualification', async () => {
-      const apArea = {
-        id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
-        name: 'Midlands',
-      }
-
+      const cruManagementArea = cruManagementAreaFactory.build()
       const qualification: UserQualification = 'emergency' as const
-      const expectedUser = userWithWorkloadFactory.build({ apArea, qualifications: [qualification] })
+      const expectedUser = userWithWorkloadFactory.build({ cruManagementArea, qualifications: [qualification] })
       const users = [...userWithWorkloadFactory.buildList(2), expectedUser]
       const taskWrapper = taskWrapperFactory.build({ users })
       taskClient.find.mockResolvedValue(taskWrapper)
 
-      const result = await service.find(token, applicationId, 'assessment', { apAreaId: apArea.id, qualification })
+      const result = await service.find(token, applicationId, 'assessment', {
+        cruManagementAreaId: cruManagementArea.id,
+        qualification,
+      })
       expect(result.users).toEqual([expectedUser])
     })
 
     it('filters users result by only AP Area', async () => {
-      const apArea = {
-        id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
-        name: 'Midlands',
-      }
-
-      const expectedUser = userWithWorkloadFactory.build({ apArea })
+      const cruManagementArea = cruManagementAreaFactory.build()
+      const expectedUser = userWithWorkloadFactory.build({ cruManagementArea })
       const users = [...userWithWorkloadFactory.buildList(2), expectedUser]
       const taskWrapper = taskWrapperFactory.build({ users })
       taskClient.find.mockResolvedValue(taskWrapper)
 
-      const result = await service.find(token, applicationId, 'assessment', { apAreaId: apArea.id })
+      const result = await service.find(token, applicationId, 'assessment', {
+        cruManagementAreaId: cruManagementArea.id,
+      })
       expect(result.users).toEqual([expectedUser])
     })
 

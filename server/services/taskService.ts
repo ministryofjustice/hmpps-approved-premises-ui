@@ -1,4 +1,5 @@
 import {
+  Cas1CruManagementArea,
   PlacementApplicationTask,
   PlacementRequestTask,
   Reallocation,
@@ -92,19 +93,21 @@ export default class TaskService {
     token: string,
     premisesId: string,
     taskType: string,
-    userFilters: { apAreaId?: string; qualification?: UserQualification },
+    userFilters: { cruManagementAreaId?: Cas1CruManagementArea['id']; qualification?: UserQualification },
   ): Promise<TaskWrapper> {
     const taskClient = this.taskClientFactory(token)
 
     const task = await taskClient.find(premisesId, taskType)
 
-    const { apAreaId, qualification } = userFilters
+    const { cruManagementAreaId, qualification } = userFilters
 
-    if (apAreaId || qualification) {
+    if (cruManagementAreaId || qualification) {
       task.users = task.users.filter(user => {
-        const includesApAreaIdIfFilter = apAreaId ? user.apArea.id === apAreaId : true
+        const includesCruManagementAreaIdIfFilter = cruManagementAreaId
+          ? user.cruManagementArea.id === cruManagementAreaId
+          : true
         const includesQualificationIfFilter = qualification ? user.qualifications.includes(qualification) : true
-        return includesApAreaIdIfFilter && includesQualificationIfFilter
+        return includesCruManagementAreaIdIfFilter && includesQualificationIfFilter
       })
     }
 
