@@ -1,6 +1,6 @@
 import { cruManagementAreaFactory, userFactory } from '../../testutils/factories'
 import {
-  userCRUManagementAreasSelectOptions,
+  userCruManagementAreasSelectOptions,
   userQualificationsSelectOptions,
   userRolesSelectOptions,
   userSummaryListItems,
@@ -200,11 +200,11 @@ describe('userQualificationsSelectOptions', () => {
   })
 })
 
-describe('userCRUManagementAreasSelectOptions', () => {
+describe('userCruManagementAreasSelectOptions', () => {
   const cruManagementAreas = cruManagementAreaFactory.buildList(2)
 
   it('returns a list of CRU management areas', () => {
-    expect(userCRUManagementAreasSelectOptions(cruManagementAreas)).toEqual([
+    expect(userCruManagementAreasSelectOptions(cruManagementAreas)).toEqual([
       {
         text: 'None',
         value: '',
@@ -224,7 +224,7 @@ describe('userCRUManagementAreasSelectOptions', () => {
   })
 
   it('returns a list of CRU management areas with one selected', () => {
-    expect(userCRUManagementAreasSelectOptions(cruManagementAreas, cruManagementAreas[1].id)).toEqual([
+    expect(userCruManagementAreasSelectOptions(cruManagementAreas, cruManagementAreas[1].id)).toEqual([
       {
         text: 'None',
         value: '',

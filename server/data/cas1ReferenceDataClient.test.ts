@@ -44,7 +44,7 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
     })
   })
 
-  describe('getCRUManagementAreas', () => {
+  describe('getCruManagementAreas', () => {
     it('should return an array of CRU management areas', async () => {
       const cruManagementAreas = cruManagementAreaFactory.buildList(5)
 
@@ -64,7 +64,7 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
         },
       })
 
-      const output = await cas1ReferenceDataClient.getCRUManagementAreas()
+      const output = await cas1ReferenceDataClient.getCruManagementAreas()
       expect(output).toEqual(cruManagementAreas)
     })
   })

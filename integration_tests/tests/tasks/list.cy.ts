@@ -24,7 +24,7 @@ context('Task Allocation', () => {
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubAuthUser', { apArea })
     cy.task('stubApAreaReferenceData', { apArea, additionalAreas: [additionalArea] })
-    cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
+    cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
 
     const me = userFactory.build({ apArea, cruManagementArea: cruManagementAreas[0] })
     cy.task('stubAuthUser', {

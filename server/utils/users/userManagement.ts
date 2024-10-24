@@ -102,7 +102,7 @@ export const userQualificationsSelectOptions = (
   return options
 }
 
-export const userCRUManagementAreasSelectOptions = (
+export const userCruManagementAreasSelectOptions = (
   cruManagementAreas: Array<Cas1CruManagementArea>,
   selected?: Cas1CruManagementArea['id'],
 ): Array<SelectOption> => [

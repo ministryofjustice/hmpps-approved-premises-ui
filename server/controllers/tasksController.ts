@@ -59,7 +59,7 @@ export default class TasksController {
         isCompleted,
       })
 
-      const cruManagementAreas = await this.cruManagementAreaService.getCRUManagementAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       res.render('tasks/index', {
         pageHeading: 'Task Allocation',

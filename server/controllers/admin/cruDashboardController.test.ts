@@ -66,7 +66,7 @@ describe('CruDashboardController', () => {
     beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
-      cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
     })
 
     it('should render the placement requests template with the users CRU management area filtered by default', async () => {
@@ -98,7 +98,7 @@ describe('CruDashboardController', () => {
         paginationDetails.sortDirection,
       )
 
-      expect(cruManagementAreaService.getCRUManagementAreas).toHaveBeenCalledWith(token)
+      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
 
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.cruDashboard.index({}), {
         status: 'notMatched',

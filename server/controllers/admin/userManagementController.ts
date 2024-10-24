@@ -5,7 +5,7 @@ import paths from '../../paths/admin'
 import { flattenCheckboxInput } from '../../utils/formUtils'
 import { UserQualification, ApprovedPremisesUserRole as UserRole, UserSortField } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { userCRUManagementAreasSelectOptions } from '../../utils/users/userManagement'
+import { userCruManagementAreasSelectOptions } from '../../utils/users/userManagement'
 
 export default class UserController {
   constructor(
@@ -57,12 +57,12 @@ export default class UserController {
   edit(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const updateUser = await this.userService.getUserById(req.user.token, req.params.id)
-      const cruManagementAreas = await this.cruManagementAreaService.getCRUManagementAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       res.render('admin/users/edit', {
         pageHeading: 'Manage permissions',
         updateUser,
-        cruManagementAreasOptions: userCRUManagementAreasSelectOptions(
+        cruManagementAreasOptions: userCruManagementAreasSelectOptions(
           cruManagementAreas,
           updateUser.cruManagementAreaOverride?.id,
         ),

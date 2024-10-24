@@ -22,7 +22,7 @@ export default class CruDashboardController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const cruManagementAreas = await this.cruManagementAreaService.getCRUManagementAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
       const viewArgs =
         req.query.status === 'pendingPlacement'
           ? await this.getPendingApplications(req, res)

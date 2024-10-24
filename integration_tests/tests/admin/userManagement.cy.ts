@@ -27,7 +27,7 @@ context('User management', () => {
     cy.task('stubFindUser', { user, id: user.id })
     cy.task('stubUsers', { users })
     cy.task('stubApAreaReferenceData')
-    cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
+    cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
     cy.task('stubAuthUser', { roles })
 
     // When I visit the list page
@@ -124,7 +124,7 @@ context('User management', () => {
   it('enables adding a user from Delius', () => {
     const users = userFactory.buildList(10)
     cy.task('stubApAreaReferenceData')
-    cy.task('stubCRUManagementAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData')
     cy.task('stubUsers', { users })
     // Given I am on the list page
     const listPage = ListPage.visit()
@@ -170,7 +170,7 @@ context('User management', () => {
     cy.task('stubUsers', { users })
     cy.task('stubFindUser', { user: userToDelete, id: userToDelete.id })
     cy.task('stubApAreaReferenceData')
-    cy.task('stubCRUManagementAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData')
 
     // Given I am on a user's permissions page
     const permissionsPage = ShowPage.visit(userToDelete.id)

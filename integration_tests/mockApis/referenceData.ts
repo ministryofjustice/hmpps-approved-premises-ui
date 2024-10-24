@@ -33,7 +33,7 @@ export const stubApAreaReferenceData = (
   })
 }
 
-export const stubCRUManagementAreaReferenceData = (
+export const stubCruManagementAreaReferenceData = (
   args: {
     cruManagementAreas?: Array<Cas1CruManagementArea>
   } = {},
@@ -55,5 +55,5 @@ export const stubCRUManagementAreaReferenceData = (
 
 export default {
   stubApAreaReferenceData,
-  stubCRUManagementAreaReferenceData,
+  stubCruManagementAreaReferenceData,
 }

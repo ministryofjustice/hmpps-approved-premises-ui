@@ -74,7 +74,7 @@ context('Task Allocation', () => {
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
     cy.task('stubApAreaReferenceData', { apArea })
-    cy.task('stubCRUManagementAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData')
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
 

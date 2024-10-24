@@ -24,7 +24,7 @@ context('Placement Requests', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
-    cy.task('stubCRUManagementAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData')
   })
 
   it('allows me to search for an available space', () => {

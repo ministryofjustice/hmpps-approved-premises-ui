@@ -268,7 +268,7 @@ describe('UserManagementController', () => {
       const updateUser = userFactory.build({ cruManagementAreaOverride: undefined })
 
       userService.getUserById.mockResolvedValue(updateUser)
-      cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
 
       const requestHandler = userManagementController.edit()
 
@@ -277,7 +277,7 @@ describe('UserManagementController', () => {
       await requestHandler(request, response, next)
 
       expect(userService.getUserById).toHaveBeenCalledWith(token, updateUser.id)
-      expect(cruManagementAreaService.getCRUManagementAreas).toHaveBeenCalledWith(token)
+      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
       expect(response.render).toHaveBeenCalledWith('admin/users/edit', {
         pageHeading: 'Manage permissions',
         updateUser,
@@ -309,7 +309,7 @@ describe('UserManagementController', () => {
         const updateUser = userFactory.build({ cruManagementAreaOverride: cruManagementAreas[1] })
 
         userService.getUserById.mockResolvedValue(updateUser)
-        cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
+        cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
 
         const requestHandler = userManagementController.edit()
 
@@ -354,12 +354,12 @@ describe('UserManagementController', () => {
         allocationRoles: ['excluded_from_assess_allocation'],
         roles: ['assessor', 'matcher'],
       }
-      const updatedCRUManagementArea = cruManagementAreaFactory.build()
+      const updatedCruManagementArea = cruManagementAreaFactory.build()
       const updatedUser = {
         ...user,
         qualifications: ['emergency'],
         roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
-        cruManagementAreaOverride: updatedCRUManagementArea,
+        cruManagementAreaOverride: updatedCruManagementArea,
       }
       const flash = jest.fn()
 
@@ -372,7 +372,7 @@ describe('UserManagementController', () => {
             roles: updatedRoles.roles,
             allocationPreferences: updatedRoles.allocationRoles,
             qualifications: updatedUser.qualifications,
-            cruManagementAreaOverrideId: updatedCRUManagementArea.id,
+            cruManagementAreaOverrideId: updatedCruManagementArea.id,
           },
           params: { id: user.id },
         },
@@ -383,7 +383,7 @@ describe('UserManagementController', () => {
       expect(userService.updateUser).toHaveBeenCalledWith(token, user.id, {
         roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
         qualifications: updatedUser.qualifications,
-        cruManagementAreaOverrideId: updatedCRUManagementArea.id,
+        cruManagementAreaOverrideId: updatedCruManagementArea.id,
       })
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.edit({ id: user.id }))
       expect(flash).toHaveBeenCalledWith('success', 'User updated')
