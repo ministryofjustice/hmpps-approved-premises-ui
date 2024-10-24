@@ -6,13 +6,11 @@
 {% set pageTitle = applicationName + " - Home" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full-width">
 
-            <h1 class="govuk-heading-l">List of Approved Premises</h1>
-        </div>
-
-        <form action="{{ paths.premises.index({}) }}" method="post">
+    <h1 class="govuk-heading-l">List of Approved Premises</h1>
+    
+    <form action="{{ paths.premises.index({}) }}" method="post">
+        <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-quarter">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
@@ -36,28 +34,26 @@
                     preventDoubleClick: true
                 }) }}
             </div>
-        </form>
-
-        <div class="govuk-grid-column-full-width">
-            {{ govukTable({
-                captionClasses: "govuk-table__caption--m",
-                firstCellIsHeader: true,
-                head: [
-                    {
-                        text: "Name"
-                    },
-                    {
-                        text: "Code"
-                    },
-                    {
-                        text: "Number of beds"
-                    },
-                    {
-                        html: '<span class="govuk-visually-hidden">Actions</span>'
-                    }
-                ],
-                rows: PremisesUtils.premisesTableRows(premisesSummaries)
-            }) }}
         </div>
-    </div>
+    </form>
+
+    {{ govukTable({
+        captionClasses: "govuk-table__caption--m",
+        firstCellIsHeader: true,
+        head: [
+            {
+                text: "Name"
+            },
+            {
+                text: "Code"
+            },
+            {
+                text: "Number of beds"
+            },
+            {
+                html: '<span class="govuk-visually-hidden">Actions</span>'
+            }
+        ],
+        rows: PremisesUtils.premisesTableRows(premisesSummaries)
+    }) }}
 {% endblock %}
