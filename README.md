@@ -27,7 +27,7 @@ script/bootstrap
 
 ### Using AP Tools
 
-In order to spin up a full stack of a working API and other [dependent services](./docker-compose.yml) we recommend using [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
+In order to spin up a full stack of a working API and other dependent services use [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
 
 NB. The approach AP Tools takes solves a critical limitation for working in
 development. Due to how the frontend and API authenticate requests they both
@@ -71,108 +71,71 @@ npm install
 npx playwright install
 ```
 
-### Running locally against the deployed `dev` environment
+### Running against UI/API hosted in the `dev` environment
 
-#### Environment variables
+Copy the contents of `.env.dev` into `.env`. Update the user passwords to the actual values (available in 1Password)
 
-You will need to have the following **environment variables** in your local `.env` file:
+If you also want to test emails, review the 'Testing Emails' section below
+
+Then start the tests using one of the following:
 
 ```
-API_CLIENT_ID=approved-premises-ui
-APPROVED_PREMISES_API_URL=http://localhost:8080
-CAS1_E2E_ADMINISTRATOR_PASSWORD=*REDACTED*
-CAS1_E2E_ADMINISTRATOR_USERNAME=AP_USER_TEST_2
-CAS1_E2E_ASSESSOR_EMAIL=e2e.test.user@example.digital.justice.gov.uk
-CAS1_E2E_ASSESSOR_NAME="AP_USER TEST_1"
-CAS1_E2E_ASSESSOR_PASSWORD=*REDACTED*
-CAS1_E2E_ASSESSOR_USERNAME=AP_USER_TEST_1
-CAS1_E2E_CRU_MEMBER_PASSWORD=*REDACTED*
-CAS1_E2E_CRU_MEMBER_USERNAME=AP_USER_TEST_4
-CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=JOSEPHHOLLINSHEAD
-CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO="AP_USER TEST_1"
-CAS1_E2E_EMERGENCY_NAME_TO_ALLOCATE_TO="AP_USER TEST_1"
-CAS1_E2E_FUTURE_MANAGER_PASSWORD=*REDACTED*
-CAS1_E2E_FUTURE_MANAGER_USERNAME=AP_USER_TEST_5
-CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN=X349420
-CAS1_E2E_REPORT_VIEWER_PASSWORD=*REDACTED*
-CAS1_E2E_REPORT_VIEWER_USERNAME=AP_USER_TEST_2
-CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD=*REDACTED*
-CAS1_E2E_USER_WITHOUT_ROLES_USERNAME=AP_USER_TEST_1
-HMPPS_AUTH_EXTERNAL_URL=http://localhost:9091/auth
-HMPPS_AUTH_NAME="AP_USER TEST_1"
-HMPPS_AUTH_PASSWORD=*REDACTED*
-HMPPS_AUTH_URL=http://localhost:9091/auth
-HMPPS_AUTH_USERNAME=AP_USER_TEST_1
-NOTIFY_API_KEY=*REDACTED*
-SYSTEM_CLIENT_ID=approved-premises-api
-```
-
-To run headless:
-
-```bash
+# headless
 npm run test:e2e:ci
-# ->  npx playwright test --config ./e2e/playwright.config.ts  --project=dev
-```
-
-or with the UI:
-
-```bash
+# ui
 npm run test:e2e:ui
-# ->  npx playwright test --config ./e2e/playwright.config.ts  --project=dev --ui
-
 ```
 
-### Running locally against your `local` development environment
+### Running against UI/API hosted in your local dev environment (ap-tools)
 
-#### Environment variables
-
-You will need to have the following **environment variables** in your local `.env` file.
-
-NOTIFY_API_KEY will need updating (speak to colleagues). All other defaults should work out of the box.
+First start the ap-tools using
 
 ```
-API_CLIENT_ID=approved-premises-ui
-APPROVED_PREMISES_API_URL=http://localhost:8080
-CAS1_E2E_ADMINISTRATOR_PASSWORD=secret
-CAS1_E2E_ADMINISTRATOR_USERNAME=JIMSNOWLDAP
-CAS1_E2E_ASSESSOR_EMAIL=jim.snow@justice.gov.uk
-CAS1_E2E_ASSESSOR_NAME="Test Jim Snow"
-CAS1_E2E_ASSESSOR_PASSWORD=secret
-CAS1_E2E_ASSESSOR_USERNAME=JIMSNOWLDAP
-CAS1_E2E_CRU_MEMBER_PASSWORD=secret
-CAS1_E2E_CRU_MEMBER_USERNAME=LAOFULLACCESS
-CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=john-smith
-CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO="Test Jim Snow"
-CAS1_E2E_FUTURE_MANAGER_PASSWORD=secret
-CAS1_E2E_FUTURE_MANAGER_USERNAME=LAOFULLACCESS
-CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN=X320811
-CAS1_E2E_REPORT_VIEWER_PASSWORD=secret
-CAS1_E2E_REPORT_VIEWER_USERNAME=JIMSNOWLDAP
-CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD=secret
-CAS1_E2E_USER_WITHOUT_ROLES_USERNAME=JIMSNOWLDAP
-CAS1_E2E_CHECK_EMAILS=false
-HMPPS_AUTH_EXTERNAL_URL=http://localhost:9091/auth
-HMPPS_AUTH_NAME=AP_USER TEST_1
-HMPPS_AUTH_PASSWORD=*REDACTED*
-HMPPS_AUTH_URL=http://localhost:9091/auth
-HMPPS_AUTH_USERNAME=AP_USER_TEST_1
-NOTIFY_API_KEY=*REDACTED*
-SYSTEM_CLIENT_ID=approved-premises-api
-ENABLE_V2_MATCH=true
+ap-tools server stop --clear-databases
+ap-tools server start --local-ui --local-api
 ```
 
-#### Testing Email Locally
+Copy the contents of `.env.local` into `.env`
 
-When testing locally emails will not be enabled by default. To enable this behaviour:
+If you also want to test emails, review the 'Testing Emails' section below
 
-1. Update .env, changing:
+Then start the tests using one of the following:
+
+```
+npm run test:e2e:local
+npm run test:e2e:local:ui
+```
+
+#### Running against UI/API hosted in your local dev environment against upstream services in dev (emulate circle ci e2e test execution)
+
+First start the ap-tools using
+
+```
+ap-tools server stop --clear-databases
+ap-tools server start --local-ui --local-api-dev-upstream
+```
+
+Copy the contents of `.env.local-dev-upstream` into `.env`
+
+If you also want to test emails, review the 'Testing Emails' section below
+
+Then start the tests using one of the following:
+
+```
+npm run test:e2e:local-dev-upstream
+npm run test:e2e:local-dev-upstream:ui
+```
+
+### Testing Emails
+
+The E2E test do not check emails by default. To enable this in the e2e tests update the .env file, changing:
 
 ```
 CAS1_E2E_CHECK_EMAILS=true
 NOTIFY_API_KEY=set to the local-e2e test key (speak to collegues)
 ```
 
-2. In the api project, update application-local.yml, adding the following:
+If then API is also running locally, that will need configuring to send emails to notify:
 
 ```
 notify:
@@ -180,24 +143,6 @@ notify:
   api-key: aforementioned NOTIFY_API_KEY value
   guest-list-api-key: aforementioned NOTIFY_API_KEY value
 ```
-
-#### CLI commands
-
-Headless:
-
-```bash
-npm run test:e2e:local
-# -> npx playwright test --config ./e2e/playwright.config.ts --project=local
-```
-
-With UI:
-
-```bash
-npm run test:e2e:local:ui
-# -> npx playwright test --config ./e2e/playwright.config.ts --project=local --ui
-```
-
-When running with UI it may select 'setupLocal' project by default. Click on projects and select 'local' too to see all tests
 
 ## Feature flags
 
