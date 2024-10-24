@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { Cas1SpaceSearchParameters, Cas1SpaceSearchRequirements } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import { filterOutAPTypes } from '../../utils/match'
+import { filterOutAPTypes } from '../../utils/match/util'
 import { placementCriteria } from './placementRequest'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { SpaceSearchParametersUi } from '../../@types/ui'
