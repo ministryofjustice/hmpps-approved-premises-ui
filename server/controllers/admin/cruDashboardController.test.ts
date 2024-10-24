@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import CruDashboardController from './cruDashboardController'
 
-import { ApplicationService, CRUManagementAreaService, PlacementRequestService } from '../../services'
+import { ApplicationService, CruManagementAreaService, PlacementRequestService } from '../../services'
 import {
   applicationSummaryFactory,
   cruManagementAreaFactory,
@@ -35,7 +35,7 @@ describe('CruDashboardController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
-  const cruManagementAreaService = createMock<CRUManagementAreaService>({})
+  const cruManagementAreaService = createMock<CruManagementAreaService>({})
   const applicationService = createMock<ApplicationService>({})
 
   let cruDashboardController: CruDashboardController
@@ -66,7 +66,7 @@ describe('CruDashboardController', () => {
     beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
-      cruManagementAreaService.getCRUManagementAreas.mockResolvedValue(cruManagementAreas)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
     })
 
     it('should render the placement requests template with the users CRU management area filtered by default', async () => {
@@ -98,7 +98,7 @@ describe('CruDashboardController', () => {
         paginationDetails.sortDirection,
       )
 
-      expect(cruManagementAreaService.getCRUManagementAreas).toHaveBeenCalledWith(token)
+      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
 
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.cruDashboard.index({}), {
         status: 'notMatched',

@@ -33,6 +33,7 @@ const person = people.path(':crn')
 const oasys = person.path('oasys')
 
 const users = path('/users')
+const cas1Users = cas1Namespace.path('users')
 
 const tasks = path('/tasks')
 const taskSingle = tasks.path(':taskType/:id')
@@ -180,11 +181,10 @@ export default {
     summary: users.path('summary'),
     search: users.path('search'),
     searchDelius: users.path('delius'),
-    show: users.path(':id'),
-    profile,
-    update: users.path(':id'),
-    delete: users.path(':id'),
-    v2profile: profile.path('v2'),
+    show: cas1Users.path(':id'),
+    update: cas1Users.path(':id'),
+    delete: cas1Users.path(':id'),
+    profile: profile.path('v2'),
   },
   reports: cas1Reports.path(':reportName'),
 }

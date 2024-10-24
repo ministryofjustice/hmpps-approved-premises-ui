@@ -24,7 +24,7 @@ context('Withdrawals', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
-    cy.task('stubCRUManagementAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData')
   })
 
   describe('as a CRU user', () => {

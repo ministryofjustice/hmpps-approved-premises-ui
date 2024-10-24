@@ -1,5 +1,10 @@
-import { userFactory } from '../../testutils/factories'
-import { userQualificationsSelectOptions, userRolesSelectOptions, userSummaryListItems } from './userManagement'
+import { cruManagementAreaFactory, userFactory } from '../../testutils/factories'
+import {
+  userCruManagementAreasSelectOptions,
+  userQualificationsSelectOptions,
+  userRolesSelectOptions,
+  userSummaryListItems,
+} from './userManagement'
 
 describe('UserUtils', () => {
   it('returns the correct objects in an array when all the expected data is present', () => {
@@ -191,6 +196,50 @@ describe('userQualificationsSelectOptions', () => {
       { selected: false, text: 'PIPE', value: 'pipe' },
       { selected: false, text: 'Recovery-focused APs', value: 'recovery_focused' },
       { selected: false, text: 'Specialist Mental Health APs', value: 'mental_health_specialist' },
+    ])
+  })
+})
+
+describe('userCruManagementAreasSelectOptions', () => {
+  const cruManagementAreas = cruManagementAreaFactory.buildList(2)
+
+  it('returns a list of CRU management areas', () => {
+    expect(userCruManagementAreasSelectOptions(cruManagementAreas)).toEqual([
+      {
+        text: 'None',
+        value: '',
+        selected: true,
+      },
+      {
+        text: cruManagementAreas[0].name,
+        value: cruManagementAreas[0].id,
+        selected: false,
+      },
+      {
+        text: cruManagementAreas[1].name,
+        value: cruManagementAreas[1].id,
+        selected: false,
+      },
+    ])
+  })
+
+  it('returns a list of CRU management areas with one selected', () => {
+    expect(userCruManagementAreasSelectOptions(cruManagementAreas, cruManagementAreas[1].id)).toEqual([
+      {
+        text: 'None',
+        value: '',
+        selected: false,
+      },
+      {
+        text: cruManagementAreas[0].name,
+        value: cruManagementAreas[0].id,
+        selected: false,
+      },
+      {
+        text: cruManagementAreas[1].name,
+        value: cruManagementAreas[1].id,
+        selected: true,
+      },
     ])
   })
 })

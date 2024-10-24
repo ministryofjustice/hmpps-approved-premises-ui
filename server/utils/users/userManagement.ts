@@ -1,5 +1,10 @@
 import { SelectOption } from '@approved-premises/ui'
-import { ApprovedPremisesUserRole, ApprovedPremisesUser as User, UserQualification } from '../../@types/shared'
+import {
+  ApprovedPremisesUserRole,
+  Cas1CruManagementArea,
+  ApprovedPremisesUser as User,
+  UserQualification,
+} from '../../@types/shared'
 import { RoleInUse, qualificationDictionary } from './roles'
 
 export const userSummaryListItems = (user: User) => [
@@ -96,3 +101,19 @@ export const userQualificationsSelectOptions = (
 
   return options
 }
+
+export const userCruManagementAreasSelectOptions = (
+  cruManagementAreas: Array<Cas1CruManagementArea>,
+  selected?: Cas1CruManagementArea['id'],
+): Array<SelectOption> => [
+  {
+    text: 'None',
+    value: '',
+    selected: !selected,
+  },
+  ...cruManagementAreas.map(area => ({
+    text: area.name,
+    value: area.id,
+    selected: selected === area.id,
+  })),
+]

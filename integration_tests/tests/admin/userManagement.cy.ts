@@ -1,6 +1,6 @@
 import { ApprovedPremisesUserRole, UserQualification } from '@approved-premises/api'
 import paths from '../../../server/paths/admin'
-import { userFactory } from '../../../server/testutils/factories'
+import { cruManagementAreaFactory, userFactory } from '../../../server/testutils/factories'
 import ConfirmDeletionPage from '../../pages/admin/userManagement/confirmDeletionPage'
 import ConfirmUserDetailsPage from '../../pages/admin/userManagement/confirmUserDetailsPage'
 import ListPage from '../../pages/admin/userManagement/listPage'
@@ -20,12 +20,14 @@ context('User management', () => {
 
   it('allows the user to view and update users', () => {
     // Given there are users in the DB
-    const users = userFactory.buildList(10, { roles: ['assessor'] })
+    const users = userFactory.buildList(10, { roles: ['assessor'], cruManagementAreaOverride: undefined })
     const user = users[0]
+    const cruManagementAreas = cruManagementAreaFactory.buildList(5)
     const roles = ['matcher', 'workflow_manager']
     cy.task('stubFindUser', { user, id: user.id })
     cy.task('stubUsers', { users })
     cy.task('stubApAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
     cy.task('stubAuthUser', { roles })
 
     // When I visit the list page
@@ -45,7 +47,8 @@ context('User management', () => {
     showPage.checkForBackButton(paths.admin.userManagement.index({}))
     showPage.shouldShowUserDetails(user)
 
-    // When I update the user's roles and qualifications
+    // When I update the user's CRU management area, roles and qualifications
+    const updatedCruManagementArea = cruManagementAreas[1]
     const updatedRoles = {
       roles: ['matcher', 'workflow_manager'] as const,
       allocationRoles: [
@@ -59,11 +62,13 @@ context('User management', () => {
       roles: updatedRoles.roles,
       allocationRoles: updatedRoles.allocationRoles,
       qualifications: updatedRoles.qualifications,
+      cruManagementArea: updatedCruManagementArea,
     })
     const updatedUser = {
       ...user,
       roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
       qualifications: [...updatedRoles.qualifications],
+      cruManagementAreaOverride: updatedCruManagementArea,
     }
     cy.task('stubUserUpdate', {
       user: updatedUser,
@@ -80,6 +85,7 @@ context('User management', () => {
       expect(body).to.deep.equal({
         roles: updatedUser.roles,
         qualifications: updatedRoles.qualifications,
+        cruManagementAreaOverrideId: updatedCruManagementArea.id,
       })
     })
 
@@ -118,6 +124,7 @@ context('User management', () => {
   it('enables adding a user from Delius', () => {
     const users = userFactory.buildList(10)
     cy.task('stubApAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData')
     cy.task('stubUsers', { users })
     // Given I am on the list page
     const listPage = ListPage.visit()
@@ -163,6 +170,7 @@ context('User management', () => {
     cy.task('stubUsers', { users })
     cy.task('stubFindUser', { user: userToDelete, id: userToDelete.id })
     cy.task('stubApAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData')
 
     // Given I am on a user's permissions page
     const permissionsPage = ShowPage.visit(userToDelete.id)

@@ -2,6 +2,7 @@ import Page from '../../page'
 import paths from '../../../../server/paths/admin'
 
 import {
+  Cas1CruManagementArea,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
@@ -49,14 +50,17 @@ export default class ShowPage extends Page {
     roles,
     allocationRoles,
     qualifications,
+    cruManagementArea,
   }: {
     roles: ReadonlyArray<UserRole>
     allocationRoles: ReadonlyArray<AllocationRole>
     qualifications: ReadonlyArray<UserQualification>
+    cruManagementArea: Readonly<Cas1CruManagementArea>
   }): void {
     this.selectRoles(roles)
     this.selectAllocationRoles(allocationRoles)
     this.selectUserQualifications(qualifications)
+    this.getSelectInputByIdAndSelectAnEntry('cruManagementAreaOverrideId', cruManagementArea.name)
   }
 
   clickRemoveAccess(): void {

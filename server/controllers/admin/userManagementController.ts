@@ -1,15 +1,17 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { qualifications, roles } from '../../utils/users'
-import { ApAreaService, UserService } from '../../services'
+import { ApAreaService, CruManagementAreaService, UserService } from '../../services'
 import paths from '../../paths/admin'
 import { flattenCheckboxInput } from '../../utils/formUtils'
 import { UserQualification, ApprovedPremisesUserRole as UserRole, UserSortField } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { userCruManagementAreasSelectOptions } from '../../utils/users/userManagement'
 
 export default class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly apAreaService: ApAreaService,
+    private readonly cruManagementAreaService: CruManagementAreaService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
@@ -54,9 +56,19 @@ export default class UserController {
 
   edit(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const user = await this.userService.getUserById(req.user.token, req.params.id)
+      const updateUser = await this.userService.getUserById(req.user.token, req.params.id)
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
-      res.render('admin/users/edit', { pageHeading: 'Manage permissions', user, roles, qualifications })
+      res.render('admin/users/edit', {
+        pageHeading: 'Manage permissions',
+        updateUser,
+        cruManagementAreasOptions: userCruManagementAreasSelectOptions(
+          cruManagementAreas,
+          updateUser.cruManagementAreaOverride?.id,
+        ),
+        roles,
+        qualifications,
+      })
     }
   }
 
@@ -65,6 +77,7 @@ export default class UserController {
       await this.userService.updateUser(req.user.token, req.params.id, {
         roles: [...flattenCheckboxInput(req.body.roles), ...flattenCheckboxInput(req.body.allocationPreferences)],
         qualifications: flattenCheckboxInput(req.body.qualifications),
+        cruManagementAreaOverrideId: req.body.cruManagementAreaOverrideId,
       })
 
       req.flash('success', 'User updated')

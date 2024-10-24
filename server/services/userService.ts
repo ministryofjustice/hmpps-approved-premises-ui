@@ -1,10 +1,10 @@
 import {
+  Cas1UpdateUser,
   ProbationRegion,
   SortDirection,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
-  UserRolesAndQualifications,
   UserSortField,
   type UserSummary,
 } from '@approved-premises/api'
@@ -64,10 +64,10 @@ export default class UserService {
     return client.getUsers(areaId, roles, qualifications, page, sortBy, sortDirection)
   }
 
-  async updateUser(token: string, userId: string, rolesAndQualifications: UserRolesAndQualifications): Promise<User> {
+  async updateUser(token: string, userId: string, updateUserData: Cas1UpdateUser): Promise<User> {
     const client = this.userClientFactory(token)
 
-    return client.updateUser(userId, rolesAndQualifications)
+    return client.updateUser(userId, updateUserData)
   }
 
   async search(token: string, query: string): Promise<Array<User>> {

@@ -14,7 +14,7 @@ export default class Cas1ReferenceDataClient {
     return (await this.restClient.get({ path: `/cas1/reference-data/${objectType}` })) as Array<Cas1ReferenceData>
   }
 
-  async getCRUManagementAreas(): Promise<Array<Cas1CruManagementArea>> {
+  async getCruManagementAreas(): Promise<Array<Cas1CruManagementArea>> {
     return (await this.restClient.get({
       path: `/cas1/reference-data/cru-management-areas`,
     })) as Array<Cas1CruManagementArea>

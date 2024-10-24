@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApplicationService, CRUManagementAreaService, PlacementRequestService } from '../../services'
+import { ApplicationService, CruManagementAreaService, PlacementRequestService } from '../../services'
 import {
   ApplicationSortField,
   Cas1CruManagementArea,
@@ -16,13 +16,13 @@ import { getSearchOptions } from '../../utils/getSearchOptions'
 export default class CruDashboardController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
-    private readonly cruManagementAreaService: CRUManagementAreaService,
+    private readonly cruManagementAreaService: CruManagementAreaService,
     private readonly applicationService: ApplicationService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const cruManagementAreas = await this.cruManagementAreaService.getCRUManagementAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
       const viewArgs =
         req.query.status === 'pendingPlacement'
           ? await this.getPendingApplications(req, res)

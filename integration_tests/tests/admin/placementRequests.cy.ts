@@ -77,7 +77,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', unmatchedPlacementRequest)
     cy.task('stubPlacementRequest', matchedPlacementRequest)
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
-    cy.task('stubCRUManagementAreaReferenceData', { cruManagementAreas })
+    cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
 
     const cas1premises = cas1PremisesBasicSummaryFactory.buildList(3)
     cy.task('stubCas1AllPremises', cas1premises)
