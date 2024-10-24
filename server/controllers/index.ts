@@ -23,7 +23,6 @@ export const controllers = (services: Services) => {
   const tasksController = new TasksController(
     services.taskService,
     services.applicationService,
-    services.apAreaService,
     services.userService,
     services.cruManagementAreaService,
   )

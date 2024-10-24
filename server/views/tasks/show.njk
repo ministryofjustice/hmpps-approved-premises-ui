@@ -8,86 +8,84 @@
 {% extends "../partials/layout.njk" %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l">
-        {{ pageHeading }}
-      </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">
+                {{ pageHeading }}
+            </h1>
 
-      {{
-        govukSummaryList({
-            rows: TaskUtils.taskSummary(task, application)
-        })
-      }}
+            {{ govukSummaryList({
+                rows: TaskUtils.taskSummary(task, application)
+            }) }}
 
-      {{ showErrorSummary(errorSummary) }}
+            {{ showErrorSummary(errorSummary) }}
+        </div>
     </div>
-  </div>
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h2 class="govuk-heading-m">Allocate task to</h2>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">Allocate task to</h2>
+        </div>
     </div>
-  </div>
-  <div class="search-and-filter__wrapper">
-    <form action="{{ paths.tasks.show(TaskUtils.taskParams(task)) }}" method="get">
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
-          <h2 class="govuk-heading-m">Filters</h2>
-        </div>
-      </div>
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-          {{ govukSelect({
-                  label: {
-                    text: "Region",
-                    classes: "govuk-label--s"
-                  },
-                  id: "apAreaId",
-                  name: "apAreaId",
-                  items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apAreaId')
-                }) }}
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-          {{ govukSelect({
-                  label: {
-                    text: "Qualifications",
-                    classes: "govuk-label--s"
-                  },
-                  id: "qualification",
-                  name: "qualification",
-                  items: UserUtils.userQualificationsSelectOptions(qualification)
-                }) }}
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-          {{ govukButton({
-                  "name": "submit",
-                  "text": "Apply filters",
-                  "classes": "search-and-filter__submit",
-                  "preventDoubleClick": true
-              }) }}
-        </div>
-      </div>
-    </form>
-  </div>
-  {{
-    govukTable({
-      attributes: {
-        'data-module': 'moj-sortable-table'
-      },
-      firstCellIsHeader: true,
-      head: TaskUtils.userTableHeader(),
-      rows: TaskUtils.userTableRows(users, task, csrfToken)
-    })
-  }}
-</div>
+
+    <div class="search-and-filter__wrapper">
+        <form action="{{ paths.tasks.show(TaskUtils.taskParams(task)) }}" method="get">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-quarter">
+                    <h2 class="govuk-heading-m">Filters</h2>
+                </div>
+            </div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-quarter">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                    {{ govukSelect({
+                        label: {
+                            text: "AP area",
+                            classes: "govuk-label--s"
+                        },
+                        id: "cruManagementAreaId",
+                        name: "cruManagementAreaId",
+                        items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementAreaId')
+                    }) }}
+                </div>
+                <div class="govuk-grid-column-one-quarter">
+                    {{ govukSelect({
+                        label: {
+                            text: "Qualifications",
+                            classes: "govuk-label--s"
+                        },
+                        id: "qualification",
+                        name: "qualification",
+                        items: UserUtils.userQualificationsSelectOptions(qualification)
+                    }) }}
+                </div>
+                <div class="govuk-grid-column-one-quarter">
+                    {{ govukButton({
+                        "name": "submit",
+                        "text": "Apply filters",
+                        "classes": "search-and-filter__submit",
+                        "preventDoubleClick": true
+                    }) }}
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {{ govukTable({
+        attributes: {
+            'data-module': 'moj-sortable-table'
+        },
+        firstCellIsHeader: true,
+        head: TaskUtils.userTableHeader(),
+        rows: TaskUtils.userTableRows(users, task, csrfToken)
+    }) }}
 
 {% endblock %}
 
 {% block extraScripts %}
-<script type="text/javascript" nonce="{{ cspNonce }}">
-  window
-    .MOJFrontend
-    .initAll()
-</script>
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+      window
+        .MOJFrontend
+        .initAll()
+    </script>
 {% endblock %}
