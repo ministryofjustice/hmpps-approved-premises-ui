@@ -1,5 +1,4 @@
 import type { Request, RequestHandler, Response } from 'express'
-
 import {
   ApArea,
   Cas1SpaceBookingResidency,

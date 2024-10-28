@@ -53,4 +53,16 @@ export default class PremisesClient {
       query: { residency: status, sortBy, sortDirection, perPage },
     })
   }
+
+  async getPlacements(
+    premisesId: string,
+    status: string,
+    sortBy: Cas1SpaceBookingSummarySortField,
+    sortDirection: SortDirection,
+  ): Promise<Array<Cas1SpaceBookingSummary>> {
+    return (await this.restClient.get({
+      path: paths.premises.placements({ premisesId }),
+      query: { residency: status, sortBy, sortDirection },
+    })) as Array<Cas1SpaceBookingSummary>
+  }
 }

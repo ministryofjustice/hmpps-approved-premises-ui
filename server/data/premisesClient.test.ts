@@ -63,4 +63,34 @@ describeClient('PremisesClient', provider => {
       expect(output).toEqual(bed)
     })
   })
+
+  describe('getPlacements', () => {
+    it('should return a list of placements for a premises', async () => {
+      const premises = extendedPremisesSummaryFactory.build()
+      const placements = cas1SpaceBookingSummaryFactory.buildList(10)
+      const status = 'current'
+      const sortBy = 'personName'
+      const sortDirection = 'asc'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get placements for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.placements({ premisesId: premises.id }),
+          query: { residency: status, sortBy, sortDirection },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placements,
+        },
+      })
+
+      const output = await premisesClient.getPlacements(premises.id, status, sortBy, sortDirection)
+      expect(output).toEqual(placements)
+    })
+  })
 })

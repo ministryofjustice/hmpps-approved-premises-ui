@@ -108,10 +108,24 @@ export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: stri
       },
       { addQueryPrefix: true },
     )}`
-  return Object.entries(tabTextMap).map(([key, label]) => {
-    return { text: label, active: activeTab === key, href: getSelfLink(key) }
-  })
-}
+  }
+  return [
+    {
+      text: 'Upcoming',
+      active: activeTab === 'upcoming',
+      href: getSelfLink('upcoming'),
+    },
+    {
+      text: 'Current',
+      active: activeTab === 'current',
+      href: getSelfLink('current'),
+    },
+    {
+      text: 'Historical',
+      active: activeTab === 'historical',
+      href: getSelfLink('historical'),
+    },
+  ]
 
 type ColumnDefinition = {
   title: string

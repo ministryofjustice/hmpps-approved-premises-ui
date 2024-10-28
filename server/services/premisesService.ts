@@ -51,4 +51,16 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getPlacements(remainingArgs)
   }
+
+  async getPlacements(
+    token: string,
+    premisesId: string,
+    status: string,
+    sortBy: Cas1SpaceBookingSummarySortField,
+    sortDirection: SortDirection,
+  ) {
+    const premisesClient = this.premisesClientFactory(token)
+    const result = await premisesClient.getPlacements(premisesId, status, sortBy, sortDirection)
+    return result
+  }
 }

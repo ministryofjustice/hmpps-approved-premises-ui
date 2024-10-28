@@ -131,4 +131,23 @@ describe('PremisesService', () => {
       })
     })
   })
+
+  describe('getPlacements', () => {
+    it('returns the placements for a particular premesis', async () => {
+      const status = 'upcoming'
+      const sortBy = 'personName'
+      const sortDirection = 'asc'
+
+      const placements = cas1SpaceBookingSummaryFactory.buildList(10)
+
+      premisesClient.getPlacements.mockResolvedValue(placements)
+
+      const result = await service.getPlacements(token, premisesId, status, sortBy, sortDirection)
+
+      expect(result).toEqual(placements)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getPlacements).toHaveBeenCalledWith(premisesId, status, sortBy, sortDirection)
+    })
+  })
 })
