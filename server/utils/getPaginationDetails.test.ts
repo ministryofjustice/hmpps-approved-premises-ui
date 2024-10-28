@@ -37,4 +37,15 @@ describe('getPaginationDetails', () => {
       hrefPrefix: `${hrefPrefix}?foo=bar&sortBy=something&sortDirection=asc&`,
     })
   })
+
+  it('should default the sort column', () => {
+    const request = createMock<Request>({ query: { page: '1' } })
+
+    expect(getPaginationDetails(request, hrefPrefix, { foo: 'bar' }, 'defaultSort')).toEqual({
+      pageNumber: 1,
+      sortBy: 'defaultSort',
+      sortDirection: undefined,
+      hrefPrefix: `${hrefPrefix}?foo=bar&sortBy=defaultSort&`,
+    })
+  })
 })

@@ -19,7 +19,7 @@ export default Cas1ReferenceDataFactory.define(() => ({
   isActive: true,
 }))
 
-export const cruManagementAreaFactory = Factory.define<Cas1CruManagementArea>(() => ({
+export const cruManagementAreaFactory = Factory.define<Cas1CruManagementArea>(({ sequence }) => ({
   id: faker.string.uuid(),
-  name: faker.location.city(),
+  name: `${faker.location.city()}${sequence}`,
 }))

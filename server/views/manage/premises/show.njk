@@ -4,8 +4,10 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -39,6 +41,25 @@
     {{ govukSummaryList(
         PremisesUtils.summaryListForPremises(premises)
     ) }}
+
+    <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get">
+        <input type="hidden" name="activeTab" value="{{ activeTab }}"/>
+    </form>
+    
+    {{ mojSubNavigation({
+        label: 'Sub navigation',
+        items: PremisesUtils.premisesTabItems(premises, activeTab)
+    }) }}
+
+    {{ govukTable({
+        firstCellIsHeader: false,
+        head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
+        rows: PremisesUtils.placementTableRows(activeTab, premises.id, placements)
+    }) }}
+
+    {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+
+
 {% endblock %}
 
 {% block extraScripts %}

@@ -1,4 +1,8 @@
-import { cas1PremisesSummaryFactory, premisesSummaryFactory } from '../../../server/testutils/factories'
+import {
+  cas1PremisesSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
+  premisesSummaryFactory,
+} from '../../../server/testutils/factories'
 
 import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
 
@@ -26,16 +30,22 @@ context('Premises', () => {
     })
   })
 
-  it('should show a single premises', () => {
-    // Given there is a premises in the database
-    const premises = cas1PremisesSummaryFactory.build()
-    cy.task('stubSinglePremises', premises)
+  describe('show', () => {
+    it('should show a single premises', () => {
+      // Given there is a premises in the database
+      const premises = cas1PremisesSummaryFactory.build()
+      cy.task('stubSinglePremises', premises)
+      const placements = cas1SpaceBookingSummaryFactory.buildList(5)
+      cy.task('stubSpaceBookingSummary', { premisesId: premises.id, placements })
 
-    // When I visit premises page
-    const page = PremisesShowPage.visit(premises)
+      // When I visit premises page
+      const page = PremisesShowPage.visit(premises)
 
-    // Then I should see the premises details shown
-    page.shouldShowAPArea(premises.apArea.name)
-    page.shouldShowPremisesDetail()
+      // Then I should see the premises details shown
+      page.shouldShowAPArea(premises.apArea.name)
+      page.shouldShowPremisesDetail()
+      page.shouldShowListOfPlacements(placements)
+      page.shouldHaveTabSelected('Upcoming')
+    })
   })
 })

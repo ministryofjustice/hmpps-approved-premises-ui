@@ -1,4 +1,14 @@
-import type { BedDetail, BedSummary, Cas1PremisesBasicSummary, Cas1PremisesSummary } from '@approved-premises/api'
+import type {
+  BedDetail,
+  BedSummary,
+  Cas1PremisesBasicSummary,
+  Cas1PremisesSummary,
+  Cas1SpaceBookingSummarySortField,
+  ExtendedPremisesSummary,
+  Room,
+  SortDirection,
+  StaffMember,
+} from '@approved-premises/api'
 import type { PremisesFilters } from '@approved-premises/ui'
 import type { PremisesClient, RestClientBuilder } from '../data'
 
@@ -29,5 +39,30 @@ export default class PremisesService {
     const premises = await premisesClient.find(id)
 
     return premises
+  }
+
+  async getPremisesDetails(token: string, id: string): Promise<ExtendedPremisesSummary> {
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.summary(id)
+  }
+
+  async getOccupancy(token: string, premisesId: string, startDate: string, endDate: string) {
+    const premisesClient = this.premisesClientFactory(token)
+    const apiOccupancy = await premisesClient.calendar(premisesId, startDate, endDate)
+    const occupancyForUi = await mapApiOccupancyToUiOccupancy(apiOccupancy)
+
+    return occupancyForUi
+  }
+
+  async getPlacements(
+    token: string,
+    premisesId: string,
+    status: string,
+    sortBy: Cas1SpaceBookingSummarySortField,
+    sortDirection: SortDirection,
+  ) {
+    const premisesClient = this.premisesClientFactory(token)
+    const result = await premisesClient.getPlacements(premisesId, status, sortBy, sortDirection)
+    return result
   }
 }

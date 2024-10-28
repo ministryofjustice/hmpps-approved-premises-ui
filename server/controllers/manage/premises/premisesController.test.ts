@@ -8,6 +8,7 @@ import {
   apAreaFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../../testutils/factories'
 
 describe('V2PremisesController', () => {
@@ -28,18 +29,28 @@ describe('V2PremisesController', () => {
   })
 
   describe('show', () => {
-    it('should return the premises detail to the template', async () => {
+    it('should render the premises detail and list of placements', async () => {
       const premisesSummary = cas1PremisesSummaryFactory.build()
-
+      const placementList = cas1SpaceBookingSummaryFactory.buildList(3)
       premisesService.find.mockResolvedValue(premisesSummary)
+      premisesService.getPlacements.mockResolvedValue(placementList)
+      const hrefPrefix = `/manage/premises/${premisesId}?activeTab=upcoming&sortBy=personName&sortDirection=asc&`
+      const sortParameters = { sortDirection: 'asc', sortBy: 'personName', activeTab: 'upcoming', hrefPrefix }
+      request = createMock<Request>({
+        user: { token },
+        params: { premisesId },
+        query: { ...sortParameters, page: '1' },
+      })
 
       const requestHandler = premisesController.show()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
+        ...sortParameters,
+        pageNumber: 1,
+        placements: placementList,
       })
-
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
     })
   })

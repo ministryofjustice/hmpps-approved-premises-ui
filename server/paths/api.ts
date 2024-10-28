@@ -89,6 +89,7 @@ export default {
       move: booking.path('moves'),
       dateChange: booking.path('date-changes'),
     },
+    placements: cas1PremisesSingle.path('space-bookings'),
     calendar: premisesSingle.path('calendar'),
   },
   bookings: {

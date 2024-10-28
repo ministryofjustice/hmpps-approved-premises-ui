@@ -1,14 +1,30 @@
-import { cas1PremisesBasicSummaryFactory, cas1PremisesSummaryFactory } from '../../testutils/factories'
+import { BedOccupancyEntryUi } from '@approved-premises/ui'
+import {
+  bedOccupancyEntryFactory,
+  bedOccupancyRangeFactory,
+  cas1PremisesBasicSummaryFactory,
+  cas1PremisesSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
+} from '../../testutils/factories'
 import {
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
-  premisesActions,
+  mapApiOccupancyEntryToUiOccupancyEntry,
+  mapApiOccupancyToUiOccupancy,
+  overcapacityMessage,
+  placementTableHeader,
+  placementTableRows,
+  premisesTabItems,
   premisesTableRows,
   summaryListForPremises,
 } from '.'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
-import { linkTo } from '../utils'
+
+import { convertToTitleCase, linkTo } from '../utils'
+import { DateFormats } from '../dateUtils'
+
+jest.mock('../addOverbookingsToSchedule')
 
 describe('premisesUtils', () => {
   describe('premisesActions', () => {
@@ -179,6 +195,61 @@ describe('premisesUtils', () => {
           },
         ],
       ])
+    })
+  })
+
+  describe('premisesTabItems', () => {
+    it('should return a set filter tabs for the premises detail page', () => {
+      const premises = cas1PremisesSummaryFactory.build()
+      const expectedTabs = ['upcoming', 'current', 'historical'].map(tab => {
+        return {
+          active: tab === 'upcoming',
+          href: `/manage/premises/${premises.id}?activeTab=${tab}`,
+          text: convertToTitleCase(tab),
+        }
+      })
+      const tabSet = premisesTabItems(premises, 'upcoming')
+      expect(tabSet).toEqual(expectedTabs)
+    })
+  })
+
+  describe('placementTableHeader', () => {
+    it('should return the sortable table headings for the placement list', () => {
+      const sortBy = 'personName'
+      const tableHeadings = placementTableHeader('upcoming', sortBy, 'asc', 'Test_Href_Prefix')
+      const expectedHeadings = [
+        ['personName', 'Name and CRN'],
+        ['tier', 'Tier'],
+        ['canonicalArrivalDate', 'Arrival date'],
+        ['canonicalDepartureDate', 'Departure date'],
+        ['keyWorkerName', 'Key worker'],
+      ].map(([field, title]) => {
+        const isSortField = field === sortBy
+        return {
+          attributes: { 'aria-sort': isSortField ? 'ascending' : 'none', 'data-cy-sort-field': field },
+          html: `<a href="Test_Href_Prefix?sortBy=${field}${isSortField ? '&sortDirection=desc' : ''}">${title}</a>`,
+        }
+      })
+      expect(tableHeadings).toEqual(expectedHeadings)
+    })
+  })
+  describe('placementTableRows', () => {
+    it('should return the rows of he placement summary table', () => {
+      const placements = cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' })
+
+      const tableRows = placementTableRows('current', 'Test_Premises_Id', placements)
+      const expectedRows = placements.map(placement => {
+        return [
+          {
+            html: `<a href="/manage/premises/Test_Premises_Id/space-bookings/${placement.id}" data-cy-id="${placement.id}">${placement.person.name}<br>${placement.person.crn}</a>`,
+          },
+          { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
+          { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
+          { text: placement.keyWorkerAllocation.keyWorker.name },
+        ]
+      })
+      expect(tableRows).toEqual(expectedRows)
     })
   })
 })
