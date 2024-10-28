@@ -4,6 +4,7 @@ import type {
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
   DateCapacity,
+  PersonSummary,
   SortDirection,
 } from '@approved-premises/api'
 import { BedOccupancyRangeUi, SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
@@ -17,6 +18,89 @@ import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
 
 export { premisesActions } from './premisesActions'
+
+export type NegativeDateRange = { start?: string; end?: string }
+
+export interface PersonWithName extends PersonSummary {
+  name: string
+}
+
+export const overcapacityMessage = (premisesCapacity: Array<DateCapacity> = []): string => {
+  let dateRange: NegativeDateRange = {}
+  const overcapacityDateRanges: Array<NegativeDateRange> = []
+  let message: string
+
+  premisesCapacity.forEach((premisesCapacityItem, i, arr) => {
+    if (premisesCapacityItem.availableBeds < 0 && !dateRange?.start) {
+      dateRange.start = premisesCapacityItem.date
+    } else if (premisesCapacityItem.availableBeds < 0 && dateRange.start) {
+      dateRange.end = premisesCapacityItem.date
+    } else if (premisesCapacityItem.availableBeds >= 0 && dateRange.start) {
+      overcapacityDateRanges.push(dateRange)
+      dateRange = {}
+    }
+    if (arr.length === i + 1 && dateRange.start) {
+      overcapacityDateRanges.push(dateRange)
+    }
+  })
+
+  if (overcapacityDateRanges.length === 1) {
+    if (!overcapacityDateRanges[0].end) {
+      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(
+        overcapacityDateRanges[0].start,
+      )}</h3>`
+    }
+    message = `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${DateFormats.isoDateToUIDate(
+      overcapacityDateRanges[0].start,
+    )} to ${DateFormats.isoDateToUIDate(overcapacityDateRanges[0].end)}</h3>`
+  }
+
+  if (overcapacityDateRanges.length > 1) {
+    const dateRanges = overcapacityDateRanges
+      .map((range: NegativeDateRange) =>
+        !range.end
+          ? `<li>${DateFormats.isoDateToUIDate(range.start)}</li>`
+          : `<li>${DateFormats.isoDateToUIDate(range.start)} to ${DateFormats.isoDateToUIDate(range.end)}</li>`,
+      )
+      .join('')
+    message = `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
+      <ul class="govuk-list govuk-list--bullet">${dateRanges}</ul>`
+  }
+
+  return message
+}
+
+export const mapApiOccupancyToUiOccupancy = async (bedOccupancyRangeList: Array<BedOccupancyRange>) => {
+  const mappedOccupancyList = await Promise.all(
+    bedOccupancyRangeList.map(async occupancyRange => {
+      const mappedEntry = await mapApiOccupancyEntryToUiOccupancyEntry(occupancyRange)
+      return mappedEntry
+    }),
+  )
+
+  const occupancyListWithOverBookings = mappedOccupancyList.map(item => ({
+    ...item,
+    schedule: addOverbookingsToSchedule(item.schedule),
+  }))
+
+  return occupancyListWithOverBookings
+}
+
+export const mapApiOccupancyEntryToUiOccupancyEntry = async (
+  bedOccupancyRangeList: BedOccupancyRange,
+): Promise<BedOccupancyRangeUi> => {
+  return {
+    ...bedOccupancyRangeList,
+    schedule: bedOccupancyRangeList.schedule.map(scheduleEntry => {
+      return {
+        ...scheduleEntry,
+        startDate: DateFormats.isoToDateObj(scheduleEntry.startDate),
+        endDate: DateFormats.isoToDateObj(scheduleEntry.endDate),
+      }
+    }),
+  } as BedOccupancyRangeUi
+}
+>>>>>>> 6dff7c56 (Fix person name type issue)
 
 export const summaryListForPremises = (premises: Cas1PremisesSummary): SummaryList => {
   return {
@@ -161,7 +245,7 @@ export const placementTableRows = (
 ): Array<TableRow> =>
   placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => [
     htmlValue(
-      `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${person.name}<br>${person.crn}</a>`,
+      `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${(person as PersonWithName).name}<br>${person.crn}</a>`,
     ),
     htmlValue(getTierOrBlank(tier)),
     textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),

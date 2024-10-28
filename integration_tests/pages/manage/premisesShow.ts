@@ -1,8 +1,10 @@
 import type { Cas1PremisesSummary, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
+
 import Page from '../page'
 import paths from '../../../server/paths/manage'
+import { PersonWithName } from '../../../server/utils/premises'
 
 export default class PremisesShowPage extends Page {
   constructor(private readonly premises: Cas1PremisesSummary) {
@@ -49,7 +51,7 @@ export default class PremisesShowPage extends Page {
       cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
       cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
       cy.get('@row').contains(tier)
-      cy.get('@row').contains(person.name)
+      cy.get('@row').contains((person as PersonWithName).name)
     })
   }
 

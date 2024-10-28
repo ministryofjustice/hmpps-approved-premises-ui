@@ -12,6 +12,7 @@ import {
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
+  PersonWithName,
   placementTableHeader,
   placementTableRows,
   premisesTabItems,
@@ -241,7 +242,7 @@ describe('premisesUtils', () => {
       const expectedRows = placements.map(placement => {
         return [
           {
-            html: `<a href="/manage/premises/Test_Premises_Id/space-bookings/${placement.id}" data-cy-id="${placement.id}">${placement.person.name}<br>${placement.person.crn}</a>`,
+            html: `<a href="/manage/premises/Test_Premises_Id/space-bookings/${placement.id}" data-cy-id="${placement.id}">${(placement.person as PersonWithName).name}<br>${placement.person.crn}</a>`,
           },
           { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
           { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
