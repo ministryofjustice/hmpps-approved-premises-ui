@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { qualifications, roles } from '../../utils/users'
-import { ApAreaService, CruManagementAreaService, UserService } from '../../services'
+import { CruManagementAreaService, UserService } from '../../services'
 import paths from '../../paths/admin'
 import { flattenCheckboxInput } from '../../utils/formUtils'
 import { UserQualification, ApprovedPremisesUserRole as UserRole, UserSortField } from '../../@types/shared'
@@ -10,7 +10,6 @@ import { userCruManagementAreasSelectOptions } from '../../utils/users/userManag
 export default class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly apAreaService: ApAreaService,
     private readonly cruManagementAreaService: CruManagementAreaService,
   ) {}
 
@@ -36,12 +35,12 @@ export default class UserController {
         sortDirection,
       )
 
-      const apAreas = await this.apAreaService.getApAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       res.render('admin/users/index', {
         pageHeading: 'User management dashboard',
         users: usersResponse.data,
-        apAreas,
+        cruManagementAreas,
         pageNumber: Number(usersResponse.pageNumber),
         totalPages: Number(usersResponse.totalPages),
         hrefPrefix,
@@ -88,9 +87,14 @@ export default class UserController {
   search(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const users = await this.userService.search(req.user.token, req.body.name as string)
-      const apAreas = await this.apAreaService.getApAreas(req.user.token)
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
-      res.render('admin/users/index', { pageHeading: 'User management dashboard', users, apAreas, name: req.body.name })
+      res.render('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        cruManagementAreas,
+        name: req.body.name,
+      })
     }
   }
 

@@ -3,7 +3,6 @@ import AllocationsPage from '../../pages/tasks/allocationPage'
 import Page from '../../pages/page'
 
 import {
-  apAreaFactory,
   applicationFactory,
   cruManagementAreaFactory,
   personFactory,
@@ -22,8 +21,8 @@ context('Task Allocation', () => {
     cy.task('reset')
     cy.task('stubSignIn')
 
-    const apArea = apAreaFactory.build()
     const cruManagementArea = cruManagementAreaFactory.build()
+    const cruManagementAreas = [...cruManagementAreaFactory.buildList(4), cruManagementArea]
     const qualifications = qualificationFactory.buildList(2)
     // Given there are some users in the database
     const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ qualifications })]
@@ -73,8 +72,7 @@ context('Task Allocation', () => {
     })
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
-    cy.task('stubApAreaReferenceData', { apArea })
-    cy.task('stubCruManagementAreaReferenceData')
+    cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
 
@@ -93,7 +91,6 @@ context('Task Allocation', () => {
     cy.wrap(selectedUser).as('selectedUser')
     cy.wrap(application).as('application')
     cy.wrap(applicationForRestrictedPerson).as('applicationForRestrictedPerson')
-    cy.wrap(apArea).as('apArea')
     cy.wrap(cruManagementArea).as('cruManagementArea')
     cy.wrap(qualifications).as('qualification')
   })
@@ -166,16 +163,16 @@ context('Task Allocation', () => {
     // And I should see a list of staff members who can be allocated to that task
     allocationsPage.shouldShowUserTable(this.users, this.task)
 
-    // When I filter by AP Area
-    allocationsPage.searchBy('apAreaId', this.apArea.id)
+    // When I filter by CRU Management Area
+    allocationsPage.searchBy('cruManagementAreaId', this.cruManagementArea.id)
     allocationsPage.clickApplyFilter()
 
-    // Then I should be shown a list of users with that AP Area
-    let expectedUsers = this.users.filter(user => user.apArea.id === this.apArea.id)
+    // Then I should be shown a list of users with that CRU Management Area
+    let expectedUsers = this.users.filter(user => user.cruManagementArea.id === this.cruManagementArea.id)
     allocationsPage.shouldShowUserTable(expectedUsers, this.task)
 
     // When I filter by all areas it should clear the filter
-    allocationsPage.searchBy('apAreaId', '')
+    allocationsPage.searchBy('cruManagementAreaId', '')
     allocationsPage.clickApplyFilter()
 
     // Then I should be shown a list of users for all areas
@@ -190,7 +187,7 @@ context('Task Allocation', () => {
     allocationsPage.shouldShowUserTable(expectedUsers, this.task)
 
     // When I filter by both filters
-    allocationsPage.searchBy('apAreaId', this.apArea.id)
+    allocationsPage.searchBy('cruManagementAreaId', this.cruManagementArea.id)
     allocationsPage.clickApplyFilter()
 
     // Then I should be shown a list of users with that qualification and CRU Management Area
