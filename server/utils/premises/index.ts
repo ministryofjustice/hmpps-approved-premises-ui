@@ -178,32 +178,27 @@ export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSumm
     })
 }
 
+type TabKey = 'upcoming' | 'current' | 'historical'
+
 export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: string): Array<TabItem> => {
-  const getSelfLink = (tab: string): string => {
-    return `${managePaths.premises.show({ premisesId: premises.id })}${createQueryString(
+  const getSelfLink = (tab: string): string =>
+    `${managePaths.premises.show({ premisesId: premises.id })}${createQueryString(
       {
         activeTab: tab,
       },
       { addQueryPrefix: true },
     )}`
-  }
-  return [
-    {
-      text: 'Upcoming',
-      active: activeTab === 'upcoming',
-      href: getSelfLink('upcoming'),
-    },
-    {
-      text: 'Current',
-      active: activeTab === 'current',
-      href: getSelfLink('current'),
-    },
-    {
-      text: 'Historical',
-      active: activeTab === 'historical',
-      href: getSelfLink('historical'),
-    },
+  const tabs: Array<{
+    label: string
+    key: TabKey
+  }> = [
+    { label: 'Upcoming', key: 'upcoming' },
+    { label: 'Current', key: 'current' },
+    { label: 'Historical', key: 'historical' },
   ]
+  return tabs.map(({ label, key }) => {
+    return { text: label, active: activeTab === key, href: getSelfLink(key) }
+  })
 }
 
 type ColumnDefinition = {
@@ -221,7 +216,7 @@ const upcomingAndCurrentColumns: Array<ColumnDefinition> = [
   { title: 'Key worker', fieldName: 'keyWorkerName' },
 ]
 
-const columnMap: Record<string, Array<ColumnDefinition>> = {
+const columnMap: Record<TabKey, Array<ColumnDefinition>> = {
   upcoming: upcomingAndCurrentColumns,
   current: upcomingAndCurrentColumns,
   historical: baseColumns,
@@ -233,7 +228,7 @@ export const placementTableHeader = (
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
-  return columnMap[activeTab].map(({ title, fieldName }) =>
+  return columnMap[activeTab].map(({ title, fieldName }: ColumnDefinition) =>
     sortHeader<Cas1SpaceBookingSummarySortField>(title, fieldName, sortBy, sortDirection, hrefPrefix),
   )
 }
@@ -245,7 +240,7 @@ export const placementTableRows = (
 ): Array<TableRow> =>
   placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => [
     htmlValue(
-      `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${(person as PersonWithName).name}<br>${person.crn}</a>`,
+      `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${(person as PersonWithName).name}, ${person.crn}</a>`,
     ),
     htmlValue(getTierOrBlank(tier)),
     textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
