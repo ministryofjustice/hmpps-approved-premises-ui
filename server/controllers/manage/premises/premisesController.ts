@@ -22,7 +22,7 @@ export default class PremisesController {
       )
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
-      const perPage = activeTab === 'current' ? 2000 : 2
+      const perPage = activeTab === 'current' ? 2000 : 20
 
       const paginatedPlacements = await this.premisesService.getPlacements(
         req.user.token,
