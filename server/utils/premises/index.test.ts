@@ -6,6 +6,7 @@ import {
 } from '../../testutils/factories'
 import {
   PersonWithName,
+  TAB_TEXT_MAP,
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
   placementTableHeader,
@@ -17,7 +18,7 @@ import {
 } from '.'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
-import { convertToTitleCase, linkTo } from '../utils'
+import { linkTo } from '../utils'
 import { DateFormats } from '../dateUtils'
 
 describe('premisesUtils', () => {
