@@ -8,6 +8,7 @@ import {
 } from '../../testutils/factories'
 import {
   PersonWithName,
+  TAB_TEXT_MAP,
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
   mapApiOccupancyEntryToUiOccupancyEntry,
@@ -202,11 +203,11 @@ describe('premisesUtils', () => {
   describe('premisesTabItems', () => {
     it('should return a set filter tabs for the premises detail page', () => {
       const premises = cas1PremisesSummaryFactory.build()
-      const expectedTabs = ['upcoming', 'current', 'historical'].map(tab => {
+      const expectedTabs = Object.entries(TAB_TEXT_MAP).map(([key, text]) => {
         return {
-          active: tab === 'upcoming',
-          href: `/manage/premises/${premises.id}?activeTab=${tab}`,
-          text: convertToTitleCase(tab),
+          active: key === 'upcoming',
+          href: `/manage/premises/${premises.id}?activeTab=${key}`,
+          text,
         }
       })
       const tabSet = premisesTabItems(premises, 'upcoming')

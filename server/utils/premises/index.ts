@@ -178,7 +178,13 @@ export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSumm
     })
 }
 
-type TabKey = 'upcoming' | 'current' | 'historical'
+type TabKey = 'upcoming' | 'current' | 'historic'
+
+export const TAB_TEXT_MAP: Record<TabKey, string> = {
+  upcoming: 'Upcoming',
+  current: 'Current',
+  historic: 'Historical',
+}
 
 export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: string): Array<TabItem> => {
   const getSelfLink = (tab: string): string =>
@@ -188,15 +194,7 @@ export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: stri
       },
       { addQueryPrefix: true },
     )}`
-  const tabs: Array<{
-    label: string
-    key: TabKey
-  }> = [
-    { label: 'Upcoming', key: 'upcoming' },
-    { label: 'Current', key: 'current' },
-    { label: 'Historical', key: 'historical' },
-  ]
-  return tabs.map(({ label, key }) => {
+  return Object.entries(TAB_TEXT_MAP).map(([key, label]) => {
     return { text: label, active: activeTab === key, href: getSelfLink(key) }
   })
 }
@@ -216,7 +214,7 @@ const keyWorkerColumn: ColumnDefinition = { title: 'Key worker', fieldName: 'key
 const columnMap: Record<TabKey, Array<ColumnDefinition>> = {
   upcoming: [...baseColumns, keyWorkerColumn],
   current: [...baseColumns, keyWorkerColumn],
-  historical: baseColumns,
+  historic: baseColumns,
 }
 
 export const placementTableHeader = (
