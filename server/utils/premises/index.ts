@@ -211,14 +211,11 @@ const baseColumns: Array<ColumnDefinition> = [
   { title: 'Arrival date', fieldName: 'canonicalArrivalDate' },
   { title: 'Departure date', fieldName: 'canonicalDepartureDate' },
 ]
-const upcomingAndCurrentColumns: Array<ColumnDefinition> = [
-  ...baseColumns,
-  { title: 'Key worker', fieldName: 'keyWorkerName' },
-]
+const keyWorkerColumn: ColumnDefinition = { title: 'Key worker', fieldName: 'keyWorkerName' }
 
 const columnMap: Record<TabKey, Array<ColumnDefinition>> = {
-  upcoming: upcomingAndCurrentColumns,
-  current: upcomingAndCurrentColumns,
+  upcoming: [...baseColumns, keyWorkerColumn],
+  current: [...baseColumns, keyWorkerColumn],
   historical: baseColumns,
 }
 
