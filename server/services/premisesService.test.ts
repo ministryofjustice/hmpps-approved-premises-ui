@@ -1,4 +1,6 @@
-import type { ManWoman } from '@approved-premises/ui'
+import type { ManWoman, PaginatedResponse } from '@approved-premises/ui'
+import type { Cas1SpaceBookingSummary } from '@approved-premises/api'
+
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
@@ -8,6 +10,7 @@ import {
   cas1PremisesSummaryFactory,
   cas1SpaceBookingSummaryFactory,
   extendedPremisesSummaryFactory,
+  paginatedResponseFactory,
   roomFactory,
   staffMemberFactory,
 } from '../testutils/factories'
@@ -135,21 +138,32 @@ describe('PremisesService', () => {
   })
 
   describe('getPlacements', () => {
-    it('returns the placements for a particular premesis', async () => {
+    it('returns the placements for a single premesis', async () => {
       const status = 'upcoming'
       const sortBy = 'personName'
       const sortDirection = 'asc'
+      const page = 1
+      const perPage = 20
 
-      const placements = cas1SpaceBookingSummaryFactory.buildList(10)
+      const paginatedPlacements = paginatedResponseFactory.build({
+        data: cas1SpaceBookingSummaryFactory.buildList(3),
+      }) as PaginatedResponse<Cas1SpaceBookingSummary>
 
-      premisesClient.getPlacements.mockResolvedValue(placements)
+      premisesClient.getPlacements.mockResolvedValue(paginatedPlacements)
 
-      const result = await service.getPlacements(token, premisesId, status, sortBy, sortDirection)
+      const result = await service.getPlacements(token, premisesId, status, page, perPage, sortBy, sortDirection)
 
-      expect(result).toEqual(placements)
+      expect(result).toEqual(paginatedPlacements)
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getPlacements).toHaveBeenCalledWith(premisesId, status, sortBy, sortDirection)
+      expect(premisesClient.getPlacements).toHaveBeenCalledWith(
+        premisesId,
+        status,
+        page,
+        perPage,
+        sortBy,
+        sortDirection,
+      )
     })
   })
 })

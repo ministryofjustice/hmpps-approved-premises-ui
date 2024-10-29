@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from '@approved-premises/ui'
+import type { Cas1SpaceBookingSummary } from '@approved-premises/api'
 import {
   bedDetailFactory,
   bedOccupancyRangeFactory,
@@ -5,6 +7,7 @@ import {
   cas1SpaceBookingSummaryFactory,
   dateCapacityFactory,
   extendedPremisesSummaryFactory,
+  paginatedResponseFactory,
   premisesFactory,
   premisesSummaryFactory,
   roomFactory,
@@ -133,8 +136,14 @@ describeClient('PremisesClient', provider => {
   describe('getPlacements', () => {
     it('should return a list of placements for a premises', async () => {
       const premises = extendedPremisesSummaryFactory.build()
-      const placements = cas1SpaceBookingSummaryFactory.buildList(10)
+      const paginatedPlacements = paginatedResponseFactory.build({
+        data: cas1SpaceBookingSummaryFactory.buildList(3),
+        pageSize: '20',
+        totalPages: '2',
+        totalResults: '40',
+      }) as PaginatedResponse<Cas1SpaceBookingSummary>
       const status = 'current'
+      const page = 1
       const sortBy = 'personName'
       const sortDirection = 'asc'
 
@@ -144,19 +153,43 @@ describeClient('PremisesClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.premises.placements({ premisesId: premises.id }),
-          query: { residency: status, sortBy, sortDirection },
+          query: {
+            residency: status,
+            sortBy,
+            sortDirection,
+            page: String(page),
+            perPage: paginatedPlacements.pageSize,
+          },
           headers: {
             authorization: `Bearer ${token}`,
           },
         },
         willRespondWith: {
           status: 200,
-          body: placements,
+          body: paginatedPlacements.data,
+          headers: {
+            'X-Pagination-PageSize': paginatedPlacements.pageSize,
+            'X-Pagination-TotalPages': paginatedPlacements.totalPages,
+            'X-Pagination-TotalResults': paginatedPlacements.totalResults,
+          },
         },
       })
 
-      const output = await premisesClient.getPlacements(premises.id, status, sortBy, sortDirection)
-      expect(output).toEqual(placements)
+      const output = await premisesClient.getPlacements(
+        premises.id,
+        status,
+        page,
+        Number(paginatedPlacements.pageSize),
+        sortBy,
+        sortDirection,
+      )
+      expect(output).toEqual({
+        ...paginatedPlacements,
+        ...['pageSize', 'totalPages', 'totalResults'].reduce((acc, fieldName) => {
+          acc[fieldName] = String(paginatedPlacements[fieldName])
+          return acc
+        }, {}),
+      })
     })
   })
 })

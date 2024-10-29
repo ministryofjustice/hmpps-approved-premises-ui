@@ -1,7 +1,6 @@
 import type { Cas1PremisesSummary, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { PersonWithName } from '../../../server/utils/premises'
@@ -55,7 +54,19 @@ export default class PremisesShowPage extends Page {
     })
   }
 
+  shouldHavePlacementListLengthOf(length: number): void {
+    cy.get('.govuk-table__body .govuk-table__row').should('have.length', length)
+  }
+
+  shouldHavePaginationControl(): void {
+    cy.get('.govuk-pagination').contains('2')
+  }
+
   shouldHaveTabSelected(tabTitle: string): void {
     cy.get('.moj-sub-navigation__list').contains(tabTitle).should('have.attr', 'aria-current', 'page')
+  }
+
+  shouldSelectTab(tabTitle: string): void {
+    cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
   }
 }

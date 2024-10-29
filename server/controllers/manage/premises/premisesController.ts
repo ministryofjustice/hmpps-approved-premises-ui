@@ -22,22 +22,26 @@ export default class PremisesController {
       )
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
+      const perPage = activeTab === 'current' ? 2000 : 2
 
-      const placements = await this.premisesService.getPlacements(
+      const paginatedPlacements = await this.premisesService.getPlacements(
         req.user.token,
         req.params.premisesId,
         activeTab as string,
+        pageNumber,
+        perPage,
         sortBy,
         sortDirection,
       )
       return res.render('manage/premises/show', {
         premises,
         activeTab: activeTab || 'upcoming',
-        placements,
+        placements: paginatedPlacements.data,
         hrefPrefix,
         sortBy: sortBy || 'canonicalDepartureDate',
         sortDirection,
-        pageNumber,
+        pageNumber: Number(paginatedPlacements.pageNumber),
+        totalPages: Number(paginatedPlacements.totalPages),
       })
     }
   }

@@ -31,8 +31,13 @@ export default {
       })
     ).body.requests,
 
-  stubSpaceBookingSummary: (args: { premisesId: string; placements: Array<Cas1SpaceBookingSummary> }) =>
-    stubFor({
+  stubSpaceBookingSummary: (args: {
+    premisesId: string
+    placements: Array<Cas1SpaceBookingSummary>
+    pageSize: number
+  }) => {
+    const pageSize: number = args.pageSize || 20
+    return stubFor({
       request: {
         method: 'GET',
         urlPattern: `${paths.premises.placements({ premisesId: args.premisesId })}.*`,
@@ -41,8 +46,12 @@ export default {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-PageSize': String(pageSize),
+          'X-Pagination-TotalPages': String(Math.ceil(args.placements.length / pageSize)),
+          'X-Pagination-TotalResults': String(args.placements.length),
         },
-        jsonBody: args.placements,
+        jsonBody: args.placements.slice(0, pageSize),
       },
-    }),
+    })
+  },
 }

@@ -7,12 +7,12 @@ import {
   cas1SpaceBookingSummaryFactory,
 } from '../../testutils/factories'
 import {
+  PersonWithName,
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
-  PersonWithName,
   placementTableHeader,
   placementTableRows,
   premisesTabItems,

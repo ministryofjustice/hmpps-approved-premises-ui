@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from '@approved-premises/ui'
+import type { Cas1SpaceBookingSummary } from '@approved-premises/api'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
@@ -9,6 +11,7 @@ import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
   cas1SpaceBookingSummaryFactory,
+  paginatedResponseFactory,
 } from '../../../testutils/factories'
 
 describe('V2PremisesController', () => {
@@ -31,9 +34,12 @@ describe('V2PremisesController', () => {
   describe('show', () => {
     it('should render the premises detail and list of placements', async () => {
       const premisesSummary = cas1PremisesSummaryFactory.build()
-      const placementList = cas1SpaceBookingSummaryFactory.buildList(3)
+      const paginatedPlacements = paginatedResponseFactory.build({
+        data: cas1SpaceBookingSummaryFactory.buildList(3),
+        totalPages: '5',
+      }) as PaginatedResponse<Cas1SpaceBookingSummary>
       premisesService.find.mockResolvedValue(premisesSummary)
-      premisesService.getPlacements.mockResolvedValue(placementList)
+      premisesService.getPlacements.mockResolvedValue(paginatedPlacements)
       const hrefPrefix = `/manage/premises/${premisesId}?activeTab=upcoming&sortBy=personName&sortDirection=asc&`
       const sortParameters = { sortDirection: 'asc', sortBy: 'personName', activeTab: 'upcoming', hrefPrefix }
       request = createMock<Request>({
@@ -49,7 +55,8 @@ describe('V2PremisesController', () => {
         premises: premisesSummary,
         ...sortParameters,
         pageNumber: 1,
-        placements: placementList,
+        totalPages: 5,
+        placements: paginatedPlacements.data,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
     })

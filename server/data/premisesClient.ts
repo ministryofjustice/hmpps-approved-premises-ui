@@ -13,7 +13,7 @@ import type {
   SortDirection,
   StaffMember,
 } from '@approved-premises/api'
-import type { PremisesFilters } from '@approved-premises/ui'
+import type { PaginatedResponse, PremisesFilters } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -67,12 +67,15 @@ export default class PremisesClient {
   async getPlacements(
     premisesId: string,
     status: string,
-    sortBy: Cas1SpaceBookingSummarySortField,
-    sortDirection: SortDirection,
-  ): Promise<Array<Cas1SpaceBookingSummary>> {
-    return (await this.restClient.get({
+    page: number = 1,
+    perPage: number = 20,
+    sortBy: Cas1SpaceBookingSummarySortField = 'canonicalArrivalDate',
+    sortDirection: SortDirection = 'asc',
+  ): Promise<PaginatedResponse<Cas1SpaceBookingSummary>> {
+    return this.restClient.getPaginatedResponse<Cas1SpaceBookingSummary>({
       path: paths.premises.placements({ premisesId }),
-      query: { residency: status, sortBy, sortDirection },
-    })) as Array<Cas1SpaceBookingSummary>
+      page: page.toString(),
+      query: { residency: status, sortBy, sortDirection, perPage },
+    })
   }
 }
