@@ -56,11 +56,12 @@ export default class PremisesService {
     token: string,
     premisesId: string,
     status: string,
+    page: number,
+    perPage: number,
     sortBy: Cas1SpaceBookingSummarySortField,
     sortDirection: SortDirection,
   ) {
     const premisesClient = this.premisesClientFactory(token)
-    const result = await premisesClient.getPlacements(premisesId, status, sortBy, sortDirection)
-    return result
+    return premisesClient.getPlacements(premisesId, status, page, perPage, sortBy, sortDirection)
   }
 }

@@ -1,7 +1,6 @@
 import type { Cas1PremisesSummary, Cas1SpaceBookingSummary, FullPerson } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { laoName } from '../../../server/utils/personUtils'
