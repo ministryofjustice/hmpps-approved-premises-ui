@@ -116,21 +116,15 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         },
       })
 
-      const output = await premisesClient.getPlacements(
-        premises.id,
+      const output = await premisesClient.getPlacements({
+        premisesId: premises.id,
         status,
         page,
-        Number(paginatedPlacements.pageSize),
+        perPage: Number(paginatedPlacements.pageSize),
         sortBy,
         sortDirection,
-      )
-      expect(output).toEqual({
-        ...paginatedPlacements,
-        ...['pageSize', 'totalPages', 'totalResults'].reduce((acc, fieldName) => {
-          acc[fieldName] = String(paginatedPlacements[fieldName])
-          return acc
-        }, {}),
       })
+      expect(output).toEqual(paginatedPlacements)
     })
   })
 })

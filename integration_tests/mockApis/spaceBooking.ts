@@ -31,7 +31,7 @@ export default {
       })
     ).body.requests,
 
-  stubSpaceBookingSummary: (args: {
+  stubSpaceBookingSummaryList: (args: {
     premisesId: string
     placements: Array<Cas1SpaceBookingSummary>
     pageSize: number

@@ -54,16 +54,17 @@ export default class PremisesService {
     return occupancyForUi
   }
 
-  async getPlacements(
-    token: string,
-    premisesId: string,
-    status: string,
-    page: number,
-    perPage: number,
-    sortBy: Cas1SpaceBookingSummarySortField,
-    sortDirection: SortDirection,
-  ) {
-    const premisesClient = this.premisesClientFactory(token)
-    return premisesClient.getPlacements(premisesId, status, page, perPage, sortBy, sortDirection)
+  async getPlacements(args: {
+    token: string
+    premisesId: string
+    status: string
+    page: number
+    perPage: number
+    sortBy: Cas1SpaceBookingSummarySortField
+    sortDirection: SortDirection
+  }) {
+    const { token, ...remainingArgs } = args
+    const premisesClient = this.premisesClientFactory(args.token)
+    return premisesClient.getPlacements(remainingArgs)
   }
 }

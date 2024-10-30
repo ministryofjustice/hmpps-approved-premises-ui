@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { ApArea, Cas1SpaceBookingSummarySortField } from '@approved-premises/api'
+import { ApArea, Cas1SpaceBookingResidency, Cas1SpaceBookingSummarySortField } from '@approved-premises/api'
 import { ApAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -13,33 +13,39 @@ export default class PremisesController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { activeTab } = req.query
+      const tabSettings: Record<
+        Cas1SpaceBookingResidency,
+        { pageSize: number; sortBy: Cas1SpaceBookingSummarySortField; sortDirection: string }
+      > = {
+        upcoming: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'asc' },
+        current: { pageSize: 2000, sortBy: 'canonicalDepartureDate', sortDirection: 'asc' },
+        historic: { pageSize: 20, sortBy: 'canonicalDepartureDate', sortDirection: 'dsc' },
+      }
+      const activeTab = String(req.query.activeTab || 'upcoming')
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1SpaceBookingSummarySortField>(
         req,
         managePaths.premises.show({ premisesId: req.params.premisesId }),
         { activeTab },
-        'canonicalArrivalDate',
       )
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
-      const perPage = activeTab === 'current' ? 2000 : 20
 
-      const paginatedPlacements = await this.premisesService.getPlacements(
-        req.user.token,
-        req.params.premisesId,
-        activeTab as string,
-        pageNumber,
-        perPage,
-        sortBy,
-        sortDirection,
-      )
+      const paginatedPlacements = await this.premisesService.getPlacements({
+        token: req.user.token,
+        premisesId: req.params.premisesId,
+        status: activeTab,
+        page: pageNumber || 1,
+        perPage: tabSettings[activeTab].pageSize,
+        sortBy: sortBy || tabSettings[activeTab].sortBy,
+        sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
+      })
       return res.render('manage/premises/show', {
         premises,
-        activeTab: activeTab || 'upcoming',
+        activeTab,
         placements: paginatedPlacements.data,
         hrefPrefix,
-        sortBy: sortBy || 'canonicalDepartureDate',
-        sortDirection,
+        sortBy: sortBy || tabSettings[activeTab].sortBy,
+        sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
         pageNumber: Number(paginatedPlacements.pageNumber),
         totalPages: Number(paginatedPlacements.totalPages),
       })

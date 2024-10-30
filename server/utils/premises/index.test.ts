@@ -8,7 +8,6 @@ import {
 } from '../../testutils/factories'
 import {
   PersonWithName,
-  TAB_TEXT_MAP,
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
   mapApiOccupancyEntryToUiOccupancyEntry,
@@ -203,13 +202,23 @@ describe('premisesUtils', () => {
   describe('premisesTabItems', () => {
     it('should return a set filter tabs for the premises detail page', () => {
       const premises = cas1PremisesSummaryFactory.build()
-      const expectedTabs = Object.entries(TAB_TEXT_MAP).map(([key, text]) => {
-        return {
-          active: key === 'upcoming',
-          href: `/manage/premises/${premises.id}?activeTab=${key}`,
-          text,
-        }
-      })
+      const expectedTabs = [
+        {
+          active: true,
+          href: `/manage/premises/${premises.id}?activeTab=upcoming`,
+          text: 'Upcoming',
+        },
+        {
+          active: false,
+          href: `/manage/premises/${premises.id}?activeTab=current`,
+          text: 'Current',
+        },
+        {
+          active: false,
+          href: `/manage/premises/${premises.id}?activeTab=historic`,
+          text: 'Historical',
+        },
+      ]
       const tabSet = premisesTabItems(premises, 'upcoming')
       expect(tabSet).toEqual(expectedTabs)
     })
@@ -219,20 +228,29 @@ describe('premisesUtils', () => {
     it('should return the sortable table headings for the placement list', () => {
       const sortBy = 'personName'
       const tableHeadings = placementTableHeader('upcoming', sortBy, 'asc', 'Test_Href_Prefix')
-      const expectedHeadings = [
-        ['personName', 'Name and CRN'],
-        ['tier', 'Tier'],
-        ['canonicalArrivalDate', 'Arrival date'],
-        ['canonicalDepartureDate', 'Departure date'],
-        ['keyWorkerName', 'Key worker'],
-      ].map(([field, title]) => {
-        const isSortField = field === sortBy
-        return {
-          attributes: { 'aria-sort': isSortField ? 'ascending' : 'none', 'data-cy-sort-field': field },
-          html: `<a href="Test_Href_Prefix?sortBy=${field}${isSortField ? '&sortDirection=desc' : ''}">${title}</a>`,
-        }
-      })
-      expect(tableHeadings).toEqual(expectedHeadings)
+      const expectedTableHeadings = [
+        {
+          attributes: { 'aria-sort': 'ascending', 'data-cy-sort-field': 'personName' },
+          html: '<a href="Test_Href_Prefix?sortBy=personName&sortDirection=desc">Name and CRN</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'tier' },
+          html: '<a href="Test_Href_Prefix?sortBy=tier">Tier</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalArrivalDate' },
+          html: '<a href="Test_Href_Prefix?sortBy=canonicalArrivalDate">Arrival date</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalDepartureDate' },
+          html: '<a href="Test_Href_Prefix?sortBy=canonicalDepartureDate">Departure date</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'keyWorkerName' },
+          html: '<a href="Test_Href_Prefix?sortBy=keyWorkerName">Key worker</a>',
+        },
+      ]
+      expect(tableHeadings).toEqual(expectedTableHeadings)
     })
   })
   describe('placementTableRows', () => {

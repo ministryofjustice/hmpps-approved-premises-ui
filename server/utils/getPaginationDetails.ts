@@ -6,10 +6,9 @@ export const getPaginationDetails = <T>(
   request: Request,
   basePath: string,
   additionalParams: Record<string, unknown> = {},
-  defaultSortBy: T = undefined,
 ) => {
   const pageNumber = request.query.page ? Number(request.query.page) : undefined
-  const sortBy = (request.query.sortBy || defaultSortBy) as T
+  const sortBy = request.query.sortBy as T
   const sortDirection = request.query.sortDirection as SortDirection
 
   const queryString = createQueryString({ ...additionalParams, sortBy, sortDirection }, { addQueryPrefix: true })

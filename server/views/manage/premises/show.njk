@@ -42,10 +42,6 @@
         PremisesUtils.summaryListForPremises(premises)
     ) }}
 
-    <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get">
-        <input type="hidden" name="activeTab" value="{{ activeTab }}"/>
-    </form>
-    
     {{ mojSubNavigation({
         label: 'Sub navigation',
         items: PremisesUtils.premisesTabItems(premises, activeTab)

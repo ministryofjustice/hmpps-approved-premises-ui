@@ -1,9 +1,11 @@
 import type {
   Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
+  Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
   DateCapacity,
+  FullPerson,
   PersonSummary,
   SortDirection,
 } from '@approved-premises/api'
@@ -16,6 +18,7 @@ import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
+import { laoName } from '../personUtils'
 
 export { premisesActions } from './premisesActions'
 
@@ -178,9 +181,7 @@ export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSumm
     })
 }
 
-type TabKey = 'upcoming' | 'current' | 'historic'
-
-export const TAB_TEXT_MAP: Record<TabKey, string> = {
+export const tabTextMap: Record<Cas1SpaceBookingResidency, string> = {
   upcoming: 'Upcoming',
   current: 'Current',
   historic: 'Historical',
@@ -194,7 +195,7 @@ export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: stri
       },
       { addQueryPrefix: true },
     )}`
-  return Object.entries(TAB_TEXT_MAP).map(([key, label]) => {
+  return Object.entries(tabTextMap).map(([key, label]) => {
     return { text: label, active: activeTab === key, href: getSelfLink(key) }
   })
 }
@@ -211,7 +212,7 @@ const baseColumns: Array<ColumnDefinition> = [
 ]
 const keyWorkerColumn: ColumnDefinition = { title: 'Key worker', fieldName: 'keyWorkerName' }
 
-const columnMap: Record<TabKey, Array<ColumnDefinition>> = {
+const columnMap: Record<Cas1SpaceBookingResidency, Array<ColumnDefinition>> = {
   upcoming: [...baseColumns, keyWorkerColumn],
   current: [...baseColumns, keyWorkerColumn],
   historic: baseColumns,
@@ -235,7 +236,7 @@ export const placementTableRows = (
 ): Array<TableRow> =>
   placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => [
     htmlValue(
-      `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${(person as PersonWithName).name}, ${person.crn}</a>`,
+      `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${laoName(person as unknown as FullPerson)}, ${person.crn}</a>`,
     ),
     htmlValue(getTierOrBlank(tier)),
     textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),

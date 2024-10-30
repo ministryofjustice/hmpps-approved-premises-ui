@@ -35,9 +35,10 @@ context('Premises', () => {
       // Given there is a premises in the database
       const premises = cas1PremisesSummaryFactory.build()
       cy.task('stubSinglePremises', premises)
+
       // And it has a list of placements
       const placements = cas1SpaceBookingSummaryFactory.buildList(10)
-      cy.task('stubSpaceBookingSummary', { premisesId: premises.id, placements })
+      cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements })
 
       // When I visit premises details page
       const page = PremisesShowPage.visit(premises)
@@ -57,7 +58,7 @@ context('Premises', () => {
       cy.task('stubSinglePremises', premises)
       // And it has a long list of placements
       const placements = cas1SpaceBookingSummaryFactory.buildList(30)
-      cy.task('stubSpaceBookingSummary', { premisesId: premises.id, placements, pageSize: 9 })
+      cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, pageSize: 9 })
 
       // When I visit premises details page
       const page = PremisesShowPage.visit(premises)
@@ -75,7 +76,7 @@ context('Premises', () => {
       const premises = cas1PremisesSummaryFactory.build()
       cy.task('stubSinglePremises', premises)
       const placements = cas1SpaceBookingSummaryFactory.buildList(1)
-      cy.task('stubSpaceBookingSummary', { premisesId: premises.id, placements, pageSize: 9 })
+      cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, pageSize: 9 })
 
       // When I visit premises details page
       const page = PremisesShowPage.visit(premises)
