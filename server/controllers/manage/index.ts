@@ -2,7 +2,6 @@
 
 import BookingsController from './bookingsController'
 import BookingExtensionsController from './bookingExtensionsController'
-import NonArrivalsController from './nonArrivalsController'
 import DeparturesController from './departuresController'
 import CancellationsController from './cancellationsController'
 import MoveBedsController from './moveBedsController'
@@ -26,7 +25,6 @@ export const controllers = (services: Services) => {
 
   const bookingsController = new BookingsController(services.bookingService)
   const bookingExtensionsController = new BookingExtensionsController(services.bookingService)
-  const nonArrivalsController = new NonArrivalsController(services.nonArrivalService)
   const departuresController = new DeparturesController(services.departureService, services.bookingService)
   const cancellationsController = new CancellationsController(services.cancellationService, services.bookingService)
   const moveBedsController = new MoveBedsController(services.bookingService, services.premisesService)
@@ -40,7 +38,6 @@ export const controllers = (services: Services) => {
     bookingsController,
     bookingExtensionsController,
     dateChangesController,
-    nonArrivalsController,
     departuresController,
     cancellationsController,
     moveBedsController,
@@ -54,7 +51,6 @@ export {
   UpdateOutOfServiceBedsController,
   BookingsController,
   BookingExtensionsController,
-  NonArrivalsController,
   DeparturesController,
   MoveBedsController,
 }
