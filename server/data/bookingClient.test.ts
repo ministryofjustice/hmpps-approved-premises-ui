@@ -1,12 +1,10 @@
 import nock from 'nock'
 
 import {
-  arrivalFactory,
   bookingFactory,
   cancellationFactory,
   dateChangeFactory,
   departureFactory,
-  newArrivalFactory,
   newBookingFactory,
   newCancellationFactory,
   newDepartureFactory,
@@ -169,38 +167,6 @@ describeClient('BookingClient', provider => {
       const result = await bookingClient.extendBooking('premisesId', booking.id, payload)
 
       expect(result).toEqual(booking)
-    })
-  })
-
-  describe('markAsArrived', () => {
-    it('should create an arrival', async () => {
-      const arrival = arrivalFactory.build()
-      const payload = newArrivalFactory.build({
-        arrivalDateTime: `${arrival.arrivalDate}T${arrival.arrivalTime}`,
-        expectedDepartureDate: arrival.expectedDepartureDate.toString(),
-        notes: arrival.notes,
-      })
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a booking as arrived',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/premisesId/bookings/bookingId/arrivals`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: arrival,
-        },
-      })
-
-      const result = await bookingClient.markAsArrived('premisesId', 'bookingId', payload)
-
-      expect(result).toEqual(arrival)
     })
   })
 

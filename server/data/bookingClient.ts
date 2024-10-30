@@ -1,10 +1,8 @@
 import type {
-  Arrival,
   Booking,
   Cancellation,
   Departure,
   Extension,
-  NewCas1Arrival as NewArrival,
   NewBedMove,
   NewBooking,
   NewCancellation,
@@ -49,15 +47,6 @@ export default class BookingClient {
       path: `/premises/${premisesId}/bookings/${bookingId}/extensions`,
       data: bookingExtension,
     })) as Extension
-  }
-
-  async markAsArrived(premisesId: string, bookingId: string, arrival: NewArrival): Promise<Arrival> {
-    const response = await this.restClient.post({
-      path: `${this.bookingPath(premisesId, bookingId)}/arrivals`,
-      data: arrival,
-    })
-
-    return response as Arrival
   }
 
   async cancel(premisesId: string, bookingId: string, cancellation: NewCancellation): Promise<Cancellation> {

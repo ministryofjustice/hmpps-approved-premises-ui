@@ -11,8 +11,6 @@ const v1PeoplePath = v1BookingsPath.path('people')
 
 const v1ExtensionsPath = v1BookingPath.path('extensions')
 
-const v1ArrivalsPath = v1BookingPath.path('arrivals')
-
 const v1NonArrivalsPath = v1BookingPath.path('non-arrivals')
 
 const v1CancellationsPath = v1BookingPath.path('cancellations')
@@ -93,10 +91,6 @@ const paths = {
       new: extensionsPath.path('new'),
       create: extensionsPath,
       confirm: extensionsPath.path('confirmation'),
-    },
-    arrivals: {
-      new: v1ArrivalsPath.path('new'), // no v2 equivalent
-      create: v1ArrivalsPath, // no v2 equivalent
     },
     nonArrivals: {
       new: v1NonArrivalsPath.path('new'), // no v2 equivalent

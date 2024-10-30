@@ -1,4 +1,3 @@
-import ArrivalCreatePage from './arrivalCreate'
 import CancellationCreatePage from './cancellationCreate'
 import DepartureCreatePage from './departureCreate'
 import PremisesListPage from './premisesList'
@@ -15,7 +14,6 @@ import DepartureDateChangePage from './booking/dateChanges/create'
 import CalendarPage from './calendar'
 
 export {
-  ArrivalCreatePage,
   CancellationCreatePage,
   DepartureCreatePage,
   PremisesShowPage,

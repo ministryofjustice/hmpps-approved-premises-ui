@@ -19,7 +19,6 @@ export default function routes(controllers: Controllers, router: Router, service
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
-    arrivalsController,
     nonArrivalsController,
     departuresController,
     cancellationsController,
@@ -163,22 +162,6 @@ export default function routes(controllers: Controllers, router: Router, service
     allowedRoles: ['future_manager'],
   })
   get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
-
-  // Booking arrivals
-  get(paths.bookings.arrivals.new.pattern, arrivalsController.new(), {
-    auditEvent: 'NEW_ARRIVAL',
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-  post(paths.bookings.arrivals.create.pattern, arrivalsController.create(), {
-    auditEvent: 'CREATE_ARRIVAL_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.arrivals.new.pattern,
-        auditEvent: 'CREATE_ARRIVAL_FAILURE',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
 
   // Booking non-arrivals
   get(paths.bookings.nonArrivals.new.pattern, nonArrivalsController.new(), {
