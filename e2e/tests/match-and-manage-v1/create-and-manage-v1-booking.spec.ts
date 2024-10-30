@@ -1,14 +1,14 @@
 import { test } from '../../test'
 import { createApplication, visitDashboard } from '../../steps/apply'
 import { CancellationPage } from '../../pages/manage/cancellationPage'
-import { CreatePlacementPage } from '../../pages/manage/createPlacementPage'
+import { CreatePlacementPage } from '../../pages/manage/v1/createPlacementPage'
 import { ChangePlacementDatesPage } from '../../pages/manage/changePlacementDates'
 import { signIn } from '../../steps/signIn'
 import { assessApplication } from '../../steps/assess'
 import { ListPage, PlacementRequestPage } from '../../pages/workflow'
 import { PlacementSelectPage } from '../../pages/manage/placementSelectPage'
 import { WithdrawalSelectionPage } from '../../pages/manage/withdrawalSelectionPage'
-import { PlacementPage } from '../../pages/manage/placementPage'
+import { PlacementPage } from '../../pages/manage/v1/placementPage'
 
 test('Apply, assess, and match an application, then book, update and cancel a placement through the V1 flow', async ({
   page,
