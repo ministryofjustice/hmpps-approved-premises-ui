@@ -17,7 +17,7 @@ export default defineConfig<TestOptions>({
   },
   projects: [
     {
-      name: 'setupDev',
+      name: 'setup-dev',
       testMatch: /.*\.setup\.ts/,
       use: { baseURL: 'https://approved-premises-dev.hmpps.service.justice.gov.uk' },
     },
@@ -27,14 +27,25 @@ export default defineConfig<TestOptions>({
         ...devices['Desktop Chrome'],
         baseURL: 'https://approved-premises-dev.hmpps.service.justice.gov.uk',
       },
-      dependencies: ['setupDev'],
+      dependencies: ['setup-dev'],
     },
     {
-      name: 'setupLocal',
+      name: 'setup-local-dev-upstream',
       testMatch: /.*\.setup\.ts/,
+      use: { baseURL: 'http://localhost:3000' },
+    },
+    {
+      name: 'local-dev-upstream',
       use: {
+        ...devices['Desktop Chrome'],
         baseURL: 'http://localhost:3000',
       },
+      dependencies: ['setup-local-dev-upstream'],
+    },
+    {
+      name: 'setup-local',
+      testMatch: /.*\.setup\.ts/,
+      use: { baseURL: 'http://localhost:3000' },
     },
     {
       name: 'local',
@@ -56,7 +67,7 @@ export default defineConfig<TestOptions>({
           '13. Health',
         ],
       },
-      dependencies: ['setupLocal'],
+      dependencies: ['setup-local'],
     },
   ],
   testIgnore: ['/utils/*.ts'],
