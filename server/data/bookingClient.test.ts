@@ -1,10 +1,4 @@
-import {
-  bookingFactory,
-  cancellationFactory,
-  dateChangeFactory,
-  newBookingFactory,
-  newCancellationFactory,
-} from '../testutils/factories'
+import { bookingFactory, cancellationFactory, dateChangeFactory, newCancellationFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import BookingClient from './bookingClient'
 
@@ -18,38 +12,6 @@ describeClient('BookingClient', provider => {
 
   beforeEach(() => {
     bookingClient = new BookingClient(token)
-  })
-
-  describe('create', () => {
-    it('should return the booking that has been posted', async () => {
-      const booking = bookingFactory.build()
-      const payload = newBookingFactory.build({
-        arrivalDate: booking.arrivalDate,
-        departureDate: booking.departureDate,
-        crn: booking.person.crn,
-      })
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to create a booking',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/some-uuid/bookings`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: booking,
-        },
-      })
-
-      const result = await bookingClient.create('some-uuid', payload)
-
-      expect(result).toEqual(booking)
-    })
   })
 
   describe('find', () => {

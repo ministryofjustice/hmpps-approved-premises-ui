@@ -2,7 +2,6 @@ import type {
   Booking,
   Cancellation,
   Extension,
-  NewBooking,
   NewCancellation,
   NewDateChange,
   NewExtension,
@@ -17,10 +16,6 @@ export default class BookingClient {
 
   constructor(token: string) {
     this.restClient = new RestClient('bookingClient', config.apis.approvedPremises as ApiConfig, token)
-  }
-
-  async create(premisesId: string, data: NewBooking): Promise<Booking> {
-    return (await this.restClient.post({ path: this.bookingsPath(premisesId), data })) as Booking
   }
 
   async find(premisesId: Premises['id'], bookingId: Booking['id']): Promise<Booking> {

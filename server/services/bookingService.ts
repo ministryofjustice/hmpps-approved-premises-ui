@@ -18,11 +18,6 @@ export default class BookingService {
     return bookingClient.findWithoutPremises(bookingId)
   }
 
-  async listOfBookingsForPremisesId(token: string, premisesId: string): Promise<Array<Booking>> {
-    const bookingClient = this.bookingClientFactory(token)
-    return bookingClient.allBookingsForPremisesId(premisesId)
-  }
-
   async changeDepartureDate(
     token: string,
     premisesId: string,

@@ -37,7 +37,6 @@ import dateChangeFactory from './dateChange'
 import departureFactory from './departure'
 import documentFactory from './document'
 import extendedPremisesSummaryFactory from './extendedPremisesSummary'
-import newBookingFactory from './newBooking'
 import newCancellationFactory from './newCancellation'
 import {
   newPlacementRequestBookingConfirmationFactory,
@@ -137,7 +136,6 @@ export {
   departureFactory,
   documentFactory,
   extendedPremisesSummaryFactory,
-  newBookingFactory,
   newPlacementRequestBookingFactory,
   newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,

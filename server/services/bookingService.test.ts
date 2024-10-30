@@ -2,7 +2,6 @@ import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
 import { bookingExtensionFactory, bookingFactory, dateChangeFactory } from '../testutils/factories'
-import { Booking } from '../@types/shared'
 
 jest.mock('../data/bookingClient.ts')
 jest.mock('../data/referenceDataClient.ts')
@@ -51,28 +50,6 @@ describe('BookingService', () => {
 
       expect(bookingClientFactory).toHaveBeenCalledWith(token)
       expect(bookingClient.findWithoutPremises).toHaveBeenCalledWith(booking.id)
-    })
-  })
-
-  describe('listOfBookingsForPremisesId', () => {
-    let bookings: Array<Booking>
-
-    beforeAll(() => {
-      bookings = bookingFactory.buildList(1)
-    })
-
-    it('should return table rows of bookings', async () => {
-      const premisesId = 'some-uuid'
-      bookingClient.allBookingsForPremisesId.mockResolvedValue(bookings)
-
-      const results = await service.listOfBookingsForPremisesId(token, premisesId)
-
-      expect(results).toEqual(bookings)
-
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
-
-      expect(bookingClientFactory).toHaveBeenCalledWith(token)
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
     })
   })
 
