@@ -25,7 +25,7 @@ export const controllers = (services: Services) => {
   )
   const updateOutOfServiceBedsController = new UpdateOutOfServiceBedsController(services.outOfServiceBedService)
 
-  const bookingsController = new BookingsController(services.bookingService, services.personService)
+  const bookingsController = new BookingsController(services.bookingService)
   const bookingExtensionsController = new BookingExtensionsController(services.bookingService)
   const arrivalsController = new ArrivalsController(services.arrivalService, services.premisesService)
   const nonArrivalsController = new NonArrivalsController(services.nonArrivalService)

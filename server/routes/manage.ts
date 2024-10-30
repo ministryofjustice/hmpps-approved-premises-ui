@@ -123,28 +123,8 @@ export default function routes(controllers: Controllers, router: Router, service
   })
 
   // Bookings
-  get(paths.bookings.new.pattern, bookingsController.new(), {
-    auditEvent: 'START_AD_HOC_BOOKING',
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
   get(paths.bookings.show.pattern, bookingsController.show(), {
     auditEvent: 'SHOW_BOOKING',
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-  post(paths.bookings.create.pattern, bookingsController.create(), {
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.show.pattern,
-        auditEvent: 'CREATE_AD_HOC_BOOKING_FAILURE',
-      },
-      {
-        path: paths.bookings.confirm.pattern,
-        auditEvent: 'CREATE_AD_HOC_BOOKING_SUCCESS',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-  get(paths.bookings.confirm.pattern, bookingsController.confirm(), {
     allowedRoles: ['workflow_manager', 'future_manager'],
   })
 

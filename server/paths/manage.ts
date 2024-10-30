@@ -6,7 +6,6 @@ const v1SinglePremisesPath = v1PremisesPath.path(':premisesId')
 
 const v1BookingsPath = v1SinglePremisesPath.path('bookings')
 const v1BookingPath = v1BookingsPath.path(':bookingId')
-const v1NewBookingPath = v1SinglePremisesPath.path('beds/bookings/new')
 
 const v1PeoplePath = v1BookingsPath.path('people')
 
@@ -86,9 +85,6 @@ const paths = {
   },
   bookings: {
     show: bookingsPath.path(':bookingId'),
-    new: v1NewBookingPath, // no v2 equivalent
-    create: v1NewBookingPath, // no v2 equivalent
-    confirm: v1BookingPath.path('confirmation'), // no v2 equivalent
     dateChanges: {
       new: dateChangesPath.path('new'),
       create: dateChangesPath,

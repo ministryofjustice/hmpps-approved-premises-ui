@@ -1,7 +1,6 @@
 import type { Premises } from '@approved-premises/api'
 import { UserDetails } from '@approved-premises/ui'
 import paths from '../../paths/manage'
-import { hasPermission } from '../users'
 
 export const premisesActions = (user: UserDetails, premises: Premises) => {
   const actions = []
@@ -19,14 +18,6 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
       text: 'Manage out of service bed records',
       classes: 'govuk-button--secondary',
       href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
-    })
-  }
-
-  if (hasPermission(user, ['cas1_adhoc_booking_create'])) {
-    actions.push({
-      text: 'Create a placement',
-      classes: 'govuk-button--secondary',
-      href: paths.bookings.new({ premisesId: premises.id }),
     })
   }
 
