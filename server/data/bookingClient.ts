@@ -1,13 +1,11 @@
 import type {
   Booking,
   Cancellation,
-  Departure,
   Extension,
   NewBedMove,
   NewBooking,
   NewCancellation,
   NewDateChange,
-  NewDeparture,
   NewExtension,
   NewNonarrival,
   Nonarrival,
@@ -56,15 +54,6 @@ export default class BookingClient {
     })
 
     return response as Cancellation
-  }
-
-  async markDeparture(premisesId: string, bookingId: string, departure: NewDeparture): Promise<Departure> {
-    const response = await this.restClient.post({
-      path: `${this.bookingPath(premisesId, bookingId)}/departures`,
-      data: departure,
-    })
-
-    return response as Departure
   }
 
   async markNonArrival(premisesId: string, bookingId: string, nonArrival: NewNonarrival): Promise<Nonarrival> {

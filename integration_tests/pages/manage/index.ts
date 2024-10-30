@@ -1,5 +1,4 @@
 import CancellationCreatePage from './cancellationCreate'
-import DepartureCreatePage from './departureCreate'
 import PremisesListPage from './premisesList'
 import PremisesShowPage from './premisesShow'
 import WithdrawConfirmPage from './withdrawConfirm'
@@ -15,7 +14,6 @@ import CalendarPage from './calendar'
 
 export {
   CancellationCreatePage,
-  DepartureCreatePage,
   PremisesShowPage,
   BookingShowPage,
   DepartureDateChangeConfirmationPage,

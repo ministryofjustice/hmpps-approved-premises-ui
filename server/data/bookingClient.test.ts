@@ -4,10 +4,8 @@ import {
   bookingFactory,
   cancellationFactory,
   dateChangeFactory,
-  departureFactory,
   newBookingFactory,
   newCancellationFactory,
-  newDepartureFactory,
   newNonArrivalFactory,
   nonArrivalFactory,
 } from '../testutils/factories'
@@ -195,35 +193,6 @@ describeClient('BookingClient', provider => {
       const result = await bookingClient.cancel('premisesId', 'bookingId', newCancellation)
 
       expect(result).toEqual(cancellation)
-    })
-  })
-
-  describe('markDeparture', () => {
-    it('should create a departure', async () => {
-      const payload = newDepartureFactory.build()
-      const departure = departureFactory.build()
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a booking as not arrived',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/premisesId/bookings/bookingId/departures`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 201,
-          body: departure,
-        },
-      })
-
-      const result = await bookingClient.markDeparture('premisesId', 'bookingId', payload)
-
-      expect(result).toEqual(departure)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
