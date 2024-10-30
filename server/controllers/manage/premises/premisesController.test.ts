@@ -33,7 +33,7 @@ describe('V2PremisesController', () => {
   })
 
   describe('show', () => {
-    const mockSummaryAndPlacements = async (query: Record<string, unknown>) => {
+    const mockSummaryAndPlacements = async (query: Record<string, string>) => {
       const premisesSummary = cas1PremisesSummaryFactory.build()
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),
@@ -135,7 +135,7 @@ describe('V2PremisesController', () => {
       const hrefPrefix = `/manage/premises/${premisesId}?activeTab=historic&sortBy=personName&sortDirection=asc&`
       const queryParameters = { sortDirection: 'asc', sortBy: 'personName', activeTab: 'historic', hrefPrefix }
 
-      const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({ ...queryParameters, page: 2 })
+      const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({ ...queryParameters, page: '2' })
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,

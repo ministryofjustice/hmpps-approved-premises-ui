@@ -6,7 +6,6 @@ import type {
   Cas1SpaceBookingSummarySortField,
   DateCapacity,
   FullPerson,
-  PersonSummary,
   SortDirection,
 } from '@approved-premises/api'
 import { BedOccupancyRangeUi, SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
@@ -23,10 +22,6 @@ import { laoName } from '../personUtils'
 export { premisesActions } from './premisesActions'
 
 export type NegativeDateRange = { start?: string; end?: string }
-
-export interface PersonWithName extends PersonSummary {
-  name: string
-}
 
 export const overcapacityMessage = (premisesCapacity: Array<DateCapacity> = []): string => {
   let dateRange: NegativeDateRange = {}
