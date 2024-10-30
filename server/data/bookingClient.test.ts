@@ -229,33 +229,6 @@ describeClient('BookingClient', provider => {
     })
   })
 
-  describe('moveBooking', () => {
-    it('should move a booking', async () => {
-      const payload = {
-        bedId: 'bedId',
-        notes: 'Some notes',
-      }
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to move a booking',
-        withRequest: {
-          method: 'POST',
-          path: paths.premises.bookings.move({ premisesId: 'premisesId', bookingId: 'bookingId' }),
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-        },
-      })
-
-      await bookingClient.moveBooking('premisesId', 'bookingId', payload)
-    })
-  })
-
   describe('changeDates', () => {
     it('should change dates for a booking', async () => {
       const dateChange = dateChangeFactory.build()

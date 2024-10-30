@@ -1,14 +1,6 @@
 import { BedDetail, BedSummary } from '@approved-premises/api'
-import {
-  BedOccupancyBookingEntryUi,
-  BedOccupancyLostBedEntryUi,
-  BedOccupancyOverbookingEntryUi,
-  SummaryListItem,
-  SummaryListWithCard,
-  TableCell,
-} from '../@types/ui'
+import { BedOccupancyOverbookingEntryUi, SummaryListItem, TableCell } from '../@types/ui'
 import paths from '../paths/manage'
-import { DateFormats } from './dateUtils'
 import { linkTo, sentenceCase } from './utils'
 import { translateCharacteristic } from './characteristicsUtils'
 
@@ -98,62 +90,4 @@ export const decodeOverbooking = (string: string): BedOccupancyOverbookingEntryU
   }
 
   throw new InvalidOverbookingDataException()
-}
-
-export const overbookingSummaryList = (
-  item: BedOccupancyBookingEntryUi | BedOccupancyLostBedEntryUi,
-  premisesId: string,
-  bedId: string,
-): SummaryListWithCard => {
-  const cardTitle = 'personName' in item ? item.personName : 'Lost Bed'
-  const action =
-    'bookingId' in item
-      ? {
-          href: paths.bookings.moves.new({ premisesId, bookingId: item.bookingId }),
-          text: 'Change allocated bed',
-          visuallyHiddenText: `for ${cardTitle}`,
-        }
-      : {
-          href: paths.outOfServiceBeds.show({ premisesId, bedId, id: item.lostBedId, tab: 'details' }),
-          text: 'Amend',
-          visuallyHiddenText: 'lost bed entry',
-        }
-  const attributes =
-    'bookingId' in item
-      ? {
-          'data-cy-bookingId': item.bookingId,
-        }
-      : {
-          'data-cy-lostBedId': item.lostBedId,
-        }
-
-  return {
-    card: {
-      title: {
-        text: cardTitle,
-      },
-      actions: {
-        items: [action],
-      },
-      attributes,
-    },
-    rows: [
-      {
-        key: {
-          text: 'Arrival Date',
-        },
-        value: {
-          text: DateFormats.dateObjtoUIDate(item.startDate),
-        },
-      },
-      {
-        key: {
-          text: 'Departure Date',
-        },
-        value: {
-          text: DateFormats.dateObjtoUIDate(item.endDate),
-        },
-      },
-    ],
-  }
 }

@@ -13,8 +13,6 @@ const v1ExtensionsPath = v1BookingPath.path('extensions')
 
 const v1CancellationsPath = v1BookingPath.path('cancellations')
 
-const v1MovesPath = v1BookingPath.path('moves')
-
 const v1LostBedsPath = v1SinglePremisesPath.path('beds/:bedId/lost-beds')
 
 const v1BedsPath = v1SinglePremisesPath.path('beds')
@@ -91,10 +89,6 @@ const paths = {
     cancellations: {
       new: v1CancellationsPath.path('new'), // no v2 equivalent
       create: v1CancellationsPath, // no v2 equivalent
-    },
-    moves: {
-      new: v1MovesPath.path('new'), // no v2 equivalent
-      create: v1MovesPath, // no v2 equivalent
     },
   },
   people: {

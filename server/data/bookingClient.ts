@@ -2,7 +2,6 @@ import type {
   Booking,
   Cancellation,
   Extension,
-  NewBedMove,
   NewBooking,
   NewCancellation,
   NewDateChange,
@@ -63,13 +62,6 @@ export default class BookingClient {
     })
 
     return response as Nonarrival
-  }
-
-  async moveBooking(premisesId: string, bookingId: string, move: NewBedMove): Promise<void> {
-    await this.restClient.post({
-      path: paths.premises.bookings.move({ premisesId, bookingId }),
-      data: move,
-    })
   }
 
   async changeDates(premisesId: string, bookingId: string, dateChange: NewDateChange): Promise<void> {

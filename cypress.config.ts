@@ -21,7 +21,6 @@ import placementRequests from './integration_tests/mockApis/placementRequests'
 import placementApplication from './integration_tests/mockApis/placementApplication'
 import beds from './integration_tests/mockApis/beds'
 import spaceSearch from './integration_tests/mockApis/spaces'
-import moveBooking from './integration_tests/mockApis/moveBooking'
 import spaceBookings from './integration_tests/mockApis/spaceBooking'
 import referenceData from './integration_tests/mockApis/referenceData'
 
@@ -60,7 +59,6 @@ export default defineConfig({
         ...placementApplication,
         ...beds,
         ...spaceSearch,
-        ...moveBooking,
         ...reports,
         ...spaceBookings,
         ...referenceData,
