@@ -39,7 +39,6 @@ import documentFactory from './document'
 import extendedPremisesSummaryFactory from './extendedPremisesSummary'
 import newBookingFactory from './newBooking'
 import newCancellationFactory from './newCancellation'
-import newDepartureFactory from './newDeparture'
 import {
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
@@ -142,7 +141,6 @@ export {
   newPlacementRequestBookingFactory,
   newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,
-  newDepartureFactory,
   newAppealFactory,
   noteFactory,
   oasysSectionsFactory,
