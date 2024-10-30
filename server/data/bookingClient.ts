@@ -6,8 +6,6 @@ import type {
   NewCancellation,
   NewDateChange,
   NewExtension,
-  NewNonarrival,
-  Nonarrival,
   Premises,
 } from '@approved-premises/api'
 import RestClient from './restClient'
@@ -53,15 +51,6 @@ export default class BookingClient {
     })
 
     return response as Cancellation
-  }
-
-  async markNonArrival(premisesId: string, bookingId: string, nonArrival: NewNonarrival): Promise<Nonarrival> {
-    const response = await this.restClient.post({
-      path: `${this.bookingPath(premisesId, bookingId)}/non-arrivals`,
-      data: nonArrival,
-    })
-
-    return response as Nonarrival
   }
 
   async changeDates(premisesId: string, bookingId: string, dateChange: NewDateChange): Promise<void> {

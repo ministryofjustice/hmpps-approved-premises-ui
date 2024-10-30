@@ -40,13 +40,11 @@ import extendedPremisesSummaryFactory from './extendedPremisesSummary'
 import newBookingFactory from './newBooking'
 import newCancellationFactory from './newCancellation'
 import newDepartureFactory from './newDeparture'
-import newNonArrivalFactory from './newNonArrival'
 import {
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
 } from './newPlacementRequestBooking'
 import newAppealFactory from './newAppealFactory'
-import nonArrivalFactory from './nonArrival'
 import noteFactory from './noteFactory'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
@@ -145,9 +143,7 @@ export {
   newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,
   newDepartureFactory,
-  newNonArrivalFactory,
   newAppealFactory,
-  nonArrivalFactory,
   noteFactory,
   oasysSectionsFactory,
   oasysSelectionFactory,

@@ -1,13 +1,9 @@
-import nock from 'nock'
-
 import {
   bookingFactory,
   cancellationFactory,
   dateChangeFactory,
   newBookingFactory,
   newCancellationFactory,
-  newNonArrivalFactory,
-  nonArrivalFactory,
 } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import BookingClient from './bookingClient'
@@ -193,39 +189,6 @@ describeClient('BookingClient', provider => {
       const result = await bookingClient.cancel('premisesId', 'bookingId', newCancellation)
 
       expect(result).toEqual(cancellation)
-    })
-  })
-
-  describe('markNonArrival', () => {
-    it('should create an non-arrival', async () => {
-      const nonArrival = nonArrivalFactory.build()
-      const payload = newNonArrivalFactory.build({
-        date: nonArrival.date.toString(),
-        notes: nonArrival.notes,
-        reason: nonArrival.reason.id,
-      })
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a booking as not arrived',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/premisesId/bookings/bookingId/non-arrivals`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: nonArrival,
-        },
-      })
-
-      const result = await bookingClient.markNonArrival('premisesId', 'bookingId', payload)
-
-      expect(result).toEqual(nonArrival)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
