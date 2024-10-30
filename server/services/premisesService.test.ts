@@ -133,7 +133,7 @@ describe('PremisesService', () => {
   })
 
   describe('getPlacements', () => {
-    it('returns the placements for a single premesis', async () => {
+    it('returns the placements for a single premises', async () => {
       const status = 'upcoming'
       const sortBy = 'personName'
       const sortDirection = 'asc'
@@ -146,19 +146,19 @@ describe('PremisesService', () => {
 
       premisesClient.getPlacements.mockResolvedValue(paginatedPlacements)
 
-      const result = await service.getPlacements(token, premisesId, status, page, perPage, sortBy, sortDirection)
+      const result = await service.getPlacements({ token, premisesId, status, page, perPage, sortBy, sortDirection })
 
       expect(result).toEqual(paginatedPlacements)
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getPlacements).toHaveBeenCalledWith(
+      expect(premisesClient.getPlacements).toHaveBeenCalledWith({
         premisesId,
         status,
         page,
         perPage,
         sortBy,
         sortDirection,
-      )
+      })
     })
   })
 })

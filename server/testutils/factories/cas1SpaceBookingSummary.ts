@@ -19,4 +19,3 @@ export default Factory.define<Cas1SpaceBookingSummary>(() => {
     keyWorkerAllocation: { keyWorker: staffMemberFactory.build() } as Cas1KeyWorkerAllocation,
   }
 })
-

@@ -6,7 +6,6 @@ import {
 } from '../../testutils/factories'
 import {
   PersonWithName,
-  TAB_TEXT_MAP,
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
   placementTableHeader,
