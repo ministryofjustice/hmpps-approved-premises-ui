@@ -5,7 +5,6 @@ import {
   cas1SpaceBookingSummaryFactory,
 } from '../../testutils/factories'
 import {
-  PersonWithName,
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
   placementTableHeader,
@@ -18,6 +17,7 @@ import {
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
+import { laoName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 
 describe('premisesUtils', () => {
