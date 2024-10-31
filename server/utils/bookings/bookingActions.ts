@@ -34,21 +34,6 @@ class MenuItems {
   }
 
   items = {
-    movePerson: {
-      text: 'Move person to a new bed',
-      classes: 'govuk-button--secondary',
-      href: paths.bookings.moves.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id }),
-    },
-    markAsArrived: {
-      text: 'Mark as arrived',
-      classes: 'govuk-button--secondary',
-      href: paths.bookings.arrivals.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id }),
-    },
-    markAsNotArrived: {
-      text: 'Mark as not arrived',
-      classes: 'govuk-button--secondary',
-      href: paths.bookings.nonArrivals.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id }),
-    },
     changeDates: {
       text: 'Change placement dates',
       classes: 'govuk-button--secondary',
@@ -56,11 +41,6 @@ class MenuItems {
         premisesId: this.booking.premises.id,
         bookingId: this.booking.id,
       }),
-    },
-    logDeparture: {
-      text: 'Log departure',
-      classes: 'govuk-button--secondary',
-      href: paths.bookings.departures.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id }),
     },
     updateDepartureDate: {
       text: 'Update departure date',

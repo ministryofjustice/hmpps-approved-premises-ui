@@ -1,7 +1,7 @@
 import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
-import { bookingExtensionFactory, bookingFactory, dateChangeFactory, newBookingFactory } from '../testutils/factories'
+import { bookingExtensionFactory, bookingFactory, dateChangeFactory } from '../testutils/factories'
 import { Booking, NewBedMove } from '../@types/shared'
 
 jest.mock('../data/bookingClient.ts')
@@ -18,20 +18,6 @@ describe('BookingService', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     bookingClientFactory.mockReturnValue(bookingClient)
-  })
-
-  describe('create', () => {
-    it('on success returns the booking that has been posted', async () => {
-      const booking = bookingFactory.build()
-      const newBooking = newBookingFactory.build()
-      bookingClient.create.mockResolvedValue(booking)
-
-      const postedBooking = await service.create(token, 'premisesId', newBooking)
-      expect(postedBooking).toEqual(booking)
-
-      expect(bookingClientFactory).toHaveBeenCalledWith(token)
-      expect(bookingClient.create).toHaveBeenCalledWith('premisesId', newBooking)
-    })
   })
 
   describe('find', () => {
