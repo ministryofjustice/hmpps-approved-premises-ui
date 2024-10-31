@@ -4,11 +4,6 @@ import type {
   BedSummary,
   Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
-  DateCapacity,
-  ExtendedPremisesSummary,
-  ApprovedPremisesSummary as PremisesSummary,
-  Room,
-  StaffMember,
 } from '@approved-premises/api'
 import type { PremisesFilters } from '@approved-premises/ui'
 import RestClient from './restClient'
@@ -22,14 +17,6 @@ export default class PremisesClient {
     this.restClient = new RestClient('premisesClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(apAreaId: string = ''): Promise<Array<PremisesSummary>> {
-    const query = apAreaId ? { apAreaId } : {}
-    return (await this.restClient.get({
-      path: paths.premises.index({}),
-      query,
-    })) as Array<PremisesSummary>
-  }
-
   async allCas1(filters: PremisesFilters): Promise<Array<Cas1PremisesBasicSummary>> {
     return (await this.restClient.get({
       path: paths.premises.indexCas1({}),
@@ -41,16 +28,6 @@ export default class PremisesClient {
     return (await this.restClient.get({ path: paths.premises.show({ premisesId: id }) })) as Cas1PremisesSummary
   }
 
-  async capacity(id: string): Promise<Array<DateCapacity>> {
-    return (await this.restClient.get({ path: paths.premises.capacity({ premisesId: id }) })) as Array<DateCapacity>
-  }
-
-  async getStaffMembers(premisesId: string): Promise<Array<StaffMember>> {
-    return (await this.restClient.get({
-      path: paths.premises.staffMembers.index({ premisesId }),
-    })) as Array<StaffMember>
-  }
-
   async getBeds(premisesId: string): Promise<Array<BedSummary>> {
     return (await this.restClient.get({ path: paths.premises.beds.index({ premisesId }) })) as Array<BedSummary>
   }
@@ -59,23 +36,11 @@ export default class PremisesClient {
     return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
   }
 
-  async getRooms(premisesId: string): Promise<Array<Room>> {
-    return (await this.restClient.get({ path: paths.premises.rooms({ premisesId }) })) as Array<Room>
-  }
-
-  async getRoom(premisesId: string, roomId: string): Promise<Room> {
-    return (await this.restClient.get({ path: paths.premises.room({ premisesId, roomId }) })) as Room
-  }
-
   async calendar(premisesId: string, startDate: string, endDate: string): Promise<Array<BedOccupancyRange>> {
     const path = paths.premises.calendar({ premisesId })
     return (await this.restClient.get({
       path,
       query: { startDate, endDate },
     })) as Array<BedOccupancyRange>
-  }
-
-  async summary(premisesId: string): Promise<ExtendedPremisesSummary> {
-    return (await this.restClient.get({ path: paths.premises.summary({ premisesId }) })) as ExtendedPremisesSummary
   }
 }

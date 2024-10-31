@@ -1,16 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Bed, Characteristic, CharacteristicPair, Room } from '@approved-premises/api'
-
-export default Factory.define<Room>(() => ({
-  id: faker.string.uuid(),
-  name: faker.lorem.words(3),
-  beds: bedFactory.buildList(faker.number.int({ min: 1, max: 2 })),
-  code: faker.lorem.words(1).toLocaleUpperCase(),
-  notes: faker.lorem.sentence(),
-  characteristics: roomCharacteristicFactory.buildList(faker.number.int({ min: 1, max: 3 })),
-}))
+import type { Bed, Characteristic, CharacteristicPair } from '@approved-premises/api'
 
 export const roomCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({
   name: faker.helpers.arrayElement([

@@ -68,7 +68,6 @@ import referenceDataFactory, { apAreaFactory, probationRegionFactory } from './r
 import cas1ReferenceDataFactory, { cruManagementAreaFactory } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
-import roomFactory from './room'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
@@ -168,7 +167,6 @@ export {
   restrictedPersonFactory,
   requestForPlacementFactory,
   risksFactory,
-  roomFactory,
   roshSummaryFactory,
   staffMemberFactory,
   taskFactory,
