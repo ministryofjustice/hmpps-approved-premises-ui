@@ -1,19 +1,12 @@
-import type { Response, SuperAgentRequest } from 'superagent'
-
 import type {
-  BedOccupancyRange,
-  Booking,
   Cas1PremisesBasicSummary,
   ExtendedPremisesSummary,
   Premises,
   ApprovedPremisesSummary as PremisesSummary,
-  StaffMember,
 } from '@approved-premises/api'
 
 import { stubFor } from './setup'
-import bookingStubs from './booking'
 import paths from '../../server/paths/api'
-import { createQueryString } from '../../server/utils/utils'
 
 const stubAllPremises = (premises: Array<PremisesSummary>) =>
   stubFor({
@@ -81,41 +74,4 @@ export default {
   stubCas1AllPremises,
   stubPremisesSummary,
   stubSinglePremises,
-  stubPremisesWithBookings: (args: { premises: Premises; bookings: Array<Booking> }): Promise<[Response, Response]> =>
-    Promise.all([
-      stubPremisesSummary(args.premises),
-      bookingStubs.stubBookingsForPremisesId({ premisesId: args.premises.id, bookings: args.bookings }),
-    ]),
-  stubPremisesStaff: (args: { premisesId: string; staff: Array<StaffMember> }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/premises/${args.premisesId}/staff`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.staff,
-      },
-    }),
-  stubPremisesOccupancy: (args: {
-    premisesId: string
-    startDate: string
-    endDate: string
-    premisesOccupancy: Array<BedOccupancyRange>
-  }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `${paths.premises.calendar({ premisesId: args.premisesId })}?${createQueryString({
-          startDate: args.startDate,
-          endDate: args.endDate,
-        })}`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.premisesOccupancy,
-      },
-    }),
 }

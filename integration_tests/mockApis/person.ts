@@ -15,7 +15,7 @@ import type {
   PrisonCaseNote,
 } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from './setup'
+import { stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { createQueryString } from '../../server/utils/utils'
 
@@ -42,47 +42,6 @@ export default {
         status: 201,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.person,
-      },
-    }),
-  stubFindPersonNotInCaseload: (args: { person: Person }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/people/search?crn=${args.person.crn}&checkCaseload=true`,
-      },
-      response: {
-        status: 403,
-      },
-    }),
-  stubFindPersonNoNomsNumber: (crn: string): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/people/search?crn=${crn}&checkCaseload=true`,
-      },
-      response: {
-        status: 500,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-
-        jsonBody: {
-          detail: 'No nomsNumber present for CRN',
-        },
-      },
-    }),
-
-  stubFindPersonNoOasysRecord: (crn: string): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/people/search?crn=${crn}&checkCaseload=true`,
-      },
-      response: {
-        status: 500,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-
-        jsonBody: {
-          detail: 'No OASys present for CRN',
-        },
       },
     }),
   stubPersonNotFound: (args: { person: Person }): SuperAgentRequest =>
@@ -131,14 +90,6 @@ export default {
         jsonBody: args.timeline,
       },
     }),
-  verifyFindPerson: async (args: { person: Person }) =>
-    (
-      await getMatchingRequests({
-        method: 'GET',
-        url: `/people/search?crn=${args.person.crn}`,
-      })
-    ).body.requests,
-
   stubPrisonCaseNotes: (args: { person: Person; prisonCaseNotes: Array<PrisonCaseNote> }) =>
     stubFor({
       request: {

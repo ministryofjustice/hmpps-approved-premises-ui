@@ -1,18 +1,5 @@
 import { LostBed } from '@approved-premises/api'
-import { EntityType } from '../../server/@types/ui'
-
-const getCombinations = (arr: Array<string>) => {
-  const result: Array<Array<string>> = []
-  arr.forEach(item => {
-    result.push([item])
-    const index = arr.indexOf(item) + 1
-    for (let i = index; i < arr.length; i += 1) {
-      const group = [item, ...arr.slice(index, i + 1)]
-      result.push(group)
-    }
-  })
-  return result.sort((a, b) => b.length - a.length)
-}
+import { EntityType } from '@approved-premises/ui'
 
 const errorStub = (fields: Array<string>, pattern: string, method: 'PUT' | 'POST' = 'POST') => {
   const bodyPatterns = fields.map(field => {
@@ -58,4 +45,4 @@ const bedspaceConflictResponseBody = (entityId: string | LostBed, entityType: En
   detail: `${entityType === 'booking' ? 'Booking' : 'out-of-service bed'}: ${entityId}`,
 })
 
-export { getCombinations, errorStub, bedspaceConflictResponseBody }
+export { errorStub, bedspaceConflictResponseBody }

@@ -1,7 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
+import { Cas1SpaceSearchResults } from '@approved-premises/api'
 import paths from '../../server/paths/api'
 import { getMatchingRequests, stubFor } from './setup'
-import { Cas1SpaceSearchResults } from '../../server/@types/shared'
 
 export default {
   stubSpaceSearch: (spaceSearchResults: Cas1SpaceSearchResults): SuperAgentRequest =>
