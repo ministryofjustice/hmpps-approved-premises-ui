@@ -1,6 +1,11 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { ApArea, Cas1SpaceBookingResidency, Cas1SpaceBookingSummarySortField } from '@approved-premises/api'
+import {
+  ApArea,
+  Cas1SpaceBookingResidency,
+  Cas1SpaceBookingSummarySortField,
+  SortDirection,
+} from '@approved-premises/api'
 import { ApAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -15,11 +20,11 @@ export default class PremisesController {
     return async (req: Request, res: Response) => {
       const tabSettings: Record<
         Cas1SpaceBookingResidency,
-        { pageSize: number; sortBy: Cas1SpaceBookingSummarySortField; sortDirection: string }
+        { pageSize: number; sortBy: Cas1SpaceBookingSummarySortField; sortDirection: SortDirection }
       > = {
         upcoming: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'asc' },
         current: { pageSize: 2000, sortBy: 'canonicalDepartureDate', sortDirection: 'asc' },
-        historic: { pageSize: 20, sortBy: 'canonicalDepartureDate', sortDirection: 'dsc' },
+        historic: { pageSize: 20, sortBy: 'canonicalDepartureDate', sortDirection: 'desc' },
       }
       const activeTab = String(req.query.activeTab || 'upcoming')
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1SpaceBookingSummarySortField>(

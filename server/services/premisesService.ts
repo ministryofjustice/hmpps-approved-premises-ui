@@ -64,7 +64,7 @@ export default class PremisesService {
     sortDirection: SortDirection
   }) {
     const { token, ...remainingArgs } = args
-    const premisesClient = this.premisesClientFactory(args.token)
+    const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getPlacements(remainingArgs)
   }
 }

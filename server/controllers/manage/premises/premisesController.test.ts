@@ -112,7 +112,7 @@ describe('V2PremisesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
         sortBy: 'canonicalDepartureDate',
-        sortDirection: 'dsc',
+        sortDirection: 'desc',
         activeTab: 'historic',
         pageNumber: 1,
         totalPages: 1,
@@ -127,7 +127,7 @@ describe('V2PremisesController', () => {
         page: 1,
         perPage: 20,
         sortBy: 'canonicalDepartureDate',
-        sortDirection: 'dsc',
+        sortDirection: 'desc',
       })
     })
 
