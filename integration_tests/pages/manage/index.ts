@@ -10,15 +10,12 @@ import BookingShowPage from './booking/show'
 import DepartureDateChangeConfirmationPage from './booking/dateChanges/confirmation'
 import DepartureDateChangePage from './booking/dateChanges/create'
 
-import CalendarPage from './calendar'
-
 export {
   CancellationCreatePage,
   PremisesShowPage,
   BookingShowPage,
   DepartureDateChangeConfirmationPage,
   DepartureDateChangePage,
-  CalendarPage,
   NewDateChangePage,
   WithdrawConfirmPage,
   UnableToMatchPage,

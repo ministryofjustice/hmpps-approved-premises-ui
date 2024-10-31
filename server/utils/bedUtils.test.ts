@@ -1,12 +1,6 @@
 import paths from '../paths/manage'
+import { apCharacteristicPairFactory, bedDetailFactory, bedSummaryFactory } from '../testutils/factories'
 import {
-  apCharacteristicPairFactory,
-  bedDetailFactory,
-  bedOccupancyEntryOverbookingUiFactory,
-  bedSummaryFactory,
-} from '../testutils/factories'
-import {
-  InvalidOverbookingDataException,
   actionCell,
   bedActions,
   bedDetails,
@@ -14,8 +8,6 @@ import {
   bedNameCell,
   bedTableRows,
   characteristicsRow,
-  decodeOverbooking,
-  encodeOverbooking,
   roomNameCell,
   statusCell,
   statusRow,
@@ -155,29 +147,6 @@ describe('bedUtils', () => {
           },
         ],
       })
-    })
-  })
-
-  describe('encodeOverbooking', () => {
-    it('encodes an overbooking entry to Base64', () => {
-      const overbooking = bedOccupancyEntryOverbookingUiFactory.build()
-
-      expect(encodeOverbooking(overbooking)).toEqual(Buffer.from(JSON.stringify(overbooking)).toString('base64'))
-    })
-  })
-
-  describe('decodeOverbooking', () => {
-    it('decodes a Base64 encoded overbooking', () => {
-      const overbooking = bedOccupancyEntryOverbookingUiFactory.build()
-      const encodedOverbooking = encodeOverbooking(overbooking)
-
-      expect(decodeOverbooking(encodedOverbooking)).toEqual(overbooking)
-    })
-
-    it('throws an error if the object is not an overbooking', () => {
-      const obj = Buffer.from('{"foo":"bar"}').toString('base64')
-
-      expect(() => decodeOverbooking(obj)).toThrowError(InvalidOverbookingDataException)
     })
   })
 })

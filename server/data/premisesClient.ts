@@ -1,10 +1,4 @@
-import type {
-  BedDetail,
-  BedOccupancyRange,
-  BedSummary,
-  Cas1PremisesBasicSummary,
-  Cas1PremisesSummary,
-} from '@approved-premises/api'
+import type { BedDetail, BedSummary, Cas1PremisesBasicSummary, Cas1PremisesSummary } from '@approved-premises/api'
 import type { PremisesFilters } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -34,13 +28,5 @@ export default class PremisesClient {
 
   async getBed(premisesId: string, bedId: string): Promise<BedDetail> {
     return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
-  }
-
-  async calendar(premisesId: string, startDate: string, endDate: string): Promise<Array<BedOccupancyRange>> {
-    const path = paths.premises.calendar({ premisesId })
-    return (await this.restClient.get({
-      path,
-      query: { startDate, endDate },
-    })) as Array<BedOccupancyRange>
   }
 }

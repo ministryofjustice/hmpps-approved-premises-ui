@@ -66,13 +66,9 @@ const paths = {
   premises: {
     index: premisesPath,
     show: singlePremisesPath,
-    calendar: v1SinglePremisesPath.path('calendar'), // not implemented, used in Calendar utils
     beds: {
       index: bedsPath,
       show: bedsPath.path(':bedId'),
-      overbookings: {
-        show: v1BedsPath.path(':bedId').path('overbookings'), // not implemented, used in Calendar utils
-      },
     },
   },
   bookings: {
