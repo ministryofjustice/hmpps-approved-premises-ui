@@ -55,6 +55,10 @@ export default class SelectApType implements TasklistPage {
     const renderTypes = isWomensApplication(this.application) ? womensApTypes : apTypes
     return convertArrayToRadioItems(renderTypes, this.body.type, apTypeLabels, apTypeHintText)
   }
+
+  isWomensApplication() {
+    return isWomensApplication(this.application)
+  }
 }
 
 export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {

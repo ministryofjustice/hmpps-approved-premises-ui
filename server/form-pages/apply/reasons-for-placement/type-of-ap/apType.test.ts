@@ -77,6 +77,26 @@ describe('SelectApType', () => {
     })
   })
 
+  describe('isWomensApplication', () => {
+    it("returns true if the application is for the Women's Estate", () => {
+      const person = personFactory.build({ sex: 'Female' })
+      const applicationWomens = applicationFactory.build({ person })
+
+      const page = new SelectApType({}, applicationWomens)
+
+      expect(page.isWomensApplication()).toBe(true)
+    })
+
+    it("returns false if the application is not for the Women's Estate", () => {
+      const person = personFactory.build({ sex: 'Male' })
+      const applicationWomens = applicationFactory.build({ person })
+
+      const page = new SelectApType({}, applicationWomens)
+
+      expect(page.isWomensApplication()).toBe(false)
+    })
+  })
+
   describe('response', () => {
     it('should return a translated version of the response', () => {
       const page = new SelectApType({ type: 'pipe' }, application)
