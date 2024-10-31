@@ -16,7 +16,6 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
-  FullPerson,
   PersonalTimeline,
   SortDirection,
   TimelineEvent,
@@ -24,7 +23,6 @@ import type {
   TimelineEventType,
   TimelineEventUrlType,
 } from '@approved-premises/api'
-import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
 
@@ -55,6 +53,7 @@ export {
   pendingPlacementRequestTableRows,
   releaseTypeSelectOptions,
 } from './pendingPlacementRequestTable'
+export { isWomensApplication } from './isWomensApplication'
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
@@ -195,16 +194,6 @@ const isInapplicable = (application: Application): boolean => {
   }
 
   return false
-}
-
-const isWomensApplication = (application: Application): boolean => {
-  const { sex } = application.person as FullPerson
-  const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromFormArtifact(
-    application,
-    MaleAp,
-    'shouldPersonBePlacedInMaleAp',
-  )
-  return sex === 'Female' || shouldPersonBePlacedInMaleAp === 'no'
 }
 
 const tierQualificationPage = (application: Application) => {
@@ -432,7 +421,6 @@ export {
   arrivalDateFromApplication,
   getApplicationType,
   isInapplicable,
-  isWomensApplication,
   mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
   mapPersonalTimelineForUi,

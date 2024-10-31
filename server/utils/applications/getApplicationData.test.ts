@@ -8,7 +8,8 @@ import {
   mockQuestionResponse,
 } from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
-import { isInapplicable, isWomensApplication } from './utils'
+import { isInapplicable } from './utils'
+import { isWomensApplication } from './isWomensApplication'
 import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
 
@@ -16,6 +17,7 @@ jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./arrivalDateFromApplication')
 jest.mock('./utils')
+jest.mock('./isWomensApplication')
 jest.mock('./reasonForShortNoticeDetails')
 
 const apAreaId = 'test-id'
