@@ -256,8 +256,7 @@ describe('premisesUtils', () => {
   describe('placementTableRows', () => {
     it('should return the rows of he placement summary table', () => {
       const placements = cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' })
-
-      const tableRows = placementTableRows('current', 'Test_Premises_Id', placements)
+      const tableRows = placementTableRows('Test_Premises_Id', placements)
       const expectedRows = placements.map(placement => {
         return [
           {

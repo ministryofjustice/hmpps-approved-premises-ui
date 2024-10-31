@@ -224,11 +224,7 @@ export const placementTableHeader = (
   )
 }
 
-export const placementTableRows = (
-  activeTab: string,
-  premisesId: string,
-  placements: Array<Cas1SpaceBookingSummary>,
-): Array<TableRow> =>
+export const placementTableRows = (premisesId: string, placements: Array<Cas1SpaceBookingSummary>): Array<TableRow> =>
   placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => [
     htmlValue(
       `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${laoName(person as unknown as FullPerson)}, ${person.crn}</a>`,

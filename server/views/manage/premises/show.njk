@@ -50,7 +50,7 @@
     {{ govukTable({
         firstCellIsHeader: false,
         head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
-        rows: PremisesUtils.placementTableRows(activeTab, premises.id, placements)
+        rows: PremisesUtils.placementTableRows(premises.id, placements)
     }) }}
 
     {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
