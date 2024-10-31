@@ -32,6 +32,15 @@ describe('SelectApType', () => {
       const page = new SelectApType({}, application)
       expect(page.errors()).toEqual({ type: 'You must specify an AP type' })
     })
+
+    it("should return an error if the type is not available for a women's application", () => {
+      const person = personFactory.build({ sex: 'Female' })
+      const applicationWomens = applicationFactory.build({ person })
+
+      const page = new SelectApType({ type: 'mhapElliottHouse' }, applicationWomens)
+
+      expect(page.errors()).toEqual({ type: 'You must specify an AP type' })
+    })
   })
 
   describe('items', () => {
@@ -84,7 +93,7 @@ describe('SelectApType', () => {
 
       const page = new SelectApType({}, applicationWomens)
 
-      expect(page.isWomensApplication()).toBe(true)
+      expect(page.isWomensApplication).toBe(true)
     })
 
     it("returns false if the application is not for the Women's Estate", () => {
@@ -93,7 +102,7 @@ describe('SelectApType', () => {
 
       const page = new SelectApType({}, applicationWomens)
 
-      expect(page.isWomensApplication()).toBe(false)
+      expect(page.isWomensApplication).toBe(false)
     })
   })
 
