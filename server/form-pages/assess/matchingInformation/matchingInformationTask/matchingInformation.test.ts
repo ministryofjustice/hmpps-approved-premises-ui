@@ -1,4 +1,4 @@
-import { assessmentFactory } from '../../../../testutils/factories'
+import { applicationFactory, assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
@@ -11,7 +11,12 @@ jest.mock('../../../../utils/assessments/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 jest.mock('../../../utils/matchingInformationUtils')
 
-const assessment = assessmentFactory.build()
+const assessment = assessmentFactory.build({
+  application: applicationFactory.build({ isWomensApplication: false }),
+})
+const weAssessment = assessmentFactory.build({
+  application: applicationFactory.build({ isWomensApplication: true }),
+})
 
 const defaultArguments = {
   apType: 'isESAP' as const,
@@ -94,6 +99,14 @@ describe('MatchingInformation', () => {
         lengthOfStay: 'You must provide a recommended length of stay',
       })
     })
+
+    it("should return an error if the type is not available for a women's application", () => {
+      const page = new MatchingInformation({ ...defaultArguments, apType: 'isMHAPElliottHouse' }, weAssessment)
+
+      expect(page.errors()).toEqual({
+        apType: 'You must select the type of AP required',
+      })
+    })
   })
 
   describe('response', () => {
@@ -152,6 +165,39 @@ describe('MatchingInformation', () => {
 
       expect(page.suggestedStaySummaryListOptions).toEqual(utilsReturnValue)
       expect(suggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
+    })
+  })
+
+  describe('apTypesItems', () => {
+    it('converts all available AP types to radio items', () => {
+      const page = new MatchingInformation({ apType: 'isPIPE' }, assessment)
+      const items = page.apTypeItems
+
+      expect(items).toEqual([
+        { value: 'normal', text: 'Standard AP', checked: false },
+        { value: 'isPIPE', text: 'Psychologically Informed Planned Environment (PIPE)', checked: true },
+        { value: 'isESAP', text: 'Enhanced Security AP (ESAP)', checked: false },
+        { value: 'isRecoveryFocussed', text: 'Recovery Focused Approved Premises (RFAP)', checked: false },
+        { value: 'isMHAPElliottHouse', text: 'Specialist Mental Health AP (Elliott House - Midlands)', checked: false },
+        {
+          value: 'isMHAPStJosephs',
+          text: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
+          checked: false,
+        },
+      ])
+    })
+
+    describe("when assessing a women's estate application", () => {
+      it('restricts the available AP types', () => {
+        const page = new MatchingInformation({ apType: 'normal' }, weAssessment)
+        const items = page.apTypeItems
+
+        expect(items).toEqual([
+          { value: 'normal', text: 'Standard AP', checked: true },
+          { value: 'isPIPE', text: 'Psychologically Informed Planned Environment (PIPE)', checked: false },
+          { value: 'isESAP', text: 'Enhanced Security AP (ESAP)', checked: false },
+        ])
+      })
     })
   })
 })

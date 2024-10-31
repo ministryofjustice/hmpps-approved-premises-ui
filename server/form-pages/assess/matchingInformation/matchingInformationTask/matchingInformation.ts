@@ -1,6 +1,6 @@
 import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApType, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import {
   defaultMatchingInformationValues,
   suggestedStaySummaryListOptions,
@@ -15,12 +15,15 @@ import {
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
   apTypeCriteriaLabels,
+  applyApTypeToAssessApType,
   nonPrepopulatablePlacementRequirementCriteria,
   offenceAndRiskCriteria,
   placementCriteriaLabels,
   placementRequirementCriteria,
   prepopulatablePlacementRequirementCriteria,
 } from '../../../../utils/placementCriteriaUtils'
+import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
+import { womensApTypes } from '../../../apply/reasons-for-placement/type-of-ap/apType'
 
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
 export type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
@@ -68,8 +71,6 @@ export default class MatchingInformation implements TasklistPage {
     cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
   }
 
-  apTypeCriteriaLabels = apTypeCriteriaLabels
-
   placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not required']
 
   placementRequirementCriteria = placementRequirementCriteria
@@ -86,10 +87,22 @@ export default class MatchingInformation implements TasklistPage {
 
   offenceAndRiskInformationRelevance = offenceAndRiskRelevance
 
+  availableApTypes: Record<ApTypeCriteria, string>
+
   constructor(
     private _body: Partial<MatchingInformationBody>,
     public assessment: Assessment,
-  ) {}
+  ) {
+    const mappedWomensApTypes = womensApTypes.map(type => applyApTypeToAssessApType?.[type] || type)
+    this.availableApTypes = assessment.application.isWomensApplication
+      ? (Object.entries(apTypeCriteriaLabels).reduce((types, [value, text]) => {
+          if (value === 'normal' || mappedWomensApTypes.includes(value as ApType)) {
+            types[value] = text
+          }
+          return types
+        }, {}) as Record<ApTypeCriteria, string>)
+      : apTypeCriteriaLabels
+  }
 
   set body(value: MatchingInformationBody) {
     this._body = { ...value, ...defaultMatchingInformationValues(this.body, this.assessment.application) }
@@ -142,7 +155,8 @@ export default class MatchingInformation implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.apType) errors.apType = 'You must select the type of AP required'
+    if (!Object.keys(this.availableApTypes).includes(this.body.apType))
+      errors.apType = 'You must select the type of AP required'
 
     this.placementRequirementCriteria.forEach(placementRequirementCriterion => {
       if (!this.body[placementRequirementCriterion]) {
@@ -173,5 +187,9 @@ export default class MatchingInformation implements TasklistPage {
 
   get suggestedStaySummaryListOptions(): SummaryList {
     return suggestedStaySummaryListOptions(this.assessment.application)
+  }
+
+  get apTypeItems() {
+    return convertKeyValuePairToRadioItems(this.availableApTypes, this.body.apType)
   }
 }

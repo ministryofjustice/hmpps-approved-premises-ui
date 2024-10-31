@@ -3,9 +3,14 @@ import { filterByType } from './utils'
 import { apTypes } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
-type SpecialistApTypeCriteria = 'isPIPE' | 'isESAP' | 'isMHAPElliottHouse' | 'isMHAPStJosephs' | 'isRecoveryFocussed'
+export type SpecialistApTypeCriteria =
+  | 'isPIPE'
+  | 'isESAP'
+  | 'isMHAPElliottHouse'
+  | 'isMHAPStJosephs'
+  | 'isRecoveryFocussed'
 
-const applyApTypeToAssessApType: Record<Exclude<ApType, 'normal'>, SpecialistApTypeCriteria> = {
+export const applyApTypeToAssessApType: Record<Exclude<ApType, 'normal'>, SpecialistApTypeCriteria> = {
   pipe: 'isPIPE',
   esap: 'isESAP',
   mhapElliottHouse: 'isMHAPElliottHouse',
