@@ -577,14 +577,21 @@ export default class ApplyHelper {
     apTypePage.completeForm()
     apTypePage.clickSubmit()
 
-    // Given I am on the RFAP details page
-    const rfapDetailsPage = new ApplyPages.RfapDetailsPage(this.application)
+    // Given I am on the PIPE referral page
+    const pipeDetailsPage = new ApplyPages.PipeReferralPage(this.application)
 
     // When I complete the form and click submit
-    rfapDetailsPage.completeForm()
-    rfapDetailsPage.clickSubmit()
+    pipeDetailsPage.completeForm()
+    pipeDetailsPage.clickSubmit()
 
-    this.pages.typeOfAp = [apTypePage, rfapDetailsPage]
+    // Given I am on the PIPE OPD screening page
+    const pipeOpdScreeningPage = new ApplyPages.PipeOpdScreening(this.application)
+
+    // When I complete the form and click submit
+    pipeOpdScreeningPage.completeForm()
+    pipeOpdScreeningPage.clickSubmit()
+
+    this.pages.typeOfAp = [apTypePage, pipeDetailsPage, pipeOpdScreeningPage]
 
     // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)

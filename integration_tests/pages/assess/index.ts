@@ -12,7 +12,7 @@ import CheckYourAnswersPage from './checkYourAnswersPage'
 import SubmissionConfirmation from './submissionConfirmation'
 import ShowPage from './showPage'
 import ApplicationTimelinessPage from './applicationTimelinessPage'
-import RfapSuitabilityPage from './rfapSuitability'
+import PipeSuitabilityPage from './pipeSuitability'
 import ContingencyPlanSuitabilityPage from './contingencyPlanSuitability'
 
 export {
@@ -30,6 +30,6 @@ export {
   SubmissionConfirmation,
   ShowPage,
   ApplicationTimelinessPage,
-  RfapSuitabilityPage,
+  PipeSuitabilityPage,
   ContingencyPlanSuitabilityPage,
 }

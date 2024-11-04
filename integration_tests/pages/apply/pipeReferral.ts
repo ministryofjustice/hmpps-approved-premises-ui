@@ -3,21 +3,19 @@ import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
-export default class RfapDetailsPage extends ApplyPage {
+export default class PipeReferralPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      'Recovery Focused Approved Premises (RFAP)',
+      'Has the person been screened into the Offender Personality Disorder Pathway (OPD)?',
       application,
       'type-of-ap',
-      'rfap-details',
+      'pipe-referral',
       paths.applications.pages.show({ id: application.id, task: 'type-of-ap', page: 'ap-type' }),
     )
   }
 
   completeForm() {
-    this.completeTextInputFromPageBody('motivation')
-    this.completeTextInputFromPageBody('continuedRecovery')
-    this.checkRadioButtonFromPageBody('receivingTreatment')
-    this.completeTextInputFromPageBody('receivingTreatmentDetail')
+    this.checkRadioButtonFromPageBody('opdPathway')
+    this.completeDateInputsFromPageBody('opdPathwayDate')
   }
 }

@@ -15,7 +15,7 @@ import AssessHelper from '../../helpers/assess'
 import {
   ContingencyPlanSuitabilityPage,
   ListPage,
-  RfapSuitabilityPage,
+  PipeSuitabilityPage,
   ShowPage,
   SuitabilityAssessmentPage,
   TaskListPage,
@@ -369,8 +369,8 @@ context('Assess', () => {
     // And I review a section
     const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
     suitabilityAssessmentPage.clickSubmit()
-    const rfapSuitabilityAssessmentPage = new RfapSuitabilityPage(assessment)
-    rfapSuitabilityAssessmentPage.clickSubmit()
+    const pipeSuitabilityAssessmentPage = new PipeSuitabilityPage(assessment)
+    pipeSuitabilityAssessmentPage.clickSubmit()
     const contingencyPlanPage = new ContingencyPlanSuitabilityPage(assessment)
     contingencyPlanPage.clickSubmit()
 

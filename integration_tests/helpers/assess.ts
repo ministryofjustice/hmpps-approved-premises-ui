@@ -25,7 +25,7 @@ import {
 import Page from '../pages/page'
 import AssessPage from '../pages/assess/assessPage'
 import { assessmentSummaryFactory, personFactory } from '../../server/testutils/factories'
-import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
+import PipeSuitabilityPage from '../pages/assess/pipeSuitability'
 import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
 
 import { awaitingAssessmentStatuses } from '../../server/utils/assessments/utils'
@@ -208,11 +208,11 @@ export default class AseessHelper {
     suitabilityAssessmentPage.completeForm()
     suitabilityAssessmentPage.clickSubmit()
 
-    const rfapSuitabilityPage = new RfapSuitabilityPage(this.assessment)
-    rfapSuitabilityPage.completeForm()
-    rfapSuitabilityPage.clickSubmit()
+    const pipeSuitabilityPage = new PipeSuitabilityPage(this.assessment)
+    pipeSuitabilityPage.completeForm()
+    pipeSuitabilityPage.clickSubmit()
 
-    this.pages.assessSuitability = [suitabilityAssessmentPage, rfapSuitabilityPage]
+    this.pages.assessSuitability = [suitabilityAssessmentPage, pipeSuitabilityPage]
 
     if (!options.isShortNoticeApplication) {
       const contingencyPlanSuitabilityPage = new ContingencyPlanSuitabilityPage(this.assessment)

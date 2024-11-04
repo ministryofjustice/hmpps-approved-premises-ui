@@ -1,19 +1,34 @@
 import type { BackwardsCompatibleApplyApType, RadioItem, TaskListErrors } from '@approved-premises/ui'
 
-import { ApType } from '@approved-premises/api'
+import { ApType, ApprovedPremisesApplication } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
 import { convertArrayToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
 import { apTypeLabels } from '../../../../utils/apTypeLabels'
 
+import { isWomensApplication } from '../../../../utils/applications/isWomensApplication'
+
 // The ordering of AP types is meaningful to users
 export const apTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap', 'rfap', 'mhapElliottHouse', 'mhapStJosephs']
+export const womensApTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap']
 
 @Page({ name: 'ap-type', bodyProperties: ['type'] })
 export default class SelectApType implements TasklistPage {
   title = `Which type of AP does the person require?`
 
-  constructor(public body: { type?: BackwardsCompatibleApplyApType }) {}
+  availableTypes: ReadonlyArray<ApType>
+
+  isWomensApplication: boolean
+
+  constructor(
+    public body: {
+      type?: BackwardsCompatibleApplyApType
+    },
+    private readonly application: ApprovedPremisesApplication,
+  ) {
+    this.isWomensApplication = isWomensApplication(application)
+    this.availableTypes = this.isWomensApplication ? womensApTypes : apTypes
+  }
 
   previous() {
     return 'dashboard'
@@ -36,7 +51,7 @@ export default class SelectApType implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.type) {
+    if (!this.body.type || !this.availableTypes.includes(this.body.type as ApType)) {
       errors.type = 'You must specify an AP type'
     }
 
@@ -44,7 +59,7 @@ export default class SelectApType implements TasklistPage {
   }
 
   items() {
-    return convertArrayToRadioItems(apTypes, this.body.type, apTypeLabels, apTypeHintText)
+    return convertArrayToRadioItems(this.availableTypes, this.body.type, apTypeLabels, apTypeHintText)
   }
 }
 

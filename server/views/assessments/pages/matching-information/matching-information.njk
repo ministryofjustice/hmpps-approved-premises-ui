@@ -5,86 +5,77 @@
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">{{page.title}}</h1>
-  <p>Please specify requirements for matching the person to a bed within an Approved Premises (AP).</p>
+    <h1 class="govuk-heading-l">{{ page.title }}</h1>
+    <p>Please specify requirements for matching the person to a bed within an Approved Premises (AP).</p>
 
-  {{ govukInsetText({
-    text: "The answers on this screen are prepopulated from the application. If you (the assessor) have disagreed with the requirements set in the application during your assessment you must update these answers. Please verify all answers as placements are matched according to these."
-  }) }}
+    {{ govukInsetText({
+        text: "The answers on this screen are prepopulated from the application. If you (the assessor) have disagreed with the requirements set in the application during your assessment you must update these answers. Please verify all answers as placements are matched according to these."
+    }) }}
 
-  {{ formPageRadios({
-      fieldName: "apType",
-      fieldset: {
-        legend: {
-          text: page.questions.apType,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      items: convertKeyValuePairToRadioItems(page.apTypeCriteriaLabels, page.apType)
-    },fetchContext()) }}
-
-  <h2 class="govuk-heading-m">Placement requirements</h2>
-
-  {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskCriteria, page.offenceAndRiskInformationRelevance, page.body) | safe }}
-
-  {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.prepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
-
-  {{ govukInsetText({
-    text: "You must enter the following requirements manually as these are not explicitly asked in the application."
-  }) }}
-
-  {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.nonPrepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
-
-  {% set lengthOfStayAgreedHint %}
-  {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}
-  {% endset %}
-
-  {{
-    formPageRadios({
-      fieldName: "lengthOfStayAgreed",
-      fieldset: {
-        legend: {
-          text: page.questions.lengthOfStayAgreed,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      hint: {
-        html: lengthOfStayAgreedHint
-      },
-      items: [
-        {
-          value: "yes",
-          text: "Yes"
+    {{ formPageRadios({
+        fieldName: "apType",
+        fieldset: {
+            legend: {
+                text: page.questions.apType,
+                classes: "govuk-fieldset__legend--m"
+            }
         },
-        {
-          value: "no",
-          text: "No",
-          conditional: {
-            html: formPageDaysAndWeeksInput("lengthOfStay", "govuk-label--s", fetchContext())
-          }
-        }
-      ]
-    },
-    fetchContext()
-    )
-  }}
+        items: page.apTypeItems
+    }, fetchContext()) }}
 
-  {{
-    formPageTextarea(
-      {
+    <h2 class="govuk-heading-m">Placement requirements</h2>
+
+    {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskCriteria, page.offenceAndRiskInformationRelevance, page.body) | safe }}
+
+    {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.prepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
+
+    {{ govukInsetText({
+        text: "You must enter the following requirements manually as these are not explicitly asked in the application."
+    }) }}
+
+    {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.nonPrepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
+
+    {% set lengthOfStayAgreedHint %}
+        {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}
+    {% endset %}
+
+    {{ formPageRadios({
+        fieldName: "lengthOfStayAgreed",
+        fieldset: {
+            legend: {
+                text: page.questions.lengthOfStayAgreed,
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+        hint: {
+            html: lengthOfStayAgreedHint
+        },
+        items: [
+            {
+                value: "yes",
+                text: "Yes"
+            },
+            {
+                value: "no",
+                text: "No",
+                conditional: {
+                html: formPageDaysAndWeeksInput("lengthOfStay", "govuk-label--s", fetchContext())
+            }
+            }
+        ]
+    }, fetchContext()) }}
+
+    {{ formPageTextarea({
         fieldName: "cruInformation",
         type: "textarea",
         spellcheck: false,
         label: {
-          text: page.questions.cruInformation,
-          classes: "govuk-label--m"
+            text: page.questions.cruInformation,
+            classes: "govuk-label--m"
         },
         hint: {
-          text: "Record any observations you think would benefit the CRU manager. They will use this information to match the person to a suitable AP."
+            text: "Record any observations you think would benefit the CRU manager. They will use this information to match the person to a suitable AP."
         }
-      },
-      fetchContext()
-    )
-  }}
+    }, fetchContext()) }}
 
 {% endblock %}
