@@ -105,13 +105,18 @@
   },
   "type-of-ap": {
     "ap-type": {
-      "type": "rfap"
+      "type": "pipe"
     },
-    "rfap-details": {
-      "motivation": "Some motivation",
-      "continuedRecovery": "Some work",
-      "receivingTreatment": "yes",
-      "receivingTreatmentDetail": "Some details here"
+    "pipe-referral": {
+      "opdPathway": "yes",
+      "opdPathwayDate-year": "2024",
+      "opdPathwayDate-month": "9",
+      "opdPathwayDate-day": "9",
+      "opdPathwayDate": "2024-09-09"
+    },
+    "pipe-opd-screening": {
+      "pipeReferral": "yes",
+      "pipeReferralMoreDetail": "Details"
     }
   },
   "oasys-import": {

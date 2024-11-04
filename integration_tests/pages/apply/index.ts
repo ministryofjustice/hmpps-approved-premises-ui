@@ -47,7 +47,8 @@ import ReasonForShortNoticePage from './reasonForShortNoticePage'
 import RehabilitativeInterventions from './rehabilitativeInterventions'
 import ReleaseDatePage from './releaseDate'
 import RelocationRegionPage from './relocationRegion'
-import RfapDetailsPage from './rfapDetails'
+import PipeOpdScreening from './pipeOpdScreening'
+import PipeReferralPage from './pipeReferral'
 import RiskManagementFeatures from './riskManagementFeatures'
 import RiskManagementPlanPage from './riskManagementPlan'
 import RiskToSelfPage from './riskToSelf'
@@ -118,7 +119,8 @@ export {
   RehabilitativeInterventions,
   ReleaseDatePage,
   RelocationRegionPage,
-  RfapDetailsPage,
+  PipeReferralPage,
+  PipeOpdScreening,
   RiskManagementFeatures,
   RiskManagementPlanPage,
   RiskToSelfPage,
