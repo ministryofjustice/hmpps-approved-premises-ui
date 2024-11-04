@@ -19,7 +19,7 @@ describe('V2PremisesController', () => {
   const premisesId = 'some-uuid'
 
   let request: DeepMocked<Request>
-  const response: DeepMocked<Response> = createMock<Response>({})
+  let response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
@@ -29,6 +29,7 @@ describe('V2PremisesController', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId } })
+    response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
     jest.useFakeTimers()
   })
 

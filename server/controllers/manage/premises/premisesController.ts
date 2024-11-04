@@ -9,6 +9,7 @@ import {
 import { ApAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+import { hasPermission } from '../../../utils/users/roles'
 
 export default class PremisesController {
   constructor(
@@ -32,27 +33,28 @@ export default class PremisesController {
         managePaths.premises.show({ premisesId: req.params.premisesId }),
         { activeTab },
       )
-
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
+      const paginatedPlacements =
+        hasPermission(res.locals.user, ['cas1_space_booking_list']) &&
+        (await this.premisesService.getPlacements({
+          token: req.user.token,
+          premisesId: req.params.premisesId,
+          status: activeTab,
+          page: pageNumber || 1,
+          perPage: tabSettings[activeTab].pageSize,
+          sortBy: sortBy || tabSettings[activeTab].sortBy,
+          sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
+        }))
 
-      const paginatedPlacements = await this.premisesService.getPlacements({
-        token: req.user.token,
-        premisesId: req.params.premisesId,
-        status: activeTab,
-        page: pageNumber || 1,
-        perPage: tabSettings[activeTab].pageSize,
-        sortBy: sortBy || tabSettings[activeTab].sortBy,
-        sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
-      })
       return res.render('manage/premises/show', {
         premises,
         activeTab,
-        placements: paginatedPlacements.data,
+        placements: paginatedPlacements?.data,
         hrefPrefix,
         sortBy: sortBy || tabSettings[activeTab].sortBy,
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
-        pageNumber: Number(paginatedPlacements.pageNumber),
-        totalPages: Number(paginatedPlacements.totalPages),
+        pageNumber: Number(paginatedPlacements?.pageNumber),
+        totalPages: Number(paginatedPlacements?.totalPages),
       })
     }
   }

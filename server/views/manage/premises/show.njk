@@ -42,7 +42,7 @@
         PremisesUtils.summaryListForPremises(premises)
     ) }}
 
-    {%  if UserUtils.hasPermission(user, 'cas1_space_booking_list') %}
+    {% if placements %}
         {{ mojSubNavigation({
             label: 'Sub navigation',
             items: PremisesUtils.premisesTabItems(premises, activeTab)
