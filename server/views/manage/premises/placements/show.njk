@@ -1,0 +1,63 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../../components/keyDetails/macro.njk" import keyDetails %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + premises.name %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.show({ premisesId:premises.id })
+    }) }}
+{% endblock %}
+
+{% block header %}
+  {{ super() }}
+  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% set titleHtml %}
+    <span class="govuk-caption-xl">{{ premises.name }}</span>
+    <h1>{{pageHeading}}</h1>
+{% endset %}
+
+{% block content %}
+
+    {{ mojIdentityBar({
+        title: {
+            html: titleHtml
+        },
+        menus: [{
+            items: PlacementUtils.actions(placement)
+        }]
+    }) }}
+
+   {# <textarea>{{  PlacementUtils.getJson(placement) }}</textarea> #}
+
+    {{ govukSummaryList(PlacementUtils.placementSummary(placement,premises)) }}
+    <h2 class="govuk-heading-m">Arrival information</h2>
+    {{ govukSummaryList(PlacementUtils.arrivalInformation(placement)) }}
+    <h2 class="govuk-heading-m">Departure information</h2>
+    {{ govukSummaryList(PlacementUtils.departureInformation(placement)) }}
+    <h2 class="govuk-heading-m">Other</h2>
+    {{ govukSummaryList(PlacementUtils.otherBookings(placement)) }}
+{% endblock %}
+
+{% block extraScripts %}
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+      new MOJFrontend.ButtonMenu({
+        container: $('.moj-button-menu'),
+        mq: '(min-width: 200em)',
+        buttonText: 'Actions',
+        menuClasses: 'moj-button-menu__wrapper--right',
+      })
+    </script>
+{% endblock %}

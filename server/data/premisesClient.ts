@@ -3,6 +3,7 @@ import type {
   BedSummary,
   Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
+  Cas1SpaceBooking,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
   SortDirection,
@@ -64,9 +65,16 @@ export default class PremisesClient {
   }): Promise<PaginatedResponse<Cas1SpaceBookingSummary>> {
     const { premisesId, status, page, perPage, sortBy, sortDirection } = args
     return this.restClient.getPaginatedResponse<Cas1SpaceBookingSummary>({
-      path: paths.premises.placements({ premisesId }),
+      path: paths.premises.placements.index({ premisesId }),
       page: page.toString(),
       query: { residency: status, sortBy, sortDirection, perPage },
     })
+  }
+
+  async getPlacement(args: { premisesId: string; placementId: string }): Promise<Cas1SpaceBooking> {
+    const { premisesId, placementId } = args
+    return (await this.restClient.get({
+      path: paths.premises.placements.show({ premisesId, placementId }),
+    })) as Cas1SpaceBooking
   }
 }

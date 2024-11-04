@@ -8,6 +8,7 @@ import {
   bedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
+  cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
 } from '../testutils/factories'
@@ -158,6 +159,24 @@ describe('PremisesService', () => {
         perPage,
         sortBy,
         sortDirection,
+      })
+    })
+  })
+
+  describe('getPlacement', () => {
+    it('returns the details for a single placement', async () => {
+      const placement = cas1SpaceBookingFactory.build()
+
+      premisesClient.getPlacement.mockResolvedValue(placement)
+
+      const result = await service.getPlacement({ token, premisesId, placementId: placement.id })
+
+      expect(result).toEqual(placement)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getPlacement).toHaveBeenCalledWith({
+        premisesId,
+        placementId: placement.id,
       })
     })
   })

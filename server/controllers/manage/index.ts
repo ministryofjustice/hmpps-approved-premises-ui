@@ -7,6 +7,7 @@ import DateChangesController from './dateChangesController'
 
 import type { Services } from '../../services'
 import PremisesController from './premises/premisesController'
+import PlacementController from './placementController'
 import BedsController from './premises/bedsController'
 import OutOfServiceBedsController from './outOfServiceBedsController'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
@@ -25,6 +26,7 @@ export const controllers = (services: Services) => {
   const bookingExtensionsController = new BookingExtensionsController(services.bookingService)
   const cancellationsController = new CancellationsController(services.cancellationService, services.bookingService)
   const dateChangesController = new DateChangesController(services.bookingService)
+  const placementController = new PlacementController(services.premisesService)
 
   return {
     premisesController,

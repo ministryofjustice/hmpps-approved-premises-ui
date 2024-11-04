@@ -16,6 +16,7 @@ export default function routes(controllers: Controllers, router: Router, service
     bookingsController,
     bookingExtensionsController,
     premisesController,
+    placementController,
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
@@ -116,6 +117,12 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SHOW_BED',
     allowedRoles: ['future_manager', 'cru_member'],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
+  })
+
+  // Placements
+  get(paths.premises.placements.show.pattern, placementController.show(), {
+    auditEvent: 'SHOW_PLACEMENT',
+    allowedRoles: ['future_manager'],
   })
 
   // Bookings

@@ -52,17 +52,9 @@ export default class PremisesService {
     return premisesClient.getPlacements(remainingArgs)
   }
 
-  async getPlacements(args: {
-    token: string
-    premisesId: string
-    status: string
-    page: number
-    perPage: number
-    sortBy: Cas1SpaceBookingSummarySortField
-    sortDirection: SortDirection
-  }) {
+  async getPlacement(args: { token: string; premisesId: string; placementId: string }) {
     const { token, ...remainingArgs } = args
-    const premisesClient = this.premisesClientFactory(args.token)
-    return premisesClient.getPlacements(remainingArgs)
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getPlacement(remainingArgs)
   }
 }
