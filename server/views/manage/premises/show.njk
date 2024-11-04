@@ -42,18 +42,20 @@
         PremisesUtils.summaryListForPremises(premises)
     ) }}
 
-    {{ mojSubNavigation({
-        label: 'Sub navigation',
-        items: PremisesUtils.premisesTabItems(premises, activeTab)
-    }) }}
+    {%  if UserUtils.hasPermission(user, 'cas1_space_booking_list') %}
+        {{ mojSubNavigation({
+            label: 'Sub navigation',
+            items: PremisesUtils.premisesTabItems(premises, activeTab)
+        }) }}
 
-    {{ govukTable({
-        firstCellIsHeader: false,
-        head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
-        rows: PremisesUtils.placementTableRows(premises.id, placements)
-    }) }}
+        {{ govukTable({
+            firstCellIsHeader: false,
+            head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
+            rows: PremisesUtils.placementTableRows(premises.id, placements)
+        }) }}
 
-    {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+        {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+    {% endif %}
 
 {% endblock %}
 

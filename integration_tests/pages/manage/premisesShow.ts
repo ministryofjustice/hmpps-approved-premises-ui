@@ -69,4 +69,9 @@ export default class PremisesShowPage extends Page {
   shouldSelectTab(tabTitle: string): void {
     cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
   }
+
+  shouldNotShowPlacementsList(): void {
+    cy.get('.moj-sub-navigation__list').should('not.exist')
+    cy.get('.govuk-table').should('not.exist')
+  }
 }
