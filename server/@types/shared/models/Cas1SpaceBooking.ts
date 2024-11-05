@@ -19,6 +19,7 @@ export type Cas1SpaceBooking = {
     premises: NamedId;
     apArea: NamedId;
     bookedBy: User;
+    requestForPlacementId?: string;
     expectedArrivalDate: string;
     expectedDepartureDate: string;
     actualArrivalDate?: string;
@@ -37,5 +38,6 @@ export type Cas1SpaceBooking = {
     keyWorkerAllocation?: Cas1KeyWorkerAllocation;
     otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;
     cancellation?: Cas1SpaceBookingCancellation;
+    deliusEventNumber?: string;
 };
 
