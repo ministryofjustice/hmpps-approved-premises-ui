@@ -1,8 +1,5 @@
-import { BedOccupancyEntryUi } from '@approved-premises/ui'
 import type { FullPerson } from '@approved-premises/api'
 import {
-  bedOccupancyEntryFactory,
-  bedOccupancyRangeFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
   cas1SpaceBookingSummaryFactory,
@@ -10,22 +7,18 @@ import {
 import {
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
-  mapApiOccupancyEntryToUiOccupancyEntry,
-  mapApiOccupancyToUiOccupancy,
-  overcapacityMessage,
   placementTableHeader,
   placementTableRows,
+  premisesActions,
   premisesTabItems,
   premisesTableRows,
   summaryListForPremises,
 } from '.'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
-import { convertToTitleCase, linkTo } from '../utils'
+import { linkTo } from '../utils'
 import { laoName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
-
-jest.mock('../addOverbookingsToSchedule')
 
 describe('premisesUtils', () => {
   describe('premisesActions', () => {

@@ -9,10 +9,7 @@ import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
   cas1SpaceBookingSummaryFactory,
-  extendedPremisesSummaryFactory,
   paginatedResponseFactory,
-  roomFactory,
-  staffMemberFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/premisesClient')
@@ -102,38 +99,6 @@ describe('PremisesService', () => {
 
       const result = await service.find(token, premises.id)
       expect(result).toEqual(premises)
-    })
-  })
-
-  describe('getPremisesDetails', () => {
-    it('returns a title and a summary list for a given Premises ID', async () => {
-      const premises = extendedPremisesSummaryFactory.build()
-      premisesClient.summary.mockResolvedValue(premises)
-
-      const result = await service.getPremisesDetails(token, premises.id)
-
-      expect(result).toEqual(premises)
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.summary).toHaveBeenCalledWith(premises.id)
-    })
-  })
-
-  describe('getOccupancy', () => {
-    it('returns the premises occupancy from the client', async () => {
-      const occupancy = bedOccupancyRangeFactory.buildList(1)
-      const startDate = '2020-01-01'
-      const endDate = '2020-01-31'
-
-      premisesClient.calendar.mockResolvedValue(occupancy)
-      ;(mapApiOccupancyToUiOccupancy as jest.Mock).mockReturnValue(occupancy)
-
-      const result = await service.getOccupancy(token, premisesId, startDate, endDate)
-
-      expect(result).toEqual(occupancy)
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.calendar).toHaveBeenCalledWith(premisesId, startDate, endDate)
     })
   })
 

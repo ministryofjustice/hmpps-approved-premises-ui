@@ -1,17 +1,12 @@
 import type {
   BedDetail,
-  BedOccupancyRange,
   BedSummary,
   Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
-  DateCapacity,
   ExtendedPremisesSummary,
-  ApprovedPremisesSummary as PremisesSummary,
-  Room,
   SortDirection,
-  StaffMember,
 } from '@approved-premises/api'
 import type { PaginatedResponse, PremisesFilters } from '@approved-premises/ui'
 import RestClient from './restClient'
@@ -42,26 +37,6 @@ export default class PremisesClient {
 
   async getBed(premisesId: string, bedId: string): Promise<BedDetail> {
     return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
-  }
-
-  async getRooms(premisesId: string): Promise<Array<Room>> {
-    return (await this.restClient.get({ path: paths.premises.rooms({ premisesId }) })) as Array<Room>
-  }
-
-  async getRoom(premisesId: string, roomId: string): Promise<Room> {
-    return (await this.restClient.get({ path: paths.premises.room({ premisesId, roomId }) })) as Room
-  }
-
-  async calendar(premisesId: string, startDate: string, endDate: string): Promise<Array<BedOccupancyRange>> {
-    const path = paths.premises.calendar({ premisesId })
-    return (await this.restClient.get({
-      path,
-      query: { startDate, endDate },
-    })) as Array<BedOccupancyRange>
-  }
-
-  async summary(premisesId: string): Promise<ExtendedPremisesSummary> {
-    return (await this.restClient.get({ path: paths.premises.summary({ premisesId }) })) as ExtendedPremisesSummary
   }
 
   async getPlacements(args: {
