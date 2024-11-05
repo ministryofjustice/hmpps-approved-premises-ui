@@ -5,38 +5,36 @@ import { htmlValue, textValue } from '../applications/helpers'
 import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
 
 export const actions = (placement: Cas1SpaceBooking) => {
-  const actions = []
+  const out = []
 
   if (!placement.keyWorkerAllocation) {
-    actions.push({
+    out.push({
       text: 'Allocate keyworker',
       classes: 'govuk-button--secondary',
       href: '',
     })
   }
   if (!placement.actualArrivalDate) {
-    actions.push({
+    out.push({
       text: 'Record arrival',
       classes: 'govuk-button--secondary',
       href: '',
     })
-  } else {
-    if (!placement.actualDepartureDate) {
-      actions.push({
-        text: 'Record departure',
-        classes: 'govuk-button--secondary',
-        href: '',
-      })
-    }
+  } else if (!placement.actualDepartureDate) {
+    out.push({
+      text: 'Record departure',
+      classes: 'govuk-button--secondary',
+      href: '',
+    })
   }
   if (placement.keyWorkerAllocation) {
-    actions.push({
+    out.push({
       text: 'Change keyworker',
       classes: 'govuk-button--secondary',
       href: '',
     })
   }
-  return actions
+  return out
 }
 
 export const getKeyDetail = (placement: Cas1SpaceBooking): KeyDetailsArgs => {
@@ -80,7 +78,7 @@ export const placementSummary = (placement: Cas1SpaceBooking, premises: Cas1Prem
     summaryRow('Status', 'TBD'),
     summaryRow('Actual length of stay', 'TBD', true),
     summaryRow('Key worker', placement.keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-    summaryRow('Delius EventNumber', 'TBD'),
+    summaryRow('Delius EventNumber', placement.deliusEventNumber),
   ],
 })
 
@@ -110,7 +108,7 @@ const listOtherBookings = (bookingList: Array<Cas1SpaceBookingDates>): string =>
   bookingList
     .map(
       ({ id, canonicalArrivalDate, canonicalDepartureDate }: Cas1SpaceBookingDates) =>
-        `<a href="${id}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate,{format:'short'})} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate,{format:'short'})}</a>`,
+        `<a href="${id}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })}</a>`,
     )
     .join('<br/>')
 

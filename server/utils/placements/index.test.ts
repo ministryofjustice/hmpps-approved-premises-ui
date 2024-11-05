@@ -1,11 +1,6 @@
 import type { FullPerson } from '@approved-premises/api'
-import { cas1SpaceBookingFactory, cas1PremisesSummaryFactory } from '../../testutils/factories'
-import { actions, getKeyDetail, placementSummary, arrivalInformation, departureInformation, otherBookings } from '.'
-import { addOverbookingsToSchedule } from '../addOverbookingsToSchedule'
-import { textValue } from '../applications/helpers'
-import paths from '../../paths/manage'
-import { linkTo } from '../utils'
-import { laoName } from '../personUtils'
+import { cas1PremisesSummaryFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
+import { actions, arrivalInformation, departureInformation, getKeyDetail, otherBookings, placementSummary } from '.'
 import { DateFormats } from '../dateUtils'
 
 describe('placementUtils', () => {
@@ -45,13 +40,15 @@ describe('placementUtils', () => {
     it('should allow setting of keyworker when placement in initial state', () => {
       const placement = cas1SpaceBookingFactory.build()
       expect(getKeyDetail(placement)).toEqual({
-        header: { key: '', showKey: false, value: placement.person.name },
+        header: { key: '', showKey: false, value: (placement.person as FullPerson).name },
         items: [
           { key: { text: 'CRN' }, value: { text: placement.person.crn } },
           { key: { text: 'Tier' }, value: { text: placement.tier } },
           {
             key: { text: 'Date of birth' },
-            value: { text: DateFormats.isoDateToUIDate(placement.person.dateOfBirth, { format: 'short' }) },
+            value: {
+              text: DateFormats.isoDateToUIDate((placement.person as FullPerson).dateOfBirth, { format: 'short' }),
+            },
           },
         ],
       })
@@ -73,7 +70,7 @@ describe('placementUtils', () => {
             value: { html: '<span class="text-grey">-</span>' },
           },
           { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.keyWorker?.name } },
-          { key: { text: 'Delius EventNumber' }, value: { text: 'TBD' } },
+          { key: { text: 'Delius EventNumber' }, value: { text: placement.deliusEventNumber } },
         ],
       })
     })
@@ -136,14 +133,19 @@ describe('placementUtils', () => {
   })
   describe('otherBookings', () => {
     it('should return a list of other bookings from a placement', () => {
-      const placementList = [{ id: 'id1', canonicalArrivalDate: '2024-09-10', canonicalDepartureDate: '2025-06-04' },{ id: 'id2', canonicalArrivalDate: '2024-09-20', canonicalDepartureDate: '2025-03-20' }]
+      const placementList = [
+        { id: 'id1', canonicalArrivalDate: '2024-09-10', canonicalDepartureDate: '2025-06-04' },
+        { id: 'id2', canonicalArrivalDate: '2024-09-20', canonicalDepartureDate: '2025-03-20' },
+      ]
 
       const placement = cas1SpaceBookingFactory.build({ otherBookingsInPremisesForCrn: placementList })
       expect(otherBookings(placement)).toEqual({
         rows: [
           {
             key: { text: 'Other placement bookings at this premises' },
-            value: { html: '<a href=\"id1\">Placement 10 Sep 2024 to 04 Jun 2025</a><br/><a href=\"id2\">Placement 20 Sep 2024 to 20 Mar 2025</a>' },
+            value: {
+              html: '<a href="id1">Placement 10 Sep 2024 to 04 Jun 2025</a><br/><a href="id2">Placement 20 Sep 2024 to 20 Mar 2025</a>',
+            },
           },
         ],
       })

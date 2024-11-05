@@ -6,6 +6,7 @@ import {
   BookingsController,
   OutOfServiceBedsController,
   PremisesController,
+  PlacementController,
   UpdateOutOfServiceBedsController,
 } from '../controllers/manage'
 import manageRoutes from './manage'
@@ -26,6 +27,7 @@ describe('manage routes', () => {
   )
   const bookingsController: DeepMocked<BookingsController> = createMock<BookingsController>({})
   const premisesController: DeepMocked<PremisesController> = createMock<PremisesController>({})
+  const placementController: DeepMocked<PlacementController> = createMock<PlacementController>({})
   const bedsController: DeepMocked<BedsController> = createMock<BedsController>({})
   const outOfServiceBedsController: DeepMocked<OutOfServiceBedsController> = createMock<OutOfServiceBedsController>({})
   const updateOutOfServiceBedsController: DeepMocked<UpdateOutOfServiceBedsController> =
@@ -45,6 +47,7 @@ describe('manage routes', () => {
     premisesController,
     cancellationsController,
     redirectController,
+    placementController,
   })
   const services: DeepMocked<Services> = createMock<Services>({})
 
