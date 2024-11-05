@@ -9,12 +9,7 @@ import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
 import { signIn } from '../signIn'
 
 context('Premises', () => {
-  beforeEach(() => {
-    // cy.task('reset')
-    // // Given I am logged in as a future manager
-    // signIn(['future_manager'])
-  })
-
+  
   describe('list', () => {
     it('should list all premises', () => {
       cy.task('reset')
