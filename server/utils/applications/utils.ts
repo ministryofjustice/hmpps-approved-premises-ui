@@ -253,6 +253,7 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   approved_premises_application_expired: 'Application expired',
   approved_premises_assessment_appealed: 'Application appealed',
   approved_premises_booking_made: 'Placement made',
+  approved_premises_booking_keyworker_assigned: 'Key worker assigned',
   approved_premises_person_arrived: 'Person arrived',
   approved_premises_person_not_arrived: 'Person not arrived',
   approved_premises_person_departed: 'Person departed',
