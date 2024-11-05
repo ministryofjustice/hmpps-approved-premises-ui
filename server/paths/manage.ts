@@ -72,7 +72,7 @@ const paths = {
     },
     placements: {
       index: singlePremisesPath.path('space-bookings'),
-      show: singlePremisesPath.path('space-bookings').path(':bookingId'),
+      show: singlePremisesPath.path('placements').path(':placementId'),
     },
   },
 

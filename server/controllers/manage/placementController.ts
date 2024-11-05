@@ -9,6 +9,7 @@ export default class PlacementController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
+      console.log('req params',req.params)
       const referrer = req.headers.referer
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)

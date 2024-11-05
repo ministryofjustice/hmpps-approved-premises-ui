@@ -56,9 +56,8 @@ export default class PremisesClient {
   }
 
   async getPlacement(args: { premisesId: string; placementId: string }): Promise<Cas1SpaceBooking> {
-    const { premisesId, placementId } = args
     return (await this.restClient.get({
-      path: paths.premises.placements.show({ premisesId, placementId }),
+      path: paths.premises.placements.show(args),
     })) as Cas1SpaceBooking
   }
 }
