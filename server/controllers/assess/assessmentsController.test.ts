@@ -21,8 +21,6 @@ import { ErrorsAndUserInput, PaginatedResponse } from '../../@types/ui'
 import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
-jest.mock('../../utils/assessments/utils')
-jest.mock('../../utils/users')
 jest.mock('../../utils/validation')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
 jest.mock('../../services/tasklistService')
