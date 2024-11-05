@@ -80,7 +80,7 @@ context('SignIn', () => {
 
   it('refreshes user details from the API if an API call returns a changed user version', () => {
     const newUserVersion = '987654321'
-    const authUser = userFactory.build({ roles: ['role_admin'] })
+    const authUser = userFactory.build({ roles: ['user_manager'] })
 
     // Given I log in with an admin user without reporter role
     cy.task('stubAuthUser', { ...authUser })
@@ -91,7 +91,7 @@ context('SignIn', () => {
     dashboardPage.shouldNotShowCard('reports')
 
     // When my user roles have been updated
-    cy.task('stubAuthUser', { ...authUser, roles: ['role_admin', 'report_viewer'] })
+    cy.task('stubAuthUser', { ...authUser, roles: ['user_manager', 'report_viewer'] })
     cy.task('stubFindUser', { user: authUser, id: authUser.id, userVersion: newUserVersion })
     cy.task('stubCruManagementAreaReferenceData')
 

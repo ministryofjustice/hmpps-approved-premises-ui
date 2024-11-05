@@ -34,7 +34,7 @@ describe('applicationAuthMiddleware', () => {
   })
 
   it('redirects with an error when the user does not have the correct roles', async () => {
-    const user = userDetailsFactory.build({ roles: ['role_admin'] })
+    const user = userDetailsFactory.build({ roles: ['user_manager'] })
     const response = createMock<Response>({ locals: { user } })
 
     const loggerSpy = jest.spyOn(logger, 'error')
@@ -63,7 +63,7 @@ describe('applicationAuthMiddleware', () => {
   })
 
   it('redirects with an error when the user does not have the correct permission', async () => {
-    const user = userDetailsFactory.build({ roles: ['role_admin'], permissions: ['cas1_booking_create'] })
+    const user = userDetailsFactory.build({ roles: ['user_manager'], permissions: ['cas1_booking_create'] })
     const response = createMock<Response>({ locals: { user } })
 
     const loggerSpy = jest.spyOn(logger, 'error')

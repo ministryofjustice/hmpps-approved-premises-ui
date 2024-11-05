@@ -6,13 +6,13 @@ export const qualifications = ['PIPE', 'Emergency APs', 'Limited access offender
 export type Qualification = (typeof qualifications)[number]
 
 export const roles = [
-  'Administrator',
   'Assessor',
   'Matcher',
   'Workflow manager',
   'Appeals manager',
   'Report viewer',
   'Future manager',
+  'User manager',
   'Stop assessment allocations',
   'Stop match allocations',
   'Stop placement request allocations',

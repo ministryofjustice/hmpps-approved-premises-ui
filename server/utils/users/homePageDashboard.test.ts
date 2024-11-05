@@ -50,8 +50,8 @@ describe('homePageDashboard', () => {
       ])
     })
 
-    it('should return the user management section for a user with a role admin role', () => {
-      const user = userDetailsFactory.build({ roles: ['role_admin'] })
+    it('should return the user management section for a user with a user manager role', () => {
+      const user = userDetailsFactory.build({ roles: ['user_manager'] })
 
       expect(sectionsForUser(user)).toEqual([...defaultSections, sections.userManagement])
     })
@@ -75,7 +75,7 @@ describe('homePageDashboard', () => {
     })
 
     it('should not return duplicates where multiple roles contain the same sections', () => {
-      const user = userDetailsFactory.build({ roles: ['role_admin', 'workflow_manager'] })
+      const user = userDetailsFactory.build({ roles: ['user_manager', 'workflow_manager'] })
       const uniqueSections = new Set(sectionsForUser(user))
 
       expect(sectionsForUser(user)).toEqual(Array.from(uniqueSections))

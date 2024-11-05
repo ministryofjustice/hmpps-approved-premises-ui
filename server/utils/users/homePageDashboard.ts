@@ -99,7 +99,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.reports)
   }
 
-  if (hasRole(user, 'role_admin')) {
+  if (hasRole(user, 'user_manager')) {
     items.push(sections.userManagement)
   }
 

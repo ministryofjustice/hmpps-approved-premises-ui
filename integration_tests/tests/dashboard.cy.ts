@@ -7,9 +7,9 @@ context('Dashboard', () => {
     cy.task('stubSignIn')
   })
 
-  it('displays all services when a user has all roles and permissions', () => {
+  it('displays all services when a user has all roles and permissions required', () => {
     signInWithRolesAndPermissions(
-      ['assessor', 'future_manager', 'report_viewer', 'role_admin'],
+      ['assessor', 'future_manager', 'report_viewer', 'user_manager'],
       [
         'cas1_view_assigned_assessments',
         'cas1_view_manage_tasks',
@@ -64,8 +64,8 @@ context('Dashboard', () => {
     dashboardPage.shouldNotShowCard('assess')
   })
 
-  it('displays the apply and user management services to users with "role_admin"', () => {
-    signInWithRolesAndPermissions(['role_admin'])
+  it('displays the apply and user management services to users with "user_manager"', () => {
+    signInWithRolesAndPermissions(['user_manager'])
 
     const dashboardPage = DashboardPage.visit()
 

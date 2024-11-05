@@ -11,6 +11,7 @@ import type {
 } from '@approved-premises/api'
 import { apAreaFactory } from './referenceData'
 import { cruManagementAreaFactory } from './cas1ReferenceData'
+import { qualifications, roles } from '../../utils/users'
 
 const userFactory = Factory.define<User>(() => ({
   name: faker.person.fullName(),
@@ -47,31 +48,8 @@ export const userProfileFactory = Factory.define<ProfileResponse>(() => ({
   user: userFactory.build(),
 }))
 
-const userRoles: Array<UserRole> = [
-  'assessor',
-  'matcher',
-  'workflow_manager',
-  'applicant',
-  'role_admin',
-  'report_viewer',
-  'excluded_from_assess_allocation',
-  'excluded_from_match_allocation',
-  'excluded_from_placement_application_allocation',
-]
+const roleFactory = Factory.define<UserRole>(() => faker.helpers.arrayElement(roles))
 
-const roleFactory = Factory.define<UserRole>(() => faker.helpers.arrayElement(userRoles))
-
-const userQualifications: Array<UserQualification> = [
-  'pipe',
-  'lao',
-  'emergency',
-  'esap',
-  'recovery_focused',
-  'mental_health_specialist',
-]
-
-export const qualificationFactory = Factory.define<UserQualification>(() =>
-  faker.helpers.arrayElement(userQualifications),
-)
+export const qualificationFactory = Factory.define<UserQualification>(() => faker.helpers.arrayElement(qualifications))
 
 export default userFactory

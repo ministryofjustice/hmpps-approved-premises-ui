@@ -55,7 +55,6 @@ const userRoles: Record<RoleInUse, string> = {
   matcher: 'Matcher',
   workflow_manager: 'Workflow manager',
   cru_member: 'CRU member',
-  role_admin: 'Role admin',
   report_viewer: 'Report viewer',
   excluded_from_assess_allocation: 'Excluded from assess allocation',
   excluded_from_match_allocation: 'Excluded from match allocation',
