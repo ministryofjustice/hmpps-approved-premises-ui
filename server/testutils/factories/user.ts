@@ -52,7 +52,7 @@ const userRoles: Array<UserRole> = [
   'matcher',
   'workflow_manager',
   'applicant',
-  'role_admin',
+  'user_manager',
   'report_viewer',
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',

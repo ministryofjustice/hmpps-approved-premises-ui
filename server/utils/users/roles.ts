@@ -6,7 +6,6 @@ import {
 import { UserDetails } from '../../@types/ui'
 
 export const roles: ReadonlyArray<RoleInUse> = [
-  'role_admin',
   'assessor',
   'matcher',
   'workflow_manager',
@@ -21,7 +20,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'janitor',
 ]
 
-export const unusedRoles = ['applicant', 'manager', 'legacy_manager'] as const
+export const unusedRoles = ['applicant', 'manager', 'legacy_manager', 'role_admin'] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
 
@@ -53,7 +52,6 @@ export type RoleLabel = { label: string; hint?: string }
 export type RoleLabelDictionary = { [K in BaseRole]: RoleLabel }
 
 export const roleLabelDictionary: RoleLabelDictionary = {
-  role_admin: { label: 'Administrator' },
   assessor: { label: 'Assessor', hint: 'Assess Approved Premises applications' },
   matcher: { label: 'Matcher', hint: 'Match a person to a suitable AP for placement' },
   workflow_manager: {

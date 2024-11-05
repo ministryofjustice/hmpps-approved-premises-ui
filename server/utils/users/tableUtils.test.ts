@@ -81,7 +81,7 @@ describe('tableUtils', () => {
           'assessor',
           'matcher',
           'workflow_manager',
-          'role_admin',
+          'user_manager',
 
           'excluded_from_assess_allocation',
           'excluded_from_match_allocation',
@@ -89,7 +89,7 @@ describe('tableUtils', () => {
         ],
       })
       expect(roleCell(user)).toEqual({
-        text: 'Assessor, Matcher, Workflow manager, Administrator',
+        text: 'Assessor, Matcher, Workflow manager, User manager',
       })
     })
   })
@@ -102,7 +102,7 @@ describe('tableUtils', () => {
           'matcher',
           'workflow_manager',
           'applicant',
-          'role_admin',
+          'user_manager',
           'report_viewer',
           'excluded_from_assess_allocation',
           'excluded_from_match_allocation',
