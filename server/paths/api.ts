@@ -93,6 +93,7 @@ export default {
     placements: {
       index: cas1PremisesSingle.path('space-bookings'),
       show: cas1SpaceBookingSingle,
+      arrival: cas1SpaceBookingSingle.path('arrival'),
     },
     calendar: premisesSingle.path('calendar'),
   },
