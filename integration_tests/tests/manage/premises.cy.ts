@@ -9,7 +9,6 @@ import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
 import { signIn } from '../signIn'
 
 context('Premises', () => {
-  
   describe('list', () => {
     it('should list all premises', () => {
       cy.task('reset')

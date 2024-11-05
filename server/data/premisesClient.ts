@@ -5,7 +5,6 @@ import type {
   Cas1PremisesSummary,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
-  ExtendedPremisesSummary,
   SortDirection,
 } from '@approved-premises/api'
 import type { PaginatedResponse, PremisesFilters } from '@approved-premises/ui'
