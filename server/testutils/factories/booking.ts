@@ -18,18 +18,12 @@ const soon = () =>
   )
 const past = () => DateFormats.dateObjToIsoDate(faker.date.past())
 const future = () => DateFormats.dateObjToIsoDate(faker.date.future())
+
 class BookingFactory extends Factory<Booking> {
   arrivingToday() {
     return this.params({
       arrivalDate: today,
       status: 'awaiting-arrival',
-    })
-  }
-
-  arrivedToday() {
-    return this.params({
-      arrivalDate: today,
-      status: 'arrived',
     })
   }
 
@@ -49,14 +43,6 @@ class BookingFactory extends Factory<Booking> {
     })
   }
 
-  departingToday() {
-    return this.params({
-      arrivalDate: past(),
-      departureDate: today,
-      status: 'arrived',
-    })
-  }
-
   departedToday() {
     return this.params({
       arrivalDate: past(),
@@ -65,33 +51,11 @@ class BookingFactory extends Factory<Booking> {
     })
   }
 
-  arrivingSoon() {
-    return this.params({
-      arrivalDate: soon(),
-      departureDate: future(),
-      status: 'awaiting-arrival',
-    })
-  }
-
   cancelledWithFutureArrivalDate() {
     return this.params({
       arrivalDate: soon(),
       departureDate: future(),
       status: 'cancelled',
-    })
-  }
-
-  departingSoon() {
-    return this.params({
-      departureDate: soon(),
-      arrivalDate: past(),
-      status: 'arrived',
-    })
-  }
-
-  withFullPerson() {
-    return this.params({
-      person: fullPersonFactory.build(),
     })
   }
 }

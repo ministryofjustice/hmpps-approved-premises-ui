@@ -1,7 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
-  ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
   AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
@@ -82,19 +81,6 @@ export default {
         jsonBody: assessment,
       },
     }),
-  stubAllocationCreate: (args: { application: Application; assessment: Assessment }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'POST',
-        url: paths.tasks.allocations.create({ id: args.application.id, taskType: 'assessment' }),
-      },
-      response: {
-        status: 201,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.assessment,
-      },
-    }),
-
   stubAssessmentRejection: (assessment: Assessment): SuperAgentRequest =>
     stubFor({
       request: {

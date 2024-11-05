@@ -154,8 +154,6 @@ describe('dateChangesController', () => {
     it.each(Object.keys(bodies))('creates a Date Change and redirects to the confirmation page %s', async key => {
       const { expectedPayload, body } = bodies[key]
 
-      bookingService.moveBooking.mockImplementationOnce(() => Promise.resolve())
-
       const requestHandler = controller.create()
 
       body.backLink = backLink

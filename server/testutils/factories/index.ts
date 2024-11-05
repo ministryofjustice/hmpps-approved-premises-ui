@@ -12,16 +12,6 @@ import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
 import bedSummaryFactory from './bedSummary'
 import bedDetailFactory from './bedDetail'
-import {
-  bedOccupancyEntryBookingUiFactory,
-  bedOccupancyEntryCalendarFactory,
-  bedOccupancyEntryFactory,
-  bedOccupancyEntryLostBedUiFactory,
-  bedOccupancyEntryOverbookingUiFactory,
-  bedOccupancyEntryUiFactory,
-  bedOccupancyRangeFactory,
-  bedOccupancyRangeFactoryUi,
-} from './bedOccupancyRange'
 import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
 import bookingAppealTask from './bookingAppealTask'
 import bookingSummaryFactory from './bookingSummary'
@@ -37,17 +27,12 @@ import dateChangeFactory from './dateChange'
 import departureFactory from './departure'
 import documentFactory from './document'
 import extendedPremisesSummaryFactory from './extendedPremisesSummary'
-import newArrivalFactory from './newArrival'
-import newBookingFactory from './newBooking'
 import newCancellationFactory from './newCancellation'
-import newDepartureFactory from './newDeparture'
-import newNonArrivalFactory from './newNonArrival'
 import {
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
 } from './newPlacementRequestBooking'
 import newAppealFactory from './newAppealFactory'
-import nonArrivalFactory from './nonArrival'
 import noteFactory from './noteFactory'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
@@ -73,7 +58,6 @@ import referenceDataFactory, { apAreaFactory, probationRegionFactory } from './r
 import cas1ReferenceDataFactory, { cruManagementAreaFactory } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
-import roomFactory from './room'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
@@ -112,15 +96,7 @@ export {
   assessmentSummaryFactory,
   bedSummaryFactory,
   bedDetailFactory,
-  bedOccupancyEntryCalendarFactory,
   bookingSummaryFactory,
-  bedOccupancyEntryFactory,
-  bedOccupancyEntryBookingUiFactory,
-  bedOccupancyEntryLostBedUiFactory,
-  bedOccupancyEntryUiFactory,
-  bedOccupancyRangeFactoryUi,
-  bedOccupancyRangeFactory,
-  bedOccupancyEntryOverbookingUiFactory,
   bedSearchResultFactory,
   bedSearchResultsFactory,
   bookingAppealTask,
@@ -141,15 +117,10 @@ export {
   departureFactory,
   documentFactory,
   extendedPremisesSummaryFactory,
-  newArrivalFactory,
-  newBookingFactory,
   newPlacementRequestBookingFactory,
   newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,
-  newDepartureFactory,
-  newNonArrivalFactory,
   newAppealFactory,
-  nonArrivalFactory,
   noteFactory,
   oasysSectionsFactory,
   oasysSelectionFactory,
@@ -178,7 +149,6 @@ export {
   restrictedPersonFactory,
   requestForPlacementFactory,
   risksFactory,
-  roomFactory,
   roshSummaryFactory,
   staffMemberFactory,
   taskFactory,

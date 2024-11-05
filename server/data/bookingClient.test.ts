@@ -1,18 +1,4 @@
-import nock from 'nock'
-
-import {
-  arrivalFactory,
-  bookingFactory,
-  cancellationFactory,
-  dateChangeFactory,
-  departureFactory,
-  newArrivalFactory,
-  newBookingFactory,
-  newCancellationFactory,
-  newDepartureFactory,
-  newNonArrivalFactory,
-  nonArrivalFactory,
-} from '../testutils/factories'
+import { bookingFactory, cancellationFactory, dateChangeFactory, newCancellationFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import BookingClient from './bookingClient'
 
@@ -26,38 +12,6 @@ describeClient('BookingClient', provider => {
 
   beforeEach(() => {
     bookingClient = new BookingClient(token)
-  })
-
-  describe('create', () => {
-    it('should return the booking that has been posted', async () => {
-      const booking = bookingFactory.build()
-      const payload = newBookingFactory.build({
-        arrivalDate: booking.arrivalDate,
-        departureDate: booking.departureDate,
-        crn: booking.person.crn,
-      })
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to create a booking',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/some-uuid/bookings`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: booking,
-        },
-      })
-
-      const result = await bookingClient.create('some-uuid', payload)
-
-      expect(result).toEqual(booking)
-    })
   })
 
   describe('find', () => {
@@ -172,38 +126,6 @@ describeClient('BookingClient', provider => {
     })
   })
 
-  describe('markAsArrived', () => {
-    it('should create an arrival', async () => {
-      const arrival = arrivalFactory.build()
-      const payload = newArrivalFactory.build({
-        arrivalDateTime: `${arrival.arrivalDate}T${arrival.arrivalTime}`,
-        expectedDepartureDate: arrival.expectedDepartureDate.toString(),
-        notes: arrival.notes,
-      })
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a booking as arrived',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/premisesId/bookings/bookingId/arrivals`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: arrival,
-        },
-      })
-
-      const result = await bookingClient.markAsArrived('premisesId', 'bookingId', payload)
-
-      expect(result).toEqual(arrival)
-    })
-  })
-
   describe('cancel', () => {
     it('should create a cancellation', async () => {
       const newCancellation = newCancellationFactory.build()
@@ -229,95 +151,6 @@ describeClient('BookingClient', provider => {
       const result = await bookingClient.cancel('premisesId', 'bookingId', newCancellation)
 
       expect(result).toEqual(cancellation)
-    })
-  })
-
-  describe('markDeparture', () => {
-    it('should create a departure', async () => {
-      const payload = newDepartureFactory.build()
-      const departure = departureFactory.build()
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a booking as not arrived',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/premisesId/bookings/bookingId/departures`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 201,
-          body: departure,
-        },
-      })
-
-      const result = await bookingClient.markDeparture('premisesId', 'bookingId', payload)
-
-      expect(result).toEqual(departure)
-      expect(nock.isDone()).toBeTruthy()
-    })
-  })
-
-  describe('markNonArrival', () => {
-    it('should create an non-arrival', async () => {
-      const nonArrival = nonArrivalFactory.build()
-      const payload = newNonArrivalFactory.build({
-        date: nonArrival.date.toString(),
-        notes: nonArrival.notes,
-        reason: nonArrival.reason.id,
-      })
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a booking as not arrived',
-        withRequest: {
-          method: 'POST',
-          path: `/premises/premisesId/bookings/bookingId/non-arrivals`,
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: nonArrival,
-        },
-      })
-
-      const result = await bookingClient.markNonArrival('premisesId', 'bookingId', payload)
-
-      expect(result).toEqual(nonArrival)
-      expect(nock.isDone()).toBeTruthy()
-    })
-  })
-
-  describe('moveBooking', () => {
-    it('should move a booking', async () => {
-      const payload = {
-        bedId: 'bedId',
-        notes: 'Some notes',
-      }
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to move a booking',
-        withRequest: {
-          method: 'POST',
-          path: paths.premises.bookings.move({ premisesId: 'premisesId', bookingId: 'bookingId' }),
-          body: payload,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-        },
-      })
-
-      await bookingClient.moveBooking('premisesId', 'bookingId', payload)
     })
   })
 

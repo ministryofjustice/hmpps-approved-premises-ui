@@ -11,15 +11,7 @@ const v1PeoplePath = v1BookingsPath.path('people')
 
 const v1ExtensionsPath = v1BookingPath.path('extensions')
 
-const v1ArrivalsPath = v1BookingPath.path('arrivals')
-
-const v1NonArrivalsPath = v1BookingPath.path('non-arrivals')
-
 const v1CancellationsPath = v1BookingPath.path('cancellations')
-
-const v1DeparturesPath = v1BookingPath.path('departures')
-
-const v1MovesPath = v1BookingPath.path('moves')
 
 const v1LostBedsPath = v1SinglePremisesPath.path('beds/:bedId/lost-beds')
 
@@ -74,13 +66,9 @@ const paths = {
   premises: {
     index: premisesPath,
     show: singlePremisesPath,
-    calendar: v1SinglePremisesPath.path('calendar'), // not implemented, used in Calendar utils
     beds: {
       index: bedsPath,
       show: bedsPath.path(':bedId'),
-      overbookings: {
-        show: v1BedsPath.path(':bedId').path('overbookings'), // not implemented, used in Calendar utils
-      },
     },
   },
   bookings: {
@@ -94,25 +82,9 @@ const paths = {
       create: extensionsPath,
       confirm: extensionsPath.path('confirmation'),
     },
-    arrivals: {
-      new: v1ArrivalsPath.path('new'), // no v2 equivalent
-      create: v1ArrivalsPath, // no v2 equivalent
-    },
-    nonArrivals: {
-      new: v1NonArrivalsPath.path('new'), // no v2 equivalent
-      create: v1NonArrivalsPath, // no v2 equivalent
-    },
     cancellations: {
       new: v1CancellationsPath.path('new'), // no v2 equivalent
       create: v1CancellationsPath, // no v2 equivalent
-    },
-    departures: {
-      new: v1DeparturesPath.path('new'), // no v2 equivalent
-      create: v1DeparturesPath, // no v2 equivalent
-    },
-    moves: {
-      new: v1MovesPath.path('new'), // no v2 equivalent
-      create: v1MovesPath, // no v2 equivalent
     },
   },
   people: {

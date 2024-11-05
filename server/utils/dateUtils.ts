@@ -33,6 +33,7 @@ type DurationWithNumberOrString = {
   minutes?: number | string
   seconds?: number | string
 }
+
 export class DateFormats {
   /**
    * @param date JS Date object.
@@ -61,14 +62,6 @@ export class DateFormats {
       return format(date, 'ccc d MMM y')
     }
     return format(date, 'dd MMM y')
-  }
-
-  /**
-   * @param date JS Date object.
-   * @returns the date in the to be shown in the heading row of the calendar: "20".
-   */
-  static calendarDate(date: Date) {
-    return format(date, 'd')
   }
 
   /**
@@ -334,7 +327,8 @@ export const bankHolidays = () => {
 
 export const todayAtMidnight = () => new Date(new Date().setHours(0, 0, 0, 0))
 
-export class InvalidDateStringError extends Error {}
+export class InvalidDateStringError extends Error {
+}
 
 export const daysToWeeksAndDays = (days: string | number): { days: number; weeks: number } => {
   const daysAsNumber = Number(days)

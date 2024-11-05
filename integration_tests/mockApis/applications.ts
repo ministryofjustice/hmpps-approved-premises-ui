@@ -6,16 +6,14 @@ import type {
   ApplicationTimelineNote,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
-  ApprovedPremisesAssessment,
-  PlacementApplication,
   RequestForPlacement,
   SortDirection,
   TimelineEvent,
 } from '@approved-premises/api'
 import { Withdrawables } from '@approved-premises/api'
+import { ApplicationDashboardSearchOptions } from '@approved-premises/ui'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
-import { ApplicationDashboardSearchOptions } from '../../server/@types/ui'
 import { errorStub } from './utils'
 
 export default {
@@ -120,40 +118,6 @@ export default {
 
     return request.body.requests
   },
-  stubApplicationCreate: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'POST',
-        url: `/applications?createWithRisks=true`,
-      },
-      response: {
-        status: 201,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: { ...args.application, data: null, type: 'CAS1' },
-      },
-    }),
-  stubApplicationUpdate: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'PUT',
-        url: `/applications/${args.application.id}`,
-      },
-      response: {
-        status: 201,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        body: `
-        {
-          "id": "{{request.pathSegments.[1]}}",
-          "person": ${JSON.stringify(args.application.person)},
-          "createdByProbationOfficerId": "${args.application.createdByUserId}",
-          "createdAt": "${args.application.createdAt}",
-          "submittedAt": "${args.application.submittedAt}",
-          "data": {{{jsonPath request.body '$.data'}}}
-        }
-        `,
-        transformers: ['response-template'],
-      },
-    }),
   stubApplicationGet: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -164,21 +128,6 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.application,
-      },
-    }),
-  stubApplicationAssessment: (args: {
-    application: ApprovedPremisesApplication
-    assessment: ApprovedPremisesAssessment
-  }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/applications/${args.application.id}/assessment`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.assessment,
       },
     }),
   stubApplicationDocuments: (args: {
@@ -228,21 +177,6 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.timeline,
-      },
-    }),
-  stubApplicationPlacementRequests: (args: {
-    applicationId: string
-    placementApplications: Array<PlacementApplication>
-  }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `${paths.applications.placementApplications({ id: args.applicationId })}?includeInitialRequestForPlacement=true`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.placementApplications,
       },
     }),
   stubApplicationRequestsForPlacement: ({

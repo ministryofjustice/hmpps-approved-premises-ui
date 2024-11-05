@@ -7,9 +7,6 @@ import UserService from './userService'
 import PremisesService from './premisesService'
 import PersonService from './personService'
 import BookingService from './bookingService'
-import ArrivalService from './arrivalService'
-import NonArrivalService from './nonArrivalService'
-import DepartureService from './departureService'
 import CancellationService from './cancellationService'
 import ApplicationService from './applicationService'
 import OutOfServiceBedService from './outOfServiceBedService'
@@ -50,9 +47,6 @@ export const services = () => {
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
   const personService = new PersonService(personClient)
   const bookingService = new BookingService(bookingClientBuilder)
-  const arrivalService = new ArrivalService(bookingClientBuilder)
-  const nonArrivalService = new NonArrivalService(bookingClientBuilder, referenceDataClientBuilder)
-  const departureService = new DepartureService(bookingClientBuilder, referenceDataClientBuilder)
   const cancellationService = new CancellationService(bookingClientBuilder, referenceDataClientBuilder)
   const outOfServiceBedService = new OutOfServiceBedService(
     outOfServiceBedClientBuilder,
@@ -75,9 +69,6 @@ export const services = () => {
     premisesService,
     personService,
     bookingService,
-    arrivalService,
-    nonArrivalService,
-    departureService,
     cancellationService,
     outOfServiceBedService,
     applicationService,
@@ -99,9 +90,6 @@ export {
   UserService,
   PremisesService,
   PersonService,
-  ArrivalService,
-  NonArrivalService,
-  DepartureService,
   CancellationService,
   BookingService,
   OutOfServiceBedService,

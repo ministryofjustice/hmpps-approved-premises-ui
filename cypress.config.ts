@@ -5,9 +5,6 @@ import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import premises from './integration_tests/mockApis/premises'
 import booking from './integration_tests/mockApis/booking'
 import bookingExtension from './integration_tests/mockApis/bookingExtension'
-import arrival from './integration_tests/mockApis/arrival'
-import nonArrival from './integration_tests/mockApis/nonArrival'
-import departure from './integration_tests/mockApis/departure'
 import cancellation from './integration_tests/mockApis/cancellation'
 import outOfServiceBed from './integration_tests/mockApis/outOfServiceBed'
 import person from './integration_tests/mockApis/person'
@@ -21,7 +18,6 @@ import placementRequests from './integration_tests/mockApis/placementRequests'
 import placementApplication from './integration_tests/mockApis/placementApplication'
 import beds from './integration_tests/mockApis/beds'
 import spaceSearch from './integration_tests/mockApis/spaces'
-import moveBooking from './integration_tests/mockApis/moveBooking'
 import spaceBookings from './integration_tests/mockApis/spaceBooking'
 import referenceData from './integration_tests/mockApis/referenceData'
 
@@ -41,14 +37,11 @@ export default defineConfig({
     setupNodeEvents(on) {
       on('task', {
         reset: resetStubs,
-        ...arrival,
-        ...nonArrival,
         ...auth,
         ...tokenVerification,
         ...premises,
         ...booking,
         ...bookingExtension,
-        ...departure,
         ...cancellation,
         ...outOfServiceBed,
         ...person,
@@ -60,7 +53,6 @@ export default defineConfig({
         ...placementApplication,
         ...beds,
         ...spaceSearch,
-        ...moveBooking,
         ...reports,
         ...spaceBookings,
         ...referenceData,

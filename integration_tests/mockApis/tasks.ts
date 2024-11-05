@@ -4,7 +4,6 @@ import type { Reallocation, SortDirection, Task, TaskSortField, TaskType, User }
 import { AllocatedFilter } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
-import { errorStub } from './utils'
 import { kebabCase } from '../../server/utils/utils'
 
 export default {
@@ -77,20 +76,6 @@ export default {
       },
     })
   },
-  stubTasks: (tasks: Array<Task>): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: paths.tasks.index.pattern,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: tasks,
-      },
-    }),
   stubTaskGet: (args: { task: Task; users: Array<User> }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -130,16 +115,6 @@ export default {
         }),
       })
     ).body.requests,
-  stubAllocationErrors: (task: Task) =>
-    stubFor(
-      errorStub(
-        ['userId'],
-        paths.tasks.allocations.create({
-          id: task.id,
-          taskType: kebabCase(task.taskType),
-        }),
-      ),
-    ),
   verifyTasksRequests: async ({
     allocatedFilter,
     page = '1',

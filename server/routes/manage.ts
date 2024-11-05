@@ -19,11 +19,7 @@ export default function routes(controllers: Controllers, router: Router, service
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
-    arrivalsController,
-    nonArrivalsController,
-    departuresController,
     cancellationsController,
-    moveBedsController,
     redirectController,
   } = controllers
 
@@ -164,38 +160,6 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
 
-  // Booking arrivals
-  get(paths.bookings.arrivals.new.pattern, arrivalsController.new(), {
-    auditEvent: 'NEW_ARRIVAL',
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-  post(paths.bookings.arrivals.create.pattern, arrivalsController.create(), {
-    auditEvent: 'CREATE_ARRIVAL_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.arrivals.new.pattern,
-        auditEvent: 'CREATE_ARRIVAL_FAILURE',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-
-  // Booking non-arrivals
-  get(paths.bookings.nonArrivals.new.pattern, nonArrivalsController.new(), {
-    auditEvent: 'NEW_NON_ARRIVAL',
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-  post(paths.bookings.nonArrivals.create.pattern, nonArrivalsController.create(), {
-    auditEvent: 'CREATE_NON_ARRIVAL_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.nonArrivals.new.pattern,
-        auditEvent: 'CREATE_NON_ARRIVAL_FAILURE',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-
   // Booking cancellations
   get(paths.bookings.cancellations.new.pattern, cancellationsController.new(), {
     auditEvent: 'NEW_CANCELLATION',
@@ -207,38 +171,6 @@ export default function routes(controllers: Controllers, router: Router, service
       {
         path: paths.bookings.cancellations.new.pattern,
         auditEvent: 'CREATE_CANCELLATION_FAILURE',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-
-  // Booking departures
-  get(paths.bookings.departures.new.pattern, departuresController.new(), {
-    auditEvent: 'NEW_DEPARTURE',
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-  post(paths.bookings.departures.create.pattern, departuresController.create(), {
-    auditEvent: 'CREATE_DEPARTURE_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.departures.new.pattern,
-        auditEvent: 'CREATE_DEPARTURE_FAILURE',
-      },
-    ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-
-  // Booking moves
-  get(paths.bookings.moves.new.pattern, moveBedsController.new(), {
-    auditEvent: 'NEW_BED_MOVE',
-    allowedRoles: ['workflow_manager', 'future_manager'],
-  })
-  post(paths.bookings.moves.create.pattern, moveBedsController.create(), {
-    auditEvent: 'BED_MOVE_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.moves.new.pattern,
-        auditEvent: 'BED_MOVE_FAILURE',
       },
     ],
     allowedRoles: ['workflow_manager', 'future_manager'],

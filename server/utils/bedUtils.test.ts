@@ -1,14 +1,6 @@
 import paths from '../paths/manage'
+import { apCharacteristicPairFactory, bedDetailFactory, bedSummaryFactory } from '../testutils/factories'
 import {
-  apCharacteristicPairFactory,
-  bedDetailFactory,
-  bedOccupancyEntryBookingUiFactory,
-  bedOccupancyEntryLostBedUiFactory,
-  bedOccupancyEntryOverbookingUiFactory,
-  bedSummaryFactory,
-} from '../testutils/factories'
-import {
-  InvalidOverbookingDataException,
   actionCell,
   bedActions,
   bedDetails,
@@ -16,15 +8,11 @@ import {
   bedNameCell,
   bedTableRows,
   characteristicsRow,
-  decodeOverbooking,
-  encodeOverbooking,
-  overbookingSummaryList,
   roomNameCell,
   statusCell,
   statusRow,
   title,
 } from './bedUtils'
-import { DateFormats } from './dateUtils'
 import { translateCharacteristic } from './characteristicsUtils'
 
 describe('bedUtils', () => {
@@ -156,122 +144,6 @@ describe('bedUtils', () => {
             text: 'Create out of service bed record',
             classes: 'govuk-button--secondary',
             href: paths.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
-          },
-        ],
-      })
-    })
-  })
-
-  describe('encodeOverbooking', () => {
-    it('encodes an overbooking entry to Base64', () => {
-      const overbooking = bedOccupancyEntryOverbookingUiFactory.build()
-
-      expect(encodeOverbooking(overbooking)).toEqual(Buffer.from(JSON.stringify(overbooking)).toString('base64'))
-    })
-  })
-
-  describe('decodeOverbooking', () => {
-    it('decodes a Base64 encoded overbooking', () => {
-      const overbooking = bedOccupancyEntryOverbookingUiFactory.build()
-      const encodedOverbooking = encodeOverbooking(overbooking)
-
-      expect(decodeOverbooking(encodedOverbooking)).toEqual(overbooking)
-    })
-
-    it('throws an error if the object is not an overbooking', () => {
-      const obj = Buffer.from('{"foo":"bar"}').toString('base64')
-
-      expect(() => decodeOverbooking(obj)).toThrowError(InvalidOverbookingDataException)
-    })
-  })
-
-  describe('overbookingSummaryList', () => {
-    const bedId = 'bedId'
-
-    it('returns the correct detail for a booking', () => {
-      const booking = bedOccupancyEntryBookingUiFactory.build()
-
-      expect(overbookingSummaryList(booking, premisesId, bedId)).toEqual({
-        card: {
-          title: {
-            text: booking.personName,
-          },
-          actions: {
-            items: [
-              {
-                href: paths.bookings.moves.new({ premisesId, bookingId: booking.bookingId }),
-                text: 'Change allocated bed',
-                visuallyHiddenText: `for ${booking.personName}`,
-              },
-            ],
-          },
-          attributes: {
-            'data-cy-bookingId': booking.bookingId,
-          },
-        },
-        rows: [
-          {
-            key: {
-              text: 'Arrival Date',
-            },
-            value: {
-              text: DateFormats.dateObjtoUIDate(booking.startDate),
-            },
-          },
-          {
-            key: {
-              text: 'Departure Date',
-            },
-            value: {
-              text: DateFormats.dateObjtoUIDate(booking.endDate),
-            },
-          },
-        ],
-      })
-    })
-
-    it('returns the correct detail for a lost bed', () => {
-      const lostBed = bedOccupancyEntryLostBedUiFactory.build()
-
-      expect(overbookingSummaryList(lostBed, premisesId, bedId)).toEqual({
-        card: {
-          title: {
-            text: 'Lost Bed',
-          },
-          actions: {
-            items: [
-              {
-                href: paths.outOfServiceBeds.show({
-                  premisesId,
-                  bedId,
-                  id: lostBed.lostBedId,
-                  tab: 'details',
-                }),
-                text: 'Amend',
-                visuallyHiddenText: 'lost bed entry',
-              },
-            ],
-          },
-          attributes: {
-            'data-cy-lostBedId': lostBed.lostBedId,
-          },
-        },
-        rows: [
-          {
-            key: {
-              text: 'Arrival Date',
-            },
-            value: {
-              text: DateFormats.dateObjtoUIDate(lostBed.startDate),
-            },
-          },
-          {
-            key: {
-              text: 'Departure Date',
-            },
-            value: {
-              text: DateFormats.dateObjtoUIDate(lostBed.endDate),
-            },
           },
         ],
       })

@@ -11,21 +11,6 @@ import paths from '../../server/paths/api'
 import { bookingNotMadeFactory, newPlacementRequestBookingConfirmationFactory } from '../../server/testutils/factories'
 
 export default {
-  stubPlacementRequests: (placementRequests: Array<PlacementRequest>): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: paths.placementRequests.index.pattern,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: placementRequests,
-      },
-    }),
-
   stubPlacementRequestsDashboard: ({
     placementRequests,
     status,

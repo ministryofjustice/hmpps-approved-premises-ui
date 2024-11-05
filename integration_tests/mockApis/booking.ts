@@ -1,45 +1,10 @@
 import type { Booking } from '@approved-premises/api'
 
-import { EntityType } from '../../server/@types/ui'
 import { getMatchingRequests, stubFor } from './setup'
-import { bedspaceConflictResponseBody, errorStub } from './utils'
+import { errorStub } from './utils'
 import paths from '../../server/paths/api'
 
 export default {
-  stubBookingCreate: (args: { premisesId: string; booking: Booking }) =>
-    stubFor({
-      request: {
-        method: 'POST',
-        url: `/premises/${args.premisesId}/bookings`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: args.booking,
-      },
-    }),
-  stubBookingCreateConflictError: (args: {
-    premisesId: string
-    conflictingEntityId: string
-    conflictingEntityType: EntityType
-  }) =>
-    stubFor({
-      request: {
-        method: 'POST',
-        url: `/premises/${args.premisesId}/bookings`,
-      },
-      response: {
-        status: 409,
-        headers: {
-          'Content-Type': 'application/problem+json;charset=UTF-8',
-        },
-        jsonBody: bedspaceConflictResponseBody(args.conflictingEntityId, args.conflictingEntityType),
-      },
-    }),
-  stubBookingErrors: (args: { premisesId: string; params: Array<string> }) =>
-    stubFor(errorStub(args.params, `/premises/${args.premisesId}/bookings`)),
   stubBookingGet: (args: { premisesId: string; booking: Booking }) =>
     stubFor({
       request: {
@@ -66,20 +31,6 @@ export default {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: booking,
-      },
-    }),
-  stubBookingsForPremisesId: (args: { premisesId: string; bookings: Array<Booking> }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/premises/${args.premisesId}/bookings`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        body: JSON.stringify(args.bookings),
       },
     }),
   stubDateChange: (args: { premisesId: string; bookingId: string }) =>
@@ -109,6 +60,4 @@ export default {
         url: paths.premises.bookings.dateChange({ premisesId: args.premisesId, bookingId: args.bookingId }),
       })
     ).body.requests,
-  verifyBookingCreate: async (args: { premisesId }) =>
-    (await getMatchingRequests({ method: 'POST', url: `/premises/${args.premisesId}/bookings` })).body.requests,
 }

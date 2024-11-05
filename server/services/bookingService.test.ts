@@ -2,7 +2,6 @@ import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
 import { bookingExtensionFactory, bookingFactory, dateChangeFactory } from '../testutils/factories'
-import { Booking, NewBedMove } from '../@types/shared'
 
 jest.mock('../data/bookingClient.ts')
 jest.mock('../data/referenceDataClient.ts')
@@ -54,28 +53,6 @@ describe('BookingService', () => {
     })
   })
 
-  describe('listOfBookingsForPremisesId', () => {
-    let bookings: Array<Booking>
-
-    beforeAll(() => {
-      bookings = bookingFactory.buildList(1)
-    })
-
-    it('should return table rows of bookings', async () => {
-      const premisesId = 'some-uuid'
-      bookingClient.allBookingsForPremisesId.mockResolvedValue(bookings)
-
-      const results = await service.listOfBookingsForPremisesId(token, premisesId)
-
-      expect(results).toEqual(bookings)
-
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
-
-      expect(bookingClientFactory).toHaveBeenCalledWith(token)
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
-    })
-  })
-
   describe('extendBooking', () => {
     it('on success returns the booking that has been extended', async () => {
       const booking = bookingExtensionFactory.build()
@@ -93,20 +70,6 @@ describe('BookingService', () => {
       expect(extendedBooking).toEqual(booking)
       expect(bookingClientFactory).toHaveBeenCalledWith(token)
       expect(bookingClient.extendBooking).toHaveBeenCalledWith('premisesId', booking.id, newDepartureDateObj)
-    })
-  })
-
-  describe('createMoveBooking', () => {
-    it('on success returns the arrival that has been posted', async () => {
-      const payload: NewBedMove = {
-        bedId: 'bedId',
-        notes: 'notes',
-      }
-
-      await service.moveBooking(token, 'premisesID', 'bookingId', payload)
-
-      expect(bookingClientFactory).toHaveBeenCalledWith(token)
-      expect(bookingClient.moveBooking).toHaveBeenCalledWith('premisesID', 'bookingId', payload)
     })
   })
 

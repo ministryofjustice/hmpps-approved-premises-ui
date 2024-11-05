@@ -1,7 +1,6 @@
 import {
   ApArea,
   ApType,
-  Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
@@ -13,14 +12,8 @@ import {
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
-  ApprovedPremisesAssessment as Assessment,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   AssessmentTask,
-  BedOccupancyBookingEntry,
-  BedOccupancyLostBedEntry,
-  BedOccupancyOpenEntry,
-  BedOccupancyRange,
-  Booking,
   Cas1CruManagementArea,
   Cas1PremisesBasicSummary,
   Document,
@@ -28,7 +21,6 @@ import {
   Gender,
   Mappa,
   OASysSection,
-  Person,
   PersonAcctAlert,
   PlacementApplication,
   PlacementApplicationTask,
@@ -283,10 +275,6 @@ export interface PersonRisksUI {
   mappa: MappaUi
 }
 
-export type GroupedListofBookings = {
-  [K in 'arrivingToday' | 'departingToday' | 'upcomingArrivals' | 'upcomingDepartures']: Array<Booking>
-}
-
 type ManWoman = 'man' | 'woman'
 
 export interface PremisesFilters {
@@ -325,17 +313,10 @@ export type DataServices = Partial<{
   }
 }>
 
-export type AssessmentGroupingCategory = 'status' | 'allocation'
-
 export type GroupedAssessments = {
   completed: Array<AssessmentSummary>
   requestedFurtherInformation: Array<AssessmentSummary>
   awaiting: Array<AssessmentSummary>
-}
-
-export interface AllocatedAndUnallocatedAssessments {
-  allocated: Array<Assessment>
-  unallocated: Array<Assessment>
 }
 
 export interface GroupedApplications {
@@ -348,14 +329,6 @@ export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementAppl
 
 export type GroupedMatchTasks = Record<PlacementRequestStatus, Array<PlacementRequestTask>> & {
   placementApplications: Array<PlacementApplicationTask>
-}
-
-export interface ApplicationWithRisks extends Application {
-  person: PersonWithRisks
-}
-
-export interface PersonWithRisks extends Person {
-  risks: PersonRisks
 }
 
 export type OasysImportArrays =
@@ -429,45 +402,6 @@ export interface SpaceSearchParametersUi {
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
 
 export type FormArtifact = ApprovedPremisesApplication | ApprovedPremisesAssessment | PlacementApplication
-
-type RemoveStartAndEndDates<T> = Omit<T, 'startDate' | 'endDate'>
-
-interface StartAndEndDates {
-  startDate: Date
-  endDate: Date
-}
-
-export interface BedOccupancyBookingEntryUi extends RemoveStartAndEndDates<BedOccupancyBookingEntry>, StartAndEndDates {
-  type: 'booking'
-}
-
-export interface BedOccupancyLostBedEntryUi extends RemoveStartAndEndDates<BedOccupancyLostBedEntry>, StartAndEndDates {
-  type: 'lost_bed'
-}
-
-export interface BedOccupancyOpenEntryUi extends RemoveStartAndEndDates<BedOccupancyOpenEntry>, StartAndEndDates {
-  type: 'open'
-}
-
-export interface BedOccupancyOverbookingEntryUi extends StartAndEndDates {
-  length: number
-  type: 'overbooking'
-  items: Array<BedOccupancyEntryUi>
-}
-
-export type BedOccupancyEntryTypes =
-  | BedOccupancyBookingEntryUi
-  | BedOccupancyLostBedEntryUi
-  | BedOccupancyOpenEntryUi
-  | BedOccupancyOverbookingEntryUi
-
-export type BedOccupancyEntryUiType = 'open' | 'lost_bed' | 'booking' | 'overbooking'
-
-export type BedOccupancyEntryUi = BedOccupancyEntryTypes & { type: BedOccupancyEntryUiType }
-
-export type BedOccupancyEntryCalendar = BedOccupancyEntryUi & { label: string }
-
-export type BedOccupancyRangeUi = Omit<BedOccupancyRange, 'schedule'> & { schedule: Array<BedOccupancyEntryUi> }
 
 export interface OasysPage extends TasklistPage {
   oasysCompleted: string

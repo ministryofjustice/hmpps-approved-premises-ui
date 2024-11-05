@@ -1,4 +1,4 @@
-import type { Booking, Extension, NewBedMove, NewDateChange, NewExtension } from '@approved-premises/api'
+import type { Booking, Extension, NewDateChange, NewExtension } from '@approved-premises/api'
 
 import type { RestClientBuilder } from '../data'
 import BookingClient from '../data/bookingClient'
@@ -18,11 +18,6 @@ export default class BookingService {
     return bookingClient.findWithoutPremises(bookingId)
   }
 
-  async listOfBookingsForPremisesId(token: string, premisesId: string): Promise<Array<Booking>> {
-    const bookingClient = this.bookingClientFactory(token)
-    return bookingClient.allBookingsForPremisesId(premisesId)
-  }
-
   async changeDepartureDate(
     token: string,
     premisesId: string,
@@ -32,12 +27,6 @@ export default class BookingService {
     const bookingClient = this.bookingClientFactory(token)
 
     return bookingClient.extendBooking(premisesId, bookingId, bookingExtension)
-  }
-
-  async moveBooking(token: string, premisesId: string, bookingId: string, move: NewBedMove): Promise<void> {
-    const bookingClient = this.bookingClientFactory(token)
-
-    return bookingClient.moveBooking(premisesId, bookingId, move)
   }
 
   async changeDates(token: string, premisesId: string, bookingId: string, dateChange: NewDateChange): Promise<void> {
