@@ -1,5 +1,13 @@
-import type { BedDetail, BedSummary, Cas1PremisesBasicSummary, Cas1PremisesSummary } from '@approved-premises/api'
-import type { PremisesFilters } from '@approved-premises/ui'
+import type {
+  BedDetail,
+  BedSummary,
+  Cas1PremisesBasicSummary,
+  Cas1PremisesSummary,
+  Cas1SpaceBookingSummary,
+  Cas1SpaceBookingSummarySortField,
+  SortDirection,
+} from '@approved-premises/api'
+import type { PaginatedResponse, PremisesFilters } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -28,5 +36,21 @@ export default class PremisesClient {
 
   async getBed(premisesId: string, bedId: string): Promise<BedDetail> {
     return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
+  }
+
+  async getPlacements(args: {
+    premisesId: string
+    status: string
+    page: number
+    perPage: number
+    sortBy: Cas1SpaceBookingSummarySortField
+    sortDirection: SortDirection
+  }): Promise<PaginatedResponse<Cas1SpaceBookingSummary>> {
+    const { premisesId, status, page, perPage, sortBy, sortDirection } = args
+    return this.restClient.getPaginatedResponse<Cas1SpaceBookingSummary>({
+      path: paths.premises.placements({ premisesId }),
+      page: page.toString(),
+      query: { residency: status, sortBy, sortDirection, perPage },
+    })
   }
 }

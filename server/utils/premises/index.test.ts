@@ -1,14 +1,24 @@
-import { cas1PremisesBasicSummaryFactory, cas1PremisesSummaryFactory } from '../../testutils/factories'
+import type { FullPerson } from '@approved-premises/api'
+import {
+  cas1PremisesBasicSummaryFactory,
+  cas1PremisesSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
+} from '../../testutils/factories'
 import {
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
+  placementTableHeader,
+  placementTableRows,
   premisesActions,
+  premisesTabItems,
   premisesTableRows,
   summaryListForPremises,
 } from '.'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
+import { laoName } from '../personUtils'
+import { DateFormats } from '../dateUtils'
 
 describe('premisesUtils', () => {
   describe('premisesActions', () => {
@@ -179,6 +189,79 @@ describe('premisesUtils', () => {
           },
         ],
       ])
+    })
+  })
+
+  describe('premisesTabItems', () => {
+    it('should return a set filter tabs for the premises detail page', () => {
+      const premises = cas1PremisesSummaryFactory.build()
+      const expectedTabs = [
+        {
+          active: true,
+          href: `/manage/premises/${premises.id}?activeTab=upcoming`,
+          text: 'Upcoming',
+        },
+        {
+          active: false,
+          href: `/manage/premises/${premises.id}?activeTab=current`,
+          text: 'Current',
+        },
+        {
+          active: false,
+          href: `/manage/premises/${premises.id}?activeTab=historic`,
+          text: 'Historical',
+        },
+      ]
+      const tabSet = premisesTabItems(premises, 'upcoming')
+      expect(tabSet).toEqual(expectedTabs)
+    })
+  })
+
+  describe('placementTableHeader', () => {
+    it('should return the sortable table headings for the placement list', () => {
+      const sortBy = 'personName'
+      const tableHeadings = placementTableHeader('upcoming', sortBy, 'asc', 'Test_Href_Prefix')
+      const expectedTableHeadings = [
+        {
+          attributes: { 'aria-sort': 'ascending', 'data-cy-sort-field': 'personName' },
+          html: '<a href="Test_Href_Prefix?sortBy=personName&sortDirection=desc">Name and CRN</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'tier' },
+          html: '<a href="Test_Href_Prefix?sortBy=tier">Tier</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalArrivalDate' },
+          html: '<a href="Test_Href_Prefix?sortBy=canonicalArrivalDate">Arrival date</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalDepartureDate' },
+          html: '<a href="Test_Href_Prefix?sortBy=canonicalDepartureDate">Departure date</a>',
+        },
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'keyWorkerName' },
+          html: '<a href="Test_Href_Prefix?sortBy=keyWorkerName">Key worker</a>',
+        },
+      ]
+      expect(tableHeadings).toEqual(expectedTableHeadings)
+    })
+  })
+  describe('placementTableRows', () => {
+    it('should return the rows of he placement summary table', () => {
+      const placements = cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' })
+      const tableRows = placementTableRows('Test_Premises_Id', placements)
+      const expectedRows = placements.map(placement => {
+        return [
+          {
+            html: `<a href="/manage/premises/Test_Premises_Id/space-bookings/${placement.id}" data-cy-id="${placement.id}">${laoName(placement.person as unknown as FullPerson)}, ${placement.person.crn}</a>`,
+          },
+          { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
+          { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
+          { text: placement.keyWorkerAllocation.keyWorker.name },
+        ]
+      })
+      expect(tableRows).toEqual(expectedRows)
     })
   })
 })

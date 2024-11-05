@@ -1,7 +1,9 @@
-import type { Cas1PremisesSummary } from '@approved-premises/api'
+import type { Cas1PremisesSummary, Cas1SpaceBookingSummary, FullPerson } from '@approved-premises/api'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
+import { laoName } from '../../../server/utils/personUtils'
 
 export default class PremisesShowPage extends Page {
   constructor(private readonly premises: Cas1PremisesSummary) {
@@ -37,5 +39,39 @@ export default class PremisesShowPage extends Page {
       .contains('Available Beds')
       .siblings('.govuk-summary-list__value')
       .should('contain', this.premises.availableBeds)
+  }
+
+  shouldShowListOfPlacements(placements: Array<Cas1SpaceBookingSummary>): void {
+    ;['Name and CRN', 'Arrival date', 'Departure date', 'Key worker'].forEach(heading => {
+      cy.get('.govuk-table .govuk-table__head').contains(heading)
+    })
+    placements.forEach(({ person, canonicalArrivalDate, canonicalDepartureDate, tier }) => {
+      cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
+      cy.get('@row').contains(tier)
+      cy.get('@row').contains(laoName(person as unknown as FullPerson))
+    })
+  }
+
+  shouldHavePlacementListLengthOf(length: number): void {
+    cy.get('.govuk-table__body .govuk-table__row').should('have.length', length)
+  }
+
+  shouldHavePaginationControl(): void {
+    cy.get('.govuk-pagination').contains('2')
+  }
+
+  shouldHaveTabSelected(tabTitle: string): void {
+    cy.get('.moj-sub-navigation__list').contains(tabTitle).should('have.attr', 'aria-current', 'page')
+  }
+
+  shouldSelectTab(tabTitle: string): void {
+    cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
+  }
+
+  shouldNotShowPlacementsList(): void {
+    cy.get('.moj-sub-navigation__list').should('not.exist')
+    cy.get('.govuk-table').should('not.exist')
   }
 }

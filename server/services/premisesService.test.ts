@@ -1,4 +1,6 @@
-import type { ManWoman } from '@approved-premises/ui'
+import type { ManWoman, PaginatedResponse } from '@approved-premises/ui'
+import type { Cas1SpaceBookingSummary } from '@approved-premises/api'
+
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
@@ -6,6 +8,8 @@ import {
   bedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
+  paginatedResponseFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/premisesClient')
@@ -95,6 +99,36 @@ describe('PremisesService', () => {
 
       const result = await service.find(token, premises.id)
       expect(result).toEqual(premises)
+    })
+  })
+
+  describe('getPlacements', () => {
+    it('returns the placements for a single premises', async () => {
+      const status = 'upcoming'
+      const sortBy = 'personName'
+      const sortDirection = 'asc'
+      const page = 1
+      const perPage = 20
+
+      const paginatedPlacements = paginatedResponseFactory.build({
+        data: cas1SpaceBookingSummaryFactory.buildList(3),
+      }) as PaginatedResponse<Cas1SpaceBookingSummary>
+
+      premisesClient.getPlacements.mockResolvedValue(paginatedPlacements)
+
+      const result = await service.getPlacements({ token, premisesId, status, page, perPage, sortBy, sortDirection })
+
+      expect(result).toEqual(paginatedPlacements)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getPlacements).toHaveBeenCalledWith({
+        premisesId,
+        status,
+        page,
+        perPage,
+        sortBy,
+        sortDirection,
+      })
     })
   })
 })

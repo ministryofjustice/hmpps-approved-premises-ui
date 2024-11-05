@@ -70,7 +70,12 @@ const paths = {
       index: bedsPath,
       show: bedsPath.path(':bedId'),
     },
+    placements: {
+      index: singlePremisesPath.path('space-bookings'),
+      show: singlePremisesPath.path('space-bookings').path(':bookingId'),
+    },
   },
+
   bookings: {
     show: bookingsPath.path(':bookingId'),
     dateChanges: {

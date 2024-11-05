@@ -79,6 +79,7 @@ import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
 import cas1PremisesSummaryFactory from './cas1PremisesSummary'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
+import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 
 export {
   acctAlertFactory,
@@ -108,6 +109,7 @@ export {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
   cas1ReferenceDataFactory,
+  cas1SpaceBookingSummaryFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,

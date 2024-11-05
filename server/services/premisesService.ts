@@ -1,4 +1,11 @@
-import type { BedDetail, BedSummary, Cas1PremisesBasicSummary, Cas1PremisesSummary } from '@approved-premises/api'
+import type {
+  BedDetail,
+  BedSummary,
+  Cas1PremisesBasicSummary,
+  Cas1PremisesSummary,
+  Cas1SpaceBookingSummarySortField,
+  SortDirection,
+} from '@approved-premises/api'
 import type { PremisesFilters } from '@approved-premises/ui'
 import type { PremisesClient, RestClientBuilder } from '../data'
 
@@ -29,5 +36,19 @@ export default class PremisesService {
     const premises = await premisesClient.find(id)
 
     return premises
+  }
+
+  async getPlacements(args: {
+    token: string
+    premisesId: string
+    status: string
+    page: number
+    perPage: number
+    sortBy: Cas1SpaceBookingSummarySortField
+    sortDirection: SortDirection
+  }) {
+    const { token, ...remainingArgs } = args
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getPlacements(remainingArgs)
   }
 }
