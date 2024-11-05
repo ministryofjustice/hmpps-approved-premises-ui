@@ -49,22 +49,6 @@ export default class PremisesClient {
   }): Promise<PaginatedResponse<Cas1SpaceBookingSummary>> {
     const { premisesId, status, page, perPage, sortBy, sortDirection } = args
     return this.restClient.getPaginatedResponse<Cas1SpaceBookingSummary>({
-      path: paths.premises.placements({ premisesId }),
-      page: page.toString(),
-      query: { residency: status, sortBy, sortDirection, perPage },
-    })
-  }
-
-  async getPlacements(args: {
-    premisesId: string
-    status: string
-    page: number
-    perPage: number
-    sortBy: Cas1SpaceBookingSummarySortField
-    sortDirection: SortDirection
-  }): Promise<PaginatedResponse<Cas1SpaceBookingSummary>> {
-    const { premisesId, status, page, perPage, sortBy, sortDirection } = args
-    return this.restClient.getPaginatedResponse<Cas1SpaceBookingSummary>({
       path: paths.premises.placements.index({ premisesId }),
       page: page.toString(),
       query: { residency: status, sortBy, sortDirection, perPage },

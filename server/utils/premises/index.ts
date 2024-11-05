@@ -108,24 +108,10 @@ export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: stri
       },
       { addQueryPrefix: true },
     )}`
+  return Object.entries(tabTextMap).map(([key, label]) => {
+    return { text: label, active: activeTab === key, href: getSelfLink(key) }
+  })
 }
-return [
-  {
-    text: 'Upcoming',
-    active: activeTab === 'upcoming',
-    href: getSelfLink('upcoming'),
-  },
-  {
-    text: 'Current',
-    active: activeTab === 'current',
-    href: getSelfLink('current'),
-  },
-  {
-    text: 'Historical',
-    active: activeTab === 'historical',
-    href: getSelfLink('historical'),
-  },
-]
 
 type ColumnDefinition = {
   title: string
@@ -159,7 +145,7 @@ export const placementTableHeader = (
 export const placementTableRows = (premisesId: string, placements: Array<Cas1SpaceBookingSummary>): Array<TableRow> =>
   placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => [
     htmlValue(
-      `<a href="${managePaths.premises.placements.show({ premisesId, placementId: id })}" data-cy-id="${id}">${laoName(person as unknown as FullPerson)}, ${person.crn}</a>`,
+      `<a href="${managePaths.premises.placements.show({ premisesId, bookingId: id })}" data-cy-id="${id}">${laoName(person as unknown as FullPerson)}, ${person.crn}</a>`,
     ),
     htmlValue(getTierOrBlank(tier)),
     textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),

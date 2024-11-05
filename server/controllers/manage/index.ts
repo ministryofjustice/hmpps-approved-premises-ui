@@ -37,11 +37,13 @@ export const controllers = (services: Services) => {
     bookingExtensionsController,
     dateChangesController,
     cancellationsController,
+    placementController,
   }
 }
 
 export {
   PremisesController,
+  PlacementController,
   BedsController,
   OutOfServiceBedsController,
   UpdateOutOfServiceBedsController,

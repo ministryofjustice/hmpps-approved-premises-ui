@@ -60,7 +60,6 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
           path: paths.premises.indexCas1({ gender }),
           headers: {
             authorization: `Bearer ${sampleToken}`,
-            //'X-Service-Name': 'approved-premises',
           },
           query: { gender },
         },
@@ -143,7 +142,6 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
           query: {},
           headers: {
             authorization: `Bearer ${sampleToken}`,
-            //'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {

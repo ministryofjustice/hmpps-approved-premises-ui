@@ -40,7 +40,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: `${paths.premises.placements({ premisesId: args.premisesId })}.*`,
+        urlPattern: `${paths.premises.placements.index({ premisesId: args.premisesId })}.*`,
       },
       response: {
         status: 200,

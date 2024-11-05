@@ -5,8 +5,8 @@ import {
   BookingExtensionsController,
   BookingsController,
   OutOfServiceBedsController,
-  PremisesController,
   PlacementController,
+  PremisesController,
   UpdateOutOfServiceBedsController,
 } from '../controllers/manage'
 import manageRoutes from './manage'
