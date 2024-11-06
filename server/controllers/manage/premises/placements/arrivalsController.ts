@@ -20,7 +20,7 @@ export default class ArrivalsController {
 
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
-      return res.render('manage/placements/arrivals/new', {
+      return res.render('manage/premises/placements/arrival', {
         placement,
         errors,
         errorSummary,
@@ -37,15 +37,21 @@ export default class ArrivalsController {
       try {
         const errors: Record<string, string> = {}
 
-        const arrivalTime = req.body['arrivalDateTime-time']
+        const { arrivalTime } = req.body
 
         if (!arrivalTime) {
-          errors['arrivalDateTime-time'] = 'You must enter a time of arrival'
+          errors.arrivalTime = 'You must enter a time of arrival'
         } else if (!timeIsValid24hrFormat(arrivalTime)) {
-          errors['arrivalDateTime-time'] = 'You must enter a valid time of arrival in 24hr format'
+          errors.arrivalTime = 'You must enter a valid time of arrival in 24hr format'
         }
 
-        const { arrivalDateTime } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDateTime')
+        const { arrivalDateTime } = DateFormats.dateAndTimeInputsToIsoString(
+          {
+            ...req.body,
+            'arrivalDateTime-time': arrivalTime,
+          },
+          'arrivalDateTime',
+        )
 
         if (!arrivalDateTime) {
           errors.arrivalDateTime = 'You must enter an arrival date'
@@ -65,7 +71,7 @@ export default class ArrivalsController {
         await this.placementService.createArrival(req.user.token, premisesId, placementId, placementArrival)
 
         req.flash('success', 'You have recorded this person as arrived')
-        return res.redirect(paths.premises.placements.show({ premisesId, bookingId: placementId }))
+        return res.redirect(paths.premises.placements.show({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -73,7 +79,7 @@ export default class ArrivalsController {
           error as Error,
           paths.premises.placements.arrival({
             premisesId,
-            bookingId: placementId,
+            placementId,
           }),
         )
       }

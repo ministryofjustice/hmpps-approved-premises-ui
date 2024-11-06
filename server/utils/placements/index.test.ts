@@ -13,6 +13,8 @@ import {
 } from '.'
 import { DateFormats } from '../dateUtils'
 
+import paths from '../../paths/manage'
+
 describe('placementUtils', () => {
   describe('actions', () => {
     const userDetails = userDetailsFactory.build({
@@ -29,27 +31,46 @@ describe('placementUtils', () => {
         actualDepartureDate: undefined,
         keyWorkerAllocation: undefined,
       })
+
       expect(actions(placement, userDetails)).toEqual([
         { classes: 'govuk-button--secondary', href: '', text: 'Allocate keyworker' },
-        { classes: 'govuk-button--secondary', href: '', text: 'Record arrival' },
+        {
+          classes: 'govuk-button--secondary',
+          href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
+          text: 'Record arrival',
+        },
       ])
     })
+
     it('should render record arrival option before arrival', () => {
       const placement = cas1SpaceBookingFactory.build({ actualArrivalDate: undefined, actualDepartureDate: undefined })
+
       expect(actions(placement, userDetails)).toEqual([
-        { classes: 'govuk-button--secondary', href: '', text: 'Edit keyworker' },
-        { classes: 'govuk-button--secondary', href: '', text: 'Record arrival' },
+        {
+          classes: 'govuk-button--secondary',
+          href: '',
+          text: 'Edit keyworker',
+        },
+        {
+          classes: 'govuk-button--secondary',
+          href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
+          text: 'Record arrival',
+        },
       ])
     })
+
     it('should render record departure option after arrival', () => {
       const placement = cas1SpaceBookingFactory.build({ actualDepartureDate: undefined })
+
       expect(actions(placement, userDetails)).toEqual([
         { classes: 'govuk-button--secondary', href: '', text: 'Edit keyworker' },
         { classes: 'govuk-button--secondary', href: '', text: 'Record departure' },
       ])
     })
+
     it('should allow change of keyworker as only option after departure', () => {
       const placement = cas1SpaceBookingFactory.build()
+
       expect(actions(placement, userDetails)).toEqual([
         { classes: 'govuk-button--secondary', href: '', text: 'Edit keyworker' },
       ])
@@ -61,7 +82,11 @@ describe('placementUtils', () => {
         keyWorkerAllocation: undefined,
       })
       expect(actions(placement, { permissions: ['cas1_space_booking_record_arrival'] } as UserDetails)).toEqual([
-        { classes: 'govuk-button--secondary', href: '', text: 'Record arrival' },
+        {
+          classes: 'govuk-button--secondary',
+          href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
+          text: 'Record arrival',
+        },
       ])
       expect(actions(placement, { permissions: ['cas1_space_booking_record_departure'] } as UserDetails)).toEqual([
         { classes: 'govuk-button--secondary', href: '', text: 'Record departure' },
@@ -90,6 +115,7 @@ describe('placementUtils', () => {
   describe('getKeyDetail', () => {
     it('should return the key information from the person in the placement', () => {
       const placement = cas1SpaceBookingFactory.build()
+
       expect(getKeyDetail(placement)).toEqual({
         header: { key: '', showKey: false, value: (placement.person as FullPerson).name },
         items: [
@@ -183,13 +209,13 @@ describe('placementUtils', () => {
       })
     })
   })
+
   describe('otherBookings', () => {
     it('should return a list of other bookings from a placement', () => {
       const placementList = [
         { id: 'id1', canonicalArrivalDate: '2024-09-10', canonicalDepartureDate: '2025-06-04' },
         { id: 'id2', canonicalArrivalDate: '2024-09-20', canonicalDepartureDate: '2025-03-20' },
       ]
-
       const placement = cas1SpaceBookingFactory.build({
         premises: { id: '1234' },
         otherBookingsInPremisesForCrn: placementList,

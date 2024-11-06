@@ -44,7 +44,7 @@ describe('ArrivalsController', () => {
       await requestHandler(request, response, next)
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
-      expect(response.render).toHaveBeenCalledWith('manage/placements/arrivals/new', {
+      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/arrival', {
         placement,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -61,13 +61,13 @@ describe('ArrivalsController', () => {
       'arrivalDateTime-year': '2024',
       'arrivalDateTime-month': '11',
       'arrivalDateTime-day': '5',
-      'arrivalDateTime-time': '9:45',
+      arrivalTime: '9:45',
     }
 
     beforeEach(() => {
       arrivalPath = paths.premises.placements.arrival({
         premisesId: request.params.premisesId,
-        bookingId: request.params.placementId,
+        placementId: request.params.placementId,
       })
       request.body = validBody
     })
@@ -83,7 +83,7 @@ describe('ArrivalsController', () => {
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as arrived')
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.premises.placements.show({ premisesId, bookingId: placement.id }),
+        paths.premises.placements.show({ premisesId, placementId: placement.id }),
       )
     })
 
@@ -97,7 +97,7 @@ describe('ArrivalsController', () => {
 
         const expectedErrorData = {
           arrivalDateTime: 'You must enter an arrival date',
-          'arrivalDateTime-time': 'You must enter a time of arrival',
+          arrivalTime: 'You must enter a time of arrival',
         }
 
         expect(placementService.createArrival).not.toHaveBeenCalled()
@@ -121,14 +121,14 @@ describe('ArrivalsController', () => {
           'arrivalDateTime-year': '2024',
           'arrivalDateTime-month': '13',
           'arrivalDateTime-day': '34',
-          'arrivalDateTime-time': '9am',
+          arrivalTime: '9am',
         }
 
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
           arrivalDateTime: 'You must enter a valid arrival date',
-          'arrivalDateTime-time': 'You must enter a valid time of arrival in 24hr format',
+          arrivalTime: 'You must enter a valid time of arrival in 24hr format',
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(

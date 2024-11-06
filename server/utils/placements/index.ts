@@ -20,7 +20,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     out.push({
       text: 'Record arrival',
       classes: 'govuk-button--secondary',
-      href: '',
+      href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   } else if (!placement.actualDepartureDate && hasPermission(user, ['cas1_space_booking_record_departure'])) {
     out.push({

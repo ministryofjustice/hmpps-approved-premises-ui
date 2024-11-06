@@ -11,7 +11,18 @@ import { DateFormats } from '../../utils/dateUtils'
 
 const addTime = (date: Date): Date => new Date(date.getTime() + faker.number.int({ max: 60 * 60 * 24 * 1000 }))
 
-export default Factory.define<Cas1SpaceBooking>(() => {
+class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
+  upcoming() {
+    return this.params({
+      actualArrivalDate: undefined,
+      actualDepartureDate: undefined,
+      departureReason: undefined,
+      departureMoveOnCategory: undefined,
+    })
+  }
+}
+
+export default Cas1SpaceBookingFactory.define(() => {
   const startDateTime = addTime(faker.date.soon({ days: 90 }))
   const endDateTime = addTime(faker.date.soon({ days: 365, refDate: startDateTime }))
   const [actualArrivalDate, actualDepartureDate] = [startDateTime, endDateTime].map(DateFormats.dateObjToIsoDateTime)
