@@ -15,7 +15,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: paths.premises.show({ premisesId:premises.id })
+        href: PlacementUtils.getBackLink(referrer,premises)
     }) }}
 {% endblock %}
 
@@ -36,19 +36,21 @@
             html: titleHtml
         },
         menus: [{
-            items: PlacementUtils.actions(placement)
+            items: PlacementUtils.actions(placement, user)
         }]
     }) }}
 
-   {# <textarea>{{  PlacementUtils.getJson(placement) }}</textarea> #}
-
     {{ govukSummaryList(PlacementUtils.placementSummary(placement,premises)) }}
+
     <h2 class="govuk-heading-m">Arrival information</h2>
     {{ govukSummaryList(PlacementUtils.arrivalInformation(placement)) }}
+
     <h2 class="govuk-heading-m">Departure information</h2>
     {{ govukSummaryList(PlacementUtils.departureInformation(placement)) }}
+
     <h2 class="govuk-heading-m">Other</h2>
     {{ govukSummaryList(PlacementUtils.otherBookings(placement)) }}
+
 {% endblock %}
 
 {% block extraScripts %}

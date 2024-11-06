@@ -31,6 +31,21 @@ export default {
       })
     ).body.requests,
 
+  stubSpaceBookingShow: (args: { premisesId: string; placement: Cas1SpaceBookingSummary }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: `${paths.premises.placements.show({ premisesId: args.premisesId, placementId: args.placement.id })}`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: args.placement,
+      },
+    }),
+
   stubSpaceBookingSummaryList: (args: {
     premisesId: string
     placements: Array<Cas1SpaceBookingSummary>

@@ -122,7 +122,7 @@ export default function routes(controllers: Controllers, router: Router, service
   // Placements
   get(paths.premises.placements.show.pattern, placementController.show(), {
     auditEvent: 'SHOW_PLACEMENT',
-    allowedRoles: ['future_manager'],
+    allowedPermissions: ['cas1_space_booking_view'],
   })
 
   // Bookings
