@@ -4,7 +4,8 @@ import { PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import PlacementService from '../../../../services/placementService'
 import paths from '../../../../paths/manage'
-import { DateFormats } from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, timeIsValid24hrFormat } from '../../../../utils/dateUtils'
+import { ValidationError } from '../../../../utils/errors'
 
 export default class ArrivalsController {
   constructor(
@@ -33,14 +34,34 @@ export default class ArrivalsController {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
 
-      const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDate')
-
-      const placementArrival: Cas1NewArrival = {
-        expectedDepartureDate: req.body.expectedDepartureDate,
-        arrivalDateTime: `${arrivalDate}T${req.body.arrivalTime}:00.000Z`,
-      }
-
       try {
+        const errors: Record<string, string> = {}
+
+        const arrivalTime = req.body['arrivalDateTime-time']
+
+        if (!arrivalTime) {
+          errors['arrivalDateTime-time'] = 'You must enter a time of arrival'
+        } else if (!timeIsValid24hrFormat(arrivalTime)) {
+          errors['arrivalDateTime-time'] = 'You must enter a valid time of arrival in 24hr format'
+        }
+
+        const { arrivalDateTime } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDateTime')
+
+        if (!arrivalDateTime) {
+          errors.arrivalDateTime = 'You must enter an arrival date'
+        } else if (!dateAndTimeInputsAreValidDates(req.body, 'arrivalDateTime')) {
+          errors.arrivalDateTime = 'You must enter a valid arrival date'
+        }
+
+        if (Object.keys(errors).length) {
+          throw new ValidationError(errors)
+        }
+
+        const placementArrival: Cas1NewArrival = {
+          expectedDepartureDate: req.body.expectedDepartureDate,
+          arrivalDateTime,
+        }
+
         await this.placementService.createArrival(req.user.token, premisesId, placementId, placementArrival)
 
         req.flash('success', 'You have recorded this person as arrived')

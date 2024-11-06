@@ -8,6 +8,7 @@ import { PremisesService } from '../../../../services'
 import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
+import { ValidationError } from '../../../../utils/errors'
 
 describe('ArrivalsController', () => {
   const token = 'SOME_TOKEN'
@@ -24,9 +25,13 @@ describe('ArrivalsController', () => {
   const placement = spaceBookingFactory.build()
 
   beforeEach(() => {
+    jest.clearAllMocks()
+
     premisesService.getPlacement.mockResolvedValue(placement)
     request = createMock<Request>({ user: { token }, params: { premisesId, placementId: placement.id } })
+
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
+    jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
   })
 
   describe('new', () => {
@@ -50,22 +55,31 @@ describe('ArrivalsController', () => {
   })
 
   describe('create', () => {
+    let arrivalPath: string
+    const validBody = {
+      expectedDepartureDate: '2025-04-01',
+      'arrivalDateTime-year': '2024',
+      'arrivalDateTime-month': '11',
+      'arrivalDateTime-day': '5',
+      'arrivalDateTime-time': '9:45',
+    }
+
+    beforeEach(() => {
+      arrivalPath = paths.premises.placements.arrival({
+        premisesId: request.params.premisesId,
+        bookingId: request.params.placementId,
+      })
+      request.body = validBody
+    })
+
     it('creates the arrival and redirects to the placement page', async () => {
       const requestHandler = arrivalsController.create()
-
-      request.body = {
-        expectedDepartureDate: '2025-04-01',
-        'arrivalDate-year': '2024',
-        'arrivalDate-month': '11',
-        'arrivalDate-day': '5',
-        arrivalTime: '10:45',
-      }
 
       await requestHandler(request, response, next)
 
       expect(placementService.createArrival).toHaveBeenCalledWith(token, premisesId, placement.id, {
         expectedDepartureDate: '2025-04-01',
-        arrivalDateTime: '2024-11-05T10:45:00.000Z',
+        arrivalDateTime: '2024-11-05T09:45:00.000Z',
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as arrived')
       expect(response.redirect).toHaveBeenCalledWith(
@@ -73,10 +87,65 @@ describe('ArrivalsController', () => {
       )
     })
 
-    describe('when errors are raised', () => {
-      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
-        jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
+    describe('when submitting', () => {
+      it('returns errors for empty arrival date and time', async () => {
+        const requestHandler = arrivalsController.create()
 
+        request.body = {}
+
+        await requestHandler(request, response, next)
+
+        const expectedErrorData = {
+          arrivalDateTime: 'You must enter an arrival date',
+          'arrivalDateTime-time': 'You must enter a time of arrival',
+        }
+
+        expect(placementService.createArrival).not.toHaveBeenCalled()
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          arrivalPath,
+        )
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it('returns errors for invalid date and time', async () => {
+        const requestHandler = arrivalsController.create()
+
+        request.body = {
+          expectedDepartureDate: '2025-04-01',
+          'arrivalDateTime-year': '2024',
+          'arrivalDateTime-month': '13',
+          'arrivalDateTime-day': '34',
+          'arrivalDateTime-time': '9am',
+        }
+
+        await requestHandler(request, response, next)
+
+        const expectedErrorData = {
+          arrivalDateTime: 'You must enter a valid arrival date',
+          'arrivalDateTime-time': 'You must enter a valid time of arrival in 24hr format',
+        }
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          arrivalPath,
+        )
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+    })
+
+    describe('when errors are raised by the API', () => {
+      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
         const requestHandler = arrivalsController.create()
 
         const err = new Error()
@@ -89,10 +158,7 @@ describe('ArrivalsController', () => {
           request,
           response,
           err,
-          paths.premises.placements.arrival({
-            premisesId: request.params.premisesId,
-            bookingId: request.params.placementId,
-          }),
+          arrivalPath,
         )
       })
     })
