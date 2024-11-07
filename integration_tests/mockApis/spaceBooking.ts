@@ -1,14 +1,10 @@
-import type {
-  Cas1SpaceBookingSummary,
-  PlacementRequest,
-  Cas1SpaceBooking as SpaceBooking,
-} from '@approved-premises/api'
+import type { Cas1SpaceBooking, Cas1SpaceBookingSummary, PlacementRequest } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
 export default {
-  stubSpaceBookingCreate: (args: { placementRequestId: string; spaceBooking: SpaceBooking }) =>
+  stubSpaceBookingCreate: (args: { placementRequestId: string; spaceBooking: Cas1SpaceBooking }) =>
     stubFor({
       request: {
         method: 'POST',
@@ -31,18 +27,18 @@ export default {
       })
     ).body.requests,
 
-  stubSpaceBookingShow: (args: { premisesId: string; placement: Cas1SpaceBookingSummary }) =>
+  stubSpaceBookingShow: (placement: Cas1SpaceBooking) =>
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: `${paths.premises.placements.show({ premisesId: args.premisesId, placementId: args.placement.id })}`,
+        urlPattern: `${paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })}`,
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: args.placement,
+        jsonBody: placement,
       },
     }),
 

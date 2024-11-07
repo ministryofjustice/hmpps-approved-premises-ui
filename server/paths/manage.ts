@@ -71,7 +71,6 @@ const paths = {
       show: bedsPath.path(':bedId'),
     },
     placements: {
-      index: singlePremisesPath.path('space-bookings'),
       show: singlePremisesPath.path('placements').path(':placementId'),
     },
   },

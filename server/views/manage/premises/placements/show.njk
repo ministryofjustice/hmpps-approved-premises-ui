@@ -15,7 +15,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: PlacementUtils.getBackLink(referrer,premises)
+        href: PlacementUtils.getBackLink(referrer,placement.premises.id)
     }) }}
 {% endblock %}
 
@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% set titleHtml %}
-    <span class="govuk-caption-xl">{{ premises.name }}</span>
+    <span class="govuk-caption-xl">{{ placement.premises.name }}</span>
     <h1>{{pageHeading}}</h1>
 {% endset %}
 
@@ -40,7 +40,7 @@
         }]
     }) }}
 
-    {{ govukSummaryList(PlacementUtils.placementSummary(placement,premises)) }}
+    {{ govukSummaryList(PlacementUtils.placementSummary(placement)) }}
 
     <h2 class="govuk-heading-m">Arrival information</h2>
     {{ govukSummaryList(PlacementUtils.arrivalInformation(placement)) }}

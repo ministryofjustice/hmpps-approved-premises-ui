@@ -1,4 +1,4 @@
-import type { Cas1PremisesSummary, Cas1SpaceBooking, Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
+import type { Cas1SpaceBooking, Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
 import { KeyDetailsArgs, SummaryList, UserDetails } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
@@ -68,20 +68,20 @@ const summaryRow = (key: string, value: string, greyRow = false) =>
         value: textValue(value),
       }
 
-export const getBackLink = (referrer: string, premises: Cas1PremisesSummary): string => {
+export const getBackLink = (referrer: string, premisesId: string): string => {
   const regString: string = `${paths.premises.show({ premisesId: '([0-9a-f-]{36})' })}[^/]*$`
   const result = new RegExp(regString).exec(referrer)
-  if (result && result[1] === premises.id) {
+  if (result && result[1] === premisesId) {
     return referrer
   }
-  return paths.premises.show({ premisesId: premises.id })
+  return paths.premises.show({ premisesId })
 }
 
-export const placementSummary = (placement: Cas1SpaceBooking, premises: Cas1PremisesSummary): SummaryList => {
+export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   const { createdAt, actualArrivalDate, actualDepartureDate, keyWorkerAllocation, deliusEventNumber } = placement
   return {
     rows: [
-      summaryRow('AP name', premises.name),
+      summaryRow('AP name', placement.premises.name),
       summaryRow('Date allocated', formatDate(createdAt)),
       summaryRow('Status', 'TBD'),
       summaryRow(
@@ -126,19 +126,19 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
   ],
 })
 
-const listOtherBookings = (bookingList: Array<Cas1SpaceBookingDates>): string =>
-  bookingList
+const listOtherBookings = (placement: Cas1SpaceBooking): string =>
+  (placement.otherBookingsInPremisesForCrn || [])
     .map(
       ({ id, canonicalArrivalDate, canonicalDepartureDate }: Cas1SpaceBookingDates) =>
-        `<a href="${id}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })}</a>`,
+        `<li><a class="govuk-link" href="${paths.premises.placements.show({ premisesId: placement.premises.id, placementId: id })}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })}</a></li>`,
     )
-    .join('<br/>')
+    .join('')
 
 export const otherBookings = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
     {
       key: textValue('Other placement bookings at this premises'),
-      value: htmlValue(listOtherBookings(placement.otherBookingsInPremisesForCrn || [])),
+      value: htmlValue(`<ul class="govuk-list">${listOtherBookings(placement)}</ul>`),
     },
   ],
 })

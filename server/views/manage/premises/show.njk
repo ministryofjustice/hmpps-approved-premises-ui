@@ -53,6 +53,7 @@
             head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
             rows: PremisesUtils.placementTableRows(premises.id, placements)
         }) }}
+
         {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
     {% endif %}
 
