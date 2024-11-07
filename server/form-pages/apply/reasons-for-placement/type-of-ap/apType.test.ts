@@ -7,9 +7,14 @@ import { apTypeLabels } from '../../../../utils/apTypeLabels'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 describe('SelectApType', () => {
-  const application = applicationFactory.build()
+  const applicationMensEstate = applicationFactory.build({
+    person: personFactory.build({ sex: 'Male' }),
+  })
+  const applicationWomensEstate = applicationFactory.build({
+    person: personFactory.build({ sex: 'Female' }),
+  })
 
-  itShouldHavePreviousValue(new SelectApType({}, application), 'dashboard')
+  itShouldHavePreviousValue(new SelectApType({}, applicationMensEstate), 'dashboard')
 
   describe.each<[ApType, string]>([
     ['normal', ''],
@@ -19,25 +24,22 @@ describe('SelectApType', () => {
     ['pipe', 'pipe-referral'],
     ['rfap', 'rfap-details'],
   ])('when the type is set to %s', (type, nextPage) => {
-    itShouldHaveNextValue(new SelectApType({ type }, application), nextPage)
+    itShouldHaveNextValue(new SelectApType({ type }, applicationMensEstate), nextPage)
   })
 
   describe('errors', () => {
     it('should return an empty object if the type is populated', () => {
-      const page = new SelectApType({ type: 'normal' }, application)
+      const page = new SelectApType({ type: 'normal' }, applicationMensEstate)
       expect(page.errors()).toEqual({})
     })
 
     it('should return an errors if the type is not populated', () => {
-      const page = new SelectApType({}, application)
+      const page = new SelectApType({}, applicationMensEstate)
       expect(page.errors()).toEqual({ type: 'You must specify an AP type' })
     })
 
     it("should return an error if the type is not available for a women's application", () => {
-      const person = personFactory.build({ sex: 'Female' })
-      const applicationWomens = applicationFactory.build({ person })
-
-      const page = new SelectApType({ type: 'mhapElliottHouse' }, applicationWomens)
+      const page = new SelectApType({ type: 'mhapElliottHouse' }, applicationWomensEstate)
 
       expect(page.errors()).toEqual({ type: 'You must specify an AP type' })
     })
@@ -49,7 +51,7 @@ describe('SelectApType', () => {
     })
 
     it('it calls convertKeyValuePairToRadioItems', () => {
-      const page = new SelectApType({}, application)
+      const page = new SelectApType({}, applicationMensEstate)
       const items = page.items()
 
       expect(formUtils.convertArrayToRadioItems).toHaveBeenCalledWith(apTypes, undefined, apTypeLabels, apTypeHintText)
@@ -58,10 +60,7 @@ describe('SelectApType', () => {
 
     describe("when the application is for the Women's Estate", () => {
       it('should restrict the application types available', () => {
-        const person = personFactory.build({ sex: 'Female' })
-        const applicationWomens = applicationFactory.build({ person })
-
-        const page = new SelectApType({}, applicationWomens)
+        const page = new SelectApType({}, applicationWomensEstate)
         const items = page.items()
 
         expect(items).toHaveLength(3)
@@ -88,19 +87,13 @@ describe('SelectApType', () => {
 
   describe('isWomensApplication', () => {
     it("returns true if the application is for the Women's Estate", () => {
-      const person = personFactory.build({ sex: 'Female' })
-      const applicationWomens = applicationFactory.build({ person })
-
-      const page = new SelectApType({}, applicationWomens)
+      const page = new SelectApType({}, applicationWomensEstate)
 
       expect(page.isWomensApplication).toBe(true)
     })
 
-    it("returns false if the application is not for the Women's Estate", () => {
-      const person = personFactory.build({ sex: 'Male' })
-      const applicationWomens = applicationFactory.build({ person })
-
-      const page = new SelectApType({}, applicationWomens)
+    it("returns false if the application is for the Men's Estate", () => {
+      const page = new SelectApType({}, applicationMensEstate)
 
       expect(page.isWomensApplication).toBe(false)
     })
@@ -108,7 +101,7 @@ describe('SelectApType', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new SelectApType({ type: 'pipe' }, application)
+      const page = new SelectApType({ type: 'pipe' }, applicationMensEstate)
 
       expect(page.response()).toEqual({
         [page.title]: 'Psychologically Informed Planned Environment (PIPE)',
@@ -116,7 +109,7 @@ describe('SelectApType', () => {
     })
 
     it('should return a translated version of the response', () => {
-      const page = new SelectApType({ type: 'standard' }, application)
+      const page = new SelectApType({ type: 'standard' }, applicationMensEstate)
 
       expect(page.response()).toEqual({
         [page.title]: 'Standard AP',
