@@ -12,13 +12,13 @@ import type { User } from './User';
 export type Cas1SpaceBooking = {
     id: string;
     applicationId: string;
-    assessmentId: string;
+    assessmentId?: string;
     person: Person;
     tier?: string;
     requirements: Cas1SpaceBookingRequirements;
     premises: NamedId;
     apArea: NamedId;
-    bookedBy: User;
+    bookedBy?: User;
     requestForPlacementId?: string;
     expectedArrivalDate: string;
     expectedDepartureDate: string;

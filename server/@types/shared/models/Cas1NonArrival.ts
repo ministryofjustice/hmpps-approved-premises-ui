@@ -2,8 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewNonarrival = {
-    date: string;
+export type Cas1NonArrival = {
     reason: string;
     notes?: string;
 };

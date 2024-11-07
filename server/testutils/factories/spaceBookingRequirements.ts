@@ -7,9 +7,6 @@ import { placementCriteria } from './placementRequest'
 
 export default Factory.define<Cas1SpaceBookingRequirements>(() => {
   return {
-    apType: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
     essentialCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
-    desirableCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
-    gender: faker.helpers.arrayElement(['male', 'female']),
   }
 })

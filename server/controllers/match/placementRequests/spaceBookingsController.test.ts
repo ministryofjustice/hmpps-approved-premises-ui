@@ -73,7 +73,7 @@ describe('SpaceBookingsController', () => {
 
   describe('create', () => {
     it.each([
-      ['empty', { essentialCharacteristics: [], desirableCharacteristics: [] }],
+      ['empty', { essentialCharacteristics: [] }],
       ['populated', {}],
     ])(
       'should call the createSpaceBooking method on the spaceService and redirect the user to the CRU dashboard with characteristics %1',
@@ -89,10 +89,7 @@ describe('SpaceBookingsController', () => {
           arrivalDate: newSpaceBooking.arrivalDate,
           departureDate: newSpaceBooking.departureDate,
           premisesId: newSpaceBooking.premisesId,
-          apType: newSpaceBooking.requirements.apType,
           essentialCharacteristics: newSpaceBooking.requirements.essentialCharacteristics.toString(),
-          desirableCharacteristics: newSpaceBooking.requirements.desirableCharacteristics.toString(),
-          gender: newSpaceBooking.requirements.gender,
           personName,
           premisesName,
         }
