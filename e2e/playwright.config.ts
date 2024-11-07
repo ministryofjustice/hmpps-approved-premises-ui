@@ -70,5 +70,5 @@ export default defineConfig<TestOptions>({
       dependencies: ['setup-local'],
     },
   ],
-  testIgnore: ['/utils/*.ts'],
+  testIgnore: process.env.APPLICATION_TYPE ? [] : ['/utils/*.ts'],
 })
