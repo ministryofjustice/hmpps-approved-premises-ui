@@ -44,10 +44,7 @@ export default class {
         departureDate: body.departureDate,
         premisesId: body.premisesId,
         requirements: {
-          apType: body.apType,
           essentialCharacteristics: body.essentialCharacteristics ? body.essentialCharacteristics.split(',') : [],
-          desirableCharacteristics: body.desirableCharacteristics ? body.desirableCharacteristics.split(',') : [],
-          gender: body.gender,
         },
       }
       try {

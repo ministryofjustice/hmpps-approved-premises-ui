@@ -133,7 +133,7 @@ context('Placement Requests', () => {
     page.shouldShowBookingDetails(placementRequest, startDate, durationDays, apType)
 
     // And when I complete the form
-    const requirements = spaceBookingRequirementsFactory.build({ apType, gender: placementRequest.gender })
+    const requirements = spaceBookingRequirementsFactory.build()
     const spaceBooking = spaceBookingFactory.build({ requirements })
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
@@ -157,7 +157,6 @@ context('Placement Requests', () => {
         requirements: {
           ...spaceBooking.requirements,
           essentialCharacteristics: placementRequest.essentialCriteria,
-          desirableCharacteristics: placementRequest.desirableCriteria,
         },
       })
     })
