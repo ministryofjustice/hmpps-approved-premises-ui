@@ -62,7 +62,7 @@ jobs:
     name: node build
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
-  unit_test:
+  unit_tests:
     name: "Unit testing 🧪"
     runs-on: ubuntu-latest
     steps:
@@ -85,7 +85,7 @@ jobs:
         run: |
           npx nyc report -t ./coverage --reporter=text --reporter=text-summary
           npx nyc check-coverage -t ./coverage
-  integration_test:
+  integration_tests:
     name: "Integration testing 🧪"
     runs-on: ubuntu-latest
     strategy:
@@ -114,7 +114,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: junit-xml-reports
+          name: junit-xml-reports-${{ matrix.ci_node_index }}
           path: tmp/integration-tests-reports
         continue-on-error: true
 
@@ -132,20 +132,23 @@ jobs:
       - name: Store Integration tests reports
         uses: actions/upload-artifact@v4
         with:
-          name: integration-tests-reports
+          name: integration-tests-reports-${{ matrix.ci_node_index }}
           path: test_results/cypress
+          retention-days: 5
 
       - name: Store Integration tests videos
         uses: actions/upload-artifact@v4
         with:
-          name: integration-tests-videos
+          name: integration-tests-videos-${{ matrix.ci_node_index }}
           path: integration_tests/videos
+          retention-days: 5
 
       - name: Store Integration tests screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: integration-tests-screenshots
+          name: integration-tests-screenshots-${{ matrix.ci_node_index }}
           path: integration_tests/screenshots
+          retention-days: 5
 
   helm_lint:
     name: helm lint
