@@ -1,0 +1,72 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <form action="{{ paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+          method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="expectedDepartureDate" value="{{ placement.expectedDepartureDate }}" />
+
+        {{ showErrorSummary(errorSummary, errorTitle) }}
+
+        <h1 class="govuk-heading-l">Record someone as arrived</h1>
+
+        {{ govukSummaryList({
+            rows: [{
+                key: {
+                    text: "Expected arrival date"
+                },
+                value: {
+                    text: formatDate(placement.expectedArrivalDate)
+                }
+            }]
+        }) }}
+
+        {{ govukDateInput({
+            id: "arrivalDateTime",
+            namePrefix: "arrivalDateTime",
+            items: dateFieldValues('arrivalDateTime', errors),
+            errorMessage: errors.arrivalDateTime,
+            fieldset: {
+                legend: {
+                    text: "What is the arrival date?",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            }
+        }) }}
+
+        {{ govukInput({
+            label: {
+                text: 'What is the time of arrival?',
+                classes: 'govuk-fieldset__legend--m'
+            },
+            hint: {
+                text: 'For example, 09:30 or 14:55.'
+            },
+            classes: 'govuk-input--width-5',
+            id: 'arrivalTime',
+            name: 'arrivalTime',
+            value: arrivalTime,
+            errorMessage: errors.arrivalTime
+        }) }}
+
+        {{ govukButton({
+            text: "Submit",
+            preventDoubleClick: true
+        }) }}
+    </form>
+{% endblock %}

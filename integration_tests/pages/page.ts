@@ -141,6 +141,10 @@ export default abstract class Page {
     cy.get(`input[name="${name}"][value="${option}"]`).uncheck()
   }
 
+  completeTextInput(name: string, value: string): void {
+    cy.get(`input[name="${name}"]`).type(value)
+  }
+
   completeTextArea(name: string, value: string): void {
     cy.get(`textarea[name="${name}"]`).type(value)
   }
@@ -173,6 +177,11 @@ export default abstract class Page {
 
   clickBack(): void {
     cy.get('a').contains('Back').click()
+  }
+
+  clickAction(actionLabel: string): void {
+    cy.get('.moj-button-menu > button').contains('Actions').click()
+    cy.get('[role="menuitem"]').contains(actionLabel).click()
   }
 
   shouldShowMappa = (): void => {

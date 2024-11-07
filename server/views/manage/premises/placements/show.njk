@@ -20,16 +20,18 @@
 {% endblock %}
 
 {% block header %}
-  {{ super() }}
-  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% set titleHtml %}
     <span class="govuk-caption-xl">{{ placement.premises.name }}</span>
-    <h1>{{pageHeading}}</h1>
+    <h1>{{ pageHeading }}</h1>
 {% endset %}
 
 {% block content %}
+
+    {% include "../../../_messages.njk" %}
 
     {{ mojIdentityBar({
         title: {

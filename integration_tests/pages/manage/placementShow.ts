@@ -5,23 +5,25 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import { arrivalInformation, departureInformation, placementSummary } from '../../../server/utils/placements'
 
 export default class PlacementShowPage extends Page {
-  constructor(pageHeading: string) {
-    super(pageHeading)
+  constructor(placement: Cas1SpaceBooking | null, pageHeading?: string) {
+    let title = pageHeading
+    if (placement) {
+      title = `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`
+    }
+    super(title)
     this.checkPhaseBanner('Give us your feedback')
   }
 
   static visit(placement: Cas1SpaceBooking): PlacementShowPage {
     cy.visit(paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id }))
-    return new PlacementShowPage(
-      `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`,
-    )
+    return new PlacementShowPage(placement)
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): PlacementShowPage {
     cy.visit(paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id }), {
       failOnStatusCode: false,
     })
-    return new PlacementShowPage(`Authorisation Error`)
+    return new PlacementShowPage(null, `Authorisation Error`)
   }
 
   shouldShowPersonHeader(placement: Cas1SpaceBooking): void {

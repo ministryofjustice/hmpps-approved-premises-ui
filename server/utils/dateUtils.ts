@@ -116,7 +116,7 @@ export class DateFormats {
     const day = `0${dateInputObj[`${key}-day`]}`.slice(-2)
     const month = `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
-    const time = dateInputObj[`${key}-time`]
+    const time = dateInputObj[`${key}-time`] ? `0${dateInputObj[`${key}-time`]}`.slice(-5) : undefined
 
     const o: { [P in K]?: string } = dateInputObj
     if (day && month && year) {
@@ -338,4 +338,8 @@ export const daysToWeeksAndDays = (days: string | number): { days: number; weeks
     days: daysAsNumber - durationWeeks * 7,
     weeks: durationWeeks,
   }
+}
+
+export const timeIsValid24hrFormat = (time: string): Boolean => {
+  return /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/.test(time)
 }

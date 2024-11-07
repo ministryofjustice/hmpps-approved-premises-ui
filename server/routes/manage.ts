@@ -17,6 +17,7 @@ export default function routes(controllers: Controllers, router: Router, service
     bookingExtensionsController,
     premisesController,
     placementController,
+    arrivalsController,
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
@@ -123,6 +124,20 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.placements.show.pattern, placementController.show(), {
     auditEvent: 'SHOW_PLACEMENT',
     allowedPermissions: ['cas1_space_booking_view'],
+  })
+  get(paths.premises.placements.arrival.pattern, arrivalsController.new(), {
+    auditEvent: 'NEW_ARRIVAL',
+    allowedRoles: ['future_manager'], // TODO: use permissions instead of roles here
+  })
+  post(paths.premises.placements.arrival.pattern, arrivalsController.create(), {
+    auditEvent: 'CREATE_ARRIVAL_SUCCESS',
+    redirectAuditEventSpecs: [
+      {
+        path: paths.premises.placements.arrival.pattern,
+        auditEvent: 'CREATE_ARRIVAL_FAILURE',
+      },
+    ],
+    allowedRoles: ['future_manager'], // TODO: use permissions instead of roles here
   })
 
   // Bookings

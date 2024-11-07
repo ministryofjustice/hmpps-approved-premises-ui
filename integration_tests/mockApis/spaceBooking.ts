@@ -31,7 +31,10 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: `${paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })}`,
+        urlPattern: paths.premises.placements.show({
+          premisesId: placement.premises.id,
+          placementId: placement.id,
+        }),
       },
       response: {
         status: 200,
@@ -65,4 +68,15 @@ export default {
       },
     })
   },
+
+  stubSpaceBookingArrivalCreate: (args: { premisesId: string; placementId: string }) =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.premises.placements.arrival({ premisesId: args.premisesId, placementId: args.placementId }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }

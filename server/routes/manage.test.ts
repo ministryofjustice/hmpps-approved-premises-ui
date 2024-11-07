@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import {
+  ArrivalsController,
   BedsController,
   BookingExtensionsController,
   BookingsController,
@@ -27,6 +28,7 @@ describe('manage routes', () => {
   )
   const bookingsController: DeepMocked<BookingsController> = createMock<BookingsController>({})
   const premisesController: DeepMocked<PremisesController> = createMock<PremisesController>({})
+  const arrivalsController: DeepMocked<ArrivalsController> = createMock<ArrivalsController>({})
   const placementController: DeepMocked<PlacementController> = createMock<PlacementController>({})
   const bedsController: DeepMocked<BedsController> = createMock<BedsController>({})
   const outOfServiceBedsController: DeepMocked<OutOfServiceBedsController> = createMock<OutOfServiceBedsController>({})
@@ -45,6 +47,7 @@ describe('manage routes', () => {
     updateOutOfServiceBedsController,
     dateChangesController,
     premisesController,
+    arrivalsController,
     cancellationsController,
     redirectController,
     placementController,

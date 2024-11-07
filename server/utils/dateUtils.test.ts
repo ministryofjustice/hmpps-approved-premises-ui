@@ -20,6 +20,7 @@ import {
   daysToWeeksAndDays,
   isToday,
   monthOptions,
+  timeIsValid24hrFormat,
   uiDateOrDateEmptyMessage,
   yearOptions,
 } from './dateUtils'
@@ -149,6 +150,19 @@ describe('DateFormats', () => {
       const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
       expect(result.date).toEqual('2022-01-01T12:35:00.000Z')
+    })
+
+    it('pads the time', () => {
+      const obj: ObjectWithDateParts<'date'> = {
+        'date-year': '2022',
+        'date-month': '1',
+        'date-day': '1',
+        'date-time': '8:15',
+      }
+
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
+
+      expect(result.date).toEqual('2022-01-01T08:15:00.000Z')
     })
 
     it('returns an empty string when given empty strings as input', () => {
@@ -494,4 +508,17 @@ describe('daysToWeeksAndDays', () => {
   it('should convert a string value to a number', () => {
     expect(daysToWeeksAndDays('7')).toEqual({ days: 0, weeks: 1 })
   })
+})
+
+describe('timeIsValid24hrFormat', () => {
+  it.each(['08:45', '11:20', '23:59', '00:00'])('returns true if the time is valid, like %s', time => {
+    expect(timeIsValid24hrFormat(time)).toEqual(true)
+  })
+
+  it.each(['8:30pm', '1am', '1.25pm', '08.35', '-1:00', '24:00', '13:78', 'foo', 'no:no', '', '9:4'])(
+    'returns false if the time is invalid, like %s',
+    time => {
+      expect(timeIsValid24hrFormat(time)).toEqual(false)
+    },
+  )
 })

@@ -53,6 +53,7 @@ const deprecated = {
 const managePath = path('/manage')
 const premisesPath = managePath.path('premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
+const placementPath = singlePremisesPath.path('placements/:placementId')
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
 const bedsPath = singlePremisesPath.path('beds')
@@ -71,7 +72,8 @@ const paths = {
       show: bedsPath.path(':bedId'),
     },
     placements: {
-      show: singlePremisesPath.path('placements').path(':placementId'),
+      show: placementPath,
+      arrival: placementPath.path('arrival'),
     },
   },
 

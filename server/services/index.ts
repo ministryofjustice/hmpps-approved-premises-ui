@@ -5,6 +5,7 @@ import { dataAccess } from '../data'
 import AuditService from './auditService'
 import UserService from './userService'
 import PremisesService from './premisesService'
+import PlacementService from './placementService'
 import PersonService from './personService'
 import BookingService from './bookingService'
 import CancellationService from './cancellationService'
@@ -26,6 +27,7 @@ export const services = () => {
   const {
     appealClientBuilder,
     approvedPremisesClientBuilder,
+    placementClientBuilder,
     bookingClientBuilder,
     cas1ReferenceDataClientBuilder,
     referenceDataClientBuilder,
@@ -45,6 +47,7 @@ export const services = () => {
   const userService = new UserService(userClientBuilder, referenceDataClientBuilder)
   const auditService = new AuditService(config.apis.audit as AuditConfig)
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
+  const placementService = new PlacementService(placementClientBuilder)
   const personService = new PersonService(personClient)
   const bookingService = new BookingService(bookingClientBuilder)
   const cancellationService = new CancellationService(bookingClientBuilder, referenceDataClientBuilder)
@@ -67,6 +70,7 @@ export const services = () => {
     userService,
     auditService,
     premisesService,
+    placementService,
     personService,
     bookingService,
     cancellationService,
@@ -89,6 +93,7 @@ export {
   AppealService,
   UserService,
   PremisesService,
+  PlacementService,
   PersonService,
   CancellationService,
   BookingService,
