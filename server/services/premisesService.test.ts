@@ -8,6 +8,7 @@ import {
   bedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
+  cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
 } from '../testutils/factories'
@@ -128,6 +129,54 @@ describe('PremisesService', () => {
         perPage,
         sortBy,
         sortDirection,
+      })
+    })
+  })
+
+  describe('getPlacements', () => {
+    it('returns the placements for a single premises', async () => {
+      const status = 'upcoming'
+      const sortBy = 'personName'
+      const sortDirection = 'asc'
+      const page = 1
+      const perPage = 20
+
+      const paginatedPlacements = paginatedResponseFactory.build({
+        data: cas1SpaceBookingSummaryFactory.buildList(3),
+      }) as PaginatedResponse<Cas1SpaceBookingSummary>
+
+      premisesClient.getPlacements.mockResolvedValue(paginatedPlacements)
+
+      const result = await service.getPlacements({ token, premisesId, status, page, perPage, sortBy, sortDirection })
+
+      expect(result).toEqual(paginatedPlacements)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getPlacements).toHaveBeenCalledWith({
+        premisesId,
+        status,
+        page,
+        perPage,
+        sortBy,
+        sortDirection,
+      })
+    })
+  })
+
+  describe('getPlacement', () => {
+    it('returns the details for a single placement', async () => {
+      const placement = cas1SpaceBookingFactory.build()
+
+      premisesClient.getPlacement.mockResolvedValue(placement)
+
+      const result = await service.getPlacement({ token, premisesId, placementId: placement.id })
+
+      expect(result).toEqual(placement)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getPlacement).toHaveBeenCalledWith({
+        premisesId,
+        placementId: placement.id,
       })
     })
   })

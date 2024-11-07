@@ -135,7 +135,6 @@ describe('V2PremisesController', () => {
     it('should render the premises detail and list of placements with specified sort and pagination criteria', async () => {
       const hrefPrefix = `/manage/premises/${premisesId}?activeTab=historic&sortBy=personName&sortDirection=asc&`
       const queryParameters = { sortDirection: 'asc', sortBy: 'personName', activeTab: 'historic' }
-
       const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({
         ...queryParameters,
         hrefPrefix,

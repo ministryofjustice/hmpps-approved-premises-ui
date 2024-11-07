@@ -10,6 +10,7 @@ const cas1LostBedsSingle = cas1LostBeds.path(':id')
 const cas1LostBedsCancellations = cas1LostBedsSingle.path('cancellations')
 const cas1OutOfServiceBeds = cas1PremisesSingle.path('out-of-service-beds')
 const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
+const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placementId')
 
 const cas1SpaceBookings = cas1Namespace.path('/placement-requests/:id/space-bookings')
 
@@ -89,7 +90,10 @@ export default {
       move: booking.path('moves'),
       dateChange: booking.path('date-changes'),
     },
-    placements: cas1PremisesSingle.path('space-bookings'),
+    placements: {
+      index: cas1PremisesSingle.path('space-bookings'),
+      show: cas1SpaceBookingSingle,
+    },
     calendar: premisesSingle.path('calendar'),
   },
   bookings: {

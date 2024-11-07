@@ -247,20 +247,18 @@ describe('premisesUtils', () => {
     })
   })
   describe('placementTableRows', () => {
-    it('should return the rows of he placement summary table', () => {
+    it('should return the rows of the placement summary table', () => {
       const placements = cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' })
       const tableRows = placementTableRows('Test_Premises_Id', placements)
-      const expectedRows = placements.map(placement => {
-        return [
-          {
-            html: `<a href="/manage/premises/Test_Premises_Id/space-bookings/${placement.id}" data-cy-id="${placement.id}">${laoName(placement.person as unknown as FullPerson)}, ${placement.person.crn}</a>`,
-          },
-          { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
-          { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
-          { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
-          { text: placement.keyWorkerAllocation.keyWorker.name },
-        ]
-      })
+      const expectedRows = placements.map(placement => [
+        {
+          html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoName(placement.person as unknown as FullPerson)}, ${placement.person.crn}</a>`,
+        },
+        { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
+        { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
+        { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
+        { text: placement.keyWorkerAllocation.keyWorker.name },
+      ])
       expect(tableRows).toEqual(expectedRows)
     })
   })

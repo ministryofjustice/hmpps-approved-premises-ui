@@ -51,4 +51,10 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getPlacements(remainingArgs)
   }
+
+  async getPlacement(args: { token: string; premisesId: string; placementId: string }) {
+    const { token, ...remainingArgs } = args
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getPlacement(remainingArgs)
+  }
 }

@@ -102,6 +102,7 @@ context('Premises', () => {
       // Given there is a premises in the database
       const premises = cas1PremisesSummaryFactory.build()
       cy.task('stubSinglePremises', premises)
+
       // And it has a list of placements
       const placements = cas1SpaceBookingSummaryFactory.buildList(1)
       cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, pageSize: 9 })

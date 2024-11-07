@@ -57,6 +57,7 @@ import * as BedUtils from './bedUtils'
 import * as OutOfServiceBedUtils from './outOfServiceBedUtils'
 import * as PlacementApplicationUtils from './placementApplications'
 import * as PremisesUtils from './premises'
+import * as PlacementUtils from './placements'
 import * as ReportUtils from './reportUtils'
 
 import managePaths from '../paths/manage'
@@ -256,6 +257,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('OutOfServiceBedUtils', OutOfServiceBedUtils)
   njkEnv.addGlobal('PlacementApplicationUtils', PlacementApplicationUtils)
   njkEnv.addGlobal('PremisesUtils', PremisesUtils)
+  njkEnv.addGlobal('PlacementUtils', PlacementUtils)
   njkEnv.addGlobal('ReportUtils', ReportUtils)
   njkEnv.addGlobal('AppealsUtils', AppealsUtils)
 

@@ -1,11 +1,12 @@
 import { PaginatedResponse } from '@approved-premises/ui'
-import { Cas1SpaceBookingSummary } from '@approved-premises/api'
+import { Cas1SpaceBooking, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import PremisesClient from './premisesClient'
 import paths from '../paths/api'
 
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import {
   cas1PremisesBasicSummaryFactory,
+  cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   extendedPremisesSummaryFactory,
   paginatedResponseFactory,
@@ -59,7 +60,6 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
           path: paths.premises.indexCas1({ gender }),
           headers: {
             authorization: `Bearer ${sampleToken}`,
-            'X-Service-Name': 'approved-premises',
           },
           query: { gender },
         },
@@ -93,7 +93,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         uponReceiving: 'A request to get placements for a premises',
         withRequest: {
           method: 'GET',
-          path: paths.premises.placements({ premisesId: premises.id }),
+          path: paths.premises.placements.index({ premisesId: premises.id }),
           query: {
             residency: status,
             sortBy,
@@ -125,6 +125,36 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         sortDirection,
       })
       expect(output).toEqual(paginatedPlacements)
+    })
+  })
+
+  describe('getPlacement', () => {
+    it('should return details of a single placement', async () => {
+      const premises = extendedPremisesSummaryFactory.build()
+      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a single placement',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.placements.show({ premisesId: premises.id, placementId: placement.id }),
+          query: {},
+          headers: {
+            authorization: `Bearer ${sampleToken}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placement,
+        },
+      })
+
+      const output = await premisesClient.getPlacement({
+        premisesId: premises.id,
+        placementId: placement.id,
+      })
+      expect(output).toEqual(placement)
     })
   })
 })

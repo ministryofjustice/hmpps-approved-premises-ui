@@ -1,6 +1,7 @@
 import CancellationCreatePage from './cancellationCreate'
 import PremisesListPage from './premisesList'
 import PremisesShowPage from './premisesShow'
+import PlacementShowPage from './placementShow'
 import WithdrawConfirmPage from './withdrawConfirm'
 import UnableToMatchPage from './unableToMatch'
 
@@ -13,6 +14,7 @@ import DepartureDateChangePage from './booking/dateChanges/create'
 export {
   CancellationCreatePage,
   PremisesShowPage,
+  PlacementShowPage,
   BookingShowPage,
   DepartureDateChangeConfirmationPage,
   DepartureDateChangePage,
