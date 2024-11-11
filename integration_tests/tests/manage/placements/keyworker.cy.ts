@@ -28,7 +28,7 @@ context('Keyworker', () => {
     placementPage.clickAction('Assign keyworker')
 
     // Then I should open the keyworker assignment page
-    const page = new KeyworkerAssignmentPage(placement)
+    const page = new KeyworkerAssignmentPage(placement, staffMembers)
     page.shouldShowKeyworkerList(placement)
 
     // When I submit the form without selecting a keyworker
@@ -38,7 +38,7 @@ context('Keyworker', () => {
     page.shouldShowError()
 
     // When I select a keyworker and submit the form
-    page.completeForm(staffMembers[1].name)
+    page.completeForm()
     page.clickSubmit()
 
     // Then I should be shown the placement page with a confirmation message

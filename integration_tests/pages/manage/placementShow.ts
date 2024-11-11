@@ -36,7 +36,6 @@ export default class PlacementShowPage extends Page {
   shouldNotShowUnpopulatedRows(placement: Cas1SpaceBooking, rows: Array<string>): void {
     rows.forEach(title => {
       cy.contains(title).should('not.exist')
-      cy.contains(title).should('not.exist')
     })
   }
 
