@@ -1,4 +1,4 @@
-import { ApprovedPremisesUserPermission, Cas1SpaceBookingDates } from '@approved-premises/api'
+import { ApprovedPremisesUserPermission, Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
 import { cas1SpaceBookingFactory } from '../../../server/testutils/factories'
 
 import { PlacementShowPage } from '../../pages/manage'
@@ -23,7 +23,7 @@ context('Placements', () => {
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // Then I should see the person information in the header
-      placementShowPage.shouldShowPersonHeader(placement)
+      placementShowPage.shouldShowPersonHeader(placement.person as FullPerson)
       // And the placement details in the page tables
       placementShowPage.shouldShowSummaryInformation(placement)
     })

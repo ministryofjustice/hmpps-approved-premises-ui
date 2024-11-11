@@ -1,3 +1,4 @@
+import { FullPerson } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import { ArrivalCreatePage } from '../../../pages/manage/placements/arrival'
 import { cas1PremisesSummaryFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
@@ -25,6 +26,7 @@ context('Arrivals', () => {
 
     // Then I should see the form to record the arrival
     const arrivalCreatePage = new ArrivalCreatePage(placement)
+    arrivalCreatePage.shouldShowPersonHeader(placement.person as FullPerson)
     arrivalCreatePage.shouldShowFormAndExpectedArrivalDate()
 
     // When I submit the form with the arrival details
