@@ -96,6 +96,7 @@ export default {
       arrival: cas1SpaceBookingSingle.path('arrival'),
       nonArrival: cas1SpaceBookingSingle.path('non-arrival'),
       keyworker: cas1SpaceBookingSingle.path('keyworker'),
+      departure: cas1SpaceBookingSingle.path('departure'),
     },
     calendar: premisesSingle.path('calendar'),
   },
