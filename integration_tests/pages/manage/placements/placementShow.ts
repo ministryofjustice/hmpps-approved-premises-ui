@@ -1,8 +1,8 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
-import Page from '../page'
-import paths from '../../../server/paths/manage'
-import { DateFormats } from '../../../server/utils/dateUtils'
-import { arrivalInformation, departureInformation, placementSummary } from '../../../server/utils/placements'
+import Page from '../../page'
+import paths from '../../../../server/paths/manage'
+import { DateFormats } from '../../../../server/utils/dateUtils'
+import { arrivalInformation, departureInformation, placementSummary } from '../../../../server/utils/placements'
 
 export default class PlacementShowPage extends Page {
   constructor(placement: Cas1SpaceBooking | null, pageHeading?: string) {

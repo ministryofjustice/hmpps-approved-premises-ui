@@ -93,4 +93,18 @@ export default {
         status: 200,
       },
     }),
+
+  stubSpaceBookingNonArrival: placement =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.premises.placements.nonArrival({
+          premisesId: placement.premises.id,
+          placementId: placement.id,
+        }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }

@@ -28,15 +28,23 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_arrival',
         'cas1_space_booking_record_departure',
         'cas1_space_booking_record_keyworker',
+        'cas1_space_booking_record_non_arrival',
       ],
     })
     const premises = cas1PremisesSummaryFactory.build()
     const placementId = 'sample_placement_id'
 
+    const wrapOptions = (optionList: unknown) => [{ items: optionList }]
+
     const arrivalOption = {
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.arrival({ premisesId: premises.id, placementId }),
       text: 'Record arrival',
+    }
+    const nonArrivalOption = {
+      classes: 'govuk-button--secondary',
+      href: paths.premises.placements.nonArrival({ premisesId: premises.id, placementId }),
+      text: 'Record non-arrival',
     }
     const departureOption = {
       classes: 'govuk-button--secondary',
@@ -50,10 +58,12 @@ describe('placementUtils', () => {
     }
     describe('when the placement is in its initial state', () => {
       const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
-      it('should allow arrivals and assignment of keyworker', () => {
-        expect(actions(placementInitial, userDetails)).toEqual([keyworkerOption, arrivalOption])
+      it('should allow arrivals, non-arrivals and assignment of keyworker', () => {
+        expect(actions(placementInitial, userDetails)).toEqual(
+          wrapOptions([keyworkerOption, arrivalOption, nonArrivalOption]),
+        )
       })
-      it('should require correct permissions for arrival and keyworker', () => {
+      it('should require correct permissions for arrival, non-arrival and keyworker', () => {
         expect(
           actions(
             placementInitial,
@@ -61,7 +71,7 @@ describe('placementUtils', () => {
               permissions: ['cas1_space_booking_record_keyworker'],
             }),
           ),
-        ).toEqual([keyworkerOption])
+        ).toEqual(wrapOptions([keyworkerOption]))
         expect(
           actions(
             placementInitial,
@@ -69,13 +79,29 @@ describe('placementUtils', () => {
               permissions: ['cas1_space_booking_record_arrival'],
             }),
           ),
-        ).toEqual([arrivalOption])
+        ).toEqual(wrapOptions([arrivalOption]))
+        expect(
+          actions(
+            placementInitial,
+            userDetailsFactory.build({
+              permissions: ['cas1_space_booking_record_non_arrival'],
+            }),
+          ),
+        ).toEqual(wrapOptions([nonArrivalOption]))
       })
     })
+
+    describe('when the placement is marked as non-arrival', () => {
+      const placementNonArrival = cas1SpaceBookingFactory.nonArrival().build({ id: placementId, premises })
+      it('should allow nothing', () => {
+        expect(actions(placementNonArrival, userDetails)).toEqual(null)
+      })
+    })
+
     describe('when the placement has an arrival recorded, but no departure', () => {
       const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises })
       it('should allow departure and assigning keyworker after arrival', () => {
-        expect(actions(placementAfterArrival, userDetails)).toEqual([keyworkerOption, departureOption])
+        expect(actions(placementAfterArrival, userDetails)).toEqual([{ items: [keyworkerOption, departureOption] }])
       })
       it('should require correct permissions for departure', () => {
         expect(
@@ -85,7 +111,7 @@ describe('placementUtils', () => {
               permissions: [],
             }),
           ),
-        ).toEqual([])
+        ).toEqual(null)
         expect(
           actions(
             placementAfterArrival,
@@ -93,14 +119,14 @@ describe('placementUtils', () => {
               permissions: ['cas1_space_booking_record_departure'],
             }),
           ),
-        ).toEqual([departureOption])
+        ).toEqual([{ items: [departureOption] }])
       })
     })
 
     describe('when the placement has both an arrival and a departure recorded', () => {
       const placementAfterDeparture = cas1SpaceBookingFactory.build({ id: placementId, premises })
-      it('should allow only assigning keyworker after departure', () => {
-        expect(actions(placementAfterDeparture, userDetails)).toEqual([keyworkerOption])
+      it('should allow nothing', () => {
+        expect(actions(placementAfterDeparture, userDetails)).toEqual(null)
       })
     })
   })
@@ -175,6 +201,34 @@ describe('placementUtils', () => {
           {
             key: { text: 'Arrival time' },
             value: { text: DateFormats.timeFromDate(DateFormats.isoToDateObj(placement.actualArrivalDate)) },
+          },
+        ],
+      })
+    })
+
+    it('should return the arrival information if non-arrival', () => {
+      const nonArrivalplacement = cas1SpaceBookingFactory.nonArrival().build()
+      const { expectedArrivalDate, nonArrival } = nonArrivalplacement
+      const { notes, reason, confirmedAt } = nonArrival
+      expect(arrivalInformation(nonArrivalplacement)).toEqual({
+        rows: [
+          {
+            key: { text: 'Expected arrival date' },
+            value: { text: DateFormats.isoDateToUIDate(expectedArrivalDate) },
+          },
+          {
+            key: { text: 'Non arrival recorded at' },
+            value: {
+              text: `${DateFormats.isoDateToUIDate(confirmedAt)} ${DateFormats.timeFromDate(DateFormats.isoToDateObj(confirmedAt))}`,
+            },
+          },
+          {
+            key: { text: 'Non arrival reason' },
+            value: { text: reason.name },
+          },
+          {
+            key: { text: 'Non arrival any other information' },
+            value: { text: notes },
           },
         ],
       })

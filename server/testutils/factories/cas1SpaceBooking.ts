@@ -8,6 +8,7 @@ import userFactory from './user'
 
 import staffMemberFactory from './staffMember'
 import { DateFormats } from '../../utils/dateUtils'
+import cas1SpaceBookingNonArrivalFactory from './cas1SpaceBookingNonArrival'
 
 const addTime = (date: Date): Date => new Date(date.getTime() + faker.number.int({ max: 60 * 60 * 24 * 1000 }))
 
@@ -26,6 +27,16 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualDepartureDate: undefined,
       departureReason: undefined,
       departureMoveOnCategory: undefined,
+    })
+  }
+
+  nonArrival() {
+    return this.params({
+      actualArrivalDate: undefined,
+      actualDepartureDate: undefined,
+      departureReason: undefined,
+      departureMoveOnCategory: undefined,
+      nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
     })
   }
 }

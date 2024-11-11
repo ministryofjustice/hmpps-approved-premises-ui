@@ -1,9 +1,9 @@
 import { ApprovedPremisesUserPermission, Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
-import { cas1SpaceBookingFactory } from '../../../server/testutils/factories'
+import { cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
 
-import { PlacementShowPage } from '../../pages/manage'
+import { PlacementShowPage } from '../../../pages/manage'
 
-import { signIn } from '../signIn'
+import { signIn } from '../../signIn'
 
 context('Placements', () => {
   describe('show', () => {

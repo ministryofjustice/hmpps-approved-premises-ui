@@ -18,6 +18,7 @@ export default function routes(controllers: Controllers, router: Router, service
     premisesController,
     placementController,
     arrivalsController,
+    nonArrivalsController,
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
@@ -151,6 +152,20 @@ export default function routes(controllers: Controllers, router: Router, service
       {
         path: paths.premises.placements.keyworker.pattern,
         auditEvent: 'ASSIGN_KEYWORKER_FAILURE',
+      },
+    ],
+  })
+  get(paths.premises.placements.nonArrival.pattern, nonArrivalsController.new(), {
+    auditEvent: 'NON_ARRIVAL',
+    allowedPermissions: ['cas1_space_booking_record_non_arrival'],
+  })
+  post(paths.premises.placements.nonArrival.pattern, nonArrivalsController.create(), {
+    auditEvent: 'NON_ARRIVAL_SUCCESS',
+    allowedPermissions: ['cas1_space_booking_record_non_arrival'],
+    redirectAuditEventSpecs: [
+      {
+        path: paths.premises.placements.nonArrival.pattern,
+        auditEvent: 'NON_ARRIVAL_FAILURE',
       },
     ],
   })

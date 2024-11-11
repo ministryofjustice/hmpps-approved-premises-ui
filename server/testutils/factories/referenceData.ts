@@ -10,7 +10,7 @@ import cancellationReasonsJson from '../referenceData/stubs/cancellation-reasons
 import lostBedReasonsJson from '../referenceData/stubs/lost-bed-reasons.json'
 import nonArrivalReasonsJson from '../referenceData/stubs/non-arrival-reasons.json'
 import probationRegionsJson from '../referenceData/stubs/probation-regions.json'
-import { ApArea, ProbationRegion } from '../../@types/shared'
+import { ApArea, NonArrivalReason, ProbationRegion } from '../../@types/shared'
 
 class ReferenceDataFactory extends Factory<ReferenceData> {
   departureReasons() {
@@ -64,4 +64,10 @@ export const apAreaFactory = Factory.define<ApArea>(() => ({
   id: faker.string.uuid(),
   name: faker.location.city(),
   identifier: faker.location.countryCode(),
+}))
+
+export const nonArrivalReasonsFactory = Factory.define<NonArrivalReason>(() => ({
+  id: faker.string.uuid(),
+  name: faker.word.words(2),
+  isActive: faker.datatype.boolean(),
 }))

@@ -146,6 +146,7 @@ export default abstract class Page {
   }
 
   completeTextArea(name: string, value: string): void {
+    cy.get(`textarea[name="${name}"]`).clear()
     cy.get(`textarea[name="${name}"]`).type(value)
   }
 
@@ -182,6 +183,10 @@ export default abstract class Page {
   clickAction(actionLabel: string): void {
     cy.get('.moj-button-menu > button').contains('Actions').click()
     cy.get('[role="menuitem"]').contains(actionLabel).click()
+  }
+
+  actionMenuShouldNotExist(): void {
+    cy.get('.moj-button-menu > button').should('not.exist')
   }
 
   shouldShowMappa = (): void => {

@@ -7,29 +7,40 @@ import paths from '../../paths/manage'
 import { hasPermission } from '../users/roles'
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
-  const out = []
+  const actionList = []
+  const arrived = !!placement.actualArrivalDate
+  const departed = !!placement.actualDepartureDate
+  const nonArrival = !!placement.nonArrival
 
-  if (hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
-    out.push({
+  if (!departed && !nonArrival && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
+    actionList.push({
       text: 'Assign keyworker',
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
-  if (!placement.actualArrivalDate && hasPermission(user, ['cas1_space_booking_record_arrival'])) {
-    out.push({
+  if (!arrived && !nonArrival && hasPermission(user, ['cas1_space_booking_record_arrival'])) {
+    actionList.push({
       text: 'Record arrival',
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
     })
-  } else if (!placement.actualDepartureDate && hasPermission(user, ['cas1_space_booking_record_departure'])) {
-    out.push({
+  }
+  if (!arrived && !nonArrival && !departed && hasPermission(user, ['cas1_space_booking_record_non_arrival'])) {
+    actionList.push({
+      text: 'Record non-arrival',
+      classes: 'govuk-button--secondary',
+      href: paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
+    })
+  }
+  if (arrived && !nonArrival && !departed && hasPermission(user, ['cas1_space_booking_record_departure'])) {
+    actionList.push({
       text: 'Record departure',
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
-  return out
+  return actionList.length ? [{ items: actionList }] : null
 }
 
 export const getKeyDetail = (placement: Cas1SpaceBooking): KeyDetailsArgs => {
@@ -96,15 +107,20 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   }
 }
 
-export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => ({
-  rows: [
-    summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
-    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate)),
-    summaryRow('Arrival time', formatTime(placement.actualArrivalDate)),
-    summaryRow('Non arrival reason', null),
-    summaryRow('Non arrival any other information', null),
-  ].filter(Boolean),
-})
+export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => {
+  const { expectedArrivalDate, actualArrivalDate, nonArrival } = placement
+  const { reason, notes, confirmedAt } = nonArrival || {}
+  return {
+    rows: [
+      summaryRow('Expected arrival date', formatDate(expectedArrivalDate)),
+      summaryRow('Actual arrival date', formatDate(actualArrivalDate)),
+      summaryRow('Arrival time', formatTime(actualArrivalDate)),
+      summaryRow('Non arrival recorded at', confirmedAt && `${formatDate(confirmedAt)} ${formatTime(confirmedAt)}`),
+      summaryRow('Non arrival reason', reason?.name),
+      summaryRow('Non arrival any other information', notes),
+    ].filter(Boolean),
+  }
+}
 
 export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
