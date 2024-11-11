@@ -7,6 +7,7 @@ import type {
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
   SortDirection,
+  StaffMember,
 } from '@approved-premises/api'
 import type { PaginatedResponse, PremisesFilters } from '@approved-premises/ui'
 import RestClient from './restClient'
@@ -59,5 +60,11 @@ export default class PremisesClient {
     return (await this.restClient.get({
       path: paths.premises.placements.show(args),
     })) as Cas1SpaceBooking
+  }
+
+  async getStaff(premisesId: string): Promise<Array<StaffMember>> {
+    return (await this.restClient.get({
+      path: paths.premises.staffMembers.index({ premisesId }),
+    })) as Array<StaffMember>
   }
 }

@@ -23,6 +23,7 @@ export default function routes(controllers: Controllers, router: Router, service
     updateOutOfServiceBedsController,
     cancellationsController,
     redirectController,
+    keyworkerController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -127,17 +128,31 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.premises.placements.arrival.pattern, arrivalsController.new(), {
     auditEvent: 'NEW_ARRIVAL',
-    allowedRoles: ['future_manager'], // TODO: use permissions instead of roles here
+    allowedPermissions: ['cas1_space_booking_record_arrival'],
   })
   post(paths.premises.placements.arrival.pattern, arrivalsController.create(), {
     auditEvent: 'CREATE_ARRIVAL_SUCCESS',
+    allowedPermissions: ['cas1_space_booking_record_arrival'],
     redirectAuditEventSpecs: [
       {
         path: paths.premises.placements.arrival.pattern,
         auditEvent: 'CREATE_ARRIVAL_FAILURE',
       },
     ],
-    allowedRoles: ['future_manager'], // TODO: use permissions instead of roles here
+  })
+  get(paths.premises.placements.keyworker.pattern, keyworkerController.new(), {
+    auditEvent: 'ASSIGN_KEYWORKER',
+    allowedPermissions: ['cas1_space_booking_record_keyworker'],
+  })
+  post(paths.premises.placements.keyworker.pattern, keyworkerController.assign(), {
+    auditEvent: 'ASSIGN_KEYWORKER_SUCCESS',
+    allowedPermissions: ['cas1_space_booking_record_keyworker'],
+    redirectAuditEventSpecs: [
+      {
+        path: paths.premises.placements.keyworker.pattern,
+        auditEvent: 'ASSIGN_KEYWORKER_FAILURE',
+      },
+    ],
   })
 
   // Bookings

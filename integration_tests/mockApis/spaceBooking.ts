@@ -79,4 +79,18 @@ export default {
         status: 200,
       },
     }),
+
+  stubSpaceBookingAssignKeyworker: placement =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.premises.placements.keyworker({
+          premisesId: placement.premises.id,
+          placementId: placement.id,
+        }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }

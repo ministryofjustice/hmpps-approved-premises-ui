@@ -1,0 +1,66 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "../../../components/keyDetails/macro.njk" import keyDetails %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
+    }) }}
+{% endblock %}
+
+{% block header %}
+  {{ super() }}
+  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% block content %}
+
+    <form action="{{ paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+          method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ showErrorSummary(errorSummary, errorTitle) }}
+
+        {% include "../../../_messages.njk" %}
+
+        <h1 class="govuk-heading-l">Edit keyworker details</h1>
+
+
+        {{ govukSummaryList({
+            rows: [{
+                key: {
+                    text: "Keyworker"
+                },
+                value: {
+                    text: currentKeyworkerName
+                }
+            }]
+        }) }}
+
+        {{ govukSelect({
+            label: {
+                text: "Select keyworker",
+                classes: "govuk-label--s"
+            },
+            id: "keyworkerId",
+            name: "keyworkerId",
+            items: PlacementUtils.renderKeyworkersSelectOptions(staffList, placement)
+        }) }}
+
+        {{ govukButton({
+            text: "Submit",
+            preventDoubleClick: true
+        }) }}
+    </form>
+
+{% endblock %}
+

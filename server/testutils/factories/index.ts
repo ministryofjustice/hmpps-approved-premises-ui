@@ -82,6 +82,8 @@ import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import cas1SpaceBookingFactory from './cas1SpaceBooking'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
+import cas1AssignKeyWorkerFactory from './cas1AssignKeyWorker'
+import newPlacementArrivalFactory from './newPlacementArrival'
 
 export {
   acctAlertFactory,
@@ -114,6 +116,8 @@ export {
   cas1SpaceBookingDatesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
+  cas1AssignKeyWorkerFactory,
+  newPlacementArrivalFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,

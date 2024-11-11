@@ -27,16 +27,16 @@ export default class PlacementShowPage extends Page {
   }
 
   shouldShowSummaryInformation(placement: Cas1SpaceBooking): void {
-    const removeGreyRows = row => !row.key.html
-    this.shouldContainSummaryListItems(placementSummary(placement).rows.filter(removeGreyRows))
-    this.shouldContainSummaryListItems(arrivalInformation(placement).rows.filter(removeGreyRows))
-    this.shouldContainSummaryListItems(departureInformation(placement).rows.filter(removeGreyRows))
+    const removeHiddenRows = row => row.key
+    this.shouldContainSummaryListItems(placementSummary(placement).rows.filter(removeHiddenRows))
+    this.shouldContainSummaryListItems(arrivalInformation(placement).rows.filter(removeHiddenRows))
+    this.shouldContainSummaryListItems(departureInformation(placement).rows.filter(removeHiddenRows))
   }
 
-  shouldShowGreyRows(placement: Cas1SpaceBooking, rows: Array<string>): void {
+  shouldNotShowUnpopulatedRows(placement: Cas1SpaceBooking, rows: Array<string>): void {
     rows.forEach(title => {
-      cy.contains(title).closest('.govuk-summary-list__row').should('contain', '-')
-      cy.contains(title).closest('.govuk-summary-list__row').should('contain', '-')
+      cy.contains(title).should('not.exist')
+      cy.contains(title).should('not.exist')
     })
   }
 

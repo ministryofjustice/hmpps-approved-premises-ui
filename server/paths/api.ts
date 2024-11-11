@@ -94,6 +94,7 @@ export default {
       index: cas1PremisesSingle.path('space-bookings'),
       show: cas1SpaceBookingSingle,
       arrival: cas1SpaceBookingSingle.path('arrival'),
+      keyworker: cas1SpaceBookingSingle.path('keyworker'),
     },
     calendar: premisesSingle.path('calendar'),
   },

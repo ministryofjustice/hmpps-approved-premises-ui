@@ -1,7 +1,7 @@
 import PlacementClient from './placementClient'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
-import { newPlacementArrivalFactory } from '../testutils/factories/newPlacementArrival'
+import { cas1AssignKeyWorkerFactory, newPlacementArrivalFactory } from '../testutils/factories'
 
 describeCas1NamespaceClient('PlacementClient', provider => {
   let placementClient: PlacementClient
@@ -36,6 +36,32 @@ describeCas1NamespaceClient('PlacementClient', provider => {
       })
 
       const result = await placementClient.createArrival(premisesId, placementId, newPlacementArrival)
+
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('assignKeyworker', () => {
+    it('assigns a keyworker to a given placement', async () => {
+      const keyworkerAssignment = cas1AssignKeyWorkerFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to assign a keyworker to a placement',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.placements.keyworker({ premisesId, placementId }),
+          body: keyworkerAssignment,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      const result = await placementClient.assignKeyworker(premisesId, placementId, keyworkerAssignment)
 
       expect(result).toEqual({})
     })

@@ -11,6 +11,7 @@ import {
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
+  staffMemberFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/premisesClient')
@@ -166,7 +167,6 @@ describe('PremisesService', () => {
   describe('getPlacement', () => {
     it('returns the details for a single placement', async () => {
       const placement = cas1SpaceBookingFactory.build()
-
       premisesClient.getPlacement.mockResolvedValue(placement)
 
       const result = await service.getPlacement({ token, premisesId, placementId: placement.id })
@@ -178,6 +178,20 @@ describe('PremisesService', () => {
         premisesId,
         placementId: placement.id,
       })
+    })
+  })
+
+  describe('getStaff', () => {
+    it('on success returns the list of staff in a premises', async () => {
+      const staffList = staffMemberFactory.buildList(5)
+      premisesClient.getStaff.mockResolvedValue(staffList)
+
+      const result = await service.getStaff(token, premisesId)
+
+      expect(result).toEqual(staffList)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
     })
   })
 })
