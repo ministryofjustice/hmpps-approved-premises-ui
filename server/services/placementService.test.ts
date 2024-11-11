@@ -5,6 +5,7 @@ import {
   cas1AssignKeyWorkerFactory,
   cas1NonArrivalFactory,
   newPlacementArrivalFactory,
+  newPlacementDepartureFactory,
   nonArrivalReasonsFactory,
 } from '../testutils/factories'
 
@@ -32,7 +33,7 @@ describe('PlacementService', () => {
   })
 
   describe('createArrival', () => {
-    it('calls the create method of the placement client and returns a response', async () => {
+    it('calls the createArrival method of the placement client and returns a response', async () => {
       const newPlacementArrival = newPlacementArrivalFactory.build()
 
       placementClient.createArrival.mockResolvedValue({})
@@ -79,6 +80,20 @@ describe('PlacementService', () => {
       const result = await placementService.getNonArrivalReasons(token)
 
       expect(result).toEqual(nonArrivalReasons.filter(({ isActive }) => isActive))
+    })
+  })
+
+  describe('createDeparture', () => {
+    it('calls the createDeparture method of the placement client and returns a response', async () => {
+      const newPlacementDeparture = newPlacementDepartureFactory.build()
+
+      placementClient.createDeparture.mockResolvedValue({})
+
+      const result = await service.createDeparture(token, premisesId, placementId, newPlacementDeparture)
+
+      expect(result).toEqual({})
+      expect(placementClientFactory).toHaveBeenCalledWith(token)
+      expect(placementClient.createDeparture).toHaveBeenCalledWith(premisesId, placementId, newPlacementDeparture)
     })
   })
 })
