@@ -20,6 +20,14 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       departureMoveOnCategory: undefined,
     })
   }
+
+  current() {
+    return this.params({
+      actualDepartureDate: undefined,
+      departureReason: undefined,
+      departureMoveOnCategory: undefined,
+    })
+  }
 }
 
 export default Cas1SpaceBookingFactory.define(() => {

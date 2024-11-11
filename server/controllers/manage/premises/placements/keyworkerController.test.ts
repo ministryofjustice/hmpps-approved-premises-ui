@@ -23,7 +23,7 @@ describe('keyworkerController', () => {
 
   const premisesId = 'premises-id'
   const placement = spaceBookingFactory.build()
-  const testKeyworkerId = 'TestId'
+  const testStaffCode = 'TestId'
   const uiPlacementPagePath = paths.premises.placements.show({ premisesId, placementId: placement.id })
   const uiKeyworkerPagePath = paths.premises.placements.keyworker({ premisesId, placementId: placement.id })
 
@@ -61,12 +61,12 @@ describe('keyworkerController', () => {
   describe('assign', () => {
     it('assigns the keyworker and returns to the placement details page', async () => {
       const requestHandler = keyworkerController.assign()
-      request.body = { keyworkerId: testKeyworkerId }
+      request.body = { staffCode: testStaffCode }
 
       await requestHandler(request, response, next)
 
       expect(placementService.assignKeyworker).toHaveBeenCalledWith(token, premisesId, placement.id, {
-        staffCode: testKeyworkerId,
+        staffCode: testStaffCode,
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'Keyworker assigned')
       expect(response.redirect).toHaveBeenCalledWith(uiPlacementPagePath)
@@ -90,14 +90,14 @@ describe('keyworkerController', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
-        keyworkerId: 'You must select a keyworker',
+        staffCode: 'You must select a keyworker',
       })
     })
 
     describe('when errors are raised by the API', () => {
       it('should call catchValidationErrorOrPropogate with a standard error', async () => {
         const requestHandler = keyworkerController.assign()
-        request.body = { keyworkerId: testKeyworkerId }
+        request.body = { staffCode: testStaffCode }
 
         const err = new Error()
 

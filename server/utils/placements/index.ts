@@ -64,10 +64,11 @@ export const getBackLink = (referrer: string, premisesId: string): string => {
   return paths.premises.show({ premisesId })
 }
 
-const summaryRow = (key: string, value: string, excludeRow = false): SummaryListItem => ({
-  key: excludeRow ? null : textValue(key),
-  value: textValue(value),
-})
+const summaryRow = (key: string, value: string, excludeRow = false): SummaryListItem =>
+  value && {
+    key: excludeRow ? null : textValue(key),
+    value: textValue(value),
+  }
 
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   const { createdAt, actualArrivalDate, actualDepartureDate, keyWorkerAllocation, deliusEventNumber } = placement
@@ -92,7 +93,7 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
       ),
       summaryRow('Key worker', keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
       summaryRow('Delius Event Number', deliusEventNumber, !deliusEventNumber),
-    ].filter(({ key }) => key),
+    ].filter(Boolean),
   }
 }
 
@@ -103,7 +104,7 @@ export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => 
     summaryRow('Arrival time', formatTime(placement.actualArrivalDate), !placement.actualArrivalDate),
     summaryRow('Non arrival reason', null, true),
     summaryRow('Non arrival any other information', null, true),
-  ].filter(({ key }) => key),
+  ].filter(Boolean),
 })
 
 export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => ({
@@ -115,7 +116,7 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
     summaryRow('Breach or recall', null, true),
     summaryRow('Move on', placement.departureMoveOnCategory?.name, !placement.departureMoveOnCategory?.name),
     summaryRow('More information', null, true),
-  ].filter(({ key }) => key),
+  ].filter(Boolean),
 })
 
 const listOtherBookings = (placement: Cas1SpaceBooking): string =>

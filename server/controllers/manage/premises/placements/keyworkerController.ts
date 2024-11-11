@@ -1,5 +1,5 @@
 import { type Request, RequestHandler, type Response } from 'express'
-import { Cas1AssignKeyWorker, StaffMember } from '@approved-premises/api'
+import { StaffMember } from '@approved-premises/api'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
@@ -36,19 +36,15 @@ export default class KeyworkerController {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
       try {
-        const { keyworkerId } = req.body
+        const { staffCode } = req.body
 
-        if (!keyworkerId) {
+        if (!staffCode) {
           throw new ValidationError({
-            keyworkerId: 'You must select a keyworker',
+            staffCode: 'You must select a keyworker',
           })
         }
 
-        const keyworkerAssignment: Cas1AssignKeyWorker = {
-          staffCode: keyworkerId,
-        }
-
-        await this.placementService.assignKeyworker(req.user.token, premisesId, placementId, keyworkerAssignment)
+        await this.placementService.assignKeyworker(req.user.token, premisesId, placementId, { staffCode })
 
         req.flash('success', 'Keyworker assigned')
         return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))

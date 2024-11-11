@@ -1,7 +1,12 @@
 import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premises/api'
 import { SelectOption } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import { cas1SpaceBookingFactory, staffMemberFactory, userDetailsFactory } from '../../testutils/factories'
+import {
+  cas1PremisesSummaryFactory,
+  cas1SpaceBookingFactory,
+  staffMemberFactory,
+  userDetailsFactory,
+} from '../../testutils/factories'
 import {
   actions,
   arrivalInformation,
@@ -25,82 +30,78 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_keyworker',
       ],
     })
-    const placement = cas1SpaceBookingFactory.build()
-    const { actualDepartureDate: _, ...placementAfterArrival } = placement
-    const { actualArrivalDate: __, ...placementInitial } = placementAfterArrival
-    const placementAfterDeparture = placement
+    const premises = cas1PremisesSummaryFactory.build()
+    const placementId = 'sample_placement_id'
 
     const arrivalOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.arrival({ premisesId: premises.id, placementId }),
       text: 'Record arrival',
     }
     const departureOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.departure({ premisesId: premises.id, placementId }),
       text: 'Record departure',
     }
     const keyworkerOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.keyworker({ premisesId: premises.id, placementId }),
       text: 'Assign keyworker',
     }
-
-    it('should allow arrivals and assignment of keyworker when placement in initial state', () => {
-      expect(actions(placementInitial, userDetails)).toEqual([keyworkerOption, arrivalOption])
+    describe('when the placement is in its initial state', () => {
+      const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
+      it('should allow arrivals and assignment of keyworker', () => {
+        expect(actions(placementInitial, userDetails)).toEqual([keyworkerOption, arrivalOption])
+      })
+      it('should require correct permissions for arrival and keyworker', () => {
+        expect(
+          actions(
+            placementInitial,
+            userDetailsFactory.build({
+              permissions: ['cas1_space_booking_record_keyworker'],
+            }),
+          ),
+        ).toEqual([keyworkerOption])
+        expect(
+          actions(
+            placementInitial,
+            userDetailsFactory.build({
+              permissions: ['cas1_space_booking_record_arrival'],
+            }),
+          ),
+        ).toEqual([arrivalOption])
+      })
+    })
+    describe('when the placement has an arrival recorded, but no departure', () => {
+      const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises })
+      it('should allow departure and assigning keyworker after arrival', () => {
+        expect(actions(placementAfterArrival, userDetails)).toEqual([keyworkerOption, departureOption])
+      })
+      it('should require correct permissions for departure', () => {
+        expect(
+          actions(
+            placementAfterArrival,
+            userDetailsFactory.build({
+              permissions: [],
+            }),
+          ),
+        ).toEqual([])
+        expect(
+          actions(
+            placementAfterArrival,
+            userDetailsFactory.build({
+              permissions: ['cas1_space_booking_record_departure'],
+            }),
+          ),
+        ).toEqual([departureOption])
+      })
     })
 
-    it('should allow departure and assigning keyworker after arrival', () => {
-      expect(actions(placementAfterArrival, userDetails)).toEqual([keyworkerOption, departureOption])
-    })
-
-    it('should allow only assigning keyworker after departure', () => {
-      expect(actions(placementAfterDeparture, userDetails)).toEqual([keyworkerOption])
-    })
-
-    it('should require correct permissions for arrival and keyworker', () => {
-      expect(
-        actions(
-          placementInitial,
-          userDetailsFactory.build({
-            permissions: [],
-          }),
-        ),
-      ).toEqual([])
-      expect(
-        actions(
-          placementInitial,
-          userDetailsFactory.build({
-            permissions: ['cas1_space_booking_record_keyworker'],
-          }),
-        ),
-      ).toEqual([keyworkerOption])
-      expect(
-        actions(
-          placementInitial,
-          userDetailsFactory.build({
-            permissions: ['cas1_space_booking_record_arrival'],
-          }),
-        ),
-      ).toEqual([arrivalOption])
-    })
-    it('should require correct permissions for arrival and keyworker', () => {
-      expect(
-        actions(
-          placementAfterArrival,
-          userDetailsFactory.build({
-            permissions: [],
-          }),
-        ),
-      ).toEqual([])
-      expect(
-        actions(
-          placementInitial,
-          userDetailsFactory.build({
-            permissions: ['cas1_space_booking_record_departure'],
-          }),
-        ),
-      ).toEqual([departureOption])
+    describe('when the placement has both an arrival and a departure recorded', () => {
+      const placementAfterDeparture = cas1SpaceBookingFactory.build({ id: placementId, premises })
+      it('should allow only assigning keyworker after departure', () => {
+        expect(actions(placementAfterDeparture, userDetails)).toEqual([keyworkerOption])
+      })
     })
   })
 
@@ -224,11 +225,12 @@ describe('placementUtils', () => {
     })
   })
   describe('renderKeyworkersSelectOptions', () => {
+    const selectBlankOption = { text: 'Select a keyworker', value: null } as SelectOption
     it('should return a list of keyworker selection options', () => {
       const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
       const expected = [
-        { text: 'Select a keyworker', value: null } as SelectOption,
+        selectBlankOption,
         ...staffList.map(({ name, code }) => ({ text: name, value: code, selected: false })),
       ]
       const result = renderKeyworkersSelectOptions(staffList, placement)
@@ -238,7 +240,19 @@ describe('placementUtils', () => {
       const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: false })
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
       const result = renderKeyworkersSelectOptions(staffList, placement)
-      expect(result).toEqual([{ text: 'Select a keyworker', value: null } as SelectOption])
+      expect(result).toEqual([selectBlankOption])
+    })
+
+    it('should exclude the currently assigned keyworker', () => {
+      const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
+      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build({
+        keyWorkerAllocation: { keyWorker: { ...staffList[1] } },
+      })
+      const result = renderKeyworkersSelectOptions(staffList, placement)
+      expect(result).toEqual([
+        selectBlankOption,
+        ...[staffList[0], staffList[2]].map(({ name, code }) => ({ text: name, value: code, selected: false })),
+      ])
     })
   })
 })
