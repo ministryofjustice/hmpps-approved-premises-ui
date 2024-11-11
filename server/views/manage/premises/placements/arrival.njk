@@ -10,8 +10,8 @@
 {% extends "../../../partials/layout.njk" %}
 
 {% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+  {{ super() }}
+  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -19,11 +19,6 @@
         text: "Back",
         href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
     }) }}
-{% endblock %}
-
-{% block header %}
-  {{ super() }}
-  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block content %}
