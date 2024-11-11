@@ -538,6 +538,13 @@ export default abstract class Page {
     })
   }
 
+  shouldShowPersonHeader(person: FullPerson): void {
+    const { name, crn, dateOfBirth } = person
+    cy.get('.key-details-bar').should('contain', name)
+    cy.get('.key-details-bar').should('contain', crn)
+    cy.get('.key-details-bar').should('contain', DateFormats.isoDateToUIDate(dateOfBirth, { format: 'short' }))
+  }
+
   shouldShowOutOfServiceBedDetails(bedDetails: OutOfServiceBed | OutOfServiceBedRevision) {
     if (bedDetails.startDate) {
       cy.get('.govuk-summary-list__key').should('contain', 'Start date')

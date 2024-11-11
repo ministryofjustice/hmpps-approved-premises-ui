@@ -1,4 +1,4 @@
-import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
+import { Cas1SpaceBooking } from '@approved-premises/api'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -24,13 +24,6 @@ export default class PlacementShowPage extends Page {
       failOnStatusCode: false,
     })
     return new PlacementShowPage(null, `Authorisation Error`)
-  }
-
-  shouldShowPersonHeader(placement: Cas1SpaceBooking): void {
-    const { name, crn, dateOfBirth } = placement.person as FullPerson
-    cy.get('.key-details-bar').should('contain', name)
-    cy.get('.key-details-bar').should('contain', crn)
-    cy.get('.key-details-bar').should('contain', DateFormats.isoDateToUIDate(dateOfBirth, { format: 'short' }))
   }
 
   shouldShowSummaryInformation(placement: Cas1SpaceBooking): void {
