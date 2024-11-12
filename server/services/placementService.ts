@@ -5,7 +5,8 @@ import {
   Cas1NonArrival,
   NonArrivalReason,
 } from '@approved-premises/api'
-import type { ReferenceDataClient, RestClientBuilder } from '../data'
+import type { Request } from 'express'
+import { ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
 export default class PlacementService {
@@ -59,5 +60,24 @@ export default class PlacementService {
     const referenceDataClient = this.referenceDataClientFactory(token)
 
     return referenceDataClient.getReferenceData('departure-reasons')
+  }
+
+  async getMoveOnCategories(token: string) {
+    const referenceDataClient = this.referenceDataClientFactory(token)
+
+    return referenceDataClient.getReferenceData('move-on-categories')
+  }
+
+  getDepartureSessionData(placementId: string, session: Request['session']) {
+    return session?.departuresData?.[placementId]
+  }
+
+  setDepartureSessionData(placementId: string, session: Request['session'], departureData: Partial<Cas1NewDeparture>) {
+    session.departuresData = session.departuresData || {}
+
+    session.departuresData[placementId] = {
+      ...this.getDepartureSessionData(placementId, session),
+      ...departureData,
+    }
   }
 }
