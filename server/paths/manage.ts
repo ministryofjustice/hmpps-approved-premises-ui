@@ -79,6 +79,9 @@ const paths = {
       nonArrival: singlePlacementPath.path('non-arrival'),
       departure: {
         new: departurePath.path('new'),
+        breachOrRecallReason: departurePath.path('breach-or-recall'),
+        moveOnCategory: departurePath.path('move-on'),
+        notes: departurePath.path('notes'),
       },
     },
   },
