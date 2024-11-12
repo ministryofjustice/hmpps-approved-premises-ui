@@ -3,6 +3,7 @@ import type {
   ExtendedPremisesSummary,
   Premises,
   ApprovedPremisesSummary as PremisesSummary,
+  StaffMember,
 } from '@approved-premises/api'
 
 import { stubFor } from './setup'
@@ -69,9 +70,25 @@ const stubSinglePremises = (premises: Premises) =>
     },
   })
 
+const stubPremisesStaffMembers = (args: { premisesId: string; staffMembers: Array<StaffMember> }) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: paths.premises.staffMembers.index({ premisesId: args.premisesId }),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.staffMembers,
+    },
+  })
+
 export default {
   stubAllPremises,
   stubCas1AllPremises,
   stubPremisesSummary,
   stubSinglePremises,
+  stubPremisesStaffMembers,
 }

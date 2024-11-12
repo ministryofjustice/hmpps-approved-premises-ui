@@ -1,5 +1,5 @@
-import type { Cas1SpaceBooking, Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
-import { KeyDetailsArgs, SummaryList, UserDetails } from '@approved-premises/ui'
+import type { Cas1SpaceBooking, Cas1SpaceBookingDates, FullPerson, StaffMember } from '@approved-premises/api'
+import { KeyDetailsArgs, SelectOption, SummaryList, SummaryListItem, UserDetails } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
 import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
@@ -11,9 +11,9 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
 
   if (hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
     out.push({
-      text: placement.keyWorkerAllocation ? 'Edit keyworker' : 'Allocate keyworker',
+      text: 'Assign keyworker',
       classes: 'govuk-button--secondary',
-      href: '',
+      href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
   if (!placement.actualArrivalDate && hasPermission(user, ['cas1_space_booking_record_arrival'])) {
@@ -26,7 +26,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     out.push({
       text: 'Record departure',
       classes: 'govuk-button--secondary',
-      href: '',
+      href: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
   return out
@@ -51,22 +51,9 @@ export const getKeyDetail = (placement: Cas1SpaceBooking): KeyDetailsArgs => {
   }
 }
 
-const greyValue = (text: string) => htmlValue(`<span class="text-grey">${text}</span>`)
-
 const formatDate = (date: string | null) => date && DateFormats.isoDateToUIDate(date)
 
 const formatTime = (date: string | null) => date && DateFormats.timeFromDate(DateFormats.isoToDateObj(date))
-
-const summaryRow = (key: string, value: string, greyRow = false) =>
-  greyRow
-    ? {
-        key: greyValue(key),
-        value: greyValue('-'),
-      }
-    : {
-        key: textValue(key),
-        value: textValue(value),
-      }
 
 export const getBackLink = (referrer: string, premisesId: string): string => {
   const regString: string = `${paths.premises.show({ premisesId: '([0-9a-f-]{36})' })}[^/]*$`
@@ -76,6 +63,12 @@ export const getBackLink = (referrer: string, premisesId: string): string => {
   }
   return paths.premises.show({ premisesId })
 }
+
+const summaryRow = (key: string, value: string): SummaryListItem =>
+  value && {
+    key: textValue(key),
+    value: textValue(value),
+  }
 
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   const { createdAt, actualArrivalDate, actualDepartureDate, keyWorkerAllocation, deliusEventNumber } = placement
@@ -96,34 +89,33 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
               ).number,
             ),
           ),
-        !actualArrivalDate || !actualDepartureDate,
       ),
       summaryRow('Key worker', keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-      summaryRow('Delius Event Number', deliusEventNumber, !deliusEventNumber),
-    ],
+      summaryRow('Delius Event Number', deliusEventNumber),
+    ].filter(Boolean),
   }
 }
 
 export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
     summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
-    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate), !placement.actualArrivalDate),
-    summaryRow('Arrival time', formatTime(placement.actualArrivalDate), !placement.actualArrivalDate),
-    summaryRow('Non arrival reason', null, true),
-    summaryRow('Non arrival any other information', null, true),
-  ],
+    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate)),
+    summaryRow('Arrival time', formatTime(placement.actualArrivalDate)),
+    summaryRow('Non arrival reason', null),
+    summaryRow('Non arrival any other information', null),
+  ].filter(Boolean),
 })
 
 export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-    summaryRow('Actual departure date', formatDate(placement.actualDepartureDate), !placement.actualDepartureDate),
-    summaryRow('Departure time', formatTime(placement.actualDepartureDate), !placement.actualDepartureDate),
-    summaryRow('Departure reason', placement.departureReason?.name, !placement.departureReason?.name),
-    summaryRow('Breach or recall', null, true),
-    summaryRow('Move on', placement.departureMoveOnCategory?.name, !placement.departureMoveOnCategory?.name),
-    summaryRow('More information', null, true),
-  ],
+    summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
+    summaryRow('Departure time', formatTime(placement.actualDepartureDate)),
+    summaryRow('Departure reason', placement.departureReason?.name),
+    summaryRow('Breach or recall', null),
+    summaryRow('Move on', placement.departureMoveOnCategory?.name),
+    summaryRow('More information', null),
+  ].filter(Boolean),
 })
 
 const listOtherBookings = (placement: Cas1SpaceBooking): string =>
@@ -142,3 +134,17 @@ export const otherBookings = (placement: Cas1SpaceBooking): SummaryList => ({
     },
   ],
 })
+
+export const renderKeyworkersSelectOptions = (
+  staffList: Array<StaffMember>,
+  placement: Cas1SpaceBooking,
+): Array<SelectOption> => [
+  { text: 'Select a keyworker', value: null },
+  ...staffList
+    .filter(({ keyWorker, code }) => keyWorker && placement.keyWorkerAllocation?.keyWorker?.code !== code)
+    .map(({ name, code }) => ({
+      text: `${name}`,
+      value: `${code}`,
+      selected: false,
+    })),
+]

@@ -9,7 +9,6 @@ context('Placements', () => {
   describe('show', () => {
     const setup = (permissions: Array<ApprovedPremisesUserPermission>, placementParameters = {}) => {
       cy.task('reset')
-      // Given I am logged in with permission to view a placement
       signIn(['future_manager'], permissions)
       const placement = cas1SpaceBookingFactory.build(placementParameters)
       cy.task('stubSpaceBookingShow', placement)
@@ -17,8 +16,9 @@ context('Placements', () => {
         placement,
       }
     }
+
     it('should show a placement', () => {
-      // Given I am logged in with permission to view a placement and a mocked placement
+      // Given that I am logged in with permission to view a placement and a mocked placement
       const { placement } = setup(['cas1_space_booking_view'])
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
@@ -38,7 +38,7 @@ context('Placements', () => {
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // Then I should see greyed rows in the page tables
-      placementShowPage.shouldShowGreyRows(placement, ['Actual arrival date', 'Actual departure date'])
+      placementShowPage.shouldNotShowUnpopulatedRows(placement, ['Actual arrival date', 'Actual departure date'])
       placementShowPage.shouldShowSummaryInformation(placement)
     })
 

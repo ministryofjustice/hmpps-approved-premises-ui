@@ -5,14 +5,13 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "../../../components/keyDetails/macro.njk" import keyDetails %}
-
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
 {% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+  {{ super() }}
+  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block beforeContent %}

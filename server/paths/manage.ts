@@ -74,6 +74,8 @@ const paths = {
     placements: {
       show: placementPath,
       arrival: placementPath.path('arrival'),
+      departure: placementPath.path('departure'),
+      keyworker: placementPath.path('keyworker'),
     },
   },
 

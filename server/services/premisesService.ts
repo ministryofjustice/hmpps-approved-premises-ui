@@ -5,6 +5,7 @@ import type {
   Cas1PremisesSummary,
   Cas1SpaceBookingSummarySortField,
   SortDirection,
+  StaffMember,
 } from '@approved-premises/api'
 import type { PremisesFilters } from '@approved-premises/ui'
 import type { PremisesClient, RestClientBuilder } from '../data'
@@ -56,5 +57,10 @@ export default class PremisesService {
     const { token, ...remainingArgs } = args
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getPlacement(remainingArgs)
+  }
+
+  async getStaff(token: string, premisesId: string): Promise<Array<StaffMember>> {
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getStaff(premisesId)
   }
 }
