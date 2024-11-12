@@ -64,9 +64,9 @@ export const getBackLink = (referrer: string, premisesId: string): string => {
   return paths.premises.show({ premisesId })
 }
 
-const summaryRow = (key: string, value: string, excludeRow = false): SummaryListItem =>
+const summaryRow = (key: string, value: string): SummaryListItem =>
   value && {
-    key: excludeRow ? null : textValue(key),
+    key: textValue(key),
     value: textValue(value),
   }
 
@@ -89,10 +89,9 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
               ).number,
             ),
           ),
-        !actualArrivalDate || !actualDepartureDate,
       ),
       summaryRow('Key worker', keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-      summaryRow('Delius Event Number', deliusEventNumber, !deliusEventNumber),
+      summaryRow('Delius Event Number', deliusEventNumber),
     ].filter(Boolean),
   }
 }
@@ -100,22 +99,22 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
 export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
     summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
-    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate), !placement.actualArrivalDate),
-    summaryRow('Arrival time', formatTime(placement.actualArrivalDate), !placement.actualArrivalDate),
-    summaryRow('Non arrival reason', null, true),
-    summaryRow('Non arrival any other information', null, true),
+    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate)),
+    summaryRow('Arrival time', formatTime(placement.actualArrivalDate)),
+    summaryRow('Non arrival reason', null),
+    summaryRow('Non arrival any other information', null),
   ].filter(Boolean),
 })
 
 export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-    summaryRow('Actual departure date', formatDate(placement.actualDepartureDate), !placement.actualDepartureDate),
-    summaryRow('Departure time', formatTime(placement.actualDepartureDate), !placement.actualDepartureDate),
-    summaryRow('Departure reason', placement.departureReason?.name, !placement.departureReason?.name),
-    summaryRow('Breach or recall', null, true),
-    summaryRow('Move on', placement.departureMoveOnCategory?.name, !placement.departureMoveOnCategory?.name),
-    summaryRow('More information', null, true),
+    summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
+    summaryRow('Departure time', formatTime(placement.actualDepartureDate)),
+    summaryRow('Departure reason', placement.departureReason?.name),
+    summaryRow('Breach or recall', null),
+    summaryRow('Move on', placement.departureMoveOnCategory?.name),
+    summaryRow('More information', null),
   ].filter(Boolean),
 })
 
