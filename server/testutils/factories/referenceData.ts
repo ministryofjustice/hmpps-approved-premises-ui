@@ -54,6 +54,7 @@ export default ReferenceDataFactory.define(() => ({
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   serviceScope: 'approved-premises',
   isActive: true,
+  parent: null,
 }))
 
 export const probationRegionFactory = ReferenceDataFactory.define<ProbationRegion>(() =>

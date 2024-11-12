@@ -7,10 +7,11 @@ import {
   newPlacementArrivalFactory,
   newPlacementDepartureFactory,
   nonArrivalReasonsFactory,
+  referenceDataFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/placementClient')
-jest.mock('../data/referenceDataClient.ts')
+jest.mock('../data/referenceDataClient')
 
 describe('PlacementService', () => {
   const placementClient = new PlacementClient(null) as jest.Mocked<PlacementClient>
@@ -94,6 +95,20 @@ describe('PlacementService', () => {
       expect(result).toEqual({})
       expect(placementClientFactory).toHaveBeenCalledWith(token)
       expect(placementClient.createDeparture).toHaveBeenCalledWith(premisesId, placementId, newPlacementDeparture)
+    })
+  })
+
+  describe('getDepartureReasons', () => {
+    it('calls the getReferenceData method of teh reference data client and returns a response', async () => {
+      const departureReasons = referenceDataFactory.buildList(5)
+
+      referenceDataClient.getReferenceData.mockResolvedValue(departureReasons)
+
+      const result = await service.getDepartureReasons(token)
+
+      expect(result).toEqual(departureReasons)
+      expect(referenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('departure-reasons')
     })
   })
 })

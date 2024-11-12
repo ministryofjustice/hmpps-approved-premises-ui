@@ -38,7 +38,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     actionList.push({
       text: 'Record departure',
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
   return actionList.length ? [{ items: actionList }] : null
@@ -139,7 +139,10 @@ const listOtherBookings = (placement: Cas1SpaceBooking): string =>
   (placement.otherBookingsInPremisesForCrn || [])
     .map(
       ({ id, canonicalArrivalDate, canonicalDepartureDate }: Cas1SpaceBookingDates) =>
-        `<li><a class="govuk-link" href="${paths.premises.placements.show({ premisesId: placement.premises.id, placementId: id })}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })}</a></li>`,
+        `<li><a class="govuk-link" href="${paths.premises.placements.show({
+          premisesId: placement.premises.id,
+          placementId: id,
+        })}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })}</a></li>`,
     )
     .join('')
 

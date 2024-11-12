@@ -1,0 +1,89 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
+
+{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "../../../../partials/layout.njk" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
+    }) }}
+{% endblock %}
+
+{% block header %}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ showErrorSummary(errorSummary, errorTitle) }}
+
+        <h1 class="govuk-heading-l">Record a departure</h1>
+
+        {{ govukSummaryList({
+            rows: [{
+                key: {
+                    text: "Expected departure date"
+                },
+                value: {
+                    text: formatDate(placement.expectedDepartureDate)
+                }
+            }]
+        }) }}
+
+        {{ govukDateInput({
+            id: "departureDateTime",
+            namePrefix: "departureDateTime",
+            items: dateFieldValues('departureDateTime', errors),
+            errorMessage: errors.departureDateTime,
+            fieldset: {
+                legend: {
+                    text: "What is the departure date?",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            }
+        }) }}
+
+        {{ govukInput({
+            label: {
+                text: 'What is the time of departure?',
+                classes: 'govuk-fieldset__legend--m'
+            },
+            hint: {
+                text: 'For example, 09:30 or 14:55.'
+            },
+            classes: 'govuk-input--width-5',
+            id: 'departureTime',
+            name: 'departureTime',
+            value: departureTime,
+            errorMessage: errors.departureTime
+        }) }}
+
+        {{ govukRadios({
+            name: "departureReasonId",
+            fieldset: {
+                legend: {
+                    text: "Reason",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
+            items: convertObjectsToRadioItems(departureReasons, 'name', 'id', 'departureReasonId')
+        }) }}
+
+        {{ govukButton({
+            text: "Continue",
+            preventDoubleClick: true
+        }) }}
+
+    </form>
+{% endblock %}

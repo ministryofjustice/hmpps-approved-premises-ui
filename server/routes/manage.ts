@@ -19,6 +19,7 @@ export default function routes(controllers: Controllers, router: Router, service
     placementController,
     arrivalsController,
     nonArrivalsController,
+    departuresController,
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
@@ -168,6 +169,10 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'NON_ARRIVAL_FAILURE',
       },
     ],
+  })
+  get(paths.premises.placements.departure.new.pattern, departuresController.new(), {
+    auditEvent: 'NEW_DEPARTURE',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
   })
 
   // Bookings
