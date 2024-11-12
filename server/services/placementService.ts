@@ -1,4 +1,10 @@
-import { Cas1AssignKeyWorker, Cas1NewArrival, Cas1NewDeparture, Cas1NonArrival, NonArrivalReason } from '@approved-premises/api'
+import {
+  Cas1AssignKeyWorker,
+  Cas1NewArrival,
+  Cas1NewDeparture,
+  Cas1NonArrival,
+  NonArrivalReason,
+} from '@approved-premises/api'
 import type { ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
@@ -47,5 +53,11 @@ export default class PlacementService {
     const placementClient = this.placementClientFactory(token)
 
     return placementClient.createDeparture(premisesId, placementId, newPlacementDeparture)
+  }
+
+  async getDepartureReasons(token: string) {
+    const referenceDataClient = this.referenceDataClientFactory(token)
+
+    return referenceDataClient.getReferenceData('departure-reasons')
   }
 }

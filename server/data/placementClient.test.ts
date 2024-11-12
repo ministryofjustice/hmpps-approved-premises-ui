@@ -1,7 +1,12 @@
 import PlacementClient from './placementClient'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
-import { cas1AssignKeyWorkerFactory, cas1NonArrivalFactory, newPlacementArrivalFactory, newPlacementDepartureFactory } from '../testutils/factories'
+import {
+  cas1AssignKeyWorkerFactory,
+  cas1NonArrivalFactory,
+  newPlacementArrivalFactory,
+  newPlacementDepartureFactory,
+} from '../testutils/factories'
 
 describeCas1NamespaceClient('PlacementClient', provider => {
   let placementClient: PlacementClient

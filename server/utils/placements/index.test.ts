@@ -48,7 +48,7 @@ describe('placementUtils', () => {
     }
     const departureOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.departure({ premisesId: premises.id, placementId }),
+      href: paths.premises.placements.departure.new({ premisesId: premises.id, placementId }),
       text: 'Record departure',
     }
     const keyworkerOption = {

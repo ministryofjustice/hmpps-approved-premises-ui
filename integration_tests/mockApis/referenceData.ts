@@ -1,7 +1,12 @@
 import { Response } from 'superagent'
 import { ApArea, Cas1CruManagementArea, NonArrivalReason } from '@approved-premises/api'
 import { stubFor } from './setup'
-import { apAreaFactory, cruManagementAreaFactory, nonArrivalReasonsFactory } from '../../server/testutils/factories'
+import {
+  apAreaFactory,
+  cruManagementAreaFactory,
+  nonArrivalReasonsFactory,
+  referenceDataFactory,
+} from '../../server/testutils/factories'
 
 export const stubApAreaReferenceData = (
   {
@@ -69,8 +74,24 @@ export const stubNonArrivalReasonsReferenceData = (nonArrivalReasons: Array<NonA
   })
 }
 
+const stubDepartureReasonsReferenceData = () =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: '/reference-data/departure-reasons',
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: referenceDataFactory.buildList(5),
+    },
+  })
+
 export default {
   stubApAreaReferenceData,
   stubCruManagementAreaReferenceData,
   stubNonArrivalReasonsReferenceData,
+  stubDepartureReasonsReferenceData,
 }

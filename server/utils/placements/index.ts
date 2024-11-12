@@ -38,7 +38,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     actionList.push({
       text: 'Record departure',
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
   return actionList.length ? [{ items: actionList }] : null

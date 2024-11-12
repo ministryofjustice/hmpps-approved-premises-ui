@@ -256,6 +256,7 @@ export interface ReferenceData {
   name: string
   isActive: boolean
   serviceScope: string
+  parent?: string | null
 }
 
 export interface Cas1ReferenceData {

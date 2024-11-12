@@ -5,6 +5,7 @@ import {
   BedsController,
   BookingExtensionsController,
   BookingsController,
+  DeparturesController,
   KeyworkerController,
   NonArrivalsController,
   OutOfServiceBedsController,
@@ -32,6 +33,7 @@ describe('manage routes', () => {
   const premisesController: DeepMocked<PremisesController> = createMock<PremisesController>({})
   const arrivalsController: DeepMocked<ArrivalsController> = createMock<ArrivalsController>({})
   const nonArrivalsController: DeepMocked<NonArrivalsController> = createMock<NonArrivalsController>({})
+  const departuresController: DeepMocked<DeparturesController> = createMock<DeparturesController>({})
   const placementController: DeepMocked<PlacementController> = createMock<PlacementController>({})
   const bedsController: DeepMocked<BedsController> = createMock<BedsController>({})
   const outOfServiceBedsController: DeepMocked<OutOfServiceBedsController> = createMock<OutOfServiceBedsController>({})
@@ -53,6 +55,7 @@ describe('manage routes', () => {
     premisesController,
     arrivalsController,
     nonArrivalsController,
+    departuresController,
     cancellationsController,
     redirectController,
     placementController,
@@ -161,6 +164,15 @@ describe('manage routes', () => {
       auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
       allowedRoles: [],
       allowedPermissions: ['cas1_view_out_of_service_beds'],
+    })
+  })
+
+  it('should allow users with permission cas1 space booking record departure to record a departure', () => {
+    manageRoutes(controllers, router, services)
+
+    expect(getSpy).toHaveBeenCalledWith(paths.premises.placements.departure.new.pattern, departuresController.new(), {
+      auditEvent: 'NEW_DEPARTURE',
+      allowedPermissions: ['cas1_space_booking_record_departure'],
     })
   })
 })
