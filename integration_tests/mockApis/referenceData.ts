@@ -1,5 +1,6 @@
 import { Response } from 'superagent'
 import { ApArea, Cas1CruManagementArea, NonArrivalReason } from '@approved-premises/api'
+import { ReferenceData } from '@approved-premises/ui'
 import { stubFor } from './setup'
 import {
   apAreaFactory,
@@ -74,7 +75,7 @@ export const stubNonArrivalReasonsReferenceData = (nonArrivalReasons: Array<NonA
   })
 }
 
-const stubDepartureReasonsReferenceData = () =>
+const stubDepartureReasonsReferenceData = (departureReasons?: Array<ReferenceData>) =>
   stubFor({
     request: {
       method: 'GET',
@@ -85,7 +86,21 @@ const stubDepartureReasonsReferenceData = () =>
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: referenceDataFactory.buildList(5),
+      jsonBody: departureReasons || referenceDataFactory.buildList(5),
+    },
+  })
+const stubMoveOnCategoriesReferenceData = (moveOnCategories?: Array<ReferenceData>) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: '/reference-data/move-on-categories',
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: moveOnCategories || referenceDataFactory.buildList(5),
     },
   })
 
@@ -94,4 +109,5 @@ export default {
   stubCruManagementAreaReferenceData,
   stubNonArrivalReasonsReferenceData,
   stubDepartureReasonsReferenceData,
+  stubMoveOnCategoriesReferenceData,
 }

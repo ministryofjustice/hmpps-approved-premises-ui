@@ -89,16 +89,16 @@ describe('PlacementService', () => {
   describe('departure session data', () => {
     let request: DeepMocked<Request>
     const page1Data = {
-      departureDateTime: '2024-12-14T12:30:00.000Z',
+      departureDate: '2024-12-14T12:30:00.000Z',
       reasonId: 'reason-id',
     }
     const page2Data = {
-      reasonId: 'new-reason-id',
+      breachOrRecallReasonId: 'new-reason-id',
     }
 
     it('returns the departure data for the given placement', () => {
       request = createMock<Request>({
-        session: { departuresData: { 'placement-id': page1Data } },
+        session: { departureForms: { 'placement-id': page1Data } },
       })
 
       const result = placementService.getDepartureSessionData(placementId, request.session)
@@ -113,7 +113,7 @@ describe('PlacementService', () => {
 
       expect(request.session).toEqual(
         expect.objectContaining({
-          departuresData: {
+          departureForms: {
             'placement-id': page1Data,
           },
         }),
@@ -121,16 +121,16 @@ describe('PlacementService', () => {
     })
 
     it('updates the existing data in session', () => {
-      request = createMock<Request>({ session: { departuresData: { 'placement-id': page1Data } } })
+      request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
 
       placementService.setDepartureSessionData(placementId, request.session, page2Data)
 
       expect(request.session).toEqual(
         expect.objectContaining({
-          departuresData: {
+          departureForms: {
             'placement-id': {
               ...page1Data,
-              reasonId: 'new-reason-id',
+              breachOrRecallReasonId: 'new-reason-id',
             },
           },
         }),

@@ -6,6 +6,7 @@ import {
   NonArrivalReason,
 } from '@approved-premises/api'
 import type { Request } from 'express'
+import { DepartureFormData } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
@@ -68,16 +69,16 @@ export default class PlacementService {
     return referenceDataClient.getReferenceData('move-on-categories')
   }
 
-  getDepartureSessionData(placementId: string, session: Request['session']) {
-    return session?.departuresData?.[placementId]
+  getDepartureSessionData(placementId: string, session: Request['session']): DepartureFormData {
+    return session?.departureForms?.[placementId]
   }
 
-  setDepartureSessionData(placementId: string, session: Request['session'], departureData: Partial<Cas1NewDeparture>) {
-    session.departuresData = session.departuresData || {}
+  setDepartureSessionData(placementId: string, session: Request['session'], data: DepartureFormData) {
+    session.departureForms = session.departureForms || {}
 
-    session.departuresData[placementId] = {
+    session.departureForms[placementId] = {
       ...this.getDepartureSessionData(placementId, session),
-      ...departureData,
+      ...data,
     }
   }
 }

@@ -82,6 +82,7 @@ const paths = {
         breachOrRecallReason: departurePath.path('breach-or-recall'),
         moveOnCategory: departurePath.path('move-on'),
         notes: departurePath.path('notes'),
+        create: departurePath.path('create'),
       },
     },
   },

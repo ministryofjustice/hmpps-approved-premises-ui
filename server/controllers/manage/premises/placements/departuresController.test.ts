@@ -5,9 +5,10 @@ import type { NextFunction, Request, Response } from 'express'
 import * as validationUtils from '../../../../utils/validation'
 import { PlacementService, PremisesService } from '../../../../services'
 import { referenceDataFactory, spaceBookingFactory } from '../../../../testutils/factories'
-import DeparturesController, { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from './departuresController'
+import DeparturesController from './departuresController'
 import paths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
+import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
 
 describe('DeparturesController', () => {
   const token = 'SOME_TOKEN'
@@ -36,6 +37,15 @@ describe('DeparturesController', () => {
     childDepartureReason2,
   ]
   const moveOnCategories = referenceDataFactory.buildList(5)
+
+  const departureFormData = {
+    departureDate: '2024-12-08',
+    'departureDate-day': '8',
+    'departureDate-month': '12',
+    'departureDate-year': '2024',
+    departureTime: '9:35',
+    reasonId: BREACH_OR_RECALL_REASON_ID,
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -68,14 +78,36 @@ describe('DeparturesController', () => {
         ...errorsAndUserInput.userInput,
       })
     })
+
+    it('renders the form with data saved in session', async () => {
+      placementService.getDepartureSessionData.mockReturnValue(departureFormData)
+
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>({
+        errors: {},
+        errorSummary: [],
+        userInput: {},
+      })
+      when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+
+      const requestHandler = departuresController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
+      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/new', {
+        placement,
+        departureReasons: [rootDepartureReason1, rootDepartureReason2, rootDepartureReason3],
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        errorTitle: errorsAndUserInput.errorTitle,
+        ...departureFormData,
+      })
+    })
   })
 
   describe('saveNew', () => {
     const validBody = {
-      'departureDateTime-year': '2024',
-      'departureDateTime-month': '12',
-      'departureDateTime-day': '8',
-      departureTime: '9:35',
+      ...departureFormData,
       reasonId: rootDepartureReason1.id,
     }
 
@@ -87,7 +119,7 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       const expectedErrorData = {
-        departureDateTime: 'You must enter an departure date',
+        departureDate: 'You must enter a date of departure',
         departureTime: 'You must enter a time of departure',
         reasonId: 'You must select a reason',
       }
@@ -116,7 +148,11 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session, {
-          departureDateTime: '2024-12-08T09:35:00.000Z',
+          departureDate: '2024-12-08',
+          'departureDate-day': '8',
+          'departureDate-month': '12',
+          'departureDate-year': '2024',
+          departureTime: '9:35',
           reasonId: rootDepartureReason1.id,
         })
         expect(response.redirect).toHaveBeenCalledWith(
@@ -130,13 +166,17 @@ describe('DeparturesController', () => {
         request.body = { ...validBody, reasonId: rootDepartureReason2.id }
       })
 
-      it('saves the datetime and selected reason to the session and redirects to the second page', async () => {
+      it('saves the datetime and selected reason to the session and redirects to the Breach or recall page', async () => {
         const requestHandler = departuresController.saveNew()
 
         await requestHandler(request, response, next)
 
         expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session, {
-          departureDateTime: '2024-12-08T09:35:00.000Z',
+          departureDate: '2024-12-08',
+          'departureDate-day': '8',
+          'departureDate-month': '12',
+          'departureDate-year': '2024',
+          departureTime: '9:35',
           reasonId: rootDepartureReason2.id,
         })
         expect(response.redirect).toHaveBeenCalledWith(
@@ -144,14 +184,35 @@ describe('DeparturesController', () => {
         )
       })
     })
+
+    describe('if the selected reason is Planned move-on', () => {
+      beforeEach(() => {
+        request.body = { ...validBody, reasonId: rootDepartureReason3.id }
+      })
+
+      it('saves the datetime and selected reason to the session and redirects to the Move on category page', async () => {
+        const requestHandler = departuresController.saveNew()
+
+        await requestHandler(request, response, next)
+
+        expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session, {
+          departureDate: '2024-12-08',
+          'departureDate-day': '8',
+          'departureDate-month': '12',
+          'departureDate-year': '2024',
+          departureTime: '9:35',
+          reasonId: rootDepartureReason3.id,
+        })
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.premises.placements.departure.moveOnCategory({ premisesId, placementId: placement.id }),
+        )
+      })
+    })
   })
 
   describe('breachOrRecallReason', () => {
     it('renders the Breach or recall reason form with placement information, list of breach or recall departure reasons, errors and user input', async () => {
-      placementService.getDepartureSessionData.mockReturnValue({
-        departureDateTime: '2025-01-24T23:11:00.000Z',
-        reasonId: BREACH_OR_RECALL_REASON_ID,
-      })
+      placementService.getDepartureSessionData.mockReturnValue(departureFormData)
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
@@ -166,6 +227,7 @@ describe('DeparturesController', () => {
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         errorTitle: errorsAndUserInput.errorTitle,
+        ...departureFormData,
         ...errorsAndUserInput.userInput,
       })
     })
@@ -190,7 +252,7 @@ describe('DeparturesController', () => {
     describe('if the selected main reason is not breach or recall', () => {
       it('redirects to the new departure page', async () => {
         placementService.getDepartureSessionData.mockReturnValue({
-          departureDateTime: '2025-01-24T23:11:00.000Z',
+          ...departureFormData,
           reasonId: 'not-breach-or-recall-id',
         })
 
@@ -217,7 +279,7 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       const expectedErrorData = {
-        reasonId: 'You must select a reason',
+        breachOrRecallReasonId: 'You must select a breach or recall reason',
       }
 
       expect(placementService.setDepartureSessionData).not.toHaveBeenCalled()
@@ -235,7 +297,7 @@ describe('DeparturesController', () => {
 
     it('saves the breach or recall reason and redirects to the notes page', async () => {
       request.body = {
-        reasonId: childDepartureReason1.id,
+        breachOrRecallReasonId: childDepartureReason1.id,
       }
 
       const requestHandler = departuresController.saveBreachOrRecallReason()
@@ -243,7 +305,7 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session, {
-        reasonId: childDepartureReason1.id,
+        breachOrRecallReasonId: childDepartureReason1.id,
       })
       expect(response.redirect).toHaveBeenCalledWith(
         paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
@@ -254,7 +316,7 @@ describe('DeparturesController', () => {
   describe('moveOnCategory', () => {
     it('renders the Move on category form with placement information, list of move on categories, errors and user input', async () => {
       placementService.getDepartureSessionData.mockReturnValue({
-        departureDateTime: '2025-01-24T23:11:00.000Z',
+        ...departureFormData,
         reasonId: PLANNED_MOVE_ON_REASON_ID,
       })
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
@@ -271,6 +333,8 @@ describe('DeparturesController', () => {
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         errorTitle: errorsAndUserInput.errorTitle,
+        ...departureFormData,
+        reasonId: PLANNED_MOVE_ON_REASON_ID,
         ...errorsAndUserInput.userInput,
       })
     })
@@ -295,7 +359,7 @@ describe('DeparturesController', () => {
     describe('if the selected main reason is not Planned move-on', () => {
       it('redirects to the new departure page', async () => {
         placementService.getDepartureSessionData.mockReturnValue({
-          departureDateTime: '2025-01-24T23:11:00.000Z',
+          ...departureFormData,
           reasonId: 'not-planned-move-on-id',
         })
 
@@ -357,10 +421,10 @@ describe('DeparturesController', () => {
   })
 
   describe('notes', () => {
-    it('renders the departure notes form with  errors and user input', async () => {
+    it('renders the departure notes form with errors, user input and a backlink to the new departure page', async () => {
       placementService.getDepartureSessionData.mockReturnValue({
-        departureDateTime: '2025-01-24T23:11:00.000Z',
-        reasonId: BREACH_OR_RECALL_REASON_ID,
+        ...departureFormData,
+        reasonId: rootDepartureReason1.id,
       })
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
@@ -370,10 +434,60 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/notes', {
+        backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
+        placement,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         errorTitle: errorsAndUserInput.errorTitle,
+        ...departureFormData,
+        reasonId: rootDepartureReason1.id,
         ...errorsAndUserInput.userInput,
+      })
+    })
+
+    describe('if the reason selected was Breach or recall', () => {
+      it('points the back link to the Breach or recall page', async () => {
+        placementService.getDepartureSessionData.mockReturnValue({
+          ...departureFormData,
+          reasonId: BREACH_OR_RECALL_REASON_ID,
+        })
+
+        const requestHandler = departuresController.notes()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith(
+          'manage/premises/placements/departure/notes',
+          expect.objectContaining({
+            backlink: paths.premises.placements.departure.breachOrRecallReason({
+              premisesId,
+              placementId: placement.id,
+            }),
+          }),
+        )
+      })
+    })
+
+    describe('if the reason selected was Planned move on', () => {
+      it('points the back link to the Move on category page', async () => {
+        placementService.getDepartureSessionData.mockReturnValue({
+          ...departureFormData,
+          reasonId: PLANNED_MOVE_ON_REASON_ID,
+        })
+
+        const requestHandler = departuresController.notes()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith(
+          'manage/premises/placements/departure/notes',
+          expect.objectContaining({
+            backlink: paths.premises.placements.departure.moveOnCategory({
+              premisesId,
+              placementId: placement.id,
+            }),
+          }),
+        )
       })
     })
 
@@ -397,11 +511,11 @@ describe('DeparturesController', () => {
 
   describe('create', () => {
     it('creates the departure and redirects to the placement page', async () => {
-      const departureSessionData = {
-        departureDateTime: '2024-10-09T16:13:00.000Z',
+      placementService.getDepartureSessionData.mockReturnValue({
+        ...departureFormData,
         reasonId: rootDepartureReason1.id,
-      }
-      placementService.getDepartureSessionData.mockReturnValue(departureSessionData)
+      })
+
       request.body = {
         notes: 'Some notes',
       }
@@ -410,7 +524,8 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       expect(placementService.createDeparture).toHaveBeenCalledWith(token, premisesId, placement.id, {
-        ...departureSessionData,
+        departureDateTime: '2024-12-08T09:35:00.000Z',
+        reasonId: rootDepartureReason1.id,
         notes: 'Some notes',
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as departed')
