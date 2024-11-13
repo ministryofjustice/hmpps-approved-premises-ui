@@ -18,44 +18,57 @@
     "serviceScope": "approved-premises"
   },
   {
+    "id": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "Breach or recall",
+    "isActive": true,
+    "serviceScope": "approved-premises"
+  },
+  {
     "id": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f7",
-    "name": "Breach / recall (abscond)",
+    "parentReasonId": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "Absconded",
     "isActive": true,
     "serviceScope": "approved-premises"
   },
   {
     "id": "905ed7ef-e45d-4f50-91ca-a21ccf9c5af6",
-    "name": "Breach / recall (behaviour / increasing risk)",
+    "parentReasonId": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "Behaviour / increasing risk",
     "isActive": true,
     "serviceScope": "approved-premises"
   },
   {
     "id": "0bef1bf3-12a2-49b9-9cd2-83fb9af0e71e",
-    "name": "Breach / recall (curfew)",
+    "parentReasonId": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "Curfew",
     "isActive": true,
     "serviceScope": "approved-premises"
   },
   {
     "id": "e15aef5f-9153-4dc6-a4dd-1f569acf8d5d",
-    "name": "Breach / recall (house rules)",
+    "parentReasonId": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "House rules",
     "isActive": true,
     "serviceScope": "approved-premises"
   },
   {
     "id": "bc6eef37-a261-4408-98ef-428925ff6df4",
-    "name": "Breach / recall (licence or bail condition)",
+    "parentReasonId": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "Licence or bail condition",
     "isActive": true,
     "serviceScope": "approved-premises"
   },
   {
     "id": "6900ffe4-07ff-4da5-bbef-89099c710620",
-    "name": "Breach / recall (other)",
+    "parentReasonId": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "Other",
     "isActive": true,
     "serviceScope": "approved-premises"
   },
   {
     "id": "70860b69-088d-47e5-a1bd-f19012c99a93",
-    "name": "Breach / recall (positive drugs test)",
+    "parentReasonId": "7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9",
+    "name": "Positive drugs test",
     "isActive": true,
     "serviceScope": "approved-premises"
   },

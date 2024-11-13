@@ -1,7 +1,5 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
-{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
@@ -13,7 +11,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
+        href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id })
     }) }}
 {% endblock %}
 
@@ -44,49 +42,21 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form action="{{ paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+            <form action="{{ paths.premises.placements.departure.moveOnCategory({ premisesId: placement.premises.id, placementId: placement.id }) }}"
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukDateInput({
-                    id: "departureDate",
-                    namePrefix: "departureDate",
-                    items: dateFieldValues('departureDate', errors),
-                    errorMessage: errors.departureDate,
-                    fieldset: {
-                        legend: {
-                            text: "What is the departure date?",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    }
-                }) }}
-
-                {{ govukInput({
-                    label: {
-                        text: 'What is the time of departure?',
-                        classes: 'govuk-fieldset__legend--m'
-                    },
-                    hint: {
-                        text: 'For example, 09:30 or 14:55.'
-                    },
-                    classes: 'govuk-input--width-5',
-                    id: 'departureTime',
-                    name: 'departureTime',
-                    value: departureTime,
-                    errorMessage: errors.departureTime
-                }) }}
-
                 {{ govukRadios({
-                    name: "reasonId",
+                    name: "moveOnCategoryId",
                     fieldset: {
                         legend: {
-                            text: "Reason",
+                            text: "Move on",
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    items: convertObjectsToRadioItems(departureReasons, 'name', 'id', 'reasonId'),
-                    value: reasonId,
-                    errorMessage: errors.reasonId
+                    items: convertObjectsToRadioItems(moveOnCategories, 'name', 'id', 'moveOnCategoryId'),
+                    value: moveOnCategoryId,
+                    errorMessage: errors.moveOnCategoryId
                 }) }}
 
                 {{ govukButton({

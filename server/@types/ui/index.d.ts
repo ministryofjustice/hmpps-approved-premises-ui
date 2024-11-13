@@ -463,3 +463,13 @@ export type TaskSearchQualification = Exclude<UserQualification, 'lao'>
 export type BackwardsCompatibleApplyApType = ApType | 'standard'
 
 export type EntityType = 'booking' | 'lost-bed'
+
+export type DepartureFormData = Partial<
+  ObjectWithDateParts<'departureDate'> & {
+    departureTime: string
+    reasonId: string
+    breachOrRecallReasonId: string
+    moveOnCategoryId: string
+    notes: string
+  }
+>

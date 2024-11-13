@@ -1,7 +1,6 @@
-import type { ErrorMessages } from '@approved-premises/ui'
+import type { DepartureFormData, ErrorMessages } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication,
-  Cas1NewDeparture,
   Cas1SpaceBooking,
   PlacementApplicationDecisionEnvelope,
 } from '@approved-premises/api'
@@ -17,7 +16,7 @@ declare module 'express-session' {
     user: UserDetails
     placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
     messages: Array<string>
-    departuresData: Record<Cas1SpaceBooking['id'], Partial<Cas1NewDeparture>>
+    departureForms: Record<Cas1SpaceBooking['id'], DepartureFormData>
   }
 }
 

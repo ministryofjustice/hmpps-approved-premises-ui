@@ -86,6 +86,7 @@ import cas1AssignKeyWorkerFactory from './cas1AssignKeyWorker'
 import newPlacementArrivalFactory from './newPlacementArrival'
 import cas1NonArrivalFactory from './cas1NonArrival'
 import newPlacementDepartureFactory from './newPlacementDeparture'
+import cas1NewDepartureFactory from './cas1NewDeparture'
 
 export {
   acctAlertFactory,
@@ -185,4 +186,5 @@ export {
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
   newPlacementDepartureFactory,
+  cas1NewDepartureFactory,
 }

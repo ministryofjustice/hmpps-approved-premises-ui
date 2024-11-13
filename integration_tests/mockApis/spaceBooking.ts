@@ -107,4 +107,25 @@ export default {
         status: 200,
       },
     }),
+
+  stubSpaceBookingDepartureCreate: (placement: Cas1SpaceBooking) =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.premises.placements.departure({
+          premisesId: placement.premises.id,
+          placementId: placement.id,
+        }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
+  verifySpaceBookingDepartureCreate: async (placement: Cas1SpaceBooking) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    ).body.requests,
 }
