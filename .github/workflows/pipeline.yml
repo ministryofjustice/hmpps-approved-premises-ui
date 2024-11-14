@@ -3,7 +3,7 @@ name: Pipeline [test -> build -> deploy]
 on:
   push:
     branches:
-     - '**'
+      - '**'
   workflow_dispatch:
     inputs:
       environment:
@@ -16,7 +16,7 @@ on:
           # - staging
           # - prod
         default: 'dev'
-      version: # Only used when run manually - build.yml will include it - bump
+      version:
         description: Image version
         type: string
         required: true
@@ -55,13 +55,13 @@ on:
 permissions:
   contents: read
   packages: write
-        
+
 jobs:
-  # main node build workflow
   node_build:
     name: node build
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
+
   unit_tests:
     name: "Unit testing 🧪"
     runs-on: ubuntu-latest
@@ -85,6 +85,7 @@ jobs:
         run: |
           npx nyc report -t ./coverage --reporter=text --reporter=text-summary
           npx nyc check-coverage -t ./coverage
+
   integration_tests:
     name: "Integration testing 🧪"
     runs-on: ubuntu-latest
@@ -156,24 +157,40 @@ jobs:
     secrets: inherit
     with:
       environment: ${{ inputs.environment || 'dev' }}
+
   build:
     name: Build docker image from hmpps-github-actions
-    if: github.ref == 'refs/heads/main'
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v1 # WORKFLOW_VERSION
-    needs: 
+    needs:
       - unit_tests
       - integration_tests
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v1 # WORKFLOW_VERSION
     with:
       docker_registry: ${{ inputs.docker_registry || 'ghcr.io' }}
       registry_org: ${{ inputs.registry_org || 'ministryofjustice' }}
       additional_docker_tag: ${{ inputs.additional_docker_tag }}
       push: ${{ inputs.push || true }}
       docker_multiplatform: ${{ inputs.docker_multiplatform || false }}
-  deploy_dev:
-    name: Deploy to the development environment 
-    needs: 
+
+  request_deploy:
+    name: Request deployment approval
+    needs:
       - build
       - helm_lint
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: manual-approval # unsure about this...
+        with:
+          approvers: approved-premises-team
+          minimum-approvals: 1
+          issue-title: "Deploy branch to dev environment"
+          issue-body: "Please approve or deny the deployment this branch"
+          exclude-workflow-initiator-as-approver: false
+
+  deploy_dev:
+    name: Deploy to the development environment
+    needs:
+      - request_deploy
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
     with:
