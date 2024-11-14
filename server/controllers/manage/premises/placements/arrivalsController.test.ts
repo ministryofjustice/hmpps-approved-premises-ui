@@ -125,7 +125,7 @@ describe('ArrivalsController', () => {
 
         const expectedErrorData = {
           arrivalDateTime: 'You must enter a valid arrival date',
-          arrivalTime: 'You must enter a valid time of arrival in 24hr format',
+          arrivalTime: 'You must enter a valid time of arrival in 24-hour format',
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
