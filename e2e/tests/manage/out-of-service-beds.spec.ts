@@ -16,7 +16,7 @@ import { OutOfServiceBedsPage } from '../../pages/manage/outOfServiceBedsPage'
 
 test.describe.configure({ mode: 'parallel' })
 
-const premisesName = 'Test AP 10'
+const premisesName = 'NE Men Premise 1'
 
 const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetails) => {
   // Given I am signed in as a future manager
