@@ -81,4 +81,8 @@ export default class PlacementService {
       ...data,
     }
   }
+
+  removeDepartureSessionData(placementId: string, session: Request['session']) {
+    delete session?.departureForms?.[placementId]
+  }
 }

@@ -136,6 +136,14 @@ describe('PlacementService', () => {
         }),
       )
     })
+
+    it('removes the existing data from session', () => {
+      request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
+
+      service.removeDepartureSessionData(placementId, request.session)
+
+      expect(request.session.departureForms).not.toHaveProperty('placement-id')
+    })
   })
 
   describe('createDeparture', () => {
