@@ -571,7 +571,7 @@ describe('DeparturesController', () => {
   })
 
   describe('create', () => {
-    it('creates the departure and redirects to the placement page', async () => {
+    it('creates the departure, clears the session and redirects to the placement page', async () => {
       placementService.getDepartureSessionData.mockReturnValue({
         ...departureFormData,
         reasonId: rootDepartureReason1.id,
@@ -589,6 +589,7 @@ describe('DeparturesController', () => {
         reasonId: rootDepartureReason1.id,
         notes: 'Some notes',
       })
+      expect(placementService.removeDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session)
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as departed')
       expect(response.redirect).toHaveBeenCalledWith(
         paths.premises.placements.show({ premisesId, placementId: placement.id }),

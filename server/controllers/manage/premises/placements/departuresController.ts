@@ -307,6 +307,7 @@ export default class DeparturesController {
 
         await this.placementService.createDeparture(req.user.token, premisesId, placementId, placementDeparture)
 
+        this.placementService.removeDepartureSessionData(placementId, req.session)
         req.flash('success', 'You have recorded this person as departed')
         return res.redirect(paths.premises.placements.show({ premisesId, placementId }))
       } catch (error) {
