@@ -179,7 +179,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
-      - uses: manual-approval # unsure about this...
+      - uses: trstringer/manual-approval@v1 # this has to be a specific process...
         with:
           approvers: approved-premises-team
           minimum-approvals: 1
