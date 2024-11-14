@@ -38,10 +38,11 @@ describe('DeparturesController', () => {
   ]
   const moveOnCategories = referenceDataFactory.buildList(5)
 
+  const TEST_DATE = new Date('2024-11-14T14:00:00.000Z')
   const departureFormData = {
-    departureDate: '2024-12-08',
+    departureDate: '2024-10-08',
     'departureDate-day': '8',
-    'departureDate-month': '12',
+    'departureDate-month': '10',
     'departureDate-year': '2024',
     departureTime: '9:35',
     reasonId: BREACH_OR_RECALL_REASON_ID,
@@ -49,6 +50,8 @@ describe('DeparturesController', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.useFakeTimers()
+    jest.setSystemTime(TEST_DATE)
 
     premisesService.getPlacement.mockResolvedValue(placement)
     placementService.getDepartureReasons.mockResolvedValue(departureReasons)
@@ -137,6 +140,73 @@ describe('DeparturesController', () => {
       expect(errorData).toEqual(expectedErrorData)
     })
 
+    it('returns errors for invalid date or time', async () => {
+      const requestHandler = departuresController.saveNew()
+
+      request.body = {
+        'departureDate-day': '32',
+        'departureDate-month': '13',
+        'departureDate-year': '2024',
+        departureTime: '9am',
+        reasonId: rootDepartureReason1.id,
+      }
+
+      await requestHandler(request, response, next)
+
+      const expectedErrorData = {
+        departureDate: 'You must enter a valid date of departure',
+        departureTime: 'You must enter a valid time of departure in 24-hour format',
+      }
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual(expectedErrorData)
+    })
+
+    it('returns a date error for a date in the future', async () => {
+      const requestHandler = departuresController.saveNew()
+
+      request.body = {
+        'departureDate-day': '15',
+        'departureDate-month': '11',
+        'departureDate-year': '2024',
+        departureTime: '10:00',
+        reasonId: rootDepartureReason1.id,
+      }
+
+      await requestHandler(request, response, next)
+
+      const expectedErrorData = {
+        departureDate: 'The date of departure must be today or in the past',
+      }
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual(expectedErrorData)
+    })
+
+    it('returns a time error for a date today but time in the future', async () => {
+      const requestHandler = departuresController.saveNew()
+
+      request.body = {
+        'departureDate-day': '14',
+        'departureDate-month': '11',
+        'departureDate-year': '2024',
+        departureTime: '17:00',
+        reasonId: rootDepartureReason1.id,
+      }
+
+      await requestHandler(request, response, next)
+
+      const expectedErrorData = {
+        departureTime: 'The time of departure must be in the past',
+      }
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual(expectedErrorData)
+    })
+
     describe('if the selected reason is not Breach or recall or Planned move-on', () => {
       beforeEach(() => {
         request.body = validBody
@@ -147,14 +217,11 @@ describe('DeparturesController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session, {
-          departureDate: '2024-12-08',
-          'departureDate-day': '8',
-          'departureDate-month': '12',
-          'departureDate-year': '2024',
-          departureTime: '9:35',
-          reasonId: rootDepartureReason1.id,
-        })
+        expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(
+          placement.id,
+          request.session,
+          request.body,
+        )
         expect(response.redirect).toHaveBeenCalledWith(
           paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
         )
@@ -171,14 +238,11 @@ describe('DeparturesController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session, {
-          departureDate: '2024-12-08',
-          'departureDate-day': '8',
-          'departureDate-month': '12',
-          'departureDate-year': '2024',
-          departureTime: '9:35',
-          reasonId: rootDepartureReason2.id,
-        })
+        expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(
+          placement.id,
+          request.session,
+          request.body,
+        )
         expect(response.redirect).toHaveBeenCalledWith(
           paths.premises.placements.departure.breachOrRecallReason({ premisesId, placementId: placement.id }),
         )
@@ -195,14 +259,11 @@ describe('DeparturesController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session, {
-          departureDate: '2024-12-08',
-          'departureDate-day': '8',
-          'departureDate-month': '12',
-          'departureDate-year': '2024',
-          departureTime: '9:35',
-          reasonId: rootDepartureReason3.id,
-        })
+        expect(placementService.setDepartureSessionData).toHaveBeenCalledWith(
+          placement.id,
+          request.session,
+          request.body,
+        )
         expect(response.redirect).toHaveBeenCalledWith(
           paths.premises.placements.departure.moveOnCategory({ premisesId, placementId: placement.id }),
         )
@@ -524,7 +585,7 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       expect(placementService.createDeparture).toHaveBeenCalledWith(token, premisesId, placement.id, {
-        departureDateTime: '2024-12-08T09:35:00.000Z',
+        departureDateTime: '2024-10-08T09:35:00.000Z',
         reasonId: rootDepartureReason1.id,
         notes: 'Some notes',
       })

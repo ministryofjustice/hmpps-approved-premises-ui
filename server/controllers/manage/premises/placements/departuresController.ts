@@ -3,7 +3,13 @@ import { Cas1NewDeparture } from '@approved-premises/api'
 import { DepartureFormData, ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
-import { DateFormats, dateAndTimeInputsAreValidDates, timeIsValid24hrFormat } from '../../../../utils/dateUtils'
+import {
+  DateFormats,
+  dateAndTimeInputsAreValidDates,
+  dateIsInThePast,
+  isToday,
+  timeIsValid24hrFormat,
+} from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import paths from '../../../../paths/manage'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
@@ -53,12 +59,23 @@ export default class DeparturesController {
       errors.departureDate = 'You must enter a date of departure'
     } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'departureDate'>, 'departureDate')) {
       errors.departureDate = 'You must enter a valid date of departure'
+    } else if (!dateIsInThePast(departureDate)) {
+      errors.departureDate = 'The date of departure must be today or in the past'
     }
 
     if (!departureTime) {
       errors.departureTime = 'You must enter a time of departure'
     } else if (!timeIsValid24hrFormat(departureTime)) {
-      errors.departureTime = 'You must enter a valid time of departure in 24hr format'
+      errors.departureTime = 'You must enter a valid time of departure in 24-hour format'
+    } else if (isToday(departureDate)) {
+      const [hours, minutes] = departureTime.split(':').map(Number)
+      const now = new Date()
+
+      now.setHours(hours, minutes)
+
+      if (!dateIsInThePast(now.toISOString())) {
+        errors.departureTime = 'The time of departure must be in the past'
+      }
     }
 
     if (!reasonId) {
