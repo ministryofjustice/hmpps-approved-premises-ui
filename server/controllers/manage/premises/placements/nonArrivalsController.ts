@@ -19,7 +19,7 @@ export default class NonArrivalsController {
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
       const nonArrivalReasons: Array<NonArrivalReason> = await this.placementService.getNonArrivalReasons(token)
       return res.render('manage/premises/placements/non-arrival', {
-        nonArrivalReasons,
+        nonArrivalReasons: nonArrivalReasons.filter(({ isActive }) => isActive),
         placement,
         errors,
         errorSummary,
