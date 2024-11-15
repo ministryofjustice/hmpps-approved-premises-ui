@@ -1,19 +1,17 @@
 import { faker } from '@faker-js/faker'
-import type { Cas1SpaceBooking } from '@approved-premises/api'
+import type { Cas1NonArrival, Cas1SpaceBooking } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
+import apiPaths from '../../../../server/paths/api'
 
 export class RecordNonArrivalPage extends Page {
   constructor(title: string = 'Record someone as not arrived') {
     super(title)
   }
 
-  shouldShowReasonError(): void {
-    cy.get('.govuk-error-summary__list').should('contain', 'You must select a reason for non-arrival')
-  }
-
-  shouldShowTextError(): void {
-    cy.get('.govuk-error-summary__list').should('contain', 'You have exceeded 200 characters')
+  nonArrivalDetails: Cas1NonArrival = {
+    notes: faker.lorem.words(20).substring(0, 200),
+    reason: null,
   }
 
   completeNotesBad(): void {
@@ -24,7 +22,7 @@ export class RecordNonArrivalPage extends Page {
   }
 
   completeNotesGood(): void {
-    this.completeTextArea('notes', faker.lorem.words(20).substring(0, 200))
+    this.completeTextArea('notes', this.nonArrivalDetails.notes)
   }
 
   checkForCharacterCountError(): void {
@@ -35,6 +33,7 @@ export class RecordNonArrivalPage extends Page {
     cy.get('input[name=reason]')
       .invoke('val')
       .then(val => {
+        this.nonArrivalDetails.reason = String(val)
         this.checkRadioByNameAndValue('reason', String(val))
       })
   }
@@ -44,5 +43,14 @@ export class RecordNonArrivalPage extends Page {
       failOnStatusCode: false,
     })
     return new RecordNonArrivalPage(`Authorisation Error`)
+  }
+
+  checkApiCalled(placement: Cas1SpaceBooking): void {
+    cy.task(
+      'getApiPost',
+      apiPaths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
+    ).then(body => {
+      expect(body).to.deep.equal(this.nonArrivalDetails)
+    })
   }
 }

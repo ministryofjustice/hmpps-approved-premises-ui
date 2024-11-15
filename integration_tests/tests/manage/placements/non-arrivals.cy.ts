@@ -14,6 +14,11 @@ context('Non-arrivals', () => {
     cy.task('stubSpaceBookingNonArrival', placement)
   })
 
+  const errorMessages = {
+    notes: 'You have exceeded 200 characters',
+    reason: 'You must select a reason for non-arrival',
+  }
+
   it('Records a non-arrival against a placement', () => {
     // Given I am logged in with the correct permissions
     signIn([], ['cas1_space_booking_view', 'cas1_space_booking_record_non_arrival'])
@@ -31,7 +36,7 @@ context('Non-arrivals', () => {
     page.clickSubmit()
 
     // Then I should see an error message
-    page.shouldShowReasonError()
+    page.shouldShowErrorMessagesForFields(['reason'], errorMessages)
 
     // When I type too much text into the notes box
     page.completeNotesBad()
@@ -43,8 +48,7 @@ context('Non-arrivals', () => {
     page.clickSubmit()
 
     // Then I should see two errors
-    page.shouldShowReasonError()
-    page.shouldShowTextError()
+    page.shouldShowErrorMessagesForFields(['reason', 'notes'], errorMessages)
 
     // And the text should still be populated
     page.checkForCharacterCountError()
@@ -54,7 +58,7 @@ context('Non-arrivals', () => {
     page.clickSubmit()
 
     // Then I should see the text overflow error (but the reason should remain populated)
-    page.shouldShowTextError()
+    page.shouldShowErrorMessagesForFields(['notes'], errorMessages)
 
     // When I fix the text overflow and submit the form (given that the reason remained populated)
     page.completeNotesGood()
@@ -63,6 +67,9 @@ context('Non-arrivals', () => {
     // Then I should be shown the placement page with a confirmation message
     placementPage = new PlacementShowPage(placement)
     placementPage.shouldShowBanner('You have recorded this person as not arrived')
+
+    // And the booking details should have been sent to the API
+    page.checkApiCalled(placement)
   })
 
   it('Requires the correct permission to record a non-arrival against a placement', () => {

@@ -4,9 +4,7 @@ import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Cas1NonArrival>(() => ({
-  reason: faker.word.words(3),
-  notes: faker.lorem.words(50),
-  confirmedAt: DateFormats.dateObjToIsoDateTime(
-    new Date(faker.date.recent().getTime() + faker.number.int({ max: 1000 * 60 * 60 * 24 })),
-  ),
+  reason: faker.string.uuid(),
+  notes: faker.lorem.words(20),
+  confirmedAt: DateFormats.dateObjToIsoDateTime(new Date(faker.date.recent())),
 }))

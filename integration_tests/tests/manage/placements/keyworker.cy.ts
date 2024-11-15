@@ -46,6 +46,9 @@ context('Keyworker', () => {
     // Then I should be shown the placement page with a confirmation message
     placementPage = new PlacementShowPage(placement)
     placementPage.shouldShowBanner('Keyworker assigned')
+
+    // And the API should have been called with the correct parameters
+    page.checkApiCalled(placement)
   })
 
   it('Requires the correct permission to assign a keyworker', () => {

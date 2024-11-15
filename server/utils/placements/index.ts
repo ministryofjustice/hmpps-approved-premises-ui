@@ -19,19 +19,20 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
       href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
-  if (!arrived && !nonArrival && hasPermission(user, ['cas1_space_booking_record_arrival'])) {
-    actionList.push({
-      text: 'Record arrival',
-      classes: 'govuk-button--secondary',
-      href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
-    })
-  }
-  if (!arrived && !nonArrival && !departed && hasPermission(user, ['cas1_space_booking_record_non_arrival'])) {
-    actionList.push({
-      text: 'Record non-arrival',
-      classes: 'govuk-button--secondary',
-      href: paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
-    })
+  if (!arrived && !nonArrival) {
+    if (hasPermission(user, ['cas1_space_booking_record_arrival']))
+      actionList.push({
+        text: 'Record arrival',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    if (hasPermission(user, ['cas1_space_booking_record_non_arrival'])) {
+      actionList.push({
+        text: 'Record non-arrival',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
   }
   if (arrived && !nonArrival && !departed && hasPermission(user, ['cas1_space_booking_record_departure'])) {
     actionList.push({

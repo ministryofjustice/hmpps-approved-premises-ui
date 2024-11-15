@@ -1,6 +1,7 @@
 import type { Cas1SpaceBooking, StaffMember } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
+import apiPaths from '../../../../server/paths/api'
 
 export class KeyworkerAssignmentPage extends Page {
   constructor(
@@ -33,5 +34,14 @@ export class KeyworkerAssignmentPage extends Page {
 
   completeForm(): void {
     this.getSelectInputByIdAndSelectAnEntry('staffCode', this.staffMembers[1].name)
+  }
+
+  checkApiCalled(placement: Cas1SpaceBooking): void {
+    cy.task(
+      'getApiPost',
+      apiPaths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
+    ).then(body => {
+      expect(body).to.deep.equal({ staffCode: this.staffMembers[1].code })
+    })
   }
 }

@@ -107,4 +107,13 @@ export default {
         status: 200,
       },
     }),
+
+  getApiPost: async (path: string): Promise<Record<string, unknown>> => {
+    const result = await getMatchingRequests({
+      method: 'POST',
+      url: path,
+    })
+    const { requests } = result.body
+    return JSON.parse(requests[0].body)
+  },
 }

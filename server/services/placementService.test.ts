@@ -51,6 +51,7 @@ describe('PlacementService', () => {
       placementClient.assignKeyworker.mockResolvedValue({})
 
       const result = await placementService.assignKeyworker(token, premisesId, placementId, assignKeyworker)
+
       expect(result).toEqual({})
       expect(placementClientFactory).toHaveBeenCalledWith(token)
       expect(placementClient.assignKeyworker).toHaveBeenCalledWith(premisesId, placementId, assignKeyworker)
@@ -61,7 +62,9 @@ describe('PlacementService', () => {
     it('calls the recordNonArrival method of the placement client and returns a response', async () => {
       const nonArrival = cas1NonArrivalFactory.build()
       placementClient.recordNonArrival.mockResolvedValue({})
+
       const result = await placementService.recordNonArrival(token, premisesId, placementId, nonArrival)
+
       expect(result).toEqual({})
       expect(placementClientFactory).toHaveBeenCalledWith(token)
       expect(placementClient.recordNonArrival).toHaveBeenCalledWith(premisesId, placementId, nonArrival)
@@ -72,7 +75,9 @@ describe('PlacementService', () => {
     it('loads the non-arrival reasons from the reference data client', async () => {
       const nonArrivalReasons = nonArrivalReasonsFactory.buildList(20)
       referenceDataClient.getNonArrivalReasons.mockResolvedValue(nonArrivalReasons)
+
       const result = await placementService.getNonArrivalReasons(token)
+
       expect(result).toEqual(nonArrivalReasons)
     })
   })
