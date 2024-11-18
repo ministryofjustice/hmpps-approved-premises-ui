@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
+import type { Cas1SpaceBookingSummaryStatus } from './Cas1SpaceBookingSummaryStatus';
 import type { PersonSummary } from './PersonSummary';
 export type Cas1SpaceBookingSummary = {
     id: string;
@@ -20,5 +21,6 @@ export type Cas1SpaceBookingSummary = {
      */
     tier?: string;
     keyWorkerAllocation?: Cas1KeyWorkerAllocation;
+    status?: Cas1SpaceBookingSummaryStatus;
 };
 

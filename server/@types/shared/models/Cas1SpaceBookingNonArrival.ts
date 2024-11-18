@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1NewDeparture = {
-    departureDateTime: string;
-    reasonId: string;
-    moveOnCategoryId?: string;
+import type { NamedId } from './NamedId';
+export type Cas1SpaceBookingNonArrival = {
+    confirmedAt?: string;
+    reason?: NamedId;
     notes?: string;
 };
 

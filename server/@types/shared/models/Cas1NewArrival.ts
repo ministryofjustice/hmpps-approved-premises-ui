@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1NewArrival = {
-    expectedDepartureDate: string;
     arrivalDateTime: string;
 };
 
