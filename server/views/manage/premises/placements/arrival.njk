@@ -10,8 +10,8 @@
 {% extends "../../../partials/layout.njk" %}
 
 {% block header %}
-  {{ super() }}
-  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -25,7 +25,6 @@
     <form action="{{ paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }) }}"
           method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        <input type="hidden" name="expectedDepartureDate" value="{{ placement.expectedDepartureDate }}" />
 
         {{ showErrorSummary(errorSummary, errorTitle) }}
 

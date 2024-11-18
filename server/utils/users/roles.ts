@@ -20,7 +20,13 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'janitor',
 ]
 
-export const unusedRoles = ['applicant', 'manager', 'legacy_manager', 'role_admin'] as const
+export const unusedRoles = [
+  'applicant',
+  'manager',
+  'legacy_manager',
+  'role_admin',
+  'cru_member_find_and_book_beta',
+] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
 
