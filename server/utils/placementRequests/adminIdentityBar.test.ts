@@ -1,4 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
+import { ApprovedPremisesUserPermission } from '@approved-premises/api'
 import {
   personFactory,
   placementRequestDetailFactory,
@@ -14,9 +15,14 @@ import applyPaths from '../../paths/apply'
 import { nameOrPlaceholderCopy } from '../personUtils'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import config from '../../config'
-import { ApprovedPremisesUserPermission } from '@approved-premises/api'
 
-const setup = ({ placementRequesstStatus, permissions }:{placementRequesstStatus:Record<string,unknown>, permissions:Array<ApprovedPremisesUserPermission>}) => {
+const setup = ({
+  placementRequesstStatus,
+  permissions,
+}: {
+  placementRequesstStatus: Record<string, unknown>
+  permissions: Array<ApprovedPremisesUserPermission>
+}) => {
   const userId = 'some-id'
   const placementRequestDetail = placementRequestDetailFactory.build({ ...placementRequesstStatus })
   const user = userDetailsFactory.build({ roles: ['appeals_manager'], permissions: [...permissions], id: userId })
@@ -65,7 +71,10 @@ describe('adminIdentityBar', () => {
     })
 
     it('should return actions to amend a booking if the status is `matched`', () => {
-      const { adminActionsResult, actionAmendPlacement } = setup({ placementRequesstStatus: { status: 'matched' }, permissions:[] })
+      const { adminActionsResult, actionAmendPlacement } = setup({
+        placementRequesstStatus: { status: 'matched' },
+        permissions: [],
+      })
       expect(adminActionsResult).toEqual([actionAmendPlacement])
     })
 
