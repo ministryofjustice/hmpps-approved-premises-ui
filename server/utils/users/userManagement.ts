@@ -59,6 +59,7 @@ const userRoles: Record<RoleInUse, string> = {
   excluded_from_assess_allocation: 'Excluded from assess allocation',
   excluded_from_match_allocation: 'Excluded from match allocation',
   excluded_from_placement_application_allocation: 'Excluded from placement application allocation',
+  cru_member_find_and_book_beta: 'CRU member beta (find and book)',
   appeals_manager: 'Appeals manager',
   future_manager: 'Future manager',
   user_manager: 'User manager',

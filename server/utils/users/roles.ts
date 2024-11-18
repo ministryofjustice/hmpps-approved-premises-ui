@@ -72,6 +72,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'CRU member',
     hint: 'Manage out of service beds across all premises and areas',
   },
+  cru_member_find_and_book_beta: {
+    label: 'CRU member beta (find and book)',
+    hint: 'Create and amend space bookings',
+  },
   report_viewer: {
     label: 'Report Viewer',
     hint: 'View and download reports',

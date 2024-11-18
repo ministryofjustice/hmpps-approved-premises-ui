@@ -14,6 +14,42 @@ import applyPaths from '../../paths/apply'
 import { nameOrPlaceholderCopy } from '../personUtils'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import config from '../../config'
+import { ApprovedPremisesUserPermission } from '@approved-premises/api'
+
+const setup = ({ placementRequesstStatus, permissions }:{placementRequesstStatus:Record<string,unknown>, permissions:Array<ApprovedPremisesUserPermission>}) => {
+  const userId = 'some-id'
+  const placementRequestDetail = placementRequestDetailFactory.build({ ...placementRequesstStatus })
+  const user = userDetailsFactory.build({ roles: ['appeals_manager'], permissions: [...permissions], id: userId })
+
+  const actionCreatePlacement = {
+    href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
+    text: 'Create placement',
+  }
+  const actionSearchForASpace = {
+    href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
+    text: 'Search for a space',
+  }
+  const actionAmendPlacement = {
+    href: managePaths.bookings.dateChanges.new({
+      premisesId: placementRequestDetail.booking?.premisesId || '',
+      bookingId: placementRequestDetail.booking?.id || '',
+    }),
+    text: 'Amend placement',
+  }
+  const actionWithdrawPlacement = {
+    href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
+    text: 'Withdraw placement',
+  }
+  const adminActionsResult = adminActions(placementRequestDetail, fromPartial(user))
+  return {
+    placementRequestDetail,
+    actionCreatePlacement,
+    actionSearchForASpace,
+    actionAmendPlacement,
+    actionWithdrawPlacement,
+    adminActionsResult,
+  }
+}
 
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
@@ -29,62 +65,34 @@ describe('adminIdentityBar', () => {
     })
 
     it('should return actions to amend a booking if the status is `matched`', () => {
-      const userId = 'some-id'
-      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
-      const user = userDetailsFactory.build({ roles: ['appeals_manager'], id: userId })
-
-      expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
-        {
-          href: managePaths.bookings.dateChanges.new({
-            premisesId: placementRequestDetail.booking?.premisesId || '',
-            bookingId: placementRequestDetail.booking?.id || '',
-          }),
-          text: 'Amend placement',
-        },
-      ])
+      const { adminActionsResult, actionAmendPlacement } = setup({ placementRequesstStatus: { status: 'matched' }, permissions:[] })
+      expect(adminActionsResult).toEqual([actionAmendPlacement])
     })
 
     it('should return actions to amend and withdraw a booking if the status is `matched` and user has the withdraw permission ', () => {
-      const userId = 'some-id'
-      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
-      const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_withdraw' as const], id: userId }
+      const { adminActionsResult, actionAmendPlacement, actionWithdrawPlacement } = setup({
+        permissions: ['cas1_booking_withdraw'],
+        placementRequesstStatus: { status: 'matched' },
+      })
 
-      expect(adminActions(placementRequestDetail, fromPartial(user))).toEqual([
-        {
-          href: managePaths.bookings.dateChanges.new({
-            premisesId: placementRequestDetail.booking?.premisesId || '',
-            bookingId: placementRequestDetail.booking?.id || '',
-          }),
-          text: 'Amend placement',
-        },
-        {
-          href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
-          text: 'Withdraw placement',
-        },
-      ])
+      expect(adminActionsResult).toEqual([actionAmendPlacement, actionWithdrawPlacement])
     })
 
     describe('if ENABLE_V2_MATCH is false', () => {
       it('returns the "Create placement" action', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_create' as const], id: userId }
-
-        expect(adminActions(placementRequestDetail, fromPartial(user))).toContainAction({
-          href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
-          text: 'Create placement',
+        const { adminActionsResult, actionCreatePlacement } = setup({
+          permissions: ['cas1_booking_create', 'cas1_space_booking_create'],
+          placementRequesstStatus: { status: 'notMatched' },
         })
+        expect(adminActionsResult).toContainAction(actionCreatePlacement)
       })
 
       it('does not return the "Create placement" action when user does not have cas1 booking create permission', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = { roles: ['appeals_manager' as const], id: userId }
-
-        expect(adminActions(placementRequestDetail, fromPartial(user))).not.toContainAction({
-          href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
-          text: 'Create placement',
+        const { adminActionsResult, actionCreatePlacement } = setup({
+          permissions: ['cas1_space_booking_create'],
+          placementRequesstStatus: { status: 'notMatched' },
         })
+        expect(adminActionsResult).not.toContainAction(actionCreatePlacement)
       })
     })
 
@@ -98,29 +106,21 @@ describe('adminIdentityBar', () => {
       })
 
       it('returns the "Search for a space" action', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = { roles: ['appeals_manager' as const], permissions: ['cas1_booking_create' as const], id: userId }
-
-        expect(adminActions(placementRequestDetail, fromPartial(user))).toContainAction({
-          href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
-          text: 'Search for a space',
+        const { adminActionsResult, actionSearchForASpace } = setup({
+          permissions: ['cas1_space_booking_create'],
+          placementRequesstStatus: { status: 'notMatched' },
         })
+
+        expect(adminActionsResult).toContainAction(actionSearchForASpace)
       })
 
-      it('does not return the "Search for a space" action when user does not have cas1 booking create permission', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
-        const userId = 'some-id'
-        const user = {
-          roles: ['appeals_manager' as const],
-          permissions: ['cas1_booking_withdraw' as const],
-          id: userId,
-        }
-
-        expect(adminActions(placementRequestDetail, fromPartial(user))).not.toContainAction({
-          href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
-          text: 'Search for a space',
+      it('does not return the "Search for a space" action when user does not have cas1 space booking create permission', () => {
+        const { adminActionsResult, actionSearchForASpace } = setup({
+          permissions: ['cas1_booking_create'],
+          placementRequesstStatus: { status: 'notMatched' },
         })
+
+        expect(adminActionsResult).not.toContainAction(actionSearchForASpace)
       })
     })
   })

@@ -56,14 +56,16 @@ export const adminActions = (
     },
   ]
 
+  if (
+    hasPermission(user, ['cas1_space_booking_create']) &&
+    (config.flags.v2MatchEnabled === 'true' || config.flags.v2MatchEnabled === true)
+  ) {
+    actions.unshift({
+      href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+      text: 'Search for a space',
+    })
+  }
   if (hasPermission(user, ['cas1_booking_create'])) {
-    if (config.flags.v2MatchEnabled === 'true' || config.flags.v2MatchEnabled === true) {
-      actions.unshift({
-        href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
-        text: 'Search for a space',
-      })
-    }
-
     actions.unshift({
       href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
       text: 'Create placement',
