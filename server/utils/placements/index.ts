@@ -169,6 +169,5 @@ export const renderKeyworkersSelectOptions = (
     })),
 ]
 
-// TODO: update these with actual IDs as saved in DB
-export const BREACH_OR_RECALL_REASON_ID = '7801b1a0-ca4c-4287-8b5b-203b1c3fa4f9'
-export const PLANNED_MOVE_ON_REASON_ID = 'b77865aa-2f16-4821-80ff-6f1d72c93d61'
+export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
+export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

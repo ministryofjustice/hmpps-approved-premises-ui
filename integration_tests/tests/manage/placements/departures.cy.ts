@@ -1,4 +1,3 @@
-import { ReferenceData } from '@approved-premises/ui'
 import { Cas1SpaceBooking } from '@approved-premises/api'
 import {
   cas1NewDepartureFactory,
@@ -26,19 +25,19 @@ context('Departures', () => {
 
     cy.task('stubSinglePremises', premises)
     cy.task('stubSpaceBookingShow', placement)
-    cy.task('stubDepartureReasonsReferenceData', departureReasonsJson as Array<ReferenceData>)
-    cy.task('stubMoveOnCategoriesReferenceData', moveOnCategoriesJson as Array<ReferenceData>)
+    cy.task('stubDepartureReasonsReferenceData', departureReasonsJson)
+    cy.task('stubMoveOnCategoriesReferenceData', moveOnCategoriesJson)
     cy.task('stubSpaceBookingDepartureCreate', placement)
   })
 
   it('lets a user with the correct permissions mark a person as departed', () => {
     const newDeparture = cas1NewDepartureFactory.build({
-      reasonId: departureReasonsJson[1].id,
+      reasonId: departureReasonsJson.find(reason => reason.name === 'End of ROTL').id,
       moveOnCategoryId: undefined,
     })
 
     // Given I am logged in as a user with the correct permissions
-    signIn([], ['cas1_space_booking_view', 'cas1_space_booking_record_departure'])
+    signIn(['future_manager'], ['cas1_space_booking_view', 'cas1_space_booking_record_departure'])
 
     // When I view a new placement
     const placementPage = PlacementShowPage.visit(placement)
@@ -65,7 +64,7 @@ context('Departures', () => {
     departureNewPage.clickContinue()
 
     // Then I should see the Breach or recall page
-    const breachOrRecallPage = new BreachOrRecallPage(placement, newDeparture, departureReasonsJson)
+    const breachOrRecallPage = new BreachOrRecallPage(placement, departureReasonsJson)
     breachOrRecallPage.shouldShowFormAndExpectedDepartureDate()
 
     // When I submit the form empty
@@ -142,17 +141,8 @@ context('Departures', () => {
     notesPage.completeForm()
     notesPage.clickSubmit()
 
-    // Then the departure has been recorded
-    cy.task('verifySpaceBookingDepartureCreate', placement).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
-
-      expect(requestBody).to.contain({
-        departureDateTime: newDeparture.departureDateTime,
-        reasonId: newDeparture.reasonId,
-        notes: newDeparture.notes,
-      })
-    })
+    // and the API should have been called with the correct data
+    notesPage.checkApiCalled()
 
     // And I see the placement page with a confirmation banner
     placementPage.shouldShowBanner('You have recorded this person as departed')
@@ -160,7 +150,7 @@ context('Departures', () => {
 
   it('Requires the correct permission to record a departure', () => {
     // Given I am logged in and have permission to view the placement
-    signIn([], ['cas1_space_booking_view'])
+    signIn(['future_manager'], ['cas1_space_booking_view'])
 
     // And I am on the placement page
     const placementPage = PlacementShowPage.visit(placement)

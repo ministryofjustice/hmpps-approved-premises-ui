@@ -8,6 +8,7 @@ import {
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
   cas1NonArrivalFactory,
+  departureReasonFactory,
   nonArrivalReasonsFactory,
   referenceDataFactory,
 } from '../testutils/factories'
@@ -161,8 +162,8 @@ describe('PlacementService', () => {
   })
 
   describe('getDepartureReasons', () => {
-    it('calls the getReferenceData method of teh reference data client and returns a response', async () => {
-      const departureReasons = referenceDataFactory.buildList(5)
+    it('calls the getReferenceData method of the reference data client and returns a response', async () => {
+      const departureReasons = departureReasonFactory.buildList(5)
 
       referenceDataClient.getReferenceData.mockResolvedValue(departureReasons)
 
@@ -175,7 +176,7 @@ describe('PlacementService', () => {
   })
 
   describe('getMoveOnCategories', () => {
-    it('calls the getReferenceData method of teh reference data client and returns a response', async () => {
+    it('calls the getReferenceData method of the reference data client and returns a response', async () => {
       const moveOnCategories = referenceDataFactory.buildList(5)
 
       referenceDataClient.getReferenceData.mockResolvedValue(moveOnCategories)

@@ -1,4 +1,4 @@
-import type { Cas1NewDeparture, Cas1SpaceBooking } from '@approved-premises/api'
+import type { Cas1SpaceBooking, DepartureReason } from '@approved-premises/api'
 import { ReferenceData } from '@approved-premises/ui'
 import Page from '../../../page'
 import { DateFormats } from '../../../../../server/utils/dateUtils'
@@ -10,12 +10,11 @@ export class BreachOrRecallPage extends Page {
 
   constructor(
     private readonly placement: Cas1SpaceBooking,
-    private readonly newDeparture: Cas1NewDeparture,
-    departureReasons: Array<ReferenceData>,
+    departureReasons: Array<DepartureReason>,
   ) {
     super('Record a departure')
 
-    this.breachOrRecallReasons = departureReasons.filter(reason => reason.parent === BREACH_OR_RECALL_REASON_ID)
+    this.breachOrRecallReasons = departureReasons.filter(reason => reason.parentReasonId === BREACH_OR_RECALL_REASON_ID)
   }
 
   shouldShowFormAndExpectedDepartureDate(): void {

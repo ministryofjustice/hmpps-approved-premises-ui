@@ -10,12 +10,15 @@ import cancellationReasonsJson from '../referenceData/stubs/cancellation-reasons
 import lostBedReasonsJson from '../referenceData/stubs/lost-bed-reasons.json'
 import nonArrivalReasonsJson from '../referenceData/stubs/non-arrival-reasons.json'
 import probationRegionsJson from '../referenceData/stubs/probation-regions.json'
-import { ApArea, NonArrivalReason, ProbationRegion } from '../../@types/shared'
+import { ApArea, DepartureReason, NonArrivalReason, ProbationRegion } from '../../@types/shared'
 
 class ReferenceDataFactory extends Factory<ReferenceData> {
   departureReasons() {
     const data = faker.helpers.arrayElement(departureReasonsJson)
-    return this.params(data)
+    return this.params({
+      ...data,
+      parentReasonId: undefined,
+    } as ReferenceData)
   }
 
   moveOnCategories() {
@@ -54,7 +57,6 @@ export default ReferenceDataFactory.define(() => ({
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   serviceScope: 'approved-premises',
   isActive: true,
-  parent: null,
 }))
 
 export const probationRegionFactory = ReferenceDataFactory.define<ProbationRegion>(() =>
@@ -71,4 +73,12 @@ export const nonArrivalReasonsFactory = Factory.define<NonArrivalReason>(() => (
   id: faker.string.uuid(),
   name: faker.word.words(2),
   isActive: faker.datatype.boolean(),
+}))
+
+export const departureReasonFactory = Factory.define<DepartureReason>(() => ({
+  id: faker.string.uuid(),
+  name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
+  serviceScope: 'approved-premises',
+  isActive: true,
+  parentReasonId: null,
 }))
