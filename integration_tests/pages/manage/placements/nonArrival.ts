@@ -47,7 +47,7 @@ export class RecordNonArrivalPage extends Page {
 
   checkApiCalled(placement: Cas1SpaceBooking): void {
     cy.task(
-      'getApiPost',
+      'verifyApiPost',
       apiPaths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
     ).then(body => {
       expect(body).to.deep.equal(this.nonArrivalDetails)

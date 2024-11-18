@@ -38,7 +38,7 @@ export class KeyworkerAssignmentPage extends Page {
 
   checkApiCalled(placement: Cas1SpaceBooking): void {
     cy.task(
-      'getApiPost',
+      'verifyApiPost',
       apiPaths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
     ).then(body => {
       expect(body).to.deep.equal({ staffCode: this.staffMembers[1].code })

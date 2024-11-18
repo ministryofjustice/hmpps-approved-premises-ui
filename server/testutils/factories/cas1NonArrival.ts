@@ -6,5 +6,5 @@ import { DateFormats } from '../../utils/dateUtils'
 export default Factory.define<Cas1NonArrival>(() => ({
   reason: faker.string.uuid(),
   notes: faker.lorem.words(20),
-  confirmedAt: DateFormats.dateObjToIsoDateTime(new Date(faker.date.recent())),
+  confirmedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
 }))

@@ -26,7 +26,7 @@ export class ArrivalCreatePage extends Page {
 
   checkApiCalled(): void {
     cy.task(
-      'getApiPost',
+      'verifyApiPost',
       apiPaths.premises.placements.arrival({ premisesId: this.placement.premises.id, placementId: this.placement.id }),
     ).then(body => {
       const { arrivalDateTime, expectedDepartureDate } = body as Cas1NewArrival
