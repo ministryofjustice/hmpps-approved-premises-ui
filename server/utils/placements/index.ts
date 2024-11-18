@@ -14,7 +14,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
 
   if (!departed && !nonArrival && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
     actionList.push({
-      text: 'Assign keyworker',
+      text: 'Edit keyworker',
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
     })

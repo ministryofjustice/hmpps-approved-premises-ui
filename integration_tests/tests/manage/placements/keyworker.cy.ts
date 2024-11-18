@@ -27,7 +27,7 @@ context('Keyworker', () => {
     let placementPage = PlacementShowPage.visit(placement)
 
     // When I click on option to assign a keyworker
-    placementPage.clickAction('Assign keyworker')
+    placementPage.clickAction('Edit keyworker')
 
     // Then I should open the keyworker assignment page
     const page = new KeyworkerAssignmentPage(placement, staffMembers)
@@ -51,8 +51,8 @@ context('Keyworker', () => {
     page.checkApiCalled(placement)
   })
 
-  it('Requires the correct permission to assign a keyworker', () => {
-    // Given I am logged in and have permission to view the placement, but not assign keyworker
+  it('Requires the correct permission to edit a keyworker', () => {
+    // Given I am logged in and have permission to view the placement, but not edit keyworker
     signIn([], ['cas1_space_booking_view'])
 
     // And I am on the placement page

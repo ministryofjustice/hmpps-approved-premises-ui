@@ -54,7 +54,7 @@ describe('placementUtils', () => {
     const keyworkerOption = {
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.keyworker({ premisesId: premises.id, placementId }),
-      text: 'Assign keyworker',
+      text: 'Edit keyworker',
     }
     describe('when the placement is in its initial state', () => {
       const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
