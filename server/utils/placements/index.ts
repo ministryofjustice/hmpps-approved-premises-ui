@@ -34,7 +34,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
       })
     }
   }
-  if (arrived && !nonArrival && !departed && hasPermission(user, ['cas1_space_booking_record_departure'])) {
+  if (arrived && !departed && hasPermission(user, ['cas1_space_booking_record_departure'])) {
     actionList.push({
       text: 'Record departure',
       classes: 'govuk-button--secondary',
