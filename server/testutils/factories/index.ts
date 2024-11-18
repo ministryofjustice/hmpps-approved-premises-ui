@@ -83,9 +83,8 @@ import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import cas1SpaceBookingFactory from './cas1SpaceBooking'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import cas1AssignKeyWorkerFactory from './cas1AssignKeyWorker'
-import newPlacementArrivalFactory from './newPlacementArrival'
 import cas1NonArrivalFactory from './cas1NonArrival'
-import newPlacementDepartureFactory from './newPlacementDeparture'
+import cas1NewArrivalFactory from './cas1NewArrival'
 import cas1NewDepartureFactory from './cas1NewDeparture'
 
 export {
@@ -120,7 +119,8 @@ export {
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   cas1AssignKeyWorkerFactory,
-  newPlacementArrivalFactory,
+  cas1NewArrivalFactory,
+  cas1NewDepartureFactory,
   cas1NonArrivalFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
@@ -185,6 +185,4 @@ export {
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
-  newPlacementDepartureFactory,
-  cas1NewDepartureFactory,
 }
