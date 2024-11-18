@@ -3,9 +3,9 @@ import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import {
   cas1AssignKeyWorkerFactory,
+  cas1NewArrivalFactory,
+  cas1NewDepartureFactory,
   cas1NonArrivalFactory,
-  newPlacementArrivalFactory,
-  newPlacementDepartureFactory,
 } from '../testutils/factories'
 
 describeCas1NamespaceClient('PlacementClient', provider => {
@@ -22,7 +22,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
 
   describe('createArrival', () => {
     it('creates and returns an arrival for a given placement', async () => {
-      const newPlacementArrival = newPlacementArrivalFactory.build()
+      const newPlacementArrival = cas1NewArrivalFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -100,7 +100,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
 
   describe('createDeparture', () => {
     it('creates a departure for a given placement', async () => {
-      const newPlacementDeparture = newPlacementDepartureFactory.build()
+      const newPlacementDeparture = cas1NewDepartureFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',

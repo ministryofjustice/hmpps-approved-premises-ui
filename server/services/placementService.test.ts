@@ -5,9 +5,9 @@ import PlacementClient from '../data/placementClient'
 import { ReferenceDataClient } from '../data'
 import {
   cas1AssignKeyWorkerFactory,
+  cas1NewArrivalFactory,
+  cas1NewDepartureFactory,
   cas1NonArrivalFactory,
-  newPlacementArrivalFactory,
-  newPlacementDepartureFactory,
   nonArrivalReasonsFactory,
   referenceDataFactory,
 } from '../testutils/factories'
@@ -37,7 +37,7 @@ describe('PlacementService', () => {
 
   describe('createArrival', () => {
     it('calls the createArrival method of the placement client and returns a response', async () => {
-      const newPlacementArrival = newPlacementArrivalFactory.build()
+      const newPlacementArrival = cas1NewArrivalFactory.build()
 
       placementClient.createArrival.mockResolvedValue({})
 
@@ -140,7 +140,7 @@ describe('PlacementService', () => {
     it('removes the existing data from session', () => {
       request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
 
-      service.removeDepartureSessionData(placementId, request.session)
+      placementService.removeDepartureSessionData(placementId, request.session)
 
       expect(request.session.departureForms).not.toHaveProperty('placement-id')
     })
@@ -148,7 +148,7 @@ describe('PlacementService', () => {
 
   describe('createDeparture', () => {
     it('calls the createDeparture method of the placement client and returns a response', async () => {
-      const newPlacementDeparture = newPlacementDepartureFactory.build()
+      const newPlacementDeparture = cas1NewDepartureFactory.build()
 
       placementClient.createDeparture.mockResolvedValue({})
 
