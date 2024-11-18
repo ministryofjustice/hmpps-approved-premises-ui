@@ -32,7 +32,9 @@ export default class DeparturesController {
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
-      const departureReasons = (await this.placementService.getDepartureReasons(token)).filter(reason => !reason.parent)
+      const departureReasons = (await this.placementService.getDepartureReasons(token)).filter(
+        reason => !reason.parentReasonId,
+      )
 
       return res.render('manage/premises/placements/departure/new', {
         placement,
@@ -141,7 +143,7 @@ export default class DeparturesController {
 
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
       const departureReasons = (await this.placementService.getDepartureReasons(token)).filter(
-        reason => !!reason.parent,
+        reason => reason.parentReasonId === BREACH_OR_RECALL_REASON_ID,
       )
 
       return res.render('manage/premises/placements/departure/breach-or-recall', {

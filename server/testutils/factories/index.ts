@@ -54,7 +54,12 @@ import premisesFactory from './premises'
 import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
-import referenceDataFactory, { apAreaFactory, nonArrivalReasonsFactory, probationRegionFactory } from './referenceData'
+import referenceDataFactory, {
+  apAreaFactory,
+  departureReasonFactory,
+  nonArrivalReasonsFactory,
+  probationRegionFactory,
+} from './referenceData'
 import cas1ReferenceDataFactory, { cruManagementAreaFactory } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
@@ -129,6 +134,7 @@ export {
   dateChangeFactory,
   dateCapacityFactory,
   departureFactory,
+  departureReasonFactory,
   documentFactory,
   extendedPremisesSummaryFactory,
   newPlacementRequestBookingFactory,

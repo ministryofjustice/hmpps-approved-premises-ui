@@ -5,6 +5,7 @@ import { stubFor } from './setup'
 import {
   apAreaFactory,
   cruManagementAreaFactory,
+  departureReasonFactory,
   nonArrivalReasonsFactory,
   referenceDataFactory,
 } from '../../server/testutils/factories'
@@ -86,7 +87,7 @@ const stubDepartureReasonsReferenceData = (departureReasons?: Array<ReferenceDat
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: departureReasons || referenceDataFactory.buildList(5),
+      jsonBody: departureReasons || departureReasonFactory.buildList(5),
     },
   })
 const stubMoveOnCategoriesReferenceData = (moveOnCategories?: Array<ReferenceData>) =>

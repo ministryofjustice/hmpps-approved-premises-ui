@@ -9,6 +9,7 @@ import DeparturesController from './departuresController'
 import paths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
+import { departureReasonFactory } from '../../../../testutils/factories/referenceData'
 
 describe('DeparturesController', () => {
   const token = 'SOME_TOKEN'
@@ -24,11 +25,11 @@ describe('DeparturesController', () => {
   const premisesId = 'premises-id'
   const placement = spaceBookingFactory.build()
 
-  const rootDepartureReason1 = referenceDataFactory.build({ parent: null })
-  const rootDepartureReason2 = referenceDataFactory.build({ id: BREACH_OR_RECALL_REASON_ID, parent: null })
-  const rootDepartureReason3 = referenceDataFactory.build({ id: PLANNED_MOVE_ON_REASON_ID, parent: null })
-  const childDepartureReason1 = referenceDataFactory.build({ parent: BREACH_OR_RECALL_REASON_ID })
-  const childDepartureReason2 = referenceDataFactory.build({ parent: BREACH_OR_RECALL_REASON_ID })
+  const rootDepartureReason1 = departureReasonFactory.build({ parentReasonId: null })
+  const rootDepartureReason2 = departureReasonFactory.build({ id: BREACH_OR_RECALL_REASON_ID, parentReasonId: null })
+  const rootDepartureReason3 = departureReasonFactory.build({ id: PLANNED_MOVE_ON_REASON_ID, parentReasonId: null })
+  const childDepartureReason1 = departureReasonFactory.build({ parentReasonId: BREACH_OR_RECALL_REASON_ID })
+  const childDepartureReason2 = departureReasonFactory.build({ parentReasonId: BREACH_OR_RECALL_REASON_ID })
   const departureReasons = [
     rootDepartureReason1,
     rootDepartureReason2,

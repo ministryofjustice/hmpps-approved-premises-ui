@@ -44,8 +44,4 @@ export default class PlacementShowPage extends Page {
       cy.contains('Other placement bookings at this premises').get('a').should('contain', placementTitle)
     })
   }
-
-  actionMenuShouldNotExist() {
-    // TODO: Use parent method when rebased
-  }
 }

@@ -3,10 +3,11 @@ import {
   Cas1NewArrival,
   Cas1NewDeparture,
   Cas1NonArrival,
+  DepartureReason,
   NonArrivalReason,
 } from '@approved-premises/api'
 import type { Request } from 'express'
-import { DepartureFormData } from '@approved-premises/ui'
+import { DepartureFormData, ReferenceData } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
@@ -60,13 +61,13 @@ export default class PlacementService {
   async getDepartureReasons(token: string) {
     const referenceDataClient = this.referenceDataClientFactory(token)
 
-    return referenceDataClient.getReferenceData('departure-reasons')
+    return referenceDataClient.getReferenceData('departure-reasons') as Promise<Array<DepartureReason>>
   }
 
   async getMoveOnCategories(token: string) {
     const referenceDataClient = this.referenceDataClientFactory(token)
 
-    return referenceDataClient.getReferenceData('move-on-categories')
+    return referenceDataClient.getReferenceData('move-on-categories') as Promise<Array<ReferenceData>>
   }
 
   getDepartureSessionData(placementId: string, session: Request['session']): DepartureFormData {
