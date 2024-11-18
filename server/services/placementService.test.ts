@@ -78,7 +78,7 @@ describe('PlacementService', () => {
 
       const result = await placementService.getNonArrivalReasons(token)
 
-      expect(result).toEqual(nonArrivalReasons)
+      expect(result).toEqual(nonArrivalReasons.filter(({ isActive }) => isActive))
     })
   })
 })

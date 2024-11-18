@@ -27,7 +27,9 @@ export default class PlacementService {
 
   async getNonArrivalReasons(token: string): Promise<Array<NonArrivalReason>> {
     const client = this.referenceDataClientFactory(token)
-    return client.getNonArrivalReasons()
+    const allNonArrivalReasons = await client.getNonArrivalReasons()
+
+    return allNonArrivalReasons.filter(({ isActive }) => isActive)
   }
 
   async recordNonArrival(token: string, premisesId: string, placementId: string, nonArrival: Cas1NonArrival) {
