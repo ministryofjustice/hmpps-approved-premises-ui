@@ -64,7 +64,6 @@ export default class ArrivalsController {
         }
 
         const placementArrival: Cas1NewArrival = {
-          expectedDepartureDate: req.body.expectedDepartureDate,
           arrivalDateTime,
         }
 

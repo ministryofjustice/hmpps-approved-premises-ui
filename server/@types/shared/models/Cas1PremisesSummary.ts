@@ -21,5 +21,6 @@ export type Cas1PremisesSummary = {
      * The total number of out of service beds
      */
     outOfServiceBeds: number;
+    supportsSpaceBookings: boolean;
 };
 

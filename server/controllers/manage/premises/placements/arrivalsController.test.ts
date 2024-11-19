@@ -57,7 +57,6 @@ describe('ArrivalsController', () => {
   describe('create', () => {
     let arrivalPath: string
     const validBody = {
-      expectedDepartureDate: '2025-04-01',
       'arrivalDateTime-year': '2024',
       'arrivalDateTime-month': '11',
       'arrivalDateTime-day': '5',
@@ -78,7 +77,6 @@ describe('ArrivalsController', () => {
       await requestHandler(request, response, next)
 
       expect(placementService.createArrival).toHaveBeenCalledWith(token, premisesId, placement.id, {
-        expectedDepartureDate: '2025-04-01',
         arrivalDateTime: '2024-11-05T09:45:00.000Z',
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as arrived')
@@ -117,7 +115,6 @@ describe('ArrivalsController', () => {
         const requestHandler = arrivalsController.create()
 
         request.body = {
-          expectedDepartureDate: '2025-04-01',
           'arrivalDateTime-year': '2024',
           'arrivalDateTime-month': '13',
           'arrivalDateTime-day': '34',

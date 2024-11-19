@@ -5,6 +5,7 @@
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
 import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellation';
 import type { Cas1SpaceBookingDates } from './Cas1SpaceBookingDates';
+import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
 import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
 import type { NamedId } from './NamedId';
 import type { Person } from './Person';
@@ -38,6 +39,7 @@ export type Cas1SpaceBooking = {
     keyWorkerAllocation?: Cas1KeyWorkerAllocation;
     otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;
     cancellation?: Cas1SpaceBookingCancellation;
+    nonArrival?: Cas1SpaceBookingNonArrival;
     deliusEventNumber?: string;
 };
 
