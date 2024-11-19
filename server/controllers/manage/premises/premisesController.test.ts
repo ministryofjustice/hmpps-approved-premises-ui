@@ -135,18 +135,16 @@ describe('V2PremisesController', () => {
     })
 
     it('should render the premises detail and list of placements with specified sort and pagination criteria', async () => {
-      const hrefPrefix = `/manage/premises/${premisesId}?activeTab=historic&sortBy=personName&sortDirection=asc&`
       const queryParameters = { sortDirection: 'asc', sortBy: 'personName', activeTab: 'historic' }
       const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({
         ...queryParameters,
-        hrefPrefix,
         page: '2',
       })
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
         ...queryParameters,
-        hrefPrefix,
+        hrefPrefix: `/manage/premises/some-uuid?activeTab=historic&sortBy=personName&sortDirection=asc&`,
         pageNumber: 1,
         totalPages: 1,
         placements: paginatedPlacements.data,
@@ -162,6 +160,36 @@ describe('V2PremisesController', () => {
         sortDirection: 'asc',
       })
     })
+
+    it('should render the premises detail and list of placements when on the "search" tab', async () => {
+      const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({
+        activeTab: 'search',
+        crnOrName: 'X123456',
+      })
+
+      expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
+        premises: premisesSummary,
+        sortBy: 'canonicalArrivalDate',
+        sortDirection: 'desc',
+        activeTab: 'search',
+        crnOrName: 'X123456',
+        pageNumber: 1,
+        totalPages: 1,
+        hrefPrefix: `/manage/premises/some-uuid?activeTab=search&crnOrName=X123456&`,
+        placements: paginatedPlacements.data,
+      })
+      expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.getPlacements).toHaveBeenCalledWith({
+        token,
+        premisesId,
+        page: 1,
+        perPage: 20,
+        sortBy: 'canonicalArrivalDate',
+        sortDirection: 'desc',
+        crnOrName: 'X123456',
+      })
+    })
+
     it('should not render the list of placements if the premises does not support space bookings', async () => {
       const { premisesSummary } = await mockSummaryAndPlacements(
         {},

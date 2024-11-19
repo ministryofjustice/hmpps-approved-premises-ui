@@ -5,7 +5,7 @@ import { getPaginationDetails } from './getPaginationDetails'
 describe('getPaginationDetails', () => {
   const hrefPrefix = 'http://localhost/example'
 
-  it('should return the hrefPrefix with a query string prefix if there are no query parameters', () => {
+  it('should return the hrefPrefix with a query string suffix if there are no query parameters', () => {
     const request = createMock<Request>({})
 
     expect(getPaginationDetails(request, hrefPrefix)).toEqual({
@@ -27,7 +27,7 @@ describe('getPaginationDetails', () => {
     })
   })
 
-  it('should append additonal parameters to the hrefPrefix', () => {
+  it('should append additional parameters to the hrefPrefix', () => {
     const request = createMock<Request>({ query: { page: '1', sortBy: 'something', sortDirection: 'asc' } })
 
     expect(getPaginationDetails(request, hrefPrefix, { foo: 'bar' })).toEqual({
