@@ -12,6 +12,6 @@ export default Cas1SpaceBookingNonArrivalFactory.define(() => {
       id: faker.string.uuid(),
       name: `${faker.word.noun()} ${faker.word.verb()}`,
     },
-    confirmedAt: DateFormats.dateObjToIsoDateTime(new Date(faker.date.recent())),
+    confirmedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   }
 })
