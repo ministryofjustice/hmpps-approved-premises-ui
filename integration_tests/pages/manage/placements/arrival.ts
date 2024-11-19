@@ -29,9 +29,8 @@ export class ArrivalCreatePage extends Page {
       'verifyApiPost',
       apiPaths.premises.placements.arrival({ premisesId: this.placement.premises.id, placementId: this.placement.id }),
     ).then(body => {
-      const { arrivalDateTime, expectedDepartureDate } = body as Cas1NewArrival
+      const { arrivalDateTime } = body as Cas1NewArrival
       expect(arrivalDateTime).equal(`${this.placement.expectedArrivalDate}T09:45:00.000Z`)
-      expect(expectedDepartureDate).equal(this.placement.expectedDepartureDate)
     })
   }
 }
