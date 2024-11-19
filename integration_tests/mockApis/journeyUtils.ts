@@ -4,7 +4,7 @@ import {
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
 
-import { bulkStub } from './setup'
+import { bulkStub, getMatchingRequests } from './setup'
 import isAssessment from '../../server/utils/assessments/isAssessment'
 
 export const generateStubsForPage = (
@@ -150,6 +150,15 @@ export const copyCompleteTasksToData = ({ completeTasks, form }) => {
   })
 
   return data
+}
+
+export const verifyApiPost = async (path: string): Promise<Record<string, unknown>> => {
+  const result = await getMatchingRequests({
+    method: 'POST',
+    url: path,
+  })
+  const { requests } = result.body
+  return JSON.parse(requests[0].body)
 }
 
 export const stubJourney = (form: Application | Assessment): SuperAgentRequest => {

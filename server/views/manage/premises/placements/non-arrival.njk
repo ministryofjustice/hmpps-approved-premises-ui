@@ -1,0 +1,74 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "../../../components/keyDetails/macro.njk" import keyDetails %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
+    }) }}
+{% endblock %}
+
+{% block header %}
+  {{ super() }}
+  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% block content %}
+
+    <form action="{{ paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+          method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ showErrorSummary(errorSummary, errorTitle) }}
+
+        <h1 class="govuk-heading-l">Record someone as not arrived</h1>
+
+
+        {{ govukSummaryList({
+            rows: [{
+                key: {
+                    text: "Expected arrival date"
+                },
+                value: {
+                    text: formatDate(placement.expectedArrivalDate)
+                }
+            }]
+        }) }}
+
+        {{ govukRadios({
+            idPrefix: "reason",
+            errorMessage: errors.reason,
+            name: "reason",
+                items: convertObjectsToRadioItems(nonArrivalReasons, 'name', 'id', 'reason',{reason:reason})
+            }) 
+        }}
+
+        {{ govukCharacterCount({
+            id: "notes",
+            name: "notes",
+            maxlength: 200,
+            value: notes,
+            label: {
+                text: "Any other information",
+                classes: "govuk-fieldset__legend--s"
+            },
+            errorMessage: errors.notes
+        }) }}
+
+        {{ govukButton({
+            text: "Submit",
+            preventDoubleClick: true
+        }) }}
+    </form>
+
+{% endblock %}
+

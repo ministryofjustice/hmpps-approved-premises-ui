@@ -1,7 +1,7 @@
 import PlacementClient from './placementClient'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
-import { cas1AssignKeyWorkerFactory, newPlacementArrivalFactory } from '../testutils/factories'
+import { cas1AssignKeyWorkerFactory, cas1NonArrivalFactory, newPlacementArrivalFactory } from '../testutils/factories'
 
 describeCas1NamespaceClient('PlacementClient', provider => {
   let placementClient: PlacementClient
@@ -62,6 +62,32 @@ describeCas1NamespaceClient('PlacementClient', provider => {
       })
 
       const result = await placementClient.assignKeyworker(premisesId, placementId, keyworkerAssignment)
+
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('recordNonArrival', () => {
+    it('records a non-arrival against a given placement', async () => {
+      const nonArrival = cas1NonArrivalFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to record a non-arrival',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.placements.nonArrival({ premisesId, placementId }),
+          body: nonArrival,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      const result = await placementClient.recordNonArrival(premisesId, placementId, nonArrival)
 
       expect(result).toEqual({})
     })

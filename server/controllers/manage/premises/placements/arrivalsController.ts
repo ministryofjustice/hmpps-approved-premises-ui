@@ -17,7 +17,6 @@ export default class ArrivalsController {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
-
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
       return res.render('manage/premises/placements/arrival', {

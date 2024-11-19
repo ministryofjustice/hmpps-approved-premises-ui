@@ -37,9 +37,7 @@
         title: {
             html: titleHtml
         },
-        menus: [{
-            items: PlacementUtils.actions(placement, user)
-        }]
+        menus: PlacementUtils.actions(placement, user)
     }) }}
 
     {{ govukSummaryList(PlacementUtils.placementSummary(placement)) }}

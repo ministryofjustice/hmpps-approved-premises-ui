@@ -8,8 +8,7 @@ import userFactory from './user'
 
 import staffMemberFactory from './staffMember'
 import { DateFormats } from '../../utils/dateUtils'
-
-const addTime = (date: Date): Date => new Date(date.getTime() + faker.number.int({ max: 60 * 60 * 24 * 1000 }))
+import cas1SpaceBookingNonArrivalFactory from './cas1SpaceBookingNonArrival'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
@@ -28,11 +27,21 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       departureMoveOnCategory: undefined,
     })
   }
+
+  nonArrival() {
+    return this.params({
+      actualArrivalDate: undefined,
+      actualDepartureDate: undefined,
+      departureReason: undefined,
+      departureMoveOnCategory: undefined,
+      nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
+    })
+  }
 }
 
 export default Cas1SpaceBookingFactory.define(() => {
-  const startDateTime = addTime(faker.date.soon({ days: 90 }))
-  const endDateTime = addTime(faker.date.soon({ days: 365, refDate: startDateTime }))
+  const startDateTime = faker.date.soon({ days: 90 })
+  const endDateTime = faker.date.soon({ days: 365, refDate: startDateTime })
   const [actualArrivalDate, actualDepartureDate] = [startDateTime, endDateTime].map(DateFormats.dateObjToIsoDateTime)
   const [canonicalArrivalDate, canonicalDepartureDate] = [startDateTime, endDateTime].map(DateFormats.dateObjToIsoDate)
   const [expectedArrivalDate, expectedDepartureDate] = faker.date
@@ -59,7 +68,7 @@ export default Cas1SpaceBookingFactory.define(() => {
     canonicalDepartureDate,
     departureReason: { id: faker.string.uuid(), name: faker.word.noun() },
     departureMoveOnCategory: { id: faker.string.uuid(), name: faker.word.noun() },
-    createdAt: DateFormats.dateObjToIsoDateTime(addTime(faker.date.recent())),
+    createdAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
     keyWorkerAllocation: { keyWorker: staffMemberFactory.build() } as Cas1KeyWorkerAllocation,
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
     deliusEventNumber: String(faker.number.int()),

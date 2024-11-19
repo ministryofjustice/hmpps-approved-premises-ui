@@ -36,5 +36,8 @@ context('Arrivals', () => {
     // Then I should be shown the placement page with a confirmation that the placement has been marked as arrived
     placementPage = new PlacementShowPage(placement)
     placementPage.shouldShowBanner('You have recorded this person as arrived')
+
+    // and the API should have been called with the correct data
+    arrivalCreatePage.checkApiCalled()
   })
 })

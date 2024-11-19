@@ -10,7 +10,7 @@ import {
 import ReferenceDataClient from './referenceDataClient'
 import { probationRegionFactory, referenceDataFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
-import { apAreaFactory } from '../testutils/factories/referenceData'
+import { apAreaFactory, nonArrivalReasonsFactory } from '../testutils/factories/referenceData'
 
 describeClient('ReferenceDataClient', provider => {
   let referenceDataClient: ReferenceDataClient
@@ -102,6 +102,31 @@ describeClient('ReferenceDataClient', provider => {
 
       const output = await referenceDataClient.getApAreas()
       expect(output).toEqual(apAreas)
+    })
+  })
+
+  describe('getNonArrivalReasons', () => {
+    it('should return an array of non-arrival reasons', async () => {
+      const nonArrivalReasons = nonArrivalReasonsFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get Non-arrival reasons`,
+        withRequest: {
+          method: 'GET',
+          path: `/reference-data/non-arrival-reasons`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: nonArrivalReasons,
+        },
+      })
+
+      const output = await referenceDataClient.getNonArrivalReasons()
+      expect(output).toEqual(nonArrivalReasons)
     })
   })
 })

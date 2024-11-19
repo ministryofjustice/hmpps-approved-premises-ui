@@ -12,6 +12,7 @@ import BedsController from './premises/bedsController'
 import OutOfServiceBedsController from './outOfServiceBedsController'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
 import ArrivalsController from './premises/placements/arrivalsController'
+import NonArrivalsController from './premises/placements/nonArrivalsController'
 import KeyworkerController from './premises/placements/keyworkerController'
 
 export const controllers = (services: Services) => {
@@ -30,11 +31,13 @@ export const controllers = (services: Services) => {
   const dateChangesController = new DateChangesController(services.bookingService)
   const placementController = new PlacementController(services.premisesService)
   const arrivalsController = new ArrivalsController(services.premisesService, services.placementService)
+  const nonArrivalsController = new NonArrivalsController(services.premisesService, services.placementService)
   const keyworkerController = new KeyworkerController(services.premisesService, services.placementService)
 
   return {
     premisesController,
     arrivalsController,
+    nonArrivalsController,
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
@@ -51,6 +54,7 @@ export {
   PremisesController,
   PlacementController,
   ArrivalsController,
+  NonArrivalsController,
   KeyworkerController,
   BedsController,
   OutOfServiceBedsController,

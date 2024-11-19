@@ -1,6 +1,7 @@
-import type { Cas1SpaceBooking } from '@approved-premises/api'
+import type { Cas1NewArrival, Cas1SpaceBooking } from '@approved-premises/api'
 import Page from '../../page'
 import { DateFormats } from '../../../../server/utils/dateUtils'
+import apiPaths from '../../../../server/paths/api'
 
 export class ArrivalCreatePage extends Page {
   constructor(private readonly placement: Cas1SpaceBooking) {
@@ -21,5 +22,15 @@ export class ArrivalCreatePage extends Page {
   completeForm(): void {
     this.completeDateInputs('arrivalDateTime', this.placement.expectedArrivalDate)
     this.completeTextInput('arrivalTime', '9:45')
+  }
+
+  checkApiCalled(): void {
+    cy.task(
+      'verifyApiPost',
+      apiPaths.premises.placements.arrival({ premisesId: this.placement.premises.id, placementId: this.placement.id }),
+    ).then(body => {
+      const { arrivalDateTime } = body as Cas1NewArrival
+      expect(arrivalDateTime).equal(`${this.placement.expectedArrivalDate}T09:45:00.000Z`)
+    })
   }
 }

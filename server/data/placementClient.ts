@@ -1,4 +1,4 @@
-import { Cas1AssignKeyWorker, Cas1NewArrival } from '@approved-premises/api'
+import { Cas1AssignKeyWorker, Cas1NewArrival, Cas1NonArrival } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -14,6 +14,13 @@ export default class PlacementClient {
     return this.restClient.post({
       path: paths.premises.placements.arrival({ premisesId, placementId }),
       data: newPlacementArrival,
+    })
+  }
+
+  async recordNonArrival(premisesId: string, placementId: string, nonArrival: Cas1NonArrival) {
+    return this.restClient.post({
+      path: paths.premises.placements.nonArrival({ premisesId, placementId }),
+      data: nonArrival,
     })
   }
 

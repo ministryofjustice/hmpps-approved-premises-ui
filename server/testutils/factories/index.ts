@@ -54,7 +54,7 @@ import premisesFactory from './premises'
 import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
-import referenceDataFactory, { apAreaFactory, probationRegionFactory } from './referenceData'
+import referenceDataFactory, { apAreaFactory, nonArrivalReasonsFactory, probationRegionFactory } from './referenceData'
 import cas1ReferenceDataFactory, { cruManagementAreaFactory } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
@@ -84,6 +84,7 @@ import cas1SpaceBookingFactory from './cas1SpaceBooking'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import cas1AssignKeyWorkerFactory from './cas1AssignKeyWorker'
 import newPlacementArrivalFactory from './newPlacementArrival'
+import cas1NonArrivalFactory from './cas1NonArrival'
 
 export {
   acctAlertFactory,
@@ -118,6 +119,7 @@ export {
   cas1SpaceBookingSummaryFactory,
   cas1AssignKeyWorkerFactory,
   newPlacementArrivalFactory,
+  cas1NonArrivalFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
@@ -138,6 +140,7 @@ export {
   outOfServiceBedCancellationFactory,
   outOfServiceBedRevisionFactory,
   newOutOfServiceBedFactory,
+  nonArrivalReasonsFactory,
   paginatedResponseFactory,
   personFactory,
   personalTimelineFactory,
