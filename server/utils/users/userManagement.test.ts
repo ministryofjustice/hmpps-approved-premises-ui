@@ -118,7 +118,6 @@ describe('userRolesSelectOptions', () => {
         text: 'Excluded from placement application allocation',
         value: 'excluded_from_placement_application_allocation',
       },
-      { selected: false, text: 'CRU member beta (find and book)', value: 'cru_member_find_and_book_beta' },
       {
         selected: false,
         text: 'Appeals manager',
@@ -153,7 +152,6 @@ describe('userRolesSelectOptions', () => {
         text: 'Excluded from placement application allocation',
         value: 'excluded_from_placement_application_allocation',
       },
-      { selected: false, text: 'CRU member beta (find and book)', value: 'cru_member_find_and_book_beta' },
       {
         selected: false,
         text: 'Appeals manager',
