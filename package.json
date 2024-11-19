@@ -41,8 +41,11 @@
     "start-test-wiremock": "docker compose -f docker-compose-test.yml up -d",
     "generate-types": "script/generate-types",
     "create-application:standard": "APPLICATION_TYPE='standard' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
+    "create-application:standard:assess": "ASSESS_APPLICATION='true' npm run create-application:standard",
     "create-application:emergency": "APPLICATION_TYPE='emergency' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
-    "create-application:short-notice": "APPLICATION_TYPE='shortNotice' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts"
+    "create-application:emergency:assess": "ASSESS_APPLICATION='true' npm run create-application:emergency",
+    "create-application:short-notice": "APPLICATION_TYPE='shortNotice' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
+    "create-application:short-notice:assess": "ASSESS_APPLICATION='true' npm run create-application:short-notice"
   },
   "engines": {
     "node": "^20.0.0",
