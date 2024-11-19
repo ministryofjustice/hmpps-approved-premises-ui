@@ -94,6 +94,51 @@ context('Premises', () => {
         page.shouldHaveTabSelected('Current')
       })
 
+      it('should let the user search for placements by CRN or name', () => {
+        // Given there is a premises in the database
+        const premises = cas1PremisesSummaryFactory.build()
+        cy.task('stubSinglePremises', premises)
+        const placements = cas1SpaceBookingSummaryFactory.buildList(1)
+        cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, pageSize: 9 })
+
+        // When I visit premises details page
+        const page = PremisesShowPage.visit(premises)
+
+        // And I select to the 'search' tab
+        page.shouldSelectTab('Search for a booking')
+
+        // Then the 'search' tab should be selected
+        page.shouldHaveTabSelected('Search for a booking')
+
+        // And I should see the search form
+        page.shouldShowSearchForm()
+
+        // When I submit a search using the form
+        page.searchByCrnOrName('Aadland')
+
+        // Then the 'search' tab should be selected
+        page.shouldHaveTabSelected('Search for a booking')
+
+        // And the search form should be populated with my search term
+        page.shouldShowSearchForm('Aadland')
+
+        // And I should see the results
+        page.shouldShowListOfPlacements(placements)
+
+        // When I search for a name that returns no results
+        cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements: [] })
+        page.searchByCrnOrName('No results for this query')
+
+        // Then the 'search' tab should be selected
+        page.shouldHaveTabSelected('Search for a booking')
+
+        // And the search form should be populated with my search term
+        page.shouldShowSearchForm('No results for this query')
+
+        // Then I should see a message that there are no results
+        page.shouldShowNoResults()
+      })
+
       it('should not show the placements list if space bookings are not enabled for the premises', () => {
         // Given there is a premises in the database that does not support space bookings
         const premises = cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false })

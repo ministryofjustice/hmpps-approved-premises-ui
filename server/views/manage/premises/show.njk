@@ -5,6 +5,8 @@
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
@@ -42,19 +44,58 @@
         PremisesUtils.summaryListForPremises(premises)
     ) }}
 
+    <h2 class="govuk-heading-m">All bookings</h2>
+
     {% if placements %}
         {{ mojSubNavigation({
             label: 'Sub navigation',
             items: PremisesUtils.premisesTabItems(premises, activeTab)
         }) }}
 
-        {{ govukTable({
-            firstCellIsHeader: false,
-            head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
-            rows: PremisesUtils.placementTableRows(premises.id, placements)
-        }) }}
+        {% if activeTab === 'search' %}
+            <div class="search-and-filter__wrapper">
+                <form action="{{ hrefPrefix }}" method="get">
+                    <input type="hidden" name="activeTab" value="search" />
 
-        {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-two-thirds">
+                            {{ govukInput({
+                                label: {
+                                    text: 'Search for a booking',
+                                    classes: 'govuk-fieldset__legend--m'
+                                },
+                                hint: {
+                                    text: 'You can search for a person name or CRN'
+                                },
+                                id: 'crnOrName',
+                                name: 'crnOrName',
+                                value: crnOrName
+                            }) }}
+
+                            {{ govukButton({
+                                text: 'Search',
+                                classes: 'govuk-!-margin-bottom-0',
+                                preventDoubleClick: true
+                            }) }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+
+        {% if activeTab === 'search' and placements | length === 0 %}
+            <p>There are no results for your search.</p>
+        {% else %}
+            {{ govukTable({
+                firstCellIsHeader: false,
+                head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
+                rows: PremisesUtils.placementTableRows(premises.id, placements)
+            }) }}
+
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+        {% endif %}
+
+
     {% endif %}
 
 {% endblock %}
