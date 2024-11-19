@@ -1,5 +1,5 @@
 import type { PaginatedResponse } from '@approved-premises/ui'
-import type { Cas1SpaceBookingSummary } from '@approved-premises/api'
+import type { Cas1PremisesSummary, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
@@ -34,8 +34,10 @@ describe('V2PremisesController', () => {
   })
 
   describe('show', () => {
-    const mockSummaryAndPlacements = async (query: Record<string, string>) => {
-      const premisesSummary = cas1PremisesSummaryFactory.build()
+    const mockSummaryAndPlacements = async (
+      query: Record<string, string>,
+      premisesSummary: Cas1PremisesSummary = cas1PremisesSummaryFactory.build(),
+    ) => {
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),
         totalPages: '1',
@@ -159,6 +161,25 @@ describe('V2PremisesController', () => {
         sortBy: 'personName',
         sortDirection: 'asc',
       })
+    })
+    it('should not render the list of placements if the premises does not support space bookings', async () => {
+      const { premisesSummary } = await mockSummaryAndPlacements(
+        {},
+        cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false }),
+      )
+
+      expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
+        premises: premisesSummary,
+        sortBy: 'canonicalArrivalDate',
+        sortDirection: 'asc',
+        activeTab: 'upcoming',
+        pageNumber: NaN,
+        totalPages: NaN,
+        hrefPrefix: '/manage/premises/some-uuid?activeTab=upcoming&',
+        placements: undefined,
+      })
+      expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.getPlacements).not.toHaveBeenCalled()
     })
   })
 
