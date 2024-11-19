@@ -35,6 +35,7 @@ export default class PremisesController {
       )
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
       const paginatedPlacements =
+        premises.supportsSpaceBookings &&
         hasPermission(res.locals.user, ['cas1_space_booking_list']) &&
         (await this.premisesService.getPlacements({
           token: req.user.token,

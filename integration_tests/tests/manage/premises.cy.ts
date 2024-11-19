@@ -93,6 +93,18 @@ context('Premises', () => {
         // Then the 'current' tab should be selected
         page.shouldHaveTabSelected('Current')
       })
+
+      it('should not show the placements list if space bookings are not enabled for the premises', () => {
+        // Given there is a premises in the database that does not support space bookings
+        const premises = cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false })
+        cy.task('stubSinglePremises', premises)
+
+        // When I visit premises details page
+        const page = PremisesShowPage.visit(premises)
+
+        // Then I should not see a list of bookings
+        page.shouldNotShowPlacementsList()
+      })
     })
 
     it('should not show the placements list if the user lacks permission', () => {
@@ -109,6 +121,8 @@ context('Premises', () => {
 
       // When I visit premises details page
       const page = PremisesShowPage.visit(premises)
+
+      // Then I should not see a list of bookings
       page.shouldNotShowPlacementsList()
     })
   })

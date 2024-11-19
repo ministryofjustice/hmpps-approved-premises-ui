@@ -13,6 +13,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',
   'excluded_from_placement_application_allocation',
+  'cru_member_find_and_book_beta',
   'appeals_manager',
   'report_viewer',
   'future_manager',
