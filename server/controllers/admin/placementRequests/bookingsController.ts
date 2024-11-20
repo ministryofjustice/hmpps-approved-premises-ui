@@ -20,10 +20,10 @@ export default class PlacementRequestsController {
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
       const { isWomensApplication } = placementRequest.application as ApprovedPremisesApplication
-      const premises = await this.premisesService.getCas1All(req.user.token, {
+      const allPremises = await this.premisesService.getCas1All(req.user.token, {
         gender: isWomensApplication ? 'woman' : 'man',
       })
-
+      const premises = allPremises.filter(({ supportsSpaceBookings }) => !supportsSpaceBookings)
       if (!Object.keys(userInput).length) {
         const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
 

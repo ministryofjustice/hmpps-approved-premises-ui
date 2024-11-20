@@ -54,7 +54,7 @@ context('Placement Requests', () => {
     })
     const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
 
-    const preferredAps = premisesFactory.buildList(3)
+    const preferredAps = premisesFactory.buildList(3, {})
 
     const cruManagementAreas = cruManagementAreaFactory.buildList(5)
     application = addResponseToFormArtifact(application, {
@@ -79,8 +79,9 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
 
-    const cas1premises = cas1PremisesBasicSummaryFactory.buildList(3)
-    cy.task('stubCas1AllPremises', cas1premises)
+    const cas1premises = cas1PremisesBasicSummaryFactory.buildList(3, { supportsSpaceBookings: false })
+    const cas1SpaceBookingPremises = cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: true })
+    cy.task('stubCas1AllPremises', [...cas1premises, ...cas1SpaceBookingPremises])
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
 
     return {
@@ -96,6 +97,7 @@ context('Placement Requests', () => {
       preferredAps,
       booking,
       cas1premises,
+      cas1SpaceBookingPremises,
     }
   }
 
@@ -191,7 +193,9 @@ context('Placement Requests', () => {
   })
 
   it('allows me to create a booking', () => {
-    const { unmatchedPlacementRequest, cas1premises } = stubArtifacts({ isWomensApplication: false })
+    const { unmatchedPlacementRequest, cas1premises, cas1SpaceBookingPremises } = stubArtifacts({
+      isWomensApplication: false,
+    })
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit()
@@ -210,6 +214,9 @@ context('Placement Requests', () => {
 
     // And the dates should be prepopulated
     createPage.dateInputsShouldBePrepopulated()
+
+    // And only legacy premises, that don't support space bookings, are available for selection
+    createPage.premisesShouldNotBeAvailable(cas1SpaceBookingPremises[0])
 
     // When I complete the form
     createPage.completeForm('2022-01-01', '2022-02-01', cas1premises[0])
