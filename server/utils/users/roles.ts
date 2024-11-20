@@ -10,6 +10,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'matcher',
   'workflow_manager',
   'cru_member',
+  'cru_member_find_and_book_beta',
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',
   'excluded_from_placement_application_allocation',
@@ -20,13 +21,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'janitor',
 ]
 
-export const unusedRoles = [
-  'applicant',
-  'manager',
-  'legacy_manager',
-  'role_admin',
-  'cru_member_find_and_book_beta',
-] as const
+export const unusedRoles = ['applicant', 'manager', 'legacy_manager', 'role_admin'] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
 
@@ -71,6 +66,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   cru_member: {
     label: 'CRU member',
     hint: 'Manage out of service beds across all premises and areas',
+  },
+  cru_member_find_and_book_beta: {
+    label: 'CRU member beta (find and book)',
+    hint: 'Create and amend space bookings',
   },
   report_viewer: {
     label: 'Report Viewer',
