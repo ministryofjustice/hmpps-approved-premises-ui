@@ -9,5 +9,6 @@ export type Cas1PremisesBasicSummary = {
     apCode?: string;
     apArea: NamedId;
     bedCount: number;
+    supportsSpaceBookings: boolean;
 };
 

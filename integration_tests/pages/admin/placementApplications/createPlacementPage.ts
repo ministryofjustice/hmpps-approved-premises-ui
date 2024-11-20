@@ -35,4 +35,8 @@ export default class CreatePlacementPage extends Page {
       this.checkRadioByNameAndValue('premisesId', premises.id)
     }
   }
+
+  premisesShouldNotBeAvailable(premises: Cas1PremisesBasicSummary): void {
+    cy.get(`#area0 option:contains(${premises.apArea.name})`).should('not.exist')
+  }
 }

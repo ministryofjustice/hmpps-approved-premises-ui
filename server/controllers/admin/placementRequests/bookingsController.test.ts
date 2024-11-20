@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, Cas1PremisesBasicSummary } from '@approved-premises/api'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
@@ -36,8 +36,7 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('new', () => {
-    const premises = cas1PremisesBasicSummaryFactory.buildList(2)
-
+    const premises = cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: false })
     beforeEach(() => {
       jest.resetAllMocks()
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
@@ -57,8 +56,8 @@ describe('PlacementRequestsController', () => {
         premises,
         placementRequest,
         errors: {},
-        errorSummary: [],
-        errorTitle: undefined,
+        errorSummary: [] as Array<unknown>,
+        errorTitle: undefined as string,
         isWomensApplication: false,
         ...DateFormats.isoDateToDateInputs(placementRequest.expectedArrival, 'arrivalDate'),
         ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
@@ -66,6 +65,28 @@ describe('PlacementRequestsController', () => {
 
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { gender: 'man' })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+    })
+
+    it('should filter out premises that operate space-bookings rather than legacy bookings', async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
+      ;(placementRequest.application as ApprovedPremisesApplication).isWomensApplication = false
+
+      const mixedPremises: Array<Cas1PremisesBasicSummary> = [
+        ...cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: true }),
+        ...cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: false }),
+      ]
+      premisesService.getCas1All.mockResolvedValue(mixedPremises)
+
+      const requestHandler = bookingsController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'admin/placementRequests/bookings/new',
+        expect.objectContaining({
+          premises: mixedPremises.filter(({ supportsSpaceBookings }) => !supportsSpaceBookings),
+        }),
+      )
     })
 
     it(`should render the form for a women's AP with the premises and the placement request`, async () => {
@@ -76,17 +97,13 @@ describe('PlacementRequestsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
-        pageHeading: `Record a women’s Approved Premises placement`,
-        premises,
-        placementRequest,
-        errors: {},
-        errorSummary: [],
-        errorTitle: undefined,
-        isWomensApplication: true,
-        ...DateFormats.isoDateToDateInputs(placementRequest.expectedArrival, 'arrivalDate'),
-        ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'admin/placementRequests/bookings/new',
+        expect.objectContaining({
+          pageHeading: `Record a women’s Approved Premises placement`,
+          isWomensApplication: true,
+        }),
+      )
 
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { gender: 'woman' })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
