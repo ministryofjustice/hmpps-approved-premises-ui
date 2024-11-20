@@ -54,7 +54,7 @@ context('Placement Requests', () => {
     })
     const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
 
-    const preferredAps = premisesFactory.buildList(3, {})
+    const preferredAps = premisesFactory.buildList(3)
 
     const cruManagementAreas = cruManagementAreaFactory.buildList(5)
     application = addResponseToFormArtifact(application, {
