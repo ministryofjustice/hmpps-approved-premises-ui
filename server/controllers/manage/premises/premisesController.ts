@@ -35,9 +35,11 @@ export default class PremisesController {
       )
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
+      const showPlacements =
+        premises.supportsSpaceBookings && hasPermission(res.locals.user, ['cas1_space_booking_list'])
       const paginatedPlacements =
-        premises.supportsSpaceBookings &&
-        hasPermission(res.locals.user, ['cas1_space_booking_list']) &&
+        showPlacements &&
+        (activeTab !== 'search' || Boolean(crnOrName)) &&
         (await this.premisesService.getPlacements({
           token: req.user.token,
           premisesId: req.params.premisesId,
@@ -51,14 +53,15 @@ export default class PremisesController {
 
       return res.render('manage/premises/show', {
         premises,
+        showPlacements,
         activeTab,
         crnOrName,
         placements: paginatedPlacements?.data,
         hrefPrefix,
         sortBy: sortBy || tabSettings[activeTab].sortBy,
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
-        pageNumber: Number(paginatedPlacements?.pageNumber),
-        totalPages: Number(paginatedPlacements?.totalPages),
+        pageNumber: Number(paginatedPlacements?.pageNumber) || undefined,
+        totalPages: Number(paginatedPlacements?.totalPages) || undefined,
       })
     }
   }

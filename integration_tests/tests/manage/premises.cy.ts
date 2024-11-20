@@ -113,6 +113,9 @@ context('Premises', () => {
         // And I should see the search form
         page.shouldShowSearchForm()
 
+        // And I should not see the results list
+        page.shouldNotShowPlacementsResultsTable()
+
         // When I submit a search using the form
         page.searchByCrnOrName('Aadland')
 
@@ -139,7 +142,7 @@ context('Premises', () => {
         page.shouldShowNoResults()
       })
 
-      it('should not show the placements list if space bookings are not enabled for the premises', () => {
+      it('should not show the placements section if space bookings are not enabled for the premises', () => {
         // Given there is a premises in the database that does not support space bookings
         const premises = cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false })
         cy.task('stubSinglePremises', premises)
@@ -147,17 +150,19 @@ context('Premises', () => {
         // When I visit premises details page
         const page = PremisesShowPage.visit(premises)
 
-        // Then I should not see a list of bookings
-        page.shouldNotShowPlacementsList()
+        // Then I should not see the placements section
+        page.shouldNotShowPlacementsSection()
       })
     })
 
-    it('should not show the placements list if the user lacks permission', () => {
+    it('should not show the placements section if the user lacks permission', () => {
       cy.task('reset')
       // Given I am logged in as a user without access to the booking list
       signIn(['future_manager'])
       // Given there is a premises in the database
-      const premises = cas1PremisesSummaryFactory.build()
+      const premises = cas1PremisesSummaryFactory.build({
+        supportsSpaceBookings: true,
+      })
       cy.task('stubSinglePremises', premises)
 
       // And it has a list of placements
@@ -168,7 +173,7 @@ context('Premises', () => {
       const page = PremisesShowPage.visit(premises)
 
       // Then I should not see a list of bookings
-      page.shouldNotShowPlacementsList()
+      page.shouldNotShowPlacementsSection()
     })
   })
 })
