@@ -160,9 +160,7 @@ context('Premises', () => {
       // Given I am logged in as a user without access to the booking list
       signIn(['future_manager'])
       // Given there is a premises in the database
-      const premises = cas1PremisesSummaryFactory.build({
-        supportsSpaceBookings: true,
-      })
+      const premises = cas1PremisesSummaryFactory.build()
       cy.task('stubSinglePremises', premises)
 
       // And it has a list of placements
