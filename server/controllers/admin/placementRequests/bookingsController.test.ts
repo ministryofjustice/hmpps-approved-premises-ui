@@ -37,17 +37,6 @@ describe('PlacementRequestsController', () => {
 
   describe('new', () => {
     const premises = cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: false })
-    const expectedRenderParameters = {
-      pageHeading: 'Record an Approved Premises (AP) placement',
-      premises,
-      placementRequest,
-      errors: {},
-      errorSummary: [] as Array<unknown>,
-      errorTitle: undefined as string,
-      isWomensApplication: false,
-      ...DateFormats.isoDateToDateInputs(placementRequest.expectedArrival, 'arrivalDate'),
-      ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
-    }
     beforeEach(() => {
       jest.resetAllMocks()
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
@@ -62,7 +51,17 @@ describe('PlacementRequestsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', expectedRenderParameters)
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
+        pageHeading: 'Record an Approved Premises (AP) placement',
+        premises,
+        placementRequest,
+        errors: {},
+        errorSummary: [] as Array<unknown>,
+        errorTitle: undefined as string,
+        isWomensApplication: false,
+        ...DateFormats.isoDateToDateInputs(placementRequest.expectedArrival, 'arrivalDate'),
+        ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
+      })
 
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { gender: 'man' })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
@@ -82,10 +81,12 @@ describe('PlacementRequestsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
-        ...expectedRenderParameters,
-        premises: mixedPremises.filter(({ supportsSpaceBookings }) => !supportsSpaceBookings),
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'admin/placementRequests/bookings/new',
+        expect.objectContaining({
+          premises: mixedPremises.filter(({ supportsSpaceBookings }) => !supportsSpaceBookings),
+        }),
+      )
     })
 
     it(`should render the form for a women's AP with the premises and the placement request`, async () => {
@@ -96,11 +97,13 @@ describe('PlacementRequestsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
-        ...expectedRenderParameters,
-        pageHeading: `Record a women’s Approved Premises placement`,
-        isWomensApplication: true,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'admin/placementRequests/bookings/new',
+        expect.objectContaining({
+          pageHeading: `Record a women’s Approved Premises placement`,
+          isWomensApplication: true,
+        }),
+      )
 
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { gender: 'woman' })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
