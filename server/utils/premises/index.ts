@@ -144,16 +144,23 @@ export const placementTableHeader = (
   )
 }
 
-export const placementTableRows = (premisesId: string, placements: Array<Cas1SpaceBookingSummary>): Array<TableRow> =>
-  placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => [
-    htmlValue(
-      `<a href="${managePaths.premises.placements.show({
-        premisesId,
-        placementId: id,
-      })}" data-cy-id="${id}">${laoName(person as unknown as FullPerson)}, ${person.crn}</a>`,
-    ),
-    htmlValue(getTierOrBlank(tier)),
-    textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
-    textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
-    textValue(keyWorkerAllocation?.keyWorker?.name),
-  ])
+export const placementTableRows = (
+  activeTab: string,
+  premisesId: string,
+  placements: Array<Cas1SpaceBookingSummary>,
+): Array<TableRow> =>
+  placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => {
+    const fieldValues: Record<Cas1SpaceBookingSummarySortField, TableCell> = {
+      personName: htmlValue(
+        `<a href="${managePaths.premises.placements.show({
+          premisesId,
+          placementId: id,
+        })}" data-cy-id="${id}">${laoName(person as unknown as FullPerson)}, ${person.crn}</a>`,
+      ),
+      tier: htmlValue(getTierOrBlank(tier)),
+      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
+      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
+      keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name),
+    }
+    return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
+  })
