@@ -5,6 +5,7 @@
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
 import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellation';
 import type { Cas1SpaceBookingDates } from './Cas1SpaceBookingDates';
+import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
 import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
 import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
 import type { NamedId } from './NamedId';
@@ -33,8 +34,7 @@ export type Cas1SpaceBooking = {
      * actual departure date or, if not known, the expected departure date
      */
     canonicalDepartureDate: string;
-    departureReason?: NamedId;
-    departureMoveOnCategory?: NamedId;
+    departure?: Cas1SpaceBookingDeparture;
     createdAt: string;
     keyWorkerAllocation?: Cas1KeyWorkerAllocation;
     otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;

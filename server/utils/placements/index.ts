@@ -123,17 +123,21 @@ export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => 
   }
 }
 
-export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => ({
-  rows: [
-    summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-    summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
-    summaryRow('Departure time', formatTime(placement.actualDepartureDate)),
-    summaryRow('Departure reason', placement.departureReason?.name),
-    summaryRow('Breach or recall', null),
-    summaryRow('Move on', placement.departureMoveOnCategory?.name),
-    summaryRow('More information', null),
-  ].filter(Boolean),
-})
+export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => {
+  const departureReason = placement.departure?.parentReason || placement.departure?.reason
+  const breachOrRecall = placement.departure?.parentReason ? placement.departure?.reason : null
+  return {
+    rows: [
+      summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
+      summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
+      summaryRow('Departure time', formatTime(placement.actualDepartureDate)),
+      summaryRow('Departure reason', departureReason?.name),
+      summaryRow('Breach or recall', breachOrRecall?.name),
+      summaryRow('Move on', placement.departure?.moveOnCategory?.name),
+      summaryRow('More information', placement.departure?.notes),
+    ].filter(Boolean),
+  }
+}
 
 const listOtherBookings = (placement: Cas1SpaceBooking): string =>
   (placement.otherBookingsInPremisesForCrn || [])

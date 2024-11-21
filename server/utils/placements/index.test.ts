@@ -234,7 +234,7 @@ describe('placementUtils', () => {
       })
     })
 
-    it('should return the departure information', () => {
+    it('should return the departure information for Breach or Recall departure', () => {
       expect(departureInformation(placement)).toEqual({
         rows: [
           {
@@ -249,8 +249,37 @@ describe('placementUtils', () => {
             key: { text: 'Departure time' },
             value: { text: DateFormats.timeFromDate(DateFormats.isoToDateObj(placement.actualDepartureDate)) },
           },
-          { key: { text: 'Departure reason' }, value: { text: placement.departureReason?.name } },
-          { key: { text: 'Move on' }, value: { text: placement.departureMoveOnCategory?.name } },
+          { key: { text: 'Departure reason' }, value: { text: placement.departure?.parentReason?.name } },
+          { key: { text: 'Breach or recall' }, value: { text: placement.departure?.reason?.name } },
+          { key: { text: 'Move on' }, value: { text: placement.departure?.moveOnCategory?.name } },
+          { key: { text: 'More information' }, value: { text: placement.departure?.notes } },
+        ],
+      })
+    })
+
+    it('should return the departure information for non-Breach or recall departure', () => {
+      const nbPlacement = cas1SpaceBookingFactory.departedNonBreach().build()
+      expect(departureInformation(nbPlacement)).toEqual({
+        rows: [
+          {
+            key: { text: 'Expected departure date' },
+            value: { text: DateFormats.isoDateToUIDate(nbPlacement.expectedDepartureDate) },
+          },
+          {
+            key: { text: 'Actual departure date' },
+            value: { text: DateFormats.isoDateToUIDate(nbPlacement.actualDepartureDate) },
+          },
+          {
+            key: { text: 'Departure time' },
+            value: {
+              text: DateFormats.timeFromDate(DateFormats.isoToDateObj(nbPlacement.actualDepartureDate)),
+            },
+          },
+          {
+            key: { text: 'Departure reason' },
+            value: { text: nbPlacement.departure?.reason?.name },
+          },
+          { key: { text: 'More information' }, value: { text: nbPlacement.departure?.notes } },
         ],
       })
     })

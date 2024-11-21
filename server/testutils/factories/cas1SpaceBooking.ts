@@ -4,6 +4,7 @@ import { Cas1KeyWorkerAllocation, Cas1SpaceBooking, Person } from '@approved-pre
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import cas1SpaceBookingRequirementsFactory from './spaceBookingRequirements'
+import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
 import userFactory from './user'
 
 import staffMemberFactory from './staffMember'
@@ -15,16 +16,14 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
     return this.params({
       actualArrivalDate: undefined,
       actualDepartureDate: undefined,
-      departureReason: undefined,
-      departureMoveOnCategory: undefined,
+      departure: undefined,
     })
   }
 
   current() {
     return this.params({
       actualDepartureDate: undefined,
-      departureReason: undefined,
-      departureMoveOnCategory: undefined,
+      departure: undefined,
     })
   }
 
@@ -32,9 +31,14 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
     return this.params({
       actualArrivalDate: undefined,
       actualDepartureDate: undefined,
-      departureReason: undefined,
-      departureMoveOnCategory: undefined,
+      departure: undefined,
       nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
+    })
+  }
+
+  departedNonBreach() {
+    return this.params({
+      departure: cas1SpaceBookingDepartureFactory.build({ parentReason: undefined, moveOnCategory: undefined }),
     })
   }
 }
@@ -66,8 +70,7 @@ export default Cas1SpaceBookingFactory.define(() => {
     actualDepartureDate,
     canonicalArrivalDate,
     canonicalDepartureDate,
-    departureReason: { id: faker.string.uuid(), name: faker.word.noun() },
-    departureMoveOnCategory: { id: faker.string.uuid(), name: faker.word.noun() },
+    departure: cas1SpaceBookingDepartureFactory.build(),
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
     keyWorkerAllocation: { keyWorker: staffMemberFactory.build() } as Cas1KeyWorkerAllocation,
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
