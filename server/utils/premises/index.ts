@@ -1,4 +1,5 @@
 import type {
+  ApArea,
   Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
   Cas1SpaceBookingResidency,
@@ -50,7 +51,7 @@ export const groupCas1SummaryPremisesSelectOptions = (
   context: Record<string, unknown>,
   fieldName: string = 'premisesId',
 ): Array<SelectGroup> => {
-  const apAreas = premises.reduce((map, { apArea }) => {
+  const apAreas: Record<string, ApArea> = premises.reduce((map, { apArea }) => {
     map[apArea.id] = apArea
     return map
   }, {})
@@ -94,20 +95,20 @@ export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSumm
     })
 }
 
-export const tabTextMap: Record<Cas1SpaceBookingResidency, string> = {
+export type PremisesTab = Cas1SpaceBookingResidency | 'search'
+
+export const tabTextMap: Record<PremisesTab, string> = {
   upcoming: 'Upcoming',
   current: 'Current',
   historic: 'Historical',
+  search: 'Search for a booking',
 }
 
-export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: string): Array<TabItem> => {
+export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: PremisesTab): Array<TabItem> => {
   const getSelfLink = (tab: string): string =>
-    `${managePaths.premises.show({ premisesId: premises.id })}${createQueryString(
-      {
-        activeTab: tab,
-      },
-      { addQueryPrefix: true },
-    )}`
+    `${managePaths.premises.show({ premisesId: premises.id })}?${createQueryString({
+      activeTab: tab,
+    })}`
   return Object.entries(tabTextMap).map(([key, label]) => {
     return { text: label, active: activeTab === key, href: getSelfLink(key) }
   })
@@ -125,10 +126,11 @@ const baseColumns: Array<ColumnDefinition> = [
 ]
 const keyWorkerColumn: ColumnDefinition = { title: 'Key worker', fieldName: 'keyWorkerName' }
 
-const columnMap: Record<Cas1SpaceBookingResidency, Array<ColumnDefinition>> = {
+const columnMap: Record<PremisesTab, Array<ColumnDefinition>> = {
   upcoming: [...baseColumns, keyWorkerColumn],
   current: [...baseColumns, keyWorkerColumn],
   historic: baseColumns,
+  search: [...baseColumns, keyWorkerColumn],
 }
 
 export const placementTableHeader = (

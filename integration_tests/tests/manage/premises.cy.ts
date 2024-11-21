@@ -94,7 +94,55 @@ context('Premises', () => {
         page.shouldHaveTabSelected('Current')
       })
 
-      it('should not show the placements list if space bookings are not enabled for the premises', () => {
+      it('should let the user search for placements by CRN or name', () => {
+        // Given there is a premises in the database
+        const premises = cas1PremisesSummaryFactory.build()
+        cy.task('stubSinglePremises', premises)
+        const placements = cas1SpaceBookingSummaryFactory.buildList(1)
+        cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, pageSize: 9 })
+
+        // When I visit premises details page
+        const page = PremisesShowPage.visit(premises)
+
+        // And I select to the 'search' tab
+        page.shouldSelectTab('Search for a booking')
+
+        // Then the 'search' tab should be selected
+        page.shouldHaveTabSelected('Search for a booking')
+
+        // And I should see the search form
+        page.shouldShowSearchForm()
+
+        // And I should not see the results list
+        page.shouldNotShowPlacementsResultsTable()
+
+        // When I submit a search using the form
+        page.searchByCrnOrName('Aadland')
+
+        // Then the 'search' tab should be selected
+        page.shouldHaveTabSelected('Search for a booking')
+
+        // And the search form should be populated with my search term
+        page.shouldShowSearchForm('Aadland')
+
+        // And I should see the results
+        page.shouldShowListOfPlacements(placements)
+
+        // When I search for a name that returns no results
+        cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements: [] })
+        page.searchByCrnOrName('No results for this query')
+
+        // Then the 'search' tab should be selected
+        page.shouldHaveTabSelected('Search for a booking')
+
+        // And the search form should be populated with my search term
+        page.shouldShowSearchForm('No results for this query')
+
+        // Then I should see a message that there are no results
+        page.shouldShowNoResults()
+      })
+
+      it('should not show the placements section if space bookings are not enabled for the premises', () => {
         // Given there is a premises in the database that does not support space bookings
         const premises = cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false })
         cy.task('stubSinglePremises', premises)
@@ -102,12 +150,12 @@ context('Premises', () => {
         // When I visit premises details page
         const page = PremisesShowPage.visit(premises)
 
-        // Then I should not see a list of bookings
-        page.shouldNotShowPlacementsList()
+        // Then I should not see the placements section
+        page.shouldNotShowPlacementsSection()
       })
     })
 
-    it('should not show the placements list if the user lacks permission', () => {
+    it('should not show the placements section if the user lacks permission', () => {
       cy.task('reset')
       // Given I am logged in as a user without access to the booking list
       signIn(['future_manager'])
@@ -123,7 +171,7 @@ context('Premises', () => {
       const page = PremisesShowPage.visit(premises)
 
       // Then I should not see a list of bookings
-      page.shouldNotShowPlacementsList()
+      page.shouldNotShowPlacementsSection()
     })
   })
 })

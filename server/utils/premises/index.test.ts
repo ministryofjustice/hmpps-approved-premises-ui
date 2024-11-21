@@ -211,6 +211,11 @@ describe('premisesUtils', () => {
           href: `/manage/premises/${premises.id}?activeTab=historic`,
           text: 'Historical',
         },
+        {
+          active: false,
+          href: `/manage/premises/${premises.id}?activeTab=search`,
+          text: 'Search for a booking',
+        },
       ]
       const tabSet = premisesTabItems(premises, 'upcoming')
       expect(tabSet).toEqual(expectedTabs)

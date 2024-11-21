@@ -42,7 +42,8 @@ export default class PremisesService {
   async getPlacements(args: {
     token: string
     premisesId: string
-    status: string
+    status?: string
+    crnOrName?: string
     page: number
     perPage: number
     sortBy: Cas1SpaceBookingSummarySortField

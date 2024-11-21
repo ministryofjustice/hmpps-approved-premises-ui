@@ -1,5 +1,6 @@
 import { PaginatedResponse } from '@approved-premises/ui'
 import { Cas1SpaceBooking, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import PremisesClient from './premisesClient'
 import paths from '../paths/api'
 
@@ -75,7 +76,61 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
   })
 
   describe('getPlacements', () => {
-    it('should return a list of placements for a premises', async () => {
+    it.each(['upcoming', 'current', 'historic'] as const)(
+      'should return a list of %s placements for a premises',
+      async status => {
+        const premises = extendedPremisesSummaryFactory.build()
+        const paginatedPlacements = paginatedResponseFactory.build({
+          data: cas1SpaceBookingSummaryFactory.buildList(3),
+          pageSize: '20',
+          totalPages: '2',
+          totalResults: '40',
+        }) as PaginatedResponse<Cas1SpaceBookingSummary>
+        const page = 1
+        const sortBy = 'personName'
+        const sortDirection = 'asc'
+
+        provider.addInteraction({
+          state: 'Server is healthy',
+          uponReceiving: `A request to get ${status} placements for a premises`,
+          withRequest: {
+            method: 'GET',
+            path: paths.premises.placements.index({ premisesId: premises.id }),
+            query: {
+              residency: status,
+              sortBy,
+              sortDirection,
+              page: String(page),
+              perPage: paginatedPlacements.pageSize,
+            },
+            headers: {
+              authorization: `Bearer ${sampleToken}`,
+            },
+          },
+          willRespondWith: {
+            status: 200,
+            body: paginatedPlacements.data,
+            headers: {
+              'X-Pagination-PageSize': paginatedPlacements.pageSize,
+              'X-Pagination-TotalPages': paginatedPlacements.totalPages,
+              'X-Pagination-TotalResults': paginatedPlacements.totalResults,
+            },
+          },
+        })
+
+        const output = await premisesClient.getPlacements({
+          premisesId: premises.id,
+          status,
+          page,
+          perPage: Number(paginatedPlacements.pageSize),
+          sortBy,
+          sortDirection,
+        })
+        expect(output).toEqual(paginatedPlacements)
+      },
+    )
+
+    it('should return a list of all placements matching a CRN or name for a premises', async () => {
       const premises = extendedPremisesSummaryFactory.build()
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),
@@ -83,19 +138,19 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         totalPages: '2',
         totalResults: '40',
       }) as PaginatedResponse<Cas1SpaceBookingSummary>
-      const status = 'current'
+      const crnOrName = faker.person.firstName()
       const page = 1
-      const sortBy = 'personName'
-      const sortDirection = 'asc'
+      const sortBy = 'canonicalArrivalDate'
+      const sortDirection = 'desc'
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get placements for a premises',
+        uponReceiving: `A request to get placements matching "${crnOrName}" for a premises`,
         withRequest: {
           method: 'GET',
           path: paths.premises.placements.index({ premisesId: premises.id }),
           query: {
-            residency: status,
+            crnOrName,
             sortBy,
             sortDirection,
             page: String(page),
@@ -118,7 +173,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
 
       const output = await premisesClient.getPlacements({
         premisesId: premises.id,
-        status,
+        crnOrName,
         page,
         perPage: Number(paginatedPlacements.pageSize),
         sortBy,

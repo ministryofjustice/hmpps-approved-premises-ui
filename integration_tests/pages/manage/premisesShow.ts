@@ -70,8 +70,29 @@ export default class PremisesShowPage extends Page {
     cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
   }
 
-  shouldNotShowPlacementsList(): void {
+  shouldNotShowPlacementsSection(): void {
+    cy.contains('All bookings').should('not.exist')
     cy.get('.moj-sub-navigation__list').should('not.exist')
+  }
+
+  shouldNotShowPlacementsResultsTable(): void {
     cy.get('.govuk-table').should('not.exist')
+  }
+
+  shouldShowSearchForm(crnOrName?: string) {
+    this.getLabel('Search for a booking')
+
+    if (crnOrName) {
+      this.verifyTextInputContentsById('crnOrName', crnOrName)
+    }
+  }
+
+  searchByCrnOrName(crnOrName: string) {
+    this.clearAndCompleteTextInputById('crnOrName', crnOrName)
+    cy.get('button').contains('Search').click()
+  }
+
+  shouldShowNoResults() {
+    cy.get('p').contains('There are no results for your search.').should('exist')
   }
 }
