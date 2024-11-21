@@ -1,4 +1,4 @@
-import type { FullPerson } from '@approved-premises/api'
+import type { Cas1SpaceBookingResidency, FullPerson } from '@approved-premises/api'
 import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
@@ -223,48 +223,60 @@ describe('premisesUtils', () => {
   })
 
   describe('placementTableHeader', () => {
-    it('should return the sortable table headings for the placement list', () => {
-      const sortBy = 'personName'
-      const tableHeadings = placementTableHeader('upcoming', sortBy, 'asc', 'Test_Href_Prefix')
-      const expectedTableHeadings = [
-        {
-          attributes: { 'aria-sort': 'ascending', 'data-cy-sort-field': 'personName' },
-          html: '<a href="Test_Href_Prefix?sortBy=personName&sortDirection=desc">Name and CRN</a>',
-        },
-        {
-          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'tier' },
-          html: '<a href="Test_Href_Prefix?sortBy=tier">Tier</a>',
-        },
-        {
-          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalArrivalDate' },
-          html: '<a href="Test_Href_Prefix?sortBy=canonicalArrivalDate">Arrival date</a>',
-        },
-        {
-          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalDepartureDate' },
-          html: '<a href="Test_Href_Prefix?sortBy=canonicalDepartureDate">Departure date</a>',
-        },
-        {
+    it.each(['upcoming', 'current', 'historic'])(
+      'should return the sortable table headings for tab "%s" of the placement list',
+      (activeTab: Cas1SpaceBookingResidency) => {
+        const sortBy = 'personName'
+        const tableHeadings = placementTableHeader(activeTab, sortBy, 'asc', 'Test_Href_Prefix')
+        const baseTableHeadings = [
+          {
+            attributes: { 'aria-sort': 'ascending', 'data-cy-sort-field': 'personName' },
+            html: '<a href="Test_Href_Prefix?sortBy=personName&sortDirection=desc">Name and CRN</a>',
+          },
+          {
+            attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'tier' },
+            html: '<a href="Test_Href_Prefix?sortBy=tier">Tier</a>',
+          },
+          {
+            attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalArrivalDate' },
+            html: '<a href="Test_Href_Prefix?sortBy=canonicalArrivalDate">Arrival date</a>',
+          },
+          {
+            attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalDepartureDate' },
+            html: '<a href="Test_Href_Prefix?sortBy=canonicalDepartureDate">Departure date</a>',
+          },
+        ]
+        const keyworkerColumn = {
           attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'keyWorkerName' },
           html: '<a href="Test_Href_Prefix?sortBy=keyWorkerName">Key worker</a>',
-        },
-      ]
-      expect(tableHeadings).toEqual(expectedTableHeadings)
-    })
+        }
+        const expectedTableHeadings =
+          activeTab === 'historic' ? baseTableHeadings : [...baseTableHeadings, keyworkerColumn]
+        expect(tableHeadings).toEqual(expectedTableHeadings)
+      },
+    )
   })
   describe('placementTableRows', () => {
-    it('should return the rows of the placement summary table', () => {
-      const placements = cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' })
-      const tableRows = placementTableRows('Test_Premises_Id', placements)
-      const expectedRows = placements.map(placement => [
-        {
-          html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoName(placement.person as unknown as FullPerson)}, ${placement.person.crn}</a>`,
-        },
-        { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
-        { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
-        { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
-        { text: placement.keyWorkerAllocation.keyWorker.name },
-      ])
-      expect(tableRows).toEqual(expectedRows)
-    })
+    it.each(['upcoming', 'current', 'historic'])(
+      'should return the rows of the placement summary table for the "%s" tab',
+      (activeTab: Cas1SpaceBookingResidency) => {
+        const placements = cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' })
+        const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
+        const expectedRows = placements.map(placement => {
+          const baseColumns = [
+            {
+              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoName(placement.person as unknown as FullPerson)}, ${placement.person.crn}</a>`,
+            },
+            { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
+            { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
+            { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
+          ]
+          return activeTab === 'historic'
+            ? baseColumns
+            : [...baseColumns, { text: placement.keyWorkerAllocation.keyWorker.name }]
+        })
+        expect(tableRows).toEqual(expectedRows)
+      },
+    )
   })
 })
