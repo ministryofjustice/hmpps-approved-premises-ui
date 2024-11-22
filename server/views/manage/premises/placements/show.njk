@@ -48,8 +48,10 @@
     <h2 class="govuk-heading-m">Departure information</h2>
     {{ govukSummaryList(PlacementUtils.departureInformation(placement)) }}
 
-    <h2 class="govuk-heading-m">Other</h2>
-    {{ govukSummaryList(PlacementUtils.otherBookings(placement)) }}
+    {% if placement.otherBookingsInPremisesForCrn and placement.otherBookingsInPremisesForCrn.length %}
+        <h2 class="govuk-heading-m">Other</h2>
+        {{ govukSummaryList(PlacementUtils.otherBookings(placement)) }}
+    {% endif %}
 
 {% endblock %}
 
