@@ -1,22 +1,12 @@
 import { Page } from '@playwright/test'
 import { visitDashboard } from './apply'
-import { ConfirmPage, ConfirmationPage } from '../pages/match'
 import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'
 import { SearchScreen } from '../pages/match/searchScreen'
 import { BookingScreen } from '../pages/match/bookingScreen'
-
-export const confirmBooking = async (page: Page) => {
-  const confirmPage = new ConfirmPage(page)
-  await confirmPage.clickConfirm()
-}
-
-export const shouldShowBookingConfirmation = async (page: Page) => {
-  const confirmationPage = new ConfirmationPage(page)
-  await confirmationPage.shouldShowSuccessMessage()
-}
+import { OccupancyViewScreen } from '../pages/match/occupancyViewScreen'
 
 export const matchAndBookApplication = async ({
   applicationId,
@@ -78,6 +68,11 @@ export const matchAndBookApplication = async ({
   // And I select an AP
   const premisesName = await searchScreen.retrieveFirstAPName()
   await searchScreen.selectFirstAP()
+
+  // Then I should see the occupancy view screen for that AP
+  const occupancyViewScreen = await OccupancyViewScreen.initialize(page, premisesName)
+  // And I continue to booking
+  await occupancyViewScreen.clickContinue()
 
   // Then I should see the booking screen for that AP
   const bookingScreen = await BookingScreen.initialize(page, premisesName)

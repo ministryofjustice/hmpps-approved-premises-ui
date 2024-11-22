@@ -38,6 +38,7 @@ import {
   placementRequestSummaryListForMatching,
   postcodeRow,
   premisesNameRow,
+  redirectToSpaceBookingsNew,
   requirementsHtmlString,
   spaceBookingPersonNeedsSummaryCardRows,
   spaceBookingPremisesSummaryCardRows,
@@ -265,6 +266,39 @@ describe('matchUtils', () => {
             apType,
             startDate,
             durationInDays,
+          },
+          { addQueryPrefix: true },
+        )}`,
+      )
+    })
+  })
+
+  describe('Continue to Occupancy View', () => {
+    it('returns a link to the Occupancy View page', () => {
+      const placementRequestId = '123'
+      const premisesName = 'Hope House'
+      const premisesId = 'abc'
+      const apType = 'pipe'
+      const startDate = '2022-01-01'
+      const durationDays = '1'
+
+      redirectToSpaceBookingsNew({
+        placementRequestId,
+        premisesName,
+        premisesId,
+        apType,
+        startDate,
+        durationDays,
+      })
+
+      expect(
+        `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+          {
+            premisesName,
+            premisesId,
+            apType,
+            startDate,
+            durationDays,
           },
           { addQueryPrefix: true },
         )}`,
