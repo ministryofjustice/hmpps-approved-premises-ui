@@ -1,7 +1,7 @@
-import { Page, expect } from '@playwright/test'
-import { BasePage } from '../basePage'
+import { Locator, Page, expect } from '@playwright/test'
+import { PaginatedPage } from '../paginatedPage'
 
-export class PremisesPage extends BasePage {
+export class PremisesPage extends PaginatedPage {
   static async initialize(page: Page, title?: string) {
     if (title) {
       await expect(page.locator('h1')).toContainText(title)
@@ -44,5 +44,9 @@ export class PremisesPage extends BasePage {
   async viewOutOfServiceBedRecords() {
     await this.page.getByRole('button', { name: 'Actions' }).click()
     await this.page.getByRole('menuitem', { name: 'Manage out of service bed records' }).click()
+  }
+
+  async openBookingFromRow(bookingRow: Locator) {
+    await bookingRow.getByRole('link').click()
   }
 }

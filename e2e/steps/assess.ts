@@ -1,9 +1,10 @@
 import { Page } from '@playwright/test'
 import { ApplicationType, TestOptions } from '@approved-premises/e2e'
 import { AssessPage, ConfirmationPage, ListPage, TasklistPage } from '../pages/assess'
-import { visitDashboard } from './apply'
 import { assessmentShouldHaveCorrectDeadlineAndAllocatedUser, assignAssessmentToMe } from './workflow'
 import { verifyEmailSent } from './email'
+import { DateFormats } from '../../server/utils/dateUtils'
+import { visitDashboard } from './signIn'
 
 interface AssessApplicationOptions {
   applicationType?: ApplicationType
@@ -169,7 +170,9 @@ export const addMatchingInformation = async (page: Page) => {
   let endDate
 
   if (await page.locator('.dates-of-placement').isVisible()) {
-    ;[startDate, endDate] = (await page.locator('.dates-of-placement').textContent()).split(' - ') as [string, string]
+    ;[startDate, endDate] = (await page.locator('.dates-of-placement').textContent())
+      .split(' - ')
+      .map(value => DateFormats.dateObjToIsoDate(new Date(value.trim())))
   }
   const duration = await page.locator('.placement-duration').textContent()
 

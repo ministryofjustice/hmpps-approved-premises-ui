@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test'
-import { Premises } from '../../server/@types/shared'
+import { Page, expect } from '@playwright/test'
+import { Premises } from '@approved-premises/api'
 
 export class BasePage {
   constructor(public readonly page: Page) {}
@@ -81,5 +81,13 @@ export class BasePage {
       .innerText()
 
     return premisesNames.split('\n')[1]
+  }
+
+  async clickTab(label: string): Promise<void> {
+    await this.page.getByLabel('Sub navigation').getByRole('link', { name: label }).click()
+  }
+
+  async shouldShowSuccessBanner(label: string): Promise<void> {
+    await expect(this.page.getByRole('alert', { name: 'success' })).toContainText(label)
   }
 }

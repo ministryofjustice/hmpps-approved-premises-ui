@@ -1,8 +1,7 @@
-/* eslint-disable no-await-in-loop */
 import { expect } from '@playwright/test'
-import { BasePage } from '../basePage'
+import { PaginatedPage } from '../paginatedPage'
 
-export class ListPage extends BasePage {
+export class ListPage extends PaginatedPage {
   async getAssignmentWithId(id: string, isAllocated: boolean) {
     if (!isAllocated) {
       await this.page
@@ -20,21 +19,9 @@ export class ListPage extends BasePage {
       .getByRole('row')
       .filter({ has: this.page.getByText('Assessment') })
       .filter({ has: this.page.locator(`[data-cy-applicationId="${id}"]`) })
-    const nextLink = this.page.getByRole('link', { name: 'Next' })
+      .first()
 
-    try {
-      await expect(assessmentRow).toBeVisible({ timeout: 1000 })
-    } catch (err) {
-      try {
-        await expect(nextLink).toBeVisible()
-      } catch {
-        throw err
-      }
-      await nextLink.click()
-      await this.getAssessmentRow(id)
-    }
-
-    return assessmentRow.first()
+    return this.tryNextPageUntilFound(assessmentRow)
   }
 
   async chooseAssessmentWithId(id: string, isAllocated: boolean) {
@@ -69,47 +56,6 @@ export class ListPage extends BasePage {
       .first()
       .getByRole('link')
 
-    const nextLink = this.page.getByRole('link', { name: 'Next' })
-
-    try {
-      await expect(placementApplication).toBeVisible({ timeout: 1000 })
-      await placementApplication.click()
-    } catch (err) {
-      try {
-        await expect(nextLink).toBeVisible()
-      } catch {
-        throw err
-      }
-      await nextLink.click()
-      await this.choosePlacementApplicationWithId(id)
-    }
-  }
-
-  async chooseFirstAssessment() {
-    await this.page
-      .getByRole('row')
-      .filter({ has: this.page.getByText('Assessment') })
-      .first()
-      .getByRole('link')
-      .click()
-  }
-
-  async chooseFirstPlacementRequest() {
-    await this.page
-      .getByRole('row')
-      .filter({ has: this.page.getByText('Placement request') })
-      .first()
-      .getByRole('link')
-      .click()
-  }
-
-  async choosePlacementRequestWithId(id: string) {
-    const assessmentRows = this.page.getByRole('row').filter({ has: this.page.getByText('Placement request') })
-
-    await assessmentRows
-      .filter({ has: this.page.locator(`[data-cy-applicationId="${id}"]`) })
-      .first()
-      .getByRole('link')
-      .click()
+    return (await this.tryNextPageUntilFound(placementApplication)).click()
   }
 }

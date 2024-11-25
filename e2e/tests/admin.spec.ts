@@ -1,13 +1,12 @@
 import { expect } from '@playwright/test'
 import { test } from '../test'
-import { visitDashboard } from '../steps/apply'
 import { ReportsPage } from '../pages/admin/reports'
 import { UserList } from '../pages/admin/listUsers'
 import { AddUser } from '../pages/admin/addUser'
 import { EditUser, roles } from '../pages/admin/editUser'
 import { NewUserConfirmationPage } from '../pages/admin/newUserConfirmationPage'
 import { DeleteUserConfirmationPage } from '../pages/admin/deleteUserConfirmationPage'
-import { signIn } from '../steps/signIn'
+import { signIn, visitDashboard } from '../steps/signIn'
 
 test.describe.configure({ mode: 'parallel' })
 
