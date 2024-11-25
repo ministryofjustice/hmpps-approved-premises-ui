@@ -1,5 +1,7 @@
 import { Page, expect } from '@playwright/test'
 import { ApplicationType } from '@approved-premises/e2e'
+import { faker } from '@faker-js/faker'
+import { addDays, addMonths } from 'date-fns'
 import { BasePage } from '../basePage'
 
 export class ApplyPage extends BasePage {
@@ -11,24 +13,21 @@ export class ApplyPage extends BasePage {
   }
 
   async fillReleaseDateField(applicationType: ApplicationType) {
-    const sevenMonths = 1000 * 60 * 60 * 24 * 7 * 4 * 7
-    const twoWeeks = 1000 * 60 * 60 * 24 * 14
-    const threeDays = 1000 * 60 * 60 * 24 * 3
+    const today = new Date()
 
-    const releaseTimescale = {
-      emergency: threeDays,
-      shortNotice: twoWeeks,
-      standard: sevenMonths,
-    }[applicationType]
+    let releaseDate: Date
 
-    const releaseDate = new Date(new Date().getTime() + releaseTimescale)
-    const dateFields = {
-      day: releaseDate.getDate().toString(),
-      month: (releaseDate.getMonth() + 1).toString(),
-      year: releaseDate.getFullYear().toString(),
+    if (applicationType === 'emergency') {
+      releaseDate = faker.date.between({ from: addDays(today, 1), to: addDays(today, 8) })
+    } else if (applicationType === 'shortNotice') {
+      releaseDate = faker.date.between({ from: addDays(today, 9), to: addDays(today, 29) })
+    } else {
+      releaseDate = faker.date.soon({ days: 30, refDate: addMonths(today, 7) })
     }
 
-    await this.fillDateField(dateFields)
+    const [year, month, day] = releaseDate.toISOString().split(/[-T]/)
+
+    await this.fillDateField({ year, month, day })
   }
 
   async fillNamedDateField({ day, month, year }: { day: string; month: string; year: string }, fieldLabel: string) {

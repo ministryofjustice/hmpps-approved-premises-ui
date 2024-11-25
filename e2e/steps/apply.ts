@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test'
 
 import { AppealDecision, ApplicationType, TestOptions } from '@approved-premises/e2e'
+import { Premises } from '@approved-premises/api'
 import {
   ApplyPage,
   CRNPage,
@@ -11,19 +12,12 @@ import {
   ListPage,
   StartPage,
   TasklistPage,
-} from '../pages/apply/index'
+} from '../pages/apply'
 import { BasePage } from '../pages/basePage'
 import { ShowPage } from '../pages/apply/showPage'
 import { assessmentShouldHaveCorrectDeadlineAndAllocatedUser } from './workflow'
 import { SelectIndexOffencePage } from '../pages/apply/selectIndexOffencePage'
-import { Premises } from '../../server/@types/shared'
-
-export const visitDashboard = async (page: Page): Promise<DashboardPage> => {
-  const dashboard = new DashboardPage(page)
-  await dashboard.goto()
-
-  return dashboard
-}
+import { visitDashboard } from './signIn'
 
 export const startAnApplication = async (dashboard: DashboardPage, page: Page) => {
   await dashboard.clickApply()
