@@ -463,7 +463,7 @@ export type BackwardsCompatibleApplyApType = ApType | 'standard'
 
 export type EntityType = 'booking' | 'lost-bed'
 
-export type DepartureFormData = Partial<
+export type DepartureFormSessionData = Partial<
   ObjectWithDateParts<'departureDate'> & {
     departureTime: string
     reasonId: string

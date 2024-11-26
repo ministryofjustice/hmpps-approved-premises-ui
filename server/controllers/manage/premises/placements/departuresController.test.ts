@@ -21,6 +21,13 @@ describe('DeparturesController', () => {
   const placementService = createMock<PlacementService>()
   const departuresController = new DeparturesController(premisesService, placementService)
 
+  const errorsAndUserInput = createMock<ErrorsAndUserInput>({
+    errors: {},
+    errorSummary: [],
+    errorTitle: '',
+    userInput: {},
+  })
+
   const premisesId = 'premises-id'
   const placement = spaceBookingFactory.build()
 
@@ -64,7 +71,6 @@ describe('DeparturesController', () => {
 
   describe('new', () => {
     it('renders the form with placement information, list of root departure reasons as radios, errors and user input', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
       const requestHandler = departuresController.new()
@@ -85,12 +91,6 @@ describe('DeparturesController', () => {
 
     it('renders the form with data saved in session', async () => {
       placementService.getDepartureSessionData.mockReturnValue(departureFormData)
-
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>({
-        errors: {},
-        errorSummary: [],
-        userInput: {},
-      })
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
       const requestHandler = departuresController.new()
@@ -276,7 +276,6 @@ describe('DeparturesController', () => {
   describe('breachOrRecallReason', () => {
     it('renders the Breach or recall reason form with placement information, list of breach or recall departure reasons, errors and user input', async () => {
       placementService.getDepartureSessionData.mockReturnValue(departureFormData)
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
       const requestHandler = departuresController.breachOrRecallReason()
@@ -383,7 +382,6 @@ describe('DeparturesController', () => {
         ...departureFormData,
         reasonId: PLANNED_MOVE_ON_REASON_ID,
       })
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
       const requestHandler = departuresController.moveOnCategory()
@@ -491,7 +489,6 @@ describe('DeparturesController', () => {
         ...departureFormData,
         reasonId: rootDepartureReason1.id,
       })
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
       const requestHandler = departuresController.notes()

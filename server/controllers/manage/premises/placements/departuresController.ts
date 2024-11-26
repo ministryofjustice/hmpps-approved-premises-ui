@@ -1,6 +1,6 @@
 import { type Request, RequestHandler, type Response } from 'express'
-import { Cas1NewDeparture } from '@approved-premises/api'
-import { DepartureFormData, ObjectWithDateParts } from '@approved-premises/ui'
+import { Cas1NewDeparture, Cas1SpaceBooking } from '@approved-premises/api'
+import { DepartureFormSessionData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import {
@@ -15,7 +15,16 @@ import paths from '../../../../paths/manage'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
 
 type DepartureFormErrors = {
-  [K in keyof DepartureFormData]: string
+  [K in keyof DepartureFormSessionData]: string
+}
+
+type FormPageData = {
+  token: string
+  premisesId: string
+  placementId: string
+  placement: Cas1SpaceBooking
+  departureFormSessionData: DepartureFormSessionData
+  errorsAndUserInput: ErrorsAndUserInput
 }
 
 export default class DeparturesController {
@@ -24,32 +33,50 @@ export default class DeparturesController {
     private readonly placementService: PlacementService,
   ) {}
 
+  private async getFormPageData(req: Request): Promise<FormPageData> {
+    const { token } = req.user
+    const { premisesId, placementId } = req.params
+    const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
+    const errorsAndUserInput = fetchErrorsAndUserInput(req)
+    const departureFormSessionData = this.placementService.getDepartureSessionData(placementId, req.session)
+
+    return {
+      token,
+      premisesId,
+      placementId,
+      placement,
+      errorsAndUserInput,
+      departureFormSessionData,
+    }
+  }
+
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { token } = req.user
-      const { premisesId, placementId } = req.params
-      const departureData = this.placementService.getDepartureSessionData(placementId, req.session)
-      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
+      const {
+        token,
+        premisesId,
+        placementId,
+        placement,
+        departureFormSessionData,
+        errorsAndUserInput: { userInput, ...errorsData },
+      } = await this.getFormPageData(req)
 
-      const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
       const departureReasons = (await this.placementService.getDepartureReasons(token)).filter(
         reason => !reason.parentReasonId,
       )
 
       return res.render('manage/premises/placements/departure/new', {
-        placement,
         backlink: paths.premises.placements.show({ premisesId, placementId }),
+        placement,
         departureReasons,
-        errors,
-        errorSummary,
-        errorTitle,
-        ...departureData,
+        ...errorsData,
+        ...departureFormSessionData,
         ...userInput,
       })
     }
   }
 
-  private newErrors(body: DepartureFormData): DepartureFormErrors | null {
+  private newErrors(body: DepartureFormSessionData): DepartureFormErrors | null {
     const errors: DepartureFormErrors = {}
 
     const { departureTime, reasonId } = body
@@ -131,30 +158,32 @@ export default class DeparturesController {
 
   breachOrRecallReason(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { token } = req.user
-      const { premisesId, placementId } = req.params
+      const {
+        token,
+        premisesId,
+        placementId,
+        placement,
+        departureFormSessionData,
+        errorsAndUserInput: { userInput, ...errorsData },
+      } = await this.getFormPageData(req)
 
-      const departureData = this.placementService.getDepartureSessionData(placementId, req.session)
-
-      if (this.newErrors(departureData) || departureData.reasonId !== BREACH_OR_RECALL_REASON_ID) {
+      if (
+        this.newErrors(departureFormSessionData) ||
+        departureFormSessionData.reasonId !== BREACH_OR_RECALL_REASON_ID
+      ) {
         return res.redirect(paths.premises.placements.departure.new({ premisesId, placementId }))
       }
 
-      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
-
-      const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
       const departureReasons = (await this.placementService.getDepartureReasons(token)).filter(
         reason => reason.parentReasonId === BREACH_OR_RECALL_REASON_ID,
       )
 
       return res.render('manage/premises/placements/departure/breach-or-recall', {
-        placement,
         backlink: paths.premises.placements.departure.new({ premisesId, placementId }),
+        placement,
         departureReasons,
-        errors,
-        errorSummary,
-        errorTitle,
-        ...departureData,
+        ...errorsData,
+        ...departureFormSessionData,
         ...userInput,
       })
     }
@@ -190,28 +219,27 @@ export default class DeparturesController {
 
   moveOnCategory(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { token } = req.user
-      const { premisesId, placementId } = req.params
+      const {
+        token,
+        premisesId,
+        placementId,
+        placement,
+        departureFormSessionData,
+        errorsAndUserInput: { userInput, ...errorsData },
+      } = await this.getFormPageData(req)
 
-      const departureData = this.placementService.getDepartureSessionData(placementId, req.session)
-
-      if (this.newErrors(departureData) || departureData.reasonId !== PLANNED_MOVE_ON_REASON_ID) {
+      if (this.newErrors(departureFormSessionData) || departureFormSessionData.reasonId !== PLANNED_MOVE_ON_REASON_ID) {
         return res.redirect(paths.premises.placements.departure.new({ premisesId, placementId }))
       }
 
-      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
-
-      const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
       const moveOnCategories = await this.placementService.getMoveOnCategories(token)
 
       return res.render('manage/premises/placements/departure/move-on-category', {
-        placement,
         backlink: paths.premises.placements.departure.new({ premisesId, placementId }),
+        placement,
         moveOnCategories,
-        errors,
-        errorSummary,
-        errorTitle,
-        ...departureData,
+        ...errorsData,
+        ...departureFormSessionData,
         ...userInput,
       })
     }
@@ -247,33 +275,30 @@ export default class DeparturesController {
 
   notes(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { token } = req.user
-      const { premisesId, placementId } = req.params
+      const {
+        premisesId,
+        placementId,
+        placement,
+        departureFormSessionData,
+        errorsAndUserInput: { userInput, ...errorsData },
+      } = await this.getFormPageData(req)
 
-      const departureData = this.placementService.getDepartureSessionData(placementId, req.session)
-
-      if (this.newErrors(departureData)) {
+      if (this.newErrors(departureFormSessionData)) {
         return res.redirect(paths.premises.placements.departure.new({ premisesId, placementId }))
       }
 
-      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
-
-      const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
-
       let backlink = paths.premises.placements.departure.new({ premisesId, placementId })
-      if (departureData.reasonId === BREACH_OR_RECALL_REASON_ID) {
+      if (departureFormSessionData.reasonId === BREACH_OR_RECALL_REASON_ID) {
         backlink = paths.premises.placements.departure.breachOrRecallReason({ premisesId, placementId })
-      } else if (departureData.reasonId === PLANNED_MOVE_ON_REASON_ID) {
+      } else if (departureFormSessionData.reasonId === PLANNED_MOVE_ON_REASON_ID) {
         backlink = paths.premises.placements.departure.moveOnCategory({ premisesId, placementId })
       }
 
       return res.render('manage/premises/placements/departure/notes', {
         backlink,
         placement,
-        errors,
-        errorSummary,
-        errorTitle,
-        ...departureData,
+        ...errorsData,
+        ...departureFormSessionData,
         ...userInput,
       })
     }
