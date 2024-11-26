@@ -13,15 +13,14 @@ export class RecordArrivalPage extends BasePage {
   }
 
   async recordArrival() {
-    const yesterday = addDays(new Date(), -1)
-    const [year, month, day] = DateFormats.dateObjToIsoDate(yesterday).split('-')
-    const hours = faker.number.int({ min: 8, max: 20 })
-    const minutes = faker.number.int({ min: 0, max: 59 }).toString().padStart(2, '0')
+    const arrivalDateTime = addDays(new Date(), -1) // Yesterday same time
+    const [year, month, day, hours, minutes] = DateFormats.dateObjToIsoDate(arrivalDateTime).split(/\D/)
+
     await this.fillDateField({ year, month, day })
     await this.fillField('What is the time of arrival?', `${hours}:${minutes}`)
 
     await this.clickSubmit()
 
-    return { arrivalDateTime: new Date(Number(year), Number(month) - 1, Number(day), hours, Number(minutes)) }
+    return { arrivalDateTime }
   }
 }
