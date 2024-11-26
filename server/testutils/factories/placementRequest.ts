@@ -33,7 +33,7 @@ export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
     assessmentDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessor: userFactory.build(),
     isParole: false,
-    booking: bookingSummary.build({}),
+    booking: bookingSummary.build(),
     isWithdrawn: false,
     withdrawalReason: faker.helpers.arrayElement(['DuplicatePlacementRequest', undefined]),
     requestType: faker.helpers.arrayElement(['parole', 'standardRelease', undefined]),

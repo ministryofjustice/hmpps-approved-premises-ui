@@ -128,9 +128,9 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
     summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
     summaryRow('Departure time', formatTime(placement.actualDepartureDate)),
-    summaryRow('Departure reason', placement.departureReason?.name),
+    summaryRow('Departure reason', placement.departure?.reason?.name),
     summaryRow('Breach or recall', null),
-    summaryRow('Move on', placement.departureMoveOnCategory?.name),
+    summaryRow('Move on', placement.departure?.moveOnCategory?.name),
     summaryRow('More information', null),
   ].filter(Boolean),
 })
@@ -139,7 +139,10 @@ const listOtherBookings = (placement: Cas1SpaceBooking): string =>
   (placement.otherBookingsInPremisesForCrn || [])
     .map(
       ({ id, canonicalArrivalDate, canonicalDepartureDate }: Cas1SpaceBookingDates) =>
-        `<li><a class="govuk-link" href="${paths.premises.placements.show({ premisesId: placement.premises.id, placementId: id })}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })}</a></li>`,
+        `<li><a class="govuk-link" href="${paths.premises.placements.show({
+          premisesId: placement.premises.id,
+          placementId: id,
+        })}">Placement ${DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })}</a></li>`,
     )
     .join('')
 

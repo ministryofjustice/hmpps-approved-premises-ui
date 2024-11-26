@@ -9,22 +9,21 @@ import userFactory from './user'
 import staffMemberFactory from './staffMember'
 import { DateFormats } from '../../utils/dateUtils'
 import cas1SpaceBookingNonArrivalFactory from './cas1SpaceBookingNonArrival'
+import referenceDataFactory from './referenceData'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
     return this.params({
       actualArrivalDate: undefined,
       actualDepartureDate: undefined,
-      departureReason: undefined,
-      departureMoveOnCategory: undefined,
+      departure: undefined,
     })
   }
 
   current() {
     return this.params({
       actualDepartureDate: undefined,
-      departureReason: undefined,
-      departureMoveOnCategory: undefined,
+      departure: undefined,
     })
   }
 
@@ -32,8 +31,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
     return this.params({
       actualArrivalDate: undefined,
       actualDepartureDate: undefined,
-      departureReason: undefined,
-      departureMoveOnCategory: undefined,
+      departure: undefined,
       nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
     })
   }
@@ -66,8 +64,11 @@ export default Cas1SpaceBookingFactory.define(() => {
     actualDepartureDate,
     canonicalArrivalDate,
     canonicalDepartureDate,
-    departureReason: { id: faker.string.uuid(), name: faker.word.noun() },
-    departureMoveOnCategory: { id: faker.string.uuid(), name: faker.word.noun() },
+    departure: {
+      reason: referenceDataFactory.departureReasons().build(),
+      moveOnCategory: referenceDataFactory.moveOnCategories().build(),
+      notes: faker.word.words(20),
+    },
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
     keyWorkerAllocation: { keyWorker: staffMemberFactory.build() } as Cas1KeyWorkerAllocation,
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
