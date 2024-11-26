@@ -91,6 +91,7 @@ import cas1AssignKeyWorkerFactory from './cas1AssignKeyWorker'
 import cas1NonArrivalFactory from './cas1NonArrival'
 import cas1NewArrivalFactory from './cas1NewArrival'
 import cas1NewDepartureFactory from './cas1NewDeparture'
+import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
 
 export {
   acctAlertFactory,
@@ -121,6 +122,7 @@ export {
   cas1PremisesSummaryFactory,
   cas1ReferenceDataFactory,
   cas1SpaceBookingDatesFactory,
+  cas1SpaceBookingDepartureFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   cas1AssignKeyWorkerFactory,

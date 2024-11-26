@@ -235,24 +235,82 @@ describe('placementUtils', () => {
       })
     })
 
-    it('should return the departure information', () => {
-      expect(departureInformation(placement)).toEqual({
-        rows: [
-          {
-            key: { text: 'Expected departure date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.expectedDepartureDate) },
-          },
-          {
-            key: { text: 'Actual departure date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.actualDepartureDate) },
-          },
-          {
-            key: { text: 'Departure time' },
-            value: { text: DateFormats.timeFromDate(DateFormats.isoToDateObj(placement.actualDepartureDate)) },
-          },
-          { key: { text: 'Departure reason' }, value: { text: placement.departure?.reason?.name } },
-          { key: { text: 'Move on' }, value: { text: placement.departure?.moveOnCategory?.name } },
-        ],
+    describe('departure information', () => {
+      it('should be returned for a non-breach, non-planned-move-on departure', () => {
+        const departedPlacement = cas1SpaceBookingFactory.departed().build()
+
+        expect(departureInformation(departedPlacement)).toEqual({
+          rows: [
+            {
+              key: { text: 'Expected departure date' },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.expectedDepartureDate) },
+            },
+            {
+              key: { text: 'Actual departure date' },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
+            },
+            {
+              key: { text: 'Departure time' },
+              value: {
+                text: DateFormats.timeFromDate(DateFormats.isoToDateObj(departedPlacement.actualDepartureDate)),
+              },
+            },
+            { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
+            { key: { text: 'More information' }, value: { text: departedPlacement.departure?.notes } },
+          ],
+        })
+      })
+
+      it('should be returned for a breach or recall departure', () => {
+        const departedPlacement = cas1SpaceBookingFactory.departedBreachOrRecall().build()
+
+        expect(departureInformation(departedPlacement)).toEqual({
+          rows: [
+            {
+              key: { text: 'Expected departure date' },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.expectedDepartureDate) },
+            },
+            {
+              key: { text: 'Actual departure date' },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
+            },
+            {
+              key: { text: 'Departure time' },
+              value: {
+                text: DateFormats.timeFromDate(DateFormats.isoToDateObj(departedPlacement.actualDepartureDate)),
+              },
+            },
+            { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.parentReason?.name } },
+            { key: { text: 'Breach or recall' }, value: { text: departedPlacement.departure?.reason?.name } },
+            { key: { text: 'More information' }, value: { text: departedPlacement.departure?.notes } },
+          ],
+        })
+      })
+
+      it('should be returned for a planned move on departure', () => {
+        const departedPlacement = cas1SpaceBookingFactory.departedPlannedMoveOn().build()
+
+        expect(departureInformation(departedPlacement)).toEqual({
+          rows: [
+            {
+              key: { text: 'Expected departure date' },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.expectedDepartureDate) },
+            },
+            {
+              key: { text: 'Actual departure date' },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
+            },
+            {
+              key: { text: 'Departure time' },
+              value: {
+                text: DateFormats.timeFromDate(DateFormats.isoToDateObj(departedPlacement.actualDepartureDate)),
+              },
+            },
+            { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
+            { key: { text: 'Move on' }, value: { text: departedPlacement.departure?.moveOnCategory?.name } },
+            { key: { text: 'More information' }, value: { text: departedPlacement.departure?.notes } },
+          ],
+        })
       })
     })
   })
