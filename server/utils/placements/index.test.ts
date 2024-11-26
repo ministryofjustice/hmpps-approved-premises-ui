@@ -171,6 +171,7 @@ describe('placementUtils', () => {
       actualArrivalDate: '2024-06-01',
       actualDepartureDate: '2024-12-25',
     })
+
     it('should return the placement summary information', () => {
       expect(placementSummary(placement)).toEqual({
         rows: [
@@ -249,8 +250,8 @@ describe('placementUtils', () => {
             key: { text: 'Departure time' },
             value: { text: DateFormats.timeFromDate(DateFormats.isoToDateObj(placement.actualDepartureDate)) },
           },
-          { key: { text: 'Departure reason' }, value: { text: placement.departureReason?.name } },
-          { key: { text: 'Move on' }, value: { text: placement.departureMoveOnCategory?.name } },
+          { key: { text: 'Departure reason' }, value: { text: placement.departure?.reason?.name } },
+          { key: { text: 'Move on' }, value: { text: placement.departure?.moveOnCategory?.name } },
         ],
       })
     })

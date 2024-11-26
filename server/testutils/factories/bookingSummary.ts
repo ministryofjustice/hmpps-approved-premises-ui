@@ -7,6 +7,7 @@ import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<BookingSummary>(() => ({
   id: faker.string.uuid(),
+  type: 'space',
   premisesId: faker.string.uuid(),
   premisesName: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   arrivalDate: DateFormats.dateObjToIsoDate(

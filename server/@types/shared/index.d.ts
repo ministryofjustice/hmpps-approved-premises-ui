@@ -99,6 +99,9 @@ export type { Cas1OutOfServiceBedRevision } from './models/Cas1OutOfServiceBedRe
 export type { Cas1OutOfServiceBedRevisionType } from './models/Cas1OutOfServiceBedRevisionType';
 export type { Cas1OutOfServiceBedSortField } from './models/Cas1OutOfServiceBedSortField';
 export type { Cas1OutOfServiceBedStatus } from './models/Cas1OutOfServiceBedStatus';
+export type { Cas1PremiseCapacity } from './models/Cas1PremiseCapacity';
+export type { Cas1PremiseCapacityForDay } from './models/Cas1PremiseCapacityForDay';
+export type { Cas1PremiseCharacteristicAvailability } from './models/Cas1PremiseCharacteristicAvailability';
 export type { Cas1PremisesBasicSummary } from './models/Cas1PremisesBasicSummary';
 export type { Cas1PremisesSearchResultSummary } from './models/Cas1PremisesSearchResultSummary';
 export type { Cas1PremisesSummary } from './models/Cas1PremisesSummary';
@@ -107,6 +110,7 @@ export type { Cas1SpaceAvailability } from './models/Cas1SpaceAvailability';
 export type { Cas1SpaceBooking } from './models/Cas1SpaceBooking';
 export type { Cas1SpaceBookingCancellation } from './models/Cas1SpaceBookingCancellation';
 export type { Cas1SpaceBookingDates } from './models/Cas1SpaceBookingDates';
+export type { Cas1SpaceBookingDeparture } from './models/Cas1SpaceBookingDeparture';
 export type { Cas1SpaceBookingNonArrival } from './models/Cas1SpaceBookingNonArrival';
 export type { Cas1SpaceBookingRequirements } from './models/Cas1SpaceBookingRequirements';
 export type { Cas1SpaceBookingResidency } from './models/Cas1SpaceBookingResidency';
