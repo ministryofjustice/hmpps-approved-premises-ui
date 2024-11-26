@@ -85,6 +85,33 @@ export const summaryCardLink = ({
   startDate: string
   durationDays: string
 }): string => {
+  return `${matchPaths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+    {
+      premisesName,
+      premisesId,
+      apType,
+      startDate,
+      durationDays,
+    },
+    { addQueryPrefix: true },
+  )}`
+}
+
+export const redirectToSpaceBookingsNew = ({
+  placementRequestId,
+  premisesName,
+  premisesId,
+  apType,
+  startDate,
+  durationDays,
+}: {
+  placementRequestId: string
+  premisesName: string
+  premisesId: string
+  apType: string
+  startDate: string
+  durationDays: string
+}): string => {
   return `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
     {
       premisesName,
