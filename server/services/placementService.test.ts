@@ -1,4 +1,4 @@
-import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { createMock } from '@golevelup/ts-jest'
 import type { Request } from 'express'
 import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
@@ -88,7 +88,6 @@ describe('PlacementService', () => {
   })
 
   describe('departure session data', () => {
-    let request: DeepMocked<Request>
     const page1Data = {
       departureDate: '2024-12-14T12:30:00.000Z',
       reasonId: 'reason-id',
@@ -98,7 +97,7 @@ describe('PlacementService', () => {
     }
 
     it('returns the departure data for the given placement', () => {
-      request = createMock<Request>({
+      const request = createMock<Request>({
         session: { departureForms: { 'placement-id': page1Data } },
       })
 
@@ -108,7 +107,7 @@ describe('PlacementService', () => {
     })
 
     it('sets the given departure data in session against the placement id', () => {
-      request = createMock<Request>()
+      const request = createMock<Request>()
 
       placementService.setDepartureSessionData(placementId, request.session, page1Data)
 
@@ -122,7 +121,7 @@ describe('PlacementService', () => {
     })
 
     it('updates the existing data in session', () => {
-      request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
+      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
 
       placementService.setDepartureSessionData(placementId, request.session, page2Data)
 
@@ -139,7 +138,7 @@ describe('PlacementService', () => {
     })
 
     it('removes the existing data from session', () => {
-      request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
+      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
 
       placementService.removeDepartureSessionData(placementId, request.session)
 
