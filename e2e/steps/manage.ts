@@ -6,6 +6,7 @@ import { PremisesPage } from '../pages/manage/premisesPage'
 import { PremisesListPage } from '../pages/manage/premisesListPage'
 import { EditKeyworkerPage } from '../pages/manage/editKeyworkerPage'
 import { visitDashboard } from './signIn'
+import { RecordArrivalPage } from '../pages/manage/recordArrivalPage'
 
 export const manageBooking = async ({
   page,
@@ -46,21 +47,18 @@ export const manageBooking = async ({
   await SpaceBookingPage.initialize(page, datesOfPlacement)
 
   // Then I can assign a keyworker
-  await assignKeyWorker({ page, datesOfPlacement })
+  await assignKeyWorker({ page })
+
+  // And I can record the person's arrival
+  await recordArrival({ page })
 }
 
-export const assignKeyWorker = async ({
-  page,
-  datesOfPlacement,
-}: {
-  page: Page
-  datesOfPlacement: E2EDatesOfPlacement
-}) => {
+export const assignKeyWorker = async ({ page }: { page: Page }) => {
   // When I open the page for a given placement
-  const bookingPage = await SpaceBookingPage.initialize(page, datesOfPlacement)
+  const bookingPage = await SpaceBookingPage.initialize(page)
 
-  // And I click on 'Assign keyworker'
-  await bookingPage.clickEditKeyworker()
+  // And I click on the 'Edit keyworker' action
+  await bookingPage.clickAction('Edit keyworker')
 
   // Then I see the page to edit the keyworker
   const editKeyworkerPage = await EditKeyworkerPage.initialize(page, 'Edit keyworker details')
@@ -72,5 +70,26 @@ export const assignKeyWorker = async ({
   await bookingPage.shouldShowSuccessBanner('Keyworker assigned')
 
   // And the details should show the assigned keyworker
-  await bookingPage.shouldShowPlacementDetail('Key worker', keyworkerName)
+  await bookingPage.shouldShowSummaryItem('Key worker', keyworkerName)
+}
+
+export const recordArrival = async ({ page }: { page: Page }) => {
+  // When I open the page for a given placement
+  const bookingPage = await SpaceBookingPage.initialize(page)
+
+  // And I click on the 'Record arrival' action
+  await bookingPage.clickAction('Record arrival')
+
+  // Then I see the page to record the arrival
+  const recordArrivalPage = await RecordArrivalPage.initialize(page, 'Record someone as arrived')
+
+  // When I record the person as arrived
+  const { arrivalDateTime } = await recordArrivalPage.recordArrival()
+
+  // Then I should see the placement page with a success banner
+  await recordArrivalPage.shouldShowSuccessBanner('You have recorded this person as arrived')
+
+  // And the details should show the recorded arrival
+  await recordArrivalPage.shouldShowSummaryItem('Actual arrival date', DateFormats.dateObjtoUIDate(arrivalDateTime))
+  await recordArrivalPage.shouldShowSummaryItem('Arrival time', DateFormats.timeFromDate(arrivalDateTime))
 }

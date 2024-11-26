@@ -13,13 +13,4 @@ export class SpaceBookingPage extends BasePage {
     }
     return new SpaceBookingPage(page)
   }
-
-  async shouldShowPlacementDetail(label: string, value: string) {
-    await expect(this.page.locator('.govuk-summary-list__row').filter({ hasText: label })).toContainText(value)
-  }
-
-  async clickEditKeyworker() {
-    await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Edit keyworker' }).click()
-  }
 }
