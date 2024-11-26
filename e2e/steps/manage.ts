@@ -7,6 +7,7 @@ import { PremisesListPage } from '../pages/manage/premisesListPage'
 import { EditKeyworkerPage } from '../pages/manage/editKeyworkerPage'
 import { visitDashboard } from './signIn'
 import { RecordArrivalPage } from '../pages/manage/recordArrivalPage'
+import { RecordDeparturePage } from '../pages/manage/recordDeparturePage'
 
 export const manageBooking = async ({
   page,
@@ -51,6 +52,9 @@ export const manageBooking = async ({
 
   // And I can record the person's arrival
   await recordArrival({ page })
+
+  // And I can record the person's departure
+  await recordDeparture({ page })
 }
 
 export const assignKeyWorker = async ({ page }: { page: Page }) => {
@@ -92,4 +96,30 @@ export const recordArrival = async ({ page }: { page: Page }) => {
   // And the details should show the recorded arrival
   await recordArrivalPage.shouldShowSummaryItem('Actual arrival date', DateFormats.dateObjtoUIDate(arrivalDateTime))
   await recordArrivalPage.shouldShowSummaryItem('Arrival time', DateFormats.timeFromDate(arrivalDateTime))
+}
+
+const recordDeparture = async ({ page }: { page: Page }) => {
+  // When I open the page for a given placement
+  const bookingPage = await SpaceBookingPage.initialize(page)
+
+  // And I click on the 'Record departure' action
+  await bookingPage.clickAction('Record departure')
+
+  // Then I see the page to record the arrival
+  const recordDeparturePage = await RecordDeparturePage.initialize(page, 'Record a departure')
+
+  // When I record the person as arrived
+  const { departureDateTime, reason, notes } = await recordDeparturePage.recordDeparture()
+
+  // Then I should see the placement page with a success banner
+  await recordDeparturePage.shouldShowSuccessBanner('You have recorded this person as departed')
+
+  // And the details should show the recorded arrival
+  await recordDeparturePage.shouldShowSummaryItem(
+    'Actual departure date',
+    DateFormats.dateObjtoUIDate(departureDateTime),
+  )
+  await recordDeparturePage.shouldShowSummaryItem('Departure time', DateFormats.timeFromDate(departureDateTime))
+  await recordDeparturePage.shouldShowSummaryItem('Departure reason', reason)
+  await recordDeparturePage.shouldShowSummaryItem('More information', notes)
 }

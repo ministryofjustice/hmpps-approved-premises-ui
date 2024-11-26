@@ -93,7 +93,7 @@ export class BasePage {
   }
 
   async shouldShowSuccessBanner(label: string): Promise<void> {
-    await expect(this.page.getByRole('alert', { name: 'success' })).toContainText(label)
+    await expect(this.page.getByRole('alert', { name: 'Success' })).toContainText(label)
   }
 
   getSummaryItem(label: string) {
