@@ -1,70 +1,24 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
 
-{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% extends "./partials/layout.njk" %}
 
-{% extends "../../../../partials/layout.njk" %}
-
-{% block beforeContent %}
-    {{ govukBackLink({
-        text: "Back",
-        href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id })
-    }) }}
-{% endblock %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
-{% endblock %}
-
-{% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ showErrorSummary(errorSummary, errorTitle) }}
-
-            <h1 class="govuk-heading-l">Record a departure</h1>
-        </div>
-    </div>
-
-    {{ govukSummaryList({
-        rows: [{
-            key: {
-                text: "Expected departure date"
-            },
-            value: {
-                text: formatDate(placement.expectedDepartureDate)
+{% block formContent %}
+    {{ govukRadios({
+        name: "breachOrRecallReasonId",
+        fieldset: {
+            legend: {
+                text: "Breach or recall",
+                classes: "govuk-fieldset__legend--m"
             }
-        }]
+        },
+        items: convertObjectsToRadioItems(departureReasons, 'name', 'id', 'breachOrRecallReasonId'),
+        value: breachOrRecallReasonId,
+        errorMessage: errors.breachOrRecallReasonId
     }) }}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form action="{{ paths.premises.placements.departure.breachOrRecallReason({ premisesId: placement.premises.id, placementId: placement.id }) }}"
-                  method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-                {{ govukRadios({
-                    name: "breachOrRecallReasonId",
-                    fieldset: {
-                        legend: {
-                            text: "Breach or recall",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    items: convertObjectsToRadioItems(departureReasons, 'name', 'id', 'breachOrRecallReasonId'),
-                    value: breachOrRecallReasonId,
-                    errorMessage: errors.breachOrRecallReasonId
-                }) }}
-
-                {{ govukButton({
-                    text: "Continue",
-                    preventDoubleClick: true
-                }) }}
-
-            </form>
-        </div>
-    </div>
+    {{ govukButton({
+        text: "Continue",
+        preventDoubleClick: true
+    }) }}
 {% endblock %}

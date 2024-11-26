@@ -4,12 +4,11 @@ import { when } from 'jest-when'
 import type { NextFunction, Request, Response } from 'express'
 import * as validationUtils from '../../../../utils/validation'
 import { PlacementService, PremisesService } from '../../../../services'
-import { referenceDataFactory, spaceBookingFactory } from '../../../../testutils/factories'
+import { departureReasonFactory, referenceDataFactory, spaceBookingFactory } from '../../../../testutils/factories'
 import DeparturesController from './departuresController'
 import paths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
-import { departureReasonFactory } from '../../../../testutils/factories/referenceData'
 
 describe('DeparturesController', () => {
   const token = 'SOME_TOKEN'
@@ -74,6 +73,7 @@ describe('DeparturesController', () => {
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/new', {
+        backlink: paths.premises.placements.show({ premisesId, placementId: placement.id }),
         placement,
         departureReasons: [rootDepartureReason1, rootDepartureReason2, rootDepartureReason3],
         errors: errorsAndUserInput.errors,
@@ -100,6 +100,7 @@ describe('DeparturesController', () => {
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/new', {
         placement,
+        backlink: paths.premises.placements.show({ premisesId, placementId: placement.id }),
         departureReasons: [rootDepartureReason1, rootDepartureReason2, rootDepartureReason3],
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -285,6 +286,7 @@ describe('DeparturesController', () => {
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/breach-or-recall', {
         placement,
+        backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
         departureReasons: [childDepartureReason1, childDepartureReason2],
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -391,6 +393,7 @@ describe('DeparturesController', () => {
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/move-on-category', {
         placement,
+        backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
         moveOnCategories,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,

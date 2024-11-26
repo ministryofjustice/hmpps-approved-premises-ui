@@ -202,7 +202,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_DEPARTURE_NOTES',
     allowedPermissions: ['cas1_space_booking_record_departure'],
   })
-  post(paths.premises.placements.departure.create.pattern, departuresController.create(), {
+  post(paths.premises.placements.departure.notes.pattern, departuresController.create(), {
     auditEvent: 'NEW_DEPARTURE_CREATE',
     allowedPermissions: ['cas1_space_booking_record_departure'],
   })

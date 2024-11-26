@@ -1,66 +1,20 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
 
-{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% extends "./partials/layout.njk" %}
 
-{% extends "../../../../partials/layout.njk" %}
-
-{% block beforeContent %}
-    {{ govukBackLink({
-        text: "Back",
-        href: backlink
-    }) }}
-{% endblock %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
-{% endblock %}
-
-{% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ showErrorSummary(errorSummary, errorTitle) }}
-
-            <h1 class="govuk-heading-l">Record a departure</h1>
-        </div>
-    </div>
-
-    {{ govukSummaryList({
-        rows: [{
-            key: {
-                text: "Expected departure date"
-            },
-            value: {
-                text: formatDate(placement.expectedDepartureDate)
-            }
-        }]
+{% block formContent %}
+    {{ govukTextarea({
+        name: "notes",
+        id: "notes",
+        label: {
+            text: "Provide more information",
+            classes: "govuk-label--m"
+        }
     }) }}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form action="{{ paths.premises.placements.departure.create({ premisesId: placement.premises.id, placementId: placement.id }) }}"
-                  method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-                {{ govukTextarea({
-                    name: "notes",
-                    id: "notes",
-                    label: {
-                        text: "Provide more information",
-                        classes: "govuk-label--m"
-                    }
-                }) }}
-
-                {{ govukButton({
-                    text: "Submit",
-                    preventDoubleClick: true
-                }) }}
-
-            </form>
-        </div>
-    </div>
+    {{ govukButton({
+        text: "Submit",
+        preventDoubleClick: true
+    }) }}
 {% endblock %}

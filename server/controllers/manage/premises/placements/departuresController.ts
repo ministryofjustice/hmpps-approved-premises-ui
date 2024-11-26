@@ -38,6 +38,7 @@ export default class DeparturesController {
 
       return res.render('manage/premises/placements/departure/new', {
         placement,
+        backlink: paths.premises.placements.show({ premisesId, placementId }),
         departureReasons,
         errors,
         errorSummary,
@@ -148,6 +149,7 @@ export default class DeparturesController {
 
       return res.render('manage/premises/placements/departure/breach-or-recall', {
         placement,
+        backlink: paths.premises.placements.departure.new({ premisesId, placementId }),
         departureReasons,
         errors,
         errorSummary,
@@ -204,6 +206,7 @@ export default class DeparturesController {
 
       return res.render('manage/premises/placements/departure/move-on-category', {
         placement,
+        backlink: paths.premises.placements.departure.new({ premisesId, placementId }),
         moveOnCategories,
         errors,
         errorSummary,
