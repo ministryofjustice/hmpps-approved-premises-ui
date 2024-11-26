@@ -19,13 +19,6 @@ describe('reportUtils', () => {
           },
         },
         {
-          value: 'placementMatchingOutcomes',
-          text: 'Raw data for Placement matching outcomes',
-          hint: {
-            text: 'A raw data extract to help identify placement matching outcomes. This downloads Match requests based on the Expected Arrival Date.',
-          },
-        },
-        {
           value: 'lostBeds',
           text: 'Lost beds (no longer in use)',
           hint: {
@@ -58,13 +51,6 @@ describe('reportUtils', () => {
           text: 'Raw Requests for Placement for Performance Hub',
           hint: {
             text: 'A raw data extract for requests for placements created or withdrawn within the month. Does not include any PII.',
-          },
-        },
-        {
-          value: 'placementMatchingOutcomesV2',
-          text: 'Raw Placement Matching Outcomes Reports (V2)',
-          hint: {
-            text: 'A raw data extract to help identify placement matching outcomes. This downloads placement requests based on the Expected Arrival Date. Does not include any PII.',
           },
         },
       ])
