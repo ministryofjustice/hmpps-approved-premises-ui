@@ -4,7 +4,7 @@ import { when } from 'jest-when'
 import type { NextFunction, Request, Response } from 'express'
 import * as validationUtils from '../../../../utils/validation'
 import { PlacementService, PremisesService } from '../../../../services'
-import { departureReasonFactory, referenceDataFactory, spaceBookingFactory } from '../../../../testutils/factories'
+import { cas1SpaceBookingFactory, departureReasonFactory, referenceDataFactory } from '../../../../testutils/factories'
 import DeparturesController from './departuresController'
 import paths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
@@ -29,7 +29,7 @@ describe('DeparturesController', () => {
   })
 
   const premisesId = 'premises-id'
-  const placement = spaceBookingFactory.build()
+  const placement = cas1SpaceBookingFactory.current().build()
 
   const rootDepartureReason1 = departureReasonFactory.build({ parentReasonId: null })
   const rootDepartureReason2 = departureReasonFactory.build({ id: BREACH_OR_RECALL_REASON_ID, parentReasonId: null })
@@ -165,48 +165,96 @@ describe('DeparturesController', () => {
       expect(errorData).toEqual(expectedErrorData)
     })
 
-    it('returns a date error for a date in the future', async () => {
-      const requestHandler = departuresController.saveNew()
+    describe('future date or time', () => {
+      it('returns a date error for a date in the future', async () => {
+        const requestHandler = departuresController.saveNew()
 
-      request.body = {
-        'departureDate-day': '15',
-        'departureDate-month': '11',
-        'departureDate-year': '2024',
-        departureTime: '10:00',
-        reasonId: rootDepartureReason1.id,
-      }
+        request.body = {
+          'departureDate-day': '15',
+          'departureDate-month': '11',
+          'departureDate-year': '2024',
+          departureTime: '10:00',
+          reasonId: rootDepartureReason1.id,
+        }
 
-      await requestHandler(request, response, next)
+        await requestHandler(request, response, next)
 
-      const expectedErrorData = {
-        departureDate: 'The date of departure must be today or in the past',
-      }
+        const expectedErrorData = {
+          departureDate: 'The date of departure must be today or in the past',
+        }
 
-      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
-      expect(errorData).toEqual(expectedErrorData)
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it('returns a time error for a date today but time in the future', async () => {
+        const requestHandler = departuresController.saveNew()
+
+        request.body = {
+          'departureDate-day': '14',
+          'departureDate-month': '11',
+          'departureDate-year': '2024',
+          departureTime: '17:00',
+          reasonId: rootDepartureReason1.id,
+        }
+
+        await requestHandler(request, response, next)
+
+        const expectedErrorData = {
+          departureTime: 'The time of departure must be in the past',
+        }
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
     })
 
-    it('returns a time error for a date today but time in the future', async () => {
-      const requestHandler = departuresController.saveNew()
+    describe('date or time before arrival date', () => {
+      it('returns a date error for a date before the arrival date', async () => {
+        const requestHandler = departuresController.saveNew()
 
-      request.body = {
-        'departureDate-day': '14',
-        'departureDate-month': '11',
-        'departureDate-year': '2024',
-        departureTime: '17:00',
-        reasonId: rootDepartureReason1.id,
-      }
+        request.body = {
+          'departureDate-day': '15',
+          'departureDate-month': '11',
+          'departureDate-year': '2024',
+          departureTime: '10:00',
+          reasonId: rootDepartureReason1.id,
+        }
 
-      await requestHandler(request, response, next)
+        await requestHandler(request, response, next)
 
-      const expectedErrorData = {
-        departureTime: 'The time of departure must be in the past',
-      }
+        const expectedErrorData = {
+          departureDate: 'The date of departure must be today or in the past',
+        }
 
-      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
-      expect(errorData).toEqual(expectedErrorData)
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it('returns a time error for a date on the same day but before the arrival time', async () => {
+        const requestHandler = departuresController.saveNew()
+
+        request.body = {
+          'departureDate-day': '14',
+          'departureDate-month': '11',
+          'departureDate-year': '2024',
+          departureTime: '17:00',
+          reasonId: rootDepartureReason1.id,
+        }
+
+        await requestHandler(request, response, next)
+
+        const expectedErrorData = {
+          departureTime: 'The time of departure must be in the past',
+        }
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
     })
 
     describe('if the selected reason is not Breach or recall or Planned move-on', () => {

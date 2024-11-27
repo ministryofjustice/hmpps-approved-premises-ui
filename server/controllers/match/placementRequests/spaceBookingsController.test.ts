@@ -5,10 +5,10 @@ import SpaceBookingsController from './spaceBookingsController'
 
 import { PlacementRequestService, SpaceService } from '../../../services'
 import {
+  cas1SpaceBookingFactory,
   newSpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
-  spaceBookingFactory,
   spaceBookingRequirementsFactory,
 } from '../../../testutils/factories'
 import { filterOutAPTypes, placementDates } from '../../../utils/match'
@@ -89,7 +89,7 @@ describe('SpaceBookingsController', () => {
         const id = 'placement-request-id'
         const requirements = spaceBookingRequirementsFactory.build(requirementsOverride)
         const newSpaceBooking = newSpaceBookingFactory.build({ requirements })
-        const spaceBooking = spaceBookingFactory.build()
+        const spaceBooking = cas1SpaceBookingFactory.build()
 
         const body = {
           arrivalDate: newSpaceBooking.arrivalDate,

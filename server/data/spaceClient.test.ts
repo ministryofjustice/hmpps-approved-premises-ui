@@ -2,8 +2,8 @@ import SpaceClient from './spaceClient'
 import paths from '../paths/api'
 
 import {
+  cas1SpaceBookingFactory,
   newSpaceBookingFactory,
-  spaceBookingFactory,
   spaceSearchParametersFactory,
   spaceSearchResultsFactory,
 } from '../testutils/factories'
@@ -50,7 +50,7 @@ describeCas1NamespaceClient('SpaceClient', provider => {
     it('makes a POST request to the space booking endpoint', async () => {
       const placementRequestId = 'placement-request-id'
       const newSpaceBooking = newSpaceBookingFactory.build()
-      const spaceBooking = spaceBookingFactory.build()
+      const spaceBooking = cas1SpaceBookingFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',

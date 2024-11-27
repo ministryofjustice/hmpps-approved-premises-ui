@@ -3,9 +3,9 @@ import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
+  cas1SpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
-  spaceBookingFactory,
   spaceBookingRequirementsFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultsFactory,
@@ -134,7 +134,7 @@ context('Placement Requests', () => {
 
     // And when I complete the form
     const requirements = spaceBookingRequirementsFactory.build()
-    const spaceBooking = spaceBookingFactory.build({ requirements })
+    const spaceBooking = cas1SpaceBookingFactory.build({ requirements })
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
     page.clickSubmit()

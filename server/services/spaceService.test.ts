@@ -1,7 +1,7 @@
 import SpaceClient from '../data/spaceClient'
 import {
+  cas1SpaceBookingFactory,
   newSpaceBookingFactory,
-  spaceBookingFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultsFactory,
 } from '../testutils/factories'
@@ -40,7 +40,7 @@ describe('spaceService', () => {
   describe('createSpaceBooking', () => {
     it('should call the client', async () => {
       const newSpaceBooking = newSpaceBookingFactory.build()
-      const spaceBooking = spaceBookingFactory.build()
+      const spaceBooking = cas1SpaceBookingFactory.build()
       spaceClient.createSpaceBooking.mockResolvedValue(spaceBooking)
       const id = 'some-uuid'
 

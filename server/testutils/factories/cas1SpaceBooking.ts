@@ -24,6 +24,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
 
   current() {
     return this.params({
+      actualArrivalDate: DateFormats.dateObjToIsoDateTime(faker.date.recent({ days: 180 })),
       actualDepartureDate: undefined,
       departure: undefined,
     })
@@ -39,7 +40,12 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   }
 
   departed() {
+    const actualDepartureDate = faker.date.recent({ days: 20 })
+    const actualArrivalDate = faker.date.past({ years: 1, refDate: actualDepartureDate })
+
     return this.params({
+      actualArrivalDate: DateFormats.dateObjToIsoDateTime(actualArrivalDate),
+      actualDepartureDate: DateFormats.dateObjToIsoDateTime(actualDepartureDate),
       departure: cas1SpaceBookingDepartureFactory.build({
         moveOnCategory: undefined,
       }),
@@ -47,7 +53,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   }
 
   departedBreachOrRecall() {
-    return this.params({
+    return this.departed().params({
       departure: cas1SpaceBookingDepartureFactory.build({
         parentReason: departureReasonFactory.build({
           id: BREACH_OR_RECALL_REASON_ID,
@@ -58,7 +64,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   }
 
   departedPlannedMoveOn() {
-    return this.params({
+    return this.departed().params({
       departure: cas1SpaceBookingDepartureFactory.build({
         reason: departureReasonFactory.build({
           id: PLANNED_MOVE_ON_REASON_ID,
