@@ -10,7 +10,6 @@ import {
   formatISO,
   isBefore,
   isPast,
-  isToday as isTodayDateFns,
   isValid,
   isWeekend,
   isWithinInterval,
@@ -274,14 +273,22 @@ export const dateIsBlank = <K extends string | number>(
   return !['year' as const, 'month' as const, 'day' as const].every(part => !!dateInputObj[`${key}-${part}`])
 }
 
-export const dateIsInThePast = (dateString: string): boolean => {
+export const datetimeIsInThePast = (dateString: string, refDateString?: string): boolean => {
   const date = DateFormats.isoToDateObj(dateString)
+
+  if (refDateString) {
+    const refDate = DateFormats.isoToDateObj(refDateString)
+    return isBefore(date, refDate)
+  }
+
   return isPast(date)
 }
 
-export const isToday = (date: string): boolean => {
-  const dateObj = DateFormats.isoToDateObj(date)
-  return isTodayDateFns(dateObj)
+export const dateIsToday = (date: string, refDate?: string): boolean => {
+  const dateIso = DateFormats.dateObjToIsoDate(DateFormats.isoToDateObj(date))
+  const refDateIso = DateFormats.dateObjToIsoDate(refDate ? DateFormats.isoToDateObj(refDate) : new Date())
+
+  return dateIso === refDateIso
 }
 
 export const monthOptions = [

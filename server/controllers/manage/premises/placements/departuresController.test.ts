@@ -29,7 +29,18 @@ describe('DeparturesController', () => {
   })
 
   const premisesId = 'premises-id'
-  const placement = cas1SpaceBookingFactory.current().build()
+  const TEST_DATE = new Date('2024-11-14T14:00:00.000Z')
+  const placement = cas1SpaceBookingFactory.current().build({
+    actualArrivalDate: '2024-10-05T11:30:00.000Z',
+  })
+  const departureFormData = {
+    departureDate: '2024-10-08',
+    'departureDate-day': '8',
+    'departureDate-month': '10',
+    'departureDate-year': '2024',
+    departureTime: '9:35',
+    reasonId: BREACH_OR_RECALL_REASON_ID,
+  }
 
   const rootDepartureReason1 = departureReasonFactory.build({ parentReasonId: null })
   const rootDepartureReason2 = departureReasonFactory.build({ id: BREACH_OR_RECALL_REASON_ID, parentReasonId: null })
@@ -43,17 +54,8 @@ describe('DeparturesController', () => {
     childDepartureReason1,
     childDepartureReason2,
   ]
-  const moveOnCategories = referenceDataFactory.buildList(5)
 
-  const TEST_DATE = new Date('2024-11-14T14:00:00.000Z')
-  const departureFormData = {
-    departureDate: '2024-10-08',
-    'departureDate-day': '8',
-    'departureDate-month': '10',
-    'departureDate-year': '2024',
-    departureTime: '9:35',
-    reasonId: BREACH_OR_RECALL_REASON_ID,
-  }
+  const moveOnCategories = referenceDataFactory.buildList(5)
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -216,8 +218,8 @@ describe('DeparturesController', () => {
         const requestHandler = departuresController.saveNew()
 
         request.body = {
-          'departureDate-day': '15',
-          'departureDate-month': '11',
+          'departureDate-day': '01',
+          'departureDate-month': '10',
           'departureDate-year': '2024',
           departureTime: '10:00',
           reasonId: rootDepartureReason1.id,
@@ -226,7 +228,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureDate: 'The date of departure must be today or in the past',
+          departureDate: 'The date of departure must be the same as or after 05 Oct 2024, when the person arrived',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -238,17 +240,17 @@ describe('DeparturesController', () => {
         const requestHandler = departuresController.saveNew()
 
         request.body = {
-          'departureDate-day': '14',
-          'departureDate-month': '11',
+          'departureDate-day': '05',
+          'departureDate-month': '10',
           'departureDate-year': '2024',
-          departureTime: '17:00',
+          departureTime: '11:00',
           reasonId: rootDepartureReason1.id,
         }
 
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureTime: 'The time of departure must be in the past',
+          departureTime: 'The time of departure must be after the time of arrival, 11:30 on 05 Oct 2024',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data

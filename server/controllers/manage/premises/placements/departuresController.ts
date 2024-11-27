@@ -6,8 +6,8 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import {
   DateFormats,
   dateAndTimeInputsAreValidDates,
-  dateIsInThePast,
-  isToday,
+  dateIsToday,
+  datetimeIsInThePast,
   timeIsValid24hrFormat,
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
@@ -82,7 +82,7 @@ export default class DeparturesController {
     }
   }
 
-  private newErrors(body: DepartureFormSessionData): DepartureFormErrors | null {
+  private newErrors(body: DepartureFormSessionData, placement: Cas1SpaceBooking): DepartureFormErrors | null {
     const errors: DepartureFormErrors = {}
 
     const { departureTime, reasonId } = body
@@ -95,22 +95,38 @@ export default class DeparturesController {
       errors.departureDate = 'You must enter a date of departure'
     } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'departureDate'>, 'departureDate')) {
       errors.departureDate = 'You must enter a valid date of departure'
-    } else if (!dateIsInThePast(departureDate)) {
+    } else if (!datetimeIsInThePast(departureDate)) {
       errors.departureDate = 'The date of departure must be today or in the past'
+    } else if (
+      !dateIsToday(departureDate, placement.actualArrivalDate) &&
+      datetimeIsInThePast(departureDate, placement.actualArrivalDate)
+    ) {
+      const actualArrivalDate = DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })
+      errors.departureDate = `The date of departure must be the same as or after ${actualArrivalDate}, when the person arrived`
     }
 
     if (!departureTime) {
       errors.departureTime = 'You must enter a time of departure'
     } else if (!timeIsValid24hrFormat(departureTime)) {
       errors.departureTime = 'You must enter a valid time of departure in 24-hour format'
-    } else if (isToday(departureDate)) {
+    } else {
       const [hours, minutes] = departureTime.split(':').map(Number)
-      const now = new Date()
 
-      now.setHours(hours, minutes)
+      if (dateIsToday(departureDate)) {
+        const now = new Date()
+        now.setHours(hours, minutes)
 
-      if (!dateIsInThePast(now.toISOString())) {
-        errors.departureTime = 'The time of departure must be in the past'
+        if (!datetimeIsInThePast(now.toISOString())) {
+          errors.departureTime = 'The time of departure must be in the past'
+        }
+      } else if (dateIsToday(departureDate, placement.actualArrivalDate)) {
+        const departureDateObj = DateFormats.isoToDateObj(departureDate)
+        departureDateObj.setHours(hours, minutes)
+
+        if (datetimeIsInThePast(DateFormats.dateObjToIsoDateTime(departureDateObj), placement.actualArrivalDate)) {
+          const arrivalTime = placement.actualArrivalDate.substring(11, 16)
+          errors.departureTime = `The time of departure must be after the time of arrival, ${arrivalTime} on ${DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })}`
+        }
       }
     }
 
@@ -123,10 +139,12 @@ export default class DeparturesController {
 
   saveNew(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { token } = req.user
       const { premisesId, placementId } = req.params
+      const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
 
       try {
-        const errors = this.newErrors(req.body)
+        const errors = this.newErrors(req.body, placement)
 
         if (errors) {
           throw new ValidationError(errors)
@@ -168,7 +186,7 @@ export default class DeparturesController {
       } = await this.getFormPageData(req)
 
       if (
-        this.newErrors(departureFormSessionData) ||
+        this.newErrors(departureFormSessionData, placement) ||
         departureFormSessionData.reasonId !== BREACH_OR_RECALL_REASON_ID
       ) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
@@ -225,7 +243,10 @@ export default class DeparturesController {
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
 
-      if (this.newErrors(departureFormSessionData) || departureFormSessionData.reasonId !== PLANNED_MOVE_ON_REASON_ID) {
+      if (
+        this.newErrors(departureFormSessionData, placement) ||
+        departureFormSessionData.reasonId !== PLANNED_MOVE_ON_REASON_ID
+      ) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
@@ -277,7 +298,7 @@ export default class DeparturesController {
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
 
-      if (this.newErrors(departureFormSessionData)) {
+      if (this.newErrors(departureFormSessionData, placement)) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
