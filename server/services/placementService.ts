@@ -1,5 +1,14 @@
-import { Cas1AssignKeyWorker, Cas1NewArrival, Cas1NonArrival, NonArrivalReason } from '@approved-premises/api'
-import type { ReferenceDataClient, RestClientBuilder } from '../data'
+import {
+  Cas1AssignKeyWorker,
+  Cas1NewArrival,
+  Cas1NewDeparture,
+  Cas1NonArrival,
+  DepartureReason,
+  NonArrivalReason,
+} from '@approved-premises/api'
+import type { Request } from 'express'
+import { DepartureFormSessionData, ReferenceData } from '@approved-premises/ui'
+import { ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
 export default class PlacementService {
@@ -36,5 +45,45 @@ export default class PlacementService {
     const placementClient = this.placementClientFactory(token)
 
     return placementClient.recordNonArrival(premisesId, placementId, nonArrival)
+  }
+
+  async createDeparture(
+    token: string,
+    premisesId: string,
+    placementId: string,
+    newPlacementDeparture: Cas1NewDeparture,
+  ) {
+    const placementClient = this.placementClientFactory(token)
+
+    return placementClient.createDeparture(premisesId, placementId, newPlacementDeparture)
+  }
+
+  async getDepartureReasons(token: string) {
+    const referenceDataClient = this.referenceDataClientFactory(token)
+
+    return referenceDataClient.getReferenceData('departure-reasons') as Promise<Array<DepartureReason>>
+  }
+
+  async getMoveOnCategories(token: string) {
+    const referenceDataClient = this.referenceDataClientFactory(token)
+
+    return referenceDataClient.getReferenceData('move-on-categories') as Promise<Array<ReferenceData>>
+  }
+
+  getDepartureSessionData(placementId: string, session: Request['session']): DepartureFormSessionData {
+    return session?.departureForms?.[placementId]
+  }
+
+  setDepartureSessionData(placementId: string, session: Request['session'], data: DepartureFormSessionData) {
+    session.departureForms = session.departureForms || {}
+
+    session.departureForms[placementId] = {
+      ...this.getDepartureSessionData(placementId, session),
+      ...data,
+    }
+  }
+
+  removeDepartureSessionData(placementId: string, session: Request['session']) {
+    delete session?.departureForms?.[placementId]
   }
 }

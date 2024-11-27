@@ -1,5 +1,9 @@
-import type { ErrorMessages } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication, PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
+import type { DepartureFormSessionData, ErrorMessages } from '@approved-premises/ui'
+import type {
+  ApprovedPremisesApplication,
+  Cas1SpaceBooking,
+  PlacementApplicationDecisionEnvelope,
+} from '@approved-premises/api'
 
 export default {}
 
@@ -12,6 +16,7 @@ declare module 'express-session' {
     user: UserDetails
     placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
     messages: Array<string>
+    departureForms: Record<Cas1SpaceBooking['id'], DepartureFormSessionData>
   }
 }
 
@@ -45,7 +50,9 @@ export declare global {
     interface Request {
       verified?: boolean
       id: string
+
       logout(done: (err: unknown) => void): void
+
       flash(type: string, message: string | ErrorMessages | Array<ErrorSummary> | Record<string, unknown>): number
     }
   }

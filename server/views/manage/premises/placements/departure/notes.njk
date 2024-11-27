@@ -1,0 +1,20 @@
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "./partials/layout.njk" %}
+
+{% block formContent %}
+    {{ govukTextarea({
+        name: "notes",
+        id: "notes",
+        label: {
+            text: "Provide more information",
+            classes: "govuk-label--m"
+        }
+    }) }}
+
+    {{ govukButton({
+        text: "Submit",
+        preventDoubleClick: true
+    }) }}
+{% endblock %}

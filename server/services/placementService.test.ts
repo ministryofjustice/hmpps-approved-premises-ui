@@ -1,15 +1,20 @@
+import { createMock } from '@golevelup/ts-jest'
+import type { Request } from 'express'
 import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
 import { ReferenceDataClient } from '../data'
 import {
   cas1AssignKeyWorkerFactory,
+  cas1NewArrivalFactory,
+  cas1NewDepartureFactory,
   cas1NonArrivalFactory,
-  newPlacementArrivalFactory,
+  departureReasonFactory,
   nonArrivalReasonsFactory,
+  referenceDataFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/placementClient')
-jest.mock('../data/referenceDataClient.ts')
+jest.mock('../data/referenceDataClient')
 
 describe('PlacementService', () => {
   const placementClient = new PlacementClient(null) as jest.Mocked<PlacementClient>
@@ -19,8 +24,8 @@ describe('PlacementService', () => {
   const referenceDataClientFactory = jest.fn()
 
   const token = 'SOME_TOKEN'
-  const premisesId = 'premisesId'
-  const placementId = 'placementId'
+  const premisesId = 'premises-id'
+  const placementId = 'placement-id'
 
   let placementService: PlacementService
 
@@ -32,8 +37,8 @@ describe('PlacementService', () => {
   })
 
   describe('createArrival', () => {
-    it('calls the create method of the placement client and returns a response', async () => {
-      const newPlacementArrival = newPlacementArrivalFactory.build()
+    it('calls the createArrival method of the placement client and returns a response', async () => {
+      const newPlacementArrival = cas1NewArrivalFactory.build()
 
       placementClient.createArrival.mockResolvedValue({})
 
@@ -79,6 +84,107 @@ describe('PlacementService', () => {
       const result = await placementService.getNonArrivalReasons(token)
 
       expect(result).toEqual(nonArrivalReasons.filter(({ isActive }) => isActive))
+    })
+  })
+
+  describe('departure session data', () => {
+    const page1Data = {
+      departureDate: '2024-12-14T12:30:00.000Z',
+      reasonId: 'reason-id',
+    }
+    const page2Data = {
+      breachOrRecallReasonId: 'new-reason-id',
+    }
+
+    it('returns the departure data for the given placement', () => {
+      const request = createMock<Request>({
+        session: { departureForms: { 'placement-id': page1Data } },
+      })
+
+      const result = placementService.getDepartureSessionData(placementId, request.session)
+
+      expect(result).toEqual(page1Data)
+    })
+
+    it('sets the given departure data in session against the placement id', () => {
+      const request = createMock<Request>()
+
+      placementService.setDepartureSessionData(placementId, request.session, page1Data)
+
+      expect(request.session).toEqual(
+        expect.objectContaining({
+          departureForms: {
+            'placement-id': page1Data,
+          },
+        }),
+      )
+    })
+
+    it('updates the existing data in session', () => {
+      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
+
+      placementService.setDepartureSessionData(placementId, request.session, page2Data)
+
+      expect(request.session).toEqual(
+        expect.objectContaining({
+          departureForms: {
+            'placement-id': {
+              ...page1Data,
+              breachOrRecallReasonId: 'new-reason-id',
+            },
+          },
+        }),
+      )
+    })
+
+    it('removes the existing data from session', () => {
+      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
+
+      placementService.removeDepartureSessionData(placementId, request.session)
+
+      expect(request.session.departureForms).not.toHaveProperty('placement-id')
+    })
+  })
+
+  describe('createDeparture', () => {
+    it('calls the createDeparture method of the placement client and returns a response', async () => {
+      const newPlacementDeparture = cas1NewDepartureFactory.build()
+
+      placementClient.createDeparture.mockResolvedValue({})
+
+      const result = await placementService.createDeparture(token, premisesId, placementId, newPlacementDeparture)
+
+      expect(result).toEqual({})
+      expect(placementClientFactory).toHaveBeenCalledWith(token)
+      expect(placementClient.createDeparture).toHaveBeenCalledWith(premisesId, placementId, newPlacementDeparture)
+    })
+  })
+
+  describe('getDepartureReasons', () => {
+    it('calls the getReferenceData method of the reference data client and returns a response', async () => {
+      const departureReasons = departureReasonFactory.buildList(5)
+
+      referenceDataClient.getReferenceData.mockResolvedValue(departureReasons)
+
+      const result = await placementService.getDepartureReasons(token)
+
+      expect(result).toEqual(departureReasons)
+      expect(referenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('departure-reasons')
+    })
+  })
+
+  describe('getMoveOnCategories', () => {
+    it('calls the getReferenceData method of the reference data client and returns a response', async () => {
+      const moveOnCategories = referenceDataFactory.buildList(5)
+
+      referenceDataClient.getReferenceData.mockResolvedValue(moveOnCategories)
+
+      const result = await placementService.getMoveOnCategories(token)
+
+      expect(result).toEqual(moveOnCategories)
+      expect(referenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('move-on-categories')
     })
   })
 })

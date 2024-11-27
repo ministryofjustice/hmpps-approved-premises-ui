@@ -19,6 +19,7 @@ export default function routes(controllers: Controllers, router: Router, service
     placementController,
     arrivalsController,
     nonArrivalsController,
+    departuresController,
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
@@ -168,6 +169,42 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'NON_ARRIVAL_FAILURE',
       },
     ],
+  })
+  get(paths.premises.placements.departure.new.pattern, departuresController.new(), {
+    auditEvent: 'NEW_DEPARTURE',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
+  })
+  post(paths.premises.placements.departure.new.pattern, departuresController.saveNew(), {
+    auditEvent: 'NEW_DEPARTURE_SAVE',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
+  })
+  get(paths.premises.placements.departure.breachOrRecallReason.pattern, departuresController.breachOrRecallReason(), {
+    auditEvent: 'NEW_DEPARTURE_BREACH_OR_RECALL',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
+  })
+  post(
+    paths.premises.placements.departure.breachOrRecallReason.pattern,
+    departuresController.saveBreachOrRecallReason(),
+    {
+      auditEvent: 'NEW_DEPARTURE_BREACH_OR_RECALL_SAVE',
+      allowedPermissions: ['cas1_space_booking_record_departure'],
+    },
+  )
+  get(paths.premises.placements.departure.moveOnCategory.pattern, departuresController.moveOnCategory(), {
+    auditEvent: 'NEW_DEPARTURE_MOVE_ON',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
+  })
+  post(paths.premises.placements.departure.moveOnCategory.pattern, departuresController.saveMoveOnCategory(), {
+    auditEvent: 'NEW_DEPARTURE_MOVE_ON_SAVE',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
+  })
+  get(paths.premises.placements.departure.notes.pattern, departuresController.notes(), {
+    auditEvent: 'NEW_DEPARTURE_NOTES',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
+  })
+  post(paths.premises.placements.departure.notes.pattern, departuresController.create(), {
+    auditEvent: 'NEW_DEPARTURE_CREATE',
+    allowedPermissions: ['cas1_space_booking_record_departure'],
   })
 
   // Bookings

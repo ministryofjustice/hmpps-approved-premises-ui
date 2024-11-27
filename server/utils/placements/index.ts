@@ -4,7 +4,7 @@ import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
 import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
 import paths from '../../paths/manage'
-import { hasPermission } from '../users/roles'
+import { hasPermission } from '../users'
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
@@ -38,7 +38,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     actionList.push({
       text: 'Record departure',
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
   return actionList.length ? [{ items: actionList }] : null
@@ -123,17 +123,27 @@ export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => 
   }
 }
 
-export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => ({
-  rows: [
-    summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-    summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
-    summaryRow('Departure time', formatTime(placement.actualDepartureDate)),
-    summaryRow('Departure reason', placement.departure?.reason?.name),
-    summaryRow('Breach or recall', null),
-    summaryRow('Move on', placement.departure?.moveOnCategory?.name),
-    summaryRow('More information', null),
-  ].filter(Boolean),
-})
+export const departureInformation = (placement: Cas1SpaceBooking): SummaryList => {
+  let reason = placement.departure?.reason?.name
+  let breachOrRecall = null
+
+  if (placement.departure?.parentReason?.id === BREACH_OR_RECALL_REASON_ID) {
+    reason = placement.departure.parentReason.name
+    breachOrRecall = placement.departure?.reason?.name
+  }
+
+  return {
+    rows: [
+      summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
+      summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
+      summaryRow('Departure time', formatTime(placement.actualDepartureDate)),
+      summaryRow('Departure reason', reason),
+      summaryRow('Breach or recall', breachOrRecall),
+      summaryRow('Move on', placement.departure?.moveOnCategory?.name),
+      summaryRow('More information', placement.departure?.notes),
+    ].filter(Boolean),
+  }
+}
 
 const listOtherBookings = (placement: Cas1SpaceBooking): string =>
   (placement.otherBookingsInPremisesForCrn || [])
@@ -168,3 +178,6 @@ export const renderKeyworkersSelectOptions = (
       selected: false,
     })),
 ]
+
+export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
+export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

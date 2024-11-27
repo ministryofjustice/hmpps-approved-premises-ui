@@ -54,7 +54,12 @@ import premisesFactory from './premises'
 import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
-import referenceDataFactory, { apAreaFactory, nonArrivalReasonsFactory, probationRegionFactory } from './referenceData'
+import referenceDataFactory, {
+  apAreaFactory,
+  departureReasonFactory,
+  nonArrivalReasonsFactory,
+  probationRegionFactory,
+} from './referenceData'
 import cas1ReferenceDataFactory, { cruManagementAreaFactory } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
@@ -83,8 +88,10 @@ import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import cas1SpaceBookingFactory from './cas1SpaceBooking'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import cas1AssignKeyWorkerFactory from './cas1AssignKeyWorker'
-import newPlacementArrivalFactory from './newPlacementArrival'
 import cas1NonArrivalFactory from './cas1NonArrival'
+import cas1NewArrivalFactory from './cas1NewArrival'
+import cas1NewDepartureFactory from './cas1NewDeparture'
+import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
 
 export {
   acctAlertFactory,
@@ -115,10 +122,12 @@ export {
   cas1PremisesSummaryFactory,
   cas1ReferenceDataFactory,
   cas1SpaceBookingDatesFactory,
+  cas1SpaceBookingDepartureFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   cas1AssignKeyWorkerFactory,
-  newPlacementArrivalFactory,
+  cas1NewArrivalFactory,
+  cas1NewDepartureFactory,
   cas1NonArrivalFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
@@ -127,6 +136,7 @@ export {
   dateChangeFactory,
   dateCapacityFactory,
   departureFactory,
+  departureReasonFactory,
   documentFactory,
   extendedPremisesSummaryFactory,
   newPlacementRequestBookingFactory,

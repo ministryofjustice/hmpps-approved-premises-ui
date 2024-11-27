@@ -176,6 +176,10 @@ export default abstract class Page {
     cy.get('button').click()
   }
 
+  clickContinue(): void {
+    cy.get('button').contains('Continue').click()
+  }
+
   clickBack(): void {
     cy.get('a').contains('Back').click()
   }
@@ -364,6 +368,10 @@ export default abstract class Page {
 
   verifyTextInputContentsById(id: string, value: string): void {
     cy.get(`#${id}`).should('have.value', value)
+  }
+
+  verifyRadioInputByName(name: string, value: string): void {
+    cy.get(`[name="${name}"][value="${value}"]`).should('be.checked')
   }
 
   clearAndCompleteTextInputById(id: string, text: string): void {

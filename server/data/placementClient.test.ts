@@ -1,7 +1,12 @@
 import PlacementClient from './placementClient'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
-import { cas1AssignKeyWorkerFactory, cas1NonArrivalFactory, newPlacementArrivalFactory } from '../testutils/factories'
+import {
+  cas1AssignKeyWorkerFactory,
+  cas1NewArrivalFactory,
+  cas1NewDepartureFactory,
+  cas1NonArrivalFactory,
+} from '../testutils/factories'
 
 describeCas1NamespaceClient('PlacementClient', provider => {
   let placementClient: PlacementClient
@@ -17,11 +22,11 @@ describeCas1NamespaceClient('PlacementClient', provider => {
 
   describe('createArrival', () => {
     it('creates and returns an arrival for a given placement', async () => {
-      const newPlacementArrival = newPlacementArrivalFactory.build()
+      const newPlacementArrival = cas1NewArrivalFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to create a lost bed',
+        uponReceiving: 'A request to record a placement arrival',
         withRequest: {
           method: 'POST',
           path: paths.premises.placements.arrival({ premisesId, placementId }),
@@ -88,6 +93,32 @@ describeCas1NamespaceClient('PlacementClient', provider => {
       })
 
       const result = await placementClient.recordNonArrival(premisesId, placementId, nonArrival)
+
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('createDeparture', () => {
+    it('creates a departure for a given placement', async () => {
+      const newPlacementDeparture = cas1NewDepartureFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to record a placement departure',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.placements.departure({ premisesId, placementId }),
+          body: newPlacementDeparture,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      const result = await placementClient.createDeparture(premisesId, placementId, newPlacementDeparture)
 
       expect(result).toEqual({})
     })

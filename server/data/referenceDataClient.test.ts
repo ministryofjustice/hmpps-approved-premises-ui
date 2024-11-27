@@ -8,9 +8,13 @@ import {
 } from '@approved-premises/api'
 
 import ReferenceDataClient from './referenceDataClient'
-import { probationRegionFactory, referenceDataFactory } from '../testutils/factories'
+import {
+  apAreaFactory,
+  nonArrivalReasonsFactory,
+  probationRegionFactory,
+  referenceDataFactory,
+} from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
-import { apAreaFactory, nonArrivalReasonsFactory } from '../testutils/factories/referenceData'
 
 describeClient('ReferenceDataClient', provider => {
   let referenceDataClient: ReferenceDataClient

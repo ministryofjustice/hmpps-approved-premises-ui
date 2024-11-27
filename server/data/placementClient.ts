@@ -1,4 +1,4 @@
-import { Cas1AssignKeyWorker, Cas1NewArrival, Cas1NonArrival } from '@approved-premises/api'
+import { Cas1AssignKeyWorker, Cas1NewArrival, Cas1NewDeparture, Cas1NonArrival } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -10,7 +10,7 @@ export default class PlacementClient {
     this.restClient = new RestClient('placementClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async createArrival(premisesId: string, placementId: string, newPlacementArrival: Cas1NewArrival) {
+  async createArrival(premisesId: string, placementId: string, newPlacementArrival: Cas1NewArrival): Promise<unknown> {
     return this.restClient.post({
       path: paths.premises.placements.arrival({ premisesId, placementId }),
       data: newPlacementArrival,
@@ -28,6 +28,17 @@ export default class PlacementClient {
     return this.restClient.post({
       path: paths.premises.placements.keyworker({ premisesId, placementId }),
       data: keyworkerAssignment,
+    })
+  }
+
+  async createDeparture(
+    premisesId: string,
+    placementId: string,
+    newPlacementDeparture: Cas1NewDeparture,
+  ): Promise<unknown> {
+    return this.restClient.post({
+      path: paths.premises.placements.departure({ premisesId, placementId }),
+      data: newPlacementDeparture,
     })
   }
 }

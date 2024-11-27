@@ -41,7 +41,7 @@ export default class ArrivalsController {
         if (!arrivalTime) {
           errors.arrivalTime = 'You must enter a time of arrival'
         } else if (!timeIsValid24hrFormat(arrivalTime)) {
-          errors.arrivalTime = 'You must enter a valid time of arrival in 24hr format'
+          errors.arrivalTime = 'You must enter a valid time of arrival in 24-hour format'
         }
 
         const { arrivalDateTime } = DateFormats.dateAndTimeInputsToIsoString(

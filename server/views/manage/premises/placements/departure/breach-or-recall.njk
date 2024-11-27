@@ -1,0 +1,24 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "./partials/layout.njk" %}
+
+{% block formContent %}
+    {{ govukRadios({
+        name: "breachOrRecallReasonId",
+        fieldset: {
+            legend: {
+                text: "Breach or recall",
+                classes: "govuk-fieldset__legend--m"
+            }
+        },
+        items: convertObjectsToRadioItems(departureReasons, 'name', 'id', 'breachOrRecallReasonId'),
+        value: breachOrRecallReasonId,
+        errorMessage: errors.breachOrRecallReasonId
+    }) }}
+
+    {{ govukButton({
+        text: "Continue",
+        preventDoubleClick: true
+    }) }}
+{% endblock %}

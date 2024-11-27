@@ -54,6 +54,7 @@ const managePath = path('/manage')
 const premisesPath = managePath.path('premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
 const singlePlacementPath = singlePremisesPath.path('placements/:placementId')
+const departurePath = singlePlacementPath.path('departure')
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
 const bedsPath = singlePremisesPath.path('beds')
@@ -74,9 +75,14 @@ const paths = {
     placements: {
       show: singlePlacementPath,
       arrival: singlePlacementPath.path('arrival'),
-      departure: singlePlacementPath.path('departure'),
       keyworker: singlePlacementPath.path('keyworker'),
       nonArrival: singlePlacementPath.path('non-arrival'),
+      departure: {
+        new: departurePath.path('new'),
+        breachOrRecallReason: departurePath.path('breach-or-recall'),
+        moveOnCategory: departurePath.path('move-on'),
+        notes: departurePath.path('notes'),
+      },
     },
   },
 
