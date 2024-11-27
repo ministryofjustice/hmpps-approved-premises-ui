@@ -8,6 +8,7 @@ export default class CancellationCreatePage extends Page {
   constructor(
     public readonly premisesId: string,
     public readonly bookingId: string,
+    public readonly spaceBookingId: string,
   ) {
     super('Confirm withdrawn placement')
   }
@@ -15,7 +16,13 @@ export default class CancellationCreatePage extends Page {
   static visit(premisesId: string, bookingId: string): CancellationCreatePage {
     cy.visit(paths.bookings.cancellations.new({ premisesId, bookingId }))
 
-    return new CancellationCreatePage(premisesId, bookingId)
+    return new CancellationCreatePage(premisesId, bookingId, undefined)
+  }
+
+  static visitWithSpaceBooking(premisesId: string, placementId: string): CancellationCreatePage {
+    cy.visit(paths.premises.placements.cancellations.new({ premisesId, placementId }))
+
+    return new CancellationCreatePage(premisesId, undefined, placementId)
   }
 
   completeForm(cancellation: NewCancellation): void {

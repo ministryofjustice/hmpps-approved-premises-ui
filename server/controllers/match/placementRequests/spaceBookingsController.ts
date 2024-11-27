@@ -2,9 +2,10 @@ import type { Request, RequestHandler, Response, TypedRequestHandler } from 'exp
 import { ApType, NewCas1SpaceBooking as NewSpaceBooking } from '@approved-premises/api'
 import { PlacementRequestService, SpaceService } from '../../../services'
 import { filterOutAPTypes, placementDates } from '../../../utils/match'
-import { catchValidationErrorOrPropogate } from '../../../utils/validation'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
+import { createQueryString } from '../../../utils/utils'
 
 interface NewRequest extends Request {
   params: { id: string }
@@ -21,6 +22,7 @@ export default class {
     return async (req: NewRequest, res: Response) => {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
       const { startDate, durationDays, premisesName, premisesId, apType } = req.query
+      const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       res.render('match/placementRequests/spaceBookings/new', {
         pageHeading: `Book space in ${premisesName}`,
@@ -31,20 +33,24 @@ export default class {
         dates: placementDates(startDate, durationDays),
         essentialCharacteristics: filterOutAPTypes(placementRequest.essentialCriteria),
         desirableCharacteristics: filterOutAPTypes(placementRequest.desirableCriteria),
+        errors,
+        errorSummary,
       })
     }
   }
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { body } = req
+      const {
+        body: { arrivalDate, departureDate, durationDays, premisesId, premisesName, essentialCharacteristics, apType },
+      } = req
 
       const newSpaceBooking: NewSpaceBooking = {
-        arrivalDate: body.arrivalDate,
-        departureDate: body.departureDate,
-        premisesId: body.premisesId,
+        arrivalDate,
+        departureDate,
+        premisesId,
         requirements: {
-          essentialCharacteristics: body.essentialCharacteristics ? body.essentialCharacteristics.split(',') : [],
+          essentialCharacteristics: essentialCharacteristics ? essentialCharacteristics.split(',') : [],
         },
       }
       try {
@@ -52,11 +58,18 @@ export default class {
         req.flash('success', `Space booked for ${req.body.personName} in ${req.body.premisesName}`)
         return res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)
       } catch (error) {
+        const queryString = createQueryString({
+          startDate: arrivalDate,
+          durationDays,
+          premisesName,
+          premisesId,
+          apType,
+        })
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          matchPaths.v2Match.placementRequests.spaceBookings.new({ id: req.params.id }),
+          `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: req.params.id })}?${queryString}`,
         )
       }
     }

@@ -1,14 +1,16 @@
-import {
+import type {
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
   Cas1NonArrival,
+  Cas1SpaceBooking,
   DepartureReason,
+  NewCas1SpaceBookingCancellation,
   NonArrivalReason,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { DepartureFormSessionData, ReferenceData } from '@approved-premises/ui'
-import { ReferenceDataClient, RestClientBuilder } from '../data'
+import type { ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
 export default class PlacementService {
@@ -16,6 +18,12 @@ export default class PlacementService {
     private readonly placementClientFactory: RestClientBuilder<PlacementClient>,
     private readonly referenceDataClientFactory: RestClientBuilder<ReferenceDataClient>,
   ) {}
+
+  async getPlacement(token: string, placementId: string): Promise<Cas1SpaceBooking> {
+    const placementClient = this.placementClientFactory(token)
+
+    return placementClient.getPlacement(placementId)
+  }
 
   async createArrival(token: string, premisesId: string, placementId: string, newPlacementArrival: Cas1NewArrival) {
     const placementClient = this.placementClientFactory(token)
@@ -85,5 +93,16 @@ export default class PlacementService {
 
   removeDepartureSessionData(placementId: string, session: Request['session']) {
     delete session?.departureForms?.[placementId]
+  }
+
+  async createCancellation(
+    token: string,
+    premisesId: string,
+    placementId: string,
+    cancellation: NewCas1SpaceBookingCancellation,
+  ) {
+    const placementClient = this.placementClientFactory(token)
+
+    return placementClient.cancel(premisesId, placementId, cancellation)
   }
 }

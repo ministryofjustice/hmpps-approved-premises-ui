@@ -1,16 +1,17 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { ApplicationService, BookingService } from '../../services'
+import { ApplicationService, BookingService, PlacementService } from '../../services'
 import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
 import placementAppPaths from '../../paths/placementApplications'
 import managePaths from '../../paths/manage'
-import { ApprovedPremisesApplication as Application, Withdrawable } from '../../@types/shared'
+import type { ApprovedPremisesApplication as Application, Withdrawable } from '../../@types/shared'
 import { SelectedWithdrawableType, sortAndFilterWithdrawables } from '../../utils/applications/withdrawables'
 
 export default class WithdrawalsController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly bookingService: BookingService,
+    private readonly placementService: PlacementService,
   ) {}
 
   show(): RequestHandler {
@@ -19,20 +20,31 @@ export default class WithdrawalsController {
       const selectedWithdrawableType = req.query?.selectedWithdrawableType as SelectedWithdrawableType | undefined
 
       const withdrawables = await this.applicationService.getWithdrawablesWithNotes(req.user.token, id)
-
       if (selectedWithdrawableType === 'placement') {
-        const placementWithdrawables = sortAndFilterWithdrawables(withdrawables.withdrawables, ['booking'])
+        const placementAndBookingWithdrawables = sortAndFilterWithdrawables(withdrawables.withdrawables, [
+          'booking',
+          'space_booking',
+        ])
+        const bookingWithdrawables = placementAndBookingWithdrawables.filter(({ type }) => type === 'booking')
         const bookings = await Promise.all(
-          placementWithdrawables.map(async withdrawable => {
+          bookingWithdrawables.map(async withdrawable => {
             return this.bookingService.findWithoutPremises(req.user.token, withdrawable.id)
           }),
         )
-
+        const spaceBookingWithdrawables = placementAndBookingWithdrawables.filter(
+          ({ type }) => type === 'space_booking',
+        )
+        const placements = await Promise.all(
+          spaceBookingWithdrawables.map(async withdrawable => {
+            return this.placementService.getPlacement(req.user.token, withdrawable.id)
+          }),
+        )
         return res.render('applications/withdrawables/show', {
           pageHeading: 'Select your placement',
           id,
-          withdrawables: placementWithdrawables,
+          withdrawables: placementAndBookingWithdrawables,
           bookings,
+          placements,
           withdrawableType: 'placement',
           notes: withdrawables.notes,
         })
@@ -77,6 +89,17 @@ export default class WithdrawalsController {
         return res.redirect(
           302,
           managePaths.bookings.cancellations.new({ bookingId: booking.id, premisesId: booking.premises.id }),
+        )
+      }
+
+      if (withdrawable.type === 'space_booking') {
+        const placement = await this.placementService.getPlacement(req.user.token, selectedWithdrawable)
+        return res.redirect(
+          302,
+          managePaths.premises.placements.cancellations.new({
+            placementId: placement.id,
+            premisesId: placement.premises.id,
+          }),
         )
       }
 

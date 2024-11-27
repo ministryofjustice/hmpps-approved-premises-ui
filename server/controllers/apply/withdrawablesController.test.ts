@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { NextFunction } from 'express'
-import { ApplicationService, BookingService } from '../../services'
+import { ApplicationService, BookingService, PlacementService } from '../../services'
 import WithdrawablesController from './withdrawablesController'
-import { bookingFactory, withdrawableFactory } from '../../testutils/factories'
+import { bookingFactory, cas1SpaceBookingFactory, withdrawableFactory } from '../../testutils/factories'
 import adminPaths from '../../paths/admin'
 import managePaths from '../../paths/manage'
 import placementAppPaths from '../../paths/placementApplications'
@@ -25,11 +25,12 @@ describe('withdrawablesController', () => {
 
   const applicationService = createMock<ApplicationService>({})
   const bookingService = createMock<BookingService>({})
+  const placementService = createMock<PlacementService>({})
 
   let withdrawablesController: WithdrawablesController
 
   beforeEach(() => {
-    withdrawablesController = new WithdrawablesController(applicationService, bookingService)
+    withdrawablesController = new WithdrawablesController(applicationService, bookingService, placementService)
     request = createMock<Request>({ user: { token }, flash })
     response = createMock<Response>({})
     jest.clearAllMocks()
@@ -77,19 +78,25 @@ describe('withdrawablesController', () => {
     describe('Bookings', () => {
       it(`renders the view, calling the booking service to retrieve bookings`, async () => {
         const selectedWithdrawableType = 'placement'
-        const placementWithdrawables = withdrawableFactory.buildList(2, { type: 'booking' })
+        const bookingWithdrawables = withdrawableFactory.buildList(2, { type: 'booking' })
+        const spaceBookingWithdrawables = withdrawableFactory.buildList(2, { type: 'space_booking' })
+        const allPlacementWithdrawables = [...bookingWithdrawables, ...spaceBookingWithdrawables]
         const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
         const bookings = bookingFactory.buildList(2).map((b, i) => {
-          return { ...b, id: placementWithdrawables[i].id }
+          return { ...b, id: bookingWithdrawables[i].id }
         })
-        const withdrawable = [applicationWithdrawable, ...placementWithdrawables]
+        const spaceBookings = cas1SpaceBookingFactory.buildList(2).map((b, i) => {
+          return { ...b, id: spaceBookingWithdrawables[i].id }
+        })
+        const withdrawable = [applicationWithdrawable, ...allPlacementWithdrawables]
         const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
         applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
         ;(sortAndFilterWithdrawables as jest.MockedFunction<typeof sortAndFilterWithdrawables>).mockReturnValue(
-          placementWithdrawables,
+          allPlacementWithdrawables,
         )
         bookings.forEach(b => bookingService.findWithoutPremises.mockResolvedValueOnce(b))
+        spaceBookings.forEach(b => placementService.getPlacement.mockResolvedValueOnce(b))
 
         const requestHandler = withdrawablesController.show()
 
@@ -98,20 +105,24 @@ describe('withdrawablesController', () => {
           response,
           next,
         )
-        expect(sortAndFilterWithdrawables).toHaveBeenCalledWith(withdrawable, ['booking'])
+        expect(sortAndFilterWithdrawables).toHaveBeenCalledWith(withdrawable, ['booking', 'space_booking'])
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
           pageHeading: 'Select your placement',
           id: applicationId,
-          withdrawables: placementWithdrawables,
+          withdrawables: allPlacementWithdrawables,
           bookings,
+          placements: spaceBookings,
           withdrawableType: 'placement',
           notes: withdrawables.notes,
         })
         expect(bookingService.findWithoutPremises).toHaveBeenCalledTimes(2)
-        expect(bookingService.findWithoutPremises).toHaveBeenCalledWith(token, placementWithdrawables[0].id)
-        expect(bookingService.findWithoutPremises).toHaveBeenCalledWith(token, placementWithdrawables[1].id)
+        expect(bookingService.findWithoutPremises).toHaveBeenCalledWith(token, bookingWithdrawables[0].id)
+        expect(bookingService.findWithoutPremises).toHaveBeenCalledWith(token, bookingWithdrawables[1].id)
         expect(bookingService.findWithoutPremises).not.toHaveBeenCalledWith(token, applicationWithdrawable.id)
+        expect(placementService.getPlacement).toHaveBeenCalledTimes(2)
+        expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[0].id)
+        expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[1].id)
       })
     })
   })
@@ -180,6 +191,35 @@ describe('withdrawablesController', () => {
       expect(response.redirect).toHaveBeenCalledWith(
         302,
         managePaths.bookings.cancellations.new({ bookingId: selectedWithdrawable, premisesId: booking.premises.id }),
+      )
+    })
+
+    it('redirects to the booking withdrawal page if the withdrawable is a space_booking (placement)', async () => {
+      const placementId = 'some-id'
+      const withdrawable = withdrawableFactory.build({
+        type: 'space_booking',
+        id: placementId,
+      })
+      const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
+
+      const placement = cas1SpaceBookingFactory.build({ id: placementId })
+
+      applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
+      placementService.getPlacement.mockResolvedValue(placement)
+
+      const requestHandler = withdrawablesController.create()
+
+      await requestHandler(
+        { ...request, params: { id: applicationId }, body: { selectedWithdrawable: placementId } },
+        response,
+        next,
+      )
+
+      expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placementId)
+      expect(response.redirect).toHaveBeenCalledWith(
+        302,
+        managePaths.premises.placements.cancellations.new({ placementId, premisesId: placement.premises.id }),
       )
     })
   })

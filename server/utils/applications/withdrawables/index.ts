@@ -1,4 +1,4 @@
-import { Booking, Withdrawable } from '../../../@types/shared'
+import { Booking, Cas1SpaceBooking, Withdrawable } from '../../../@types/shared'
 import { RadioItem } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
 import managePaths from '../../../paths/manage'
@@ -56,7 +56,7 @@ export const withdrawableTypeRadioOptions = (
       hint: { html: hintCopy.placementRequest },
     })
 
-  if (withdrawables.find(w => w.type === 'booking')) {
+  if (withdrawables.find(w => ['booking', 'space_booking'].includes(w.type))) {
     radioItems.push({
       text: 'Placement/Booking',
       value: 'placement',
@@ -74,8 +74,9 @@ export const withdrawableRadioOptions = (
   withdrawables: Array<Withdrawable>,
   selectedWithdrawable?: Withdrawable['id'],
   bookings: Array<Booking> = [],
-): Array<RadioItem> => {
-  return withdrawables.map(withdrawable => {
+  placements: Array<Cas1SpaceBooking> = [],
+): Array<RadioItem> =>
+  withdrawables.map(withdrawable => {
     if (withdrawable.type === 'placement_application') {
       return {
         text: withdrawable.dates
@@ -133,7 +134,29 @@ export const withdrawableRadioOptions = (
         },
       }
     }
+    if (withdrawable.type === 'space_booking') {
+      const placement = placements.find(b => b.id === withdrawable.id)
 
+      if (!placement) throw new Error(`Placement not found for withdrawable: ${withdrawable.id}`)
+
+      return {
+        text: `${placement.premises.name} - ${withdrawable.dates
+          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+          .join(', ')}`,
+        value: withdrawable.id,
+        checked: selectedWithdrawable === withdrawable.id,
+        hint: {
+          html: linkTo(
+            managePaths.premises.placements.show,
+            { premisesId: placement.premises.id, placementId: withdrawable.id },
+            {
+              text: 'See placement details (opens in a new tab)',
+              attributes: { 'data-cy-withdrawable-id': withdrawable.id },
+              openInNewTab: true,
+            },
+          ),
+        },
+      }
+    }
     throw new Error(`Unknown withdrawable type: ${withdrawable.type}`)
   })
-}

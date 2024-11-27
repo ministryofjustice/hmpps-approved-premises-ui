@@ -2,13 +2,16 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-
-import CancellationService from '../../services/cancellationService'
-import BookingService from '../../services/bookingService'
+import { BookingService, CancellationService, PlacementService } from '../../services'
 import CancellationsController from './cancellationsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
-import { bookingFactory, cancellationFactory, referenceDataFactory } from '../../testutils/factories'
+import {
+  bookingFactory,
+  cancellationFactory,
+  cas1SpaceBookingFactory,
+  referenceDataFactory,
+} from '../../testutils/factories'
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
@@ -18,6 +21,7 @@ jest.mock('../../utils/validation')
 describe('cancellationsController', () => {
   const token = 'SOME_TOKEN'
   const booking = bookingFactory.build()
+  const placement = cas1SpaceBookingFactory.build({ applicationId: booking.applicationId })
   const backLink = `${applyPaths.applications.withdrawables.show({ id: booking.applicationId })}?selectedWithdrawableType=placement`
 
   const cancellationReasons = referenceDataFactory.buildList(4)
@@ -31,17 +35,19 @@ describe('cancellationsController', () => {
 
   const cancellationService = createMock<CancellationService>({})
   const bookingService = createMock<BookingService>({})
+  const placementService = createMock<PlacementService>({})
 
-  const cancellationsController = new CancellationsController(cancellationService, bookingService)
+  const cancellationsController = new CancellationsController(cancellationService, bookingService, placementService)
 
   beforeEach(() => {
     jest.resetAllMocks()
     bookingService.find.mockResolvedValue(booking)
+    placementService.getPlacement.mockResolvedValue(placement)
     cancellationService.getCancellationReasons.mockResolvedValue(cancellationReasons)
   })
 
   describe('new', () => {
-    it('should render the form', async () => {
+    it('should render the form with a legacy booking', async () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
         return { errors: {}, errorSummary: [], userInput: {} }
       })
@@ -50,17 +56,46 @@ describe('cancellationsController', () => {
 
       await requestHandler({ ...request, params: { premisesId, bookingId } }, response, next)
 
+      const { arrivalDate, departureDate, person, id } = booking
+
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
         premisesId,
-        booking,
+        booking: { arrivalDate, departureDate, person, id },
         backLink,
         cancellationReasons,
+        formAction: paths.bookings.cancellations.create({ premisesId, bookingId }),
         pageHeading: 'Confirm withdrawn placement',
         errors: {},
         errorSummary: [],
       })
 
       expect(bookingService.find).toHaveBeenCalledWith(token, premisesId, bookingId)
+      expect(cancellationService.getCancellationReasons).toHaveBeenCalledWith(token)
+    })
+
+    it('should render the form with a placement (space_booking)', async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [], userInput: {} }
+      })
+
+      const requestHandler = cancellationsController.new()
+
+      await requestHandler({ ...request, params: { premisesId, placementId: placement.id } }, response, next)
+
+      const { canonicalArrivalDate, canonicalDepartureDate, person, id } = placement
+
+      expect(response.render).toHaveBeenCalledWith('cancellations/new', {
+        premisesId,
+        booking: { arrivalDate: canonicalArrivalDate, departureDate: canonicalDepartureDate, person, id },
+        backLink,
+        cancellationReasons,
+        pageHeading: 'Confirm withdrawn placement',
+        formAction: paths.premises.placements.cancellations.create({ premisesId, placementId: placement.id }),
+        errors: {},
+        errorSummary: [],
+      })
+
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(cancellationService.getCancellationReasons).toHaveBeenCalledWith(token)
     })
 
@@ -73,16 +108,14 @@ describe('cancellationsController', () => {
 
       await requestHandler({ ...request, params: { premisesId, bookingId } }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('cancellations/new', {
-        premisesId,
-        booking,
-        backLink,
-        cancellationReasons,
-        pageHeading: 'Confirm withdrawn placement',
-        errors: errorsAndUserInput.errors,
-        errorSummary: errorsAndUserInput.errorSummary,
-        ...errorsAndUserInput.userInput,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'cancellations/new',
+        expect.objectContaining({
+          errors: errorsAndUserInput.errors,
+          errorSummary: errorsAndUserInput.errorSummary,
+          ...errorsAndUserInput.userInput,
+        }),
+      )
     })
 
     it('sets the backlink to the withdrawables show page if there is an applicationId on the booking', async () => {
@@ -97,15 +130,12 @@ describe('cancellationsController', () => {
 
       await requestHandler({ ...request, params: { premisesId, bookingId }, headers: {} }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('cancellations/new', {
-        premisesId,
-        booking: bookingWithoutAnApplication,
-        backLink: paths.bookings.show({ premisesId, bookingId }),
-        cancellationReasons,
-        pageHeading: 'Confirm withdrawn placement',
-        errors: {},
-        errorSummary: [],
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'cancellations/new',
+        expect.objectContaining({
+          backLink: paths.bookings.show({ premisesId, bookingId }),
+        }),
+      )
     })
   })
 

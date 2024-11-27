@@ -1,4 +1,4 @@
-import { bookingFactory, withdrawableFactory } from '../../../testutils/factories'
+import { bookingFactory, cas1SpaceBookingFactory, withdrawableFactory } from '../../../testutils/factories'
 import { hintCopy, withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
@@ -53,50 +53,60 @@ describe('withdrawableTypeRadioOptions', () => {
     expect(withdrawableTypeRadioOptions([placementWithdrawable])).toEqual([placementRadioItem])
   })
 
+  it('should return the booking item if passed a space_booking Withdrawable', () => {
+    const placementWithdrawable = withdrawableFactory.build({ type: 'space_booking' })
+
+    expect(withdrawableTypeRadioOptions([placementWithdrawable])).toEqual([placementRadioItem])
+  })
+
   it('returns checked: true if an item is selected', () => {
     const withdrawable = withdrawableFactory.buildList(1, { type: 'booking' })
     expect(withdrawableTypeRadioOptions(withdrawable, 'placement')).toEqual([{ ...placementRadioItem, checked: true }])
   })
 
   describe('withdrawableRadioOptions', () => {
-    it('returns the withdrawables in radio input format', () => {
-      const paWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
-      const prWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
-      const booking = bookingFactory.build()
-      const placementWithdrawable = withdrawableFactory.build({ type: 'booking', id: booking.id })
+    const paWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
+    const prWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
 
+    const applicationAndAssesRadios = [
+      {
+        text: paWithdrawable.dates
+          .map(datePeriod =>
+            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+          )
+          .join(', '),
+        checked: true,
+        value: paWithdrawable.id,
+      },
+      {
+        text: prWithdrawable.dates
+          .map(datePeriod =>
+            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+          )
+          .join(', '),
+        checked: false,
+        hint: {
+          html: linkTo(
+            matchPaths.placementRequests.show,
+            { id: prWithdrawable.id },
+            {
+              text: 'See placement details (opens in a new tab)',
+              attributes: { 'data-cy-withdrawable-id': prWithdrawable.id },
+              openInNewTab: true,
+            },
+          ),
+        },
+        value: prWithdrawable.id,
+      },
+    ]
+
+    it('returns the legacy bookings withdrawables in radio input format', () => {
+      const booking = bookingFactory.build()
+      const bookingWithdrawable = withdrawableFactory.build({ type: 'booking', id: booking.id })
       expect(
-        withdrawableRadioOptions([paWithdrawable, prWithdrawable, placementWithdrawable], paWithdrawable.id, [booking]),
+        withdrawableRadioOptions([paWithdrawable, prWithdrawable, bookingWithdrawable], paWithdrawable.id, [booking]),
       ).toEqual([
-        {
-          text: paWithdrawable.dates
-            .map(datePeriod =>
-              DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
-            )
-            .join(', '),
-          checked: true,
-          value: paWithdrawable.id,
-        },
-        {
-          text: prWithdrawable.dates
-            .map(datePeriod =>
-              DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
-            )
-            .join(', '),
-          checked: false,
-          hint: {
-            html: linkTo(
-              matchPaths.placementRequests.show,
-              { id: prWithdrawable.id },
-              {
-                text: 'See placement details (opens in a new tab)',
-                attributes: { 'data-cy-withdrawable-id': prWithdrawable.id },
-                openInNewTab: true,
-              },
-            ),
-          },
-          value: prWithdrawable.id,
-        },
+        ...applicationAndAssesRadios,
         {
           checked: false,
           hint: {
@@ -110,7 +120,40 @@ describe('withdrawableTypeRadioOptions', () => {
               },
             ),
           },
-          text: `${booking.premises.name} - ${placementWithdrawable.dates
+          text: `${booking.premises.name} - ${bookingWithdrawable.dates
+            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .join(', ')}`,
+          value: bookingWithdrawable.id,
+        },
+      ])
+    })
+
+    it('returns placement (space_bookings) withdrawables in radio input format', () => {
+      const placement = cas1SpaceBookingFactory.build()
+      const placementWithdrawable = withdrawableFactory.build({ type: 'space_booking', id: placement.id })
+      expect(
+        withdrawableRadioOptions(
+          [paWithdrawable, prWithdrawable, placementWithdrawable],
+          paWithdrawable.id,
+          [],
+          [placement],
+        ),
+      ).toEqual([
+        ...applicationAndAssesRadios,
+        {
+          checked: false,
+          hint: {
+            html: linkTo(
+              managePaths.premises.placements.show,
+              { placementId: placement.id, premisesId: placement.premises.id },
+              {
+                text: 'See placement details (opens in a new tab)',
+                attributes: { 'data-cy-withdrawable-id': placement.id },
+                openInNewTab: true,
+              },
+            ),
+          },
+          text: `${placement.premises.name} - ${placementWithdrawable.dates
             .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
             .join(', ')}`,
           value: placementWithdrawable.id,

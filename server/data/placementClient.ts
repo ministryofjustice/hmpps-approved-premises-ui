@@ -1,4 +1,11 @@
-import { Cas1AssignKeyWorker, Cas1NewArrival, Cas1NewDeparture, Cas1NonArrival } from '@approved-premises/api'
+import type {
+  Cas1AssignKeyWorker,
+  Cas1NewArrival,
+  Cas1NewDeparture,
+  Cas1NonArrival,
+  Cas1SpaceBooking,
+  NewCas1SpaceBookingCancellation,
+} from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -8,6 +15,12 @@ export default class PlacementClient {
 
   constructor(token: string) {
     this.restClient = new RestClient('placementClient', config.apis.approvedPremises as ApiConfig, token)
+  }
+
+  async getPlacement(placementId: string): Promise<Cas1SpaceBooking> {
+    return (await this.restClient.get({
+      path: paths.placements.placementWithoutPremises({ placementId }),
+    })) as Cas1SpaceBooking
   }
 
   async createArrival(premisesId: string, placementId: string, newPlacementArrival: Cas1NewArrival): Promise<unknown> {
@@ -39,6 +52,13 @@ export default class PlacementClient {
     return this.restClient.post({
       path: paths.premises.placements.departure({ premisesId, placementId }),
       data: newPlacementDeparture,
+    })
+  }
+
+  async cancel(premisesId: string, placementId: string, cancellation: NewCas1SpaceBookingCancellation) {
+    return this.restClient.post({
+      path: paths.premises.placements.cancel({ premisesId, placementId }),
+      data: cancellation,
     })
   }
 }
