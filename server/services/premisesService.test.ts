@@ -6,6 +6,7 @@ import PremisesClient from '../data/premisesClient'
 import {
   bedDetailFactory,
   bedSummaryFactory,
+  cas1PremiseCapacityFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
   cas1SpaceBookingFactory,
@@ -91,6 +92,23 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getBed).toHaveBeenCalledWith(premisesId, bed.id)
+    })
+  })
+
+  describe('getCapacity', () => {
+    it('on success returns capacity given a premises ID', async () => {
+      const startDate = '2025-05-20'
+      const endDate = '2025-12-01'
+
+      const premiseCapacity = cas1PremiseCapacityFactory.build()
+      premisesClient.getCapacity.mockResolvedValue(premiseCapacity)
+
+      const result = await service.getCapacity(token, premisesId, startDate, endDate)
+
+      expect(result).toEqual(premiseCapacity)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, endDate)
     })
   })
 

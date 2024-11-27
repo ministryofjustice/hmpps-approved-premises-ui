@@ -30,6 +30,8 @@ export default class {
         premisesName,
         premisesId,
         apType,
+        startDate,
+        durationDays,
         dates: placementDates(startDate, durationDays),
         essentialCharacteristics: filterOutAPTypes(placementRequest.essentialCriteria),
         desirableCharacteristics: filterOutAPTypes(placementRequest.desirableCriteria),

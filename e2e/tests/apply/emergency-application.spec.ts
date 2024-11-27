@@ -12,7 +12,7 @@ test('Apply, assess, match and book an emergency application for an Approved Pre
   assessor,
 }) => {
   await signIn(page, assessor)
-  const { id, preferredAps, apType, preferredPostcode } = await createApplication(
+  const { id, preferredAps, apType, preferredPostcode, releaseType } = await createApplication(
     { page, person, oasysSections, applicationType: 'emergency' },
     true,
   )
@@ -29,5 +29,6 @@ test('Apply, assess, match and book an emergency application for an Approved Pre
     apType,
     preferredAps,
     preferredPostcode,
+    releaseType,
   })
 })

@@ -1,4 +1,5 @@
 import { ReleaseTypeOptions } from '@approved-premises/ui'
+import { ReleaseTypeOption } from '@approved-premises/api'
 
 export const allReleaseTypes: ReleaseTypeOptions = {
   licence: 'Licence',
@@ -11,3 +12,5 @@ export const allReleaseTypes: ReleaseTypeOptions = {
   paroleDirectedLicence: 'Licence (Parole directed)',
   reReleasedPostRecall: 'Re-released post recall',
 }
+
+export type ReleaseTypeLabel = (typeof allReleaseTypes)[ReleaseTypeOption]

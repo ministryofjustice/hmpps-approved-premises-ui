@@ -12,7 +12,7 @@ test('Apply, assess, match and book an short notice application for an Approved 
   assessor,
 }) => {
   await signIn(page, assessor)
-  const { id, apType, preferredAps, preferredPostcode } = await createApplication(
+  const { id, apType, preferredAps, preferredPostcode, releaseType } = await createApplication(
     { page, person, oasysSections, applicationType: 'shortNotice' },
     true,
     true,
@@ -27,6 +27,7 @@ test('Apply, assess, match and book an short notice application for an Approved 
     applicationId: id,
     page,
     apType,
+    releaseType,
     preferredAps,
     datesOfPlacement,
     duration,

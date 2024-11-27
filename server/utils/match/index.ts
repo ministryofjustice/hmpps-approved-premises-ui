@@ -3,6 +3,7 @@ import {
   ApType,
   Gender,
   PlacementCriteria,
+  PlacementRequest,
   PlacementRequestDetail,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
@@ -23,6 +24,7 @@ import { textValue } from '../applications/helpers'
 import { isFullPerson } from '../personUtils'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
+import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 export { placementDates } from './placementDates'
 
@@ -70,7 +72,7 @@ export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
 }
 
-export const summaryCardLink = ({
+export const occupancyViewLink = ({
   placementRequestId,
   premisesName,
   premisesId,
@@ -156,6 +158,22 @@ export const spaceBookingPersonNeedsSummaryCardRows = (
   ]
 }
 
+export const occupancyViewSummaryListForMatchingDetails = (
+  totalCapacity: number,
+  dates: PlacementDates,
+  placementRequest: PlacementRequest,
+  essentialCharacteristics: Array<SpaceCharacteristic>,
+): Array<SummaryListItem> => {
+  return [
+    arrivalDateRow(dates.startDate),
+    departureDateRow(dates.endDate),
+    placementLengthRow(dates.placementLength),
+    releaseTypeRow(placementRequest),
+    totalCapacityRow(totalCapacity),
+    spaceRequirementsRow(essentialCharacteristics),
+  ]
+}
+
 export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<SpaceCharacteristic> => {
   return requirements.filter(
     requirement =>
@@ -170,7 +188,7 @@ export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<
   ) as Array<SpaceCharacteristic>
 }
 
-export const requirementsHtmlString = (requirements: Array<PlacementCriteria>): string => {
+export const requirementsHtmlString = (requirements: Array<SpaceCharacteristic | PlacementCriteria>): string => {
   let htmlString = ''
   requirements.forEach(requirement => {
     htmlString += `<li>${placementCriteriaLabels[requirement]}</li>`
@@ -289,6 +307,33 @@ export const desirableCharacteristicsRow = (desirableCharacteristics: Array<Plac
   },
   value: {
     html: requirementsHtmlString(desirableCharacteristics),
+  },
+})
+
+export const totalCapacityRow = (totalCapacity: number) => ({
+  key: {
+    text: 'Total capacity',
+  },
+  value: {
+    text: `${totalCapacity} spaces`,
+  },
+})
+
+export const spaceRequirementsRow = (essentialCharacteristics: Array<SpaceCharacteristic>) => ({
+  key: {
+    text: 'Space requirements',
+  },
+  value: {
+    html: requirementsHtmlString(essentialCharacteristics),
+  },
+})
+
+export const releaseTypeRow = (placementRequest: PlacementRequest) => ({
+  key: {
+    text: 'Release type',
+  },
+  value: {
+    text: allReleaseTypes[placementRequest.releaseType],
   },
 })
 

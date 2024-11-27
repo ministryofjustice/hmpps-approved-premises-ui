@@ -1,4 +1,10 @@
-import { ApType, ApprovedPremisesApplication, FullPerson, PlacementCriteria } from '@approved-premises/api'
+import {
+  ApType,
+  ApprovedPremisesApplication,
+  Cas1SpaceCharacteristic,
+  FullPerson,
+  PlacementCriteria,
+} from '@approved-premises/api'
 import { when } from 'jest-when'
 import paths from '../../paths/match'
 import {
@@ -33,18 +39,22 @@ import {
   keyDetails,
   lengthOfStayRow,
   mapUiParamsForApi,
+  occupancyViewLink,
+  occupancyViewSummaryListForMatchingDetails,
   placementLength,
   placementLengthRow,
   placementRequestSummaryListForMatching,
   postcodeRow,
   premisesNameRow,
   redirectToSpaceBookingsNew,
+  releaseTypeRow,
   requirementsHtmlString,
   spaceBookingPersonNeedsSummaryCardRows,
   spaceBookingPremisesSummaryCardRows,
+  spaceRequirementsRow,
   startDateObjFromParams,
-  summaryCardLink,
   summaryCardRows,
+  totalCapacityRow,
 } from '.'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { createQueryString } from '../utils'
@@ -238,8 +248,8 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('summaryCardLink', () => {
-    it('returns a link to the confirm page with the premises name and bed', () => {
+  describe('occupancyViewLink', () => {
+    it('returns a link to the occupancy view page', () => {
       const placementRequestId = '123'
       const premisesName = 'Hope House'
       const premisesId = 'abc'
@@ -249,7 +259,7 @@ describe('matchUtils', () => {
       const durationDays = '1'
       const durationInDays = Number(durationWeeks) * 7 + Number(durationDays)
 
-      summaryCardLink({
+      const result = occupancyViewLink({
         placementRequestId,
         premisesName,
         premisesId,
@@ -258,8 +268,8 @@ describe('matchUtils', () => {
         durationDays,
       })
 
-      expect(
-        `${paths.placementRequests.bookings.confirm({ id: placementRequestId })}${createQueryString(
+      expect(result).toEqual(
+        `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
           {
             premisesName,
             premisesId,
@@ -273,8 +283,8 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('Continue to Occupancy View', () => {
-    it('returns a link to the Occupancy View page', () => {
+  describe('redirectToSpaceBookingsNew', () => {
+    it('returns a link to the confirm page with the premises name and bed', () => {
       const placementRequestId = '123'
       const premisesName = 'Hope House'
       const premisesId = 'abc'
@@ -282,7 +292,7 @@ describe('matchUtils', () => {
       const startDate = '2022-01-01'
       const durationDays = '1'
 
-      redirectToSpaceBookingsNew({
+      const result = redirectToSpaceBookingsNew({
         placementRequestId,
         premisesName,
         premisesId,
@@ -291,8 +301,8 @@ describe('matchUtils', () => {
         durationDays,
       })
 
-      expect(
-        `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+      expect(result).toEqual(
+        `${paths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
           {
             premisesName,
             premisesId,
@@ -345,6 +355,86 @@ describe('matchUtils', () => {
         genderRow(gender),
         essentialCharacteristicsRow(essentialCharacteristics),
         desirableCharacteristicsRow(desirableCharacteristics),
+      ])
+    })
+  })
+
+  describe('occupancyViewSummaryListForMatchingDetails', () => {
+    const placementRequest = placementRequestDetailFactory.build({ releaseType: 'hdc' })
+    const totalCapacity = 120
+
+    const dates = {
+      startDate: '2025-10-02',
+      endDate: '2025-12-23',
+      placementLength: 52,
+    }
+    const essentialCharacteristics: Array<Cas1SpaceCharacteristic> = ['hasTactileFlooring']
+
+    it('should call the correct row functions', () => {
+      expect(
+        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
+      ).toEqual([
+        arrivalDateRow(dates.startDate),
+        departureDateRow(dates.endDate),
+        placementLengthRow(dates.placementLength),
+        releaseTypeRow(placementRequest),
+        totalCapacityRow(totalCapacity),
+        spaceRequirementsRow(essentialCharacteristics),
+      ])
+    })
+
+    it('should generate the expected matching details', () => {
+      expect(
+        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
+      ).toEqual([
+        {
+          key: {
+            text: 'Expected arrival date',
+          },
+          value: {
+            text: 'Thu 2 Oct 2025',
+          },
+        },
+        {
+          key: {
+            text: 'Expected departure date',
+          },
+          value: {
+            text: 'Tue 23 Dec 2025',
+          },
+        },
+        {
+          key: {
+            text: 'Placement length',
+          },
+          value: {
+            text: '7 weeks, 3 days',
+          },
+        },
+        {
+          key: {
+            text: 'Release type',
+          },
+          value: {
+            text: 'Home detention curfew (HDC)',
+          },
+        },
+        {
+          key: {
+            text: 'Total capacity',
+          },
+          value: {
+            text: '120 spaces',
+          },
+        },
+        {
+          key: {
+            text: 'Space requirements',
+          },
+          value: {
+            html: '<ul class="govuk-list"><li>Tactile flooring</li></ul>',
+          },
+        },
       ])
     })
   })

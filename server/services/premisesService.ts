@@ -1,6 +1,7 @@
 import type {
   BedDetail,
   BedSummary,
+  Cas1PremiseCapacity,
   Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
   Cas1SpaceBookingSummarySortField,
@@ -30,6 +31,17 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
 
     return premisesClient.getBed(premisesId, bedId)
+  }
+
+  async getCapacity(
+    token: string,
+    premisesId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<Cas1PremiseCapacity> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    return premisesClient.getCapacity(premisesId, startDate, endDate)
   }
 
   async find(token: string, id: string): Promise<Cas1PremisesSummary> {

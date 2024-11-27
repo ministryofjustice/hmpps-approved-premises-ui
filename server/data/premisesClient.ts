@@ -1,6 +1,7 @@
 import type {
   BedDetail,
   BedSummary,
+  Cas1PremiseCapacity,
   Cas1PremisesBasicSummary,
   Cas1PremisesSummary,
   Cas1SpaceBooking,
@@ -38,6 +39,13 @@ export default class PremisesClient {
 
   async getBed(premisesId: string, bedId: string): Promise<BedDetail> {
     return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
+  }
+
+  async getCapacity(premisesId: string, startDate: string, endDate: string): Promise<Cas1PremiseCapacity> {
+    return (await this.restClient.get({
+      path: paths.premises.capacity({ premisesId }),
+      query: { startDate, endDate },
+    })) as Cas1PremiseCapacity
   }
 
   async getPlacements(args: {

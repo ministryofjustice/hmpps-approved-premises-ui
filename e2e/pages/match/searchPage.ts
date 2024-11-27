@@ -1,15 +1,14 @@
 import { Page, expect } from '@playwright/test'
-import { BasePage } from '../basePage'
+import { MatchBasePage } from './matchBasePage'
 import { Premises } from '../../../server/@types/shared'
 import { ApTypeLabel } from '../../../server/utils/apTypeLabels'
 import { E2EDatesOfPlacement } from '../../steps/assess'
-import { DateFormats } from '../../../server/utils/dateUtils'
 
-export class SearchScreen extends BasePage {
+export class SearchPage extends MatchBasePage {
   static async initialize(page: Page) {
     await expect(page.locator('h1')).toContainText('Find a space in an Approved Premises')
 
-    return new SearchScreen(page)
+    return new SearchPage(page)
   }
 
   async clickUpdate() {
@@ -20,7 +19,7 @@ export class SearchScreen extends BasePage {
     await this.page.getByRole('link', { name: 'View spaces' }).first().click()
   }
 
-  shouldShowApplicationDetails({
+  async shouldShowApplicationDetails({
     preferredAps,
     datesOfPlacement,
     duration,
@@ -32,17 +31,19 @@ export class SearchScreen extends BasePage {
     duration: string
     apType: ApTypeLabel
     preferredPostcode: string
-  }): void {
-    this.shouldShowDatesOfPlacement(datesOfPlacement, duration)
-    this.shouldShowApType(apType)
-    this.shouldShowPreferredPostcode(preferredPostcode)
-    this.shouldShowPreferredAps(preferredAps)
+  }): Promise<void> {
+    await this.shouldShowDatesOfPlacement(datesOfPlacement, duration)
+    await this.shouldShowApType(apType)
+    await this.shouldShowPreferredPostcode(preferredPostcode)
+    await this.shouldShowPreferredAps(preferredAps)
   }
 
   async shouldShowPreferredAps(preferredAps: Array<Premises['name']>) {
-    preferredAps.forEach(async (preferredAp, index) => {
-      await expect(this.page.getByText(preferredAp, { exact: true }).nth(index)).toBeVisible()
-    })
+    return Promise.all(
+      preferredAps.map(async (preferredAp, index) => {
+        await expect(this.page.getByText(preferredAp, { exact: true }).nth(index)).toBeVisible()
+      }),
+    )
   }
 
   async shouldShowApType(apType: ApTypeLabel) {
@@ -51,18 +52,6 @@ export class SearchScreen extends BasePage {
 
   async shouldShowPreferredPostcode(postcode: string) {
     await expect(this.page.locator('.govuk-details').getByText(postcode)).toBeVisible()
-  }
-
-  async shouldShowDatesOfPlacement({ startDate, endDate }: E2EDatesOfPlacement, duration: string) {
-    if (startDate) {
-      await expect(this.page.locator('.govuk-details').getByText(DateFormats.isoDateToUIDate(startDate))).toBeVisible()
-    }
-    if (endDate) {
-      await expect(this.page.locator('.govuk-details').getByText(DateFormats.isoDateToUIDate(endDate))).toBeVisible()
-    }
-    if (duration) {
-      await expect(this.page.locator('.govuk-details').getByText(duration)).toBeVisible()
-    }
   }
 
   async retrieveFirstAPName(): Promise<Premises['name']> {
