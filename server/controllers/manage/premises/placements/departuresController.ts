@@ -14,6 +14,12 @@ import { ValidationError } from '../../../../utils/errors'
 import paths from '../../../../paths/manage'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
 
+const {
+  premises: {
+    placements: { show: placementPath, departure: departurePaths },
+  },
+} = paths
+
 type DepartureFormErrors = {
   [K in keyof DepartureFormSessionData]: string
 }
@@ -66,7 +72,7 @@ export default class DeparturesController {
       )
 
       return res.render('manage/premises/placements/departure/new', {
-        backlink: paths.premises.placements.show({ premisesId, placementId }),
+        backlink: placementPath({ premisesId, placementId }),
         placement,
         departureReasons,
         ...errorsData,
@@ -128,17 +134,14 @@ export default class DeparturesController {
 
         this.placementService.setDepartureSessionData(placementId, req.session, req.body)
 
-        let redirect = paths.premises.placements.departure.notes({ premisesId, placementId })
+        let redirect = departurePaths.notes({ premisesId, placementId })
 
         if (req.body.reasonId === BREACH_OR_RECALL_REASON_ID) {
-          redirect = paths.premises.placements.departure.breachOrRecallReason({
-            premisesId,
-            placementId,
-          })
+          redirect = departurePaths.breachOrRecallReason({ premisesId, placementId })
         }
 
         if (req.body.reasonId === PLANNED_MOVE_ON_REASON_ID) {
-          redirect = paths.premises.placements.departure.moveOnCategory({ premisesId, placementId })
+          redirect = departurePaths.moveOnCategory({ premisesId, placementId })
         }
 
         return res.redirect(redirect)
@@ -147,10 +150,7 @@ export default class DeparturesController {
           req,
           res,
           error as Error,
-          paths.premises.placements.departure.new({
-            premisesId,
-            placementId,
-          }),
+          departurePaths.new({ premisesId, placementId }),
         )
       }
     }
@@ -171,7 +171,7 @@ export default class DeparturesController {
         this.newErrors(departureFormSessionData) ||
         departureFormSessionData.reasonId !== BREACH_OR_RECALL_REASON_ID
       ) {
-        return res.redirect(paths.premises.placements.departure.new({ premisesId, placementId }))
+        return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
       const departureReasons = (await this.placementService.getDepartureReasons(token)).filter(
@@ -179,7 +179,7 @@ export default class DeparturesController {
       )
 
       return res.render('manage/premises/placements/departure/breach-or-recall', {
-        backlink: paths.premises.placements.departure.new({ premisesId, placementId }),
+        backlink: departurePaths.new({ premisesId, placementId }),
         placement,
         departureReasons,
         ...errorsData,
@@ -202,16 +202,13 @@ export default class DeparturesController {
 
         this.placementService.setDepartureSessionData(placementId, req.session, req.body)
 
-        return res.redirect(paths.premises.placements.departure.notes({ premisesId, placementId }))
+        return res.redirect(departurePaths.notes({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          paths.premises.placements.departure.breachOrRecallReason({
-            premisesId,
-            placementId,
-          }),
+          departurePaths.breachOrRecallReason({ premisesId, placementId }),
         )
       }
     }
@@ -229,13 +226,13 @@ export default class DeparturesController {
       } = await this.getFormPageData(req)
 
       if (this.newErrors(departureFormSessionData) || departureFormSessionData.reasonId !== PLANNED_MOVE_ON_REASON_ID) {
-        return res.redirect(paths.premises.placements.departure.new({ premisesId, placementId }))
+        return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
       const moveOnCategories = await this.placementService.getMoveOnCategories(token)
 
       return res.render('manage/premises/placements/departure/move-on-category', {
-        backlink: paths.premises.placements.departure.new({ premisesId, placementId }),
+        backlink: departurePaths.new({ premisesId, placementId }),
         placement,
         moveOnCategories,
         ...errorsData,
@@ -258,16 +255,13 @@ export default class DeparturesController {
 
         this.placementService.setDepartureSessionData(placementId, req.session, req.body)
 
-        return res.redirect(paths.premises.placements.departure.notes({ premisesId, placementId }))
+        return res.redirect(departurePaths.notes({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          paths.premises.placements.departure.moveOnCategory({
-            premisesId,
-            placementId,
-          }),
+          departurePaths.moveOnCategory({ premisesId, placementId }),
         )
       }
     }
@@ -284,14 +278,14 @@ export default class DeparturesController {
       } = await this.getFormPageData(req)
 
       if (this.newErrors(departureFormSessionData)) {
-        return res.redirect(paths.premises.placements.departure.new({ premisesId, placementId }))
+        return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
-      let backlink = paths.premises.placements.departure.new({ premisesId, placementId })
+      let backlink = departurePaths.new({ premisesId, placementId })
       if (departureFormSessionData.reasonId === BREACH_OR_RECALL_REASON_ID) {
-        backlink = paths.premises.placements.departure.breachOrRecallReason({ premisesId, placementId })
+        backlink = departurePaths.breachOrRecallReason({ premisesId, placementId })
       } else if (departureFormSessionData.reasonId === PLANNED_MOVE_ON_REASON_ID) {
-        backlink = paths.premises.placements.departure.moveOnCategory({ premisesId, placementId })
+        backlink = departurePaths.moveOnCategory({ premisesId, placementId })
       }
 
       return res.render('manage/premises/placements/departure/notes', {
@@ -339,16 +333,13 @@ export default class DeparturesController {
 
         this.placementService.removeDepartureSessionData(placementId, req.session)
         req.flash('success', 'You have recorded this person as departed')
-        return res.redirect(paths.premises.placements.show({ premisesId, placementId }))
+        return res.redirect(placementPath({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          paths.premises.placements.departure.notes({
-            premisesId,
-            placementId,
-          }),
+          departurePaths.notes({ premisesId, placementId }),
         )
       }
     }
