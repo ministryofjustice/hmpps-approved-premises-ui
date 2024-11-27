@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test'
 import { E2EDatesOfPlacement } from 'e2e/steps/assess'
 import { BasePage } from '../basePage'
 import { Premises } from '../../../server/@types/shared'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 export class BookingScreen extends BasePage {
   static async initialize(page: Page, premisesName: Premises['name']) {
@@ -16,11 +17,15 @@ export class BookingScreen extends BasePage {
 
   async shouldShowDatesOfPlacement(datesOfPlacement: E2EDatesOfPlacement) {
     await expect(
-      this.page.locator('.govuk-summary-list__value').filter({ hasText: datesOfPlacement.startDate }),
+      this.page
+        .locator('.govuk-summary-list__value')
+        .filter({ hasText: DateFormats.isoDateToUIDate(datesOfPlacement.startDate) }),
     ).toBeVisible()
 
     await expect(
-      this.page.locator('.govuk-summary-list__value').filter({ hasText: datesOfPlacement.endDate }),
+      this.page
+        .locator('.govuk-summary-list__value')
+        .filter({ hasText: DateFormats.isoDateToUIDate(datesOfPlacement.endDate) }),
     ).toBeVisible()
   }
 }

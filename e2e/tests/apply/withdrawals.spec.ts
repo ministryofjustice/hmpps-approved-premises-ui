@@ -1,15 +1,10 @@
 import { test } from '../../test'
-import {
-  enterAndConfirmCrn,
-  startAnApplication,
-  visitDashboard,
-  withdrawAnApplicationBeforeSubmission,
-} from '../../steps/apply'
+import { enterAndConfirmCrn, startAnApplication, withdrawAnApplicationBeforeSubmission } from '../../steps/apply'
 
 import { ListPage } from '../../pages/apply'
 
 import { ShowPage } from '../../pages/apply/showPage'
-import { signIn } from '../../steps/signIn'
+import { signIn, visitDashboard } from '../../steps/signIn'
 
 test('Withdraw an application before submission', async ({ page, person, userWithoutRoles }) => {
   await signIn(page, userWithoutRoles)

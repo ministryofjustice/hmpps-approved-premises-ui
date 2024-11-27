@@ -3,10 +3,13 @@ import { createApplication } from '../../steps/apply'
 import { assessApplication } from '../../steps/assess'
 import { signIn } from '../../steps/signIn'
 import { matchAndBookApplication } from '../../steps/match'
+import { manageBooking } from '../../steps/manage'
+import { signOut } from '../../steps/signOut'
 
 test('Apply, assess, match and book an application for an Approved Premises with a release date', async ({
   page,
   assessor,
+  futureManager,
   person,
   oasysSections,
 }) => {
@@ -17,7 +20,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
     true,
   )
   const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id)
-  await matchAndBookApplication({
+  const { premisesName } = await matchAndBookApplication({
     applicationId: id,
     page,
     apType,
@@ -26,4 +29,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
     duration,
     preferredPostcode,
   })
+  await signOut(page)
+  await signIn(page, futureManager)
+  await manageBooking({ page, premisesName, datesOfPlacement })
 })

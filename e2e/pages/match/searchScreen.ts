@@ -3,6 +3,7 @@ import { BasePage } from '../basePage'
 import { Premises } from '../../../server/@types/shared'
 import { ApTypeLabel } from '../../../server/utils/apTypeLabels'
 import { E2EDatesOfPlacement } from '../../steps/assess'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 export class SearchScreen extends BasePage {
   static async initialize(page: Page) {
@@ -53,9 +54,15 @@ export class SearchScreen extends BasePage {
   }
 
   async shouldShowDatesOfPlacement({ startDate, endDate }: E2EDatesOfPlacement, duration: string) {
-    ;[startDate, endDate, duration].forEach(async date => {
-      if (date) await expect(this.page.locator('.govuk-details').getByText(date)).toBeVisible()
-    })
+    if (startDate) {
+      await expect(this.page.locator('.govuk-details').getByText(DateFormats.isoDateToUIDate(startDate))).toBeVisible()
+    }
+    if (endDate) {
+      await expect(this.page.locator('.govuk-details').getByText(DateFormats.isoDateToUIDate(endDate))).toBeVisible()
+    }
+    if (duration) {
+      await expect(this.page.locator('.govuk-details').getByText(duration)).toBeVisible()
+    }
   }
 
   async retrieveFirstAPName(): Promise<Premises['name']> {

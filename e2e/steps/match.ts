@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test'
-import { visitDashboard } from './apply'
 import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
@@ -7,6 +6,8 @@ import { ApTypeLabel } from '../../server/utils/apTypeLabels'
 import { SearchScreen } from '../pages/match/searchScreen'
 import { BookingScreen } from '../pages/match/bookingScreen'
 import { OccupancyViewScreen } from '../pages/match/occupancyViewScreen'
+import { DateFormats } from '../../server/utils/dateUtils'
+import { visitDashboard } from './signIn'
 
 export const matchAndBookApplication = async ({
   applicationId,
@@ -34,7 +35,7 @@ export const matchAndBookApplication = async ({
   let cruDashboard = new ListPage(page)
 
   // And I select the placement request
-  cruDashboard.choosePlacementApplicationWithId(applicationId)
+  await cruDashboard.choosePlacementApplicationWithId(applicationId)
 
   const placementRequestPage = new PlacementRequestPage(page)
 
@@ -81,8 +82,18 @@ export const matchAndBookApplication = async ({
   await bookingScreen.shouldShowDatesOfPlacement(datesOfPlacement)
 
   // And I confirm the booking
+  const premisesId = page.url().match(/premisesId=(.[^&]*)/)[1] // premisesId=338e22f3-70be-4519-97ab-f08c6c2dfb0b
   await bookingScreen.clickConfirm()
 
-  // Then I should see the CRU dashboard matched tab
+  // Then I should see the Matched tab on the CRU dashboard
   cruDashboard = new ListPage(page)
+
+  // And the placement should be listed
+  await cruDashboard.findRowWithValues([
+    DateFormats.isoDateToUIDate(datesOfPlacement.startDate, { format: 'short' }),
+    premisesName,
+    'Matched',
+  ])
+
+  return { premisesName, premisesId }
 }

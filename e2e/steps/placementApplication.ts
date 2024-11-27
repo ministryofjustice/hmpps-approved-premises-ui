@@ -8,8 +8,8 @@ import { PlacementApplicationDecisionPage as DecisionPage } from '../pages/match
 import { PlacementApplicationConfirmationPage as ConfirmationPage } from '../pages/match/placement-applications/confirmationPage'
 import { PlacementConfirmPage } from '../pages/apply/placementConfirmPage'
 import { ShowPage } from '../pages/apply/showPage'
-import { visitDashboard } from './apply'
 import { PlacementApplicationPage } from '../pages/workflow/placementApplicationPage'
+import { visitDashboard } from './signIn'
 
 export const assignPlacementApplicationToMe = async (
   dashboard: DashboardPage,
