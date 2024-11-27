@@ -1,7 +1,3 @@
-/* eslint-disable import/no-duplicates */
-
-import { differenceInDays } from 'date-fns/differenceInDays'
-import { formatDistanceStrict } from 'date-fns/formatDistanceStrict'
 import { subDays } from 'date-fns'
 import { fromPartial } from '@total-typescript/shoehorn'
 
@@ -23,8 +19,6 @@ import {
   yearOptions,
 } from './dateUtils'
 
-jest.mock('date-fns/formatDistanceStrict')
-jest.mock('date-fns/differenceInDays')
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
   return {
     'england-and-wales': {
@@ -214,18 +208,18 @@ describe('DateFormats', () => {
   })
 
   describe('differenceInDays', () => {
-    it('calls the date-fns functions and returns the results as an object', () => {
-      const date1 = new Date(2023, 3, 12)
-      const date2 = new Date(2023, 3, 11)
-      ;(formatDistanceStrict as jest.Mock).mockReturnValue('1 day')
-      ;(differenceInDays as jest.Mock).mockReturnValue(1)
+    const baseDate = new Date(2023, 3, 12)
 
-      expect(DateFormats.differenceInDays(date1, date2)).toEqual({
-        ui: '1 day',
-        number: 1,
+    it.each([
+      [new Date(2023, 3, 11), '1 day', 1],
+      [new Date(2023, 3, 15), '3 days', -3],
+      [new Date(2023, 4, 12), '30 days', -30],
+      [new Date(2023, 0, 1), '101 days', 101],
+    ])('returns the different in days for %s', (compareDate, ui, number) => {
+      expect(DateFormats.differenceInDays(baseDate, compareDate)).toEqual({
+        ui,
+        number,
       })
-      expect(formatDistanceStrict).toHaveBeenCalledWith(date1, date2, { unit: 'day' })
-      expect(differenceInDays).toHaveBeenCalledWith(date1, date2)
     })
   })
 
