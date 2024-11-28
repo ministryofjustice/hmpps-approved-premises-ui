@@ -16,9 +16,9 @@ import { createQueryString, linkTo } from '../utils'
 import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
 import { laoName } from '../personUtils'
+import { statusTextMap } from '../placements'
 
 export { premisesActions } from './premisesActions'
-
 export const summaryListForPremises = (premises: Cas1PremisesSummary): SummaryList => {
   return {
     rows: [
@@ -114,23 +114,27 @@ export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: Prem
   })
 }
 
+type ColumnField = Cas1SpaceBookingSummarySortField | 'status'
+
 type ColumnDefinition = {
   title: string
-  fieldName: Cas1SpaceBookingSummarySortField
+  fieldName: ColumnField
+  sortable: boolean
 }
 const baseColumns: Array<ColumnDefinition> = [
-  { title: 'Name and CRN', fieldName: 'personName' },
-  { title: 'Tier', fieldName: 'tier' },
-  { title: 'Arrival date', fieldName: 'canonicalArrivalDate' },
-  { title: 'Departure date', fieldName: 'canonicalDepartureDate' },
+  { title: 'Name and CRN', fieldName: 'personName', sortable: true },
+  { title: 'Tier', fieldName: 'tier', sortable: true },
+  { title: 'Arrival date', fieldName: 'canonicalArrivalDate', sortable: true },
+  { title: 'Departure date', fieldName: 'canonicalDepartureDate', sortable: true },
 ]
-const keyWorkerColumn: ColumnDefinition = { title: 'Key worker', fieldName: 'keyWorkerName' }
+const statusColumn: ColumnDefinition = { title: 'Status', fieldName: 'status', sortable: false }
+const keyWorkerColumn: ColumnDefinition = { title: 'Key worker', fieldName: 'keyWorkerName', sortable: true }
 
 const columnMap: Record<PremisesTab, Array<ColumnDefinition>> = {
-  upcoming: [...baseColumns, keyWorkerColumn],
-  current: [...baseColumns, keyWorkerColumn],
-  historic: baseColumns,
-  search: [...baseColumns, keyWorkerColumn],
+  upcoming: [...baseColumns, keyWorkerColumn, statusColumn],
+  current: [...baseColumns, keyWorkerColumn, statusColumn],
+  historic: [...baseColumns, statusColumn],
+  search: [...baseColumns, keyWorkerColumn, statusColumn],
 }
 
 export const placementTableHeader = (
@@ -139,8 +143,8 @@ export const placementTableHeader = (
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
-  return columnMap[activeTab].map(({ title, fieldName }: ColumnDefinition) =>
-    sortHeader<Cas1SpaceBookingSummarySortField>(title, fieldName, sortBy, sortDirection, hrefPrefix),
+  return columnMap[activeTab].map(({ title, fieldName, sortable }: ColumnDefinition) =>
+    sortable ? sortHeader<ColumnField>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textValue(title),
   )
 }
 
@@ -149,8 +153,8 @@ export const placementTableRows = (
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
 ): Array<TableRow> =>
-  placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation }) => {
-    const fieldValues: Record<Cas1SpaceBookingSummarySortField, TableCell> = {
+  placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation, status }) => {
+    const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlValue(
         `<a href="${managePaths.premises.placements.show({
           premisesId,
@@ -161,6 +165,7 @@ export const placementTableRows = (
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
       keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name),
+      status: textValue(statusTextMap[status]),
     }
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
   })

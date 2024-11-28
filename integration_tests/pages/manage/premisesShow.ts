@@ -4,6 +4,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { laoName } from '../../../server/utils/personUtils'
+import { statusTextMap } from '../../../server/utils/placements'
 
 export default class PremisesShowPage extends Page {
   constructor(private readonly premises: Cas1PremisesSummary) {
@@ -45,12 +46,13 @@ export default class PremisesShowPage extends Page {
     ;['Name and CRN', 'Arrival date', 'Departure date', 'Key worker'].forEach(heading => {
       cy.get('.govuk-table .govuk-table__head').contains(heading)
     })
-    placements.forEach(({ person, canonicalArrivalDate, canonicalDepartureDate, tier }) => {
+    placements.forEach(({ person, canonicalArrivalDate, canonicalDepartureDate, tier, status }) => {
       cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
       cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
       cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
       cy.get('@row').contains(tier)
       cy.get('@row').contains(laoName(person as unknown as FullPerson))
+      cy.get('@row').contains(statusTextMap[status])
     })
   }
 
