@@ -34,9 +34,7 @@ export default class PremisesService {
 
   async find(token: string, id: string): Promise<Cas1PremisesSummary> {
     const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.find(id)
-
-    return premises
+    return premisesClient.find(id)
   }
 
   async getPlacements(args: {
@@ -44,6 +42,7 @@ export default class PremisesService {
     premisesId: string
     status?: string
     crnOrName?: string
+    keyWorkerStaffCode?: string
     page: number
     perPage: number
     sortBy: Cas1SpaceBookingSummarySortField
