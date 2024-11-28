@@ -210,7 +210,6 @@ export default function routes(controllers: Controllers, router: Router, service
   // Bookings
   get(paths.bookings.show.pattern, bookingsController.show(), {
     auditEvent: 'SHOW_BOOKING',
-    allowedRoles: ['workflow_manager', 'future_manager'],
   })
 
   // Booking date changes
