@@ -31,7 +31,7 @@ export default class PremisesController {
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1SpaceBookingSummarySortField>(
         req,
         managePaths.premises.show({ premisesId: req.params.premisesId }),
-        { activeTab, crnOrName },
+        { activeTab, crnOrName, keyworker },
       )
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
@@ -49,7 +49,7 @@ export default class PremisesController {
           premisesId: req.params.premisesId,
           status: activeTab !== 'search' ? activeTab : undefined,
           crnOrName,
-          keyWorkerStaffCode: keyworker,
+          keyWorkerStaffCode: keyworker || undefined,
           page: pageNumber || 1,
           perPage: tabSettings[activeTab].pageSize,
           sortBy: sortBy || tabSettings[activeTab].sortBy,

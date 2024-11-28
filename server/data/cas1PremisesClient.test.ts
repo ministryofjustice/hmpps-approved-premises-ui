@@ -130,7 +130,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
       },
     )
 
-    it('should return a list of all placements matching a CRN or name for a premises', async () => {
+    it('should return a list of all placements matching a keyworker code, or a CRN or name, for a premises', async () => {
       const premises = extendedPremisesSummaryFactory.build()
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),
@@ -139,6 +139,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         totalResults: '40',
       }) as PaginatedResponse<Cas1SpaceBookingSummary>
       const crnOrName = faker.person.firstName()
+      const keyWorkerStaffCode = faker.string.alphanumeric(8)
       const page = 1
       const sortBy = 'canonicalArrivalDate'
       const sortDirection = 'desc'
@@ -151,6 +152,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
           path: paths.premises.placements.index({ premisesId: premises.id }),
           query: {
             crnOrName,
+            keyWorkerStaffCode,
             sortBy,
             sortDirection,
             page: String(page),
@@ -174,6 +176,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
       const output = await premisesClient.getPlacements({
         premisesId: premises.id,
         crnOrName,
+        keyWorkerStaffCode,
         page,
         perPage: Number(paginatedPlacements.pageSize),
         sortBy,
