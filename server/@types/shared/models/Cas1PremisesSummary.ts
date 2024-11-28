@@ -10,15 +10,15 @@ export type Cas1PremisesSummary = {
     postcode: string;
     apArea: ApArea;
     /**
-     * The total number of spaces in this premises
+     * The total number of beds in this premises
      */
     bedCount: number;
     /**
-     * The total number of spaces available right now
+     * The total number of beds available at this moment in time
      */
     availableBeds: number;
     /**
-     * The total number of out of service beds
+     * The total number of out of service beds at this moment in time
      */
     outOfServiceBeds: number;
     supportsSpaceBookings: boolean;
