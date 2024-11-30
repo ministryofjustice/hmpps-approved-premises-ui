@@ -4,7 +4,6 @@ import {
   Gender,
   PlacementCriteria,
   PlacementRequestDetail,
-  Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '../../@types/shared'
@@ -25,6 +24,7 @@ import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
 export { placementDates } from './placementDates'
+export { filterOutAPTypes } from './util'
 
 type PlacementDates = {
   placementLength: number
@@ -156,20 +156,6 @@ export const spaceBookingPersonNeedsSummaryCardRows = (
   ]
 }
 
-export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<SpaceCharacteristic> => {
-  return requirements.filter(
-    requirement =>
-      ![
-        'isPIPE',
-        'isESAP',
-        'isRecoveryFocussed',
-        'isMHAPElliottHouse',
-        'isMHAPStJosephs',
-        'isSemiSpecialistMentalHealth',
-      ].includes(requirement),
-  ) as Array<SpaceCharacteristic>
-}
-
 export const requirementsHtmlString = (requirements: Array<PlacementCriteria>): string => {
   let htmlString = ''
   requirements.forEach(requirement => {
@@ -246,7 +232,7 @@ export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
 
 export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
   return {
-    key: { text: 'Characteristics' },
+    key: { text: 'Suitable for' },
     value: {
       html: `<ul class="govuk-list govuk-list--bullet">${spaceSearchResult.premises.premisesCharacteristics.map(characteristic => `<li>${characteristic.name}</li>`).join(' ')}</ul>`,
     },
@@ -302,15 +288,28 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
+export const offenceAndRiskCriteriaLabelsFiltered = () => {
+  const result = offenceAndRiskCriteriaLabels
+  delete result.acceptsNonSexualChildOffenders
+  return result
+}
+
+export const placementRequirementCriteriaLabelsFiltered = () => {
+  const result = placementRequirementCriteriaLabels
+  delete result.isSuitedForSexOffenders
+  delete result.isArsonDesignated
+  return result
+}
+
 export const groupedCriteria = {
   offenceAndRisk: {
     title: 'Risks and offences',
-    items: offenceAndRiskCriteriaLabels,
+    items: offenceAndRiskCriteriaLabelsFiltered(),
     inputName: 'spaceCharacteristics',
   },
   accessNeeds: {
     title: 'Access needs and additional features',
-    items: placementRequirementCriteriaLabels,
+    items: placementRequirementCriteriaLabelsFiltered(),
     inputName: 'spaceCharacteristics',
   },
 }
