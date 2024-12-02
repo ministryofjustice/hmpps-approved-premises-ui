@@ -91,17 +91,21 @@ export default {
       dateChange: booking.path('date-changes'),
     },
     placements: {
-      index: cas1PremisesSingle.path('space-bookings'),
       show: cas1SpaceBookingSingle,
+      index: cas1PremisesSingle.path('space-bookings'),
       arrival: cas1SpaceBookingSingle.path('arrival'),
       nonArrival: cas1SpaceBookingSingle.path('non-arrival'),
       keyworker: cas1SpaceBookingSingle.path('keyworker'),
       departure: cas1SpaceBookingSingle.path('departure'),
+      cancel: cas1SpaceBookingSingle.path('cancellations'),
     },
     calendar: premisesSingle.path('calendar'),
   },
   bookings: {
     bookingWithoutPremisesPath: path('/bookings/:bookingId'),
+  },
+  placements: {
+    placementWithoutPremises: cas1Namespace.path('space-bookings/:placementId'),
   },
   applications: {
     show: applicationsSingle,

@@ -101,26 +101,18 @@ export const applicationDateCell = (item: PlacementRequest): TableCell => ({
 export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCell => {
   if ('personName' in item && item.personName) {
     return {
-      html: linkTo(
-        matchPaths.placementRequests.show,
-        { id: item.id },
-        {
-          text: item.personName,
-          attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
-        },
-      ),
+      html: linkTo(matchPaths.placementRequests.show({ id: item.id }), {
+        text: item.personName,
+        attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
+      }),
     }
   }
   if ('person' in item && item.person && isFullPerson(item.person)) {
     return {
-      html: linkTo(
-        adminPaths.admin.placementRequests.show,
-        { id: item.id },
-        {
-          text: laoName(item.person),
-          attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
-        },
-      ),
+      html: linkTo(adminPaths.admin.placementRequests.show({ id: item.id }), {
+        text: laoName(item.person),
+        attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
+      }),
     }
   }
 

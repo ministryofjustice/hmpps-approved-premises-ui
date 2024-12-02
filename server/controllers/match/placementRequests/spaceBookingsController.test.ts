@@ -13,7 +13,9 @@ import {
 } from '../../../testutils/factories'
 import { filterOutAPTypes, placementDates } from '../../../utils/match'
 import paths from '../../../paths/admin'
+import { fetchErrorsAndUserInput } from '../../../utils/validation'
 
+jest.mock('../../../utils/validation')
 describe('SpaceBookingsController', () => {
   const token = 'SOME_TOKEN'
 
@@ -40,7 +42,7 @@ describe('SpaceBookingsController', () => {
       const premisesName = 'Hope House'
       const premisesId = 'abc123'
       const apType = 'esap'
-
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: [], errorSummary: {}, userInput: {} })
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 
       const query = {
@@ -54,8 +56,10 @@ describe('SpaceBookingsController', () => {
       const params = { id: placementRequestDetail.id }
 
       const requestHandler = spaceBookingsController.new()
+      request.params = params
+      request.query = query
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
         pageHeading: `Book space in ${premisesName}`,
@@ -63,6 +67,8 @@ describe('SpaceBookingsController', () => {
         premisesName,
         premisesId,
         apType,
+        errorSummary: {},
+        errors: [],
         dates: placementDates(startDate, durationDays),
         essentialCharacteristics: filterOutAPTypes(placementRequestDetail.essentialCriteria),
         desirableCharacteristics: filterOutAPTypes(placementRequestDetail.desirableCriteria),

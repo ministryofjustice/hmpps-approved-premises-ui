@@ -15,15 +15,11 @@ import { sortHeader } from '../sortHeader'
 import { AssessmentStatusTag } from './statusTag'
 
 const assessmentLink = (assessment: AssessmentSummary, person: FullPerson, linkText = '', hiddenText = ''): string => {
-  return linkTo(
-    paths.assessments.show,
-    { id: assessment.id },
-    {
-      text: linkText || laoName(person),
-      hiddenText,
-      attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
-    },
-  )
+  return linkTo(paths.assessments.show({ id: assessment.id }), {
+    text: linkText || laoName(person),
+    hiddenText,
+    attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
+  })
 }
 
 export const restrictedPersonCell = (person: RestrictedPerson) => {

@@ -21,12 +21,13 @@
 {% endblock %}
 
 {% block content %}
+  {{ showErrorSummary(errorSummary) }}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
       <h1>{{pageHeading}}</h1>
 
-      <form action="{{ paths.bookings.cancellations.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
+      <form action="{{ formAction }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         {{ govukSummaryList({
             rows: [
@@ -66,7 +67,7 @@
           })
         }}
 
-        {{ showErrorSummary(errorSummary) }}
+
 
         {% set noteConditional %}
         {{

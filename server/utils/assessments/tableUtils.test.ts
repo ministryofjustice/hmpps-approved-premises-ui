@@ -34,14 +34,10 @@ describe('tableUtils', () => {
 
     it('returns a link to an assessment', () => {
       expect(assessmentLink(assessment, person)).toBe(
-        linkTo(
-          paths.assessments.show,
-          { id: assessment.id },
-          {
-            text: laoName(person),
-            attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
-          },
-        ),
+        linkTo(paths.assessments.show({ id: assessment.id }), {
+          text: laoName(person),
+          attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
+        }),
       )
     })
 

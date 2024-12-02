@@ -52,14 +52,10 @@ describe('table', () => {
 
       nameCell(task)
 
-      expect(linkTo).toHaveBeenCalledWith(
-        paths.placementApplications.review.show,
-        { id: task.id },
-        {
-          text: task.personName,
-          attributes: { 'data-cy-placementApplicationId': task.id, 'data-cy-applicationId': task.applicationId },
-        },
-      )
+      expect(linkTo).toHaveBeenCalledWith(paths.placementApplications.review.show({ id: task.id }), {
+        text: task.personName,
+        attributes: { 'data-cy-placementApplicationId': task.id, 'data-cy-applicationId': task.applicationId },
+      })
     })
   })
 
@@ -95,17 +91,13 @@ describe('table', () => {
           statusCell(tasks[0]),
         ],
       ])
-      expect(linkTo).toHaveBeenCalledWith(
-        paths.placementApplications.review.show,
-        { id: tasks[0].id },
-        {
-          text: tasks[0].personName,
-          attributes: {
-            'data-cy-placementApplicationId': tasks[0].id,
-            'data-cy-applicationId': tasks[0].applicationId,
-          },
+      expect(linkTo).toHaveBeenCalledWith(paths.placementApplications.review.show({ id: tasks[0].id }), {
+        text: tasks[0].personName,
+        attributes: {
+          'data-cy-placementApplicationId': tasks[0].id,
+          'data-cy-applicationId': tasks[0].applicationId,
         },
-      )
+      })
     })
   })
 })

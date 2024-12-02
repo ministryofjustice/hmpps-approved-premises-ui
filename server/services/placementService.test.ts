@@ -1,5 +1,6 @@
 import { createMock } from '@golevelup/ts-jest'
 import type { Request } from 'express'
+import type { Cas1SpaceBooking } from '@approved-premises/api'
 import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
 import { ReferenceDataClient } from '../data'
@@ -7,7 +8,9 @@ import {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
+  cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
+  cas1SpaceBookingFactory,
   departureReasonFactory,
   nonArrivalReasonsFactory,
   referenceDataFactory,
@@ -34,6 +37,20 @@ describe('PlacementService', () => {
     placementService = new PlacementService(placementClientFactory, referenceDataClientFactory)
     placementClientFactory.mockReturnValue(placementClient)
     referenceDataClientFactory.mockReturnValue(referenceDataClient)
+  })
+
+  describe('getPlacement', () => {
+    it('gets a placement summary by id', async () => {
+      const placementSummary: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
+
+      placementClient.getPlacement.mockResolvedValue(placementSummary)
+
+      const result = await placementService.getPlacement(token, placementId)
+
+      expect(result).toEqual(placementSummary)
+      expect(placementClientFactory).toHaveBeenCalledWith(token)
+      expect(placementClient.getPlacement).toHaveBeenCalledWith(placementId)
+    })
   })
 
   describe('createArrival', () => {
@@ -185,6 +202,19 @@ describe('PlacementService', () => {
       expect(result).toEqual(moveOnCategories)
       expect(referenceDataClientFactory).toHaveBeenCalledWith(token)
       expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('move-on-categories')
+    })
+  })
+
+  describe('cancel', () => {
+    it('calls the cancel method of the placement client and returns a response', async () => {
+      const cancellation = cas1NewSpaceBookingCancellationFactory.build()
+      placementClient.cancel.mockResolvedValue({})
+
+      const result = await placementService.createCancellation(token, premisesId, placementId, cancellation)
+
+      expect(result).toEqual({})
+      expect(placementClientFactory).toHaveBeenCalledWith(token)
+      expect(placementClient.cancel).toHaveBeenCalledWith(premisesId, placementId, cancellation)
     })
   })
 })

@@ -1,5 +1,4 @@
 import Case from 'case'
-import { Params, Path } from 'static-path'
 import qs, { IStringifyOptions } from 'qs'
 
 import type { PersonRisksUI, SummaryListItem } from '@approved-premises/ui'
@@ -106,9 +105,8 @@ export const mapApiPersonRisksForUi = (risks: PersonRisks): PersonRisksUI => {
   }
 }
 
-export const linkTo = <Pattern extends `/${string}`>(
-  path: Path<Pattern>,
-  params: Params<Pattern>,
+export const linkTo = (
+  path: string,
   {
     text,
     query = {},
@@ -133,7 +131,7 @@ export const linkTo = <Pattern extends `/${string}`>(
     .map(a => `${a}="${attributes[a]}"`)
     .join(' ')
 
-  return `<a href="${path(params)}${createQueryString(query, { addQueryPrefix: true })}" ${attrBody} ${openInNewTab ? 'target="_blank"' : ''}>${linkBody}</a>`
+  return `<a href="${path}${createQueryString(query, { addQueryPrefix: true })}" ${attrBody} ${openInNewTab ? 'target="_blank"' : ''}>${linkBody}</a>`
 }
 
 /**

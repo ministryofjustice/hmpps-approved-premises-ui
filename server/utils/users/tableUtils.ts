@@ -37,11 +37,9 @@ export const managementDashboardTableRows = (users: Array<User>): Array<Array<Ta
   return users.map(user => [nameCell(user), roleCell(user), allocationCell(user), emailCell(user), apAreaCell(user)])
 }
 
-export const nameCell = (user: User): TableCell => {
-  return {
-    html: linkTo(paths.admin.userManagement.edit, { id: user.id }, { text: user.name }),
-  }
-}
+export const nameCell = (user: User): TableCell => ({
+  html: linkTo(paths.admin.userManagement.edit({ id: user.id }), { text: user.name }),
+})
 
 export const roleCell = (user: User): TableCell => {
   return {

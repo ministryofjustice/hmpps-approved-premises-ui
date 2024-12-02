@@ -2,6 +2,7 @@ import {
   applicationFactory,
   bookingFactory,
   cancellationFactory,
+  cas1SpaceBookingFactory,
   extendedPremisesSummaryFactory,
   newCancellationFactory,
   premisesFactory,
@@ -11,6 +12,7 @@ import {
 import { CancellationCreatePage } from '../../pages/manage'
 import { signIn } from '../signIn'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
+import apiPaths from '../../../server/paths/api'
 
 context('Cancellation', () => {
   beforeEach(() => {
@@ -18,7 +20,7 @@ context('Cancellation', () => {
     cy.task('stubCancellationReferenceData')
 
     // Given I am signed in
-    signIn(['workflow_manager'], ['cas1_booking_withdraw'])
+    signIn(['workflow_manager'], ['cas1_booking_withdraw', 'cas1_space_booking_withdraw'])
   })
 
   it('should allow me to create a cancellation with a reason of "other" ', () => {
@@ -95,15 +97,8 @@ context('Cancellation', () => {
     page.completeForm(cancellation)
 
     // Then a cancellation should have been created in the API
-    cy.task('verifyCancellationCreate', {
-      premisesId: premises.id,
-      bookingId: booking.id,
-      cancellation,
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
-
-      expect(requestBody.reason).equal(cancellation.reason)
+    cy.task('verifyApiPost', `/premises/${premises.id}/bookings/${booking.id}/cancellations`).then(({ reason }) => {
+      expect(reason).equal(cancellation.reason)
     })
 
     // And I should see a confirmation message
@@ -137,5 +132,74 @@ context('Cancellation', () => {
 
     // And the back link should be populated correctly
     page.shouldShowBackLinkToApplicationWithdraw(booking.applicationId)
+  })
+
+  it('should allow me to create a cancellation for a space booking ', () => {
+    // Given a booking is available
+    const application = applicationFactory.build()
+    const placement = cas1SpaceBookingFactory.upcoming().build({ applicationId: application.id })
+    const premises = extendedPremisesSummaryFactory.build({ bookings: [placement], id: placement.premises.id })
+
+    const placementId = placement.id
+    const premisesId = premises.id
+
+    cy.task('stubSpaceBookingShow', placement)
+
+    const cancellation = newCancellationFactory.withOtherReason().build()
+    const withdrawable = withdrawableFactory.build({ id: placementId, type: 'space_booking' })
+    cy.task('stubPremisesSummary', premises)
+    cy.task('stubWithdrawablesWithNotes', { applicationId: application.id, withdrawables: [withdrawable] })
+    cy.task('stubSpaceBookingGetWithoutPremises', placement)
+    cy.task('stubCancellationCreate', { premisesId, placementId, cancellation })
+
+    // When I navigate to the booking's cancellation page
+    const cancellationPage = CancellationCreatePage.visitWithSpaceBooking(premisesId, placementId)
+
+    cancellationPage.shouldShowBackLinkToApplicationWithdraw(application.id)
+
+    // And I complete the reason and notes
+    cancellationPage.completeForm(cancellation)
+
+    // Then a cancellation should have been created in the API
+    cy.task('verifyApiPost', apiPaths.premises.placements.cancel({ premisesId, placementId })).then(
+      ({ reasonNotes, reasonId }) => {
+        expect(reasonNotes).equal(cancellation.otherReason)
+        expect(reasonId).equal(cancellation.reason)
+      },
+    )
+
+    // And I should see a confirmation message
+    const confirmationPage = new BookingCancellationConfirmPage()
+    confirmationPage.shouldShowPanel()
+  })
+
+  it('should allow me to create a cancellation for a space-booking without an applicationId', () => {
+    // Given a placement is available
+    const premises = premisesFactory.build()
+    const placement = cas1SpaceBookingFactory.build({ applicationId: undefined })
+    const placementId = placement.id
+    const premisesId = premises.id
+    cy.task('stubSpaceBookingGetWithoutPremises', placement)
+
+    // When I navigate to the placements's cancellation page
+    const cancellation = newCancellationFactory.build()
+    cy.task('stubCancellationCreate', { premisesId, placementId, cancellation })
+
+    const page = CancellationCreatePage.visitWithSpaceBooking(premisesId, placementId)
+
+    // Then the backlink should be populated correctly
+    page.shouldShowBacklinkToSpaceBooking()
+
+    // When I fill out the cancellation form
+    page.completeForm(cancellation)
+
+    // Then a cancellation should have been created in the API
+    cy.task('verifyApiPost', apiPaths.premises.placements.cancel({ premisesId, placementId })).then(({ reasonId }) => {
+      expect(reasonId).equal(cancellation.reason)
+    })
+
+    // And I should see a confirmation message
+    const confirmationPage = new BookingCancellationConfirmPage()
+    confirmationPage.shouldShowPanel()
   })
 })

@@ -68,12 +68,16 @@ const formatDate = (date: string | null) => date && DateFormats.isoDateToUIDate(
 const formatTime = (date: string | null) => date && DateFormats.timeFromDate(DateFormats.isoToDateObj(date))
 
 export const getBackLink = (referrer: string, premisesId: string): string => {
-  const regString: string = `${paths.premises.show({ premisesId: '([0-9a-f-]{36})' })}[^/]*$`
-  const result = new RegExp(regString).exec(referrer)
-  if (result && result[1] === premisesId) {
+  const premisesShowPagePathRegex = paths.premises.show({ premisesId: '([0-9a-f-]{36})' })
+  const premisesViewMatch = new RegExp(`${premisesShowPagePathRegex}[^/]*$`).exec(referrer)
+  if (premisesViewMatch && premisesViewMatch[1] === premisesId) {
     return referrer
   }
-  return paths.premises.show({ premisesId })
+  const premisesChildMatch = new RegExp(premisesShowPagePathRegex).exec(referrer)
+  if (premisesChildMatch && premisesChildMatch[1] === premisesId) {
+    return paths.premises.show({ premisesId })
+  }
+  return null
 }
 
 const summaryRow = (key: string, value: string): SummaryListItem =>

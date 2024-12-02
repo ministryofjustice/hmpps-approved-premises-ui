@@ -18,6 +18,12 @@ export default class CancellationCreatePage extends Page {
     return new CancellationCreatePage(premisesId, bookingId)
   }
 
+  static visitWithSpaceBooking(premisesId: string, placementId: string): CancellationCreatePage {
+    cy.visit(paths.premises.placements.cancellations.new({ premisesId, placementId }))
+
+    return new CancellationCreatePage(premisesId, placementId)
+  }
+
   completeForm(cancellation: NewCancellation): void {
     this.getLegend('Why is this placement being withdrawn?')
     this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason)
@@ -27,6 +33,12 @@ export default class CancellationCreatePage extends Page {
     }
 
     this.clickSubmit()
+  }
+
+  shouldShowBacklinkToSpaceBooking(): void {
+    cy.get('.govuk-back-link')
+      .should('have.attr', 'href')
+      .and('include', paths.premises.placements.show({ premisesId: this.premisesId, placementId: this.bookingId }))
   }
 
   shouldShowBacklinkToBooking(): void {

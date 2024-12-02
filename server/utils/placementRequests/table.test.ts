@@ -46,14 +46,10 @@ describe('tableUtils', () => {
 
       nameCell(task)
 
-      expect(linkTo).toHaveBeenCalledWith(
-        matchPaths.placementRequests.show,
-        { id: task.id },
-        {
-          text: task.personName,
-          attributes: { 'data-cy-placementRequestId': task.id, 'data-cy-applicationId': task.applicationId },
-        },
-      )
+      expect(linkTo).toHaveBeenCalledWith(matchPaths.placementRequests.show({ id: task.id }), {
+        text: task.personName,
+        attributes: { 'data-cy-placementRequestId': task.id, 'data-cy-applicationId': task.applicationId },
+      })
     })
 
     it('returns the name of the service user and a link with a placement request', () => {
@@ -61,17 +57,13 @@ describe('tableUtils', () => {
 
       nameCell(placementRequest)
 
-      expect(linkTo).toHaveBeenCalledWith(
-        adminPaths.admin.placementRequests.show,
-        { id: placementRequest.id },
-        {
-          text: laoName(placementRequest.person as FullPerson),
-          attributes: {
-            'data-cy-placementRequestId': placementRequest.id,
-            'data-cy-applicationId': placementRequest.applicationId,
-          },
+      expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
+        text: laoName(placementRequest.person as FullPerson),
+        attributes: {
+          'data-cy-placementRequestId': placementRequest.id,
+          'data-cy-applicationId': placementRequest.applicationId,
         },
-      )
+      })
     })
 
     it('returns an empty cell if the personName is blank', () => {
@@ -105,17 +97,13 @@ describe('tableUtils', () => {
 
       nameCell(restrictedPersonTask)
 
-      expect(linkTo).toHaveBeenCalledWith(
-        adminPaths.admin.placementRequests.show,
-        { id: restrictedPersonTask.id },
-        {
-          text: laoName(restrictedPersonTask.person as FullPerson),
-          attributes: {
-            'data-cy-placementRequestId': restrictedPersonTask.id,
-            'data-cy-applicationId': restrictedPersonTask.applicationId,
-          },
+      expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: restrictedPersonTask.id }), {
+        text: laoName(restrictedPersonTask.person as FullPerson),
+        attributes: {
+          'data-cy-placementRequestId': restrictedPersonTask.id,
+          'data-cy-applicationId': restrictedPersonTask.applicationId,
         },
-      )
+      })
     })
 
     it('returns the crn cell if the person is a unknown person', () => {

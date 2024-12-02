@@ -46,14 +46,10 @@ export const tableRows = (tasks: Array<PlacementApplicationTask>): Array<TableRo
 
 export const nameCell = (task: PlacementApplicationTask): TableCell => {
   return {
-    html: linkTo(
-      paths.placementApplications.review.show,
-      { id: task.id },
-      {
-        text: task.personName,
-        attributes: { 'data-cy-placementApplicationId': task.id, 'data-cy-applicationId': task.applicationId },
-      },
-    ),
+    html: linkTo(paths.placementApplications.review.show({ id: task.id }), {
+      text: task.personName,
+      attributes: { 'data-cy-placementApplicationId': task.id, 'data-cy-applicationId': task.applicationId },
+    }),
   }
 }
 

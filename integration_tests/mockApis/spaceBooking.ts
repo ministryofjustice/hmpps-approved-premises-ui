@@ -152,6 +152,24 @@ export default {
         status: 200,
       },
     }),
+
+  stubSpaceBookingGetWithoutPremises: (placement: Cas1SpaceBooking) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.placements.placementWithoutPremises({
+          placementId: placement.id,
+        }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: placement,
+      },
+    }),
+
   verifySpaceBookingDepartureCreate: async (placement: Cas1SpaceBooking) =>
     (
       await getMatchingRequests({

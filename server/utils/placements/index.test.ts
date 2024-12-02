@@ -139,10 +139,10 @@ describe('placementUtils', () => {
       const urlOtherId = `/manage/premises/${faker.string.uuid()}`
       expect(getBackLink(bareUrl, premisesId)).toEqual(bareUrl)
       expect(getBackLink(urlWithQuery, premisesId)).toEqual(urlWithQuery)
-      expect(getBackLink('some string', premisesId)).toEqual(bareUrl)
-      expect(getBackLink('', premisesId)).toEqual(bareUrl)
-      expect(getBackLink(null, premisesId)).toEqual(bareUrl)
-      expect(getBackLink(urlOtherId, premisesId)).toEqual(bareUrl)
+      expect(getBackLink('some string', premisesId)).toEqual(null)
+      expect(getBackLink('', premisesId)).toEqual(null)
+      expect(getBackLink(null, premisesId)).toEqual(null)
+      expect(getBackLink(urlOtherId, premisesId)).toEqual(null)
     })
   })
 

@@ -170,6 +170,7 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
   })
+  // Placement departures
   get(paths.premises.placements.departure.new.pattern, departuresController.new(), {
     auditEvent: 'NEW_DEPARTURE',
     allowedPermissions: ['cas1_space_booking_record_departure'],
@@ -205,6 +206,21 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.premises.placements.departure.notes.pattern, departuresController.create(), {
     auditEvent: 'NEW_DEPARTURE_CREATE',
     allowedPermissions: ['cas1_space_booking_record_departure'],
+  })
+  // Placement cancellations
+  get(paths.premises.placements.cancellations.new.pattern, cancellationsController.new(), {
+    auditEvent: 'NEW_CANCELLATION',
+    allowedPermissions: ['cas1_space_booking_withdraw'],
+  })
+  post(paths.premises.placements.cancellations.create.pattern, cancellationsController.create(), {
+    auditEvent: 'CREATE_CANCELLATION_SUCCESS',
+    redirectAuditEventSpecs: [
+      {
+        path: paths.premises.placements.cancellations.new.pattern,
+        auditEvent: 'CREATE_CANCELLATION_FAILURE',
+      },
+    ],
+    allowedPermissions: ['cas1_space_booking_withdraw'],
   })
 
   // Bookings
