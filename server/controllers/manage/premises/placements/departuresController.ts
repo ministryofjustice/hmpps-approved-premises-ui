@@ -113,10 +113,10 @@ export default class DeparturesController {
       const [hours, minutes] = departureTime.split(':').map(Number)
 
       if (dateIsToday(departureDate)) {
-        const now = new Date()
-        now.setHours(hours, minutes)
+        const departureDateTime = DateFormats.isoToDateObj(departureDate)
+        departureDateTime.setHours(hours, minutes)
 
-        if (!datetimeIsInThePast(now.toISOString())) {
+        if (!datetimeIsInThePast(DateFormats.dateObjToIsoDateTime(departureDateTime))) {
           errors.departureTime = 'The time of departure must be in the past'
         }
       } else if (dateIsToday(departureDate, placement.actualArrivalDate)) {
