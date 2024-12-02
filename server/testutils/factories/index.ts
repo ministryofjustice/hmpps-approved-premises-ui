@@ -76,7 +76,6 @@ import withdrawableFactory from './withdrawableFactory'
 import cancellationReasonFactory from './cancellationReason'
 import newSpaceBookingFactory from './newSpaceBooking'
 import premisesSearchResultSummaryFactory from './premisesSearchResultSummary'
-import spaceBookingFactory from './spaceBooking'
 import spaceBookingRequirementsFactory from './spaceBookingRequirements'
 import spaceCategoryAvailabilityFactory from './spaceAvailability'
 import spaceSearchParametersFactory, { spaceSearchParametersUiFactory } from './spaceSearchParameters'
@@ -190,7 +189,6 @@ export {
   cancellationReasonFactory,
   newSpaceBookingFactory,
   premisesSearchResultSummaryFactory,
-  spaceBookingFactory,
   spaceBookingRequirementsFactory,
   spaceCategoryAvailabilityFactory,
   spaceSearchParametersFactory,

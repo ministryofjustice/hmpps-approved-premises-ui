@@ -4,7 +4,7 @@ import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
 import { NonArrivalReason } from '@approved-premises/api'
 import NonArrivalsController from './nonArrivalsController'
-import { referenceDataFactory, spaceBookingFactory } from '../../../../testutils/factories'
+import { cas1SpaceBookingFactory, referenceDataFactory } from '../../../../testutils/factories'
 import { PremisesService } from '../../../../services'
 import * as validationUtils from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
@@ -24,7 +24,7 @@ describe('nonArrivalsController', () => {
 
   const nonArrivalsController = new NonArrivalsController(premisesService, placementService)
 
-  const placement = spaceBookingFactory.build()
+  const placement = cas1SpaceBookingFactory.upcoming().build()
   const uiPlacementPagePath = managePaths.premises.placements.show({ premisesId, placementId: placement.id })
   const uiNonArrivalsPagePath = managePaths.premises.placements.nonArrival({ premisesId, placementId: placement.id })
 

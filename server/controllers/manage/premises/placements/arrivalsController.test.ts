@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
 import ArrivalsController from './arrivalsController'
-import { spaceBookingFactory } from '../../../../testutils/factories'
+import { cas1SpaceBookingFactory } from '../../../../testutils/factories'
 import { PremisesService } from '../../../../services'
 import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
@@ -22,7 +22,7 @@ describe('ArrivalsController', () => {
   const arrivalsController = new ArrivalsController(premisesService, placementService)
 
   const premisesId = 'premises-id'
-  const placement = spaceBookingFactory.build()
+  const placement = cas1SpaceBookingFactory.upcoming().build()
 
   beforeEach(() => {
     jest.clearAllMocks()

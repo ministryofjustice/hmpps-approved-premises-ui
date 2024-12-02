@@ -10,7 +10,6 @@ import {
   formatISO,
   isBefore,
   isPast,
-  isToday as isTodayDateFns,
   isValid,
   isWeekend,
   isWithinInterval,
@@ -53,15 +52,15 @@ export class DateFormats {
 
   /**
    * @param date JS Date object.
+   * @param options - options for the formatting
+   * @param options.format - 'long' (default, e.g. "Thu 20 Dec 2012") or 'short' (e.g. "20 Dec 2012")
    * @returns the date in the to be shown in the UI.
-   * Long: "Thu 20 Dec 2012"
-   * Short: "20 Dec 2012"
    */
   static dateObjtoUIDate(date: Date, options: { format: 'short' | 'long' } = { format: 'long' }) {
     if (options.format === 'long') {
       return format(date, 'ccc d MMM y')
     }
-    return format(date, 'dd MMM y')
+    return format(date, 'd MMM y')
   }
 
   /**
@@ -88,7 +87,9 @@ export class DateFormats {
 
   /**
    * @param isoDate an ISO8601 date string.
-   * @returns the date in the to be shown in the UI: "Thu 20 Dec 2012".
+   * @param options - options for the formatting
+   * @param options.format - 'long' (default, e.g. "Thu 20 Dec 2012") or 'short' (e.g. "20 Dec 2012")
+   * @returns the date in the to be shown in the UI.
    */
   static isoDateToUIDate(isoDate: string, options: { format: 'short' | 'long' } = { format: 'long' }) {
     return DateFormats.dateObjtoUIDate(DateFormats.isoToDateObj(isoDate), options)
@@ -274,14 +275,22 @@ export const dateIsBlank = <K extends string | number>(
   return !['year' as const, 'month' as const, 'day' as const].every(part => !!dateInputObj[`${key}-${part}`])
 }
 
-export const dateIsInThePast = (dateString: string): boolean => {
+export const datetimeIsInThePast = (dateString: string, refDateString?: string): boolean => {
   const date = DateFormats.isoToDateObj(dateString)
+
+  if (refDateString) {
+    const refDate = DateFormats.isoToDateObj(refDateString)
+    return isBefore(date, refDate)
+  }
+
   return isPast(date)
 }
 
-export const isToday = (date: string): boolean => {
-  const dateObj = DateFormats.isoToDateObj(date)
-  return isTodayDateFns(dateObj)
+export const dateIsToday = (date: string, refDate?: string): boolean => {
+  const dateIso = DateFormats.dateObjToIsoDate(DateFormats.isoToDateObj(date))
+  const refDateIso = DateFormats.dateObjToIsoDate(refDate ? DateFormats.isoToDateObj(refDate) : new Date())
+
+  return dateIso === refDateIso
 }
 
 export const monthOptions = [

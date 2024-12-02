@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
 import KeyworkerController from './keyworkerController'
-import { spaceBookingFactory } from '../../../../testutils/factories'
+import { cas1SpaceBookingFactory } from '../../../../testutils/factories'
 import { PremisesService } from '../../../../services'
 import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
@@ -22,7 +22,7 @@ describe('keyworkerController', () => {
   const keyworkerController = new KeyworkerController(premisesService, placementService)
 
   const premisesId = 'premises-id'
-  const placement = spaceBookingFactory.build()
+  const placement = cas1SpaceBookingFactory.build()
   const testStaffCode = 'TestId'
   const uiPlacementPagePath = paths.premises.placements.show({ premisesId, placementId: placement.id })
   const uiKeyworkerPagePath = paths.premises.placements.keyworker({ premisesId, placementId: placement.id })

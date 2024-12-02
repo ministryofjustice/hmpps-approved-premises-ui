@@ -1,10 +1,4 @@
-/* eslint-disable import/no-duplicates */
-
-import { isPast } from 'date-fns/isPast'
-import { differenceInDays } from 'date-fns/differenceInDays'
-import { formatDistanceStrict } from 'date-fns/formatDistanceStrict'
 import { subDays } from 'date-fns'
-import { isToday as isTodayDateFns } from 'date-fns/isToday'
 import { fromPartial } from '@total-typescript/shoehorn'
 
 import type { ObjectWithDateParts } from '@approved-premises/ui'
@@ -16,19 +10,15 @@ import {
   bankHolidays,
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
-  dateIsInThePast,
+  dateIsToday,
+  datetimeIsInThePast,
   daysToWeeksAndDays,
-  isToday,
   monthOptions,
   timeIsValid24hrFormat,
   uiDateOrDateEmptyMessage,
   yearOptions,
 } from './dateUtils'
 
-jest.mock('date-fns/isPast')
-jest.mock('date-fns/isToday')
-jest.mock('date-fns/formatDistanceStrict')
-jest.mock('date-fns/differenceInDays')
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
   return {
     'england-and-wales': {
@@ -65,16 +55,18 @@ describe('DateFormats', () => {
   })
 
   describe('isoDateToUIDate', () => {
-    it('converts a ISO8601 date string to a GOV.UK formatted date', () => {
-      const date = '2022-11-11T00:00:00.000Z'
-
-      expect(DateFormats.isoDateToUIDate(date)).toEqual('Fri 11 Nov 2022')
+    it.each([
+      ['2022-11-08T00:00:00.000Z', 'Tue 8 Nov 2022'],
+      ['2022-11-11T00:00:00.000Z', 'Fri 11 Nov 2022'],
+    ])('converts ISO8601 date string %s to a GOV.UK formatted date', (date, expectedUiDate) => {
+      expect(DateFormats.isoDateToUIDate(date)).toEqual(expectedUiDate)
     })
 
-    it('converts a ISO8601 date string to a short format date', () => {
-      const date = '2022-11-11T00:00:00.000Z'
-
-      expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual('11 Nov 2022')
+    it.each([
+      ['2022-11-09T00:00:00.000Z', '9 Nov 2022'],
+      ['2022-11-11T00:00:00.000Z', '11 Nov 2022'],
+    ])('converts ISO8601 date %s to a short format date', (date, expectedUiDate) => {
+      expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual(expectedUiDate)
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {
@@ -91,10 +83,11 @@ describe('DateFormats', () => {
   })
 
   describe('isoDateTimeToUIDateTime', () => {
-    it('converts a ISO8601 date string to a GOV.UK formatted date', () => {
-      const date = '2022-11-11T10:00:00.000Z'
-
-      expect(DateFormats.isoDateTimeToUIDateTime(date)).toEqual('11 Nov 2022, 10:00')
+    it.each([
+      ['2022-11-09T16:35:00.000Z', '9 Nov 2022, 16:35'],
+      ['2022-11-11T10:00:00.000Z', '11 Nov 2022, 10:00'],
+    ])('converts a ISO8601 date %s to a GOV.UK formatted date and time', (date, expectedUiDateTime) => {
+      expect(DateFormats.isoDateTimeToUIDateTime(date)).toEqual(expectedUiDateTime)
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {
@@ -218,18 +211,18 @@ describe('DateFormats', () => {
   })
 
   describe('differenceInDays', () => {
-    it('calls the date-fns functions and returns the results as an object', () => {
-      const date1 = new Date(2023, 3, 12)
-      const date2 = new Date(2023, 3, 11)
-      ;(formatDistanceStrict as jest.Mock).mockReturnValue('1 day')
-      ;(differenceInDays as jest.Mock).mockReturnValue(1)
+    const baseDate = new Date(2023, 3, 12)
 
-      expect(DateFormats.differenceInDays(date1, date2)).toEqual({
-        ui: '1 day',
-        number: 1,
+    it.each([
+      [new Date(2023, 3, 11), '1 day', 1],
+      [new Date(2023, 3, 15), '3 days', -3],
+      [new Date(2023, 4, 12), '30 days', -30],
+      [new Date(2023, 0, 1), '101 days', 101],
+    ])('returns the different in days for %s', (compareDate, ui, number) => {
+      expect(DateFormats.differenceInDays(baseDate, compareDate)).toEqual({
+        ui,
+        number,
       })
-      expect(formatDistanceStrict).toHaveBeenCalledWith(date1, date2, { unit: 'day' })
-      expect(differenceInDays).toHaveBeenCalledWith(date1, date2)
     })
   })
 
@@ -412,35 +405,63 @@ describe('dateIsBlank', () => {
   })
 })
 
-describe('dateIsInThePast', () => {
-  it('returns true if the date is in the past', () => {
-    ;(isPast as jest.Mock).mockReturnValue(true)
+describe('datetimeIsInThePast', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2022-01-01'))
+  })
 
-    expect(dateIsInThePast('2020-01-01')).toEqual(true)
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('returns true if the date is in the past', () => {
+    expect(datetimeIsInThePast('2020-01-01')).toEqual(true)
   })
 
   it('returns false if the date is not in the past', () => {
-    ;(isPast as jest.Mock).mockReturnValue(false)
+    expect(datetimeIsInThePast('2024-01-01')).toEqual(false)
+  })
 
-    expect(dateIsInThePast('2020-01-01')).toEqual(false)
+  it('returns false if the date is today', () => {
+    expect(datetimeIsInThePast('2022-01-01')).toEqual(false)
+  })
+
+  it('returns true if the date is before the provided reference date', () => {
+    expect(datetimeIsInThePast('2024-01-01', '2024-03-14')).toEqual(true)
+  })
+
+  it('returns false if the date is after the provided reference date', () => {
+    expect(datetimeIsInThePast('2024-01-01', '2023-01-12')).toEqual(false)
+  })
+
+  it('returns false if the date is the same as the reference date', () => {
+    expect(datetimeIsInThePast('2023-01-12', '2023-01-12')).toEqual(false)
   })
 })
 
-describe('isToday', () => {
-  it('returns true if the date is today', () => {
-    const dateString = '2020-01-01'
-    ;(isTodayDateFns as jest.Mock).mockReturnValue(true)
+describe('dateIsToday', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2022-01-01'))
+  })
 
-    expect(isToday(dateString)).toEqual(true)
-    expect(isTodayDateFns).toHaveBeenCalledWith(DateFormats.isoToDateObj(dateString))
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('returns true if the date is today', () => {
+    expect(dateIsToday('2022-01-01')).toEqual(true)
   })
 
   it('returns false if the date is not today', () => {
-    const dateString = '2020-01-01'
-    ;(isTodayDateFns as jest.Mock).mockReturnValue(false)
+    expect(dateIsToday('2022-01-02')).toEqual(false)
+  })
 
-    expect(isToday(dateString)).toEqual(false)
-    expect(isTodayDateFns).toHaveBeenCalledWith(DateFormats.isoToDateObj(dateString))
+  it('returns true if the date is the same as the reference date', () => {
+    expect(dateIsToday('2022-01-28', '2022-01-28')).toEqual(true)
+  })
+
+  it('returns false if the date is not the same as the reference date', () => {
+    expect(dateIsToday('2022-01-01', '2022-05-21')).toEqual(false)
   })
 })
 

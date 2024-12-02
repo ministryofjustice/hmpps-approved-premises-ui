@@ -9,8 +9,8 @@ import {
   DateFormats,
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
-  dateIsInThePast,
-  isToday,
+  dateIsToday,
+  datetimeIsInThePast,
 } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 import ReleaseDate from './releaseDate'
@@ -126,7 +126,7 @@ export default class PlacementDate implements TasklistPage {
         errors.startDate = 'You must enter a start date'
       } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'startDate'>, 'startDate')) {
         errors.startDate = 'The start date is an invalid date'
-      } else if (!isToday(this.body.startDate) && dateIsInThePast(this.body.startDate)) {
+      } else if (!dateIsToday(this.body.startDate) && datetimeIsInThePast(this.body.startDate)) {
         errors.startDate = 'The start date must not be in the past'
       }
     }

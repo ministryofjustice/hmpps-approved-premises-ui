@@ -56,7 +56,7 @@ context('Placements', () => {
       // Then the linked placement
       placementShowPage.shouldShowLinkedPlacements([
         'Placement 10 Jun 2024 to 10 Sep 2024',
-        'Placement 02 Jan 2026 to 04 Mar 2027',
+        'Placement 2 Jan 2026 to 4 Mar 2027',
       ])
     })
 
