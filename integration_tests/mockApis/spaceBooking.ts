@@ -1,5 +1,11 @@
-import type { Cas1SpaceBooking, Cas1SpaceBookingSummary, PlacementRequest } from '@approved-premises/api'
+import type {
+  Cas1SpaceBooking,
+  Cas1SpaceBookingResidency,
+  Cas1SpaceBookingSummary,
+  PlacementRequest,
+} from '@approved-premises/api'
 
+import { PaginatedRequestParams, SortedRequestParams } from '@approved-premises/ui'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
@@ -45,26 +51,51 @@ export default {
       },
     }),
 
-  stubSpaceBookingSummaryList: (args: {
-    premisesId: string
-    placements: Array<Cas1SpaceBookingSummary>
-    pageSize: number
-  }) => {
-    const pageSize: number = args.pageSize || 20
+  stubSpaceBookingSummaryList: (
+    args: {
+      premisesId: string
+      placements: Array<Cas1SpaceBookingSummary>
+      residency?: Cas1SpaceBookingResidency
+      crnOrName?: string
+      keyWorkerStaffCode?: string
+    } & Partial<PaginatedRequestParams> &
+      Partial<SortedRequestParams>,
+  ) => {
+    const {
+      page = 1,
+      perPage = 20,
+      sortBy = 'canonicalArrivalDate',
+      sortDirection = 'asc',
+      residency,
+      crnOrName,
+      keyWorkerStaffCode,
+    } = args
+
+    const queryParameters: Record<string, Record<'equalTo', string | number>> = {
+      page: { equalTo: String(page) },
+      perPage: { equalTo: String(perPage) },
+      sortBy: { equalTo: sortBy },
+      sortDirection: { equalTo: sortDirection },
+    }
+    if (residency) queryParameters.residency = { equalTo: residency }
+    if (crnOrName) queryParameters.crnOrName = { equalTo: crnOrName }
+    if (keyWorkerStaffCode) queryParameters.keyWorkerStaffCode = { equalTo: keyWorkerStaffCode }
+
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: `${paths.premises.placements.index({ premisesId: args.premisesId })}.*`,
+        urlPathPattern: paths.premises.placements.index({ premisesId: args.premisesId }),
+        queryParameters,
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
-          'X-Pagination-PageSize': String(pageSize),
-          'X-Pagination-TotalPages': String(Math.ceil(args.placements.length / pageSize)),
+          'X-Pagination-PageSize': String(perPage),
+          'X-Pagination-TotalPages': String(Math.ceil(args.placements.length / perPage)),
           'X-Pagination-TotalResults': String(args.placements.length),
         },
-        jsonBody: args.placements.slice(0, pageSize),
+        jsonBody: args.placements.slice(0, perPage),
       },
     })
   },

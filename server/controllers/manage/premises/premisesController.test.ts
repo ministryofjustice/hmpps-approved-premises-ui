@@ -12,6 +12,7 @@ import {
   cas1PremisesSummaryFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
+  staffMemberFactory,
 } from '../../../testutils/factories'
 
 describe('V2PremisesController', () => {
@@ -42,8 +43,10 @@ describe('V2PremisesController', () => {
         data: cas1SpaceBookingSummaryFactory.buildList(3),
         totalPages: '1',
       }) as PaginatedResponse<Cas1SpaceBookingSummary>
+      const staffMembers = staffMemberFactory.buildList(5)
       premisesService.find.mockResolvedValue(premisesSummary)
       premisesService.getPlacements.mockResolvedValue(paginatedPlacements)
+      premisesService.getStaff.mockResolvedValue(staffMembers)
       request = createMock<Request>({
         user: { token },
         params: { premisesId },
@@ -56,11 +59,12 @@ describe('V2PremisesController', () => {
       return {
         premisesSummary,
         paginatedPlacements,
+        staffMembers,
       }
     }
 
     it('should render the premises detail and list of placements on the default ("upcoming") tab', async () => {
-      const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({})
+      const { premisesSummary, paginatedPlacements, staffMembers } = await mockSummaryAndPlacements({})
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
@@ -72,8 +76,10 @@ describe('V2PremisesController', () => {
         totalPages: 1,
         hrefPrefix: '/manage/premises/some-uuid?activeTab=upcoming&',
         placements: paginatedPlacements.data,
+        staffMembers,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.getStaff).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getPlacements).toHaveBeenCalledWith({
         token,
         premisesId,
@@ -86,7 +92,9 @@ describe('V2PremisesController', () => {
     })
 
     it('should render the premises detail and list of placements on the "current" tab', async () => {
-      const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({ activeTab: 'current' })
+      const { premisesSummary, paginatedPlacements, staffMembers } = await mockSummaryAndPlacements({
+        activeTab: 'current',
+      })
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
@@ -98,8 +106,10 @@ describe('V2PremisesController', () => {
         totalPages: 1,
         hrefPrefix: '/manage/premises/some-uuid?activeTab=current&',
         placements: paginatedPlacements.data,
+        staffMembers,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.getStaff).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getPlacements).toHaveBeenCalledWith({
         token,
         premisesId,
@@ -126,6 +136,7 @@ describe('V2PremisesController', () => {
         placements: paginatedPlacements.data,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.getStaff).not.toHaveBeenCalled()
       expect(premisesService.getPlacements).toHaveBeenCalledWith({
         token,
         premisesId,
@@ -162,6 +173,24 @@ describe('V2PremisesController', () => {
         perPage: 20,
         sortBy: 'personName',
         sortDirection: 'asc',
+      })
+    })
+
+    describe.each(['upcoming', 'current'])('when viewing the "%s" tab', activeTab => {
+      it('should filter results by keyworker', async () => {
+        await mockSummaryAndPlacements({ activeTab, keyworker: 'FOO' })
+
+        expect(response.render).toHaveBeenCalledWith(
+          'manage/premises/show',
+          expect.objectContaining({
+            keyworker: 'FOO',
+          }),
+        )
+        expect(premisesService.getPlacements).toHaveBeenCalledWith(
+          expect.objectContaining({
+            keyWorkerStaffCode: 'FOO',
+          }),
+        )
       })
     })
 

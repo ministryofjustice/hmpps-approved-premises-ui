@@ -105,6 +105,14 @@ describe('PremisesService', () => {
   })
 
   describe('getPlacements', () => {
+    const paginatedPlacements = paginatedResponseFactory.build({
+      data: cas1SpaceBookingSummaryFactory.buildList(3),
+    }) as PaginatedResponse<Cas1SpaceBookingSummary>
+
+    beforeEach(() => {
+      premisesClient.getPlacements.mockResolvedValue(paginatedPlacements)
+    })
+
     it.each(['upcoming', 'current', 'historic'] as const)(
       'returns the %s placements for a single premises',
       async (status: Cas1SpaceBookingResidency) => {
@@ -112,12 +120,6 @@ describe('PremisesService', () => {
         const sortDirection = 'asc'
         const page = 1
         const perPage = 20
-
-        const paginatedPlacements = paginatedResponseFactory.build({
-          data: cas1SpaceBookingSummaryFactory.buildList(3),
-        }) as PaginatedResponse<Cas1SpaceBookingSummary>
-
-        premisesClient.getPlacements.mockResolvedValue(paginatedPlacements)
 
         const result = await service.getPlacements({ token, premisesId, status, page, perPage, sortBy, sortDirection })
 
@@ -142,12 +144,6 @@ describe('PremisesService', () => {
       const page = 1
       const perPage = 20
 
-      const paginatedPlacements = paginatedResponseFactory.build({
-        data: cas1SpaceBookingSummaryFactory.buildList(3),
-      }) as PaginatedResponse<Cas1SpaceBookingSummary>
-
-      premisesClient.getPlacements.mockResolvedValue(paginatedPlacements)
-
       const result = await service.getPlacements({ token, premisesId, page, perPage, sortBy, sortDirection, crnOrName })
 
       expect(result).toEqual(paginatedPlacements)
@@ -156,6 +152,36 @@ describe('PremisesService', () => {
       expect(premisesClient.getPlacements).toHaveBeenCalledWith({
         premisesId,
         crnOrName,
+        page,
+        perPage,
+        sortBy,
+        sortDirection,
+      })
+    })
+
+    it('returns placements filtered by keyworker staff code for a given premises', async () => {
+      const keyWorkerStaffCode = 'Foo'
+      const sortBy = 'canonicalArrivalDate'
+      const sortDirection = 'desc'
+      const page = 1
+      const perPage = 20
+
+      const result = await service.getPlacements({
+        token,
+        premisesId,
+        page,
+        perPage,
+        sortBy,
+        sortDirection,
+        keyWorkerStaffCode,
+      })
+
+      expect(result).toEqual(paginatedPlacements)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getPlacements).toHaveBeenCalledWith({
+        premisesId,
+        keyWorkerStaffCode,
         page,
         perPage,
         sortBy,

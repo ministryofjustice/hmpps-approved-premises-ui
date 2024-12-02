@@ -60,6 +60,7 @@ export default class PremisesShowPage extends Page {
 
   shouldHavePaginationControl(): void {
     cy.get('.govuk-pagination').contains('2')
+    cy.get('.govuk-pagination').contains('Next')
   }
 
   shouldHaveTabSelected(tabTitle: string): void {
@@ -94,5 +95,17 @@ export default class PremisesShowPage extends Page {
 
   shouldShowNoResults() {
     cy.get('p').contains('There are no results for your search.').should('exist')
+  }
+
+  selectKeyworker(keyworkerName: string) {
+    this.getSelectInputByIdAndSelectAnEntry('keyworker', keyworkerName)
+  }
+
+  shouldShowInEveryTableRow(name: string) {
+    cy.get('tbody tr').then($rows => {
+      $rows.each(key => {
+        expect($rows[key].textContent).to.contain(name)
+      })
+    })
   }
 }

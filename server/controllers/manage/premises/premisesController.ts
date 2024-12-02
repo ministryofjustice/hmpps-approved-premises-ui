@@ -27,16 +27,20 @@ export default class PremisesController {
         historic: { pageSize: 20, sortBy: 'canonicalDepartureDate', sortDirection: 'desc' },
         search: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'desc' },
       }
-      const { crnOrName, activeTab = 'upcoming' } = req.query as Record<string, string>
+      const { crnOrName, keyworker, activeTab = 'upcoming' } = req.query as Record<string, string>
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1SpaceBookingSummarySortField>(
         req,
         managePaths.premises.show({ premisesId: req.params.premisesId }),
-        { activeTab, crnOrName },
+        { activeTab, crnOrName, keyworker },
       )
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
       const showPlacements =
         premises.supportsSpaceBookings && hasPermission(res.locals.user, ['cas1_space_booking_list'])
+      const staffMembers =
+        showPlacements && (activeTab === 'upcoming' || activeTab === 'current')
+          ? await this.premisesService.getStaff(req.user.token, req.params.premisesId)
+          : undefined
       const paginatedPlacements =
         showPlacements &&
         (activeTab !== 'search' || Boolean(crnOrName)) &&
@@ -45,6 +49,7 @@ export default class PremisesController {
           premisesId: req.params.premisesId,
           status: activeTab !== 'search' ? activeTab : undefined,
           crnOrName,
+          keyWorkerStaffCode: keyworker || undefined,
           page: pageNumber || 1,
           perPage: tabSettings[activeTab].pageSize,
           sortBy: sortBy || tabSettings[activeTab].sortBy,
@@ -56,7 +61,9 @@ export default class PremisesController {
         showPlacements,
         activeTab,
         crnOrName,
+        keyworker,
         placements: paginatedPlacements?.data,
+        staffMembers,
         hrefPrefix,
         sortBy: sortBy || tabSettings[activeTab].sortBy,
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,

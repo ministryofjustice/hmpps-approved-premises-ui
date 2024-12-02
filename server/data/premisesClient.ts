@@ -44,16 +44,17 @@ export default class PremisesClient {
     premisesId: string
     status?: string
     crnOrName?: string
+    keyWorkerStaffCode?: string
     page: number
     perPage: number
     sortBy: Cas1SpaceBookingSummarySortField
     sortDirection: SortDirection
   }): Promise<PaginatedResponse<Cas1SpaceBookingSummary>> {
-    const { premisesId, status, crnOrName, page, perPage, sortBy, sortDirection } = args
+    const { premisesId, status, crnOrName, keyWorkerStaffCode, page, perPage, sortBy, sortDirection } = args
     return this.restClient.getPaginatedResponse<Cas1SpaceBookingSummary>({
       path: paths.premises.placements.index({ premisesId }),
       page: page.toString(),
-      query: { residency: status, crnOrName, sortBy, sortDirection, perPage },
+      query: { residency: status, crnOrName, keyWorkerStaffCode, sortBy, sortDirection, perPage },
     })
   }
 

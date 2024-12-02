@@ -409,6 +409,16 @@ export interface OasysPage extends TasklistPage {
   oasysSuccess: boolean
 }
 
+export type PaginatedRequestParams = {
+  page: number
+  perPage: number
+}
+
+export type SortedRequestParams = {
+  sortBy: string
+  sortDirection: string
+}
+
 export type PaginatedResponse<T> = {
   data: Array<T>
   pageNumber: string
