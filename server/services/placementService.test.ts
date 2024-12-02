@@ -8,10 +8,10 @@ import {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
+  cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
   departureReasonFactory,
-  newCas1SpaceBookingCancellationFactory,
   nonArrivalReasonsFactory,
   referenceDataFactory,
 } from '../testutils/factories'
@@ -207,7 +207,7 @@ describe('PlacementService', () => {
 
   describe('cancel', () => {
     it('calls the cancel method of the placement client and returns a response', async () => {
-      const cancellation = newCas1SpaceBookingCancellationFactory.build()
+      const cancellation = cas1NewSpaceBookingCancellationFactory.build()
       placementClient.cancel.mockResolvedValue({})
 
       const result = await placementService.createCancellation(token, premisesId, placementId, cancellation)

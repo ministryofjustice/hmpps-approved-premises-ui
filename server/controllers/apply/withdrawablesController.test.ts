@@ -111,8 +111,7 @@ describe('withdrawablesController', () => {
           pageHeading: 'Select your placement',
           id: applicationId,
           withdrawables: allPlacementWithdrawables,
-          bookings,
-          placements: spaceBookings,
+          allBookings: [...bookings, ...spaceBookings],
           withdrawableType: 'placement',
           notes: withdrawables.notes,
         })

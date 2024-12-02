@@ -335,11 +335,10 @@ export const bookingShowDocumentRows = (booking: Booking): Array<SummaryListItem
         text: 'Application',
       },
       value: {
-        html: linkTo(
-          applyPaths.applications.show,
-          { id: booking.applicationId },
-          { text: 'View document', hiddenText: 'View application' },
-        ),
+        html: linkTo(applyPaths.applications.show({ id: booking.applicationId }), {
+          text: 'View document',
+          hiddenText: 'View application',
+        }),
       },
     })
   } else {
@@ -359,11 +358,10 @@ export const bookingShowDocumentRows = (booking: Booking): Array<SummaryListItem
         text: 'Assessment',
       },
       value: {
-        html: linkTo(
-          assessPaths.assessments.show,
-          { id: booking.assessmentId },
-          { text: 'View document', hiddenText: 'View assessment' },
-        ),
+        html: linkTo(assessPaths.assessments.show({ id: booking.assessmentId }), {
+          text: 'View document',
+          hiddenText: 'View assessment',
+        }),
       },
     })
   } else {

@@ -11,10 +11,9 @@ describe('applicationLink', () => {
 
     applicationLink(placementRequest, 'link text', 'hidden text')
 
-    expect(linkTo).toHaveBeenCalledWith(
-      applyPaths.applications.show,
-      { id: placementRequest.applicationId },
-      { text: 'link text', hiddenText: 'hidden text' },
-    )
+    expect(linkTo).toHaveBeenCalledWith(applyPaths.applications.show({ id: placementRequest.applicationId }), {
+      text: 'link text',
+      hiddenText: 'hidden text',
+    })
   })
 })

@@ -38,16 +38,4 @@ export default {
         url: `/premises/${args.premisesId}/bookings/${args.bookingId}/cancellations`,
       })
     ).body.requests,
-
-  verifySpaceBookingCancellationCreate: async (args: {
-    premisesId: string
-    placementId: string
-    cancellation: Cancellation
-  }) =>
-    (
-      await getMatchingRequests({
-        method: 'POST',
-        url: `/cas1/premises/${args.premisesId}/space-bookings/${args.placementId}/cancellations`,
-      })
-    ).body.requests,
 }

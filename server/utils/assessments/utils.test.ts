@@ -366,11 +366,10 @@ describe('utils', () => {
           },
           {
             value: {
-              html: linkTo(
-                applyPaths.applications.show,
-                { id: application.id },
-                { text: 'View application (opens in new window)', attributes: { target: '_blank' } },
-              ),
+              html: linkTo(applyPaths.applications.show({ id: application.id }), {
+                text: 'View application (opens in new window)',
+                attributes: { target: '_blank' },
+              }),
             },
           },
         ],
@@ -400,11 +399,10 @@ describe('utils', () => {
           },
           {
             value: {
-              html: linkTo(
-                applyPaths.applications.show,
-                { id: application.id },
-                { text: 'View application (opens in new window)', attributes: { target: '_blank' } },
-              ),
+              html: linkTo(applyPaths.applications.show({ id: application.id }), {
+                text: 'View application (opens in new window)',
+                attributes: { target: '_blank' },
+              }),
             },
           },
         ],

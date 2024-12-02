@@ -205,14 +205,10 @@ describe('table', () => {
         personSummary,
       })
       expect(nameAnchorCell(task)).toEqual({
-        html: linkTo(
-          paths.tasks.show,
-          { id: task.id, taskType: kebabCase(task.taskType) },
-          {
-            text: personSummary.name,
-            attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
-          },
-        ),
+        html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
+          text: personSummary.name,
+          attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+        }),
       })
     })
     it('returns the Limited Access Offender (LAO) CRN when the person summary is RestrictedPersonSummary in the task', () => {
@@ -222,14 +218,10 @@ describe('table', () => {
         personSummary,
       })
       expect(nameAnchorCell(task)).toEqual({
-        html: linkTo(
-          paths.tasks.show,
-          { id: task.id, taskType: kebabCase(task.taskType) },
-          {
-            text: `LAO CRN: ${personSummary.crn}`,
-            attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
-          },
-        ),
+        html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
+          text: `LAO CRN: ${personSummary.crn}`,
+          attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+        }),
       })
     })
     it('returns the not found CRN when the person summary is UnknownPersonSummary  in the task', () => {
@@ -239,14 +231,10 @@ describe('table', () => {
         personSummary,
       })
       expect(nameAnchorCell(task)).toEqual({
-        html: linkTo(
-          paths.tasks.show,
-          { id: task.id, taskType: kebabCase(task.taskType) },
-          {
-            text: `Not Found CRN: ${personSummary.crn}`,
-            attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
-          },
-        ),
+        html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
+          text: `Not Found CRN: ${personSummary.crn}`,
+          attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+        }),
       })
     })
   })

@@ -19,7 +19,7 @@ import { DateFormats } from '../../utils/dateUtils'
 jest.mock('../../utils/validation')
 
 describe('cancellationsController', () => {
-  const token = 'SOME_TOKEN'
+  const token = 'TEST_TOKEN'
   const booking = bookingFactory.build()
   const placement = cas1SpaceBookingFactory.build({ applicationId: booking.applicationId })
   const backLink = `${applyPaths.applications.withdrawables.show({ id: booking.applicationId })}?selectedWithdrawableType=placement`
@@ -30,8 +30,9 @@ describe('cancellationsController', () => {
   const response: DeepMocked<Response> = createMock<Response>({ locals: { user: [] } })
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
-  const premisesId = 'premisesId'
-  const bookingId = 'bookingId'
+  const premisesId = 'premises-id'
+  const bookingId = 'booking-id'
+  const placementId = 'placement-id'
 
   const cancellationService = createMock<CancellationService>({})
   const bookingService = createMock<BookingService>({})
@@ -140,6 +141,12 @@ describe('cancellationsController', () => {
   })
 
   describe('create', () => {
+    beforeEach(() => {
+      jest.resetAllMocks()
+      bookingService.find.mockResolvedValue(booking)
+      placementService.getPlacement.mockResolvedValue(placement)
+      cancellationService.getCancellationReasons.mockResolvedValue(cancellationReasons)
+    })
     it('creates a Cancellation and redirects to the confirmation page', async () => {
       const cancellation = cancellationFactory.build()
 
@@ -222,13 +229,17 @@ describe('cancellationsController', () => {
       expect(response.render).toHaveBeenCalledWith('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
     })
 
-    it('should catch the validation errors when the API returns an error', async () => {
+    it('should catch the validation errors when the API returns an error creating a booking cancellation', async () => {
       const requestHandler = cancellationsController.create()
-
-      request.params = {
-        bookingId,
-        premisesId,
-      }
+      const localResponse: DeepMocked<Response> = createMock<Response>({ locals: { user: [] } })
+      const localRequest: DeepMocked<Request> = createMock<Request>({
+        user: { token },
+        headers: { referer: backLink },
+        params: {
+          bookingId,
+          premisesId,
+        },
+      })
 
       const err = new Error()
 
@@ -236,15 +247,44 @@ describe('cancellationsController', () => {
         throw err
       })
 
-      await requestHandler(request, response, next)
-
+      await requestHandler(localRequest, localResponse, next)
       expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
+        localRequest,
+        localResponse,
         err,
         paths.bookings.cancellations.new({
-          bookingId: request.params.bookingId,
-          premisesId: request.params.premisesId,
+          bookingId,
+          premisesId,
+        }),
+      )
+    })
+
+    it('should catch the validation errors when the API returns an error creating a placement cancellation', async () => {
+      const requestHandler = cancellationsController.create()
+      const localResponse: DeepMocked<Response> = createMock<Response>({ locals: { user: [] } })
+      const localRequest: DeepMocked<Request> = createMock<Request>({
+        user: { token },
+        headers: { referer: backLink },
+        params: {
+          placementId,
+          premisesId,
+        },
+      })
+
+      const err = new Error()
+
+      placementService.createCancellation.mockImplementation(() => {
+        throw err
+      })
+
+      await requestHandler(localRequest, localResponse, next)
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        localRequest,
+        localResponse,
+        err,
+        paths.premises.placements.cancellations.new({
+          placementId,
+          premisesId,
         }),
       )
     })

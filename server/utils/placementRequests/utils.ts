@@ -34,14 +34,13 @@ export const mapPlacementRequestToSpaceSearchParams = ({
 export const formatReleaseType = (placementRequest: PlacementRequest) => allReleaseTypes[placementRequest.releaseType]
 
 export const searchButton = (placementRequest: PlacementRequest) =>
-  linkTo(
-    paths.v2Match.placementRequests.search.spaces,
-    { id: placementRequest.id },
-    { text: 'Search', attributes: { class: 'govuk-button' } },
-  )
+  linkTo(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }), {
+    text: 'Search',
+    attributes: { class: 'govuk-button' },
+  })
 
 export const assessmentLink = (placementRequest: PlacementRequest, text: string, hiddenText: string) =>
-  linkTo(assessPaths.assessments.show, { id: placementRequest.assessmentId }, { text, hiddenText })
+  linkTo(assessPaths.assessments.show({ id: placementRequest.assessmentId }), { text, hiddenText })
 
 export const requestTypes = [
   { name: 'Parole', value: 'parole' },

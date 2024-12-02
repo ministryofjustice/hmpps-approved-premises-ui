@@ -54,8 +54,7 @@ describe('utils', () => {
       searchButton(placementRequest)
 
       expect(utils.linkTo).toHaveBeenCalledWith(
-        paths.v2Match.placementRequests.search.spaces,
-        { id: placementRequest.id },
+        paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         { text: 'Search', attributes: { class: 'govuk-button' } },
       )
     })
@@ -68,11 +67,10 @@ describe('utils', () => {
 
       assessmentLink(placementRequest, 'link text', 'hidden text')
 
-      expect(utils.linkTo).toHaveBeenCalledWith(
-        assessPaths.assessments.show,
-        { id: placementRequest.assessmentId },
-        { text: 'link text', hiddenText: 'hidden text' },
-      )
+      expect(utils.linkTo).toHaveBeenCalledWith(assessPaths.assessments.show({ id: placementRequest.assessmentId }), {
+        text: 'link text',
+        hiddenText: 'hidden text',
+      })
     })
   })
 

@@ -10,7 +10,7 @@ export const otherCancellationReasonId = cancellationReasonsJson.find(r => r.nam
 
 class NewCancellationFactory extends Factory<NewCancellation> {
   withOtherReason() {
-    return this.params({ reason: otherCancellationReasonId })
+    return this.params({ reason: otherCancellationReasonId, otherReason: 'other reason' })
   }
 }
 

@@ -168,11 +168,10 @@ const keyDetails = (assessment: Assessment): KeyDetailsArgs => {
       },
       {
         value: {
-          html: linkTo(
-            applyPaths.applications.show,
-            { id: assessment.application.id },
-            { text: 'View application (opens in new window)', attributes: { target: '_blank' } },
-          ),
+          html: linkTo(applyPaths.applications.show({ id: assessment.application.id }), {
+            text: 'View application (opens in new window)',
+            attributes: { target: '_blank' },
+          }),
         },
       },
     ],

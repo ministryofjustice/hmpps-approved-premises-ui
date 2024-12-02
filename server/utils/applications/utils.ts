@@ -119,23 +119,21 @@ export const applicationSuitableStatuses: ReadonlyArray<ApplicationStatus> = [
 
 export const actionsLink = (application: ApplicationSummary) => {
   if (application.hasRequestsForPlacement) {
-    return linkTo(
-      paths.applications.show,
-      { id: application.id },
-      { text: 'View placement request(s)', query: { tab: applicationShowPageTabs.placementRequests } },
-    )
+    return linkTo(paths.applications.show({ id: application.id }), {
+      text: 'View placement request(s)',
+      query: { tab: applicationShowPageTabs.placementRequests },
+    })
   }
 
   if (application.status === 'started' || application.status === 'requestedFurtherInformation') {
-    return linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
+    return linkTo(paths.applications.withdraw.new({ id: application.id }), { text: 'Withdraw' })
   }
 
   if (applicationSuitableStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
-    return linkTo(
-      placementApplicationPaths.placementApplications.create,
-      {},
-      { text: 'Create request for placement', query: { id: application.id } },
-    )
+    return linkTo(placementApplicationPaths.placementApplications.create({}), {
+      text: 'Create request for placement',
+      query: { id: application.id },
+    })
   }
 
   return ''

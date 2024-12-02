@@ -36,6 +36,12 @@ export default class CancellationCreatePage extends Page {
     this.clickSubmit()
   }
 
+  shouldShowBacklinkToSpaceBooking(): void {
+    cy.get('.govuk-back-link')
+      .should('have.attr', 'href')
+      .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.spaceBookingId }))
+  }
+
   shouldShowBacklinkToBooking(): void {
     cy.get('.govuk-back-link')
       .should('have.attr', 'href')

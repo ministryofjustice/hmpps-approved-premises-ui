@@ -105,7 +105,7 @@ const getPersonName = (personSummary: PersonSummary): string => {
 }
 
 const nameAnchorCell = (task: Task): TableCell => ({
-  html: linkTo(paths.tasks.show, taskParams(task), {
+  html: linkTo(paths.tasks.show(taskParams(task)), {
     text: getPersonName(task.personSummary),
     attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
   }),

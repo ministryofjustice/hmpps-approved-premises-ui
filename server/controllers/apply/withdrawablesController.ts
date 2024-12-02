@@ -43,8 +43,7 @@ export default class WithdrawalsController {
           pageHeading: 'Select your placement',
           id,
           withdrawables: placementAndBookingWithdrawables,
-          bookings,
-          placements,
+          allBookings: [...bookings, ...placements],
           withdrawableType: 'placement',
           notes: withdrawables.notes,
         })

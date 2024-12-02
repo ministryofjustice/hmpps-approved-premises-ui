@@ -114,15 +114,11 @@ export const outOfServiceBedCount = (totalResults: number): string => {
 }
 
 const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
-  linkTo(
-    paths.outOfServiceBeds.show,
-    { id: bed.id, bedId: bed.bed.id, premisesId, tab: 'details' },
-    {
-      text: 'View',
-      hiddenText: `Out of service bed ${bed.bed.name}`,
-      attributes: { 'data-cy-bedId': bed.bed.id },
-    },
-  )
+  linkTo(paths.outOfServiceBeds.show({ id: bed.id, bedId: bed.bed.id, premisesId, tab: 'details' }), {
+    text: 'View',
+    hiddenText: `Out of service bed ${bed.bed.name}`,
+    attributes: { 'data-cy-bedId': bed.bed.id },
+  })
 
 export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): SummaryList['rows'] => {
   const summaryListItems: Array<SummaryListItem> = []

@@ -224,36 +224,36 @@ describe('mapApiPersonRiskForUI', () => {
 
 describe('linkTo', () => {
   it('returns a generic link', () => {
-    expect(linkTo(path('/foo'), {}, { text: 'Hello' })).toMatchStringIgnoringWhitespace('<a href="/foo">Hello</a>')
+    expect(linkTo(path('/foo')({}), { text: 'Hello' })).toMatchStringIgnoringWhitespace('<a href="/foo">Hello</a>')
   })
 
   it('allows params to be specified', () => {
-    expect(linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello' })).toMatchStringIgnoringWhitespace(
+    expect(linkTo(path('/foo/:id')({ id: '123' }), { text: 'Hello' })).toMatchStringIgnoringWhitespace(
       '<a href="/foo/123">Hello</a>',
     )
   })
 
   it('allows hidden text to be specified', () => {
     expect(
-      linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello', hiddenText: 'Hidden' }),
+      linkTo(path('/foo/:id')({ id: '123' }), { text: 'Hello', hiddenText: 'Hidden' }),
     ).toMatchStringIgnoringWhitespace('<a href="/foo/123">Hello <span class="govuk-visually-hidden">Hidden</span></a>')
   })
 
   it('allows attributes to be specified', () => {
     expect(
-      linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello', attributes: { class: 'some-class' } }),
+      linkTo(path('/foo/:id')({ id: '123' }), { text: 'Hello', attributes: { class: 'some-class' } }),
     ).toMatchStringIgnoringWhitespace('<a href="/foo/123" class="some-class">Hello</a>')
   })
 
   it('allows a query to be passed', () => {
-    expect(linkTo(path('/foo'), {}, { text: 'Hello', query: { foo: 'bar' } })).toMatchStringIgnoringWhitespace(
+    expect(linkTo(path('/foo')({}), { text: 'Hello', query: { foo: 'bar' } })).toMatchStringIgnoringWhitespace(
       '<a href="/foo?foo=bar">Hello</a>',
     )
   })
 
   it('returns a link that will open in a new tab', () => {
     expect(
-      linkTo(path('/foo'), {}, { text: 'Hello', query: { foo: 'bar' }, openInNewTab: true }),
+      linkTo(path('/foo')({}), { text: 'Hello', query: { foo: 'bar' }, openInNewTab: true }),
     ).toMatchStringIgnoringWhitespace('<a href="/foo?foo=bar" target="_blank">Hello</a>')
   })
 })

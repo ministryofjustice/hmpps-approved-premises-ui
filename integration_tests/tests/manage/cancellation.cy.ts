@@ -96,15 +96,8 @@ context('Cancellation', () => {
     page.completeForm(cancellation)
 
     // Then a cancellation should have been created in the API
-    cy.task('verifyCancellationCreate', {
-      premisesId: premises.id,
-      bookingId: booking.id,
-      cancellation,
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
-
-      expect(requestBody.reason).equal(cancellation.reason)
+    cy.task('verifyApiPost', `/premises/${premises.id}/bookings/${booking.id}/cancellations`).then(({ reason }) => {
+      expect(reason).equal(cancellation.reason)
     })
 
     // And I should see a confirmation message
@@ -150,9 +143,7 @@ context('Cancellation', () => {
 
     cy.task('stubSpaceBookingShow', placement)
 
-    const cancellation = newCancellationFactory.withOtherReason().build({
-      otherReason: 'other reason',
-    })
+    const cancellation = newCancellationFactory.withOtherReason().build()
     const withdrawable = withdrawableFactory.build({ id: placement.id, type: 'space_booking' })
     cy.task('stubPremisesSummary', premises)
     cy.task('stubWithdrawablesWithNotes', { applicationId: application.id, withdrawables: [withdrawable] })
@@ -162,20 +153,18 @@ context('Cancellation', () => {
     // When I navigate to the booking's cancellation page
     const cancellationPage = CancellationCreatePage.visitWithSpaceBooking(premises.id, placement.id)
 
+    cancellationPage.shouldShowBackLinkToApplicationWithdraw(application.id)
+
     // And I complete the reason and notes
     cancellationPage.completeForm(cancellation)
 
     // Then a cancellation should have been created in the API
-    cy.task('verifySpaceBookingCancellationCreate', {
-      premisesId: premises.id,
-      placementId,
-      cancellation,
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
-      expect(requestBody.reasonId).equal(cancellation.reason)
-      expect(requestBody.reasonNotes).equal(cancellation.otherReason)
-    })
+    cy.task('verifyApiPost', `/cas1/premises/${premises.id}/space-bookings/${placementId}/cancellations`).then(
+      ({ reasonNotes, reasonId }) => {
+        expect(reasonNotes).equal(cancellation.otherReason)
+        expect(reasonId).equal(cancellation.reason)
+      },
+    )
 
     // And I should see a confirmation message
     const confirmationPage = new BookingCancellationConfirmPage()

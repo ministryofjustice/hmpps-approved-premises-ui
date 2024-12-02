@@ -86,15 +86,11 @@ describe('withdrawableTypeRadioOptions', () => {
           .join(', '),
         checked: false,
         hint: {
-          html: linkTo(
-            matchPaths.placementRequests.show,
-            { id: prWithdrawable.id },
-            {
-              text: 'See placement details (opens in a new tab)',
-              attributes: { 'data-cy-withdrawable-id': prWithdrawable.id },
-              openInNewTab: true,
-            },
-          ),
+          html: linkTo(matchPaths.placementRequests.show({ id: prWithdrawable.id }), {
+            text: 'See placement details (opens in a new tab)',
+            attributes: { 'data-cy-withdrawable-id': prWithdrawable.id },
+            openInNewTab: true,
+          }),
         },
         value: prWithdrawable.id,
       },
@@ -110,18 +106,16 @@ describe('withdrawableTypeRadioOptions', () => {
         {
           checked: false,
           hint: {
-            html: linkTo(
-              managePaths.bookings.show,
-              { bookingId: booking.id, premisesId: booking.premises.id },
-              {
-                text: 'See placement details (opens in a new tab)',
-                attributes: { 'data-cy-withdrawable-id': booking.id },
-                openInNewTab: true,
-              },
-            ),
+            html: linkTo(managePaths.bookings.show({ bookingId: booking.id, premisesId: booking.premises.id }), {
+              text: 'See placement details (opens in a new tab)',
+              attributes: { 'data-cy-withdrawable-id': booking.id },
+              openInNewTab: true,
+            }),
           },
           text: `${booking.premises.name} - ${bookingWithdrawable.dates
-            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .map(datePeriod =>
+              DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+            )
             .join(', ')}`,
           value: bookingWithdrawable.id,
         },
@@ -132,20 +126,16 @@ describe('withdrawableTypeRadioOptions', () => {
       const placement = cas1SpaceBookingFactory.build()
       const placementWithdrawable = withdrawableFactory.build({ type: 'space_booking', id: placement.id })
       expect(
-        withdrawableRadioOptions(
-          [paWithdrawable, prWithdrawable, placementWithdrawable],
-          paWithdrawable.id,
-          [],
-          [placement],
-        ),
+        withdrawableRadioOptions([paWithdrawable, prWithdrawable, placementWithdrawable], paWithdrawable.id, [
+          placement,
+        ]),
       ).toEqual([
         ...applicationAndAssesRadios,
         {
           checked: false,
           hint: {
             html: linkTo(
-              managePaths.premises.placements.show,
-              { placementId: placement.id, premisesId: placement.premises.id },
+              managePaths.premises.placements.show({ placementId: placement.id, premisesId: placement.premises.id }),
               {
                 text: 'See placement details (opens in a new tab)',
                 attributes: { 'data-cy-withdrawable-id': placement.id },
@@ -154,7 +144,9 @@ describe('withdrawableTypeRadioOptions', () => {
             ),
           },
           text: `${placement.premises.name} - ${placementWithdrawable.dates
-            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .map(datePeriod =>
+              DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+            )
             .join(', ')}`,
           value: placementWithdrawable.id,
         },

@@ -56,14 +56,9 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   }
 }
 
-export const bedLink = (bed: BedSummary, premisesId: string): string => {
-  return linkTo(
-    paths.premises.beds.show,
-    { bedId: bed.id, premisesId },
-    {
-      text: 'Manage',
-      hiddenText: `bed ${bed.name}`,
-      attributes: { 'data-cy-bedId': bed.id },
-    },
-  )
-}
+export const bedLink = (bed: BedSummary, premisesId: string): string =>
+  linkTo(paths.premises.beds.show({ bedId: bed.id, premisesId }), {
+    text: 'Manage',
+    hiddenText: `bed ${bed.name}`,
+    attributes: { 'data-cy-bedId': bed.id },
+  })

@@ -55,7 +55,7 @@ describe('tableUtils', () => {
       const user = users[0]
       expect(managementDashboardTableRows(users)).toEqual([
         [
-          { html: linkTo(paths.admin.userManagement.edit, { id: user.id }, { text: user.name }) },
+          { html: linkTo(paths.admin.userManagement.edit({ id: user.id }), { text: user.name }) },
           { text: '' },
           { text: 'Standard' },
           { text: user.email },
@@ -69,7 +69,7 @@ describe('tableUtils', () => {
     it('returns a cell with the persons name as a link to the edit page', () => {
       const user = userFactory.build()
       expect(nameCell(user)).toEqual({
-        html: linkTo(paths.admin.userManagement.edit, { id: user.id }, { text: user.name }),
+        html: linkTo(paths.admin.userManagement.edit({ id: user.id }), { text: user.name }),
       })
     })
   })

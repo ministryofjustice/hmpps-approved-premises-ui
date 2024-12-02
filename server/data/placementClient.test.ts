@@ -6,9 +6,9 @@ import {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
+  cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
-  newCas1SpaceBookingCancellationFactory,
 } from '../testutils/factories'
 
 const token = 'TEST_TOKEN'
@@ -150,7 +150,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
 
   describe('createCancellation', () => {
     it('cancels the given placement', async () => {
-      const cancellation = newCas1SpaceBookingCancellationFactory.build()
+      const cancellation = cas1NewSpaceBookingCancellationFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
