@@ -55,16 +55,18 @@ describe('DateFormats', () => {
   })
 
   describe('isoDateToUIDate', () => {
-    it('converts a ISO8601 date string to a GOV.UK formatted date', () => {
-      const date = '2022-11-11T00:00:00.000Z'
-
-      expect(DateFormats.isoDateToUIDate(date)).toEqual('Fri 11 Nov 2022')
+    it.each([
+      ['2022-11-08T00:00:00.000Z', 'Tue 8 Nov 2022'],
+      ['2022-11-11T00:00:00.000Z', 'Fri 11 Nov 2022'],
+    ])('converts ISO8601 date string %s to a GOV.UK formatted date', (date, expectedUiDate) => {
+      expect(DateFormats.isoDateToUIDate(date)).toEqual(expectedUiDate)
     })
 
-    it('converts a ISO8601 date string to a short format date', () => {
-      const date = '2022-11-11T00:00:00.000Z'
-
-      expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual('11 Nov 2022')
+    it.each([
+      ['2022-11-09T00:00:00.000Z', '9 Nov 2022'],
+      ['2022-11-11T00:00:00.000Z', '11 Nov 2022'],
+    ])('converts ISO8601 date %s to a short format date', (date, expectedUiDate) => {
+      expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual(expectedUiDate)
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {
@@ -81,10 +83,11 @@ describe('DateFormats', () => {
   })
 
   describe('isoDateTimeToUIDateTime', () => {
-    it('converts a ISO8601 date string to a GOV.UK formatted date', () => {
-      const date = '2022-11-11T10:00:00.000Z'
-
-      expect(DateFormats.isoDateTimeToUIDateTime(date)).toEqual('11 Nov 2022, 10:00')
+    it.each([
+      ['2022-11-09T16:35:00.000Z', '9 Nov 2022, 16:35'],
+      ['2022-11-11T10:00:00.000Z', '11 Nov 2022, 10:00'],
+    ])('converts a ISO8601 date %s to a GOV.UK formatted date and time', (date, expectedUiDateTime) => {
+      expect(DateFormats.isoDateTimeToUIDateTime(date)).toEqual(expectedUiDateTime)
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {

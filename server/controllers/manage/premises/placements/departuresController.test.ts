@@ -228,7 +228,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureDate: 'The date of departure must be the same as or after 05 Oct 2024, when the person arrived',
+          departureDate: 'The date of departure must be the same as or after 5 Oct 2024, when the person arrived',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -250,7 +250,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureTime: 'The time of departure must be after the time of arrival, 11:30 on 05 Oct 2024',
+          departureTime: 'The time of departure must be after the time of arrival, 11:30 on 5 Oct 2024',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
