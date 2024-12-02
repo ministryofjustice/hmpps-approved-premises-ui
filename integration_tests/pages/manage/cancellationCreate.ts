@@ -8,7 +8,6 @@ export default class CancellationCreatePage extends Page {
   constructor(
     public readonly premisesId: string,
     public readonly bookingId: string,
-    public readonly spaceBookingId: string,
   ) {
     super('Confirm withdrawn placement')
   }
@@ -16,13 +15,13 @@ export default class CancellationCreatePage extends Page {
   static visit(premisesId: string, bookingId: string): CancellationCreatePage {
     cy.visit(paths.bookings.cancellations.new({ premisesId, bookingId }))
 
-    return new CancellationCreatePage(premisesId, bookingId, undefined)
+    return new CancellationCreatePage(premisesId, bookingId)
   }
 
   static visitWithSpaceBooking(premisesId: string, placementId: string): CancellationCreatePage {
     cy.visit(paths.premises.placements.cancellations.new({ premisesId, placementId }))
 
-    return new CancellationCreatePage(premisesId, undefined, placementId)
+    return new CancellationCreatePage(premisesId, placementId)
   }
 
   completeForm(cancellation: NewCancellation): void {
@@ -39,7 +38,7 @@ export default class CancellationCreatePage extends Page {
   shouldShowBacklinkToSpaceBooking(): void {
     cy.get('.govuk-back-link')
       .should('have.attr', 'href')
-      .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.spaceBookingId }))
+      .and('include', paths.premises.placements.show({ premisesId: this.premisesId, placementId: this.bookingId }))
   }
 
   shouldShowBacklinkToBooking(): void {

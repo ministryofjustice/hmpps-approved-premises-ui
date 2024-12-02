@@ -170,4 +170,34 @@ context('Cancellation', () => {
     const confirmationPage = new BookingCancellationConfirmPage()
     confirmationPage.shouldShowPanel()
   })
+
+  it('should allow me to create a cancellation for a space-booking without an applicationId', () => {
+    // Given a placement is available
+    const premises = premisesFactory.build()
+    const placement = cas1SpaceBookingFactory.build({ applicationId: undefined })
+    cy.task('stubSpaceBookingGetWithoutPremises', placement)
+
+    // When I navigate to the placements's cancellation page
+    const cancellation = newCancellationFactory.build()
+    cy.task('stubCancellationCreate', { premisesId: premises.id, placementId: placement.id, cancellation })
+
+    const page = CancellationCreatePage.visitWithSpaceBooking(premises.id, placement.id)
+
+    // Then the backlink should be populated correctly
+    page.shouldShowBacklinkToSpaceBooking()
+
+    // When I fill out the cancellation form
+    page.completeForm(cancellation)
+
+    // Then a cancellation should have been created in the API
+    cy.task('verifyApiPost', `/cas1/premises/${premises.id}/space-bookings/${placement.id}/cancellations`).then(
+      ({ reasonId }) => {
+        expect(reasonId).equal(cancellation.reason)
+      },
+    )
+
+    // And I should see a confirmation message
+    const confirmationPage = new BookingCancellationConfirmPage()
+    confirmationPage.shouldShowPanel()
+  })
 })
