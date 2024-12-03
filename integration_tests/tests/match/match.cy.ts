@@ -3,6 +3,7 @@ import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
+  cas1PremiseCapacityFactory,
   cas1SpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
@@ -16,6 +17,7 @@ import { signIn } from '../signIn'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import { filterOutAPTypes, placementDates } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
+import OccupancyViewPage from '../../pages/match/occupancyViewPage'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -29,7 +31,7 @@ context('Placement Requests', () => {
 
   it('allows me to search for an available space', () => {
     // Given I am signed in as a cru_member
-    signIn(['cru_member'])
+    signIn(['cru_member'], ['cas1_space_booking_create'])
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
@@ -102,9 +104,42 @@ context('Placement Requests', () => {
     })
   })
 
+  it('allows me to view spaces and occupancy capacity', () => {
+    const premisesName = 'Hope House'
+    const apType = 'normal'
+    const durationDays = 15
+    const startDate = '2024-07-23'
+    const endDate = '2024-08-07'
+    const totalCapacity = 10
+
+    // Given I am signed in as a cru_member
+    signIn(['cru_member'], ['cas1_space_booking_create'])
+
+    // And there is a placement request waiting for me to match
+    const person = personFactory.build()
+    const placementRequest = placementRequestDetailFactory.build({ person })
+    const premiseCapacity = cas1PremiseCapacityFactory.build({ premise: { bedCount: totalCapacity } })
+
+    cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubPremiseCapacity', { premisesId: premiseCapacity.premise.id, startDate, endDate, premiseCapacity })
+
+    // When I visit the search page
+    const searchPage = OccupancyViewPage.visit(
+      placementRequest,
+      startDate,
+      durationDays,
+      premisesName,
+      premiseCapacity.premise.id,
+      apType,
+    )
+
+    // Then I should see the details of the case I am matching
+    searchPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
+  })
+
   it('allows me to book a space', () => {
     // Given I am signed in as a cru_member
-    signIn(['cru_member'])
+    signIn(['cru_member'], ['cas1_space_booking_create'])
 
     const premisesName = 'Hope House'
     const premisesId = 'abc123'
@@ -163,7 +198,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to mark a placement request as unable to match', () => {
-    signIn(['cru_member'])
+    signIn(['cru_member'], ['cas1_space_booking_create'])
 
     // Given there is a placement request waiting for me to match
     const placementRequest = placementRequestDetailFactory.build({

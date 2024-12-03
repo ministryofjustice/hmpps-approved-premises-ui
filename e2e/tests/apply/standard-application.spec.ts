@@ -14,7 +14,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
   oasysSections,
 }) => {
   await signIn(page, assessor)
-  const { id, apType, preferredAps, preferredPostcode } = await createApplication(
+  const { id, apType, preferredAps, preferredPostcode, releaseType } = await createApplication(
     { page, person, oasysSections, applicationType: 'standard' },
     true,
     true,
@@ -24,6 +24,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
     applicationId: id,
     page,
     apType,
+    releaseType,
     preferredAps,
     datesOfPlacement,
     duration,

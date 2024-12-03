@@ -1,4 +1,5 @@
 import type {
+  Cas1PremiseCapacity,
   Cas1PremisesBasicSummary,
   ExtendedPremisesSummary,
   Premises,
@@ -8,6 +9,7 @@ import type {
 
 import { stubFor } from './setup'
 import paths from '../../server/paths/api'
+import { createQueryString } from '../../server/utils/utils'
 
 const stubAllPremises = (premises: Array<PremisesSummary>) =>
   stubFor({
@@ -85,10 +87,31 @@ const stubPremisesStaffMembers = (args: { premisesId: string; staffMembers: Arra
     },
   })
 
+const stubPremiseCapacity = (args: {
+  premisesId: string
+  startDate: string
+  endDate: string
+  premiseCapacity: Cas1PremiseCapacity
+}) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: `${paths.premises.capacity({ premisesId: args.premiseCapacity.premise.id })}?${createQueryString({ startDate: args.startDate, endDate: args.endDate })}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.premiseCapacity,
+    },
+  })
+
 export default {
   stubAllPremises,
   stubCas1AllPremises,
   stubPremisesSummary,
   stubSinglePremises,
   stubPremisesStaffMembers,
+  stubPremiseCapacity,
 }

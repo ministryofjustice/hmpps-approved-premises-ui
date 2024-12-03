@@ -67,6 +67,8 @@ describe('SpaceBookingsController', () => {
         premisesName,
         premisesId,
         apType,
+        startDate,
+        durationDays,
         errorSummary: {},
         errors: [],
         dates: placementDates(startDate, durationDays),

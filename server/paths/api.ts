@@ -11,6 +11,7 @@ const cas1LostBedsCancellations = cas1LostBedsSingle.path('cancellations')
 const cas1OutOfServiceBeds = cas1PremisesSingle.path('out-of-service-beds')
 const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placementId')
+const cas1Capacity = cas1PremisesSingle.path('capacity')
 
 const cas1SpaceBookings = cas1Namespace.path('/placement-requests/:id/space-bookings')
 
@@ -68,7 +69,7 @@ export default {
     show: cas1PremisesSingle,
     index: premises.path('summary'),
     indexCas1: cas1Premises.path('summary'),
-    capacity: premisesSingle.path('capacity'),
+    capacity: cas1Capacity,
     summary: premisesSingle.path('summary'),
     lostBeds: {
       create: cas1LostBeds,

@@ -116,7 +116,9 @@ export const completeBasicInformationTask = async (
   await sentenceTypePage.clickSave()
 
   const releaseTypePage = await ApplyPage.initialize(page, 'What type of release will the application support?')
-  await releaseTypePage.checkRadio('Licence')
+
+  const releaseType = 'Licence'
+  await releaseTypePage.checkRadio(releaseType)
   await releaseTypePage.clickSave()
 
   const releaseDatePage = await ApplyPage.initialize(page, `Do you know the person's release date?`)
@@ -148,6 +150,8 @@ export const completeBasicInformationTask = async (
   const purposePage = await ApplyPage.initialize(page, 'What is the purpose of the Approved Premises (AP) placement?')
   await purposePage.checkCheckBoxes(['Public protection', 'Prevent contact with known individuals or victims'])
   await purposePage.clickSave()
+
+  return releaseType
 }
 
 export const completeTypeOfApTask = async (page: Page) => {
@@ -463,7 +467,7 @@ export const createApplication = async (
   await enterAndConfirmCrn(page, person.crn)
 
   // And I complete the basic information Task
-  await completeBasicInformationTask(page, withReleaseDate, applicationType, testMappaFlow)
+  const releaseType = await completeBasicInformationTask(page, withReleaseDate, applicationType, testMappaFlow)
 
   // And I complete the Type of AP Task
   const apType = await completeTypeOfApTask(page)
@@ -503,7 +507,7 @@ export const createApplication = async (
 
   const url = page.url()
 
-  return { id: url.match(/applications\/(.+)\//)[1], preferredAps, apType, preferredPostcode }
+  return { id: url.match(/applications\/(.+)\//)[1], preferredAps, apType, preferredPostcode, releaseType }
 }
 
 export const withdrawAnApplicationBeforeSubmission = async (page: Page, applicationId: string) => {

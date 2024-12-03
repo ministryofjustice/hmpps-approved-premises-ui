@@ -3,11 +3,12 @@ import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'
-import { SearchScreen } from '../pages/match/searchScreen'
-import { BookingScreen } from '../pages/match/bookingScreen'
-import { OccupancyViewScreen } from '../pages/match/occupancyViewScreen'
+import { SearchPage } from '../pages/match/searchPage'
+import { BookingPage } from '../pages/match/bookingPage'
+import { OccupancyViewPage } from '../pages/match/occupancyViewPage'
 import { DateFormats } from '../../server/utils/dateUtils'
 import { visitDashboard } from './signIn'
+import { ReleaseTypeLabel } from '../../server/utils/applications/releaseTypeUtils'
 
 export const matchAndBookApplication = async ({
   applicationId,
@@ -15,6 +16,7 @@ export const matchAndBookApplication = async ({
   datesOfPlacement,
   duration,
   apType,
+  releaseType,
   preferredAps,
   preferredPostcode,
 }: {
@@ -23,6 +25,7 @@ export const matchAndBookApplication = async ({
   datesOfPlacement: E2EDatesOfPlacement
   duration: string
   apType: ApTypeLabel
+  releaseType: ReleaseTypeLabel
   preferredAps: Array<Premises['name']>
   preferredPostcode: string
 }) => {
@@ -43,10 +46,10 @@ export const matchAndBookApplication = async ({
   await placementRequestPage.clickSearchForASpace()
 
   // Then I should see the search screen
-  const searchScreen = new SearchScreen(page)
+  const searchScreen = new SearchPage(page)
 
   // Should show details
-  searchScreen.shouldShowApplicationDetails({
+  await searchScreen.shouldShowApplicationDetails({
     preferredAps,
     datesOfPlacement,
     duration,
@@ -58,7 +61,7 @@ export const matchAndBookApplication = async ({
   await searchScreen.clickUpdate()
 
   // Should show details again
-  searchScreen.shouldShowApplicationDetails({
+  await searchScreen.shouldShowApplicationDetails({
     preferredAps,
     datesOfPlacement,
     duration,
@@ -71,19 +74,27 @@ export const matchAndBookApplication = async ({
   await searchScreen.selectFirstAP()
 
   // Then I should see the occupancy view screen for that AP
-  const occupancyViewScreen = await OccupancyViewScreen.initialize(page, premisesName)
+  const occupancyViewPage = await OccupancyViewPage.initialize(page, premisesName)
+
+  // Should show details
+  await occupancyViewPage.shouldShowMatchingDetails({
+    datesOfPlacement,
+    duration,
+    releaseType,
+  })
+
   // And I continue to booking
-  await occupancyViewScreen.clickContinue()
+  await occupancyViewPage.clickContinue()
 
   // Then I should see the booking screen for that AP
-  const bookingScreen = await BookingScreen.initialize(page, premisesName)
+  const bookingPage = await BookingPage.initialize(page, premisesName)
 
   // Should show the booking details
-  await bookingScreen.shouldShowDatesOfPlacement(datesOfPlacement)
+  await bookingPage.shouldShowDatesOfPlacement(datesOfPlacement)
 
   // And I confirm the booking
   const premisesId = page.url().match(/premisesId=(.[^&]*)/)[1] // premisesId=338e22f3-70be-4519-97ab-f08c6c2dfb0b
-  await bookingScreen.clickConfirm()
+  await bookingPage.clickConfirm()
 
   // Then I should see the Matched tab on the CRU dashboard
   cruDashboard = new ListPage(page)
