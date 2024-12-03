@@ -168,8 +168,8 @@ describe('placementUtils', () => {
 
   describe('tabular information', () => {
     const placement = cas1SpaceBookingFactory.build({
-      actualArrivalDate: '2024-06-01',
-      actualDepartureDate: '2024-12-25',
+      actualArrivalDateOnly: '2024-06-01',
+      actualDepartureDateOnly: '2024-12-25',
     })
 
     it('should return the placement summary information', () => {
@@ -177,7 +177,7 @@ describe('placementUtils', () => {
         rows: [
           { key: { text: 'AP name' }, value: { text: placement.premises.name } },
           { key: { text: 'Date allocated' }, value: { text: DateFormats.isoDateToUIDate(placement.createdAt) } },
-          { key: { text: 'Status' }, value: { text: 'TBD' } },
+          { key: { text: 'Status' }, value: { text: 'Departed' } },
           {
             key: { text: 'Actual length of stay' },
             value: { text: '29 weeks, 4 days' },
@@ -197,11 +197,11 @@ describe('placementUtils', () => {
           },
           {
             key: { text: 'Actual arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDate) },
+            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDateOnly) },
           },
           {
             key: { text: 'Arrival time' },
-            value: { text: DateFormats.timeFromDate(DateFormats.isoToDateObj(placement.actualArrivalDate)) },
+            value: { text: (placement.actualArrivalTime || '')},
           },
         ],
       })
@@ -247,12 +247,12 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
             },
             {
               key: { text: 'Departure time' },
               value: {
-                text: DateFormats.timeFromDate(DateFormats.isoToDateObj(departedPlacement.actualDepartureDate)),
+                text: (departedPlacement.actualDepartureTime || '').substring(0, 5),
               },
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
@@ -272,12 +272,12 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
             },
             {
               key: { text: 'Departure time' },
               value: {
-                text: DateFormats.timeFromDate(DateFormats.isoToDateObj(departedPlacement.actualDepartureDate)),
+                text: (departedPlacement.actualDepartureTime || '').substring(0, 5),
               },
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.parentReason?.name } },
@@ -298,12 +298,12 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
             },
             {
               key: { text: 'Departure time' },
               value: {
-                text: DateFormats.timeFromDate(DateFormats.isoToDateObj(departedPlacement.actualDepartureDate)),
+                text: (departedPlacement.actualDepartureTime || '').substring(0, 5),
               },
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },

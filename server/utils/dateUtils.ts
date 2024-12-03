@@ -52,6 +52,14 @@ export class DateFormats {
 
   /**
    * @param date JS Date object.
+   * @returns the time in the format '19:05'.
+   */
+  static dateObjTo24hrTime(date: Date) {
+    return formatISO(date, { representation: 'time' }).substring(0, 5)
+  }
+
+  /**
+   * @param date JS Date object.
    * @param options - options for the formatting
    * @param options.format - 'long' (default, e.g. "Thu 20 Dec 2012") or 'short' (e.g. "20 Dec 2012")
    * @returns the date in the to be shown in the UI.
@@ -336,8 +344,7 @@ export const bankHolidays = () => {
 
 export const todayAtMidnight = () => new Date(new Date().setHours(0, 0, 0, 0))
 
-export class InvalidDateStringError extends Error {
-}
+export class InvalidDateStringError extends Error {}
 
 export const daysToWeeksAndDays = (days: string | number): { days: number; weeks: number } => {
   const daysAsNumber = Number(days)
@@ -351,4 +358,13 @@ export const daysToWeeksAndDays = (days: string | number): { days: number; weeks
 
 export const timeIsValid24hrFormat = (time: string): Boolean => {
   return /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/.test(time)
+}
+
+export const isoDateAndTimeToDateObj = (isoDate:string,time:string):Date => {
+  const date = DateFormats.isoToDateObj(isoDate)
+  if(timeIsValid24hrFormat(time)) {
+    const [h,m] = time.split(':').map(Number)
+    date.setHours(h,m)
+  }
+  return date
 }

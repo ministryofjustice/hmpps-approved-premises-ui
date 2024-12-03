@@ -13,6 +13,7 @@ import {
   dateIsToday,
   datetimeIsInThePast,
   daysToWeeksAndDays,
+  isoDateAndTimeToDateObj,
   monthOptions,
   timeIsValid24hrFormat,
   uiDateOrDateEmptyMessage,
@@ -542,4 +543,29 @@ describe('timeIsValid24hrFormat', () => {
       expect(timeIsValid24hrFormat(time)).toEqual(false)
     },
   )
+})
+
+describe('dateObjToIsoTime', () => {
+  it.each([
+    ['00:00', 0, 0, 0],
+    ['12:01', 12, 1, 1],
+    ['23:59', 23, 59, 59],
+  ])('returns the iso time part of the date with time like %s', (expected, h, m, s) => {
+    const date = new Date()
+    date.setUTCHours(h)
+    date.setUTCMinutes(m)
+    date.setUTCSeconds(s)
+    expect(DateFormats.dateObjTo24hrTime(date)).toBe(expected)
+  })
+})
+
+describe('isoDateAndTimeToDateObj', () => {
+  it.each([
+    ['2024-01-01', '05:22', '2024-01-01T05:22'],
+    ['2024-12-31', '13:22', '2024-12-31T13:22'],
+    ['2024-12-31', null, '2024-12-31'],
+  ])('returns a date from an iso date and time, %s %s', (dateStr, timeStr, expected) => {
+    const date = isoDateAndTimeToDateObj(dateStr, timeStr)
+    expect(date.getTime()).toEqual(DateFormats.isoToDateObj(expected).getTime())
+  })
 })
