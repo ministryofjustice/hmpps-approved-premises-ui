@@ -4,6 +4,7 @@ import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
+import { renderKeyworkersSelectOptions } from '../../../../utils/placements'
 
 export default class KeyworkerController {
   constructor(
@@ -18,11 +19,11 @@ export default class KeyworkerController {
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
-      const staffList: Array<StaffMember> = await this.premisesService.getStaff(token, premisesId)
+      const keyworkers: Array<StaffMember> = await this.premisesService.getKeyworkers(token, premisesId)
 
       return res.render('manage/premises/placements/keyworker', {
         currentKeyworkerName: placement.keyWorkerAllocation?.keyWorker?.name || 'Not assigned',
-        staffList,
+        keyworkersOptions: renderKeyworkersSelectOptions(keyworkers, placement),
         placement,
         errors,
         errorSummary,

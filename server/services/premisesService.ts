@@ -75,4 +75,8 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getStaff(premisesId)
   }
+
+  async getKeyworkers(token: string, premisesId: string) {
+    return this.getStaff(token, premisesId).then(result => result.filter(member => member.keyWorker))
+  }
 }

@@ -175,7 +175,7 @@ export const renderKeyworkersSelectOptions = (
 ): Array<SelectOption> => [
   { text: 'Select a keyworker', value: null },
   ...staffList
-    .filter(({ keyWorker, code }) => keyWorker && placement.keyWorkerAllocation?.keyWorker?.code !== code)
+    .filter(({ code }) => placement.keyWorkerAllocation?.keyWorker?.code !== code)
     .map(({ name, code }) => ({
       text: `${name}`,
       value: `${code}`,
