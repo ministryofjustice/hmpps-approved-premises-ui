@@ -37,9 +37,9 @@ export default class PremisesController {
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
       const showPlacements =
         premises.supportsSpaceBookings && hasPermission(res.locals.user, ['cas1_space_booking_list'])
-      const staffMembers =
+      const keyworkersList =
         showPlacements && (activeTab === 'upcoming' || activeTab === 'current')
-          ? await this.premisesService.getStaff(req.user.token, req.params.premisesId)
+          ? await this.premisesService.getKeyworkers(req.user.token, req.params.premisesId)
           : undefined
       const paginatedPlacements =
         showPlacements &&
@@ -63,7 +63,7 @@ export default class PremisesController {
         crnOrName,
         keyworker,
         placements: paginatedPlacements?.data,
-        staffMembers,
+        keyworkersList,
         hrefPrefix,
         sortBy: sortBy || tabSettings[activeTab].sortBy,
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,

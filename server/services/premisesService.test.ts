@@ -238,4 +238,20 @@ describe('PremisesService', () => {
       expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
     })
   })
+
+  describe('getKeyworkers', () => {
+    it('returns the list of staff filtered for keyworkers in a premises', async () => {
+      const keyworker = staffMemberFactory.build({ keyWorker: true })
+      const notKeyworker = staffMemberFactory.build({ keyWorker: false })
+
+      premisesClient.getStaff.mockResolvedValue([keyworker, notKeyworker])
+
+      const result = await service.getKeyworkers(token, premisesId)
+
+      expect(result).toEqual([keyworker])
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
+    })
+  })
 })
