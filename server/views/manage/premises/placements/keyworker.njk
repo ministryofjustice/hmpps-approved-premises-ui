@@ -18,8 +18,8 @@
 {% endblock %}
 
 {% block header %}
-  {{ super() }}
-  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block content %}
@@ -53,7 +53,7 @@
             },
             id: "staffCode",
             name: "staffCode",
-            items: PlacementUtils.renderKeyworkersSelectOptions(staffList, placement)
+            items: keyworkersOptions
         }) }}
 
         {{ govukButton({

@@ -3,12 +3,13 @@ import type { NextFunction, Request, Response } from 'express'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
 import KeyworkerController from './keyworkerController'
-import { cas1SpaceBookingFactory } from '../../../../testutils/factories'
+import { cas1SpaceBookingFactory, staffMemberFactory } from '../../../../testutils/factories'
 import { PremisesService } from '../../../../services'
 import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
+import { renderKeyworkersSelectOptions } from '../../../../utils/placements'
 
 describe('keyworkerController', () => {
   const token = 'SOME_TOKEN'
@@ -26,11 +27,14 @@ describe('keyworkerController', () => {
   const testStaffCode = 'TestId'
   const uiPlacementPagePath = paths.premises.placements.show({ premisesId, placementId: placement.id })
   const uiKeyworkerPagePath = paths.premises.placements.keyworker({ premisesId, placementId: placement.id })
+  const keyworkers = staffMemberFactory.buildList(5, { keyWorker: true })
 
   beforeEach(() => {
     jest.clearAllMocks()
 
     premisesService.getPlacement.mockResolvedValue(placement)
+    premisesService.getKeyworkers.mockResolvedValue(keyworkers)
+
     request = createMock<Request>({ user: { token }, params: { premisesId, placementId: placement.id } })
 
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
@@ -47,8 +51,10 @@ describe('keyworkerController', () => {
       await requestHandler(request, response, next)
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
+      expect(premisesService.getKeyworkers).toHaveBeenCalledWith(token, premisesId)
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/keyworker', {
         placement,
+        keyworkersOptions: renderKeyworkersSelectOptions(keyworkers, placement),
         currentKeyworkerName: placement.keyWorkerAllocation?.keyWorker?.name,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,

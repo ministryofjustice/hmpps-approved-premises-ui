@@ -338,30 +338,28 @@ describe('placementUtils', () => {
     })
   })
   describe('renderKeyworkersSelectOptions', () => {
-    const selectBlankOption = { text: 'Select a keyworker', value: null } as SelectOption
+    const selectBlankOption: SelectOption = { text: 'Select a keyworker', value: null }
+    const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
+
     it('should return a list of keyworker selection options', () => {
-      const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
       const expected = [
         selectBlankOption,
         ...staffList.map(({ name, code }) => ({ text: name, value: code, selected: false })),
       ]
+
       const result = renderKeyworkersSelectOptions(staffList, placement)
+
       expect(result).toEqual(expected)
-    })
-    it('should remove non-keyworkers', () => {
-      const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: false })
-      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
-      const result = renderKeyworkersSelectOptions(staffList, placement)
-      expect(result).toEqual([selectBlankOption])
     })
 
     it('should exclude the currently assigned keyworker', () => {
-      const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build({
         keyWorkerAllocation: { keyWorker: { ...staffList[1] } },
       })
+
       const result = renderKeyworkersSelectOptions(staffList, placement)
+
       expect(result).toEqual([
         selectBlankOption,
         ...[staffList[0], staffList[2]].map(({ name, code }) => ({ text: name, value: code, selected: false })),
