@@ -3,6 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1NewArrival = {
-    arrivalDateTime: string;
+    /**
+     * This is deprecated. Instead use arrivalDate and arrivalTime
+     * @deprecated
+     */
+    arrivalDateTime?: string;
+    arrivalDate?: string;
+    arrivalTime?: string;
 };
 

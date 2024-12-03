@@ -3,7 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1NewDeparture = {
-    departureDateTime: string;
+    departureDateTime?: string;
+    departureDate?: string;
+    departureTime?: string;
     reasonId: string;
     moveOnCategoryId?: string;
     notes?: string;

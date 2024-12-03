@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewCas1OutOfServiceBedCancellation = {
+export type Cas1NewOutOfServiceBedCancellation = {
     notes?: string;
 };
 

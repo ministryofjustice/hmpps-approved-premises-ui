@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
-export type NewCas1SpaceBooking = {
+export type Cas1NewSpaceBooking = {
     arrivalDate: string;
     departureDate: string;
     premisesId: string;

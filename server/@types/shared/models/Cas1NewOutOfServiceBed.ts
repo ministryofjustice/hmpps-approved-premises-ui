@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewCas1OutOfServiceBed = {
+export type Cas1NewOutOfServiceBed = {
     startDate: string;
     endDate: string;
     reason: string;

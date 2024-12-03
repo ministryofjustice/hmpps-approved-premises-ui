@@ -8,6 +8,7 @@ import type { Cas1SpaceBookingDates } from './Cas1SpaceBookingDates';
 import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
 import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
 import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
+import type { Cas1SpaceBookingSummaryStatus } from './Cas1SpaceBookingSummaryStatus';
 import type { NamedId } from './NamedId';
 import type { Person } from './Person';
 import type { User } from './User';
@@ -24,8 +25,26 @@ export type Cas1SpaceBooking = {
     requestForPlacementId?: string;
     expectedArrivalDate: string;
     expectedDepartureDate: string;
+    /**
+     * Use actualArrivalDateOnly and actualArrivalTime
+     * @deprecated
+     */
     actualArrivalDate?: string;
+    actualArrivalDateOnly?: string;
+    /**
+     * This value may not be defined even if an arrival date is
+     */
+    actualArrivalTime?: string;
+    /**
+     * Use actualDepartureDateOnly and actualDepartureTime
+     * @deprecated
+     */
     actualDepartureDate?: string;
+    actualDepartureDateOnly?: string;
+    /**
+     * This value may not be defined even if a departure date is
+     */
+    actualDepartureTime?: string;
     /**
      * actual arrival date or, if not known, the expected arrival date
      */
@@ -41,5 +60,6 @@ export type Cas1SpaceBooking = {
     cancellation?: Cas1SpaceBookingCancellation;
     nonArrival?: Cas1SpaceBookingNonArrival;
     deliusEventNumber?: string;
+    status?: Cas1SpaceBookingSummaryStatus;
 };
 

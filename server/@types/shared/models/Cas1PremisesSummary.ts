@@ -22,5 +22,6 @@ export type Cas1PremisesSummary = {
      */
     outOfServiceBeds: number;
     supportsSpaceBookings: boolean;
+    managerDetails?: string;
 };
 
