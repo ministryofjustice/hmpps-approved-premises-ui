@@ -1,15 +1,9 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import {
-  Cas1KeyWorkerAllocation,
-  Cas1SpaceBookingSummary,
-  Cas1SpaceBookingSummaryStatus,
-  PersonSummary,
-} from '@approved-premises/api'
+import { Cas1SpaceBookingSummary, Cas1SpaceBookingSummaryStatus, PersonSummary } from '@approved-premises/api'
 import { fullPersonSummaryFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
-import { staffMemberFactory } from '.'
 
 const statuses: Array<Cas1SpaceBookingSummaryStatus> = [
   'arrived',
