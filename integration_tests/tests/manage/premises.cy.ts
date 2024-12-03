@@ -33,14 +33,14 @@ context('Premises', () => {
   describe('show', () => {
     const premises = cas1PremisesSummaryFactory.build()
     const placements = cas1SpaceBookingSummaryFactory.buildList(30)
-    const staffMembers = staffMemberFactory.buildList(5)
+    const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
     beforeEach(() => {
       cy.task('reset')
 
       // Given there is a premises in the database
       cy.task('stubSinglePremises', premises)
-      cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers })
+      cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
 
       // And it has a list of upcoming placements
       cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, residency: 'upcoming' })
@@ -105,7 +105,7 @@ context('Premises', () => {
       })
 
       it('should let the user filter by keyworker', () => {
-        const testKeyworker = staffMembers[2]
+        const testKeyworker = keyworkers[2]
         const placementsWithKeyworker = cas1SpaceBookingSummaryFactory.buildList(6, {
           keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
             keyWorker: testKeyworker,
