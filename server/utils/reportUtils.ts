@@ -7,6 +7,10 @@ export const reportInputLabels = {
     text: 'Raw requests for placement',
     hint: 'A raw data extract for request for placements created within the month. Includes application data, but does not include matching or booking data.',
   },
+  placementMatchingOutcomes: {
+    text: 'Raw data for Placement matching outcomes',
+    hint: 'A raw data extract to help identify placement matching outcomes. This downloads Match requests based on the Expected Arrival Date.',
+  },
   lostBeds: {
     text: 'Lost beds (no longer in use)',
     hint: 'This report provides information on lost beds recorded before out of service beds functionality was enabled. This will be removed in the near future.',
