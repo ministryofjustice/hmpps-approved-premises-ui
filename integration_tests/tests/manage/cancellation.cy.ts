@@ -1,3 +1,4 @@
+import type { Cancellation } from '@approved-premises/api'
 import {
   applicationFactory,
   bookingFactory,
@@ -97,9 +98,11 @@ context('Cancellation', () => {
     page.completeForm(cancellation)
 
     // Then a cancellation should have been created in the API
-    cy.task('verifyApiPost', `/premises/${premises.id}/bookings/${booking.id}/cancellations`).then(({ reason }) => {
-      expect(reason).equal(cancellation.reason)
-    })
+    cy.task('verifyApiPost', `/premises/${premises.id}/bookings/${booking.id}/cancellations`).then(
+      ({ reason }: Cancellation) => {
+        expect(reason).equal(cancellation.reason)
+      },
+    )
 
     // And I should see a confirmation message
     const confirmationPage = new BookingCancellationConfirmPage()
@@ -138,7 +141,7 @@ context('Cancellation', () => {
     // Given a booking is available
     const application = applicationFactory.build()
     const placement = cas1SpaceBookingFactory.upcoming().build({ applicationId: application.id })
-    const premises = extendedPremisesSummaryFactory.build({ bookings: [placement], id: placement.premises.id })
+    const premises = premisesFactory.build({ id: placement.premises.id })
 
     const placementId = placement.id
     const premisesId = premises.id

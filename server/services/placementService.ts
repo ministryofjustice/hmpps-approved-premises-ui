@@ -2,10 +2,10 @@ import type {
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
+  Cas1NewSpaceBookingCancellation,
   Cas1NonArrival,
   Cas1SpaceBooking,
   DepartureReason,
-  NewCas1SpaceBookingCancellation,
   NonArrivalReason,
 } from '@approved-premises/api'
 import type { Request } from 'express'
@@ -99,7 +99,7 @@ export default class PlacementService {
     token: string,
     premisesId: string,
     placementId: string,
-    cancellation: NewCas1SpaceBookingCancellation,
+    cancellation: Cas1NewSpaceBookingCancellation,
   ) {
     const placementClient = this.placementClientFactory(token)
 

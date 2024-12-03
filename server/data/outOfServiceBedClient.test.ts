@@ -1,5 +1,5 @@
-import {
-  NewCas1OutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
+import type {
+  Cas1NewOutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
 import OutOfServiceBedClient from './outOfServiceBedClient'

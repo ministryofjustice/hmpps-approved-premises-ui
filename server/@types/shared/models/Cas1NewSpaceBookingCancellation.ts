@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewCas1SpaceBookingCancellation = {
+export type Cas1NewSpaceBookingCancellation = {
     occurredAt: string;
     reasonId: string;
     reasonNotes?: string;

@@ -1,18 +1,18 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import {
-  NewCas1OutOfServiceBed as NewOutOfServiceBed,
-  Cas1OutOfServiceBed as OutOfServiceBed,
-  Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
-  Cas1OutOfServiceBedRevision as OutOfServiceBedRevision,
-} from '../../@types/shared'
+import type {
+  Cas1NewOutOfServiceBed,
+  Cas1OutOfServiceBed,
+  Cas1OutOfServiceBedCancellation,
+  Cas1OutOfServiceBedRevision,
+} from '@approved-premises/api'
 
 import cas1ReferenceDataFactory from './cas1ReferenceData'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
 import namedIdFactory from './namedId'
 
-export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
+export const outOfServiceBedFactory = Factory.define<Cas1OutOfServiceBed>(() => ({
   id: faker.string.uuid(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   startDate: DateFormats.dateObjToIsoDate(faker.date.future()),
@@ -31,7 +31,7 @@ export const outOfServiceBedFactory = Factory.define<OutOfServiceBed>(() => ({
   revisionHistory: outOfServiceBedRevisionFactory.buildList(3),
 }))
 
-export const newOutOfServiceBedFactory = Factory.define<NewOutOfServiceBed>(() => {
+export const newOutOfServiceBedFactory = Factory.define<Cas1NewOutOfServiceBed>(() => {
   const startDate = faker.date.soon()
   const endDate = faker.date.future()
   return {
@@ -52,7 +52,7 @@ export const newOutOfServiceBedFactory = Factory.define<NewOutOfServiceBed>(() =
   }
 })
 
-export const outOfServiceBedCancellationFactory = Factory.define<OutOfServiceBedCancellation>(() => {
+export const outOfServiceBedCancellationFactory = Factory.define<Cas1OutOfServiceBedCancellation>(() => {
   return {
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
     id: faker.string.uuid(),
@@ -60,7 +60,7 @@ export const outOfServiceBedCancellationFactory = Factory.define<OutOfServiceBed
   }
 })
 
-export const outOfServiceBedRevisionFactory = Factory.define<OutOfServiceBedRevision>(() => {
+export const outOfServiceBedRevisionFactory = Factory.define<Cas1OutOfServiceBedRevision>(() => {
   return {
     id: faker.string.uuid(),
     updatedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),

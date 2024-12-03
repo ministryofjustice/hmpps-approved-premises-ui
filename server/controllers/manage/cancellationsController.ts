@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import type { NewCancellation, NewCas1SpaceBookingCancellation } from '@approved-premises/api'
+import type { Cas1NewSpaceBookingCancellation, NewCancellation } from '@approved-premises/api'
 
 import { BookingService, CancellationService, PlacementService } from '../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
@@ -76,11 +76,11 @@ export default class CancellationsController {
         date,
       } as NewCancellation
 
-      const spaceBookingCancellation = {
+      const spaceBookingCancellation: Cas1NewSpaceBookingCancellation = {
         occurredAt: date,
         reasonId: cancellation.reason,
         reasonNotes: cancellation.otherReason,
-      } as NewCas1SpaceBookingCancellation
+      }
 
       try {
         if (bookingId) {

@@ -1,13 +1,13 @@
-import config, { ApiConfig } from '../config'
-import RestClient from './restClient'
-import paths from '../paths/api'
-import {
-  NewCas1SpaceBooking as NewSpaceBooking,
+import type {
+  Cas1NewSpaceBooking as NewSpaceBooking,
   PlacementRequest,
   Cas1SpaceBooking as SpaceBooking,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResults as SpaceSearchResults,
-} from '../@types/shared'
+} from '@approved-premises/api'
+import config, { ApiConfig } from '../config'
+import RestClient from './restClient'
+import paths from '../paths/api'
 
 export default class SpaceClient {
   restClient: RestClient
