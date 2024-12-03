@@ -2,9 +2,9 @@ import type {
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
+  Cas1NewSpaceBookingCancellation,
   Cas1NonArrival,
   Cas1SpaceBooking,
-  NewCas1SpaceBookingCancellation,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -55,7 +55,7 @@ export default class PlacementClient {
     })
   }
 
-  async cancel(premisesId: string, placementId: string, cancellation: NewCas1SpaceBookingCancellation) {
+  async cancel(premisesId: string, placementId: string, cancellation: Cas1NewSpaceBookingCancellation) {
     return this.restClient.post({
       path: paths.premises.placements.cancel({ premisesId, placementId }),
       data: cancellation,

@@ -1,8 +1,8 @@
 /* istanbul ignore file */
 
-import {
-  NewCas1OutOfServiceBed as NewOutOfServiceBed,
-  NewCas1OutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
+import type {
+  Cas1NewOutOfServiceBed as NewOutOfServiceBed,
+  Cas1NewOutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,

@@ -1,17 +1,16 @@
-import type { Cas1ReferenceData } from '@approved-premises/ui'
+import type { Cas1ReferenceData, PaginatedResponse } from '@approved-premises/ui'
 import type {
-  NewCas1OutOfServiceBed as NewOutOfServiceBed,
-  NewCas1OutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
+  Cas1NewOutOfServiceBed as NewOutOfServiceBed,
+  Cas1NewOutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
+  Premises,
   SortDirection,
   Temporality,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
-import { PaginatedResponse } from '@approved-premises/ui'
 import type { Cas1ReferenceDataClient, OutOfServiceBedClient, RestClientBuilder } from '../data'
-import { Premises } from '../@types/shared'
 
 export type OutOfServiceBedReasons = Array<Cas1ReferenceData>
 
@@ -28,9 +27,7 @@ export default class OutOfServiceBedService {
   ): Promise<OutOfServiceBed> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
 
-    const confirmedOutOfServiceBed = await outOfServiceBedClient.create(premisesId, outOfServiceBed)
-
-    return confirmedOutOfServiceBed
+    return outOfServiceBedClient.create(premisesId, outOfServiceBed)
   }
 
   async getOutOfServiceBed(
@@ -40,9 +37,7 @@ export default class OutOfServiceBedService {
   ): Promise<OutOfServiceBed> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
 
-    const outOfServiceBed = await outOfServiceBedClient.find(premisesId, id)
-
-    return outOfServiceBed
+    return outOfServiceBedClient.find(premisesId, id)
   }
 
   async updateOutOfServiceBed(
@@ -53,24 +48,19 @@ export default class OutOfServiceBedService {
   ): Promise<OutOfServiceBed> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
 
-    const updatedOutOfServiceBed = await outOfServiceBedClient.update(id, updateOutOfServiceBed, premisesId)
-
-    return updatedOutOfServiceBed
+    return outOfServiceBedClient.update(id, updateOutOfServiceBed, premisesId)
   }
 
   async getOutOfServiceBedReasons(token: string): Promise<OutOfServiceBedReasons> {
     const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
 
-    const reasons = await cas1ReferenceDataClient.getReferenceData('out-of-service-bed-reasons')
-
-    return reasons
+    return cas1ReferenceDataClient.getReferenceData('out-of-service-bed-reasons')
   }
 
   async getOutOfServiceBedsForAPremises(token: string, premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
-    const outOfServiceBeds = await outOfServiceBedClient.getAllByPremises(premisesId)
 
-    return outOfServiceBeds
+    return outOfServiceBedClient.getAllByPremises(premisesId)
   }
 
   async getAllOutOfServiceBeds({
@@ -93,7 +83,8 @@ export default class OutOfServiceBedService {
     perPage?: number
   }): Promise<PaginatedResponse<OutOfServiceBed>> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
-    const outOfServiceBeds = await outOfServiceBedClient.get({
+
+    return outOfServiceBedClient.get({
       sortBy,
       sortDirection,
       page,
@@ -102,8 +93,6 @@ export default class OutOfServiceBedService {
       apAreaId,
       perPage,
     })
-
-    return outOfServiceBeds
   }
 
   async cancelOutOfServiceBed(
@@ -114,8 +103,6 @@ export default class OutOfServiceBedService {
   ): Promise<OutOfServiceBedCancellation> {
     const outOfServiceBedService = this.outOfServiceBedClientFactory(token)
 
-    const cancellation = await outOfServiceBedService.cancel(premisesId, outOfServiceBedId, data)
-
-    return cancellation
+    return outOfServiceBedService.cancel(premisesId, outOfServiceBedId, data)
   }
 }
