@@ -1,4 +1,4 @@
-import type { Cas1SpaceBookingResidency, FullPerson } from '@approved-premises/api'
+import { type Cas1SpaceBookingResidency, type FullPerson } from '@approved-premises/api'
 import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
@@ -14,6 +14,7 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
+import { statusTextMap } from '../placements/index'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -247,8 +248,13 @@ describe('premisesUtils', () => {
           attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'keyWorkerName' },
           html: '<a href="Test_Href_Prefix?sortBy=keyWorkerName">Key worker</a>',
         }
+        const statusColumn = {
+          text: 'Status',
+        }
         const expectedTableHeadings =
-          activeTab === 'historic' ? baseTableHeadings : [...baseTableHeadings, keyworkerColumn]
+          activeTab === 'historic'
+            ? [...baseTableHeadings, statusColumn]
+            : [...baseTableHeadings, keyworkerColumn, statusColumn]
         expect(tableHeadings).toEqual(expectedTableHeadings)
       },
     )
@@ -257,9 +263,14 @@ describe('premisesUtils', () => {
     it.each(['upcoming', 'current', 'historic'])(
       'should return the rows of the placement summary table for the "%s" tab',
       (activeTab: Cas1SpaceBookingResidency) => {
-        const placements = cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' })
+        const placements = [
+          ...cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' }),
+          cas1SpaceBookingSummaryFactory.build({ tier: 'A', status: undefined }),
+        ]
+
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
+          const statusColumn = { text: statusTextMap[placement.status] }
           const baseColumns = [
             {
               html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoName(placement.person as unknown as FullPerson)}, ${placement.person.crn}</a>`,
@@ -269,8 +280,8 @@ describe('premisesUtils', () => {
             { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
           ]
           return activeTab === 'historic'
-            ? baseColumns
-            : [...baseColumns, { text: placement.keyWorkerAllocation.keyWorker.name }]
+            ? [...baseColumns, statusColumn]
+            : [...baseColumns, { text: placement.keyWorkerAllocation.keyWorker.name }, statusColumn]
         })
         expect(tableRows).toEqual(expectedRows)
       },

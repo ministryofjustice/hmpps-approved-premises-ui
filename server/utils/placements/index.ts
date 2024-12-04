@@ -1,10 +1,29 @@
-import type { Cas1SpaceBooking, Cas1SpaceBookingDates, FullPerson, StaffMember } from '@approved-premises/api'
+import type {
+  Cas1SpaceBooking,
+  Cas1SpaceBookingDates,
+  Cas1SpaceBookingSummaryStatus,
+  FullPerson,
+  StaffMember,
+} from '@approved-premises/api'
 import { KeyDetailsArgs, SelectOption, SummaryList, SummaryListItem, UserDetails } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
 import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
+
+export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
+  arrivingWithin6Weeks: 'Arriving within 6 weeks',
+  arrivingWithin2Weeks: 'Arriving within 2 weeks',
+  arrivingToday: 'Arriving today',
+  overdueArrival: 'Overdue arrival',
+  arrived: 'Arrived',
+  notArrived: 'Not arrived',
+  departingWithin2Weeks: 'Departing within 2 weeks',
+  departingToday: 'Departing today',
+  overdueDeparture: 'Overdue departure',
+  departed: 'Departed',
+}
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
