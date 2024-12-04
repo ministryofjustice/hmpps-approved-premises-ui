@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response, TypedRequestHandler } from 'express'
-import type { ApType, Cas1NewSpaceBooking as NewSpaceBooking } from '@approved-premises/api'
+import type { ApType, Cas1NewSpaceBooking } from '@approved-premises/api'
 import { PlacementRequestService, SpaceService } from '../../../services'
 import { filterOutAPTypes, placementDates } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
@@ -47,7 +47,7 @@ export default class {
         body: { arrivalDate, departureDate, durationDays, premisesId, premisesName, essentialCharacteristics, apType },
       } = req
 
-      const newSpaceBooking: NewSpaceBooking = {
+      const newSpaceBooking: Cas1NewSpaceBooking = {
         arrivalDate,
         departureDate,
         premisesId,

@@ -31,7 +31,8 @@ describe('DeparturesController', () => {
   const premisesId = 'premises-id'
   const TEST_DATE = new Date('2024-11-14T14:00:00.000Z')
   const placement = cas1SpaceBookingFactory.current().build({
-    actualArrivalDate: '2024-10-05T11:30:00.000Z',
+    actualArrivalDateOnly: '2024-10-05',
+    actualArrivalTime: '11:30',
   })
   const departureFormData = {
     departureDate: '2024-10-08',
