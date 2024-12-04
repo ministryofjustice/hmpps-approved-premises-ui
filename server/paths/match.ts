@@ -13,7 +13,10 @@ const v2Match = {
     },
     spaceBookings: {
       new: v2SpaceBookingsPath.path('new'),
-      viewSpaces: v2SpaceBookingsPath.path('view-spaces'),
+      viewSpaces: {
+        index: v2SpaceBookingsPath.path('view-spaces'),
+        bookSpace: v2SpaceBookingsPath.path('view-spaces').path('book-space'),
+      },
       create: v2SpaceBookingsPath,
     },
   },

@@ -33,6 +33,7 @@ import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
+export { validateSpaceBooking } from './validateSpaceBooking'
 
 type PlacementDates = {
   placementLength: number
@@ -94,7 +95,7 @@ export const occupancyViewLink = ({
   startDate: string
   durationDays: string
 }): string => {
-  return `${matchPaths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+  return `${matchPaths.v2Match.placementRequests.spaceBookings.viewSpaces.index({ id: placementRequestId })}${createQueryString(
     {
       premisesName,
       premisesId,

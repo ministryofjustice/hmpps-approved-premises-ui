@@ -31,7 +31,7 @@ export default class OccupancyViewPage extends Page {
     apType: ApType,
   ) {
     const queryString = createQueryString({ startDate, durationDays, premisesName, premisesId, apType })
-    const path = `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id })}?${queryString}`
+    const path = `${paths.v2Match.placementRequests.spaceBookings.viewSpaces.index({ id: placementRequest.id })}?${queryString}`
     cy.visit(path)
     return new OccupancyViewPage(premisesName)
   }

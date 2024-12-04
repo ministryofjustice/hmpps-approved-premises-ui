@@ -10,6 +10,12 @@ import { DateFormats } from '../../server/utils/dateUtils'
 import { visitDashboard } from './signIn'
 import { ReleaseTypeLabel } from '../../server/utils/applications/releaseTypeUtils'
 
+export type E2EMatchAndBookResult = {
+  premisesName: string
+  premisesId: string
+  newDatesOfPlacement: E2EDatesOfPlacement
+}
+
 export const matchAndBookApplication = async ({
   applicationId,
   page,
@@ -28,7 +34,7 @@ export const matchAndBookApplication = async ({
   releaseType: ReleaseTypeLabel
   preferredAps: Array<Premises['name']>
   preferredPostcode: string
-}) => {
+}): Promise<E2EMatchAndBookResult> => {
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
 
@@ -83,14 +89,39 @@ export const matchAndBookApplication = async ({
     releaseType,
   })
 
-  // And I continue to booking
+  // Then enter invalid dates into the "Book you placement" form and submit
+  const dateToday = new Date()
+  const today = {
+    year: dateToday.getFullYear().toString(),
+    month: (dateToday.getMonth() + 1).toString(),
+    day: dateToday.getDate().toString(),
+  }
+  const oneYearFromNow = {
+    year: (dateToday.getFullYear() + 1).toString(),
+    month: (dateToday.getMonth() + 1).toString(),
+    day: dateToday.getDate().toString(),
+  }
+  await occupancyViewPage.fillNamedDateField(oneYearFromNow, 'arrivalDate')
+  await occupancyViewPage.fillNamedDateField(today, 'departureDate')
+  await occupancyViewPage.clickContinue()
+
+  // Should show validate error message
+  await occupancyViewPage.shouldShowErrorMessage('The departure date must not be before the arrival date')
+
+  // Then enter valid dates into the "Book you placement" form and submit
+  await occupancyViewPage.fillNamedDateField(today, 'arrivalDate')
+  await occupancyViewPage.fillNamedDateField(oneYearFromNow, 'departureDate')
   await occupancyViewPage.clickContinue()
 
   // Then I should see the booking screen for that AP
   const bookingPage = await BookingPage.initialize(page, premisesName)
 
-  // Should show the booking details
-  await bookingPage.shouldShowDatesOfPlacement(datesOfPlacement)
+  // Should show the booking details (inc. new dates)
+  const newDatesOfPlacement: E2EDatesOfPlacement = {
+    startDate: `${today.year}-${today.month}-${today.day}`,
+    endDate: `${oneYearFromNow.year}-${oneYearFromNow.month}-${oneYearFromNow.day}`,
+  }
+  await bookingPage.shouldShowDatesOfPlacement(newDatesOfPlacement)
 
   // And I confirm the booking
   const premisesId = page.url().match(/premisesId=(.[^&]*)/)[1] // premisesId=338e22f3-70be-4519-97ab-f08c6c2dfb0b
@@ -106,5 +137,5 @@ export const matchAndBookApplication = async ({
     'Matched',
   ])
 
-  return { premisesName, premisesId }
+  return { premisesName, premisesId, newDatesOfPlacement }
 }
