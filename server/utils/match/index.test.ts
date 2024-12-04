@@ -1,4 +1,4 @@
-import {
+import type {
   ApType,
   ApprovedPremisesApplication,
   Cas1SpaceCharacteristic,

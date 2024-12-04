@@ -123,8 +123,8 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubPremiseCapacity', { premisesId: premiseCapacity.premise.id, startDate, endDate, premiseCapacity })
 
-    // When I visit the search page
-    const searchPage = OccupancyViewPage.visit(
+    // When I visit the occupancy view page
+    const occupancyViewPage = OccupancyViewPage.visit(
       placementRequest,
       startDate,
       durationDays,
@@ -134,7 +134,10 @@ context('Placement Requests', () => {
     )
 
     // Then I should see the details of the case I am matching
-    searchPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
+    occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
+
+    // And I should see a summary of occupancy
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
   })
 
   it('allows me to book a space', () => {

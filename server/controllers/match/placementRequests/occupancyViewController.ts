@@ -1,7 +1,12 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { ApType } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService } from '../../../services'
-import { filterOutAPTypes, occupancyViewSummaryListForMatchingDetails, placementDates } from '../../../utils/match'
+import {
+  filterOutAPTypes,
+  occupancySummary,
+  occupancyViewSummaryListForMatchingDetails,
+  placementDates,
+} from '../../../utils/match'
 
 interface NewRequest extends Request {
   params: { id: string }
@@ -29,6 +34,8 @@ export default class {
         placementRequest,
         essentialCharacteristics,
       )
+      const occupancySummaryHtml = occupancySummary(capacity)
+
       res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premisesName}`,
         placementRequest,
@@ -38,6 +45,7 @@ export default class {
         startDate,
         durationDays,
         matchingDetailsSummaryList,
+        occupancySummaryHtml,
       })
     }
   }
