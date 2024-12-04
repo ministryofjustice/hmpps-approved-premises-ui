@@ -269,7 +269,7 @@ describe('matchUtils', () => {
       })
 
       expect(result).toEqual(
-        `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+        `${paths.v2Match.placementRequests.spaceBookings.viewSpaces.index({ id: placementRequestId })}${createQueryString(
           {
             premisesName,
             premisesId,
