@@ -14,6 +14,7 @@ import {
 } from '../../../server/utils/match'
 import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
+import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 
 export default class OccupancyViewPage extends Page {
   constructor(premisesName: string) {
@@ -47,6 +48,11 @@ export default class OccupancyViewPage extends Page {
         occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
       )
     })
+    cy.get('.govuk-heading-l')
+      .contains(
+        `View availability and book your placement for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
+      )
+      .should('exist')
   }
 
   shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity) {
