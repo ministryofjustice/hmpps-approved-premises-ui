@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { Cas1PremiseCharacteristicAvailability } from './Cas1PremiseCharacteristicAvailability';
 export type Cas1PremiseCapacityForDay = {
+    date: string;
     /**
      * total bed count including temporarily unavailable beds (e.g. out of service beds)
      */
