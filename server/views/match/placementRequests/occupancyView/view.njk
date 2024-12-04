@@ -3,7 +3,9 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% extends "../../layout-with-details.njk" %}
 
@@ -25,6 +27,7 @@
 
 {% block content %}
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+    {{ showErrorSummary(errorSummary) }}
 
     {% set detailsHTML %}
         {{ govukSummaryList({
@@ -70,9 +73,65 @@
     <section>
         <h2 class="govuk-heading-l">Book your placement</h2>
 
-        <a class="govuk-button"
-           href="{{ MatchUtils.redirectToSpaceBookingsNew({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays }) }}">
-            Continue
-        </a>
+        <form action="{{ paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id }) }}" method="post">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <input type="hidden" name="premisesId" value="{{ premisesId }}" />
+            <input type="hidden" name="premisesName" value="{{ premisesName }}" />
+            <input type="hidden" name="apType" value="{{ apType }}" />
+            <input type="hidden" name="startDate" value="{{ startDate }}" />
+            <input type="hidden" name="durationDays" value="{{ durationDays }}" />
+
+            {{ govukDateInput({
+                id: "arrivalDate",
+                namePrefix: "arrivalDate",
+                fieldset: {
+                    legend: {
+                        text: "Arrival date",
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                hint: {
+                    text: "For example, 17 5 2024"
+                },
+                items: dateFieldValues('arrivalDate', errors),
+                errorMessage: errors.arrivalDate
+            }) }}
+
+            {{ govukDateInput({
+                id: "departureDate",
+                namePrefix: "departureDate",
+                fieldset: {
+                    legend: {
+                        text: "Departure date",
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                hint: {
+                    text: "For example, 17 5 2024"
+                },
+                items: dateFieldValues('departureDate', errors),
+                errorMessage: errors.departureDate
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue",
+                    preventDoubleClick: true
+                }) }}
+                {{ govukButton({
+                    text: "Cancel",
+                    classes: "govuk-button--secondary",
+                    href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+                    preventDoubleClick: true
+                }) }}
+            </div>
+        </form>
+        <h3 class="govuk-heading-m">If you are not booking this placement</h3>
+        <p class="govuk-body">
+            <a href="{{ paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }) }}">Check for a space at another AP</a>
+        </p>
+        <p class="govuk-body">
+            <a href="{{ paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}) }}">Mark as unable to match</a>
+        </p>
     </section>
 {% endblock %}

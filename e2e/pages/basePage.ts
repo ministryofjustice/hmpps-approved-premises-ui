@@ -64,6 +64,12 @@ export class BasePage {
     })
   }
 
+  async fillNamedDateField({ day, month, year }: { day: string; month: string; year: string }, fieldLabel: string) {
+    await this.page.locator(`#${fieldLabel}-day`).fill(day)
+    await this.page.locator(`#${fieldLabel}-month`).fill(month)
+    await this.page.locator(`#${fieldLabel}-year`).fill(year)
+  }
+
   async fillDateField({ year, month, day }: { year: string; month: string; day: string }) {
     await this.page.getByLabel('Day', { exact: true }).first().fill(day)
     await this.page.getByLabel('Month', { exact: true }).first().fill(month)

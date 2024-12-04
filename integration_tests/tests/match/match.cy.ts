@@ -107,6 +107,40 @@ context('Placement Requests', () => {
   })
 
   it('allows me to view spaces and occupancy capacity', () => {
+    const { occupancyViewPage, premiseCapacity } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+
+    // And I should see a summary of occupancy
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+
+    // And I should see an occupancy calendar
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+  })
+
+  it('allows me to submit invalid dates in the book your placement form on occupancy view page and displays appropriate validation messages', () => {
+    const { occupancyViewPage } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+
+    // When I submit invalid dates
+    occupancyViewPage.shouldFillBookYourPlacementFormDates('2024-11-25', '2024-11-24')
+    occupancyViewPage.clickContinue()
+
+    // Then I should see validation messages
+    occupancyViewPage.shouldShowErrorSummaryAndErrorMessage('The departure date must be after the arrival date')
+  })
+
+  it('allows me to submit valid dates in the book your placement form on occupancy view page and redirects to book a space', () => {
+    const { occupancyViewPage, placementRequest, premisesName } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+
+    // When I submit valid dates
+    const arrivalDate = '2024-11-25'
+    occupancyViewPage.shouldFillBookYourPlacementFormDates(arrivalDate, '2024-11-26')
+    occupancyViewPage.clickContinue()
+
+    // Then I should land on the Book a space page (with the new dates overriding the original ones)
+    const bookASpacePage = Page.verifyOnPage(BookASpacePage, premisesName)
+    bookASpacePage.shouldShowBookingDetails(placementRequest, arrivalDate, 1, 'normal')
+  })
+
+  const shouldVisitOccupancyViewPageAndShowMatchingDetails = () => {
     const premisesName = 'Hope House'
     const apType = 'normal'
     const durationDays = 15
@@ -137,13 +171,8 @@ context('Placement Requests', () => {
 
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
-
-    // And I should see a summary of occupancy
-    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
-
-    // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
-  })
+    return { occupancyViewPage, placementRequest, premiseCapacity, premisesName }
+  }
 
   it('allows me to book a space', () => {
     // Given I am signed in as a cru_member
