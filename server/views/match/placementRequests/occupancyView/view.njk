@@ -30,13 +30,23 @@
         html: detailsHTML
     }) }}
 
-    {{ govukNotificationBanner({
-        html: occupancySummaryHtml,
-        classes: 'govuk-notification-banner--full-width-content'
-    }) }}
+    <section>
+        <h2 class="govuk-heading-l">View availability and book your placement
+            for {{ formatDuration(durationDays) }}
+            from {{ formatDate(startDate, { format: 'short' }) }}</h2>
 
-    <a class="govuk-button"
-       href="{{ MatchUtils.redirectToSpaceBookingsNew({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays }) }}">
-        Continue
-    </a>
+        {{ govukNotificationBanner({
+            html: occupancySummaryHtml,
+            classes: 'govuk-notification-banner--full-width-content'
+        }) }}
+    </section>
+
+    <section>
+        <h2 class="govuk-heading-l">Book your placement</h2>
+
+        <a class="govuk-button"
+           href="{{ MatchUtils.redirectToSpaceBookingsNew({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays }) }}">
+            Continue
+        </a>
+    </section>
 {% endblock %}
