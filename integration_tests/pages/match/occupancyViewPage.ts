@@ -1,4 +1,11 @@
-import { ApType, PlacementDates, PlacementRequest, PlacementRequestDetail, Premises } from '@approved-premises/api'
+import {
+  ApType,
+  Cas1PremiseCapacity,
+  PlacementDates,
+  PlacementRequest,
+  PlacementRequestDetail,
+  Premises,
+} from '@approved-premises/api'
 import Page from '../page'
 import {
   filterOutAPTypes,
@@ -40,5 +47,16 @@ export default class OccupancyViewPage extends Page {
         occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
       )
     })
+  }
+
+  shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity) {
+    if (premiseCapacity.capacity.every(day => day.availableBedCount > 0)) {
+      this.shouldShowBanner('The placement dates you have selected are available.')
+    } else if (premiseCapacity.capacity.every(day => day.availableBedCount <= 0)) {
+      this.shouldShowBanner('There are no spaces available for the dates you have selected.')
+    } else {
+      this.shouldShowBanner('Available on:')
+      this.shouldShowBanner('Overbooked on:')
+    }
   }
 }

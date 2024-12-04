@@ -2,6 +2,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../../layout-with-details.njk" %}
 
@@ -16,17 +17,26 @@
 
 {% block content %}
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
     {% set detailsHTML %}
         {{ govukSummaryList({
             rows: matchingDetailsSummaryList
         }) }}
     {% endset %}
+
     {{ govukDetails({
         summaryText: "Matching details",
         open: true,
         html: detailsHTML
     }) }}
-    <a class="govuk-button" href="{{ MatchUtils.redirectToSpaceBookingsNew({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays }) }}">
+
+    {{ govukNotificationBanner({
+        html: occupancySummaryHtml,
+        classes: 'govuk-notification-banner--full-width-content'
+    }) }}
+
+    <a class="govuk-button"
+       href="{{ MatchUtils.redirectToSpaceBookingsNew({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays }) }}">
         Continue
     </a>
 {% endblock %}

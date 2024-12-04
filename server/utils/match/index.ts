@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns'
-import {
+import type {
   ApType,
   Gender,
   PlacementCriteria,
@@ -8,8 +8,13 @@ import {
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
-} from '../../@types/shared'
-import { KeyDetailsArgs, ObjectWithDateParts, SpaceSearchParametersUi, SummaryListItem } from '../../@types/ui'
+} from '@approved-premises/api'
+import type {
+  KeyDetailsArgs,
+  ObjectWithDateParts,
+  SpaceSearchParametersUi,
+  SummaryListItem,
+} from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { createQueryString, sentenceCase } from '../utils'
 import matchPaths from '../../paths/match'
@@ -27,6 +32,7 @@ import { placementRequirementsRow } from '../placementRequests/placementRequirem
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 export { placementDates } from './placementDates'
+export { occupancySummary } from './occupancySummary'
 
 type PlacementDates = {
   placementLength: number

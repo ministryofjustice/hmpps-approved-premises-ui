@@ -4,7 +4,12 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import { cas1PremiseCapacityFactory, personFactory, placementRequestDetailFactory } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
-import { filterOutAPTypes, occupancyViewSummaryListForMatchingDetails, placementDates } from '../../../utils/match'
+import {
+  filterOutAPTypes,
+  occupancySummary,
+  occupancyViewSummaryListForMatchingDetails,
+  placementDates,
+} from '../../../utils/match'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -66,6 +71,7 @@ describe('OccupancyViewController', () => {
           placementRequestDetail,
           filterOutAPTypes(placementRequestDetail.essentialCriteria),
         ),
+        occupancySummaryHtml: occupancySummary(premiseCapacity),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
