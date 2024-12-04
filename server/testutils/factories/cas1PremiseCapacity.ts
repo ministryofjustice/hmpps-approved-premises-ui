@@ -21,6 +21,7 @@ export default Factory.define<Cas1PremiseCapacity>(() => {
 })
 
 const premiseCapacityForDayFactory = Factory.define<Cas1PremiseCapacityForDay>(() => ({
+  date: DateFormats.dateObjToIsoDate(faker.date.anytime()),
   totalBedCount: faker.number.int(),
   availableBedCount: faker.number.int(),
   bookingCount: faker.number.int(),
