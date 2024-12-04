@@ -201,7 +201,7 @@ describe('placementUtils', () => {
           },
           {
             key: { text: 'Arrival time' },
-            value: { text: (placement.actualArrivalTime || '')},
+            value: { text: placement.actualArrivalTime || '' },
           },
         ],
       })
