@@ -1,0 +1,14 @@
+{% macro occupancyCalendar(calendar) %}
+    <div class="calendar">
+        {% for month in calendar %}
+            <h3 class="govuk-heading-m">{{ month.name }}</h3>
+            <ul class="calendar__month govuk-list">
+                {% for day in month.days %}
+                    <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }}">
+                        <time datetime="{{ day.date }}">{{ day.name }}</time>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+{% endmacro %}
