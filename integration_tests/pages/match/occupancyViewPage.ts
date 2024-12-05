@@ -15,6 +15,7 @@ import {
 import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
+import { dateRangeAvailability } from '../../../server/utils/match/occupancy'
 
 export default class OccupancyViewPage extends Page {
   constructor(premisesName: string) {
@@ -56,13 +57,32 @@ export default class OccupancyViewPage extends Page {
   }
 
   shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity) {
-    if (premiseCapacity.capacity.every(day => day.availableBedCount > 0)) {
+    const availability = dateRangeAvailability(premiseCapacity)
+
+    if (availability === 'available') {
       this.shouldShowBanner('The placement dates you have selected are available.')
-    } else if (premiseCapacity.capacity.every(day => day.availableBedCount <= 0)) {
+    } else if (availability === 'none') {
       this.shouldShowBanner('There are no spaces available for the dates you have selected.')
     } else {
       this.shouldShowBanner('Available on:')
       this.shouldShowBanner('Overbooked on:')
+    }
+  }
+
+  shouldShowCalendarCell(copy: string | RegExp) {
+    cy.get('.calendar__availability').contains(copy).should('exist')
+  }
+
+  shouldShowOccupancyCalendar(premiseCapacity: Cas1PremiseCapacity) {
+    const firstMonth = DateFormats.isoDateToMonthAndYear(premiseCapacity.startDate)
+    cy.get('.govuk-heading-m').contains(firstMonth).should('exist')
+
+    const availability = dateRangeAvailability(premiseCapacity)
+    if (availability === 'available' || availability === 'partial') {
+      this.shouldShowCalendarCell('Available')
+    }
+    if (availability === 'none' || availability === 'partial') {
+      this.shouldShowCalendarCell(/-?\d+ total/)
     }
   }
 }

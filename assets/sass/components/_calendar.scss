@@ -2,8 +2,44 @@
   border-top: 1px solid $govuk-border-colour;
 
   .calendar__day {
-    padding: govuk-spacing(2) 0;
+    margin: 0;
     border-bottom: 1px solid $govuk-border-colour;
+
+    &:focus-within {
+      border-color: transparent;
+    }
+
+    #calendar-key & {
+      padding: govuk-spacing(2) 0;
+    }
+  }
+
+  .calendar__link {
+    display: flex;
+    flex-direction: row;
+    gap: govuk-spacing(4);
+    color: $govuk-text-colour;
+    padding: govuk-spacing(2) 0;
+    text-decoration: none;
+
+    &:hover {
+      background: govuk-colour('blue');
+      color: govuk-colour('white');
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  .calendar__date {
+    min-width: 20%;
+  }
+
+  .calendar__availability {
+    margin: 0;
+
+    dd {
+      margin: 0;
+    }
   }
 
   @include govuk-media-query($from: tablet) {
@@ -12,10 +48,23 @@
     grid-gap: 2px;
     border-top: none;
 
+    #calendar-key & {
+      display: flex;
+    }
+
     .calendar__day {
-      margin: 0;
-      padding: govuk-spacing(2);
+      display: flex;
       border: 1px solid $govuk-text-colour;
+
+      #calendar-key & {
+        padding: govuk-spacing(2) govuk-spacing(6);
+      }
+    }
+
+    .calendar__link {
+      flex: 1;
+      flex-direction: column;
+      padding: govuk-spacing(2);
       @include govuk-font-size(16);
     }
 
@@ -39,6 +88,10 @@
     }
     .calendar__day--sun {
       grid-column-start: 7;
+    }
+
+    .calendar__date {
+      margin-bottom: auto;
     }
   }
 }

@@ -12,8 +12,13 @@ import { DateFormats } from '../../utils/dateUtils'
 import { offenceAndRiskCriteria } from '../../utils/placementCriteriaUtils'
 
 export default Factory.define<Cas1PremiseCapacity>(({ params }) => {
-  const startDate = DateFormats.isoToDateObj(params.startDate) || faker.date.anytime()
-  const endDate = DateFormats.isoToDateObj(params.endDate) || faker.date.soon({ days: 365, refDate: startDate })
+  const startDate = params.startDate ? DateFormats.isoToDateObj(params.startDate) : faker.date.anytime()
+  const endDate = params.endDate
+    ? DateFormats.isoToDateObj(params.endDate)
+    : faker.date.soon({
+        days: 365,
+        refDate: startDate,
+      })
   const days = differenceInDays(endDate, startDate) + 1
 
   const capacity = Array.from(Array(days).keys()).map(index =>
@@ -32,9 +37,9 @@ export default Factory.define<Cas1PremiseCapacity>(({ params }) => {
 
 class CapacityForDayFactory extends Factory<Cas1PremiseCapacityForDay> {
   available() {
-    const totalBedCount = faker.number.int({ min: 1, max: 40 })
-    const availableBedCount = faker.number.int({ min: 1, max: totalBedCount })
-    const bookingCount = totalBedCount - availableBedCount
+    const totalBedCount = faker.number.int({ min: 6, max: 40 })
+    const availableBedCount = faker.number.int({ min: totalBedCount - 5, max: totalBedCount })
+    const bookingCount = faker.number.int({ min: 0, max: availableBedCount - 1 })
 
     return this.params({
       totalBedCount,
@@ -44,12 +49,14 @@ class CapacityForDayFactory extends Factory<Cas1PremiseCapacityForDay> {
   }
 
   overbooked() {
-    const totalBedCount = faker.number.int({ min: 1, max: 40 })
-    const availableBedCount = 0
+    const totalBedCount = faker.number.int({ min: 6, max: 40 })
+    const availableBedCount = faker.number.int({ min: totalBedCount - 5, max: totalBedCount })
+    const bookingCount = faker.number.int({ min: availableBedCount, max: totalBedCount + 5 })
+
     return this.params({
       totalBedCount,
       availableBedCount,
-      bookingCount: faker.number.int({ min: totalBedCount, max: totalBedCount + 10 }),
+      bookingCount,
     })
   }
 }

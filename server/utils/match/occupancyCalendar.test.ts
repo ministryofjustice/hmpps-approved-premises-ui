@@ -1,5 +1,6 @@
 import { occupancyCalendar } from './occupancyCalendar'
 import { cas1PremiseCapacityFactory } from '../../testutils/factories'
+import { dayAvailabilityCount } from './occupancy'
 
 describe('occupancyCalendar', () => {
   it('returns a calendar from the start date to the end date', () => {
@@ -8,15 +9,15 @@ describe('occupancyCalendar', () => {
       {
         name: 'December 2024',
         days: [
-          { name: 'Mon 30 Dec', ...premisesCapacity.capacity[0] },
-          { name: 'Tue 31 Dec', ...premisesCapacity.capacity[1] },
+          { name: 'Mon 30 Dec', bookableCount: dayAvailabilityCount(premisesCapacity.capacity[0]) },
+          { name: 'Tue 31 Dec', bookableCount: dayAvailabilityCount(premisesCapacity.capacity[1]) },
         ],
       },
       {
         name: 'January 2025',
         days: [
-          { name: 'Wed 1 Jan', ...premisesCapacity.capacity[2] },
-          { name: 'Thu 2 Jan', ...premisesCapacity.capacity[3] },
+          { name: 'Wed 1 Jan', bookableCount: dayAvailabilityCount(premisesCapacity.capacity[2]) },
+          { name: 'Thu 2 Jan', bookableCount: dayAvailabilityCount(premisesCapacity.capacity[3]) },
         ],
       },
     ])

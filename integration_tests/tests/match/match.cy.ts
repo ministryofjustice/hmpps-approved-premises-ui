@@ -140,6 +140,9 @@ context('Placement Requests', () => {
 
     // And I should see a summary of occupancy
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+
+    // And I should see an occupancy calendar
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
   })
 
   it('allows me to book a space', () => {
