@@ -11,10 +11,10 @@ import cas1PremisesSummaryFactory from './cas1PremisesSummary'
 import { DateFormats } from '../../utils/dateUtils'
 import { offenceAndRiskCriteria } from '../../utils/placementCriteriaUtils'
 
-export default Factory.define<Cas1PremiseCapacity>(() => {
-  const startDate = faker.date.anytime()
-  const endDate = faker.date.soon({ days: 365, refDate: startDate })
-  const days = differenceInDays(endDate, startDate)
+export default Factory.define<Cas1PremiseCapacity>(({ params }) => {
+  const startDate = DateFormats.isoToDateObj(params.startDate) || faker.date.anytime()
+  const endDate = DateFormats.isoToDateObj(params.endDate) || faker.date.soon({ days: 365, refDate: startDate })
+  const days = differenceInDays(endDate, startDate) + 1
 
   const capacity = Array.from(Array(days).keys()).map(index =>
     cas1PremiseCapacityForDayFactory.build({

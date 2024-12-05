@@ -7,6 +7,7 @@ import {
   occupancyViewSummaryListForMatchingDetails,
   placementDates,
 } from '../../../utils/match'
+import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 
 interface NewRequest extends Request {
   params: { id: string }
@@ -35,6 +36,7 @@ export default class {
         essentialCharacteristics,
       )
       const occupancySummaryHtml = occupancySummary(capacity)
+      const calendar = occupancyCalendar(capacity)
 
       res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premisesName}`,
@@ -46,6 +48,7 @@ export default class {
         durationDays,
         matchingDetailsSummaryList,
         occupancySummaryHtml,
+        calendar,
       })
     }
   }
