@@ -3,6 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 
 {% extends "../../layout-with-details.njk" %}
 
@@ -13,6 +14,13 @@
         text: "Back to other APs",
         href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id })
     }) }}
+{% endblock %}
+
+{% block extraScripts %}
+    {# TODO: useful for debugging, remove once page complete! #}
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+      console.log(JSON.parse('{{ calendar | dump | safe }}'))
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -30,13 +38,41 @@
         html: detailsHTML
     }) }}
 
-    {{ govukNotificationBanner({
-        html: occupancySummaryHtml,
-        classes: 'govuk-notification-banner--full-width-content'
-    }) }}
+    <section>
+        <h2 class="govuk-heading-l">View availability and book your placement
+            for {{ formatDuration(durationDays) }}
+            from {{ formatDate(startDate, { format: 'short' }) }}</h2>
 
-    <a class="govuk-button"
-       href="{{ MatchUtils.redirectToSpaceBookingsNew({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays }) }}">
-        Continue
-    </a>
+        {{ govukNotificationBanner({
+            html: occupancySummaryHtml,
+            classes: 'govuk-notification-banner--full-width-content'
+        }) }}
+
+        <section id="calendar-key">
+            <h3 class="govuk-heading-m">Key</h3>
+
+            <ul class="calendar__month govuk-list">
+                <li class="calendar__day">
+                    Available
+                </li>
+                <li class="calendar__day govuk-tag--red">
+                    Full or overbooked
+                </li>
+            </ul>
+        </section>
+
+
+        <section aria-describedby="calendar-key">
+            {{ occupancyCalendar(calendar) }}
+        </section>
+    </section>
+
+    <section>
+        <h2 class="govuk-heading-l">Book your placement</h2>
+
+        <a class="govuk-button"
+           href="{{ MatchUtils.redirectToSpaceBookingsNew({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays }) }}">
+            Continue
+        </a>
+    </section>
 {% endblock %}

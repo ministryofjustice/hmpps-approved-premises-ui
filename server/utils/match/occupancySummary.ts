@@ -1,6 +1,7 @@
 import type { Cas1PremiseCapacity, Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { dayHasAvailability } from './occupancy'
 
 export type DateRange = {
   start: string
@@ -42,7 +43,7 @@ export const occupancySummary = (premiseCapacity: Cas1PremiseCapacity): string =
   const overbookedDays: Array<Cas1PremiseCapacityForDay> = []
 
   premiseCapacity.capacity.forEach(capacityForDay => {
-    if (capacityForDay.availableBedCount > 0) {
+    if (dayHasAvailability(capacityForDay)) {
       availableDays.push(capacityForDay)
     } else {
       overbookedDays.push(capacityForDay)

@@ -33,6 +33,13 @@ type DurationWithNumberOrString = {
   seconds?: number | string
 }
 
+const uiDateFormats = {
+  short: 'd MMM y',
+  long: 'ccc d MMM y',
+  longNoYear: 'ccc d MMM',
+}
+type UiDateFormat = keyof typeof uiDateFormats
+
 export class DateFormats {
   /**
    * @param date JS Date object.
@@ -64,11 +71,8 @@ export class DateFormats {
    * @param options.format - 'long' (default, e.g. "Thu 20 Dec 2012") or 'short' (e.g. "20 Dec 2012")
    * @returns the date in the to be shown in the UI.
    */
-  static dateObjtoUIDate(date: Date, options: { format: 'short' | 'long' } = { format: 'long' }) {
-    if (options.format === 'long') {
-      return format(date, 'ccc d MMM y')
-    }
-    return format(date, 'd MMM y')
+  static dateObjtoUIDate(date: Date, options: { format: UiDateFormat } = { format: 'long' }) {
+    return format(date, uiDateFormats[options.format])
   }
 
   /**
@@ -99,7 +103,7 @@ export class DateFormats {
    * @param options.format - 'long' (default, e.g. "Thu 20 Dec 2012") or 'short' (e.g. "20 Dec 2012")
    * @returns the date in the to be shown in the UI.
    */
-  static isoDateToUIDate(isoDate: string, options: { format: 'short' | 'long' } = { format: 'long' }) {
+  static isoDateToUIDate(isoDate: string, options: { format: UiDateFormat } = { format: 'long' }) {
     return DateFormats.dateObjtoUIDate(DateFormats.isoToDateObj(isoDate), options)
   }
 
@@ -226,9 +230,13 @@ export class DateFormats {
   static formatDurationBetweenTwoDates(
     date1: string,
     date2: string,
-    options: { format: 'short' | 'long' } = { format: 'long' },
+    options: { format: UiDateFormat } = { format: 'long' },
   ): string {
     return `${DateFormats.isoDateToUIDate(date1, { format: options.format })} - ${DateFormats.isoDateToUIDate(date2, { format: options.format })}`
+  }
+
+  static isoDateToMonthAndYear(date: string) {
+    return format(date, 'MMMM yyyy')
   }
 }
 
