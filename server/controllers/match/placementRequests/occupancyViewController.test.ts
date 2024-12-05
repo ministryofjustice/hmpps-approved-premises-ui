@@ -10,6 +10,7 @@ import {
   occupancyViewSummaryListForMatchingDetails,
   placementDates,
 } from '../../../utils/match'
+import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -72,6 +73,7 @@ describe('OccupancyViewController', () => {
           filterOutAPTypes(placementRequestDetail.essentialCriteria),
         ),
         occupancySummaryHtml: occupancySummary(premiseCapacity),
+        calendar: occupancyCalendar(premiseCapacity),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })

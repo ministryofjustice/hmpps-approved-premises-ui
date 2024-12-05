@@ -48,7 +48,23 @@
             classes: 'govuk-notification-banner--full-width-content'
         }) }}
 
-        {{ occupancyCalendar(calendar) }}
+        <section id="calendar-key">
+            <h3 class="govuk-heading-m">Key</h3>
+
+            <ul class="calendar__month govuk-list">
+                <li class="calendar__day">
+                    Available
+                </li>
+                <li class="calendar__day govuk-tag--red">
+                    Full or overbooked
+                </li>
+            </ul>
+        </section>
+
+
+        <section aria-describedby="calendar-key">
+            {{ occupancyCalendar(calendar) }}
+        </section>
     </section>
 
     <section>

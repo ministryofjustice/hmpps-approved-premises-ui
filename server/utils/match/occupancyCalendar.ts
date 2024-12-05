@@ -1,8 +1,10 @@
-import { Cas1PremiseCapacity, Cas1PremiseCapacityForDay } from '@approved-premises/api'
+import { Cas1PremiseCapacity } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
+import { dayAvailabilityCount } from './occupancy'
 
-type CalendarDay = Cas1PremiseCapacityForDay & {
+type CalendarDay = {
   name: string
+  bookableCount: number
 }
 type CalendarMonth = {
   name: string
@@ -27,7 +29,7 @@ export const occupancyCalendar = (capacity: Cas1PremiseCapacity) => {
 
     currentMonth.days.push({
       name: DateFormats.isoDateToUIDate(day.date, { format: 'longNoYear' }),
-      ...day,
+      bookableCount: dayAvailabilityCount(day),
     })
   })
 
