@@ -5,6 +5,10 @@
 import type { Cas1SpaceSearchRequirements } from './Cas1SpaceSearchRequirements';
 export type Cas1SpaceSearchParameters = {
     /**
+     * The id of the application the space search is for
+     */
+    applicationId?: string;
+    /**
      * The date the space is required from
      */
     startDate: string;
