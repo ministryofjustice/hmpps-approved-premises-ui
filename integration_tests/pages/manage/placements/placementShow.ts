@@ -1,8 +1,9 @@
-import { Cas1SpaceBooking } from '@approved-premises/api'
+import { Cas1SpaceBooking, PlacementRequest } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import { arrivalInformation, departureInformation, placementSummary } from '../../../../server/utils/placements'
+import { placementDates, placementLength } from '../../../../server/utils/match'
 
 export default class PlacementShowPage extends Page {
   constructor(placement: Cas1SpaceBooking | null, pageHeading?: string) {
@@ -14,8 +15,10 @@ export default class PlacementShowPage extends Page {
     this.checkPhaseBanner('Give us your feedback')
   }
 
-  static visit(placement: Cas1SpaceBooking): PlacementShowPage {
-    cy.visit(paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id }))
+  static visit(placement: Cas1SpaceBooking, tab: string = null): PlacementShowPage {
+    cy.visit(
+      `${paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })}${tab ? `?activeTab=${tab}` : ''}`,
+    )
     return new PlacementShowPage(placement)
   }
 
@@ -42,6 +45,19 @@ export default class PlacementShowPage extends Page {
   shouldShowLinkedPlacements(placementTitleList: Array<string>): void {
     placementTitleList.forEach((placementTitle: string) => {
       cy.contains('Other placement bookings at this premises').get('a').should('contain', placementTitle)
+    })
+  }
+
+  shouldHaveTabSelected(tabTitle: string): void {
+    cy.get('.moj-sub-navigation__list').contains(tabTitle).should('have.attr', 'aria-current', 'page')
+  }
+
+  shouldShowPlacementRequestDetails(placementRequest: PlacementRequest): void {
+    cy.get('dl[data-cy-section="placement-request-summary"').within(() => {
+      const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
+      this.assertDefinition('Requested Arrival Date', DateFormats.isoDateToUIDate(dates.startDate, { format: 'short' }))
+      this.assertDefinition('Requested Departure Date', DateFormats.isoDateToUIDate(dates.endDate, { format: 'short' }))
+      this.assertDefinition('Length of stay', placementLength(dates.placementLength))
     })
   }
 }
