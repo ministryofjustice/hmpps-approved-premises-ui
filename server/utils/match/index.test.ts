@@ -85,6 +85,7 @@ describe('matchUtils', () => {
           genders: [uiParams.requirements.gender],
           spaceCharacteristics: uiParams.requirements.spaceCharacteristics,
         },
+        applicationId: uiParams.applicationId,
         startDate: uiParams.startDate,
         targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
       })

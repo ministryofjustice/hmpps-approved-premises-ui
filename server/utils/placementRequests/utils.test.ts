@@ -24,6 +24,7 @@ describe('utils', () => {
       })
 
       expect(mapPlacementRequestToSpaceSearchParams(placementRequest)).toEqual({
+        applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration.toString(),
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,

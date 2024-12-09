@@ -389,6 +389,7 @@ type ContingencyPlanQuestion = {
 export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
 
 export interface SpaceSearchParametersUi {
+  applicationId: string
   startDate: string
   targetPostcodeDistrict: string
   durationInDays: string
