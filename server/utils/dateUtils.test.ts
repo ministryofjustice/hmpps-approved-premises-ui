@@ -70,6 +70,13 @@ describe('DateFormats', () => {
       expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual(expectedUiDate)
     })
 
+    it.each([
+      ['2022-11-09T00:00:00.000Z', 'Wed 9 Nov'],
+      ['2022-11-11T00:00:00.000Z', 'Fri 11 Nov'],
+    ])('converts ISO8601 date %s to a long format date with no year', (date, expectedUiDate) => {
+      expect(DateFormats.isoDateToUIDate(date, { format: 'longNoYear' })).toEqual(expectedUiDate)
+    })
+
     it('raises an error if the date is not a valid ISO8601 date string', () => {
       const date = '23/11/2022'
 
@@ -279,6 +286,15 @@ describe('DateFormats', () => {
   describe('formatDuration', () => {
     it('formats a duration with the given unit', () => {
       expect(DateFormats.formatDuration({ days: '4', weeks: '7' })).toEqual('7 weeks, 4 days')
+    })
+  })
+
+  describe('isoDateToMonthAndYear', () => {
+    it.each([
+      ['2024-12-04', 'December 2024'],
+      ['2025-01-01', 'January 2025'],
+    ])('returns the month and year for the date %s', (date, expected) => {
+      expect(DateFormats.isoDateToMonthAndYear(date)).toEqual(expected)
     })
   })
 })

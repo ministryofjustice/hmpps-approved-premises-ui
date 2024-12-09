@@ -1,0 +1,26 @@
+{% macro occupancyCalendar(calendar) %}
+    <div class="calendar">
+        {% for month in calendar %}
+            <h3 class="govuk-heading-m">{{ month.name }}</h3>
+            <ul class="calendar__month govuk-list">
+                {% for day in month.days %}
+                    <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }}{% if day.bookableCount <= 0 %} govuk-tag--red{% endif %}">
+                        <a class="calendar__link" href="#">
+                            <time class="calendar__date" datetime="{{ day.date }}">{{ day.name }}</time>
+
+                            <dl class="calendar__availability">
+                                <dt class="govuk-visually-hidden">Availability:</dt>
+
+                                {% if day.bookableCount > 0 %}
+                                    <dd>Available</dd>
+                                {% else %}
+                                    <dd><span class="govuk-!-font-weight-bold">{{ day.bookableCount }}</span> total</dd>
+                                {% endif %}
+                            </dl>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+{% endmacro %}

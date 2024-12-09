@@ -16,17 +16,15 @@ describe('occupancySummary', () => {
     const result = occupancySummary(capacity)
 
     expect(result).toMatchStringIgnoringWhitespace(`
-      <div style="max-width: 100%">
-        <h3 class="govuk-heading-m">Available on:</h3>
-        <ul>
-          <li>Wed 12 Feb 2025 to Thu 13 Feb 2025 <strong>(2 days)</strong></li>
-          <li>Mon 17 Feb 2025 <strong>(1 day)</strong></li>
-        </ul>
-        <h3 class="govuk-heading-m">Overbooked on:</h3>
-        <ul>
-          <li>Fri 14 Feb 2025 to Sun 16 Feb 2025 <strong>(3 days)</strong></li>
-        </ul>
-      </div>
+      <h3 class="govuk-heading-m">Available on:</h3>
+      <ul>
+        <li>Wed 12 Feb 2025 to Thu 13 Feb 2025 <strong>(2 days)</strong></li>
+        <li>Mon 17 Feb 2025 <strong>(1 day)</strong></li>
+      </ul>
+      <h3 class="govuk-heading-m">Overbooked on:</h3>
+      <ul>
+        <li>Fri 14 Feb 2025 to Sun 16 Feb 2025 <strong>(3 days)</strong></li>
+      </ul>
     `)
   })
 

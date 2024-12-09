@@ -1,6 +1,7 @@
 import type { Cas1PremiseCapacity, Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { dayHasAvailability } from './occupancy'
 
 export type DateRange = {
   start: string
@@ -42,7 +43,7 @@ export const occupancySummary = (premiseCapacity: Cas1PremiseCapacity): string =
   const overbookedDays: Array<Cas1PremiseCapacityForDay> = []
 
   premiseCapacity.capacity.forEach(capacityForDay => {
-    if (capacityForDay.availableBedCount > 0) {
+    if (dayHasAvailability(capacityForDay)) {
       availableDays.push(capacityForDay)
     } else {
       overbookedDays.push(capacityForDay)
@@ -60,15 +61,13 @@ export const occupancySummary = (premiseCapacity: Cas1PremiseCapacity): string =
   const overbookedRanges = daysToRanges(overbookedDays).map(renderDateRange)
 
   return `
-    <div style="max-width: 100%">
-        <h3 class="govuk-heading-m">Available on:</h3>
-        <ul>
-          ${availableRanges.map(range => `<li>${range}</li>`).join('')}
-        </ul>
-        <h3 class="govuk-heading-m">Overbooked on:</h3>
-        <ul>
-          ${overbookedRanges.map(range => `<li>${range}</li>`).join('')}
-        </ul>
-    </div>
+    <h3 class="govuk-heading-m">Available on:</h3>
+    <ul>
+      ${availableRanges.map(range => `<li>${range}</li>`).join('')}
+    </ul>
+    <h3 class="govuk-heading-m">Overbooked on:</h3>
+    <ul>
+      ${overbookedRanges.map(range => `<li>${range}</li>`).join('')}
+    </ul>
   `
 }

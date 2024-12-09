@@ -1,123 +1,97 @@
-$colWidth: 22px;
-$colPadding: 2px;
+.calendar__month {
+  border-top: 1px solid $govuk-border-colour;
 
-$roomHeaderWidth: 100px;
+  .calendar__day {
+    margin: 0;
+    border-bottom: 1px solid $govuk-border-colour;
 
-$calendarWidth: $roomHeaderWidth + (30 * ($colWidth + ($colPadding * 2)));
+    &:focus-within {
+      border-color: transparent;
+    }
 
-.govuk-link {
-  &--booking {
-    &:link, &:visited {
-      color: govuk-colour("black");
-      font-weight: bold;
+    #calendar-key & {
+      padding: govuk-spacing(2) 0;
     }
   }
 
-  &--overbooking {
-    &:link, &:visited {
-      color: govuk-colour("white");
-      font-weight: bold;
-    }
-  }
-}
+  .calendar__link {
+    display: flex;
+    flex-direction: row;
+    gap: govuk-spacing(4);
+    color: $govuk-text-colour;
+    padding: govuk-spacing(2) 0;
+    text-decoration: none;
 
-.govuk-pagination {
-  &--calendar {
-    padding-bottom: govuk-spacing(6);
-
-    .govuk-pagination__prev {
-      float: left;
-    }
-
-    .govuk-pagination__next {
-      float: right;
-      border-top: none;
-    }
-
-    .govuk-pagination__prev + .govuk-pagination__next {
-      border-top: none;
-    }
-  }
-}
-
-.govuk-table {
-  &--calendar {
-    font-size: 0.9em;
-    width: $calendarWidth;
-    table-layout: fixed;
-    margin: 0 auto;
-
-    @for $i from 1 through 31 {
-      th[colspan="#{$i}"], td[colspan="#{$i}"] {
-        width: ($i * ($colWidth + ($colPadding * 2)));
-      }
+    &:hover {
+      background: govuk-colour('blue');
+      color: govuk-colour('white');
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
     }
   }
 
-  &__header {
-    &--calendar {
-      border: 1px solid $govuk-border-colour;
-      text-align: center;
-      width: $colWidth;
-      padding: $colPadding;
-    }
+  .calendar__date {
+    min-width: 20%;
+  }
 
-    &--calendar-room-header {
-      text-align: center;
-      width: 100px;
-      vertical-align: middle;
+  .calendar__availability {
+    margin: 0;
+
+    dd {
+      margin: 0;
     }
   }
 
+  @include govuk-media-query($from: tablet) {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 2px;
+    border-top: none;
 
-  &__cell {
-    &--calendar {
-      position: relative;
-      border: 1px solid $govuk-border-colour;
-      padding: $colPadding;
+    #calendar-key & {
+      display: flex;
+    }
 
-      span {
-        white-space: nowrap;
-        overflow:hidden;
-        text-overflow: ellipsis;
-        display: block;
+    .calendar__day {
+      display: flex;
+      border: 1px solid $govuk-text-colour;
 
-        &.tooltip {
-          &:hover::before {
-            position: absolute;
-            bottom: -120%;
-            left: 10px;
-            z-index: 999;
-            content: attr(title);
-            opacity: 0.75;
-            background-color: govuk-colour("black");
-            color: govuk-colour("white");
-            padding: $colPadding;
-            border-radius: 3px;
-            display: block;
-            font-weight: normal;
-          }
-        }
+      #calendar-key & {
+        padding: govuk-spacing(2) govuk-spacing(6);
       }
     }
 
-    &--booking {
-      background-color: govuk-colour("light-blue");
+    .calendar__link {
+      flex: 1;
+      flex-direction: column;
+      padding: govuk-spacing(2);
+      @include govuk-font-size(16);
     }
 
-    &--lost_bed {
-      background-color: govuk-colour("light-grey");
-      font-weight: bold;
+    .calendar__day--mon {
+      grid-column-start: 1;
+    }
+    .calendar__day--tue {
+      grid-column-start: 2;
+    }
+    .calendar__day--wed {
+      grid-column-start: 3;
+    }
+    .calendar__day--thu {
+      grid-column-start: 4;
+    }
+    .calendar__day--fri {
+      grid-column-start: 5;
+    }
+    .calendar__day--sat {
+      grid-column-start: 6;
+    }
+    .calendar__day--sun {
+      grid-column-start: 7;
     }
 
-    &--month {
-      text-align: center;
-    }
-
-    &--overbooking {
-      background-color: govuk-colour("black");
-      color: govuk-colour("white");
-      font-weight: bold;
+    .calendar__date {
+      margin-bottom: auto;
     }
   }
 }
