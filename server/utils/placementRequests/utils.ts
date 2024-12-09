@@ -11,6 +11,7 @@ import { DateFormats } from '../dateUtils'
 import { TabItem } from '../tasks/listTable'
 
 export const mapPlacementRequestToSpaceSearchParams = ({
+  applicationId,
   duration,
   expectedArrival,
   location,
@@ -20,6 +21,7 @@ export const mapPlacementRequestToSpaceSearchParams = ({
   gender,
 }: PlacementRequest): SpaceSearchParametersUi => {
   return {
+    applicationId,
     startDate: expectedArrival,
     targetPostcodeDistrict: location,
     durationInDays: duration.toString(),

@@ -46,6 +46,7 @@ export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementReq
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
   return {
+    applicationId: query.applicationId,
     startDate: query.startDate,
     targetPostcodeDistrict: query.targetPostcodeDistrict,
     requirements: {

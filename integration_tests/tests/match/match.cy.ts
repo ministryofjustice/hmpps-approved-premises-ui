@@ -78,6 +78,7 @@ context('Placement Requests', () => {
 
       // And the first request to the API should contain the criteria from the placement request
       expect(initialSearchRequestBody).to.deep.equal({
+        applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,
@@ -91,6 +92,7 @@ context('Placement Requests', () => {
       // And the second request to the API should contain the new criteria I submitted
 
       expect(secondSearchRequestBody).to.contain({
+        applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
         startDate: newSearchParameters.startDate,
         targetPostcodeDistrict: newSearchParameters.targetPostcodeDistrict,
