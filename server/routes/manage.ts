@@ -124,10 +124,27 @@ export default function routes(controllers: Controllers, router: Router, service
   })
 
   // Placements
+  get(paths.premises.placements.showTabApplication.pattern, placementController.show('application'), {
+    auditEvent: 'SHOW_PLACEMENT',
+    allowedPermissions: ['cas1_space_booking_view'],
+  })
+  get(paths.premises.placements.showTabAssessment.pattern, placementController.show('assessment'), {
+    auditEvent: 'SHOW_PLACEMENT',
+    allowedPermissions: ['cas1_space_booking_view'],
+  })
+  get(paths.premises.placements.showTabPlacementRequest.pattern, placementController.show('placementRequest'), {
+    auditEvent: 'SHOW_PLACEMENT',
+    allowedPermissions: ['cas1_space_booking_view'],
+  })
+  get(paths.premises.placements.showTabTimeline.pattern, placementController.show('timeline'), {
+    auditEvent: 'SHOW_PLACEMENT',
+    allowedPermissions: ['cas1_space_booking_view'],
+  })
   get(paths.premises.placements.show.pattern, placementController.show(), {
     auditEvent: 'SHOW_PLACEMENT',
     allowedPermissions: ['cas1_space_booking_view'],
   })
+
   get(paths.premises.placements.arrival.pattern, arrivalsController.new(), {
     auditEvent: 'NEW_ARRIVAL',
     allowedPermissions: ['cas1_space_booking_record_arrival'],

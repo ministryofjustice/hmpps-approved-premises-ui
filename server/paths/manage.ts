@@ -75,6 +75,10 @@ const paths = {
     },
     placements: {
       show: singlePlacementPath,
+      showTabApplication: singlePlacementPath.path('application'),
+      showTabAssessment: singlePlacementPath.path('assessment'),
+      showTabPlacementRequest: singlePlacementPath.path('placement-request'),
+      showTabTimeline: singlePlacementPath.path('timeline'),
       arrival: singlePlacementPath.path('arrival'),
       keyworker: singlePlacementPath.path('keyworker'),
       nonArrival: singlePlacementPath.path('non-arrival'),

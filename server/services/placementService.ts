@@ -25,6 +25,12 @@ export default class PlacementService {
     return placementClient.getPlacement(placementId)
   }
 
+  async getTimeline(args: { token: string; premisesId: string; placementId: string }) {
+    const { token, ...remainingArgs } = args
+    const placementClient = this.placementClientFactory(token)
+    return placementClient.getTimeline(remainingArgs)
+  }
+
   async createArrival(token: string, premisesId: string, placementId: string, newPlacementArrival: Cas1NewArrival) {
     const placementClient = this.placementClientFactory(token)
 

@@ -89,19 +89,19 @@ context('Premises', () => {
         const page = PremisesShowPage.visit(premises)
 
         // Then the 'upcoming' tab should be selected by default
-        page.shouldHaveTabSelected('Upcoming')
+        page.shouldHaveActiveTab('Upcoming')
 
         // When I select to the 'current' tab
-        page.shouldSelectTab('Current')
+        page.clickTab('Current')
 
         // Then the 'current' tab should be selected
-        page.shouldHaveTabSelected('Current')
+        page.shouldHaveActiveTab('Current')
 
         // When I select to the 'current' tab
-        page.shouldSelectTab('Historical')
+        page.clickTab('Historical')
 
         // Then the 'current' tab should be selected
-        page.shouldHaveTabSelected('Historical')
+        page.shouldHaveActiveTab('Historical')
       })
 
       it('should let the user filter by keyworker', () => {
@@ -172,10 +172,10 @@ context('Premises', () => {
         const page = PremisesShowPage.visit(premises)
 
         // And I select to the 'search' tab
-        page.shouldSelectTab('Search for a booking')
+        page.clickTab('Search for a booking')
 
         // Then the 'search' tab should be selected
-        page.shouldHaveTabSelected('Search for a booking')
+        page.shouldHaveActiveTab('Search for a booking')
 
         // And I should see the search form
         page.shouldShowSearchForm()
@@ -187,7 +187,7 @@ context('Premises', () => {
         page.searchByCrnOrName(searchName)
 
         // Then the 'search' tab should be selected
-        page.shouldHaveTabSelected('Search for a booking')
+        page.shouldHaveActiveTab('Search for a booking')
 
         // And the search form should be populated with my search term
         page.shouldShowSearchForm(searchName)
@@ -200,7 +200,7 @@ context('Premises', () => {
         page.searchByCrnOrName('No results for this query')
 
         // Then the 'search' tab should be selected
-        page.shouldHaveTabSelected('Search for a booking')
+        page.shouldHaveActiveTab('Search for a booking')
 
         // And the search form should be populated with my search term
         page.shouldShowSearchForm('No results for this query')

@@ -65,14 +65,6 @@ export default class PremisesShowPage extends Page {
     cy.get('.govuk-pagination').contains('Next')
   }
 
-  shouldHaveTabSelected(tabTitle: string): void {
-    cy.get('.moj-sub-navigation__list').contains(tabTitle).should('have.attr', 'aria-current', 'page')
-  }
-
-  shouldSelectTab(tabTitle: string): void {
-    cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
-  }
-
   shouldNotShowPlacementsSection(): void {
     cy.contains('All bookings').should('not.exist')
     cy.get('.moj-sub-navigation__list').should('not.exist')

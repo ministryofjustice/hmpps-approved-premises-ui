@@ -17,7 +17,7 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
   religionOrBelief: faker.helpers.arrayElement(['Christian', 'Muslim', 'Jewish', 'Hindu', 'Buddhist', 'Sikh', 'None']),
   prisonName: `HMP ${faker.location.street()}`,
   type: 'FullPerson',
-  isRestricted: Boolean(Math.floor(Math.random())),
+  isRestricted: false,
 }))
 
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
@@ -33,6 +33,11 @@ export const personSummaryFactory = Factory.define<PersonSummary>(() => ({
 export const restrictedPersonSummaryFactory = Factory.define<PersonSummary>(() => ({
   crn: getCrn(),
   personType: 'RestrictedPersonSummary',
+}))
+
+export const unknownPersonSummaryFactory = Factory.define<PersonSummary>(() => ({
+  crn: getCrn(),
+  personType: 'UnknownPersonSummary',
 }))
 
 export const fullPersonSummaryFactory = Factory.define<FullPersonSummary>(() => ({

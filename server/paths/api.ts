@@ -99,6 +99,7 @@ export default {
       keyworker: cas1SpaceBookingSingle.path('keyworker'),
       departure: cas1SpaceBookingSingle.path('departure'),
       cancel: cas1SpaceBookingSingle.path('cancellations'),
+      timeline: cas1SpaceBookingSingle.path('timeline'),
     },
     calendar: premisesSingle.path('calendar'),
   },

@@ -6,6 +6,9 @@
 {% from "../../../components/keyDetails/macro.njk" import keyDetails %}
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "../../../partials/_applicationTimeline.njk" import applicationTimeline %}
+{% from "../../../applications/partials/_readonly-application.njk" import applicationReadonlyView %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -41,27 +44,58 @@
         },
         menus: PlacementUtils.actions(placement, user)
     }) }}
+    {{ mojSubNavigation({
+        label: 'Sub navigation',
+        items: tabItems
+    }) }}
+    {% if activeTab=='timeline' %}
+        <h2 class="govuk-heading-m">Placement timeline</h2>
+        {{applicationTimeline(timelineEvents)}}
+    {% elseif activeTab==='application' %}
+        {{ applicationReadonlyView(application) }}
+    {% elseif activeTab==='assessment' %}
+      {% for section in SummaryListUtils.summaryListSections(assessment, false) %}
+        <h2 class="govuk-heading-l">{{ section.title }}</h2>
+        {% for task in section.tasks %}
+          {{
+            govukSummaryList(task)
+          }}
+        {% endfor %}
+      {% endfor %}
+    {% elseif activeTab==='placementRequest' %}
+        {{ govukSummaryList({
+            attributes: {
+            'data-cy-section': "placement-request-summary"
+            },
+            rows:PlacementRequestUtils.adminSummary(placementRequestDetail).rows
+            })
+        }}
+        {{ govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequestDetail)) }}
+    {% else %}
+        {{ govukSummaryList(PlacementUtils.placementSummary(placement)) }}
 
-    {{ govukSummaryList(PlacementUtils.placementSummary(placement)) }}
+        <h2 class="govuk-heading-m">Arrival information</h2>
+        {{ govukSummaryList(PlacementUtils.arrivalInformation(placement)) }}
 
-    <h2 class="govuk-heading-m">Arrival information</h2>
-    {{ govukSummaryList(PlacementUtils.arrivalInformation(placement)) }}
-
-    <h2 class="govuk-heading-m">Departure information</h2>
-    {{ govukSummaryList(PlacementUtils.departureInformation(placement)) }}
-
-    <h2 class="govuk-heading-m">Other</h2>
-    {{ govukSummaryList(PlacementUtils.otherBookings(placement)) }}
-
+        <h2 class="govuk-heading-m">Departure information</h2>
+        {{ govukSummaryList(PlacementUtils.departureInformation(placement)) }}
+        {% if placement.otherBookingsInPremisesForCrn and placement.otherBookingsInPremisesForCrn.length %}
+            <h2 class="govuk-heading-m">Other</h2>
+            {{ govukSummaryList(PlacementUtils.otherBookings(placement)) }}
+        {% endif %}
+    {% endif %}
 {% endblock %}
 
 {% block extraScripts %}
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-      new MOJFrontend.ButtonMenu({
-        container: $('.moj-button-menu'),
-        mq: '(min-width: 200em)',
-        buttonText: 'Actions',
-        menuClasses: 'moj-button-menu__wrapper--right',
-      })
-    </script>
+   <script type="text/javascript" nonce="{{ cspNonce }}">
+     const container = $('.moj-button-menu')
+     if(container?.length) {
+         new MOJFrontend.ButtonMenu({
+           container: container,
+            mq: '(min-width: 200em)',
+            buttonText: 'Actions',
+            menuClasses: 'moj-button-menu__wrapper--right',
+         })
+     }
+   </script>
 {% endblock %}

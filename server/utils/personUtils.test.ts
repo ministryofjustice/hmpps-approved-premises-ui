@@ -1,9 +1,16 @@
-import { fullPersonFactory, restrictedPersonFactory } from '../testutils/factories/person'
+import {
+  fullPersonFactory,
+  fullPersonSummaryFactory,
+  restrictedPersonFactory,
+  restrictedPersonSummaryFactory,
+  unknownPersonSummaryFactory,
+} from '../testutils/factories/person'
 import {
   isApplicableTier,
   isFullPerson,
   isUnknownPerson,
   laoName,
+  laoSummaryName,
   nameOrPlaceholderCopy,
   tierBadge,
 } from './personUtils'
@@ -66,6 +73,32 @@ describe('personUtils', () => {
       const person = fullPersonFactory.build({ isRestricted: true })
 
       expect(laoName(person)).toEqual(`LAO: ${person.name}`)
+    })
+  })
+
+  describe('laoSummaryName', () => {
+    it('if the person is not restricted it returns their name', () => {
+      const person = fullPersonSummaryFactory.build({ isRestricted: false })
+
+      expect(laoSummaryName(person)).toEqual(person.name)
+    })
+
+    it('if the person is restricted but the API returns a full person summary, it returns their name prefixed with LAO:', () => {
+      const person = fullPersonSummaryFactory.build({ isRestricted: true })
+
+      expect(laoSummaryName(person)).toEqual(`LAO: ${person.name}`)
+    })
+
+    it('if the person is restricted and the API returns a restrictedPersonSummary, it returns LAO ', () => {
+      const person = restrictedPersonSummaryFactory.build()
+
+      expect(laoSummaryName(person)).toEqual(`LAO`)
+    })
+
+    it('if the person is unknown and the API returns an unknownPersonSummary, it returns Unknown ', () => {
+      const person = unknownPersonSummaryFactory.build()
+
+      expect(laoSummaryName(person)).toEqual(`Unknown`)
     })
   })
 

@@ -1040,7 +1040,7 @@ export default class ApplyHelper {
     const checkYourAnswersPage = new ApplyPages.CheckYourAnswersPage(this.application)
 
     // And the page should be populated with my answers
-    checkYourAnswersPage.shouldShowPersonInformation(this.person as FullPerson)
+    checkYourAnswersPage.shouldShowPersonDetails(this.person as FullPerson)
     checkYourAnswersPage.shouldShowBasicInformationAnswers(this.pages.basicInformation)
     checkYourAnswersPage.shouldShowTypeOfApAnswers(this.pages.typeOfAp)
     checkYourAnswersPage.shouldShowRiskManagementAnswers(this.pages.riskManagement)

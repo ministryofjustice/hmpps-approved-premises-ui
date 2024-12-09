@@ -11,6 +11,7 @@ import { htmlValue, textValue } from '../applications/helpers'
 import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
+import { TabItem } from '../tasks/listTable'
 
 export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
@@ -210,6 +211,46 @@ export const renderKeyworkersSelectOptions = (
       selected: false,
     })),
 ]
+
+export type PlacementTab = 'application' | 'assessment' | 'placementRequest' | 'placement' | 'timeline'
+
+export const tabMap: Record<PlacementTab, { label: string; disableRestricted?: boolean }> = {
+  application: { label: 'Application', disableRestricted: true },
+  assessment: { label: 'Assessment', disableRestricted: true },
+  placementRequest: { label: 'Request for placement' },
+  placement: { label: 'Placement details' },
+  timeline: { label: 'Timeline' },
+}
+
+export const placementTabItems = (placement: Cas1SpaceBooking, activeTab?: PlacementTab): Array<TabItem> => {
+  const isPersonRestricted = placement.person.type === 'RestrictedPerson'
+  const getSelfLink = (tab: PlacementTab): string => {
+    const pathRoot = paths.premises.placements
+    const premisesId = placement.premises.id
+    const placementId = placement.id
+    switch (tab) {
+      case 'application':
+        return pathRoot.showTabApplication({ premisesId, placementId })
+      case 'assessment':
+        return pathRoot.showTabAssessment({ premisesId, placementId })
+      case 'placementRequest':
+        return pathRoot.showTabPlacementRequest({ premisesId, placementId })
+      case 'timeline':
+        return pathRoot.showTabTimeline({ premisesId, placementId })
+      default:
+        return pathRoot.show({ premisesId, placementId })
+    }
+  }
+  return Object.entries(tabMap).map(([key, { label, disableRestricted }]) => {
+    const isRestricted = isPersonRestricted && disableRestricted
+    return {
+      text: label,
+      active: activeTab === key,
+      href: isRestricted ? null : getSelfLink(key as PlacementTab),
+      classes: isRestricted ? 'disabled' : '',
+    }
+  })
+}
 
 export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
 export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

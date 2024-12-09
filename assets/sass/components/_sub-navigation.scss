@@ -15,11 +15,17 @@
       height: 5px;
       width: 100%;
     }
-
   }
 
   &:focus:before {
     background-color: govuk-colour("black");
   }
 
+  &.disabled {
+
+  }
+}
+.moj-sub-navigation__item.disabled .moj-sub-navigation__link {
+  color:  $govuk-secondary-text-colour;
+  cursor: default;
 }
