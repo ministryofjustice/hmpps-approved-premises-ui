@@ -538,7 +538,7 @@ export default abstract class Page {
   }
 
   shouldShowPersonDetails(person: FullPerson): void {
-    cy.get('dl[data-cy-person-info]').within(() => {
+    cy.get('dl[data-cy-person-info],div[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
