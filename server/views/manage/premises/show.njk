@@ -55,12 +55,12 @@
             }) }}
 
             {% if activeTab === 'upcoming' or activeTab === 'current' %}
-                <div class="search-and-filter__wrapper">
-                    <form action="{{ hrefPrefix }}" method="get">
-                        <input type="hidden" name="activeTab" value="{{ activeTab }}" />
+                <form action="{{ hrefPrefix }}" method="get" class="search-and-filter">
+                    <input type="hidden" name="activeTab" value="{{ activeTab }}" />
 
-                        <h3 class="govuk-heading-m">Filters</h3>
+                    <h3 class="govuk-heading-m">Filters</h3>
 
+                    <div class="search-and-filter__row">
                         {{ govukSelect({
                             id: 'keyworker',
                             name: 'keyworker',
@@ -73,42 +73,36 @@
 
                         {{ govukButton({
                             text: 'Apply filters',
-                            classes: 'govuk-!-margin-bottom-0',
                             preventDoubleClick: true
                         }) }}
-                    </form>
-                </div>
+                    </div>
+                </form>
             {% endif %}
 
             {% if activeTab === 'search' %}
-                <div class="search-and-filter__wrapper">
-                    <form action="{{ hrefPrefix }}" method="get">
-                        <input type="hidden" name="activeTab" value="search" />
+                <form action="{{ hrefPrefix }}" method="get" class="search-and-filter">
+                    <input type="hidden" name="activeTab" value="search" />
 
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-two-thirds">
-                                {{ govukInput({
-                                    label: {
-                                        text: 'Search for a booking',
-                                        classes: 'govuk-fieldset__legend--m'
-                                    },
-                                    hint: {
-                                        text: 'You can search for a person name or CRN'
-                                    },
-                                    id: 'crnOrName',
-                                    name: 'crnOrName',
-                                    value: crnOrName
-                                }) }}
+                    <div class="search-and-filter__row">
+                        {{ govukInput({
+                            label: {
+                                text: 'Search for a booking',
+                                classes: 'govuk-fieldset__legend--m'
+                            },
+                            hint: {
+                                text: 'You can search for a person name or CRN'
+                            },
+                            id: 'crnOrName',
+                            name: 'crnOrName',
+                            value: crnOrName
+                        }) }}
 
-                                {{ govukButton({
-                                    text: 'Search',
-                                    classes: 'govuk-!-margin-bottom-0',
-                                    preventDoubleClick: true
-                                }) }}
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                        {{ govukButton({
+                            text: 'Search',
+                            preventDoubleClick: true
+                        }) }}
+                    </div>
+                </form>
             {% endif %}
 
 

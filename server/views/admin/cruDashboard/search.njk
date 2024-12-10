@@ -10,119 +10,96 @@
 
 {% from "./_navigation.njk" import navigation %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full search-and-filter">
-      {% include "../../_messages.njk" %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {% include "../../_messages.njk" %}
 
-      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      {{ navigation("search") }}
+            {{ navigation("search") }}
 
-      <div class="search-and-filter__wrapper">
 
-        <form action="{{ paths.admin.cruDashboard.search({}) }}" method="get">
+            <form action="{{ paths.admin.cruDashboard.search({}) }}" method="get" class="search-and-filter">
 
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-              <div class="govuk-form-group">
-                <label class="search-and-filter__crn-label" for="crnOrName">
-                 Find a placement
-                </label>
 
-                <div id="crn-hint" class="govuk-hint moj-crn__hint ">
-                  You can search by CRN or name
+                <div class="govuk-form-group">
+                    <label class="search-and-filter__crn-label" for="crnOrName">
+                        Find a placement
+                    </label>
+
+                    <div id="crn-hint" class="govuk-hint moj-crn__hint ">
+                        You can search by CRN or name
+                    </div>
+
+                    <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search"
+                           aria-describedby="crn-hint" value="{{ crnOrName }}">
+
                 </div>
 
-                <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search" aria-describedby="crn-hint" value="{{ crnOrName }}">
-              </div>
-            </div>
-          </div>
+                <h2 class="govuk-heading-m">Filters</h2>
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-quarter">
-              <h2 class="govuk-heading-m">Filters</h2>
-            </div>
-          </div>
+                <div class="search-and-filter__row">
+                    {{ govukSelect({
+                        label: {
+                            text: "Tier",
+                            classes: "govuk-label--s"
+                        },
+                        id: "tier",
+                        name: "tier",
+                        items: FormUtils.tierSelectOptions(tier)
+                    }) }}
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-quarter">
-              {{
-                govukSelect({
-                  label: {
-                      text: "Tier",
-                      classes: "govuk-label--s"
-                  },
-                  id: "tier",
-                  name: "tier",
-                  items: FormUtils.tierSelectOptions(tier)
-                })
-              }}
-            </div>
-            <div class="govuk-grid-column-one-quarter">
-              {{
-                govukSelect({
-                  label: {
-                      text: "Status",
-                      classes: "govuk-label--s"
-                  },
-                  id: "status",
-                  name: "status",
-                  items: FormUtils.placementRequestStatusSelectOptions(status)
-                })
-              }}
-            </div>
-            <div class="govuk-grid-column-one-quarter">
-              <div class="govuk-form-group">
-                <label class="govuk-label govuk-label--s" for="arrivalDateStart">
-                  Arrival date from
-                </label>
+                    {{ govukSelect({
+                        label: {
+                            text: "Status",
+                            classes: "govuk-label--s"
+                        },
+                        id: "status",
+                        name: "status",
+                        items: FormUtils.placementRequestStatusSelectOptions(status)
+                    }) }}
 
-                <input type="date" id="arrivalDateStart" class="govuk-input" name="arrivalDateStart" placeholder="Date from" value="{{ arrivalDateStart }}"/>
-              </div>
-            </div>
-            <div class="govuk-grid-column-one-quarter">
-              <div class="govuk-form-group">
-                <label class="govuk-label govuk-label--s" for="arrivalDateEnd">
-                  Arrival date to
-                </label>
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--s" for="arrivalDateStart">
+                            Arrival date from
+                        </label>
 
-                <input type="date" id="arrivalDateEnd" class="govuk-input" name="arrivalDateEnd" placeholder="Date to" value="{{ arrivalDateEnd }}"/>
-              </div>
-            </div>
-          </div>
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-quarter">
-              {{
-                          govukButton({
-                            name: 'submit',
-                            text: 'Apply filters',
-                            classes: 'search-and-filter__submit',
-                            preventDoubleClick: true
-                          })
-                        }}
-            </div>
-          </div>
+                        <input type="date" id="arrivalDateStart" class="govuk-input" name="arrivalDateStart"
+                               placeholder="Date from" value="{{ arrivalDateStart }}" />
+                    </div>
 
-        </form>
-      </div>
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--s" for="arrivalDateEnd">
+                            Arrival date to
+                        </label>
 
-      {{
-        govukTable({
-            firstCellIsHeader: true,
-            head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
-            rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)
-          })
-      }}
+                        <input type="date" id="arrivalDateEnd" class="govuk-input" name="arrivalDateEnd"
+                               placeholder="Date to" value="{{ arrivalDateEnd }}" />
+                    </div>
 
-      {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+                    {{ govukButton({
+                        name: 'submit',
+                        text: 'Apply filters',
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
 
+            {{ govukTable({
+                firstCellIsHeader: true,
+                head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
+                rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)
+            }) }}
+
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+
+        </div>
     </div>
-  </div>
 {% endblock %}

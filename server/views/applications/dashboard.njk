@@ -9,87 +9,64 @@
 
 {% extends "../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
-  {% include "../_messages.njk" %}
+    {% include "../_messages.njk" %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
 
-      <h1 class="govuk-heading-l">Approved Premises applications</h1>
+            <h1 class="govuk-heading-l">Approved Premises applications</h1>
 
-      {{ navigation('allApplications') }}
+            {{ navigation('allApplications') }}
 
-      <div class="search-and-filter__wrapper">
+            <form action="{{ paths.applications.dashboard({}) }}" method="get" class="search-and-filter">
+                <div class="govuk-form-group">
+                    <label class="search-and-filter__crn-label" for="crnOrName">
+                        Find an application
+                    </label>
 
-        <form action="{{ paths.applications.dashboard({}) }}" method="get">
+                    <div id="crn-hint" class="govuk-hint moj-crn__hint ">
+                        You can search by CRN or name
+                    </div>
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-              <div class="govuk-form-group">
-                <label class="search-and-filter__crn-label" for="crnOrName">
-                 Find an application
-                </label>
-
-                <div id="crn-hint" class="govuk-hint moj-crn__hint ">
-                  You can search by CRN or name
+                    <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search"
+                           aria-describedby="crn-hint" value="{{ crnOrName }}">
                 </div>
 
-                <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search" aria-describedby="crn-hint" value="{{ crnOrName }}">
-              </div>
-            </div>
-          </div>
+                <h2 class="govuk-heading-m govuk-!-margin-top-4">Filters</h2>
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-quarter">
-              <h2 class="govuk-heading-m">Filters</h2>
-            </div>
-          </div>
+                <div class="search-and-filter__row">
+                    {{ govukSelect({
+                        label: {
+                            text: "Statuses",
+                            classes: "govuk-label--s"
+                        },
+                        id: "status",
+                        name: "status",
+                        items: ApplyUtils.applicationStatusSelectOptions(status)
+                    }) }}
 
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-quarter">
-              {{
-                govukSelect({
-                  label: {
-                      text: "Statuses",
-                      classes: "govuk-label--s"
-                  },
-                  id: "status",
-                  name: "status",
-                  items: ApplyUtils.applicationStatusSelectOptions(status)
-                })
-              }}
-            </div>
-            <div class="govuk-grid-column-one-quarter">
-              {{
-                govukButton({
-                  name: 'submit',
-                  text: 'Apply filters',
-                  classes: 'search-and-filter__submit',
-                  preventDoubleClick: true
-                })
-              }}
-            </div>
-          </div>
+                    {{ govukButton({
+                        name: 'submit',
+                        text: 'Apply filters',
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
 
-        </form>
-      </div>
+            {{ govukTable({
+                caption: title,
+                captionClasses: "govuk-table__caption--m",
+                firstCellIsHeader: true,
+                head: ApplyUtils.dashboardTableHeader(sortBy, sortDirection, hrefPrefix),
+                rows: ApplyUtils.dashboardTableRows(applications, { linkInProgressApplications: false })
+            }) }}
 
-      {{
-        govukTable({
-          caption: title,
-          captionClasses: "govuk-table__caption--m",
-          firstCellIsHeader: true,
-          head: ApplyUtils.dashboardTableHeader(sortBy, sortDirection, hrefPrefix),
-          rows: ApplyUtils.dashboardTableRows(applications, { linkInProgressApplications: false })
-        })
-      }}
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
 
-      {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
-
+        </div>
     </div>
-  </div>
-</div>
 {% endblock %}

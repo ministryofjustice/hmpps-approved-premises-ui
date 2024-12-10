@@ -1,20 +1,32 @@
 .search-and-filter {
-  &__wrapper {
-    @include govuk-responsive-padding(6);
-    @include govuk-responsive-margin(6, 'bottom');
+  @include govuk-responsive-padding(6);
+  @include govuk-responsive-margin(6, 'bottom');
 
-    background-color: govuk-colour('light-grey');
-  }
+  background-color: govuk-colour('light-grey');
 
   &__crn-label {
     &--small {
       @extend .govuk-heading-s;
       @include govuk-responsive-margin(1, 'bottom');
     }
+
     @extend .govuk-heading-m;
   }
 
-  &__submit {
-    @include govuk-responsive-margin(6, 'top');
+  &__row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: govuk-spacing(4);
+
+    & .govuk-form-group {
+      margin-bottom: 0;
+    }
+
+    & .govuk-button {
+      margin-bottom: 2px;
+    }
   }
 }

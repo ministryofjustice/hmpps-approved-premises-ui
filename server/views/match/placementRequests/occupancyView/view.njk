@@ -44,7 +44,7 @@
     }) }}
 
     <section>
-        <div class="search-and-filter__wrapper">
+        <div class="search-and-filter">
             <form action="{{ paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id }) }}"
                   method="get">
                 <h2 class="govuk-heading-m">Filters</h2>
@@ -53,33 +53,35 @@
                 <input type="hidden" name="premisesName" value="{{ premisesName }}">
                 <input type="hidden" name="apType" value="{{ apType }}">
 
-                {{ govukDateInput({
-                    id: "startDate",
-                    namePrefix: "startDate",
-                    fieldset: {
-                        legend: {
-                            text: "Availability start date",
-                            classes: "govuk-fieldset__legend--s"
-                        }
-                    },
-                    items: dateFieldValues('startDate', errors)
-                }) }}
+                <div class="search-and-filter__row">
+                    {{ govukDateInput({
+                        id: "startDate",
+                        namePrefix: "startDate",
+                        fieldset: {
+                            legend: {
+                                text: "Availability start date",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: dateFieldValues('startDate', errors)
+                    }) }}
 
-                {{ govukSelect({
-                    id: 'durationDays',
-                    name: 'durationDays',
-                    label: {
-                        text: 'Length of availability',
-                        classes: 'govuk-label--s'
-                    },
-                    items: durationOptions
-                }) }}
+                    {{ govukSelect({
+                        id: 'durationDays',
+                        name: 'durationDays',
+                        label: {
+                            text: 'Length of availability',
+                            classes: 'govuk-label--s'
+                        },
+                        items: durationOptions
+                    }) }}
 
-                {{ govukButton({
-                    text: 'Apply filters',
-                    classes: 'govuk-!-margin-bottom-0',
-                    preventDoubleClick: true
-                }) }}
+                    {{ govukButton({
+                        text: 'Apply filters',
+                        preventDoubleClick: true
+                    }) }}
+
+                </div>
             </form>
         </div>
 
