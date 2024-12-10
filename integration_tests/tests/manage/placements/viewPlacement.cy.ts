@@ -23,7 +23,7 @@ context('Placements', () => {
       const application = applicationFactory.build({ person, personStatusOnSubmission: person.status })
       const assessment = assessmentFactory.build()
       const placementRequest = placementRequestFactory.build()
-      const placement = cas1SpaceBookingFactory.build({
+      const placement = cas1SpaceBookingFactory.upcoming().build({
         ...placementParameters,
         applicationId: application.id,
         assessmentId: assessment.id,
@@ -60,48 +60,49 @@ context('Placements', () => {
       placementShowPage.shouldHaveActiveTab('Placement details')
     })
 
-    it('should show a placement (Application tab)', () => {
+    it('should show placement details tabs', () => {
       // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement, application } = setup(['cas1_space_booking_view'])
-      // When I visit the placement page with the application tab showing
-      const placementShowPage = PlacementShowPage.visit(placement, 'application')
+      const { placement, application, assessment, timeline, placementRequest } = setup(['cas1_space_booking_view'])
+      // When I visit the placement page
+      const placementShowPage = PlacementShowPage.visit(placement)
+      // And I select the application tab
+      placementShowPage.selectTab('Application')
       // Then I should see the details of the person
       placementShowPage.shouldShowPersonDetails(application.person as FullPerson)
       // And the application tab should be selected
       placementShowPage.shouldHaveActiveTab('Application')
-    })
 
-    it('should show a placement (Assessment tab)', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement, assessment } = setup(['cas1_space_booking_view'])
-      // When I visit the placement page with the assessment tab selected
-      const placementShowPage = PlacementShowPage.visit(placement, 'assessment')
+      // When I select the assessment tab
+      placementShowPage.selectTab('Assessment')
       // Then I should see the details of the assessment
       placementShowPage.shouldShowCheckYourAnswersResponses(assessment)
       // And the assessment tab should be selected
       placementShowPage.shouldHaveActiveTab('Assessment')
-    })
 
-    it('should show a placement (Timeline tab)', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement, timeline } = setup(['cas1_space_booking_view'])
-      // When I visit the placement page with the timeline selected
-      const placementShowPage = PlacementShowPage.visit(placement, 'timeline')
+      // When I select the placement request tab
+      placementShowPage.selectTab('Request for placement')
+      // Then I should see the details of the request for placement
+      placementShowPage.shouldShowPlacementRequestDetails(placementRequest)
+      // And the 'request for placement' tab should be selected
+      placementShowPage.shouldHaveActiveTab('Request for placement')
+
+      // When I select the timeline tab
+      placementShowPage.selectTab('Timeline')
       // Then I should see the timeline for this placement
       placementShowPage.shouldShowApplicationTimeline(timeline)
       // And the timeline tab should be selected
       placementShowPage.shouldHaveActiveTab('Timeline')
     })
 
-    it('should show a placement (Placement request tab)', () => {
+    it('should select a tab from the querystring', () => {
       // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement, placementRequest } = setup(['cas1_space_booking_view'])
-      // When I visit the placement page with the request for placement tab selected
-      const placementShowPage = PlacementShowPage.visit(placement, 'placementrequest')
-      // Then I should see the details of the request for placement
-      placementShowPage.shouldShowPlacementRequestDetails(placementRequest)
-      // And the 'request for placement' tab should be selected
-      placementShowPage.shouldHaveActiveTab('Request for placement')
+      const { placement, timeline } = setup(['cas1_space_booking_view'])
+      // When I visit the placement page with the timeline tab selected
+      const placementShowPage = PlacementShowPage.visit(placement, 'timeline')
+      // Then I should see the timeline for this placement
+      placementShowPage.shouldShowApplicationTimeline(timeline)
+      // And the timeline tab should be selected
+      placementShowPage.shouldHaveActiveTab('Timeline')
     })
 
     it('should show a placement with missing fields', () => {

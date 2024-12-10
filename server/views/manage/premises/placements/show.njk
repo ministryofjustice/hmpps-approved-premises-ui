@@ -44,7 +44,6 @@
         },
         menus: PlacementUtils.actions(placement, user)
     }) }}
-
     {{ mojSubNavigation({
         label: 'Sub navigation',
         items: tabItems
@@ -88,11 +87,14 @@
 
 {% block extraScripts %}
    <script type="text/javascript" nonce="{{ cspNonce }}">
-     new MOJFrontend.ButtonMenu({
-       container: $('.moj-button-menu'),
-        mq: '(min-width: 200em)',
-        buttonText: 'Actions',
-        menuClasses: 'moj-button-menu__wrapper--right',
-     })
+     const container = $('.moj-button-menu')
+     if(container?.length) {
+         new MOJFrontend.ButtonMenu({
+           container: container,
+            mq: '(min-width: 200em)',
+            buttonText: 'Actions',
+            menuClasses: 'moj-button-menu__wrapper--right',
+         })
+     }
    </script>
 {% endblock %}
