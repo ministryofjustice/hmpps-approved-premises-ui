@@ -501,6 +501,10 @@ export default abstract class Page {
     cy.get('a.moj-sub-navigation__link').contains(tabName).should('have.attr', 'aria-current', 'page')
   }
 
+  selectTab(tabTitle: string): void {
+    cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
+  }
+
   shouldHaveSelectText(id: string, text: string): void {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
   }
@@ -538,7 +542,7 @@ export default abstract class Page {
   }
 
   shouldShowPersonDetails(person: FullPerson): void {
-    cy.get('dl[data-cy-person-info]').within(() => {
+    cy.get('dl[data-cy-person-info],div[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))

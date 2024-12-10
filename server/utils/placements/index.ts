@@ -11,6 +11,8 @@ import { htmlValue, textValue } from '../applications/helpers'
 import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
+import { TabItem } from '../tasks/listTable'
+import { createQueryString } from '../utils'
 
 export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
@@ -210,6 +212,28 @@ export const renderKeyworkersSelectOptions = (
       selected: false,
     })),
 ]
+
+export type PlacementTab = 'application' | 'assessment' | 'placementrequest' | 'placement' | 'timeline'
+
+export const tabTextMap: Record<PlacementTab, string> = {
+  application: 'Application',
+  assessment: 'Assessment',
+  placementrequest: 'Request for placement',
+  placement: 'Placement details',
+  timeline: 'Timeline',
+}
+
+export const placementTabItems = (placement: Cas1SpaceBooking, activeTab?: PlacementTab): Array<TabItem> => {
+  const getSelfLink = (tab: string): string =>
+    `${paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })}?${createQueryString(
+      {
+        activeTab: tab,
+      },
+    )}`
+  return Object.entries(tabTextMap).map(([key, label]) => {
+    return { text: label, active: activeTab === key, href: getSelfLink(key) }
+  })
+}
 
 export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
 export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

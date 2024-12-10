@@ -3,6 +3,7 @@ import type {
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
   PlacementRequest,
+  TimelineEvent,
 } from '@approved-premises/api'
 
 import { PaginatedRequestParams, SortedRequestParams } from '@approved-premises/ui'
@@ -167,6 +168,24 @@ export default {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: placement,
+      },
+    }),
+
+  stubSpaceBookingTimeline: (args: { placementId: string; premisesId: string; timeline: Array<TimelineEvent> }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.premises.placements.timeline({
+          placementId: args.placementId,
+          premisesId: args.premisesId,
+        }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: args.timeline,
       },
     }),
 
