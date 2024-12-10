@@ -250,18 +250,12 @@ describe('matchUtils', () => {
       const premisesName = 'Hope House'
       const premisesId = 'abc'
       const apType = 'pipe'
-      const startDate = '2022-01-01'
-      const durationWeeks = '4'
-      const durationDays = '1'
-      const durationInDays = Number(durationWeeks) * 7 + Number(durationDays)
 
       const result = occupancyViewLink({
         placementRequestId,
         premisesName,
         premisesId,
         apType,
-        startDate,
-        durationDays,
       })
 
       expect(result).toEqual(
@@ -270,8 +264,6 @@ describe('matchUtils', () => {
             premisesName,
             premisesId,
             apType,
-            startDate,
-            durationInDays,
           },
           { addQueryPrefix: true },
         )}`,
