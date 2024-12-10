@@ -30,6 +30,7 @@ import { isFullPerson } from '../personUtils'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { placementDates } from './placementDates'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
@@ -168,14 +169,15 @@ export const spaceBookingPersonNeedsSummaryCardRows = (
 
 export const occupancyViewSummaryListForMatchingDetails = (
   totalCapacity: number,
-  dates: PlacementDates,
   placementRequest: PlacementRequest,
-  essentialCharacteristics: Array<SpaceCharacteristic>,
 ): Array<SummaryListItem> => {
+  const placementRequestDates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
+  const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
+
   return [
-    arrivalDateRow(dates.startDate),
-    departureDateRow(dates.endDate),
-    placementLengthRow(dates.placementLength),
+    arrivalDateRow(placementRequestDates.startDate),
+    departureDateRow(placementRequestDates.endDate),
+    placementLengthRow(placementRequestDates.placementLength),
     releaseTypeRow(placementRequest),
     totalCapacityRow(totalCapacity),
     spaceRequirementsRow(essentialCharacteristics),

@@ -1,17 +1,6 @@
-import {
-  ApType,
-  Cas1PremiseCapacity,
-  PlacementDates,
-  PlacementRequest,
-  PlacementRequestDetail,
-  Premises,
-} from '@approved-premises/api'
+import { ApType, Cas1PremiseCapacity, PlacementRequest, PlacementRequestDetail, Premises } from '@approved-premises/api'
 import Page from '../page'
-import {
-  filterOutAPTypes,
-  occupancyViewSummaryListForMatchingDetails,
-  placementDates,
-} from '../../../server/utils/match'
+import { occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
 import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
@@ -24,13 +13,11 @@ export default class OccupancyViewPage extends Page {
 
   static visit(
     placementRequest: PlacementRequestDetail,
-    startDate: string,
-    durationDays: PlacementDates['duration'],
     premisesName: Premises['name'],
     premisesId: Premises['id'],
     apType: ApType,
   ) {
-    const queryString = createQueryString({ startDate, durationDays, premisesName, premisesId, apType })
+    const queryString = createQueryString({ premisesName, premisesId, apType })
     const path = `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id })}?${queryString}`
     cy.visit(path)
     return new OccupancyViewPage(premisesName)
@@ -42,18 +29,25 @@ export default class OccupancyViewPage extends Page {
     durationDays: number,
     placementRequest: PlacementRequest,
   ) {
-    const dates = placementDates(startDate, durationDays.toString())
-    const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
     cy.get('.govuk-details').within(() => {
-      this.shouldContainSummaryListItems(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
-      )
+      this.shouldContainSummaryListItems(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest))
     })
     cy.get('.govuk-heading-l')
       .contains(
         `View availability and book your placement for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
       )
       .should('exist')
+  }
+
+  shouldShowFilters(startDate: string, selectedDuration: string) {
+    this.dateInputsShouldContainDate('startDate', startDate)
+    this.shouldHaveSelectText('durationDays', selectedDuration)
+  }
+
+  filterForDateAndDuration(newStartDate: string, newDuration: string) {
+    this.clearAndCompleteDateInputs('startDate', newStartDate)
+    this.getSelectInputByIdAndSelectAnEntry('durationDays', newDuration)
+    this.clickApplyFilter()
   }
 
   shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity) {

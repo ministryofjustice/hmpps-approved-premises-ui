@@ -4,7 +4,6 @@ import { differenceInDays } from 'date-fns'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
-  filterOutAPTypes,
   occupancySummary,
   occupancyViewLink,
   occupancyViewSummaryListForMatchingDetails,
@@ -12,13 +11,19 @@ import {
   redirectToSpaceBookingsNew,
   validateSpaceBooking,
 } from '../../../utils/match'
-import { DateFormats } from '../../../utils/dateUtils'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../../utils/validation'
+import { DateFormats } from '../../../utils/dateUtils'
+import { durationSelectOptions } from '../../../utils/match/occupancy'
 
 interface NewRequest extends Request {
   params: { id: string }
-  query: { startDate: string; durationDays: string; premisesName: string; premisesId: string; apType: ApType }
+  query: ObjectWithDateParts<'startDate'> & {
+    durationDays: string
+    premisesName: string
+    premisesId: string
+    apType: ApType
+  }
 }
 
 export default class {
@@ -29,18 +34,24 @@ export default class {
 
   view(): TypedRequestHandler<Request> {
     return async (req: NewRequest, res: Response) => {
-      const { startDate, durationDays, premisesName, premisesId, apType } = req.query
-      const dates = placementDates(startDate, durationDays)
-      const [placementRequest, capacity] = await Promise.all([
-        this.placementRequestService.getPlacementRequest(req.user.token, req.params.id),
-        this.premisesService.getCapacity(req.user.token, premisesId, dates.startDate, dates.endDate),
-      ])
-      const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
+      const { premisesName, premisesId, apType } = req.query
+
+      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+
+      const startDate =
+        DateFormats.dateAndTimeInputsToIsoString(req.query, 'startDate').startDate || placementRequest.expectedArrival
+      const durationDays = Number(req.query.durationDays) || placementRequest.duration
+
+      const capacityDates = placementDates(startDate, durationDays)
+      const capacity = await this.premisesService.getCapacity(
+        req.user.token,
+        premisesId,
+        capacityDates.startDate,
+        capacityDates.endDate,
+      )
       const matchingDetailsSummaryList = occupancyViewSummaryListForMatchingDetails(
         capacity.premise.bedCount,
-        dates,
         placementRequest,
-        essentialCharacteristics,
       )
       const occupancySummaryHtml = occupancySummary(capacity)
       const calendar = occupancyCalendar(capacity)
@@ -52,7 +63,9 @@ export default class {
         premisesId,
         apType,
         startDate,
+        ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),
         durationDays,
+        durationOptions: durationSelectOptions(durationDays),
         matchingDetailsSummaryList,
         occupancySummaryHtml,
         calendar,

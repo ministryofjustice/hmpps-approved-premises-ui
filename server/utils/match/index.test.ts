@@ -1,10 +1,4 @@
-import type {
-  ApType,
-  ApprovedPremisesApplication,
-  Cas1SpaceCharacteristic,
-  FullPerson,
-  PlacementCriteria,
-} from '@approved-premises/api'
+import type { ApType, ApprovedPremisesApplication, FullPerson, PlacementCriteria } from '@approved-premises/api'
 import { when } from 'jest-when'
 import paths from '../../paths/match'
 import {
@@ -41,6 +35,7 @@ import {
   mapUiParamsForApi,
   occupancyViewLink,
   occupancyViewSummaryListForMatchingDetails,
+  placementDates,
   placementLength,
   placementLengthRow,
   placementRequestSummaryListForMatching,
@@ -361,33 +356,28 @@ describe('matchUtils', () => {
   })
 
   describe('occupancyViewSummaryListForMatchingDetails', () => {
-    const placementRequest = placementRequestDetailFactory.build({ releaseType: 'hdc' })
+    const placementRequest = placementRequestDetailFactory.build({
+      releaseType: 'hdc',
+      expectedArrival: '2025-10-02',
+      duration: 52,
+      essentialCriteria: ['hasTactileFlooring'],
+    })
+    const dates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
     const totalCapacity = 120
 
-    const dates = {
-      startDate: '2025-10-02',
-      endDate: '2025-12-23',
-      placementLength: 52,
-    }
-    const essentialCharacteristics: Array<Cas1SpaceCharacteristic> = ['hasTactileFlooring']
-
     it('should call the correct row functions', () => {
-      expect(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
-      ).toEqual([
+      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest)).toEqual([
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
         releaseTypeRow(placementRequest),
         totalCapacityRow(totalCapacity),
-        spaceRequirementsRow(essentialCharacteristics),
+        spaceRequirementsRow(filterOutAPTypes(placementRequest.essentialCriteria)),
       ])
     })
 
     it('should generate the expected matching details', () => {
-      expect(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
-      ).toEqual([
+      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest)).toEqual([
         {
           key: {
             text: 'Expected arrival date',
@@ -401,7 +391,7 @@ describe('matchUtils', () => {
             text: 'Expected departure date',
           },
           value: {
-            text: 'Tue 23 Dec 2025',
+            text: 'Sun 23 Nov 2025',
           },
         },
         {

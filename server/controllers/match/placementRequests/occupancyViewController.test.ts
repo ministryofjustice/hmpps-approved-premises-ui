@@ -15,6 +15,7 @@ import {
 import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../../utils/validation'
+import { DateFormats } from '../../../utils/dateUtils'
 
 jest.mock('../../../utils/validation')
 
@@ -33,6 +34,10 @@ describe('OccupancyViewController', () => {
   let premiseCapacity: Cas1PremiseCapacity
   let request: Readonly<DeepMocked<Request>>
 
+  const premisesName = 'Hope House'
+  const premisesId = 'abc123'
+  const apType = 'esap'
+
   beforeEach(() => {
     jest.resetAllMocks()
     occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
@@ -40,37 +45,32 @@ describe('OccupancyViewController', () => {
       user: { token },
       flash: flashSpy,
     })
-    placementRequestDetail = placementRequestDetailFactory.build()
+    placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
     premiseCapacity = cas1PremiseCapacityFactory.build()
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
+
+    when(fetchErrorsAndUserInput as jest.Mock)
+      .calledWith(request)
+      .mockReturnValue({
+        errors: {},
+        errorSummary: [],
+        userInput: {},
+      })
   })
 
   describe('view', () => {
-    it('should render the occupancy view template', async () => {
-      const startDate = '2024-07-26'
-      const durationDays = '40'
-      const premisesName = 'Hope House'
-      const premisesId = 'abc123'
-      const apType = 'esap'
+    it('should render the occupancy view template with placement start date and duration', async () => {
+      const expectedStartDate = placementRequestDetail.expectedArrival
+      const expectedDuration = placementRequestDetail.duration
 
       const query = {
-        startDate,
-        durationDays,
         premisesName,
         premisesId,
         apType,
       }
 
       const params = { id: placementRequestDetail.id }
-
-      when(fetchErrorsAndUserInput as jest.Mock)
-        .calledWith(request)
-        .mockReturnValue({
-          errors: {},
-          errorSummary: [],
-          userInput: {},
-        })
 
       const requestHandler = occupancyViewController.view()
 
@@ -82,13 +82,19 @@ describe('OccupancyViewController', () => {
         premisesName,
         premisesId,
         apType,
-        startDate,
-        durationDays,
+        startDate: expectedStartDate,
+        ...DateFormats.isoDateToDateInputs(expectedStartDate, 'startDate'),
+        durationDays: expectedDuration,
+        durationOptions: [
+          { text: 'Up to 1 week', value: '7' },
+          { text: 'Up to 6 weeks', value: '42' },
+          { text: 'Up to 12 weeks', value: '84', selected: true },
+          { text: 'Up to 26 weeks', value: '182' },
+          { text: 'Up to 52 weeks', value: '364' },
+        ],
         matchingDetailsSummaryList: occupancyViewSummaryListForMatchingDetails(
           premiseCapacity.premise.bedCount,
-          placementDates(startDate, durationDays),
           placementRequestDetail,
-          filterOutAPTypes(placementRequestDetail.essentialCriteria),
         ),
         occupancySummaryHtml: occupancySummary(premiseCapacity),
         calendar: occupancyCalendar(premiseCapacity),
@@ -99,15 +105,7 @@ describe('OccupancyViewController', () => {
     })
 
     it('should render the occupancy view template with errors', async () => {
-      const startDate = '2024-07-26'
-      const durationDays = '40'
-      const premisesName = 'Hope House'
-      const premisesId = 'abc123'
-      const apType = 'esap'
-
       const query = {
-        startDate,
-        durationDays,
         premisesName,
         premisesId,
         apType,
@@ -150,39 +148,57 @@ describe('OccupancyViewController', () => {
 
       await requestHandler({ ...request, params, query }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
-        pageHeading: `View spaces in ${premisesName}`,
-        placementRequest: placementRequestDetail,
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          errors: expectedErrors,
+          errorSummary: expectedErrorSummary,
+          'arrivalDate-day': '',
+          'arrivalDate-month': '',
+          'arrivalDate-year': '',
+          'departureDate-day': '1',
+          'departureDate-month': '5',
+          'departureDate-year': '2026',
+        }),
+      )
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
+    })
+
+    it('should render the occupancy view template with filtered start date and duration', async () => {
+      const query = {
         premisesName,
         premisesId,
         apType,
-        startDate,
-        durationDays,
-        matchingDetailsSummaryList: occupancyViewSummaryListForMatchingDetails(
-          premiseCapacity.premise.bedCount,
-          placementDates(startDate, durationDays),
-          placementRequestDetail,
-          filterOutAPTypes(placementRequestDetail.essentialCriteria),
-        ),
-        occupancySummaryHtml: occupancySummary(premiseCapacity),
-        calendar: occupancyCalendar(premiseCapacity),
-        errors: expectedErrors,
-        errorSummary: expectedErrorSummary,
-        'arrivalDate-day': '',
-        'arrivalDate-month': '',
-        'arrivalDate-year': '',
-        'departureDate-day': '1',
-        'departureDate-month': '5',
-        'departureDate-year': '2026',
-      })
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
+        'startDate-day': '30',
+        'startDate-month': '04',
+        'startDate-year': '2025',
+        durationDays: '100',
+      }
+
+      const params = { id: placementRequestDetail.id }
+
+      const requestHandler = occupancyViewController.view()
+
+      await requestHandler({ ...request, params, query }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          durationOptions: [
+            { text: 'Up to 1 week', value: '7' },
+            { text: 'Up to 6 weeks', value: '42' },
+            { text: 'Up to 12 weeks', value: '84' },
+            { text: 'Up to 26 weeks', value: '182', selected: true },
+            { text: 'Up to 52 weeks', value: '364' },
+          ],
+          durationDays: 100,
+          startDate: '2025-04-30',
+        }),
+      )
     })
   })
 
   describe('bookSpace', () => {
-    const premisesId = '08f1af53-8c0d-4ad5-abe1-724f4b639538'
-    const premisesName = 'Hope House'
-    const apType = 'normal'
     const startDate = '2025-08-15'
     const durationDays = '22'
     const arrivalDay = '11'

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { cas1PremiseCapacityFactory, cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
-import { dateRangeAvailability, dayAvailabilityCount, dayHasAvailability } from './occupancy'
+import { dateRangeAvailability, dayAvailabilityCount, dayHasAvailability, durationSelectOptions } from './occupancy'
 
 describe('dayAvailabilityCount', () => {
   it('returns the count of available spaces for the day', () => {
@@ -92,5 +92,35 @@ describe('dateRangeAvailability', () => {
     })
 
     expect(dateRangeAvailability(premisesCapacity)).toEqual('none')
+  })
+})
+
+describe('durationSelectOptions', () => {
+  const defaultOptions = [
+    { text: 'Up to 1 week', value: '7' },
+    { text: 'Up to 6 weeks', value: '42' },
+    { text: 'Up to 12 weeks', value: '84' },
+    { text: 'Up to 26 weeks', value: '182' },
+    { text: 'Up to 52 weeks', value: '364' },
+  ]
+
+  it('returns a list of duration options', () => {
+    expect(durationSelectOptions()).toEqual(defaultOptions)
+  })
+
+  it.each([
+    ['Up to 1 week', 3],
+    ['Up to 1 week', 7],
+    ['Up to 6 weeks', 42],
+    ['Up to 12 weeks', 80],
+    ['Up to 12 weeks', 84],
+    ['Up to 26 weeks', 85],
+    ['Up to 26 weeks', 182],
+    ['Up to 52 weeks', 183],
+    ['Up to 52 weeks', 500],
+  ])('selects the option "%s" for a duration of %s days', (selectedLabel, duration) => {
+    const result = durationSelectOptions(duration)
+
+    expect(result.find(option => option.selected === true).text).toEqual(selectedLabel)
   })
 })

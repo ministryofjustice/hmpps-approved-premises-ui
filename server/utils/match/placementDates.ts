@@ -7,7 +7,7 @@ type PlacementDates = {
   endDate: string
 }
 
-export const placementDates = (startDateString: string, lengthInDays: string): PlacementDates => {
+export const placementDates = (startDateString: string, lengthInDays: string | number): PlacementDates => {
   const days = Number(lengthInDays)
   const startDate = DateFormats.isoToDateObj(startDateString)
   const endDate = addDays(startDate, days)

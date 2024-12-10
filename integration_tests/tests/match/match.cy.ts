@@ -142,6 +142,7 @@ context('Placement Requests', () => {
 
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = () => {
     const premisesName = 'Hope House'
+    const premisesId = 'premises-id'
     const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
@@ -153,17 +154,23 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const placementRequest = placementRequestDetailFactory.build({ person })
-    const premiseCapacity = cas1PremiseCapacityFactory.build({ premise: { bedCount: totalCapacity } })
+    const placementRequest = placementRequestDetailFactory.build({
+      person,
+      expectedArrival: startDate,
+      duration: durationDays,
+    })
+    const premiseCapacity = cas1PremiseCapacityFactory.build({
+      premise: { id: premisesId, bedCount: totalCapacity },
+      startDate,
+      endDate,
+    })
 
     cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubPremiseCapacity', { premisesId: premiseCapacity.premise.id, startDate, endDate, premiseCapacity })
+    cy.task('stubPremiseCapacity', { premisesId, startDate, endDate, premiseCapacity })
 
     // When I visit the occupancy view page
     const occupancyViewPage = OccupancyViewPage.visit(
       placementRequest,
-      startDate,
-      durationDays,
       premisesName,
       premiseCapacity.premise.id,
       apType,
@@ -173,6 +180,75 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
     return { occupancyViewPage, placementRequest, premiseCapacity, premisesName }
   }
+
+  it('allows me to view spaces and occupancy capacity and filter the result', () => {
+    const premisesName = 'Hope House'
+    const premisesId = 'premises-id'
+    const apType = 'normal'
+    const durationDays = 15
+    const startDate = '2024-07-23'
+    const endDate = '2024-08-07'
+    const totalCapacity = 10
+
+    // Given I am signed in as a cru_member
+    signIn(['cru_member'], ['cas1_space_booking_create'])
+
+    // And there is a placement request waiting for me to match
+    const person = personFactory.build()
+    const placementRequest = placementRequestDetailFactory.build({
+      person,
+      expectedArrival: startDate,
+      duration: durationDays,
+    })
+    const premiseCapacity = cas1PremiseCapacityFactory.build({
+      premise: { id: premisesId, bedCount: totalCapacity },
+      startDate,
+      endDate,
+    })
+
+    cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubPremiseCapacity', { premisesId, startDate, endDate, premiseCapacity })
+
+    // When I visit the occupancy view page
+    const occupancyViewPage = OccupancyViewPage.visit(
+      placementRequest,
+      premisesName,
+      premiseCapacity.premise.id,
+      apType,
+    )
+
+    // Then I should see the details of the case I am matching
+    occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
+
+    // And I should see the filter form with populated values
+    occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks')
+
+    // And I should see a summary of occupancy
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+
+    // And I should see an occupancy calendar
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+
+    // When I filter for a different date and duration
+    const newStartDate = '2024-08-01'
+    const newEndDate = '2024-08-08'
+    const newDuration = 'Up to 1 week'
+    const newPremiseCapacity = cas1PremiseCapacityFactory.build({
+      premise: { id: premisesId, bedCount: totalCapacity },
+      startDate: newStartDate,
+      endDate: newEndDate,
+    })
+    cy.task('stubPremiseCapacity', {
+      premisesId,
+      startDate: newStartDate,
+      endDate: newEndDate,
+      premiseCapacity: newPremiseCapacity,
+    })
+    occupancyViewPage.filterForDateAndDuration(newStartDate, newDuration)
+
+    // Then I should see the filter form with updated values
+    occupancyViewPage.shouldShowFilters(newStartDate, newDuration)
+  })
 
   it('allows me to book a space', () => {
     // Given I am signed in as a cru_member

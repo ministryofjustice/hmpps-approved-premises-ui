@@ -1,5 +1,7 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
@@ -42,6 +44,45 @@
     }) }}
 
     <section>
+        <div class="search-and-filter__wrapper">
+            <form action="{{ paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id }) }}"
+                  method="get">
+                <h2 class="govuk-heading-m">Filters</h2>
+
+                <input type="hidden" name="premisesId" value="{{ premisesId }}">
+                <input type="hidden" name="premisesName" value="{{ premisesName }}">
+                <input type="hidden" name="apType" value="{{ apType }}">
+
+                {{ govukDateInput({
+                    id: "startDate",
+                    namePrefix: "startDate",
+                    fieldset: {
+                        legend: {
+                            text: "Availability start date",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    items: dateFieldValues('startDate', errors)
+                }) }}
+
+                {{ govukSelect({
+                    id: 'durationDays',
+                    name: 'durationDays',
+                    label: {
+                        text: 'Length of availability',
+                        classes: 'govuk-label--s'
+                    },
+                    items: durationOptions
+                }) }}
+
+                {{ govukButton({
+                    text: 'Apply filters',
+                    classes: 'govuk-!-margin-bottom-0',
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+
         <h2 class="govuk-heading-l">View availability and book your placement
             for {{ formatDuration(durationDays) }}
             from {{ formatDate(startDate, { format: 'short' }) }}</h2>
