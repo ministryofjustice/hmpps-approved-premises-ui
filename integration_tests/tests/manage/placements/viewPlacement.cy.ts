@@ -57,7 +57,7 @@ context('Placements', () => {
       // And the placement details in the page tables
       placementShowPage.shouldShowSummaryInformation(placement)
       // And the placement details tab should be selected
-      placementShowPage.shouldHaveTabSelected('Placement details')
+      placementShowPage.shouldHaveActiveTab('Placement details')
     })
 
     it('should show a placement (Application tab)', () => {
@@ -68,7 +68,7 @@ context('Placements', () => {
       // Then I should see the details of the person
       placementShowPage.shouldShowPersonDetails(application.person as FullPerson)
       // And the application tab should be selected
-      placementShowPage.shouldHaveTabSelected('Application')
+      placementShowPage.shouldHaveActiveTab('Application')
     })
 
     it('should show a placement (Assessment tab)', () => {
@@ -79,7 +79,7 @@ context('Placements', () => {
       // Then I should see the details of the assessment
       placementShowPage.shouldShowCheckYourAnswersResponses(assessment)
       // And the assessment tab should be selected
-      placementShowPage.shouldHaveTabSelected('Assessment')
+      placementShowPage.shouldHaveActiveTab('Assessment')
     })
 
     it('should show a placement (Timeline tab)', () => {
@@ -90,7 +90,7 @@ context('Placements', () => {
       // Then I should see the timeline for this placement
       placementShowPage.shouldShowApplicationTimeline(timeline)
       // And the timeline tab should be selected
-      placementShowPage.shouldHaveTabSelected('Timeline')
+      placementShowPage.shouldHaveActiveTab('Timeline')
     })
 
     it('should show a placement (Placement request tab)', () => {
@@ -101,7 +101,7 @@ context('Placements', () => {
       // Then I should see the details of the request for placement
       placementShowPage.shouldShowPlacementRequestDetails(placementRequest)
       // And the 'request for placement' tab should be selected
-      placementShowPage.shouldHaveTabSelected('Request for placement')
+      placementShowPage.shouldHaveActiveTab('Request for placement')
     })
 
     it('should show a placement with missing fields', () => {

@@ -501,6 +501,10 @@ export default abstract class Page {
     cy.get('a.moj-sub-navigation__link').contains(tabName).should('have.attr', 'aria-current', 'page')
   }
 
+  selectTab(tabTitle: string): void {
+    cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
+  }
+
   shouldHaveSelectText(id: string, text: string): void {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
   }

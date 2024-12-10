@@ -48,10 +48,6 @@ export default class PlacementShowPage extends Page {
     })
   }
 
-  shouldHaveTabSelected(tabTitle: string): void {
-    cy.get('.moj-sub-navigation__list').contains(tabTitle).should('have.attr', 'aria-current', 'page')
-  }
-
   shouldShowPlacementRequestDetails(placementRequest: PlacementRequest): void {
     cy.get('dl[data-cy-section="placement-request-summary"').within(() => {
       const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
