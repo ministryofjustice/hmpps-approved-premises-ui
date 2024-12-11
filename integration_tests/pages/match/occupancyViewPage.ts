@@ -34,7 +34,7 @@ export default class OccupancyViewPage extends Page {
     })
     cy.get('.govuk-heading-l')
       .contains(
-        `View availability and book your placement for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
+        `View availability for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
       )
       .should('exist')
   }

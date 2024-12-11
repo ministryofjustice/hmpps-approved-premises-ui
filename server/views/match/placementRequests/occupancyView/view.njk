@@ -45,10 +45,13 @@
     }) }}
 
     <section>
+        <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
+            from {{ formatDate(startDate, { format: 'short' }) }}</h2>
+
         <div class="search-and-filter">
             <form action="{{ paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id }) }}"
                   method="get">
-                <h2 class="govuk-heading-m">Filters</h2>
+                <h3 class="govuk-heading-m">Filters</h3>
 
                 <input type="hidden" name="premisesId" value="{{ premisesId }}">
                 <input type="hidden" name="premisesName" value="{{ premisesName }}">
@@ -100,10 +103,6 @@
                 </div>
             </form>
         </div>
-
-        <h2 class="govuk-heading-l">View availability and book your placement
-            for {{ formatDuration(durationDays) }}
-            from {{ formatDate(startDate, { format: 'short' }) }}</h2>
 
         {{ govukNotificationBanner({
             html: occupancySummaryHtml,
