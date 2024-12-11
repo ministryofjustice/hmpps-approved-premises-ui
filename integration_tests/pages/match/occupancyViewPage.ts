@@ -39,14 +39,20 @@ export default class OccupancyViewPage extends Page {
       .should('exist')
   }
 
-  shouldShowFilters(startDate: string, selectedDuration: string) {
+  shouldShowFilters(startDate: string, selectedDuration: string, newCriteria: Array<string>) {
     this.dateInputsShouldContainDate('startDate', startDate)
     this.shouldHaveSelectText('durationDays', selectedDuration)
+    newCriteria.forEach(criteria => {
+      this.verifyCheckboxByLabel(criteria)
+    })
   }
 
-  filterForDateAndDuration(newStartDate: string, newDuration: string) {
+  filterAvailability(newStartDate: string, newDuration: string, newCriteria: Array<string>) {
     this.clearAndCompleteDateInputs('startDate', newStartDate)
     this.getSelectInputByIdAndSelectAnEntry('durationDays', newDuration)
+    newCriteria.forEach(criteria => {
+      this.checkCheckboxByLabel(criteria)
+    })
     this.clickApplyFilter()
   }
 
@@ -76,7 +82,7 @@ export default class OccupancyViewPage extends Page {
       this.shouldShowCalendarCell('Available')
     }
     if (availability === 'none' || availability === 'partial') {
-      this.shouldShowCalendarCell(/-?\d+ total/)
+      this.shouldShowCalendarCell(/-?\d+ in total/)
     }
   }
 

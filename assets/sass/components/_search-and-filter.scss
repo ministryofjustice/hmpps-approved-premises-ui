@@ -28,5 +28,9 @@
     & .govuk-button {
       margin-bottom: 2px;
     }
+
+    & + & {
+      margin-top: govuk-spacing(4);
+    }
   }
 }

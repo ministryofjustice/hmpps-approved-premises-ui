@@ -2,6 +2,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
@@ -75,12 +76,27 @@
                         },
                         items: durationOptions
                     }) }}
+                </div>
 
+                <div class="search-and-filter__row">
+                    {{ govukCheckboxes({
+                        name: "criteria",
+                        classes: "govuk-checkboxes--small govuk-checkboxes--inline",
+                        fieldset: {
+                            legend: {
+                                text: "Select following criteria",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: criteriaOptions
+                    }) }}
+                </div>
+
+                <div class="search-and-filter__row">
                     {{ govukButton({
                         text: 'Apply filters',
                         preventDoubleClick: true
                     }) }}
-
                 </div>
             </form>
         </div>
@@ -100,6 +116,9 @@
             <ul class="calendar__month govuk-list">
                 <li class="calendar__day">
                     Available
+                </li>
+                <li class="calendar__day govuk-tag--yellow">
+                    Available for your criteria
                 </li>
                 <li class="calendar__day govuk-tag--red">
                     Full or overbooked

@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { type Cas1PremiseCapacity, PlacementRequestDetail } from '@approved-premises/api'
+import type { Cas1PremiseCapacity, PlacementRequestDetail } from '@approved-premises/api'
 import { when } from 'jest-when'
+import { addDays } from 'date-fns'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import { cas1PremiseCapacityFactory, placementRequestDetailFactory } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
@@ -76,6 +77,14 @@ describe('OccupancyViewController', () => {
 
       await requestHandler({ ...request, params, query }, response, next)
 
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
+      expect(premisesService.getCapacity).toHaveBeenCalledWith(
+        token,
+        premisesId,
+        placementRequestDetail.expectedArrival,
+        DateFormats.dateObjToIsoDate(addDays(placementRequestDetail.expectedArrival, placementRequestDetail.duration)),
+      )
+
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premisesName}`,
         placementRequest: placementRequestDetail,
@@ -92,6 +101,14 @@ describe('OccupancyViewController', () => {
           { text: 'Up to 26 weeks', value: '182' },
           { text: 'Up to 52 weeks', value: '364' },
         ],
+        criteriaOptions: [
+          { value: 'isWheelchairDesignated', text: 'Wheelchair accessible', checked: false },
+          { value: 'isSingle', text: 'Single room', checked: false },
+          { value: 'isStepFreeDesignated', text: 'Step-free', checked: false },
+          { value: 'hasEnSuite', text: 'En-suite', checked: false },
+          { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
+          { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
+        ],
         matchingDetailsSummaryList: occupancyViewSummaryListForMatchingDetails(
           premiseCapacity.premise.bedCount,
           placementRequestDetail,
@@ -101,7 +118,6 @@ describe('OccupancyViewController', () => {
         errors: {},
         errorSummary: [],
       })
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
 
     it('should render the occupancy view template with errors', async () => {
@@ -164,7 +180,7 @@ describe('OccupancyViewController', () => {
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
 
-    it('should render the occupancy view template with filtered start date and duration', async () => {
+    it('should render the occupancy view template with filtered start date, duration and criteria', async () => {
       const query = {
         premisesName,
         premisesId,
@@ -173,6 +189,7 @@ describe('OccupancyViewController', () => {
         'startDate-month': '04',
         'startDate-year': '2025',
         durationDays: '100',
+        criteria: ['isSingle', 'isWheelchairDesignated'],
       }
 
       const params = { id: placementRequestDetail.id }
@@ -181,6 +198,7 @@ describe('OccupancyViewController', () => {
 
       await requestHandler({ ...request, params, query }, response, next)
 
+      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premisesId, '2025-04-30', '2025-08-08')
       expect(response.render).toHaveBeenCalledWith(
         'match/placementRequests/occupancyView/view',
         expect.objectContaining({
@@ -191,8 +209,17 @@ describe('OccupancyViewController', () => {
             { text: 'Up to 26 weeks', value: '182', selected: true },
             { text: 'Up to 52 weeks', value: '364' },
           ],
+          criteriaOptions: [
+            { value: 'isWheelchairDesignated', text: 'Wheelchair accessible', checked: true },
+            { value: 'isSingle', text: 'Single room', checked: true },
+            { value: 'isStepFreeDesignated', text: 'Step-free', checked: false },
+            { value: 'hasEnSuite', text: 'En-suite', checked: false },
+            { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
+            { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
+          ],
           durationDays: 100,
           startDate: '2025-04-30',
+          calendar: occupancyCalendar(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
         }),
       )
     })

@@ -1,4 +1,4 @@
-import type { Cas1PremiseCapacity, Cas1PremiseCapacityForDay } from '@approved-premises/api'
+import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { dayHasAvailability } from './occupancy'
@@ -38,11 +38,11 @@ export const renderDateRange = (dateRange: DateRange): string => {
   return render
 }
 
-export const occupancySummary = (premiseCapacity: Cas1PremiseCapacity): string => {
+export const occupancySummary = (capacity: Array<Cas1PremiseCapacityForDay>): string => {
   const availableDays: Array<Cas1PremiseCapacityForDay> = []
   const overbookedDays: Array<Cas1PremiseCapacityForDay> = []
 
-  premiseCapacity.capacity.forEach(capacityForDay => {
+  capacity.forEach(capacityForDay => {
     if (dayHasAvailability(capacityForDay)) {
       availableDays.push(capacityForDay)
     } else {

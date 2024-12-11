@@ -1072,7 +1072,7 @@ export default class ApplyHelper {
 
     tasklistPage.shouldShowMissingCheckboxErrorMessage()
 
-    tasklistPage.checkCheckboxByLabel('submit')
+    tasklistPage.checkCheckboxByValue('submit')
     tasklistPage.clickSubmit()
   }
 }

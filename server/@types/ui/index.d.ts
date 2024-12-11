@@ -11,6 +11,7 @@ import {
   AssessmentTask,
   Cas1CruManagementArea,
   Cas1PremisesBasicSummary,
+  type Cas1SpaceCharacteristic,
   Document,
   FlagsEnvelope,
   Gender,
@@ -472,4 +473,14 @@ export type DepartureFormSessionData = Partial<
     moveOnCategoryId: string
     notes: string
   }
+>
+
+export type OccupancyFilterCriteria = Extract<
+  Cas1SpaceCharacteristic,
+  | 'isArsonSuitable'
+  | 'hasEnSuite'
+  | 'isSingle'
+  | 'isStepFreeDesignated'
+  | 'isSuitedForSexOffenders'
+  | 'isWheelchairDesignated'
 >

@@ -1,7 +1,7 @@
 import { Request, Response, TypedRequestHandler } from 'express'
 import { ApType } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
-import type { ObjectWithDateParts } from '@approved-premises/ui'
+import type { ObjectWithDateParts, OccupancyFilterCriteria } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   occupancySummary,
@@ -14,7 +14,8 @@ import {
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
-import { durationSelectOptions } from '../../../utils/match/occupancy'
+import { durationSelectOptions, occupancyCriteriaMap } from '../../../utils/match/occupancy'
+import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 
 interface NewRequest extends Request {
   params: { id: string }
@@ -23,6 +24,7 @@ interface NewRequest extends Request {
     premisesName: string
     premisesId: string
     apType: ApType
+    criteria: Array<OccupancyFilterCriteria> | OccupancyFilterCriteria
   }
 }
 
@@ -34,7 +36,12 @@ export default class {
 
   view(): TypedRequestHandler<Request> {
     return async (req: NewRequest, res: Response) => {
-      const { premisesName, premisesId, apType } = req.query
+      const { premisesName, premisesId, apType, criteria } = req.query
+
+      let criteriaAsArray: Array<OccupancyFilterCriteria>
+      if (criteria) {
+        criteriaAsArray = Array.isArray(criteria) ? criteria : [criteria]
+      }
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
@@ -54,8 +61,9 @@ export default class {
         placementRequest,
       )
       const occupancySummaryHtml = occupancySummary(capacity)
-      const calendar = occupancyCalendar(capacity)
+      const calendar = occupancyCalendar(capacity, criteriaAsArray)
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
       res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premisesName}`,
         placementRequest,
@@ -66,6 +74,7 @@ export default class {
         ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),
         durationDays,
         durationOptions: durationSelectOptions(durationDays),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteriaAsArray),
         matchingDetailsSummaryList,
         occupancySummaryHtml,
         calendar,

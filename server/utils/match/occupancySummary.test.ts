@@ -1,18 +1,17 @@
-import { cas1PremiseCapacityFactory, cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
+import { cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
 import { DateRange, occupancySummary, renderDateRange } from './occupancySummary'
 
 describe('occupancySummary', () => {
   it('returns a list of available and overbooked time periods', () => {
-    const capacity = cas1PremiseCapacityFactory.build({
-      capacity: [
-        cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-12' }),
-        cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-13' }),
-        cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-14' }),
-        cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-15' }),
-        cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-16' }),
-        cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-17' }),
-      ],
-    })
+    const capacity = [
+      cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-12' }),
+      cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-13' }),
+      cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-14' }),
+      cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-15' }),
+      cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-16' }),
+      cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-17' }),
+    ]
+
     const result = occupancySummary(capacity)
 
     expect(result).toMatchStringIgnoringWhitespace(`
@@ -29,9 +28,8 @@ describe('occupancySummary', () => {
   })
 
   it('returns null for available if no dates are available', () => {
-    const capacity = cas1PremiseCapacityFactory.build({
-      capacity: [cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-04-14' })],
-    })
+    const capacity = [cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-04-14' })]
+
     const result = occupancySummary(capacity)
 
     expect(result).toMatchStringIgnoringWhitespace(
@@ -40,9 +38,8 @@ describe('occupancySummary', () => {
   })
 
   it('returns null for overbooked if no dates are overbooked', () => {
-    const capacity = cas1PremiseCapacityFactory.build({
-      capacity: [cas1PremiseCapacityForDayFactory.available().build({ date: '2025-04-15' })],
-    })
+    const capacity = [cas1PremiseCapacityForDayFactory.available().build({ date: '2025-04-15' })]
+
     const result = occupancySummary(capacity)
 
     expect(result).toMatchStringIgnoringWhitespace(

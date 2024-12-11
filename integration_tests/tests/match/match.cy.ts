@@ -221,7 +221,7 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
 
     // And I should see the filter form with populated values
-    occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks')
+    occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks', [])
 
     // And I should see a summary of occupancy
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
@@ -233,6 +233,7 @@ context('Placement Requests', () => {
     const newStartDate = '2024-08-01'
     const newEndDate = '2024-08-08'
     const newDuration = 'Up to 1 week'
+    const newCriteria = ['Wheelchair accessible', 'Step-free']
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({
       premise: { id: premisesId, bedCount: totalCapacity },
       startDate: newStartDate,
@@ -244,10 +245,10 @@ context('Placement Requests', () => {
       endDate: newEndDate,
       premiseCapacity: newPremiseCapacity,
     })
-    occupancyViewPage.filterForDateAndDuration(newStartDate, newDuration)
+    occupancyViewPage.filterAvailability(newStartDate, newDuration, newCriteria)
 
     // Then I should see the filter form with updated values
-    occupancyViewPage.shouldShowFilters(newStartDate, newDuration)
+    occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteria)
   })
 
   it('allows me to book a space', () => {

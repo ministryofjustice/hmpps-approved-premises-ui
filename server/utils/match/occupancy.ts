@@ -1,5 +1,5 @@
-import { Cas1PremiseCapacity, Cas1PremiseCapacityForDay } from '@approved-premises/api'
-import { SelectOption } from '@approved-premises/ui'
+import type { Cas1PremiseCapacity, Cas1PremiseCapacityForDay } from '@approved-premises/api'
+import { OccupancyFilterCriteria, SelectOption } from '@approved-premises/ui'
 
 export const dayAvailabilityCount = (dayCapacity: Cas1PremiseCapacityForDay) => {
   return dayCapacity.availableBedCount - dayCapacity.bookingCount
@@ -38,4 +38,13 @@ export const durationSelectOptions = (duration?: number): Array<SelectOption> =>
     text: label,
     selected: selected === value || undefined,
   }))
+}
+
+export const occupancyCriteriaMap: Record<OccupancyFilterCriteria, string> = {
+  isWheelchairDesignated: 'Wheelchair accessible',
+  isSingle: 'Single room',
+  isStepFreeDesignated: 'Step-free',
+  hasEnSuite: 'En-suite',
+  isSuitedForSexOffenders: 'Suitable for sex offenders',
+  isArsonSuitable: 'Designated arson room',
 }

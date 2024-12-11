@@ -134,8 +134,12 @@ export default abstract class Page {
     cy.get(`input[name="${name}"][value="${option}"]`).check()
   }
 
-  checkCheckboxByLabel(option: string): void {
+  checkCheckboxByValue(option: string): void {
     cy.get(`input[value="${option}"]`).check()
+  }
+
+  checkCheckboxByLabel(label: string): void {
+    cy.get('label').contains(label).parent().find('input').check()
   }
 
   uncheckCheckboxbyNameAndValue(name: string, option: string): void {
@@ -373,6 +377,14 @@ export default abstract class Page {
 
   verifyRadioInputByName(name: string, value: string): void {
     cy.get(`[name="${name}"][value="${value}"]`).should('be.checked')
+  }
+
+  verifyCheckboxByLabel(label: string, checked = true) {
+    cy.get('label')
+      .contains(label)
+      .parent()
+      .find('input')
+      .should(checked ? 'be.checked' : 'not.be.checked')
   }
 
   clearAndCompleteTextInputById(id: string, text: string): void {
