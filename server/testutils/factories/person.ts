@@ -39,4 +39,5 @@ export const fullPersonSummaryFactory = Factory.define<FullPersonSummary>(() => 
   crn: getCrn(),
   personType: 'FullPersonSummary',
   name: faker.person.fullName(),
+  isRestricted: false,
 }))
