@@ -8,6 +8,9 @@ export type Cas1PremiseCapacity = {
     premise: Cas1PremisesSummary;
     startDate: string;
     endDate: string;
+    /**
+     * Capacity for each day, returning chronologically (oldest first)
+     */
     capacity: Array<Cas1PremiseCapacityForDay>;
 };
 

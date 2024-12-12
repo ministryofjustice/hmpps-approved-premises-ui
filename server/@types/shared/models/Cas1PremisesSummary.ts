@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApArea } from './ApArea';
+import type { Cas1OverbookingRange } from './Cas1OverbookingRange';
 export type Cas1PremisesSummary = {
     id: string;
     name: string;
@@ -23,5 +24,9 @@ export type Cas1PremisesSummary = {
     outOfServiceBeds: number;
     supportsSpaceBookings: boolean;
     managerDetails?: string;
+    /**
+     * over-bookings for the next 12 weeks
+     */
+    overbookingSummary: Array<Cas1OverbookingRange>;
 };
 

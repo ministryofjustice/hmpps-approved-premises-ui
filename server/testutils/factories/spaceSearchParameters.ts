@@ -18,6 +18,7 @@ const spaceBookingRequirements = Factory.define<Cas1SpaceSearchRequirements>(() 
 
 export default Factory.define<Cas1SpaceSearchParameters>(() => {
   return {
+    applicationId: faker.string.uuid(),
     startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
     durationInDays: faker.number.int({ min: 1, max: 70 }),
     targetPostcodeDistrict: faker.location.zipCode(),

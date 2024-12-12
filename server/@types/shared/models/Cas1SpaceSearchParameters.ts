@@ -7,7 +7,7 @@ export type Cas1SpaceSearchParameters = {
     /**
      * The id of the application the space search is for
      */
-    applicationId?: string;
+    applicationId: string;
     /**
      * The date the space is required from
      */

@@ -8,6 +8,10 @@ import type { Gender } from './Gender';
 export type Cas1SpaceSearchRequirements = {
     apTypes?: Array<ApType>;
     spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
+    /**
+     * gender is obtained from application's associated gender
+     * @deprecated
+     */
     genders?: Array<Gender>;
 };
 
