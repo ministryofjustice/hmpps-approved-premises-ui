@@ -4,6 +4,7 @@ import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   cas1PremiseCapacityFactory,
+  cas1PremisesSummaryFactory,
   cas1SpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
@@ -128,7 +129,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to submit valid dates in the book your placement form on occupancy view page and redirects to book a space', () => {
-    const { occupancyViewPage, placementRequest, premisesName } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+    const { occupancyViewPage, placementRequest, premises } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
 
     // When I submit valid dates
     const arrivalDate = '2024-11-25'
@@ -136,13 +137,11 @@ context('Placement Requests', () => {
     occupancyViewPage.clickContinue()
 
     // Then I should land on the Book a space page (with the new dates overriding the original ones)
-    const bookASpacePage = Page.verifyOnPage(BookASpacePage, premisesName)
+    const bookASpacePage = Page.verifyOnPage(BookASpacePage, premises.name)
     bookASpacePage.shouldShowBookingDetails(placementRequest, arrivalDate, 1, 'normal')
   })
 
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = () => {
-    const premisesName = 'Hope House'
-    const premisesId = 'premises-id'
     const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
@@ -154,36 +153,31 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
+    const premises = cas1PremisesSummaryFactory.build({ bedCount: totalCapacity })
     const placementRequest = placementRequestDetailFactory.build({
       person,
       expectedArrival: startDate,
       duration: durationDays,
     })
     const premiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premisesId, bedCount: totalCapacity },
+      premise: { id: premises.id, bedCount: totalCapacity },
       startDate,
       endDate,
     })
 
+    cy.task('stubSinglePremises', premises)
     cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubPremiseCapacity', { premisesId, startDate, endDate, premiseCapacity })
+    cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
     // When I visit the occupancy view page
-    const occupancyViewPage = OccupancyViewPage.visit(
-      placementRequest,
-      premisesName,
-      premiseCapacity.premise.id,
-      apType,
-    )
+    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
 
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
-    return { occupancyViewPage, placementRequest, premiseCapacity, premisesName }
+    return { occupancyViewPage, placementRequest, premiseCapacity, premises }
   }
 
   it('allows me to view spaces and occupancy capacity and filter the result', () => {
-    const premisesName = 'Hope House'
-    const premisesId = 'premises-id'
     const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
@@ -195,27 +189,24 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
+    const premises = cas1PremisesSummaryFactory.build({ bedCount: totalCapacity })
     const placementRequest = placementRequestDetailFactory.build({
       person,
       expectedArrival: startDate,
       duration: durationDays,
     })
     const premiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premisesId, bedCount: totalCapacity },
+      premise: { id: premises.id, bedCount: totalCapacity },
       startDate,
       endDate,
     })
 
+    cy.task('stubSinglePremises', premises)
     cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubPremiseCapacity', { premisesId, startDate, endDate, premiseCapacity })
+    cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
     // When I visit the occupancy view page
-    const occupancyViewPage = OccupancyViewPage.visit(
-      placementRequest,
-      premisesName,
-      premiseCapacity.premise.id,
-      apType,
-    )
+    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
 
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
@@ -235,12 +226,12 @@ context('Placement Requests', () => {
     const newDuration = 'Up to 1 week'
     const newCriteria = ['Wheelchair accessible', 'Step-free']
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premisesId, bedCount: totalCapacity },
+      premise: { id: premises.id, bedCount: totalCapacity },
       startDate: newStartDate,
       endDate: newEndDate,
     })
     cy.task('stubPremiseCapacity', {
-      premisesId,
+      premisesId: premises.id,
       startDate: newStartDate,
       endDate: newEndDate,
       premiseCapacity: newPremiseCapacity,
@@ -332,7 +323,7 @@ context('Placement Requests', () => {
     // And I declare that I do not see a suitable space
     searchPage.clickUnableToMatch()
 
-    // Then I am able to complete a form to explain why I the spaces weren't suitable
+    // Then I am able to complete a form to explain why the spaces weren't suitable
     const unableToMatchPage = new UnableToMatchPage()
 
     // When I complete the form

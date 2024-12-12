@@ -10,10 +10,10 @@ const v2Match = {
   placementRequests: {
     search: {
       spaces: v2PlacementRequestSearchPath.path('new'),
+      occupancy: v2PlacementRequestSearchPath.path('occupancy/:premisesId'),
     },
     spaceBookings: {
       new: v2SpaceBookingsPath.path('new'),
-      viewSpaces: v2SpaceBookingsPath.path('view-spaces'),
       create: v2SpaceBookingsPath,
     },
   },

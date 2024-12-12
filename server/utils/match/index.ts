@@ -83,23 +83,22 @@ export const placementLength = (lengthInDays: number): string => {
 
 export const occupancyViewLink = ({
   placementRequestId,
-  premisesName,
   premisesId,
   apType,
   startDate,
   durationDays,
 }: {
   placementRequestId: string
-  premisesName: string
   premisesId: string
   apType: string
   startDate: string
   durationDays: string
 }): string => {
-  return `${matchPaths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+  return `${matchPaths.v2Match.placementRequests.search.occupancy({
+    id: placementRequestId,
+    premisesId,
+  })}${createQueryString(
     {
-      premisesName,
-      premisesId,
       apType,
       startDate,
       durationDays,

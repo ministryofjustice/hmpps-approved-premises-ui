@@ -247,7 +247,6 @@ describe('matchUtils', () => {
   describe('occupancyViewLink', () => {
     it('returns a link to the occupancy view page', () => {
       const placementRequestId = '123'
-      const premisesName = 'Hope House'
       const premisesId = 'abc'
       const apType = 'pipe'
       const startDate = '2025-04-14'
@@ -255,7 +254,6 @@ describe('matchUtils', () => {
 
       const result = occupancyViewLink({
         placementRequestId,
-        premisesName,
         premisesId,
         apType,
         startDate,
@@ -263,10 +261,11 @@ describe('matchUtils', () => {
       })
 
       expect(result).toEqual(
-        `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+        `${paths.v2Match.placementRequests.search.occupancy({
+          id: placementRequestId,
+          premisesId,
+        })}${createQueryString(
           {
-            premisesName,
-            premisesId,
             apType,
             startDate,
             durationDays,

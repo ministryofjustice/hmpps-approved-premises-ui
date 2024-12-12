@@ -1,4 +1,10 @@
-import { ApType, Cas1PremiseCapacity, PlacementRequest, PlacementRequestDetail, Premises } from '@approved-premises/api'
+import {
+  ApType,
+  Cas1PremiseCapacity,
+  Cas1PremisesSummary,
+  PlacementRequest,
+  PlacementRequestDetail,
+} from '@approved-premises/api'
 import { OccupancyFilterCriteria } from '@approved-premises/ui'
 import Page from '../page'
 import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
@@ -11,16 +17,15 @@ export default class OccupancyViewPage extends Page {
     super(`View spaces in ${premisesName}`)
   }
 
-  static visit(
-    placementRequest: PlacementRequestDetail,
-    premisesName: Premises['name'],
-    premisesId: Premises['id'],
-    apType: ApType,
-  ) {
-    const queryString = createQueryString({ premisesName, premisesId, apType })
-    const path = `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id })}?${queryString}`
+  static visit(placementRequest: PlacementRequestDetail, premises: Cas1PremisesSummary, apType: ApType) {
+    const path = `${paths.v2Match.placementRequests.search.occupancy({
+      id: placementRequest.id,
+      premisesId: premises.id,
+    })}?${createQueryString({ apType })}`
+
     cy.visit(path)
-    return new OccupancyViewPage(premisesName)
+
+    return new OccupancyViewPage(premises.name)
   }
 
   shouldShowMatchingDetails(
