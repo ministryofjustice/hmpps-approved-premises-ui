@@ -1,10 +1,13 @@
 import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import type { OccupancyFilterCriteria } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
-import { dayAvailabilityCount } from './occupancy'
+import { dayAvailabilityCount, dayHasAvailability } from './occupancy'
+
+type CalendarDayStatus = 'available' | 'availableForCriteria' | 'overbooked'
 
 type CalendarDay = {
   name: string
+  status: CalendarDayStatus
   bookableCount: number
   criteriaBookableCount?: number
 }
@@ -32,15 +35,15 @@ export const occupancyCalendar = (
 
     const calendarDay: CalendarDay = {
       name: DateFormats.isoDateToUIDate(day.date, { format: 'longNoYear' }),
+      status: dayHasAvailability(day) ? 'available' : 'overbooked',
       bookableCount: dayAvailabilityCount(day),
     }
 
     if (criteria.length) {
-      calendarDay.criteriaBookableCount = Math.min(
-        ...day.characteristicAvailability
-          .filter(availability => criteria.includes(availability.characteristic as OccupancyFilterCriteria))
-          .map(availability => availability.availableBedsCount - availability.bookingsCount),
-      )
+      calendarDay.criteriaBookableCount = dayAvailabilityCount(day, criteria)
+      if (dayHasAvailability(day, criteria) && calendarDay.status === 'overbooked') {
+        calendarDay.status = 'availableForCriteria'
+      }
     }
 
     currentMonth.days.push(calendarDay)

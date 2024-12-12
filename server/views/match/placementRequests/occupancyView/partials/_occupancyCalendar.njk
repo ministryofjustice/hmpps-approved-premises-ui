@@ -6,14 +6,14 @@
 
                 <ul class="calendar__month govuk-list">
                     {% for day in month.days %}
-                        <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }}{% if day.bookableCount <= 0 %} {{ 'govuk-tag--yellow' if day.criteriaBookableCount > 0 else 'govuk-tag--red' }}{% endif %}">
+                        <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }}{% if day.status !== 'available' %} {{ 'govuk-tag--yellow' if day.status === 'availableForCriteria' else 'govuk-tag--red' }}{% endif %}">
                             <a class="calendar__link" href="#">
                                 <time class="calendar__date" datetime="{{ day.date }}">{{ day.name }}</time>
 
                                 <dl class="calendar__availability">
                                     <dt class="govuk-visually-hidden">Availability:</dt>
 
-                                    {% if day.bookableCount > 0 %}
+                                    {% if day.status === 'available' %}
                                         <dd>Available</dd>
                                     {% else %}
                                         {% if day.criteriaBookableCount is defined %}
