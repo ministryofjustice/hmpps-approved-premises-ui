@@ -78,6 +78,11 @@ describe('occupancyCalendar', () => {
             availableBedsCount: 2,
             bookingsCount: 1,
           }),
+          premiseCharacteristicAvailability.build({
+            characteristic: 'isStepFreeDesignated',
+            availableBedsCount: 4,
+            bookingsCount: 4,
+          }),
         ],
       }),
     ]
@@ -124,6 +129,20 @@ describe('occupancyCalendar', () => {
           ],
         },
       ])
+
+      expect(occupancyCalendar(capacity, ['isStepFreeDesignated'])).toEqual([
+        {
+          name: 'February 2025',
+          days: [
+            {
+              name: 'Sun 2 Feb',
+              bookableCount: -2,
+              criteriaBookableCount: 0,
+              status: 'overbooked',
+            },
+          ],
+        },
+      ])
     })
 
     it('returns the calendar with the lowest bookable count for all criteria', () => {
@@ -154,6 +173,20 @@ describe('occupancyCalendar', () => {
               bookableCount: 18,
               criteriaBookableCount: 3,
               status: 'available',
+            },
+          ],
+        },
+      ])
+
+      expect(occupancyCalendar(capacityAvailable, ['isStepFreeDesignated'])).toEqual([
+        {
+          name: 'February 2025',
+          days: [
+            {
+              name: 'Sun 2 Feb',
+              bookableCount: 18,
+              criteriaBookableCount: 0,
+              status: 'overbooked',
             },
           ],
         },

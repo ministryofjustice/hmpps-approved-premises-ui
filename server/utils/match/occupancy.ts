@@ -14,13 +14,6 @@ export const dayAvailabilityCount = (
     : dayCapacity.availableBedCount - dayCapacity.bookingCount
 }
 
-export const dayHasAvailability = (
-  dayCapacity: Cas1PremiseCapacityForDay,
-  criteria: Array<OccupancyFilterCriteria> = [],
-) => {
-  return dayAvailabilityCount(dayCapacity, criteria) > 0
-}
-
 const durationOptionsMap: Record<number, string> = {
   '7': 'Up to 1 week',
   '42': 'Up to 6 weeks',

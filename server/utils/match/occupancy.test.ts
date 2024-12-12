@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
-import { dayAvailabilityCount, dayHasAvailability, durationSelectOptions } from './occupancy'
+import { dayAvailabilityCount, durationSelectOptions } from './occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 
 const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDayFactory.build({
@@ -58,61 +58,6 @@ describe('dayAvailabilityCount', () => {
       expect(
         dayAvailabilityCount(capacityWithCriteria, ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated']),
       ).toEqual(-1)
-    })
-  })
-})
-
-describe('dayHasAvailability', () => {
-  it('returns true if the day has availability', () => {
-    const dayCapacity = cas1PremiseCapacityForDayFactory.build({
-      availableBedCount: 15,
-      bookingCount: 10,
-    })
-
-    expect(dayHasAvailability(dayCapacity)).toBe(true)
-  })
-
-  it('returns false if the day is overbooked', () => {
-    const dayCapacity = cas1PremiseCapacityForDayFactory.build({
-      availableBedCount: 15,
-      bookingCount: 20,
-    })
-
-    expect(dayHasAvailability(dayCapacity)).toBe(false)
-  })
-
-  it('returns false if the day is fully booked', () => {
-    const dayCapacity = cas1PremiseCapacityForDayFactory.build({
-      availableBedCount: 15,
-      bookingCount: 15,
-    })
-
-    expect(dayHasAvailability(dayCapacity)).toBe(false)
-  })
-
-  describe('when criteria are provided', () => {
-    it('returns true if the count of available spaces that match the criteria is more than 0', () => {
-      expect(dayHasAvailability(capacityWithCriteria, ['isSuitedForSexOffenders'])).toEqual(true)
-    })
-
-    it('returns false if the count of available spaces that match the criteria is 0', () => {
-      expect(dayHasAvailability(capacityWithCriteria, ['isStepFreeDesignated'])).toEqual(false)
-    })
-
-    it('returns false if the count of available spaces that match the criteria is less than', () => {
-      expect(dayHasAvailability(capacityWithCriteria, ['hasEnSuite'])).toEqual(false)
-    })
-
-    it('returns true if the lowest count that match any criteria is more than 0', () => {
-      expect(dayHasAvailability(capacityWithCriteria, ['isSuitedForSexOffenders', 'isWheelchairDesignated'])).toEqual(
-        true,
-      )
-    })
-
-    it('returns false if the lowest count that match any criteria is less than 0', () => {
-      expect(
-        dayHasAvailability(capacityWithCriteria, ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated']),
-      ).toEqual(false)
     })
   })
 })
