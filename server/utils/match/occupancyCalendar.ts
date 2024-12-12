@@ -15,7 +15,7 @@ type CalendarMonth = {
   name: string
   days: Array<CalendarDay>
 }
-type Calendar = Array<CalendarMonth>
+export type Calendar = Array<CalendarMonth>
 
 export const occupancyCalendar = (
   capacity: Array<Cas1PremiseCapacityForDay>,

@@ -220,6 +220,14 @@ context('Placement Requests', () => {
     // And I should see an occupancy calendar
     occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
 
+    // When I filter with an invalid date
+    occupancyViewPage.filterAvailability('2025-02-35')
+
+    // Then I should see an error message
+    occupancyViewPage.shouldShowErrorMessagesForFields(['startDate'], {
+      startDate: 'Enter a valid date',
+    })
+
     // When I filter for a different date and duration
     const newStartDate = '2024-08-01'
     const newEndDate = '2024-08-08'

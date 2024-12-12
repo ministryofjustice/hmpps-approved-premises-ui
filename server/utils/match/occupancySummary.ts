@@ -28,7 +28,7 @@ const daysToRanges = (days: Array<Cas1PremiseCapacityForDay>): Array<DateRange> 
     return ranges
   }, [])
 
-type OccupancySummary = {
+export type OccupancySummary = {
   available?: Array<DateRange>
   overbooked?: Array<DateRange>
 }

@@ -52,12 +52,16 @@ export default class OccupancyViewPage extends Page {
     })
   }
 
-  filterAvailability(newStartDate: string, newDuration: string, newCriteria: Array<string>) {
+  filterAvailability(newStartDate: string, newDuration?: string, newCriteria?: Array<string>) {
     this.clearAndCompleteDateInputs('startDate', newStartDate)
-    this.getSelectInputByIdAndSelectAnEntry('durationDays', newDuration)
-    newCriteria.forEach(criteria => {
-      this.checkCheckboxByLabel(criteria)
-    })
+    if (newDuration) {
+      this.getSelectInputByIdAndSelectAnEntry('durationDays', newDuration)
+    }
+    if (newCriteria) {
+      newCriteria.forEach(criteria => {
+        this.checkCheckboxByLabel(criteria)
+      })
+    }
     this.clickApplyFilter()
   }
 

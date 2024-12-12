@@ -13,10 +13,8 @@ import OccupancyViewController from './occupancyViewController'
 import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../utils/match'
 import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
-import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../../utils/validation'
+import * as validationUtils from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
-
-jest.mock('../../../utils/validation')
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -49,7 +47,8 @@ describe('OccupancyViewController', () => {
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
 
-    when(fetchErrorsAndUserInput as jest.Mock)
+    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
+    when(validationUtils.fetchErrorsAndUserInput as jest.Mock)
       .calledWith(request)
       .mockReturnValue({
         errors: {},
@@ -146,7 +145,7 @@ describe('OccupancyViewController', () => {
         'departureDate-year': '2026',
       }
 
-      when(fetchErrorsAndUserInput as jest.Mock)
+      when(validationUtils.fetchErrorsAndUserInput as jest.Mock)
         .calledWith(request)
         .mockReturnValue({
           errors: expectedErrors,
@@ -211,10 +210,44 @@ describe('OccupancyViewController', () => {
           ],
           durationDays: 100,
           startDate: '2025-04-30',
+          'startDate-day': '30',
+          'startDate-month': '04',
+          'startDate-year': '2025',
           summary: occupancySummary(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
           calendar: occupancyCalendar(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
         }),
       )
+    })
+
+    it('should show an error if the filter date is invalid', async () => {
+      const query = {
+        apType,
+        'startDate-day': '32',
+        'startDate-month': '02',
+        'startDate-year': '2025',
+        durationDays: '84',
+      }
+
+      const params = { id: placementRequestDetail.id, premisesId: premises.id }
+
+      const requestHandler = occupancyViewController.view()
+
+      await requestHandler({ ...request, params, query }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          errors: { startDate: { attributes: { 'data-cy-error-startDate': true }, text: 'Enter a valid date' } },
+          errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
+          startDate: undefined,
+          'startDate-day': '32',
+          'startDate-month': '02',
+          'startDate-year': '2025',
+          summary: undefined,
+          calendar: undefined,
+        }),
+      )
+      expect(premisesService.getCapacity).not.toHaveBeenCalled()
     })
   })
 
@@ -252,6 +285,7 @@ describe('OccupancyViewController', () => {
     })
 
     it(`should redirect to occupancy view and add errors messages when date validation fails`, async () => {
+      jest.spyOn(validationUtils, 'addErrorMessageToFlash')
       const emptyDay = ''
       const body = {
         ...validBookingBody,
@@ -263,7 +297,11 @@ describe('OccupancyViewController', () => {
 
       await requestHandler({ ...request, params, body }, response, next)
 
-      expect(addErrorMessageToFlash).toHaveBeenCalledWith(request, 'You must enter an arrival date', 'arrivalDate')
+      expect(validationUtils.addErrorMessageToFlash).toHaveBeenCalledWith(
+        request,
+        'You must enter an arrival date',
+        'arrivalDate',
+      )
 
       const expectedParams = `apType=${apType}&startDate=${startDate}&durationDays=${durationDays}`
 

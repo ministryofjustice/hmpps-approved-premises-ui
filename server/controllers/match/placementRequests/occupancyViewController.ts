@@ -11,11 +11,17 @@ import {
   redirectToSpaceBookingsNew,
   validateSpaceBooking,
 } from '../../../utils/match'
-import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
-import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../../utils/validation'
-import { DateFormats } from '../../../utils/dateUtils'
+import {
+  addErrorMessageToFlash,
+  fetchErrorsAndUserInput,
+  generateErrorMessages,
+  generateErrorSummary,
+} from '../../../utils/validation'
+import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
+import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
 import { durationSelectOptions, occupancyCriteriaMap } from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
+import { OccupancySummary } from '../../../utils/match/occupancySummary'
 
 interface NewRequest extends Request {
   params: {
@@ -39,40 +45,60 @@ export default class {
     return async (req: NewRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId } = req.params
-      const { apType, criteria } = req.query
+      const { apType, criteria, ...filterUserInput } = req.query
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const premises = await this.premisesService.find(token, premisesId)
 
       let criteriaAsArray: Array<OccupancyFilterCriteria>
       if (criteria) {
         criteriaAsArray = Array.isArray(criteria) ? criteria : [criteria]
       }
+      const durationDays = Number(filterUserInput.durationDays) || placementRequest.duration
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
-      const premises = await this.premisesService.find(token, premisesId)
+      let startDate: string
+      let dateFieldValues: ObjectWithDateParts<'startDate'>
 
-      const startDate =
-        DateFormats.dateAndTimeInputsToIsoString(req.query, 'startDate').startDate || placementRequest.expectedArrival
-      const durationDays = Number(req.query.durationDays) || placementRequest.duration
+      if (filterUserInput['startDate-day'] || filterUserInput['startDate-month'] || filterUserInput['startDate-year']) {
+        dateFieldValues = filterUserInput
 
-      const capacityDates = placementDates(startDate, durationDays)
-      const capacity = await this.premisesService.getCapacity(
-        token,
-        premisesId,
-        capacityDates.startDate,
-        capacityDates.endDate,
-      )
+        if (dateAndTimeInputsAreValidDates(filterUserInput, 'startDate')) {
+          startDate = DateFormats.dateAndTimeInputsToIsoString(filterUserInput, 'startDate').startDate
+        } else {
+          const dateError = { startDate: 'Enter a valid date' }
+          Object.assign(errors, generateErrorMessages(dateError))
+          errorSummary.push(generateErrorSummary(dateError)[0])
+        }
+      } else {
+        startDate = placementRequest.expectedArrival
+        dateFieldValues = DateFormats.isoDateToDateInputs(startDate, 'startDate')
+      }
+
       const matchingDetailsSummaryList = occupancyViewSummaryListForMatchingDetails(premises.bedCount, placementRequest)
-      const summary = occupancySummary(capacity.capacity, criteriaAsArray)
-      const calendar = occupancyCalendar(capacity.capacity, criteriaAsArray)
+      let summary: OccupancySummary
+      let calendar: Calendar
 
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+      if (!Object.keys(errors).length) {
+        const capacityDates = placementDates(startDate, durationDays)
+        const capacity = await this.premisesService.getCapacity(
+          token,
+          premisesId,
+          capacityDates.startDate,
+          capacityDates.endDate,
+        )
+
+        summary = occupancySummary(capacity.capacity, criteriaAsArray)
+        calendar = occupancyCalendar(capacity.capacity, criteriaAsArray)
+      }
 
       res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest,
         premises,
         apType,
+        ...dateFieldValues,
         startDate,
-        ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),
         durationDays,
         durationOptions: durationSelectOptions(durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteriaAsArray),
