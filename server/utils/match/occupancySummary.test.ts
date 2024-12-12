@@ -42,4 +42,30 @@ describe('occupancySummary', () => {
       available: [{ from: '2025-04-15', duration: 1 }],
     })
   })
+
+  it('can handle ranges spanning the GMT to BST clock change', () => {
+    const capacity = [
+      cas1PremiseCapacityForDayFactory.available().build({ date: '2025-03-30' }),
+      cas1PremiseCapacityForDayFactory.available().build({ date: '2025-03-31' }),
+    ]
+
+    const result = occupancySummary(capacity)
+
+    expect(result).toEqual({
+      available: [{ from: '2025-03-30', to: '2025-03-31', duration: 2 }],
+    })
+  })
+
+  it('can handle ranges spanning the BST to GMT clock change', () => {
+    const capacity = [
+      cas1PremiseCapacityForDayFactory.available().build({ date: '2025-10-26' }),
+      cas1PremiseCapacityForDayFactory.available().build({ date: '2025-10-27' }),
+    ]
+
+    const result = occupancySummary(capacity)
+
+    expect(result).toEqual({
+      available: [{ from: '2025-10-26', to: '2025-10-27', duration: 2 }],
+    })
+  })
 })

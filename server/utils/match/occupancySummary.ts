@@ -10,26 +10,23 @@ type DateRange = {
 }
 
 const daysToRanges = (days: Array<Cas1PremiseCapacityForDay>): Array<DateRange> =>
-  days
-    .reduce((ranges: Array<Omit<DateRange, 'duration'>>, capacityForDay) => {
-      if (!ranges.length) {
-        ranges.push({ from: capacityForDay.date })
-      } else {
-        const lastRange = ranges[ranges.length - 1]
-        const previousDate = lastRange.to || lastRange.from
+  days.reduce((ranges: Array<DateRange>, capacityForDay) => {
+    const newRange = { from: capacityForDay.date, duration: 1 }
+    if (!ranges.length) {
+      ranges.push(newRange)
+    } else {
+      const lastRange = ranges[ranges.length - 1]
+      const previousDate = lastRange.to || lastRange.from
 
-        if (differenceInDays(capacityForDay.date, previousDate) === 1) {
-          lastRange.to = capacityForDay.date
-        } else {
-          ranges.push({ from: capacityForDay.date })
-        }
+      if (differenceInDays(capacityForDay.date, previousDate) < 2) {
+        lastRange.to = capacityForDay.date
+        lastRange.duration += 1
+      } else {
+        ranges.push(newRange)
       }
-      return ranges
-    }, [])
-    .map(range => ({
-      ...range,
-      duration: range.to ? differenceInDays(range.to, range.from) + 1 : 1,
-    }))
+    }
+    return ranges
+  }, [])
 
 type OccupancySummary = {
   available?: Array<DateRange>
