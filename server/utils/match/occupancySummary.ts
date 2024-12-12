@@ -1,73 +1,58 @@
 import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { OccupancyFilterCriteria } from '@approved-premises/ui'
 import { dayHasAvailability } from './occupancy'
 
-export type DateRange = {
-  start: string
-  end: string
+type DateRange = {
+  from: string
+  to?: string
+  duration: number
 }
 
-const daysToRanges = (days: Array<Cas1PremiseCapacityForDay>) =>
-  days.reduce((ranges: Array<DateRange>, capacityForDay) => {
-    if (!ranges.length) {
-      ranges.push({ start: capacityForDay.date, end: capacityForDay.date })
-    } else {
-      const lastRange = ranges[ranges.length - 1]
-      if (differenceInDays(capacityForDay.date, lastRange.end) === 1) {
-        lastRange.end = capacityForDay.date
+const daysToRanges = (days: Array<Cas1PremiseCapacityForDay>): Array<DateRange> =>
+  days
+    .reduce((ranges: Array<Omit<DateRange, 'duration'>>, capacityForDay) => {
+      if (!ranges.length) {
+        ranges.push({ from: capacityForDay.date })
       } else {
-        ranges.push({ start: capacityForDay.date, end: capacityForDay.date })
+        const lastRange = ranges[ranges.length - 1]
+        const previousDate = lastRange.to || lastRange.from
+
+        if (differenceInDays(capacityForDay.date, previousDate) === 1) {
+          lastRange.to = capacityForDay.date
+        } else {
+          ranges.push({ from: capacityForDay.date })
+        }
       }
-    }
-    return ranges
-  }, [])
+      return ranges
+    }, [])
+    .map(range => ({
+      ...range,
+      duration: range.to ? differenceInDays(range.to, range.from) + 1 : 1,
+    }))
 
-export const renderDateRange = (dateRange: DateRange): string => {
-  let render = `${DateFormats.isoDateToUIDate(dateRange.start)}`
-
-  const totalDays =
-    differenceInDays(DateFormats.isoToDateObj(dateRange.end), DateFormats.isoToDateObj(dateRange.start)) + 1
-  if (totalDays > 1) {
-    render += ` to ${DateFormats.isoDateToUIDate(dateRange.end)}`
-  }
-
-  const duration = DateFormats.formatDuration(daysToWeeksAndDays(totalDays)).replace(', ', ' and ')
-  render += ` <strong>(${duration})</strong>`
-
-  return render
+type OccupancySummary = {
+  available?: Array<DateRange>
+  overbooked?: Array<DateRange>
 }
 
-export const occupancySummary = (capacity: Array<Cas1PremiseCapacityForDay>): string => {
+export const occupancySummary = (
+  capacity: Array<Cas1PremiseCapacityForDay>,
+  criteria: Array<OccupancyFilterCriteria> = [],
+): OccupancySummary => {
   const availableDays: Array<Cas1PremiseCapacityForDay> = []
   const overbookedDays: Array<Cas1PremiseCapacityForDay> = []
 
   capacity.forEach(capacityForDay => {
-    if (dayHasAvailability(capacityForDay)) {
+    if (dayHasAvailability(capacityForDay, criteria)) {
       availableDays.push(capacityForDay)
     } else {
       overbookedDays.push(capacityForDay)
     }
   })
 
-  if (availableDays.length === 0) {
-    return `<p class="govuk-heading-m">There are no spaces available for the dates you have selected.</p>`
+  return {
+    available: availableDays.length ? daysToRanges(availableDays) : undefined,
+    overbooked: overbookedDays.length ? daysToRanges(overbookedDays) : undefined,
   }
-  if (overbookedDays.length === 0) {
-    return `<p class="govuk-heading-m">The placement dates you have selected are available.</p>`
-  }
-
-  const availableRanges = daysToRanges(availableDays).map(renderDateRange)
-  const overbookedRanges = daysToRanges(overbookedDays).map(renderDateRange)
-
-  return `
-    <h3 class="govuk-heading-m">Available on:</h3>
-    <ul>
-      ${availableRanges.map(range => `<li>${range}</li>`).join('')}
-    </ul>
-    <h3 class="govuk-heading-m">Overbooked on:</h3>
-    <ul>
-      ${overbookedRanges.map(range => `<li>${range}</li>`).join('')}
-    </ul>
-  `
 }

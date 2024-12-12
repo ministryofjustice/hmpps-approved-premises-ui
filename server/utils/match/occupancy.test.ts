@@ -1,17 +1,64 @@
 import { faker } from '@faker-js/faker'
-import { cas1PremiseCapacityFactory, cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
-import { dateRangeAvailability, dayAvailabilityCount, dayHasAvailability, durationSelectOptions } from './occupancy'
+import { Cas1PremiseCapacityForDay } from '@approved-premises/api'
+import { cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
+import { dayAvailabilityCount, dayHasAvailability, durationSelectOptions } from './occupancy'
+import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
+
+const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDayFactory.build({
+  date: '2025-02-02',
+  totalBedCount: 20,
+  availableBedCount: 18,
+  bookingCount: 20,
+  characteristicAvailability: [
+    premiseCharacteristicAvailability.build({
+      characteristic: 'hasEnSuite',
+      availableBedsCount: 1,
+      bookingsCount: 2,
+    }),
+    premiseCharacteristicAvailability.build({
+      characteristic: 'isSuitedForSexOffenders',
+      availableBedsCount: 5,
+      bookingsCount: 2,
+    }),
+    premiseCharacteristicAvailability.build({
+      characteristic: 'isWheelchairDesignated',
+      availableBedsCount: 2,
+      bookingsCount: 1,
+    }),
+    premiseCharacteristicAvailability.build({
+      characteristic: 'isStepFreeDesignated',
+      availableBedsCount: 1,
+      bookingsCount: 1,
+    }),
+  ],
+})
 
 describe('dayAvailabilityCount', () => {
-  it('returns the count of available spaces for the day', () => {
+  it('returns the count of available spaces', () => {
     const availableBedCount = faker.number.int({ min: 1, max: 20 })
     const bookingCount = faker.number.int({ min: 1, max: 30 })
     const dayCapacity = cas1PremiseCapacityForDayFactory.build({
       availableBedCount,
       bookingCount,
     })
+    const expectedCount = availableBedCount - bookingCount
 
-    expect(dayAvailabilityCount(dayCapacity)).toEqual(availableBedCount - bookingCount)
+    expect(dayAvailabilityCount(dayCapacity)).toEqual(expectedCount)
+    expect(dayAvailabilityCount(dayCapacity, [])).toEqual(expectedCount)
+  })
+
+  describe('when criteria are provided', () => {
+    it('returns the count of available spaces that match the criteria', () => {
+      expect(dayAvailabilityCount(capacityWithCriteria, ['hasEnSuite'])).toEqual(-1)
+      expect(dayAvailabilityCount(capacityWithCriteria, ['isSuitedForSexOffenders'])).toEqual(3)
+      expect(dayAvailabilityCount(capacityWithCriteria, ['isWheelchairDesignated'])).toEqual(1)
+    })
+
+    it('returns the lowest count that match any criteria', () => {
+      expect(
+        dayAvailabilityCount(capacityWithCriteria, ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated']),
+      ).toEqual(-1)
+    })
   })
 })
 
@@ -42,56 +89,31 @@ describe('dayHasAvailability', () => {
 
     expect(dayHasAvailability(dayCapacity)).toBe(false)
   })
-})
 
-describe('dateRangeAvailability', () => {
-  it('returns "available" if all dates have availability', () => {
-    const premisesCapacity = cas1PremiseCapacityFactory.build({
-      startDate: '2024-12-05',
-      endDate: '2024-12-05',
-      capacity: [
-        cas1PremiseCapacityForDayFactory.build({
-          availableBedCount: 15,
-          bookingCount: 0,
-        }),
-      ],
+  describe('when criteria are provided', () => {
+    it('returns true if the count of available spaces that match the criteria is more than 0', () => {
+      expect(dayHasAvailability(capacityWithCriteria, ['isSuitedForSexOffenders'])).toEqual(true)
     })
 
-    expect(dateRangeAvailability(premisesCapacity)).toEqual('available')
-  })
-
-  it('returns "partial" if only some of the dates have availability', () => {
-    const premisesCapacity = cas1PremiseCapacityFactory.build({
-      startDate: '2024-12-05',
-      endDate: '2024-12-05',
-      capacity: [
-        cas1PremiseCapacityForDayFactory.build({
-          availableBedCount: 15,
-          bookingCount: 0,
-        }),
-        cas1PremiseCapacityForDayFactory.build({
-          availableBedCount: 15,
-          bookingCount: 20,
-        }),
-      ],
+    it('returns false if the count of available spaces that match the criteria is 0', () => {
+      expect(dayHasAvailability(capacityWithCriteria, ['isStepFreeDesignated'])).toEqual(false)
     })
 
-    expect(dateRangeAvailability(premisesCapacity)).toEqual('partial')
-  })
-
-  it('returns "none" if none of the dates have availability', () => {
-    const premisesCapacity = cas1PremiseCapacityFactory.build({
-      startDate: '2024-12-05',
-      endDate: '2024-12-05',
-      capacity: [
-        cas1PremiseCapacityForDayFactory.build({
-          availableBedCount: 15,
-          bookingCount: 20,
-        }),
-      ],
+    it('returns false if the count of available spaces that match the criteria is less than', () => {
+      expect(dayHasAvailability(capacityWithCriteria, ['hasEnSuite'])).toEqual(false)
     })
 
-    expect(dateRangeAvailability(premisesCapacity)).toEqual('none')
+    it('returns true if the lowest count that match any criteria is more than 0', () => {
+      expect(dayHasAvailability(capacityWithCriteria, ['isSuitedForSexOffenders', 'isWheelchairDesignated'])).toEqual(
+        true,
+      )
+    })
+
+    it('returns false if the lowest count that match any criteria is less than 0', () => {
+      expect(
+        dayHasAvailability(capacityWithCriteria, ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated']),
+      ).toEqual(false)
+    })
   })
 })
 

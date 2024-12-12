@@ -7,6 +7,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "./partials/_occupancySummary.njk" import occupancySummary %}
 {% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 
@@ -104,10 +105,7 @@
             </form>
         </div>
 
-        {{ govukNotificationBanner({
-            html: occupancySummaryHtml,
-            classes: 'govuk-notification-banner--full-width-content'
-        }) }}
+        {{ occupancySummary(summary) }}
 
         <section id="calendar-key">
             <h3 class="govuk-heading-m">Key</h3>
@@ -124,7 +122,6 @@
                 </li>
             </ul>
         </section>
-
 
         <section aria-describedby="calendar-key">
             {{ occupancyCalendar(calendar) }}

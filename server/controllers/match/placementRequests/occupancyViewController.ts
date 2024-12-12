@@ -60,8 +60,8 @@ export default class {
         capacity.premise.bedCount,
         placementRequest,
       )
-      const occupancySummaryHtml = occupancySummary(capacity)
-      const calendar = occupancyCalendar(capacity, criteriaAsArray)
+      const summary = occupancySummary(capacity.capacity, criteriaAsArray)
+      const calendar = occupancyCalendar(capacity.capacity, criteriaAsArray)
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       res.render('match/placementRequests/occupancyView/view', {
@@ -76,7 +76,7 @@ export default class {
         durationOptions: durationSelectOptions(durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteriaAsArray),
         matchingDetailsSummaryList,
-        occupancySummaryHtml,
+        summary,
         calendar,
         errors,
         errorSummary,

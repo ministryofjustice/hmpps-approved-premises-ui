@@ -1,10 +1,10 @@
 import { ApType, Cas1PremiseCapacity, PlacementRequest, PlacementRequestDetail, Premises } from '@approved-premises/api'
+import { OccupancyFilterCriteria } from '@approved-premises/ui'
 import Page from '../page'
-import { occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
+import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
 import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
-import { dateRangeAvailability } from '../../../server/utils/match/occupancy'
 
 export default class OccupancyViewPage extends Page {
   constructor(premisesName: string) {
@@ -56,12 +56,12 @@ export default class OccupancyViewPage extends Page {
     this.clickApplyFilter()
   }
 
-  shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity) {
-    const availability = dateRangeAvailability(premiseCapacity)
+  shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity, criteria: Array<OccupancyFilterCriteria> = []) {
+    const summary = occupancySummary(premiseCapacity.capacity, criteria)
 
-    if (availability === 'available') {
+    if (!summary.overbooked) {
       this.shouldShowBanner('The placement dates you have selected are available.')
-    } else if (availability === 'none') {
+    } else if (!summary.available) {
       this.shouldShowBanner('There are no spaces available for the dates you have selected.')
     } else {
       this.shouldShowBanner('Available on:')
@@ -73,15 +73,15 @@ export default class OccupancyViewPage extends Page {
     cy.get('.calendar__availability').contains(copy).should('exist')
   }
 
-  shouldShowOccupancyCalendar(premiseCapacity: Cas1PremiseCapacity) {
+  shouldShowOccupancyCalendar(premiseCapacity: Cas1PremiseCapacity, criteria: Array<OccupancyFilterCriteria> = []) {
     const firstMonth = DateFormats.isoDateToMonthAndYear(premiseCapacity.startDate)
     cy.get('.govuk-heading-m').contains(firstMonth).should('exist')
 
-    const availability = dateRangeAvailability(premiseCapacity)
-    if (availability === 'available' || availability === 'partial') {
+    const summary = occupancySummary(premiseCapacity.capacity, criteria)
+    if (summary.available) {
       this.shouldShowCalendarCell('Available')
     }
-    if (availability === 'none' || availability === 'partial') {
+    if (summary.overbooked) {
       this.shouldShowCalendarCell(/-?\d+ in total/)
     }
   }

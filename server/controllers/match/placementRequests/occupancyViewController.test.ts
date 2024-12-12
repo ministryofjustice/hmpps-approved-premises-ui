@@ -113,8 +113,8 @@ describe('OccupancyViewController', () => {
           premiseCapacity.premise.bedCount,
           placementRequestDetail,
         ),
-        occupancySummaryHtml: occupancySummary(premiseCapacity),
-        calendar: occupancyCalendar(premiseCapacity),
+        summary: occupancySummary(premiseCapacity.capacity),
+        calendar: occupancyCalendar(premiseCapacity.capacity),
         errors: {},
         errorSummary: [],
       })
@@ -219,6 +219,7 @@ describe('OccupancyViewController', () => {
           ],
           durationDays: 100,
           startDate: '2025-04-30',
+          summary: occupancySummary(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
           calendar: occupancyCalendar(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
         }),
       )

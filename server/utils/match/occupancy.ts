@@ -1,20 +1,24 @@
-import type { Cas1PremiseCapacity, Cas1PremiseCapacityForDay } from '@approved-premises/api'
+import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { OccupancyFilterCriteria, SelectOption } from '@approved-premises/ui'
 
-export const dayAvailabilityCount = (dayCapacity: Cas1PremiseCapacityForDay) => {
-  return dayCapacity.availableBedCount - dayCapacity.bookingCount
+export const dayAvailabilityCount = (
+  dayCapacity: Cas1PremiseCapacityForDay,
+  criteria: Array<OccupancyFilterCriteria> = [],
+) => {
+  return criteria.length
+    ? Math.min(
+        ...dayCapacity.characteristicAvailability
+          .filter(availability => criteria.includes(availability.characteristic as OccupancyFilterCriteria))
+          .map(availability => availability.availableBedsCount - availability.bookingsCount),
+      )
+    : dayCapacity.availableBedCount - dayCapacity.bookingCount
 }
 
-export const dayHasAvailability = (dayCapacity: Cas1PremiseCapacityForDay) => {
-  return dayAvailabilityCount(dayCapacity) > 0
-}
-
-export const dateRangeAvailability = (capacity: Cas1PremiseCapacity) => {
-  const availableDays = capacity.capacity.filter(dayHasAvailability)
-
-  if (availableDays.length === capacity.capacity.length) return 'available'
-  if (availableDays.length === 0) return 'none'
-  return 'partial'
+export const dayHasAvailability = (
+  dayCapacity: Cas1PremiseCapacityForDay,
+  criteria: Array<OccupancyFilterCriteria> = [],
+) => {
+  return dayAvailabilityCount(dayCapacity, criteria) > 0
 }
 
 const durationOptionsMap: Record<number, string> = {
