@@ -14,4 +14,5 @@ export default Factory.define<Cas1PremisesSummary>(() => ({
   outOfServiceBeds: faker.number.int({ min: 0, max: 50 }),
   apArea: apAreaFactory.build(),
   supportsSpaceBookings: true,
+  overbookingSummary: [],
 }))
