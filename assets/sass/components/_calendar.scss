@@ -41,6 +41,10 @@
 
     dd {
       margin: 0;
+
+      &:only-of-type {
+        margin-bottom: govuk-spacing(4);
+      }
     }
   }
 
