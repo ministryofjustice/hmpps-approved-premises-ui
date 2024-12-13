@@ -7,11 +7,6 @@ import {
   ApprovedPremisesAssessment,
   ApprovedPremisesUserPermission,
   ApprovedPremisesUserRole,
-  ArrayOfOASysOffenceDetailsQuestions,
-  ArrayOfOASysRiskManagementPlanQuestions,
-  ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
-  ArrayOfOASysRiskToSelfQuestions,
-  ArrayOfOASysSupportingInformationQuestions,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   AssessmentTask,
   Cas1CruManagementArea,
@@ -331,12 +326,7 @@ export type GroupedMatchTasks = Record<PlacementRequestStatus, Array<PlacementRe
   placementApplications: Array<PlacementApplicationTask>
 }
 
-export type OasysImportArrays =
-  | ArrayOfOASysOffenceDetailsQuestions
-  | ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
-  | ArrayOfOASysSupportingInformationQuestions
-  | ArrayOfOASysRiskToSelfQuestions
-  | ArrayOfOASysRiskManagementPlanQuestions
+export type OasysImportArrays = Array<OASysQuestion> | Array<OASysSupportingInformationQuestion>
 
 export type OasysSummariesSection = { [index: string]: OasysImportArrays }
 

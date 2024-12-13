@@ -1,13 +1,13 @@
 import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, ArrayOfOASysOffenceDetailsQuestions } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type OffenceDetailsBody = {
   offenceDetailsAnswers: Record<string, string>
-  offenceDetailsSummaries: ArrayOfOASysOffenceDetailsQuestions
+  offenceDetailsSummaries: Array<OASysQuestion>
 }
 
 @Page({

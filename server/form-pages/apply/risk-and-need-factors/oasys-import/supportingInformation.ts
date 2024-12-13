@@ -1,13 +1,13 @@
 import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, ArrayOfOASysSupportingInformationQuestions } from '@approved-premises/api'
+import { ApprovedPremisesApplication, OASysSupportingInformationQuestion } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import { fetchOptionalOasysSections, getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type SupportingInformationBody = {
   supportingInformationAnswers: Record<string, string>
-  supportingInformationSummaries: ArrayOfOASysSupportingInformationQuestions
+  supportingInformationSummaries: Array<OASysSupportingInformationQuestion>
 }
 
 @Page({

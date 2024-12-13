@@ -1,13 +1,13 @@
 import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, ArrayOfOASysRiskToSelfQuestions } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RiskToSelfBody = {
   riskToSelfAnswers: Record<string, string>
-  riskToSelfSummaries: ArrayOfOASysRiskToSelfQuestions
+  riskToSelfSummaries: Array<OASysQuestion>
 }
 
 @Page({

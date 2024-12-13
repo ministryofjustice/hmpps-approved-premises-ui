@@ -1,14 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Record<string, string>
-  roshSummaries: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+  roshSummaries: Array<OASysQuestion>
 }
 
 @Page({
