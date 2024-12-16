@@ -46,7 +46,7 @@ describe('roleCheckboxUtils', () => {
         {
           text: 'Future manager',
           value: 'future_manager',
-          hint: { text: 'For digital team use only' },
+          hint: { text: 'Provides access to manage and creating out of service beds' },
           checked: false,
         },
       ])

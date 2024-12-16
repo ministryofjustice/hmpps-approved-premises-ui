@@ -11,6 +11,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'workflow_manager',
   'cru_member',
   'cru_member_find_and_book_beta',
+  'cru_member_enable_out_of_service_beds',
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',
   'excluded_from_placement_application_allocation',
@@ -65,28 +66,27 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   },
   cru_member: {
     label: 'CRU member',
-    hint: 'Manage out of service beds across all premises and areas',
+    hint: 'Assign to CRU Members who are not in the Find and Book Beta',
   },
   cru_member_enable_out_of_service_beds: {
-    label: 'CRU member enable out of service beds',
-    hint: 'Enable out of service beds',
+    label: 'CRU member - Enable out of service beds',
+    hint: "Assign in addition to 'CRU member' or 'CRU member - Find and book beta' to enable access to out of service beds",
   },
   cru_member_find_and_book_beta: {
-    label: 'CRU member beta (find and book)',
-    hint: 'Create and amend space bookings',
+    label: 'CRU member - Find and book beta',
+    hint: 'Assign to CRU Members who are in the Find and Book Beta',
   },
-
   report_viewer: {
     label: 'Report Viewer',
     hint: 'View and download reports',
   },
   future_manager: {
     label: 'Future manager',
-    hint: 'For digital team use only',
+    hint: 'Provides access to manage and creating out of service beds',
   },
   user_manager: {
     label: 'User manager',
-    hint: 'For digital team use only',
+    hint: 'Add, update and disable users',
   },
   janitor: {
     label: 'Janitor',
