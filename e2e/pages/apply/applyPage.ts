@@ -30,12 +30,6 @@ export class ApplyPage extends BasePage {
     await this.fillDateField({ year, month, day })
   }
 
-  async fillNamedDateField({ day, month, year }: { day: string; month: string; year: string }, fieldLabel: string) {
-    await this.page.locator(`#${fieldLabel}-day`).fill(day)
-    await this.page.locator(`#${fieldLabel}-month`).fill(month)
-    await this.page.locator(`#${fieldLabel}-year`).fill(year)
-  }
-
   async clickTab(title: string) {
     await this.page.getByRole('link', { name: title }).click()
   }

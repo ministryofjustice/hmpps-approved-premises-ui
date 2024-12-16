@@ -20,7 +20,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
     true,
   )
   const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id)
-  const { premisesName } = await matchAndBookApplication({
+  const { premisesName, newDatesOfPlacement } = await matchAndBookApplication({
     applicationId: id,
     page,
     apType,
@@ -32,5 +32,9 @@ test('Apply, assess, match and book an application for an Approved Premises with
   })
   await signOut(page)
   await signIn(page, futureManager)
-  await manageBooking({ page, premisesName, datesOfPlacement })
+  await manageBooking({
+    page,
+    premisesName,
+    datesOfPlacement: newDatesOfPlacement,
+  })
 })

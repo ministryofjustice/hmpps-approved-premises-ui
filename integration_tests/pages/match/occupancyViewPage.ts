@@ -85,4 +85,14 @@ export default class OccupancyViewPage extends Page {
       this.shouldShowCalendarCell(/-?\d+ total/)
     }
   }
+
+  shouldFillBookYourPlacementFormDates(arrivalDate: string, departureDate: string) {
+    this.completeDateInputs('arrivalDate', arrivalDate)
+    this.completeDateInputs('departureDate', departureDate)
+  }
+
+  shouldShowErrorSummaryAndErrorMessage(message: string): void {
+    cy.get('.govuk-error-summary').should('contain', message)
+    cy.get(`.govuk-error-message`).should('contain', message)
+  }
 }

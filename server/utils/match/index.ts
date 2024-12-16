@@ -33,6 +33,7 @@ import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
+export { validateSpaceBooking } from './validateSpaceBooking'
 
 type PlacementDates = {
   placementLength: number
