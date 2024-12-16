@@ -1,5 +1,4 @@
-import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
-import type { OccupancyFilterCriteria } from '@approved-premises/ui'
+import type { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 import { dayAvailabilityCount } from './occupancy'
 
@@ -19,7 +18,7 @@ export type Calendar = Array<CalendarMonth>
 
 export const occupancyCalendar = (
   capacity: Array<Cas1PremiseCapacityForDay>,
-  criteria: Array<OccupancyFilterCriteria> = [],
+  criteria: Array<Cas1SpaceBookingCharacteristic> = [],
 ): Calendar => {
   return capacity.reduce<Calendar>((calendar, day) => {
     const monthAndYear = DateFormats.isoDateToMonthAndYear(day.date)

@@ -1,6 +1,5 @@
-import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
+import type { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
-import { OccupancyFilterCriteria } from '@approved-premises/ui'
 import { dayAvailabilityCount } from './occupancy'
 
 type DateRange = {
@@ -36,7 +35,7 @@ export type OccupancySummary = {
 
 export const occupancySummary = (
   capacity: Array<Cas1PremiseCapacityForDay>,
-  criteria: Array<OccupancyFilterCriteria> = [],
+  criteria: Array<Cas1SpaceBookingCharacteristic> = [],
 ): OccupancySummary => {
   const availableDays: Array<Cas1PremiseCapacityForDay> = []
   const overbookedDays: Array<Cas1PremiseCapacityForDay> = []

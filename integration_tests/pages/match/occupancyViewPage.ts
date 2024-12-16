@@ -2,10 +2,10 @@ import {
   ApType,
   Cas1PremiseCapacity,
   Cas1PremisesSummary,
+  Cas1SpaceBookingCharacteristic,
   PlacementRequest,
   PlacementRequestDetail,
 } from '@approved-premises/api'
-import { OccupancyFilterCriteria } from '@approved-premises/ui'
 import Page from '../page'
 import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
 import { createQueryString } from '../../../server/utils/utils'
@@ -65,7 +65,10 @@ export default class OccupancyViewPage extends Page {
     this.clickApplyFilter()
   }
 
-  shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity, criteria: Array<OccupancyFilterCriteria> = []) {
+  shouldShowOccupancySummary(
+    premiseCapacity: Cas1PremiseCapacity,
+    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+  ) {
     const summary = occupancySummary(premiseCapacity.capacity, criteria)
 
     if (!summary.overbooked) {
@@ -82,7 +85,10 @@ export default class OccupancyViewPage extends Page {
     cy.get('.calendar__availability').contains(copy).should('exist')
   }
 
-  shouldShowOccupancyCalendar(premiseCapacity: Cas1PremiseCapacity, criteria: Array<OccupancyFilterCriteria> = []) {
+  shouldShowOccupancyCalendar(
+    premiseCapacity: Cas1PremiseCapacity,
+    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+  ) {
     const firstMonth = DateFormats.isoDateToMonthAndYear(premiseCapacity.startDate)
     cy.get('.govuk-heading-m').contains(firstMonth).should('exist')
 

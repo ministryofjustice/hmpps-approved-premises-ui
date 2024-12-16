@@ -1,14 +1,14 @@
-import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
-import { OccupancyFilterCriteria, SelectOption } from '@approved-premises/ui'
+import { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { SelectOption } from '@approved-premises/ui'
 
 export const dayAvailabilityCount = (
   dayCapacity: Cas1PremiseCapacityForDay,
-  criteria: Array<OccupancyFilterCriteria> = [],
+  criteria: Array<Cas1SpaceBookingCharacteristic> = [],
 ) => {
   return criteria.length
     ? Math.min(
         ...dayCapacity.characteristicAvailability
-          .filter(availability => criteria.includes(availability.characteristic as OccupancyFilterCriteria))
+          .filter(availability => criteria.includes(availability.characteristic as Cas1SpaceBookingCharacteristic))
           .map(availability => availability.availableBedsCount - availability.bookingsCount),
       )
     : dayCapacity.availableBedCount - dayCapacity.bookingCount
@@ -37,7 +37,7 @@ export const durationSelectOptions = (duration?: number): Array<SelectOption> =>
   }))
 }
 
-export const occupancyCriteriaMap: Record<OccupancyFilterCriteria, string> = {
+export const occupancyCriteriaMap: Record<Cas1SpaceBookingCharacteristic, string> = {
   isWheelchairDesignated: 'Wheelchair accessible',
   isSingle: 'Single room',
   isStepFreeDesignated: 'Step-free',

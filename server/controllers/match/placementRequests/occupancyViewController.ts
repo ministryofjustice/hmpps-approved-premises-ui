@@ -1,7 +1,7 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import { ApType } from '@approved-premises/api'
+import type { ApType, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
-import type { ObjectWithDateParts, OccupancyFilterCriteria } from '@approved-premises/ui'
+import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   occupancySummary,
@@ -31,7 +31,7 @@ interface NewRequest extends Request {
   query: ObjectWithDateParts<'startDate'> & {
     durationDays: string
     apType: ApType
-    criteria: Array<OccupancyFilterCriteria> | OccupancyFilterCriteria
+    criteria: Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
   }
 }
 
@@ -51,7 +51,7 @@ export default class {
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
 
-      let criteriaAsArray: Array<OccupancyFilterCriteria>
+      let criteriaAsArray: Array<Cas1SpaceBookingCharacteristic>
       if (criteria) {
         criteriaAsArray = Array.isArray(criteria) ? criteria : [criteria]
       }
