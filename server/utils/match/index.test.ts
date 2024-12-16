@@ -1,4 +1,10 @@
-import type { ApType, ApprovedPremisesApplication, FullPerson, PlacementCriteria } from '@approved-premises/api'
+import type {
+  ApType,
+  ApprovedPremisesApplication,
+  Cas1SpaceCharacteristic,
+  FullPerson,
+  PlacementCriteria,
+} from '@approved-premises/api'
 import { when } from 'jest-when'
 import paths from '../../paths/match'
 import {
@@ -61,7 +67,6 @@ import { textValue } from '../applications/helpers'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
-jest.mock('../utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('matchUtils', () => {
@@ -251,6 +256,7 @@ describe('matchUtils', () => {
       const apType = 'pipe'
       const startDate = '2025-04-14'
       const durationDays = '84'
+      const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = ['isWheelchairDesignated', 'isSingle']
 
       const result = occupancyViewLink({
         placementRequestId,
@@ -258,20 +264,48 @@ describe('matchUtils', () => {
         apType,
         startDate,
         durationDays,
+        spaceCharacteristics,
       })
 
       expect(result).toEqual(
         `${paths.v2Match.placementRequests.search.occupancy({
           id: placementRequestId,
           premisesId,
-        })}${createQueryString(
-          {
-            apType,
-            startDate,
-            durationDays,
-          },
-          { addQueryPrefix: true },
-        )}`,
+        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle`,
+      )
+    })
+
+    it('filters out non booking-specific search criteria', () => {
+      const placementRequestId = '123'
+      const premisesId = 'abc'
+      const apType = 'pipe'
+      const startDate = '2025-04-14'
+      const durationDays = '84'
+      const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = [
+        'isWheelchairDesignated',
+        'isIAP',
+        'hasArsonInsuranceConditions',
+        'isSingle',
+        'acceptsHateCrimeOffenders',
+        'hasEnSuite',
+        'isArsonDesignated',
+        'isArsonSuitable',
+      ]
+
+      const result = occupancyViewLink({
+        placementRequestId,
+        premisesId,
+        apType,
+        startDate,
+        durationDays,
+        spaceCharacteristics,
+      })
+
+      expect(result).toEqual(
+        `${paths.v2Match.placementRequests.search.occupancy({
+          id: placementRequestId,
+          premisesId,
+        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
       )
     })
   })
@@ -303,7 +337,7 @@ describe('matchUtils', () => {
             startDate,
             durationDays,
           },
-          { addQueryPrefix: true },
+          { addQueryPrefix: true, arrayFormat: 'repeat' },
         )}`,
       )
     })

@@ -104,6 +104,7 @@ describe('OccupancyViewController', () => {
           { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
           { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
         ],
+        criteria: undefined,
         matchingDetailsSummaryList: occupancyViewSummaryListForMatchingDetails(
           premiseCapacity.premise.bedCount,
           placementRequestDetail,
@@ -208,6 +209,7 @@ describe('OccupancyViewController', () => {
             { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
             { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
           ],
+          criteria: ['isSingle', 'isWheelchairDesignated'],
           durationDays: 100,
           startDate: '2025-04-30',
           'startDate-day': '30',
@@ -262,6 +264,7 @@ describe('OccupancyViewController', () => {
       apType,
       startDate,
       durationDays,
+      criteria: '',
       'arrivalDate-day': arrivalDay,
       'arrivalDate-month': arrivalMonth,
       'arrivalDate-year': arrivalYear,
@@ -290,6 +293,7 @@ describe('OccupancyViewController', () => {
       const body = {
         ...validBookingBody,
         'arrivalDate-day': emptyDay,
+        criteria: 'isWheelchairDesignated,isSuitedForSexOffenders',
       }
       const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
@@ -303,7 +307,7 @@ describe('OccupancyViewController', () => {
         'arrivalDate',
       )
 
-      const expectedParams = `apType=${apType}&startDate=${startDate}&durationDays=${durationDays}`
+      const expectedParams = `apType=${apType}&startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
 
       expect(response.redirect).toHaveBeenCalledWith(
         `${matchPaths.v2Match.placementRequests.search.occupancy({

@@ -1,6 +1,7 @@
 import { addDays } from 'date-fns'
 import type {
   ApType,
+  Cas1SpaceCharacteristic,
   Gender,
   PlacementCriteria,
   PlacementRequest,
@@ -31,6 +32,7 @@ import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { placementDates } from './placementDates'
+import { occupancyCriteriaMap } from './occupancy'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
@@ -87,13 +89,16 @@ export const occupancyViewLink = ({
   apType,
   startDate,
   durationDays,
+  spaceCharacteristics = [],
 }: {
   placementRequestId: string
   premisesId: string
   apType: string
   startDate: string
   durationDays: string
+  spaceCharacteristics: Array<Cas1SpaceCharacteristic>
 }): string => {
+  const criteria = spaceCharacteristics.filter(name => Object.keys(occupancyCriteriaMap).includes(name))
   return `${matchPaths.v2Match.placementRequests.search.occupancy({
     id: placementRequestId,
     premisesId,
@@ -102,8 +107,9 @@ export const occupancyViewLink = ({
       apType,
       startDate,
       durationDays,
+      criteria,
     },
-    { addQueryPrefix: true },
+    { addQueryPrefix: true, arrayFormat: 'repeat' },
   )}`
 }
 

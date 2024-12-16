@@ -102,6 +102,7 @@ export default class {
         durationDays,
         durationOptions: durationSelectOptions(durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteriaAsArray),
+        criteria: criteriaAsArray,
         matchingDetailsSummaryList,
         summary,
         calendar,
@@ -123,13 +124,14 @@ export default class {
         if (errors.departureDate) {
           addErrorMessageToFlash(req, errors.departureDate, 'departureDate')
         }
-        const { startDate, durationDays, apType } = body
+        const { startDate, durationDays, apType, criteria } = body
         const redirectUrl = occupancyViewLink({
           placementRequestId: req.params.id,
           premisesId: req.params.premisesId,
           apType,
           startDate,
           durationDays,
+          spaceCharacteristics: criteria.split(','),
         })
         res.redirect(redirectUrl)
       } else {

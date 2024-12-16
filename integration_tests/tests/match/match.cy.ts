@@ -66,6 +66,9 @@ context('Placement Requests', () => {
     // And the new search criteria should be selected
     searchPage.shouldShowSearchParametersInInputs(newSearchParameters)
 
+    // And the results should have links with the correct AP type and criteria
+    searchPage.shouldHaveSearchParametersInLinks(newSearchParameters)
+
     // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
@@ -91,7 +94,6 @@ context('Placement Requests', () => {
       })
 
       // And the second request to the API should contain the new criteria I submitted
-
       expect(secondSearchRequestBody).to.contain({
         applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
