@@ -10,16 +10,17 @@ type DateRange = {
 }
 
 const daysToRanges = (days: Array<Cas1PremiseCapacityForDay>): Array<DateRange> =>
-  days.reduce((ranges: Array<DateRange>, capacityForDay) => {
-    const newRange = { from: capacityForDay.date, duration: 1 }
+  days.reduce((ranges: Array<DateRange>, { date }) => {
+    const newRange = { from: date, duration: 1 }
+
     if (!ranges.length) {
       ranges.push(newRange)
     } else {
       const lastRange = ranges[ranges.length - 1]
       const previousDate = lastRange.to || lastRange.from
 
-      if (differenceInDays(capacityForDay.date, previousDate) < 2) {
-        lastRange.to = capacityForDay.date
+      if (differenceInDays(date, previousDate) < 2) {
+        lastRange.to = date
         lastRange.duration += 1
       } else {
         ranges.push(newRange)

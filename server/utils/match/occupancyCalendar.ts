@@ -22,12 +22,12 @@ export const occupancyCalendar = (
   criteria: Array<OccupancyFilterCriteria> = [],
 ): Calendar => {
   return capacity.reduce<Calendar>((calendar, day) => {
-    const dayMonthAndYear = DateFormats.isoDateToMonthAndYear(day.date)
-    let currentMonth = calendar.find(month => month.name === dayMonthAndYear)
+    const monthAndYear = DateFormats.isoDateToMonthAndYear(day.date)
+    let currentMonth = calendar.find(month => month.name === monthAndYear)
 
     if (!currentMonth) {
       currentMonth = {
-        name: dayMonthAndYear,
+        name: monthAndYear,
         days: [],
       }
       calendar.push(currentMonth)
