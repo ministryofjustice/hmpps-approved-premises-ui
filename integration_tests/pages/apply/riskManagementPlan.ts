@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, ArrayOfOASysRiskManagementPlanQuestions } from '@approved-premises/api'
+import { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
@@ -6,7 +6,7 @@ import ApplyPage from './applyPage'
 export default class RiskManagementPlan extends ApplyPage {
   constructor(
     application: ApprovedPremisesApplication,
-    private readonly riskRiskManagementPlanSummaries: ArrayOfOASysRiskManagementPlanQuestions,
+    private readonly riskRiskManagementPlanSummaries: Array<OASysQuestion>,
     private readonly oasysMissing: boolean,
   ) {
     const title = oasysMissing ? 'Provide risk information' : 'Risk management plan'

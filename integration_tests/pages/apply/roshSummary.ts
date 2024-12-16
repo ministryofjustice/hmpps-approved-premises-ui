@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions } from '@approved-premises/api'
+import { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
@@ -6,7 +6,7 @@ import ApplyPage from './applyPage'
 export default class RoshSummary extends ApplyPage {
   constructor(
     application: ApprovedPremisesApplication,
-    private readonly roshSummary: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
+    private readonly roshSummary: Array<OASysQuestion>,
     private readonly oasysMissing: boolean,
   ) {
     const title = oasysMissing ? 'Provide risk information' : 'RoSH summary'

@@ -1,50 +1,37 @@
 import { add } from 'date-fns'
 import {
-  AnyValue,
   ApprovedPremisesApplication,
   ApprovedPremisesUserPermission,
-  ArrayOfOASysOffenceDetailsQuestions,
-  ArrayOfOASysRiskManagementPlanQuestions,
-  ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
-  ArrayOfOASysRiskToSelfQuestions,
-  ArrayOfOASysSupportingInformationQuestions,
+  OASysQuestion,
+  OASysSupportingInformationQuestion,
+  Unit,
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 import { TableCell, TableRow } from '@approved-premises/ui'
 
 import { DateFormats } from '../../server/utils/dateUtils'
 
-const roshSummariesFromApplication = (
-  application: ApprovedPremisesApplication,
-): ArrayOfOASysRiskOfSeriousHarmSummaryQuestions => {
-  return application.data['oasys-import']['rosh-summary'].roshSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+const roshSummariesFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
+  return application.data['oasys-import']['rosh-summary'].roshSummaries as Array<OASysQuestion>
 }
 
-const offenceDetailSummariesFromApplication = (
-  application: ApprovedPremisesApplication,
-): ArrayOfOASysOffenceDetailsQuestions => {
-  return application.data['oasys-import']['offence-details']
-    .offenceDetailsSummaries as ArrayOfOASysOffenceDetailsQuestions
+const offenceDetailSummariesFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
+  return application.data['oasys-import']['offence-details'].offenceDetailsSummaries as Array<OASysQuestion>
 }
 
 const supportInformationFromApplication = (
   application: ApprovedPremisesApplication,
-): ArrayOfOASysSupportingInformationQuestions => {
+): Array<OASysSupportingInformationQuestion> => {
   return application.data['oasys-import']['supporting-information']
-    .supportingInformationSummaries as ArrayOfOASysSupportingInformationQuestions
+    .supportingInformationSummaries as Array<OASysSupportingInformationQuestion>
 }
 
-const riskManagementPlanFromApplication = (
-  application: ApprovedPremisesApplication,
-): ArrayOfOASysRiskManagementPlanQuestions => {
-  return application.data['oasys-import']['risk-management-plan']
-    .riskManagementSummaries as ArrayOfOASysRiskManagementPlanQuestions
+const riskManagementPlanFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
+  return application.data['oasys-import']['risk-management-plan'].riskManagementSummaries as Array<OASysQuestion>
 }
 
-const riskToSelfSummariesFromApplication = (
-  application: ApprovedPremisesApplication,
-): ArrayOfOASysRiskToSelfQuestions => {
-  return application.data['oasys-import']['risk-to-self'].riskToSelfSummaries as ArrayOfOASysRiskToSelfQuestions
+const riskToSelfSummariesFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
+  return application.data['oasys-import']['risk-to-self'].riskToSelfSummaries as Array<OASysQuestion>
 }
 
 const tableRowsToArrays = (tableRows: Array<TableRow>): Array<Array<string>> => {
@@ -78,7 +65,7 @@ const shouldShowTableRows = (tableRows: Array<TableRow>): void => {
   })
 }
 
-const updateApplicationReleaseDate = (data: AnyValue) => {
+const updateApplicationReleaseDate = (data: Unit) => {
   const releaseDate = add(new Date(), { months: 7 })
 
   return {
