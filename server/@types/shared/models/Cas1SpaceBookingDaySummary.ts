@@ -3,10 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1SpaceBookingCharacteristic } from './Cas1SpaceBookingCharacteristic';
-import type { PersonSummary } from './PersonSummary';
+import type { FullPersonSummary } from './FullPersonSummary';
+import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
+import type { UnknownPersonSummary } from './UnknownPersonSummary';
 export type Cas1SpaceBookingDaySummary = {
     id: string;
-    person: PersonSummary;
+    person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
     /**
      * actual arrival date or, if not known, the expected arrival date
      */

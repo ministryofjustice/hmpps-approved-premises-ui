@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1PremiseCharacteristicAvailability } from './Cas1PremiseCharacteristicAvailability';
+/**
+ * Capacity for each day, returning chronologically (oldest first)
+ */
 export type Cas1PremiseCapacityForDay = {
     date: string;
     /**

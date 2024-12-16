@@ -6,9 +6,9 @@ import type { NamedId } from './NamedId';
 export type Cas1PremisesBasicSummary = {
     id: string;
     name: string;
-    apCode?: string;
     apArea: NamedId;
     bedCount: number;
     supportsSpaceBookings: boolean;
+    apCode?: string;
 };
 

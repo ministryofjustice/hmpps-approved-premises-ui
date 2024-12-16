@@ -2,5 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { OASysQuestion } from './OASysQuestion';
-export type ArrayOfOASysRisksToTheIndividualQuestions = Array<OASysQuestion>;
+export type ModelScope = 'premises' | 'room' | '*';

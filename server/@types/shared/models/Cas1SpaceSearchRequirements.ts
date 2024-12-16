@@ -10,7 +10,6 @@ export type Cas1SpaceSearchRequirements = {
     spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
     /**
      * gender is obtained from application's associated gender
-     * @deprecated
      */
     genders?: Array<Gender>;
 };

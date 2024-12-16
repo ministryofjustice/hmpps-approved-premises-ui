@@ -23,10 +23,10 @@ export type Cas1PremisesSummary = {
      */
     outOfServiceBeds: number;
     supportsSpaceBookings: boolean;
-    managerDetails?: string;
     /**
      * over-bookings for the next 12 weeks
      */
     overbookingSummary: Array<Cas1OverbookingRange>;
+    managerDetails?: string;
 };
 

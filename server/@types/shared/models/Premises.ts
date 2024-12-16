@@ -8,20 +8,20 @@ import type { LocalAuthorityArea } from './LocalAuthorityArea';
 import type { ProbationRegion } from './ProbationRegion';
 import type { PropertyStatus } from './PropertyStatus';
 export type Premises = {
-    service: string;
-    id: string;
     name: string;
+    id: string;
+    probationRegion: ProbationRegion;
     addressLine1: string;
     addressLine2?: string;
+    characteristics?: Array<Characteristic>;
+    localAuthorityArea?: LocalAuthorityArea;
+    status: PropertyStatus;
+    service: string;
     town?: string;
     postcode: string;
     bedCount: number;
-    availableBedsForToday: number;
-    notes?: string;
-    probationRegion: ProbationRegion;
     apArea: ApArea;
-    localAuthorityArea?: LocalAuthorityArea;
-    characteristics?: Array<Characteristic>;
-    status: PropertyStatus;
+    notes?: string;
+    availableBedsForToday: number;
 };
 

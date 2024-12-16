@@ -2,6 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+/**
+ * over-bookings for the next 12 weeks
+ */
 export type Cas1OverbookingRange = {
     startInclusive: string;
     /**

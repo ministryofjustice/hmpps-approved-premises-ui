@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
+/**
+ * details of the space booking to be created
+ */
 export type Cas1NewSpaceBooking = {
     arrivalDate: string;
     departureDate: string;

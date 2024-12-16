@@ -18,12 +18,12 @@ export type Cas1OutOfServiceBed = {
     premises: NamedId;
     apArea: NamedId;
     reason: Cas1OutOfServiceBedReason;
-    referenceNumber?: string;
-    notes?: string;
     daysLostCount: number;
     temporality: Temporality;
     status: Cas1OutOfServiceBedStatus;
-    cancellation?: Cas1OutOfServiceBedCancellation | null;
     revisionHistory: Array<Cas1OutOfServiceBedRevision>;
+    referenceNumber?: string;
+    notes?: string;
+    cancellation?: Cas1OutOfServiceBedCancellation;
 };
 

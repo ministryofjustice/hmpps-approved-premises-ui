@@ -4,10 +4,12 @@
 /* eslint-disable */
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
 import type { Cas1SpaceBookingSummaryStatus } from './Cas1SpaceBookingSummaryStatus';
-import type { PersonSummary } from './PersonSummary';
+import type { FullPersonSummary } from './FullPersonSummary';
+import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
+import type { UnknownPersonSummary } from './UnknownPersonSummary';
 export type Cas1SpaceBookingSummary = {
     id: string;
-    person: PersonSummary;
+    person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
     /**
      * actual arrival date or, if not known, the expected arrival date
      */

@@ -5,7 +5,6 @@
 export type Cas1NewArrival = {
     /**
      * This is deprecated. Instead use arrivalDate and arrivalTime
-     * @deprecated
      */
     arrivalDateTime?: string;
     arrivalDate?: string;

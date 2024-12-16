@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ApprovedPremisesGender = 'man' | 'woman';
+export type LoadError = 'staff_record_not_found';
