@@ -1,5 +1,6 @@
 import { ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 import { when } from 'jest-when'
+import { faker } from '@faker-js/faker/locale/en_GB'
 import { applicationFactory } from '../../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from './getApplicationData'
 import {
@@ -12,6 +13,8 @@ import { isInapplicable } from './utils'
 import { isWomensApplication } from './isWomensApplication'
 import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
+import { DateFormats } from '../dateUtils'
+import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplication'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/applicantAndCaseManagerDetails')
@@ -19,6 +22,7 @@ jest.mock('./arrivalDateFromApplication')
 jest.mock('./utils')
 jest.mock('./isWomensApplication')
 jest.mock('./reasonForShortNoticeDetails')
+jest.mock('./licenceExpiryDateFromApplication')
 
 const apAreaId = 'test-id'
 const applicantUserDetails = applicationUserDetailsFactory.build()
@@ -53,10 +57,12 @@ describe('getApplicationData', () => {
     const releaseType: ReleaseTypeOption = 'licence'
     const sentenceType: SentenceTypeOption = 'standardDeterminate'
     const arrivalDate = '2023-01-01'
+    const licenceExpiryDate = DateFormats.dateObjToIsoDate(faker.date.soon())
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
       ;(isWomensApplication as jest.Mock).mockReturnValue(false)
+      ;(licenceExpiryDateFromApplication as jest.Mock).mockReturnValue(licenceExpiryDate)
       mockOptionalQuestionResponse({
         releaseType,
         sentenceType,
@@ -73,6 +79,7 @@ describe('getApplicationData', () => {
         translatedDocument: application.document,
         apType: 'normal',
         isWomensApplication: false,
+        licenseExpiryDate: licenceExpiryDate,
         releaseType,
         sentenceType,
         situation: null,
@@ -145,6 +152,14 @@ describe('getApplicationData', () => {
     it('returns correct data for a womens application', () => {
       ;(isWomensApplication as jest.Mock).mockReturnValue(true)
       expect(getApplicationSubmissionData(application)).toEqual(expect.objectContaining({ isWomensApplication: true }))
+    })
+
+    it('returns the licence expiry date', () => {
+      expect(getApplicationSubmissionData(application)).toEqual(
+        expect.objectContaining({
+          licenseExpiryDate: licenceExpiryDate,
+        }),
+      )
     })
   })
 

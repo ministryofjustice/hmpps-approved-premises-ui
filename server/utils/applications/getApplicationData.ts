@@ -24,6 +24,7 @@ import ConfirmYourDetails from '../../form-pages/apply/reasons-for-placement/bas
 import { applicantAndCaseManagerDetails } from './applicantAndCaseManagerDetails'
 import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { isWomensApplication } from './isWomensApplication'
+import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplication'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -66,6 +67,7 @@ const firstClassFields = <T>(
   const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } =
     applicantAndCaseManagerDetails(application)
   const { reasonForShortNotice, reasonForShortNoticeOther } = reasonForShortNoticeDetails(application)
+  const licenseExpiryDate = licenceExpiryDateFromApplication(application)
 
   return {
     isWomensApplication: isWomensApplication(application),
@@ -83,6 +85,7 @@ const firstClassFields = <T>(
     noticeType,
     reasonForShortNotice,
     reasonForShortNoticeOther,
+    licenseExpiryDate,
   } as FirstClassFields<T>
 }
 
