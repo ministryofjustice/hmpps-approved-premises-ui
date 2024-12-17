@@ -187,13 +187,11 @@
             <h3 class="govuk-heading-m">If you are not booking this placement</h3>
             <p class="govuk-body">
                 <a href="{{ paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }) }}">Check for a
-                    space
-                    at another AP</a>
+                    space at another AP</a>
             </p>
             <p class="govuk-body">
                 <a href="{{ paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}) }}">Mark as unable
-                    to
-                    match</a>
+                    to match</a>
             </p>
         </section>
     {% endif %}
