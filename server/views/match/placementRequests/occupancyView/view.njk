@@ -42,7 +42,7 @@
 
     <section>
         <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
-            {% if startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
+            {% if not errors.startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
 
         <div class="search-and-filter">
             <form action="{{ paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id }) }}"
