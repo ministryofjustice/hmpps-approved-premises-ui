@@ -55,7 +55,7 @@ context('Apply', () => {
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
         'noticeType',
-        'licenseExpiryDate'
+        'licenseExpiryDate',
       )
       expect(body.data).to.deep.equal(this.applicationData)
     })
@@ -342,7 +342,7 @@ context('Apply', () => {
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
         'noticeType',
-        'licenseExpiryDate'
+        'licenseExpiryDate',
       )
 
       expect(body.data).to.deep.equal(this.applicationData)

@@ -1,4 +1,4 @@
-import { ApType, PlacementCriteria } from '@approved-premises/api'
+import { ApType, Cas1SpaceBookingCharacteristic, PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
 import { apTypes } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
@@ -35,6 +35,14 @@ export const prepopulatablePlacementRequirementCriteria = [
   'isSuitedForSexOffenders',
 ] as const
 export const nonPrepopulatablePlacementRequirementCriteria = ['isStepFreeDesignated', 'hasEnSuite'] as const
+export const spaceBookingCharacteristics: Array<Cas1SpaceBookingCharacteristic> = [
+  'hasEnSuite',
+  'isArsonSuitable',
+  'isSingle',
+  'isStepFreeDesignated',
+  'isSuitedForSexOffenders',
+  'isWheelchairDesignated',
+]
 export const placementRequirementCriteria = [
   ...prepopulatablePlacementRequirementCriteria,
   ...nonPrepopulatablePlacementRequirementCriteria,
