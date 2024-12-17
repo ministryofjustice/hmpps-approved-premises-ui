@@ -8,6 +8,7 @@ import {
   Cas1OutOfServiceBedRevision as OutOfServiceBedRevision,
   Person,
   PersonAcctAlert,
+  PersonStatus,
   PrisonCaseNote,
   SortOrder,
   TimelineEvent,
@@ -501,6 +502,10 @@ export default abstract class Page {
     cy.get('a.moj-sub-navigation__link').contains(tabName).should('have.attr', 'aria-current', 'page')
   }
 
+  clickTab(tabTitle: string): void {
+    cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
+  }
+
   shouldHaveSelectText(id: string, text: string): void {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
   }
@@ -529,16 +534,18 @@ export default abstract class Page {
                 timelineEvents[i].createdBy.name,
               )
             }
-            cy.get('.govuk-link').should('have.attr', { time: timelineEvents[i].associatedUrls[0].url })
-            cy.get('.govuk-link').should('contain', timelineEvents[i].associatedUrls[0].type)
+            if (timelineEvents[i].associatedUrls?.length) {
+              cy.get('.govuk-link').should('have.attr', { time: timelineEvents[i].associatedUrls[0].url })
+              cy.get('.govuk-link').should('contain', timelineEvents[i].associatedUrls[0].type)
+            }
             cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[i].occurredAt))
           })
         })
       })
   }
 
-  shouldShowPersonDetails(person: FullPerson): void {
-    cy.get('dl[data-cy-person-info]').within(() => {
+  shouldShowPersonDetails(person: FullPerson, expectedStatus?: PersonStatus): void {
+    cy.get('dl[data-cy-person-info],div[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
@@ -546,7 +553,9 @@ export default abstract class Page {
       this.assertDefinition('Nationality', person.nationality)
       this.assertDefinition('Religion or belief', person.religionOrBelief)
       this.assertDefinition('Sex', person.sex)
-      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+      cy.get(`[data-cy-status]`)
+        .should('have.attr', 'data-cy-status')
+        .and('equal', expectedStatus || person.status)
       this.assertDefinition('Prison', person.prisonName)
     })
   }

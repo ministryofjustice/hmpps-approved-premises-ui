@@ -1,4 +1,4 @@
-import { FullPerson, Person } from '../@types/shared'
+import { FullPerson, FullPersonSummary, Person, PersonSummary } from '../@types/shared'
 
 const tierBadge = (tier: string): string => {
   if (!tier) return ''
@@ -23,6 +23,14 @@ const isUnknownPerson = (person?: Person): boolean => person?.type === 'UnknownP
 
 const laoName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.name}` : person.name)
 
+const laoSummaryName = (personSummary: PersonSummary) => {
+  if (personSummary.personType === 'FullPersonSummary') {
+    const { name, isRestricted } = personSummary as FullPersonSummary
+    return isRestricted ? `LAO: ${name}` : name
+  }
+  return personSummary.personType === 'RestrictedPersonSummary' ? 'LAO' : 'Unknown'
+}
+
 /**
  * Returns the person's name if they are a FullPerson, otherwise returns 'the person'
  * @param {Person} person
@@ -44,4 +52,4 @@ const nameText = (person: FullPerson, showLaoLabel: boolean) => {
   return name
 }
 
-export { tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName, isUnknownPerson }
+export { tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName, laoSummaryName, isUnknownPerson }

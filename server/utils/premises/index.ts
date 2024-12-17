@@ -5,7 +5,6 @@ import type {
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
-  FullPerson,
   SortDirection,
 } from '@approved-premises/api'
 import { SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
@@ -15,7 +14,7 @@ import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
-import { laoName } from '../personUtils'
+import { laoSummaryName } from '../personUtils'
 import { statusTextMap } from '../placements'
 
 export { premisesActions } from './premisesActions'
@@ -159,7 +158,7 @@ export const placementTableRows = (
         `<a href="${managePaths.premises.placements.show({
           premisesId,
           placementId: id,
-        })}" data-cy-id="${id}">${laoName(person as unknown as FullPerson)}, ${person.crn}</a>`,
+        })}" data-cy-id="${id}">${laoSummaryName(person)}, ${person.crn}</a>`,
       ),
       tier: htmlValue(getTierOrBlank(tier)),
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),

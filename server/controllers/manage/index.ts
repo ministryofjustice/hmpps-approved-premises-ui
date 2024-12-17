@@ -34,7 +34,13 @@ export const controllers = (services: Services) => {
     services.placementService,
   )
   const dateChangesController = new DateChangesController(services.bookingService)
-  const placementController = new PlacementController(services.premisesService)
+  const placementController = new PlacementController(
+    services.applicationService,
+    services.assessmentService,
+    services.placementRequestService,
+    services.placementService,
+    services.premisesService,
+  )
   const arrivalsController = new ArrivalsController(services.premisesService, services.placementService)
   const nonArrivalsController = new NonArrivalsController(services.premisesService, services.placementService)
   const keyworkerController = new KeyworkerController(services.premisesService, services.placementService)

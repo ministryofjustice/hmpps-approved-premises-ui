@@ -1,5 +1,4 @@
 import type {
-  ApprovedPremisesApplication,
   ApprovedPremisesAssessment as Assessment,
   Document,
   FullPerson,
@@ -18,22 +17,6 @@ import { OasysSummariesSection } from '../../../server/@types/ui'
 export default class ReviewPage extends AssessPage {
   constructor(assessment: Assessment) {
     super('Review application', assessment, 'review-application', 'review')
-  }
-
-  shouldShowPersonInformation(person: FullPerson, application: ApprovedPremisesApplication) {
-    cy.get('[data-cy-section="person-details"]').within(() => {
-      this.assertDefinition('Name', person.name)
-      this.assertDefinition('CRN', person.crn)
-      this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
-      this.assertDefinition('NOMIS Number', person.nomsNumber)
-      this.assertDefinition('Nationality', person.nationality)
-      this.assertDefinition('Religion or belief', person.religionOrBelief)
-      this.assertDefinition('Sex', person.sex)
-      cy.get(`[data-cy-status]`)
-        .should('have.attr', 'data-cy-status')
-        .and('equal', application.personStatusOnSubmission)
-      this.assertDefinition('Prison', person.prisonName)
-    })
   }
 
   shouldShowDocuments(selectedDocuments: Array<Document>) {
@@ -130,7 +113,10 @@ export default class ReviewPage extends AssessPage {
   }
 
   shouldShowAnswers(assessment: Assessment) {
-    this.shouldShowPersonInformation(assessment.application.person as FullPerson, assessment.application)
+    this.shouldShowPersonDetails(
+      assessment.application.person as FullPerson,
+      assessment.application.personStatusOnSubmission,
+    )
     this.shouldShowDocuments(
       assessment.application.data?.['attach-required-documents']['attach-documents'].selectedDocuments,
     )

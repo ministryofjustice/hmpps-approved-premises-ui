@@ -251,6 +251,7 @@ export type TabItem = {
   text: string
   active: boolean
   href: string
+  classes?: string
 }
 
 const tasksTabItems = (hrefPrefix: string, activeTab = 'allocated'): Array<TabItem> => {

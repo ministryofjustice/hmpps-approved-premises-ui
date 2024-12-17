@@ -1,4 +1,4 @@
-import { type Cas1SpaceBookingResidency, type FullPerson } from '@approved-premises/api'
+import type { Cas1SpaceBookingResidency } from '@approved-premises/api'
 import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesSummaryFactory,
@@ -18,7 +18,7 @@ import { statusTextMap } from '../placements/index'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
-import { laoName } from '../personUtils'
+import { laoSummaryName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 
 describe('premisesUtils', () => {
@@ -273,7 +273,7 @@ describe('premisesUtils', () => {
           const statusColumn = { text: statusTextMap[placement.status] }
           const baseColumns = [
             {
-              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoName(placement.person as unknown as FullPerson)}, ${placement.person.crn}</a>`,
+              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoSummaryName(placement.person)}, ${placement.person.crn}</a>`,
             },
             { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
             { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },

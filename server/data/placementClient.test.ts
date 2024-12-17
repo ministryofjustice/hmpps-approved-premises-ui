@@ -1,4 +1,4 @@
-import type { Cas1SpaceBooking } from '@approved-premises/api'
+import type { Cas1SpaceBooking, TimelineEvent } from '@approved-premises/api'
 import PlacementClient from './placementClient'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
@@ -9,6 +9,7 @@ import {
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
+  timelineEventFactory,
 } from '../testutils/factories'
 
 const token = 'TEST_TOKEN'
@@ -43,6 +44,29 @@ describeCas1NamespaceClient('PlacementClient', provider => {
       const result = await placementClient.getPlacement(placement.id)
 
       expect(result).toEqual(placement)
+    })
+  })
+
+  describe('getTimeline', () => {
+    it('gets the timeline for a placement', async () => {
+      const timeLine: Array<TimelineEvent> = timelineEventFactory.buildList(10)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for placement timeline',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.placements.timeline({ placementId, premisesId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: timeLine,
+        },
+      })
+      const result = await placementClient.getTimeline({ premisesId, placementId })
+      expect(result).toEqual(timeLine)
     })
   })
 
