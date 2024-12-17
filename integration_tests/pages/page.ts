@@ -134,8 +134,12 @@ export default abstract class Page {
     cy.get(`input[name="${name}"][value="${option}"]`).check()
   }
 
-  checkCheckboxByLabel(option: string): void {
+  checkCheckboxByValue(option: string): void {
     cy.get(`input[value="${option}"]`).check()
+  }
+
+  checkCheckboxByLabel(label: string): void {
+    cy.get('label').contains(label).parent().find('input').check()
   }
 
   uncheckCheckboxbyNameAndValue(name: string, option: string): void {
@@ -152,25 +156,23 @@ export default abstract class Page {
   }
 
   completeDateInputs(prefix: string, date: string): void {
-    const parsedDate = DateFormats.isoToDateObj(date)
-    cy.get(`#${prefix}-day`).type(parsedDate.getDate().toString())
-    cy.get(`#${prefix}-month`).type(`${parsedDate.getMonth() + 1}`)
-    cy.get(`#${prefix}-year`).type(parsedDate.getFullYear().toString())
+    const [year, month, day] = date.split('-')
+
+    cy.get(`#${prefix}-day`).type(day)
+    cy.get(`#${prefix}-month`).type(month)
+    cy.get(`#${prefix}-year`).type(year)
   }
 
-  completeDateInputsByName(prefix: string, date: string): void {
-    const parsedDate = DateFormats.isoToDateObj(date)
-
-    cy.get(`[name="${prefix}[day]"`).type(parsedDate.getDate().toString())
-    cy.get(`[name="${prefix}[month]"`).type(`${parsedDate.getMonth() + 1}`)
-    cy.get(`[name="${prefix}[year]`).type(parsedDate.getFullYear().toString())
+  private stripLeadingZeros(value: string): string {
+    return value.replace(/^0+/, '')
   }
 
   dateInputsShouldContainDate(prefix: string, date: string): void {
-    const parsedDate = DateFormats.isoToDateObj(date)
-    cy.get(`#${prefix}-day`).should('have.value', parsedDate.getDate().toString())
-    cy.get(`#${prefix}-month`).should('have.value', `${parsedDate.getMonth() + 1}`)
-    cy.get(`#${prefix}-year`).should('have.value', parsedDate.getFullYear().toString())
+    const [year, month, day] = date.split('-').map(this.stripLeadingZeros)
+
+    cy.get(`#${prefix}-day`).invoke('val').then(this.stripLeadingZeros).should('equal', day)
+    cy.get(`#${prefix}-month`).invoke('val').then(this.stripLeadingZeros).should('equal', month)
+    cy.get(`#${prefix}-year`).invoke('val').then(this.stripLeadingZeros).should('equal', year)
   }
 
   clickSubmit(): void {
@@ -373,6 +375,14 @@ export default abstract class Page {
 
   verifyRadioInputByName(name: string, value: string): void {
     cy.get(`[name="${name}"][value="${value}"]`).should('be.checked')
+  }
+
+  verifyCheckboxByLabel(label: string, checked = true) {
+    cy.get('label')
+      .contains(label)
+      .parent()
+      .find('input')
+      .should(checked ? 'be.checked' : 'not.be.checked')
   }
 
   clearAndCompleteTextInputById(id: string, text: string): void {

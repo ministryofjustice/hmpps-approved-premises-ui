@@ -74,7 +74,7 @@ export const catchAPIErrorOrPropogate = (request: Request, response: Response, e
 
 export const fetchErrorsAndUserInput = (request: Request): ErrorsAndUserInput => {
   const errors = firstFlashItem(request, 'errors') || {}
-  const errorSummary = request.flash('errorSummary') || []
+  const errorSummary = (request.flash('errorSummary') as Array<ErrorSummary>) || []
   const userInput = firstFlashItem(request, 'userInput') || {}
   const errorTitle = firstFlashItem(request, 'errorTitle')
 

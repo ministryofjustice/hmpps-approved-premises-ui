@@ -33,88 +33,75 @@
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full-width">
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-            <div class="search-and-filter__wrapper">
-                <form action="{{ paths.outOfServiceBeds.index({temporality: temporality}) }}" method="get"
-                      id="osbFilters">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-full">
-                            <h2 class="govuk-heading-m">Filters</h2>
-                        </div>
-                    </div>
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-one-third">
-                            {{ govukSelect({
-                                label: {
-                                    text: "AP Area",
-                                    classes: "govuk-label--s"
-                                },
-                                classes: "govuk-input--width-20",
-                                id: "apAreaId",
-                                name: "apAreaId",
-                                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apAreaId', 'all', context)
-                            }) }}
-                        </div>
-                        <div class="govuk-grid-column-one-third">
-                            {{ govukSelect({
-                                label: {
-                                    text: "Premises Name",
-                                    classes: "govuk-label--s"
-                                },
-                                id: "premisesId",
-                                name: "premisesId",
-                                disabled: disablePremisesSelect,
-                                items: premisesItems
-                            }) }}
-                        </div>
-                        <div class="govuk-grid-column-one-third" id="submitbutton">
-                            {{ govukButton({
-                                "name": "submit",
-                                "text": "Apply filters",
-                                "classes": "search-and-filter__submit",
-                                "preventDoubleClick": true
-                            }) }}
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <form action="{{ paths.outOfServiceBeds.index({temporality: temporality}) }}" method="get"
+          id="osbFilters" class="search-and-filter">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-            {{ mojSubNavigation({
-                label: 'Sub navigation',
-                items: [{
-                    text: 'Current',
-                    href: paths.outOfServiceBeds.index({temporality: 'current'}) + areaAndPremisesParam,
-                    active: temporality === 'current'
-                }, {
-                    text: 'Future',
-                    href: paths.outOfServiceBeds.index({temporality: 'future'}) + areaAndPremisesParam,
-                    active: temporality === 'future'
-                }, {
-                    text: 'Historic',
-                    href: paths.outOfServiceBeds.index({temporality: 'past'}) + areaAndPremisesParam,
-                    active: temporality === 'past'
-                }]
+        <h2 class="govuk-heading-m">Filters</h2>
+
+        <div class="search-and-filter__row">
+            {{ govukSelect({
+                label: {
+                    text: "AP Area",
+                    classes: "govuk-label--s"
+                },
+                classes: "govuk-input--width-20",
+                id: "apAreaId",
+                name: "apAreaId",
+                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apAreaId', 'all', context)
             }) }}
 
-            {% if outOfServiceBeds %}
+            {{ govukSelect({
+                label: {
+                    text: "Premises Name",
+                    classes: "govuk-label--s"
+                },
+                id: "premisesId",
+                name: "premisesId",
+                disabled: disablePremisesSelect,
+                items: premisesItems
+            }) }}
 
-                {{ govukTable({
-                    caption: "Out of service beds",
-                    captionClasses: "govuk-table__caption--m",
-                    head: OutOfServiceBedUtils.allOutOfServiceBedsTableHeaders(sortBy, sortDirection, hrefPrefix),
-                    rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds)
-                }) }}
-
-                {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
-
-            {% endif %}
+            {{ govukButton({
+                "name": "submit",
+                "text": "Apply filters",
+                "preventDoubleClick": true
+            }) }}
         </div>
-    </div>
+    </form>
+
+    {{ mojSubNavigation({
+        label: 'Sub navigation',
+        items: [{
+            text: 'Current',
+            href: paths.outOfServiceBeds.index({temporality: 'current'}) + areaAndPremisesParam,
+            active: temporality === 'current'
+        }, {
+            text: 'Future',
+            href: paths.outOfServiceBeds.index({temporality: 'future'}) + areaAndPremisesParam,
+            active: temporality === 'future'
+        }, {
+            text: 'Historic',
+            href: paths.outOfServiceBeds.index({temporality: 'past'}) + areaAndPremisesParam,
+            active: temporality === 'past'
+        }]
+    }) }}
+
+    {% if outOfServiceBeds %}
+
+        {{ govukTable({
+            caption: "Out of service beds",
+            captionClasses: "govuk-table__caption--m",
+            head: OutOfServiceBedUtils.allOutOfServiceBedsTableHeaders(sortBy, sortDirection, hrefPrefix),
+            rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds)
+        }) }}
+
+        {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+
+    {% endif %}
 {% endblock %}
 
 {% block extraScripts %}

@@ -337,7 +337,7 @@ export default class AseessHelper {
 
     tasklistPage.shouldShowMissingCheckboxErrorMessage()
 
-    tasklistPage.checkCheckboxByLabel('confirmed')
+    tasklistPage.checkCheckboxByValue('confirmed')
     tasklistPage.clickSubmit()
     Page.verifyOnPage(SubmissionConfirmation, isSuitable)
   }

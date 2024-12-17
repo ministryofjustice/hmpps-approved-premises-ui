@@ -4,6 +4,7 @@ import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   cas1PremiseCapacityFactory,
+  cas1PremisesSummaryFactory,
   cas1SpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
@@ -65,6 +66,9 @@ context('Placement Requests', () => {
     // And the new search criteria should be selected
     searchPage.shouldShowSearchParametersInInputs(newSearchParameters)
 
+    // And the results should have links with the correct AP type and criteria
+    searchPage.shouldHaveSearchParametersInLinks(newSearchParameters)
+
     // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
@@ -90,7 +94,6 @@ context('Placement Requests', () => {
       })
 
       // And the second request to the API should contain the new criteria I submitted
-
       expect(secondSearchRequestBody).to.contain({
         applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
@@ -128,7 +131,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to submit valid dates in the book your placement form on occupancy view page and redirects to book a space', () => {
-    const { occupancyViewPage, placementRequest, premisesName } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+    const { occupancyViewPage, placementRequest, premises } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
 
     // When I submit valid dates
     const arrivalDate = '2024-11-25'
@@ -136,12 +139,11 @@ context('Placement Requests', () => {
     occupancyViewPage.clickContinue()
 
     // Then I should land on the Book a space page (with the new dates overriding the original ones)
-    const bookASpacePage = Page.verifyOnPage(BookASpacePage, premisesName)
+    const bookASpacePage = Page.verifyOnPage(BookASpacePage, premises.name)
     bookASpacePage.shouldShowBookingDetails(placementRequest, arrivalDate, 1, 'normal')
   })
 
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = () => {
-    const premisesName = 'Hope House'
     const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
@@ -153,26 +155,102 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const placementRequest = placementRequestDetailFactory.build({ person })
-    const premiseCapacity = cas1PremiseCapacityFactory.build({ premise: { bedCount: totalCapacity } })
+    const premises = cas1PremisesSummaryFactory.build({ bedCount: totalCapacity })
+    const placementRequest = placementRequestDetailFactory.build({
+      person,
+      expectedArrival: startDate,
+      duration: durationDays,
+    })
+    const premiseCapacity = cas1PremiseCapacityFactory.build({
+      premise: { id: premises.id, bedCount: totalCapacity },
+      startDate,
+      endDate,
+    })
 
+    cy.task('stubSinglePremises', premises)
     cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubPremiseCapacity', { premisesId: premiseCapacity.premise.id, startDate, endDate, premiseCapacity })
+    cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
     // When I visit the occupancy view page
-    const occupancyViewPage = OccupancyViewPage.visit(
-      placementRequest,
-      startDate,
-      durationDays,
-      premisesName,
-      premiseCapacity.premise.id,
-      apType,
-    )
+    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
 
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
-    return { occupancyViewPage, placementRequest, premiseCapacity, premisesName }
+    return { occupancyViewPage, placementRequest, premiseCapacity, premises }
   }
+
+  it('allows me to view spaces and occupancy capacity and filter the result', () => {
+    const apType = 'normal'
+    const durationDays = 15
+    const startDate = '2024-07-23'
+    const endDate = '2024-08-07'
+    const totalCapacity = 10
+
+    // Given I am signed in as a cru_member
+    signIn(['cru_member'], ['cas1_space_booking_create'])
+
+    // And there is a placement request waiting for me to match
+    const person = personFactory.build()
+    const premises = cas1PremisesSummaryFactory.build({ bedCount: totalCapacity })
+    const placementRequest = placementRequestDetailFactory.build({
+      person,
+      expectedArrival: startDate,
+      duration: durationDays,
+    })
+    const premiseCapacity = cas1PremiseCapacityFactory.build({
+      premise: { id: premises.id, bedCount: totalCapacity },
+      startDate,
+      endDate,
+    })
+
+    cy.task('stubSinglePremises', premises)
+    cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
+
+    // When I visit the occupancy view page
+    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
+
+    // Then I should see the details of the case I am matching
+    occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
+
+    // And I should see the filter form with populated values
+    occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks', [])
+
+    // And I should see a summary of occupancy
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+
+    // And I should see an occupancy calendar
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+
+    // When I filter with an invalid date
+    occupancyViewPage.filterAvailability('2025-02-35')
+
+    // Then I should see an error message
+    occupancyViewPage.shouldShowErrorMessagesForFields(['startDate'], {
+      startDate: 'Enter a valid date',
+    })
+
+    // When I filter for a different date and duration
+    const newStartDate = '2024-08-01'
+    const newEndDate = '2024-08-08'
+    const newDuration = 'Up to 1 week'
+    const newCriteria = ['Wheelchair accessible', 'Step-free']
+    const newPremiseCapacity = cas1PremiseCapacityFactory.build({
+      premise: { id: premises.id, bedCount: totalCapacity },
+      startDate: newStartDate,
+      endDate: newEndDate,
+    })
+    cy.task('stubPremiseCapacity', {
+      premisesId: premises.id,
+      startDate: newStartDate,
+      endDate: newEndDate,
+      premiseCapacity: newPremiseCapacity,
+    })
+    occupancyViewPage.filterAvailability(newStartDate, newDuration, newCriteria)
+
+    // Then I should see the filter form with updated values
+    occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteria)
+  })
 
   it('allows me to book a space', () => {
     // Given I am signed in as a cru_member
@@ -255,7 +333,7 @@ context('Placement Requests', () => {
     // And I declare that I do not see a suitable space
     searchPage.clickUnableToMatch()
 
-    // Then I am able to complete a form to explain why I the spaces weren't suitable
+    // Then I am able to complete a form to explain why the spaces weren't suitable
     const unableToMatchPage = new UnableToMatchPage()
 
     // When I complete the form

@@ -30,19 +30,19 @@ export default class ShowPage extends Page {
   selectRoles(roles: ReadonlyArray<UserRole>): void {
     this.uncheckUsersPreviousRoles()
     roles.forEach(role => {
-      this.checkCheckboxByLabel(role)
+      this.checkCheckboxByValue(role)
     })
   }
 
   selectAllocationRoles(roles: ReadonlyArray<UserRole>): void {
     roles.forEach(role => {
-      this.checkCheckboxByLabel(role)
+      this.checkCheckboxByValue(role)
     })
   }
 
   selectUserQualifications(roles: ReadonlyArray<UserQualification>): void {
     roles.forEach(role => {
-      this.checkCheckboxByLabel(role)
+      this.checkCheckboxByValue(role)
     })
   }
 

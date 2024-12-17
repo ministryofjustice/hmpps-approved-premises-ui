@@ -10,7 +10,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: MatchUtils.occupancyViewLink({placementRequestId: placementRequest.id, premisesName: premisesName, premisesId: premisesId, apType: apType, startDate: startDate, durationDays: durationDays})
+        href: MatchUtils.occupancyViewLink({ placementRequestId: placementRequest.id, premisesId: premisesId, apType: apType })
     }) }}
 {% endblock %}
 

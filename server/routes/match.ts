@@ -47,11 +47,11 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_SPACE_BOOKING',
   })
 
-  get(paths.v2Match.placementRequests.spaceBookings.viewSpaces.pattern, occupancyViewController.view(), {
+  get(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.view(), {
     auditEvent: 'OCCUPANCY_VIEW',
   })
 
-  post(paths.v2Match.placementRequests.spaceBookings.viewSpaces.pattern, occupancyViewController.bookSpace(), {
+  post(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.bookSpace(), {
     auditEvent: 'OCCUPANCY_VIEW_BOOK_SPACE',
   })
 

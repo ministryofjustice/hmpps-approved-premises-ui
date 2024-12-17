@@ -5,11 +5,12 @@ import type {
   Cas1PremiseCapacity,
   Cas1PremiseCapacityForDay,
   Cas1PremiseCharacteristicAvailability,
+  Cas1SpaceBookingCharacteristic,
 } from '@approved-premises/api'
 import { addDays, differenceInDays } from 'date-fns'
 import cas1PremisesSummaryFactory from './cas1PremisesSummary'
 import { DateFormats } from '../../utils/dateUtils'
-import { offenceAndRiskCriteria } from '../../utils/placementCriteriaUtils'
+import { occupancyCriteriaMap } from '../../utils/match/occupancy'
 
 export default Factory.define<Cas1PremiseCapacity>(({ params }) => {
   const startDate = params.startDate ? DateFormats.isoToDateObj(params.startDate) : faker.date.anytime()
@@ -69,12 +70,14 @@ export const cas1PremiseCapacityForDayFactory = CapacityForDayFactory.define(() 
     totalBedCount,
     availableBedCount: faker.number.int({ min: 0, max: totalBedCount }),
     bookingCount: faker.number.int({ min: 0, max: totalBedCount + 10 }),
-    characteristicAvailability: premiseCharacteristicAvailability.buildList(2),
+    characteristicAvailability: Object.keys(occupancyCriteriaMap).map(characteristic =>
+      premiseCharacteristicAvailability.build({ characteristic: characteristic as Cas1SpaceBookingCharacteristic }),
+    ),
   }
 })
 
-const premiseCharacteristicAvailability = Factory.define<Cas1PremiseCharacteristicAvailability>(() => ({
-  characteristic: faker.helpers.arrayElement(offenceAndRiskCriteria),
+export const premiseCharacteristicAvailability = Factory.define<Cas1PremiseCharacteristicAvailability>(() => ({
+  characteristic: faker.helpers.arrayElement(Object.keys(occupancyCriteriaMap)) as Cas1SpaceBookingCharacteristic,
   availableBedsCount: faker.number.int({ min: 0, max: 40 }),
   bookingsCount: faker.number.int({ min: 0, max: 45 }),
 }))

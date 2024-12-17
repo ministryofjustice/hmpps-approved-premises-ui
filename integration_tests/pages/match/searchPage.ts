@@ -5,6 +5,7 @@ import { placementRequestSummaryListForMatching, summaryCardRows } from '../../.
 import paths from '../../../server/paths/match'
 import { isFullPerson } from '../../../server/utils/personUtils'
 import { DateFormats } from '../../../server/utils/dateUtils'
+import { occupancyCriteriaMap } from '../../../server/utils/match/occupancy'
 
 export default class SearchPage extends Page {
   constructor() {
@@ -82,6 +83,19 @@ export default class SearchPage extends Page {
 
     newSearchParameters.requirements.spaceCharacteristics.forEach(requirement => {
       cy.get(`input[name="requirements[spaceCharacteristics][]"][value="${requirement}"]`).should('be.checked')
+    })
+  }
+
+  shouldHaveSearchParametersInLinks(newSearchParameters: SpaceSearchParametersUi): void {
+    cy.get('.govuk-summary-card__actions .govuk-link')
+      .invoke('attr', 'href')
+      .should('contain', `apType=${newSearchParameters.requirements.apType}`)
+
+    newSearchParameters.requirements.spaceCharacteristics.forEach(spaceCharacteristic => {
+      const isSpaceBookingCharacteristic = Object.keys(occupancyCriteriaMap).includes(spaceCharacteristic)
+      cy.get('.govuk-summary-card__actions .govuk-link')
+        .invoke('attr', 'href')
+        .should(isSpaceBookingCharacteristic ? 'contain' : 'not.contain', `criteria=${spaceCharacteristic}`)
     })
   }
 

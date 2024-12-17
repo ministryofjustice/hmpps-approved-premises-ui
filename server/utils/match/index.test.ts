@@ -41,6 +41,7 @@ import {
   mapUiParamsForApi,
   occupancyViewLink,
   occupancyViewSummaryListForMatchingDetails,
+  placementDates,
   placementLength,
   placementLengthRow,
   placementRequestSummaryListForMatching,
@@ -66,7 +67,6 @@ import { textValue } from '../applications/helpers'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 
-jest.mock('../utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('matchUtils', () => {
@@ -252,34 +252,60 @@ describe('matchUtils', () => {
   describe('occupancyViewLink', () => {
     it('returns a link to the occupancy view page', () => {
       const placementRequestId = '123'
-      const premisesName = 'Hope House'
       const premisesId = 'abc'
       const apType = 'pipe'
-      const startDate = '2022-01-01'
-      const durationWeeks = '4'
-      const durationDays = '1'
-      const durationInDays = Number(durationWeeks) * 7 + Number(durationDays)
+      const startDate = '2025-04-14'
+      const durationDays = '84'
+      const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = ['isWheelchairDesignated', 'isSingle']
 
       const result = occupancyViewLink({
         placementRequestId,
-        premisesName,
         premisesId,
         apType,
         startDate,
         durationDays,
+        spaceCharacteristics,
       })
 
       expect(result).toEqual(
-        `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
-          {
-            premisesName,
-            premisesId,
-            apType,
-            startDate,
-            durationInDays,
-          },
-          { addQueryPrefix: true },
-        )}`,
+        `${paths.v2Match.placementRequests.search.occupancy({
+          id: placementRequestId,
+          premisesId,
+        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle`,
+      )
+    })
+
+    it('filters out non booking-specific search criteria', () => {
+      const placementRequestId = '123'
+      const premisesId = 'abc'
+      const apType = 'pipe'
+      const startDate = '2025-04-14'
+      const durationDays = '84'
+      const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = [
+        'isWheelchairDesignated',
+        'isIAP',
+        'hasArsonInsuranceConditions',
+        'isSingle',
+        'acceptsHateCrimeOffenders',
+        'hasEnSuite',
+        'isArsonDesignated',
+        'isArsonSuitable',
+      ]
+
+      const result = occupancyViewLink({
+        placementRequestId,
+        premisesId,
+        apType,
+        startDate,
+        durationDays,
+        spaceCharacteristics,
+      })
+
+      expect(result).toEqual(
+        `${paths.v2Match.placementRequests.search.occupancy({
+          id: placementRequestId,
+          premisesId,
+        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
       )
     })
   })
@@ -311,7 +337,7 @@ describe('matchUtils', () => {
             startDate,
             durationDays,
           },
-          { addQueryPrefix: true },
+          { addQueryPrefix: true, arrayFormat: 'repeat' },
         )}`,
       )
     })
@@ -361,33 +387,28 @@ describe('matchUtils', () => {
   })
 
   describe('occupancyViewSummaryListForMatchingDetails', () => {
-    const placementRequest = placementRequestDetailFactory.build({ releaseType: 'hdc' })
+    const placementRequest = placementRequestDetailFactory.build({
+      releaseType: 'hdc',
+      expectedArrival: '2025-10-02',
+      duration: 52,
+      essentialCriteria: ['hasTactileFlooring'],
+    })
+    const dates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
     const totalCapacity = 120
 
-    const dates = {
-      startDate: '2025-10-02',
-      endDate: '2025-12-23',
-      placementLength: 52,
-    }
-    const essentialCharacteristics: Array<Cas1SpaceCharacteristic> = ['hasTactileFlooring']
-
     it('should call the correct row functions', () => {
-      expect(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
-      ).toEqual([
+      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest)).toEqual([
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
         releaseTypeRow(placementRequest),
         totalCapacityRow(totalCapacity),
-        spaceRequirementsRow(essentialCharacteristics),
+        spaceRequirementsRow(filterOutAPTypes(placementRequest.essentialCriteria)),
       ])
     })
 
     it('should generate the expected matching details', () => {
-      expect(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
-      ).toEqual([
+      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest)).toEqual([
         {
           key: {
             text: 'Expected arrival date',
@@ -401,7 +422,7 @@ describe('matchUtils', () => {
             text: 'Expected departure date',
           },
           value: {
-            text: 'Tue 23 Dec 2025',
+            text: 'Sun 23 Nov 2025',
           },
         },
         {

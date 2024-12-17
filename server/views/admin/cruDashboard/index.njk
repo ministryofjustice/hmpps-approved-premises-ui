@@ -20,68 +20,56 @@
             <p class="govuk-body">
                 {{ subheading }}
             </p>
-            <div class="search-and-filter__wrapper">
-                <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get">
-                    <input type="hidden" name="status" value="{{ status }}">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            
+            <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get" class="search-and-filter">
+                <input type="hidden" name="status" value="{{ status }}">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-full">
-                            <h2 class="govuk-heading-m">Filters</h2>
-                        </div>
-                    </div>
+                <h2 class="govuk-heading-m">Filters</h2>
 
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-one-third">
-                            {{ govukSelect({
-                                label: {
-                                    text: "AP Area",
-                                    classes: "govuk-label--s"
-                                },
-                                classes: "govuk-input--width-20",
-                                id: "cruManagementArea",
-                                name: "cruManagementArea",
-                                items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementArea', 'all', context)
-                            }) }}
-                        </div>
-                        {% if status != "pendingPlacement" %}
-                            <div class="govuk-grid-column-one-third">
-                                {{ govukSelect({
-                                    label: {
-                                        text: "Request type",
-                                        classes: "govuk-label--s"
-                                    },
-                                    id: "requestType",
-                                    name: "requestType",
-                                    items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', '', context)
-                                }) }}
-                            </div>
-                        {% endif %}
-                        {% if status === "pendingPlacement" %}
-                            <div class="govuk-grid-column-one-third">
-                                {{ govukSelect({
-                                    label: {
-                                        text: "Release type",
-                                        classes: "govuk-label--s"
-                                    },
-                                    id: "releaseType",
-                                    name: "releaseType",
-                                    items: ApplyUtils.releaseTypeSelectOptions(releaseType)
-                                }) }}
-                            </div>
-                        {% endif %}
+                <div class="search-and-filter__row">
+                    {{ govukSelect({
+                        label: {
+                            text: "AP Area",
+                            classes: "govuk-label--s"
+                        },
+                        classes: "govuk-input--width-20",
+                        id: "cruManagementArea",
+                        name: "cruManagementArea",
+                        items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementArea', 'all', context)
+                    }) }}
 
-                        <div class="govuk-grid-column-one-third">
-                            {{ govukButton({
-                                "name": "submit",
-                                "text": "Apply filters",
-                                "classes": "search-and-filter__submit",
-                                "preventDoubleClick": true
-                            }) }}
-                        </div>
-                    </div>
-                </form>
-            </div>
+                    {% if status != "pendingPlacement" %}
+                        {{ govukSelect({
+                            label: {
+                                text: "Request type",
+                                classes: "govuk-label--s"
+                            },
+                            id: "requestType",
+                            name: "requestType",
+                            items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', '', context)
+                        }) }}
+                    {% endif %}
+
+                    {% if status === "pendingPlacement" %}
+                        {{ govukSelect({
+                            label: {
+                                text: "Release type",
+                                classes: "govuk-label--s"
+                            },
+                            id: "releaseType",
+                            name: "releaseType",
+                            items: ApplyUtils.releaseTypeSelectOptions(releaseType)
+                        }) }}
+                    {% endif %}
+
+                    {{ govukButton({
+                        "name": "submit",
+                        "text": "Apply filters",
+                        "preventDoubleClick": true
+                    }) }}
+                </div>
+            </form>
 
             {{ navigation(status, cruManagementArea, requestType) }}
 

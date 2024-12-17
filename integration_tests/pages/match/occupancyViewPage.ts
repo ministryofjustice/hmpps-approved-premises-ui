@@ -1,39 +1,31 @@
 import {
   ApType,
   Cas1PremiseCapacity,
-  PlacementDates,
+  Cas1PremisesSummary,
+  Cas1SpaceBookingCharacteristic,
   PlacementRequest,
   PlacementRequestDetail,
-  Premises,
 } from '@approved-premises/api'
 import Page from '../page'
-import {
-  filterOutAPTypes,
-  occupancyViewSummaryListForMatchingDetails,
-  placementDates,
-} from '../../../server/utils/match'
+import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
 import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
-import { dateRangeAvailability } from '../../../server/utils/match/occupancy'
 
 export default class OccupancyViewPage extends Page {
   constructor(premisesName: string) {
     super(`View spaces in ${premisesName}`)
   }
 
-  static visit(
-    placementRequest: PlacementRequestDetail,
-    startDate: string,
-    durationDays: PlacementDates['duration'],
-    premisesName: Premises['name'],
-    premisesId: Premises['id'],
-    apType: ApType,
-  ) {
-    const queryString = createQueryString({ startDate, durationDays, premisesName, premisesId, apType })
-    const path = `${paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id })}?${queryString}`
+  static visit(placementRequest: PlacementRequestDetail, premises: Cas1PremisesSummary, apType: ApType) {
+    const path = `${paths.v2Match.placementRequests.search.occupancy({
+      id: placementRequest.id,
+      premisesId: premises.id,
+    })}?${createQueryString({ apType })}`
+
     cy.visit(path)
-    return new OccupancyViewPage(premisesName)
+
+    return new OccupancyViewPage(premises.name)
   }
 
   shouldShowMatchingDetails(
@@ -42,26 +34,46 @@ export default class OccupancyViewPage extends Page {
     durationDays: number,
     placementRequest: PlacementRequest,
   ) {
-    const dates = placementDates(startDate, durationDays.toString())
-    const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
     cy.get('.govuk-details').within(() => {
-      this.shouldContainSummaryListItems(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, dates, placementRequest, essentialCharacteristics),
-      )
+      this.shouldContainSummaryListItems(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest))
     })
     cy.get('.govuk-heading-l')
       .contains(
-        `View availability and book your placement for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
+        `View availability for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
       )
       .should('exist')
   }
 
-  shouldShowOccupancySummary(premiseCapacity: Cas1PremiseCapacity) {
-    const availability = dateRangeAvailability(premiseCapacity)
+  shouldShowFilters(startDate: string, selectedDuration: string, newCriteria: Array<string>) {
+    this.dateInputsShouldContainDate('startDate', startDate)
+    this.shouldHaveSelectText('durationDays', selectedDuration)
+    newCriteria.forEach(criteria => {
+      this.verifyCheckboxByLabel(criteria)
+    })
+  }
 
-    if (availability === 'available') {
+  filterAvailability(newStartDate: string, newDuration?: string, newCriteria?: Array<string>) {
+    this.clearAndCompleteDateInputs('startDate', newStartDate)
+    if (newDuration) {
+      this.getSelectInputByIdAndSelectAnEntry('durationDays', newDuration)
+    }
+    if (newCriteria) {
+      newCriteria.forEach(criteria => {
+        this.checkCheckboxByLabel(criteria)
+      })
+    }
+    this.clickApplyFilter()
+  }
+
+  shouldShowOccupancySummary(
+    premiseCapacity: Cas1PremiseCapacity,
+    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+  ) {
+    const summary = occupancySummary(premiseCapacity.capacity, criteria)
+
+    if (!summary.overbooked) {
       this.shouldShowBanner('The placement dates you have selected are available.')
-    } else if (availability === 'none') {
+    } else if (!summary.available) {
       this.shouldShowBanner('There are no spaces available for the dates you have selected.')
     } else {
       this.shouldShowBanner('Available on:')
@@ -73,16 +85,19 @@ export default class OccupancyViewPage extends Page {
     cy.get('.calendar__availability').contains(copy).should('exist')
   }
 
-  shouldShowOccupancyCalendar(premiseCapacity: Cas1PremiseCapacity) {
+  shouldShowOccupancyCalendar(
+    premiseCapacity: Cas1PremiseCapacity,
+    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+  ) {
     const firstMonth = DateFormats.isoDateToMonthAndYear(premiseCapacity.startDate)
     cy.get('.govuk-heading-m').contains(firstMonth).should('exist')
 
-    const availability = dateRangeAvailability(premiseCapacity)
-    if (availability === 'available' || availability === 'partial') {
+    const summary = occupancySummary(premiseCapacity.capacity, criteria)
+    if (summary.available) {
       this.shouldShowCalendarCell('Available')
     }
-    if (availability === 'none' || availability === 'partial') {
-      this.shouldShowCalendarCell(/-?\d+ total/)
+    if (summary.overbooked) {
+      this.shouldShowCalendarCell(/-?\d+ in total/)
     }
   }
 

@@ -1,9 +1,14 @@
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "./partials/_occupancySummary.njk" import occupancySummary %}
 {% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 
@@ -18,16 +23,10 @@
     }) }}
 {% endblock %}
 
-{% block extraScripts %}
-    {# TODO: useful for debugging, remove once page complete! #}
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-      console.log(JSON.parse('{{ calendar | dump | safe }}'))
-    </script>
-{% endblock %}
-
 {% block content %}
-    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
     {{ showErrorSummary(errorSummary) }}
+
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     {% set detailsHTML %}
         {{ govukSummaryList({
@@ -42,96 +41,158 @@
     }) }}
 
     <section>
-        <h2 class="govuk-heading-l">View availability and book your placement
-            for {{ formatDuration(durationDays) }}
-            from {{ formatDate(startDate, { format: 'short' }) }}</h2>
+        <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
+            {% if startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
 
-        {{ govukNotificationBanner({
-            html: occupancySummaryHtml,
-            classes: 'govuk-notification-banner--full-width-content'
-        }) }}
+        <div class="search-and-filter">
+            <form action="{{ paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id }) }}"
+                  method="get">
+                <h3 class="govuk-heading-m">Filters</h3>
 
-        <section id="calendar-key">
-            <h3 class="govuk-heading-m">Key</h3>
+                <input type="hidden" name="apType" value="{{ apType }}">
 
-            <ul class="calendar__month govuk-list">
-                <li class="calendar__day">
-                    Available
-                </li>
-                <li class="calendar__day govuk-tag--red">
-                    Full or overbooked
-                </li>
-            </ul>
-        </section>
+                <div class="search-and-filter__row">
+                    {{ govukDateInput({
+                        id: "startDate",
+                        namePrefix: "startDate",
+                        fieldset: {
+                            legend: {
+                                text: "Availability start date",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: dateFieldValues('startDate', errors),
+                        errorMessage: errors.startDate
+                    }) }}
 
+                    {{ govukSelect({
+                        id: 'durationDays',
+                        name: 'durationDays',
+                        label: {
+                            text: 'Length of availability',
+                            classes: 'govuk-label--s'
+                        },
+                        items: durationOptions
+                    }) }}
+                </div>
 
-        <section aria-describedby="calendar-key">
-            {{ occupancyCalendar(calendar) }}
-        </section>
+                <div class="search-and-filter__row">
+                    {{ govukCheckboxes({
+                        name: "criteria",
+                        classes: "govuk-checkboxes--small govuk-checkboxes--inline",
+                        fieldset: {
+                            legend: {
+                                text: "Select following criteria",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: criteriaOptions
+                    }) }}
+                </div>
+
+                <div class="search-and-filter__row">
+                    {{ govukButton({
+                        text: 'Apply filters',
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
+        </div>
+
+        {% if not errors.startDate %}
+
+            {{ occupancySummary(summary) }}
+
+            <section id="calendar-key">
+                <h3 class="govuk-heading-m">Key</h3>
+
+                <ul class="calendar__month govuk-list">
+                    <li class="calendar__day">
+                        Available
+                    </li>
+                    <li class="calendar__day govuk-tag--yellow">
+                        Available for your criteria
+                    </li>
+                    <li class="calendar__day govuk-tag--red">
+                        Full or overbooked
+                    </li>
+                </ul>
+            </section>
+
+            <section aria-describedby="calendar-key">
+                {{ occupancyCalendar(calendar) }}
+            </section>
+        {% endif %}
     </section>
 
-    <section>
-        <h2 class="govuk-heading-l">Book your placement</h2>
+    {% if not errors.startDate %}
+        <section>
+            <h2 class="govuk-heading-l">Book your placement</h2>
 
-        <form action="{{ paths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequest.id }) }}" method="post">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            <input type="hidden" name="premisesId" value="{{ premisesId }}" />
-            <input type="hidden" name="premisesName" value="{{ premisesName }}" />
-            <input type="hidden" name="apType" value="{{ apType }}" />
-            <input type="hidden" name="startDate" value="{{ startDate }}" />
-            <input type="hidden" name="durationDays" value="{{ durationDays }}" />
+            <form action="{{ paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id }) }}"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="premisesId" value="{{ premises.id }}" />
+                <input type="hidden" name="premisesName" value="{{ premises.name }}" />
+                <input type="hidden" name="apType" value="{{ apType }}" />
+                <input type="hidden" name="startDate" value="{{ startDate }}" />
+                <input type="hidden" name="durationDays" value="{{ durationDays }}" />
+                <input type="hidden" name="criteria" value="{{ criteria }}" />
 
-            {{ govukDateInput({
-                id: "arrivalDate",
-                namePrefix: "arrivalDate",
-                fieldset: {
-                    legend: {
-                        text: "Arrival date",
-                        classes: "govuk-fieldset__legend--m"
-                    }
-                },
-                hint: {
-                    text: "For example, 17 5 2024"
-                },
-                items: dateFieldValues('arrivalDate', errors),
-                errorMessage: errors.arrivalDate
-            }) }}
-
-            {{ govukDateInput({
-                id: "departureDate",
-                namePrefix: "departureDate",
-                fieldset: {
-                    legend: {
-                        text: "Departure date",
-                        classes: "govuk-fieldset__legend--m"
-                    }
-                },
-                hint: {
-                    text: "For example, 17 5 2024"
-                },
-                items: dateFieldValues('departureDate', errors),
-                errorMessage: errors.departureDate
-            }) }}
-
-            <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Continue",
-                    preventDoubleClick: true
+                {{ govukDateInput({
+                    id: "arrivalDate",
+                    namePrefix: "arrivalDate",
+                    fieldset: {
+                        legend: {
+                            text: "Arrival date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "For example, 17 5 2024"
+                    },
+                    items: dateFieldValues('arrivalDate', errors),
+                    errorMessage: errors.arrivalDate
                 }) }}
-                {{ govukButton({
-                    text: "Cancel",
-                    classes: "govuk-button--secondary",
-                    href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
-                    preventDoubleClick: true
+
+                {{ govukDateInput({
+                    id: "departureDate",
+                    namePrefix: "departureDate",
+                    fieldset: {
+                        legend: {
+                            text: "Departure date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "For example, 17 5 2024"
+                    },
+                    items: dateFieldValues('departureDate', errors),
+                    errorMessage: errors.departureDate
                 }) }}
-            </div>
-        </form>
-        <h3 class="govuk-heading-m">If you are not booking this placement</h3>
-        <p class="govuk-body">
-            <a href="{{ paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }) }}">Check for a space at another AP</a>
-        </p>
-        <p class="govuk-body">
-            <a href="{{ paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}) }}">Mark as unable to match</a>
-        </p>
-    </section>
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue",
+                        preventDoubleClick: true
+                    }) }}
+                    {{ govukButton({
+                        text: "Cancel",
+                        classes: "govuk-button--secondary",
+                        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
+            <h3 class="govuk-heading-m">If you are not booking this placement</h3>
+            <p class="govuk-body">
+                <a href="{{ paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }) }}">Check for a
+                    space at another AP</a>
+            </p>
+            <p class="govuk-body">
+                <a href="{{ paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}) }}">Mark as unable
+                    to match</a>
+            </p>
+        </section>
+    {% endif %}
 {% endblock %}

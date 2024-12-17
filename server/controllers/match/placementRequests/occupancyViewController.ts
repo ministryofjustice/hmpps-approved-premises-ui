@@ -1,10 +1,9 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import { ApType } from '@approved-premises/api'
+import type { ApType, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
-  filterOutAPTypes,
   occupancySummary,
   occupancyViewLink,
   occupancyViewSummaryListForMatchingDetails,
@@ -12,13 +11,28 @@ import {
   redirectToSpaceBookingsNew,
   validateSpaceBooking,
 } from '../../../utils/match'
-import { DateFormats } from '../../../utils/dateUtils'
-import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
-import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../../utils/validation'
+import {
+  addErrorMessageToFlash,
+  fetchErrorsAndUserInput,
+  generateErrorMessages,
+  generateErrorSummary,
+} from '../../../utils/validation'
+import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
+import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { durationSelectOptions, occupancyCriteriaMap } from '../../../utils/match/occupancy'
+import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
+import { OccupancySummary } from '../../../utils/match/occupancySummary'
 
 interface NewRequest extends Request {
-  params: { id: string }
-  query: { startDate: string; durationDays: string; premisesName: string; premisesId: string; apType: ApType }
+  params: {
+    id: string
+    premisesId: string
+  }
+  query: ObjectWithDateParts<'startDate'> & {
+    durationDays: string
+    apType: ApType
+    criteria: Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
+  }
 }
 
 export default class {
@@ -29,32 +43,68 @@ export default class {
 
   view(): TypedRequestHandler<Request> {
     return async (req: NewRequest, res: Response) => {
-      const { startDate, durationDays, premisesName, premisesId, apType } = req.query
-      const dates = placementDates(startDate, durationDays)
-      const [placementRequest, capacity] = await Promise.all([
-        this.placementRequestService.getPlacementRequest(req.user.token, req.params.id),
-        this.premisesService.getCapacity(req.user.token, premisesId, dates.startDate, dates.endDate),
-      ])
-      const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
-      const matchingDetailsSummaryList = occupancyViewSummaryListForMatchingDetails(
-        capacity.premise.bedCount,
-        dates,
-        placementRequest,
-        essentialCharacteristics,
-      )
-      const occupancySummaryHtml = occupancySummary(capacity)
-      const calendar = occupancyCalendar(capacity)
+      const { token } = req.user
+      const { id, premisesId } = req.params
+      const { apType, criteria, ...filterUserInput } = req.query
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const premises = await this.premisesService.find(token, premisesId)
+
+      let criteriaAsArray: Array<Cas1SpaceBookingCharacteristic>
+      if (criteria) {
+        criteriaAsArray = Array.isArray(criteria) ? criteria : [criteria]
+      }
+      const durationDays = Number(filterUserInput.durationDays) || placementRequest.duration
+
+      let startDate: string
+      let dateFieldValues: ObjectWithDateParts<'startDate'>
+
+      if (filterUserInput['startDate-day'] || filterUserInput['startDate-month'] || filterUserInput['startDate-year']) {
+        dateFieldValues = filterUserInput
+
+        if (dateAndTimeInputsAreValidDates(filterUserInput, 'startDate')) {
+          startDate = DateFormats.dateAndTimeInputsToIsoString(filterUserInput, 'startDate').startDate
+        } else {
+          const dateError = { startDate: 'Enter a valid date' }
+          Object.assign(errors, generateErrorMessages(dateError))
+          errorSummary.push(generateErrorSummary(dateError)[0])
+        }
+      } else {
+        startDate = placementRequest.expectedArrival
+        dateFieldValues = DateFormats.isoDateToDateInputs(startDate, 'startDate')
+      }
+
+      const matchingDetailsSummaryList = occupancyViewSummaryListForMatchingDetails(premises.bedCount, placementRequest)
+      let summary: OccupancySummary
+      let calendar: Calendar
+
+      if (!Object.keys(errors).length) {
+        const capacityDates = placementDates(startDate, durationDays)
+        const capacity = await this.premisesService.getCapacity(
+          token,
+          premisesId,
+          capacityDates.startDate,
+          capacityDates.endDate,
+        )
+
+        summary = occupancySummary(capacity.capacity, criteriaAsArray)
+        calendar = occupancyCalendar(capacity.capacity, criteriaAsArray)
+      }
+
       res.render('match/placementRequests/occupancyView/view', {
-        pageHeading: `View spaces in ${premisesName}`,
+        pageHeading: `View spaces in ${premises.name}`,
         placementRequest,
-        premisesName,
-        premisesId,
+        premises,
         apType,
+        ...dateFieldValues,
         startDate,
         durationDays,
+        durationOptions: durationSelectOptions(durationDays),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteriaAsArray),
+        criteria: criteriaAsArray,
         matchingDetailsSummaryList,
-        occupancySummaryHtml,
+        summary,
         calendar,
         errors,
         errorSummary,
@@ -74,14 +124,14 @@ export default class {
         if (errors.departureDate) {
           addErrorMessageToFlash(req, errors.departureDate, 'departureDate')
         }
-        const { startDate, durationDays, premisesName, premisesId, apType } = body
+        const { startDate, durationDays, apType, criteria } = body
         const redirectUrl = occupancyViewLink({
           placementRequestId: req.params.id,
-          premisesName,
-          premisesId,
+          premisesId: req.params.premisesId,
           apType,
           startDate,
           durationDays,
+          spaceCharacteristics: criteria.split(','),
         })
         res.redirect(redirectUrl)
       } else {

@@ -1,8 +1,8 @@
 import type {
   Cas1PremiseCapacity,
   Cas1PremisesBasicSummary,
+  Cas1PremisesSummary,
   ExtendedPremisesSummary,
-  Premises,
   ApprovedPremisesSummary as PremisesSummary,
   StaffMember,
 } from '@approved-premises/api'
@@ -57,7 +57,7 @@ const stubPremisesSummary = (premises: ExtendedPremisesSummary) =>
     },
   })
 
-const stubSinglePremises = (premises: Premises) =>
+const stubSinglePremises = (premises: Cas1PremisesSummary) =>
   stubFor({
     request: {
       method: 'GET',
@@ -96,7 +96,10 @@ const stubPremiseCapacity = (args: {
   stubFor({
     request: {
       method: 'GET',
-      url: `${paths.premises.capacity({ premisesId: args.premiseCapacity.premise.id })}?${createQueryString({ startDate: args.startDate, endDate: args.endDate })}`,
+      url: `${paths.premises.capacity({ premisesId: args.premiseCapacity.premise.id })}?${createQueryString({
+        startDate: args.startDate,
+        endDate: args.endDate,
+      })}`,
     },
     response: {
       status: 200,

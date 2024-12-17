@@ -1,6 +1,7 @@
 import { addDays } from 'date-fns'
 import type {
   ApType,
+  Cas1SpaceCharacteristic,
   Gender,
   PlacementCriteria,
   PlacementRequest,
@@ -30,6 +31,8 @@ import { isFullPerson } from '../personUtils'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { placementDates } from './placementDates'
+import { occupancyCriteriaMap } from './occupancy'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
@@ -82,28 +85,31 @@ export const placementLength = (lengthInDays: number): string => {
 
 export const occupancyViewLink = ({
   placementRequestId,
-  premisesName,
   premisesId,
   apType,
   startDate,
   durationDays,
+  spaceCharacteristics = [],
 }: {
   placementRequestId: string
-  premisesName: string
   premisesId: string
   apType: string
   startDate: string
   durationDays: string
+  spaceCharacteristics: Array<Cas1SpaceCharacteristic>
 }): string => {
-  return `${matchPaths.v2Match.placementRequests.spaceBookings.viewSpaces({ id: placementRequestId })}${createQueryString(
+  const criteria = spaceCharacteristics.filter(name => Object.keys(occupancyCriteriaMap).includes(name))
+  return `${matchPaths.v2Match.placementRequests.search.occupancy({
+    id: placementRequestId,
+    premisesId,
+  })}${createQueryString(
     {
-      premisesName,
-      premisesId,
       apType,
       startDate,
       durationDays,
+      criteria,
     },
-    { addQueryPrefix: true },
+    { addQueryPrefix: true, arrayFormat: 'repeat' },
   )}`
 }
 
@@ -168,14 +174,15 @@ export const spaceBookingPersonNeedsSummaryCardRows = (
 
 export const occupancyViewSummaryListForMatchingDetails = (
   totalCapacity: number,
-  dates: PlacementDates,
   placementRequest: PlacementRequest,
-  essentialCharacteristics: Array<SpaceCharacteristic>,
 ): Array<SummaryListItem> => {
+  const placementRequestDates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
+  const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
+
   return [
-    arrivalDateRow(dates.startDate),
-    departureDateRow(dates.endDate),
-    placementLengthRow(dates.placementLength),
+    arrivalDateRow(placementRequestDates.startDate),
+    departureDateRow(placementRequestDates.endDate),
+    placementLengthRow(placementRequestDates.placementLength),
     releaseTypeRow(placementRequest),
     totalCapacityRow(totalCapacity),
     spaceRequirementsRow(essentialCharacteristics),

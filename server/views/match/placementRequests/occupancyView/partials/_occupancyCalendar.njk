@@ -1,26 +1,41 @@
 {% macro occupancyCalendar(calendar) %}
     <div class="calendar">
         {% for month in calendar %}
-            <h3 class="govuk-heading-m">{{ month.name }}</h3>
-            <ul class="calendar__month govuk-list">
-                {% for day in month.days %}
-                    <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }}{% if day.bookableCount <= 0 %} govuk-tag--red{% endif %}">
-                        <a class="calendar__link" href="#">
-                            <time class="calendar__date" datetime="{{ day.date }}">{{ day.name }}</time>
+            <section>
+                <h3 class="govuk-heading-m">{{ month.name }}</h3>
 
-                            <dl class="calendar__availability">
-                                <dt class="govuk-visually-hidden">Availability:</dt>
+                <ul class="calendar__month govuk-list">
+                    {% for day in month.days %}
+                        <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }}{% if day.status !== 'available' %} {{ 'govuk-tag--yellow' if day.status === 'availableForCriteria' else 'govuk-tag--red' }}{% endif %}">
+                            <a class="calendar__link" href="#">
+                                <time class="calendar__date" datetime="{{ day.date }}">{{ day.name }}</time>
 
-                                {% if day.bookableCount > 0 %}
-                                    <dd>Available</dd>
-                                {% else %}
-                                    <dd><span class="govuk-!-font-weight-bold">{{ day.bookableCount }}</span> total</dd>
-                                {% endif %}
-                            </dl>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+                                <dl class="calendar__availability">
+                                    <dt class="govuk-visually-hidden">Availability:</dt>
+
+                                    {% if day.status === 'available' %}
+                                        <dd>Available</dd>
+                                    {% else %}
+                                        {% if day.criteriaBookableCount is defined %}
+                                            <dd>
+                                                <span class="govuk-!-font-weight-bold">{{ day.criteriaBookableCount }}</span>
+                                                <span class="govuk-visually-hidden">for</span>
+                                                your criteria
+                                            </dd>
+                                        {% endif %}
+
+                                        <dd>
+                                            <span class="govuk-!-font-weight-bold">{{ day.bookableCount }}</span>
+                                            <span class="govuk-visually-hidden">in</span>
+                                            total
+                                        </dd>
+                                    {% endif %}
+                                </dl>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
         {% endfor %}
     </div>
 {% endmacro %}

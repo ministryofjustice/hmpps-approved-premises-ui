@@ -1,0 +1,38 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% macro dateRangeList(ranges) %}
+    <ul>
+        {% for range in ranges %}
+            <li>
+                {{ formatDate(range.from) }}
+                {% if range.to %} to {{ formatDate(range.to) }}{% endif %}
+                <strong>({{ formatDuration(range.duration) }})</strong>
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% macro occupancySummary(summary) %}
+    {% set bannerHtml %}
+        {% if summary.overbooked is not defined %}
+            <p class="govuk-heading-m">The placement dates you have selected are available.</p>
+        {% endif %}
+
+        {% if summary.available is not defined %}
+            <p class="govuk-heading-m">There are no spaces available for the dates you have selected.</p>
+        {% endif %}
+
+        {% if summary.available and summary.overbooked %}
+            <h3 class="govuk-heading-m">Available on:</h3>
+            {{ dateRangeList(summary.available) }}
+
+            <h3 class="govuk-heading-m">Overbooked on:</h3>
+            {{ dateRangeList(summary.overbooked) }}
+        {% endif %}
+    {% endset %}
+
+    {{ govukNotificationBanner({
+        html: bannerHtml,
+        classes: 'govuk-notification-banner--full-width-content'
+    }) }}
+{% endmacro %}
