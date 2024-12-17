@@ -10,7 +10,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: MatchUtils.occupancyViewLink({ placementRequestId: placementRequest.id, premisesId: premisesId, apType: apType })
+        href: MatchUtils.occupancyViewLink({ placementRequestId: placementRequest.id, premisesId: premises.id })
     }) }}
 {% endblock %}
 
@@ -28,7 +28,7 @@
                         }
                     },
                     classes: 'govuk-summary-list--no-border',
-                    rows: MatchUtils.spaceBookingPremisesSummaryCardRows(premisesName, apType)
+                    rows: MatchUtils.spaceBookingPremisesSummaryCardRows(premises.name, premises.apType)
                 }) }}
 
                 {{ govukSummaryList({
@@ -41,7 +41,7 @@
                     rows: MatchUtils.spaceBookingPersonNeedsSummaryCardRows(dates, placementRequest.gender, essentialCharacteristics, desirableCharacteristics)
                 }) }}
 
-                <p>This booking will be sent to {{ premisesName }} Approved Premises for confirmation.</p>
+                <p>This booking will be sent to {{ premises.name }} Approved Premises for confirmation.</p>
 
                 <form action="{{ paths.v2Match.placementRequests.spaceBookings.create({ id: placementRequest.id }) }}"
                       method="post">
@@ -50,9 +50,8 @@
                     <input type="hidden" name="arrivalDate" value="{{ dates.startDate }}" />
                     <input type="hidden" name="departureDate" value="{{ dates.endDate }}" />
                     <input type="hidden" name="durationDays" value="{{ dates.placementLength }}" />
-                    <input type="hidden" name="premisesId" value="{{ premisesId }}" />
-                    <input type="hidden" name="premisesName" value="{{ premisesName }}" />
-                    <input type="hidden" name="apType" value="{{ apType }}" />
+                    <input type="hidden" name="premisesId" value="{{ premises.id }}" />
+                    <input type="hidden" name="premisesName" value="{{ premises.name }}" />
                     <input type="hidden" name="essentialCharacteristics" value="{{ essentialCharacteristics }}" />
                     <input type="hidden" name="personName" value="{{ placementRequest.person.name }}" />
 

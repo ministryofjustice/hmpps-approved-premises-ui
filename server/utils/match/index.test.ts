@@ -253,7 +253,6 @@ describe('matchUtils', () => {
     it('returns a link to the occupancy view page', () => {
       const placementRequestId = '123'
       const premisesId = 'abc'
-      const apType = 'pipe'
       const startDate = '2025-04-14'
       const durationDays = '84'
       const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = ['isWheelchairDesignated', 'isSingle']
@@ -261,7 +260,6 @@ describe('matchUtils', () => {
       const result = occupancyViewLink({
         placementRequestId,
         premisesId,
-        apType,
         startDate,
         durationDays,
         spaceCharacteristics,
@@ -271,14 +269,13 @@ describe('matchUtils', () => {
         `${paths.v2Match.placementRequests.search.occupancy({
           id: placementRequestId,
           premisesId,
-        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle`,
+        })}?startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle`,
       )
     })
 
     it('filters out non booking-specific search criteria', () => {
       const placementRequestId = '123'
       const premisesId = 'abc'
-      const apType = 'pipe'
       const startDate = '2025-04-14'
       const durationDays = '84'
       const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = [
@@ -295,7 +292,6 @@ describe('matchUtils', () => {
       const result = occupancyViewLink({
         placementRequestId,
         premisesId,
-        apType,
         startDate,
         durationDays,
         spaceCharacteristics,
@@ -305,7 +301,7 @@ describe('matchUtils', () => {
         `${paths.v2Match.placementRequests.search.occupancy({
           id: placementRequestId,
           premisesId,
-        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
+        })}?startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
       )
     })
   })
@@ -315,7 +311,6 @@ describe('matchUtils', () => {
       const placementRequestId = '123'
       const premisesName = 'Hope House'
       const premisesId = 'abc'
-      const apType = 'pipe'
       const startDate = '2022-01-01'
       const durationDays = '1'
 
@@ -323,7 +318,6 @@ describe('matchUtils', () => {
         placementRequestId,
         premisesName,
         premisesId,
-        apType,
         startDate,
         durationDays,
       })
@@ -333,7 +327,6 @@ describe('matchUtils', () => {
           {
             premisesName,
             premisesId,
-            apType,
             startDate,
             durationDays,
           },

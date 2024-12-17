@@ -32,14 +32,13 @@ describe('OccupancyViewController', () => {
   const premiseCapacity = cas1PremiseCapacityFactory.build()
   let request: Readonly<DeepMocked<Request>>
 
-  const apType = 'esap'
-
   beforeEach(() => {
     jest.resetAllMocks()
 
     occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
     request = createMock<Request>({
       user: { token },
+      query: {},
       flash: flashSpy,
     })
 
@@ -62,15 +61,11 @@ describe('OccupancyViewController', () => {
       const expectedStartDate = placementRequestDetail.expectedArrival
       const expectedDuration = placementRequestDetail.duration
 
-      const query = {
-        apType,
-      }
-
       const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
       const requestHandler = occupancyViewController.view()
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler({ ...request, params }, response, next)
 
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
@@ -85,7 +80,6 @@ describe('OccupancyViewController', () => {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
         premises,
-        apType,
         startDate: expectedStartDate,
         ...DateFormats.isoDateToDateInputs(expectedStartDate, 'startDate'),
         durationDays: expectedDuration,
@@ -117,10 +111,6 @@ describe('OccupancyViewController', () => {
     })
 
     it('should render the occupancy view template with booking errors', async () => {
-      const query = {
-        apType,
-      }
-
       const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
       const expectedErrors = {
@@ -156,7 +146,7 @@ describe('OccupancyViewController', () => {
 
       const requestHandler = occupancyViewController.view()
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler({ ...request, params }, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/placementRequests/occupancyView/view',
@@ -178,7 +168,6 @@ describe('OccupancyViewController', () => {
 
     it('should render the occupancy view template with filtered start date, duration and criteria', async () => {
       const query = {
-        apType,
         'startDate-day': '30',
         'startDate-month': '04',
         'startDate-year': '2025',
@@ -225,7 +214,6 @@ describe('OccupancyViewController', () => {
 
     it('should show an error if the filter date is invalid', async () => {
       const query = {
-        apType,
         'startDate-day': '32',
         'startDate-month': '2',
         'startDate-year': '2025',
@@ -262,7 +250,6 @@ describe('OccupancyViewController', () => {
     const arrivalYear = '2026'
 
     const validBookingBody = {
-      apType,
       startDate,
       durationDays,
       criteria: '',
@@ -282,7 +269,7 @@ describe('OccupancyViewController', () => {
 
       const expectedDurationDays = 10
       const expectedStartDate = `${arrivalYear}-0${arrivalMonth}-${arrivalDay}`
-      const expectedParams = `apType=${apType}&startDate=${expectedStartDate}&durationDays=${expectedDurationDays}`
+      const expectedParams = `startDate=${expectedStartDate}&durationDays=${expectedDurationDays}`
       expect(response.redirect).toHaveBeenCalledWith(
         `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestDetail.id })}?${expectedParams}`,
       )
@@ -308,7 +295,7 @@ describe('OccupancyViewController', () => {
         'arrivalDate',
       )
 
-      const expectedParams = `apType=${apType}&startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
+      const expectedParams = `startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
 
       expect(response.redirect).toHaveBeenCalledWith(
         `${matchPaths.v2Match.placementRequests.search.occupancy({

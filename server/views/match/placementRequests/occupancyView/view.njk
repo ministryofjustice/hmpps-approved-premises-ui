@@ -48,9 +48,7 @@
             <form action="{{ paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id }) }}"
                   method="get">
                 <h3 class="govuk-heading-m">Filters</h3>
-
-                <input type="hidden" name="apType" value="{{ apType }}">
-
+                
                 <div class="search-and-filter__row">
                     {{ govukDateInput({
                         id: "startDate",
@@ -134,7 +132,6 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type="hidden" name="premisesId" value="{{ premises.id }}" />
                 <input type="hidden" name="premisesName" value="{{ premises.name }}" />
-                <input type="hidden" name="apType" value="{{ apType }}" />
                 <input type="hidden" name="startDate" value="{{ startDate }}" />
                 <input type="hidden" name="durationDays" value="{{ durationDays }}" />
                 <input type="hidden" name="criteria" value="{{ criteria }}" />

@@ -1,5 +1,5 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import type { ApType, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
@@ -33,9 +33,7 @@ interface NewRequest extends Request {
     id: string
     premisesId: string
   }
-  query: FilterUserInput & {
-    apType: ApType
-  }
+  query: FilterUserInput
 }
 
 export default class {
@@ -82,7 +80,7 @@ export default class {
     return async (req: NewRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId } = req.params
-      const { apType, ...filterUserInput } = req.query
+      const filterUserInput = req.query
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
@@ -121,7 +119,6 @@ export default class {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest,
         premises,
-        apType,
         ...dateFieldValues,
         startDate,
         durationDays,
@@ -149,11 +146,10 @@ export default class {
         if (errors.departureDate) {
           addErrorMessageToFlash(req, errors.departureDate, 'departureDate')
         }
-        const { startDate, durationDays, apType, criteria } = body
+        const { startDate, durationDays, criteria } = body
         const redirectUrl = occupancyViewLink({
           placementRequestId: req.params.id,
           premisesId: req.params.premisesId,
-          apType,
           startDate,
           durationDays,
           spaceCharacteristics: criteria.split(','),
@@ -172,7 +168,6 @@ export default class {
           placementRequestId: req.params.id,
           premisesName: body.premisesName,
           premisesId: body.premisesId,
-          apType: body.apType,
           startDate: arrivalDate,
           durationDays: differenceInDays(
             DateFormats.isoToDateObj(departureDate),

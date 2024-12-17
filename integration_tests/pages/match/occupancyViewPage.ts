@@ -1,5 +1,4 @@
 import {
-  ApType,
   Cas1PremiseCapacity,
   Cas1PremisesSummary,
   Cas1SpaceBookingCharacteristic,
@@ -8,7 +7,6 @@ import {
 } from '@approved-premises/api'
 import Page from '../page'
 import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
-import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 
@@ -17,13 +15,13 @@ export default class OccupancyViewPage extends Page {
     super(`View spaces in ${premisesName}`)
   }
 
-  static visit(placementRequest: PlacementRequestDetail, premises: Cas1PremisesSummary, apType: ApType) {
-    const path = `${paths.v2Match.placementRequests.search.occupancy({
-      id: placementRequest.id,
-      premisesId: premises.id,
-    })}?${createQueryString({ apType })}`
-
-    cy.visit(path)
+  static visit(placementRequest: PlacementRequestDetail, premises: Cas1PremisesSummary) {
+    cy.visit(
+      paths.v2Match.placementRequests.search.occupancy({
+        id: placementRequest.id,
+        premisesId: premises.id,
+      }),
+    )
 
     return new OccupancyViewPage(premises.name)
   }

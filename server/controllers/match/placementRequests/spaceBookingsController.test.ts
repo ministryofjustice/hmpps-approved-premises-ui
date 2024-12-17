@@ -3,8 +3,9 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import SpaceBookingsController from './spaceBookingsController'
 
-import { PlacementRequestService, SpaceService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
 import {
+  cas1PremisesSummaryFactory,
   cas1SpaceBookingFactory,
   newSpaceBookingFactory,
   personFactory,
@@ -24,33 +25,34 @@ describe('SpaceBookingsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
+  const premisesService = createMock<PremisesService>({})
   const spaceService = createMock<SpaceService>({})
 
   let spaceBookingsController: SpaceBookingsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    spaceBookingsController = new SpaceBookingsController(placementRequestService, spaceService)
+    spaceBookingsController = new SpaceBookingsController(placementRequestService, spaceService, premisesService)
   })
 
   describe('new', () => {
     it('should render the new space booking template', async () => {
-      const person = personFactory.build({ name: 'John Wayne' })
-      const placementRequestDetail = placementRequestDetailFactory.build({ person })
       const startDate = '2024-07-26'
       const durationDays = '40'
-      const premisesName = 'Hope House'
       const premisesId = 'abc123'
-      const apType = 'esap'
+
+      const person = personFactory.build({ name: 'John Wayne' })
+      const placementRequestDetail = placementRequestDetailFactory.build({ person })
+      const premises = cas1PremisesSummaryFactory.build({ id: premisesId })
+
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: [], errorSummary: {}, userInput: {} })
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
+      premisesService.find.mockResolvedValue(premises)
 
       const query = {
         startDate,
         durationDays,
-        premisesName,
         premisesId,
-        apType,
       }
 
       const params = { id: placementRequestDetail.id }
@@ -62,11 +64,9 @@ describe('SpaceBookingsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
-        pageHeading: `Book space in ${premisesName}`,
+        pageHeading: `Book space in ${premises.name}`,
         placementRequest: placementRequestDetail,
-        premisesName,
-        premisesId,
-        apType,
+        premises,
         startDate,
         durationDays,
         errorSummary: {},

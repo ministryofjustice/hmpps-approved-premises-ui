@@ -9,6 +9,7 @@ export default Factory.define<Cas1PremisesSummary>(() => ({
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   postcode: faker.location.zipCode(),
   apCode: `${faker.string.alpha(2)}`,
+  apType: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
   bedCount: 50,
   availableBeds: faker.number.int({ min: 0, max: 50 }),
   outOfServiceBeds: faker.number.int({ min: 0, max: 50 }),
