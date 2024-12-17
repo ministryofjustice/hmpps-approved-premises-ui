@@ -116,7 +116,7 @@ describe('OccupancyViewController', () => {
       })
     })
 
-    it('should render the occupancy view template with errors', async () => {
+    it('should render the occupancy view template with booking errors', async () => {
       const query = {
         apType,
       }
@@ -169,6 +169,8 @@ describe('OccupancyViewController', () => {
           'departureDate-day': '1',
           'departureDate-month': '5',
           'departureDate-year': '2026',
+          calendar: occupancyCalendar(premiseCapacity.capacity),
+          summary: occupancySummary(premiseCapacity.capacity),
         }),
       )
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
@@ -213,7 +215,7 @@ describe('OccupancyViewController', () => {
           durationDays: 100,
           startDate: '2025-04-30',
           'startDate-day': '30',
-          'startDate-month': '04',
+          'startDate-month': '4',
           'startDate-year': '2025',
           summary: occupancySummary(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
           calendar: occupancyCalendar(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
@@ -225,7 +227,7 @@ describe('OccupancyViewController', () => {
       const query = {
         apType,
         'startDate-day': '32',
-        'startDate-month': '02',
+        'startDate-month': '2',
         'startDate-year': '2025',
         durationDays: '84',
       }
@@ -241,9 +243,8 @@ describe('OccupancyViewController', () => {
         expect.objectContaining({
           errors: { startDate: { attributes: { 'data-cy-error-startDate': true }, text: 'Enter a valid date' } },
           errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
-          startDate: undefined,
           'startDate-day': '32',
-          'startDate-month': '02',
+          'startDate-month': '2',
           'startDate-year': '2025',
           summary: undefined,
           calendar: undefined,
