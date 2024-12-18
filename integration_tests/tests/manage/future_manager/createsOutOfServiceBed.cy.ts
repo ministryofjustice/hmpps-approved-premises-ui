@@ -32,7 +32,7 @@ context('OutOfServiceBeds', () => {
     cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // Given I am signed in with permissions to view and create out of service beds
-    signIn([], ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'])
+    signIn([], ['cas1_premises_view', 'cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'])
 
     // When I navigate to the out of service bed form
     const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)

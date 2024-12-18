@@ -67,13 +67,12 @@ describe('manage routes', () => {
   const postSpy = jest.fn()
   ;(actions as jest.Mock).mockReturnValue({ get: getSpy, post: postSpy, put: jest.fn(), delete: jest.fn() })
 
-  it('should allow a user with role cru_member to view a bed', () => {
+  it('should allow a user with permission cas1_premises_view to view a bed', () => {
     manageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(paths.premises.beds.show.pattern, bedsController.show(), {
       auditEvent: 'SHOW_BED',
-      allowedRoles: ['future_manager', 'cru_member'],
-      allowedPermissions: ['cas1_out_of_service_bed_create'],
+      allowedPermissions: ['cas1_premises_view'],
     })
   })
 
