@@ -108,6 +108,7 @@ describe('OccupancyViewController', () => {
         matchingDetailsSummaryList: occupancyViewSummaryListForMatchingDetails(
           premiseCapacity.premise.bedCount,
           placementRequestDetail,
+          premiseCapacity.premise.managerDetails,
         ),
         summary: occupancySummary(premiseCapacity.capacity),
         calendar: occupancyCalendar(premiseCapacity.capacity),

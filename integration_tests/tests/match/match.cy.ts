@@ -149,6 +149,7 @@ context('Placement Requests', () => {
     const startDate = '2024-07-23'
     const endDate = '2024-08-07'
     const totalCapacity = 10
+    const managerDetails = 'John Doe'
 
     // Given I am signed in as a cru_member
     signIn(['cru_member'], ['cas1_space_booking_create'])
@@ -162,7 +163,7 @@ context('Placement Requests', () => {
       duration: durationDays,
     })
     const premiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premises.id, bedCount: totalCapacity },
+      premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
       startDate,
       endDate,
     })
@@ -175,7 +176,13 @@ context('Placement Requests', () => {
     const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
 
     // Then I should see the details of the case I am matching
-    occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
+    occupancyViewPage.shouldShowMatchingDetails(
+      totalCapacity,
+      startDate,
+      durationDays,
+      placementRequest,
+      managerDetails,
+    )
     return { occupancyViewPage, placementRequest, premiseCapacity, premises }
   }
 
@@ -185,6 +192,7 @@ context('Placement Requests', () => {
     const startDate = '2024-07-23'
     const endDate = '2024-08-07'
     const totalCapacity = 10
+    const managerDetails = 'John Doe'
 
     // Given I am signed in as a cru_member
     signIn(['cru_member'], ['cas1_space_booking_create'])
@@ -198,7 +206,7 @@ context('Placement Requests', () => {
       duration: durationDays,
     })
     const premiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premises.id, bedCount: totalCapacity },
+      premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
       startDate,
       endDate,
     })
@@ -211,7 +219,13 @@ context('Placement Requests', () => {
     const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
 
     // Then I should see the details of the case I am matching
-    occupancyViewPage.shouldShowMatchingDetails(totalCapacity, startDate, durationDays, placementRequest)
+    occupancyViewPage.shouldShowMatchingDetails(
+      totalCapacity,
+      startDate,
+      durationDays,
+      placementRequest,
+      managerDetails,
+    )
 
     // And I should see the filter form with populated values
     occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks', [])
@@ -236,7 +250,7 @@ context('Placement Requests', () => {
     const newDuration = 'Up to 1 week'
     const newCriteria = ['Wheelchair accessible', 'Step-free']
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premises.id, bedCount: totalCapacity },
+      premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
       startDate: newStartDate,
       endDate: newEndDate,
     })

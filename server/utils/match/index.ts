@@ -175,6 +175,7 @@ export const spaceBookingPersonNeedsSummaryCardRows = (
 export const occupancyViewSummaryListForMatchingDetails = (
   totalCapacity: number,
   placementRequest: PlacementRequest,
+  managerDetails: string,
 ): Array<SummaryListItem> => {
   const placementRequestDates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
   const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
@@ -185,6 +186,7 @@ export const occupancyViewSummaryListForMatchingDetails = (
     placementLengthRow(placementRequestDates.placementLength),
     releaseTypeRow(placementRequest),
     totalCapacityRow(totalCapacity),
+    apManagerDetailsRow(managerDetails),
     spaceRequirementsRow(essentialCharacteristics),
   ]
 }
@@ -331,6 +333,15 @@ export const totalCapacityRow = (totalCapacity: number) => ({
   },
   value: {
     text: `${totalCapacity} spaces`,
+  },
+})
+
+export const apManagerDetailsRow = (apManagerDetails: string) => ({
+  key: {
+    text: 'AP manager details',
+  },
+  value: {
+    text: apManagerDetails,
   },
 })
 
