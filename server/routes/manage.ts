@@ -119,8 +119,7 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.premises.beds.show.pattern, bedsController.show(), {
     auditEvent: 'SHOW_BED',
-    allowedRoles: ['future_manager', 'cru_member'],
-    allowedPermissions: ['cas1_out_of_service_bed_create'],
+    allowedPermissions: ['cas1_premises_view'],
   })
 
   // Placements
