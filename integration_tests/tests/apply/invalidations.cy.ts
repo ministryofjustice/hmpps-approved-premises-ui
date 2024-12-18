@@ -35,7 +35,6 @@ context('Apply', () => {
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(1)
       const body = JSON.parse(requests[0].body)
-
       expect(body).to.have.keys(
         'data',
         'arrivalDate',
@@ -53,6 +52,7 @@ context('Apply', () => {
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
         'noticeType',
+        'licenseExpiryDate',
       )
       expect(body.data).not.to.have.keys(['check-your-answers'])
     })
@@ -95,6 +95,7 @@ context('Apply', () => {
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
         'noticeType',
+        'licenseExpiryDate',
       )
       expect(body.data).to.have.any.keys(['check-your-answers'])
     })
