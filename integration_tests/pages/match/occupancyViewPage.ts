@@ -33,9 +33,12 @@ export default class OccupancyViewPage extends Page {
     startDate: string,
     durationDays: number,
     placementRequest: PlacementRequest,
+    managerDetails: string,
   ) {
     cy.get('.govuk-details').within(() => {
-      this.shouldContainSummaryListItems(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest))
+      this.shouldContainSummaryListItems(
+        occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails),
+      )
     })
     cy.get('.govuk-heading-l')
       .contains(

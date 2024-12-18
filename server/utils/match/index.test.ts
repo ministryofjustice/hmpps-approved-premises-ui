@@ -19,6 +19,7 @@ import { DateFormats } from '../dateUtils'
 import {
   InvalidSpaceSearchDataException,
   addressRow,
+  apManagerDetailsRow,
   apTypeLabelsForRadioInput,
   apTypeRow,
   arrivalDateRow,
@@ -395,20 +396,22 @@ describe('matchUtils', () => {
     })
     const dates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
     const totalCapacity = 120
+    const managerDetails = 'John Doe'
 
     it('should call the correct row functions', () => {
-      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest)).toEqual([
+      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails)).toEqual([
         arrivalDateRow(dates.startDate),
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
         releaseTypeRow(placementRequest),
         totalCapacityRow(totalCapacity),
+        apManagerDetailsRow(managerDetails),
         spaceRequirementsRow(filterOutAPTypes(placementRequest.essentialCriteria)),
       ])
     })
 
     it('should generate the expected matching details', () => {
-      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest)).toEqual([
+      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails)).toEqual([
         {
           key: {
             text: 'Expected arrival date',
@@ -447,6 +450,14 @@ describe('matchUtils', () => {
           },
           value: {
             text: '120 spaces',
+          },
+        },
+        {
+          key: {
+            text: 'AP manager details',
+          },
+          value: {
+            text: 'John Doe',
           },
         },
         {
