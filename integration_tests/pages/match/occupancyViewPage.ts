@@ -1,6 +1,7 @@
 import {
   ApType,
   Cas1PremiseCapacity,
+  Cas1PremiseCapacityForDay,
   Cas1PremisesSummary,
   Cas1SpaceBookingCharacteristic,
   PlacementRequestDetail,
@@ -111,5 +112,15 @@ export default class OccupancyViewPage extends Page {
   shouldShowErrorSummaryAndErrorMessage(message: string): void {
     cy.get('.govuk-error-summary').should('contain', message)
     cy.get(`.govuk-error-message`).should('contain', message)
+  }
+
+  getOccupancyForDate(date: Date, capacity: Cas1PremiseCapacity): Cas1PremiseCapacityForDay {
+    return capacity.capacity.find(day => day.date === DateFormats.dateObjToIsoDate(date))
+  }
+
+  clickCalendarDay(date: string) {
+    const calendarDate = DateFormats.isoDateToUIDate(date, { format: 'longNoYear' })
+
+    cy.get('.calendar__day').contains(calendarDate).click()
   }
 }

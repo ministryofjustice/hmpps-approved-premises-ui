@@ -1,4 +1,10 @@
-import { Cas1SpaceSearchParameters, PlacementCriteria } from '@approved-premises/api'
+import {
+  Cas1PremiseCapacity,
+  Cas1PremisesSummary,
+  Cas1SpaceSearchParameters,
+  PlacementCriteria,
+} from '@approved-premises/api'
+import { addDays } from 'date-fns'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
@@ -20,6 +26,7 @@ import { filterOutAPTypes, placementDates } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 import OccupancyViewPage from '../../pages/match/occupancyViewPage'
 import applicationFactory from '../../../server/testutils/factories/application'
+import DayAvailabilityPage from '../../pages/match/dayAvailabilityPage'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -200,49 +207,45 @@ context('Placement Requests', () => {
       placementRequest,
       managerDetails,
     )
-    return { occupancyViewPage, placementRequest, premiseCapacity, premises }
+    return { occupancyViewPage, placementRequest, premiseCapacity, premises, startDate }
+  }
+
+  const shouldShowDayDetailsAndReturn = (
+    occupancyViewPage: OccupancyViewPage,
+    date: Date,
+    premises: Cas1PremisesSummary,
+    premiseCapacity: Cas1PremiseCapacity,
+  ) => {
+    const dayCapacity = occupancyViewPage.getOccupancyForDate(date, premiseCapacity)
+    const premiseCapacityForDay = cas1PremiseCapacityFactory.build({
+      premise: premiseCapacity.premise,
+      startDate: dayCapacity.date,
+      endDate: dayCapacity.date,
+      capacity: [dayCapacity],
+    })
+    cy.task('stubPremiseCapacity', {
+      premisesId: premises.id,
+      startDate: dayCapacity.date,
+      endDate: dayCapacity.date,
+      premiseCapacity: premiseCapacityForDay,
+    })
+
+    // When I click on a day on the calendar
+    occupancyViewPage.clickCalendarDay(dayCapacity.date)
+
+    // Then I should see the page showing details for the day
+    const dayAvailabilityPage = new DayAvailabilityPage(dayCapacity)
+
+    // And I should see availability details
+    dayAvailabilityPage.shouldShowDayAvailability()
+
+    // When I click back
+    dayAvailabilityPage.clickBack()
   }
 
   it('allows me to view spaces and occupancy capacity and filter the result', () => {
-    const apType = 'normal'
-    const durationDays = 15
-    const startDate = '2024-07-23'
-    const endDate = '2024-08-07'
-    const totalCapacity = 10
-    const managerDetails = 'John Doe'
-
-    // Given I am signed in as a cru_member
-    signIn(['cru_member'], ['cas1_space_booking_create'])
-
-    // And there is a placement request waiting for me to match
-    const person = personFactory.build()
-    const premises = cas1PremisesSummaryFactory.build({ bedCount: totalCapacity })
-    const placementRequest = placementRequestDetailFactory.build({
-      person,
-      expectedArrival: startDate,
-      duration: durationDays,
-    })
-    const premiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
-      startDate,
-      endDate,
-    })
-
-    cy.task('stubSinglePremises', premises)
-    cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
-
-    // When I visit the occupancy view page
-    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
-
-    // Then I should see the details of the case I am matching
-    occupancyViewPage.shouldShowMatchingDetails(
-      totalCapacity,
-      startDate,
-      durationDays,
-      placementRequest,
-      managerDetails,
-    )
+    const { occupancyViewPage, premiseCapacity, premises, startDate } =
+      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     // And I should see the filter form with populated values
     occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks', [])
@@ -252,6 +255,12 @@ context('Placement Requests', () => {
 
     // And I should see an occupancy calendar
     occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+
+    // Then I should see the calendar again
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+
+    // And I should be able to see the day's availability details
+    shouldShowDayDetailsAndReturn(occupancyViewPage, addDays(startDate, 10), premises, premiseCapacity)
 
     // When I filter with an invalid date
     occupancyViewPage.filterAvailability('2025-02-35')
@@ -267,7 +276,7 @@ context('Placement Requests', () => {
     const newDuration = 'Up to 1 week'
     const newCriteria = ['Wheelchair accessible', 'Step-free']
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
+      premise: { id: premises.id, bedCount: premises.bedCount },
       startDate: newStartDate,
       endDate: newEndDate,
     })

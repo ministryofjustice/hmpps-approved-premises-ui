@@ -53,6 +53,9 @@ describe('OccupancyViewController', () => {
     request = createMock<Request>({
       user: { token },
       flash: flashSpy,
+      headers: {
+        referer: '/referrerPath',
+      },
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
@@ -364,9 +367,11 @@ describe('OccupancyViewController', () => {
 
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
+        backlink: '/referrerPath',
         pageHeading: dayAvailabilityStatusMap[expectedStatus],
         placementRequest: placementRequestDetail,
         premises,
+        date,
         status: expectedStatus,
         availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, criteria),
       })
