@@ -229,6 +229,7 @@ export default class {
       const { id, premisesId, date } = req.params
       const { criteria } = req.query
 
+      const backlink = req.headers.referer
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
@@ -236,9 +237,11 @@ export default class {
       const status = dayAvailabilityStatus(dayCapacity, this.criteriaAsArray(criteria))
 
       res.render('match/placementRequests/occupancyView/viewDay', {
+        backlink,
         pageHeading: dayAvailabilityStatusMap[status],
         placementRequest,
         premises,
+        date,
         status,
         availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, this.criteriaAsArray(criteria)),
       })
