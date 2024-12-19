@@ -76,7 +76,29 @@ export const cas1PremiseCapacityForDayFactory = CapacityForDayFactory.define(() 
   }
 })
 
-export const premiseCharacteristicAvailability = Factory.define<Cas1PremiseCharacteristicAvailability>(() => ({
+class PremisesCharacteristicAvailability extends Factory<Cas1PremiseCharacteristicAvailability> {
+  available() {
+    const availableBedsCount = faker.number.int({ min: 5, max: 20 })
+    const bookingsCount = faker.number.int({ min: 0, max: availableBedsCount - 1 })
+
+    return this.params({
+      availableBedsCount,
+      bookingsCount,
+    })
+  }
+
+  overbooked() {
+    const availableBedsCount = faker.number.int({ min: 5, max: 20 })
+    const bookingsCount = faker.number.int({ min: availableBedsCount, max: 30 })
+
+    return this.params({
+      availableBedsCount,
+      bookingsCount,
+    })
+  }
+}
+
+export const premiseCharacteristicAvailability = PremisesCharacteristicAvailability.define(() => ({
   characteristic: faker.helpers.arrayElement(Object.keys(occupancyCriteriaMap)) as Cas1SpaceBookingCharacteristic,
   availableBedsCount: faker.number.int({ min: 0, max: 40 }),
   bookingsCount: faker.number.int({ min: 0, max: 45 }),
