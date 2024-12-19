@@ -37,11 +37,11 @@ export default class PremisesService {
     token: string,
     premisesId: string,
     startDate: string,
-    endDate: string,
+    endDate?: string,
   ): Promise<Cas1PremiseCapacity> {
     const premisesClient = this.premisesClientFactory(token)
 
-    return premisesClient.getCapacity(premisesId, startDate, endDate)
+    return premisesClient.getCapacity(premisesId, startDate, endDate || startDate)
   }
 
   async find(token: string, id: string): Promise<Cas1PremisesSummary> {
