@@ -50,9 +50,12 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.view(), {
     auditEvent: 'OCCUPANCY_VIEW',
   })
-
   post(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.bookSpace(), {
     auditEvent: 'OCCUPANCY_VIEW_BOOK_SPACE',
+  })
+
+  get(paths.v2Match.placementRequests.search.dayOccupancy.pattern, occupancyViewController.viewDay(), {
+    auditEvent: 'OCCUPANCY_VIEW_DAY',
   })
 
   post(paths.v2Match.placementRequests.spaceBookings.create.pattern, spaceBookingsController.create(), {

@@ -25,3 +25,12 @@
   color: govuk-colour("dark-grey");
 }
 
+.govuk-summary-list--swap-bolding {
+  .govuk-summary-list__key {
+    font-weight: normal;
+  }
+
+  .govuk-summary-list__value {
+    font-weight: 700;
+  }
+}
