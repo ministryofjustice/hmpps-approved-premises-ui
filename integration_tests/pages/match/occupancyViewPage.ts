@@ -3,7 +3,6 @@ import {
   Cas1PremiseCapacity,
   Cas1PremisesSummary,
   Cas1SpaceBookingCharacteristic,
-  PlacementRequest,
   PlacementRequestDetail,
 } from '@approved-premises/api'
 import Page from '../page'
@@ -32,7 +31,7 @@ export default class OccupancyViewPage extends Page {
     totalCapacity: number,
     startDate: string,
     durationDays: number,
-    placementRequest: PlacementRequest,
+    placementRequest: PlacementRequestDetail,
     managerDetails: string,
   ) {
     cy.get('.govuk-details').within(() => {

@@ -159,5 +159,6 @@ export default ApplicationFactory.define(() => ({
   caseManagerIsNotApplicant: faker.datatype.boolean(),
   caseManagerUserDetails: applicationUserDetailsFactory.build(),
   applicantUserDetails: applicationUserDetailsFactory.build(),
+  licenceExpiryDate: DateFormats.dateObjToIsoDateTime(faker.date.future()),
   ...apTypeField(),
 }))
