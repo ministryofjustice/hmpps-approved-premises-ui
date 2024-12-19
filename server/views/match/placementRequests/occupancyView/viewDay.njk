@@ -1,7 +1,13 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
 {% extends "../../layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block content %}
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    {{ govukSummaryList({
+        rows: availabilitySummaryListItems
+    }) }}
 {% endblock %}

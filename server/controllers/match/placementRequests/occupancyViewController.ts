@@ -22,6 +22,7 @@ import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/date
 import {
   dayAvailabilityStatus,
   dayAvailabilityStatusMap,
+  dayAvailabilitySummaryListItems,
   durationSelectOptions,
   occupancyCriteriaMap,
 } from '../../../utils/match/occupancy'
@@ -229,6 +230,7 @@ export default class {
         placementRequest,
         premises,
         status,
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, this.criteriaAsArray(criteria)),
       })
     }
   }
