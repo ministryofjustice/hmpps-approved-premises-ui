@@ -28,10 +28,13 @@ import {
 } from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
+import paths from '../../../paths/match'
+
+type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
 type FilterUserInput = ObjectWithDateParts<'startDate'> & {
   durationDays: string
-  criteria: Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
+  criteria: CriteriaQuery
 }
 
 interface ViewRequest extends Request {
@@ -50,7 +53,9 @@ interface ViewDayRequest extends Request {
     premisesId: string
     date: string
   }
-  query: FilterUserInput
+  query: {
+    criteria: CriteriaQuery
+  }
 }
 
 export default class {
@@ -132,9 +137,14 @@ export default class {
           capacityDates.startDate,
           capacityDates.endDate,
         )
+        const placeholderDetailsUrl = paths.v2Match.placementRequests.search.dayOccupancy({
+          id,
+          premisesId,
+          date: ':date',
+        })
 
         summary = occupancySummary(capacity.capacity, filterCriteria)
-        calendar = occupancyCalendar(capacity.capacity, filterCriteria)
+        calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria)
         managerDetails = capacity.premise.managerDetails
       }
 
