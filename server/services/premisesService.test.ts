@@ -110,6 +110,23 @@ describe('PremisesService', () => {
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, endDate)
     })
+
+    it('returns capacity for one day if no end date provided', async () => {
+      const startDate = '2025-05-20'
+
+      const premiseCapacity = cas1PremiseCapacityFactory.build({
+        startDate,
+        endDate: startDate,
+      })
+      premisesClient.getCapacity.mockResolvedValue(premiseCapacity)
+
+      const result = await service.getCapacity(token, premisesId, startDate)
+
+      expect(result).toEqual(premiseCapacity)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, startDate)
+    })
   })
 
   describe('find', () => {

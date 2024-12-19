@@ -3,9 +3,11 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
+import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
+  cas1PremiseCapacityForDayFactory,
   cas1PremisesSummaryFactory,
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
@@ -15,6 +17,7 @@ import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
+import { dayAvailabilityStatus } from '../../../utils/match/occupancy'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -317,6 +320,40 @@ describe('OccupancyViewController', () => {
           premisesId: premises.id,
         })}?${expectedParams}`,
       )
+    })
+  })
+
+  describe('viewDay', () => {
+    it('should render the day occupancy view template with given approved premises, date and criteria', async () => {
+      const date = '2025-03-23'
+      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
+
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
+      const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
+        premise: premises,
+        startDate: date,
+        endDate: date,
+        capacity: [dayCapacity],
+      })
+      when(premisesService.getCapacity)
+        .calledWith(request.user.token, premises.id, date)
+        .mockResolvedValue(premisesCapacityForDay)
+
+      const query = {
+        criteria,
+      }
+      const params = { id: placementRequestDetail.id, premisesId: premises.id, date }
+
+      const requestHandler = occupancyViewController.viewDay()
+
+      await requestHandler({ ...request, params, query }, response, next)
+
+      expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
+      expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
+        placementRequest: placementRequestDetail,
+        premises,
+        status: dayAvailabilityStatus(dayCapacity, criteria),
+      })
     })
   })
 })
