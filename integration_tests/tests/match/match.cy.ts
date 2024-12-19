@@ -256,11 +256,11 @@ context('Placement Requests', () => {
     // And I should see an occupancy calendar
     occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
 
-    // Then I should see the calendar again
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
-
     // And I should be able to see the day's availability details
     shouldShowDayDetailsAndReturn(occupancyViewPage, addDays(startDate, 10), premises, premiseCapacity)
+
+    // Then I should see the calendar again
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
 
     // When I filter with an invalid date
     occupancyViewPage.filterAvailability('2025-02-35')
