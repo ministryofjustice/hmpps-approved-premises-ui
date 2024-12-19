@@ -14,6 +14,28 @@ export const dayAvailabilityCount = (
     : dayCapacity.availableBedCount - dayCapacity.bookingCount
 }
 
+export type DayAvailabilityStatus = 'available' | 'availableForCriteria' | 'overbooked'
+
+export const dayAvailabilityStatus = (
+  dayCapacity: Cas1PremiseCapacityForDay,
+  criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+): DayAvailabilityStatus => {
+  let status: DayAvailabilityStatus =
+    dayCapacity.availableBedCount > dayCapacity.bookingCount ? 'available' : 'overbooked'
+
+  if (criteria.length) {
+    const criteriaBookableCount = dayAvailabilityCount(dayCapacity, criteria)
+
+    if (criteriaBookableCount > 0 && status === 'overbooked') {
+      status = 'availableForCriteria'
+    } else if (criteriaBookableCount <= 0) {
+      status = 'overbooked'
+    }
+  }
+
+  return status
+}
+
 const durationOptionsMap: Record<number, string> = {
   '7': 'Up to 1 week',
   '42': 'Up to 6 weeks',
