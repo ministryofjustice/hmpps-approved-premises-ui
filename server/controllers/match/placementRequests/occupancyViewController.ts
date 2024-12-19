@@ -19,7 +19,7 @@ import {
 } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
-import { durationSelectOptions, occupancyCriteriaMap } from '../../../utils/match/occupancy'
+import { dayAvailabilityStatus, durationSelectOptions, occupancyCriteriaMap } from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 
@@ -28,7 +28,7 @@ type FilterUserInput = ObjectWithDateParts<'startDate'> & {
   criteria: Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 }
 
-interface NewRequest extends Request {
+interface ViewRequest extends Request {
   params: {
     id: string
     premisesId: string
@@ -38,11 +38,30 @@ interface NewRequest extends Request {
   }
 }
 
+interface ViewDayRequest extends Request {
+  params: {
+    id: string
+    premisesId: string
+    date: string
+  }
+  query: FilterUserInput
+}
+
 export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
   ) {}
+
+  private criteriaAsArray(
+    criteria?: Cas1SpaceBookingCharacteristic | Array<Cas1SpaceBookingCharacteristic>,
+  ): Array<Cas1SpaceBookingCharacteristic> {
+    let filterCriteria: Array<Cas1SpaceBookingCharacteristic>
+    if (criteria) {
+      filterCriteria = Array.isArray(criteria) ? criteria : [criteria]
+    }
+    return filterCriteria
+  }
 
   private getFilter(filterUserInput: FilterUserInput): {
     filterDurationDays?: number
@@ -53,13 +72,9 @@ export default class {
     const { criteria, durationDays } = filterUserInput
 
     const filterDurationDays = durationDays ? Number(durationDays) : undefined
+    const filterCriteria = this.criteriaAsArray(criteria)
     let filterStartDate: string
-    let filterCriteria: Array<Cas1SpaceBookingCharacteristic>
     let filterError: string
-
-    if (criteria) {
-      filterCriteria = Array.isArray(criteria) ? criteria : [criteria]
-    }
 
     if (filterUserInput.startDate) {
       filterStartDate = filterUserInput.startDate
@@ -79,7 +94,7 @@ export default class {
   }
 
   view(): TypedRequestHandler<Request> {
-    return async (req: NewRequest, res: Response) => {
+    return async (req: ViewRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId } = req.params
       const { apType, ...filterUserInput } = req.query
@@ -188,7 +203,26 @@ export default class {
     }
   }
 
-  hasErrors(errors: Record<string, string>): boolean {
+  private hasErrors(errors: Record<string, string>): boolean {
     return errors && Object.keys(errors).length > 0
+  }
+
+  viewDay(): TypedRequestHandler<Request> {
+    return async (req: ViewDayRequest, res: Response) => {
+      const { token } = req.user
+      const { id, premisesId, date } = req.params
+      const { criteria } = req.query
+
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const premises = await this.premisesService.find(token, premisesId)
+      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
+      const status = dayAvailabilityStatus(premisesCapacity.capacity[0], this.criteriaAsArray(criteria))
+
+      res.render('match/placementRequests/occupancyView/viewDay', {
+        placementRequest,
+        premises,
+        status,
+      })
+    }
   }
 }
