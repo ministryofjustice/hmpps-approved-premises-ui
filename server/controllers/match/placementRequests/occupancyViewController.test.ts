@@ -3,9 +3,11 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
+import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
+  cas1PremiseCapacityForDayFactory,
   cas1PremisesSummaryFactory,
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
@@ -15,6 +17,11 @@ import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
+import {
+  dayAvailabilityStatus,
+  dayAvailabilityStatusMap,
+  dayAvailabilitySummaryListItems,
+} from '../../../utils/match/occupancy'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -33,6 +40,11 @@ describe('OccupancyViewController', () => {
   let request: Readonly<DeepMocked<Request>>
 
   const apType = 'esap'
+  const placeholderDetailsUrl = matchPaths.v2Match.placementRequests.search.dayOccupancy({
+    id: placementRequestDetail.id,
+    premisesId: premises.id,
+    date: ':date',
+  })
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -41,6 +53,9 @@ describe('OccupancyViewController', () => {
     request = createMock<Request>({
       user: { token },
       flash: flashSpy,
+      headers: {
+        referer: '/referrerPath',
+      },
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
@@ -111,7 +126,7 @@ describe('OccupancyViewController', () => {
           premiseCapacity.premise.managerDetails,
         ),
         summary: occupancySummary(premiseCapacity.capacity),
-        calendar: occupancyCalendar(premiseCapacity.capacity),
+        calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
         errors: {},
         errorSummary: [],
       })
@@ -170,7 +185,7 @@ describe('OccupancyViewController', () => {
           'departureDate-day': '1',
           'departureDate-month': '5',
           'departureDate-year': '2026',
-          calendar: occupancyCalendar(premiseCapacity.capacity),
+          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
           summary: occupancySummary(premiseCapacity.capacity),
         }),
       )
@@ -219,7 +234,10 @@ describe('OccupancyViewController', () => {
           'startDate-month': '4',
           'startDate-year': '2025',
           summary: occupancySummary(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
-          calendar: occupancyCalendar(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
+          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, [
+            'isSingle',
+            'isWheelchairDesignated',
+          ]),
         }),
       )
     })
@@ -317,6 +335,46 @@ describe('OccupancyViewController', () => {
           premisesId: premises.id,
         })}?${expectedParams}`,
       )
+    })
+  })
+
+  describe('viewDay', () => {
+    it('should render the day occupancy view template with given approved premises, date and criteria', async () => {
+      const date = '2025-03-23'
+      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
+
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
+      const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
+        premise: premises,
+        startDate: date,
+        endDate: date,
+        capacity: [dayCapacity],
+      })
+      when(premisesService.getCapacity)
+        .calledWith(request.user.token, premises.id, date)
+        .mockResolvedValue(premisesCapacityForDay)
+
+      const query = {
+        criteria,
+      }
+      const params = { id: placementRequestDetail.id, premisesId: premises.id, date }
+
+      const requestHandler = occupancyViewController.viewDay()
+
+      await requestHandler({ ...request, params, query }, response, next)
+
+      const expectedStatus = dayAvailabilityStatus(dayCapacity, criteria)
+
+      expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
+      expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
+        backlink: '/referrerPath',
+        pageHeading: dayAvailabilityStatusMap[expectedStatus],
+        placementRequest: placementRequestDetail,
+        premises,
+        date,
+        status: expectedStatus,
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, criteria),
+      })
     })
   })
 })
