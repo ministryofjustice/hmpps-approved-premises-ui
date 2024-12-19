@@ -40,6 +40,11 @@ describe('OccupancyViewController', () => {
   let request: Readonly<DeepMocked<Request>>
 
   const apType = 'esap'
+  const placeholderDetailsUrl = matchPaths.v2Match.placementRequests.search.dayOccupancy({
+    id: placementRequestDetail.id,
+    premisesId: premises.id,
+    date: ':date',
+  })
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -118,7 +123,7 @@ describe('OccupancyViewController', () => {
           premiseCapacity.premise.managerDetails,
         ),
         summary: occupancySummary(premiseCapacity.capacity),
-        calendar: occupancyCalendar(premiseCapacity.capacity),
+        calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
         errors: {},
         errorSummary: [],
       })
@@ -177,7 +182,7 @@ describe('OccupancyViewController', () => {
           'departureDate-day': '1',
           'departureDate-month': '5',
           'departureDate-year': '2026',
-          calendar: occupancyCalendar(premiseCapacity.capacity),
+          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
           summary: occupancySummary(premiseCapacity.capacity),
         }),
       )
@@ -226,7 +231,10 @@ describe('OccupancyViewController', () => {
           'startDate-month': '4',
           'startDate-year': '2025',
           summary: occupancySummary(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
-          calendar: occupancyCalendar(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
+          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, [
+            'isSingle',
+            'isWheelchairDesignated',
+          ]),
         }),
       )
     })
