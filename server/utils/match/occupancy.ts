@@ -36,6 +36,12 @@ export const dayAvailabilityStatus = (
   return status
 }
 
+export const dayAvailabilityStatusMap: Record<DayAvailabilityStatus, string> = {
+  available: 'Available',
+  availableForCriteria: 'Available for criteria',
+  overbooked: 'Overbooked',
+}
+
 const durationOptionsMap: Record<number, string> = {
   '7': 'Up to 1 week',
   '42': 'Up to 6 weeks',
