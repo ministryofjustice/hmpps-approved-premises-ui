@@ -62,7 +62,7 @@ describe('dayAvailabilityCount', () => {
   })
 })
 
-describe('dayOccupancyStatus', () => {
+describe('dayAvailabilityStatus', () => {
   describe('when no criteria is provided', () => {
     it('returns available if there is availability', () => {
       const capacityForDay = cas1PremiseCapacityForDayFactory.available().build()
