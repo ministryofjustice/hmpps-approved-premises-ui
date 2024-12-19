@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response, TypedRequestHandler } from 'express'
-import type { ApType, Cas1NewSpaceBooking } from '@approved-premises/api'
-import { PlacementRequestService, SpaceService } from '../../../services'
+import type { Cas1NewSpaceBooking } from '@approved-premises/api'
+import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
 import { filterOutAPTypes, placementDates } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
@@ -9,27 +9,28 @@ import { createQueryString } from '../../../utils/utils'
 
 interface NewRequest extends Request {
   params: { id: string }
-  query: { startDate: string; durationDays: string; premisesName: string; premisesId: string; apType: ApType }
+  query: { startDate: string; durationDays: string; premisesName: string; premisesId: string }
 }
 
 export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly spaceService: SpaceService,
+    private readonly premisesService: PremisesService,
   ) {}
 
   new(): TypedRequestHandler<Request, Response> {
     return async (req: NewRequest, res: Response) => {
-      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const { startDate, durationDays, premisesName, premisesId, apType } = req.query
+      const { startDate, durationDays, premisesId } = req.query
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
+      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+      const premises = await this.premisesService.find(req.user.token, premisesId)
+
       res.render('match/placementRequests/spaceBookings/new', {
-        pageHeading: `Book space in ${premisesName}`,
+        pageHeading: `Book space in ${premises.name}`,
         placementRequest,
-        premisesName,
-        premisesId,
-        apType,
+        premises,
         startDate,
         durationDays,
         dates: placementDates(startDate, durationDays),
@@ -44,7 +45,7 @@ export default class {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const {
-        body: { arrivalDate, departureDate, durationDays, premisesId, premisesName, essentialCharacteristics, apType },
+        body: { arrivalDate, departureDate, durationDays, premisesId, essentialCharacteristics },
       } = req
 
       const newSpaceBooking: Cas1NewSpaceBooking = {
@@ -63,9 +64,7 @@ export default class {
         const queryString = createQueryString({
           startDate: arrivalDate,
           durationDays,
-          premisesName,
           premisesId,
-          apType,
         })
         return catchValidationErrorOrPropogate(
           req,

@@ -86,14 +86,12 @@ export const placementLength = (lengthInDays: number): string => {
 export const occupancyViewLink = ({
   placementRequestId,
   premisesId,
-  apType,
   startDate,
   durationDays,
   spaceCharacteristics = [],
 }: {
   placementRequestId: string
   premisesId: string
-  apType: string
   startDate: string
   durationDays: string
   spaceCharacteristics: Array<Cas1SpaceCharacteristic>
@@ -104,7 +102,6 @@ export const occupancyViewLink = ({
     premisesId,
   })}${createQueryString(
     {
-      apType,
       startDate,
       durationDays,
       criteria,
@@ -117,14 +114,12 @@ export const redirectToSpaceBookingsNew = ({
   placementRequestId,
   premisesName,
   premisesId,
-  apType,
   startDate,
   durationDays,
 }: {
   placementRequestId: string
   premisesName: string
   premisesId: string
-  apType: string
   startDate: string
   durationDays: string
 }): string => {
@@ -132,7 +127,6 @@ export const redirectToSpaceBookingsNew = ({
     {
       premisesName,
       premisesId,
-      apType,
       startDate,
       durationDays,
     },
