@@ -19,7 +19,12 @@ import {
 } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
-import { dayAvailabilityStatus, durationSelectOptions, occupancyCriteriaMap } from '../../../utils/match/occupancy'
+import {
+  dayAvailabilityStatus,
+  dayAvailabilityStatusMap,
+  durationSelectOptions,
+  occupancyCriteriaMap,
+} from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 
@@ -216,9 +221,11 @@ export default class {
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
-      const status = dayAvailabilityStatus(premisesCapacity.capacity[0], this.criteriaAsArray(criteria))
+      const dayCapacity = premisesCapacity.capacity[0]
+      const status = dayAvailabilityStatus(dayCapacity, this.criteriaAsArray(criteria))
 
       res.render('match/placementRequests/occupancyView/viewDay', {
+        pageHeading: dayAvailabilityStatusMap[status],
         placementRequest,
         premises,
         status,

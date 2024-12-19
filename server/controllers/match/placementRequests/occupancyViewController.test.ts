@@ -17,7 +17,7 @@ import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
-import { dayAvailabilityStatus } from '../../../utils/match/occupancy'
+import { dayAvailabilityStatus, dayAvailabilityStatusMap } from '../../../utils/match/occupancy'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -348,11 +348,14 @@ describe('OccupancyViewController', () => {
 
       await requestHandler({ ...request, params, query }, response, next)
 
+      const expectedStatus = dayAvailabilityStatus(dayCapacity, criteria)
+
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
+        pageHeading: dayAvailabilityStatusMap[expectedStatus],
         placementRequest: placementRequestDetail,
         premises,
-        status: dayAvailabilityStatus(dayCapacity, criteria),
+        status: expectedStatus,
       })
     })
   })
