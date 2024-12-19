@@ -17,7 +17,11 @@ import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
-import { dayAvailabilityStatus, dayAvailabilityStatusMap } from '../../../utils/match/occupancy'
+import {
+  dayAvailabilityStatus,
+  dayAvailabilityStatusMap,
+  dayAvailabilitySummaryListItems,
+} from '../../../utils/match/occupancy'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -356,6 +360,7 @@ describe('OccupancyViewController', () => {
         placementRequest: placementRequestDetail,
         premises,
         status: expectedStatus,
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, criteria),
       })
     })
   })
