@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
+/**
+ * @deprecated
+ */
 export type Cas1SpaceAvailability = {
     spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
     durationInDays?: number;
