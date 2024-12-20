@@ -19,6 +19,7 @@ import ListPage from '../../pages/admin/placementApplications/listPage'
 import { filterOutAPTypes, placementDates } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 import OccupancyViewPage from '../../pages/match/occupancyViewPage'
+import applicationFactory from '../../../server/testutils/factories/application'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -29,6 +30,7 @@ context('Placement Requests', () => {
     cy.task('stubAuthUser')
     cy.task('stubCruManagementAreaReferenceData')
   })
+  const defaultLicenceExpiryDate = '2030-06-05'
 
   it('allows me to search for an available space', () => {
     // Given I am signed in as a cru_member
@@ -110,7 +112,18 @@ context('Placement Requests', () => {
   })
 
   it('allows me to view spaces and occupancy capacity', () => {
-    const { occupancyViewPage, premiseCapacity } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+    const { occupancyViewPage, premiseCapacity } =
+      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
+
+    // And I should see a summary of occupancy
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+
+    // And I should see an occupancy calendar
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+  })
+
+  it('allows me to view spaces and occupancy capacity with blank licence expiry date', () => {
+    const { occupancyViewPage, premiseCapacity } = shouldVisitOccupancyViewPageAndShowMatchingDetails(undefined)
 
     // And I should see a summary of occupancy
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
@@ -120,7 +133,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to submit invalid dates in the book your placement form on occupancy view page and displays appropriate validation messages', () => {
-    const { occupancyViewPage } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+    const { occupancyViewPage } = shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     // When I submit invalid dates
     occupancyViewPage.shouldFillBookYourPlacementFormDates('2024-11-25', '2024-11-24')
@@ -131,7 +144,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to submit valid dates in the book your placement form on occupancy view page and redirects to book a space', () => {
-    const { occupancyViewPage, placementRequest, premises } = shouldVisitOccupancyViewPageAndShowMatchingDetails()
+    const { occupancyViewPage, placementRequest, premises } =
+      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     // When I submit valid dates
     const arrivalDate = '2024-11-25'
@@ -143,7 +157,7 @@ context('Placement Requests', () => {
     bookASpacePage.shouldShowBookingDetails(placementRequest, arrivalDate, 1, 'normal')
   })
 
-  const shouldVisitOccupancyViewPageAndShowMatchingDetails = () => {
+  const shouldVisitOccupancyViewPageAndShowMatchingDetails = (licenceExpiryDate: string | undefined) => {
     const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
@@ -161,6 +175,9 @@ context('Placement Requests', () => {
       person,
       expectedArrival: startDate,
       duration: durationDays,
+      application: applicationFactory.build({
+        licenceExpiryDate,
+      }),
     })
     const premiseCapacity = cas1PremiseCapacityFactory.build({
       premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
