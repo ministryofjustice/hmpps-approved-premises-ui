@@ -93,6 +93,10 @@ const paths = {
         create: placementCancellationsPath.path('create'),
       },
     },
+    occupancy: {
+      view: singlePremisesPath.path('occupancy'),
+      day: singlePremisesPath.path('occupancy/day'),
+    },
   },
 
   bookings: {
