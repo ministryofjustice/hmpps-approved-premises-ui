@@ -26,6 +26,7 @@ export default function routes(controllers: Controllers, router: Router, service
     cancellationsController,
     redirectController,
     keyworkerController,
+    apOccupancyViewController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -237,6 +238,12 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
     allowedPermissions: ['cas1_space_booking_withdraw'],
+  })
+
+  // Occupancy
+  get(paths.premises.occupancy.view.pattern, apOccupancyViewController.view(), {
+    auditEvent: 'VIEW_OCCUPANCY',
+    allowedPermissions: ['cas1_premises_view'],
   })
 
   // Bookings

@@ -192,6 +192,11 @@ export default abstract class Page {
     cy.get('[role="menuitem"]').contains(actionLabel).click()
   }
 
+  actionShouldNotExist(actionLabel: string): void {
+    cy.get('.moj-button-menu > button').contains('Actions').click()
+    cy.get('[role="menuitem"]').contains(actionLabel).should('not.exist')
+  }
+
   actionMenuShouldNotExist(): void {
     cy.get('.moj-button-menu > button').should('not.exist')
   }

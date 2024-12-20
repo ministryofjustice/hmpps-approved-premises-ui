@@ -1,0 +1,25 @@
+{% macro occupancyCalendar(calendar) %}
+    <div class="calendar">
+        {% for month in calendar %}
+            <section>
+                <h3 class="govuk-heading-m">{{ month.name }}</h3>
+
+                <ul class="calendar__month govuk-list">
+                    {% for day in month.days %}
+                        <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }}{% if day.status !== 'available' %} {{ 'govuk-tag--yellow' if day.status in ['availableForCriteria','full'] else 'govuk-tag--red' }}{% endif %}">
+                            <a class="calendar__link" href="{% if day.link %}{{ day.link }}{% else %}#{% endif %}">
+                                <time class="calendar__date" datetime="{{ day.date }}">{{ day.name }}</time>
+
+                                <dl class="calendar__availability">
+                                    <dt class="govuk-visually-hidden">Availability:</dt>
+                                    {% block dayContent %}
+                                    {% endblock %}
+                                </dl>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endfor %}
+    </div>
+{% endmacro %}

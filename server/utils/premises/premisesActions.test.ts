@@ -1,4 +1,4 @@
-import { premisesFactory } from '../../testutils/factories'
+import { cas1PremisesSummaryFactory } from '../../testutils/factories'
 import { premisesActions } from './premisesActions'
 import paths from '../../paths/manage'
 import userDetails from '../../testutils/factories/userDetails'
@@ -6,7 +6,7 @@ import userDetails from '../../testutils/factories/userDetails'
 describe('premisesActions', () => {
   describe('for users with the role "workflow_manager"', () => {
     const user = userDetails.build({ roles: ['workflow_manager'], permissions: ['cas1_adhoc_booking_create'] })
-    const premises = premisesFactory.build()
+    const premises = cas1PremisesSummaryFactory.build()
 
     it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({
@@ -27,7 +27,7 @@ describe('premisesActions', () => {
 
   describe('for users with the role "future_manager"', () => {
     const user = userDetails.build({ roles: ['future_manager'] })
-    const premises = premisesFactory.build()
+    const premises = cas1PremisesSummaryFactory.build()
 
     it('includes the MANAGE BEDS action', () => {
       expect(premisesActions(user, premises)).toContainAction({
@@ -48,7 +48,7 @@ describe('premisesActions', () => {
 
   describe('for users with no role', () => {
     const user = userDetails.build({ roles: [] })
-    const premises = premisesFactory.build()
+    const premises = cas1PremisesSummaryFactory.build()
 
     it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({

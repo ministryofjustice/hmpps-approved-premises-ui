@@ -225,7 +225,7 @@ context('Premises', () => {
     describe('without placement list view permission', () => {
       beforeEach(() => {
         // Given I am logged in as a user without placement list view permission
-        signIn(['future_manager'])
+        signIn(['future_manager'], ['cas1_premises_view'])
       })
 
       it('should not show the placements section', () => {
