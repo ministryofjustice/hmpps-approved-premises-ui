@@ -6,7 +6,7 @@ import { apAreaFactory } from './referenceData'
 
 export default Factory.define<Cas1PremisesSummary>(() => ({
   id: faker.string.uuid(),
-  name: `${faker.person}`,
+  name: `${faker.location.direction()} ${faker.location.city()}`,
   postcode: faker.location.zipCode(),
   apCode: `${faker.string.alpha(2)}`,
   bedCount: 50,

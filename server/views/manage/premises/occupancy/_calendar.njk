@@ -1,0 +1,12 @@
+{% extends "../../../partials/_calendar.njk" %}
+
+{% block  dayContent %}
+    <dd>
+        <span class="govuk-!-font-weight-bold">{{ day.availability }}</span>
+        available
+    </dd>
+    <dd>
+        <span class="govuk-!-font-weight-bold">{{ day.booked }}</span>
+        booked
+    </dd>
+{% endblock %}

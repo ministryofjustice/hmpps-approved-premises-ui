@@ -19,6 +19,11 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
       classes: 'govuk-button--secondary',
       href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
     })
+    actions.push({
+      text: 'View spaces',
+      classes: 'govuk-button--secondary',
+      href: paths.premises.occupancy.view({ premisesId: premises.id }),
+    })
   }
 
   return actions
