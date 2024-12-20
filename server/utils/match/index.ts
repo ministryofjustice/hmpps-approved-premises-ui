@@ -273,7 +273,7 @@ export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   },
   value: {
     html: `<p>
-           ${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2}<br/>
+           ${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2 || ''}<br/>
            ${spaceSearchResult.premises?.town}<br/>
            ${spaceSearchResult.premises?.postcode}</p>`,
   },
