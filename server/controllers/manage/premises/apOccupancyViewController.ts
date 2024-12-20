@@ -17,7 +17,6 @@ export default class ApOccupancyViewController {
       const { token } = req.user
       const { premisesId } = req.params
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
-
       let startDate
       if (req.query.durationDays) {
         if (dateAndTimeInputsAreValidDates(req.query as ObjectWithDateParts<'startDate'>, 'startDate')) {
