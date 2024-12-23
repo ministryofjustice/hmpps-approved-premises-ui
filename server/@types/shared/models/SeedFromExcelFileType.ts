@@ -2,5 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { OASysQuestion } from './OASysQuestion';
-export type ArrayOfOASysRiskManagementPlanQuestions = Array<OASysQuestion>;
+export type SeedFromExcelFileType = 'approved_premises_room' | 'cas1_import_site_survey_premise';
