@@ -35,6 +35,9 @@ export const manageBooking = async ({
   // Then I see the page for the given premises
   const premisesPage = await PremisesPage.initialize(page, premisesName)
 
+  // And I select the upcoming tab
+  await premisesPage.clickTab('Upcoming')
+
   // And I can see the placement in the list of upcoming placements
   const bookingRow = await premisesPage.findRowWithValues([
     DateFormats.isoDateToUIDate(datesOfPlacement.startDate, { format: 'short' }),
