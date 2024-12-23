@@ -140,11 +140,10 @@ context('Placement Requests', () => {
 
     // Then I should land on the Book a space page (with the new dates overriding the original ones)
     const bookASpacePage = Page.verifyOnPage(BookASpacePage, premises.name)
-    bookASpacePage.shouldShowBookingDetails(placementRequest, arrivalDate, 1, 'normal')
+    bookASpacePage.shouldShowBookingDetails(placementRequest, arrivalDate, 1, premises.apType)
   })
 
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = () => {
-    const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
     const endDate = '2024-08-07'
@@ -173,7 +172,7 @@ context('Placement Requests', () => {
     cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
     // When I visit the occupancy view page
-    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
+    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises)
 
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(
@@ -187,7 +186,6 @@ context('Placement Requests', () => {
   }
 
   it('allows me to view spaces and occupancy capacity and filter the result', () => {
-    const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
     const endDate = '2024-08-07'
@@ -216,7 +214,7 @@ context('Placement Requests', () => {
     cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
     // When I visit the occupancy view page
-    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
+    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises)
 
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(
@@ -270,9 +268,6 @@ context('Placement Requests', () => {
     // Given I am signed in as a cru_member
     signIn(['cru_member'], ['cas1_space_booking_create'])
 
-    const premisesName = 'Hope House'
-    const premisesId = 'abc123'
-    const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
     const { endDate } = placementDates(startDate, durationDays.toString())
@@ -288,13 +283,15 @@ context('Placement Requests', () => {
       essentialCriteria: essentialCharacteristics,
       desirableCriteria: desirableCharacteristics,
     })
+    const premises = cas1PremisesSummaryFactory.build()
 
     // When I visit the 'Book a space' page
+    cy.task('stubSinglePremises', premises)
     cy.task('stubPlacementRequest', placementRequest)
-    const page = BookASpacePage.visit(placementRequest, startDate, durationDays, premisesName, premisesId, apType)
+    const page = BookASpacePage.visit(placementRequest, startDate, durationDays, premises.name, premises.id)
 
     // Then I should see the details of the space I am booking
-    page.shouldShowBookingDetails(placementRequest, startDate, durationDays, apType)
+    page.shouldShowBookingDetails(placementRequest, startDate, durationDays, premises.apType)
 
     // And when I complete the form
     const requirements = spaceBookingRequirementsFactory.build()
@@ -307,7 +304,7 @@ context('Placement Requests', () => {
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     // And I should see a success message
-    cruDashboard.shouldShowSpaceBookingConfirmation(premisesName, person.name)
+    cruDashboard.shouldShowSpaceBookingConfirmation(premises.name, person.name)
 
     // And the booking details should have been sent to the API
     cy.task('verifySpaceBookingCreate', placementRequest).then(requests => {
@@ -317,7 +314,7 @@ context('Placement Requests', () => {
       expect(body).to.deep.equal({
         arrivalDate: startDate,
         departureDate: endDate,
-        premisesId,
+        premisesId: premises.id,
         requirements: {
           ...spaceBooking.requirements,
           essentialCharacteristics: placementRequest.essentialCriteria,

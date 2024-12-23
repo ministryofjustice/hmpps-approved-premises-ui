@@ -87,10 +87,6 @@ export default class SearchPage extends Page {
   }
 
   shouldHaveSearchParametersInLinks(newSearchParameters: SpaceSearchParametersUi): void {
-    cy.get('.govuk-summary-card__actions .govuk-link')
-      .invoke('attr', 'href')
-      .should('contain', `apType=${newSearchParameters.requirements.apType}`)
-
     newSearchParameters.requirements.spaceCharacteristics.forEach(spaceCharacteristic => {
       const isSpaceBookingCharacteristic = Object.keys(occupancyCriteriaMap).includes(spaceCharacteristic)
       cy.get('.govuk-summary-card__actions .govuk-link')
