@@ -10,6 +10,7 @@ import NewDateChangePage from './booking/dateChanges/new'
 import BookingShowPage from './booking/show'
 import DepartureDateChangeConfirmationPage from './booking/dateChanges/confirmation'
 import DepartureDateChangePage from './booking/dateChanges/create'
+import OccupancyViewPage from './occupancyView'
 
 export {
   CancellationCreatePage,
@@ -22,4 +23,5 @@ export {
   WithdrawConfirmPage,
   UnableToMatchPage,
   PremisesListPage,
+  OccupancyViewPage,
 }

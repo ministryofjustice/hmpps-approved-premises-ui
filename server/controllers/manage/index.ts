@@ -7,6 +7,7 @@ import DateChangesController from './dateChangesController'
 
 import type { Services } from '../../services'
 import PremisesController from './premises/premisesController'
+import ApOccupancyViewController from './premises/apOccupancyViewController'
 import PlacementController from './placementController'
 import BedsController from './premises/bedsController'
 import OutOfServiceBedsController from './outOfServiceBedsController'
@@ -45,6 +46,7 @@ export const controllers = (services: Services) => {
   const nonArrivalsController = new NonArrivalsController(services.premisesService, services.placementService)
   const keyworkerController = new KeyworkerController(services.premisesService, services.placementService)
   const departuresController = new DeparturesController(services.premisesService, services.placementService)
+  const apOccupancyViewController = new ApOccupancyViewController(services.premisesService)
 
   return {
     premisesController,
@@ -60,6 +62,7 @@ export const controllers = (services: Services) => {
     cancellationsController,
     placementController,
     keyworkerController,
+    apOccupancyViewController,
   }
 }
 
@@ -75,4 +78,5 @@ export {
   UpdateOutOfServiceBedsController,
   BookingsController,
   BookingExtensionsController,
+  ApOccupancyViewController,
 }
