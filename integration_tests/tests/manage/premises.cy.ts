@@ -42,8 +42,30 @@ context('Premises', () => {
       cy.task('stubSinglePremises', premises)
       cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
 
-      // And it has a list of upcoming placements
-      cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, residency: 'upcoming' })
+      // And it has a list of placements
+      cy.task('stubSpaceBookingSummaryList', {
+        premisesId: premises.id,
+        placements,
+        residency: 'current',
+        sortBy: 'canonicalDepartureDate',
+        sortDirection: 'asc',
+        perPage: 2000,
+      })
+      cy.task('stubSpaceBookingSummaryList', {
+        premisesId: premises.id,
+        placements,
+        residency: 'upcoming',
+        sortBy: 'canonicalArrivalDate',
+        sortDirection: 'asc',
+        perPage: 20,
+      })
+      cy.task('stubSpaceBookingSummaryList', {
+        premisesId: premises.id,
+        placements,
+        residency: 'historic',
+        sortBy: 'canonicalDepartureDate',
+        sortDirection: 'desc',
+      })
     })
 
     describe('with placement list permission', () => {
@@ -61,47 +83,39 @@ context('Premises', () => {
         page.shouldShowPremisesDetail()
 
         // And I should see the first page of placements for the premises
-        page.shouldHavePlacementListLengthOf(20)
+        page.shouldHavePlacementListLengthOf(30)
         page.shouldShowListOfPlacements(placements.slice(0, 20))
-
-        // And I see a pagination control
-        page.shouldHavePaginationControl()
       })
 
       it('should allow the user to change tab', () => {
-        cy.task('stubSpaceBookingSummaryList', {
-          premisesId: premises.id,
-          placements,
-          residency: 'current',
-          sortBy: 'canonicalDepartureDate',
-          sortDirection: 'asc',
-          perPage: 2000,
-        })
-        cy.task('stubSpaceBookingSummaryList', {
-          premisesId: premises.id,
-          placements,
-          residency: 'historic',
-          sortBy: 'canonicalDepartureDate',
-          sortDirection: 'desc',
-        })
-
         // When I visit premises details page
         const page = PremisesShowPage.visit(premises)
 
-        // Then the 'upcoming' tab should be selected by default
-        page.shouldHaveActiveTab('Upcoming')
-
-        // When I select to the 'current' tab
-        page.clickTab('Current')
-
-        // Then the 'current' tab should be selected
+        // Then the 'current' tab should be selected by default
         page.shouldHaveActiveTab('Current')
 
-        // When I select to the 'current' tab
-        page.clickTab('Historical')
+        // And it should show all 30 placements
+        page.shouldHavePlacementListLengthOf(30)
+
+        // When I select the 'upcoming' tab
+        page.clickTab('Upcoming')
 
         // Then the 'current' tab should be selected
+        page.shouldHaveActiveTab('Upcoming')
+
+        // And it should be paginated (20/page)
+        page.shouldHavePlacementListLengthOf(20)
+        page.shouldHavePaginationControl()
+
+        // When I select the 'historical' tab
+        page.clickTab('Historical')
+
+        // Then the 'historical' tab should be selected
         page.shouldHaveActiveTab('Historical')
+
+        // And it should be paginated (20/page)
+        page.shouldHavePlacementListLengthOf(20)
+        page.shouldHavePaginationControl()
       })
 
       it('should let the user filter by keyworker', () => {
@@ -118,8 +132,9 @@ context('Premises', () => {
           keyWorkerStaffCode: testKeyworker.code,
         })
 
-        // When I visit premises details page
+        // When I visit premises details page and select the upcoming tab
         const page = PremisesShowPage.visit(premises)
+        page.clickTab('Upcoming')
 
         // When I filter the results by keyworker
         page.selectKeyworker(testKeyworker.name)

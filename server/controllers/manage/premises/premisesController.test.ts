@@ -64,8 +64,10 @@ describe('V2PremisesController', () => {
       }
     }
 
-    it('should render the premises detail and list of placements on the default ("upcoming") tab', async () => {
-      const { premisesSummary, paginatedPlacements, keyworkersList } = await mockSummaryAndPlacements({})
+    it('should render the premises detail and list of placements on the "upcoming" tab', async () => {
+      const { premisesSummary, paginatedPlacements, keyworkersList } = await mockSummaryAndPlacements({
+        activeTab: 'upcoming',
+      })
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
@@ -92,10 +94,8 @@ describe('V2PremisesController', () => {
       })
     })
 
-    it('should render the premises detail and list of placements on the "current" tab', async () => {
-      const { premisesSummary, paginatedPlacements, keyworkersList } = await mockSummaryAndPlacements({
-        activeTab: 'current',
-      })
+    it('should render the premises detail and list of placements on the default ("current") tab', async () => {
+      const { premisesSummary, paginatedPlacements, keyworkersList } = await mockSummaryAndPlacements({})
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
@@ -264,12 +264,12 @@ describe('V2PremisesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
         showPlacements: false,
-        sortBy: 'canonicalArrivalDate',
+        sortBy: 'canonicalDepartureDate',
         sortDirection: 'asc',
-        activeTab: 'upcoming',
+        activeTab: 'current',
         pageNumber: undefined,
         totalPages: undefined,
-        hrefPrefix: '/manage/premises/some-uuid?activeTab=upcoming&',
+        hrefPrefix: '/manage/premises/some-uuid?activeTab=current&',
         placements: undefined,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)

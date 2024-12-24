@@ -27,7 +27,7 @@ export default class PremisesController {
         historic: { pageSize: 20, sortBy: 'canonicalDepartureDate', sortDirection: 'desc' },
         search: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'desc' },
       }
-      const { crnOrName, keyworker, activeTab = 'upcoming' } = req.query as Record<string, string>
+      const { crnOrName, keyworker, activeTab = 'current' } = req.query as Record<string, string>
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1SpaceBookingSummarySortField>(
         req,
         managePaths.premises.show({ premisesId: req.params.premisesId }),
