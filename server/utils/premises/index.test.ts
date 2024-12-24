@@ -89,12 +89,12 @@ describe('premisesUtils', () => {
       ])
     })
 
-    it('should select the option whose id maches the premisesId field in the context', () => {
+    it('should select the option whose id matches the premisesId field in the context', () => {
       expect(
         groupCas1SummaryPremisesSelectOptions(premises, { premisesId: area1Premises[0].id })[0].items[0].selected,
       ).toBeTruthy()
     })
-    it('should select the option whose id maches the specified field in the context', () => {
+    it('should select the option whose id matches the specified field in the context', () => {
       expect(
         groupCas1SummaryPremisesSelectOptions(premises, { premises: area2Premises[1].id }, 'premises')[1].items[1]
           .selected,
@@ -119,7 +119,7 @@ describe('premisesUtils', () => {
         },
       ])
     })
-    it('should select the option whose id maches the specfied field in the context', () => {
+    it('should select the option whose id matches the specfied field in the context', () => {
       expect(
         cas1PremisesSummaryRadioOptions(premises, { premises: premises[1].id }, 'premises')[1].selected,
       ).toBeTruthy()
@@ -266,6 +266,7 @@ describe('premisesUtils', () => {
         const placements = [
           ...cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' }),
           cas1SpaceBookingSummaryFactory.build({ tier: 'A', status: undefined }),
+          cas1SpaceBookingSummaryFactory.build({ tier: 'A', keyWorkerAllocation: undefined }),
         ]
 
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
@@ -281,7 +282,7 @@ describe('premisesUtils', () => {
           ]
           return activeTab === 'historic'
             ? [...baseColumns, statusColumn]
-            : [...baseColumns, { text: placement.keyWorkerAllocation.keyWorker.name }, statusColumn]
+            : [...baseColumns, { text: placement.keyWorkerAllocation?.keyWorker?.name || 'Not assigned' }, statusColumn]
         })
         expect(tableRows).toEqual(expectedRows)
       },
