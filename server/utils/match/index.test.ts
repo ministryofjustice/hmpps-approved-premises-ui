@@ -1,6 +1,7 @@
 import type {
   ApType,
   ApprovedPremisesApplication,
+  Cas1SpaceBookingCharacteristic,
   Cas1SpaceCharacteristic,
   FullPerson,
   PlacementCriteria,
@@ -35,6 +36,7 @@ import {
   encodeSpaceSearchResult,
   essentialCharacteristicsRow,
   filterOutAPTypes,
+  filterToSpaceBookingCharacteristics,
   genderRow,
   groupedCheckboxes,
   groupedCriteria,
@@ -260,7 +262,7 @@ describe('matchUtils', () => {
       const apType = 'pipe'
       const startDate = '2025-04-14'
       const durationDays = '84'
-      const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = ['isWheelchairDesignated', 'isSingle']
+      const spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isSingle']
 
       const result = occupancyViewLink({
         placementRequestId,
@@ -285,14 +287,16 @@ describe('matchUtils', () => {
       const apType = 'pipe'
       const startDate = '2025-04-14'
       const durationDays = '84'
-      const spaceCharacteristics: Array<Cas1SpaceCharacteristic> = [
+      const spaceCharacteristics: Array<PlacementCriteria> = [
+        'isPIPE',
+        'isESAP',
+        'isMHAPStJosephs',
+        'isMHAPElliottHouse',
+        'isSemiSpecialistMentalHealth',
+        'isRecoveryFocussed',
         'isWheelchairDesignated',
-        'isIAP',
-        'hasArsonInsuranceConditions',
         'isSingle',
-        'acceptsHateCrimeOffenders',
         'hasEnSuite',
-        'isArsonDesignated',
         'isArsonSuitable',
       ]
 
@@ -302,7 +306,7 @@ describe('matchUtils', () => {
         apType,
         startDate,
         durationDays,
-        spaceCharacteristics,
+        spaceCharacteristics: filterToSpaceBookingCharacteristics(spaceCharacteristics),
       })
 
       expect(result).toEqual(
@@ -322,6 +326,7 @@ describe('matchUtils', () => {
       const apType = 'pipe'
       const startDate = '2022-01-01'
       const durationDays = '1'
+      const criteria: Array<Cas1SpaceCharacteristic> = ['acceptsHateCrimeOffenders', 'hasEnSuite']
 
       const result = redirectToSpaceBookingsNew({
         placementRequestId,
@@ -330,6 +335,7 @@ describe('matchUtils', () => {
         apType,
         startDate,
         durationDays,
+        criteria,
       })
 
       expect(result).toEqual(
@@ -340,6 +346,7 @@ describe('matchUtils', () => {
             apType,
             startDate,
             durationDays,
+            criteria,
           },
           { addQueryPrefix: true, arrayFormat: 'repeat' },
         )}`,

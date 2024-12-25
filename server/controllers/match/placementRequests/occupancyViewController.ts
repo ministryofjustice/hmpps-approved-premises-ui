@@ -213,6 +213,7 @@ export default class {
             DateFormats.isoToDateObj(departureDate),
             DateFormats.isoToDateObj(arrivalDate),
           ).toString(),
+          criteria: body.criteria,
         })
         res.redirect(redirectUrl)
       }

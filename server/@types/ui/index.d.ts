@@ -25,7 +25,6 @@ import {
   RiskTier,
   RiskTierLevel,
   RoshRisks,
-  Cas1SpaceCharacteristic as SpaceCharacteristic,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
@@ -386,7 +385,7 @@ export interface SpaceSearchParametersUi {
   requirements: {
     apType: ApType
     gender: Gender
-    spaceCharacteristics: Array<SpaceCharacteristic>
+    spaceCharacteristics: Array<Cas1SpaceCharacteristic>
   }
 }
 

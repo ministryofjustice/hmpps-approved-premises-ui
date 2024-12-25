@@ -2,6 +2,7 @@ import { addDays } from 'date-fns'
 import type {
   ApType,
   ApprovedPremisesApplication,
+  Cas1SpaceBookingCharacteristic,
   Cas1SpaceCharacteristic,
   Gender,
   PlacementCriteria,
@@ -97,10 +98,9 @@ export const occupancyViewLink = ({
   apType: string
   startDate: string
   durationDays: string
-  spaceCharacteristics: Array<Cas1SpaceCharacteristic>
-}): string => {
-  const criteria = spaceCharacteristics.filter(name => Object.keys(occupancyCriteriaMap).includes(name))
-  return `${matchPaths.v2Match.placementRequests.search.occupancy({
+  spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic>
+}): string =>
+  `${matchPaths.v2Match.placementRequests.search.occupancy({
     id: placementRequestId,
     premisesId,
   })}${createQueryString(
@@ -108,11 +108,10 @@ export const occupancyViewLink = ({
       apType,
       startDate,
       durationDays,
-      criteria,
+      criteria: spaceCharacteristics,
     },
     { addQueryPrefix: true, arrayFormat: 'repeat' },
   )}`
-}
 
 export const redirectToSpaceBookingsNew = ({
   placementRequestId,
@@ -121,6 +120,7 @@ export const redirectToSpaceBookingsNew = ({
   apType,
   startDate,
   durationDays,
+  criteria,
 }: {
   placementRequestId: string
   premisesName: string
@@ -128,6 +128,7 @@ export const redirectToSpaceBookingsNew = ({
   apType: string
   startDate: string
   durationDays: string
+  criteria: Array<Cas1SpaceCharacteristic>
 }): string => {
   return `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
     {
@@ -136,8 +137,9 @@ export const redirectToSpaceBookingsNew = ({
       apType,
       startDate,
       durationDays,
+      criteria,
     },
-    { addQueryPrefix: true },
+    { addQueryPrefix: true, arrayFormat: 'repeat' },
   )}`
 }
 
@@ -206,6 +208,15 @@ export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<
         'isSemiSpecialistMentalHealth',
       ].includes(requirement),
   ) as Array<SpaceCharacteristic>
+}
+
+export const filterToSpaceBookingCharacteristics = (
+  requirements: Array<PlacementCriteria>,
+): Array<Cas1SpaceBookingCharacteristic> => {
+  const characteristics = Object.keys(occupancyCriteriaMap)
+  return requirements.filter(requirement =>
+    characteristics.includes(requirement),
+  ) as Array<Cas1SpaceBookingCharacteristic>
 }
 
 export const requirementsHtmlString = (requirements: Array<SpaceCharacteristic | PlacementCriteria>): string => {

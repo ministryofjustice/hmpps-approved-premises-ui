@@ -22,7 +22,7 @@ import Page from '../../pages/page'
 import { signIn } from '../signIn'
 
 import ListPage from '../../pages/admin/placementApplications/listPage'
-import { filterOutAPTypes, placementDates } from '../../../server/utils/match'
+import { filterOutAPTypes, filterToSpaceBookingCharacteristics, placementDates } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 import OccupancyViewPage from '../../pages/match/occupancyViewPage'
 import applicationFactory from '../../../server/testutils/factories/application'
@@ -78,7 +78,7 @@ context('Placement Requests', () => {
     // And the results should have links with the correct AP type and criteria
     searchPage.shouldHaveSearchParametersInLinks(newSearchParameters)
 
-    // And the parameters should be submitted to the API
+    // // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
       const initialSearchRequestBody = JSON.parse(requests[0].body)
@@ -305,22 +305,36 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const essentialCharacteristics: Array<PlacementCriteria> = ['acceptsHateCrimeOffenders']
-    const desirableCharacteristics: Array<PlacementCriteria> = ['isCatered', 'hasEnSuite']
+    const essentialCharacteristics: Array<PlacementCriteria> = ['hasEnSuite']
+    const desirableCharacteristics: Array<PlacementCriteria> = ['isCatered']
     const placementRequest = placementRequestDetailFactory.build({
       person,
       status: 'notMatched',
       duration: durationDays,
-      essentialCriteria: essentialCharacteristics,
+      essentialCriteria: [],
       desirableCriteria: desirableCharacteristics,
     })
 
     // When I visit the 'Book a space' page
     cy.task('stubPlacementRequest', placementRequest)
-    const page = BookASpacePage.visit(placementRequest, startDate, durationDays, premisesName, premisesId, apType)
+    const page = BookASpacePage.visit(
+      placementRequest,
+      startDate,
+      durationDays,
+      premisesName,
+      premisesId,
+      apType,
+      filterToSpaceBookingCharacteristics(essentialCharacteristics),
+    )
 
     // Then I should see the details of the space I am booking
-    page.shouldShowBookingDetails(placementRequest, startDate, durationDays, apType)
+    page.shouldShowBookingDetails(
+      placementRequest,
+      startDate,
+      durationDays,
+      apType,
+      filterToSpaceBookingCharacteristics(essentialCharacteristics),
+    )
 
     // And when I complete the form
     const requirements = spaceBookingRequirementsFactory.build()
@@ -346,7 +360,7 @@ context('Placement Requests', () => {
         premisesId,
         requirements: {
           ...spaceBooking.requirements,
-          essentialCharacteristics: placementRequest.essentialCriteria,
+          essentialCharacteristics,
         },
       })
     })

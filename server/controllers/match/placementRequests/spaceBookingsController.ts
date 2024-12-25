@@ -1,7 +1,12 @@
 import type { Request, RequestHandler, Response, TypedRequestHandler } from 'express'
-import type { ApType, Cas1NewSpaceBooking } from '@approved-premises/api'
+import type { ApType, Cas1NewSpaceBooking, PlacementCriteria } from '@approved-premises/api'
 import { PlacementRequestService, SpaceService } from '../../../services'
-import { filterOutAPTypes, placementDates } from '../../../utils/match'
+import {
+  filterOutAPTypes,
+  filterToSpaceBookingCharacteristics,
+  occupancyViewLink,
+  placementDates,
+} from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
@@ -9,7 +14,14 @@ import { createQueryString } from '../../../utils/utils'
 
 interface NewRequest extends Request {
   params: { id: string }
-  query: { startDate: string; durationDays: string; premisesName: string; premisesId: string; apType: ApType }
+  query: {
+    startDate: string
+    durationDays: string
+    premisesName: string
+    premisesId: string
+    apType: ApType
+    criteria: string
+  }
 }
 
 export default class {
@@ -21,9 +33,19 @@ export default class {
   new(): TypedRequestHandler<Request, Response> {
     return async (req: NewRequest, res: Response) => {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const { startDate, durationDays, premisesName, premisesId, apType } = req.query
+      const { startDate, durationDays, premisesName, premisesId, apType, criteria } = req.query
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
-
+      const essentialCharacteristics = filterToSpaceBookingCharacteristics(
+        (criteria ? criteria.split(',') : []) as Array<PlacementCriteria>,
+      )
+      const backLink = occupancyViewLink({
+        placementRequestId: placementRequest.id,
+        premisesId,
+        apType,
+        startDate,
+        durationDays,
+        spaceCharacteristics: essentialCharacteristics,
+      })
       res.render('match/placementRequests/spaceBookings/new', {
         pageHeading: `Book space in ${premisesName}`,
         placementRequest,
@@ -33,10 +55,11 @@ export default class {
         startDate,
         durationDays,
         dates: placementDates(startDate, durationDays),
-        essentialCharacteristics: filterOutAPTypes(placementRequest.essentialCriteria),
+        essentialCharacteristics,
         desirableCharacteristics: filterOutAPTypes(placementRequest.desirableCriteria),
         errors,
         errorSummary,
+        backLink,
       })
     }
   }

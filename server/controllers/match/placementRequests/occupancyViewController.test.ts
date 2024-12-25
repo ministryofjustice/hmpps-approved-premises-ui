@@ -301,7 +301,7 @@ describe('OccupancyViewController', () => {
 
       const expectedDurationDays = 10
       const expectedStartDate = `${arrivalYear}-0${arrivalMonth}-${arrivalDay}`
-      const expectedParams = `apType=${apType}&startDate=${expectedStartDate}&durationDays=${expectedDurationDays}`
+      const expectedParams = `apType=${apType}&startDate=${expectedStartDate}&durationDays=${expectedDurationDays}&criteria=`
       expect(response.redirect).toHaveBeenCalledWith(
         `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestDetail.id })}?${expectedParams}`,
       )
