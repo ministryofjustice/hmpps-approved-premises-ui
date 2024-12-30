@@ -1,6 +1,7 @@
 import { addDays } from 'date-fns'
 import type {
   ApType,
+  ApprovedPremisesApplication,
   Cas1SpaceCharacteristic,
   Gender,
   PlacementCriteria,
@@ -174,17 +175,19 @@ export const spaceBookingPersonNeedsSummaryCardRows = (
 
 export const occupancyViewSummaryListForMatchingDetails = (
   totalCapacity: number,
-  placementRequest: PlacementRequest,
+  placementRequest: PlacementRequestDetail,
   managerDetails: string,
 ): Array<SummaryListItem> => {
   const placementRequestDates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
   const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
+  const application = placementRequest.application as ApprovedPremisesApplication
 
   return [
     arrivalDateRow(placementRequestDates.startDate),
     departureDateRow(placementRequestDates.endDate),
     placementLengthRow(placementRequestDates.placementLength),
     releaseTypeRow(placementRequest),
+    licenceExpiryDateRow(application),
     totalCapacityRow(totalCapacity),
     apManagerDetailsRow(managerDetails),
     spaceRequirementsRow(essentialCharacteristics),
@@ -360,6 +363,15 @@ export const releaseTypeRow = (placementRequest: PlacementRequest) => ({
   },
   value: {
     text: allReleaseTypes[placementRequest.releaseType],
+  },
+})
+
+export const licenceExpiryDateRow = (application: ApprovedPremisesApplication) => ({
+  key: {
+    text: 'Licence expiry date',
+  },
+  value: {
+    text: application.licenceExpiryDate ? DateFormats.isoDateToUIDate(application.licenceExpiryDate) : '',
   },
 })
 

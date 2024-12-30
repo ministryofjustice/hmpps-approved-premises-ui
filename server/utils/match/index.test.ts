@@ -6,6 +6,7 @@ import type {
   PlacementCriteria,
 } from '@approved-premises/api'
 import { when } from 'jest-when'
+import type { SummaryListItem } from '@approved-premises/ui'
 import paths from '../../paths/match'
 import {
   personFactory,
@@ -39,6 +40,7 @@ import {
   groupedCriteria,
   keyDetails,
   lengthOfStayRow,
+  licenceExpiryDateRow,
   mapUiParamsForApi,
   occupancyViewLink,
   occupancyViewSummaryListForMatchingDetails,
@@ -67,6 +69,7 @@ import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
+import applicationFactory from '../../testutils/factories/application'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -388,11 +391,15 @@ describe('matchUtils', () => {
   })
 
   describe('occupancyViewSummaryListForMatchingDetails', () => {
+    const application = applicationFactory.build({
+      licenceExpiryDate: '2030-11-23',
+    })
     const placementRequest = placementRequestDetailFactory.build({
       releaseType: 'hdc',
       expectedArrival: '2025-10-02',
       duration: 52,
       essentialCriteria: ['hasTactileFlooring'],
+      application,
     })
     const dates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
     const totalCapacity = 120
@@ -404,6 +411,7 @@ describe('matchUtils', () => {
         departureDateRow(dates.endDate),
         placementLengthRow(dates.placementLength),
         releaseTypeRow(placementRequest),
+        licenceExpiryDateRow(placementRequest.application as ApprovedPremisesApplication),
         totalCapacityRow(totalCapacity),
         apManagerDetailsRow(managerDetails),
         spaceRequirementsRow(filterOutAPTypes(placementRequest.essentialCriteria)),
@@ -411,66 +419,92 @@ describe('matchUtils', () => {
     })
 
     it('should generate the expected matching details', () => {
-      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails)).toEqual([
-        {
-          key: {
-            text: 'Expected arrival date',
-          },
-          value: {
-            text: 'Thu 2 Oct 2025',
-          },
-        },
-        {
-          key: {
-            text: 'Expected departure date',
-          },
-          value: {
-            text: 'Sun 23 Nov 2025',
-          },
-        },
-        {
-          key: {
-            text: 'Placement length',
-          },
-          value: {
-            text: '7 weeks, 3 days',
-          },
-        },
-        {
-          key: {
-            text: 'Release type',
-          },
-          value: {
-            text: 'Home detention curfew (HDC)',
-          },
-        },
-        {
-          key: {
-            text: 'Total capacity',
-          },
-          value: {
-            text: '120 spaces',
-          },
-        },
-        {
-          key: {
-            text: 'AP manager details',
-          },
-          value: {
-            text: 'John Doe',
-          },
-        },
-        {
-          key: {
-            text: 'Space requirements',
-          },
-          value: {
-            html: '<ul class="govuk-list"><li>Tactile flooring</li></ul>',
-          },
-        },
-      ])
+      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails)).toEqual(
+        expectedMatchingDetailsSummaryListItems(application.licenceExpiryDate),
+      )
+    })
+
+    it(`should generate the expected matching details with blank licence expiry date when application's license-expiry date is not set`, () => {
+      const placementRequestWithoutLicenceExpiry = {
+        ...placementRequest,
+        application: applicationFactory.build({
+          licenceExpiryDate: undefined,
+        }),
+      }
+      expect(
+        occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequestWithoutLicenceExpiry, managerDetails),
+      ).toEqual(expectedMatchingDetailsSummaryListItems(''))
     })
   })
+
+  const expectedMatchingDetailsSummaryListItems = (expectedLicenceExpiryDate: string): Array<SummaryListItem> => {
+    return [
+      {
+        key: {
+          text: 'Expected arrival date',
+        },
+        value: {
+          text: 'Thu 2 Oct 2025',
+        },
+      },
+      {
+        key: {
+          text: 'Expected departure date',
+        },
+        value: {
+          text: 'Sun 23 Nov 2025',
+        },
+      },
+      {
+        key: {
+          text: 'Placement length',
+        },
+        value: {
+          text: '7 weeks, 3 days',
+        },
+      },
+      {
+        key: {
+          text: 'Release type',
+        },
+        value: {
+          text: 'Home detention curfew (HDC)',
+        },
+      },
+      {
+        key: {
+          text: 'Licence expiry date',
+        },
+        value: {
+          text: expectedLicenceExpiryDate ? DateFormats.isoDateToUIDate(expectedLicenceExpiryDate) : '',
+        },
+      },
+      {
+        key: {
+          text: 'Total capacity',
+        },
+        value: {
+          text: '120 spaces',
+        },
+      },
+      {
+        key: {
+          text: 'AP manager details',
+        },
+        value: {
+          text: 'John Doe',
+        },
+      },
+      {
+        key: {
+          text: 'Space requirements',
+        },
+        value: {
+          html: '<ul class="govuk-list"><li>Tactile flooring</li></ul>',
+        },
+      },
+    ]
+  }
 
   describe('spaceBookingPremisesSummaryCardRows', () => {
     it('should call the correct row functions', () => {
