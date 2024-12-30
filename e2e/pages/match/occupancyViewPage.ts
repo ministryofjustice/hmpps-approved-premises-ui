@@ -25,6 +25,6 @@ export class OccupancyViewPage extends MatchBasePage {
   }
 
   async shouldShowReleaseType(releaseType: ReleaseTypeLabel) {
-    await expect(this.page.locator('.govuk-details').getByText(releaseType)).toBeVisible()
+    await expect(this.page.locator('.govuk-details').getByText(releaseType, { exact: true })).toBeVisible()
   }
 }
