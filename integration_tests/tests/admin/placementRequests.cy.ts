@@ -144,6 +144,9 @@ context('Placement Requests', () => {
     // Then I should be taken to the placement request page
     let showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
+    // And I should see the Key-person details in the blue banner
+    showPage.shouldShowKeyPersonDetails(unmatchedPlacementRequest)
+
     // And I should see the information about the placement request
     showPage.shouldShowSummary()
     showPage.shouldShowMatchingInformationSummary()
