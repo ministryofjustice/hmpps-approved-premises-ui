@@ -91,9 +91,11 @@ export const matchAndBookApplication = async ({
   })
 
   // Then enter valid dates into the 'Book you placement' form and submit
-  const { today, oneYearFromNow } = todayAndOneYearFromNow()
-  await occupancyViewPage.fillNamedDateField(today, 'arrivalDate')
-  await occupancyViewPage.fillNamedDateField(oneYearFromNow, 'departureDate')
+  const dateToday = new Date()
+  const oneYearFromNow = addYears(dateToday, 1)
+
+  await occupancyViewPage.fillNamedDateField(datePartStrings(dateToday), 'arrivalDate')
+  await occupancyViewPage.fillNamedDateField(datePartStrings(oneYearFromNow), 'departureDate')
   await occupancyViewPage.clickContinue()
 
   // Then I should see the booking screen for that AP
@@ -101,8 +103,8 @@ export const matchAndBookApplication = async ({
 
   // Should show the booking details (inc. new dates)
   const newDatesOfPlacement: E2EDatesOfPlacement = {
-    startDate: `${today.year}-${today.month}-${today.day}`,
-    endDate: `${oneYearFromNow.year}-${oneYearFromNow.month}-${oneYearFromNow.day}`,
+    startDate: DateFormats.dateObjToIsoDate(dateToday),
+    endDate: DateFormats.dateObjToIsoDate(oneYearFromNow),
   }
   await bookingPage.shouldShowDatesOfPlacement(newDatesOfPlacement)
 
@@ -123,19 +125,8 @@ export const matchAndBookApplication = async ({
   return { premisesName, premisesId, newDatesOfPlacement }
 }
 
-export const todayAndOneYearFromNow = () => {
-  const dateToday = new Date()
-  const dateOneYearFromNow = addYears(dateToday, 1)
-  return {
-    today: {
-      year: dateToday.getFullYear().toString(),
-      month: (dateToday.getMonth() + 1).toString(),
-      day: dateToday.getDate().toString(),
-    },
-    oneYearFromNow: {
-      year: dateOneYearFromNow.getFullYear().toString(),
-      month: (dateOneYearFromNow.getMonth() + 1).toString(),
-      day: dateOneYearFromNow.getDate().toString(),
-    },
-  }
-}
+const datePartStrings = (date: Date): { year: string; month: string; day: string } => ({
+  year: date.getFullYear().toString(),
+  month: (date.getMonth() + 1).toString(),
+  day: date.getDate().toString(),
+})
