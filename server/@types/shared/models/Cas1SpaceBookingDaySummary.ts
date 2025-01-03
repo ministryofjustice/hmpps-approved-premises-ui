@@ -18,8 +18,8 @@ export type Cas1SpaceBookingDaySummary = {
     /**
      * Risk rating tier level of corresponding application
      */
-    tier: string;
-    releaseType: string;
+    tier?: string;
+    releaseType?: string;
     essentialCharacteristics: Array<Cas1SpaceBookingCharacteristic>;
 };
 

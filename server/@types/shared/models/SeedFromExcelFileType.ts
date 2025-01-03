@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type SeedFromExcelFileType = 'approved_premises_room' | 'cas1_import_site_survey_premise';
+export type SeedFromExcelFileType = 'cas1_import_site_survey_rooms' | 'cas1_import_site_survey_premises';

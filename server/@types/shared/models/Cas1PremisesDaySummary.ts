@@ -5,7 +5,7 @@
 import type { Cas1OutOfServiceBedSummary } from './Cas1OutOfServiceBedSummary';
 import type { Cas1PremiseCapacityForDay } from './Cas1PremiseCapacityForDay';
 import type { Cas1SpaceBookingDaySummary } from './Cas1SpaceBookingDaySummary';
-export type Cas1PremiseDaySummary = {
+export type Cas1PremisesDaySummary = {
     forDate: string;
     previousDate: string;
     nextDate: string;
