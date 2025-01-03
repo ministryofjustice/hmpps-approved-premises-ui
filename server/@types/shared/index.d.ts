@@ -6,7 +6,6 @@
 export type { ActiveOffence } from './models/ActiveOffence';
 export type { Adjudication } from './models/Adjudication';
 export type { AllocatedFilter } from './models/AllocatedFilter';
-export type { AnyValue } from './models/AnyValue';
 export type { ApArea } from './models/ApArea';
 export type { Appeal } from './models/Appeal';
 export type { AppealDecision } from './models/AppealDecision';
@@ -93,8 +92,8 @@ export type { Cas1OverbookingRange } from './models/Cas1OverbookingRange';
 export type { Cas1PremiseCapacity } from './models/Cas1PremiseCapacity';
 export type { Cas1PremiseCapacityForDay } from './models/Cas1PremiseCapacityForDay';
 export type { Cas1PremiseCharacteristicAvailability } from './models/Cas1PremiseCharacteristicAvailability';
-export type { Cas1PremiseDaySummary } from './models/Cas1PremiseDaySummary';
 export type { Cas1PremisesBasicSummary } from './models/Cas1PremisesBasicSummary';
+export type { Cas1PremisesDaySummary } from './models/Cas1PremisesDaySummary';
 export type { Cas1PremisesSearchResultSummary } from './models/Cas1PremisesSearchResultSummary';
 export type { Cas1PremisesSummary } from './models/Cas1PremisesSummary';
 export type { Cas1ReportName } from './models/Cas1ReportName';
