@@ -6,6 +6,7 @@ import type { Cas1OutOfServiceBedReason } from './Cas1OutOfServiceBedReason';
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 export type Cas1OutOfServiceBedSummary = {
     id: string;
+    roomName?: string;
     startDate: string;
     endDate: string;
     reason: Cas1OutOfServiceBedReason;

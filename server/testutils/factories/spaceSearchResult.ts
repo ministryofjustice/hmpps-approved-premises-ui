@@ -2,7 +2,7 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { Cas1SpaceSearchResult } from '@approved-premises/api'
-import premisesSearchResultSummary from './premisesSearchResultSummary'
+import premisesSearchResultSummary from './cas1PremisesSearchResultSummary'
 import spaceCategoryAvailability from './spaceAvailability'
 
 export default Factory.define<Cas1SpaceSearchResult>(() => {
