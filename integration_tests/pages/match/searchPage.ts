@@ -3,8 +3,6 @@ import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail }
 import Page from '../page'
 import { placementRequestSummaryListForMatching, summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
-import { isFullPerson } from '../../../server/utils/personUtils'
-import { DateFormats } from '../../../server/utils/dateUtils'
 import { occupancyCriteriaMap } from '../../../server/utils/match/occupancy'
 
 export default class SearchPage extends Page {
@@ -20,18 +18,6 @@ export default class SearchPage extends Page {
   shouldShowCaseDetails(placementRequest: PlacementRequestDetail): void {
     this.shouldShowKeyPersonDetails(placementRequest)
     this.shouldShowMatchingDetails(placementRequest)
-  }
-
-  shouldShowKeyPersonDetails(placementRequest: PlacementRequestDetail) {
-    cy.get('.prisoner-info').within(() => {
-      const { person } = placementRequest
-      if (!isFullPerson(person)) throw new Error('test requires a Full Person')
-
-      cy.get('span').contains(person.name)
-      cy.get('span').contains(`CRN: ${person.crn}`)
-      cy.get('span').contains(`Tier: ${placementRequest?.risks?.tier?.value.level}`)
-      cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)
-    })
   }
 
   shouldShowMatchingDetails(placementRequest: PlacementRequestDetail) {

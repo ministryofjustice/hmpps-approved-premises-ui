@@ -9,6 +9,7 @@ import {
   Person,
   PersonAcctAlert,
   PersonStatus,
+  PlacementRequestDetail,
   PrisonCaseNote,
   SortOrder,
   TimelineEvent,
@@ -21,6 +22,7 @@ import { sentenceCase } from '../../server/utils/utils'
 import { SumbmittedApplicationSummaryCards } from '../../server/utils/applications/submittedApplicationSummaryCards'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
 import { oasysSectionsToExclude } from '../../server/utils/oasysImportUtils'
+import { isFullPerson } from '../../server/utils/personUtils'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
@@ -621,5 +623,17 @@ export default abstract class Page {
 
   clickMenuItem(label: string): void {
     cy.get('[aria-label="Primary navigation"] a').contains(label).click()
+  }
+
+  shouldShowKeyPersonDetails(placementRequest: PlacementRequestDetail) {
+    cy.get('.prisoner-info').within(() => {
+      const { person } = placementRequest
+      if (!isFullPerson(person)) throw new Error('test requires a Full Person')
+
+      cy.get('span').contains(person.name)
+      cy.get('span').contains(`CRN: ${person.crn}`)
+      cy.get('span').contains(`Tier: ${placementRequest?.risks?.tier?.value.level}`)
+      cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)
+    })
   }
 }
