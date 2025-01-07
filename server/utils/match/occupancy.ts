@@ -1,5 +1,5 @@
 import { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { SelectOption } from '@approved-premises/ui'
+import { SelectOption, SummaryListItem } from '@approved-premises/ui'
 
 export const dayAvailabilityCount = (
   dayCapacity: Cas1PremiseCapacityForDay,
@@ -12,6 +12,61 @@ export const dayAvailabilityCount = (
           .map(availability => availability.availableBedsCount - availability.bookingsCount),
       )
     : dayCapacity.availableBedCount - dayCapacity.bookingCount
+}
+
+export type DayAvailabilityStatus = 'available' | 'availableForCriteria' | 'overbooked'
+
+export const dayAvailabilityStatus = (
+  dayCapacity: Cas1PremiseCapacityForDay,
+  criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+): DayAvailabilityStatus => {
+  let status: DayAvailabilityStatus =
+    dayCapacity.availableBedCount > dayCapacity.bookingCount ? 'available' : 'overbooked'
+
+  if (criteria.length) {
+    const criteriaBookableCount = dayAvailabilityCount(dayCapacity, criteria)
+
+    if (criteriaBookableCount > 0 && status === 'overbooked') {
+      status = 'availableForCriteria'
+    } else if (criteriaBookableCount <= 0) {
+      status = 'overbooked'
+    }
+  }
+
+  return status
+}
+
+export const dayAvailabilityStatusMap: Record<DayAvailabilityStatus, string> = {
+  available: 'Available',
+  availableForCriteria: 'Available for criteria',
+  overbooked: 'Overbooked',
+}
+
+export const dayAvailabilitySummaryListItems = (
+  dayCapacity: Cas1PremiseCapacityForDay,
+  criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+): Array<SummaryListItem> => {
+  const rows = [
+    { key: { text: 'AP capacity' }, value: { text: `${dayCapacity.totalBedCount}` } },
+    { key: { text: 'Booked spaces' }, value: { text: `${dayCapacity.bookingCount}` } },
+  ]
+
+  if (!criteria.length) {
+    rows.push({ key: { text: 'Available spaces' }, value: { text: `${dayAvailabilityCount(dayCapacity)}` } })
+  } else {
+    criteria.forEach(criterion => {
+      const dayCharacteristic = dayCapacity.characteristicAvailability.find(
+        characteristic => characteristic.characteristic === criterion,
+      )
+
+      rows.push({
+        key: { text: `${occupancyCriteriaMap[criterion]} spaces available` },
+        value: { text: `${dayCharacteristic.availableBedsCount - dayCharacteristic.bookingsCount}` },
+      })
+    })
+  }
+
+  return rows
 }
 
 const durationOptionsMap: Record<number, string> = {

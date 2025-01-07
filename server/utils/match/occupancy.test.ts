@@ -1,14 +1,19 @@
 import { faker } from '@faker-js/faker'
 import { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
-import { dayAvailabilityCount, durationSelectOptions } from './occupancy'
+import {
+  dayAvailabilityCount,
+  dayAvailabilityStatus,
+  dayAvailabilitySummaryListItems,
+  durationSelectOptions,
+} from './occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 
 const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDayFactory.build({
   date: '2025-02-02',
   totalBedCount: 20,
   availableBedCount: 18,
-  bookingCount: 20,
+  bookingCount: 21,
   characteristicAvailability: [
     premiseCharacteristicAvailability.build({
       characteristic: 'hasEnSuite',
@@ -58,6 +63,90 @@ describe('dayAvailabilityCount', () => {
       expect(
         dayAvailabilityCount(capacityWithCriteria, ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated']),
       ).toEqual(-1)
+    })
+  })
+})
+
+describe('dayAvailabilityStatus', () => {
+  describe('when no criteria are provided', () => {
+    it('returns available if there is availability', () => {
+      const capacityForDay = cas1PremiseCapacityForDayFactory.available().build()
+
+      expect(dayAvailabilityStatus(capacityForDay)).toEqual('available')
+    })
+
+    it('returns overbooked if there is no availability', () => {
+      const capacityForDay = cas1PremiseCapacityForDayFactory.overbooked().build()
+
+      expect(dayAvailabilityStatus(capacityForDay)).toEqual('overbooked')
+    })
+  })
+
+  describe('when criteria are provided', () => {
+    describe('if there is general availability', () => {
+      const availableCapacity = cas1PremiseCapacityForDayFactory.available().build({
+        characteristicAvailability: [
+          premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
+          premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
+          premiseCharacteristicAvailability.overbooked().build({ characteristic: 'hasEnSuite' }),
+        ],
+      })
+
+      it('returns available if there is general availability and availability for the criteria', () => {
+        expect(dayAvailabilityStatus(availableCapacity, ['isSuitedForSexOffenders', 'isSingle'])).toEqual('available')
+      })
+
+      it('returns overbooked if there is no availability for the given criteria', () => {
+        expect(dayAvailabilityStatus(availableCapacity, ['isSingle', 'hasEnSuite'])).toEqual('overbooked')
+      })
+    })
+
+    describe('if there is no general availability but availability for criteria', () => {
+      const overbookedCapacity = cas1PremiseCapacityForDayFactory.overbooked().build({
+        characteristicAvailability: [
+          premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
+          premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
+          premiseCharacteristicAvailability.overbooked().build({ characteristic: 'hasEnSuite' }),
+        ],
+      })
+
+      it('returns available for criteria if there is availability for the given criteria', () => {
+        expect(dayAvailabilityStatus(overbookedCapacity, ['isSingle'])).toEqual('availableForCriteria')
+      })
+
+      it('returns overbooked if there is no availability for the given criteria', () => {
+        expect(dayAvailabilityStatus(overbookedCapacity, ['hasEnSuite'])).toEqual('overbooked')
+      })
+    })
+  })
+})
+
+describe('dayAvailabilitySummaryListItems', () => {
+  describe('when no criteria are provided', () => {
+    it('returns a summary list with main availability for the day', () => {
+      const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria)
+
+      expect(summaryList).toEqual([
+        { key: { text: 'AP capacity' }, value: { text: '20' } },
+        { key: { text: 'Booked spaces' }, value: { text: '21' } },
+        { key: { text: 'Available spaces' }, value: { text: '-3' } },
+      ])
+    })
+  })
+
+  describe('when criteria are provided', () => {
+    it('returns a summary list with detailed availability for the selected criteria', () => {
+      const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria, [
+        'isSuitedForSexOffenders',
+        'isStepFreeDesignated',
+      ])
+
+      expect(summaryList).toEqual([
+        { key: { text: 'AP capacity' }, value: { text: '20' } },
+        { key: { text: 'Booked spaces' }, value: { text: '21' } },
+        { key: { text: 'Suitable for sex offenders spaces available' }, value: { text: '3' } },
+        { key: { text: 'Step-free spaces available' }, value: { text: '0' } },
+      ])
     })
   })
 })

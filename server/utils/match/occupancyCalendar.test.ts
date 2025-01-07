@@ -16,19 +16,43 @@ describe('occupancyCalendar', () => {
       ],
     })
 
-    expect(occupancyCalendar(premisesCapacity.capacity)).toEqual([
+    expect(occupancyCalendar(premisesCapacity.capacity, 'path/:date')).toEqual([
       {
         name: 'December 2024',
         days: [
-          { name: 'Mon 30 Dec', bookableCount: 5, status: 'available' },
-          { name: 'Tue 31 Dec', bookableCount: 5, status: 'available' },
+          {
+            date: '2024-12-30',
+            name: 'Mon 30 Dec',
+            bookableCount: 5,
+            status: 'available',
+            link: 'path/2024-12-30',
+          },
+          {
+            date: '2024-12-31',
+            name: 'Tue 31 Dec',
+            bookableCount: 5,
+            status: 'available',
+            link: 'path/2024-12-31',
+          },
         ],
       },
       {
         name: 'January 2025',
         days: [
-          { name: 'Wed 1 Jan', bookableCount: -2, status: 'overbooked' },
-          { name: 'Thu 2 Jan', bookableCount: 5, status: 'available' },
+          {
+            date: '2025-01-01',
+            name: 'Wed 1 Jan',
+            bookableCount: -2,
+            status: 'overbooked',
+            link: 'path/2025-01-01',
+          },
+          {
+            date: '2025-01-02',
+            name: 'Thu 2 Jan',
+            bookableCount: 5,
+            status: 'available',
+            link: 'path/2025-01-02',
+          },
         ],
       },
     ])
@@ -47,10 +71,18 @@ describe('occupancyCalendar', () => {
       ],
     })
 
-    expect(occupancyCalendar(premisesCapacity.capacity, [])).toEqual([
+    expect(occupancyCalendar(premisesCapacity.capacity, 'foo/:date', [])).toEqual([
       {
         name: 'December 2024',
-        days: [{ name: 'Mon 30 Dec', bookableCount: 4, status: 'available' }],
+        days: [
+          {
+            date: '2024-12-30',
+            name: 'Mon 30 Dec',
+            bookableCount: 4,
+            status: 'available',
+            link: 'foo/2024-12-30',
+          },
+        ],
       },
     ])
   })
@@ -88,57 +120,65 @@ describe('occupancyCalendar', () => {
     ]
 
     it('returns the calendar with bookable count for the selected criteria', () => {
-      expect(occupancyCalendar(capacity, ['hasEnSuite'])).toEqual([
+      expect(occupancyCalendar(capacity, 'foo/:date', ['hasEnSuite'])).toEqual([
         {
           name: 'February 2025',
           days: [
             {
+              date: '2025-02-02',
               name: 'Sun 2 Feb',
               bookableCount: -2,
               criteriaBookableCount: -1,
               status: 'overbooked',
+              link: 'foo/2025-02-02?criteria=hasEnSuite',
             },
           ],
         },
       ])
 
-      expect(occupancyCalendar(capacity, ['isSuitedForSexOffenders'])).toEqual([
+      expect(occupancyCalendar(capacity, 'foo/:date', ['isSuitedForSexOffenders'])).toEqual([
         {
           name: 'February 2025',
           days: [
             {
+              date: '2025-02-02',
               name: 'Sun 2 Feb',
               bookableCount: -2,
               criteriaBookableCount: 3,
               status: 'availableForCriteria',
+              link: 'foo/2025-02-02?criteria=isSuitedForSexOffenders',
             },
           ],
         },
       ])
 
-      expect(occupancyCalendar(capacity, ['isWheelchairDesignated'])).toEqual([
+      expect(occupancyCalendar(capacity, 'foo/:date', ['isWheelchairDesignated'])).toEqual([
         {
           name: 'February 2025',
           days: [
             {
+              date: '2025-02-02',
               name: 'Sun 2 Feb',
               bookableCount: -2,
               criteriaBookableCount: 1,
               status: 'availableForCriteria',
+              link: 'foo/2025-02-02?criteria=isWheelchairDesignated',
             },
           ],
         },
       ])
 
-      expect(occupancyCalendar(capacity, ['isStepFreeDesignated'])).toEqual([
+      expect(occupancyCalendar(capacity, 'foo/:date', ['isStepFreeDesignated'])).toEqual([
         {
           name: 'February 2025',
           days: [
             {
+              date: '2025-02-02',
               name: 'Sun 2 Feb',
               bookableCount: -2,
               criteriaBookableCount: 0,
               status: 'overbooked',
+              link: 'foo/2025-02-02?criteria=isStepFreeDesignated',
             },
           ],
         },
@@ -146,15 +186,19 @@ describe('occupancyCalendar', () => {
     })
 
     it('returns the calendar with the lowest bookable count for all criteria', () => {
-      expect(occupancyCalendar(capacity, ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated'])).toEqual([
+      expect(
+        occupancyCalendar(capacity, 'foo/:date', ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated']),
+      ).toEqual([
         {
           name: 'February 2025',
           days: [
             {
+              date: '2025-02-02',
               name: 'Sun 2 Feb',
               bookableCount: -2,
               criteriaBookableCount: -1,
               status: 'overbooked',
+              link: 'foo/2025-02-02?criteria=hasEnSuite&criteria=isSuitedForSexOffenders&criteria=isWheelchairDesignated',
             },
           ],
         },
@@ -164,29 +208,33 @@ describe('occupancyCalendar', () => {
     it('returns the correct availability status if the day is available with and without criteria applied', () => {
       const capacityAvailable = [cas1PremiseCapacityForDayFactory.build({ ...capacity[0], bookingCount: 0 })]
 
-      expect(occupancyCalendar(capacityAvailable, ['isSuitedForSexOffenders'])).toEqual([
+      expect(occupancyCalendar(capacityAvailable, 'foo/:date', ['isSuitedForSexOffenders'])).toEqual([
         {
           name: 'February 2025',
           days: [
             {
+              date: '2025-02-02',
               name: 'Sun 2 Feb',
               bookableCount: 18,
               criteriaBookableCount: 3,
               status: 'available',
+              link: 'foo/2025-02-02?criteria=isSuitedForSexOffenders',
             },
           ],
         },
       ])
 
-      expect(occupancyCalendar(capacityAvailable, ['isStepFreeDesignated'])).toEqual([
+      expect(occupancyCalendar(capacityAvailable, 'foo/:date', ['isStepFreeDesignated'])).toEqual([
         {
           name: 'February 2025',
           days: [
             {
+              date: '2025-02-02',
               name: 'Sun 2 Feb',
               bookableCount: 18,
               criteriaBookableCount: 0,
               status: 'overbooked',
+              link: 'foo/2025-02-02?criteria=isStepFreeDesignated',
             },
           ],
         },

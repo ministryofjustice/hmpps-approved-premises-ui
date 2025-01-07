@@ -4,13 +4,15 @@ const v2MatchPath = path('/match')
 const v2PlacementRequestsPath = v2MatchPath.path('placement-requests')
 const v2PlacementRequestPath = v2PlacementRequestsPath.path(':id')
 const v2PlacementRequestSearchPath = v2PlacementRequestPath.path('space-search')
+const v2PlacementRequestSearchOccupancyPath = v2PlacementRequestSearchPath.path('occupancy/:premisesId')
 const v2SpaceBookingsPath = v2PlacementRequestPath.path('space-bookings')
 
 const v2Match = {
   placementRequests: {
     search: {
       spaces: v2PlacementRequestSearchPath.path('new'),
-      occupancy: v2PlacementRequestSearchPath.path('occupancy/:premisesId'),
+      occupancy: v2PlacementRequestSearchOccupancyPath,
+      dayOccupancy: v2PlacementRequestSearchOccupancyPath.path('date/:date'),
     },
     spaceBookings: {
       new: v2SpaceBookingsPath.path('new'),

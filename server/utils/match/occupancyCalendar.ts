@@ -1,14 +1,17 @@
 import type { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
-import { dayAvailabilityCount } from './occupancy'
+import { dayAvailabilityCount, dayAvailabilityStatus } from './occupancy'
+import { createQueryString } from '../utils'
 
 type CalendarDayStatus = 'available' | 'availableForCriteria' | 'overbooked'
 
 type CalendarDay = {
+  date: string
   name: string
   status: CalendarDayStatus
   bookableCount: number
   criteriaBookableCount?: number
+  link: string
 }
 type CalendarMonth = {
   name: string
@@ -18,6 +21,7 @@ export type Calendar = Array<CalendarMonth>
 
 export const occupancyCalendar = (
   capacity: Array<Cas1PremiseCapacityForDay>,
+  placeholderLink: string,
   criteria: Array<Cas1SpaceBookingCharacteristic> = [],
 ): Calendar => {
   return capacity.reduce<Calendar>((calendar, day) => {
@@ -35,21 +39,21 @@ export const occupancyCalendar = (
     const bookableCount = dayAvailabilityCount(day)
 
     const calendarDay: CalendarDay = {
+      date: day.date,
       name: DateFormats.isoDateToUIDate(day.date, { format: 'longNoYear' }),
-      status: bookableCount > 0 ? 'available' : 'overbooked',
+      status: dayAvailabilityStatus(day, criteria),
       bookableCount,
+      link: `${placeholderLink.replace(':date', day.date)}${createQueryString(
+        { criteria },
+        {
+          addQueryPrefix: true,
+          arrayFormat: 'repeat',
+        },
+      )}`,
     }
 
     if (criteria.length) {
-      const criteriaBookableCount = dayAvailabilityCount(day, criteria)
-
-      calendarDay.criteriaBookableCount = criteriaBookableCount
-
-      if (criteriaBookableCount > 0 && calendarDay.status === 'overbooked') {
-        calendarDay.status = 'availableForCriteria'
-      } else if (criteriaBookableCount <= 0) {
-        calendarDay.status = 'overbooked'
-      }
+      calendarDay.criteriaBookableCount = dayAvailabilityCount(day, criteria)
     }
 
     currentMonth.days.push(calendarDay)
