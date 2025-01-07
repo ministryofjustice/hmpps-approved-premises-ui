@@ -113,7 +113,6 @@ context('Placement Requests', () => {
       unmatchedPlacementRequests,
       unableToMatchPlacementRequests,
       matchedPlacementRequests,
-      preferredAps,
       matchedPlacementRequest,
       parolePlacementRequest,
     } = stubArtifacts()
@@ -149,8 +148,6 @@ context('Placement Requests', () => {
 
     // And I should see the information about the placement request
     showPage.shouldShowSummary()
-    showPage.shouldShowMatchingInformationSummary()
-    showPage.shouldShowPreferredAps(preferredAps)
 
     // And I should not see any booking information
     showPage.shouldNotShowBookingInformation()
@@ -173,7 +170,6 @@ context('Placement Requests', () => {
 
     // And I should see the information about the placement request
     showPage.shouldShowSummary()
-    showPage.shouldShowMatchingInformationSummary()
 
     showPage.shouldNotShowCreateBookingOption()
     showPage.shouldShowAmendBookingOption()

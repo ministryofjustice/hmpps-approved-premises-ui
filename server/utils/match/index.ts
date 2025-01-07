@@ -36,6 +36,7 @@ import { placementRequirementsRow } from '../placementRequests/placementRequirem
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { placementDates } from './placementDates'
 import { occupancyCriteriaMap } from './occupancy'
+import paths from '../../paths/apply'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
@@ -157,14 +158,12 @@ export const occupancyViewSummaryListForMatchingDetails = (
 ): Array<SummaryListItem> => {
   const placementRequestDates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
   const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
-  const application = placementRequest.application as ApprovedPremisesApplication
-
   return [
     arrivalDateRow(placementRequestDates.startDate),
     departureDateRow(placementRequestDates.endDate),
     placementLengthRow(placementRequestDates.placementLength),
     releaseTypeRow(placementRequest),
-    licenceExpiryDateRow(application),
+    licenceExpiryDateRow(placementRequest),
     totalCapacityRow(totalCapacity),
     apManagerDetailsRow(managerDetails),
     spaceRequirementsRow(essentialCharacteristics),
@@ -241,6 +240,15 @@ export const arrivalDateRow = (arrivalDate: string) => ({
   },
 })
 
+export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDate: string) => ({
+  key: {
+    text: isParole ? 'Estimated arrival date' : 'Requested arrival date',
+  },
+  value: {
+    text: DateFormats.isoDateToUIDate(arrivalDate),
+  },
+})
+
 export const departureDateRow = (departureDate: string) => ({
   key: {
     text: 'Expected departure date',
@@ -276,6 +284,31 @@ export const apTypeRow = (apType: ApType) => ({
     text: apTypeLabels[apType],
   },
 })
+
+export const apTypeWithViewTimelineActionRow = (placementRequest: PlacementRequestDetail) => {
+  const apTypeItem = {
+    key: {
+      text: 'Type of AP',
+    },
+    value: {
+      text: apTypeLabels[placementRequest.type],
+    },
+  }
+  if (placementRequest.application) {
+    return {
+      ...apTypeItem,
+      actions: {
+        items: [
+          {
+            href: `${paths.applications.show({ id: placementRequest.application.id })}?tab=timeline`,
+            text: 'View timeline',
+          },
+        ],
+      },
+    }
+  }
+  return apTypeItem
+}
 
 export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
   key: {
@@ -373,14 +406,21 @@ export const releaseTypeRow = (placementRequest: PlacementRequest) => ({
   },
 })
 
-export const licenceExpiryDateRow = (application: ApprovedPremisesApplication) => ({
-  key: {
-    text: 'Licence expiry date',
-  },
-  value: {
-    text: application.licenceExpiryDate ? DateFormats.isoDateToUIDate(application.licenceExpiryDate) : '',
-  },
-})
+export const licenceExpiryDateRow = (placementRequest: PlacementRequestDetail) => {
+  let licenceExpiryDate: string | undefined
+  if (placementRequest.application && 'licenceExpiryDate' in placementRequest.application) {
+    const application = placementRequest.application as ApprovedPremisesApplication
+    licenceExpiryDate = application.licenceExpiryDate
+  }
+  return {
+    key: {
+      text: 'Licence expiry date',
+    },
+    value: {
+      text: licenceExpiryDate ? DateFormats.isoDateToUIDate(licenceExpiryDate) : '',
+    },
+  }
+}
 
 export const startDateObjFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
   if (params['startDate-day'] && params['startDate-month'] && params['startDate-year']) {
@@ -441,9 +481,9 @@ export const lengthOfStayRow = (lengthInDays: number) => ({
   },
 })
 
-export const postcodeRow = (postcodeDistrict: PlacementRequestDetail['location']) => ({
+export const preferredPostcodeRow = (postcodeDistrict: PlacementRequestDetail['location']) => ({
   key: {
-    text: 'Postcode',
+    text: 'Preferred postcode',
   },
   value: {
     text: postcodeDistrict,
@@ -461,7 +501,7 @@ export const placementRequestSummaryListForMatching = (placementRequest: Placeme
       DateFormats.dateObjToIsoDate(calculateDepartureDate(placementRequest.expectedArrival, placementRequest.duration)),
     ),
     lengthOfStayRow(placementRequest.duration),
-    postcodeRow(placementRequest.location),
+    preferredPostcodeRow(placementRequest.location),
     apTypeRow(placementRequest.type),
   ]
 

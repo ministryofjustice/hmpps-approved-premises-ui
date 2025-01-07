@@ -1,6 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% from "../../components/keyDetails/macro.njk" import keyDetails %}
 {% extends "../../partials/layout.njk" %}
@@ -10,6 +11,13 @@
 {% block header %}
     {{ super() }}
     {{ keyDetails(MatchUtils.keyDetails(placementRequest)) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.admin.cruDashboard.index({})
+    }) }}
 {% endblock %}
 
 {% block content %}
@@ -23,7 +31,7 @@
         </div>
         <div class="govuk-grid-row">
             <div class="govuk-width-container">
-                <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-grid-column-full">
                     {% if placementRequest.isParole %}
                         {% set html %}
                             <p class="govuk-notification-banner__heading">
@@ -49,7 +57,7 @@
                         }) }}
                     {% endif %}
 
-                    <ul class="govuk-list govuk-!-padding-bottom-3">
+                    <ul class="govuk-list govuk-!-padding-top-3 govuk-!-padding-bottom-3">
                         <li>
                             <a href="{{ paths.applications.show({id: placementRequest.applicationId}) }}">View
                                 application</a>
@@ -62,9 +70,7 @@
                         </li>
                     </ul>
 
-                    {{ govukSummaryList(PlacementRequestUtils.adminSummary(placementRequest)) }}
-
-                    {{ govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest)) }}
+                    {{ govukSummaryList(placementRequestSummaryList) }}
 
                     {% if placementRequest.status === 'matched' %}
                         <h2 class="govuk-heading-m">Booked Placement</h2>

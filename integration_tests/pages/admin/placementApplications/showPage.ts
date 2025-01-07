@@ -1,25 +1,16 @@
+import { ApprovedPremises, PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../../page'
 
-import {
-  ApprovedPremises,
-  FullPerson,
-  PlacementRequest,
-  PlacementRequestDetail,
-} from '../../../../server/@types/shared'
-import { adminSummary, matchingInformationSummary } from '../../../../server/utils/placementRequests'
 import { bookingSummaryList } from '../../../../server/utils/bookings'
+import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
-    super((placementRequest.person as FullPerson).name)
+    super('Placement request')
   }
 
   shouldShowSummary(): void {
-    this.shouldContainSummaryListItems(adminSummary(this.placementRequest).rows)
-  }
-
-  shouldShowMatchingInformationSummary(): void {
-    this.shouldContainSummaryListItems(matchingInformationSummary(this.placementRequest).rows)
+    this.shouldContainSummaryListItems(placementRequestSummaryList(this.placementRequest).rows)
   }
 
   clickPlacementRequest(placementRequest: PlacementRequest): void {

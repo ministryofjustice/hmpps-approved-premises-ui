@@ -1,18 +1,12 @@
 import { fromPartial } from '@total-typescript/shoehorn'
 import { ApprovedPremisesUserPermission } from '@approved-premises/api'
-import {
-  personFactory,
-  placementRequestDetailFactory,
-  restrictedPersonFactory,
-  userDetailsFactory,
-} from '../../testutils/factories'
+import { personFactory, placementRequestDetailFactory, userDetailsFactory } from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
 import applyPaths from '../../paths/apply'
-import { nameOrPlaceholderCopy } from '../personUtils'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import config from '../../config'
 
@@ -139,31 +133,7 @@ describe('adminIdentityBar', () => {
       const placementRequestDetail = placementRequestDetailFactory.build({ person: personFactory.build() })
 
       expect(title(placementRequestDetail)).toMatchStringIgnoringWhitespace(`
-      <span class="govuk-caption-l">Placement request</span>
-      <h1 class="govuk-heading-l">${nameOrPlaceholderCopy(placementRequestDetail.person)}</h1>
-      `)
-    })
-
-    it('should return Not Found if the person is unknown person', () => {
-      const placementRequestDetailWithRestrictedAccessOffender = placementRequestDetailFactory.build()
-      placementRequestDetailWithRestrictedAccessOffender.person = restrictedPersonFactory.build({
-        type: 'UnknownPerson',
-      })
-
-      expect(title(placementRequestDetailWithRestrictedAccessOffender)).toMatchStringIgnoringWhitespace(`
-      <span class="govuk-caption-l">Placement request</span>
-      <h1 class="govuk-heading-l">Not Found CRN: ${placementRequestDetailWithRestrictedAccessOffender.person.crn}</h1>
-      `)
-    })
-
-    it('should return Limited Access Offender if the person has no name', () => {
-      const placementRequestDetailWithRestrictedAccessOffender = placementRequestDetailFactory.build()
-      const person = personFactory.build({ isRestricted: true })
-      placementRequestDetailWithRestrictedAccessOffender.person = person
-
-      expect(title(placementRequestDetailWithRestrictedAccessOffender)).toMatchStringIgnoringWhitespace(`
-      <span class="govuk-caption-l">Placement request</span>
-      <h1 class="govuk-heading-l"> ${person.name}</h1>
+      <h1 class="govuk-heading-l">Placement request</h1>
       `)
     })
 
@@ -174,9 +144,8 @@ describe('adminIdentityBar', () => {
       })
 
       expect(title(placementRequestDetail)).toMatchStringIgnoringWhitespace(`
-<span class="govuk-caption-l">Placement request</span>
 <h1 class="govuk-heading-l">
-${nameOrPlaceholderCopy(placementRequestDetail.person)}
+Placement request
 <strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>
 </h1>
       `)
