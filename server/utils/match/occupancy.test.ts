@@ -68,7 +68,7 @@ describe('dayAvailabilityCount', () => {
 })
 
 describe('dayAvailabilityStatus', () => {
-  describe('when no criteria is provided', () => {
+  describe('when no criteria are provided', () => {
     it('returns available if there is availability', () => {
       const capacityForDay = cas1PremiseCapacityForDayFactory.available().build()
 
@@ -82,7 +82,7 @@ describe('dayAvailabilityStatus', () => {
     })
   })
 
-  describe('when criteria is provided', () => {
+  describe('when criteria are provided', () => {
     describe('if there is general availability', () => {
       const availableCapacity = cas1PremiseCapacityForDayFactory.available().build({
         characteristicAvailability: [
@@ -122,7 +122,7 @@ describe('dayAvailabilityStatus', () => {
 })
 
 describe('dayAvailabilitySummaryListItems', () => {
-  describe('when no criteria is provided', () => {
+  describe('when no criteria are provided', () => {
     it('returns a summary list with main availability for the day', () => {
       const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria)
 
@@ -134,7 +134,7 @@ describe('dayAvailabilitySummaryListItems', () => {
     })
   })
 
-  describe('when criteria is provided', () => {
+  describe('when criteria are provided', () => {
     it('returns a summary list with detailed availability for the selected criteria', () => {
       const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria, [
         'isSuitedForSexOffenders',
