@@ -7,42 +7,31 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-      text: "Back",
-      href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })
     }) }}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
-      <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+    <div class="govuk-grid-row">
+        <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
+          
+            <h1 class="govuk-heading-l">{{ page.title }}</h1>
 
-        <h1 class="govuk-heading-l">{{ page.title }}</h1>
+            <p>From the information you've provided this person is not eligible for an ESAP placement.</p>
 
-        <p>From the information you've provided this person is not eligible for an ESAP placement.</p>
+            <p>You can continue with an application for a standard Approved Premises placement. Or you can return to the
+                dashboard to withdraw your application.</p>
 
-        <p>You can continue with an application for a standard Approved Premises placement. Or you can return to the dashboard to withdraw your application.</p>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue with application",
+                    href: paths.applications.pages.show({ id: applicationId, task: task, page: 'ap-type' })
+                }) }}
 
-        <div class="govuk-button-group">
-          {{
-            govukButton({
-              text: "Continue with application",
-              preventDoubleClick: true
-            })
-          }}
-          {{
-            linkTo(
-              paths.applications.index,
-              {},
-              {
-                text: 'Back to dashboard'
-              }
-            ) | safe
-          }}
+                <a href="{{ paths.applications.index() }}">Back to dashboard</a>
+            </div>
         </div>
-      </form>
     </div>
-  </div>
 {% endblock %}
