@@ -678,7 +678,7 @@ export default class ApplyHelper {
     const notEligiblePage = Page.verifyOnPage(ApplyPages.EsapNotEligible, this.application)
 
     // When I click the continue button
-    notEligiblePage.clickSubmit()
+    notEligiblePage.clickContinueWithApplication()
 
     // Then I should be able to choose a different type of AP
     Page.verifyOnPage(ApplyPages.ApType, this.application)

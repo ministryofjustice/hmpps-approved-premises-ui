@@ -16,11 +16,13 @@ describe('EsapNotEligible', () => {
 
   itShouldHavePreviousValue(page, 'esap-exceptional-case')
 
-  itShouldHaveNextValue(page, 'ap-type')
+  itShouldHaveNextValue(page, '')
 
   describe('errors', () => {
-    it('should return an empty object', () => {
-      expect(page.errors()).toEqual({})
+    it('should return an object with an error to prevent continuing with the application', () => {
+      expect(page.errors()).toEqual({
+        esapNotEligible: 'The person is not eligible for an Enhanced Security Approved Premises (ESAP) placement.',
+      })
     })
   })
 
