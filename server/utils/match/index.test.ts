@@ -2,7 +2,6 @@ import type {
   ApType,
   ApprovedPremisesApplication,
   Cas1SpaceBookingCharacteristic,
-  Cas1SpaceCharacteristic,
   FullPerson,
   PlacementCriteria,
 } from '@approved-premises/api'
@@ -326,7 +325,7 @@ describe('matchUtils', () => {
       const apType = 'pipe'
       const startDate = '2022-01-01'
       const durationDays = '1'
-      const criteria: Array<Cas1SpaceCharacteristic> = ['acceptsHateCrimeOffenders', 'hasEnSuite']
+      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
 
       const result = redirectToSpaceBookingsNew({
         placementRequestId,
@@ -341,12 +340,12 @@ describe('matchUtils', () => {
       expect(result).toEqual(
         `${paths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
           {
-            premisesName,
-            premisesId,
-            apType,
-            startDate,
-            durationDays,
-            criteria,
+            premisesName: 'Hope House',
+            premisesId: 'abc',
+            apType: 'pipe',
+            startDate: '2022-01-01',
+            durationDays: '1',
+            criteria: ['hasEnSuite', 'isArsonSuitable'],
           },
           { addQueryPrefix: true, arrayFormat: 'repeat' },
         )}`,

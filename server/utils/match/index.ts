@@ -3,7 +3,6 @@ import type {
   ApType,
   ApprovedPremisesApplication,
   Cas1SpaceBookingCharacteristic,
-  Cas1SpaceCharacteristic,
   Gender,
   PlacementCriteria,
   PlacementRequest,
@@ -128,7 +127,7 @@ export const redirectToSpaceBookingsNew = ({
   apType: string
   startDate: string
   durationDays: string
-  criteria: Array<Cas1SpaceCharacteristic>
+  criteria: Array<Cas1SpaceBookingCharacteristic>
 }): string => {
   return `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
     {
