@@ -38,11 +38,6 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SPACE_SEARCH',
   })
 
-  get(paths.placementRequests.bookings.confirm.pattern, placementRequestBookingsController.confirm())
-  post(paths.placementRequests.bookings.create.pattern, placementRequestBookingsController.create(), {
-    auditEvent: 'CREATE_BOOKING_FROM_PLACEMENT_REQUEST',
-  })
-
   get(paths.v2Match.placementRequests.spaceBookings.new.pattern, spaceBookingsController.new(), {
     auditEvent: 'NEW_SPACE_BOOKING',
   })

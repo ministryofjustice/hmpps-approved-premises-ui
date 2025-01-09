@@ -9,7 +9,7 @@ import SpaceService from '../../../services/spaceService'
 import { startDateObjFromParams } from '../../../utils/match'
 import { objectIfNotEmpty } from '../../../utils/utils'
 
-export default class BedSearchController {
+export default class SpaceSearchController {
   constructor(
     private readonly spaceService: SpaceService,
     private readonly placementRequestService: PlacementRequestService,

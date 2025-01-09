@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { Cas1PremisesSearchResultSummary, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import namedIdFactory from './namedId'
 import { sentenceCase } from '../../utils/utils'
-import { apCharacteristicPairFactory } from './bedSearchResult'
+import { apCharacteristicPairFactory } from './bedDetail'
 
 const characteristics: ReadonlyArray<Cas1SpaceCharacteristic> = [
   'acceptsChildSexOffenders',

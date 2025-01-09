@@ -1,27 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Bed, Characteristic, CharacteristicPair } from '@approved-premises/api'
-
-export const roomCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({
-  name: faker.helpers.arrayElement([
-    'acceptsSexOffenders',
-    'acceptsChildSexOffenders',
-    'acceptsNonSexualChildOffenders',
-    'acceptsHateCrimeOffenders',
-    'isCatered',
-    'hasWideStepFreeAccess',
-    'hasWideAccessToCommunalAreas',
-    'hasStepFreeAccessToCommunalAreas',
-    'hasWheelChairAccessibleBathrooms',
-    'hasLift',
-    'hasTactileFlooring',
-    'hasBrailleSignage',
-    'hasHearingLoop',
-    'additionalRestrictions',
-  ]),
-  premises: faker.company.name(),
-}))
+import type { Bed, Characteristic } from '@approved-premises/api'
 
 export const bedFactory = Factory.define<Bed>(() => ({
   id: faker.string.uuid(),
