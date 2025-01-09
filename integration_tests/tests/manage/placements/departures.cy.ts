@@ -1,7 +1,7 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
 import {
   cas1NewDepartureFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingFactory,
 } from '../../../../server/testutils/factories'
 import { signIn } from '../../signIn'
@@ -18,7 +18,7 @@ context('Departures', () => {
   let placement: Cas1SpaceBooking
 
   beforeEach(() => {
-    const premises = cas1PremisesSummaryFactory.build()
+    const premises = cas1PremisesFactory.build()
     placement = cas1SpaceBookingFactory.current().build({
       premises,
     })

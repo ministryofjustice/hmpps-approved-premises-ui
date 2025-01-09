@@ -1,11 +1,11 @@
-import type { Cas1PremisesSummary } from '@approved-premises/api'
+import type { Cas1Premises } from '@approved-premises/api'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { PremisesService } from 'server/services'
 import ApOccupancyViewController from './apOccupancyViewController'
 
-import { cas1PremiseCapacityFactory, cas1PremisesSummaryFactory } from '../../../testutils/factories'
+import { cas1PremiseCapacityFactory, cas1PremisesFactory } from '../../../testutils/factories'
 
 import paths from '../../../paths/manage'
 import { occupancyCalendar } from '../../../utils/premises/occupancy'
@@ -33,7 +33,7 @@ describe('AP occupancyViewController', () => {
 
   describe('view', () => {
     const mockPremises = async (startDate: string = DateFormats.dateObjToIsoDate(new Date())) => {
-      const premisesSummary: Cas1PremisesSummary = cas1PremisesSummaryFactory.build({ id: premisesId })
+      const premisesSummary: Cas1Premises = cas1PremisesFactory.build({ id: premisesId })
       const premisesCapacity = cas1PremiseCapacityFactory.build({ startDate })
       premisesService.getCapacity.mockResolvedValue(premisesCapacity)
       premisesService.find.mockResolvedValue(premisesSummary)

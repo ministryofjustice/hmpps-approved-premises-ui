@@ -1,5 +1,5 @@
 import { signIn } from '../../signIn'
-import { cas1PremisesSummaryFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
+import { cas1PremisesFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
 import { PlacementShowPage } from '../../../pages/manage'
 import { RecordNonArrivalPage } from '../../../pages/manage/placements/nonArrival'
 
@@ -7,7 +7,7 @@ context('Non-arrivals', () => {
   let placement
 
   beforeEach(() => {
-    const premises = cas1PremisesSummaryFactory.build()
+    const premises = cas1PremisesFactory.build()
     placement = cas1SpaceBookingFactory.upcoming().build({ premises })
     cy.task('stubNonArrivalReasonsReferenceData')
     cy.task('stubSpaceBookingShow', placement)

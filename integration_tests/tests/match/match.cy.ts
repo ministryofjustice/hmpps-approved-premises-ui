@@ -1,16 +1,11 @@
-import {
-  Cas1PremiseCapacity,
-  Cas1PremisesSummary,
-  Cas1SpaceSearchParameters,
-  PlacementCriteria,
-} from '@approved-premises/api'
+import { Cas1PremiseCapacity, Cas1Premises, Cas1SpaceSearchParameters, PlacementCriteria } from '@approved-premises/api'
 import { addDays } from 'date-fns'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   cas1PremiseCapacityFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
@@ -177,7 +172,7 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const premises = cas1PremisesSummaryFactory.build({ bedCount: totalCapacity })
+    const premises = cas1PremisesFactory.build({ bedCount: totalCapacity })
     const placementRequest = placementRequestDetailFactory.build({
       person,
       expectedArrival: startDate,
@@ -213,7 +208,7 @@ context('Placement Requests', () => {
   const shouldShowDayDetailsAndReturn = (
     occupancyViewPage: OccupancyViewPage,
     date: Date,
-    premises: Cas1PremisesSummary,
+    premises: Cas1Premises,
     premiseCapacity: Cas1PremiseCapacity,
   ) => {
     const dayCapacity = occupancyViewPage.getOccupancyForDate(date, premiseCapacity)

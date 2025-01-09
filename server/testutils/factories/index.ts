@@ -81,7 +81,7 @@ import spaceCategoryAvailabilityFactory from './spaceAvailability'
 import spaceSearchParametersFactory, { spaceSearchParametersUiFactory } from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
-import cas1PremisesSummaryFactory from './cas1PremisesSummary'
+import cas1PremisesFactory from './cas1Premises'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 import cas1PremiseCapacityFactory, { cas1PremiseCapacityForDayFactory } from './cas1PremiseCapacity'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
@@ -123,7 +123,7 @@ export {
   cas1PremisesBasicSummaryFactory,
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1ReferenceDataFactory,
   cas1SpaceBookingDatesFactory,
   cas1SpaceBookingDepartureFactory,

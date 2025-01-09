@@ -8,7 +8,7 @@ import type {
   Cas1SpaceBookingCharacteristic,
 } from '@approved-premises/api'
 import { addDays, differenceInDays } from 'date-fns'
-import cas1PremisesSummaryFactory from './cas1PremisesSummary'
+import cas1PremisesFactory from './cas1Premises'
 import { DateFormats } from '../../utils/dateUtils'
 import { occupancyCriteriaMap } from '../../utils/match/occupancy'
 
@@ -29,7 +29,7 @@ export default Factory.define<Cas1PremiseCapacity>(({ params }) => {
   )
 
   return {
-    premise: cas1PremisesSummaryFactory.build(),
+    premise: cas1PremisesFactory.build(),
     startDate: DateFormats.dateObjToIsoDate(startDate),
     endDate: DateFormats.dateObjToIsoDate(endDate),
     capacity,

@@ -1,7 +1,7 @@
 import { PersonSummary } from '@approved-premises/api'
 import {
   cas1KeyworkerAllocationFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
   premisesSummaryFactory,
   staffMemberFactory,
@@ -31,7 +31,7 @@ context('Premises', () => {
   })
 
   describe('show', () => {
-    const premises = cas1PremisesSummaryFactory.build()
+    const premises = cas1PremisesFactory.build()
     const placements = cas1SpaceBookingSummaryFactory.buildList(30)
     const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
@@ -226,7 +226,7 @@ context('Premises', () => {
 
       it('should not show the placements section if space bookings are not enabled for the premises', () => {
         // Given there is a premises in the database that does not support space bookings
-        const premisesSpaceBookingsDisabled = cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false })
+        const premisesSpaceBookingsDisabled = cas1PremisesFactory.build({ supportsSpaceBookings: false })
         cy.task('stubSinglePremises', premisesSpaceBookingsDisabled)
 
         // When I visit premises details page

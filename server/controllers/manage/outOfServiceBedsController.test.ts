@@ -17,7 +17,7 @@ import paths from '../../paths/manage'
 import {
   apAreaFactory,
   bedDetailFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   outOfServiceBedFactory,
   paginatedResponseFactory,
   premisesSummaryFactory,
@@ -231,7 +231,7 @@ describe('OutOfServiceBedsController', () => {
       outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
-      const premises = cas1PremisesSummaryFactory.build({ name: 'Hope House' })
+      const premises = cas1PremisesFactory.build({ name: 'Hope House' })
       when(premisesService.find).calledWith(request.user.token, premisesId).mockResolvedValue(premises)
 
       const req = { ...request, query: { premisesId }, params: { temporality } }
@@ -394,15 +394,15 @@ describe('OutOfServiceBedsController', () => {
 
       const allApAreas = [apArea1, apArea2]
 
-      const premises1 = cas1PremisesSummaryFactory.build({
+      const premises1 = cas1PremisesFactory.build({
         apArea: apArea1,
       })
 
-      const premises2 = cas1PremisesSummaryFactory.build({
+      const premises2 = cas1PremisesFactory.build({
         apArea: apArea1,
       })
 
-      const premises3 = cas1PremisesSummaryFactory.build({
+      const premises3 = cas1PremisesFactory.build({
         apArea: apArea2,
       })
 

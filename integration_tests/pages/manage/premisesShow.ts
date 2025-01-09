@@ -1,4 +1,4 @@
-import type { Cas1PremisesSummary, Cas1SpaceBookingSummary, FullPerson } from '@approved-premises/api'
+import type { Cas1Premises, Cas1SpaceBookingSummary, FullPerson } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
@@ -7,11 +7,11 @@ import { laoName } from '../../../server/utils/personUtils'
 import { statusTextMap } from '../../../server/utils/placements'
 
 export default class PremisesShowPage extends Page {
-  constructor(private readonly premises: Cas1PremisesSummary) {
+  constructor(private readonly premises: Cas1Premises) {
     super(premises.name)
   }
 
-  static visit(premises: Cas1PremisesSummary): PremisesShowPage {
+  static visit(premises: Cas1Premises): PremisesShowPage {
     cy.visit(paths.premises.show({ premisesId: premises.id }))
     return new PremisesShowPage(premises)
   }

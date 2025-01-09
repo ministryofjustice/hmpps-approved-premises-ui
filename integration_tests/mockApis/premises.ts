@@ -1,7 +1,7 @@
 import type {
   Cas1PremiseCapacity,
+  Cas1Premises,
   Cas1PremisesBasicSummary,
-  Cas1PremisesSummary,
   ExtendedPremisesSummary,
   ApprovedPremisesSummary as PremisesSummary,
   StaffMember,
@@ -57,7 +57,7 @@ const stubPremisesSummary = (premises: ExtendedPremisesSummary) =>
     },
   })
 
-const stubSinglePremises = (premises: Cas1PremisesSummary) =>
+const stubSinglePremises = (premises: Cas1Premises) =>
   stubFor({
     request: {
       method: 'GET',
