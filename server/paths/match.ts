@@ -5,7 +5,7 @@ const v2PlacementRequestsPath = v2MatchPath.path('placement-requests')
 const v2PlacementRequestPath = v2PlacementRequestsPath.path(':id')
 const v2PlacementRequestSearchPath = v2PlacementRequestPath.path('space-search')
 const v2PlacementRequestSearchOccupancyPath = v2PlacementRequestSearchPath.path('occupancy/:premisesId')
-const v2SpaceBookingsPath = v2PlacementRequestPath.path('space-bookings')
+const v2SpaceBookingsPath = v2PlacementRequestPath.path('space-bookings/:premisesId')
 
 const v2Match = {
   placementRequests: {

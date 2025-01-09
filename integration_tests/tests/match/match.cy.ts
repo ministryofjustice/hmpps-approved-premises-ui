@@ -1,4 +1,10 @@
-import { Cas1PremiseCapacity, Cas1Premises, Cas1SpaceSearchParameters, PlacementCriteria } from '@approved-premises/api'
+import {
+  Cas1PremiseCapacity,
+  Cas1Premises,
+  Cas1SpaceBookingCharacteristic,
+  Cas1SpaceSearchParameters,
+  FullPerson,
+} from '@approved-premises/api'
 import { addDays } from 'date-fns'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
@@ -17,11 +23,12 @@ import Page from '../../pages/page'
 import { signIn } from '../signIn'
 
 import ListPage from '../../pages/admin/placementApplications/listPage'
-import { filterOutAPTypes, filterToSpaceBookingCharacteristics, placementDates } from '../../../server/utils/match'
+import { filterOutAPTypes } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 import OccupancyViewPage from '../../pages/match/occupancyViewPage'
 import applicationFactory from '../../../server/testutils/factories/application'
 import DayAvailabilityPage from '../../pages/match/dayAvailabilityPage'
+import apiPaths from '../../../server/paths/api'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -143,20 +150,6 @@ context('Placement Requests', () => {
 
     // Then I should see validation messages
     occupancyViewPage.shouldShowErrorSummaryAndErrorMessage('The departure date must be after the arrival date')
-  })
-
-  it('allows me to submit valid dates in the book your placement form on occupancy view page and redirects to book a space', () => {
-    const { occupancyViewPage, placementRequest, premises } =
-      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
-
-    // When I submit valid dates
-    const arrivalDate = '2024-11-25'
-    occupancyViewPage.shouldFillBookYourPlacementFormDates(arrivalDate, '2024-11-26')
-    occupancyViewPage.clickContinue()
-
-    // Then I should land on the Book a space page (with the new dates overriding the original ones)
-    const bookASpacePage = Page.verifyOnPage(BookASpacePage, premises.name)
-    bookASpacePage.shouldShowBookingDetails(placementRequest, arrivalDate, 1, 'normal')
   })
 
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = (licenceExpiryDate: string | undefined) => {
@@ -291,49 +284,38 @@ context('Placement Requests', () => {
     // Given I am signed in as a cru_member
     signIn(['cru_member'], ['cas1_space_booking_create'])
 
-    const premisesName = 'Hope House'
-    const premisesId = 'abc123'
-    const apType = 'normal'
-    const durationDays = 15
-    const startDate = '2024-07-23'
-    const { endDate } = placementDates(startDate, durationDays.toString())
+    const premises = cas1PremisesFactory.build()
+    cy.task('stubSinglePremises', premises)
+
+    const arrivalDate = '2024-07-23'
+    const departureDate = '2024-08-08'
+    const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'hasEnSuite']
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const essentialCharacteristics: Array<PlacementCriteria> = ['hasEnSuite']
-    const desirableCharacteristics: Array<PlacementCriteria> = ['isCatered']
     const placementRequest = placementRequestDetailFactory.build({
       person,
-      status: 'notMatched',
-      duration: durationDays,
-      essentialCriteria: [],
-      desirableCriteria: desirableCharacteristics,
     })
 
     // When I visit the 'Book a space' page
     cy.task('stubPlacementRequest', placementRequest)
-    const page = BookASpacePage.visit(
-      placementRequest,
-      startDate,
-      durationDays,
-      premisesName,
-      premisesId,
-      apType,
-      filterToSpaceBookingCharacteristics(essentialCharacteristics),
-    )
+    const page = BookASpacePage.visit(placementRequest, premises.id, arrivalDate, departureDate, criteria)
 
-    // Then I should see the details of the space I am booking
-    page.shouldShowBookingDetails(
-      placementRequest,
-      startDate,
-      durationDays,
-      apType,
-      filterToSpaceBookingCharacteristics(essentialCharacteristics),
-    )
+    // Then I should see the details of the case I am matching
+    page.shouldShowPersonHeader(placementRequest.person as FullPerson)
+
+    // And I should see the details of the space I am booking
+    page.shouldShowBookingDetails(placementRequest, premises, arrivalDate, departureDate, criteria)
 
     // And when I complete the form
-    const requirements = spaceBookingRequirementsFactory.build()
-    const spaceBooking = cas1SpaceBookingFactory.build({ requirements })
+    const requirements = spaceBookingRequirementsFactory.build({
+      essentialCharacteristics: criteria,
+    })
+    const spaceBooking = cas1SpaceBookingFactory.upcoming().build({
+      expectedArrivalDate: arrivalDate,
+      expectedDepartureDate: departureDate,
+      requirements,
+    })
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
     page.clickSubmit()
@@ -342,23 +324,21 @@ context('Placement Requests', () => {
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     // And I should see a success message
-    cruDashboard.shouldShowSpaceBookingConfirmation(premisesName, person.name)
+    cruDashboard.shouldShowSpaceBookingConfirmation()
 
     // And the booking details should have been sent to the API
-    cy.task('verifySpaceBookingCreate', placementRequest).then(requests => {
-      expect(requests).to.have.length(1)
-      const body = JSON.parse(requests[0].body)
-
-      expect(body).to.deep.equal({
-        arrivalDate: startDate,
-        departureDate: endDate,
-        premisesId,
-        requirements: {
-          ...spaceBooking.requirements,
-          essentialCharacteristics,
-        },
-      })
-    })
+    cy.task('verifyApiPost', apiPaths.placementRequests.spaceBookings.create({ id: placementRequest.id })).then(
+      body => {
+        expect(body).to.deep.equal({
+          arrivalDate,
+          departureDate,
+          premisesId: premises.id,
+          requirements: {
+            essentialCharacteristics: criteria,
+          },
+        })
+      },
+    )
   })
 
   it('allows me to mark a placement request as unable to match', () => {

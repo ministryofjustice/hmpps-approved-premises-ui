@@ -99,7 +99,7 @@ export const matchAndBookApplication = async ({
   await occupancyViewPage.clickContinue()
 
   // Then I should see the booking screen for that AP
-  const bookingPage = await BookingPage.initialize(page, premisesName)
+  const bookingPage = await BookingPage.initialize(page)
 
   // Should show the booking details (inc. new dates)
   const newDatesOfPlacement: E2EDatesOfPlacement = {
@@ -109,7 +109,7 @@ export const matchAndBookApplication = async ({
   await bookingPage.shouldShowDatesOfPlacement(newDatesOfPlacement)
 
   // And I confirm the booking
-  const premisesId = page.url().match(/premisesId=(.[^&]*)/)[1] // premisesId=338e22f3-70be-4519-97ab-f08c6c2dfb0b
+  const premisesId = page.url().match(/space-bookings\/(.[^/]*)/)[1] // Path: /match/placement-requests/:id/space-bookings/:premisesId/new
   await bookingPage.clickConfirm()
 
   // Then I should see the Matched tab on the CRU dashboard

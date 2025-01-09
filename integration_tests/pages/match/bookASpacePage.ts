@@ -1,54 +1,53 @@
-import {
-  ApType,
-  Cas1SpaceBookingCharacteristic,
-  Cas1SpaceCharacteristic,
-  PlacementDates,
-  PlacementRequestDetail,
-  Premises,
-} from '@approved-premises/api'
+import { Cas1Premises, Cas1SpaceBookingCharacteristic, PlacementRequestDetail, Premises } from '@approved-premises/api'
+import { differenceInDays } from 'date-fns'
 import Page from '../page'
 import paths from '../../../server/paths/match'
-import { createQueryString, sentenceCase } from '../../../server/utils/utils'
-import { DateFormats } from '../../../server/utils/dateUtils'
-import { placementDates, placementLength as placementLengthInDaysAndWeeks } from '../../../server/utils/match'
-import { placementCriteriaLabels } from '../../../server/utils/placementCriteriaUtils'
-import { apTypeLabels } from '../../../server/utils/apTypeLabels'
+import { createQueryString } from '../../../server/utils/utils'
+import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
+import { requirementsHtmlString } from '../../../server/utils/match'
+import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 
 export default class BookASpacePage extends Page {
-  constructor(premisesName: string) {
-    super(`Book space in ${premisesName}`)
+  constructor() {
+    super(`Confirm booking`)
   }
 
   static visit(
     placementRequest: PlacementRequestDetail,
-    startDate: string,
-    durationDays: PlacementDates['duration'],
-    premisesName: Premises['name'],
     premisesId: Premises['id'],
-    apType: ApType,
+    arrivalDate: string,
+    departureDate: string,
     criteria: Array<Cas1SpaceBookingCharacteristic>,
   ) {
-    const queryString = createQueryString({ startDate, durationDays, premisesName, premisesId, apType, criteria })
-    const path = `${paths.v2Match.placementRequests.spaceBookings.new({ id: placementRequest.id })}?${queryString}`
+    const queryString = createQueryString({ arrivalDate, departureDate, criteria })
+    const path = `${paths.v2Match.placementRequests.spaceBookings.new({
+      id: placementRequest.id,
+      premisesId,
+    })}?${queryString}`
+
     cy.visit(path)
-    return new BookASpacePage(premisesName)
+
+    return new BookASpacePage()
   }
 
   shouldShowBookingDetails(
     placementRequest: PlacementRequestDetail,
-    startDate: string,
-    duration: PlacementDates['duration'],
-    apType: ApType,
-    criteria?: Array<Cas1SpaceCharacteristic>,
+    premises: Cas1Premises,
+    arrivalDate: string,
+    departureDate: string,
+    criteria: Array<Cas1SpaceBookingCharacteristic>,
   ): void {
-    const { endDate, placementLength } = placementDates(startDate, duration.toString())
-    cy.get('dd').contains(apTypeLabels[apType])
-    cy.get('dd').contains(DateFormats.isoDateToUIDate(startDate))
-    cy.get('dd').contains(DateFormats.isoDateToUIDate(endDate))
-    cy.get('dd').contains(placementLengthInDaysAndWeeks(placementLength))
-    cy.get('dd').contains(sentenceCase(placementRequest.gender))
-    ;(criteria || []).forEach(requirement => {
-      cy.get('li').contains(placementCriteriaLabels[requirement])
-    })
+    this.shouldContainSummaryListItems([
+      { key: { text: 'Approved Premises' }, value: { text: premises.name } },
+      // { key: { text: 'Address' }, value: { text: premises.fullAddress } },
+      { key: { text: 'Space type' }, value: { html: requirementsHtmlString(criteria) } },
+      { key: { text: 'Arrival date' }, value: { text: DateFormats.isoDateToUIDate(arrivalDate) } },
+      { key: { text: 'Departure date' }, value: { text: DateFormats.isoDateToUIDate(departureDate) } },
+      {
+        key: { text: 'Length of stay' },
+        value: { text: DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))) },
+      },
+      { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
+    ])
   }
 }

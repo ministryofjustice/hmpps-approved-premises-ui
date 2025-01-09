@@ -24,8 +24,10 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowSpaceBookingConfirmation(premisesName: string, personName: string) {
-    this.shouldShowBanner(`Space booked for ${personName} in ${premisesName}`)
+  shouldShowSpaceBookingConfirmation() {
+    this.shouldShowBanner(
+      'You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.',
+    )
   }
 
   shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>, status?: PlacementRequestStatus): void {

@@ -2,7 +2,6 @@ import type {
   Cas1SpaceBooking,
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
-  PlacementRequest,
   TimelineEvent,
 } from '@approved-premises/api'
 
@@ -25,14 +24,6 @@ export default {
         jsonBody: args.spaceBooking,
       },
     }),
-
-  verifySpaceBookingCreate: async (placementRequest: PlacementRequest) =>
-    (
-      await getMatchingRequests({
-        method: 'POST',
-        url: paths.placementRequests.spaceBookings.create({ id: placementRequest.id }),
-      })
-    ).body.requests,
 
   stubSpaceBookingShow: (placement: Cas1SpaceBooking) =>
     stubFor({
