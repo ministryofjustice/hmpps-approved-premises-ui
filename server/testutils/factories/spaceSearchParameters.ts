@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { Cas1SpaceSearchParameters, Cas1SpaceSearchRequirements } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import { filterOutAPTypes } from '../../utils/match'
+import { filterOutAPTypes, filterToSpaceBookingCharacteristics } from '../../utils/match'
 import { placementCriteria } from './placementRequest'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { SpaceSearchParametersUi } from '../../@types/ui'
@@ -35,7 +35,7 @@ export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParamete
     durationInDays: faker.number.int({ max: 100, min: 1 }).toString(),
     requirements: {
       apType: faker.helpers.arrayElement(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
-      spaceCharacteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
+      spaceCharacteristics: faker.helpers.arrayElements(filterToSpaceBookingCharacteristics(placementCriteria)),
       gender: faker.helpers.arrayElement(['male', 'female']),
     },
     ...startDateInputsValues,

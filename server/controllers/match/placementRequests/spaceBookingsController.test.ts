@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { faker } from '@faker-js/faker'
+import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import SpaceBookingsController from './spaceBookingsController'
 
 import { PlacementRequestService, SpaceService } from '../../../services'
@@ -11,9 +13,10 @@ import {
   placementRequestDetailFactory,
   spaceBookingRequirementsFactory,
 } from '../../../testutils/factories'
-import { filterOutAPTypes, placementDates } from '../../../utils/match'
+import { filterOutAPTypes, occupancyViewLink, placementDates } from '../../../utils/match'
 import paths from '../../../paths/admin'
 import { fetchErrorsAndUserInput } from '../../../utils/validation'
+import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
 
 jest.mock('../../../utils/validation')
 describe('SpaceBookingsController', () => {
@@ -42,6 +45,18 @@ describe('SpaceBookingsController', () => {
       const premisesName = 'Hope House'
       const premisesId = 'abc123'
       const apType = 'esap'
+      const criteria = faker.helpers.arrayElements(Object.keys(occupancyCriteriaMap), {
+        min: 0,
+        max: 3,
+      }) as Array<Cas1SpaceBookingCharacteristic>
+      const backLink = occupancyViewLink({
+        placementRequestId: placementRequestDetail.id,
+        premisesId,
+        apType,
+        startDate,
+        durationDays,
+        spaceCharacteristics: criteria,
+      })
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: [], errorSummary: {}, userInput: {} })
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 
@@ -51,6 +66,7 @@ describe('SpaceBookingsController', () => {
         premisesName,
         premisesId,
         apType,
+        criteria: criteria.join(','),
       }
 
       const params = { id: placementRequestDetail.id }
@@ -72,8 +88,9 @@ describe('SpaceBookingsController', () => {
         errorSummary: {},
         errors: [],
         dates: placementDates(startDate, durationDays),
-        essentialCharacteristics: filterOutAPTypes(placementRequestDetail.essentialCriteria),
+        essentialCharacteristics: criteria,
         desirableCharacteristics: filterOutAPTypes(placementRequestDetail.desirableCriteria),
+        backLink,
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
