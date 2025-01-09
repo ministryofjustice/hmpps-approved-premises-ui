@@ -214,15 +214,19 @@ export const renderKeyworkersSelectOptions = (
 
 export type PlacementTab = 'application' | 'assessment' | 'placementRequest' | 'placement' | 'timeline'
 
-export const tabMap: Record<PlacementTab, { label: string; disableRestricted?: boolean }> = {
+export const tabMap: Record<PlacementTab, { label: string; disableRestricted?: boolean; disableOffline?: boolean }> = {
   application: { label: 'Application', disableRestricted: true },
-  assessment: { label: 'Assessment', disableRestricted: true },
-  placementRequest: { label: 'Request for placement' },
+  assessment: { label: 'Assessment', disableRestricted: true, disableOffline: true },
+  placementRequest: { label: 'Request for placement', disableOffline: true },
   placement: { label: 'Placement details' },
   timeline: { label: 'Timeline' },
 }
 
-export const placementTabItems = (placement: Cas1SpaceBooking, activeTab?: PlacementTab): Array<TabItem> => {
+export const placementTabItems = (
+  placement: Cas1SpaceBooking,
+  activeTab: PlacementTab,
+  isOfflineApplication: boolean = false,
+): Array<TabItem> => {
   const isPersonRestricted = placement.person.type === 'RestrictedPerson'
   const getSelfLink = (tab: PlacementTab): string => {
     const pathRoot = paths.premises.placements
@@ -241,13 +245,13 @@ export const placementTabItems = (placement: Cas1SpaceBooking, activeTab?: Place
         return pathRoot.show({ premisesId, placementId })
     }
   }
-  return Object.entries(tabMap).map(([key, { label, disableRestricted }]) => {
-    const isRestricted = isPersonRestricted && disableRestricted
+  return Object.entries(tabMap).map(([key, { label, disableRestricted, disableOffline }]) => {
+    const isDisabled = (isPersonRestricted && disableRestricted) || (isOfflineApplication && disableOffline)
     return {
       text: label,
       active: activeTab === key,
-      href: isRestricted ? null : getSelfLink(key as PlacementTab),
-      classes: isRestricted ? 'disabled' : '',
+      href: isDisabled ? null : getSelfLink(key as PlacementTab),
+      classes: isDisabled ? 'disabled' : '',
     }
   })
 }

@@ -34,6 +34,11 @@
     <h1>{{ pageHeading }}</h1>
 {% endset %}
 
+{% set offlineAppContent %}
+    <span class="govuk-heading-s">This booking was imported from NDelius</span>
+    <span>As such, Assessment and Request for Placement information isn't available.</span>
+{% endset %}
+
 {% block content %}
 
     {% include "../../../_messages.njk" %}
@@ -44,6 +49,13 @@
         },
         menus: PlacementUtils.actions(placement, user)
     }) }}
+    {% if isOfflineApplication %}
+        {{ govukNotificationBanner({
+            html: offlineAppContent,
+            classes: 'govuk-notification-banner--full-width-content',
+            titleText: 'Information'
+        }) }}
+    {% endif %}
     {{ mojSubNavigation({
         label: 'Sub navigation',
         items: tabItems

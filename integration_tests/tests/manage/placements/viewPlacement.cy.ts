@@ -14,21 +14,26 @@ import { PlacementShowPage } from '../../../pages/manage'
 
 import { signIn } from '../../signIn'
 
+type Mode = 'normal' | 'lao' | 'offline'
 context('Placements', () => {
   describe('show', () => {
-    const setup = (permissions: Array<ApprovedPremisesUserPermission>, placementParameters = {}, lao = false) => {
+    const setup = (
+      permissions: Array<ApprovedPremisesUserPermission>,
+      placementParameters = {},
+      mode: Mode = 'normal',
+    ) => {
       cy.task('reset')
       signIn([], permissions)
       const premises = premisesSummaryFactory.build()
-      const person = lao ? restrictedPersonFactory.build() : personFactory.build()
+      const person = mode === 'lao' ? restrictedPersonFactory.build() : personFactory.build()
       const application = applicationFactory.build({ person, personStatusOnSubmission: (person as FullPerson).status })
       const assessment = assessmentFactory.build()
       const placementRequest = placementRequestFactory.build()
       const placement = cas1SpaceBookingFactory.upcoming().build({
         ...placementParameters,
         applicationId: application.id,
-        assessmentId: assessment.id,
-        requestForPlacementId: placementRequest.id,
+        assessmentId: mode === 'offline' ? undefined : assessment.id,
+        requestForPlacementId: mode === 'offline' ? undefined : placementRequest.id,
         premises,
         person,
       })
@@ -101,8 +106,8 @@ context('Placements', () => {
     })
 
     it('should disable tabs if person is LAO', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement } = setup(['cas1_space_booking_view'], {}, true)
+      // Given that I am logged in with permission to view a placement and a mocked placement for a Limited Access person
+      const { placement } = setup(['cas1_space_booking_view'], {}, 'lao')
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // And I click on the application tab
@@ -115,8 +120,35 @@ context('Placements', () => {
       placementShowPage.shouldHaveActiveTab('Placement details')
       // When I select the timeline tab
       placementShowPage.clickTab('Timeline')
+      // Then the timeline tab should be selected
+      placementShowPage.shouldHaveActiveTab('Timeline')
+    })
+
+    it('should disable tabs if offline application', () => {
+      // Given that I am logged in with permission to view a placement and a mocked placement for an offline application
+      const { placement } = setup(['cas1_space_booking_view'], {}, 'offline')
+      // When I visit the placement page
+      const placementShowPage = PlacementShowPage.visit(placement)
+      // Then I should see the offline application warning banner
+      placementShowPage.shouldShowBanner('This booking was imported from NDelius')
+      // Then I wil be on the placement details tab
+      placementShowPage.shouldHaveActiveTab('Placement details')
+      // When I click on the assessment tab
+      placementShowPage.clickTab('Assessment')
+      // Then I should remain on the placement details tab
+      placementShowPage.shouldHaveActiveTab('Placement details')
+      // When I click on the Request for placement tab
+      placementShowPage.clickTab('Request for placement')
+      // Then I should remain on the Placement details tab
+      placementShowPage.shouldHaveActiveTab('Placement details')
+      // When I select the timeline tab
+      placementShowPage.clickTab('Timeline')
       // When the timeline tab should be selected
       placementShowPage.shouldHaveActiveTab('Timeline')
+      // When I select the Application tab
+      placementShowPage.clickTab('Application')
+      // When the Application tab should be selected
+      placementShowPage.shouldHaveActiveTab('Application')
     })
 
     it('should select a tab from the path', () => {
