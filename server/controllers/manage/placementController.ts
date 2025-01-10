@@ -32,13 +32,15 @@ export default class PlacementController {
       const { user } = res.locals
 
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
-      const tabItems = placementTabItems(placement, activeTab)
+      const isOfflineApplication = !placement.assessmentId
+      const tabItems = placementTabItems(placement, activeTab, isOfflineApplication)
       const backLink = getBackLink(req.headers.referer, premisesId)
       const pageHeading = `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`
       let timelineEvents: Array<TimelineEvent> = []
       let application: ApprovedPremisesApplication = null
       let assessment: ApprovedPremisesAssessment = null
       let placementRequestDetail: PlacementRequestDetail = null
+
       if (activeTab === 'timeline') {
         timelineEvents = await this.placementService.getTimeline({ token: req.user.token, premisesId, placementId })
       }
@@ -70,6 +72,7 @@ export default class PlacementController {
         assessment,
         placementRequestDetail,
         showTitle: true,
+        isOfflineApplication,
       })
     }
   }

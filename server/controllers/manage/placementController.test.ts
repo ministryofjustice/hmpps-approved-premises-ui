@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { TabItem } from 'server/utils/tasks/listTable'
 import {
   applicationFactory,
   assessmentFactory,
@@ -39,7 +40,7 @@ describe('placementController', () => {
   const referrer = 'referrer/path'
   const user = { name: 'username' }
 
-  const setUp = () => {
+  const setUp = (offlineApplication = false) => {
     jest.resetAllMocks()
     jest.useFakeTimers()
 
@@ -52,8 +53,8 @@ describe('placementController', () => {
     const timeLine = timelineEventFactory.buildList(10)
     const placement = cas1SpaceBookingFactory.build({
       applicationId: application.id,
-      assessmentId: assessment.id,
-      requestForPlacementId: placementRequestDetail.id,
+      assessmentId: offlineApplication ? undefined : assessment.id,
+      requestForPlacementId: offlineApplication ? undefined : placementRequestDetail.id,
       canonicalArrivalDate: '2024-11-16',
       canonicalDepartureDate: '2025-03-26',
     })
@@ -177,6 +178,32 @@ describe('placementController', () => {
       expect(assessmentService.findAssessment).not.toHaveBeenCalled()
       expect(placementRequestService.getPlacementRequest).not.toHaveBeenCalled()
       expect(placementService.getTimeline).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
+    })
+
+    it('should show a banner and disable some tabs if placement is for an offline application', async () => {
+      const { request, response, placement } = setUp(true)
+
+      await placementController.show()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/placements/show',
+        expect.objectContaining({
+          placement,
+          pageHeading: '16 Nov 2024 to 26 Mar 2025',
+          user,
+          backLink: null,
+          activeTab: 'placement',
+          isOfflineApplication: true,
+        }),
+      )
+      const renderCall = response.render.mock.calls[0][1] as unknown as { tabItems: Array<TabItem> }
+      expect(renderCall.tabItems[1]).toEqual(
+        expect.objectContaining({ text: 'Assessment', classes: 'disabled', href: null }),
+      )
+      expect(renderCall.tabItems[2]).toEqual(
+        expect.objectContaining({ text: 'Request for placement', classes: 'disabled', href: null }),
+      )
+      expect(renderCall.tabItems[3]).toEqual(expect.objectContaining({ text: 'Placement details', classes: '' }))
     })
   })
 })
