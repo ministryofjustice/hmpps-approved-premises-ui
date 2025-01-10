@@ -10,5 +10,10 @@ export type Cas1PremisesBasicSummary = {
     apArea: NamedId;
     bedCount: number;
     supportsSpaceBookings: boolean;
+    /**
+     * Full address, excluding postcode
+     */
+    fullAddress: string;
+    postcode: string;
 };
 

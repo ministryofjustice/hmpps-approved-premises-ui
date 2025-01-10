@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1PremiseCapacityForDay } from './Cas1PremiseCapacityForDay';
-import type { Cas1PremisesSummary } from './Cas1PremisesSummary';
+import type { Cas1Premises } from './Cas1Premises';
 export type Cas1PremiseCapacity = {
-    premise: Cas1PremisesSummary;
+    premise: Cas1Premises;
     startDate: string;
     endDate: string;
     /**
