@@ -5,15 +5,21 @@ import { addErrorMessageToFlash } from '../../utils/validation'
 import { isFullPerson } from '../../utils/personUtils'
 import { RestrictedPersonError } from '../../utils/errors'
 import { crnErrorHandling } from '../../utils/people'
+import { isValidCrn } from '../../utils/crn'
 
 export default class PeopleController {
   constructor(private readonly personService: PersonService) {}
 
   find(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { crn, checkCaseload } = req.body
+      const { crn: postCrn, checkCaseload } = req.body
+      const crn = postCrn?.trim()
 
-      if (crn) {
+      if (!crn) {
+        addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
+      } else if (!isValidCrn(crn)) {
+        addErrorMessageToFlash(req, 'Enter a CRN in the correct format', 'crn')
+      } else {
         try {
           const person = await this.personService.findByCrn(req.user.token, crn, !!checkCaseload)
           req.flash('crn', person.crn)
@@ -24,9 +30,8 @@ export default class PeopleController {
         } catch (error) {
           crnErrorHandling(req, error, crn)
         }
-      } else {
-        addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
       }
+
       res.redirect(req.headers.referer)
     }
   }

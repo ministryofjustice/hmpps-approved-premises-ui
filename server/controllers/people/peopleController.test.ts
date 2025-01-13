@@ -76,10 +76,25 @@ describe('PeopleController', () => {
       expect(flashSpy).toHaveBeenCalledWith('errorSummary', [errorSummary('crn', 'You must enter a CRN')])
     })
 
+    it('sends an error to the flash if the crn provided is invalid', async () => {
+      request.body = {
+        crn: 'Not a CRN',
+      }
+
+      const requestHandler = peopleController.find()
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
+
+      expect(flashSpy).toHaveBeenCalledWith('errors', { crn: errorMessage('crn', 'Enter a CRN in the correct format') })
+      expect(flashSpy).toHaveBeenCalledWith('errorSummary', [errorSummary('crn', 'Enter a CRN in the correct format')])
+    })
+
     describe('if the service throws', () => {
       it('calls crnErrorHandling ', async () => {
         jest.spyOn(peopleUtils, 'crnErrorHandling')
-        const crn = 'SOME_CRN'
+        const crn = 'X333444'
         const requestHandler = peopleController.find()
 
         const err = { data: {}, status: 404 }
@@ -107,11 +122,11 @@ describe('PeopleController', () => {
         throw err
       })
 
-      request.body.crn = 'SOME_CRN'
+      request.body.crn = 'C555666'
 
       await requestHandler(request, response, next)
 
-      expect(peopleUtils.crnErrorHandling).toHaveBeenCalledWith(request, err, 'SOME_CRN')
+      expect(peopleUtils.crnErrorHandling).toHaveBeenCalledWith(request, err, 'C555666')
       expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
     })
   })
