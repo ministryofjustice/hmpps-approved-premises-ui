@@ -12,6 +12,7 @@ import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
+import { summaryListItem } from '../formUtils'
 
 export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
@@ -105,11 +106,7 @@ export const getBackLink = (referrer: string, premisesId: string): string => {
   return null
 }
 
-const summaryRow = (key: string, value: string): SummaryListItem =>
-  value && {
-    key: textValue(key),
-    value: textValue(value),
-  }
+const summaryRow = (key: string, value: string): SummaryListItem => value && summaryListItem(key, value)
 
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   const { createdAt, actualArrivalDateOnly, actualDepartureDateOnly, keyWorkerAllocation, deliusEventNumber, status } =

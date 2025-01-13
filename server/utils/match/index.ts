@@ -28,7 +28,7 @@ import {
   placementRequirementCriteriaLabels,
 } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
-import { convertKeyValuePairToRadioItems } from '../formUtils'
+import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
 import { isFullPerson } from '../personUtils'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
@@ -171,16 +171,6 @@ export const occupancyViewSummaryListForMatchingDetails = (
   ]
 }
 
-export const textRow = (label: string, value: string): SummaryListItem => ({
-  key: { text: label },
-  value: { text: value },
-})
-
-export const htmlRow = (label: string, value: string): SummaryListItem => ({
-  key: { text: label },
-  value: { html: value },
-})
-
 export const spaceBookingConfirmationSummaryListRows = (
   placementRequest: PlacementRequestDetail,
   premises: Cas1Premises,
@@ -189,16 +179,16 @@ export const spaceBookingConfirmationSummaryListRows = (
   criteria: Array<Cas1SpaceBookingCharacteristic>,
 ): Array<SummaryListItem> => {
   return [
-    textRow('Approved Premises', premises.name),
-    textRow('Address', premises.fullAddress),
-    htmlRow('Space type', requirementsHtmlString(criteria)),
-    textRow('Arrival date', DateFormats.isoDateToUIDate(arrivalDate)),
-    textRow('Departure date', DateFormats.isoDateToUIDate(departureDate)),
-    textRow(
+    summaryListItem('Approved Premises', premises.name),
+    summaryListItem('Address', premises.fullAddress),
+    summaryListItem('Space type', requirementsHtmlString(criteria), 'html'),
+    summaryListItem('Arrival date', DateFormats.isoDateToUIDate(arrivalDate)),
+    summaryListItem('Departure date', DateFormats.isoDateToUIDate(departureDate)),
+    summaryListItem(
       'Length of stay',
       DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))),
     ),
-    textRow('Release type', allReleaseTypes[placementRequest.releaseType]),
+    summaryListItem('Release type', allReleaseTypes[placementRequest.releaseType]),
   ]
 }
 
