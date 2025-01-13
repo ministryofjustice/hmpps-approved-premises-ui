@@ -18,7 +18,6 @@ import {
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import {
-  InvalidSpaceSearchDataException,
   addressRow,
   apManagerDetailsRow,
   apTypeLabelsForRadioInput,
@@ -28,11 +27,9 @@ import {
   characteristicsRow,
   checkBoxesForCriteria,
   confirmationSummaryCardRows,
-  decodeSpaceSearchResult,
   departureDateRow,
   desirableCharacteristicsRow,
   distanceRow,
-  encodeSpaceSearchResult,
   essentialCharacteristicsRow,
   filterOutAPTypes,
   filterToSpaceBookingCharacteristics,
@@ -220,31 +217,6 @@ describe('matchUtils', () => {
           items: groupedCriteria.accessNeeds.items,
         },
       })
-    })
-  })
-
-  describe('encodeSpaceSearchResult', () => {
-    it('encodes a space search result to Base64', () => {
-      const spaceSearchResult = spaceSearchResultFactory.build()
-
-      expect(encodeSpaceSearchResult(spaceSearchResult)).toEqual(
-        Buffer.from(JSON.stringify(spaceSearchResult)).toString('base64'),
-      )
-    })
-  })
-
-  describe('decodeSpaceSearchResult', () => {
-    it('decodes a Base64 encoded space search result', () => {
-      const spaceSearchResult = spaceSearchResultFactory.build()
-      const encodedResult = encodeSpaceSearchResult(spaceSearchResult)
-
-      expect(decodeSpaceSearchResult(encodedResult)).toEqual(spaceSearchResult)
-    })
-
-    it('throws an error if the object is not a space search result', () => {
-      const obj = Buffer.from('{"foo":"bar"}').toString('base64')
-
-      expect(() => decodeSpaceSearchResult(obj)).toThrowError(InvalidSpaceSearchDataException)
     })
   })
 

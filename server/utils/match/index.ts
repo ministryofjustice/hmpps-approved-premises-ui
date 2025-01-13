@@ -45,8 +45,6 @@ type PlacementDates = {
   endDate: string
 }
 
-export class InvalidSpaceSearchDataException extends Error {}
-
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
 export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
@@ -61,23 +59,6 @@ export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchPa
     },
     durationInDays: Number(query.durationInDays),
   }
-}
-
-export const encodeSpaceSearchResult = (spaceSearchResult: SpaceSearchResult): string => {
-  const json = JSON.stringify(spaceSearchResult)
-
-  return Buffer.from(json).toString('base64')
-}
-
-export const decodeSpaceSearchResult = (string: string): SpaceSearchResult => {
-  const json = Buffer.from(string, 'base64').toString('utf-8')
-  const obj = JSON.parse(json)
-
-  if ('premises' in obj) {
-    return obj as SpaceSearchResult
-  }
-
-  throw new InvalidSpaceSearchDataException()
 }
 
 export const placementLength = (lengthInDays: number): string => {

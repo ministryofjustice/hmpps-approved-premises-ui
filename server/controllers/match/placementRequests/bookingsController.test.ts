@@ -4,14 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import BookingsController from './bookingsController'
 
 import { PlacementRequestService } from '../../../services'
-import {
-  bedSearchResultFactory,
-  newPlacementRequestBookingConfirmationFactory,
-  personFactory,
-  placementRequestDetailFactory,
-} from '../../../testutils/factories'
-import { encodeSpaceSearchResult, placementDates } from '../../../utils/match'
-import { NewBookingNotMade, type Cas1SpaceSearchResult as SpaceSearchResult } from '../../../@types/shared'
+import { NewBookingNotMade } from '../../../@types/shared'
 
 import matchPaths from '../../../paths/match'
 import adminPaths from '../../../paths/admin'
@@ -30,62 +23,6 @@ describe('BookingsController', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     bookingsController = new BookingsController(placementRequestService)
-  })
-
-  describe('confirm', () => {
-    it('should render the confirmation template', async () => {
-      const person = personFactory.build({ name: 'John Wayne' })
-      const placementRequestDetail = placementRequestDetailFactory.build({ person })
-      const bedSearchResult = bedSearchResultFactory.build()
-
-      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
-
-      const query = {
-        bedSearchResult: encodeSpaceSearchResult(bedSearchResult as unknown as SpaceSearchResult),
-        startDate: '2022-01-01',
-        duration: '4',
-      }
-
-      const params = { id: placementRequestDetail.id }
-
-      const requestHandler = bookingsController.confirm()
-
-      await requestHandler({ ...request, params, query }, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/confirm', {
-        pageHeading: 'Confirm booking',
-        placementRequest: placementRequestDetail,
-        bedSearchResult,
-        dates: placementDates(query.startDate, query.duration),
-      })
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
-    })
-  })
-
-  describe('create', () => {
-    it('should create a booking and render a success page', async () => {
-      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
-
-      placementRequestService.createBooking.mockResolvedValue(bookingConfirmation)
-
-      const body = {
-        arrivalDate: '2022-01-01',
-        departureDate: '2022-03-01',
-        bedId: 'some-other-uuid',
-      }
-
-      const params = { id: 'some-uuid' }
-
-      const requestHandler = bookingsController.create()
-
-      await requestHandler({ ...request, params, body }, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/success', {
-        pageHeading: 'Your booking is complete',
-        bookingConfirmation,
-      })
-      expect(placementRequestService.createBooking).toHaveBeenCalledWith(token, 'some-uuid', body)
-    })
   })
 
   describe('bookingNotMade', () => {
