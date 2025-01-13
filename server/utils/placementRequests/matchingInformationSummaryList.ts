@@ -1,9 +1,20 @@
 import { PlacementRequestDetail } from '@approved-premises/api'
-import { SummaryListWithCard } from '@approved-premises/ui'
+import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { preferredApsRow } from './preferredApsRow'
 import { placementRequirementsRow } from './placementRequirementsRow'
 
 export const matchingInformationSummary = (placementRequest: PlacementRequestDetail): SummaryListWithCard => {
+  return {
+    card: {
+      title: {
+        text: 'Information for Matching',
+      },
+    },
+    rows: matchingInformationSummaryRows(placementRequest),
+  }
+}
+
+export const matchingInformationSummaryRows = (placementRequest: PlacementRequestDetail): Array<SummaryListItem> => {
   const rows = []
 
   const preferredAps = preferredApsRow(placementRequest)
@@ -25,13 +36,5 @@ export const matchingInformationSummary = (placementRequest: PlacementRequestDet
       },
     })
   }
-
-  return {
-    card: {
-      title: {
-        text: 'Information for Matching',
-      },
-    },
-    rows,
-  }
+  return rows
 }

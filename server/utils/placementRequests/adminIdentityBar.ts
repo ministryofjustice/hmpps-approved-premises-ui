@@ -5,7 +5,6 @@ import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
-import { isUnknownPerson, nameOrPlaceholderCopy } from '../personUtils'
 import config from '../../config'
 import { hasPermission } from '../users'
 
@@ -76,13 +75,9 @@ export const adminActions = (
 }
 
 export const title = (placementRequest: PlacementRequestDetail) => {
-  const { person } = placementRequest
-  let heading = nameOrPlaceholderCopy(
-    person,
-    isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO: ${person.crn}`,
-  )
+  let heading = ''
   if (placementRequest.isWithdrawn) {
     heading += `<strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>`
   }
-  return `<span class="govuk-caption-l">Placement request</span><h1 class="govuk-heading-l">${heading}</h1>`
+  return `<h1 class="govuk-heading-l">Placement request${heading}</h1>`
 }

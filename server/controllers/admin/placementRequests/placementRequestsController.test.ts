@@ -6,6 +6,7 @@ import PlacementRequestsController from './placementRequestsController'
 import { PlacementRequestService } from '../../../services'
 import { userDetailsFactory } from '../../../testutils/factories'
 import placementRequestDetail from '../../../testutils/factories/placementRequestDetail'
+import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 
 jest.mock('../../../utils/applications/utils')
 jest.mock('../../../utils/applications/getResponses')
@@ -41,6 +42,7 @@ describe('PlacementRequestsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/show', {
         placementRequest,
+        placementRequestSummaryList: placementRequestSummaryList(placementRequest),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, 'some-uuid')
     })
