@@ -4,6 +4,7 @@ import PersonService from '../../services/personService'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/people'
 import { crnErrorHandling } from '../../utils/people'
+import { isValidCrn } from '../../utils/crn'
 
 export default class TimelineController {
   constructor(private readonly personService: PersonService) {}
@@ -24,15 +25,19 @@ export default class TimelineController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const crn = req?.query?.crn as string | undefined
+      const crn = (req?.query?.crn as string)?.trim()
 
-      if (!crn?.trim()) {
+      if (!crn) {
         addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
+        return res.redirect(paths.timeline.find({}))
+      }
+      if (!isValidCrn(crn)) {
+        addErrorMessageToFlash(req, 'Enter a CRN in the correct format', 'crn')
         return res.redirect(paths.timeline.find({}))
       }
 
       try {
-        const timeline = await this.personService.getTimeline(req.user.token, crn.trim())
+        const timeline = await this.personService.getTimeline(req.user.token, crn)
         return res.render('people/timeline/show', { timeline, crn, pageHeading: `Timeline for ${crn}` })
       } catch (error) {
         crnErrorHandling(req, error, crn)

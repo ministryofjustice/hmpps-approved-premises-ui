@@ -79,7 +79,7 @@ describe('TimelineController', () => {
 
   describe('show', () => {
     it('renders the timeline view', async () => {
-      const crn = 'CRN'
+      const crn = 'X123456'
       const timeline = personalTimelineFactory.build()
 
       personService.getTimeline.mockResolvedValue(timeline)
@@ -99,14 +99,14 @@ describe('TimelineController', () => {
     it('trims the input', async () => {
       const requestHandler = timelineController.show()
 
-      await requestHandler({ ...request, query: { crn: ' test ' } }, response, next)
+      await requestHandler({ ...request, query: { crn: ' X123456 ' } }, response, next)
 
-      expect(personService.getTimeline).toHaveBeenCalledWith(token, 'test')
+      expect(personService.getTimeline).toHaveBeenCalledWith(token, 'X123456')
     })
 
     describe('when there the person service throws an error', () => {
       it('catches the error and redirects to the find page', async () => {
-        const crn = 'CRN'
+        const crn = 'X456123'
         const error = new Error('Some error')
 
         personService.getTimeline.mockRejectedValue(error)
@@ -128,6 +128,17 @@ describe('TimelineController', () => {
         await requestHandler({ ...request, query: { crn: ' ' } }, response, next)
 
         expect(addErrorMessageToFlash).toHaveBeenCalledWith(request, 'You must enter a CRN', 'crn')
+        expect(response.redirect).toHaveBeenCalledWith(paths.timeline.find({}))
+      })
+    })
+
+    describe('when the CRN does not follow the correct format', () => {
+      it('adds error message to flash and redirects to show', async () => {
+        const requestHandler = timelineController.show()
+
+        await requestHandler({ ...request, query: { crn: 'not a CRN' } }, response, next)
+
+        expect(addErrorMessageToFlash).toHaveBeenCalledWith(request, 'Enter a CRN in the correct format', 'crn')
         expect(response.redirect).toHaveBeenCalledWith(paths.timeline.find({}))
       })
     })
