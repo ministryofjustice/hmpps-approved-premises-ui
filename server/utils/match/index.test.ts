@@ -502,7 +502,7 @@ describe('matchUtils', () => {
         spaceBookingConfirmationSummaryListRows(placementRequest, premises, arrivalDate, departureDate, criteria),
       ).toEqual([
         { key: { text: 'Approved Premises' }, value: { text: premises.name } },
-        // { key: { text: 'Address' }, value: { text: premises.fullAddress } },
+        { key: { text: 'Address' }, value: { text: premises.fullAddress } },
         {
           key: { text: 'Space type' },
           value: { html: '<ul class="govuk-list"><li>En-suite bathroom</li><li>Arson offences</li></ul>' },

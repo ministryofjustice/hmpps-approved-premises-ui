@@ -39,7 +39,7 @@ export default class BookASpacePage extends Page {
   ): void {
     this.shouldContainSummaryListItems([
       { key: { text: 'Approved Premises' }, value: { text: premises.name } },
-      // { key: { text: 'Address' }, value: { text: premises.fullAddress } },
+      { key: { text: 'Address' }, value: { text: premises.fullAddress } },
       { key: { text: 'Space type' }, value: { html: requirementsHtmlString(criteria) } },
       { key: { text: 'Arrival date' }, value: { text: DateFormats.isoDateToUIDate(arrivalDate) } },
       { key: { text: 'Departure date' }, value: { text: DateFormats.isoDateToUIDate(departureDate) } },
