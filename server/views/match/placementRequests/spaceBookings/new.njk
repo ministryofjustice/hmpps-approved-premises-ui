@@ -16,52 +16,28 @@
 
 {% block content %}
     {{ showErrorSummary(errorSummary, errorTitle) }}
-    <div class="govuk-width-container">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-                {{ govukSummaryList({
-                    card: {
-                        title: {
-                            text: "Premises details"
-                        }
-                    },
-                    classes: 'govuk-summary-list--no-border',
-                    rows: MatchUtils.spaceBookingPremisesSummaryCardRows(premisesName, apType)
-                }) }}
+    <h1 class="govuk-heading-l">Confirm booking</h1>
 
-                {{ govukSummaryList({
-                    card: {
-                        title: {
-                            text: "Booking request"
-                        }
-                    },
-                    classes: 'govuk-summary-list--no-border',
-                    rows: MatchUtils.spaceBookingPersonNeedsSummaryCardRows(dates, placementRequest.gender, essentialCharacteristics, desirableCharacteristics)
-                }) }}
+    {{ govukSummaryList({
+        rows: summaryListRows
+    }) }}
 
-                <p>This booking will be sent to {{ premisesName }} Approved Premises for confirmation.</p>
+    <form action="{{ submitLink }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <form action="{{ paths.v2Match.placementRequests.spaceBookings.create({ id: placementRequest.id }) }}"
-                      method="post">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="arrivalDate" value="{{ arrivalDate }}" />
+        <input type="hidden" name="departureDate" value="{{ departureDate }}" />
+        <input type="hidden" name="criteria" value="{{ criteria }}" />
 
-                    <input type="hidden" name="arrivalDate" value="{{ dates.startDate }}" />
-                    <input type="hidden" name="departureDate" value="{{ dates.endDate }}" />
-                    <input type="hidden" name="durationDays" value="{{ dates.placementLength }}" />
-                    <input type="hidden" name="premisesId" value="{{ premisesId }}" />
-                    <input type="hidden" name="premisesName" value="{{ premisesName }}" />
-                    <input type="hidden" name="apType" value="{{ apType }}" />
-                    <input type="hidden" name="essentialCharacteristics" value="{{ essentialCharacteristics }}" />
-                    <input type="hidden" name="personName" value="{{ placementRequest.person.name }}" />
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Confirm and book",
+                preventDoubleClick: true
+            }) }}
 
-                    {{ govukButton({
-                        text: "Confirm and submit",
-                        preventDoubleClick: true
-                    }) }}
-                </form>
-            </div>
+            <a href="{{ backLink }}" class="govuk-button govuk-button--secondary">Cancel</a>
         </div>
-    </div>
+
+    </form>
 {% endblock %}

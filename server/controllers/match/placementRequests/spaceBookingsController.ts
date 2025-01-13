@@ -1,65 +1,70 @@
 import type { Request, RequestHandler, Response, TypedRequestHandler } from 'express'
-import type { ApType, Cas1NewSpaceBooking, PlacementCriteria } from '@approved-premises/api'
-import { PlacementRequestService, SpaceService } from '../../../services'
-import {
-  filterOutAPTypes,
-  filterToSpaceBookingCharacteristics,
-  occupancyViewLink,
-  placementDates,
-} from '../../../utils/match'
+import type { Cas1NewSpaceBooking, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { createQueryString } from '../../../utils/utils'
+import { occupancyViewLink, spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
 
 interface NewRequest extends Request {
-  params: { id: string }
+  params: { id: string; premisesId: string }
   query: {
-    startDate: string
-    durationDays: string
-    premisesName: string
-    premisesId: string
-    apType: ApType
-    criteria: string
+    arrivalDate: string
+    departureDate: string
+    criteria?: Array<string>
+    startDate?: string
+    durationDays?: string
   }
 }
 
 export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
+    private readonly premisesService: PremisesService,
     private readonly spaceService: SpaceService,
   ) {}
 
   new(): TypedRequestHandler<Request, Response> {
     return async (req: NewRequest, res: Response) => {
-      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const { startDate, durationDays, premisesName, premisesId, apType, criteria } = req.query
+      const { token } = req.user
+      const { id, premisesId } = req.params
+      const { arrivalDate, departureDate, criteria: criteriaParams, startDate, durationDays } = req.query
+      const criteria = [criteriaParams].flat() as Array<Cas1SpaceBookingCharacteristic>
+
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const premises = await this.premisesService.find(token, premisesId)
+
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
-      const essentialCharacteristics = filterToSpaceBookingCharacteristics(
-        (criteria ? criteria.split(',') : []) as Array<PlacementCriteria>,
-      )
+
+      const submitLink = `${matchPaths.v2Match.placementRequests.spaceBookings.create(req.params)}?${createQueryString(req.query)}`
       const backLink = occupancyViewLink({
-        placementRequestId: placementRequest.id,
+        placementRequestId: id,
         premisesId,
-        apType,
         startDate,
         durationDays,
-        spaceCharacteristics: essentialCharacteristics,
+        spaceCharacteristics: criteria,
       })
-      res.render('match/placementRequests/spaceBookings/new', {
-        pageHeading: `Book space in ${premisesName}`,
+
+      const summaryListRows = spaceBookingConfirmationSummaryListRows(
         placementRequest,
-        premisesName,
-        premisesId,
-        apType,
-        startDate,
-        durationDays,
-        dates: placementDates(startDate, durationDays),
-        essentialCharacteristics,
-        desirableCharacteristics: filterOutAPTypes(placementRequest.desirableCriteria),
+        premises,
+        arrivalDate,
+        departureDate,
+        criteria,
+      )
+
+      res.render('match/placementRequests/spaceBookings/new', {
+        backLink,
+        submitLink,
+        placementRequest,
+        premises,
+        arrivalDate,
+        departureDate,
+        criteria,
+        summaryListRows,
         errors,
         errorSummary,
-        backLink,
       })
     }
   }
@@ -67,7 +72,9 @@ export default class {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const {
-        body: { arrivalDate, departureDate, durationDays, premisesId, premisesName, essentialCharacteristics, apType },
+        body: { arrivalDate, departureDate, criteria },
+        params: { id, premisesId },
+        user: { token },
       } = req
 
       const newSpaceBooking: Cas1NewSpaceBooking = {
@@ -75,26 +82,25 @@ export default class {
         departureDate,
         premisesId,
         requirements: {
-          essentialCharacteristics: essentialCharacteristics ? essentialCharacteristics.split(',') : [],
+          essentialCharacteristics: criteria ? criteria.split(',') : [],
         },
       }
       try {
-        await this.spaceService.createSpaceBooking(req.user.token, req.params.id, newSpaceBooking)
-        req.flash('success', `Space booked for ${req.body.personName} in ${req.body.premisesName}`)
+        await this.spaceService.createSpaceBooking(token, id, newSpaceBooking)
+        req.flash(
+          'success',
+          'You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.',
+        )
         return res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)
       } catch (error) {
-        const queryString = createQueryString({
-          startDate: arrivalDate,
-          durationDays,
-          premisesName,
-          premisesId,
-          apType,
-        })
         return catchValidationErrorOrPropogate(
           req,
           res,
-          error as Error,
-          `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: req.params.id })}?${queryString}`,
+          error,
+          `${matchPaths.v2Match.placementRequests.spaceBookings.new({
+            id,
+            premisesId,
+          })}?${createQueryString(req.query)}`,
         )
       }
     }

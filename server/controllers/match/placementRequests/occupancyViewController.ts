@@ -1,6 +1,5 @@
 import { Request, Response, TypedRequestHandler } from 'express'
 import type { ApType, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { differenceInDays } from 'date-fns'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService } from '../../../services'
 import {
@@ -176,7 +175,11 @@ export default class {
   bookSpace(): TypedRequestHandler<Request> {
     return async (req: Request, res: Response) => {
       const { body } = req
+      const { criteria: criteriaBody } = body
+      const criteria = criteriaBody.split(',')
+
       const errors = validateSpaceBooking(body)
+
       if (this.hasErrors(errors)) {
         if (errors.arrivalDate) {
           addErrorMessageToFlash(req, errors.arrivalDate, 'arrivalDate')
@@ -184,14 +187,14 @@ export default class {
         if (errors.departureDate) {
           addErrorMessageToFlash(req, errors.departureDate, 'departureDate')
         }
-        const { startDate, durationDays, apType, criteria } = body
+
+        const { startDate, durationDays } = req.query
         const redirectUrl = occupancyViewLink({
           placementRequestId: req.params.id,
           premisesId: req.params.premisesId,
-          apType,
-          startDate,
-          durationDays,
-          spaceCharacteristics: criteria.split(','),
+          startDate: startDate as string,
+          durationDays: durationDays as string,
+          spaceCharacteristics: criteria,
         })
         res.redirect(redirectUrl)
       } else {
@@ -205,15 +208,11 @@ export default class {
         )
         const redirectUrl = redirectToSpaceBookingsNew({
           placementRequestId: req.params.id,
-          premisesName: body.premisesName,
-          premisesId: body.premisesId,
-          apType: body.apType,
-          startDate: arrivalDate,
-          durationDays: differenceInDays(
-            DateFormats.isoToDateObj(departureDate),
-            DateFormats.isoToDateObj(arrivalDate),
-          ).toString(),
-          criteria: body.criteria ? body.criteria : undefined,
+          premisesId: req.params.premisesId,
+          ...req.query,
+          arrivalDate,
+          departureDate,
+          criteria,
         })
         res.redirect(redirectUrl)
       }

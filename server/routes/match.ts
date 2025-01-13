@@ -38,10 +38,6 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SPACE_SEARCH',
   })
 
-  get(paths.v2Match.placementRequests.spaceBookings.new.pattern, spaceBookingsController.new(), {
-    auditEvent: 'NEW_SPACE_BOOKING',
-  })
-
   get(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.view(), {
     auditEvent: 'OCCUPANCY_VIEW',
   })
@@ -53,6 +49,9 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'OCCUPANCY_VIEW_DAY',
   })
 
+  get(paths.v2Match.placementRequests.spaceBookings.new.pattern, spaceBookingsController.new(), {
+    auditEvent: 'NEW_SPACE_BOOKING',
+  })
   post(paths.v2Match.placementRequests.spaceBookings.create.pattern, spaceBookingsController.create(), {
     auditEvent: 'CREATE_SPACE_BOOKING',
   })

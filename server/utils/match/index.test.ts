@@ -9,6 +9,7 @@ import { when } from 'jest-when'
 import type { SummaryListItem } from '@approved-premises/ui'
 import paths from '../../paths/match'
 import {
+  cas1PremisesFactory,
   personFactory,
   placementRequestDetailFactory,
   premisesFactory,
@@ -51,6 +52,7 @@ import {
   redirectToSpaceBookingsNew,
   releaseTypeRow,
   requirementsHtmlString,
+  spaceBookingConfirmationSummaryListRows,
   spaceBookingPersonNeedsSummaryCardRows,
   spaceBookingPremisesSummaryCardRows,
   spaceRequirementsRow,
@@ -59,7 +61,6 @@ import {
   totalCapacityRow,
 } from '.'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
-import { createQueryString } from '../utils'
 import * as formUtils from '../formUtils'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
@@ -68,6 +69,7 @@ import { textValue } from '../applications/helpers'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
 import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 import applicationFactory from '../../testutils/factories/application'
+import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -230,7 +232,6 @@ describe('matchUtils', () => {
     it('returns a link to the occupancy view page', () => {
       const placementRequestId = '123'
       const premisesId = 'abc'
-      const apType = 'pipe'
       const startDate = '2025-04-14'
       const durationDays = '84'
       const spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isSingle']
@@ -238,7 +239,6 @@ describe('matchUtils', () => {
       const result = occupancyViewLink({
         placementRequestId,
         premisesId,
-        apType,
         startDate,
         durationDays,
         spaceCharacteristics,
@@ -248,14 +248,13 @@ describe('matchUtils', () => {
         `${paths.v2Match.placementRequests.search.occupancy({
           id: placementRequestId,
           premisesId,
-        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle`,
+        })}?startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle`,
       )
     })
 
     it('filters out non booking-specific search criteria', () => {
       const placementRequestId = '123'
       const premisesId = 'abc'
-      const apType = 'pipe'
       const startDate = '2025-04-14'
       const durationDays = '84'
       const spaceCharacteristics: Array<PlacementCriteria> = [
@@ -274,7 +273,6 @@ describe('matchUtils', () => {
       const result = occupancyViewLink({
         placementRequestId,
         premisesId,
-        apType,
         startDate,
         durationDays,
         spaceCharacteristics: filterToSpaceBookingCharacteristics(spaceCharacteristics),
@@ -284,43 +282,39 @@ describe('matchUtils', () => {
         `${paths.v2Match.placementRequests.search.occupancy({
           id: placementRequestId,
           premisesId,
-        })}?apType=pipe&startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
+        })}?startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
       )
     })
   })
 
   describe('redirectToSpaceBookingsNew', () => {
-    it('returns a link to the confirm page with the premises name and bed', () => {
+    it('returns a link to the confirm booking page with dates, criteria and existing query parameters', () => {
       const placementRequestId = '123'
-      const premisesName = 'Hope House'
       const premisesId = 'abc'
-      const apType = 'pipe'
-      const startDate = '2022-01-01'
-      const durationDays = '1'
-      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
+      const arrivalDate = '2022-01-01'
+      const departureDate = '2022-03-05'
+      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isWheelchairDesignated']
+      const existingQuery = {
+        foo: 'bar',
+      }
 
       const result = redirectToSpaceBookingsNew({
         placementRequestId,
-        premisesName,
         premisesId,
-        apType,
-        startDate,
-        durationDays,
+        arrivalDate,
+        departureDate,
         criteria,
+        ...existingQuery,
       })
 
+      const expectedQueryString =
+        'arrivalDate=2022-01-01&departureDate=2022-03-05&criteria=hasEnSuite&criteria=isWheelchairDesignated&foo=bar'
+
       expect(result).toEqual(
-        `${paths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
-          {
-            premisesName: 'Hope House',
-            premisesId: 'abc',
-            apType: 'pipe',
-            startDate: '2022-01-01',
-            durationDays: '1',
-            criteria: ['hasEnSuite', 'isArsonSuitable'],
-          },
-          { addQueryPrefix: true, arrayFormat: 'repeat' },
-        )}`,
+        `${paths.v2Match.placementRequests.spaceBookings.new({
+          id: placementRequestId,
+          premisesId,
+        })}?${expectedQueryString}`,
       )
     })
   })
@@ -492,6 +486,31 @@ describe('matchUtils', () => {
       expect(spaceBookingPremisesSummaryCardRows(premisesName, apType)).toEqual([
         premisesNameRow(premisesName),
         apTypeRow(apType),
+      ])
+    })
+  })
+
+  describe('spaceBookingConfirmationSummaryListRows', () => {
+    it('returns summary list items for the space booking confirmation screen', () => {
+      const placementRequest = placementRequestDetailFactory.build()
+      const premises = cas1PremisesFactory.build()
+      const arrivalDate = '2025-05-23'
+      const departureDate = '2025-07-18'
+      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
+
+      expect(
+        spaceBookingConfirmationSummaryListRows(placementRequest, premises, arrivalDate, departureDate, criteria),
+      ).toEqual([
+        { key: { text: 'Approved Premises' }, value: { text: premises.name } },
+        { key: { text: 'Address' }, value: { text: premises.fullAddress } },
+        {
+          key: { text: 'Space type' },
+          value: { html: '<ul class="govuk-list"><li>En-suite bathroom</li><li>Arson offences</li></ul>' },
+        },
+        { key: { text: 'Arrival date' }, value: { text: 'Fri 23 May 2025' } },
+        { key: { text: 'Departure date' }, value: { text: 'Fri 18 Jul 2025' } },
+        { key: { text: 'Length of stay' }, value: { text: '8 weeks' } },
+        { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
       ])
     })
   })

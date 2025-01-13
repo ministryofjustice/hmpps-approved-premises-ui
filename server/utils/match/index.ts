@@ -1,7 +1,8 @@
-import { addDays } from 'date-fns'
+import { addDays, differenceInDays } from 'date-fns'
 import type {
   ApType,
   ApprovedPremisesApplication,
+  Cas1Premises,
   Cas1SpaceBookingCharacteristic,
   Gender,
   PlacementCriteria,
@@ -17,6 +18,7 @@ import type {
   SpaceSearchParametersUi,
   SummaryListItem,
 } from '@approved-premises/ui'
+import { ParsedQs } from 'qs'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { createQueryString, sentenceCase } from '../utils'
 import matchPaths from '../../paths/match'
@@ -26,7 +28,7 @@ import {
   placementRequirementCriteriaLabels,
 } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
-import { convertKeyValuePairToRadioItems } from '../formUtils'
+import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
 import { isFullPerson } from '../personUtils'
 import { preferredApsRow } from '../placementRequests/preferredApsRow'
@@ -68,14 +70,12 @@ export const placementLength = (lengthInDays: number): string => {
 export const occupancyViewLink = ({
   placementRequestId,
   premisesId,
-  apType,
   startDate,
   durationDays,
   spaceCharacteristics = [],
 }: {
   placementRequestId: string
   premisesId: string
-  apType: string
   startDate: string
   durationDays: string
   spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic>
@@ -85,7 +85,6 @@ export const occupancyViewLink = ({
     premisesId,
   })}${createQueryString(
     {
-      apType,
       startDate,
       durationDays,
       criteria: spaceCharacteristics,
@@ -95,31 +94,27 @@ export const occupancyViewLink = ({
 
 export const redirectToSpaceBookingsNew = ({
   placementRequestId,
-  premisesName,
   premisesId,
-  apType,
-  startDate,
-  durationDays,
+  arrivalDate,
+  departureDate,
   criteria,
-}: {
+  ...existingQuery
+}: ParsedQs & {
   placementRequestId: string
-  premisesName: string
   premisesId: string
-  apType: string
-  startDate: string
-  durationDays: string
+  arrivalDate: string
+  departureDate: string
   criteria: Array<Cas1SpaceBookingCharacteristic>
 }): string => {
-  return `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestId })}${createQueryString(
+  return `${matchPaths.v2Match.placementRequests.spaceBookings.new({
+    id: placementRequestId,
+    premisesId,
+  })}${createQueryString(
+    { arrivalDate, departureDate, criteria, ...existingQuery },
     {
-      premisesName,
-      premisesId,
-      apType,
-      startDate,
-      durationDays,
-      criteria,
+      addQueryPrefix: true,
+      arrayFormat: 'repeat',
     },
-    { addQueryPrefix: true, arrayFormat: 'repeat' },
   )}`
 }
 
@@ -173,6 +168,27 @@ export const occupancyViewSummaryListForMatchingDetails = (
     totalCapacityRow(totalCapacity),
     apManagerDetailsRow(managerDetails),
     spaceRequirementsRow(essentialCharacteristics),
+  ]
+}
+
+export const spaceBookingConfirmationSummaryListRows = (
+  placementRequest: PlacementRequestDetail,
+  premises: Cas1Premises,
+  arrivalDate: string,
+  departureDate: string,
+  criteria: Array<Cas1SpaceBookingCharacteristic>,
+): Array<SummaryListItem> => {
+  return [
+    summaryListItem('Approved Premises', premises.name),
+    summaryListItem('Address', premises.fullAddress),
+    summaryListItem('Space type', requirementsHtmlString(criteria), 'html'),
+    summaryListItem('Arrival date', DateFormats.isoDateToUIDate(arrivalDate)),
+    summaryListItem('Departure date', DateFormats.isoDateToUIDate(departureDate)),
+    summaryListItem(
+      'Length of stay',
+      DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))),
+    ),
+    summaryListItem('Release type', allReleaseTypes[placementRequest.releaseType]),
   ]
 }
 

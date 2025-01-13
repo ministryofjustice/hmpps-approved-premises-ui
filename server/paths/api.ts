@@ -13,7 +13,7 @@ const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placementId')
 const cas1Capacity = cas1PremisesSingle.path('capacity')
 
-const cas1SpaceBookings = cas1Namespace.path('/placement-requests/:id/space-bookings')
+const cas1SpaceBookings = cas1Namespace.path('placement-requests/:id/space-bookings')
 
 const cas1Reports = cas1Namespace.path('reports')
 

@@ -1,6 +1,14 @@
 import * as nunjucks from 'nunjucks'
 
-import type { CheckBoxItem, ErrorMessages, RadioItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
+import type {
+  CheckBoxItem,
+  ErrorMessages,
+  HtmlItem,
+  RadioItem,
+  SelectOption,
+  SummaryListItem,
+  TextItem,
+} from '@approved-premises/ui'
 import type { RiskTierLevel } from '@approved-premises/api'
 import { PlacementRequestStatus } from '@approved-premises/api'
 import { resolvePath, sentenceCase } from './utils'
@@ -161,17 +169,17 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
   values: T,
   titles: Record<string, string>,
 ): Array<SummaryListItem> {
-  return Object.keys(values).map(key => {
-    return {
-      key: {
-        text: titles[key],
-      },
-      value: {
-        text: values[key],
-      },
-    }
-  })
+  return Object.keys(values).map(key => summaryListItem(titles[key], values[key]))
 }
+
+export const summaryListItem = (
+  label: string,
+  value: string,
+  renderAs: keyof TextItem | keyof HtmlItem = 'text',
+): SummaryListItem => ({
+  key: { text: label },
+  value: renderAs === 'text' ? { text: value } : { html: value },
+})
 
 /**
  * Performs validation on the area of a postcode (IE the first three or four characters)

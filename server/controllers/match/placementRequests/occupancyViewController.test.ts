@@ -52,6 +52,7 @@ describe('OccupancyViewController', () => {
     occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
     request = createMock<Request>({
       user: { token },
+      query: {},
       flash: flashSpy,
       headers: {
         referer: '/referrerPath',
@@ -276,18 +277,12 @@ describe('OccupancyViewController', () => {
   describe('bookSpace', () => {
     const startDate = '2025-08-15'
     const durationDays = '22'
-    const arrivalDay = '11'
-    const arrivalMonth = '2'
-    const arrivalYear = '2026'
 
     const validBookingBody = {
-      apType,
-      startDate,
-      durationDays,
-      criteria: '',
-      'arrivalDate-day': arrivalDay,
-      'arrivalDate-month': arrivalMonth,
-      'arrivalDate-year': arrivalYear,
+      criteria: 'hasEnSuite,isStepFreeDesignated',
+      'arrivalDate-day': '11',
+      'arrivalDate-month': '2',
+      'arrivalDate-year': '2026',
       'departureDate-day': '21',
       'departureDate-month': '2',
       'departureDate-year': '2026',
@@ -299,27 +294,30 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.bookSpace()
       await requestHandler({ ...request, params, body: validBookingBody }, response, next)
 
-      const expectedDurationDays = 10
-      const expectedStartDate = `${arrivalYear}-0${arrivalMonth}-${arrivalDay}`
-      const expectedParams = `apType=${apType}&startDate=${expectedStartDate}&durationDays=${expectedDurationDays}`
+      const expectedQueryString =
+        'arrivalDate=2026-02-11&departureDate=2026-02-21&criteria=hasEnSuite&criteria=isStepFreeDesignated'
+
       expect(response.redirect).toHaveBeenCalledWith(
-        `${matchPaths.v2Match.placementRequests.spaceBookings.new({ id: placementRequestDetail.id })}?${expectedParams}`,
+        `${matchPaths.v2Match.placementRequests.spaceBookings.new(params)}?${expectedQueryString}`,
       )
     })
 
-    it(`should redirect to occupancy view and add errors messages when date validation fails`, async () => {
+    it(`should redirect to occupancy view with existing query string and add errors messages when date validation fails`, async () => {
       jest.spyOn(validationUtils, 'addErrorMessageToFlash')
-      const emptyDay = ''
       const body = {
         ...validBookingBody,
-        'arrivalDate-day': emptyDay,
+        'arrivalDate-day': '',
         criteria: 'isWheelchairDesignated,isSuitedForSexOffenders',
+      }
+      const query = {
+        startDate,
+        durationDays,
       }
       const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
       const requestHandler = occupancyViewController.bookSpace()
 
-      await requestHandler({ ...request, params, body }, response, next)
+      await requestHandler({ ...request, params, query, body }, response, next)
 
       expect(validationUtils.addErrorMessageToFlash).toHaveBeenCalledWith(
         request,
@@ -327,13 +325,13 @@ describe('OccupancyViewController', () => {
         'arrivalDate',
       )
 
-      const expectedParams = `apType=${apType}&startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
+      const expectedQueryString = `startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
 
       expect(response.redirect).toHaveBeenCalledWith(
         `${matchPaths.v2Match.placementRequests.search.occupancy({
           id: placementRequestDetail.id,
           premisesId: premises.id,
-        })}?${expectedParams}`,
+        })}?${expectedQueryString}`,
       )
     })
   })
