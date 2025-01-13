@@ -25,20 +25,21 @@ export default class TimelineController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const crn = (req?.query?.crn as string)?.trim()
+      const crn = req?.query?.crn as string
+      const formattedCRN = crn?.trim().toUpperCase()
 
-      if (!crn) {
-        addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
+      if (!formattedCRN) {
+        addErrorMessageToFlash({ ...req, body: { crn } } as Request, 'You must enter a CRN', 'crn')
         return res.redirect(paths.timeline.find({}))
       }
-      if (!isValidCrn(crn)) {
-        addErrorMessageToFlash(req, 'Enter a CRN in the correct format', 'crn')
+      if (!isValidCrn(formattedCRN)) {
+        addErrorMessageToFlash({ ...req, body: { crn } } as Request, 'Enter a CRN in the correct format', 'crn')
         return res.redirect(paths.timeline.find({}))
       }
 
       try {
-        const timeline = await this.personService.getTimeline(req.user.token, crn)
-        return res.render('people/timeline/show', { timeline, crn, pageHeading: `Timeline for ${crn}` })
+        const timeline = await this.personService.getTimeline(req.user.token, formattedCRN)
+        return res.render('people/timeline/show', { timeline, crn, pageHeading: `Timeline for ${formattedCRN}` })
       } catch (error) {
         crnErrorHandling(req, error, crn)
         return res.redirect(paths.timeline.find({}))

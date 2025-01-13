@@ -36,7 +36,7 @@ describe('TimelineController', () => {
   })
 
   describe('find', () => {
-    it('renders the view without errors if there isnt any entries in the errorSummary', async () => {
+    it('renders the view without errors if there is no entry in the errorSummary', async () => {
       const requestHandler = timelineController.find()
       when(fetchErrorsAndUserInput as jest.Mock)
         .calledWith(request)
@@ -64,7 +64,9 @@ describe('TimelineController', () => {
         .mockReturnValue({
           errors: {},
           errorSummary,
-          userInput: {},
+          userInput: {
+            crn: 'X123456',
+          },
         })
 
       await requestHandler(request, response, next)
@@ -73,6 +75,7 @@ describe('TimelineController', () => {
         pageHeading: "Find someone's application history",
         errorSummary: ['some error'],
         errors: { crn: 'No offender with an ID of undefined found' },
+        crn: 'X123456',
       })
     })
   })
@@ -96,10 +99,10 @@ describe('TimelineController', () => {
       })
     })
 
-    it('trims the input', async () => {
+    it('trims the input and makes it uppercase', async () => {
       const requestHandler = timelineController.show()
 
-      await requestHandler({ ...request, query: { crn: ' X123456 ' } }, response, next)
+      await requestHandler({ ...request, query: { crn: ' x123456 ' } }, response, next)
 
       expect(personService.getTimeline).toHaveBeenCalledWith(token, 'X123456')
     })
@@ -133,12 +136,16 @@ describe('TimelineController', () => {
     })
 
     describe('when the CRN does not follow the correct format', () => {
-      it('adds error message to flash and redirects to show', async () => {
+      it('adds error message to flash and redirects to show with the correct user input', async () => {
         const requestHandler = timelineController.show()
 
         await requestHandler({ ...request, query: { crn: 'not a CRN' } }, response, next)
 
-        expect(addErrorMessageToFlash).toHaveBeenCalledWith(request, 'Enter a CRN in the correct format', 'crn')
+        expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+          { ...request, query: { crn: 'not a CRN' }, body: { crn: 'not a CRN' } },
+          'Enter a CRN in the correct format',
+          'crn',
+        )
         expect(response.redirect).toHaveBeenCalledWith(paths.timeline.find({}))
       })
     })

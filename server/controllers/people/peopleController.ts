@@ -13,7 +13,7 @@ export default class PeopleController {
   find(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { crn: postCrn, checkCaseload } = req.body
-      const crn = postCrn?.trim()
+      const crn = postCrn?.trim().toUpperCase()
 
       if (!crn) {
         addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
