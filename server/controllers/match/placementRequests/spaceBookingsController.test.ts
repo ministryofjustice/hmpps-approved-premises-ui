@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { when } from 'jest-when'
 import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import SpaceBookingsController from './spaceBookingsController'
 
@@ -38,19 +37,10 @@ describe('SpaceBookingsController', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceService)
-    request = createMock<Request>({ user: { token } })
+    request = createMock<Request>({ user: { token }, flash: jest.fn() })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
-
-    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
-    when(validationUtils.fetchErrorsAndUserInput as jest.Mock)
-      .calledWith(request)
-      .mockReturnValue({
-        errors: {},
-        errorSummary: [],
-        userInput: {},
-      })
   })
 
   describe('new', () => {
