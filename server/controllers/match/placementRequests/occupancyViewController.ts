@@ -10,7 +10,7 @@ import {
   validateSpaceBooking,
 } from '../../../utils/match'
 import {
-  addErrorMessageToFlash,
+  catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
   generateErrorMessages,
   generateErrorSummary,
@@ -28,6 +28,7 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
+import { ValidationError } from '../../../utils/errors'
 
 type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -171,28 +172,15 @@ export default class {
     return async (req: Request, res: Response) => {
       const { body } = req
       const { criteria: criteriaBody } = body
-      const criteria = criteriaBody.split(',')
+      const criteria = criteriaBody?.split(',')
 
-      const errors = validateSpaceBooking(body)
+      try {
+        const errors = validateSpaceBooking(body)
 
-      if (this.hasErrors(errors)) {
-        if (errors.arrivalDate) {
-          addErrorMessageToFlash(req, errors.arrivalDate, 'arrivalDate')
-        }
-        if (errors.departureDate) {
-          addErrorMessageToFlash(req, errors.departureDate, 'departureDate')
+        if (Object.keys(errors).length) {
+          throw new ValidationError(errors)
         }
 
-        const { startDate, durationDays } = req.query
-        const redirectUrl = occupancyViewLink({
-          placementRequestId: req.params.id,
-          premisesId: req.params.premisesId,
-          startDate: startDate as string,
-          durationDays: durationDays as string,
-          spaceCharacteristics: criteria,
-        })
-        res.redirect(redirectUrl)
-      } else {
         const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(
           body as ObjectWithDateParts<'arrivalDate'>,
           'arrivalDate',
@@ -209,13 +197,19 @@ export default class {
           departureDate,
           criteria,
         })
-        res.redirect(redirectUrl)
+        return res.redirect(redirectUrl)
+      } catch (error) {
+        const { startDate, durationDays, criteria: criteriaQuery } = req.query
+        const redirectUrl = occupancyViewLink({
+          placementRequestId: req.params.id,
+          premisesId: req.params.premisesId,
+          startDate: startDate as string,
+          durationDays: durationDays as string,
+          spaceCharacteristics: criteria || criteriaQuery,
+        })
+        return catchValidationErrorOrPropogate(req, res, error, redirectUrl)
       }
     }
-  }
-
-  private hasErrors(errors: Record<string, string>): boolean {
-    return errors && Object.keys(errors).length > 0
   }
 
   viewDay(): TypedRequestHandler<Request> {
