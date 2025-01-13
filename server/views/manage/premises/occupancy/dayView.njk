@@ -1,0 +1,49 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
+{% endblock %}
+
+{% set titleHtml %}
+
+{% endset %}
+
+{% block content %}
+    <span class="govuk-caption-l">{{ premises.name }}</span>
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+    <div class="prev-next">
+        <span class="prev-next--prev">
+            <a href="{{ previousDayLink }}" class="govuk-link govuk-link--no-visited-state ">Previous day</a>
+        </span>
+        <span class="prev-next--next">
+            <a href="{{ nextDayLink }}" class="govuk-link govuk-link--no-visited-state">Next day</a>
+        </span>
+    </div>
+    {% if daySummaryText %}
+        {{ govukNotificationBanner({
+            text: daySummaryText,
+            classes: 'govuk-notification-banner--full-width-content'
+        }) }}
+    {% endif %}
+    {{ govukSummaryList(daySummaryRows) }}
+
+{% endblock %}
+
+

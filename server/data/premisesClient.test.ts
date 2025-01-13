@@ -1,7 +1,9 @@
+import { Cas1SpaceBookingDaySummarySortField, SortDirection } from '@approved-premises/api'
 import {
   bedDetailFactory,
   bedSummaryFactory,
   cas1PremiseCapacityFactory,
+  cas1PremisesDaySummaryFactory,
   premisesFactory,
   staffMemberFactory,
 } from '../testutils/factories'
@@ -9,10 +11,10 @@ import PremisesClient from './premisesClient'
 import paths from '../paths/api'
 import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 
+const token = 'test-token-1'
+
 describeClient('PremisesClient', provider => {
   let premisesClient: PremisesClient
-
-  const token = 'token-1'
 
   beforeEach(() => {
     premisesClient = new PremisesClient(token)
@@ -101,7 +103,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
   let premisesClient: PremisesClient
 
   beforeEach(() => {
-    premisesClient = new PremisesClient('token1')
+    premisesClient = new PremisesClient(token)
   })
 
   describe('getCapacity', () => {
@@ -122,7 +124,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
             endDate,
           },
           headers: {
-            authorization: `Bearer token1`,
+            authorization: `Bearer ${token}`,
           },
         },
         willRespondWith: {
@@ -132,6 +134,46 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       })
 
       const output = await premisesClient.getCapacity(premises.id, startDate, endDate)
+      expect(output).toEqual(premiseCapacity)
+    })
+  })
+
+  describe('getDaySummary', () => {
+    it('should return capacity and occupancy data for a given premises for a given day', async () => {
+      const date = '2025-03-14'
+      const premises = premisesFactory.build()
+      const premiseCapacity = cas1PremisesDaySummaryFactory.build()
+      const sortDirection: SortDirection = 'asc'
+      const sortBy: Cas1SpaceBookingDaySummarySortField = 'personName'
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the day summary of a premise',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.daySummary({ premisesId: premises.id, date }),
+          query: {
+            sortDirection,
+            sortBy,
+            bookingsCriteriaFilter: 'hasEnSuite',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: premiseCapacity,
+        },
+      })
+
+      const output = await premisesClient.getDaySummary({
+        premisesId: premises.id,
+        date,
+        sortDirection,
+        sortBy,
+        bookingsCriteriaFilter: ['hasEnSuite'],
+      })
       expect(output).toEqual(premiseCapacity)
     })
   })

@@ -87,9 +87,19 @@ class PremisesCharacteristicAvailability extends Factory<Cas1PremiseCharacterist
     })
   }
 
-  overbooked() {
+  overbookedOrFull() {
     const availableBedsCount = faker.number.int({ min: 5, max: 20 })
     const bookingsCount = faker.number.int({ min: availableBedsCount, max: 30 })
+
+    return this.params({
+      availableBedsCount,
+      bookingsCount,
+    })
+  }
+
+  strictlyOverbooked() {
+    const availableBedsCount = faker.number.int({ min: 5, max: 20 })
+    const bookingsCount = faker.number.int({ min: availableBedsCount + 1, max: 30 })
 
     return this.params({
       availableBedsCount,
