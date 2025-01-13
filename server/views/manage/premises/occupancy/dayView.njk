@@ -1,13 +1,9 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
-
-{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -43,6 +39,42 @@
         }) }}
     {% endif %}
     {{ govukSummaryList(daySummaryRows) }}
+
+    <div class="search-and-filter">
+        <form action="{{ selfPath }}"
+              method="get">
+            <h2 class="govuk-heading-m">Filter</h2>
+
+            <div class="search-and-filter__row">
+                {{ govukCheckboxes({
+                    name: "characteristics",
+                    classes: "govuk-checkboxes--small govuk-checkboxes--inline",
+                    items: criteriaOptions
+                }) }}
+                {{ govukButton({
+                    text: 'Apply filters',
+                    preventDoubleClick: true
+                }) }}
+            </div>
+        </form>
+    </div>
+
+    <section>
+        <h2 class="govuk-heading-m">People booked in on {{ formattedDate }}</h2>
+        {{ govukTable({
+            firstCellIsHeader: false,
+            head: placementTableHeader,
+            rows: placementTableRows
+        }) }}
+    </section>
+    <section>
+        <h2 class="govuk-heading-m">Out of service beds on {{ formattedDate }}</h2>
+        {{ govukTable({
+            firstCellIsHeader: false,
+            head: outOfServiceBedTableHeader,
+            rows: outOfServiceBedTableRows
+        }) }}
+    </section>
 
 {% endblock %}
 

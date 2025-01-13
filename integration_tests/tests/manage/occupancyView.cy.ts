@@ -17,6 +17,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../../pages/page'
 import { premiseCharacteristicAvailability } from '../../../server/testutils/factories/cas1PremiseCapacity'
 import OccupancyDayViewPage from '../../pages/manage/occupancyDayView'
+import { Cas1PremisesDaySummary } from '../../../server/@types/shared/models/Cas1PremisesDaySummary'
 
 context('Premises occupancy', () => {
   describe('show', () => {
@@ -168,11 +169,12 @@ context('Premises occupancy', () => {
 
 context('Premises day occupancy', () => {
   describe('day', () => {
-    const dateObj = faker.date.soon()
+    const dateObj = faker.date.soon({ days: 20 })
     const date = DateFormats.dateObjToIsoDate(dateObj)
+    const nextDate = DateFormats.dateObjToIsoDate(addDays(dateObj, 1))
     const premises = cas1PremisesBasicSummaryFactory.build()
 
-    const getDaySummary = (overBook = false) => {
+    const stubDaySummary = (forDate: string, overBook = false): Cas1PremisesDaySummary => {
       const characteristicAvailability = overBook
         ? [
             premiseCharacteristicAvailability.strictlyOverbooked().build({ characteristic: 'isSingle' }),
@@ -186,7 +188,9 @@ context('Premises day occupancy', () => {
       const capacity = cas1PremiseCapacityForDayFactory.available().build({
         characteristicAvailability,
       })
-      return cas1PremisesDaySummaryFactory.build({ forDate: date, capacity })
+      const premisesDaySummary = cas1PremisesDaySummaryFactory.build({ forDate, capacity })
+      cy.task('stubPremisesDaySummary', { premisesId: premises.id, date: forDate, premisesDaySummary })
+      return premisesDaySummary
     }
 
     beforeEach(() => {
@@ -202,19 +206,21 @@ context('Premises day occupancy', () => {
       })
 
       it('should show the day summary if spaces available', () => {
-        const premisesDaySummary = getDaySummary()
-        cy.task('stubPremiseDaySummary', { premisesId: premises.id, date, premisesDaySummary })
+        const premisesDaySummary = stubDaySummary(date)
         // When I visit premises day summary page for a day with no characteristic overbooking
         const summaryPage = OccupancyDayViewPage.visit(premises, date)
         // I should see the occupancy summary for the day
         summaryPage.shouldShowDaySummaryDetails(premisesDaySummary)
-        // And I should see a warning banner
+        // And I should not see a warning banner
         summaryPage.shouldNotShowBanner()
+        // And I should see a list of placements
+        summaryPage.shouldShowListOfPlacements(premisesDaySummary.spaceBookings)
+        // And I should see a list of out-of-service bed records
+        summaryPage.shouldShowListOfOutOfServiceBeds(premisesDaySummary.outOfServiceBeds)
       })
 
       it('should show the day summary and warning if overbooked', () => {
-        const premisesDaySummary = getDaySummary(true)
-        cy.task('stubPremiseDaySummary', { premisesId: premises.id, date, premisesDaySummary })
+        const premisesDaySummary = stubDaySummary(date, true)
         // When I visit premises day summary page for a day with a characteristic overbooking
         const summaryPage = OccupancyDayViewPage.visit(premises, date)
         // I should see the occupancy summary for the day
@@ -226,14 +232,8 @@ context('Premises day occupancy', () => {
       })
 
       it('should allow navigation to the next day and back again', () => {
-        cy.task('stubPremiseDaySummary', { premisesId: premises.id, date, premisesDaySummary: getDaySummary() })
-        const nextDate = DateFormats.dateObjToIsoDate(addDays(dateObj, 1))
-        const premisesNextDaySummary = cas1PremisesDaySummaryFactory.build({ forDate: nextDate })
-        cy.task('stubPremiseDaySummary', {
-          premisesId: premises.id,
-          date: nextDate,
-          premisesDaySummary: premisesNextDaySummary,
-        })
+        stubDaySummary(date)
+        stubDaySummary(nextDate)
         // Given I visit premises day summary page
         const summaryPage = OccupancyDayViewPage.visit(premises, date)
         // When I click on Next day, Then I navigate to the next day
@@ -241,7 +241,55 @@ context('Premises day occupancy', () => {
         // When I click on Previous day, Then I navigate back to the date I started on
         summaryPage.shouldNavigateToDay('Previous day', date)
       })
+
+      it('should allow the placement table to be sorted', () => {
+        stubDaySummary(date)
+        stubDaySummary(nextDate)
+        // Given I visit premises day summary page
+        const page = OccupancyDayViewPage.visit(premises, date)
+        // When I click a sort column in the placement table
+        page.clickSortBy('canonicalArrivalDate')
+        // Then the column should be sorted
+        page.shouldBeSortedByField('canonicalArrivalDate', 'ascending')
+        // When I click the same column again
+        page.clickSortBy('canonicalArrivalDate')
+        // Then the sort direction should be reversed
+        page.shouldBeSortedByField('canonicalArrivalDate', 'descending')
+        // And the correct sort parameters should have been used
+        cy.task('verifyPremisesDaySummaryRequest', { premisesId: premises.id, date }).then(result => {
+          expect(result[0].url).match(/bookingsSortDirection=asc&bookingsSortBy=personName/)
+          expect(result[1].url).match(/bookingsSortDirection=asc&bookingsSortBy=canonicalArrivalDate/)
+          expect(result[2].url).match(/bookingsSortDirection=desc&bookingsSortBy=canonicalArrivalDate/)
+        })
+        // When I navigate to the next day
+        page.shouldNavigateToDay('Next day', nextDate)
+        // Then the last sort order should be retained
+        page.shouldBeSortedByField('canonicalArrivalDate', 'descending')
+      })
+
+      it('should allow the placement table to be filtered', () => {
+        stubDaySummary(date)
+        stubDaySummary(nextDate)
+        // Given I visit premises day summary page
+        const page = OccupancyDayViewPage.visit(premises, date)
+        // And the single room filter is not selected
+        page.shouldNotBeSelected('isSingle')
+        // When I click a filter checkbox and submit
+        page.checkCheckboxByValue('isSingle')
+        page.clickSubmit()
+        // Then the results should be filtered
+        page.shouldBeSelected('isSingle')
+        // And the correct filter parameter should have been used
+        cy.task('verifyPremisesDaySummaryRequest', { premisesId: premises.id, date }).then(result => {
+          expect(result[1].url).match(/&bookingsCriteriaFilter=isSingle/)
+        })
+        // When I navigate to the next day
+        page.shouldNavigateToDay('Next day', nextDate)
+        // Then the results should still be filtered
+        page.shouldBeSelected('isSingle')
+      })
     })
+
     describe('Without premises view permission', () => {
       it('should not be availble if the user lacks premises_view permission', () => {
         // Given I am logged in as a future manager without premises_view permission

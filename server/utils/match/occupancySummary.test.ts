@@ -6,9 +6,9 @@ describe('occupancySummary', () => {
     const capacity = [
       cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-12' }),
       cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-13' }),
-      cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-14' }),
-      cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-15' }),
-      cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-02-16' }),
+      cas1PremiseCapacityForDayFactory.overbookedOrFull().build({ date: '2025-02-14' }),
+      cas1PremiseCapacityForDayFactory.overbookedOrFull().build({ date: '2025-02-15' }),
+      cas1PremiseCapacityForDayFactory.overbookedOrFull().build({ date: '2025-02-16' }),
       cas1PremiseCapacityForDayFactory.available().build({ date: '2025-02-17' }),
     ]
 
@@ -24,7 +24,7 @@ describe('occupancySummary', () => {
   })
 
   it('returns only overbooked if no dates are available', () => {
-    const capacity = [cas1PremiseCapacityForDayFactory.overbooked().build({ date: '2025-04-14' })]
+    const capacity = [cas1PremiseCapacityForDayFactory.overbookedOrFull().build({ date: '2025-04-14' })]
 
     const result = occupancySummary(capacity)
 

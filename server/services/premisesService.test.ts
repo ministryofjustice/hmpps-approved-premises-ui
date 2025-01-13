@@ -1,5 +1,11 @@
 import type { ManWoman, PaginatedResponse } from '@approved-premises/ui'
-import type { Cas1SpaceBookingResidency, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import type {
+  Cas1SpaceBookingCharacteristic,
+  Cas1SpaceBookingDaySummarySortField,
+  Cas1SpaceBookingResidency,
+  Cas1SpaceBookingSummary,
+  SortDirection,
+} from '@approved-premises/api'
 
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
@@ -132,14 +138,23 @@ describe('PremisesService', () => {
 
   describe('getDaySummary', () => {
     it('should return the day summary for a premises', async () => {
-      const date = '2025-05-20'
       const daySummary = cas1PremisesDaySummaryFactory.build()
-      premisesClient.getDaySummary.mockResolvedValue(daySummary)
-      const result = await service.getDaySummary({ token, premisesId, date })
+      const params = {
+        premisesId,
+        date: '2025-05-20',
+        bookingsSortBy: 'canonicalArrivalDate' as Cas1SpaceBookingDaySummarySortField,
+        bookingsSortDirection: 'asc' as SortDirection,
+        bookingsCriteriaFilter: ['isSingle'] as Array<Cas1SpaceBookingCharacteristic>,
+      }
 
+      premisesClient.getDaySummary.mockResolvedValue(daySummary)
+      const result = await service.getDaySummary({
+        token,
+        ...params,
+      })
       expect(result).toEqual(daySummary)
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getDaySummary).toHaveBeenCalledWith({ premisesId, date })
+      expect(premisesClient.getDaySummary).toHaveBeenCalledWith(params)
     })
   })
 

@@ -7,6 +7,7 @@ import {
   initialiseName,
   linebreaksToParagraphs,
   linkTo,
+  makeArrayOfType,
   mapApiPersonRisksForUi,
   numberToOrdinal,
   objectIfNotEmpty,
@@ -279,6 +280,16 @@ describe('resolvePath', () => {
     it('returns the object if it does have keys', () => {
       expect(objectIfNotEmpty({ key: 'value' })).toEqual({ key: 'value' })
     })
+  })
+})
+
+describe('makeArrayOfType', () => {
+  it('Should return an array, whatever is passed', () => {
+    type TestType = 'one' | 'two'
+    const result1: Array<TestType> = ['one']
+    expect(makeArrayOfType<TestType>('one') === result1)
+    expect(makeArrayOfType<TestType>(['one']) === result1)
+    expect(makeArrayOfType<TestType>(null) === undefined)
   })
 })
 

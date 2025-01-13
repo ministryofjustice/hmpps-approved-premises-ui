@@ -52,8 +52,8 @@ export default class PremisesService {
     premisesId: string
     date: string
     bookingsCriteriaFilter?: Array<Cas1SpaceBookingCharacteristic>
-    sortBy?: Cas1SpaceBookingDaySummarySortField
-    sortDirection?: SortDirection
+    bookingsSortBy?: Cas1SpaceBookingDaySummarySortField
+    bookingsSortDirection?: SortDirection
   }): Promise<Cas1PremisesDaySummary> {
     const { token, ...parameters } = args
     const premisesClient = this.premisesClientFactory(token)

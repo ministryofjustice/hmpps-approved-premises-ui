@@ -143,8 +143,8 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       const date = '2025-03-14'
       const premises = premisesFactory.build()
       const premiseCapacity = cas1PremisesDaySummaryFactory.build()
-      const sortDirection: SortDirection = 'asc'
-      const sortBy: Cas1SpaceBookingDaySummarySortField = 'personName'
+      const bookingsSortDirection: SortDirection = 'asc'
+      const bookingsSortBy: Cas1SpaceBookingDaySummarySortField = 'personName'
 
       await provider.addInteraction({
         state: 'Server is healthy',
@@ -153,8 +153,8 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
           method: 'GET',
           path: paths.premises.daySummary({ premisesId: premises.id, date }),
           query: {
-            sortDirection,
-            sortBy,
+            bookingsSortDirection,
+            bookingsSortBy,
             bookingsCriteriaFilter: 'hasEnSuite',
           },
           headers: {
@@ -170,8 +170,8 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       const output = await premisesClient.getDaySummary({
         premisesId: premises.id,
         date,
-        sortDirection,
-        sortBy,
+        bookingsSortDirection,
+        bookingsSortBy,
         bookingsCriteriaFilter: ['hasEnSuite'],
       })
       expect(output).toEqual(premiseCapacity)

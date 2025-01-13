@@ -1,9 +1,20 @@
-import { Cas1PremiseCapacityForDay, Cas1PremisesDaySummary } from '@approved-premises/api'
-import { SelectOption } from '@approved-premises/ui'
+import {
+  Cas1OutOfServiceBedSummary,
+  Cas1PremiseCapacityForDay,
+  Cas1PremisesDaySummary,
+  Cas1SpaceBookingDaySummary,
+  Cas1SpaceBookingDaySummarySortField,
+  SortDirection,
+} from '@approved-premises/api'
+import { SelectOption, TableCell, TableRow } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
+import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import { occupancyCriteriaMap } from '../match/occupancy'
 import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
+import { sortHeader } from '../sortHeader'
+import { laoSummaryName } from '../personUtils'
+import { spaceSearchCriteriaRoomLevelLabels } from '../placementCriteriaUtils'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -89,6 +100,7 @@ export const daySummaryRows = (daySummary: Cas1PremisesDaySummary) => {
   const {
     capacity: { totalBedCount, bookingCount, availableBedCount },
   } = daySummary
+
   return {
     rows: [
       summaryListItem('Capacity', String(totalBedCount)),
@@ -97,4 +109,96 @@ export const daySummaryRows = (daySummary: Cas1PremisesDaySummary) => {
       summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
     ],
   }
+}
+
+const itemListHtml = (items: Array<string>): { html: string } =>
+  htmlValue(`<ul class="govuk-list govuk-list">
+    ${items.map((item: string) => `<li>${item}</li>`).join('')}
+  </ul>
+`)
+
+export type PlacementColumnField = Cas1SpaceBookingDaySummarySortField | 'spaceType'
+export type OutOfServiceBedColumnField = keyof Cas1OutOfServiceBedSummary
+
+export type ColumnDefinition<T> = {
+  title: string
+  fieldName: T
+  sortable: boolean
+}
+
+export const placementColumnMap: Array<ColumnDefinition<PlacementColumnField>> = [
+  { title: 'Name and CRN', fieldName: 'personName', sortable: true },
+  { title: 'Tier', fieldName: 'tier', sortable: true },
+  { title: 'Arrival date', fieldName: 'canonicalArrivalDate', sortable: true },
+  { title: 'Departure date', fieldName: 'canonicalDepartureDate', sortable: true },
+  { title: 'Release type', fieldName: 'releaseType', sortable: true },
+  { title: 'Room criteria', fieldName: 'spaceType', sortable: false },
+]
+
+export const outOfServiceBedColumnMap: Array<ColumnDefinition<OutOfServiceBedColumnField>> = [
+  { title: 'Record ID', fieldName: 'id', sortable: false },
+  { title: 'Reason', fieldName: 'reason', sortable: false },
+  { title: 'Start date', fieldName: 'startDate', sortable: false },
+  { title: 'End date', fieldName: 'endDate', sortable: false },
+  { title: 'Room criteria', fieldName: 'characteristics', sortable: false },
+]
+
+export const tableHeader = <T extends string>(
+  columnMap: Array<ColumnDefinition<T>>,
+  sortBy?: T,
+  sortDirection?: SortDirection,
+  hrefPrefix?: string,
+): Array<TableCell> => {
+  return columnMap.map(({ title, fieldName, sortable }: ColumnDefinition<T>) =>
+    sortable ? sortHeader<T>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textValue(title),
+  )
+}
+
+export const placementTableRows = (
+  premisesId: string,
+  placements: Array<Cas1SpaceBookingDaySummary>,
+): Array<TableRow> =>
+  placements.map(
+    ({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, releaseType, essentialCharacteristics }) => {
+      const fieldValues: Record<PlacementColumnField, TableCell> = {
+        personName: htmlValue(
+          `<a href="${managePaths.premises.placements.show({
+            premisesId,
+            placementId: id,
+          })}" data-cy-id="${id}">${laoSummaryName(person)}, ${person.crn}</a>`,
+        ),
+        tier: htmlValue(getTierOrBlank(tier)),
+        canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
+        canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
+        releaseType: textValue(releaseType),
+        spaceType: itemListHtml(
+          essentialCharacteristics
+            .map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic])
+            .filter(Boolean),
+        ),
+      }
+      return placementColumnMap.map(({ fieldName }: ColumnDefinition<PlacementColumnField>) => fieldValues[fieldName])
+    },
+  )
+
+export const outOfServiceBedTableRows = (
+  premisesId: string,
+  outOfServiceBeds: Array<Cas1OutOfServiceBedSummary>,
+): Array<TableRow> => {
+  return outOfServiceBeds.map(({ id, bedId, startDate, endDate, characteristics, reason, roomName }) => {
+    const fieldValues: Partial<Record<OutOfServiceBedColumnField, TableCell>> = {
+      id: htmlValue(
+        `<a href="${managePaths.outOfServiceBeds.show({ premisesId, id, bedId, tab: 'details' })}" data-cy-id="${id}">${roomName}</a>`,
+      ),
+      characteristics: itemListHtml(
+        characteristics.map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic]).filter(Boolean),
+      ),
+      startDate: textValue(DateFormats.isoDateToUIDate(startDate, { format: 'short' })),
+      endDate: textValue(DateFormats.isoDateToUIDate(endDate, { format: 'short' })),
+      reason: textValue(reason.name),
+    }
+    return outOfServiceBedColumnMap.map(
+      ({ fieldName }: ColumnDefinition<OutOfServiceBedColumnField>) => fieldValues[fieldName],
+    )
+  })
 }

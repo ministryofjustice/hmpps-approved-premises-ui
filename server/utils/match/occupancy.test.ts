@@ -76,7 +76,7 @@ describe('dayAvailabilityStatus', () => {
     })
 
     it('returns overbooked if there is no availability', () => {
-      const capacityForDay = cas1PremiseCapacityForDayFactory.overbooked().build()
+      const capacityForDay = cas1PremiseCapacityForDayFactory.overbookedOrFull().build()
 
       expect(dayAvailabilityStatus(capacityForDay)).toEqual('overbooked')
     })
@@ -102,7 +102,7 @@ describe('dayAvailabilityStatus', () => {
     })
 
     describe('if there is no general availability but availability for criteria', () => {
-      const overbookedCapacity = cas1PremiseCapacityForDayFactory.overbooked().build({
+      const overbookedCapacity = cas1PremiseCapacityForDayFactory.overbookedOrFull().build({
         characteristicAvailability: [
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
