@@ -30,5 +30,4 @@ jobs:
           commit-message: 'Update bank holidays'
           body: 'This PR updates the bank holidays JSON file from the gov.uk API.'
           delete-branch: true
-          branch-suffix: timestamp
           branch: bank-holiday-updates
