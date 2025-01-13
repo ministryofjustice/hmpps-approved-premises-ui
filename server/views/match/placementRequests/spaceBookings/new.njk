@@ -30,9 +30,14 @@
         <input type="hidden" name="departureDate" value="{{ departureDate }}" />
         <input type="hidden" name="criteria" value="{{ criteria }}" />
 
-        {{ govukButton({
-            text: "Confirm and submit",
-            preventDoubleClick: true
-        }) }}
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Confirm and book",
+                preventDoubleClick: true
+            }) }}
+
+            <a href="{{ backLink }}" class="govuk-button govuk-button--secondary">Cancel</a>
+        </div>
+
     </form>
 {% endblock %}
