@@ -1,7 +1,7 @@
 import type { Cas1SpaceBookingResidency } from '@approved-premises/api'
 import {
   cas1PremisesBasicSummaryFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
 } from '../../testutils/factories'
 import {
@@ -14,7 +14,7 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { statusTextMap } from '../placements/index'
+import { statusTextMap } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -30,7 +30,7 @@ describe('premisesUtils', () => {
 
   describe('summaryListForPremises', () => {
     it('should return a summary of a premises', () => {
-      const premises = cas1PremisesSummaryFactory.build({
+      const premises = cas1PremisesFactory.build({
         apCode: '123',
         postcode: 'SW1A 1AA',
         bedCount: 20,
@@ -128,9 +128,9 @@ describe('premisesUtils', () => {
 
   describe('premisesTableRows', () => {
     it('returns a table view of the premises with links to the their premises pages', async () => {
-      const premises1 = cas1PremisesSummaryFactory.build({ name: 'XYZ' })
-      const premises2 = cas1PremisesSummaryFactory.build({ name: 'ABC' })
-      const premises3 = cas1PremisesSummaryFactory.build({ name: 'GHI' })
+      const premises1 = cas1PremisesFactory.build({ name: 'XYZ' })
+      const premises2 = cas1PremisesFactory.build({ name: 'ABC' })
+      const premises3 = cas1PremisesFactory.build({ name: 'GHI' })
 
       const premises = [premises1, premises2, premises3]
 
@@ -192,7 +192,7 @@ describe('premisesUtils', () => {
 
   describe('premisesTabItems', () => {
     it('should return a set filter tabs for the premises detail page', () => {
-      const premises = cas1PremisesSummaryFactory.build()
+      const premises = cas1PremisesFactory.build()
       const expectedTabs = [
         {
           active: true,

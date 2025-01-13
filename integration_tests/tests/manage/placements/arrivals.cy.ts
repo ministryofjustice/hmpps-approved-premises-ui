@@ -1,12 +1,12 @@
 import { FullPerson } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import { ArrivalCreatePage } from '../../../pages/manage/placements/arrival'
-import { cas1PremisesSummaryFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
+import { cas1PremisesFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
 import { PlacementShowPage } from '../../../pages/manage'
 
 context('Arrivals', () => {
   it('lets a future manager mark a placement as arrived', () => {
-    const premises = cas1PremisesSummaryFactory.build()
+    const premises = cas1PremisesFactory.build()
     const placement = cas1SpaceBookingFactory.upcoming().build({
       premises,
     })

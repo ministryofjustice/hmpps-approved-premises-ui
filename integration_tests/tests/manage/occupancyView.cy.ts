@@ -1,7 +1,7 @@
 import { addDays } from 'date-fns'
 import {
   cas1PremiseCapacityFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
   staffMemberFactory,
 } from '../../../server/testutils/factories'
@@ -140,7 +140,7 @@ context('Premises occupancy', () => {
 
       it('should not be available in the premises actions menu if the premises does not support space bookings', () => {
         // Given that I am looking at a premises that does not support space bookings
-        const nonSpaceBookingPremises = cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false })
+        const nonSpaceBookingPremises = cas1PremisesFactory.build({ supportsSpaceBookings: false })
         cy.task('stubSinglePremises', nonSpaceBookingPremises)
         // When I visit premises details page
         const page = PremisesShowPage.visit(nonSpaceBookingPremises)

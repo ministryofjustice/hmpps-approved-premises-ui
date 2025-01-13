@@ -8,7 +8,7 @@ import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
@@ -34,7 +34,7 @@ describe('OccupancyViewController', () => {
   const premisesService = createMock<PremisesService>({})
 
   let occupancyViewController: OccupancyViewController
-  const premises = cas1PremisesSummaryFactory.build()
+  const premises = cas1PremisesFactory.build()
   const placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
   const premiseCapacity = cas1PremiseCapacityFactory.build()
   let request: Readonly<DeepMocked<Request>>

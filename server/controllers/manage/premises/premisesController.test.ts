@@ -1,5 +1,5 @@
 import type { PaginatedResponse } from '@approved-premises/ui'
-import type { Cas1PremisesSummary, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import type { Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
@@ -9,7 +9,7 @@ import PremisesController from './premisesController'
 import {
   apAreaFactory,
   cas1PremisesBasicSummaryFactory,
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
   staffMemberFactory,
@@ -37,7 +37,7 @@ describe('V2PremisesController', () => {
   describe('show', () => {
     const mockSummaryAndPlacements = async (
       query: Record<string, string>,
-      premisesSummary: Cas1PremisesSummary = cas1PremisesSummaryFactory.build(),
+      premisesSummary: Cas1Premises = cas1PremisesFactory.build(),
     ) => {
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),
@@ -258,7 +258,7 @@ describe('V2PremisesController', () => {
     it('should not render the list of placements if the premises does not support space bookings', async () => {
       const { premisesSummary } = await mockSummaryAndPlacements(
         {},
-        cas1PremisesSummaryFactory.build({ supportsSpaceBookings: false }),
+        cas1PremisesFactory.build({ supportsSpaceBookings: false }),
       )
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {

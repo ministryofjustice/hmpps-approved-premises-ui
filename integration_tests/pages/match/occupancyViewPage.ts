@@ -2,7 +2,7 @@ import {
   ApType,
   Cas1PremiseCapacity,
   Cas1PremiseCapacityForDay,
-  Cas1PremisesSummary,
+  Cas1Premises,
   Cas1SpaceBookingCharacteristic,
   PlacementRequestDetail,
 } from '@approved-premises/api'
@@ -17,7 +17,7 @@ export default class OccupancyViewPage extends Page {
     super(`View spaces in ${premisesName}`)
   }
 
-  static visit(placementRequest: PlacementRequestDetail, premises: Cas1PremisesSummary, apType: ApType) {
+  static visit(placementRequest: PlacementRequestDetail, premises: Cas1Premises, apType: ApType) {
     const path = `${paths.v2Match.placementRequests.search.occupancy({
       id: placementRequest.id,
       premisesId: premises.id,

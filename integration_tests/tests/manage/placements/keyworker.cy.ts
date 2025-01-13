@@ -2,12 +2,12 @@ import { signIn } from '../../signIn'
 import { KeyworkerAssignmentPage } from '../../../pages/manage/placements/keyworker'
 import { PlacementShowPage } from '../../../pages/manage'
 import {
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingFactory,
   staffMemberFactory,
 } from '../../../../server/testutils/factories'
 
-const premises = cas1PremisesSummaryFactory.build()
+const premises = cas1PremisesFactory.build()
 const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
 const staffMembers = staffMemberFactory.buildList(5, { keyWorker: true })
 

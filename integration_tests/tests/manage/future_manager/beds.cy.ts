@@ -2,13 +2,13 @@ import Page from '../../../pages/page'
 import { signIn } from '../../signIn'
 import BedsListPage from '../../../pages/manage/bed/bedList'
 import BedShowPage from '../../../pages/manage/bed/bedShow'
-import { bedDetailFactory, bedSummaryFactory, cas1PremisesSummaryFactory } from '../../../../server/testutils/factories'
+import { bedDetailFactory, bedSummaryFactory, cas1PremisesFactory } from '../../../../server/testutils/factories'
 
 context('Beds', () => {
   const premisesId = 'premisesId'
   const bedSummaries = bedSummaryFactory.buildList(5)
   const bedDetail = bedDetailFactory.build({ ...bedSummaries[0] })
-  const premises = cas1PremisesSummaryFactory.build({ id: premisesId })
+  const premises = cas1PremisesFactory.build({ id: premisesId })
 
   beforeEach(() => {
     cy.task('reset')

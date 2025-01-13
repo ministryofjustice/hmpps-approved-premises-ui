@@ -1,4 +1,4 @@
-import type { Cas1PremiseCapacity, Cas1PremisesSummary } from '@approved-premises/api'
+import type { Cas1PremiseCapacity, Cas1Premises } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 import paths from '../../../server/paths/manage'
@@ -8,12 +8,12 @@ export default class OccupancyViewPage extends Page {
     super(pageTitle)
   }
 
-  static visit(premises: Cas1PremisesSummary): OccupancyViewPage {
+  static visit(premises: Cas1Premises): OccupancyViewPage {
     cy.visit(paths.premises.occupancy.view({ premisesId: premises.id }))
     return new OccupancyViewPage(`View spaces in ${premises.name}`)
   }
 
-  static visitUnauthorised(premises: Cas1PremisesSummary): OccupancyViewPage {
+  static visitUnauthorised(premises: Cas1Premises): OccupancyViewPage {
     cy.visit(paths.premises.occupancy.view({ premisesId: premises.id }), {
       failOnStatusCode: false,
     })

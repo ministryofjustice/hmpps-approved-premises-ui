@@ -1,8 +1,4 @@
-import {
-  apAreaFactory,
-  cas1PremisesSummaryFactory,
-  outOfServiceBedFactory,
-} from '../../../../server/testutils/factories'
+import { apAreaFactory, cas1PremisesFactory, outOfServiceBedFactory } from '../../../../server/testutils/factories'
 import DashboardPage from '../../../pages/dashboard'
 import Page from '../../../pages/page'
 import { OutOfServiceBedIndexPage } from '../../../pages/manage/outOfServiceBeds'
@@ -19,18 +15,18 @@ describe('CRU Member with permission to view out of service bed tile lists all O
     name: 'Test Area 2',
   })
 
-  const premises1 = cas1PremisesSummaryFactory.build({
+  const premises1 = cas1PremisesFactory.build({
     apArea: apArea1,
     name: 'Premises 1',
     id: 'premises-1-id',
   })
 
-  const premises2 = cas1PremisesSummaryFactory.build({
+  const premises2 = cas1PremisesFactory.build({
     apArea: apArea1,
     name: 'Premises 2',
   })
 
-  const premises3 = cas1PremisesSummaryFactory.build({
+  const premises3 = cas1PremisesFactory.build({
     apArea: apArea2,
     name: 'Premises 3',
   })

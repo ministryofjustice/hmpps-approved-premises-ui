@@ -1,8 +1,8 @@
-import type { Cas1PremisesSummary } from '@approved-premises/api'
+import type { Cas1Premises } from '@approved-premises/api'
 import { UserDetails } from '@approved-premises/ui'
 import paths from '../../paths/manage'
 
-export const premisesActions = (user: UserDetails, premises: Cas1PremisesSummary) => {
+export const premisesActions = (user: UserDetails, premises: Cas1Premises) => {
   const actions = []
 
   const premisesBedsPath = paths.premises.beds.index({ premisesId: premises.id })

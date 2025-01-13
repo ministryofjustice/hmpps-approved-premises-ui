@@ -4,10 +4,14 @@
 /* eslint-disable */
 import type { ApArea } from './ApArea';
 import type { Cas1OverbookingRange } from './Cas1OverbookingRange';
-export type Cas1PremisesSummary = {
+export type Cas1Premises = {
     id: string;
     name: string;
     apCode: string;
+    /**
+     * Full address, excluding postcode
+     */
+    fullAddress: string;
     postcode: string;
     apArea: ApArea;
     /**

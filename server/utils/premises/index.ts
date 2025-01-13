@@ -1,7 +1,7 @@
 import type {
   ApArea,
+  Cas1Premises,
   Cas1PremisesBasicSummary,
-  Cas1PremisesSummary,
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
@@ -18,7 +18,7 @@ import { laoSummaryName } from '../personUtils'
 import { statusTextMap } from '../placements'
 
 export { premisesActions } from './premisesActions'
-export const summaryListForPremises = (premises: Cas1PremisesSummary): SummaryList => {
+export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
   return {
     rows: [
       {
@@ -103,7 +103,7 @@ export const tabTextMap: Record<PremisesTab, string> = {
   search: 'Search for a booking',
 }
 
-export const premisesTabItems = (premises: Cas1PremisesSummary, activeTab?: PremisesTab): Array<TabItem> => {
+export const premisesTabItems = (premises: Cas1Premises, activeTab?: PremisesTab): Array<TabItem> => {
   const getSelfLink = (tab: string): string =>
     `${managePaths.premises.show({ premisesId: premises.id })}?${createQueryString({
       activeTab: tab,

@@ -2,7 +2,7 @@ import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premis
 import { SelectOption } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import {
-  cas1PremisesSummaryFactory,
+  cas1PremisesFactory,
   cas1SpaceBookingFactory,
   staffMemberFactory,
   userDetailsFactory,
@@ -31,7 +31,7 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_non_arrival',
       ],
     })
-    const premises = cas1PremisesSummaryFactory.build()
+    const premises = cas1PremisesFactory.build()
     const placementId = 'sample_placement_id'
 
     const wrapOptions = (optionList: unknown) => [{ items: optionList }]
