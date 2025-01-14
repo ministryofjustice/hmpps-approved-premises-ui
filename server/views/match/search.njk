@@ -21,6 +21,11 @@
     }) }}
 {% endblock %}
 
+{% set locationTitle %}
+    <span class="govuk-fieldset__legend--s">Preferred location</span>
+    <div class="govuk-hint">For example, M5</div>
+{% endset %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-width-container">
@@ -54,30 +59,28 @@
                             </div>
                             <div class="space-search-inputs">
 
-                                {{ govukDateInput({
-                                    id: "startDate",
-                                    namePrefix: "startDate",
-                                    fieldset: {
-                                        legend: {
-                                            text: "Available from",
-                                            classes: "govuk-fieldset__legend--s"
-                                        }
+                                {% call govukFieldset({
+                                    legend: {
+                                        html: locationTitle
                                     },
-                                    items: dateFieldValues('startDate', errors),
-                                    errorMessage: errors.startDate
-                                }) }}
+                                    hint: {
+                                        text: "For example, M5"
+                                    }
+                                }) %}
 
                                 {{ govukInput({
                                     id: "targetPostcodeDistrict",
                                     name: "targetPostcodeDistrict",
                                     value: targetPostcodeDistrict,
                                     label: {
-                                        text: "Preferred location",
-                                        classes: "govuk-fieldset__legend--s"
-
+                                        text: "Postcode"
                                     },
                                     classes: "govuk-input--width-3"
                                 }) }}
+
+                                {% endcall %}
+
+                                <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
 
                                 {{ govukRadios({
                                     name: "requirements[apType]",
@@ -106,21 +109,7 @@
                                         items: MatchUtils.checkBoxesForCriteria(details.items, context['requirements'][details.inputName])
                                     }) }}
                                 {% endfor %}
-
-                                {{ govukRadios({
-                                    name: "requirements[gender]",
-                                    classes: "govuk-radios--small",
-                                    value: requirements.gender,
-                                    fieldset: {
-                                        legend: {
-                                            text: 'Gender',
-                                            classes: 'govuk-fieldset__legend--s',
-                                            isPageHeading: false
-                                        }
-                                    },
-                                    items: [{value: 'male', text: 'Male' }, {value: 'female', text: 'Female' }]
-                                }) }}
-
+                                
                                 <div class="button">
                                     {{ govukButton({
                                         text: "Update",

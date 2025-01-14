@@ -91,7 +91,6 @@ describe('matchUtils', () => {
         durationInDays: Number(uiParams.durationInDays),
         requirements: {
           apTypes: [uiParams.requirements.apType],
-          genders: [uiParams.requirements.gender],
           spaceCharacteristics: uiParams.requirements.spaceCharacteristics,
         },
         applicationId: uiParams.applicationId,
@@ -287,11 +286,11 @@ describe('matchUtils', () => {
   describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes()).toEqual({
-        'Risks and offences': {
+        'AP requirements': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.offenceAndRisk.items,
         },
-        'Access needs and additional features': {
+        'Room requirements': {
           inputName: 'spaceCharacteristics',
           items: groupedCriteria.accessNeeds.items,
         },
@@ -661,6 +660,7 @@ describe('matchUtils', () => {
           text: 'Standard AP',
           value: 'normal',
         },
+        { divider: 'or' },
         {
           checked: false,
           conditional: undefined,

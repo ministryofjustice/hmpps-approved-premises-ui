@@ -99,7 +99,6 @@ context('Placement Requests', () => {
         targetPostcodeDistrict: placementRequest.location,
         requirements: {
           apTypes: [placementRequest.type],
-          genders: [placementRequest.gender],
           spaceCharacteristics: filteredPlacementCriteria,
         },
       })
@@ -108,7 +107,7 @@ context('Placement Requests', () => {
       expect(secondSearchRequestBody).to.contain({
         applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
-        startDate: newSearchParameters.startDate,
+        startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: newSearchParameters.targetPostcodeDistrict,
       })
 
@@ -116,7 +115,6 @@ context('Placement Requests', () => {
       expect(secondSearchRequestBody.requirements.spaceCharacteristics).to.contain.members(
         newSearchParameters.requirements.spaceCharacteristics,
       )
-      expect(secondSearchRequestBody.requirements.genders).to.contain.members([newSearchParameters.requirements.gender])
     })
   })
 

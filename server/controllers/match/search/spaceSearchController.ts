@@ -6,7 +6,6 @@ import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
 
-import { startDateObjFromParams } from '../../../utils/match'
 import { objectIfNotEmpty } from '../../../utils/utils'
 
 export default class SpaceSearchController {
@@ -28,8 +27,6 @@ export default class SpaceSearchController {
         ...body,
       }
 
-      params.startDate = startDateObjFromParams(params).startDate
-
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
       const spaceSearchResults = await this.spaceService.search(req.user.token, params)
 
@@ -40,7 +37,6 @@ export default class SpaceSearchController {
         tier,
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         ...params,
-        ...startDateObjFromParams(params),
       })
     }
   }

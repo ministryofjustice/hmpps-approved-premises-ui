@@ -136,12 +136,9 @@ describe('acceptanceData', () => {
         apType: 'isESAP',
         isWheelchairDesignated: 'essential',
         isStepFreeDesignated: 'essential',
-        isCatered: 'essential',
         acceptsSexOffenders: 'relevant',
         acceptsChildSexOffenders: 'relevant',
         acceptsNonSexualChildOffenders: 'relevant',
-        isArsonSuitable: 'relevant',
-        acceptsHateCrimeOffenders: 'relevant',
         isSuitableForVulnerable: 'relevant',
       })
 
@@ -153,12 +150,9 @@ describe('acceptanceData', () => {
           'isESAP',
           'isWheelchairDesignated',
           'isStepFreeDesignated',
-          'isCatered',
           'acceptsSexOffenders',
           'acceptsChildSexOffenders',
           'acceptsNonSexualChildOffenders',
-          'isArsonSuitable',
-          'acceptsHateCrimeOffenders',
           'isSuitableForVulnerable',
           'isSuitedForSexOffenders',
         ].sort(),
@@ -170,14 +164,11 @@ describe('acceptanceData', () => {
         apType: 'normal',
         isWheelchairDesignated: 'desirable',
         isStepFreeDesignated: 'desirable',
-        isCatered: 'desirable',
       })
 
       const result = criteriaFromMatchingInformation(matchingInformation)
 
-      expect(result.desirableCriteria.sort()).toEqual(
-        ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered'].sort(),
-      )
+      expect(result.desirableCriteria.sort()).toEqual(['isStepFreeDesignated', 'isWheelchairDesignated'].sort())
       expect(result.essentialCriteria).toEqual([])
     })
 
@@ -190,8 +181,6 @@ describe('acceptanceData', () => {
         acceptsSexOffenders: 'notRelevant',
         acceptsChildSexOffenders: 'notRelevant',
         acceptsNonSexualChildOffenders: 'notRelevant',
-        isArsonSuitable: 'notRelevant',
-        acceptsHateCrimeOffenders: 'notRelevant',
         isSuitableForVulnerable: 'notRelevant',
       })
 
