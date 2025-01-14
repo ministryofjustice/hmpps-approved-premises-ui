@@ -7,6 +7,7 @@ import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
 
 import { objectIfNotEmpty } from '../../../utils/utils'
+import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 
 export default class SpaceSearchController {
   constructor(
@@ -34,6 +35,7 @@ export default class SpaceSearchController {
         pageHeading: 'Find a space',
         spaceSearchResults,
         placementRequest,
+        placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         tier,
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         ...params,

@@ -1,9 +1,10 @@
 import { SpaceSearchParametersUi } from '@approved-premises/ui'
 import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../page'
-import { placementRequestSummaryListForMatching, summaryCardRows } from '../../../server/utils/match'
+import { summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
 import { occupancyCriteriaMap } from '../../../server/utils/match/occupancy'
+import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
 
 export default class SearchPage extends Page {
   constructor() {
@@ -22,7 +23,7 @@ export default class SearchPage extends Page {
 
   shouldShowMatchingDetails(placementRequest: PlacementRequestDetail) {
     cy.get('.govuk-details').within(() => {
-      this.shouldContainSummaryListItems(placementRequestSummaryListForMatching(placementRequest))
+      this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)
     })
   }
 

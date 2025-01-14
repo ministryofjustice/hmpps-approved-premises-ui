@@ -29,9 +29,7 @@
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     {% set detailsHTML %}
-        {{ govukSummaryList({
-            rows: matchingDetailsSummaryList
-        }) }}
+        {{ govukSummaryList(placementRequestInfoSummaryList) }}
     {% endset %}
 
     {{ govukDetails({

@@ -11,6 +11,7 @@ import {
 import { PlacementRequestService, SpaceService } from '../../../services'
 import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
 import matchPaths from '../../../paths/match'
+import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -54,6 +55,7 @@ describe('spaceSearchController', () => {
           pageHeading: 'Find a space',
           spaceSearchResults,
           placementRequest: placementRequestDetail,
+          placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
           tier: placementRequestDetail.risks.tier.value.level,
           applicationId: placementRequestDetail.applicationId,
           startDate: placementRequestDetail.expectedArrival,

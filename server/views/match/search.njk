@@ -32,9 +32,7 @@
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-l">Find a space in an Approved Premises</h1>
                 {% call govukDetails({summaryText: "Matching details", open: true}) %}
-                    {{ govukSummaryList({
-                        rows: MatchUtils.placementRequestSummaryListForMatching(placementRequest)
-                    }) }}
+                    {{ govukSummaryList(placementRequestInfoSummaryList) }}
                 {% endcall %}
             </div>
         </div>
