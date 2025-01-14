@@ -36,8 +36,6 @@ export const spaceSearchParametersUiFactory = Factory.define<SpaceSearchParamete
     requirements: {
       apType: faker.helpers.arrayElement(['pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
       spaceCharacteristics: faker.helpers.arrayElements(filterToSpaceBookingCharacteristics(placementCriteria)),
-      gender: faker.helpers.arrayElement(['male', 'female']),
     },
-    ...startDateInputsValues,
   }
 })

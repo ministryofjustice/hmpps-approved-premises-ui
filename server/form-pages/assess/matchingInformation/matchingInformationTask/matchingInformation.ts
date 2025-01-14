@@ -160,9 +160,9 @@ export default class MatchingInformation implements TasklistPage {
 
     this.placementRequirementCriteria.forEach(placementRequirementCriterion => {
       if (!this.body[placementRequirementCriterion]) {
-        errors[placementRequirementCriterion] = `You must specify a preference for ${lowerCase(
-          placementCriteriaLabels[placementRequirementCriterion],
-        )}`
+        errors[placementRequirementCriterion] = `You must specify a preference for ${placementCriteriaLabels[
+          placementRequirementCriterion
+        ].toLowerCase()}`
       }
     })
 

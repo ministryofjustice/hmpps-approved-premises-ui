@@ -18,7 +18,6 @@ export const mapPlacementRequestToSpaceSearchParams = ({
   essentialCriteria,
   desirableCriteria,
   type,
-  gender,
 }: PlacementRequest): SpaceSearchParametersUi => {
   return {
     applicationId,
@@ -28,7 +27,6 @@ export const mapPlacementRequestToSpaceSearchParams = ({
     requirements: {
       spaceCharacteristics: filterOutAPTypes([...desirableCriteria, ...essentialCriteria]),
       apType: type,
-      gender,
     },
   }
 }
