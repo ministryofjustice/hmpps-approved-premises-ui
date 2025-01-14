@@ -52,12 +52,10 @@ describe('spaceSearchController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a space',
+          pageHeading: 'Find a space in an Approved Premises',
           spaceSearchResults,
           placementRequest: placementRequestDetail,
           placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
-          tier: placementRequestDetail.risks.tier.value.level,
-          applicationId: placementRequestDetail.applicationId,
           startDate: placementRequestDetail.expectedArrival,
           formPath,
           ...query,
@@ -78,12 +76,10 @@ describe('spaceSearchController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'match/search',
         expect.objectContaining({
-          pageHeading: 'Find a space',
+          pageHeading: 'Find a space in an Approved Premises',
           targetPostcodeDistrict: placementRequestDetail.location,
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          tier: placementRequestDetail.risks.tier.value.level,
-          applicationId: placementRequestDetail.applicationId,
           startDate: placementRequestDetail.expectedArrival,
           formPath,
           ...query,

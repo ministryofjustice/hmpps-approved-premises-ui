@@ -28,15 +28,13 @@ export default class SpaceSearchController {
         ...body,
       }
 
-      const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
       const spaceSearchResults = await this.spaceService.search(req.user.token, params)
 
       res.render('match/search', {
-        pageHeading: 'Find a space',
+        pageHeading: 'Find a space in an Approved Premises',
         spaceSearchResults,
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
-        tier,
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         ...params,
       })
