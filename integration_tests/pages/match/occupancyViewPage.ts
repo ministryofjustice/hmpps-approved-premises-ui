@@ -31,6 +31,7 @@ export default class OccupancyViewPage extends Page {
 
   shouldShowMatchingDetails(startDate: string, durationDays: number, placementRequest: PlacementRequestDetail) {
     cy.get('.govuk-details').within(() => {
+      cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
       this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)
     })
     cy.get('.govuk-heading-l')

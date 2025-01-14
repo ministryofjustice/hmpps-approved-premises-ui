@@ -28,15 +28,9 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {% set detailsHTML %}
+    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
         {{ govukSummaryList(placementRequestInfoSummaryList) }}
-    {% endset %}
-
-    {{ govukDetails({
-        summaryText: "Matching details",
-        open: true,
-        html: detailsHTML
-    }) }}
+    {% endcall %}
 
     <section>
         <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}

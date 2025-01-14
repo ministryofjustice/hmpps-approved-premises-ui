@@ -23,6 +23,7 @@ export default class SearchPage extends Page {
 
   shouldShowMatchingDetails(placementRequest: PlacementRequestDetail) {
     cy.get('.govuk-details').within(() => {
+      cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
       this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)
     })
   }
