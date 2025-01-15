@@ -23,6 +23,7 @@ import {
   dayAvailabilitySummaryListItems,
 } from '../../../utils/match/occupancy'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
+import { ValidationError } from '../../../utils/errors'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -48,7 +49,7 @@ describe('OccupancyViewController', () => {
   })
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
 
     occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
     request = createMock<Request>({
@@ -64,14 +65,11 @@ describe('OccupancyViewController', () => {
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
 
-    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
-    when(validationUtils.fetchErrorsAndUserInput as jest.Mock)
-      .calledWith(request)
-      .mockReturnValue({
-        errors: {},
-        errorSummary: [],
-        userInput: {},
-      })
+    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
+      errors: {},
+      errorSummary: [],
+      userInput: {},
+    })
   })
 
   describe('view', () => {
@@ -160,13 +158,11 @@ describe('OccupancyViewController', () => {
         'departureDate-year': '2026',
       }
 
-      when(validationUtils.fetchErrorsAndUserInput as jest.Mock)
-        .calledWith(request)
-        .mockReturnValue({
-          errors: expectedErrors,
-          errorSummary: expectedErrorSummary,
-          userInput: expectedUserInput,
-        })
+      jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
+        errors: expectedErrors,
+        errorSummary: expectedErrorSummary,
+        userInput: expectedUserInput,
+      })
 
       const requestHandler = occupancyViewController.view()
 
@@ -272,6 +268,8 @@ describe('OccupancyViewController', () => {
   })
 
   describe('bookSpace', () => {
+    const params = { id: placementRequestDetail.id, premisesId: premises.id }
+
     const startDate = '2025-08-15'
     const durationDays = '22'
 
@@ -286,8 +284,6 @@ describe('OccupancyViewController', () => {
     }
 
     it(`should redirect to space-booking confirmation page when date validation succeeds`, async () => {
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
-
       const requestHandler = occupancyViewController.bookSpace()
       await requestHandler({ ...request, params, body: validBookingBody }, response, next)
 
@@ -299,37 +295,125 @@ describe('OccupancyViewController', () => {
       )
     })
 
-    it(`should redirect to occupancy view with existing query string and add errors messages when date validation fails`, async () => {
-      jest.spyOn(validationUtils, 'addErrorMessageToFlash')
-      const body = {
-        ...validBookingBody,
-        'arrivalDate-day': '',
-        criteria: 'isWheelchairDesignated,isSuitedForSexOffenders',
-      }
-      const query = {
-        startDate,
-        durationDays,
-      }
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
+    describe('when there are errors', () => {
+      beforeEach(() => {
+        jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
+      })
 
-      const requestHandler = occupancyViewController.bookSpace()
+      it(`should redirect to occupancy view when dates are empty`, async () => {
+        const body = {}
 
-      await requestHandler({ ...request, params, query, body }, response, next)
+        const requestHandler = occupancyViewController.bookSpace()
+        await requestHandler({ ...request, params, body }, response, next)
 
-      expect(validationUtils.addErrorMessageToFlash).toHaveBeenCalledWith(
-        request,
-        'You must enter an arrival date',
-        'arrivalDate',
-      )
+        const expectedErrorData = {
+          arrivalDate: 'You must enter an arrival date',
+          departureDate: 'You must enter a departure date',
+        }
 
-      const expectedQueryString = `startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          matchPaths.v2Match.placementRequests.search.occupancy({
+            id: placementRequestDetail.id,
+            premisesId: premises.id,
+          }),
+        )
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        `${matchPaths.v2Match.placementRequests.search.occupancy({
-          id: placementRequestDetail.id,
-          premisesId: premises.id,
-        })}?${expectedQueryString}`,
-      )
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it(`should redirect to occupancy view when dates are invalid`, async () => {
+        const body = {
+          'arrivalDate-day': '31',
+          'arrivalDate-month': '02',
+          'arrivalDate-year': '2025',
+          'departureDate-day': '34',
+          'departureDate-month': '05',
+          'departureDate-year': '19999',
+        }
+
+        const requestHandler = occupancyViewController.bookSpace()
+        await requestHandler({ ...request, params, body }, response, next)
+
+        const expectedErrorData = {
+          arrivalDate: 'The arrival date is an invalid date',
+          departureDate: 'The departure date is an invalid date',
+        }
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          matchPaths.v2Match.placementRequests.search.occupancy({
+            id: placementRequestDetail.id,
+            premisesId: premises.id,
+          }),
+        )
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it(`should redirect to occupancy view when the departure date is before the arrival date`, async () => {
+        const body = {
+          'arrivalDate-day': '28',
+          'arrivalDate-month': '01',
+          'arrivalDate-year': '2025',
+          'departureDate-day': '27',
+          'departureDate-month': '01',
+          'departureDate-year': '2025',
+        }
+
+        const requestHandler = occupancyViewController.bookSpace()
+        await requestHandler({ ...request, params, body }, response, next)
+
+        const expectedErrorData = {
+          departureDate: 'The departure date must be after the arrival date',
+        }
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          matchPaths.v2Match.placementRequests.search.occupancy({
+            id: placementRequestDetail.id,
+            premisesId: premises.id,
+          }),
+        )
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it(`should redirect to occupancy view with the existing query string`, async () => {
+        const body = {}
+        const query = {
+          startDate,
+          durationDays,
+          criteria: ['isWheelchairDesignated', 'isSuitedForSexOffenders'],
+        }
+
+        const requestHandler = occupancyViewController.bookSpace()
+        await requestHandler({ ...request, params, query, body }, response, next)
+
+        const expectedQueryString = `startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          `${matchPaths.v2Match.placementRequests.search.occupancy({
+            id: placementRequestDetail.id,
+            premisesId: premises.id,
+          })}?${expectedQueryString}`,
+        )
+      })
     })
   })
 
