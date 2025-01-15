@@ -3,6 +3,7 @@ import applyPaths from '../../paths/apply'
 import paths from '../../paths/match'
 import {
   cas1PremisesFactory,
+  cas1PremisesSearchResultSummaryFactory,
   personFactory,
   placementRequestDetailFactory,
   restrictedPersonFactory,
@@ -27,6 +28,7 @@ import {
   occupancyViewLink,
   placementLength,
   preferredPostcodeRow,
+  premisesAddress,
   redirectToSpaceBookingsNew,
   requestedOrEstimatedArrivalDateRow,
   requirementsHtmlString,
@@ -61,6 +63,35 @@ describe('matchUtils', () => {
         startDate: uiParams.startDate,
         targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
       })
+    })
+  })
+
+  describe('premisesAddress', () => {
+    it('renders a full premises address', () => {
+      const premises = cas1PremisesFactory.build({
+        fullAddress: '123 Street Name, Smithtown ',
+        postcode: 'M21 0BP',
+      })
+
+      expect(premisesAddress(premises)).toEqual('123 Street Name, Smithtown, M21 0BP')
+    })
+
+    it('renders a search result premises address', () => {
+      const premises = cas1PremisesSearchResultSummaryFactory.build({
+        fullAddress: ' 456 Street Name, Smithtown',
+        postcode: 'N12 0BP ',
+      })
+
+      expect(premisesAddress(premises)).toEqual('456 Street Name, Smithtown, N12 0BP')
+    })
+
+    it('renders a search result premises address with no postcode', () => {
+      const premises = cas1PremisesSearchResultSummaryFactory.build({
+        fullAddress: '123 Street Name, Smithtown',
+        postcode: undefined,
+      })
+
+      expect(premisesAddress(premises)).toEqual('123 Street Name, Smithtown')
     })
   })
 
