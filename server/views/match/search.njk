@@ -27,136 +27,123 @@
 {% endset %}
 
 {% block content %}
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
+        {{ govukSummaryList(placementRequestInfoSummaryList) }}
+    {% endcall %}
+
+    <h2 class="govuk-heading-m">{{ spaceSearchResults.resultsCount }} Approved Premises found</h2>
+
     <div class="govuk-grid-row">
-        <div class="govuk-width-container">
-            <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-l">Find a space in an Approved Premises</h1>
-                {% call govukDetails({summaryText: "Matching details", open: true}) %}
-                    {{ govukSummaryList({
-                        rows: MatchUtils.placementRequestSummaryListForMatching(placementRequest)
-                    }) }}
-                {% endcall %}
-            </div>
-        </div>
-        <div class="govuk-grid-row">
-            <div class="govuk-width-container">
-                <div class="govuk-grid-column-full">
-                    <h2 class="govuk-heading-m">{{ spaceSearchResults.resultsCount }} Approved Premises found</h2>
-                </div>
-            </div>
-        </div>
+        <div class="govuk-grid-column-one-third">
+            <form action="{{ formPath }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="durationInDays" value="{{ placementRequest.duration }}" />
 
-        <div class="govuk-grid-row">
-            <div class="govuk-width-container">
-                <div class="govuk-grid-column-one-third">
-                    <form action="{{ formPath }}" method="post">
-                        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                        <input type="hidden" name="durationInDays" value="{{ placementRequest.duration }}" />
+                <div class="moj-filter">
+                    <div class="moj-filter__header govuk-!-padding-left-2">
+                        <h3 class="govuk-heading-m">Filters</h3>
+                    </div>
+                    <div class="space-search-inputs">
 
-                        <div class="moj-filter">
-                            <div class="moj-filter__header govuk-!-padding-left-2">
-                                <h3 class="govuk-heading-m">Filters</h3>
-                            </div>
-                            <div class="space-search-inputs">
-
-                                {% call govukFieldset({
-                                    legend: {
-                                        html: locationTitle
+                        {% call govukFieldset( {
+                                legend: {
+                                    html: locationTitle
                                     },
-                                    hint: {
-                                        text: "For example, M5"
-                                    }
-                                }) %}
+                                hint: {
+                            text: "For example, M5"
+                            }
+                        }) %}
 
-                                {{ govukInput({
-                                    id: "targetPostcodeDistrict",
-                                    name: "targetPostcodeDistrict",
-                                    value: targetPostcodeDistrict,
-                                    label: {
-                                        text: "Postcode"
-                                    },
-                                    classes: "govuk-input--width-3"
-                                }) }}
+                        {{ govukInput({
+                            id: "targetPostcodeDistrict",
+                            name: "targetPostcodeDistrict",
+                            value: targetPostcodeDistrict,
+                            label: {
+                                text: "Postcode"
 
-                                {% endcall %}
+                            },
+                            classes: "govuk-input--width-3"
+                        }) }}
+
+                        {% endcall %}
 
                                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
 
                                 {{ govukRadios({
-                                    name: "requirements[apType]",
-                                    classes: "govuk-radios--small",
-                                    fieldset: {
-                                        legend: {
-                                            text: 'AP Type',
-                                            classes: 'govuk-fieldset__legend--s',
-                                            isPageHeading: false
-                                        }
-                                    },
-                                    items: MatchUtils.apTypeLabelsForRadioInput(context['requirements']['apType'])
-                                }) }}
+                            name: "requirements[apType]",
+                            classes: "govuk-radios--small",
+                            fieldset: {
+                                legend: {
+                                    text: 'AP Type',
+                                    classes: 'govuk-fieldset__legend--s',
+                                    isPageHeading: false
+                                }
+                            },
+                            items: MatchUtils.apTypeLabelsForRadioInput(context['requirements']['apType'])
+                        }) }}
 
-                                {% for title, details in MatchUtils.groupedCheckboxes() %}
-                                    {{ govukCheckboxes({
-                                        name: 'requirements[' + details.inputName + '][]',
-                                        classes: "govuk-checkboxes--small",
-                                        fieldset: {
-                                            legend: {
-                                                text: title,
-                                                isPageHeading: false,
-                                                classes: 'govuk-fieldset__legend--s'
-                                            }
-                                        },
-                                        items: MatchUtils.checkBoxesForCriteria(details.items, context['requirements'][details.inputName])
-                                    }) }}
-                                {% endfor %}
-                                
-                                <div class="button">
-                                    {{ govukButton({
-                                        text: "Update",
-                                        preventDoubleClick: true
-                                    }) }}
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="govuk-grid-column-two-thirds">
-                    <div>
-                        {% for spaceSearchResult in spaceSearchResults.results %}
-                            {{ govukSummaryList({
-                                card: {
-                                    title: {
-                                        text: spaceSearchResult.premises.name,
-                                        headingLevel: 3
-                                    },
-                                    actions: {
-                                        items: [{
-                                            href: MatchUtils.occupancyViewLink({
-                                                placementRequestId: placementRequest.id,
-                                                premisesId: spaceSearchResult.premises.id,
-                                                apType: context.requirements.apType,
-                                                spaceCharacteristics: context.requirements.spaceCharacteristics
-                                            }),
-                                            text: "View spaces",
-                                            visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
-                                        }]
+                        {% for title, details in MatchUtils.groupedCheckboxes() %}
+                            {{ govukCheckboxes({
+                                name: 'requirements[' + details.inputName + '][]',
+                                classes: "govuk-checkboxes--small",
+                                fieldset: {
+                                    legend: {
+                                        text: title,
+                                        isPageHeading: false,
+                                        classes: 'govuk-fieldset__legend--s'
                                     }
                                 },
-                                rows: MatchUtils.summaryCardRows(spaceSearchResult, targetPostcodeDistrict)
+                                items: MatchUtils.checkBoxesForCriteria(details.items, context['requirements'][details.inputName])
                             }) }}
                         {% endfor %}
 
-                        <h3 class="govuk-heading-m">Mark this case as unable to match</h3>
-                        <p>If there are no suitable results for your search, mark this case as unable to match.</p>
-                        {{ govukButton({
-                            text: "Unable to match",
-                            href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}),
-                            preventDoubleClick: true
-                        }) }}
+
+
+                        <div class="button">
+                            {{ govukButton({
+                                text: "Update",
+                                preventDoubleClick: true
+                            }) }}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            {% for spaceSearchResult in spaceSearchResults.results %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: spaceSearchResult.premises.name,
+                            headingLevel: 3
+                        },
+                        actions: {
+                            items: [{
+                                href: MatchUtils.occupancyViewLink({
+                                    placementRequestId: placementRequest.id,
+                                    premisesId: spaceSearchResult.premises.id,
+                                    apType: context.requirements.apType,
+                                    spaceCharacteristics: context.requirements.spaceCharacteristics
+                                }),
+                                text: "View spaces",
+                                visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
+                            }]
+                        }
+                    },
+                    rows: MatchUtils.summaryCardRows(spaceSearchResult, targetPostcodeDistrict)
+                }) }}
+            {% endfor %}
+
+            <h3 class="govuk-heading-m">Mark this case as unable to match</h3>
+            <p>If there are no suitable results for your search, mark this case as unable to match.</p>
+            {{ govukButton({
+                text: "Unable to match",
+                href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}),
+                preventDoubleClick: true
+            }) }}
         </div>
     </div>
 {% endblock %}

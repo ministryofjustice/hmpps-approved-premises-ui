@@ -2,6 +2,7 @@ import { PlacementRequestDetail } from '../../@types/shared'
 import { SummaryList, SummaryListItem } from '../../@types/ui'
 import { withdrawnStatusTag } from '../applications/utils'
 import {
+  apTypeRow,
   apTypeWithViewTimelineActionRow,
   departureDateRow,
   lengthOfStayRow,
@@ -13,7 +14,14 @@ import {
 } from '../match'
 import { matchingInformationSummaryRows } from './matchingInformationSummaryList'
 
-export const placementRequestSummaryList = (placementRequest: PlacementRequestDetail): SummaryList => {
+type PlacementRequestSummaryListOptions = {
+  showActions?: boolean
+}
+
+export const placementRequestSummaryList = (
+  placementRequest: PlacementRequestDetail,
+  options: PlacementRequestSummaryListOptions = { showActions: true },
+): SummaryList => {
   const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
   const rows: Array<SummaryListItem> = [
     requestedOrEstimatedArrivalDateRow(placementRequest.isParole, dates.startDate),
@@ -21,7 +29,7 @@ export const placementRequestSummaryList = (placementRequest: PlacementRequestDe
     lengthOfStayRow(placementRequest.duration),
     releaseTypeRow(placementRequest),
     licenceExpiryDateRow(placementRequest),
-    apTypeWithViewTimelineActionRow(placementRequest),
+    options.showActions ? apTypeWithViewTimelineActionRow(placementRequest) : apTypeRow(placementRequest.type),
     preferredPostcodeRow(placementRequest.location),
   ]
 

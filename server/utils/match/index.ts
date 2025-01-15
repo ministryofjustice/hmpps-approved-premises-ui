@@ -1,10 +1,9 @@
-import { addDays, differenceInDays } from 'date-fns'
+import { differenceInDays } from 'date-fns'
 import type {
   ApType,
   ApprovedPremisesApplication,
   Cas1Premises,
   Cas1SpaceBookingCharacteristic,
-  Gender,
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestDetail,
@@ -21,7 +20,7 @@ import {
 } from '@approved-premises/ui'
 import { ParsedQs } from 'qs'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { createQueryString, sentenceCase } from '../utils'
+import { createQueryString } from '../utils'
 import matchPaths from '../../paths/match'
 import {
   placementCriteriaLabels,
@@ -32,22 +31,13 @@ import { apTypeLabels } from '../apTypeLabels'
 import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
 import { isFullPerson } from '../personUtils'
-import { preferredApsRow } from '../placementRequests/preferredApsRow'
-import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { placementDates } from './placementDates'
 import { occupancyCriteriaMap } from './occupancy'
 import paths from '../../paths/apply'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
-
-type PlacementDates = {
-  placementLength: number
-  startDate: string
-  endDate: string
-}
 
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
@@ -119,57 +109,6 @@ export const redirectToSpaceBookingsNew = ({
   )}`
 }
 
-export const confirmationSummaryCardRows = (
-  spaceSearchResult: SpaceSearchResult,
-  dates: PlacementDates,
-): Array<SummaryListItem> => {
-  return [
-    premisesNameRow(spaceSearchResult.premises.name),
-    arrivalDateRow(dates.startDate),
-    departureDateRow(dates.endDate),
-    placementLengthRow(dates.placementLength),
-  ]
-}
-
-export const spaceBookingPremisesSummaryCardRows = (premisesName: string, apType: ApType): Array<SummaryListItem> => {
-  return [premisesNameRow(premisesName), apTypeRow(apType)]
-}
-
-export const spaceBookingPersonNeedsSummaryCardRows = (
-  dates: PlacementDates,
-  gender: Gender,
-  essentialCharacteristics: Array<PlacementCriteria>,
-  desirableCharacteristics: Array<PlacementCriteria>,
-): Array<SummaryListItem> => {
-  return [
-    arrivalDateRow(dates.startDate),
-    departureDateRow(dates.endDate),
-    placementLengthRow(dates.placementLength),
-    genderRow(gender),
-    essentialCharacteristicsRow(essentialCharacteristics),
-    desirableCharacteristicsRow(desirableCharacteristics),
-  ]
-}
-
-export const occupancyViewSummaryListForMatchingDetails = (
-  totalCapacity: number,
-  placementRequest: PlacementRequestDetail,
-  managerDetails: string,
-): Array<SummaryListItem> => {
-  const placementRequestDates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
-  const essentialCharacteristics = filterOutAPTypes(placementRequest.essentialCriteria)
-  return [
-    arrivalDateRow(placementRequestDates.startDate),
-    departureDateRow(placementRequestDates.endDate),
-    placementLengthRow(placementRequestDates.placementLength),
-    releaseTypeRow(placementRequest),
-    licenceExpiryDateRow(placementRequest),
-    totalCapacityRow(totalCapacity),
-    apManagerDetailsRow(managerDetails),
-    spaceRequirementsRow(essentialCharacteristics),
-  ]
-}
-
 export const spaceBookingConfirmationSummaryListRows = (
   placementRequest: PlacementRequestDetail,
   premises: Cas1Premises,
@@ -222,24 +161,6 @@ export const requirementsHtmlString = (requirements: Array<SpaceCharacteristic |
   return `<ul class="govuk-list">${htmlString}</ul>`
 }
 
-export const premisesNameRow = (premisesName: string) => ({
-  key: {
-    text: 'Approved Premises',
-  },
-  value: {
-    text: premisesName,
-  },
-})
-
-export const arrivalDateRow = (arrivalDate: string) => ({
-  key: {
-    text: 'Expected arrival date',
-  },
-  value: {
-    text: DateFormats.isoDateToUIDate(arrivalDate),
-  },
-})
-
 export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDate: string) => ({
   key: {
     text: isParole ? 'Estimated arrival date' : 'Requested arrival date',
@@ -255,15 +176,6 @@ export const departureDateRow = (departureDate: string) => ({
   },
   value: {
     text: DateFormats.isoDateToUIDate(departureDate),
-  },
-})
-
-export const placementLengthRow = (length: number) => ({
-  key: {
-    text: 'Placement length',
-  },
-  value: {
-    text: placementLength(length),
   },
 })
 
@@ -342,60 +254,6 @@ export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?:
     },
   }
 }
-
-export const genderRow = (gender: Gender) => ({
-  key: {
-    text: 'Gender',
-  },
-  value: {
-    text: sentenceCase(gender),
-  },
-})
-
-export const essentialCharacteristicsRow = (essentialCharacteristics: Array<PlacementCriteria>) => ({
-  key: {
-    text: 'Essential characteristics',
-  },
-  value: {
-    html: requirementsHtmlString(essentialCharacteristics),
-  },
-})
-
-export const desirableCharacteristicsRow = (desirableCharacteristics: Array<PlacementCriteria>) => ({
-  key: {
-    text: 'Desirable characteristics',
-  },
-  value: {
-    html: requirementsHtmlString(desirableCharacteristics),
-  },
-})
-
-export const totalCapacityRow = (totalCapacity: number) => ({
-  key: {
-    text: 'Total capacity',
-  },
-  value: {
-    text: `${totalCapacity} spaces`,
-  },
-})
-
-export const apManagerDetailsRow = (apManagerDetails: string) => ({
-  key: {
-    text: 'AP manager details',
-  },
-  value: {
-    text: apManagerDetails,
-  },
-})
-
-export const spaceRequirementsRow = (essentialCharacteristics: Array<SpaceCharacteristic>) => ({
-  key: {
-    text: 'Space requirements',
-  },
-  value: {
-    html: requirementsHtmlString(essentialCharacteristics),
-  },
-})
 
 export const releaseTypeRow = (placementRequest: PlacementRequest) => ({
   key: {
@@ -493,33 +351,6 @@ export const preferredPostcodeRow = (postcodeDistrict: PlacementRequestDetail['l
     text: postcodeDistrict,
   },
 })
-
-export const calculateDepartureDate = (startDate: string, lengthInDays: number): Date => {
-  return addDays(DateFormats.isoToDateObj(startDate), lengthInDays)
-}
-
-export const placementRequestSummaryListForMatching = (placementRequest: PlacementRequestDetail) => {
-  const rows: Array<SummaryListItem> = [
-    arrivalDateRow(placementRequest.expectedArrival),
-    departureDateRow(
-      DateFormats.dateObjToIsoDate(calculateDepartureDate(placementRequest.expectedArrival, placementRequest.duration)),
-    ),
-    lengthOfStayRow(placementRequest.duration),
-    preferredPostcodeRow(placementRequest.location),
-    apTypeRow(placementRequest.type),
-  ]
-
-  const preferredAps = preferredApsRow(placementRequest)
-
-  if (preferredAps) {
-    rows.push(preferredAps)
-  }
-
-  rows.push(placementRequirementsRow(placementRequest, 'essential'))
-  rows.push(placementRequirementsRow(placementRequest, 'desirable'))
-
-  return rows
-}
 
 export const keyDetails = (placementRequest: PlacementRequestDetail): KeyDetailsArgs => {
   const { person } = placementRequest

@@ -7,6 +7,7 @@ import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
 
 import { objectIfNotEmpty } from '../../../utils/utils'
+import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 
 export default class SpaceSearchController {
   constructor(
@@ -27,14 +28,13 @@ export default class SpaceSearchController {
         ...body,
       }
 
-      const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
       const spaceSearchResults = await this.spaceService.search(req.user.token, params)
 
       res.render('match/search', {
-        pageHeading: 'Find a space',
+        pageHeading: 'Find a space in an Approved Premises',
         spaceSearchResults,
         placementRequest,
-        tier,
+        placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         ...params,
       })

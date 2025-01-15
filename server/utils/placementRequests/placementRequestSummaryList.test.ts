@@ -94,6 +94,17 @@ describe('placementRequestSummaryList', () => {
     )
   })
 
+  it('should generate the expected summary list without actions', () => {
+    expect(placementRequestSummaryList(placementRequest, { showActions: false }).rows).toEqual(
+      expectedSummaryListItems({
+        isWithdrawn: false,
+        expectedApplicationId: undefined,
+        expectedLicenceExpiryDate: application.licenceExpiryDate,
+        expectedPostcode: placementRequest.location,
+      }),
+    )
+  })
+
   const expectedSummaryListItems = (options: {
     isWithdrawn: boolean
     expectedApplicationId: string

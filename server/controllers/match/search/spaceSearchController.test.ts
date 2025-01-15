@@ -11,6 +11,7 @@ import {
 import { PlacementRequestService, SpaceService } from '../../../services'
 import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
 import matchPaths from '../../../paths/match'
+import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -51,11 +52,10 @@ describe('spaceSearchController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a space',
+          pageHeading: 'Find a space in an Approved Premises',
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          tier: placementRequestDetail.risks.tier.value.level,
-          applicationId: placementRequestDetail.applicationId,
+          placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
           startDate: placementRequestDetail.expectedArrival,
           formPath,
           ...query,
@@ -76,12 +76,10 @@ describe('spaceSearchController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'match/search',
         expect.objectContaining({
-          pageHeading: 'Find a space',
+          pageHeading: 'Find a space in an Approved Premises',
           targetPostcodeDistrict: placementRequestDetail.location,
           spaceSearchResults,
           placementRequest: placementRequestDetail,
-          tier: placementRequestDetail.risks.tier.value.level,
-          applicationId: placementRequestDetail.applicationId,
           startDate: placementRequestDetail.expectedArrival,
           formPath,
           ...query,

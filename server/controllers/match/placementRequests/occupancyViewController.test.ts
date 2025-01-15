@@ -12,7 +12,7 @@ import {
   placementRequestDetailFactory,
 } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
-import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../utils/match'
+import { occupancySummary } from '../../../utils/match'
 import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
@@ -22,6 +22,7 @@ import {
   dayAvailabilityStatusMap,
   dayAvailabilitySummaryListItems,
 } from '../../../utils/match/occupancy'
+import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -121,11 +122,7 @@ describe('OccupancyViewController', () => {
           { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
         ],
         criteria: undefined,
-        matchingDetailsSummaryList: occupancyViewSummaryListForMatchingDetails(
-          premiseCapacity.premise.bedCount,
-          placementRequestDetail,
-          premiseCapacity.premise.managerDetails,
-        ),
+        placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
         summary: occupancySummary(premiseCapacity.capacity),
         calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
         errors: {},

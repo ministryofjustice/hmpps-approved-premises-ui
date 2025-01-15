@@ -186,13 +186,8 @@ context('Placement Requests', () => {
     const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
 
     // Then I should see the details of the case I am matching
-    occupancyViewPage.shouldShowMatchingDetails(
-      totalCapacity,
-      startDate,
-      durationDays,
-      placementRequest,
-      managerDetails,
-    )
+    occupancyViewPage.shouldShowMatchingDetails(startDate, durationDays, placementRequest)
+
     return { occupancyViewPage, placementRequest, premiseCapacity, premises, startDate }
   }
 

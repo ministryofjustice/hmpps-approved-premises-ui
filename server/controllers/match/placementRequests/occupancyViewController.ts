@@ -5,7 +5,6 @@ import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   occupancySummary,
   occupancyViewLink,
-  occupancyViewSummaryListForMatchingDetails,
   placementDates,
   redirectToSpaceBookingsNew,
   validateSpaceBooking,
@@ -28,6 +27,7 @@ import {
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
+import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 
 type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -127,7 +127,7 @@ export default class {
 
       let summary: OccupancySummary
       let calendar: Calendar
-      let managerDetails: string
+
       if (!errors.startDate) {
         const capacityDates = placementDates(startDate, durationDays)
         const capacity = await this.premisesService.getCapacity(
@@ -144,7 +144,6 @@ export default class {
 
         summary = occupancySummary(capacity.capacity, filterCriteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria)
-        managerDetails = capacity.premise.managerDetails
       }
 
       res.render('match/placementRequests/occupancyView/view', {
@@ -158,11 +157,7 @@ export default class {
         durationOptions: durationSelectOptions(durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, filterCriteria),
         criteria: filterCriteria,
-        matchingDetailsSummaryList: occupancyViewSummaryListForMatchingDetails(
-          premises.bedCount,
-          placementRequest,
-          managerDetails,
-        ),
+        placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         summary,
         calendar,
         errors,

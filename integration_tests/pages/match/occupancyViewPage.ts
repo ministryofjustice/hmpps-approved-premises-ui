@@ -7,10 +7,11 @@ import {
   PlacementRequestDetail,
 } from '@approved-premises/api'
 import Page from '../page'
-import { occupancySummary, occupancyViewSummaryListForMatchingDetails } from '../../../server/utils/match'
+import { occupancySummary } from '../../../server/utils/match'
 import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
+import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
 
 export default class OccupancyViewPage extends Page {
   constructor(premisesName: string) {
@@ -28,17 +29,10 @@ export default class OccupancyViewPage extends Page {
     return new OccupancyViewPage(premises.name)
   }
 
-  shouldShowMatchingDetails(
-    totalCapacity: number,
-    startDate: string,
-    durationDays: number,
-    placementRequest: PlacementRequestDetail,
-    managerDetails: string,
-  ) {
+  shouldShowMatchingDetails(startDate: string, durationDays: number, placementRequest: PlacementRequestDetail) {
     cy.get('.govuk-details').within(() => {
-      this.shouldContainSummaryListItems(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails),
-      )
+      cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
+      this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)
     })
     cy.get('.govuk-heading-l')
       .contains(

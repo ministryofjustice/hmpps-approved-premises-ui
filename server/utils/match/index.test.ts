@@ -1,20 +1,10 @@
-import type {
-  ApType,
-  Application,
-  ApprovedPremisesApplication,
-  Cas1SpaceBookingCharacteristic,
-  FullPerson,
-  PlacementCriteria,
-} from '@approved-premises/api'
-import { when } from 'jest-when'
-import type { SummaryListItem } from '@approved-premises/ui'
+import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
 import applyPaths from '../../paths/apply'
 import paths from '../../paths/match'
 import {
   cas1PremisesFactory,
   personFactory,
   placementRequestDetailFactory,
-  premisesFactory,
   restrictedPersonFactory,
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
@@ -22,58 +12,32 @@ import {
 import { DateFormats } from '../dateUtils'
 import {
   addressRow,
-  apManagerDetailsRow,
   apTypeLabelsForRadioInput,
   apTypeRow,
   apTypeWithViewTimelineActionRow,
-  arrivalDateRow,
-  calculateDepartureDate,
   characteristicsRow,
   checkBoxesForCriteria,
-  confirmationSummaryCardRows,
-  departureDateRow,
-  desirableCharacteristicsRow,
   distanceRow,
-  essentialCharacteristicsRow,
   filterOutAPTypes,
   filterToSpaceBookingCharacteristics,
-  genderRow,
   groupedCheckboxes,
   groupedCriteria,
   keyDetails,
-  lengthOfStayRow,
-  licenceExpiryDateRow,
   mapUiParamsForApi,
   occupancyViewLink,
-  occupancyViewSummaryListForMatchingDetails,
-  placementDates,
   placementLength,
-  placementLengthRow,
-  placementRequestSummaryListForMatching,
   preferredPostcodeRow,
-  premisesNameRow,
   redirectToSpaceBookingsNew,
-  releaseTypeRow,
   requestedOrEstimatedArrivalDateRow,
   requirementsHtmlString,
   spaceBookingConfirmationSummaryListRows,
-  spaceBookingPersonNeedsSummaryCardRows,
-  spaceBookingPremisesSummaryCardRows,
-  spaceRequirementsRow,
   startDateObjFromParams,
   summaryCardRows,
-  totalCapacityRow,
 } from '.'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import * as formUtils from '../formUtils'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
-import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
 import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
-import { preferredApsRow } from '../placementRequests/preferredApsRow'
-import { placementRequirementsRow } from '../placementRequests/placementRequirementsRow'
-import applicationFactory from '../../testutils/factories/application'
-import offlineApplicationFactory from '../../testutils/factories/offlineApplication'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -394,198 +358,6 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('confirmationSummaryCardRows', () => {
-    it('should call the correct row functions', () => {
-      const spaceSearchResult = spaceSearchResultFactory.build()
-      const dates = {
-        startDate: '2022-01-01',
-        endDate: '2022-01-15',
-        placementLength: 2,
-      }
-
-      expect(confirmationSummaryCardRows(spaceSearchResult, dates)).toEqual([
-        premisesNameRow(spaceSearchResult.premises.name),
-        arrivalDateRow(dates.startDate),
-        departureDateRow(dates.endDate),
-        placementLengthRow(dates.placementLength),
-      ])
-    })
-  })
-
-  describe('spaceBookingPersonNeedsSummaryCardRows', () => {
-    it('should call the correct row functions', () => {
-      const gender = 'male'
-
-      const dates = {
-        startDate: '2022-01-01',
-        endDate: '2022-01-15',
-        placementLength: 2,
-      }
-      const essentialCharacteristics: Array<PlacementCriteria> = ['hasTactileFlooring']
-      const desirableCharacteristics: Array<PlacementCriteria> = ['hasBrailleSignage']
-
-      expect(
-        spaceBookingPersonNeedsSummaryCardRows(dates, gender, essentialCharacteristics, desirableCharacteristics),
-      ).toEqual([
-        arrivalDateRow(dates.startDate),
-        departureDateRow(dates.endDate),
-        placementLengthRow(dates.placementLength),
-        genderRow(gender),
-        essentialCharacteristicsRow(essentialCharacteristics),
-        desirableCharacteristicsRow(desirableCharacteristics),
-      ])
-    })
-  })
-
-  describe('occupancyViewSummaryListForMatchingDetails', () => {
-    const application = applicationFactory.build({
-      licenceExpiryDate: '2030-11-23',
-    })
-    const placementRequest = placementRequestDetailFactory.build({
-      releaseType: 'hdc',
-      expectedArrival: '2025-10-02',
-      duration: 52,
-      essentialCriteria: ['hasTactileFlooring'],
-      application,
-    })
-    const dates = placementDates(placementRequest.expectedArrival, placementRequest.duration)
-    const totalCapacity = 120
-    const managerDetails = 'John Doe'
-
-    it('should call the correct row functions', () => {
-      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails)).toEqual([
-        arrivalDateRow(dates.startDate),
-        departureDateRow(dates.endDate),
-        placementLengthRow(dates.placementLength),
-        releaseTypeRow(placementRequest),
-        licenceExpiryDateRow(placementRequest),
-        totalCapacityRow(totalCapacity),
-        apManagerDetailsRow(managerDetails),
-        spaceRequirementsRow(filterOutAPTypes(placementRequest.essentialCriteria)),
-      ])
-    })
-
-    it('should generate the expected matching details', () => {
-      expect(occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequest, managerDetails)).toEqual(
-        expectedMatchingDetailsSummaryListItems(application.licenceExpiryDate),
-      )
-    })
-
-    it(`should generate the expected matching details when placement-request's application is undefined`, () => {
-      const undefinedApplication: Application = undefined
-      const placementRequestWithoutLicenceExpiry = {
-        ...placementRequest,
-        application: undefinedApplication,
-      }
-      expect(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequestWithoutLicenceExpiry, managerDetails),
-      ).toEqual(expectedMatchingDetailsSummaryListItems(''))
-    })
-
-    it(`should generate the expected matching details when placement-request's application is not of type ApprovedPremisesApplication`, () => {
-      const placementRequestWithoutLicenceExpiry = {
-        ...placementRequest,
-        application: offlineApplicationFactory.build(),
-      }
-      expect(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequestWithoutLicenceExpiry, managerDetails),
-      ).toEqual(expectedMatchingDetailsSummaryListItems(''))
-    })
-
-    it(`should generate the expected matching details with blank licence expiry date when application's license-expiry date is not set`, () => {
-      const placementRequestWithoutLicenceExpiry = {
-        ...placementRequest,
-        application: applicationFactory.build({
-          licenceExpiryDate: undefined,
-        }),
-      }
-      expect(
-        occupancyViewSummaryListForMatchingDetails(totalCapacity, placementRequestWithoutLicenceExpiry, managerDetails),
-      ).toEqual(expectedMatchingDetailsSummaryListItems(''))
-    })
-  })
-
-  const expectedMatchingDetailsSummaryListItems = (expectedLicenceExpiryDate: string): Array<SummaryListItem> => {
-    return [
-      {
-        key: {
-          text: 'Expected arrival date',
-        },
-        value: {
-          text: 'Thu 2 Oct 2025',
-        },
-      },
-      {
-        key: {
-          text: 'Expected departure date',
-        },
-        value: {
-          text: 'Sun 23 Nov 2025',
-        },
-      },
-      {
-        key: {
-          text: 'Placement length',
-        },
-        value: {
-          text: '7 weeks, 3 days',
-        },
-      },
-      {
-        key: {
-          text: 'Release type',
-        },
-        value: {
-          text: 'Home detention curfew (HDC)',
-        },
-      },
-      {
-        key: {
-          text: 'Licence expiry date',
-        },
-        value: {
-          text: expectedLicenceExpiryDate ? DateFormats.isoDateToUIDate(expectedLicenceExpiryDate) : '',
-        },
-      },
-      {
-        key: {
-          text: 'Total capacity',
-        },
-        value: {
-          text: '120 spaces',
-        },
-      },
-      {
-        key: {
-          text: 'AP manager details',
-        },
-        value: {
-          text: 'John Doe',
-        },
-      },
-      {
-        key: {
-          text: 'Space requirements',
-        },
-        value: {
-          html: '<ul class="govuk-list"><li>Tactile flooring</li></ul>',
-        },
-      },
-    ]
-  }
-
-  describe('spaceBookingPremisesSummaryCardRows', () => {
-    it('should call the correct row functions', () => {
-      const premisesName = 'Hope House'
-      const apType = 'pipe'
-
-      expect(spaceBookingPremisesSummaryCardRows(premisesName, apType)).toEqual([
-        premisesNameRow(premisesName),
-        apTypeRow(apType),
-      ])
-    })
-  })
-
   describe('spaceBookingConfirmationSummaryListRows', () => {
     it('returns summary list items for the space booking confirmation screen', () => {
       const placementRequest = placementRequestDetailFactory.build()
@@ -698,39 +470,6 @@ describe('matchUtils', () => {
         },
       ])
       expect(radioButtonUtilSpy).toHaveBeenCalledWith(apTypeLabels, apType)
-    })
-  })
-
-  describe('placementRequestSummaryListForMatching', () => {
-    it('returns the rows for a placement request', () => {
-      const placementRequest = placementRequestDetailFactory.build()
-
-      expect(placementRequestSummaryListForMatching(placementRequest)).toEqual([
-        arrivalDateRow(placementRequest.expectedArrival),
-        departureDateRow(
-          DateFormats.dateObjToIsoDate(
-            calculateDepartureDate(placementRequest.expectedArrival, placementRequest.duration),
-          ),
-        ),
-        lengthOfStayRow(placementRequest.duration),
-        preferredPostcodeRow(placementRequest.location),
-        apTypeRow(placementRequest.type),
-        placementRequirementsRow(placementRequest, 'essential'),
-        placementRequirementsRow(placementRequest, 'desirable'),
-      ])
-    })
-
-    it('adds the preferred APs if they exist', () => {
-      const placementRequest = placementRequestDetailFactory.build()
-      const preferredAps = premisesFactory.buildList(1)
-
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(placementRequest.application as ApprovedPremisesApplication, PreferredAps, 'selectedAps')
-        .mockReturnValue(preferredAps)
-
-      expect(placementRequestSummaryListForMatching(placementRequest)).toEqual(
-        expect.arrayContaining([preferredApsRow(placementRequest)]),
-      )
     })
   })
 
