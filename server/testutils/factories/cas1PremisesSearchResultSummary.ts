@@ -4,7 +4,6 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { Cas1PremisesSearchResultSummary, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import namedIdFactory from './namedId'
 import { sentenceCase } from '../../utils/utils'
-import { apCharacteristicPairFactory } from './bedDetail'
 
 const characteristics: ReadonlyArray<Cas1SpaceCharacteristic> = [
   'acceptsChildSexOffenders',
@@ -56,7 +55,6 @@ export default Factory.define<Cas1PremisesSearchResultSummary>(() => {
     apArea: namedIdFactory.build(),
     totalSpaceCount: faker.number.int({ min: 5, max: 50 }),
     fullAddress: `${faker.location.streetAddress()}, ${faker.location.county()}, ${faker.location.city()}`,
-    premisesCharacteristics: apCharacteristicPairFactory.buildList(5),
     characteristics: faker.helpers.arrayElements(characteristics),
   }
 })

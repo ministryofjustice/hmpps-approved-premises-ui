@@ -167,7 +167,7 @@ describe('placementRequestSummaryList', () => {
           text: 'Essential Criteria',
         },
         value: {
-          html: '<ul class="govuk-list"><li>Tactile flooring</li></ul>',
+          html: '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>',
         },
       },
       {
@@ -175,7 +175,7 @@ describe('placementRequestSummaryList', () => {
           text: 'Desirable Criteria',
         },
         value: {
-          html: '<ul class="govuk-list"></ul>',
+          html: '<ul class="govuk-list govuk-list--bullet"></ul>',
         },
       },
       {

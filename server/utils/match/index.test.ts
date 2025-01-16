@@ -36,7 +36,7 @@ import {
   startDateObjFromParams,
   summaryCardRows,
 } from '.'
-import { placementCriteriaLabels } from '../placementCriteriaUtils'
+import { placementCriteriaLabels, spaceSearchCriteriaRoomLevelLabels } from '../placementCriteriaUtils'
 import * as formUtils from '../formUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
@@ -404,7 +404,9 @@ describe('matchUtils', () => {
         { key: { text: 'Address' }, value: { text: `${premises.fullAddress}, ${premises.postcode}` } },
         {
           key: { text: 'Space type' },
-          value: { html: '<ul class="govuk-list"><li>En-suite bathroom</li><li>Arson offences</li></ul>' },
+          value: {
+            html: '<ul class="govuk-list govuk-list--bullet"><li>En-suite bathroom</li><li>Arson offences</li></ul>',
+          },
         },
         { key: { text: 'Arrival date' }, value: { text: 'Fri 23 May 2025' } },
         { key: { text: 'Departure date' }, value: { text: 'Fri 18 Jul 2025' } },
@@ -432,18 +434,34 @@ describe('matchUtils', () => {
   })
 
   describe('requirementsHtmlString', () => {
-    it('should return correctly formatted HTML strings for essential and desirable criteria', () => {
-      const placementRequest = placementRequestDetailFactory.build({
-        essentialCriteria: ['hasHearingLoop', 'isStepFreeDesignated'],
-        desirableCriteria: ['isArsonDesignated'],
-      })
+    const placementRequest = placementRequestDetailFactory.build({
+      essentialCriteria: ['hasBrailleSignage', 'hasHearingLoop', 'isStepFreeDesignated'],
+      desirableCriteria: ['isArsonDesignated'],
+    })
 
-      expect(requirementsHtmlString(placementRequest.essentialCriteria)).toEqual(
-        `<ul class="govuk-list"><li>${placementCriteriaLabels.hasHearingLoop}</li><li>${placementCriteriaLabels.isStepFreeDesignated}</li></ul>`,
-      )
-      expect(requirementsHtmlString(placementRequest.desirableCriteria)).toEqual(
-        `<ul class="govuk-list"><li>${placementCriteriaLabels.isArsonDesignated}</li></ul>`,
-      )
+    it('should return HTML lists of the given requirements', () => {
+      expect(requirementsHtmlString(placementRequest.essentialCriteria)).toMatchStringIgnoringWhitespace(`
+        <ul class="govuk-list govuk-list--bullet">
+          <li>${placementCriteriaLabels.isStepFreeDesignated}</li>
+          <li>${placementCriteriaLabels.hasBrailleSignage}</li>
+          <li>${placementCriteriaLabels.hasHearingLoop}</li>
+        </ul>
+      `)
+      expect(requirementsHtmlString(placementRequest.desirableCriteria)).toMatchStringIgnoringWhitespace(`
+        <ul class="govuk-list govuk-list--bullet">
+          <li>${placementCriteriaLabels.isArsonDesignated}</li>
+        </ul>
+      `)
+    })
+
+    it('should only render requirements that exist in the provided labels', () => {
+      const result = requirementsHtmlString(placementRequest.essentialCriteria, spaceSearchCriteriaRoomLevelLabels)
+
+      expect(result).toMatchStringIgnoringWhitespace(`
+        <ul class="govuk-list govuk-list--bullet">
+          <li>${spaceSearchCriteriaRoomLevelLabels.isStepFreeDesignated}</li>
+        </ul>
+      `)
     })
   })
 

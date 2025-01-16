@@ -94,3 +94,9 @@ export const spaceSearchCriteriaRoomLevelLabels = {
   isArsonSuitable: 'Arson room',
   isSuitedForSexOffenders: 'Suitable for sexual offences',
 }
+
+export const spaceSearchResultsCharacteristicsLabels = {
+  ...spaceSearchCriteriaApLevelLabels,
+  ...spaceSearchCriteriaRoomLevelLabels,
+  isSuitableForVulnerable: placementCriteriaLabels.isSuitableForVulnerable,
+}

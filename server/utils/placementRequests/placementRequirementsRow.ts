@@ -1,7 +1,7 @@
 import { PlacementRequest } from '../../@types/shared'
 import { SummaryListItem } from '../../@types/ui'
-import { mapSearchParamCharacteristicsForUi } from '../match/mapSearchParamCharacteristicsForUi'
 import { sentenceCase } from '../utils'
+import { requirementsHtmlString } from '../match'
 
 export const placementRequirementsRow = (
   placementRequest: PlacementRequest,
@@ -13,7 +13,7 @@ export const placementRequirementsRow = (
       text: `${sentenceCase(type)} Criteria`,
     },
     value: {
-      html: mapSearchParamCharacteristicsForUi(criteria),
+      html: requirementsHtmlString(criteria),
     },
   }
 }

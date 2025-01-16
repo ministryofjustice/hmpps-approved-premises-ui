@@ -7,6 +7,7 @@ import risksFactory from './risks'
 import userFactory from './user'
 import bookingSummary from './bookingSummary'
 import postcodeAreas from '../../etc/postcodeAreas.json'
+import { placementCriteriaLabels } from '../../utils/placementCriteriaUtils'
 
 export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
   const essentialCriteria = faker.helpers.arrayElements(placementCriteria)
@@ -45,21 +46,4 @@ export const placementRequestWithFullPersonFactory = Factory.define<PlacementReq
   return { ...placementRequestFactory.build(), person: fullPersonFactory.build() }
 })
 
-export const placementCriteria: Array<PlacementCriteria> = [
-  'isPIPE',
-  'isESAP',
-  'isSemiSpecialistMentalHealth',
-  'isRecoveryFocussed',
-  'isSuitableForVulnerable',
-  'acceptsSexOffenders',
-  'acceptsChildSexOffenders',
-  'acceptsNonSexualChildOffenders',
-  'acceptsHateCrimeOffenders',
-  'isWheelchairDesignated',
-  'isSingle',
-  'isStepFreeDesignated',
-  'isCatered',
-  'hasEnSuite',
-  'isSuitedForSexOffenders',
-  'isArsonSuitable',
-] as const
+export const placementCriteria = ['isGroundFloor', ...Object.keys(placementCriteriaLabels)] as Array<PlacementCriteria>

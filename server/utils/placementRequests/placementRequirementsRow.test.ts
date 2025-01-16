@@ -1,6 +1,6 @@
 import { placementRequestDetailFactory } from '../../testutils/factories'
-import { mapSearchParamCharacteristicsForUi } from '../match/mapSearchParamCharacteristicsForUi'
 import { placementRequirementsRow } from './placementRequirementsRow'
+import { requirementsHtmlString } from '../match'
 
 describe('placementRequirementsRow', () => {
   it('returns a list of desirable placement requirements in sentence case', () => {
@@ -11,7 +11,7 @@ describe('placementRequirementsRow', () => {
         text: `Desirable Criteria`,
       },
       value: {
-        html: mapSearchParamCharacteristicsForUi(placementRequest.desirableCriteria),
+        html: requirementsHtmlString(placementRequest.desirableCriteria),
       },
     })
   })
@@ -25,7 +25,7 @@ it('returns a list of essential placement requirements in sentence case', () => 
       text: `Essential Criteria`,
     },
     value: {
-      html: mapSearchParamCharacteristicsForUi(placementRequest.essentialCriteria),
+      html: requirementsHtmlString(placementRequest.essentialCriteria),
     },
   })
 })
