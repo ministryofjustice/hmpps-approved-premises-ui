@@ -1,8 +1,9 @@
 import { differenceInDays } from 'date-fns'
-import type {
+import {
   ApType,
   ApprovedPremisesApplication,
   Cas1Premises,
+  Cas1PremisesSearchResultSummary,
   Cas1SpaceBookingCharacteristic,
   PlacementCriteria,
   PlacementRequest,
@@ -118,7 +119,7 @@ export const spaceBookingConfirmationSummaryListRows = (
 ): Array<SummaryListItem> => {
   return [
     summaryListItem('Approved Premises', premises.name),
-    summaryListItem('Address', premises.fullAddress),
+    summaryListItem('Address', premisesAddress(premises)),
     summaryListItem('Space type', requirementsHtmlString(criteria), 'html'),
     summaryListItem('Arrival date', DateFormats.isoDateToUIDate(arrivalDate)),
     summaryListItem('Departure date', DateFormats.isoDateToUIDate(departureDate)),
@@ -222,17 +223,11 @@ export const apTypeWithViewTimelineActionRow = (placementRequest: PlacementReque
   return apTypeItem
 }
 
-export const addressRow = (spaceSearchResult: SpaceSearchResult) => ({
-  key: {
-    text: 'Address',
-  },
-  value: {
-    html: `<p>
-           ${spaceSearchResult.premises.addressLine1} ${spaceSearchResult.premises.addressLine2 || ''}<br/>
-           ${spaceSearchResult.premises?.town}<br/>
-           ${spaceSearchResult.premises?.postcode}</p>`,
-  },
-})
+export const premisesAddress = (premises: Cas1Premises | Cas1PremisesSearchResultSummary) =>
+  [premises.fullAddress.trim(), premises.postcode?.trim()].filter(Boolean).join(', ')
+
+export const addressRow = (spaceSearchResult: SpaceSearchResult) =>
+  summaryListItem('Address', premisesAddress(spaceSearchResult.premises))
 
 export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
   return {
