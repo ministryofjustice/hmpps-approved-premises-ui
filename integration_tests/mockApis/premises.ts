@@ -96,7 +96,7 @@ const stubPremiseCapacity = (args: {
   stubFor({
     request: {
       method: 'GET',
-      url: `${paths.premises.capacity({ premisesId: args.premiseCapacity.premise.id })}?${createQueryString({
+      url: `${paths.premises.capacity({ premisesId: args.premisesId })}?${createQueryString({
         startDate: args.startDate,
         endDate: args.endDate,
       })}`,
