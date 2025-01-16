@@ -2,8 +2,6 @@
 # Per environment values which override defaults in approved-premises-ui/values.yaml
 
 generic-service:
-  replicaCount: 2
-
   ingress:
     hosts:
       - approved-premises-test.hmpps.service.justice.gov.uk
