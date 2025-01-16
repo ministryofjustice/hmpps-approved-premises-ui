@@ -199,4 +199,29 @@ describe('forPagesInTask', () => {
     expect(spy).toHaveBeenCalledWith(secondApplyPageInstance, 'second')
     expect(spy).toHaveBeenCalledTimes(1)
   })
+
+  it('throws if the saved data creates an infinite loop', () => {
+    ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('applications')
+
+    const firstApplyPageInstance = {
+      next: () => 'second',
+    }
+    const secondApplyPageInstance = {
+      next: () => 'first',
+    }
+
+    FirstApplyPage.mockReturnValue(firstApplyPageInstance)
+    SecondApplyPage.mockReturnValue(secondApplyPageInstance)
+    const spy = jest.fn()
+
+    const application = applicationFactory.build({
+      data: {
+        'first-apply-section-task-1': { first: { foo: 'bar' }, second: { bar: 'foo' } },
+      },
+    })
+
+    expect(() => forPagesInTask(application, applySection1Task1, spy)).toThrow(
+      new Error('Page already visited while building task list: first. Visited pages: first, second'),
+    )
+  })
 })

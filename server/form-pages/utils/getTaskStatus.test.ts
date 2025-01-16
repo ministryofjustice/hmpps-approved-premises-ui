@@ -144,4 +144,20 @@ describe('getTaskStatus', () => {
     expect(page3Instance.errors).toHaveBeenCalled()
     expect(page3Instance.next).toHaveBeenCalled()
   })
+
+  it('throws if the saved data creates an infinite loop', () => {
+    const application = applicationFactory.build({
+      data: { 'my-task': { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' }, 'page-3': { foo: 'bar' } } },
+    })
+
+    page1Instance.errors.mockReturnValue({})
+    page1Instance.next.mockReturnValue('page-2')
+
+    page2Instance.errors.mockReturnValue({})
+    page2Instance.next.mockReturnValue('page-1')
+
+    expect(() => getTaskStatus(task, application)).toThrow(
+      new Error('Page already visited while getting task status: page-1. Visited pages: page-1, page-2'),
+    )
+  })
 })
