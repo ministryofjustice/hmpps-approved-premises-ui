@@ -64,7 +64,7 @@ export const stubNonArrivalReasonsReferenceData = (nonArrivalReasons: Array<NonA
   return stubFor({
     request: {
       method: 'GET',
-      url: '/reference-data/non-arrival-reasons',
+      url: '/cas1/reference-data/non-arrival-reasons',
     },
     response: {
       status: 200,
@@ -80,7 +80,7 @@ const stubDepartureReasonsReferenceData = (departureReasons?: Array<ReferenceDat
   stubFor({
     request: {
       method: 'GET',
-      url: '/reference-data/departure-reasons',
+      url: '/cas1/reference-data/departure-reasons',
     },
     response: {
       status: 200,
@@ -94,7 +94,7 @@ const stubMoveOnCategoriesReferenceData = (moveOnCategories?: Array<ReferenceDat
   stubFor({
     request: {
       method: 'GET',
-      url: '/reference-data/move-on-categories',
+      url: '/cas1/reference-data/move-on-categories',
     },
     response: {
       status: 200,

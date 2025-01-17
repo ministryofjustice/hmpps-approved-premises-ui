@@ -3,7 +3,7 @@ import type { Request } from 'express'
 import type { Cas1SpaceBooking, TimelineEvent } from '@approved-premises/api'
 import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
-import { ReferenceDataClient } from '../data'
+import { Cas1ReferenceDataClient } from '../data'
 import {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
@@ -18,14 +18,14 @@ import {
 } from '../testutils/factories'
 
 jest.mock('../data/placementClient')
-jest.mock('../data/referenceDataClient')
+jest.mock('../data/cas1ReferenceDataClient')
 
 describe('PlacementService', () => {
   const placementClient = new PlacementClient(null) as jest.Mocked<PlacementClient>
-  const referenceDataClient = new ReferenceDataClient(null) as jest.Mocked<ReferenceDataClient>
+  const cas1ReferenceDataClient = new Cas1ReferenceDataClient(null) as jest.Mocked<Cas1ReferenceDataClient>
 
   const placementClientFactory = jest.fn()
-  const referenceDataClientFactory = jest.fn()
+  const cas1ReferenceDataClientFactory = jest.fn()
 
   const token = 'SOME_TOKEN'
   const premisesId = 'premises-id'
@@ -35,9 +35,9 @@ describe('PlacementService', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    placementService = new PlacementService(placementClientFactory, referenceDataClientFactory)
+    placementService = new PlacementService(placementClientFactory, cas1ReferenceDataClientFactory)
     placementClientFactory.mockReturnValue(placementClient)
-    referenceDataClientFactory.mockReturnValue(referenceDataClient)
+    cas1ReferenceDataClientFactory.mockReturnValue(cas1ReferenceDataClient)
   })
 
   describe('getPlacement', () => {
@@ -111,11 +111,14 @@ describe('PlacementService', () => {
   describe('getNonArrivalReasons', () => {
     it('loads the non-arrival reasons from the reference data client', async () => {
       const nonArrivalReasons = nonArrivalReasonsFactory.buildList(20)
-      referenceDataClient.getNonArrivalReasons.mockResolvedValue(nonArrivalReasons)
+
+      cas1ReferenceDataClient.getReferenceData.mockResolvedValue(nonArrivalReasons)
 
       const result = await placementService.getNonArrivalReasons(token)
 
-      expect(result).toEqual(nonArrivalReasons.filter(({ isActive }) => isActive))
+      expect(result).toEqual(nonArrivalReasons)
+      expect(cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenCalledWith('non-arrival-reasons')
     })
   })
 
@@ -196,13 +199,13 @@ describe('PlacementService', () => {
     it('calls the getReferenceData method of the reference data client and returns a response', async () => {
       const departureReasons = departureReasonFactory.buildList(5)
 
-      referenceDataClient.getReferenceData.mockResolvedValue(departureReasons)
+      cas1ReferenceDataClient.getReferenceData.mockResolvedValue(departureReasons)
 
       const result = await placementService.getDepartureReasons(token)
 
       expect(result).toEqual(departureReasons)
-      expect(referenceDataClientFactory).toHaveBeenCalledWith(token)
-      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('departure-reasons')
+      expect(cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenCalledWith('departure-reasons')
     })
   })
 
@@ -210,13 +213,13 @@ describe('PlacementService', () => {
     it('calls the getReferenceData method of the reference data client and returns a response', async () => {
       const moveOnCategories = referenceDataFactory.buildList(5)
 
-      referenceDataClient.getReferenceData.mockResolvedValue(moveOnCategories)
+      cas1ReferenceDataClient.getReferenceData.mockResolvedValue(moveOnCategories)
 
       const result = await placementService.getMoveOnCategories(token)
 
       expect(result).toEqual(moveOnCategories)
-      expect(referenceDataClientFactory).toHaveBeenCalledWith(token)
-      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('move-on-categories')
+      expect(cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenCalledWith('move-on-categories')
     })
   })
 

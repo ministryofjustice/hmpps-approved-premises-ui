@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
-import departureReasonsJson from './departure-reasons.json'
-import moveOnCategoriesJson from './move-on-categories.json'
+import departureReasonsJson from './cas1/departure-reasons.json'
+import moveOnCategoriesJson from './cas1/move-on-categories.json'
 import destinationProvidersJson from './destination-providers.json'
 import cancellationReasonsJson from './cancellation-reasons.json'
 import lostBedReasonsJson from './lost-bed-reasons.json'
@@ -12,7 +12,7 @@ import probationRegionsJson from './probation-regions.json'
 const departureReasons = {
   request: {
     method: 'GET',
-    url: '/reference-data/departure-reasons',
+    url: '/cas1/reference-data/departure-reasons',
   },
   response: {
     status: 200,
@@ -26,7 +26,7 @@ const departureReasons = {
 const moveOnCategories = {
   request: {
     method: 'GET',
-    url: '/reference-data/move-on-categories',
+    url: '/cas1/reference-data/move-on-categories',
   },
   response: {
     status: 200,

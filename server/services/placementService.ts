@@ -10,13 +10,13 @@ import type {
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { DepartureFormSessionData, ReferenceData } from '@approved-premises/ui'
-import type { ReferenceDataClient, RestClientBuilder } from '../data'
+import type { Cas1ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
 export default class PlacementService {
   constructor(
     private readonly placementClientFactory: RestClientBuilder<PlacementClient>,
-    private readonly referenceDataClientFactory: RestClientBuilder<ReferenceDataClient>,
+    private readonly cas1ReferenceDataClientFactory: RestClientBuilder<Cas1ReferenceDataClient>,
   ) {}
 
   async getPlacement(token: string, placementId: string): Promise<Cas1SpaceBooking> {
@@ -49,10 +49,9 @@ export default class PlacementService {
   }
 
   async getNonArrivalReasons(token: string): Promise<Array<NonArrivalReason>> {
-    const client = this.referenceDataClientFactory(token)
-    const allNonArrivalReasons = await client.getNonArrivalReasons()
+    const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
 
-    return allNonArrivalReasons.filter(({ isActive }) => isActive)
+    return cas1ReferenceDataClient.getReferenceData('non-arrival-reasons')
   }
 
   async recordNonArrival(token: string, premisesId: string, placementId: string, nonArrival: Cas1NonArrival) {
@@ -73,15 +72,15 @@ export default class PlacementService {
   }
 
   async getDepartureReasons(token: string) {
-    const referenceDataClient = this.referenceDataClientFactory(token)
+    const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
 
-    return referenceDataClient.getReferenceData('departure-reasons') as Promise<Array<DepartureReason>>
+    return cas1ReferenceDataClient.getReferenceData('departure-reasons') as Promise<Array<DepartureReason>>
   }
 
   async getMoveOnCategories(token: string) {
-    const referenceDataClient = this.referenceDataClientFactory(token)
+    const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
 
-    return referenceDataClient.getReferenceData('move-on-categories') as Promise<Array<ReferenceData>>
+    return cas1ReferenceDataClient.getReferenceData('move-on-categories') as Promise<Array<ReferenceData>>
   }
 
   getDepartureSessionData(placementId: string, session: Request['session']): DepartureFormSessionData {
