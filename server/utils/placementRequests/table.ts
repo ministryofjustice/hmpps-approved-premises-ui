@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns'
 import {
-  PlacementRequest,
+  DashboardPlacementRequest,
   PlacementRequestSortField,
   PlacementRequestStatus,
   PlacementRequestTask,
@@ -33,10 +33,10 @@ export const tableRows = (tasks: Array<PlacementRequestTask>): Array<TableRow> =
 }
 
 export const dashboardTableRows = (
-  placementRequests: Array<PlacementRequest>,
+  placementRequests: Array<DashboardPlacementRequest>,
   status: PlacementRequestStatus | undefined,
 ): Array<TableRow> => {
-  return placementRequests.map((placementRequest: PlacementRequest) => {
+  return placementRequests.map((placementRequest: DashboardPlacementRequest) => {
     return [
       nameCell(placementRequest),
       tierCell(placementRequest.risks),
@@ -50,25 +50,25 @@ export const dashboardTableRows = (
   })
 }
 
-export const statusCell = (placementRequest: PlacementRequest): TableCell => {
+export const statusCell = (placementRequest: DashboardPlacementRequest): TableCell => {
   return {
     text: placementRequestStatus[placementRequest.status],
   }
 }
 
-export const requestTypeCell = (placementRequest: PlacementRequest): TableCell => {
+export const requestTypeCell = (placementRequest: DashboardPlacementRequest): TableCell => {
   return {
     text: placementRequest.isParole ? 'Parole' : 'Standard release',
   }
 }
 
-export const premisesNameCell = (placementRequest: PlacementRequest): TableCell => {
+export const premisesNameCell = (placementRequest: DashboardPlacementRequest): TableCell => {
   return {
     text: placementRequest.booking?.premisesName,
   }
 }
 
-export const durationCell = (placementRequest: PlacementRequest): TableCell => {
+export const durationCell = (placementRequest: DashboardPlacementRequest): TableCell => {
   return { text: DateFormats.formatDuration(daysToWeeksAndDays(placementRequest.duration), ['weeks', 'days']) }
 }
 
@@ -84,21 +84,21 @@ export const dueDateCell = (task: PlacementRequestTask, differenceBetweenDueDate
 }
 
 export const expectedArrivalDateCell = (
-  item: PlacementRequestTask | PlacementRequest,
+  item: PlacementRequestTask | DashboardPlacementRequest,
   format: 'short' | 'long' = 'long',
 ): TableCell => ({
   text: DateFormats.isoDateToUIDate(item.expectedArrival, { format }),
 })
 
-export const actualArrivalDateCell = (item: PlacementRequest): TableCell => ({
+export const actualArrivalDateCell = (item: DashboardPlacementRequest): TableCell => ({
   text: item.booking?.arrivalDate ? DateFormats.isoDateToUIDate(item.booking?.arrivalDate, { format: 'short' }) : 'N/A',
 })
 
-export const applicationDateCell = (item: PlacementRequest): TableCell => ({
+export const applicationDateCell = (item: DashboardPlacementRequest): TableCell => ({
   text: DateFormats.isoDateToUIDate(item.applicationDate, { format: 'short' }),
 })
 
-export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCell => {
+export const nameCell = (item: PlacementRequestTask | DashboardPlacementRequest): TableCell => {
   if ('personName' in item && item.personName) {
     return {
       html: linkTo(matchPaths.placementRequests.show({ id: item.id }), {

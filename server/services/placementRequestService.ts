@@ -1,9 +1,9 @@
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import {
+  DashboardPlacementRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
-  PlacementRequest,
   PlacementRequestDetail,
   PlacementRequestSortField,
   SortDirection,
@@ -21,7 +21,7 @@ export default class PlacementRequestService {
     page: number = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<PlacementRequest>> {
+  ): Promise<PaginatedResponse<DashboardPlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.dashboard(filters, page, sortBy, sortDirection)
@@ -33,7 +33,7 @@ export default class PlacementRequestService {
     page: number = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<PlacementRequest>> {
+  ): Promise<PaginatedResponse<DashboardPlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.dashboard(searchParams, page, sortBy, sortDirection)
