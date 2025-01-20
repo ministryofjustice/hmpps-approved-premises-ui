@@ -11,7 +11,18 @@ export const forPagesInTask = (
   const pageNames = Object.keys(task.pages)
   let pageName = pageNames?.[0]
 
+  const visited: Array<string> = []
+
   while (pageName && pageName !== 'check-your-answers') {
+    if (visited.includes(pageName)) {
+      throw new Error(
+        `Page already visited while building task list: ${pageName}. Visited pages: ${visited.join(', ')}`,
+      )
+    }
+
+    visited.push(pageName)
+    pageNames.splice(pageNames.indexOf(pageName), 1)
+
     const Page = getPage(task.id, pageName, journeyTypeFromArtifact(formArtifact))
     const body = formArtifact?.data?.[task.id]?.[pageName]
 

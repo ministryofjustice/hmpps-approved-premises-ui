@@ -8,6 +8,7 @@ import { forPagesInTask } from './forPagesInTask'
 jest.mock('../journeyTypeFromArtifact')
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()
+const ThirdApplyPage = jest.fn()
 const AssessPage = jest.fn()
 const PlacementRequestPage = jest.fn()
 
@@ -32,6 +33,7 @@ const applySection1Task1 = {
   pages: {
     first: FirstApplyPage,
     second: SecondApplyPage,
+    third: ThirdApplyPage,
   },
 }
 const applySection1Task2 = {
@@ -72,6 +74,7 @@ Apply.sections = [applySection1, applySection2]
 Apply.pages['first-apply-section-task-1'] = {
   first: FirstApplyPage,
   second: SecondApplyPage,
+  third: ThirdApplyPage,
 }
 
 const assessSection1Task1 = {
@@ -198,5 +201,61 @@ describe('forPagesInTask', () => {
     expect(spy).not.toHaveBeenCalledWith(applyPageWithNoData)
     expect(spy).toHaveBeenCalledWith(secondApplyPageInstance, 'second')
     expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  it('throws if the saved data creates an infinite loop', () => {
+    ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('applications')
+
+    const firstApplyPageInstance = {
+      next: () => 'second',
+    }
+    const secondApplyPageInstance = {
+      next: () => 'first',
+    }
+
+    FirstApplyPage.mockReturnValue(firstApplyPageInstance)
+    SecondApplyPage.mockReturnValue(secondApplyPageInstance)
+    const spy = jest.fn()
+
+    const application = applicationFactory.build({
+      data: {
+        'first-apply-section-task-1': { first: { foo: 'bar' }, second: { bar: 'foo' } },
+      },
+    })
+
+    expect(() => forPagesInTask(application, applySection1Task1, spy)).toThrow(
+      new Error('Page already visited while building task list: first. Visited pages: first, second'),
+    )
+  })
+
+  it('prevents a page being visited again through lack of previous page data', () => {
+    ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('applications')
+
+    const firstApplyPageInstance = {
+      next: () => 'third',
+    }
+    const secondApplyPageInstance = {
+      next: () => '',
+    }
+    const thirdApplyPageInstance = {
+      next: () => 'second',
+    }
+
+    FirstApplyPage.mockReturnValue(firstApplyPageInstance)
+    SecondApplyPage.mockReturnValue(secondApplyPageInstance)
+    ThirdApplyPage.mockReturnValue(thirdApplyPageInstance)
+    const spy = jest.fn()
+
+    const application = applicationFactory.build({
+      data: {
+        'first-apply-section-task-1': { first: { foo: 'bar' }, second: undefined, third: { bar: 'foo' } },
+      },
+    })
+
+    forPagesInTask(application, applySection1Task1, spy)
+
+    expect(spy).toHaveBeenCalledWith(firstApplyPageInstance, 'first')
+    expect(spy).toHaveBeenCalledWith(thirdApplyPageInstance, 'third')
+    expect(spy).toHaveBeenCalledTimes(2)
   })
 })

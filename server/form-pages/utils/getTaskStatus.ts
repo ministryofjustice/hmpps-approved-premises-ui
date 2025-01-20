@@ -23,7 +23,15 @@ const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Asse
     return 'not_started'
   }
 
+  const visited: Array<string> = []
+
   while (pageId) {
+    if (visited.includes(pageId)) {
+      throw new Error(`Page already visited while getting task status: ${pageId}. Visited pages: ${visited.join(', ')}`)
+    }
+
+    visited.push(pageId)
+
     const pageData = getPageData(applicationOrAssessment, task.id, pageId)
 
     // If there's no page data for this page, then we know it's incomplete
