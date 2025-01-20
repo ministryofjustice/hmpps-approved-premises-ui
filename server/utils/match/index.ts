@@ -5,6 +5,7 @@ import {
   Cas1Premises,
   Cas1PremisesSearchResultSummary,
   Cas1SpaceBookingCharacteristic,
+  Cas1SpaceCharacteristic,
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestDetail,
@@ -27,6 +28,7 @@ import {
   placementCriteriaLabels,
   spaceSearchCriteriaApLevelLabels,
   spaceSearchCriteriaRoomLevelLabels,
+  spaceSearchResultsCharacteristicsLabels,
 } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
@@ -154,12 +156,15 @@ export const filterToSpaceBookingCharacteristics = (
   ) as Array<Cas1SpaceBookingCharacteristic>
 }
 
-export const requirementsHtmlString = (requirements: Array<SpaceCharacteristic | PlacementCriteria>): string => {
-  let htmlString = ''
-  requirements.forEach(requirement => {
-    htmlString += `<li>${placementCriteriaLabels[requirement]}</li>`
-  })
-  return `<ul class="govuk-list">${htmlString}</ul>`
+export const requirementsHtmlString = (
+  requirements: Array<Cas1SpaceCharacteristic | PlacementCriteria>,
+  labels: Record<string, string> = placementCriteriaLabels,
+): string => {
+  const listItems = Object.keys(labels)
+    .filter(key => (requirements as Array<string>).includes(key))
+    .map(key => `<li>${labels[key]}</li>`)
+
+  return `<ul class="govuk-list govuk-list--bullet">${listItems.join('')}</ul>`
 }
 
 export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDate: string) => ({
@@ -231,9 +236,9 @@ export const addressRow = (spaceSearchResult: SpaceSearchResult) =>
 
 export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
   return {
-    key: { text: 'Characteristics' },
+    key: { text: 'Suitable for' },
     value: {
-      html: `<ul class="govuk-list govuk-list--bullet">${spaceSearchResult.premises.premisesCharacteristics.map(characteristic => `<li>${characteristic.name}</li>`).join(' ')}</ul>`,
+      html: requirementsHtmlString(spaceSearchResult.premises.characteristics, spaceSearchResultsCharacteristicsLabels),
     },
   }
 }
