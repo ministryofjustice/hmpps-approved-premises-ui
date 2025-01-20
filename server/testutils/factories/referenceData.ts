@@ -3,12 +3,12 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { ReferenceData } from '@approved-premises/ui'
 
-import departureReasonsJson from '../referenceData/stubs/departure-reasons.json'
-import moveOnCategoriesJson from '../referenceData/stubs/move-on-categories.json'
+import departureReasonsJson from '../referenceData/stubs/cas1/departure-reasons.json'
+import moveOnCategoriesJson from '../referenceData/stubs/cas1/move-on-categories.json'
 import destinationProvidersJson from '../referenceData/stubs/destination-providers.json'
 import cancellationReasonsJson from '../referenceData/stubs/cancellation-reasons.json'
 import lostBedReasonsJson from '../referenceData/stubs/lost-bed-reasons.json'
-import nonArrivalReasonsJson from '../referenceData/stubs/non-arrival-reasons.json'
+import nonArrivalReasonsJson from '../referenceData/stubs/cas1/non-arrival-reasons.json'
 import probationRegionsJson from '../referenceData/stubs/probation-regions.json'
 import { ApArea, DepartureReason, NonArrivalReason, ProbationRegion } from '../../@types/shared'
 
