@@ -199,7 +199,6 @@ context('Placement Requests', () => {
   ) => {
     const dayCapacity = occupancyViewPage.getOccupancyForDate(date, premiseCapacity)
     const premiseCapacityForDay = cas1PremiseCapacityFactory.build({
-      premise: premiseCapacity.premise,
       startDate: dayCapacity.date,
       endDate: dayCapacity.date,
       capacity: [dayCapacity],

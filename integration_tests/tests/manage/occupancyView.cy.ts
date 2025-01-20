@@ -20,9 +20,9 @@ context('Premises occupancy', () => {
 
     const startDate = DateFormats.dateObjToIsoDate(startDateObj)
     const endDate = DateFormats.dateObjToIsoDate(endDateObj)
+    const premises = cas1PremisesFactory.build()
     const premisesCapacity = cas1PremiseCapacityFactory.build({ startDate, endDate })
 
-    const premises = premisesCapacity.premise
     const placements = cas1SpaceBookingSummaryFactory.buildList(30)
     const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
