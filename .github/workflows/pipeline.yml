@@ -156,7 +156,7 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
     with:
-      environment: ${{ inputs.environment || 'dev' }}
+      environment: ${{ github.event.inputs.environment || 'dev' }}
 
   build:
     name: Build docker image from hmpps-github-actions
@@ -177,13 +177,13 @@ jobs:
       - build
       - helm_lint
     runs-on: ubuntu-latest
-    environment: dev
+    environment: development
     steps:
       - uses: trstringer/manual-approval@v1 # this has to be a specific process...
         with:
           approvers: approved-premises-team
           minimum-approvals: 1
-          issue-title: "Deploy branch to dev environment"
+          issue-title: "Deploy branch to development environment"
           issue-body: "Please approve or deny the deployment this branch"
           exclude-workflow-initiator-as-approver: false
 
@@ -194,7 +194,7 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
     with:
-      environment: 'dev'
+      environment: 'development'
       app_version: '${{ needs.build.outputs.app_version }}'
   # deploy_preprod:
   #   name: Deploy to pre-production environment
