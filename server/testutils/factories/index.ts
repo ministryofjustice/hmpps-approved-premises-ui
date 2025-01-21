@@ -93,6 +93,7 @@ import cas1NewDepartureFactory from './cas1NewDeparture'
 import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
+import cas1PremisesDaySummaryFactory from './cas1PremisesDaySummary'
 
 export {
   acctAlertFactory,
@@ -121,6 +122,7 @@ export {
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
   cas1PremisesFactory,
+  cas1PremisesDaySummaryFactory,
   cas1ReferenceDataFactory,
   cas1SpaceBookingDatesFactory,
   cas1SpaceBookingDepartureFactory,

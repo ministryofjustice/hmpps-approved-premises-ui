@@ -8,6 +8,7 @@ import {
   bedSummaryFactory,
   cas1PremiseCapacityFactory,
   cas1PremisesBasicSummaryFactory,
+  cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
@@ -126,6 +127,19 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, startDate)
+    })
+  })
+
+  describe('getDaySummary', () => {
+    it('should return the day summary for a premises', async () => {
+      const date = '2025-05-20'
+      const daySummary = cas1PremisesDaySummaryFactory.build()
+      premisesClient.getDaySummary.mockResolvedValue(daySummary)
+      const result = await service.getDaySummary({ token, premisesId, date })
+
+      expect(result).toEqual(daySummary)
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getDaySummary).toHaveBeenCalledWith({ premisesId, date })
     })
   })
 

@@ -4,7 +4,13 @@ import { ObjectWithDateParts } from '@approved-premises/ui'
 import { PremisesService } from '../../../services'
 
 import paths from '../../../paths/manage'
-import { Calendar, durationSelectOptions, occupancyCalendar } from '../../../utils/premises/occupancy'
+import {
+  Calendar,
+  daySummaryRows,
+  durationSelectOptions,
+  generateDaySummaryText,
+  occupancyCalendar,
+} from '../../../utils/premises/occupancy'
 import { DateFormats, dateAndTimeInputsAreValidDates, daysToWeeksAndDays } from '../../../utils/dateUtils'
 import { placementDates } from '../../../utils/match'
 import { fetchErrorsAndUserInput, generateErrorMessages, generateErrorSummary } from '../../../utils/validation'
@@ -58,6 +64,25 @@ export default class ApOccupancyViewController {
         durationOptions: durationSelectOptions(String(durationDays)),
         errors,
         errorSummary,
+      })
+    }
+  }
+
+  dayView(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { token } = req.user
+      const { premisesId, date } = req.params
+      const premises = await this.premisesService.find(token, premisesId)
+      const daySummary = await this.premisesService.getDaySummary({ token, premisesId, date })
+
+      return res.render('manage/premises/occupancy/dayView', {
+        premises,
+        pageHeading: daySummary ? DateFormats.isoDateToUIDate(daySummary.forDate) : '',
+        backLink: paths.premises.occupancy.view({ premisesId }),
+        previousDayLink: daySummary && paths.premises.occupancy.day({ premisesId, date: daySummary.previousDate }),
+        nextDayLink: daySummary && paths.premises.occupancy.day({ premisesId, date: daySummary.nextDate }),
+        daySummaryRows: daySummary && daySummaryRows(daySummary),
+        daySummaryText: daySummary && generateDaySummaryText(daySummary),
       })
     }
   }

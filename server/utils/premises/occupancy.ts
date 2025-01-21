@@ -1,7 +1,9 @@
-import type { Cas1PremiseCapacityForDay } from '@approved-premises/api'
+import { Cas1PremiseCapacityForDay, Cas1PremisesDaySummary } from '@approved-premises/api'
 import { SelectOption } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
-import paths from '../../paths/manage'
+import { occupancyCriteriaMap } from '../match/occupancy'
+import managePaths from '../../paths/manage'
+import { summaryListItem } from '../formUtils'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -41,7 +43,7 @@ export const occupancyCalendar = (capacity: Array<Cas1PremiseCapacityForDay>, pr
       status,
       availability,
       booked: bookingCount,
-      link: `${paths.premises.occupancy.day({ premisesId })}?date=${date}`,
+      link: managePaths.premises.occupancy.day({ premisesId, date }),
     }
 
     currentMonth.days.push(calendarDay)
@@ -64,3 +66,35 @@ export const durationSelectOptions = (durationDays?: string): Array<SelectOption
     text: label,
     selected: value === durationDays || undefined,
   }))
+
+export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): string => {
+  const {
+    capacity: { characteristicAvailability, availableBedCount, bookingCount },
+  } = daySummary
+  const overbookedCriteria = characteristicAvailability
+    .map(({ characteristic, availableBedsCount, bookingsCount }) =>
+      bookingsCount > availableBedsCount ? characteristic : undefined,
+    )
+    .filter(Boolean)
+  const messages: Array<string> = []
+  if (bookingCount > availableBedCount) messages.push('has bookings exceeding its available capacity')
+  if (overbookedCriteria.length)
+    messages.push(
+      `is overbooked on spaces with the following ${overbookedCriteria.length > 1 ? 'criteria' : 'criterion'}: ${overbookedCriteria.map(characteristic => occupancyCriteriaMap[characteristic].toLowerCase()).join(', ')}`,
+    )
+  return messages.length ? `This AP ${messages.join(' and ')}.` : ''
+}
+
+export const daySummaryRows = (daySummary: Cas1PremisesDaySummary) => {
+  const {
+    capacity: { totalBedCount, bookingCount, availableBedCount },
+  } = daySummary
+  return {
+    rows: [
+      summaryListItem('Capacity', String(totalBedCount)),
+      summaryListItem('Booked spaces', String(bookingCount)),
+      summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
+      summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
+    ],
+  }
+}

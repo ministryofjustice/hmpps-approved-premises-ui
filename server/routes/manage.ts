@@ -246,6 +246,12 @@ export default function routes(controllers: Controllers, router: Router, service
     allowedPermissions: ['cas1_premises_view'],
   })
 
+  // Occupancy for day
+  get(paths.premises.occupancy.day.pattern, apOccupancyViewController.dayView(), {
+    auditEvent: 'VIEW_DAY_SUMMARY',
+    allowedPermissions: ['cas1_premises_view'],
+  })
+
   // Bookings
   get(paths.bookings.show.pattern, bookingsController.show(), {
     auditEvent: 'SHOW_BOOKING',

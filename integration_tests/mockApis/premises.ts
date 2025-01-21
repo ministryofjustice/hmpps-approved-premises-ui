@@ -2,6 +2,7 @@ import type {
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
+  Cas1PremisesDaySummary,
   ExtendedPremisesSummary,
   ApprovedPremisesSummary as PremisesSummary,
   StaffMember,
@@ -110,6 +111,32 @@ const stubPremiseCapacity = (args: {
     },
   })
 
+const stubPremiseDaySummary = (args: {
+  premisesId: string
+  date: string
+  premisesDaySummary: Cas1PremisesDaySummary
+  sortBy?: string
+  sortDirection?: string
+}) => {
+  const queryString: string = createQueryString({
+    sortBy: args.sortBy || undefined,
+    sortDirection: args.sortDirection || undefined,
+  })
+  return stubFor({
+    request: {
+      method: 'GET',
+      url: `${paths.premises.daySummary({ premisesId: args.premisesId, date: args.date })}${queryString ? `?${queryString}` : ''}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.premisesDaySummary,
+    },
+  })
+}
+
 export default {
   stubAllPremises,
   stubCas1AllPremises,
@@ -117,4 +144,5 @@ export default {
   stubSinglePremises,
   stubPremisesStaffMembers,
   stubPremiseCapacity,
+  stubPremiseDaySummary,
 }

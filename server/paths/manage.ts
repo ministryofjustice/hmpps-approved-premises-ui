@@ -95,7 +95,7 @@ const paths = {
     },
     occupancy: {
       view: singlePremisesPath.path('occupancy'),
-      day: singlePremisesPath.path('occupancy/day'),
+      day: singlePremisesPath.path('occupancy/day/:date'),
     },
   },
 

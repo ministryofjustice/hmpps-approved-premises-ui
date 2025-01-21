@@ -4,6 +4,9 @@ import type {
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
+  Cas1PremisesDaySummary,
+  Cas1SpaceBookingCharacteristic,
+  Cas1SpaceBookingDaySummarySortField,
   Cas1SpaceBookingSummarySortField,
   SortDirection,
   StaffMember,
@@ -42,6 +45,19 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
 
     return premisesClient.getCapacity(premisesId, startDate, endDate || startDate)
+  }
+
+  async getDaySummary(args: {
+    token: string
+    premisesId: string
+    date: string
+    bookingsCriteriaFilter?: Array<Cas1SpaceBookingCharacteristic>
+    sortBy?: Cas1SpaceBookingDaySummarySortField
+    sortDirection?: SortDirection
+  }): Promise<Cas1PremisesDaySummary> {
+    const { token, ...parameters } = args
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getDaySummary(parameters)
   }
 
   async find(token: string, id: string): Promise<Cas1Premises> {

@@ -1,14 +1,18 @@
-import type { Cas1Premises } from '@approved-premises/api'
+import type { Cas1Premises, Cas1PremisesDaySummary } from '@approved-premises/api'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { PremisesService } from 'server/services'
 import ApOccupancyViewController from './apOccupancyViewController'
 
-import { cas1PremiseCapacityFactory, cas1PremisesFactory } from '../../../testutils/factories'
+import {
+  cas1PremiseCapacityFactory,
+  cas1PremisesDaySummaryFactory,
+  cas1PremisesFactory,
+} from '../../../testutils/factories'
 
 import paths from '../../../paths/manage'
-import { occupancyCalendar } from '../../../utils/premises/occupancy'
+import { daySummaryRows, generateDaySummaryText, occupancyCalendar } from '../../../utils/premises/occupancy'
 import { DateFormats } from '../../../utils/dateUtils'
 
 describe('AP occupancyViewController', () => {
@@ -109,6 +113,41 @@ describe('AP occupancyViewController', () => {
       )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getCapacity).not.toHaveBeenCalled()
+    })
+  })
+  describe('dayView', () => {
+    const mockPremises = async (date: string = DateFormats.dateObjToIsoDate(new Date())) => {
+      const premisesSummary: Cas1Premises = cas1PremisesFactory.build({ id: premisesId })
+      const premisesDaySummary: Cas1PremisesDaySummary = cas1PremisesDaySummaryFactory.build({ forDate: date })
+      premisesService.getDaySummary.mockResolvedValue(premisesDaySummary)
+      premisesService.find.mockResolvedValue(premisesSummary)
+      request.params.date = date
+      const requestHandler = occupancyViewController.dayView()
+      await requestHandler(request, response, next)
+      return {
+        premisesSummary,
+        premisesDaySummary,
+      }
+    }
+
+    it('should render the premises day summary', async () => {
+      const date = '2025-01-01'
+      const { premisesSummary, premisesDaySummary } = await mockPremises(date)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/occupancy/dayView',
+        expect.objectContaining({
+          premises: premisesSummary,
+          pageHeading: DateFormats.isoDateToUIDate(date),
+          backLink: paths.premises.occupancy.view({ premisesId }),
+          previousDayLink: paths.premises.occupancy.day({ premisesId, date: '2024-12-31' }),
+          nextDayLink: paths.premises.occupancy.day({ premisesId, date: '2025-01-02' }),
+          daySummaryRows: daySummaryRows(premisesDaySummary),
+          daySummaryText: generateDaySummaryText(premisesDaySummary),
+        }),
+      )
+      expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.getDaySummary).toHaveBeenCalledWith({ token, premisesId, date })
     })
   })
 })

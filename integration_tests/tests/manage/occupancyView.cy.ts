@@ -1,6 +1,10 @@
 import { addDays } from 'date-fns'
+import { faker } from '@faker-js/faker'
 import {
   cas1PremiseCapacityFactory,
+  cas1PremiseCapacityForDayFactory,
+  cas1PremisesBasicSummaryFactory,
+  cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
   staffMemberFactory,
@@ -11,6 +15,8 @@ import { OccupancyViewPage, PremisesShowPage } from '../../pages/manage'
 import { signIn } from '../signIn'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../../pages/page'
+import { premiseCharacteristicAvailability } from '../../../server/testutils/factories/cas1PremiseCapacity'
+import OccupancyDayViewPage from '../../pages/manage/occupancyDayView'
 
 context('Premises occupancy', () => {
   describe('show', () => {
@@ -155,6 +161,94 @@ context('Premises occupancy', () => {
         // When I navigate to the view premises occupancy page
         // Then I should see an error
         OccupancyViewPage.visitUnauthorised(premises)
+      })
+    })
+  })
+})
+
+context('Premises day occupancy', () => {
+  describe('day', () => {
+    const dateObj = faker.date.soon()
+    const date = DateFormats.dateObjToIsoDate(dateObj)
+    const premises = cas1PremisesBasicSummaryFactory.build()
+
+    const getDaySummary = (overBook = false) => {
+      const characteristicAvailability = overBook
+        ? [
+            premiseCharacteristicAvailability.strictlyOverbooked().build({ characteristic: 'isSingle' }),
+            premiseCharacteristicAvailability.strictlyOverbooked().build({ characteristic: 'hasEnSuite' }),
+          ]
+        : [
+            premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
+            premiseCharacteristicAvailability.available().build({ characteristic: 'hasEnSuite' }),
+          ]
+
+      const capacity = cas1PremiseCapacityForDayFactory.available().build({
+        characteristicAvailability,
+      })
+      return cas1PremisesDaySummaryFactory.build({ forDate: date, capacity })
+    }
+
+    beforeEach(() => {
+      cy.task('reset')
+      // Given there is a premises in the database
+      cy.task('stubSinglePremises', premises)
+    })
+
+    describe('with premises view permission', () => {
+      beforeEach(() => {
+        // Given I am logged in as a future manager with premises_view permission
+        signIn(['future_manager'], ['cas1_premises_view'])
+      })
+
+      it('should show the day summary if spaces available', () => {
+        const premisesDaySummary = getDaySummary()
+        cy.task('stubPremiseDaySummary', { premisesId: premises.id, date, premisesDaySummary })
+        // When I visit premises day summary page for a day with no characteristic overbooking
+        const summaryPage = OccupancyDayViewPage.visit(premises, date)
+        // I should see the occupancy summary for the day
+        summaryPage.shouldShowDaySummaryDetails(premisesDaySummary)
+        // And I should see a warning banner
+        summaryPage.shouldNotShowBanner()
+      })
+
+      it('should show the day summary and warning if overbooked', () => {
+        const premisesDaySummary = getDaySummary(true)
+        cy.task('stubPremiseDaySummary', { premisesId: premises.id, date, premisesDaySummary })
+        // When I visit premises day summary page for a day with a characteristic overbooking
+        const summaryPage = OccupancyDayViewPage.visit(premises, date)
+        // I should see the occupancy summary for the day
+        summaryPage.shouldShowDaySummaryDetails(premisesDaySummary)
+        // And I should see a warning banner
+        summaryPage.shouldShowBanner(
+          'This AP is overbooked on spaces with the following criteria: single room, en-suite',
+        )
+      })
+
+      it('should allow navigation to the next day and back again', () => {
+        cy.task('stubPremiseDaySummary', { premisesId: premises.id, date, premisesDaySummary: getDaySummary() })
+        const nextDate = DateFormats.dateObjToIsoDate(addDays(dateObj, 1))
+        const premisesNextDaySummary = cas1PremisesDaySummaryFactory.build({ forDate: nextDate })
+        cy.task('stubPremiseDaySummary', {
+          premisesId: premises.id,
+          date: nextDate,
+          premisesDaySummary: premisesNextDaySummary,
+        })
+        // Given I visit premises day summary page
+        const summaryPage = OccupancyDayViewPage.visit(premises, date)
+        // When I click on Next day, Then I navigate to the next day
+        summaryPage.shouldNavigateToDay('Next day', nextDate)
+        // When I click on Previous day, Then I navigate back to the date I started on
+        summaryPage.shouldNavigateToDay('Previous day', date)
+      })
+    })
+    describe('Without premises view permission', () => {
+      it('should not be availble if the user lacks premises_view permission', () => {
+        // Given I am logged in as a future manager without premises_view permission
+        signIn(['future_manager'])
+        // When I navigate to the view premises occupancy page
+        // Then I should see an error
+        OccupancyDayViewPage.visitUnauthorised(premises, date)
       })
     })
   })

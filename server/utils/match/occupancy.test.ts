@@ -88,7 +88,7 @@ describe('dayAvailabilityStatus', () => {
         characteristicAvailability: [
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
-          premiseCharacteristicAvailability.overbooked().build({ characteristic: 'hasEnSuite' }),
+          premiseCharacteristicAvailability.overbookedOrFull().build({ characteristic: 'hasEnSuite' }),
         ],
       })
 
@@ -106,7 +106,7 @@ describe('dayAvailabilityStatus', () => {
         characteristicAvailability: [
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
-          premiseCharacteristicAvailability.overbooked().build({ characteristic: 'hasEnSuite' }),
+          premiseCharacteristicAvailability.overbookedOrFull().build({ characteristic: 'hasEnSuite' }),
         ],
       })
 

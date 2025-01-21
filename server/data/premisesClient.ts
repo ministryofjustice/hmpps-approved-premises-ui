@@ -4,7 +4,10 @@ import type {
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
+  Cas1PremisesDaySummary,
   Cas1SpaceBooking,
+  Cas1SpaceBookingCharacteristic,
+  Cas1SpaceBookingDaySummarySortField,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
   SortDirection,
@@ -46,6 +49,20 @@ export default class PremisesClient {
       path: paths.premises.capacity({ premisesId }),
       query: { startDate, endDate },
     })) as Cas1PremiseCapacity
+  }
+
+  async getDaySummary(args: {
+    premisesId: string
+    date: string
+    bookingsCriteriaFilter?: Array<Cas1SpaceBookingCharacteristic>
+    sortDirection?: SortDirection
+    sortBy?: Cas1SpaceBookingDaySummarySortField
+  }): Promise<Cas1PremisesDaySummary> {
+    const { premisesId, date, sortDirection, sortBy, bookingsCriteriaFilter } = args
+    return (await this.restClient.get({
+      path: paths.premises.daySummary({ premisesId, date }),
+      query: { sortDirection, sortBy, bookingsCriteriaFilter: bookingsCriteriaFilter?.join(',') },
+    })) as Cas1PremisesDaySummary
   }
 
   async getPlacements(args: {
