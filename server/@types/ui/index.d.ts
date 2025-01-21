@@ -28,6 +28,7 @@ import {
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
+import { ApTypeCriteria } from '../../utils/placementCriteriaUtils'
 
 interface TasklistPage {
   body: Record<string, unknown>
@@ -470,3 +471,14 @@ export type DepartureFormSessionData = Partial<
     notes: string
   }
 >
+
+export type SpaceSearchState = {
+  postcode: string
+  apType: ApTypeCriteria
+  apCriteria: Array<SpaceSearchApCriteria>
+  roomCriteria: Array<SpaceSearchRoomCriteria>
+  startDate: string
+  durationDays: number
+  arrivalDate?: string
+  departureDate?: string
+}
