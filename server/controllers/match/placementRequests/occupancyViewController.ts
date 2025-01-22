@@ -1,5 +1,4 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
@@ -19,8 +18,6 @@ import paths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
 
-type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
-
 interface ViewRequest extends Request {
   params: {
     id: string
@@ -34,9 +31,6 @@ interface ViewDayRequest extends Request {
     premisesId: string
     date: string
   }
-  query: {
-    criteria: CriteriaQuery
-  }
 }
 
 export default class {
@@ -45,16 +39,6 @@ export default class {
     private readonly premisesService: PremisesService,
     private readonly spaceService: SpaceService,
   ) {}
-
-  private criteriaAsArray(
-    criteria?: Cas1SpaceBookingCharacteristic | Array<Cas1SpaceBookingCharacteristic>,
-  ): Array<Cas1SpaceBookingCharacteristic> {
-    let filterCriteria: Array<Cas1SpaceBookingCharacteristic>
-    if (criteria) {
-      filterCriteria = Array.isArray(criteria) ? criteria : [criteria]
-    }
-    return filterCriteria
-  }
 
   view(): TypedRequestHandler<Request> {
     return async (req: ViewRequest, res: Response) => {
@@ -196,23 +180,28 @@ export default class {
     return async (req: ViewDayRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId, date } = req.params
-      const { criteria } = req.query
 
-      const backlink = req.headers.referer
+      const searchState = this.spaceService.getSpaceSearchState(id, req.session)
+
+      if (!searchState) {
+        return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
+      }
+
+      const backlink = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
       const dayCapacity = premisesCapacity.capacity[0]
-      const status = dayAvailabilityStatus(dayCapacity, this.criteriaAsArray(criteria))
+      const status = dayAvailabilityStatus(dayCapacity, searchState.roomCriteria)
 
-      res.render('match/placementRequests/occupancyView/viewDay', {
+      return res.render('match/placementRequests/occupancyView/viewDay', {
         backlink,
         pageHeading: dayAvailabilityStatusMap[status],
         placementRequest,
         premises,
         date,
         status,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, this.criteriaAsArray(criteria)),
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, searchState.roomCriteria),
       })
     }
   }
