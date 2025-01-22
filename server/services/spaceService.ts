@@ -4,19 +4,20 @@ import type {
   PlacementRequest,
   PlacementRequestDetail,
 } from '@approved-premises/api'
-import type { SpaceSearchParametersUi, SpaceSearchState } from '@approved-premises/ui'
+import type { SpaceSearchState } from '@approved-premises/ui'
 import type { Request } from 'express'
 import { RestClientBuilder } from '../data'
 import SpaceClient from '../data/spaceClient'
-import { mapUiParamsForApi } from '../utils/match'
+
+import { spaceSearchStateToApiPayload } from '../utils/match/spaceSearch'
 
 export default class SpaceService {
   constructor(private readonly spaceClientFactory: RestClientBuilder<SpaceClient>) {}
 
-  async search(token: string, params: SpaceSearchParametersUi) {
+  async search(token: string, searchState: SpaceSearchState) {
     const spaceClient = this.spaceClientFactory(token)
 
-    return spaceClient.search(mapUiParamsForApi(params))
+    return spaceClient.search(spaceSearchStateToApiPayload(searchState))
   }
 
   async createSpaceBooking(
@@ -37,13 +38,15 @@ export default class SpaceService {
     placementRequestId: PlacementRequestDetail['id'],
     session: Request['session'],
     data: Partial<SpaceSearchState>,
-  ): void {
+  ): SpaceSearchState {
     session.spaceSearch = session.spaceSearch || {}
 
     session.spaceSearch[placementRequestId] = {
       ...this.getSpaceSearchState(placementRequestId, session),
       ...data,
     }
+
+    return session.spaceSearch[placementRequestId]
   }
 
   removeSpaceSearchState(placementRequestId: PlacementRequestDetail['id'], session: Request['session']): void {

@@ -4,14 +4,20 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import SpaceSearchController from './spaceSearchController'
 import {
   placementRequestDetailFactory,
-  spaceSearchParametersUiFactory,
   spaceSearchResultsFactory,
+  spaceSearchStateFactory,
 } from '../../../testutils/factories'
 
 import { PlacementRequestService, SpaceService } from '../../../services'
-import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
 import matchPaths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
+import {
+  apTypeRadioItems,
+  checkBoxesForCriteria,
+  initialiseSearchState,
+  spaceSearchCriteriaApLevelLabels,
+  spaceSearchCriteriaRoomLevelLabels,
+} from '../../../utils/match/spaceSearch'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -21,7 +27,6 @@ describe('spaceSearchController', () => {
   const request: DeepMocked<Request> = createMock<Request>({
     params: { id: placementRequestDetail.id },
     user: { token },
-    body: {},
   })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
@@ -42,52 +47,62 @@ describe('spaceSearchController', () => {
   })
 
   describe('search', () => {
-    describe('body params are sent', () => {
-      it('it should render the search template with body params taking precedence over the placement request params', async () => {
-        const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
-        const body = spaceSearchParametersUiFactory.build()
+    it('it should render the search template with the search state found in session', async () => {
+      const searchState = spaceSearchStateFactory.build()
+      spaceService.getSpaceSearchState.mockReturnValue(searchState)
 
-        const requestHandler = spaceSearchController.search()
+      const requestHandler = spaceSearchController.search()
+      await requestHandler(request, response, next)
 
-        await requestHandler({ ...request, body }, response, next)
-
-        expect(response.render).toHaveBeenCalledWith('match/search', {
-          pageHeading: 'Find a space in an Approved Premises',
-          spaceSearchResults,
-          placementRequest: placementRequestDetail,
-          placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
-          startDate: placementRequestDetail.expectedArrival,
-          formPath,
-          ...query,
-          ...body,
-        })
-        expect(spaceService.search).toHaveBeenCalledWith(token, { ...query, ...body })
-        expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
+      expect(response.render).toHaveBeenCalledWith('match/search', {
+        pageHeading: 'Find a space in an Approved Premises',
+        spaceSearchResults,
+        placementRequest: placementRequestDetail,
+        placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
+        formPath,
+        formValues: searchState,
+        apTypeRadioItems: apTypeRadioItems(searchState.apType),
+        criteriaCheckboxGroups: [
+          checkBoxesForCriteria(
+            'AP requirements',
+            'apCriteria',
+            spaceSearchCriteriaApLevelLabels,
+            searchState.apCriteria,
+          ),
+          checkBoxesForCriteria(
+            'Room requirements',
+            'roomCriteria',
+            spaceSearchCriteriaRoomLevelLabels,
+            searchState.roomCriteria,
+          ),
+        ],
       })
+      expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceService.search).toHaveBeenCalledWith(token, searchState)
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
-  })
 
-  describe('no body params are sent', () => {
-    it('it should render the search template by searching with the placement request variables ', async () => {
-      const query = mapPlacementRequestToSpaceSearchParams(placementRequestDetail)
+    it('should create the space search state if not found in session', async () => {
+      const searchState = spaceSearchStateFactory.build()
+
+      spaceService.getSpaceSearchState.mockReturnValue(undefined)
+      spaceService.setSpaceSearchState.mockReturnValue(searchState)
+
       const requestHandler = spaceSearchController.search()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/search',
         expect.objectContaining({
-          pageHeading: 'Find a space in an Approved Premises',
-          targetPostcodeDistrict: placementRequestDetail.location,
-          spaceSearchResults,
-          placementRequest: placementRequestDetail,
-          startDate: placementRequestDetail.expectedArrival,
-          formPath,
-          ...query,
-          ...mapPlacementRequestToSpaceSearchParams(placementRequestDetail),
+          formValues: searchState,
         }),
       )
-      expect(spaceService.search).toHaveBeenCalledWith(token, query)
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
+      expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(
+        placementRequestDetail.id,
+        request.session,
+        initialiseSearchState(placementRequestDetail),
+      )
     })
   })
 })

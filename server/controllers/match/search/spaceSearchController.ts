@@ -1,13 +1,17 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
-import { SpaceSearchParametersUi } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
 
-import { objectIfNotEmpty } from '../../../utils/utils'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
+import {
+  apTypeRadioItems,
+  checkBoxesForCriteria,
+  initialiseSearchState,
+  spaceSearchCriteriaApLevelLabels,
+  spaceSearchCriteriaRoomLevelLabels,
+} from '../../../utils/match/spaceSearch'
 
 export default class SpaceSearchController {
   constructor(
@@ -18,17 +22,18 @@ export default class SpaceSearchController {
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const searchParams = mapPlacementRequestToSpaceSearchParams(placementRequest)
 
-      const query = objectIfNotEmpty<SpaceSearchParametersUi>(searchParams)
-      const body = objectIfNotEmpty<SpaceSearchParametersUi>(req.body)
+      let searchState = this.spaceService.getSpaceSearchState(req.params.id, req.session)
 
-      const params = {
-        ...query,
-        ...body,
+      if (!searchState) {
+        searchState = this.spaceService.setSpaceSearchState(
+          placementRequest.id,
+          req.session,
+          initialiseSearchState(placementRequest),
+        )
       }
 
-      const spaceSearchResults = await this.spaceService.search(req.user.token, params)
+      const spaceSearchResults = await this.spaceService.search(req.user.token, searchState)
 
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
@@ -36,7 +41,22 @@ export default class SpaceSearchController {
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
-        ...params,
+        formValues: searchState,
+        apTypeRadioItems: apTypeRadioItems(searchState.apType),
+        criteriaCheckboxGroups: [
+          checkBoxesForCriteria(
+            'AP requirements',
+            'apCriteria',
+            spaceSearchCriteriaApLevelLabels,
+            searchState.apCriteria,
+          ),
+          checkBoxesForCriteria(
+            'Room requirements',
+            'roomCriteria',
+            spaceSearchCriteriaRoomLevelLabels,
+            searchState.roomCriteria,
+          ),
+        ],
       })
     }
   }

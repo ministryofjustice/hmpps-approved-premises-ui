@@ -473,6 +473,7 @@ export type DepartureFormSessionData = Partial<
 >
 
 export type SpaceSearchState = {
+  applicationId: string
   postcode: string
   apType: ApTypeCriteria
   apCriteria: Array<SpaceSearchApCriteria>

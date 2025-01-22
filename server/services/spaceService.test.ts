@@ -6,8 +6,8 @@ import {
   cas1SpaceBookingFactory,
   newSpaceBookingFactory,
   placementRequestDetailFactory,
-  spaceSearchParametersUiFactory,
   spaceSearchResultsFactory,
+  spaceSearchStateFactory,
 } from '../testutils/factories'
 import SpaceService from './spaceService'
 
@@ -29,10 +29,11 @@ describe('spaceService', () => {
   describe('search', () => {
     it('calls the all method on the space client', async () => {
       const spaceSearchResults = spaceSearchResultsFactory.build()
-      const params = spaceSearchParametersUiFactory.build()
+      const searchState = spaceSearchStateFactory.build()
+
       spaceClient.search.mockResolvedValue(spaceSearchResults)
 
-      const result = await service.search(token, params)
+      const result = await service.search(token, searchState)
 
       expect(result).toEqual(spaceSearchResults)
 
@@ -59,6 +60,7 @@ describe('spaceService', () => {
   describe('space search state', () => {
     const placementRequest = placementRequestDetailFactory.build()
     const state: SpaceSearchState = {
+      applicationId: 'application-id',
       postcode: 'B12',
       apType: 'normal',
       apCriteria: ['isCatered'],
@@ -79,6 +81,7 @@ describe('spaceService', () => {
 
     it('sets the space search state with initial data', () => {
       const initialSearchState: SpaceSearchState = {
+        applicationId: 'application-id',
         postcode: 'M21',
         apType: 'isMHAPElliottHouse',
         apCriteria: ['acceptsSexOffenders'],
@@ -88,8 +91,9 @@ describe('spaceService', () => {
       }
       const request = createMock<Request>({ session: {} })
 
-      service.setSpaceSearchState(placementRequest.id, request.session, initialSearchState)
+      const result = service.setSpaceSearchState(placementRequest.id, request.session, initialSearchState)
 
+      expect(result).toEqual(initialSearchState)
       expect(request.session.spaceSearch[placementRequest.id]).toEqual(initialSearchState)
     })
 
@@ -97,21 +101,24 @@ describe('spaceService', () => {
       const request = createMock<Request>({
         session: { spaceSearch: { [placementRequest.id]: state } },
       })
-
-      service.setSpaceSearchState(placementRequest.id, request.session, {
-        postcode: 'M16',
-        apType: 'isPIPE',
-        apCriteria: ['isSuitableForVulnerable'],
-      })
-
-      expect(request.session.spaceSearch[placementRequest.id]).toEqual({
+      const expectedSearchState = {
+        applicationId: 'application-id',
         postcode: 'M16',
         apType: 'isPIPE',
         apCriteria: ['isSuitableForVulnerable'],
         roomCriteria: ['hasEnSuite'],
         startDate: '2025-02-15',
         durationDays: 84,
+      }
+
+      const result = service.setSpaceSearchState(placementRequest.id, request.session, {
+        postcode: 'M16',
+        apType: 'isPIPE',
+        apCriteria: ['isSuitableForVulnerable'],
       })
+
+      expect(result).toEqual(expectedSearchState)
+      expect(request.session.spaceSearch[placementRequest.id]).toEqual(expectedSearchState)
     })
 
     it('removes the existing space search state for a given placement request', () => {

@@ -7,24 +7,18 @@ import {
   personFactory,
   placementRequestDetailFactory,
   restrictedPersonFactory,
-  spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import {
   addressRow,
-  apTypeLabelsForRadioInput,
   apTypeRow,
   apTypeWithViewTimelineActionRow,
   characteristicsRow,
-  checkBoxesForCriteria,
   distanceRow,
   filterOutAPTypes,
   filterToSpaceBookingCharacteristics,
-  groupedCheckboxes,
-  groupedCriteria,
   keyDetails,
-  mapUiParamsForApi,
   occupancyViewLink,
   placementLength,
   preferredPostcodeRow,
@@ -36,34 +30,17 @@ import {
   startDateObjFromParams,
   summaryCardRows,
 } from '.'
-import { placementCriteriaLabels, spaceSearchCriteriaRoomLevelLabels } from '../placementCriteriaUtils'
-import * as formUtils from '../formUtils'
+import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { spaceSearchCriteriaRoomLevelLabels } from './spaceSearch'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('matchUtils', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-  })
-
-  describe('mapUiParamsForApi', () => {
-    it('converts string properties to numbers', () => {
-      const uiParams = spaceSearchParametersUiFactory.build()
-
-      expect(mapUiParamsForApi(uiParams)).toEqual({
-        durationInDays: Number(uiParams.durationInDays),
-        requirements: {
-          apTypes: [uiParams.requirements.apType],
-          spaceCharacteristics: uiParams.requirements.spaceCharacteristics,
-        },
-        applicationId: uiParams.applicationId,
-        startDate: uiParams.startDate,
-        targetPostcodeDistrict: uiParams.targetPostcodeDistrict,
-      })
-    })
   })
 
   describe('premisesAddress', () => {
@@ -251,48 +228,6 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('checkBoxesForCriteria', () => {
-    it('returns an array of checkboxes with the selectedValues selected and any empty values removed', () => {
-      const options = {
-        isESAP: 'ESAP',
-        isIAP: 'IAP',
-        isSemiSpecialistMentalHealth: 'Semi specialist mental health',
-      }
-      const result = checkBoxesForCriteria(options, ['isESAP', 'isIAP'])
-
-      expect(result).toEqual([
-        {
-          checked: true,
-          id: 'isESAP',
-          text: 'ESAP',
-          value: 'isESAP',
-        },
-        { text: 'IAP', value: 'isIAP', id: 'isIAP', checked: true },
-        {
-          checked: false,
-          id: 'isSemiSpecialistMentalHealth',
-          text: 'Semi specialist mental health',
-          value: 'isSemiSpecialistMentalHealth',
-        },
-      ])
-    })
-  })
-
-  describe('groupedCheckboxes', () => {
-    it('returns checkboxes grouped by category', () => {
-      expect(groupedCheckboxes()).toEqual({
-        'AP requirements': {
-          inputName: 'spaceCharacteristics',
-          items: groupedCriteria.offenceAndRisk.items,
-        },
-        'Room requirements': {
-          inputName: 'spaceCharacteristics',
-          items: groupedCriteria.accessNeeds.items,
-        },
-      })
-    })
-  })
-
   describe('placementLength', () => {
     it('formats the number of days as weeks', () => {
       expect(placementLength(16)).toEqual('2 weeks, 2 days')
@@ -462,63 +397,6 @@ describe('matchUtils', () => {
           <li>${spaceSearchCriteriaRoomLevelLabels.isStepFreeDesignated}</li>
         </ul>
       `)
-    })
-  })
-
-  describe('apTypeLabelsForRadioInput', () => {
-    it('calls the function to create the radio items with the expected arguments', () => {
-      const radioButtonUtilSpy = jest.spyOn(formUtils, 'convertKeyValuePairToRadioItems')
-
-      const apType: ApType = 'esap'
-
-      const result = apTypeLabelsForRadioInput(apType)
-
-      expect(result).toEqual([
-        {
-          checked: false,
-          conditional: undefined,
-          hint: undefined,
-          text: 'Standard AP',
-          value: 'normal',
-        },
-        { divider: 'or' },
-        {
-          checked: false,
-          conditional: undefined,
-          hint: undefined,
-          text: 'Psychologically Informed Planned Environment (PIPE)',
-          value: 'pipe',
-        },
-        {
-          checked: true,
-          conditional: undefined,
-          hint: undefined,
-          text: 'Enhanced Security AP (ESAP)',
-          value: 'esap',
-        },
-        {
-          checked: false,
-          conditional: undefined,
-          hint: undefined,
-          text: 'Recovery Focused AP (RFAP)',
-          value: 'rfap',
-        },
-        {
-          checked: false,
-          conditional: undefined,
-          hint: undefined,
-          text: 'Specialist Mental Health AP (Elliott House - Midlands)',
-          value: 'mhapElliottHouse',
-        },
-        {
-          checked: false,
-          conditional: undefined,
-          hint: undefined,
-          text: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
-          value: 'mhapStJosephs',
-        },
-      ])
-      expect(radioButtonUtilSpy).toHaveBeenCalledWith(apTypeLabels, apType)
     })
   })
 

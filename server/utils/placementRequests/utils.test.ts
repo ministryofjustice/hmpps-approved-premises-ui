@@ -1,44 +1,11 @@
-import { personFactory, placementRequestFactory } from '../../testutils/factories'
-import {
-  assessmentLink,
-  formatReleaseType,
-  mapPlacementRequestToSpaceSearchParams,
-  placementRequestTabItems,
-  searchButton,
-  withdrawalMessage,
-} from './utils'
+import { placementRequestFactory } from '../../testutils/factories'
+import { assessmentLink, formatReleaseType, placementRequestTabItems, searchButton, withdrawalMessage } from './utils'
 import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
-import { filterOutAPTypes } from '../match'
 
 describe('utils', () => {
-  describe('mapPlacementRequestToBedSearchParams', () => {
-    it('transforms a placement request into bed search params', () => {
-      const person = personFactory.build()
-      const placementRequest = placementRequestFactory.build({
-        duration: 15,
-        radius: 100,
-        person,
-      })
-
-      expect(mapPlacementRequestToSpaceSearchParams(placementRequest)).toEqual({
-        applicationId: placementRequest.applicationId,
-        durationInDays: placementRequest.duration.toString(),
-        startDate: placementRequest.expectedArrival,
-        targetPostcodeDistrict: placementRequest.location,
-        requirements: {
-          spaceCharacteristics: filterOutAPTypes([
-            ...placementRequest.desirableCriteria,
-            ...placementRequest.essentialCriteria,
-          ]),
-          apType: placementRequest.type,
-        },
-      })
-    })
-  })
-
   describe('formatReleaseType', () => {
     it('formats a release type in a human-readable format', () => {
       const placementRequest = placementRequestFactory.build({ releaseType: 'rotl' })

@@ -95,6 +95,7 @@ import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
 import cas1PremisesDaySummaryFactory from './cas1PremisesDaySummary'
 import cas1OutOfServiceBedSummaryFactory from './cas1OutOfServiceBedSummary'
+import spaceSearchStateFactory from './spaceSearchState'
 
 export {
   acctAlertFactory,
@@ -199,4 +200,5 @@ export {
   spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
+  spaceSearchStateFactory,
 }
