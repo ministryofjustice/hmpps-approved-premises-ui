@@ -30,7 +30,7 @@ import { spaceSearchResultsCharacteristicsLabels } from './spaceSearch'
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
-export { SpaceSearchState } from './spaceSearch'
+export type { SpaceSearchState } from './spaceSearch'
 
 export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])

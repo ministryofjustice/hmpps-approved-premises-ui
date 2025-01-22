@@ -12,6 +12,9 @@ import {
   spaceSearchCriteriaApLevelLabels,
   spaceSearchCriteriaRoomLevelLabels,
 } from '../../../utils/match/spaceSearch'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
+import { ValidationError } from '../../../utils/errors'
+import logger from '../../../../logger'
 
 export default class SpaceSearchController {
   constructor(
@@ -21,6 +24,10 @@ export default class SpaceSearchController {
 
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      logger.debug('User input: ', userInput)
+
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
       let searchState = this.spaceService.getSpaceSearchState(req.params.id, req.session)
@@ -35,29 +42,66 @@ export default class SpaceSearchController {
 
       const spaceSearchResults = await this.spaceService.search(req.user.token, searchState)
 
+      const formValues = {
+        ...searchState,
+        ...userInput,
+      }
+
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
         spaceSearchResults,
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
-        formValues: searchState,
-        apTypeRadioItems: apTypeRadioItems(searchState.apType),
+        errors,
+        errorSummary,
+        formValues,
+        apTypeRadioItems: apTypeRadioItems(formValues.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(
             'AP requirements',
             'apCriteria',
             spaceSearchCriteriaApLevelLabels,
-            searchState.apCriteria,
+            formValues.apCriteria,
           ),
           checkBoxesForCriteria(
             'Room requirements',
             'roomCriteria',
             spaceSearchCriteriaRoomLevelLabels,
-            searchState.roomCriteria,
+            formValues.roomCriteria,
           ),
         ],
       })
+    }
+  }
+
+  filterSearch(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      try {
+        const { postcode, apType, apCriteria = [], roomCriteria = [] } = req.body
+
+        if (!postcode) {
+          throw new ValidationError({
+            postcode: 'Enter a postcode',
+          })
+        }
+
+        this.spaceService.setSpaceSearchState(req.params.id, req.session, {
+          postcode,
+          apType,
+          apCriteria,
+          roomCriteria,
+        })
+
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error,
+          matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }),
+        )
+      }
     }
   }
 }

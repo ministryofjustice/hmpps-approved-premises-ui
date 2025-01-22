@@ -34,8 +34,8 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
     auditEvent: 'SPACE_SEARCH',
   })
-  post(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
-    auditEvent: 'SPACE_SEARCH',
+  post(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.filterSearch(), {
+    auditEvent: 'SPACE_SEARCH_SUBMIT',
   })
 
   get(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.view(), {

@@ -12,12 +12,15 @@ import { PlacementRequestService, SpaceService } from '../../../services'
 import matchPaths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import {
+  SpaceSearchState,
   apTypeRadioItems,
   checkBoxesForCriteria,
   initialiseSearchState,
   spaceSearchCriteriaApLevelLabels,
   spaceSearchCriteriaRoomLevelLabels,
 } from '../../../utils/match/spaceSearch'
+import * as validationUtils from '../../../utils/validation'
+import { ValidationError } from '../../../utils/errors'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -27,6 +30,8 @@ describe('spaceSearchController', () => {
   const request: DeepMocked<Request> = createMock<Request>({
     params: { id: placementRequestDetail.id },
     user: { token },
+    session: {},
+    flash: jest.fn(),
   })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
@@ -36,7 +41,7 @@ describe('spaceSearchController', () => {
 
   let spaceSearchController: SpaceSearchController
 
-  const formPath = matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id })
+  const searchPath = matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id })
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -59,7 +64,7 @@ describe('spaceSearchController', () => {
         spaceSearchResults,
         placementRequest: placementRequestDetail,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
-        formPath,
+        formPath: searchPath,
         formValues: searchState,
         apTypeRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
@@ -76,6 +81,8 @@ describe('spaceSearchController', () => {
             searchState.roomCriteria,
           ),
         ],
+        errors: {},
+        errorSummary: [],
       })
       expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(spaceService.search).toHaveBeenCalledWith(token, searchState)
@@ -103,6 +110,115 @@ describe('spaceSearchController', () => {
         request.session,
         initialiseSearchState(placementRequestDetail),
       )
+    })
+
+    it('should render search errors and user input', async () => {
+      const expectedErrors = {
+        postcode: {
+          text: 'Enter a postcode',
+          attributes: { 'data-cy-error-postcode': true },
+        },
+      }
+      const expectedErrorSummary = [
+        {
+          text: 'Enter a postcode yo',
+          href: '#postcode',
+        },
+      ]
+      const expectedUserInput = {
+        postcode: '',
+      }
+
+      jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
+        errors: expectedErrors,
+        errorSummary: expectedErrorSummary,
+        userInput: expectedUserInput,
+      })
+
+      const searchState = spaceSearchStateFactory.build()
+      spaceService.getSpaceSearchState.mockReturnValue(searchState)
+
+      const requestHandler = spaceSearchController.search()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'match/search',
+        expect.objectContaining({
+          errors: expectedErrors,
+          errorSummary: expectedErrorSummary,
+          formValues: {
+            ...searchState,
+            postcode: expectedUserInput.postcode,
+          },
+        }),
+      )
+    })
+  })
+
+  describe('filterSearch', () => {
+    const searchParams: Partial<SpaceSearchState> = {
+      postcode: 'M14',
+      apType: 'isMHAPElliottHouse',
+      apCriteria: ['acceptsSexOffenders', 'isCatered'],
+      roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
+    }
+
+    it('saves the submitted filters in the search state and redirects to the view', async () => {
+      const requestHandler = spaceSearchController.filterSearch()
+      await requestHandler({ ...request, body: searchParams }, response, next)
+
+      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(
+        placementRequestDetail.id,
+        request.session,
+        searchParams,
+      )
+      expect(response.redirect).toHaveBeenCalledWith(searchPath)
+    })
+
+    it('clears the selected criteria when none are selected', async () => {
+      const searchParamsNoCriteria: Partial<SpaceSearchState> = {
+        ...searchParams,
+        apCriteria: undefined,
+        roomCriteria: undefined,
+      }
+
+      const requestHandler = spaceSearchController.filterSearch()
+      await requestHandler({ ...request, body: searchParamsNoCriteria }, response, next)
+
+      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(
+        placementRequestDetail.id,
+        request.session,
+        expect.objectContaining({
+          apCriteria: [],
+          roomCriteria: [],
+        }),
+      )
+    })
+
+    it('returns an error if the postcode is missing', async () => {
+      jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
+
+      const searchParamsNoPostcode: Partial<SpaceSearchState> = {
+        ...searchParams,
+        postcode: undefined,
+      }
+
+      const requestHandler = spaceSearchController.filterSearch()
+      await requestHandler({ ...request, body: searchParamsNoPostcode }, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        searchPath,
+      )
+      expect(spaceService.setSpaceSearchState).not.toHaveBeenCalled()
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        postcode: 'Enter a postcode',
+      })
     })
   })
 })

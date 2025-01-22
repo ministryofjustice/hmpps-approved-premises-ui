@@ -1,3 +1,4 @@
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
@@ -27,6 +28,13 @@
 {% endset %}
 
 {% block content %}
+    {% if errorSummary | length %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorSummary
+        }) }}
+    {% endif %}
+
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     {% call govukDetails({summaryText: "Placement request information", open: true}) %}
@@ -63,7 +71,8 @@
                                 text: "Postcode"
 
                             },
-                            classes: "govuk-input--width-3"
+                            classes: "govuk-input--width-3",
+                            errorMessage: errors.postcode
                         }) }}
 
                         {% endcall %}
