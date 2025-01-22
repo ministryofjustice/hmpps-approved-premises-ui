@@ -291,11 +291,7 @@ describe('OccupancyViewController', () => {
   describe('bookSpace', () => {
     const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
-    const startDate = '2025-08-15'
-    const durationDays = '22'
-
     const validBookingBody = {
-      criteria: 'hasEnSuite,isStepFreeDesignated',
       'arrivalDate-day': '11',
       'arrivalDate-month': '2',
       'arrivalDate-year': '2026',
@@ -304,16 +300,16 @@ describe('OccupancyViewController', () => {
       'departureDate-year': '2026',
     }
 
-    it(`should redirect to space-booking confirmation page when date validation succeeds`, async () => {
+    it(`should set the state search dates and redirect to space-booking confirmation page when date validation succeeds`, async () => {
       const requestHandler = occupancyViewController.bookSpace()
       await requestHandler({ ...request, params, body: validBookingBody }, response, next)
 
-      const expectedQueryString =
-        'arrivalDate=2026-02-11&departureDate=2026-02-21&criteria=hasEnSuite&criteria=isStepFreeDesignated'
+      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        arrivalDate: '2026-02-11',
+        departureDate: '2026-02-21',
+      })
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        `${matchPaths.v2Match.placementRequests.spaceBookings.new(params)}?${expectedQueryString}`,
-      )
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.spaceBookings.new(params))
     })
 
     describe('when there are errors', () => {
@@ -410,30 +406,6 @@ describe('OccupancyViewController', () => {
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
         expect(errorData).toEqual(expectedErrorData)
-      })
-
-      it(`should redirect to occupancy view with the existing query string`, async () => {
-        const body = {}
-        const query = {
-          startDate,
-          durationDays,
-          criteria: ['isWheelchairDesignated', 'isSuitedForSexOffenders'],
-        }
-
-        const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, params, query, body }, response, next)
-
-        const expectedQueryString = `startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
-
-        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
-          response,
-          new ValidationError({}),
-          `${matchPaths.v2Match.placementRequests.search.occupancy({
-            id: placementRequestDetail.id,
-            premisesId: premises.id,
-          })}?${expectedQueryString}`,
-        )
       })
     })
   })

@@ -23,7 +23,6 @@ import {
   placementLength,
   preferredPostcodeRow,
   premisesAddress,
-  redirectToSpaceBookingsNew,
   requestedOrEstimatedArrivalDateRow,
   requirementsHtmlString,
   spaceBookingConfirmationSummaryListRows,
@@ -289,37 +288,6 @@ describe('matchUtils', () => {
           id: placementRequestId,
           premisesId,
         })}?startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
-      )
-    })
-  })
-
-  describe('redirectToSpaceBookingsNew', () => {
-    it('returns a link to the confirm booking page with dates, criteria and existing query parameters', () => {
-      const placementRequestId = '123'
-      const premisesId = 'abc'
-      const arrivalDate = '2022-01-01'
-      const departureDate = '2022-03-05'
-      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isWheelchairDesignated']
-      const existingQuery = {
-        foo: 'bar',
-      }
-
-      const result = redirectToSpaceBookingsNew({
-        placementRequestId,
-        premisesId,
-        arrivalDate,
-        departureDate,
-        criteria,
-        ...existingQuery,
-      })
-      const expectedQueryString =
-        'arrivalDate=2022-01-01&departureDate=2022-03-05&criteria=hasEnSuite&criteria=isWheelchairDesignated&foo=bar'
-
-      expect(result).toEqual(
-        `${paths.v2Match.placementRequests.spaceBookings.new({
-          id: placementRequestId,
-          premisesId,
-        })}?${expectedQueryString}`,
       )
     })
   })

@@ -2,13 +2,7 @@ import { Request, Response, TypedRequestHandler } from 'express'
 import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
-import {
-  occupancySummary,
-  occupancyViewLink,
-  placementDates,
-  redirectToSpaceBookingsNew,
-  validateSpaceBooking,
-} from '../../../utils/match'
+import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../utils/dateUtils'
@@ -26,11 +20,6 @@ import { placementRequestSummaryList } from '../../../utils/placementRequests/pl
 import { ValidationError } from '../../../utils/errors'
 
 type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
-
-type FilterUserInput = ObjectWithDateParts<'startDate'> & {
-  durationDays: string
-  criteria: CriteriaQuery
-}
 
 interface ViewRequest extends Request {
   params: {
@@ -164,9 +153,8 @@ export default class {
 
   bookSpace(): TypedRequestHandler<Request> {
     return async (req: Request, res: Response) => {
+      const { id, premisesId } = req.params
       const { body } = req
-      const { criteria: criteriaBody } = body
-      const criteria = criteriaBody?.split(',')
 
       try {
         const errors = validateSpaceBooking(body)
@@ -183,25 +171,23 @@ export default class {
           body as ObjectWithDateParts<'departureDate'>,
           'departureDate',
         )
-        const redirectUrl = redirectToSpaceBookingsNew({
-          placementRequestId: req.params.id,
-          premisesId: req.params.premisesId,
-          ...req.query,
+
+        this.spaceService.setSpaceSearchState(id, req.session, {
           arrivalDate,
           departureDate,
-          criteria,
         })
-        return res.redirect(redirectUrl)
+
+        return res.redirect(paths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }))
       } catch (error) {
-        const { startDate, durationDays, criteria: criteriaQuery } = req.query
-        const redirectUrl = occupancyViewLink({
-          placementRequestId: req.params.id,
-          premisesId: req.params.premisesId,
-          startDate: startDate as string,
-          durationDays: durationDays as string,
-          spaceCharacteristics: criteria || criteriaQuery,
-        })
-        return catchValidationErrorOrPropogate(req, res, error, redirectUrl)
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error,
+          paths.v2Match.placementRequests.search.occupancy({
+            id,
+            premisesId,
+          }),
+        )
       }
     }
   }

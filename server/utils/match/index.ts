@@ -13,7 +13,6 @@ import {
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '@approved-premises/api'
 import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
-import { ParsedQs } from 'qs'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { createQueryString } from '../utils'
 import matchPaths from '../../paths/match'
@@ -60,32 +59,6 @@ export const occupancyViewLink = ({
     },
     { addQueryPrefix: true, arrayFormat: 'repeat' },
   )}`
-
-export const redirectToSpaceBookingsNew = ({
-  placementRequestId,
-  premisesId,
-  arrivalDate,
-  departureDate,
-  criteria,
-  ...existingQuery
-}: ParsedQs & {
-  placementRequestId: string
-  premisesId: string
-  arrivalDate: string
-  departureDate: string
-  criteria: Array<Cas1SpaceBookingCharacteristic>
-}): string => {
-  return `${matchPaths.v2Match.placementRequests.spaceBookings.new({
-    id: placementRequestId,
-    premisesId,
-  })}${createQueryString(
-    { arrivalDate, departureDate, criteria, ...existingQuery },
-    {
-      addQueryPrefix: true,
-      arrayFormat: 'repeat',
-    },
-  )}`
-}
 
 export const spaceBookingConfirmationSummaryListRows = (
   placementRequest: PlacementRequestDetail,
