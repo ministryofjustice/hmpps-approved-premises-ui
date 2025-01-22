@@ -1,5 +1,5 @@
 import { Cas1SpaceSearchParameters, PlacementCriteria, PlacementRequestDetail } from '@approved-premises/api'
-import { CheckBoxItem, RadioItem, SpaceSearchState } from '@approved-premises/ui'
+import { CheckBoxItem, RadioItem } from '@approved-premises/ui'
 import { filterByType } from '../utils'
 import {
   ApTypeCriteria,
@@ -36,6 +36,18 @@ export const spaceSearchResultsCharacteristicsLabels = {
   ...spaceSearchCriteriaRoomLevelLabels,
   isSuitableForVulnerable: placementCriteriaLabels.isSuitableForVulnerable,
 } as const
+
+export type SpaceSearchState = {
+  applicationId: string
+  postcode: string
+  apType: ApTypeCriteria
+  apCriteria: Array<SpaceSearchApCriteria>
+  roomCriteria: Array<SpaceSearchRoomCriteria>
+  startDate: string
+  durationDays: number
+  arrivalDate?: string
+  departureDate?: string
+}
 
 export const initialiseSearchState = (placementRequest: PlacementRequestDetail): SpaceSearchState => {
   const allCriteria = [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria]

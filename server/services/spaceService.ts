@@ -4,12 +4,11 @@ import type {
   PlacementRequest,
   PlacementRequestDetail,
 } from '@approved-premises/api'
-import type { SpaceSearchState } from '@approved-premises/ui'
 import type { Request } from 'express'
 import { RestClientBuilder } from '../data'
 import SpaceClient from '../data/spaceClient'
 
-import { spaceSearchStateToApiPayload } from '../utils/match/spaceSearch'
+import { SpaceSearchState, spaceSearchStateToApiPayload } from '../utils/match/spaceSearch'
 
 export default class SpaceService {
   constructor(private readonly spaceClientFactory: RestClientBuilder<SpaceClient>) {}

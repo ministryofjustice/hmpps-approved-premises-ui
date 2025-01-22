@@ -1,11 +1,11 @@
 import { Factory } from 'fishery'
-import { SpaceSearchState } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { ApTypeCriteria, apTypeCriteriaLabels } from '../../utils/placementCriteriaUtils'
 import {
   SpaceSearchApCriteria,
   SpaceSearchRoomCriteria,
+  SpaceSearchState,
   spaceSearchCriteriaApLevelLabels,
   spaceSearchCriteriaRoomLevelLabels,
 } from '../../utils/match/spaceSearch'

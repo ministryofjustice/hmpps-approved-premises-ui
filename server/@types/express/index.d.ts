@@ -1,10 +1,11 @@
-import type { DepartureFormSessionData, ErrorMessages, SpaceSearchState } from '@approved-premises/ui'
+import type { DepartureFormSessionData, ErrorMessages } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication,
   Cas1SpaceBooking,
   PlacementApplicationDecisionEnvelope,
   PlacementRequestDetail,
 } from '@approved-premises/api'
+import { SpaceSearchState } from '../../utils/match'
 
 export default {}
 

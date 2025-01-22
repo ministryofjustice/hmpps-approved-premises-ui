@@ -1,6 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
 import type { Request } from 'express'
-import { SpaceSearchState } from '@approved-premises/ui'
 import SpaceClient from '../data/spaceClient'
 import {
   cas1SpaceBookingFactory,
@@ -10,6 +9,7 @@ import {
   spaceSearchStateFactory,
 } from '../testutils/factories'
 import SpaceService from './spaceService'
+import { SpaceSearchState } from '../utils/match'
 
 jest.mock('../data/spaceClient.ts')
 
