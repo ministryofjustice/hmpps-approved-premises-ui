@@ -212,6 +212,82 @@ describe('OccupancyViewController', () => {
     })
   })
 
+  describe('filterView', () => {
+    const filterBody: Request['body'] = {
+      'startDate-day': '23',
+      'startDate-month': '3',
+      'startDate-year': '2025',
+      roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
+      durationDays: '42',
+    }
+
+    it('saves the submitted filters in the search state and redirects to the view', async () => {
+      const params = { id: placementRequestDetail.id, premisesId: premises.id }
+
+      const requestHandler = occupancyViewController.filterView()
+      await requestHandler({ ...request, params, body: filterBody }, response, next)
+
+      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        startDate: '2025-03-23',
+        roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
+        durationDays: 42,
+      })
+
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.occupancy(params))
+    })
+
+    it('clears the selected room criteria when none are selected', async () => {
+      const params = { id: placementRequestDetail.id, premisesId: premises.id }
+
+      const filterBodyNoCriteria: Request['body'] = {
+        ...filterBody,
+        roomCriteria: undefined,
+      }
+
+      const requestHandler = occupancyViewController.filterView()
+      await requestHandler({ ...request, params, body: filterBodyNoCriteria }, response, next)
+
+      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(
+        placementRequestDetail.id,
+        request.session,
+        expect.objectContaining({
+          roomCriteria: [],
+        }),
+      )
+    })
+
+    it.each([
+      ['empty', { 'startDate-day': '', 'startDate-month': '', 'startDate-year': '' }],
+      ['invalid', { 'startDate-day': '45', 'startDate-month': '14', 'startDate-year': '23' }],
+    ])('returns an error if the start date is %s', async (_, dateInput) => {
+      jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
+
+      const params = { id: placementRequestDetail.id, premisesId: premises.id }
+
+      const filterBodyNoStartDate: Request['body'] = {
+        ...filterBody,
+        ...dateInput,
+      }
+
+      const requestHandler = occupancyViewController.filterView()
+      await requestHandler({ ...request, params, body: filterBodyNoStartDate }, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        matchPaths.v2Match.placementRequests.search.occupancy(params),
+      )
+      expect(spaceService.setSpaceSearchState).not.toHaveBeenCalled()
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        startDate: 'Enter a valid date',
+      })
+    })
+  })
+
   describe('bookSpace', () => {
     const params = { id: placementRequestDetail.id, premisesId: premises.id }
 

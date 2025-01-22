@@ -37,11 +37,10 @@
             {% if not errors.startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
 
         <div class="search-and-filter">
-            <form action="{{ paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id }) }}"
-                  method="get">
-                <h3 class="govuk-heading-m">Filters</h3>
+            <form action="{{ currentUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <input type="hidden" name="apType" value="{{ apType }}">
+                <h3 class="govuk-heading-m">Filters</h3>
 
                 <div class="search-and-filter__row">
                     {{ govukDateInput({
@@ -70,7 +69,7 @@
 
                 <div class="search-and-filter__row">
                     {{ govukCheckboxes({
-                        name: "criteria",
+                        name: "roomCriteria",
                         classes: "govuk-checkboxes--small govuk-checkboxes--inline",
                         fieldset: {
                             legend: {
@@ -121,7 +120,7 @@
         <section>
             <h2 class="govuk-heading-l">Book your placement</h2>
 
-            <form action="{{ currentUrl }}" method="post">
+            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <input type="hidden" name="criteria" value="{{ criteria }}" />

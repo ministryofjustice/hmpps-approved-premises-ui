@@ -1,5 +1,5 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import type { ApType, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
 import {
@@ -9,14 +9,9 @@ import {
   redirectToSpaceBookingsNew,
   validateSpaceBooking,
 } from '../../../utils/match'
-import {
-  catchValidationErrorOrPropogate,
-  fetchErrorsAndUserInput,
-  generateErrorMessages,
-  generateErrorSummary,
-} from '../../../utils/validation'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
-import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../utils/dateUtils'
 import {
   dayAvailabilityStatus,
   dayAvailabilityStatusMap,
@@ -41,9 +36,6 @@ interface ViewRequest extends Request {
   params: {
     id: string
     premisesId: string
-  }
-  query: FilterUserInput & {
-    apType: ApType
   }
 }
 
@@ -131,6 +123,42 @@ export default class {
         errors,
         errorSummary,
       })
+    }
+  }
+
+  filterView(): TypedRequestHandler<Request> {
+    return async (req: Request, res: Response) => {
+      const { id, premisesId } = req.params
+
+      try {
+        const { roomCriteria = [], durationDays, ...startDateInput } = req.body
+
+        if (dateIsBlank(startDateInput, 'startDate') || !dateAndTimeInputsAreValidDates(startDateInput, 'startDate')) {
+          throw new ValidationError({
+            startDate: 'Enter a valid date',
+          })
+        }
+
+        const { startDate } = DateFormats.dateAndTimeInputsToIsoString(
+          startDateInput as ObjectWithDateParts<'startDate'>,
+          'startDate',
+        )
+
+        this.spaceService.setSpaceSearchState(req.params.id, req.session, {
+          roomCriteria,
+          startDate,
+          durationDays: Number(durationDays),
+        })
+
+        return res.redirect(paths.v2Match.placementRequests.search.occupancy({ id, premisesId }))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error,
+          paths.v2Match.placementRequests.search.occupancy({ id, premisesId }),
+        )
+      }
     }
   }
 
