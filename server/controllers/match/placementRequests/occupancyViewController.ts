@@ -1,7 +1,7 @@
 import { Request, Response, TypedRequestHandler } from 'express'
 import type { ApType, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
-import { PlacementRequestService, PremisesService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
 import {
   occupancySummary,
   occupancyViewLink,
@@ -62,6 +62,7 @@ export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
+    private readonly spaceService: SpaceService,
   ) {}
 
   private criteriaAsArray(
@@ -74,63 +75,31 @@ export default class {
     return filterCriteria
   }
 
-  private getFilter(filterUserInput: FilterUserInput): {
-    filterDurationDays?: number
-    filterStartDate?: string
-    filterCriteria?: Array<Cas1SpaceBookingCharacteristic>
-    filterError?: string
-  } {
-    const { criteria, durationDays } = filterUserInput
-
-    const filterDurationDays = durationDays ? Number(durationDays) : undefined
-    const filterCriteria = this.criteriaAsArray(criteria)
-    let filterStartDate: string
-    let filterError: string
-
-    if (filterUserInput.startDate) {
-      filterStartDate = filterUserInput.startDate
-    } else if (
-      filterUserInput['startDate-day'] ||
-      filterUserInput['startDate-month'] ||
-      filterUserInput['startDate-year']
-    ) {
-      if (dateAndTimeInputsAreValidDates(filterUserInput, 'startDate')) {
-        filterStartDate = DateFormats.dateAndTimeInputsToIsoString(filterUserInput, 'startDate').startDate
-      } else {
-        filterError = 'Enter a valid date'
-      }
-    }
-
-    return { filterDurationDays, filterStartDate, filterCriteria, filterError }
-  }
-
   view(): TypedRequestHandler<Request> {
     return async (req: ViewRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId } = req.params
-      const { apType, ...filterUserInput } = req.query
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
-      const premises = await this.premisesService.find(token, premisesId)
+      const searchState = this.spaceService.getSpaceSearchState(req.params.id, req.session)
 
-      const { filterDurationDays, filterStartDate, filterCriteria, filterError } = this.getFilter(filterUserInput)
-
-      if (filterError) {
-        const dateError = { startDate: 'Enter a valid date' }
-        Object.assign(errors, generateErrorMessages(dateError))
-        errorSummary.push(generateErrorSummary(dateError)[0])
+      if (!searchState) {
+        return res.redirect(paths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
       }
 
-      const startDate = filterStartDate || placementRequest.expectedArrival
-      const durationDays = filterDurationDays || placementRequest.duration
-      const dateFieldValues = filterError ? filterUserInput : DateFormats.isoDateToDateInputs(startDate, 'startDate')
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      const formValues = {
+        ...searchState,
+        ...userInput,
+      }
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const premises = await this.premisesService.find(token, premisesId)
 
       let summary: OccupancySummary
       let calendar: Calendar
 
       if (!errors.startDate) {
-        const capacityDates = placementDates(startDate, durationDays)
+        const capacityDates = placementDates(searchState.startDate, searchState.durationDays)
         const capacity = await this.premisesService.getCapacity(
           token,
           premisesId,
@@ -143,27 +112,24 @@ export default class {
           date: ':date',
         })
 
-        summary = occupancySummary(capacity.capacity, filterCriteria)
-        calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria)
+        summary = occupancySummary(capacity.capacity, searchState.roomCriteria)
+        calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, searchState.roomCriteria)
       }
 
-      res.render('match/placementRequests/occupancyView/view', {
+      return res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest,
         premises,
-        apType,
-        ...dateFieldValues,
-        startDate,
-        durationDays,
-        durationOptions: durationSelectOptions(durationDays),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, filterCriteria),
-        criteria: filterCriteria,
+        ...formValues,
+        ...DateFormats.isoDateToDateInputs(formValues.startDate, 'startDate'),
+        ...userInput,
+        durationOptions: durationSelectOptions(formValues.durationDays),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         summary,
         calendar,
         errors,
         errorSummary,
-        ...userInput,
       })
     }
   }

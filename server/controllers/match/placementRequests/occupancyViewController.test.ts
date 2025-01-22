@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
 import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { PlacementRequestService, PremisesService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
@@ -21,27 +21,32 @@ import {
   dayAvailabilityStatus,
   dayAvailabilityStatusMap,
   dayAvailabilitySummaryListItems,
+  durationSelectOptions,
+  occupancyCriteriaMap,
 } from '../../../utils/match/occupancy'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
+import { initialiseSearchState } from '../../../utils/match/spaceSearch'
+import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
-  const flashSpy = jest.fn()
 
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
+  const spaceService = createMock<SpaceService>({})
 
   let occupancyViewController: OccupancyViewController
   const premises = cas1PremisesFactory.build()
   const placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
+  const searchState = initialiseSearchState(placementRequestDetail)
   const premiseCapacity = cas1PremiseCapacityFactory.build()
+
   let request: Readonly<DeepMocked<Request>>
 
-  const apType = 'esap'
   const placeholderDetailsUrl = matchPaths.v2Match.placementRequests.search.dayOccupancy({
     id: placementRequestDetail.id,
     premisesId: premises.id,
@@ -51,88 +56,70 @@ describe('OccupancyViewController', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
+    occupancyViewController = new OccupancyViewController(placementRequestService, premisesService, spaceService)
     request = createMock<Request>({
       user: { token },
       query: {},
-      flash: flashSpy,
+      flash: jest.fn(),
       headers: {
         referer: '/referrerPath',
       },
+      session: {},
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
-
-    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
-      errors: {},
-      errorSummary: [],
-      userInput: {},
-    })
+    spaceService.getSpaceSearchState.mockReturnValue(searchState)
   })
 
   describe('view', () => {
-    it('should render the occupancy view template with placement start date and duration', async () => {
-      const expectedStartDate = placementRequestDetail.expectedArrival
-      const expectedDuration = placementRequestDetail.duration
-
-      const query = {
-        apType,
-      }
-
+    it('should render the occupancy view template with the search state details', async () => {
       const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
       const requestHandler = occupancyViewController.view()
+      await requestHandler({ ...request, params }, response, next)
 
-      await requestHandler({ ...request, params, query }, response, next)
-
+      expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(
         token,
         premises.id,
-        expectedStartDate,
-        DateFormats.dateObjToIsoDate(addDays(expectedStartDate, expectedDuration)),
+        searchState.startDate,
+        DateFormats.dateObjToIsoDate(addDays(searchState.startDate, searchState.durationDays)),
       )
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
         premises,
-        apType,
-        startDate: expectedStartDate,
-        ...DateFormats.isoDateToDateInputs(expectedStartDate, 'startDate'),
-        durationDays: expectedDuration,
-        durationOptions: [
-          { text: 'Up to 1 week', value: '7' },
-          { text: 'Up to 6 weeks', value: '42' },
-          { text: 'Up to 12 weeks', value: '84', selected: true },
-          { text: 'Up to 26 weeks', value: '182' },
-          { text: 'Up to 52 weeks', value: '364' },
-        ],
-        criteriaOptions: [
-          { value: 'isWheelchairDesignated', text: 'Wheelchair accessible', checked: false },
-          { value: 'isSingle', text: 'Single room', checked: false },
-          { value: 'isStepFreeDesignated', text: 'Step-free', checked: false },
-          { value: 'hasEnSuite', text: 'En-suite', checked: false },
-          { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
-          { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
-        ],
-        criteria: undefined,
+        ...searchState,
+        ...DateFormats.isoDateToDateInputs(searchState.startDate, 'startDate'),
+        durationOptions: durationSelectOptions(searchState.durationDays),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, searchState.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
-        summary: occupancySummary(premiseCapacity.capacity),
-        calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
+        summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
+        calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
         errors: {},
         errorSummary: [],
       })
     })
 
-    it('should render the occupancy view template with booking errors', async () => {
-      const query = {
-        apType,
-      }
+    it('should redirect to the suitability search if there is no search state in session', async () => {
+      spaceService.getSpaceSearchState.mockReturnValue(undefined)
 
+      const params = { id: placementRequestDetail.id, premisesId: premises.id }
+
+      const requestHandler = occupancyViewController.view()
+      await requestHandler({ ...request, params }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+      )
+    })
+
+    it('should render the occupancy view template with booking errors', async () => {
       const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
       const expectedErrors = {
@@ -166,7 +153,7 @@ describe('OccupancyViewController', () => {
 
       const requestHandler = occupancyViewController.view()
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler({ ...request, params }, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/placementRequests/occupancyView/view',
@@ -179,86 +166,44 @@ describe('OccupancyViewController', () => {
           'departureDate-day': '1',
           'departureDate-month': '5',
           'departureDate-year': '2026',
-          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
-          summary: occupancySummary(premiseCapacity.capacity),
+          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
+          summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
         }),
       )
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
 
-    it('should render the occupancy view template with filtered start date, duration and criteria', async () => {
-      const query = {
-        apType,
-        'startDate-day': '30',
-        'startDate-month': '04',
-        'startDate-year': '2025',
-        durationDays: '100',
-        criteria: ['isSingle', 'isWheelchairDesignated'],
+    it('should show an error if the filter date is invalid, and not show the calendar or summary', async () => {
+      const expectedErrors = {
+        startDate: {
+          attributes: { 'data-cy-error-startDate': true },
+          text: 'Enter a valid date',
+        },
       }
-
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
-
-      const requestHandler = occupancyViewController.view()
-
-      await requestHandler({ ...request, params, query }, response, next)
-
-      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, '2025-04-30', '2025-08-08')
-      expect(response.render).toHaveBeenCalledWith(
-        'match/placementRequests/occupancyView/view',
-        expect.objectContaining({
-          durationOptions: [
-            { text: 'Up to 1 week', value: '7' },
-            { text: 'Up to 6 weeks', value: '42' },
-            { text: 'Up to 12 weeks', value: '84' },
-            { text: 'Up to 26 weeks', value: '182', selected: true },
-            { text: 'Up to 52 weeks', value: '364' },
-          ],
-          criteriaOptions: [
-            { value: 'isWheelchairDesignated', text: 'Wheelchair accessible', checked: true },
-            { value: 'isSingle', text: 'Single room', checked: true },
-            { value: 'isStepFreeDesignated', text: 'Step-free', checked: false },
-            { value: 'hasEnSuite', text: 'En-suite', checked: false },
-            { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
-            { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
-          ],
-          criteria: ['isSingle', 'isWheelchairDesignated'],
-          durationDays: 100,
-          startDate: '2025-04-30',
-          'startDate-day': '30',
-          'startDate-month': '4',
-          'startDate-year': '2025',
-          summary: occupancySummary(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
-          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, [
-            'isSingle',
-            'isWheelchairDesignated',
-          ]),
-        }),
-      )
-    })
-
-    it('should show an error if the filter date is invalid', async () => {
-      const query = {
-        apType,
+      const expectedErrorSummary = [{ text: 'Enter a valid date', href: '#startDate' }]
+      const expectedUserInput = {
         'startDate-day': '32',
         'startDate-month': '2',
         'startDate-year': '2025',
-        durationDays: '84',
       }
+      jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
+        errors: expectedErrors,
+        errorSummary: expectedErrorSummary,
+        userInput: expectedUserInput,
+      })
 
       const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
       const requestHandler = occupancyViewController.view()
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler({ ...request, params }, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/placementRequests/occupancyView/view',
         expect.objectContaining({
-          errors: { startDate: { attributes: { 'data-cy-error-startDate': true }, text: 'Enter a valid date' } },
-          errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
-          'startDate-day': '32',
-          'startDate-month': '2',
-          'startDate-year': '2025',
+          errors: expectedErrors,
+          errorSummary: expectedErrorSummary,
+          ...expectedUserInput,
           summary: undefined,
           calendar: undefined,
         }),

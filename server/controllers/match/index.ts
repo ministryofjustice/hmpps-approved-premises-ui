@@ -20,7 +20,7 @@ export const controllers = (services: Services) => {
   const spaceSearchController = new SpaceSearchController(spaceService, placementRequestService)
   const placementRequestBookingsController = new BookingsController(placementRequestService)
   const spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceService)
-  const occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
+  const occupancyViewController = new OccupancyViewController(placementRequestService, premisesService, spaceService)
 
   return {
     placementRequestController,
