@@ -1,7 +1,6 @@
 import type { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 import { dayAvailabilityCount, dayAvailabilityStatus } from './occupancy'
-import { createQueryString } from '../utils'
 
 type CalendarDayStatus = 'available' | 'availableForCriteria' | 'overbooked'
 

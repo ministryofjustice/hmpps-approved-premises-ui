@@ -45,10 +45,10 @@ export default class {
       const { token } = req.user
       const { id, premisesId } = req.params
 
-      const searchState = this.spaceService.getSpaceSearchState(req.params.id, req.session)
+      const searchState = this.spaceService.getSpaceSearchState(id, req.session)
 
       if (!searchState) {
-        return res.redirect(paths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
+        return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
       }
 
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
@@ -100,8 +100,9 @@ export default class {
   }
 
   filterView(): TypedRequestHandler<Request> {
-    return async (req: Request, res: Response) => {
+    return async (req: ViewRequest, res: Response) => {
       const { id, premisesId } = req.params
+      const occupancyUrl = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
 
       try {
         const { roomCriteria = [], durationDays, ...startDateInput } = req.body
@@ -117,26 +118,21 @@ export default class {
           'startDate',
         )
 
-        this.spaceService.setSpaceSearchState(req.params.id, req.session, {
+        this.spaceService.setSpaceSearchState(id, req.session, {
           roomCriteria,
           startDate,
           durationDays: Number(durationDays),
         })
 
-        return res.redirect(paths.v2Match.placementRequests.search.occupancy({ id, premisesId }))
+        return res.redirect(occupancyUrl)
       } catch (error) {
-        return catchValidationErrorOrPropogate(
-          req,
-          res,
-          error,
-          paths.v2Match.placementRequests.search.occupancy({ id, premisesId }),
-        )
+        return catchValidationErrorOrPropogate(req, res, error, occupancyUrl)
       }
     }
   }
 
   bookSpace(): TypedRequestHandler<Request> {
-    return async (req: Request, res: Response) => {
+    return async (req: ViewRequest, res: Response) => {
       const { id, premisesId } = req.params
       const { body } = req
 
