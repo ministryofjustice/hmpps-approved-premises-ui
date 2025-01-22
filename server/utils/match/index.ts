@@ -14,8 +14,6 @@ import {
 } from '@approved-premises/api'
 import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { createQueryString } from '../utils'
-import matchPaths from '../../paths/match'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
@@ -34,31 +32,6 @@ export type { SpaceSearchState } from './spaceSearch'
 export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
 }
-
-export const occupancyViewLink = ({
-  placementRequestId,
-  premisesId,
-  startDate,
-  durationDays,
-  spaceCharacteristics = [],
-}: {
-  placementRequestId: string
-  premisesId: string
-  startDate: string
-  durationDays: string
-  spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic>
-}): string =>
-  `${matchPaths.v2Match.placementRequests.search.occupancy({
-    id: placementRequestId,
-    premisesId,
-  })}${createQueryString(
-    {
-      startDate,
-      durationDays,
-      criteria: spaceCharacteristics,
-    },
-    { addQueryPrefix: true, arrayFormat: 'repeat' },
-  )}`
 
 export const spaceBookingConfirmationSummaryListRows = (
   placementRequest: PlacementRequestDetail,

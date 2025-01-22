@@ -1,6 +1,5 @@
 import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
 import applyPaths from '../../paths/apply'
-import paths from '../../paths/match'
 import {
   cas1PremisesFactory,
   cas1PremisesSearchResultSummaryFactory,
@@ -17,9 +16,7 @@ import {
   characteristicsRow,
   distanceRow,
   filterOutAPTypes,
-  filterToSpaceBookingCharacteristics,
   keyDetails,
-  occupancyViewLink,
   placementLength,
   preferredPostcodeRow,
   premisesAddress,
@@ -230,65 +227,6 @@ describe('matchUtils', () => {
   describe('placementLength', () => {
     it('formats the number of days as weeks', () => {
       expect(placementLength(16)).toEqual('2 weeks, 2 days')
-    })
-  })
-
-  describe('occupancyViewLink', () => {
-    it('returns a link to the occupancy view page', () => {
-      const placementRequestId = '123'
-      const premisesId = 'abc'
-      const startDate = '2025-04-14'
-      const durationDays = '84'
-      const spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isSingle']
-
-      const result = occupancyViewLink({
-        placementRequestId,
-        premisesId,
-        startDate,
-        durationDays,
-        spaceCharacteristics,
-      })
-
-      expect(result).toEqual(
-        `${paths.v2Match.placementRequests.search.occupancy({
-          id: placementRequestId,
-          premisesId,
-        })}?startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle`,
-      )
-    })
-
-    it('filters out non booking-specific search criteria', () => {
-      const placementRequestId = '123'
-      const premisesId = 'abc'
-      const startDate = '2025-04-14'
-      const durationDays = '84'
-      const spaceCharacteristics: Array<PlacementCriteria> = [
-        'isPIPE',
-        'isESAP',
-        'isMHAPStJosephs',
-        'isMHAPElliottHouse',
-        'isSemiSpecialistMentalHealth',
-        'isRecoveryFocussed',
-        'isWheelchairDesignated',
-        'isSingle',
-        'hasEnSuite',
-        'isArsonSuitable',
-      ]
-
-      const result = occupancyViewLink({
-        placementRequestId,
-        premisesId,
-        startDate,
-        durationDays,
-        spaceCharacteristics: filterToSpaceBookingCharacteristics(spaceCharacteristics),
-      })
-
-      expect(result).toEqual(
-        `${paths.v2Match.placementRequests.search.occupancy({
-          id: placementRequestId,
-          premisesId,
-        })}?startDate=2025-04-14&durationDays=84&criteria=isWheelchairDesignated&criteria=isSingle&criteria=hasEnSuite&criteria=isArsonSuitable`,
-      )
     })
   })
 
