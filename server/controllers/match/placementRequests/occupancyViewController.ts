@@ -53,10 +53,20 @@ export default class {
 
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
+      const arrivalDateInput = searchState.arrivalDate
+        ? DateFormats.isoDateToDateInputs(searchState.arrivalDate, 'arrivalDate')
+        : {}
+      const departureDateInput = searchState.departureDate
+        ? DateFormats.isoDateToDateInputs(searchState.departureDate, 'departureDate')
+        : {}
+
       const formValues = {
         ...searchState,
+        ...arrivalDateInput,
+        ...departureDateInput,
         ...userInput,
       }
+
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
 

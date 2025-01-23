@@ -9,6 +9,7 @@ import {
   cas1PremiseCapacityForDayFactory,
   cas1PremisesFactory,
   placementRequestDetailFactory,
+  spaceSearchStateFactory,
 } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
 import { occupancySummary } from '../../../utils/match'
@@ -200,6 +201,22 @@ describe('OccupancyViewController', () => {
         }),
       )
       expect(premisesService.getCapacity).not.toHaveBeenCalled()
+    })
+
+    it('should render the occupancy view with the arrival and departure dates populated if the user has come back from confirm', async () => {
+      const fullSearchState = spaceSearchStateFactory.build()
+      spaceService.getSpaceSearchState.mockReturnValue(fullSearchState)
+
+      const requestHandler = occupancyViewController.view()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          ...DateFormats.isoDateToDateInputs(fullSearchState.arrivalDate, 'arrivalDate'),
+          ...DateFormats.isoDateToDateInputs(fullSearchState.departureDate, 'departureDate'),
+        }),
+      )
     })
   })
 
