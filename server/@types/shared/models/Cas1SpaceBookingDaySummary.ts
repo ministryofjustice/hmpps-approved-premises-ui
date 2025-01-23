@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Cas1SpaceBookingCharacteristic } from './Cas1SpaceBookingCharacteristic';
+import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { PersonSummary } from './PersonSummary';
 export type Cas1SpaceBookingDaySummary = {
     id: string;
@@ -20,6 +20,6 @@ export type Cas1SpaceBookingDaySummary = {
      */
     tier?: string;
     releaseType?: string;
-    essentialCharacteristics: Array<Cas1SpaceBookingCharacteristic>;
+    essentialCharacteristics: Array<Cas1SpaceCharacteristic>;
 };
 
