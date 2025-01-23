@@ -66,7 +66,7 @@
                         {{ govukInput({
                             id: "postcode",
                             name: "postcode",
-                            value: formValues.postcode,
+                            value: postcode,
                             label: {
                                 text: "Postcode"
 
@@ -128,18 +128,13 @@
                         },
                         actions: {
                             items: [{
-                                href: MatchUtils.occupancyViewLink({
-                                    placementRequestId: placementRequest.id,
-                                    premisesId: spaceSearchResult.premises.id,
-                                    apType: context.requirements.apType,
-                                    spaceCharacteristics: context.requirements.spaceCharacteristics
-                                }),
+                                href: paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: spaceSearchResult.premises.id }),
                                 text: "View spaces",
                                 visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
                             }]
                         }
                     },
-                    rows: MatchUtils.summaryCardRows(spaceSearchResult, targetPostcodeDistrict)
+                    rows: MatchUtils.summaryCardRows(spaceSearchResult, postcode)
                 }) }}
             {% endfor %}
 

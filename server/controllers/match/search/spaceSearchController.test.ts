@@ -65,7 +65,7 @@ describe('spaceSearchController', () => {
         placementRequest: placementRequestDetail,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
         formPath: searchPath,
-        formValues: searchState,
+        ...searchState,
         apTypeRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(
@@ -101,7 +101,7 @@ describe('spaceSearchController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'match/search',
         expect.objectContaining({
-          formValues: searchState,
+          ...searchState,
         }),
       )
       expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
@@ -146,10 +146,8 @@ describe('spaceSearchController', () => {
         expect.objectContaining({
           errors: expectedErrors,
           errorSummary: expectedErrorSummary,
-          formValues: {
-            ...searchState,
-            postcode: expectedUserInput.postcode,
-          },
+          ...searchState,
+          postcode: expectedUserInput.postcode,
         }),
       )
     })

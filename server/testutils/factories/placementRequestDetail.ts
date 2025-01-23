@@ -12,22 +12,3 @@ export default Factory.define<PlacementRequestDetail>(() => ({
   booking: bookingSummaryFactory.build(),
   application: applicationFactory.build(),
 }))
-
-export const placementCriteria = [
-  'isPIPE',
-  'isESAP',
-  'isSemiSpecialistMentalHealth',
-  'isRecoveryFocussed',
-  'isSuitableForVulnerable',
-  'acceptsSexOffenders',
-  'acceptsChildSexOffenders',
-  'acceptsNonSexualChildOffenders',
-  'acceptsHateCrimeOffenders',
-  'isWheelchairDesignated',
-  'isSingle',
-  'isStepFreeDesignated',
-  'isCatered',
-  'hasEnSuite',
-  'isSuitedForSexOffenders',
-  'isArsonSuitable',
-] as const

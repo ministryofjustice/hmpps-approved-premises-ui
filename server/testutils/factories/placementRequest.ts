@@ -46,4 +46,4 @@ export const placementRequestWithFullPersonFactory = Factory.define<PlacementReq
   return { ...placementRequestFactory.build(), person: fullPersonFactory.build() }
 })
 
-export const placementCriteria = ['isGroundFloor', ...Object.keys(placementCriteriaLabels)] as Array<PlacementCriteria>
+export const placementCriteria = Object.keys(placementCriteriaLabels) as Array<PlacementCriteria>

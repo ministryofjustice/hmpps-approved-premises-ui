@@ -20,7 +20,6 @@ import { summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
 import { isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { occupancyCriteriaMap } from './occupancy'
 import paths from '../../paths/apply'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearch'
 
@@ -66,15 +65,6 @@ export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<
         'isSemiSpecialistMentalHealth',
       ].includes(requirement),
   ) as Array<SpaceCharacteristic>
-}
-
-export const filterToSpaceBookingCharacteristics = (
-  requirements: Array<PlacementCriteria>,
-): Array<Cas1SpaceBookingCharacteristic> => {
-  const characteristics = Object.keys(occupancyCriteriaMap)
-  return requirements.filter(requirement =>
-    characteristics.includes(requirement),
-  ) as Array<Cas1SpaceBookingCharacteristic>
 }
 
 export const requirementsHtmlString = (

@@ -55,7 +55,7 @@ export default class SpaceSearchController {
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
         errors,
         errorSummary,
-        formValues,
+        ...formValues,
         apTypeRadioItems: apTypeRadioItems(formValues.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(

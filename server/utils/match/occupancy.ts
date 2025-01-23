@@ -38,7 +38,7 @@ export const dayAvailabilityStatus = (
 
 export const dayAvailabilityStatusMap: Record<DayAvailabilityStatus, string> = {
   available: 'Available',
-  availableForCriteria: 'Available for criteria',
+  availableForCriteria: 'Available for your criteria',
   overbooked: 'Overbooked',
 }
 

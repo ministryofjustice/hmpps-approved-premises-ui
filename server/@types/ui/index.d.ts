@@ -376,17 +376,6 @@ type ContingencyPlanQuestion = {
 
 export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
 
-export interface SpaceSearchParametersUi {
-  applicationId: string
-  startDate: string
-  targetPostcodeDistrict: string
-  durationInDays: string
-  requirements: {
-    apType: ApType
-    spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic>
-  }
-}
-
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
 
 export type FormArtifact = ApprovedPremisesApplication | ApprovedPremisesAssessment | PlacementApplication

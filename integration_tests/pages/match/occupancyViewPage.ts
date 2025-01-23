@@ -1,5 +1,4 @@
-import {
-  ApType,
+import type {
   Cas1PremiseCapacity,
   Cas1PremiseCapacityForDay,
   Cas1Premises,
@@ -8,21 +7,18 @@ import {
 } from '@approved-premises/api'
 import Page from '../page'
 import { occupancySummary } from '../../../server/utils/match'
-import { createQueryString } from '../../../server/utils/utils'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
+import { DayAvailabilityStatus, dayAvailabilityStatus } from '../../../server/utils/match/occupancy'
 
 export default class OccupancyViewPage extends Page {
   constructor(premisesName: string) {
     super(`View spaces in ${premisesName}`)
   }
 
-  static visit(placementRequest: PlacementRequestDetail, premises: Cas1Premises, apType: ApType) {
-    const path = `${paths.v2Match.placementRequests.search.occupancy({
-      id: placementRequest.id,
-      premisesId: premises.id,
-    })}?${createQueryString({ apType })}`
+  static visit(placementRequest: PlacementRequestDetail, premises: Cas1Premises) {
+    const path = paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id })
 
     cy.visit(path)
 
@@ -49,13 +45,17 @@ export default class OccupancyViewPage extends Page {
     })
   }
 
-  filterAvailability(newStartDate: string, newDuration?: string, newCriteria?: Array<string>) {
-    this.clearAndCompleteDateInputs('startDate', newStartDate)
-    if (newDuration) {
-      this.getSelectInputByIdAndSelectAnEntry('durationDays', newDuration)
+  filterAvailability(filters: { newStartDate?: string; newDuration?: string; newCriteria?: Array<string> }) {
+    if (filters.newStartDate) {
+      this.clearAndCompleteDateInputs('startDate', filters.newStartDate)
     }
-    if (newCriteria) {
-      newCriteria.forEach(criteria => {
+
+    if (filters.newDuration) {
+      this.getSelectInputByIdAndSelectAnEntry('durationDays', filters.newDuration)
+    }
+    if (filters.newCriteria) {
+      this.uncheckAllCheckboxesByName('roomCriteria')
+      filters.newCriteria.forEach(criteria => {
         this.checkCheckboxByLabel(criteria)
       })
     }
@@ -91,14 +91,17 @@ export default class OccupancyViewPage extends Page {
 
     const summary = occupancySummary(premiseCapacity.capacity, criteria)
     if (summary.available) {
-      this.shouldShowCalendarCell('Available')
+      // This matches cells that have the following text:
+      // - 'Available'; or
+      // - a positive number followed by ' for your criteria'
+      this.shouldShowCalendarCell(/Available|(?<!-)[1-9]\d? for your criteria/)
     }
     if (summary.overbooked) {
       this.shouldShowCalendarCell(/-?\d+ in total/)
     }
   }
 
-  shouldFillBookYourPlacementFormDates(arrivalDate: string, departureDate: string) {
+  completeForm(arrivalDate: string, departureDate: string) {
     this.completeDateInputs('arrivalDate', arrivalDate)
     this.completeDateInputs('departureDate', departureDate)
   }
@@ -116,5 +119,28 @@ export default class OccupancyViewPage extends Page {
     const calendarDate = DateFormats.isoDateToUIDate(date, { format: 'longNoYear' })
 
     cy.get('.calendar__day').contains(calendarDate).click()
+  }
+
+  getDatesForEachAvailabilityStatus(
+    premiseCapacity: Cas1PremiseCapacity,
+    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
+  ): Array<Date> {
+    const dates: Record<DayAvailabilityStatus, Date> = premiseCapacity.capacity.reduce(
+      (statuses, day) => {
+        const status = dayAvailabilityStatus(day, criteria)
+
+        return {
+          ...statuses,
+          [status]: DateFormats.isoToDateObj(day.date),
+        }
+      },
+      {
+        available: undefined,
+        availableForCriteria: undefined,
+        overbooked: undefined,
+      },
+    )
+
+    return Object.values(dates).filter(Boolean)
   }
 }

@@ -1,6 +1,11 @@
 import { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import Page from '../page'
-import { dayAvailabilityCount, occupancyCriteriaMap } from '../../../server/utils/match/occupancy'
+import {
+  dayAvailabilityCount,
+  dayAvailabilityStatus,
+  dayAvailabilityStatusMap,
+  occupancyCriteriaMap,
+} from '../../../server/utils/match/occupancy'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 type Availability = 'Available' | 'Overbooked' | 'Available for your criteria'
@@ -12,13 +17,7 @@ export default class DayAvailabilityPage extends Page {
     private readonly dayCapacity: Cas1PremiseCapacityForDay,
     private readonly criteria: Array<Cas1SpaceBookingCharacteristic> = [],
   ) {
-    let availability: Availability = dayAvailabilityCount(dayCapacity) > 0 ? 'Available' : 'Overbooked'
-
-    if (criteria.length) {
-      if (dayAvailabilityCount(dayCapacity, criteria) > 0 && availability === 'Overbooked') {
-        availability = 'Available for your criteria'
-      }
-    }
+    const availability = dayAvailabilityStatusMap[dayAvailabilityStatus(dayCapacity, criteria)] as Availability
 
     super(availability)
 
@@ -30,12 +29,11 @@ export default class DayAvailabilityPage extends Page {
     cy.get('h2').should('contain.text', uiDate)
 
     if (this.availability === 'Available') {
-      cy.get('p').should('contain.text', 'The space you require is available.')
+      cy.get('p').contains('The space you require is available.')
     } else if (this.availability === 'Overbooked') {
-      cy.get('p').should('contain.text', 'This AP is full or overbooked. The space you require is not available.')
+      cy.get('p').contains('This AP is full or overbooked. The space you require is not available.')
     } else if (this.availability === 'Available for your criteria') {
-      cy.get('p').should(
-        'contain.text',
+      cy.get('p').contains(
         'This AP is full or overbooked, but the space you require is available as it is occupied by someone who does not need it.',
       )
     }
