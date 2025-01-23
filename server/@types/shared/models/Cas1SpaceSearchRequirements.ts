@@ -7,10 +7,14 @@ import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { Gender } from './Gender';
 export type Cas1SpaceSearchRequirements = {
     /**
-     * Searching on multiple types is not supported, instead use apType. If this is used, the first type wll be matched, and type 'normal' will be ignored
+     * Use 'spaceCharacteristics' to filter on premise types
      * @deprecated
      */
     apTypes?: Array<ApType>;
+    /**
+     * Use 'spaceCharacteristics' to filter on premise types
+     * @deprecated
+     */
     apType?: ApType;
     spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
     /**

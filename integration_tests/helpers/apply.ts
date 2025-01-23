@@ -389,16 +389,12 @@ export default class ApplyHelper {
       dateCreated: '2022-12-05',
       dateExpires: '2023-05-29',
       comment: 'Soluta harum harum hic maxime reprehenderit quis harum necessitatibus.',
-      expired: false,
-      active: true,
     })
     const acctAlert2 = acctAlertFactory.build({
       alertId: 429,
       dateCreated: '2022-05-21',
       dateExpires: '2023-12-16',
       comment: 'Quia ex nisi deserunt voluptatibus sit ipsa.',
-      expired: false,
-      active: true,
     })
 
     this.acctAlerts = [acctAlert1, acctAlert2]
