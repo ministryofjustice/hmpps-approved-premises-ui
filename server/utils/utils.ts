@@ -161,6 +161,18 @@ export const objectIfNotEmpty = <T>(object: Record<string, unknown> | T | undefi
   return undefined
 }
 
+/**
+ * Returns a typed array from either an object/string or an array. Useful for handling arrays of query parameters.
+ * @param input either an object or string or an array
+ * @returns an array or undefined if the input is falsey
+ */
+export const makeArrayOfType = <T>(input: unknown): Array<T> => {
+  if (input) {
+    return (Array.isArray(input) ? input : [input]) as Array<T>
+  }
+  return undefined
+}
+
 export const numberToOrdinal = (number: number | string): string =>
   ['First', 'Second', 'Third', 'Fourth', 'Fifth'][Number(number)]
 

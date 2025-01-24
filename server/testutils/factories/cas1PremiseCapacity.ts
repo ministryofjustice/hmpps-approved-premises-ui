@@ -49,10 +49,22 @@ class CapacityForDayFactory extends Factory<Cas1PremiseCapacityForDay> {
     })
   }
 
-  overbooked() {
+  overbookedOrFull() {
     const totalBedCount = faker.number.int({ min: 6, max: 40 })
     const availableBedCount = faker.number.int({ min: totalBedCount - 5, max: totalBedCount })
     const bookingCount = faker.number.int({ min: availableBedCount, max: totalBedCount + 5 })
+
+    return this.params({
+      totalBedCount,
+      availableBedCount,
+      bookingCount,
+    })
+  }
+
+  strictlyOverbooked() {
+    const totalBedCount = faker.number.int({ min: 6, max: 40 })
+    const availableBedCount = faker.number.int({ min: totalBedCount - 5, max: totalBedCount })
+    const bookingCount = faker.number.int({ min: availableBedCount + 1, max: totalBedCount + 5 })
 
     return this.params({
       totalBedCount,

@@ -8,7 +8,7 @@ import type {
   StaffMember,
 } from '@approved-premises/api'
 
-import { stubFor } from './setup'
+import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { createQueryString } from '../../server/utils/utils'
 
@@ -111,21 +111,15 @@ const stubPremiseCapacity = (args: {
     },
   })
 
-const stubPremiseDaySummary = (args: {
+const stubPremisesDaySummary = (args: {
   premisesId: string
   date: string
   premisesDaySummary: Cas1PremisesDaySummary
-  sortBy?: string
-  sortDirection?: string
 }) => {
-  const queryString: string = createQueryString({
-    sortBy: args.sortBy || undefined,
-    sortDirection: args.sortDirection || undefined,
-  })
   return stubFor({
     request: {
       method: 'GET',
-      url: `${paths.premises.daySummary({ premisesId: args.premisesId, date: args.date })}${queryString ? `?${queryString}` : ''}`,
+      urlPath: paths.premises.daySummary({ premisesId: args.premisesId, date: args.date }),
     },
     response: {
       status: 200,
@@ -137,6 +131,14 @@ const stubPremiseDaySummary = (args: {
   })
 }
 
+const verifyPremisesDaySummaryRequest = async ({ premisesId, date }: { premisesId: string; date: string }) =>
+  (
+    await getMatchingRequests({
+      method: 'GET',
+      urlPath: paths.premises.daySummary({ premisesId, date }),
+    })
+  ).body.requests
+
 export default {
   stubAllPremises,
   stubCas1AllPremises,
@@ -144,5 +146,6 @@ export default {
   stubSinglePremises,
   stubPremisesStaffMembers,
   stubPremiseCapacity,
-  stubPremiseDaySummary,
+  stubPremisesDaySummary,
+  verifyPremisesDaySummaryRequest,
 }

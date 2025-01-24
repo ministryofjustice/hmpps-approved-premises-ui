@@ -55,13 +55,17 @@ export default class PremisesClient {
     premisesId: string
     date: string
     bookingsCriteriaFilter?: Array<Cas1SpaceBookingCharacteristic>
-    sortDirection?: SortDirection
-    sortBy?: Cas1SpaceBookingDaySummarySortField
+    bookingsSortDirection?: SortDirection
+    bookingsSortBy?: Cas1SpaceBookingDaySummarySortField
   }): Promise<Cas1PremisesDaySummary> {
-    const { premisesId, date, sortDirection, sortBy, bookingsCriteriaFilter } = args
+    const { premisesId, date, bookingsSortDirection, bookingsSortBy, bookingsCriteriaFilter } = args
     return (await this.restClient.get({
       path: paths.premises.daySummary({ premisesId, date }),
-      query: { sortDirection, sortBy, bookingsCriteriaFilter: bookingsCriteriaFilter?.join(',') },
+      query: {
+        bookingsSortDirection,
+        bookingsSortBy,
+        bookingsCriteriaFilter: bookingsCriteriaFilter?.join(','),
+      },
     })) as Cas1PremisesDaySummary
   }
 

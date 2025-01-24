@@ -535,6 +535,10 @@ export default abstract class Page {
     cy.get(`[value="${id}"]`).should('be.checked')
   }
 
+  shouldNotBeSelected(id: string): void {
+    cy.get(`[value="${id}"]`).should('not.be.checked')
+  }
+
   shouldShowApplicationTimeline(timelineEvents: Array<TimelineEvent>, index: number = 0) {
     const sortedTimelineEvents = timelineEvents.sort((a, b) => {
       return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()

@@ -1,19 +1,31 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { ObjectWithDateParts } from '@approved-premises/ui'
+import { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
 import { PremisesService } from '../../../services'
 
 import paths from '../../../paths/manage'
 import {
   Calendar,
+  type OutOfServiceBedColumnField,
+  type PlacementColumnField,
   daySummaryRows,
   durationSelectOptions,
   generateDaySummaryText,
   occupancyCalendar,
+  outOfServiceBedColumnMap,
+  outOfServiceBedTableRows,
+  placementColumnMap,
+  placementTableRows,
+  tableHeader,
 } from '../../../utils/premises/occupancy'
 import { DateFormats, dateAndTimeInputsAreValidDates, daysToWeeksAndDays } from '../../../utils/dateUtils'
 import { placementDates } from '../../../utils/match'
 import { fetchErrorsAndUserInput, generateErrorMessages, generateErrorSummary } from '../../../utils/validation'
+import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
+import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
+import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 
 export default class ApOccupancyViewController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -72,17 +84,44 @@ export default class ApOccupancyViewController {
     return async (req: Request, res: Response) => {
       const { token } = req.user
       const { premisesId, date } = req.params
-      const premises = await this.premisesService.find(token, premisesId)
-      const daySummary = await this.premisesService.getDaySummary({ token, premisesId, date })
+      const { characteristics } = req.query
 
+      const characteristicsArray = makeArrayOfType<Cas1SpaceBookingCharacteristic>(characteristics)
+      const premises = await this.premisesService.find(token, premisesId)
+      const {
+        sortBy = 'personName',
+        sortDirection = 'asc',
+        hrefPrefix,
+      } = getPaginationDetails<Cas1SpaceBookingDaySummarySortField>(
+        req,
+        paths.premises.occupancy.day({ premisesId, date }),
+        { characteristics: characteristicsArray },
+      )
+      const getDayLink = (targetDate: string) =>
+        `${paths.premises.occupancy.day({ premisesId, date: targetDate })}${createQueryString(req.query, { indices: false, addQueryPrefix: true })}`
+
+      const daySummary = await this.premisesService.getDaySummary({
+        token,
+        premisesId,
+        date,
+        bookingsSortBy: sortBy,
+        bookingsSortDirection: sortDirection,
+        bookingsCriteriaFilter: characteristicsArray as Array<Cas1SpaceBookingCharacteristic>,
+      })
       return res.render('manage/premises/occupancy/dayView', {
         premises,
-        pageHeading: daySummary ? DateFormats.isoDateToUIDate(daySummary.forDate) : '',
+        pageHeading: DateFormats.isoDateToUIDate(daySummary.forDate),
         backLink: paths.premises.occupancy.view({ premisesId }),
-        previousDayLink: daySummary && paths.premises.occupancy.day({ premisesId, date: daySummary.previousDate }),
-        nextDayLink: daySummary && paths.premises.occupancy.day({ premisesId, date: daySummary.nextDate }),
-        daySummaryRows: daySummary && daySummaryRows(daySummary),
-        daySummaryText: daySummary && generateDaySummaryText(daySummary),
+        previousDayLink: getDayLink(daySummary.previousDate),
+        nextDayLink: getDayLink(daySummary.nextDate),
+        daySummaryRows: daySummaryRows(daySummary),
+        daySummaryText: generateDaySummaryText(daySummary),
+        formattedDate: DateFormats.isoDateToUIDate(daySummary.forDate),
+        placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
+        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
+        outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
+        outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, characteristicsArray),
       })
     }
   }

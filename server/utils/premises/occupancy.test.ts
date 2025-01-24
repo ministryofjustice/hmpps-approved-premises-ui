@@ -1,14 +1,32 @@
 import type { SelectOption } from '@approved-premises/ui'
-import { type Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import {
+  Cas1OutOfServiceBedSummary,
+  type Cas1SpaceBookingCharacteristic,
+  Cas1SpaceBookingDaySummary,
+} from '@approved-premises/api'
+import {
+  cas1OutOfServiceBedSummaryFactory,
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
   cas1PremisesDaySummaryFactory,
+  cas1SpaceBookingDaySummaryFactory,
 } from '../../testutils/factories'
-import { daySummaryRows, durationSelectOptions, generateDaySummaryText, occupancyCalendar } from './occupancy'
+import {
+  ColumnDefinition,
+  daySummaryRows,
+  durationSelectOptions,
+  generateDaySummaryText,
+  occupancyCalendar,
+  outOfServiceBedTableRows,
+  placementTableRows,
+  tableHeader,
+} from './occupancy'
 import { DateFormats } from '../dateUtils'
 import { occupancyCriteriaMap } from '../match/occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
+import { getTierOrBlank } from '../applications/helpers'
+import { spaceSearchCriteriaRoomLevelLabels } from '../placementCriteriaUtils'
+import { laoSummaryName } from '../personUtils'
 
 describe('apOccupancy utils', () => {
   describe('occupancyCalendar', () => {
@@ -68,7 +86,7 @@ describe('apOccupancy utils', () => {
               .build({ characteristic: characteristic as Cas1SpaceBookingCharacteristic }),
       )
       const capacityForDay = overbook
-        ? cas1PremiseCapacityForDayFactory.overbooked().build({
+        ? cas1PremiseCapacityForDayFactory.strictlyOverbooked().build({
             characteristicAvailability,
           })
         : cas1PremiseCapacityForDayFactory.available().build({
@@ -133,6 +151,77 @@ describe('apOccupancy utils', () => {
       expect(daySummaryRows(daySummary)).toEqual({
         rows: expected,
       })
+    })
+  })
+
+  describe('tableHeader', () => {
+    const prefix: string = 'prefix'
+    type FieldName = 'fn1' | 'fn2'
+    it('should render a data table header', () => {
+      const tableDefinition: Array<ColumnDefinition<FieldName>> = [
+        { title: 'Col 1', fieldName: 'fn1', sortable: true },
+        { title: 'Col 2', fieldName: 'fn2', sortable: false },
+      ]
+      expect(tableHeader(tableDefinition, null, null, prefix)).toEqual([
+        {
+          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'fn1' },
+          html: '<a href="prefix?sortBy=fn1">Col 1</a>',
+        },
+        { text: 'Col 2' },
+      ])
+    })
+    it('should render a data table header with a sorted column', () => {
+      const tableDefinition: Array<ColumnDefinition<FieldName>> = [
+        { title: 'Col 1', fieldName: 'fn1', sortable: true },
+        { title: 'Col 2', fieldName: 'fn2', sortable: false },
+      ]
+      expect(tableHeader(tableDefinition, 'fn1', 'asc', prefix)).toEqual([
+        {
+          attributes: { 'aria-sort': 'ascending', 'data-cy-sort-field': 'fn1' },
+          html: '<a href="prefix?sortBy=fn1&sortDirection=desc">Col 1</a>',
+        },
+        { text: 'Col 2' },
+      ])
+    })
+  })
+
+  describe('placementTableRows', () => {
+    const checkRow = (placement: Cas1SpaceBookingDaySummary, row: Array<{ text?: string; html?: string }>) => {
+      expect(row[0].html).toMatchStringIgnoringWhitespace(
+        `<a href="/manage/premises/premises-Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoSummaryName(placement.person)}, ${placement.person.crn}</a>`,
+      )
+      expect(row[1].html).toEqual(getTierOrBlank(placement.tier))
+      expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }))
+      expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }))
+      expect(row[4].text).toEqual(placement.releaseType)
+      expect(row[5].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list"><li>Arson room</li></ul>`)
+    }
+    it('should generate a list of placement table rows', () => {
+      const placements = cas1SpaceBookingDaySummaryFactory.buildList(5, {
+        essentialCharacteristics: ['isArsonSuitable'],
+      })
+      const rows = placementTableRows('premises-Id', placements)
+      placements.forEach((placement, index) => checkRow(placement, rows[index]))
+    })
+  })
+
+  describe('outOfServiceBedTableRows', () => {
+    const checkRow = (summary: Cas1OutOfServiceBedSummary, row: Array<{ text?: string; html?: string }>) => {
+      expect(row[0].html).toMatchStringIgnoringWhitespace(
+        `<a href="/manage/premises/premises-Id/beds/${summary.bedId}/out-of-service-beds/${summary.id}/details" data-cy-id="${summary.id}">${summary.roomName}</a>`,
+      )
+      expect(row[1].text).toEqual(summary.reason.name)
+      expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(summary.startDate, { format: 'short' }))
+      expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(summary.endDate, { format: 'short' }))
+      expect(row[4].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list">
+        ${summary.characteristics.map((characteristic: Cas1SpaceBookingCharacteristic) => `<li>${spaceSearchCriteriaRoomLevelLabels[characteristic]}</li>`).join('')}
+      </ul>`)
+    }
+
+    it('should generate a list of out of service beds', () => {
+      const outOfServiceBeds = cas1OutOfServiceBedSummaryFactory.buildList(5)
+      const rows = outOfServiceBedTableRows('premises-Id', outOfServiceBeds)
+      outOfServiceBeds.forEach((summary, index) => checkRow(summary, rows[index]))
     })
   })
 })
