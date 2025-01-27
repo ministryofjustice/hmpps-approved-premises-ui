@@ -1,6 +1,6 @@
 import { createMock } from '@golevelup/ts-jest'
 import type { Request } from 'express'
-import SpaceClient from '../data/spaceClient'
+import SpaceSearchClient from '../data/spaceSearchClient'
 import {
   cas1SpaceBookingFactory,
   newSpaceBookingFactory,
@@ -8,22 +8,22 @@ import {
   spaceSearchResultsFactory,
   spaceSearchStateFactory,
 } from '../testutils/factories'
-import SpaceService from './spaceService'
+import SpaceSearchService from './spaceSearchService'
 import { SpaceSearchState } from '../utils/match'
 
-jest.mock('../data/spaceClient.ts')
+jest.mock('../data/spaceSearchClient.ts')
 
-describe('spaceService', () => {
-  const spaceClient = new SpaceClient(null) as jest.Mocked<SpaceClient>
-  const spaceClientFactory = jest.fn()
+describe('spaceSearchService', () => {
+  const spaceSearchClient = new SpaceSearchClient(null) as jest.Mocked<SpaceSearchClient>
+  const spaceSearchClientFactory = jest.fn()
 
-  const service = new SpaceService(spaceClientFactory)
+  const service = new SpaceSearchService(spaceSearchClientFactory)
 
   const token = 'SOME_TOKEN'
 
   beforeEach(() => {
     jest.resetAllMocks()
-    spaceClientFactory.mockReturnValue(spaceClient)
+    spaceSearchClientFactory.mockReturnValue(spaceSearchClient)
   })
 
   describe('search', () => {
@@ -31,14 +31,14 @@ describe('spaceService', () => {
       const spaceSearchResults = spaceSearchResultsFactory.build()
       const searchState = spaceSearchStateFactory.build()
 
-      spaceClient.search.mockResolvedValue(spaceSearchResults)
+      spaceSearchClient.search.mockResolvedValue(spaceSearchResults)
 
       const result = await service.search(token, searchState)
 
       expect(result).toEqual(spaceSearchResults)
 
-      expect(spaceClientFactory).toHaveBeenCalledWith(token)
-      expect(spaceClient.search).toHaveBeenCalled()
+      expect(spaceSearchClientFactory).toHaveBeenCalledWith(token)
+      expect(spaceSearchClient.search).toHaveBeenCalled()
     })
   })
 
@@ -46,14 +46,14 @@ describe('spaceService', () => {
     it('should call the client', async () => {
       const newSpaceBooking = newSpaceBookingFactory.build()
       const spaceBooking = cas1SpaceBookingFactory.build()
-      spaceClient.createSpaceBooking.mockResolvedValue(spaceBooking)
+      spaceSearchClient.createSpaceBooking.mockResolvedValue(spaceBooking)
       const id = 'some-uuid'
 
       const result = await service.createSpaceBooking(token, id, newSpaceBooking)
 
       expect(result).toEqual(spaceBooking)
-      expect(spaceClientFactory).toHaveBeenCalledWith(token)
-      expect(spaceClient.createSpaceBooking).toHaveBeenCalledWith(id, newSpaceBooking)
+      expect(spaceSearchClientFactory).toHaveBeenCalledWith(token)
+      expect(spaceSearchClient.createSpaceBooking).toHaveBeenCalledWith(id, newSpaceBooking)
     })
   })
 

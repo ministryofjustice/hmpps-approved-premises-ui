@@ -3,7 +3,7 @@ import type { Request, RequestHandler, Response } from 'express'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
-import SpaceService from '../../../services/spaceService'
+import SpaceSearchService from '../../../services/spaceSearchService'
 
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import {
@@ -18,7 +18,7 @@ import { ValidationError } from '../../../utils/errors'
 
 export default class SpaceSearchController {
   constructor(
-    private readonly spaceService: SpaceService,
+    private readonly spaceSearchService: SpaceSearchService,
     private readonly placementRequestService: PlacementRequestService,
   ) {}
 
@@ -31,20 +31,20 @@ export default class SpaceSearchController {
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
 
       if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ id }))) {
-        this.spaceService.removeSpaceSearchState(id, req.session)
+        this.spaceSearchService.removeSpaceSearchState(id, req.session)
       }
 
-      let searchState = this.spaceService.getSpaceSearchState(id, req.session)
+      let searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
 
       if (!searchState) {
-        searchState = this.spaceService.setSpaceSearchState(
+        searchState = this.spaceSearchService.setSpaceSearchState(
           placementRequest.id,
           req.session,
           initialiseSearchState(placementRequest),
         )
       }
 
-      const spaceSearchResults = await this.spaceService.search(token, searchState)
+      const spaceSearchResults = await this.spaceSearchService.search(token, searchState)
 
       const formValues = {
         ...searchState,
@@ -90,7 +90,7 @@ export default class SpaceSearchController {
           })
         }
 
-        this.spaceService.setSpaceSearchState(req.params.id, req.session, {
+        this.spaceSearchService.setSpaceSearchState(req.params.id, req.session, {
           postcode,
           apType,
           apCriteria,

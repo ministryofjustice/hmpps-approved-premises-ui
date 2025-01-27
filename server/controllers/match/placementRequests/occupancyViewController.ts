@@ -1,6 +1,6 @@
 import { Request, Response, TypedRequestHandler } from 'express'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
-import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
@@ -37,7 +37,7 @@ export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
-    private readonly spaceService: SpaceService,
+    private readonly spaceSearchService: SpaceSearchService,
   ) {}
 
   view(): TypedRequestHandler<Request> {
@@ -45,7 +45,7 @@ export default class {
       const { token } = req.user
       const { id, premisesId } = req.params
 
-      const searchState = this.spaceService.getSpaceSearchState(id, req.session)
+      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
 
       if (!searchState) {
         return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
@@ -128,7 +128,7 @@ export default class {
           'startDate',
         )
 
-        this.spaceService.setSpaceSearchState(id, req.session, {
+        this.spaceSearchService.setSpaceSearchState(id, req.session, {
           roomCriteria,
           startDate,
           durationDays: Number(durationDays),
@@ -162,7 +162,7 @@ export default class {
           'departureDate',
         )
 
-        this.spaceService.setSpaceSearchState(id, req.session, {
+        this.spaceSearchService.setSpaceSearchState(id, req.session, {
           arrivalDate,
           departureDate,
         })
@@ -187,7 +187,7 @@ export default class {
       const { token } = req.user
       const { id, premisesId, date } = req.params
 
-      const searchState = this.spaceService.getSpaceSearchState(id, req.session)
+      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
 
       if (!searchState) {
         return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))

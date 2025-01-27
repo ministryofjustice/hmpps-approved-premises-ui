@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response, TypedRequestHandler } from 'express'
 import type { Cas1NewSpaceBooking } from '@approved-premises/api'
-import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
@@ -17,7 +17,7 @@ export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
-    private readonly spaceService: SpaceService,
+    private readonly spaceSearchService: SpaceSearchService,
   ) {}
 
   new(): TypedRequestHandler<Request, Response> {
@@ -25,7 +25,7 @@ export default class {
       const { token } = req.user
       const { id, premisesId } = req.params
 
-      const searchState = this.spaceService.getSpaceSearchState(id, req.session)
+      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
 
       if (!searchState) {
         return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id }))
@@ -69,7 +69,7 @@ export default class {
         user: { token },
       } = req
 
-      const searchState = this.spaceService.getSpaceSearchState(id, req.session)
+      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
 
       const newSpaceBooking: Cas1NewSpaceBooking = {
         arrivalDate: searchState.arrivalDate,
@@ -81,7 +81,7 @@ export default class {
       }
 
       try {
-        await this.spaceService.createSpaceBooking(token, id, newSpaceBooking)
+        await this.spaceSearchService.createSpaceBooking(token, id, newSpaceBooking)
         req.flash(
           'success',
           'You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.',

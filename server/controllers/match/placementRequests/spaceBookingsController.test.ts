@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Cas1NewSpaceBooking } from '@approved-premises/api'
 import SpaceBookingsController from './spaceBookingsController'
 
-import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
@@ -25,7 +25,7 @@ describe('SpaceBookingsController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
-  const spaceService = createMock<SpaceService>({})
+  const spaceSearchService = createMock<SpaceSearchService>({})
 
   const premises = cas1PremisesFactory.build()
   const placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
@@ -38,7 +38,7 @@ describe('SpaceBookingsController', () => {
   beforeEach(() => {
     jest.resetAllMocks()
 
-    spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceService)
+    spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceSearchService)
     request = createMock<Request>({
       user: { token },
       params,
@@ -48,7 +48,7 @@ describe('SpaceBookingsController', () => {
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
-    spaceService.getSpaceSearchState.mockReturnValue(searchState)
+    spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
   })
 
   describe('new', () => {
@@ -56,7 +56,7 @@ describe('SpaceBookingsController', () => {
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)
 
-      expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(params.id, request.session)
+      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(params.id, request.session)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
         backLink: matchPaths.v2Match.placementRequests.search.occupancy(params),
@@ -78,7 +78,7 @@ describe('SpaceBookingsController', () => {
     })
 
     it('redirects to the suitability search if no search state is present', async () => {
-      spaceService.getSpaceSearchState.mockReturnValue(undefined)
+      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
 
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)
@@ -93,7 +93,7 @@ describe('SpaceBookingsController', () => {
       ['no departure date', { departureDate: undefined }],
       ['no arrival or departure date', { arrivalDate: undefined, departureDate: undefined }],
     ])('redirects to the availability search if %s is present in the search state', async (_, stateOverride) => {
-      spaceService.getSpaceSearchState.mockReturnValue({ ...searchState, ...stateOverride })
+      spaceSearchService.getSpaceSearchState.mockReturnValue({ ...searchState, ...stateOverride })
 
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)
@@ -103,7 +103,7 @@ describe('SpaceBookingsController', () => {
   })
 
   describe('create', () => {
-    it('should call the createSpaceBooking method on the spaceService and redirect the user to the CRU dashboard', async () => {
+    it('should call the createSpaceBooking method on the spaceSearchService and redirect the user to the CRU dashboard', async () => {
       const newSpaceBooking: Cas1NewSpaceBooking = {
         premisesId: premises.id,
         arrivalDate: searchState.arrivalDate,
@@ -114,13 +114,17 @@ describe('SpaceBookingsController', () => {
       }
       const spaceBooking = cas1SpaceBookingFactory.build()
 
-      spaceService.createSpaceBooking.mockResolvedValue(spaceBooking)
+      spaceSearchService.createSpaceBooking.mockResolvedValue(spaceBooking)
       const flash = jest.fn()
 
       const requestHandler = spaceBookingsController.create()
       await requestHandler({ ...request, flash }, response, next)
 
-      expect(spaceService.createSpaceBooking).toHaveBeenCalledWith(token, placementRequestDetail.id, newSpaceBooking)
+      expect(spaceSearchService.createSpaceBooking).toHaveBeenCalledWith(
+        token,
+        placementRequestDetail.id,
+        newSpaceBooking,
+      )
       expect(flash).toHaveBeenCalledWith(
         'success',
         `You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.`,
@@ -135,7 +139,7 @@ describe('SpaceBookingsController', () => {
 
       it('redirects to the confirm screen', async () => {
         const apiError = new Error()
-        spaceService.createSpaceBooking.mockRejectedValue(apiError)
+        spaceSearchService.createSpaceBooking.mockRejectedValue(apiError)
 
         const requestHandler = spaceBookingsController.create()
         await requestHandler(request, response, next)

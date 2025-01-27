@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
-import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
@@ -37,7 +37,7 @@ describe('OccupancyViewController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
-  const spaceService = createMock<SpaceService>({})
+  const spaceSearchService = createMock<SpaceSearchService>({})
 
   let occupancyViewController: OccupancyViewController
   const premises = cas1PremisesFactory.build()
@@ -59,7 +59,7 @@ describe('OccupancyViewController', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    occupancyViewController = new OccupancyViewController(placementRequestService, premisesService, spaceService)
+    occupancyViewController = new OccupancyViewController(placementRequestService, premisesService, spaceSearchService)
     request = createMock<Request>({
       params,
       user: { token },
@@ -70,7 +70,7 @@ describe('OccupancyViewController', () => {
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
-    spaceService.getSpaceSearchState.mockReturnValue(searchState)
+    spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
   })
 
   describe('view', () => {
@@ -78,7 +78,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.view()
       await requestHandler(request, response, next)
 
-      expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(
@@ -105,7 +105,7 @@ describe('OccupancyViewController', () => {
     })
 
     it('should redirect to the suitability search if there is no search state in session', async () => {
-      spaceService.getSpaceSearchState.mockReturnValue(undefined)
+      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
 
       const requestHandler = occupancyViewController.view()
       await requestHandler(request, response, next)
@@ -205,7 +205,7 @@ describe('OccupancyViewController', () => {
 
     it('should render the occupancy view with the arrival and departure dates populated if the user has come back from confirm', async () => {
       const fullSearchState = spaceSearchStateFactory.build()
-      spaceService.getSpaceSearchState.mockReturnValue(fullSearchState)
+      spaceSearchService.getSpaceSearchState.mockReturnValue(fullSearchState)
 
       const requestHandler = occupancyViewController.view()
       await requestHandler(request, response, next)
@@ -233,7 +233,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.filterView()
       await requestHandler({ ...request, body: filterBody }, response, next)
 
-      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
         startDate: '2025-03-23',
         roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
         durationDays: 42,
@@ -251,7 +251,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.filterView()
       await requestHandler({ ...request, body: filterBodyNoCriteria }, response, next)
 
-      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(
+      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
         placementRequestDetail.id,
         request.session,
         expect.objectContaining({
@@ -280,7 +280,7 @@ describe('OccupancyViewController', () => {
         new ValidationError({}),
         occupancyViewUrl,
       )
-      expect(spaceService.setSpaceSearchState).not.toHaveBeenCalled()
+      expect(spaceSearchService.setSpaceSearchState).not.toHaveBeenCalled()
 
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
@@ -304,7 +304,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.bookSpace()
       await requestHandler({ ...request, body: validBookingBody }, response, next)
 
-      expect(spaceService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
         arrivalDate: '2026-02-11',
         departureDate: '2026-02-21',
       })
@@ -422,7 +422,7 @@ describe('OccupancyViewController', () => {
 
       const expectedStatus = dayAvailabilityStatus(dayCapacity, searchState.roomCriteria)
 
-      expect(spaceService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
         backlink: occupancyViewUrl,
@@ -436,7 +436,7 @@ describe('OccupancyViewController', () => {
     })
 
     it('should redirect to the suitability search if there is no search state in session', async () => {
-      spaceService.getSpaceSearchState.mockReturnValue(undefined)
+      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
 
       const requestHandler = occupancyViewController.viewDay()
       await requestHandler({ ...request, params: { ...params, date } }, response, next)
