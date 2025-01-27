@@ -21,6 +21,7 @@ import {
 } from '../../../utils/match/spaceSearch'
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
+import paths from '../../../paths/admin'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -110,6 +111,15 @@ describe('spaceSearchController', () => {
         request.session,
         initialiseSearchState(placementRequestDetail),
       )
+    })
+
+    it('should clear the search state if coming from the placement request page', async () => {
+      request.headers.referer = `http://localhost${paths.admin.placementRequests.show({ id: placementRequestDetail.id })}`
+
+      const requestHandler = spaceSearchController.search()
+      await requestHandler(request, response, next)
+
+      expect(spaceService.removeSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
     })
 
     it('should render search errors and user input', async () => {

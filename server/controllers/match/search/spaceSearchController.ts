@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
 import SpaceService from '../../../services/spaceService'
@@ -23,11 +24,17 @@ export default class SpaceSearchController {
 
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { token } = req.user
+      const { id } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
 
-      let searchState = this.spaceService.getSpaceSearchState(req.params.id, req.session)
+      if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ id }))) {
+        this.spaceService.removeSpaceSearchState(id, req.session)
+      }
+
+      let searchState = this.spaceService.getSpaceSearchState(id, req.session)
 
       if (!searchState) {
         searchState = this.spaceService.setSpaceSearchState(
@@ -37,7 +44,7 @@ export default class SpaceSearchController {
         )
       }
 
-      const spaceSearchResults = await this.spaceService.search(req.user.token, searchState)
+      const spaceSearchResults = await this.spaceService.search(token, searchState)
 
       const formValues = {
         ...searchState,
