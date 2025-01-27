@@ -1,9 +1,9 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
 import { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummary } from '@approved-premises/api'
-import { spaceSearchCriteriaRoomLevelLabels } from '../../utils/placementCriteriaUtils'
 import { fullPersonSummaryFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
+import { spaceSearchCriteriaRoomLevelLabels } from '../../utils/match/spaceSearch'
 
 export default Factory.define<Cas1SpaceBookingDaySummary>(() => {
   const essentialCharacteristics = faker.helpers.arrayElements(

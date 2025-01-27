@@ -9,7 +9,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import paths from '../../../server/paths/manage'
 import { daySummaryRows } from '../../../server/utils/premises/occupancy'
 import { laoSummaryName } from '../../../server/utils/personUtils'
-import { spaceSearchCriteriaApLevelLabels } from '../../../server/utils/placementCriteriaUtils'
+import { spaceSearchCriteriaApLevelLabels } from '../../../server/utils/match/spaceSearch'
 
 export default class OccupancyDayViewPage extends Page {
   constructor(private pageTitle: string) {

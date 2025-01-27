@@ -6,7 +6,7 @@ import {
   Cas1SpaceBookingCharacteristic,
 } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import { spaceSearchCriteriaRoomLevelLabels } from '../../utils/placementCriteriaUtils'
+import { spaceSearchCriteriaRoomLevelLabels } from '../../utils/match/spaceSearch'
 
 export default Factory.define<Cas1OutOfServiceBedSummary>(({ sequence }) => {
   const reason: Cas1OutOfServiceBedReason = {
@@ -21,7 +21,10 @@ export default Factory.define<Cas1OutOfServiceBedSummary>(({ sequence }) => {
   return {
     id: faker.string.uuid(),
     bedId: faker.string.uuid(),
-    roomName: `${faker.helpers.arrayElement(['Ground floor', 'First floor'])} rm ${faker.number.int({ min: 1, max: 9 })}-${sequence}`,
+    roomName: `${faker.helpers.arrayElement(['Ground floor', 'First floor'])} rm ${faker.number.int({
+      min: 1,
+      max: 9,
+    })}-${sequence}`,
     startDate: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 10 })),
     endDate: DateFormats.dateObjToIsoDate(faker.date.soon({ days: 10 })),
     reason,
