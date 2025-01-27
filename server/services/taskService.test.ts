@@ -1,11 +1,9 @@
-import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
+import { PaginatedResponse } from '@approved-premises/ui'
 import { Task, UserQualification } from '../@types/shared'
 import TaskClient from '../data/taskClient'
 import {
   cruManagementAreaFactory,
   paginatedResponseFactory,
-  placementApplicationTaskFactory,
-  placementRequestTaskFactory,
   taskFactory,
   taskWrapperFactory,
   userWithWorkloadFactory,
@@ -69,31 +67,6 @@ describe('taskService', () => {
         crnOrName: 'CRN123',
         isCompleted: false,
       })
-    })
-  })
-
-  describe('getMatchTasks', () => {
-    it('calls the all method on the task client', async () => {
-      const applicationTasks = placementApplicationTaskFactory.buildList(1)
-      const notMatchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'notMatched' })
-      const unableToMatchTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'unableToMatch' })
-      const matchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'matched' })
-
-      const tasks: Array<CategorisedTask> = [applicationTasks, notMatchedTasks, unableToMatchTasks, matchedTasks].flat()
-
-      taskClient.allForUser.mockResolvedValue(tasks)
-
-      const result = await service.getMatchTasks(token)
-
-      expect(result).toEqual({
-        notMatched: notMatchedTasks,
-        unableToMatch: unableToMatchTasks,
-        matched: matchedTasks,
-        placementApplications: applicationTasks,
-      })
-
-      expect(taskClientFactory).toHaveBeenCalledWith(token)
-      expect(taskClient.allForUser).toHaveBeenCalled()
     })
   })
 
