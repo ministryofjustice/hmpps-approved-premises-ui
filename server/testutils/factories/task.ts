@@ -1,12 +1,14 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Task } from '@approved-premises/api'
+import type { Task, TaskType } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 import UserFactory from './user'
 import { apAreaFactory } from './referenceData'
 import { getCrn, personSummaryFactory, restrictedPersonSummaryFactory } from './person'
+
+export const taskTypes: ReadonlyArray<TaskType> = ['Assessment', 'PlacementRequest', 'PlacementApplication']
 
 export default Factory.define<Task>(() => ({
   id: faker.string.uuid(),
@@ -15,7 +17,7 @@ export default Factory.define<Task>(() => ({
   dueDate: DateFormats.dateObjToIsoDate(faker.date.future()),
   dueAt: DateFormats.dateObjToIsoDateTime(faker.date.future()),
   status: faker.helpers.arrayElement(['not_started', 'in_progress', 'complete']),
-  taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'BookingAppeal']),
+  taskType: faker.helpers.arrayElement(taskTypes),
   personName: faker.person.fullName(),
   crn: getCrn(),
   apArea: apAreaFactory.build(),
@@ -30,7 +32,7 @@ export const restrictedPersonSummaryTaskFactory = Factory.define<Task>(() => ({
   dueDate: DateFormats.dateObjToIsoDate(faker.date.future()),
   dueAt: DateFormats.dateObjToIsoDateTime(faker.date.future()),
   status: faker.helpers.arrayElement(['not_started', 'in_progress', 'complete']),
-  taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'BookingAppeal']),
+  taskType: faker.helpers.arrayElement(taskTypes),
   personName: faker.person.fullName(),
   crn: getCrn(),
   apArea: apAreaFactory.build(),

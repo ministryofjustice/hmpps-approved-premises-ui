@@ -3,7 +3,6 @@ import paths from '../paths/api'
 
 import {
   assessmentTaskFactory,
-  bookingAppealTask,
   placementApplicationTaskFactory,
   placementRequestTaskFactory,
   taskFactory,
@@ -93,7 +92,6 @@ describeClient('taskClient', provider => {
         placementApplicationTaskFactory.buildList(1),
         placementRequestTaskFactory.buildList(1),
         assessmentTaskFactory.buildList(1),
-        bookingAppealTask.buildList(1),
       ].flat()
 
       provider.addInteraction({
