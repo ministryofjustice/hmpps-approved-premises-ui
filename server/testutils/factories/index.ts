@@ -12,7 +12,6 @@ import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
 import bedSummaryFactory from './bedSummary'
 import bedDetailFactory, { apCharacteristicPairFactory } from './bedDetail'
-import bookingAppealTask from './bookingAppealTask'
 import bookingSummaryFactory from './bookingSummary'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
@@ -114,7 +113,6 @@ export {
   bedSummaryFactory,
   bedDetailFactory,
   bookingSummaryFactory,
-  bookingAppealTask,
   bookingFactory,
   bookingExtensionFactory,
   bookingPremisesSummaryFactory,
