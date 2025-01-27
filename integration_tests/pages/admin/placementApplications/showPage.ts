@@ -18,11 +18,11 @@ export default class ShowPage extends Page {
   }
 
   shouldNotShowBookingInformation() {
-    cy.contains('Booked Placement').should('not.exist')
+    cy.contains('Booked placement').should('not.exist')
   }
 
   shouldShowBookingInformation() {
-    cy.contains('Booked Placement').should('exist')
+    cy.contains('Booked placement').should('exist')
     this.shouldContainSummaryListItems(bookingSummaryList(this.placementRequest.booking).rows)
   }
 

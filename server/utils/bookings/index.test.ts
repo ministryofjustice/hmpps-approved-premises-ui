@@ -341,11 +341,6 @@ describe('bookingUtils', () => {
       })
 
       expect(bookingSummaryList(bookingSummary)).toEqual({
-        card: {
-          title: {
-            text: 'Placement information',
-          },
-        },
         rows: [
           {
             key: {
@@ -381,6 +376,10 @@ describe('bookingUtils', () => {
           },
         ],
       })
+    })
+
+    it('should return undefined if there is no booking', () => {
+      expect(bookingSummaryList(undefined)).toEqual(undefined)
     })
   })
 
