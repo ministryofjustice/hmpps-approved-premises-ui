@@ -1,8 +1,6 @@
-import { Cas1Premises, Cas1SpaceBookingCharacteristic, PlacementRequestDetail, Premises } from '@approved-premises/api'
+import type { Cas1Premises, Cas1SpaceBookingCharacteristic, PlacementRequestDetail } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
 import Page from '../page'
-import paths from '../../../server/paths/match'
-import { createQueryString } from '../../../server/utils/utils'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 import { requirementsHtmlString } from '../../../server/utils/match'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
@@ -10,24 +8,6 @@ import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeU
 export default class BookASpacePage extends Page {
   constructor() {
     super(`Confirm booking`)
-  }
-
-  static visit(
-    placementRequest: PlacementRequestDetail,
-    premisesId: Premises['id'],
-    arrivalDate: string,
-    departureDate: string,
-    criteria: Array<Cas1SpaceBookingCharacteristic>,
-  ) {
-    const queryString = createQueryString({ arrivalDate, departureDate, criteria })
-    const path = `${paths.v2Match.placementRequests.spaceBookings.new({
-      id: placementRequest.id,
-      premisesId,
-    })}?${queryString}`
-
-    cy.visit(path)
-
-    return new BookASpacePage()
   }
 
   shouldShowBookingDetails(

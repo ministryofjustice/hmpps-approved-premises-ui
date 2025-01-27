@@ -1,34 +1,55 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { mapPlacementRequestToSpaceSearchParams } from '../../../utils/placementRequests/utils'
-import { SpaceSearchParametersUi } from '../../../@types/ui'
+import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { PlacementRequestService } from '../../../services'
-import SpaceService from '../../../services/spaceService'
+import SpaceSearchService from '../../../services/spaceSearchService'
 
-import { objectIfNotEmpty } from '../../../utils/utils'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
+import {
+  apTypeRadioItems,
+  checkBoxesForCriteria,
+  initialiseSearchState,
+  spaceSearchCriteriaApLevelLabels,
+  spaceSearchCriteriaRoomLevelLabels,
+} from '../../../utils/match/spaceSearch'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
+import { ValidationError } from '../../../utils/errors'
 
 export default class SpaceSearchController {
   constructor(
-    private readonly spaceService: SpaceService,
+    private readonly spaceSearchService: SpaceSearchService,
     private readonly placementRequestService: PlacementRequestService,
   ) {}
 
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-      const searchParams = mapPlacementRequestToSpaceSearchParams(placementRequest)
+      const { token } = req.user
+      const { id } = req.params
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const query = objectIfNotEmpty<SpaceSearchParametersUi>(searchParams)
-      const body = objectIfNotEmpty<SpaceSearchParametersUi>(req.body)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
 
-      const params = {
-        ...query,
-        ...body,
+      if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ id }))) {
+        this.spaceSearchService.removeSpaceSearchState(id, req.session)
       }
 
-      const spaceSearchResults = await this.spaceService.search(req.user.token, params)
+      let searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
+
+      if (!searchState) {
+        searchState = this.spaceSearchService.setSpaceSearchState(
+          placementRequest.id,
+          req.session,
+          initialiseSearchState(placementRequest),
+        )
+      }
+
+      const spaceSearchResults = await this.spaceSearchService.search(token, searchState)
+
+      const formValues = {
+        ...searchState,
+        ...userInput,
+      }
 
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
@@ -36,8 +57,55 @@ export default class SpaceSearchController {
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
-        ...params,
+        errors,
+        errorSummary,
+        ...formValues,
+        apTypeRadioItems: apTypeRadioItems(formValues.apType),
+        criteriaCheckboxGroups: [
+          checkBoxesForCriteria(
+            'AP requirements',
+            'apCriteria',
+            spaceSearchCriteriaApLevelLabels,
+            formValues.apCriteria,
+          ),
+          checkBoxesForCriteria(
+            'Room requirements',
+            'roomCriteria',
+            spaceSearchCriteriaRoomLevelLabels,
+            formValues.roomCriteria,
+          ),
+        ],
       })
+    }
+  }
+
+  filterSearch(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      try {
+        const { postcode, apType, apCriteria = [], roomCriteria = [] } = req.body
+
+        if (!postcode) {
+          throw new ValidationError({
+            postcode: 'Enter a postcode',
+          })
+        }
+
+        this.spaceSearchService.setSpaceSearchState(req.params.id, req.session, {
+          postcode,
+          apType,
+          apCriteria,
+          roomCriteria,
+        })
+
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error,
+          matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }),
+        )
+      }
     }
   }
 }

@@ -1,6 +1,5 @@
 import { ApType, PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
-import { apTypes } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
 export type SpecialistApTypeCriteria =
@@ -9,6 +8,9 @@ export type SpecialistApTypeCriteria =
   | 'isMHAPElliottHouse'
   | 'isMHAPStJosephs'
   | 'isRecoveryFocussed'
+
+// The ordering of AP types is meaningful to users
+export const apTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap', 'rfap', 'mhapElliottHouse', 'mhapStJosephs']
 
 export const applyApTypeToAssessApType: Record<Exclude<ApType, 'normal'>, SpecialistApTypeCriteria> = {
   pipe: 'isPIPE',
@@ -47,7 +49,7 @@ export type PlacementRequirementCriteria = (typeof placementRequirementCriteria)
 export const placementCriteriaLabels: Record<UiPlacementCriteria, string> = {
   isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
   isESAP: 'Enhanced Security AP (ESAP)',
-  isRecoveryFocussed: 'Recovery Focused Approved Premises (RFAP)',
+  isRecoveryFocussed: 'Recovery Focused AP (RFAP)',
   isMHAPElliottHouse: 'Specialist Mental Health AP (Elliott House - Midlands)',
   isMHAPStJosephs: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
   isSemiSpecialistMentalHealth: 'Semi-specialist mental health',
@@ -73,30 +75,25 @@ export const specialistApTypeCriteriaLabels = filterByType<SpecialistApTypeCrite
   specialistApTypeCriteria,
   placementCriteriaLabels,
 )
+
 export const apTypeCriteriaLabels: Record<ApTypeCriteria, string> = {
   normal: 'Standard AP',
   ...specialistApTypeCriteriaLabels,
 }
 
-export const spaceSearchCriteriaApLevelLabels = {
-  acceptsSexOffenders: 'Sexual offences against adults',
-  acceptsChildSexOffenders: 'Sexual offences against children',
-  acceptsNonSexualChildOffenders: 'Non sexual offences against children',
-  isSuitableForVulnerable: 'Vulnerable to exploitation (removes ESAP APs)',
-  isCatered: 'Catered',
-}
-
-export const spaceSearchCriteriaRoomLevelLabels = {
-  isWheelchairDesignated: 'Wheelchair',
-  isStepFreeDesignated: 'Step-free',
-  hasEnSuite: 'En-suite',
-  isSingle: 'Single room',
-  isArsonSuitable: 'Arson room',
-  isSuitedForSexOffenders: 'Suitable for sexual offences',
-}
-
-export const spaceSearchResultsCharacteristicsLabels = {
-  ...spaceSearchCriteriaApLevelLabels,
-  ...spaceSearchCriteriaRoomLevelLabels,
-  isSuitableForVulnerable: placementCriteriaLabels.isSuitableForVulnerable,
+export const apType = (type: ApTypeCriteria): ApType => {
+  switch (type) {
+    case 'isPIPE':
+      return 'pipe'
+    case 'isESAP':
+      return 'esap'
+    case 'isRecoveryFocussed':
+      return 'rfap'
+    case 'isMHAPElliottHouse':
+      return 'mhapElliottHouse'
+    case 'isMHAPStJosephs':
+      return 'mhapStJosephs'
+    default:
+      return 'normal'
+  }
 }

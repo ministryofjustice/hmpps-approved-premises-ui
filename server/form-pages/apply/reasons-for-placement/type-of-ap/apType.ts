@@ -7,9 +7,8 @@ import { Page } from '../../../utils/decorators'
 import { apTypeLabels } from '../../../../utils/apTypeLabels'
 
 import { isWomensApplication } from '../../../../utils/applications/isWomensApplication'
+import { apTypes } from '../../../../utils/placementCriteriaUtils'
 
-// The ordering of AP types is meaningful to users
-export const apTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap', 'rfap', 'mhapElliottHouse', 'mhapStJosephs']
 export const womensApTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap']
 
 @Page({ name: 'ap-type', bodyProperties: ['type'] })

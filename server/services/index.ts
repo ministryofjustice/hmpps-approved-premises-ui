@@ -15,7 +15,7 @@ import AssessmentService from './assessmentService'
 import TaskService from './taskService'
 import PlacementRequestService from './placementRequestService'
 import PlacementApplicationService from './placementApplicationService'
-import SpaceService from './spaceService'
+import SpaceSearchService from './spaceSearchService'
 import ReportService from './reportService'
 import ApAreaService from './apAreaService'
 import CruManagementAreaService from './cruManagementAreaService'
@@ -60,7 +60,7 @@ export const services = () => {
   const taskService = new TaskService(taskClientBuilder)
   const placementRequestService = new PlacementRequestService(placementRequestClientBuilder)
   const placementApplicationService = new PlacementApplicationService(placementApplicationClientBuilder)
-  const spaceService = new SpaceService(bedClientBuilder)
+  const spaceSearchService = new SpaceSearchService(bedClientBuilder)
   const reportService = new ReportService(reportClientBuilder)
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
   const cruManagementAreaService = new CruManagementAreaService(cas1ReferenceDataClientBuilder)
@@ -80,7 +80,7 @@ export const services = () => {
     taskService,
     placementRequestService,
     placementApplicationService,
-    spaceService,
+    spaceSearchService,
     reportService,
     apAreaService,
     cruManagementAreaService,
@@ -103,7 +103,7 @@ export {
   TaskService,
   PlacementRequestService,
   PlacementApplicationService,
-  SpaceService,
+  SpaceSearchService,
   ReportService,
   ApAreaService,
   CruManagementAreaService,

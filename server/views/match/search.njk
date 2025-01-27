@@ -1,3 +1,4 @@
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
@@ -27,6 +28,13 @@
 {% endset %}
 
 {% block content %}
+    {% if errorSummary | length %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorSummary
+        }) }}
+    {% endif %}
+
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     {% call govukDetails({summaryText: "Placement request information", open: true}) %}
@@ -39,7 +47,6 @@
         <div class="govuk-grid-column-one-third">
             <form action="{{ formPath }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <input type="hidden" name="durationInDays" value="{{ placementRequest.duration }}" />
 
                 <div class="moj-filter">
                     <div class="moj-filter__header govuk-!-padding-left-2">
@@ -57,22 +64,23 @@
                         }) %}
 
                         {{ govukInput({
-                            id: "targetPostcodeDistrict",
-                            name: "targetPostcodeDistrict",
-                            value: targetPostcodeDistrict,
+                            id: "postcode",
+                            name: "postcode",
+                            value: postcode,
                             label: {
                                 text: "Postcode"
 
                             },
-                            classes: "govuk-input--width-3"
+                            classes: "govuk-input--width-3",
+                            errorMessage: errors.postcode
                         }) }}
 
                         {% endcall %}
 
-                                <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
+                        <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
 
-                                {{ govukRadios({
-                            name: "requirements[apType]",
+                        {{ govukRadios({
+                            name: "apType",
                             classes: "govuk-radios--small",
                             fieldset: {
                                 legend: {
@@ -81,25 +89,23 @@
                                     isPageHeading: false
                                 }
                             },
-                            items: MatchUtils.apTypeLabelsForRadioInput(context['requirements']['apType'])
+                            items: apTypeRadioItems
                         }) }}
 
-                        {% for title, details in MatchUtils.groupedCheckboxes() %}
+                        {% for group in criteriaCheckboxGroups %}
                             {{ govukCheckboxes({
-                                name: 'requirements[' + details.inputName + '][]',
+                                name: group.fieldName + '[]',
                                 classes: "govuk-checkboxes--small",
                                 fieldset: {
                                     legend: {
-                                        text: title,
+                                        text: group.legend,
                                         isPageHeading: false,
                                         classes: 'govuk-fieldset__legend--s'
                                     }
                                 },
-                                items: MatchUtils.checkBoxesForCriteria(details.items, context['requirements'][details.inputName])
+                                items: group.items
                             }) }}
                         {% endfor %}
-
-
 
                         <div class="button">
                             {{ govukButton({
@@ -122,18 +128,13 @@
                         },
                         actions: {
                             items: [{
-                                href: MatchUtils.occupancyViewLink({
-                                    placementRequestId: placementRequest.id,
-                                    premisesId: spaceSearchResult.premises.id,
-                                    apType: context.requirements.apType,
-                                    spaceCharacteristics: context.requirements.spaceCharacteristics
-                                }),
+                                href: paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: spaceSearchResult.premises.id }),
                                 text: "View spaces",
                                 visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
                             }]
                         }
                     },
-                    rows: MatchUtils.summaryCardRows(spaceSearchResult, targetPostcodeDistrict)
+                    rows: MatchUtils.summaryCardRows(spaceSearchResult, postcode)
                 }) }}
             {% endfor %}
 

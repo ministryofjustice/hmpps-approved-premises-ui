@@ -10,106 +10,26 @@ import {
   PlacementRequest,
   PlacementRequestDetail,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
-  Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '@approved-premises/api'
-import {
-  KeyDetailsArgs,
-  ObjectWithDateParts,
-  RadioItem,
-  SpaceSearchParametersUi,
-  SummaryListItem,
-} from '@approved-premises/ui'
-import { ParsedQs } from 'qs'
+import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { createQueryString } from '../utils'
-import matchPaths from '../../paths/match'
-import {
-  placementCriteriaLabels,
-  spaceSearchCriteriaApLevelLabels,
-  spaceSearchCriteriaRoomLevelLabels,
-  spaceSearchResultsCharacteristicsLabels,
-} from '../placementCriteriaUtils'
+import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
-import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
+import { summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
 import { isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { occupancyCriteriaMap } from './occupancy'
 import paths from '../../paths/apply'
+import { spaceSearchResultsCharacteristicsLabels } from './spaceSearch'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
-
-export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
-
-export const mapUiParamsForApi = (query: SpaceSearchParametersUi): SpaceSearchParameters => {
-  return {
-    applicationId: query.applicationId,
-    startDate: query.startDate,
-    targetPostcodeDistrict: query.targetPostcodeDistrict,
-    requirements: {
-      apTypes: [query.requirements.apType],
-      spaceCharacteristics: query.requirements.spaceCharacteristics,
-    },
-    durationInDays: Number(query.durationInDays),
-  }
-}
+export type { SpaceSearchState } from './spaceSearch'
 
 export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
-}
-
-export const occupancyViewLink = ({
-  placementRequestId,
-  premisesId,
-  startDate,
-  durationDays,
-  spaceCharacteristics = [],
-}: {
-  placementRequestId: string
-  premisesId: string
-  startDate: string
-  durationDays: string
-  spaceCharacteristics: Array<Cas1SpaceBookingCharacteristic>
-}): string =>
-  `${matchPaths.v2Match.placementRequests.search.occupancy({
-    id: placementRequestId,
-    premisesId,
-  })}${createQueryString(
-    {
-      startDate,
-      durationDays,
-      criteria: spaceCharacteristics,
-    },
-    { addQueryPrefix: true, arrayFormat: 'repeat' },
-  )}`
-
-export const redirectToSpaceBookingsNew = ({
-  placementRequestId,
-  premisesId,
-  arrivalDate,
-  departureDate,
-  criteria,
-  ...existingQuery
-}: ParsedQs & {
-  placementRequestId: string
-  premisesId: string
-  arrivalDate: string
-  departureDate: string
-  criteria: Array<Cas1SpaceBookingCharacteristic>
-}): string => {
-  return `${matchPaths.v2Match.placementRequests.spaceBookings.new({
-    id: placementRequestId,
-    premisesId,
-  })}${createQueryString(
-    { arrivalDate, departureDate, criteria, ...existingQuery },
-    {
-      addQueryPrefix: true,
-      arrayFormat: 'repeat',
-    },
-  )}`
 }
 
 export const spaceBookingConfirmationSummaryListRows = (
@@ -145,15 +65,6 @@ export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<
         'isSemiSpecialistMentalHealth',
       ].includes(requirement),
   ) as Array<SpaceCharacteristic>
-}
-
-export const filterToSpaceBookingCharacteristics = (
-  requirements: Array<PlacementCriteria>,
-): Array<Cas1SpaceBookingCharacteristic> => {
-  const characteristics = Object.keys(occupancyCriteriaMap)
-  return requirements.filter(requirement =>
-    characteristics.includes(requirement),
-  ) as Array<Cas1SpaceBookingCharacteristic>
 }
 
 export const requirementsHtmlString = (
@@ -288,50 +199,6 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   }
 
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
-}
-
-export const groupedCriteria = {
-  offenceAndRisk: {
-    title: 'AP requirements',
-    items: spaceSearchCriteriaApLevelLabels,
-    inputName: 'spaceCharacteristics',
-  },
-  accessNeeds: {
-    title: 'Room requirements',
-    items: spaceSearchCriteriaRoomLevelLabels,
-    inputName: 'spaceCharacteristics',
-  },
-}
-
-export const groupedCheckboxes = () => {
-  return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
-    return {
-      ...obj,
-      [`${groupedCriteria[k].title}`]: {
-        inputName: groupedCriteria[k].inputName,
-        items: groupedCriteria[k].items,
-      },
-    }
-  }, {})
-}
-
-export const checkBoxesForCriteria = (criteria: Record<string, string>, selectedValues: Array<string> = []) => {
-  return Object.keys(criteria)
-    .map(criterion => ({
-      id: criterion,
-      text: criteria[criterion],
-      value: criterion,
-      checked: selectedValues.includes(criterion),
-    }))
-    .filter(item => item.text.length > 0)
-}
-
-export const apTypeLabelsForRadioInput = (selectedValue: ApType) => {
-  const apTypeRadios = convertKeyValuePairToRadioItems(apTypeLabels, selectedValue) as Array<
-    RadioItem | { divider: 'or' }
-  >
-  apTypeRadios.splice(1, 0, { divider: 'or' })
-  return apTypeRadios
 }
 
 export const lengthOfStayRow = (lengthInDays: number) => ({

@@ -5,7 +5,6 @@ import {
   Cas1SpaceSearchParameters,
   FullPerson,
 } from '@approved-premises/api'
-import { addDays } from 'date-fns'
 import SearchPage from '../../pages/match/searchPage'
 import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
@@ -15,20 +14,26 @@ import {
   cas1SpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
-  spaceBookingRequirementsFactory,
-  spaceSearchParametersUiFactory,
+  spaceSearchResultFactory,
   spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
 
 import ListPage from '../../pages/admin/placementApplications/listPage'
-import { filterOutAPTypes } from '../../../server/utils/match'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 import OccupancyViewPage from '../../pages/match/occupancyViewPage'
 import applicationFactory from '../../../server/testutils/factories/application'
 import DayAvailabilityPage from '../../pages/match/dayAvailabilityPage'
 import apiPaths from '../../../server/paths/api'
+import spaceSearchState from '../../../server/testutils/factories/spaceSearchState'
+import {
+  filterApLevelCriteria,
+  filterRoomLevelCriteria,
+  initialiseSearchState,
+} from '../../../server/utils/match/spaceSearch'
+import { apType } from '../../../server/utils/placementCriteriaUtils'
+import premisesSearchResultSummary from '../../../server/testutils/factories/cas1PremisesSearchResultSummary'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -66,8 +71,8 @@ context('Placement Requests', () => {
 
     // Given I want to search for a different space
     // When I enter new details on the search screen
-    const newSearchParameters = spaceSearchParametersUiFactory.build()
-    searchPage.changeSearchParameters(newSearchParameters)
+    const newSearchState = spaceSearchState.build()
+    searchPage.changeSearchParameters(newSearchState)
     searchPage.clickSubmit()
     numberOfSearches += 1
 
@@ -75,10 +80,7 @@ context('Placement Requests', () => {
     Page.verifyOnPage(SearchPage)
 
     // And the new search criteria should be selected
-    searchPage.shouldShowSearchParametersInInputs(newSearchParameters)
-
-    // And the results should have links with the correct AP type and criteria
-    searchPage.shouldHaveSearchParametersInLinks(newSearchParameters)
+    searchPage.shouldShowSearchParametersInInputs(newSearchState)
 
     // // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
@@ -86,10 +88,11 @@ context('Placement Requests', () => {
       const initialSearchRequestBody = JSON.parse(requests[0].body)
       const secondSearchRequestBody: Cas1SpaceSearchParameters = JSON.parse(requests[1].body)
 
-      const filteredPlacementCriteria = filterOutAPTypes([
-        ...placementRequest.desirableCriteria,
-        ...placementRequest.essentialCriteria,
-      ])
+      const allPlacementCriteria = [...placementRequest.desirableCriteria, ...placementRequest.essentialCriteria]
+      const filteredPlacementCriteria = [
+        ...filterApLevelCriteria(allPlacementCriteria),
+        ...filterRoomLevelCriteria(allPlacementCriteria),
+      ]
 
       // And the first request to the API should contain the criteria from the placement request
       expect(initialSearchRequestBody).to.deep.equal({
@@ -98,7 +101,7 @@ context('Placement Requests', () => {
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,
         requirements: {
-          apTypes: [placementRequest.type],
+          apType: placementRequest.type,
           spaceCharacteristics: filteredPlacementCriteria,
         },
       })
@@ -108,42 +111,44 @@ context('Placement Requests', () => {
         applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
         startDate: placementRequest.expectedArrival,
-        targetPostcodeDistrict: newSearchParameters.targetPostcodeDistrict,
+        targetPostcodeDistrict: newSearchState.postcode,
       })
 
-      expect(secondSearchRequestBody.requirements.apTypes).to.contain.members([newSearchParameters.requirements.apType])
-      expect(secondSearchRequestBody.requirements.spaceCharacteristics).to.contain.members(
-        newSearchParameters.requirements.spaceCharacteristics,
-      )
+      expect(secondSearchRequestBody.requirements.apType).to.equal(apType(newSearchState.apType))
+      expect(secondSearchRequestBody.requirements.spaceCharacteristics).to.contain.members([
+        ...newSearchState.apCriteria,
+        ...newSearchState.roomCriteria,
+      ])
     })
   })
 
   it('allows me to view spaces and occupancy capacity', () => {
-    const { occupancyViewPage, premiseCapacity } =
+    const { occupancyViewPage, premiseCapacity, searchState } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     // And I should see a summary of occupancy
-    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
   })
 
   it('allows me to view spaces and occupancy capacity with blank licence expiry date', () => {
-    const { occupancyViewPage, premiseCapacity } = shouldVisitOccupancyViewPageAndShowMatchingDetails(undefined)
+    const { occupancyViewPage, premiseCapacity, searchState } =
+      shouldVisitOccupancyViewPageAndShowMatchingDetails(undefined)
 
     // And I should see a summary of occupancy
-    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
   })
 
   it('allows me to submit invalid dates in the book your placement form on occupancy view page and displays appropriate validation messages', () => {
     const { occupancyViewPage } = shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     // When I submit invalid dates
-    occupancyViewPage.shouldFillBookYourPlacementFormDates('2024-11-25', '2024-11-24')
+    occupancyViewPage.completeForm('2024-11-25', '2024-11-24')
     occupancyViewPage.clickContinue()
 
     // Then I should see validation messages
@@ -151,7 +156,6 @@ context('Placement Requests', () => {
   })
 
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = (licenceExpiryDate: string | undefined) => {
-    const apType = 'normal'
     const durationDays = 15
     const startDate = '2024-07-23'
     const endDate = '2024-08-07'
@@ -172,23 +176,37 @@ context('Placement Requests', () => {
         licenceExpiryDate,
       }),
     })
+    const searchState = initialiseSearchState(placementRequest)
     const premiseCapacity = cas1PremiseCapacityFactory.build({
       premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
       startDate,
       endDate,
     })
+    const spaceSearchResults = spaceSearchResultsFactory.build({
+      results: [
+        spaceSearchResultFactory.build({
+          premises: premisesSearchResultSummary.build(premises),
+        }),
+        ...spaceSearchResultFactory.buildList(4),
+      ],
+    })
 
+    cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubSinglePremises', premises)
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
+    // Given I have followed a link to a result from the suitability search
+    const searchPage = SearchPage.visit(placementRequest)
+    searchPage.clickSearchResult(spaceSearchResults.results[0])
+
     // When I visit the occupancy view page
-    const occupancyViewPage = OccupancyViewPage.visit(placementRequest, premises, apType)
+    const occupancyViewPage = Page.verifyOnPage(OccupancyViewPage, premises.name)
 
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(startDate, durationDays, placementRequest)
 
-    return { occupancyViewPage, placementRequest, premiseCapacity, premises, startDate }
+    return { occupancyViewPage, placementRequest, premiseCapacity, premises, startDate, searchState }
   }
 
   const shouldShowDayDetailsAndReturn = (
@@ -196,6 +214,7 @@ context('Placement Requests', () => {
     date: Date,
     premises: Cas1Premises,
     premiseCapacity: Cas1PremiseCapacity,
+    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
   ) => {
     const dayCapacity = occupancyViewPage.getOccupancyForDate(date, premiseCapacity)
     const premiseCapacityForDay = cas1PremiseCapacityFactory.build({
@@ -214,7 +233,7 @@ context('Placement Requests', () => {
     occupancyViewPage.clickCalendarDay(dayCapacity.date)
 
     // Then I should see the page showing details for the day
-    const dayAvailabilityPage = new DayAvailabilityPage(dayCapacity)
+    const dayAvailabilityPage = new DayAvailabilityPage(dayCapacity, criteria)
 
     // And I should see availability details
     dayAvailabilityPage.shouldShowDayAvailability()
@@ -224,26 +243,29 @@ context('Placement Requests', () => {
   }
 
   it('allows me to view spaces and occupancy capacity and filter the result', () => {
-    const { occupancyViewPage, premiseCapacity, premises, startDate } =
+    const { occupancyViewPage, premiseCapacity, premises, startDate, searchState } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     // And I should see the filter form with populated values
     occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks', [])
 
     // And I should see a summary of occupancy
-    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity)
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
 
-    // And I should be able to see the day's availability details
-    shouldShowDayDetailsAndReturn(occupancyViewPage, addDays(startDate, 10), premises, premiseCapacity)
+    // And I should be able to see any day's availability details
+    const datesByStatus = occupancyViewPage.getDatesForEachAvailabilityStatus(premiseCapacity, searchState.roomCriteria)
+    datesByStatus.forEach(date => {
+      shouldShowDayDetailsAndReturn(occupancyViewPage, date, premises, premiseCapacity, searchState.roomCriteria)
+    })
 
     // Then I should see the calendar again
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity)
+    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
 
     // When I filter with an invalid date
-    occupancyViewPage.filterAvailability('2025-02-35')
+    occupancyViewPage.filterAvailability({ newStartDate: '2025-02-35' })
 
     // Then I should see an error message
     occupancyViewPage.shouldShowErrorMessagesForFields(['startDate'], {
@@ -266,48 +288,33 @@ context('Placement Requests', () => {
       endDate: newEndDate,
       premiseCapacity: newPremiseCapacity,
     })
-    occupancyViewPage.filterAvailability(newStartDate, newDuration, newCriteria)
+    occupancyViewPage.filterAvailability({ newStartDate, newDuration, newCriteria })
 
     // Then I should see the filter form with updated values
     occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteria)
   })
 
   it('allows me to book a space', () => {
-    // Given I am signed in as a cru_member
-    signIn(['cru_member'], ['cas1_space_booking_create'])
-
-    const premises = cas1PremisesFactory.build()
-    cy.task('stubSinglePremises', premises)
+    const { occupancyViewPage, premises, placementRequest, searchState } =
+      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     const arrivalDate = '2024-07-23'
     const departureDate = '2024-08-08'
-    const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'hasEnSuite']
 
-    // And there is a placement request waiting for me to match
-    const person = personFactory.build()
-    const placementRequest = placementRequestDetailFactory.build({
-      person,
-    })
+    // And I fill in the requested arrival and departure dates
+    occupancyViewPage.completeForm(arrivalDate, departureDate)
+    occupancyViewPage.clickContinue()
 
-    // When I visit the 'Book a space' page
-    cy.task('stubPlacementRequest', placementRequest)
-    const page = BookASpacePage.visit(placementRequest, premises.id, arrivalDate, departureDate, criteria)
+    const page = Page.verifyOnPage(BookASpacePage)
 
     // Then I should see the details of the case I am matching
     page.shouldShowPersonHeader(placementRequest.person as FullPerson)
 
     // And I should see the details of the space I am booking
-    page.shouldShowBookingDetails(placementRequest, premises, arrivalDate, departureDate, criteria)
+    page.shouldShowBookingDetails(placementRequest, premises, arrivalDate, departureDate, searchState.roomCriteria)
 
     // And when I complete the form
-    const requirements = spaceBookingRequirementsFactory.build({
-      essentialCharacteristics: criteria,
-    })
-    const spaceBooking = cas1SpaceBookingFactory.upcoming().build({
-      expectedArrivalDate: arrivalDate,
-      expectedDepartureDate: departureDate,
-      requirements,
-    })
+    const spaceBooking = cas1SpaceBookingFactory.upcoming().build()
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
     page.clickSubmit()
@@ -326,7 +333,7 @@ context('Placement Requests', () => {
           departureDate,
           premisesId: premises.id,
           requirements: {
-            essentialCharacteristics: criteria,
+            essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
           },
         })
       },

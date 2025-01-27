@@ -177,7 +177,7 @@ describe('MatchingInformation', () => {
         { value: 'normal', text: 'Standard AP', checked: false },
         { value: 'isPIPE', text: 'Psychologically Informed Planned Environment (PIPE)', checked: true },
         { value: 'isESAP', text: 'Enhanced Security AP (ESAP)', checked: false },
-        { value: 'isRecoveryFocussed', text: 'Recovery Focused Approved Premises (RFAP)', checked: false },
+        { value: 'isRecoveryFocussed', text: 'Recovery Focused AP (RFAP)', checked: false },
         { value: 'isMHAPElliottHouse', text: 'Specialist Mental Health AP (Elliott House - Midlands)', checked: false },
         {
           value: 'isMHAPStJosephs',

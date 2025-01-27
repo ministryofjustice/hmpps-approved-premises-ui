@@ -25,8 +25,8 @@ import { DateFormats } from '../dateUtils'
 import { occupancyCriteriaMap } from '../match/occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 import { getTierOrBlank } from '../applications/helpers'
-import { spaceSearchCriteriaRoomLevelLabels } from '../placementCriteriaUtils'
 import { laoSummaryName } from '../personUtils'
+import { spaceSearchCriteriaRoomLevelLabels } from '../match/spaceSearch'
 
 describe('apOccupancy utils', () => {
   describe('occupancyCalendar', () => {

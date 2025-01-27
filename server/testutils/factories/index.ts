@@ -75,8 +75,7 @@ import cancellationReasonFactory from './cancellationReason'
 import newSpaceBookingFactory from './newSpaceBooking'
 import cas1PremisesSearchResultSummaryFactory from './cas1PremisesSearchResultSummary'
 import spaceBookingRequirementsFactory from './spaceBookingRequirements'
-import spaceCategoryAvailabilityFactory from './spaceAvailability'
-import spaceSearchParametersFactory, { spaceSearchParametersUiFactory } from './spaceSearchParameters'
+import spaceSearchParametersFactory from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
 import cas1PremisesFactory from './cas1Premises'
@@ -95,6 +94,7 @@ import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
 import cas1PremisesDaySummaryFactory from './cas1PremisesDaySummary'
 import cas1OutOfServiceBedSummaryFactory from './cas1OutOfServiceBedSummary'
+import spaceSearchStateFactory from './spaceSearchState'
 
 export {
   acctAlertFactory,
@@ -194,9 +194,8 @@ export {
   newSpaceBookingFactory,
   cas1PremisesSearchResultSummaryFactory,
   spaceBookingRequirementsFactory,
-  spaceCategoryAvailabilityFactory,
   spaceSearchParametersFactory,
-  spaceSearchParametersUiFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
+  spaceSearchStateFactory,
 }

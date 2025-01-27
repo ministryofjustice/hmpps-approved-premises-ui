@@ -1,4 +1,4 @@
-import SpaceClient from './spaceClient'
+import SpaceSearchClient from './spaceSearchClient'
 import paths from '../paths/api'
 
 import {
@@ -9,13 +9,13 @@ import {
 } from '../testutils/factories'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
-describeCas1NamespaceClient('SpaceClient', provider => {
-  let spaceClient: SpaceClient
+describeCas1NamespaceClient('SpaceSearchClient', provider => {
+  let spaceSearchClient: SpaceSearchClient
 
   const token = 'SOME_TOKEN'
 
   beforeEach(() => {
-    spaceClient = new SpaceClient(token)
+    spaceSearchClient = new SpaceSearchClient(token)
   })
 
   describe('search', () => {
@@ -40,7 +40,7 @@ describeCas1NamespaceClient('SpaceClient', provider => {
         },
       })
 
-      const result = await spaceClient.search(payload)
+      const result = await spaceSearchClient.search(payload)
 
       expect(result).toEqual(spaceSearchResult)
     })
@@ -69,7 +69,7 @@ describeCas1NamespaceClient('SpaceClient', provider => {
         },
       })
 
-      const result = await spaceClient.createSpaceBooking(placementRequestId, newSpaceBooking)
+      const result = await spaceSearchClient.createSpaceBooking(placementRequestId, newSpaceBooking)
 
       expect(result).toEqual(spaceBooking)
     })

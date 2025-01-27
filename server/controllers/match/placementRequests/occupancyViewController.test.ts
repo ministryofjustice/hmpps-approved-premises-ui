@@ -3,13 +3,13 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
-import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { PlacementRequestService, PremisesService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
   cas1PremisesFactory,
   placementRequestDetailFactory,
+  spaceSearchStateFactory,
 } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
 import { occupancySummary } from '../../../utils/match'
@@ -21,27 +21,35 @@ import {
   dayAvailabilityStatus,
   dayAvailabilityStatusMap,
   dayAvailabilitySummaryListItems,
+  durationSelectOptions,
+  occupancyCriteriaMap,
 } from '../../../utils/match/occupancy'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
+import { initialiseSearchState } from '../../../utils/match/spaceSearch'
+import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
-  const flashSpy = jest.fn()
 
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
+  const spaceSearchService = createMock<SpaceSearchService>({})
 
   let occupancyViewController: OccupancyViewController
   const premises = cas1PremisesFactory.build()
   const placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
+  const searchState = initialiseSearchState(placementRequestDetail)
   const premiseCapacity = cas1PremiseCapacityFactory.build()
+
   let request: Readonly<DeepMocked<Request>>
 
-  const apType = 'esap'
+  const params = { id: placementRequestDetail.id, premisesId: premises.id }
+
+  const occupancyViewUrl = matchPaths.v2Match.placementRequests.search.occupancy(params)
   const placeholderDetailsUrl = matchPaths.v2Match.placementRequests.search.dayOccupancy({
     id: placementRequestDetail.id,
     premisesId: premises.id,
@@ -51,90 +59,63 @@ describe('OccupancyViewController', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
+    occupancyViewController = new OccupancyViewController(placementRequestService, premisesService, spaceSearchService)
     request = createMock<Request>({
+      params,
       user: { token },
-      query: {},
-      flash: flashSpy,
-      headers: {
-        referer: '/referrerPath',
-      },
+      flash: jest.fn(),
+      session: {},
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
-
-    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
-      errors: {},
-      errorSummary: [],
-      userInput: {},
-    })
+    spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
   })
 
   describe('view', () => {
-    it('should render the occupancy view template with placement start date and duration', async () => {
-      const expectedStartDate = placementRequestDetail.expectedArrival
-      const expectedDuration = placementRequestDetail.duration
-
-      const query = {
-        apType,
-      }
-
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
-
+    it('should render the occupancy view template with the search state details', async () => {
       const requestHandler = occupancyViewController.view()
+      await requestHandler(request, response, next)
 
-      await requestHandler({ ...request, params, query }, response, next)
-
+      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(
         token,
         premises.id,
-        expectedStartDate,
-        DateFormats.dateObjToIsoDate(addDays(expectedStartDate, expectedDuration)),
+        searchState.startDate,
+        DateFormats.dateObjToIsoDate(addDays(searchState.startDate, searchState.durationDays)),
       )
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
         premises,
-        apType,
-        startDate: expectedStartDate,
-        ...DateFormats.isoDateToDateInputs(expectedStartDate, 'startDate'),
-        durationDays: expectedDuration,
-        durationOptions: [
-          { text: 'Up to 1 week', value: '7' },
-          { text: 'Up to 6 weeks', value: '42' },
-          { text: 'Up to 12 weeks', value: '84', selected: true },
-          { text: 'Up to 26 weeks', value: '182' },
-          { text: 'Up to 52 weeks', value: '364' },
-        ],
-        criteriaOptions: [
-          { value: 'isWheelchairDesignated', text: 'Wheelchair accessible', checked: false },
-          { value: 'isSingle', text: 'Single room', checked: false },
-          { value: 'isStepFreeDesignated', text: 'Step-free', checked: false },
-          { value: 'hasEnSuite', text: 'En-suite', checked: false },
-          { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
-          { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
-        ],
-        criteria: undefined,
+        ...searchState,
+        ...DateFormats.isoDateToDateInputs(searchState.startDate, 'startDate'),
+        durationOptions: durationSelectOptions(searchState.durationDays),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, searchState.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
-        summary: occupancySummary(premiseCapacity.capacity),
-        calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
+        summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
+        calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
         errors: {},
         errorSummary: [],
       })
     })
 
+    it('should redirect to the suitability search if there is no search state in session', async () => {
+      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
+
+      const requestHandler = occupancyViewController.view()
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+      )
+    })
+
     it('should render the occupancy view template with booking errors', async () => {
-      const query = {
-        apType,
-      }
-
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
-
       const expectedErrors = {
         arrivalDate: {
           text: 'You must enter an arrival date',
@@ -166,7 +147,7 @@ describe('OccupancyViewController', () => {
 
       const requestHandler = occupancyViewController.view()
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/placementRequests/occupancyView/view',
@@ -179,102 +160,138 @@ describe('OccupancyViewController', () => {
           'departureDate-day': '1',
           'departureDate-month': '5',
           'departureDate-year': '2026',
-          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl),
-          summary: occupancySummary(premiseCapacity.capacity),
+          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
+          summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
         }),
       )
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
 
-    it('should render the occupancy view template with filtered start date, duration and criteria', async () => {
-      const query = {
-        apType,
-        'startDate-day': '30',
-        'startDate-month': '04',
-        'startDate-year': '2025',
-        durationDays: '100',
-        criteria: ['isSingle', 'isWheelchairDesignated'],
+    it('should show an error if the filter date is invalid, and not show the calendar or summary', async () => {
+      const expectedErrors = {
+        startDate: {
+          attributes: { 'data-cy-error-startDate': true },
+          text: 'Enter a valid date',
+        },
       }
-
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
-
-      const requestHandler = occupancyViewController.view()
-
-      await requestHandler({ ...request, params, query }, response, next)
-
-      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, '2025-04-30', '2025-08-08')
-      expect(response.render).toHaveBeenCalledWith(
-        'match/placementRequests/occupancyView/view',
-        expect.objectContaining({
-          durationOptions: [
-            { text: 'Up to 1 week', value: '7' },
-            { text: 'Up to 6 weeks', value: '42' },
-            { text: 'Up to 12 weeks', value: '84' },
-            { text: 'Up to 26 weeks', value: '182', selected: true },
-            { text: 'Up to 52 weeks', value: '364' },
-          ],
-          criteriaOptions: [
-            { value: 'isWheelchairDesignated', text: 'Wheelchair accessible', checked: true },
-            { value: 'isSingle', text: 'Single room', checked: true },
-            { value: 'isStepFreeDesignated', text: 'Step-free', checked: false },
-            { value: 'hasEnSuite', text: 'En-suite', checked: false },
-            { value: 'isSuitedForSexOffenders', text: 'Suitable for sex offenders', checked: false },
-            { value: 'isArsonSuitable', text: 'Designated arson room', checked: false },
-          ],
-          criteria: ['isSingle', 'isWheelchairDesignated'],
-          durationDays: 100,
-          startDate: '2025-04-30',
-          'startDate-day': '30',
-          'startDate-month': '4',
-          'startDate-year': '2025',
-          summary: occupancySummary(premiseCapacity.capacity, ['isSingle', 'isWheelchairDesignated']),
-          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, [
-            'isSingle',
-            'isWheelchairDesignated',
-          ]),
-        }),
-      )
-    })
-
-    it('should show an error if the filter date is invalid', async () => {
-      const query = {
-        apType,
+      const expectedErrorSummary = [{ text: 'Enter a valid date', href: '#startDate' }]
+      const expectedUserInput = {
         'startDate-day': '32',
         'startDate-month': '2',
         'startDate-year': '2025',
-        durationDays: '84',
       }
-
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
+      jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
+        errors: expectedErrors,
+        errorSummary: expectedErrorSummary,
+        userInput: expectedUserInput,
+      })
 
       const requestHandler = occupancyViewController.view()
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/placementRequests/occupancyView/view',
         expect.objectContaining({
-          errors: { startDate: { attributes: { 'data-cy-error-startDate': true }, text: 'Enter a valid date' } },
-          errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
-          'startDate-day': '32',
-          'startDate-month': '2',
-          'startDate-year': '2025',
+          errors: expectedErrors,
+          errorSummary: expectedErrorSummary,
+          ...expectedUserInput,
           summary: undefined,
           calendar: undefined,
         }),
       )
       expect(premisesService.getCapacity).not.toHaveBeenCalled()
     })
+
+    it('should render the occupancy view with the arrival and departure dates populated if the user has come back from confirm', async () => {
+      const fullSearchState = spaceSearchStateFactory.build()
+      spaceSearchService.getSpaceSearchState.mockReturnValue(fullSearchState)
+
+      const requestHandler = occupancyViewController.view()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          ...DateFormats.isoDateToDateInputs(fullSearchState.arrivalDate, 'arrivalDate'),
+          ...DateFormats.isoDateToDateInputs(fullSearchState.departureDate, 'departureDate'),
+        }),
+      )
+    })
+  })
+
+  describe('filterView', () => {
+    const filterBody: Request['body'] = {
+      'startDate-day': '23',
+      'startDate-month': '3',
+      'startDate-year': '2025',
+      roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
+      durationDays: '42',
+    }
+
+    it('saves the submitted filters in the search state and redirects to the view', async () => {
+      const requestHandler = occupancyViewController.filterView()
+      await requestHandler({ ...request, body: filterBody }, response, next)
+
+      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        startDate: '2025-03-23',
+        roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
+        durationDays: 42,
+      })
+
+      expect(response.redirect).toHaveBeenCalledWith(occupancyViewUrl)
+    })
+
+    it('clears the selected room criteria when none are selected', async () => {
+      const filterBodyNoCriteria: Request['body'] = {
+        ...filterBody,
+        roomCriteria: undefined,
+      }
+
+      const requestHandler = occupancyViewController.filterView()
+      await requestHandler({ ...request, body: filterBodyNoCriteria }, response, next)
+
+      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
+        placementRequestDetail.id,
+        request.session,
+        expect.objectContaining({
+          roomCriteria: [],
+        }),
+      )
+    })
+
+    it.each([
+      ['empty', { 'startDate-day': '', 'startDate-month': '', 'startDate-year': '' }],
+      ['invalid', { 'startDate-day': '45', 'startDate-month': '14', 'startDate-year': '23' }],
+    ])('returns an error if the start date is %s', async (_, dateInput) => {
+      jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
+
+      const filterBodyNoStartDate: Request['body'] = {
+        ...filterBody,
+        ...dateInput,
+      }
+
+      const requestHandler = occupancyViewController.filterView()
+      await requestHandler({ ...request, body: filterBodyNoStartDate }, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        occupancyViewUrl,
+      )
+      expect(spaceSearchService.setSpaceSearchState).not.toHaveBeenCalled()
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        startDate: 'Enter a valid date',
+      })
+    })
   })
 
   describe('bookSpace', () => {
-    const params = { id: placementRequestDetail.id, premisesId: premises.id }
-
-    const startDate = '2025-08-15'
-    const durationDays = '22'
-
     const validBookingBody = {
-      criteria: 'hasEnSuite,isStepFreeDesignated',
       'arrivalDate-day': '11',
       'arrivalDate-month': '2',
       'arrivalDate-year': '2026',
@@ -283,16 +300,16 @@ describe('OccupancyViewController', () => {
       'departureDate-year': '2026',
     }
 
-    it(`should redirect to space-booking confirmation page when date validation succeeds`, async () => {
+    it(`should set the state search dates and redirect to space-booking confirmation page when date validation succeeds`, async () => {
       const requestHandler = occupancyViewController.bookSpace()
-      await requestHandler({ ...request, params, body: validBookingBody }, response, next)
+      await requestHandler({ ...request, body: validBookingBody }, response, next)
 
-      const expectedQueryString =
-        'arrivalDate=2026-02-11&departureDate=2026-02-21&criteria=hasEnSuite&criteria=isStepFreeDesignated'
+      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        arrivalDate: '2026-02-11',
+        departureDate: '2026-02-21',
+      })
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        `${matchPaths.v2Match.placementRequests.spaceBookings.new(params)}?${expectedQueryString}`,
-      )
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.spaceBookings.new(params))
     })
 
     describe('when there are errors', () => {
@@ -304,7 +321,7 @@ describe('OccupancyViewController', () => {
         const body = {}
 
         const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, params, body }, response, next)
+        await requestHandler({ ...request, body }, response, next)
 
         const expectedErrorData = {
           arrivalDate: 'You must enter an arrival date',
@@ -315,10 +332,7 @@ describe('OccupancyViewController', () => {
           request,
           response,
           new ValidationError({}),
-          matchPaths.v2Match.placementRequests.search.occupancy({
-            id: placementRequestDetail.id,
-            premisesId: premises.id,
-          }),
+          occupancyViewUrl,
         )
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -337,7 +351,7 @@ describe('OccupancyViewController', () => {
         }
 
         const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, params, body }, response, next)
+        await requestHandler({ ...request, body }, response, next)
 
         const expectedErrorData = {
           arrivalDate: 'The arrival date is an invalid date',
@@ -348,10 +362,7 @@ describe('OccupancyViewController', () => {
           request,
           response,
           new ValidationError({}),
-          matchPaths.v2Match.placementRequests.search.occupancy({
-            id: placementRequestDetail.id,
-            premisesId: premises.id,
-          }),
+          occupancyViewUrl,
         )
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -370,7 +381,7 @@ describe('OccupancyViewController', () => {
         }
 
         const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, params, body }, response, next)
+        await requestHandler({ ...request, body }, response, next)
 
         const expectedErrorData = {
           departureDate: 'The departure date must be after the arrival date',
@@ -380,49 +391,21 @@ describe('OccupancyViewController', () => {
           request,
           response,
           new ValidationError({}),
-          matchPaths.v2Match.placementRequests.search.occupancy({
-            id: placementRequestDetail.id,
-            premisesId: premises.id,
-          }),
+          occupancyViewUrl,
         )
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
         expect(errorData).toEqual(expectedErrorData)
       })
-
-      it(`should redirect to occupancy view with the existing query string`, async () => {
-        const body = {}
-        const query = {
-          startDate,
-          durationDays,
-          criteria: ['isWheelchairDesignated', 'isSuitedForSexOffenders'],
-        }
-
-        const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, params, query, body }, response, next)
-
-        const expectedQueryString = `startDate=${startDate}&durationDays=${durationDays}&criteria=isWheelchairDesignated&criteria=isSuitedForSexOffenders`
-
-        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
-          response,
-          new ValidationError({}),
-          `${matchPaths.v2Match.placementRequests.search.occupancy({
-            id: placementRequestDetail.id,
-            premisesId: premises.id,
-          })}?${expectedQueryString}`,
-        )
-      })
     })
   })
 
   describe('viewDay', () => {
-    it('should render the day occupancy view template with given approved premises, date and criteria', async () => {
-      const date = '2025-03-23'
-      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
+    const date = '2025-03-23'
 
-      const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
+    it('should render the day occupancy view template with given approved premises and search state', async () => {
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build()
       const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
         premise: premises,
         startDate: date,
@@ -433,27 +416,34 @@ describe('OccupancyViewController', () => {
         .calledWith(request.user.token, premises.id, date)
         .mockResolvedValue(premisesCapacityForDay)
 
-      const query = {
-        criteria,
-      }
-      const params = { id: placementRequestDetail.id, premisesId: premises.id, date }
-
       const requestHandler = occupancyViewController.viewDay()
 
-      await requestHandler({ ...request, params, query }, response, next)
+      await requestHandler({ ...request, params: { ...params, date } }, response, next)
 
-      const expectedStatus = dayAvailabilityStatus(dayCapacity, criteria)
+      const expectedStatus = dayAvailabilityStatus(dayCapacity, searchState.roomCriteria)
 
+      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
-        backlink: '/referrerPath',
+        backlink: occupancyViewUrl,
         pageHeading: dayAvailabilityStatusMap[expectedStatus],
         placementRequest: placementRequestDetail,
         premises,
         date,
         status: expectedStatus,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, criteria),
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, searchState.roomCriteria),
       })
+    })
+
+    it('should redirect to the suitability search if there is no search state in session', async () => {
+      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
+
+      const requestHandler = occupancyViewController.viewDay()
+      await requestHandler({ ...request, params: { ...params, date } }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+      )
     })
   })
 })

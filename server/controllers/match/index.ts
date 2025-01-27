@@ -9,18 +9,31 @@ import SpaceBookingsController from './placementRequests/spaceBookingsController
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { placementApplicationService, placementRequestService, spaceService, applicationService, premisesService } =
-    services
+  const {
+    placementApplicationService,
+    placementRequestService,
+    spaceSearchService,
+    applicationService,
+    premisesService,
+  } = services
 
   const placementRequestController = new PlacementRequestController(
     placementRequestService,
     placementApplicationService,
     applicationService,
   )
-  const spaceSearchController = new SpaceSearchController(spaceService, placementRequestService)
+  const spaceSearchController = new SpaceSearchController(spaceSearchService, placementRequestService)
   const placementRequestBookingsController = new BookingsController(placementRequestService)
-  const spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceService)
-  const occupancyViewController = new OccupancyViewController(placementRequestService, premisesService)
+  const spaceBookingsController = new SpaceBookingsController(
+    placementRequestService,
+    premisesService,
+    spaceSearchService,
+  )
+  const occupancyViewController = new OccupancyViewController(
+    placementRequestService,
+    premisesService,
+    spaceSearchService,
+  )
 
   return {
     placementRequestController,

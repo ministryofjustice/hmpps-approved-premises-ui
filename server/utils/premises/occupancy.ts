@@ -14,7 +14,7 @@ import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
 import { laoSummaryName } from '../personUtils'
-import { spaceSearchCriteriaRoomLevelLabels } from '../placementCriteriaUtils'
+import { spaceSearchCriteriaRoomLevelLabels } from '../match/spaceSearch'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -188,7 +188,12 @@ export const outOfServiceBedTableRows = (
   return outOfServiceBeds.map(({ id, bedId, startDate, endDate, characteristics, reason, roomName }) => {
     const fieldValues: Partial<Record<OutOfServiceBedColumnField, TableCell>> = {
       id: htmlValue(
-        `<a href="${managePaths.outOfServiceBeds.show({ premisesId, id, bedId, tab: 'details' })}" data-cy-id="${id}">${roomName}</a>`,
+        `<a href="${managePaths.outOfServiceBeds.show({
+          premisesId,
+          id,
+          bedId,
+          tab: 'details',
+        })}" data-cy-id="${id}">${roomName}</a>`,
       ),
       characteristics: itemListHtml(
         characteristics.map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic]).filter(Boolean),

@@ -1,21 +1,19 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { Cas1NewSpaceBooking } from '@approved-premises/api'
 import SpaceBookingsController from './spaceBookingsController'
 
-import { PlacementRequestService, PremisesService, SpaceService } from '../../../services'
+import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
-  newSpaceBookingFactory,
   placementRequestDetailFactory,
-  spaceBookingRequirementsFactory,
+  spaceSearchStateFactory,
 } from '../../../testutils/factories'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import * as validationUtils from '../../../utils/validation'
-import { createQueryString } from '../../../utils/utils'
 import { spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
 
 describe('SpaceBookingsController', () => {
@@ -27,61 +25,50 @@ describe('SpaceBookingsController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
-  const spaceService = createMock<SpaceService>({})
+  const spaceSearchService = createMock<SpaceSearchService>({})
 
   const premises = cas1PremisesFactory.build()
   const placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
+  const searchState = spaceSearchStateFactory.build()
+
+  const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
   let spaceBookingsController: SpaceBookingsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceService)
-    request = createMock<Request>({ user: { token }, flash: jest.fn() })
+
+    spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceSearchService)
+    request = createMock<Request>({
+      user: { token },
+      params,
+      session: {},
+      flash: jest.fn(),
+    })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
+    spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
   })
 
   describe('new', () => {
-    it('should render the new space booking confirmation template', async () => {
-      const startDate = '2024-07-20'
-      const durationDays = '84'
-      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
-      const arrivalDate = '2024-07-26'
-      const departureDate = '2024-09-04' // 40 days later
-
-      const query = {
-        startDate,
-        durationDays,
-        criteria,
-        arrivalDate,
-        departureDate,
-      }
-
-      const params = { id: placementRequestDetail.id, premisesId: premises.id }
-
+    it('should render the new space booking confirmation template based on search state', async () => {
       const requestHandler = spaceBookingsController.new()
+      await requestHandler(request, response, next)
 
-      await requestHandler({ ...request, params, query }, response, next)
-
-      const expectedSubmitLink = `${matchPaths.v2Match.placementRequests.spaceBookings.create(params)}?startDate=2024-07-20&durationDays=84&criteria=hasEnSuite&criteria=isArsonSuitable&arrivalDate=2024-07-26&departureDate=2024-09-04`
-      const expectedBackLink = `${matchPaths.v2Match.placementRequests.search.occupancy(params)}?startDate=2024-07-20&durationDays=84&criteria=hasEnSuite&criteria=isArsonSuitable`
+      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(params.id, request.session)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
-        backLink: expectedBackLink,
-        submitLink: expectedSubmitLink,
+        backLink: matchPaths.v2Match.placementRequests.search.occupancy(params),
+        submitLink: matchPaths.v2Match.placementRequests.spaceBookings.create(params),
         placementRequest: placementRequestDetail,
         premises,
-        arrivalDate,
-        departureDate,
-        criteria,
         summaryListRows: spaceBookingConfirmationSummaryListRows(
           placementRequestDetail,
           premises,
-          arrivalDate,
-          departureDate,
-          criteria,
+          searchState.arrivalDate,
+          searchState.departureDate,
+          searchState.roomCriteria,
         ),
         errorSummary: [],
         errors: {},
@@ -89,61 +76,75 @@ describe('SpaceBookingsController', () => {
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
     })
+
+    it('redirects to the suitability search if no search state is present', async () => {
+      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
+
+      const requestHandler = spaceBookingsController.new()
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+      )
+    })
+
+    it.each([
+      ['no arrival date', { arrivalDate: undefined }],
+      ['no departure date', { departureDate: undefined }],
+      ['no arrival or departure date', { arrivalDate: undefined, departureDate: undefined }],
+    ])('redirects to the availability search if %s is present in the search state', async (_, stateOverride) => {
+      spaceSearchService.getSpaceSearchState.mockReturnValue({ ...searchState, ...stateOverride })
+
+      const requestHandler = spaceBookingsController.new()
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.occupancy(params))
+    })
   })
 
   describe('create', () => {
-    it.each([
-      ['empty', { essentialCharacteristics: [] }],
-      ['populated', {}],
-    ])(
-      'should call the createSpaceBooking method on the spaceService and redirect the user to the CRU dashboard with characteristics %s',
-      async (_, requirementsOverride) => {
-        const requirements = spaceBookingRequirementsFactory.build(requirementsOverride)
-        const newSpaceBooking = newSpaceBookingFactory.build({ premisesId: premises.id, requirements })
-        const spaceBooking = cas1SpaceBookingFactory.build()
+    it('should call the createSpaceBooking method on the spaceSearchService and redirect the user to the CRU dashboard', async () => {
+      const newSpaceBooking: Cas1NewSpaceBooking = {
+        premisesId: premises.id,
+        arrivalDate: searchState.arrivalDate,
+        departureDate: searchState.departureDate,
+        requirements: {
+          essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
+        },
+      }
+      const spaceBooking = cas1SpaceBookingFactory.build()
 
-        const body = {
-          arrivalDate: newSpaceBooking.arrivalDate,
-          departureDate: newSpaceBooking.departureDate,
-          criteria: newSpaceBooking.requirements.essentialCharacteristics.toString(),
-        }
-        const params = { id: placementRequestDetail.id, premisesId: premises.id }
+      spaceSearchService.createSpaceBooking.mockResolvedValue(spaceBooking)
+      const flash = jest.fn()
 
-        spaceService.createSpaceBooking.mockResolvedValue(spaceBooking)
-        const flash = jest.fn()
+      const requestHandler = spaceBookingsController.create()
+      await requestHandler({ ...request, flash }, response, next)
 
-        const requestHandler = spaceBookingsController.create()
-        await requestHandler({ ...request, flash, params, body }, response, next)
-
-        expect(spaceService.createSpaceBooking).toHaveBeenCalledWith(token, placementRequestDetail.id, newSpaceBooking)
-        expect(flash).toHaveBeenCalledWith(
-          'success',
-          `You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.`,
-        )
-        expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
-      },
-    )
+      expect(spaceSearchService.createSpaceBooking).toHaveBeenCalledWith(
+        token,
+        placementRequestDetail.id,
+        newSpaceBooking,
+      )
+      expect(flash).toHaveBeenCalledWith(
+        'success',
+        `You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.`,
+      )
+      expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
+    })
 
     describe('when errors are raised by the API', () => {
       beforeEach(() => {
         jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue()
       })
 
-      it('redirects to the confirm screen maintaining the query string', async () => {
-        const body = newSpaceBookingFactory.build()
-        const params = { id: placementRequestDetail.id, premisesId: premises.id }
-        const query = { startDate: '2025-06-12', durationDays: '84', criteria: ['hasEnSuite'] }
-
+      it('redirects to the confirm screen', async () => {
         const apiError = new Error()
-        spaceService.createSpaceBooking.mockRejectedValue(apiError)
+        spaceSearchService.createSpaceBooking.mockRejectedValue(apiError)
 
         const requestHandler = spaceBookingsController.create()
-        await requestHandler({ ...request, params, query, body }, response, next)
+        await requestHandler(request, response, next)
 
-        const expectedRedirect = `${matchPaths.v2Match.placementRequests.spaceBookings.new({
-          id: placementRequestDetail.id,
-          premisesId: premises.id,
-        })}?${createQueryString(query)}`
+        const expectedRedirect = matchPaths.v2Match.placementRequests.spaceBookings.new(params)
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
           request,

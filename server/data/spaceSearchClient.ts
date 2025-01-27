@@ -9,11 +9,11 @@ import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
 
-export default class SpaceClient {
+export default class SpaceSearchClient {
   restClient: RestClient
 
   constructor(token: string) {
-    this.restClient = new RestClient('spaceClient', config.apis.approvedPremises as ApiConfig, token)
+    this.restClient = new RestClient('spaceSearchClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
   async search(params: SpaceSearchParameters): Promise<SpaceSearchResults> {

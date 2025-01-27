@@ -2,9 +2,10 @@ import { ApType } from '@approved-premises/api'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import * as formUtils from '../../../../utils/formUtils'
 
-import SelectApType, { apTypeHintText, apTypes } from './apType'
+import SelectApType, { apTypeHintText } from './apType'
 import { apTypeLabels } from '../../../../utils/apTypeLabels'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { apTypes } from '../../../../utils/placementCriteriaUtils'
 
 describe('SelectApType', () => {
   const applicationMensEstate = applicationFactory.build({

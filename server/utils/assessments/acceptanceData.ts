@@ -18,9 +18,9 @@ import MatchingInformation, {
 } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import LocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import {
-  ApTypeCriteria,
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
+  apType,
   offenceAndRiskCriteria,
   placementRequirementCriteria,
 } from '../placementCriteriaUtils'
@@ -82,23 +82,6 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
     location,
     radius: alternativeRadius || 50,
     ...criteria,
-  }
-}
-
-const apType = (type: ApTypeCriteria): ApType => {
-  switch (type) {
-    case 'isPIPE':
-      return 'pipe'
-    case 'isESAP':
-      return 'esap'
-    case 'isRecoveryFocussed':
-      return 'rfap'
-    case 'isMHAPElliottHouse':
-      return 'mhapElliottHouse'
-    case 'isMHAPStJosephs':
-      return 'mhapStJosephs'
-    default:
-      return 'normal'
   }
 }
 

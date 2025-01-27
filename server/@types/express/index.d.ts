@@ -3,7 +3,9 @@ import type {
   ApprovedPremisesApplication,
   Cas1SpaceBooking,
   PlacementApplicationDecisionEnvelope,
+  PlacementRequestDetail,
 } from '@approved-premises/api'
+import { SpaceSearchState } from '../../utils/match'
 
 export default {}
 
@@ -17,6 +19,7 @@ declare module 'express-session' {
     placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
     messages: Array<string>
     departureForms: Record<Cas1SpaceBooking['id'], DepartureFormSessionData>
+    spaceSearch: Record<PlacementRequestDetail['id'], SpaceSearchState>
   }
 }
 

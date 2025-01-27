@@ -12,6 +12,7 @@ const v2Match = {
     search: {
       spaces: v2PlacementRequestSearchPath.path('new'),
       occupancy: v2PlacementRequestSearchOccupancyPath,
+      occupancyBook: v2PlacementRequestSearchOccupancyPath.path('book'),
       dayOccupancy: v2PlacementRequestSearchOccupancyPath.path('date/:date'),
     },
     spaceBookings: {
