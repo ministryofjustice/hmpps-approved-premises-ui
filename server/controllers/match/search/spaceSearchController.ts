@@ -14,7 +14,6 @@ import {
 } from '../../../utils/match/spaceSearch'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
-import logger from '../../../../logger'
 
 export default class SpaceSearchController {
   constructor(
@@ -25,8 +24,6 @@ export default class SpaceSearchController {
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-
-      logger.debug('User input: ', userInput)
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
