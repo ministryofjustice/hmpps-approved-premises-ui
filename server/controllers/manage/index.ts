@@ -16,6 +16,7 @@ import ArrivalsController from './premises/placements/arrivalsController'
 import NonArrivalsController from './premises/placements/nonArrivalsController'
 import KeyworkerController from './premises/placements/keyworkerController'
 import DeparturesController from './premises/placements/departuresController'
+import ChangesController from './premises/placements/changesController'
 
 export const controllers = (services: Services) => {
   const premisesController = new PremisesController(services.premisesService, services.apAreaService)
@@ -47,6 +48,7 @@ export const controllers = (services: Services) => {
   const keyworkerController = new KeyworkerController(services.premisesService, services.placementService)
   const departuresController = new DeparturesController(services.premisesService, services.placementService)
   const apOccupancyViewController = new ApOccupancyViewController(services.premisesService)
+  const changesController = new ChangesController(services.placementService, services.premisesService)
 
   return {
     premisesController,
@@ -63,6 +65,7 @@ export const controllers = (services: Services) => {
     placementController,
     keyworkerController,
     apOccupancyViewController,
+    changesController,
   }
 }
 
@@ -79,4 +82,5 @@ export {
   BookingsController,
   BookingExtensionsController,
   ApOccupancyViewController,
+  ChangesController,
 }
