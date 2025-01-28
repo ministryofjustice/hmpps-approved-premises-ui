@@ -97,7 +97,9 @@ export default class SpaceSearchController {
           roomCriteria,
         })
 
-        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
+        return req.session.save(() => {
+          res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

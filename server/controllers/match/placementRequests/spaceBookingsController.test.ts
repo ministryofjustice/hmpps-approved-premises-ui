@@ -20,6 +20,7 @@ describe('SpaceBookingsController', () => {
   const token = 'SOME_TOKEN'
 
   let request: Readonly<DeepMocked<Request>>
+  const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -36,13 +37,15 @@ describe('SpaceBookingsController', () => {
   let spaceBookingsController: SpaceBookingsController
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
 
     spaceBookingsController = new SpaceBookingsController(placementRequestService, premisesService, spaceSearchService)
     request = createMock<Request>({
       user: { token },
       params,
-      session: {},
+      session: {
+        save: mockSessionSave,
+      },
       flash: jest.fn(),
     })
 
@@ -129,6 +132,7 @@ describe('SpaceBookingsController', () => {
         'success',
         `You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.`,
       )
+      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
     })
 

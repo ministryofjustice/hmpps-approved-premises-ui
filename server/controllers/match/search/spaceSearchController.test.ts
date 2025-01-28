@@ -28,10 +28,13 @@ describe('spaceSearchController', () => {
   const placementRequestDetail = placementRequestDetailFactory.build()
   const spaceSearchResults = spaceSearchResultsFactory.build()
 
+  const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
   const request: DeepMocked<Request> = createMock<Request>({
     params: { id: placementRequestDetail.id },
     user: { token },
-    session: {},
+    session: {
+      save: mockSessionSave,
+    },
     flash: jest.fn(),
   })
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -45,7 +48,8 @@ describe('spaceSearchController', () => {
   const searchPath = matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id })
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
+
     spaceSearchController = new SpaceSearchController(spaceSearchService, placementRequestService)
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
@@ -180,6 +184,7 @@ describe('spaceSearchController', () => {
         request.session,
         searchParams,
       )
+      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(searchPath)
     })
 

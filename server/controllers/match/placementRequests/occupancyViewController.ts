@@ -134,7 +134,9 @@ export default class {
           durationDays: Number(durationDays),
         })
 
-        return res.redirect(occupancyUrl)
+        return req.session.save(() => {
+          res.redirect(occupancyUrl)
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(req, res, error, occupancyUrl)
       }
@@ -167,7 +169,9 @@ export default class {
           departureDate,
         })
 
-        return res.redirect(paths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }))
+        return req.session.save(() => {
+          res.redirect(paths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }))
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

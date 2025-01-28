@@ -160,7 +160,9 @@ export default class DeparturesController {
           redirect = departurePaths.moveOnCategory({ premisesId, placementId })
         }
 
-        return res.redirect(redirect)
+        return req.session.save(() => {
+          res.redirect(redirect)
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -218,7 +220,9 @@ export default class DeparturesController {
 
         this.placementService.setDepartureSessionData(placementId, req.session, req.body)
 
-        return res.redirect(departurePaths.notes({ premisesId, placementId }))
+        return req.session.save(() => {
+          res.redirect(departurePaths.notes({ premisesId, placementId }))
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -274,7 +278,9 @@ export default class DeparturesController {
 
         this.placementService.setDepartureSessionData(placementId, req.session, req.body)
 
-        return res.redirect(departurePaths.notes({ premisesId, placementId }))
+        return req.session.save(() => {
+          res.redirect(departurePaths.notes({ premisesId, placementId }))
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -352,7 +358,10 @@ export default class DeparturesController {
 
         this.placementService.removeDepartureSessionData(placementId, req.session)
         req.flash('success', 'You have recorded this person as departed')
-        return res.redirect(placementPath({ premisesId, placementId }))
+
+        return req.session.save(() => {
+          res.redirect(placementPath({ premisesId, placementId }))
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

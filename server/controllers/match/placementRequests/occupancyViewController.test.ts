@@ -46,6 +46,7 @@ describe('OccupancyViewController', () => {
   const premiseCapacity = cas1PremiseCapacityFactory.build()
 
   let request: Readonly<DeepMocked<Request>>
+  const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
 
   const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
@@ -64,7 +65,9 @@ describe('OccupancyViewController', () => {
       params,
       user: { token },
       flash: jest.fn(),
-      session: {},
+      session: {
+        save: mockSessionSave,
+      },
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
@@ -238,7 +241,7 @@ describe('OccupancyViewController', () => {
         roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
         durationDays: 42,
       })
-
+      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(occupancyViewUrl)
     })
 
@@ -308,7 +311,7 @@ describe('OccupancyViewController', () => {
         arrivalDate: '2026-02-11',
         departureDate: '2026-02-21',
       })
-
+      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.spaceBookings.new(params))
     })
 
