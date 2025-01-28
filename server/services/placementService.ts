@@ -84,7 +84,7 @@ export default class PlacementService {
   }
 
   getDepartureSessionData(placementId: string, session: Request['session']): DepartureFormSessionData {
-    return session?.departureForms?.[placementId]
+    return session?.departureForms?.[placementId] || {}
   }
 
   setDepartureSessionData(placementId: string, session: Request['session'], data: DepartureFormSessionData) {

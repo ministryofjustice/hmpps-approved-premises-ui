@@ -86,7 +86,11 @@ export default class {
           'success',
           'You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.',
         )
-        return res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)
+        this.spaceSearchService.removeSpaceSearchState(id, req.session)
+
+        return req.session.save(() => {
+          res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
