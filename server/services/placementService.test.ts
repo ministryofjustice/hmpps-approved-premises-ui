@@ -131,6 +131,14 @@ describe('PlacementService', () => {
       breachOrRecallReasonId: 'new-reason-id',
     }
 
+    it('returns an empty session data object if no session departure data exists', async () => {
+      const request = createMock<Request>()
+
+      const result = placementService.getDepartureSessionData(placementId, request.session)
+
+      expect(result).toEqual({})
+    })
+
     it('returns the departure data for the given placement', () => {
       const request = createMock<Request>({
         session: { departureForms: { 'placement-id': page1Data } },
