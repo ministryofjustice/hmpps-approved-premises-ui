@@ -1,15 +1,23 @@
 import { signIn } from '../../signIn'
-import { cas1PremisesFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
+import {
+  cas1PremisesFactory,
+  cas1SpaceBookingFactory,
+  nonArrivalReasonsFactory,
+} from '../../../../server/testutils/factories'
 import { PlacementShowPage } from '../../../pages/manage'
 import { RecordNonArrivalPage } from '../../../pages/manage/placements/nonArrival'
+import { NON_ARRIVAL_REASON_OTHER_ID } from '../../../../server/utils/placements'
 
 context('Non-arrivals', () => {
   let placement
+  const nonArrivalReasons = nonArrivalReasonsFactory.buildList(5)
+  nonArrivalReasons[4].id = NON_ARRIVAL_REASON_OTHER_ID
 
   beforeEach(() => {
     const premises = cas1PremisesFactory.build()
     placement = cas1SpaceBookingFactory.upcoming().build({ premises })
-    cy.task('stubNonArrivalReasonsReferenceData')
+
+    cy.task('stubNonArrivalReasonsReferenceData', nonArrivalReasons)
     cy.task('stubSpaceBookingShow', placement)
     cy.task('stubSpaceBookingNonArrival', placement)
   })
@@ -44,7 +52,7 @@ context('Non-arrivals', () => {
     // Then I should see an in-page error
     page.checkForCharacterCountError()
 
-    // When I submit the page
+    // When I submit the form
     page.clickSubmit()
 
     // Then I should see two errors
@@ -53,14 +61,15 @@ context('Non-arrivals', () => {
     // And the text should still be populated
     page.checkForCharacterCountError()
 
-    // When I select a reason and submit the form
-    page.completeReason()
+    // When I clear the notes, select 'Other' as the non-arrival reason and submit
+    page.getTextInputByIdAndClear('notes')
+    page.checkRadioByNameAndValue('reason', NON_ARRIVAL_REASON_OTHER_ID)
     page.clickSubmit()
 
-    // Then I should see the text overflow error (but the reason should remain populated)
-    page.shouldShowErrorMessagesForFields(['notes'], errorMessages)
+    // Then I should see an error message
+    page.shouldShowErrorMessagesForFields(['notes'], { notes: 'You must provide the reason for non-arrival' })
 
-    // When I fix the text overflow and submit the form (given that the reason remained populated)
+    // When I populate the notes field and submit
     page.completeNotesGood()
     page.clickSubmit()
 

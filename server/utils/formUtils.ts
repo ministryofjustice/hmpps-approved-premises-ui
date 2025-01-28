@@ -175,11 +175,17 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
 export const summaryListItem = (
   label: string,
   value: string,
-  renderAs: keyof TextItem | keyof HtmlItem = 'text',
-): SummaryListItem => ({
-  key: { text: label },
-  value: renderAs === 'text' ? { text: value } : { html: value },
-})
+  renderAs: keyof TextItem | keyof HtmlItem | 'textBlock' = 'text',
+  supressBlank = false,
+): SummaryListItem => {
+  const htmlValue = renderAs === 'textBlock' ? `<span class="govuk-summary-list__textblock">${value}</span>` : value
+  return !supressBlank || value
+    ? {
+        key: { text: label },
+        value: renderAs === 'text' ? { text: value } : { html: htmlValue },
+      }
+    : undefined
+}
 
 /**
  * Performs validation on the area of a postcode (IE the first three or four characters)

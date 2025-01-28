@@ -4,11 +4,22 @@ import { when } from 'jest-when'
 import type { NextFunction, Request, Response } from 'express'
 import * as validationUtils from '../../../../utils/validation'
 import { PlacementService, PremisesService } from '../../../../services'
-import { cas1SpaceBookingFactory, departureReasonFactory, referenceDataFactory } from '../../../../testutils/factories'
+import {
+  cas1PremisesBasicSummaryFactory,
+  cas1SpaceBookingFactory,
+  departureReasonFactory,
+  referenceDataFactory,
+} from '../../../../testutils/factories'
 import DeparturesController from './departuresController'
 import paths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
-import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
+import {
+  BED_WITHDRAWN_REASON_ID,
+  BREACH_OR_RECALL_REASON_ID,
+  LICENCE_EXPIRED_REASON_ID,
+  MOVE_TO_AP_REASON_ID,
+  PLANNED_MOVE_ON_REASON_ID,
+} from '../../../../utils/placements'
 
 describe('DeparturesController', () => {
   const token = 'SOME_TOKEN'
@@ -58,6 +69,7 @@ describe('DeparturesController', () => {
   ]
 
   const moveOnCategories = referenceDataFactory.buildList(5)
+  const premisesList = cas1PremisesBasicSummaryFactory.buildList(10)
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -67,6 +79,8 @@ describe('DeparturesController', () => {
     premisesService.getPlacement.mockResolvedValue(placement)
     placementService.getDepartureReasons.mockResolvedValue(departureReasons)
     placementService.getMoveOnCategories.mockResolvedValue(moveOnCategories)
+    premisesService.getCas1All.mockResolvedValue(premisesList)
+
     request = createMock<Request>({
       user: { token },
       params: { premisesId, placementId: placement.id },
@@ -439,30 +453,43 @@ describe('DeparturesController', () => {
   })
 
   describe('moveOnCategory', () => {
-    it('renders the Move on category form with placement information, list of move on categories, errors and user input', async () => {
-      placementService.getDepartureSessionData.mockReturnValue({
-        ...departureFormData,
-        reasonId: PLANNED_MOVE_ON_REASON_ID,
-      })
-      when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+    it.each([
+      [['Planned move-on reason', PLANNED_MOVE_ON_REASON_ID]],
+      [['Licence expired reason', LICENCE_EXPIRED_REASON_ID]],
+      [['Bed withdrawn reason', BED_WITHDRAWN_REASON_ID]],
+    ])(
+      'renders the Move on category form with placement information, list of move on categories, errors and user input for reason: %1',
+      async test => {
+        const [, reasonId] = test
+        placementService.getDepartureSessionData.mockReturnValue({
+          ...departureFormData,
+          reasonId,
+        })
+        when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = departuresController.moveOnCategory()
+        const requestHandler = departuresController.moveOnCategory()
 
-      await requestHandler(request, response, next)
+        await requestHandler(request, response, next)
 
-      expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
-      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/move-on-category', {
-        placement,
-        backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
-        moveOnCategories,
-        errors: errorsAndUserInput.errors,
-        errorSummary: errorsAndUserInput.errorSummary,
-        errorTitle: errorsAndUserInput.errorTitle,
-        ...departureFormData,
-        reasonId: PLANNED_MOVE_ON_REASON_ID,
-        ...errorsAndUserInput.userInput,
-      })
-    })
+        expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
+        expect(premisesService.getCas1All).toHaveBeenCalledWith(token)
+        expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/move-on-category', {
+          placement,
+          backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
+          moveOnCategories,
+          MOVE_TO_AP_REASON_ID,
+          premisesSummaries: premisesList,
+          errors: errorsAndUserInput.errors,
+          errorSummary: errorsAndUserInput.errorSummary,
+          errorTitle: errorsAndUserInput.errorTitle,
+          ...departureFormData,
+          reasonId,
+          ...errorsAndUserInput.userInput,
+        })
+
+        expect(response.redirect).not.toHaveBeenCalled()
+      },
+    )
 
     describe('if there is no departure data in the session', () => {
       it('redirects to the new departure page', async () => {
@@ -525,6 +552,28 @@ describe('DeparturesController', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual(expectedErrorData)
+    })
+
+    it('returns errors if the move-on category is Transfer to AP, but the AP is not selected', async () => {
+      const requestHandler = departuresController.saveMoveOnCategory()
+
+      request.body = { moveOnCategoryId: MOVE_TO_AP_REASON_ID }
+
+      await requestHandler(request, response, next)
+
+      expect(placementService.setDepartureSessionData).not.toHaveBeenCalled()
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        paths.premises.placements.departure.moveOnCategory({ premisesId, placementId: placement.id }),
+      )
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        apName: 'You must select the destination AP',
+      })
     })
 
     it('saves the breach or recall reason and redirects to the notes page', async () => {

@@ -13,7 +13,13 @@ import {
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import paths from '../../../../paths/manage'
-import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../utils/placements'
+import {
+  BED_WITHDRAWN_REASON_ID,
+  BREACH_OR_RECALL_REASON_ID,
+  LICENCE_EXPIRED_REASON_ID,
+  MOVE_TO_AP_REASON_ID,
+  PLANNED_MOVE_ON_REASON_ID,
+} from '../../../../utils/placements'
 
 const {
   premises: {
@@ -33,6 +39,8 @@ type FormPageData = {
   departureFormSessionData: DepartureFormSessionData
   errorsAndUserInput: ErrorsAndUserInput
 }
+
+const isMoveOnReason = [PLANNED_MOVE_ON_REASON_ID, LICENCE_EXPIRED_REASON_ID, BED_WITHDRAWN_REASON_ID]
 
 export default class DeparturesController {
   constructor(
@@ -137,26 +145,30 @@ export default class DeparturesController {
 
   saveNew(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { token } = req.user
-      const { premisesId, placementId } = req.params
+      const {
+        params: { premisesId, placementId },
+        session,
+        body,
+        user: { token },
+      } = req
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
 
       try {
-        const errors = this.newErrors(req.body, placement)
+        const errors = this.newErrors(body, placement)
 
         if (errors) {
           throw new ValidationError(errors)
         }
 
-        this.placementService.setDepartureSessionData(placementId, req.session, req.body)
+        this.placementService.setDepartureSessionData(placementId, session, body)
 
         let redirect = departurePaths.notes({ premisesId, placementId })
 
-        if (req.body.reasonId === BREACH_OR_RECALL_REASON_ID) {
+        if ([BREACH_OR_RECALL_REASON_ID].includes(body.reasonId)) {
           redirect = departurePaths.breachOrRecallReason({ premisesId, placementId })
         }
 
-        if (req.body.reasonId === PLANNED_MOVE_ON_REASON_ID) {
+        if (isMoveOnReason.includes(body.reasonId)) {
           redirect = departurePaths.moveOnCategory({ premisesId, placementId })
         }
 
@@ -244,18 +256,19 @@ export default class DeparturesController {
         departureFormSessionData,
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
-
       if (
         this.newErrors(departureFormSessionData, placement) ||
-        departureFormSessionData.reasonId !== PLANNED_MOVE_ON_REASON_ID
+        !isMoveOnReason.includes(departureFormSessionData.reasonId)
       ) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
       const moveOnCategories = await this.placementService.getMoveOnCategories(token)
-
+      const premisesSummaries = await this.premisesService.getCas1All(token)
       return res.render('manage/premises/placements/departure/move-on-category', {
         backlink: departurePaths.new({ premisesId, placementId }),
+        premisesSummaries,
+        MOVE_TO_AP_REASON_ID,
         placement,
         moveOnCategories,
         ...errorsData,
@@ -270,10 +283,14 @@ export default class DeparturesController {
       const { premisesId, placementId } = req.params
 
       try {
-        const { moveOnCategoryId } = req.body
+        const { moveOnCategoryId, apName } = req.body
 
         if (!moveOnCategoryId) {
           throw new ValidationError({ moveOnCategoryId: 'You must select a move on category' })
+        }
+
+        if (moveOnCategoryId === MOVE_TO_AP_REASON_ID && !apName) {
+          throw new ValidationError({ apName: 'You must select the destination AP' })
         }
 
         this.placementService.setDepartureSessionData(placementId, req.session, req.body)
@@ -309,10 +326,9 @@ export default class DeparturesController {
       let backlink = departurePaths.new({ premisesId, placementId })
       if (departureFormSessionData.reasonId === BREACH_OR_RECALL_REASON_ID) {
         backlink = departurePaths.breachOrRecallReason({ premisesId, placementId })
-      } else if (departureFormSessionData.reasonId === PLANNED_MOVE_ON_REASON_ID) {
+      } else if (isMoveOnReason.includes(departureFormSessionData.reasonId)) {
         backlink = departurePaths.moveOnCategory({ premisesId, placementId })
       }
-
       return res.render('manage/premises/placements/departure/notes', {
         backlink,
         placement,
@@ -328,17 +344,20 @@ export default class DeparturesController {
       const { premisesId, placementId } = req.params
 
       const departureData = this.placementService.getDepartureSessionData(placementId, req.session)
-      const { notes } = req.body
+      let { notes } = req.body
 
       try {
         let { reasonId, moveOnCategoryId } = departureData
+        const { apName } = departureData
 
         if (reasonId === BREACH_OR_RECALL_REASON_ID) {
           reasonId = departureData.breachOrRecallReasonId
         }
 
-        if (reasonId !== PLANNED_MOVE_ON_REASON_ID) {
+        if (!isMoveOnReason.includes(reasonId)) {
           moveOnCategoryId = undefined
+        } else if (moveOnCategoryId === MOVE_TO_AP_REASON_ID) {
+          notes = `Transferred to AP: ${apName}\n\n${notes}`
         }
 
         const placementDeparture: Cas1NewDeparture = {

@@ -1,7 +1,20 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 
 {% extends "./partials/layout.njk" %}
+{% set conditionalHtml %}
+    {{ govukSelect({
+        label: {
+            text: "Select destination AP",
+            classes: "govuk-label--m"
+        },
+        id: "apName",
+        name: "apName",
+        items: convertObjectsToSelectOptions(premisesSummaries, 'Select an AP', 'name', 'name', 'apName'),
+        errorMessage:errors.apName
+    }) }}
+{% endset %}
 
 {% block formContent %}
     {{ govukRadios({
@@ -12,7 +25,9 @@
                 classes: "govuk-fieldset__legend--m"
             }
         },
-        items: convertObjectsToRadioItems(moveOnCategories, 'name', 'id', 'moveOnCategoryId'),
+        items: PlacementUtils.injectRadioConditionalHtml(
+            convertObjectsToRadioItems(moveOnCategories, 'name', 'id', 'moveOnCategoryId'),
+            MOVE_TO_AP_REASON_ID,conditionalHtml),
         value: moveOnCategoryId,
         errorMessage: errors.moveOnCategoryId
     }) }}

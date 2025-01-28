@@ -1,6 +1,7 @@
-import { Cas1SpaceBooking } from '@approved-premises/api'
+import { Cas1PremisesBasicSummary, Cas1SpaceBooking } from '@approved-premises/api'
 import {
   cas1NewDepartureFactory,
+  cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
 } from '../../../../server/testutils/factories'
@@ -12,22 +13,29 @@ import { DepartureNewPage } from '../../../pages/manage/placements/departures/ne
 import { BreachOrRecallPage } from '../../../pages/manage/placements/departures/breachOrRecall'
 import { NotesPage } from '../../../pages/manage/placements/departures/notes'
 import { MoveOnPage } from '../../../pages/manage/placements/departures/moveOn'
-import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../../../server/utils/placements'
+import {
+  BREACH_OR_RECALL_REASON_ID,
+  MOVE_TO_AP_REASON_ID,
+  PLANNED_MOVE_ON_REASON_ID,
+} from '../../../../server/utils/placements'
 
 context('Departures', () => {
   let placement: Cas1SpaceBooking
+  let premisesList: Array<Cas1PremisesBasicSummary>
 
   beforeEach(() => {
     const premises = cas1PremisesFactory.build()
     placement = cas1SpaceBookingFactory.current().build({
       premises,
     })
+    premisesList = cas1PremisesBasicSummaryFactory.buildList(10)
 
     cy.task('stubSinglePremises', premises)
     cy.task('stubSpaceBookingShow', placement)
     cy.task('stubDepartureReasonsReferenceData', departureReasonsJson)
     cy.task('stubMoveOnCategoriesReferenceData', moveOnCategoriesJson)
     cy.task('stubSpaceBookingDepartureCreate', placement)
+    cy.task('stubCas1AllPremises', premisesList)
   })
 
   it('lets a user with the correct permissions mark a person as departed', () => {
@@ -111,8 +119,19 @@ context('Departures', () => {
       moveOnCategoryId: 'You must select a move on category',
     })
 
-    // When I complete the form
-    moveOnPage.completeForm(moveOnCategoriesJson[0].id)
+    // When I select Transfer to another AP'
+    moveOnPage.completeForm(MOVE_TO_AP_REASON_ID)
+
+    // When I submit the form with no AP selected
+    moveOnPage.clickContinue()
+
+    // Then I should see an error
+    moveOnPage.shouldShowErrorMessagesForFields(['apName'], {
+      apName: 'You must select the destination AP',
+    })
+
+    // When I select an AP and submit
+    moveOnPage.getSelectInputByIdAndSelectAnEntry('apName', premisesList[0].name)
     moveOnPage.clickContinue()
 
     // Then I should see the Notes page
@@ -122,7 +141,7 @@ context('Departures', () => {
     notesPage.clickBack()
 
     // Then I should see the move-on category page with the form populated
-    moveOnPage.shouldShowPopulatedForm(moveOnCategoriesJson[0].id)
+    moveOnPage.shouldShowPopulatedForm(MOVE_TO_AP_REASON_ID)
 
     // When I click the back button
     moveOnPage.clickBack()

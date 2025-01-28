@@ -10,5 +10,5 @@
   { "id": "e1863cc4-dbc8-4c02-8ff7-08c0c9952ba1", "name": "Owner Occupied", "isActive": true },
   { "id": "c6d3c3e3-d05b-4828-b393-9cfddc5daa6b", "name": "Private Rented", "isActive": true },
   { "id": "8f35e009-cdf8-4a70-9ca4-97d99609893e", "name": "Supported Housing", "isActive": true },
-  { "id": "29c0c4e8-6899-4471-832b-883cea522128", "name": "Transferred to different AP", "isActive": true }
+  { "id": "6b1f6645-dc1c-489d-8312-cab9a4a6b2a7", "name": "Transferred to different AP", "isActive": true }
 ]

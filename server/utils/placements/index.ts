@@ -5,7 +5,14 @@ import type {
   FullPerson,
   StaffMember,
 } from '@approved-premises/api'
-import { KeyDetailsArgs, SelectOption, SummaryList, SummaryListItem, UserDetails } from '@approved-premises/ui'
+import {
+  KeyDetailsArgs,
+  RadioItem,
+  SelectOption,
+  SummaryList,
+  SummaryListItem,
+  UserDetails,
+} from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
 import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
@@ -170,7 +177,7 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
       summaryRow('Departure reason', reason),
       summaryRow('Breach or recall', breachOrRecall),
       summaryRow('Move on', placement.departure?.moveOnCategory?.name),
-      summaryRow('More information', placement.departure?.notes),
+      summaryListItem('More information', placement.departure?.notes, 'textBlock', true),
     ].filter(Boolean),
   }
 }
@@ -253,5 +260,17 @@ export const placementTabItems = (
   })
 }
 
+type IdAndName = { id: string; name: string }
+export const processReferenceData = <T>(input: Array<IdAndName>, subst: IdAndName): Array<T> => {
+  return input.map(item => (item.id === subst.id ? subst : item)) as Array<T>
+}
+
+export const injectRadioConditionalHtml = (input: Array<RadioItem>, value: string, html: string): Array<RadioItem> =>
+  input.map((row: RadioItem) => (row.value === value ? { ...row, conditional: { html } } : row))
+
 export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
 export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'
+export const LICENCE_EXPIRED_REASON_ID = '9c848d97-afe7-4da9-bd8b-f01897330e62'
+export const NON_ARRIVAL_REASON_OTHER_ID = '3635c76e-8e4b-4c0e-8b92-149dc1ff0855'
+export const MOVE_TO_AP_REASON_ID = '6b1f6645-dc1c-489d-8312-cab9a4a6b2a7'
+export const BED_WITHDRAWN_REASON_ID = '0f856559-26c0-4184-96fe-00d446e91da2'
