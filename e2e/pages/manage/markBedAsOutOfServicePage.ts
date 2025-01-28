@@ -44,7 +44,7 @@ export class MarkBedAsOutOfServicePage extends BasePage {
   async completeForm() {
     await this.enterOutOfServiceFromDate()
     await this.enterOutOfServiceToDate()
-    await this.checkRadio('Planned Refurbishment')
+    await this.checkRadio('Planned Refurbishment (FM)')
     await this.page.getByLabel('Work order reference number').fill('123456789')
     await this.page
       .getByLabel(
