@@ -10,7 +10,7 @@ import paths from '../../paths/manage'
 import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { ApAreaService, OutOfServiceBedService, PremisesService } from '../../services'
+import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
 import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
 import { translateCharacteristic } from '../../utils/characteristicsUtils'
 
@@ -19,6 +19,7 @@ export default class OutOfServiceBedsController {
     private readonly outOfServiceBedService: OutOfServiceBedService,
     private readonly premisesService: PremisesService,
     private readonly apAreaService: ApAreaService,
+    private readonly sessionService: SessionService,
   ) {}
 
   new(): RequestHandler {
@@ -106,8 +107,13 @@ export default class OutOfServiceBedsController {
       })
 
       const premises = await this.premisesService.find(req.user.token, premisesId)
+      const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.premisesIndex.pattern, req, [
+        paths.premises.beds.index.pattern,
+        paths.premises.show.pattern,
+      ])
 
       return res.render('manage/outOfServiceBeds/premisesIndex', {
+        backLink,
         outOfServiceBeds: outOfServiceBeds.data,
         pageHeading: 'Out of service beds',
         premises: { id: premisesId, name: premises.name },
@@ -194,8 +200,11 @@ export default class OutOfServiceBedsController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, bedId, id, tab = 'details' } = req.params
-      const referrer = req.headers.referer
-
+      const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.show.pattern, req, [
+        paths.outOfServiceBeds.premisesIndex.pattern,
+        paths.outOfServiceBeds.index.pattern,
+        paths.premises.occupancy.day.pattern,
+      ])
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
 
       outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
@@ -208,7 +217,7 @@ export default class OutOfServiceBedsController {
         premisesId,
         bedId,
         id,
-        referrer,
+        backLink,
         activeTab: tab,
         characteristics: translatedCharacteristics,
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,

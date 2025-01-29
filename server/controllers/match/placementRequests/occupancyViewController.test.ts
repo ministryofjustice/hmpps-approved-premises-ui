@@ -428,7 +428,7 @@ describe('OccupancyViewController', () => {
       expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
-        backlink: occupancyViewUrl,
+        backLink: occupancyViewUrl,
         pageHeading: dayAvailabilityStatusMap[expectedStatus],
         placementRequest: placementRequestDetail,
         premises,

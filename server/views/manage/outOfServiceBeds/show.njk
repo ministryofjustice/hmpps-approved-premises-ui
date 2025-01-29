@@ -14,7 +14,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: paths.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'})
+        href: backLink
     }) }}
 {% endblock %}
 

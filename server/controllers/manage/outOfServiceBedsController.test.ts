@@ -25,7 +25,7 @@ import {
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
 import { translateCharacteristic } from '../../utils/characteristicsUtils'
-import { ApAreaService, OutOfServiceBedService, PremisesService } from '../../services'
+import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -33,8 +33,7 @@ jest.mock('../../utils/getPaginationDetails')
 
 describe('OutOfServiceBedsController', () => {
   const token = 'SOME_TOKEN'
-  const referrer = 'http://localhost/foo/bar'
-
+  const backLink = '/back/link'
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
@@ -42,11 +41,14 @@ describe('OutOfServiceBedsController', () => {
   const outOfServiceBedService = createMock<OutOfServiceBedService>({})
   const premisesService = createMock<PremisesService>({})
   const apAreaService = createMock<ApAreaService>({})
+  const sessionService = createMock<SessionService>()
+  sessionService.getPageBackLink.mockReturnValue('back/link')
 
   const outOfServiceBedController = new OutOfServiceBedsController(
     outOfServiceBedService,
     premisesService,
     apAreaService,
+    sessionService,
   )
   let premisesId = 'premisesId'
   const outOfServiceBed = outOfServiceBedFactory.build()
@@ -55,12 +57,12 @@ describe('OutOfServiceBedsController', () => {
     jest.resetAllMocks()
     request = createMock<Request>({
       user: { token },
-      headers: { referer: referrer },
       params: {
         premisesId,
         bedId: outOfServiceBed.bed.id,
       },
     })
+    sessionService.getPageBackLink.mockReturnValue(backLink)
   })
 
   describe('new', () => {
@@ -188,31 +190,36 @@ describe('OutOfServiceBedsController', () => {
         .mockResolvedValue(outOfServiceBed)
 
       const requestHandler = outOfServiceBedController.show()
-
-      await requestHandler(
-        {
-          ...request,
-          params: {
-            premisesId,
-            bedId: outOfServiceBed.bed.id,
-            id: outOfServiceBed.id,
-            tab: 'details',
-          },
+      const req = {
+        ...request,
+        params: {
+          premisesId,
+          bedId: outOfServiceBed.bed.id,
+          id: outOfServiceBed.id,
+          tab: 'details',
         },
-        response,
-        next,
-      )
+      }
+      await requestHandler(req, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/show', {
         outOfServiceBed,
         premisesId,
         bedId: bed.id,
         id: outOfServiceBed.id,
-        referrer,
         activeTab,
         characteristics: translatedCharacteristics,
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
+        backLink,
       })
+      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+        '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/:id/:tab',
+        req,
+        [
+          '/manage/premises/:premisesId/out-of-service-beds/:temporality',
+          '/manage/out-of-service-beds/:temporality',
+          '/manage/premises/:premisesId/occupancy/day/:date',
+        ],
+      )
     })
   })
 
@@ -234,10 +241,10 @@ describe('OutOfServiceBedsController', () => {
       const premises = cas1PremisesFactory.build({ name: 'Hope House' })
       when(premisesService.find).calledWith(request.user.token, premisesId).mockResolvedValue(premises)
 
-      const req = { ...request, query: { premisesId }, params: { temporality } }
+      const req = { ...request, query: { premisesId }, params: { temporality, premisesId } }
 
       const requestHandler = outOfServiceBedController.premisesIndex()
-      await requestHandler({ ...req, params: { premisesId, temporality } }, response, next)
+      await requestHandler(req, response, next)
 
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
 
@@ -250,6 +257,7 @@ describe('OutOfServiceBedsController', () => {
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         totalResults: Number(paginatedResponse.totalResults),
+        backLink,
       })
 
       expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith({
@@ -259,6 +267,11 @@ describe('OutOfServiceBedsController', () => {
         premisesId,
         perPage: 50,
       })
+      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+        '/manage/premises/:premisesId/out-of-service-beds/:temporality',
+        req,
+        ['/manage/premises/:premisesId/beds', '/manage/premises/:premisesId'],
+      )
     })
 
     it('redirects to the current temporality if a stray temporal URL parameter is entered', async () => {

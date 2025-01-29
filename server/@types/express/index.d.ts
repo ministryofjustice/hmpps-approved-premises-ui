@@ -20,6 +20,7 @@ declare module 'express-session' {
     messages: Array<string>
     departureForms: Record<Cas1SpaceBooking['id'], DepartureFormSessionData>
     spaceSearch: Record<PlacementRequestDetail['id'], SpaceSearchState>
+    pageReferers: Record<string, string>
   }
 }
 

@@ -24,6 +24,7 @@ export const controllers = (services: Services) => {
     services.outOfServiceBedService,
     services.premisesService,
     services.apAreaService,
+    services.sessionService,
   )
   const updateOutOfServiceBedsController = new UpdateOutOfServiceBedsController(services.outOfServiceBedService)
 
@@ -41,6 +42,7 @@ export const controllers = (services: Services) => {
     services.placementRequestService,
     services.placementService,
     services.premisesService,
+    services.sessionService,
   )
   const arrivalsController = new ArrivalsController(services.premisesService, services.placementService)
   const nonArrivalsController = new NonArrivalsController(services.premisesService, services.placementService)
