@@ -83,12 +83,10 @@ export default class {
 
       if (!errors.startDate) {
         const capacityDates = placementDates(searchState.startDate, searchState.durationDays)
-        const capacity = await this.premisesService.getCapacity(
-          token,
-          premisesId,
-          capacityDates.startDate,
-          capacityDates.endDate,
-        )
+        const capacity = await this.premisesService.getCapacity(token, premisesId, {
+          startDate: capacityDates.startDate,
+          endDate: capacityDates.endDate,
+        })
         const placeholderDetailsUrl = paths.v2Match.placementRequests.search.dayOccupancy({
           id,
           premisesId,
@@ -203,7 +201,7 @@ export default class {
       const backLink = req.headers.referer
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
-      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
+      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, { startDate: date })
       const dayCapacity = premisesCapacity.capacity[0]
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
       const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)

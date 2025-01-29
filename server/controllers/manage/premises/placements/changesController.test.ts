@@ -52,12 +52,11 @@ describe('changesController', () => {
     const filteredCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
 
     expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
-    expect(premisesService.getCapacity).toHaveBeenCalledWith(
-      token,
-      premises.id,
-      placement.expectedArrivalDate,
-      placement.expectedDepartureDate,
-    )
+    expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
+      startDate: placement.expectedArrivalDate,
+      endDate: placement.expectedDepartureDate,
+      excludeSpaceBookingId: placement.id,
+    })
     expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes', {
       pageHeading: 'Change placement dates',
       placement,

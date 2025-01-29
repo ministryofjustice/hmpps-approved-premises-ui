@@ -55,12 +55,10 @@ export default class ApOccupancyViewController {
       let calendar: Calendar = []
       if (!errorSummary.length) {
         const capacityDates = placementDates(String(startDate), String(durationDays))
-        const capacity = await this.premisesService.getCapacity(
-          token,
-          premisesId,
-          capacityDates.startDate,
-          capacityDates.endDate,
-        )
+        const capacity = await this.premisesService.getCapacity(token, premisesId, {
+          startDate: capacityDates.startDate,
+          endDate: capacityDates.endDate,
+        })
         calendar = occupancyCalendar(capacity.capacity, premisesId)
       }
       const calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
@@ -98,7 +96,10 @@ export default class ApOccupancyViewController {
         { characteristics: characteristicsArray },
       )
       const getDayLink = (targetDate: string) =>
-        `${paths.premises.occupancy.day({ premisesId, date: targetDate })}${createQueryString(req.query, { indices: false, addQueryPrefix: true })}`
+        `${paths.premises.occupancy.day({
+          premisesId,
+          date: targetDate,
+        })}${createQueryString(req.query, { indices: false, addQueryPrefix: true })}`
 
       const daySummary = await this.premisesService.getDaySummary({
         token,
