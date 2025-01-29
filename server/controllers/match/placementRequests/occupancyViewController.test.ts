@@ -3,6 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
+import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
@@ -65,6 +66,9 @@ describe('OccupancyViewController', () => {
       params,
       user: { token },
       flash: jest.fn(),
+      headers: {
+        referer: '/referrerPath',
+      },
       session: {
         save: mockSessionSave,
       },
@@ -405,10 +409,11 @@ describe('OccupancyViewController', () => {
   })
 
   describe('viewDay', () => {
-    const date = '2025-03-23'
+    it('should render the day occupancy view template with given approved premises, date and criteria', async () => {
+      const date = '2025-03-23'
+      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
 
-    it('should render the day occupancy view template with given approved premises and search state', async () => {
-      const dayCapacity = cas1PremiseCapacityForDayFactory.build()
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
       const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
         startDate: date,
         endDate: date,
@@ -418,34 +423,26 @@ describe('OccupancyViewController', () => {
         .calledWith(request.user.token, premises.id, date)
         .mockResolvedValue(premisesCapacityForDay)
 
+      const query = {
+        criteria,
+      }
+
       const requestHandler = occupancyViewController.viewDay()
 
-      await requestHandler({ ...request, params: { ...params, date } }, response, next)
+      await requestHandler({ ...request, params: { ...params, date }, query }, response, next)
 
-      const expectedStatus = dayAvailabilityStatus(dayCapacity, searchState.roomCriteria)
+      const expectedStatus = dayAvailabilityStatus(dayCapacity, criteria)
 
-      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
-        backLink: occupancyViewUrl,
+        backLink: '/referrerPath',
         pageHeading: dayAvailabilityStatusMap[expectedStatus],
         placementRequest: placementRequestDetail,
         premises,
         date,
         status: expectedStatus,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, searchState.roomCriteria),
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, criteria),
       })
-    })
-
-    it('should redirect to the suitability search if there is no search state in session', async () => {
-      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
-
-      const requestHandler = occupancyViewController.viewDay()
-      await requestHandler({ ...request, params: { ...params, date } }, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
-      )
     })
   })
 })
