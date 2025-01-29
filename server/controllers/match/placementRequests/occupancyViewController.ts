@@ -18,6 +18,8 @@ import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
+import { makeArrayOfType } from '../../../utils/utils'
+import { filterRoomLevelCriteria } from '../../../utils/match/spaceSearch'
 
 type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -45,16 +47,6 @@ export default class {
     private readonly premisesService: PremisesService,
     private readonly spaceSearchService: SpaceSearchService,
   ) {}
-
-  private criteriaAsArray(
-    criteria?: Cas1SpaceBookingCharacteristic | Array<Cas1SpaceBookingCharacteristic>,
-  ): Array<Cas1SpaceBookingCharacteristic> {
-    let filterCriteria: Array<Cas1SpaceBookingCharacteristic>
-    if (criteria) {
-      filterCriteria = Array.isArray(criteria) ? criteria : [criteria]
-    }
-    return filterCriteria
-  }
 
   view(): TypedRequestHandler<Request> {
     return async (req: ViewRequest, res: Response) => {
@@ -206,14 +198,15 @@ export default class {
     return async (req: ViewDayRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId, date } = req.params
-      const { criteria } = req.query
+      const { criteria = [] } = req.query
 
       const backLink = req.headers.referer
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
       const dayCapacity = premisesCapacity.capacity[0]
-      const status = dayAvailabilityStatus(dayCapacity, this.criteriaAsArray(criteria))
+      const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
+      const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
 
       res.render('match/placementRequests/occupancyView/viewDay', {
         backLink,
@@ -222,7 +215,7 @@ export default class {
         premises,
         date,
         status,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, this.criteriaAsArray(criteria)),
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, filteredCriteria),
       })
     }
   }

@@ -6,6 +6,7 @@ import { occupancySummary } from '../../../../utils/match'
 import paths from '../../../../paths/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import { placementOverviewSummary } from '../../../../utils/placements'
+import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 
 export default class ChangesController {
   constructor(
@@ -32,7 +33,9 @@ export default class ChangesController {
         date: ':date',
       })
 
-      const bookingCriteria: Array<Cas1SpaceBookingCharacteristic> = []
+      const bookingCriteria: Array<Cas1SpaceBookingCharacteristic> = filterRoomLevelCriteria(
+        placement.requirements.essentialCharacteristics,
+      )
 
       return res.render('manage/premises/placements/changes', {
         pageHeading: 'Change placement dates',

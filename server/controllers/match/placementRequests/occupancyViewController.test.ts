@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
-import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { PlacementCriteria } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import {
   cas1PremiseCapacityFactory,
@@ -27,8 +27,9 @@ import {
 } from '../../../utils/match/occupancy'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
-import { initialiseSearchState } from '../../../utils/match/spaceSearch'
+import { filterRoomLevelCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
+import { makeArrayOfType } from '../../../utils/utils'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -409,9 +410,13 @@ describe('OccupancyViewController', () => {
   })
 
   describe('viewDay', () => {
-    it('should render the day occupancy view template with given approved premises, date and criteria', async () => {
+    it('should render the day occupancy view template with given approved premises, date and room requirement criteria', async () => {
       const date = '2025-03-23'
-      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
+      const criteria: Array<PlacementCriteria> = [
+        'isWheelchairDesignated',
+        'isArsonSuitable',
+        'acceptsNonSexualChildOffenders',
+      ]
 
       const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
       const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
@@ -431,7 +436,7 @@ describe('OccupancyViewController', () => {
 
       await requestHandler({ ...request, params: { ...params, date }, query }, response, next)
 
-      const expectedStatus = dayAvailabilityStatus(dayCapacity, criteria)
+      const expectedStatus = dayAvailabilityStatus(dayCapacity, filterRoomLevelCriteria(makeArrayOfType(criteria)))
 
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
@@ -441,7 +446,10 @@ describe('OccupancyViewController', () => {
         premises,
         date,
         status: expectedStatus,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, criteria),
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(
+          dayCapacity,
+          filterRoomLevelCriteria(makeArrayOfType(criteria)),
+        ),
       })
     })
   })

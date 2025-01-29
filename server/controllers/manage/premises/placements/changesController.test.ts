@@ -11,6 +11,7 @@ import { occupancySummary } from '../../../../utils/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import paths from '../../../../paths/match'
 import { placementOverviewSummary } from '../../../../utils/placements'
+import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 
 describe('changesController', () => {
   const token = 'SOME_TOKEN'
@@ -48,6 +49,7 @@ describe('changesController', () => {
       premisesId: premises.id,
       date: ':date',
     })
+    const filteredCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
 
     expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     expect(premisesService.getCapacity).toHaveBeenCalledWith(
@@ -60,8 +62,8 @@ describe('changesController', () => {
       pageHeading: 'Change placement dates',
       placement,
       placementSummary: placementOverviewSummary(placement),
-      summary: occupancySummary(capacity.capacity, []),
-      calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, []),
+      summary: occupancySummary(capacity.capacity, filteredCriteria),
+      calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filteredCriteria),
       errorSummary: [],
       errors: {},
     })
