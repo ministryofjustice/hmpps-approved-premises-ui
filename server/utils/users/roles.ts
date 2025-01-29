@@ -66,7 +66,7 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   },
   cru_member: {
     label: 'CRU member',
-    hint: 'Assign to CRU Members who are not in the Find and Book Beta',
+    hint: 'Assign to CRU Members who are not in the Find and Book Beta. In addition to this role, Workflow manager must also be assigned to CRU members.',
   },
   cru_member_enable_out_of_service_beds: {
     label: 'CRU member - Enable out of service beds',
@@ -74,7 +74,7 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   },
   cru_member_find_and_book_beta: {
     label: 'CRU member - Find and book beta',
-    hint: 'Assign to CRU Members who are in the Find and Book Beta',
+    hint: 'Assign to CRU Members who are in the Find and Book Beta. In addition to this role, Workflow manager must also be assigned to CRU members.',
   },
   report_viewer: {
     label: 'Report Viewer',
