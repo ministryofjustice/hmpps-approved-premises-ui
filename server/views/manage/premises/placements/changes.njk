@@ -1,4 +1,6 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% from "../../../components/keyDetails/macro.njk" import keyDetails %}
 {% from "../../../match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
@@ -27,26 +29,40 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {{ occupancySummary(summary) }}
+    {% call govukDetails({summaryText: "Your booked placement", open: true}) %}
+        {{ govukSummaryList(placementSummary) }}
+    {% endcall %}
 
-    <section id="calendar-key">
-        <h3 class="govuk-heading-m">Key</h3>
+    <section>
+        <h2 class="govuk-heading-l">View availability for {{ formatDuration(placement.durationDays) }}
+            {% if not errors.startDate %}from {{ formatDate(placement.expectedArrivalDate, { format: 'short' }) }}{% endif %}</h2>
 
-        <ul class="calendar__month govuk-list">
-            <li class="calendar__day">
-                Available
-            </li>
-            <li class="calendar__day govuk-tag--yellow">
-                Full
-            </li>
-            <li class="calendar__day govuk-tag--red">
-                Overbooked
-            </li>
-        </ul>
+        <p>Your current booking is not included in this calendar.</p>
+
+        {{ occupancySummary(summary) }}
+
+        <section id="calendar-key">
+            <h3 class="govuk-heading-m">Key</h3>
+
+            <ul class="calendar__month govuk-list">
+                <li class="calendar__day">
+                    Available
+                </li>
+                <li class="calendar__day govuk-tag--yellow">
+                    Full
+                </li>
+                <li class="calendar__day govuk-tag--red">
+                    Overbooked
+                </li>
+            </ul>
+        </section>
+
+        <section id="calendar" aria-describedby="calendar-key">
+            {{ occupancyCalendar(calendar) }}
+        </section>
     </section>
 
-    <section id="calendar" aria-describedby="calendar-key">
-        {{ occupancyCalendar(calendar) }}
-    </section>
+
+
 
 {% endblock %}

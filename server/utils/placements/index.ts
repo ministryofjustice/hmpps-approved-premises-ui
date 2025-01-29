@@ -20,6 +20,8 @@ import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
 import { summaryListItem } from '../formUtils'
+import { requirementsHtmlString } from '../match'
+import { spaceSearchCriteriaRoomLevelLabels } from '../match/spaceSearch'
 
 export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
@@ -141,6 +143,20 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
     ].filter(Boolean),
   }
 }
+
+export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryList => ({
+  rows: [
+    summaryRow('Approved premises', placement.premises.name),
+    summaryRow('Date of match', formatDate(placement.createdAt)),
+    summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
+    summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
+    summaryListItem(
+      'Space type',
+      requirementsHtmlString(placement.requirements.essentialCharacteristics, spaceSearchCriteriaRoomLevelLabels),
+      'html',
+    ),
+  ],
+})
 
 export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => {
   const { expectedArrivalDate, actualArrivalDateOnly, actualArrivalTime, nonArrival } = placement
