@@ -6,6 +6,7 @@ import {
   applicationFactory,
   applicationSummaryFactory,
   bookingFactory,
+  bookingSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cruManagementAreaFactory,
   newCancellationFactory,
@@ -54,6 +55,14 @@ context('Placement Requests', () => {
     })
     const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
 
+    const legacyBooking = bookingSummaryFactory.build({
+      type: 'legacy',
+    })
+    const matchedPlacementRequestWithLegacyBooking = placementRequestDetailFactory.build({
+      status: 'matched',
+      booking: legacyBooking,
+    })
+
     const preferredAps = premisesFactory.buildList(3)
 
     const cruManagementAreas = cruManagementAreaFactory.buildList(5)
@@ -67,7 +76,10 @@ context('Placement Requests', () => {
     unmatchedPlacementRequest.application = application
 
     cy.task('stubPlacementRequestsDashboard', { placementRequests: unmatchedPlacementRequests, status: 'notMatched' })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests: [...matchedPlacementRequests, matchedPlacementRequestWithLegacyBooking],
+      status: 'matched',
+    })
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: unableToMatchPlacementRequests,
       status: 'unableToMatch',
@@ -77,6 +89,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', unmatchedPlacementRequest)
     cy.task('stubPlacementRequest', matchedPlacementRequest)
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
+    cy.task('stubPlacementRequest', matchedPlacementRequestWithLegacyBooking)
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
 
     const cas1premises = cas1PremisesBasicSummaryFactory.buildList(3, { supportsSpaceBookings: false })
@@ -91,6 +104,7 @@ context('Placement Requests', () => {
       parolePlacementRequest,
       matchedPlacementRequest,
       matchedPlacementRequests,
+      matchedPlacementRequestWithLegacyBooking,
       unableToMatchPlacementRequest,
       unableToMatchPlacementRequests,
       cruManagementAreas,
@@ -154,6 +168,7 @@ context('Placement Requests', () => {
 
     showPage.shouldShowCreateBookingOption()
     showPage.shouldNotShowAmendBookingOption()
+    showPage.shouldNotShowChangePlacementDatesOption()
     showPage.shouldNotShowCancelBookingOption()
 
     // When I go back to the dashboard
@@ -172,7 +187,7 @@ context('Placement Requests', () => {
     showPage.shouldShowSummary()
 
     showPage.shouldNotShowCreateBookingOption()
-    showPage.shouldShowAmendBookingOption()
+    showPage.shouldShowChangePlacementDatesOption()
     showPage.shouldShowCancelBookingOption()
 
     // And I should not see any booking information
@@ -280,16 +295,57 @@ context('Placement Requests', () => {
     })
   })
 
-  it('allows me to amend a booking', () => {
-    const { matchedPlacementRequest } = stubArtifacts()
+  it('allows me to amend a legacy booking', () => {
+    const { matchedPlacementRequestWithLegacyBooking } = stubArtifacts()
     cy.task('stubDateChange', {
-      premisesId: matchedPlacementRequest.booking.premisesId,
-      bookingId: matchedPlacementRequest.booking.id,
+      premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
+      bookingId: matchedPlacementRequestWithLegacyBooking.booking.id,
     })
     cy.task('stubBookingGet', {
-      premisesId: matchedPlacementRequest.booking.premisesId,
-      booking: matchedPlacementRequest.booking,
+      premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
+      booking: matchedPlacementRequestWithLegacyBooking.booking,
     })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // And I click the matched link
+    listPage.clickMatched()
+
+    // And I choose a placement request
+    listPage.clickPlacementRequest(matchedPlacementRequestWithLegacyBooking)
+
+    // Then I should be taken to the placement request page
+    const showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequestWithLegacyBooking)
+
+    // When I click on the amend booking button
+    showPage.clickAmendBooking()
+
+    // Then I should be on the amend a booking page
+    const dateChangePage = Page.verifyOnPage(NewDateChangePage, matchedPlacementRequestWithLegacyBooking)
+
+    // And I change the date of my booking
+    dateChangePage.completeForm('2023-01-01', '2023-03-02')
+    dateChangePage.clickSubmit()
+
+    // Then I should see a confirmation message
+    showPage.shouldShowBanner('Booking changed successfully')
+
+    // And the change booking endpoint should have been called with the correct parameters
+    cy.task('verifyDateChange', {
+      premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
+      bookingId: matchedPlacementRequestWithLegacyBooking.booking.id,
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+      const requestBody = JSON.parse(requests[0].body)
+
+      expect(requestBody.newArrivalDate).equal('2023-01-01')
+      expect(requestBody.newDepartureDate).equal('2023-03-02')
+    })
+  })
+
+  it('allows me to amend a space booking', () => {
+    const { matchedPlacementRequest } = stubArtifacts()
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit()
@@ -303,30 +359,11 @@ context('Placement Requests', () => {
     // Then I should be taken to the placement request page
     const showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
 
-    // When I click on the create booking button
-    showPage.clickAmendBooking()
+    // When I click on the amend booking button
+    showPage.clickAction('Change placement dates')
 
-    // Then I should be on the amend a booking page
-    const dateChangePage = Page.verifyOnPage(NewDateChangePage, matchedPlacementRequest)
-
-    // And I change the date of my booking
-    dateChangePage.completeForm('2023-01-01', '2023-03-02')
-    dateChangePage.clickSubmit()
-
-    // Then I should see a confirmation message
-    showPage.shouldShowBanner('Booking changed successfully')
-
-    // And the change booking endpoint should have been called with the correct parameters
-    cy.task('verifyDateChange', {
-      premisesId: matchedPlacementRequest.booking.premisesId,
-      bookingId: matchedPlacementRequest.booking.id,
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
-
-      expect(requestBody.newArrivalDate).equal('2023-01-01')
-      expect(requestBody.newDepartureDate).equal('2023-03-02')
-    })
+    // TODO: test changing space booking dates. Note: this currently shows an authorisation error, as the test user
+    //  does not have the `cas1_space_booking_create` permission.
   })
 
   it('allows me to cancel a booking', () => {

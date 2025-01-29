@@ -1,6 +1,7 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { PlacementRequestService } from '../../../services'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
+import { bookingSummaryList } from '../../../utils/bookings'
 
 export default class PlacementRequestsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -12,6 +13,7 @@ export default class PlacementRequestsController {
       res.render('admin/placementRequests/show', {
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
+        bookingSummaryList: bookingSummaryList(placementRequest.booking),
       })
     }
   }

@@ -1,6 +1,3 @@
-import Page from '../../page'
-import paths from '../../../../server/paths/admin'
-
 import {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary,
@@ -8,7 +5,10 @@ import {
   PlacementRequestSortField,
   PlacementRequestStatus,
   SortOrder,
-} from '../../../../server/@types/shared'
+} from '@approved-premises/api'
+import Page from '../../page'
+import paths from '../../../../server/paths/admin'
+
 import { shouldShowTableRows, tableRowsToArrays } from '../../../helpers'
 import { dashboardTableRows } from '../../../../server/utils/placementRequests/table'
 import { pendingPlacementRequestTableRows } from '../../../../server/utils/applications/pendingPlacementRequestTable'

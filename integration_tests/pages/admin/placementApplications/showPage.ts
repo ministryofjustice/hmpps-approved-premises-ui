@@ -18,11 +18,11 @@ export default class ShowPage extends Page {
   }
 
   shouldNotShowBookingInformation() {
-    cy.contains('Booked Placement').should('not.exist')
+    cy.contains('Booked placement').should('not.exist')
   }
 
   shouldShowBookingInformation() {
-    cy.contains('Booked Placement').should('exist')
+    cy.contains('Booked placement').should('exist')
     this.shouldContainSummaryListItems(bookingSummaryList(this.placementRequest.booking).rows)
   }
 
@@ -59,6 +59,10 @@ export default class ShowPage extends Page {
     this.buttonShouldExist('Amend placement')
   }
 
+  shouldShowChangePlacementDatesOption() {
+    this.buttonShouldExist('Change placement dates')
+  }
+
   shouldShowCancelBookingOption() {
     this.buttonShouldExist('Withdraw placement')
   }
@@ -69,6 +73,10 @@ export default class ShowPage extends Page {
 
   shouldNotShowAmendBookingOption() {
     this.buttonShouldNotExist('Amend placement')
+  }
+
+  shouldNotShowChangePlacementDatesOption() {
+    this.buttonShouldNotExist('Change placement dates')
   }
 
   shouldNotShowCancelBookingOption() {
