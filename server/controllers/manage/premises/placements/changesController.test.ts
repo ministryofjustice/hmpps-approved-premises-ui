@@ -10,6 +10,7 @@ import ChangesController from './changesController'
 import { occupancySummary } from '../../../../utils/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import paths from '../../../../paths/match'
+import { placementOverviewSummary } from '../../../../utils/placements'
 
 describe('changesController', () => {
   const token = 'SOME_TOKEN'
@@ -58,6 +59,7 @@ describe('changesController', () => {
     expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes', {
       pageHeading: 'Change placement dates',
       placement,
+      placementSummary: placementOverviewSummary(placement),
       summary: occupancySummary(capacity.capacity, []),
       calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, []),
       errorSummary: [],

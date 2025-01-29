@@ -13,6 +13,7 @@ import {
   getKeyDetail,
   injectRadioConditionalHtml,
   otherBookings,
+  placementOverviewSummary,
   placementSummary,
   renderKeyworkersSelectOptions,
   requirementsInformation,
@@ -154,8 +155,14 @@ describe('placementUtils', () => {
 
   describe('tabular information', () => {
     const placement = cas1SpaceBookingFactory.build({
+      expectedArrivalDate: '2024-05-30',
+      expectedDepartureDate: '2024-12-24',
       actualArrivalDateOnly: '2024-06-01',
       actualDepartureDateOnly: '2024-12-25',
+      createdAt: '2024-03-03',
+      requirements: {
+        essentialCharacteristics: ['isESAP', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
+      },
     })
 
     it('should return the placement summary information', () => {
@@ -170,6 +177,20 @@ describe('placementUtils', () => {
           },
           { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.keyWorker?.name } },
           { key: { text: 'Delius Event Number' }, value: { text: placement.deliusEventNumber } },
+        ],
+      })
+    })
+
+    it('should return an overview of the placement summary information', () => {
+      const expectedSpaceTypeHtml = `<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>`
+
+      expect(placementOverviewSummary(placement)).toEqual({
+        rows: [
+          { key: { text: 'Approved premises' }, value: { text: placement.premises.name } },
+          { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
+          { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
+          { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
+          { key: { text: 'Space type' }, value: { html: expectedSpaceTypeHtml } },
         ],
       })
     })

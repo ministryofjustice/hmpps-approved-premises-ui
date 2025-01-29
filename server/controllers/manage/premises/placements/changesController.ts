@@ -5,6 +5,7 @@ import { fetchErrorsAndUserInput } from '../../../../utils/validation'
 import { occupancySummary } from '../../../../utils/match'
 import paths from '../../../../paths/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
+import { placementOverviewSummary } from '../../../../utils/placements'
 
 export default class ChangesController {
   constructor(
@@ -36,6 +37,7 @@ export default class ChangesController {
       return res.render('manage/premises/placements/changes', {
         pageHeading: 'Change placement dates',
         placement,
+        placementSummary: placementOverviewSummary(placement),
         summary: occupancySummary(capacity.capacity, bookingCriteria),
         calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, bookingCriteria),
         errors,
