@@ -103,36 +103,41 @@ describe('PremisesService', () => {
   })
 
   describe('getCapacity', () => {
-    it('on success returns capacity given a premises ID', async () => {
-      const startDate = '2025-05-20'
-      const endDate = '2025-12-01'
+    const startDate = '2025-05-20'
+    const endDate = '2025-12-01'
+    const excludeSpaceBookingId = 'excluded-id'
 
-      const premiseCapacity = cas1PremiseCapacityFactory.build()
+    const premiseCapacity = cas1PremiseCapacityFactory.build()
+
+    beforeEach(() => {
       premisesClient.getCapacity.mockResolvedValue(premiseCapacity)
-
-      const result = await service.getCapacity(token, premisesId, startDate, endDate)
-
-      expect(result).toEqual(premiseCapacity)
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, endDate)
     })
 
-    it('returns capacity for one day if no end date provided', async () => {
-      const startDate = '2025-05-20'
-
-      const premiseCapacity = cas1PremiseCapacityFactory.build({
-        startDate,
-        endDate: startDate,
-      })
-      premisesClient.getCapacity.mockResolvedValue(premiseCapacity)
-
-      const result = await service.getCapacity(token, premisesId, startDate)
+    it('on success returns capacity given a premises ID', async () => {
+      const result = await service.getCapacity(token, premisesId, { startDate, endDate })
 
       expect(result).toEqual(premiseCapacity)
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, startDate)
+      expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, endDate, undefined)
+    })
+
+    it('returns capacity for one day if a blank end date provided', async () => {
+      const result = await service.getCapacity(token, premisesId, { startDate })
+
+      expect(result).toEqual(premiseCapacity)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, startDate, undefined)
+    })
+
+    it('can exclude a specific space booking id from the calculations', async () => {
+      const result = await service.getCapacity(token, premisesId, { startDate, endDate, excludeSpaceBookingId })
+
+      expect(result).toEqual(premiseCapacity)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, endDate, excludeSpaceBookingId)
     })
   })
 

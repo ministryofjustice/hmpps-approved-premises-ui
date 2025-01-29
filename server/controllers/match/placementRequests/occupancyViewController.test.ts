@@ -89,12 +89,10 @@ describe('OccupancyViewController', () => {
       expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
-      expect(premisesService.getCapacity).toHaveBeenCalledWith(
-        token,
-        premises.id,
-        searchState.startDate,
-        DateFormats.dateObjToIsoDate(addDays(searchState.startDate, searchState.durationDays)),
-      )
+      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
+        startDate: searchState.startDate,
+        endDate: DateFormats.dateObjToIsoDate(addDays(searchState.startDate, searchState.durationDays)),
+      })
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
@@ -426,7 +424,7 @@ describe('OccupancyViewController', () => {
         capacity: [dayCapacity],
       })
       when(premisesService.getCapacity)
-        .calledWith(request.user.token, premises.id, date)
+        .calledWith(request.user.token, premises.id, { startDate: date })
         .mockResolvedValue(premisesCapacityForDay)
 
       const query = {
@@ -439,7 +437,7 @@ describe('OccupancyViewController', () => {
 
       const expectedStatus = dayAvailabilityStatus(dayCapacity, filterRoomLevelCriteria(makeArrayOfType(criteria)))
 
-      expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, date)
+      expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, { startDate: date })
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/viewDay', {
         backlink: '/referrerPath',
         pageHeading: dayAvailabilityStatusMap[expectedStatus],

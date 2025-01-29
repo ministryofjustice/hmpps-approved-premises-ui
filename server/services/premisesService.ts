@@ -39,12 +39,20 @@ export default class PremisesService {
   async getCapacity(
     token: string,
     premisesId: string,
-    startDate: string,
-    endDate?: string,
+    query: {
+      startDate: string
+      endDate?: string
+      excludeSpaceBookingId?: string
+    },
   ): Promise<Cas1PremiseCapacity> {
     const premisesClient = this.premisesClientFactory(token)
 
-    return premisesClient.getCapacity(premisesId, startDate, endDate || startDate)
+    return premisesClient.getCapacity(
+      premisesId,
+      query.startDate,
+      query.endDate || query.startDate,
+      query.excludeSpaceBookingId,
+    )
   }
 
   async getDaySummary(args: {

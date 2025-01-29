@@ -79,7 +79,7 @@ describe('AP occupancyViewController', () => {
         }),
       )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
-      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premisesId, startDate, endDate)
+      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premisesId, { startDate, endDate })
     })
 
     it('should render the premises occupancy view with specified valid date and duration', async () => {
@@ -102,7 +102,10 @@ describe('AP occupancyViewController', () => {
         }),
       )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
-      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premisesId, '2024-06-20', '2024-06-27')
+      expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premisesId, {
+        startDate: '2024-06-20',
+        endDate: '2024-06-27',
+      })
     })
 
     it('should render error if date is invalid', async () => {
@@ -192,8 +195,14 @@ describe('AP occupancyViewController', () => {
       expect(result).toEqual(
         expect.objectContaining({
           premises: premisesSummary,
-          previousDayLink: `${paths.premises.occupancy.day({ premisesId, date: '2024-12-31' })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnsuite`,
-          nextDayLink: `${paths.premises.occupancy.day({ premisesId, date: '2025-01-02' })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnsuite`,
+          previousDayLink: `${paths.premises.occupancy.day({
+            premisesId,
+            date: '2024-12-31',
+          })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnsuite`,
+          nextDayLink: `${paths.premises.occupancy.day({
+            premisesId,
+            date: '2025-01-02',
+          })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnsuite`,
           placementTableHeader: tableHeader(
             placementColumnMap,
             'canonicalArrivalDate',

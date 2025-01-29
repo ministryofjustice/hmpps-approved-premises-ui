@@ -21,12 +21,11 @@ export default class ChangesController {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const placement = await this.placementService.getPlacement(token, placementId)
-      const capacity = await this.premisesService.getCapacity(
-        token,
-        premisesId,
-        placement.expectedArrivalDate,
-        placement.expectedDepartureDate,
-      )
+      const capacity = await this.premisesService.getCapacity(token, premisesId, {
+        startDate: placement.expectedArrivalDate,
+        endDate: placement.expectedDepartureDate,
+        excludeSpaceBookingId: placement.id,
+      })
       const placeholderDetailsUrl = paths.v2Match.placementRequests.search.dayOccupancy({
         id: placement.requestForPlacementId,
         premisesId,

@@ -44,10 +44,15 @@ export default class PremisesClient {
     return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
   }
 
-  async getCapacity(premisesId: string, startDate: string, endDate: string): Promise<Cas1PremiseCapacity> {
+  async getCapacity(
+    premisesId: string,
+    startDate: string,
+    endDate: string,
+    excludeSpaceBookingId?: string,
+  ): Promise<Cas1PremiseCapacity> {
     return (await this.restClient.get({
       path: paths.premises.capacity({ premisesId }),
-      query: { startDate, endDate },
+      query: { startDate, endDate, excludeSpaceBookingId },
     })) as Cas1PremiseCapacity
   }
 
