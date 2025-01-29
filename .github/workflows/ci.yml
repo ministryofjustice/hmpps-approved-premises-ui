@@ -100,7 +100,8 @@ jobs:
       - name: Building source
         run: npm run build
 
-      - uses: dawidd6/action-download-artifact@v2
+      - name: Downloading test reports from previous runs
+        uses: dawidd6/action-download-artifact@v2
         with:
           #branch: main
           if_no_artifact_found: 'ignore'
@@ -110,7 +111,8 @@ jobs:
           path: tmp/junit-xml-reports-downloaded
         continue-on-error: true
 
-      - uses: r7kamura/split-tests-by-timings@v0
+      - name: Determining tests splitting by timing
+        uses: r7kamura/split-tests-by-timings@v0
         id: split-tests
         with:
           reports: tmp/junit-xml-reports-downloaded
