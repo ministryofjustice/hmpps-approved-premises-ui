@@ -1,7 +1,13 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "../../../components/keyDetails/macro.njk" import keyDetails %}
 {% from "../../../match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
 {% from "../../../match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
@@ -9,7 +15,6 @@
 {% extends "../../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
-{% set mainClasses = "app-container govuk-body" %}
 
 {% block header %}
     {{ super() }}
@@ -25,7 +30,7 @@
 
 
 {% block content %}
-    {% include "../../../_messages.njk" %}
+    {{ showErrorSummary(errorSummary) }}
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
@@ -34,32 +39,88 @@
     {% endcall %}
 
     <section>
-        <h2 class="govuk-heading-l">View availability for {{ formatDuration(placement.durationDays) }}
-            {% if not errors.startDate %}from {{ formatDate(placement.expectedArrivalDate, { format: 'short' }) }}{% endif %}</h2>
+        <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
+            {% if not errors.startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
 
         <p>Your current booking is not included in this calendar.</p>
 
-        {{ occupancySummary(summary) }}
+        <div class="search-and-filter">
+            <form action="{{ currentUrl }}" method="get">
 
-        <section id="calendar-key">
-            <h3 class="govuk-heading-m">Key</h3>
+                <h3 class="govuk-heading-m">Filters</h3>
 
-            <ul class="calendar__month govuk-list">
-                <li class="calendar__day">
-                    Available
-                </li>
-                <li class="calendar__day govuk-tag--yellow">
-                    Full
-                </li>
-                <li class="calendar__day govuk-tag--red">
-                    Overbooked
-                </li>
-            </ul>
-        </section>
+                <div class="search-and-filter__row">
+                    {{ govukDateInput({
+                        id: "startDate",
+                        namePrefix: "startDate",
+                        fieldset: {
+                            legend: {
+                                text: "Availability start date",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: dateFieldValues('startDate', errors),
+                        errorMessage: errors.startDate
+                    }) }}
 
-        <section id="calendar" aria-describedby="calendar-key">
-            {{ occupancyCalendar(calendar) }}
-        </section>
+                    {{ govukSelect({
+                        id: 'durationDays',
+                        name: 'durationDays',
+                        label: {
+                            text: 'Length of availability',
+                            classes: 'govuk-label--s'
+                        },
+                        items: durationOptions
+                    }) }}
+                </div>
+
+                <div class="search-and-filter__row">
+                    {{ govukCheckboxes({
+                        name: "criteria",
+                        classes: "govuk-checkboxes--small govuk-checkboxes--inline",
+                        fieldset: {
+                            legend: {
+                                text: "Select following criteria",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: criteriaOptions
+                    }) }}
+                </div>
+
+                <div class="search-and-filter__row">
+                    {{ govukButton({
+                        text: 'Apply filters',
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
+        </div>
+
+        {% if not errors.startDate %}
+
+            {{ occupancySummary(summary) }}
+
+            <section id="calendar-key">
+                <h3 class="govuk-heading-m">Key</h3>
+
+                <ul class="calendar__month govuk-list">
+                    <li class="calendar__day">
+                        Available
+                    </li>
+                    <li class="calendar__day govuk-tag--yellow">
+                        Available for your criteria
+                    </li>
+                    <li class="calendar__day govuk-tag--red">
+                        Full or overbooked
+                    </li>
+                </ul>
+            </section>
+
+            <section aria-describedby="calendar-key">
+                {{ occupancyCalendar(calendar) }}
+            </section>
+        {% endif %}
     </section>
 
 
