@@ -245,6 +245,14 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_BOOKING_CHANGE',
     allowedPermissions: ['cas1_space_booking_create'],
   })
+  post(paths.premises.placements.changes.new.pattern, changesController.saveNew(), {
+    auditEvent: 'SAVE_NEW_BOOKING_CHANGE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  get(paths.premises.placements.changes.confirm.pattern, changesController.confirm(), {
+    auditEvent: 'CONFIRM_BOOKING_CHANGE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
 
   // Occupancy
   get(paths.premises.occupancy.view.pattern, apOccupancyViewController.view(), {

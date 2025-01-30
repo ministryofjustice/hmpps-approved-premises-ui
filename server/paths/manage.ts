@@ -95,6 +95,7 @@ const paths = {
       },
       changes: {
         new: placementChangesPath.path('new'),
+        confirm: placementChangesPath.path('confirm'),
       },
     },
     occupancy: {

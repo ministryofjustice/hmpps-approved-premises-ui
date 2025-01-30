@@ -11,7 +11,9 @@ import {
 import ChangesController from './changesController'
 import { occupancySummary } from '../../../../utils/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
-import paths from '../../../../paths/match'
+import matchPaths from '../../../../paths/match'
+import managePaths from '../../../../paths/manage'
+import adminPaths from '../../../../paths/admin'
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
@@ -33,6 +35,7 @@ describe('changesController', () => {
   const premises = cas1PremisesFactory.build()
   const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
   const capacity = cas1PremiseCapacityFactory.build()
+  const params = { premisesId: premises.id, placementId: placement.id }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -41,113 +44,147 @@ describe('changesController', () => {
     premisesService.getCapacity.mockResolvedValue(capacity)
     request = createMock<Request>({
       user: { token },
-      params: { premisesId: premises.id, placementId: placement.id },
+      params,
       flash: jest.fn(),
       query: {},
     })
   })
 
-  it('renders the change placement screen with current booking information', async () => {
-    const requestHandler = changesController.new()
-    await requestHandler(request, response, next)
-
-    const expectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
-    const expectedPlaceholderDayUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
-      id: placement.requestForPlacementId,
-      premisesId: premises.id,
-      date: ':date',
-    })}?${createQueryString({ criteria: expectedCriteria, excludeSpaceBookingId: placement.id })}`
-    const expectedDuration = differenceInDays(placement.expectedDepartureDate, placement.expectedArrivalDate)
-
-    expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
-    expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
-      startDate: placement.expectedArrivalDate,
-      endDate: placement.expectedDepartureDate,
-      excludeSpaceBookingId: placement.id,
-    })
-    expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes', {
-      pageHeading: 'Change placement dates',
-      placement,
-      placementSummary: placementOverviewSummary(placement),
-      durationOptions: durationSelectOptions(expectedDuration),
-      criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, expectedCriteria),
-      startDate: placement.expectedArrivalDate,
-      ...DateFormats.isoDateToDateInputs(placement.expectedArrivalDate, 'startDate'),
-      durationDays: expectedDuration,
-      summary: occupancySummary(capacity.capacity, expectedCriteria),
-      calendar: occupancyCalendar(capacity.capacity, expectedPlaceholderDayUrl, expectedCriteria),
-      errorSummary: [],
-      errors: {},
-    })
-  })
-
-  describe('when filtering the view', () => {
-    it('renders the change placement screen with a filtered view', async () => {
-      const query = {
-        'startDate-day': '12',
-        'startDate-month': '5',
-        'startDate-year': '2025',
-        durationDays: '7',
-        criteria: 'hasEnSuite',
-      }
-
-      const filterCriteria = makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.criteria)
-
+  describe('new', () => {
+    it('renders the change placement screen with current booking information', async () => {
       const requestHandler = changesController.new()
-      await requestHandler({ ...request, query }, response, next)
+      await requestHandler(request, response, next)
 
-      const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
+      const expectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
+      const expectedPlaceholderDayUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
         id: placement.requestForPlacementId,
         premisesId: premises.id,
         date: ':date',
-      })}?${createQueryString({ criteria: filterCriteria, excludeSpaceBookingId: placement.id })}`
+      })}?${createQueryString({ criteria: expectedCriteria, excludeSpaceBookingId: placement.id })}`
+      const expectedDuration = differenceInDays(placement.expectedDepartureDate, placement.expectedArrivalDate)
 
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
-        startDate: '2025-05-12',
-        endDate: '2025-05-19',
+        startDate: placement.expectedArrivalDate,
+        endDate: placement.expectedDepartureDate,
         excludeSpaceBookingId: placement.id,
       })
-      expect(response.render.mock.lastCall[1]).toEqual(
-        expect.objectContaining({
-          summary: occupancySummary(capacity.capacity, filterCriteria),
-          calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria),
-          durationOptions: durationSelectOptions(Number(query.durationDays)),
-          criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, filterCriteria),
+      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
+        backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
+        pageHeading: 'Change placement dates',
+        placement,
+        placementSummary: placementOverviewSummary(placement),
+        durationOptions: durationSelectOptions(expectedDuration),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, expectedCriteria),
+        startDate: placement.expectedArrivalDate,
+        ...DateFormats.isoDateToDateInputs(placement.expectedArrivalDate, 'startDate'),
+        durationDays: expectedDuration,
+        criteria: expectedCriteria,
+        summary: occupancySummary(capacity.capacity, expectedCriteria),
+        calendar: occupancyCalendar(capacity.capacity, expectedPlaceholderDayUrl, expectedCriteria),
+        errorSummary: [],
+        errors: {},
+      })
+    })
+
+    describe('when filtering the view', () => {
+      it('renders the change placement screen with a filtered view', async () => {
+        const query = {
           'startDate-day': '12',
           'startDate-month': '5',
           'startDate-year': '2025',
-        }),
-      )
-    })
+          durationDays: '7',
+          criteria: 'hasEnSuite',
+        }
 
-    it('shows an error and does not display summary or calendar if the filter date is invalid', async () => {
-      const query = {
-        'startDate-day': '12',
-        'startDate-year': '2025',
-        durationDays: '7',
-      }
+        const filterCriteria = makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.criteria)
 
-      const requestHandler = changesController.new()
-      await requestHandler({ ...request, query }, response, next)
+        const requestHandler = changesController.new()
+        await requestHandler({ ...request, query }, response, next)
 
-      expect(premisesService.getCapacity).not.toHaveBeenCalled()
-      expect(response.render.mock.lastCall[1]).toEqual(
-        expect.objectContaining({
-          summary: undefined,
-          calendar: undefined,
-          durationOptions: durationSelectOptions(Number(query.durationDays)),
-          criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, []),
-          errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
-          errors: {
-            startDate: {
-              attributes: { 'data-cy-error-startDate': true },
-              text: 'Enter a valid date',
-            },
-          },
+        const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
+          id: placement.requestForPlacementId,
+          premisesId: premises.id,
+          date: ':date',
+        })}?${createQueryString({ criteria: filterCriteria, excludeSpaceBookingId: placement.id })}`
+
+        expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
+          startDate: '2025-05-12',
+          endDate: '2025-05-19',
+          excludeSpaceBookingId: placement.id,
+        })
+        expect(response.render.mock.lastCall[1]).toEqual(
+          expect.objectContaining({
+            summary: occupancySummary(capacity.capacity, filterCriteria),
+            calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria),
+            durationOptions: durationSelectOptions(Number(query.durationDays)),
+            criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, filterCriteria),
+            'startDate-day': '12',
+            'startDate-month': '5',
+            'startDate-year': '2025',
+          }),
+        )
+      })
+
+      it('shows an error and does not display summary or calendar if the filter date is invalid', async () => {
+        const query = {
           'startDate-day': '12',
           'startDate-year': '2025',
-        }),
-      )
+          durationDays: '7',
+        }
+
+        const requestHandler = changesController.new()
+        await requestHandler({ ...request, query }, response, next)
+
+        expect(premisesService.getCapacity).not.toHaveBeenCalled()
+        expect(response.render.mock.lastCall[1]).toEqual(
+          expect.objectContaining({
+            summary: undefined,
+            calendar: undefined,
+            durationOptions: durationSelectOptions(Number(query.durationDays)),
+            criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, []),
+            errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
+            errors: {
+              startDate: {
+                attributes: { 'data-cy-error-startDate': true },
+                text: 'Enter a valid date',
+              },
+            },
+            'startDate-day': '12',
+            'startDate-year': '2025',
+          }),
+        )
+      })
+    })
+  })
+
+  describe('saveNew', () => {
+    it('should redirect to the confirmation screen with criteria when the submitted dates are valid', async () => {
+      const body = {
+        'arrivalDate-day': '23',
+        'arrivalDate-month': '6',
+        'arrivalDate-year': '2025',
+        'departureDate-day': '13',
+        'departureDate-month': '8',
+        'departureDate-year': '2025',
+        criteria: 'hasEnSuite,isArsonDesignated',
+      }
+
+      const expectedRedirectUrl = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
+        {
+          arrivalDate: '2025-06-23',
+          departureDate: '2025-08-13',
+          criteria: ['hasEnSuite', 'isArsonDesignated'],
+        },
+        {
+          arrayFormat: 'repeat',
+        },
+      )}`
+
+      const requestHandler = changesController.saveNew()
+      await requestHandler({ ...request, body }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
     })
   })
 })
