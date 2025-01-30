@@ -7,7 +7,6 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "./partials/_occupancySummary.njk" import occupancySummary %}
 {% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
@@ -120,7 +119,8 @@
         <section>
             <h2 class="govuk-heading-l">Book your placement</h2>
 
-            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}" method="post">
+            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}"
+                  method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <input type="hidden" name="criteria" value="{{ criteria }}" />

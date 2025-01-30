@@ -21,7 +21,7 @@ import { ValidationError } from '../../../utils/errors'
 import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 import { filterRoomLevelCriteria } from '../../../utils/match/spaceSearch'
 
-type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
+export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
 interface ViewRequest extends Request {
   params: {
