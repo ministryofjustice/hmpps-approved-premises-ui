@@ -1,7 +1,6 @@
 import type { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 import { dayAvailabilityCount, dayAvailabilityStatus } from './occupancy'
-import { createQueryString } from '../utils'
 
 type CalendarDayStatus = 'available' | 'availableForCriteria' | 'overbooked'
 
@@ -43,13 +42,7 @@ export const occupancyCalendar = (
       name: DateFormats.isoDateToUIDate(day.date, { format: 'longNoYear' }),
       status: dayAvailabilityStatus(day, criteria),
       bookableCount,
-      link: `${placeholderLink.replace(':date', day.date)}${createQueryString(
-        { criteria },
-        {
-          addQueryPrefix: true,
-          arrayFormat: 'repeat',
-        },
-      )}`,
+      link: placeholderLink.replace(':date', day.date),
     }
 
     if (criteria.length) {

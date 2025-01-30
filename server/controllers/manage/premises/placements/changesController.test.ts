@@ -12,6 +12,7 @@ import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import paths from '../../../../paths/match'
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
+import { createQueryString } from '../../../../utils/utils'
 
 describe('changesController', () => {
   const token = 'SOME_TOKEN'
@@ -44,12 +45,12 @@ describe('changesController', () => {
     const requestHandler = changesController.new()
     await requestHandler(request, response, next)
 
-    const placeholderDetailsUrl = paths.v2Match.placementRequests.search.dayOccupancy({
+    const filteredCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
+    const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
       id: placement.requestForPlacementId,
       premisesId: premises.id,
       date: ':date',
-    })
-    const filteredCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
+    })}?${createQueryString({ criteria: filteredCriteria, excludeSpaceBookingId: placement.id })}`
 
     expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {

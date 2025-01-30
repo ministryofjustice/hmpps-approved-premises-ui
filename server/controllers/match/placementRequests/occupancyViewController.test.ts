@@ -29,7 +29,7 @@ import { placementRequestSummaryList } from '../../../utils/placementRequests/pl
 import { ValidationError } from '../../../utils/errors'
 import { filterRoomLevelCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
-import { makeArrayOfType } from '../../../utils/utils'
+import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -53,11 +53,11 @@ describe('OccupancyViewController', () => {
   const params = { id: placementRequestDetail.id, premisesId: premises.id }
 
   const occupancyViewUrl = matchPaths.v2Match.placementRequests.search.occupancy(params)
-  const placeholderDetailsUrl = matchPaths.v2Match.placementRequests.search.dayOccupancy({
+  const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
     id: placementRequestDetail.id,
     premisesId: premises.id,
     date: ':date',
-  })
+  })}?${createQueryString({ criteria: searchState.roomCriteria }, { arrayFormat: 'repeat' })}`
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -448,6 +448,36 @@ describe('OccupancyViewController', () => {
           dayCapacity,
           filterRoomLevelCriteria(makeArrayOfType(criteria)),
         ),
+      })
+    })
+
+    it('should fetch capacity data with a placement id to exclude', async () => {
+      const date = '2025-03-23'
+      const criteria: Array<PlacementCriteria> = ['isWheelchairDesignated']
+      const excludeSpaceBookingId = 'excluded-id'
+
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
+      const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
+        startDate: date,
+        endDate: date,
+        capacity: [dayCapacity],
+      })
+      when(premisesService.getCapacity)
+        .calledWith(request.user.token, premises.id, { startDate: date, excludeSpaceBookingId })
+        .mockResolvedValue(premisesCapacityForDay)
+
+      const query = {
+        criteria,
+        excludeSpaceBookingId,
+      }
+
+      const requestHandler = occupancyViewController.viewDay()
+
+      await requestHandler({ ...request, params: { ...params, date }, query }, response, next)
+
+      expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, {
+        startDate: date,
+        excludeSpaceBookingId,
       })
     })
   })

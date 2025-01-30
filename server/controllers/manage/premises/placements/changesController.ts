@@ -7,6 +7,7 @@ import paths from '../../../../paths/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
+import { createQueryString } from '../../../../utils/utils'
 
 export default class ChangesController {
   constructor(
@@ -26,15 +27,20 @@ export default class ChangesController {
         endDate: placement.expectedDepartureDate,
         excludeSpaceBookingId: placement.id,
       })
-      const placeholderDetailsUrl = paths.v2Match.placementRequests.search.dayOccupancy({
-        id: placement.requestForPlacementId,
-        premisesId,
-        date: ':date',
-      })
-
       const bookingCriteria: Array<Cas1SpaceBookingCharacteristic> = filterRoomLevelCriteria(
         placement.requirements.essentialCharacteristics,
       )
+      const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
+        id: placement.requestForPlacementId,
+        premisesId,
+        date: ':date',
+      })}${createQueryString(
+        {
+          criteria: bookingCriteria,
+          excludeSpaceBookingId: placement.id,
+        },
+        { arrayFormat: 'repeat', addQueryPrefix: true },
+      )}`
 
       return res.render('manage/premises/placements/changes', {
         pageHeading: 'Change placement dates',

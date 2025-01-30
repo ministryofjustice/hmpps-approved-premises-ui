@@ -87,6 +87,25 @@ describe('occupancyCalendar', () => {
     ])
   })
 
+  it.each([
+    ['foo/:date', 'foo/2025-02-12'],
+    [':date', '2025-02-12'],
+    ['foo/:date?query', 'foo/2025-02-12?query'],
+    ['foo?date=:date', 'foo?date=2025-02-12'],
+  ])('returns a link for each calendar day based on the placeholder URL %s', (placeholder, expected) => {
+    const premisesCapacity = cas1PremiseCapacityFactory.build({
+      startDate: '2025-02-12',
+      endDate: '2025-02-12',
+    })
+
+    expect(occupancyCalendar(premisesCapacity.capacity, placeholder)).toEqual([
+      {
+        name: 'February 2025',
+        days: [expect.objectContaining({ link: expected })],
+      },
+    ])
+  })
+
   describe('when a filter criteria is provided', () => {
     const capacity: Array<Cas1PremiseCapacityForDay> = [
       cas1PremiseCapacityForDayFactory.build({
@@ -130,7 +149,7 @@ describe('occupancyCalendar', () => {
               bookableCount: -2,
               criteriaBookableCount: -1,
               status: 'overbooked',
-              link: 'foo/2025-02-02?criteria=hasEnSuite',
+              link: 'foo/2025-02-02',
             },
           ],
         },
@@ -146,7 +165,7 @@ describe('occupancyCalendar', () => {
               bookableCount: -2,
               criteriaBookableCount: 3,
               status: 'availableForCriteria',
-              link: 'foo/2025-02-02?criteria=isSuitedForSexOffenders',
+              link: 'foo/2025-02-02',
             },
           ],
         },
@@ -162,7 +181,7 @@ describe('occupancyCalendar', () => {
               bookableCount: -2,
               criteriaBookableCount: 1,
               status: 'availableForCriteria',
-              link: 'foo/2025-02-02?criteria=isWheelchairDesignated',
+              link: 'foo/2025-02-02',
             },
           ],
         },
@@ -178,7 +197,7 @@ describe('occupancyCalendar', () => {
               bookableCount: -2,
               criteriaBookableCount: 0,
               status: 'overbooked',
-              link: 'foo/2025-02-02?criteria=isStepFreeDesignated',
+              link: 'foo/2025-02-02',
             },
           ],
         },
@@ -198,7 +217,7 @@ describe('occupancyCalendar', () => {
               bookableCount: -2,
               criteriaBookableCount: -1,
               status: 'overbooked',
-              link: 'foo/2025-02-02?criteria=hasEnSuite&criteria=isSuitedForSexOffenders&criteria=isWheelchairDesignated',
+              link: 'foo/2025-02-02',
             },
           ],
         },
@@ -218,7 +237,7 @@ describe('occupancyCalendar', () => {
               bookableCount: 18,
               criteriaBookableCount: 3,
               status: 'available',
-              link: 'foo/2025-02-02?criteria=isSuitedForSexOffenders',
+              link: 'foo/2025-02-02',
             },
           ],
         },
@@ -234,7 +253,7 @@ describe('occupancyCalendar', () => {
               bookableCount: 18,
               criteriaBookableCount: 0,
               status: 'overbooked',
-              link: 'foo/2025-02-02?criteria=isStepFreeDesignated',
+              link: 'foo/2025-02-02',
             },
           ],
         },

@@ -18,7 +18,7 @@ import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
-import { makeArrayOfType } from '../../../utils/utils'
+import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 import { filterRoomLevelCriteria } from '../../../utils/match/spaceSearch'
 
 type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
@@ -37,7 +37,8 @@ interface ViewDayRequest extends Request {
     date: string
   }
   query: {
-    criteria: CriteriaQuery
+    criteria?: CriteriaQuery
+    excludeSpaceBookingId?: string
   }
 }
 
@@ -87,11 +88,17 @@ export default class {
           startDate: capacityDates.startDate,
           endDate: capacityDates.endDate,
         })
-        const placeholderDetailsUrl = paths.v2Match.placementRequests.search.dayOccupancy({
+        const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
           id,
           premisesId,
           date: ':date',
-        })
+        })}${createQueryString(
+          { criteria: searchState.roomCriteria },
+          {
+            arrayFormat: 'repeat',
+            addQueryPrefix: true,
+          },
+        )}`
 
         summary = occupancySummary(capacity.capacity, searchState.roomCriteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, searchState.roomCriteria)
@@ -196,12 +203,15 @@ export default class {
     return async (req: ViewDayRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId, date } = req.params
-      const { criteria = [] } = req.query
+      const { criteria = [], excludeSpaceBookingId } = req.query
 
       const backLink = req.headers.referer
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
-      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, { startDate: date })
+      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
+        startDate: date,
+        excludeSpaceBookingId,
+      })
       const dayCapacity = premisesCapacity.capacity[0]
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
       const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
