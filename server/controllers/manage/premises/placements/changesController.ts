@@ -3,8 +3,13 @@ import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { ObjectWithDateParts } from '@approved-premises/ui'
 import { addDays, differenceInDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
-import { fetchErrorsAndUserInput, generateErrorMessages, generateErrorSummary } from '../../../../utils/validation'
-import { occupancySummary } from '../../../../utils/match'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateErrorMessages,
+  generateErrorSummary,
+} from '../../../../utils/validation'
+import { occupancySummary, validateSpaceBooking } from '../../../../utils/match'
 import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
@@ -17,6 +22,7 @@ import { OccupancySummary } from '../../../../utils/match/occupancySummary'
 import managePaths from '../../../../paths/manage'
 import matchPaths from '../../../../paths/match'
 import adminPaths from '../../../../paths/admin'
+import { ValidationError } from '../../../../utils/errors'
 
 interface ViewRequest extends Request {
   params: {
@@ -119,22 +125,36 @@ export default class ChangesController {
 
   saveNew(): RequestHandler {
     return async (req: ViewRequest, res: Response) => {
-      const { params } = req
+      const { body, params } = req
 
-      const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDate')
-      const { departureDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'departureDate')
-      const { criteria } = req.body
+      try {
+        const errors = validateSpaceBooking(body)
 
-      const redirectUrl = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
-        {
-          arrivalDate,
-          departureDate,
-          criteria: criteria.split(','),
-        },
-        { arrayFormat: 'repeat' },
-      )}`
+        if (Object.keys(errors).length) {
+          throw new ValidationError(errors)
+        }
 
-      return res.redirect(redirectUrl)
+        const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDate')
+        const { departureDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'departureDate')
+        const { criteria } = req.body
+
+        const redirectUrl = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
+          {
+            arrivalDate,
+            departureDate,
+            criteria: criteria.split(','),
+          },
+          { arrayFormat: 'repeat' },
+        )}`
+
+        return res.redirect(redirectUrl)
+      } catch (error) {
+        const viewUrl = `${managePaths.premises.placements.changes.new(params)}${createQueryString(req.query, {
+          arrayFormat: 'repeat',
+          addQueryPrefix: true,
+        })}`
+        return catchValidationErrorOrPropogate(req, res, error, viewUrl)
+      }
     }
   }
 

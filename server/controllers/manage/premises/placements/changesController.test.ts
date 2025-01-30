@@ -20,6 +20,8 @@ import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { durationSelectOptions, occupancyCriteriaMap } from '../../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
+import * as validationUtils from '../../../../utils/validation'
+import { ValidationError } from '../../../../utils/errors'
 
 describe('changesController', () => {
   const token = 'SOME_TOKEN'
@@ -36,6 +38,7 @@ describe('changesController', () => {
   const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
   const capacity = cas1PremiseCapacityFactory.build()
   const params = { premisesId: premises.id, placementId: placement.id }
+  const viewUrl = managePaths.premises.placements.changes.new(params)
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -185,6 +188,110 @@ describe('changesController', () => {
       await requestHandler({ ...request, body }, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
+    })
+
+    describe('when there are errors', () => {
+      beforeEach(() => {
+        jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
+      })
+
+      it(`should redirect to the view when dates are empty`, async () => {
+        const body = {}
+        const query = {
+          criteria: ['hasEnSuite', 'isArsonDesignated'],
+        }
+
+        const requestHandler = changesController.saveNew()
+        await requestHandler({ ...request, body, query }, response, next)
+
+        const expectedErrorData = {
+          arrivalDate: 'You must enter an arrival date',
+          departureDate: 'You must enter a departure date',
+        }
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          `${viewUrl}?criteria=hasEnSuite&criteria=isArsonDesignated`,
+        )
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it(`should redirect to the view when dates are invalid`, async () => {
+        const body = {
+          'arrivalDate-day': '31',
+          'arrivalDate-month': '02',
+          'arrivalDate-year': '2025',
+          'departureDate-day': '34',
+          'departureDate-month': '05',
+          'departureDate-year': '19999',
+        }
+
+        const requestHandler = changesController.saveNew()
+        await requestHandler({ ...request, body }, response, next)
+
+        const expectedErrorData = {
+          arrivalDate: 'The arrival date is an invalid date',
+          departureDate: 'The departure date is an invalid date',
+        }
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          viewUrl,
+        )
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it(`should redirect to the view when the departure date is before the arrival date`, async () => {
+        const body = {
+          'arrivalDate-day': '28',
+          'arrivalDate-month': '01',
+          'arrivalDate-year': '2025',
+          'departureDate-day': '27',
+          'departureDate-month': '01',
+          'departureDate-year': '2025',
+        }
+
+        const requestHandler = changesController.saveNew()
+        await requestHandler({ ...request, body }, response, next)
+
+        const expectedErrorData = {
+          departureDate: 'The departure date must be after the arrival date',
+        }
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          viewUrl,
+        )
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+    })
+  })
+
+  describe('confirm', () => {
+    it('renders the confirmation page', async () => {
+      const requestHandler = changesController.confirm()
+      await requestHandler(request, response, next)
+
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
+      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/confirm', {
+        pageHeading: 'Confirm booking changes',
+        placement,
+      })
     })
   })
 })
