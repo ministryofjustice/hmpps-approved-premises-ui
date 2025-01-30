@@ -7,12 +7,12 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "../../../components/keyDetails/macro.njk" import keyDetails %}
-{% from "../../../match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
-{% from "../../../match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
+{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
+{% from "../../../../match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
+{% from "../../../../match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
 
-{% extends "../../../partials/layout.njk" %}
+{% extends "../../../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -24,7 +24,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: paths.admin.placementRequests.show({ id: placement.requestForPlacementId })
+        href: backlink
     }) }}
 {% endblock %}
 
@@ -123,7 +123,62 @@
         {% endif %}
     </section>
 
+    {% if not errors.startDate %}
+        <section>
+            <h2 class="govuk-heading-l">Book your placement</h2>
 
+            <form action="{{ currentUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <input type="hidden" name="criteria" value="{{ criteria }}" />
+
+                {{ govukDateInput({
+                    id: "arrivalDate",
+                    namePrefix: "arrivalDate",
+                    fieldset: {
+                        legend: {
+                            text: "Arrival date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "For example, 17 5 2024"
+                    },
+                    items: dateFieldValues('arrivalDate', errors),
+                    errorMessage: errors.arrivalDate
+                }) }}
+
+                {{ govukDateInput({
+                    id: "departureDate",
+                    namePrefix: "departureDate",
+                    fieldset: {
+                        legend: {
+                            text: "Departure date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "For example, 17 5 2024"
+                    },
+                    items: dateFieldValues('departureDate', errors),
+                    errorMessage: errors.departureDate
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue",
+                        preventDoubleClick: true
+                    }) }}
+                    {{ govukButton({
+                        text: "Cancel",
+                        classes: "govuk-button--secondary",
+                        href: backlink,
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
+        </section>
+    {% endif %}
 
 
 {% endblock %}
