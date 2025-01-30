@@ -14,6 +14,7 @@ import {
   flattenCheckboxInput,
   isStringOrArrayOfStrings,
   placementRequestStatusSelectOptions,
+  summaryListItem,
   tierSelectOptions,
   validPostcodeArea,
 } from './formUtils'
@@ -602,6 +603,26 @@ describe('formUtils', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('SummaryListItem', () => {
+    const label = 'label'
+    const value = 'test value'
+
+    it('should return a summary list item', () => {
+      expect(summaryListItem(label, value)).toEqual({ key: { text: label }, value: { text: value } })
+      expect(summaryListItem(label, value, 'html')).toEqual({ key: { text: label }, value: { html: value } })
+      expect(summaryListItem(label, value, 'textBlock')).toEqual({
+        key: { text: label },
+        value: { html: `<span class="govuk-summary-list__textblock">${value}</span>` },
+      })
+      expect(summaryListItem(label, undefined)).toEqual({ key: { text: label }, value: { text: undefined } })
+    })
+
+    it('should return undefined if value is falsey and blank suppression enabled', () => {
+      expect(summaryListItem(label, '', 'text')).toEqual({ key: { text: label }, value: { text: '' } })
+      expect(summaryListItem(label, '', 'text', true)).toEqual(undefined)
     })
   })
 

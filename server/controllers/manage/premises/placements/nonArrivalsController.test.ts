@@ -10,6 +10,7 @@ import * as validationUtils from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
+import { NON_ARRIVAL_REASON_OTHER_ID } from '../../../../utils/placements'
 
 describe('nonArrivalsController', () => {
   const token = 'SAMPLE_TOKEN'
@@ -92,6 +93,28 @@ describe('nonArrivalsController', () => {
 
       expect(errorData).toEqual({
         reason: 'You must select a reason for non-arrival',
+      })
+    })
+
+    it('returns error if "other" selected but no descriptive text', async () => {
+      const requestHandler = nonArrivalsController.create()
+
+      request.body = { reason: NON_ARRIVAL_REASON_OTHER_ID }
+
+      await requestHandler(request, response, next)
+
+      expect(placementService.recordNonArrival).not.toHaveBeenCalled()
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        uiNonArrivalsPagePath,
+      )
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        notes: 'You must provide the reason for non-arrival',
       })
     })
 

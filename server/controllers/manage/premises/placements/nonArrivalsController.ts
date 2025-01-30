@@ -4,6 +4,7 @@ import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
+import { NON_ARRIVAL_REASON_OTHER_ID, processReferenceData } from '../../../../utils/placements'
 
 export default class NonArrivalsController {
   constructor(
@@ -17,7 +18,10 @@ export default class NonArrivalsController {
       const { premisesId, placementId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
-      const nonArrivalReasons: Array<NonArrivalReason> = await this.placementService.getNonArrivalReasons(token)
+      const nonArrivalReasons: Array<NonArrivalReason> = processReferenceData<NonArrivalReason>(
+        await this.placementService.getNonArrivalReasons(token),
+        { id: NON_ARRIVAL_REASON_OTHER_ID, name: 'Other - provide reasons' },
+      )
       return res.render('manage/premises/placements/non-arrival', {
         nonArrivalReasons,
         placement,
@@ -42,6 +46,10 @@ export default class NonArrivalsController {
 
         if (notes?.length > 200) {
           errors.notes = 'You have exceeded 200 characters'
+        }
+
+        if (reason === NON_ARRIVAL_REASON_OTHER_ID && !notes?.length) {
+          errors.notes = 'You must provide the reason for non-arrival'
         }
 
         if (Object.keys(errors).length) {

@@ -3,6 +3,7 @@ import type { Cas1NonArrival, Cas1SpaceBooking } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 import apiPaths from '../../../../server/paths/api'
+import { NON_ARRIVAL_REASON_OTHER_ID } from '../../../../server/utils/placements'
 
 export class RecordNonArrivalPage extends Page {
   constructor(title: string = 'Record someone as not arrived') {
@@ -11,7 +12,7 @@ export class RecordNonArrivalPage extends Page {
 
   nonArrivalDetails: Cas1NonArrival = {
     notes: faker.lorem.words(20).substring(0, 200),
-    reason: null,
+    reason: NON_ARRIVAL_REASON_OTHER_ID,
   }
 
   completeNotesBad(): void {
@@ -27,15 +28,6 @@ export class RecordNonArrivalPage extends Page {
 
   checkForCharacterCountError(): void {
     cy.contains('You have 50 characters too many')
-  }
-
-  completeReason(): void {
-    cy.get('input[name=reason]')
-      .invoke('val')
-      .then(val => {
-        this.nonArrivalDetails.reason = String(val)
-        this.checkRadioByNameAndValue('reason', String(val))
-      })
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): RecordNonArrivalPage {

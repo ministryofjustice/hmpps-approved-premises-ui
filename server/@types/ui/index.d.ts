@@ -457,5 +457,6 @@ export type DepartureFormSessionData = Partial<
     breachOrRecallReasonId: string
     moveOnCategoryId: string
     notes: string
+    apName: string
   }
 >

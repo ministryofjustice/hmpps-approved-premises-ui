@@ -1,5 +1,5 @@
 import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premises/api'
-import { SelectOption } from '@approved-premises/ui'
+import { RadioItem, SelectOption } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import {
   cas1PremisesFactory,
@@ -13,6 +13,7 @@ import {
   departureInformation,
   getBackLink,
   getKeyDetail,
+  injectRadioConditionalHtml,
   otherBookings,
   placementSummary,
   renderKeyworkersSelectOptions,
@@ -256,7 +257,12 @@ describe('placementUtils', () => {
               },
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
-            { key: { text: 'More information' }, value: { text: departedPlacement.departure?.notes } },
+            {
+              key: { text: 'More information' },
+              value: {
+                html: `<span class="govuk-summary-list__textblock">${departedPlacement.departure?.notes}</span>`,
+              },
+            },
           ],
         })
       })
@@ -282,7 +288,12 @@ describe('placementUtils', () => {
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.parentReason?.name } },
             { key: { text: 'Breach or recall' }, value: { text: departedPlacement.departure?.reason?.name } },
-            { key: { text: 'More information' }, value: { text: departedPlacement.departure?.notes } },
+            {
+              key: { text: 'More information' },
+              value: {
+                html: `<span class="govuk-summary-list__textblock">${departedPlacement.departure?.notes}</span>`,
+              },
+            },
           ],
         })
       })
@@ -308,7 +319,12 @@ describe('placementUtils', () => {
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
             { key: { text: 'Move on' }, value: { text: departedPlacement.departure?.moveOnCategory?.name } },
-            { key: { text: 'More information' }, value: { text: departedPlacement.departure?.notes } },
+            {
+              key: { text: 'More information' },
+              value: {
+                html: `<span class="govuk-summary-list__textblock">${departedPlacement.departure?.notes}</span>`,
+              },
+            },
           ],
         })
       })
@@ -364,6 +380,20 @@ describe('placementUtils', () => {
         selectBlankOption,
         ...[staffList[0], staffList[2]].map(({ name, code }) => ({ text: name, value: code, selected: false })),
       ])
+    })
+  })
+
+  describe('injectRadioConditionalHtml', () => {
+    it('should inject the supplied html into the radio list as a condtional', () => {
+      const radioList: Array<RadioItem> = [
+        { text: 'One', value: 'one' },
+        { text: 'Two', value: 'two' },
+        { text: 'Three', value: 'three' },
+      ]
+      const testHtml = 'test HTML'
+      expect(injectRadioConditionalHtml(radioList, 'two', testHtml)).toEqual(
+        expect.arrayContaining([{ text: 'Two', value: 'two', conditional: { html: testHtml } }]),
+      )
     })
   })
 })
