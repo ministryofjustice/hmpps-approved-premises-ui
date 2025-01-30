@@ -29,7 +29,7 @@ import { placementRequestSummaryList } from '../../../utils/placementRequests/pl
 import { ValidationError } from '../../../utils/errors'
 import { filterRoomLevelCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
-import { makeArrayOfType } from '../../../utils/utils'
+import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -58,6 +58,7 @@ describe('OccupancyViewController', () => {
     premisesId: premises.id,
     date: ':date',
   })
+  const dayPlaceholderUrl = `${placeholderDetailsUrl}?${createQueryString({ criteria: searchState.roomCriteria }, { arrayFormat: 'repeat' })}`
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -104,7 +105,7 @@ describe('OccupancyViewController', () => {
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, searchState.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
         summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
-        calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
+        calendar: occupancyCalendar(premiseCapacity.capacity, dayPlaceholderUrl, searchState.roomCriteria),
         errors: {},
         errorSummary: [],
       })
@@ -166,7 +167,7 @@ describe('OccupancyViewController', () => {
           'departureDate-day': '1',
           'departureDate-month': '5',
           'departureDate-year': '2026',
-          calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
+          calendar: occupancyCalendar(premiseCapacity.capacity, dayPlaceholderUrl, searchState.roomCriteria),
           summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
         }),
       )
@@ -449,6 +450,37 @@ describe('OccupancyViewController', () => {
           dayCapacity,
           filterRoomLevelCriteria(makeArrayOfType(criteria)),
         ),
+      })
+    })
+
+    it('should fetch capacity data with a placement id to exclude', async () => {
+      const date = '2025-03-23'
+      const criteria: Array<PlacementCriteria> = ['isWheelchairDesignated']
+      const excludeSpaceBookingId = 'excluded-id'
+
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
+      const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
+        premise: premises,
+        startDate: date,
+        endDate: date,
+        capacity: [dayCapacity],
+      })
+      when(premisesService.getCapacity)
+        .calledWith(request.user.token, premises.id, { startDate: date, excludeSpaceBookingId })
+        .mockResolvedValue(premisesCapacityForDay)
+
+      const query = {
+        criteria,
+        excludeSpaceBookingId,
+      }
+
+      const requestHandler = occupancyViewController.viewDay()
+
+      await requestHandler({ ...request, params: { ...params, date }, query }, response, next)
+
+      expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, {
+        startDate: date,
+        excludeSpaceBookingId,
       })
     })
   })
