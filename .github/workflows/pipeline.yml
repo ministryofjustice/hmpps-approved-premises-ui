@@ -171,26 +171,26 @@ jobs:
       push: ${{ inputs.push || true }}
       docker_multiplatform: ${{ inputs.docker_multiplatform || false }}
 
-  request_deploy:
-    name: Request deployment approval
-    needs:
-      - build
-      - helm_lint
-    runs-on: ubuntu-latest
-    environment: development
-    steps:
-      - uses: trstringer/manual-approval@v1 # this has to be a specific process...
-        with:
-          approvers: approved-premises-team
-          minimum-approvals: 1
-          issue-title: "Deploy branch to development environment"
-          issue-body: "Please approve or deny the deployment this branch"
-          exclude-workflow-initiator-as-approver: false
+  # request_deploy:
+  #   name: Request deployment approval
+  #   needs:
+  #     - build
+  #     - helm_lint
+  #   runs-on: ubuntu-latest
+  #   environment: development
+  #   steps:
+  #     - uses: trstringer/manual-approval@v1 # this has to be a specific process...
+  #       with:
+  #         approvers: approved-premises-team
+  #         minimum-approvals: 1
+  #         issue-title: "Deploy branch to development environment"
+  #         issue-body: "Please approve or deny the deployment this branch"
+  #         exclude-workflow-initiator-as-approver: false
 
   deploy_dev:
     name: Deploy to the development environment
     needs:
-      - request_deploy
+      - build
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
     with:
