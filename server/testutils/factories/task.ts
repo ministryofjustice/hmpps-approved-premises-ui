@@ -8,7 +8,7 @@ import UserFactory from './user'
 import { apAreaFactory } from './referenceData'
 import { getCrn, personSummaryFactory, restrictedPersonSummaryFactory } from './person'
 
-export const taskTypes: ReadonlyArray<TaskType> = ['Assessment', 'PlacementRequest', 'PlacementApplication']
+export const taskTypes: ReadonlyArray<TaskType> = ['Assessment', 'PlacementApplication']
 
 export default Factory.define<Task>(() => ({
   id: faker.string.uuid(),

@@ -1,10 +1,9 @@
-import { isAssessmentTask, isPlacementApplicationTask, isPlacementRequestTask } from './assertions'
+import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import {
   AssessmentDecision,
   FullPersonSummary,
   PersonSummary,
   PlacementApplicationDecision,
-  PlacementRequestTaskOutcome,
   SortDirection,
   Task,
   TaskSortField,
@@ -24,9 +23,6 @@ const statusCell = (task: Task): TableCell => ({
 
 const getTaskType = (task: Task): string => {
   let taskType
-  if (isPlacementRequestTask(task)) {
-    taskType = 'Match request'
-  }
   if (isPlacementApplicationTask(task)) {
     taskType = 'Request for placement'
   }
@@ -52,11 +48,6 @@ const placementApplicationDecisionTranslations: Record<PlacementApplicationDecis
   withdrawn_by_pp: 'Withdrawn by probation practitioner',
 }
 
-const placementRequestTaskOutcomeTranslations: Record<PlacementRequestTaskOutcome, string> = {
-  matched: 'Matched',
-  unable_to_match: 'Unable to match',
-}
-
 const getAssessmentDecisionOutcome = (outcome: AssessmentDecision): string => {
   return assessmentDecisionTranslations[outcome]
 }
@@ -65,19 +56,12 @@ const getPlacementApplicationDecisionOutcome = (outcome: PlacementApplicationDec
   return placementApplicationDecisionTranslations[outcome]
 }
 
-const getPlacementRequestTaskOutcome = (outcome: PlacementRequestTaskOutcome): string => {
-  return placementRequestTaskOutcomeTranslations[outcome]
-}
-
 export const getDecisionOutcome = (task: Task): string => {
   if (isPlacementApplicationTask(task)) {
     return getPlacementApplicationDecisionOutcome(task.outcome)
   }
   if (isAssessmentTask(task)) {
     return getAssessmentDecisionOutcome(task.outcome)
-  }
-  if (isPlacementRequestTask(task)) {
-    return getPlacementRequestTaskOutcome(task.outcome)
   }
 
   return ''

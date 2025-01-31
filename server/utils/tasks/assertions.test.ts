@@ -1,18 +1,10 @@
-import {
-  assessmentTaskFactory,
-  placementApplicationTaskFactory,
-  placementRequestTaskFactory,
-} from '../../testutils/factories'
-import { isAssessmentTask, isPlacementApplicationTask, isPlacementRequestTask } from './assertions'
+import { assessmentTaskFactory, placementApplicationTaskFactory } from '../../testutils/factories'
+import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 
 describe('assertions', () => {
-  ;[isAssessmentTask, isPlacementApplicationTask, isPlacementRequestTask].forEach(assertion => {
+  ;[isAssessmentTask, isPlacementApplicationTask].forEach(assertion => {
     describe(assertion, () => {
       ;[
-        {
-          task: placementRequestTaskFactory.build(),
-          expectedResponse: assertion === isPlacementRequestTask,
-        },
         {
           task: placementApplicationTaskFactory.build(),
           expectedResponse: assertion === isPlacementApplicationTask,

@@ -1,9 +1,4 @@
-import {
-  assessmentTaskFactory,
-  placementApplicationTaskFactory,
-  placementRequestTaskFactory,
-  taskFactory,
-} from '../../testutils/factories'
+import { assessmentTaskFactory, placementApplicationTaskFactory, taskFactory } from '../../testutils/factories'
 import {
   allocatedTableRows,
   allocationCell,
@@ -241,19 +236,18 @@ describe('table', () => {
 
   describe('taskParams', () => {
     it('returns task parameter object with task type in correct case', () => {
-      const task = taskFactory.build({ taskType: 'PlacementRequest' })
+      const task = taskFactory.build({ taskType: 'PlacementApplication' })
       const result = taskParams(task)
 
       expect(result).toEqual({
         id: task.id,
-        taskType: 'placement-request',
+        taskType: 'placement-application',
       })
     })
   })
 
   describe('getTaskType', () => {
     ;[
-      { task: placementRequestTaskFactory.build(), expectedTaskType: 'Match request', taskType: 'Placement Request' },
       {
         task: placementApplicationTaskFactory.build(),
         expectedTaskType: 'Request for placement',
@@ -456,10 +450,6 @@ describe('table', () => {
     it('returns placement application decision outcome withdrawn_by_pp', () => {
       const task = placementApplicationTaskFactory.build({ outcome: 'withdrawn_by_pp' })
       expect(getDecisionOutcome(task)).toEqual('Withdrawn by probation practitioner')
-    })
-    it('returns placement application decision outcome withdrawn_by_pp', () => {
-      const task = placementRequestTaskFactory.build({ outcome: 'matched' })
-      expect(getDecisionOutcome(task)).toEqual('Matched')
     })
   })
 })
