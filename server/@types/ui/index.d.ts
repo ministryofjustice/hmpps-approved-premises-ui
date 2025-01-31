@@ -460,3 +460,9 @@ export type DepartureFormSessionData = Partial<
     apName: string
   }
 >
+
+export type DateRange = {
+  from: string
+  to?: string
+  duration: number
+}

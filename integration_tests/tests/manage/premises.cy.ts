@@ -235,6 +235,31 @@ context('Premises', () => {
         // Then I should not see the placements section
         page.shouldNotShowPlacementsSection()
       })
+
+      it('should show the overbooking banner if the premises is overbooked', () => {
+        // Given there is a premises that is overbooked in the next 12 weeks
+        const overbooking = {
+          overbookingSummary: PremisesShowPage.overbookingSummary,
+        }
+        cy.task('stubSinglePremises', { ...premises, ...overbooking })
+
+        // When I visit premises details page
+        const page = PremisesShowPage.visit(premises)
+
+        // Then I should see the overbooking banner
+        page.shouldShowOverbookingSummary()
+      })
+
+      it('should not show the overbooking banner if the premises is not overbooked', () => {
+        // Given there is a premises that is not overbooked in the next 12 weeks
+        cy.task('stubSinglePremises', { ...premises, overbookingSummary: [] })
+
+        // When I visit premises details page
+        const page = PremisesShowPage.visit(premises)
+
+        // Then I should see the overbooking banner
+        page.shouldNotShowBanner()
+      })
     })
 
     describe('without placement list view permission', () => {

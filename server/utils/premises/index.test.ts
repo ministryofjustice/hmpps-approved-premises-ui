@@ -1,4 +1,4 @@
-import type { Cas1SpaceBookingResidency } from '@approved-premises/api'
+import type { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
 import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
@@ -10,6 +10,7 @@ import {
   placementTableHeader,
   placementTableRows,
   premisesActions,
+  premisesOverbookingSummary,
   premisesTabItems,
   premisesTableRows,
   summaryListForPremises,
@@ -287,5 +288,25 @@ describe('premisesUtils', () => {
         expect(tableRows).toEqual(expectedRows)
       },
     )
+  })
+
+  describe('premisesOverbookingSummary', () => {
+    it('Should generate the premisesOverbooking summary', () => {
+      const overbookingSummary: Array<Cas1OverbookingRange> = [
+        { startInclusive: '2025-01-10', endInclusive: '2025-01-20' },
+        { startInclusive: '2025-01-25', endInclusive: '2025-01-25' },
+      ]
+
+      const premises = cas1PremisesFactory.build({ overbookingSummary })
+      expect(premisesOverbookingSummary(premises)).toEqual([
+        { duration: 11, from: '2025-01-10', to: '2025-01-20' },
+        { duration: 1, from: '2025-01-25', to: '2025-01-25' },
+      ])
+    })
+    it('Should generate an empty premisesOverbooking summary', () => {
+      const overbookingSummary: Array<Cas1OverbookingRange> = []
+      const premises = cas1PremisesFactory.build({ overbookingSummary })
+      expect(premisesOverbookingSummary(premises)).toEqual([])
+    })
   })
 })
