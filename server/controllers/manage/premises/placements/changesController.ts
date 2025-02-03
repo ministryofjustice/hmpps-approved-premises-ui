@@ -1,5 +1,5 @@
 import { type Request, RequestHandler, type Response } from 'express'
-import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { ObjectWithDateParts } from '@approved-premises/ui'
 import { addDays, differenceInDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
@@ -28,11 +28,13 @@ import matchPaths from '../../../../paths/match'
 import adminPaths from '../../../../paths/admin'
 import { ValidationError } from '../../../../utils/errors'
 
+type RequestParams = {
+  premisesId: string
+  placementId: string
+}
+
 interface ViewRequest extends Request {
-  params: {
-    premisesId: string
-    placementId: string
-  }
+  params: RequestParams
   query: ObjectWithDateParts<'startDate'> & {
     durationDays: string
     criteria: CriteriaQuery
@@ -43,15 +45,23 @@ interface ViewRequest extends Request {
     }
 }
 
+type ConfirmQuery = {
+  arrivalDate: string
+  departureDate: string
+  criteria: CriteriaQuery
+}
+
 interface ConfirmRequest extends Request {
-  params: {
-    premisesId: string
-    placementId: string
-  }
-  query: {
+  params: RequestParams
+  query: ConfirmQuery
+}
+
+interface CreateRequest extends Request {
+  params: RequestParams
+  body: {
     arrivalDate: string
     departureDate: string
-    criteria: CriteriaQuery
+    criteria: string
   }
 }
 
@@ -179,7 +189,7 @@ export default class ChangesController {
     return async (req: ConfirmRequest, res: Response) => {
       const { token } = req.user
       const { premisesId, placementId } = req.params
-      const { arrivalDate, departureDate, criteria: queryCriteria } = req.query
+      const { arrivalDate, departureDate, criteria } = req.query
 
       const [premises, placement] = await Promise.all([
         this.premisesService.find(token, premisesId),
@@ -188,7 +198,7 @@ export default class ChangesController {
 
       const backlink = `${managePaths.premises.placements.changes.new(req.params)}${createQueryString(
         {
-          criteria: queryCriteria,
+          criteria,
           arrivalDate,
           departureDate,
         },
@@ -203,9 +213,49 @@ export default class ChangesController {
           premises,
           arrivalDate,
           departureDate,
-          makeArrayOfType<Cas1SpaceBookingCharacteristic>(queryCriteria),
+          makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria),
         ),
+        arrivalDate,
+        departureDate,
+        criteria,
       })
+    }
+  }
+
+  create(): RequestHandler {
+    return async (req: CreateRequest, res: Response) => {
+      const { token } = req.user
+      const { premisesId, placementId } = req.params
+      const { arrivalDate, departureDate, criteria } = req.body
+
+      try {
+        const updatePlacementData: Cas1UpdateSpaceBooking = {
+          arrivalDate,
+          departureDate,
+          characteristics: makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria.split(',')),
+        }
+
+        await this.placementService.updatePlacement(token, premisesId, placementId, updatePlacementData)
+
+        const placement = await this.placementService.getPlacement(token, placementId)
+
+        req.flash('success', 'Booking changed successfully')
+
+        return res.redirect(adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }))
+      } catch (error) {
+        const redirectUrl = `${managePaths.premises.placements.changes.confirm({
+          premisesId,
+          placementId,
+        })}${createQueryString(
+          {
+            arrivalDate,
+            departureDate,
+            criteria: criteria.split(','),
+          },
+          { arrayFormat: 'repeat', addQueryPrefix: true },
+        )}`
+        return catchValidationErrorOrPropogate(req, res, error, redirectUrl)
+      }
     }
   }
 }

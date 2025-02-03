@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
-import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
@@ -26,6 +26,7 @@ import { ValidationError } from '../../../../utils/errors'
 describe('changesController', () => {
   const token = 'SOME_TOKEN'
 
+  const mockFlash = jest.fn()
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>()
   const next: DeepMocked<NextFunction> = createMock<NextFunction>()
@@ -49,7 +50,7 @@ describe('changesController', () => {
     request = createMock<Request>({
       user: { token },
       params,
-      flash: jest.fn(),
+      flash: mockFlash,
       query: {},
     })
   })
@@ -311,6 +312,71 @@ describe('changesController', () => {
           query.departureDate,
           query.criteria as Array<Cas1SpaceBookingCharacteristic>,
         ),
+        arrivalDate: query.arrivalDate,
+        departureDate: query.departureDate,
+        criteria: query.criteria,
+      })
+    })
+  })
+
+  describe('create', () => {
+    const body = {
+      arrivalDate: '2025-05-05',
+      departureDate: '2025-07-05',
+      criteria: 'isSuitedForSexOffenders,isStepFreeDesignated',
+    }
+
+    it('updates the placement and redirects the user to the placement request', async () => {
+      placementService.updatePlacement.mockResolvedValue(placement)
+
+      const requestHandler = changesController.create()
+      await requestHandler({ ...request, body }, response, next)
+
+      const expectedUpdateBody: Cas1UpdateSpaceBooking = {
+        arrivalDate: '2025-05-05',
+        departureDate: '2025-07-05',
+        characteristics: ['isSuitedForSexOffenders', 'isStepFreeDesignated'],
+      }
+      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId })
+
+      expect(placementService.updatePlacement).toHaveBeenCalledWith(
+        token,
+        params.premisesId,
+        params.placementId,
+        expectedUpdateBody,
+      )
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, params.placementId)
+      expect(mockFlash).toHaveBeenCalledWith('success', 'Booking changed successfully')
+      expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
+    })
+
+    describe('when errors are raised by the API', () => {
+      beforeEach(() => {
+        jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue()
+      })
+
+      it('redirects to the confirm screen with existing query string', async () => {
+        const apiError = new Error()
+        placementService.updatePlacement.mockRejectedValue(apiError)
+
+        const requestHandler = changesController.create()
+        await requestHandler({ ...request, body }, response, next)
+
+        const expectedRedirect = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
+          {
+            arrivalDate: '2025-05-05',
+            departureDate: '2025-07-05',
+            criteria: ['isSuitedForSexOffenders', 'isStepFreeDesignated'],
+          },
+          { arrayFormat: 'repeat' },
+        )}`
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          apiError,
+          expectedRedirect,
+        )
       })
     })
   })
