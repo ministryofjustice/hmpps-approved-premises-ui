@@ -5,6 +5,7 @@ import type {
   Cas1NewSpaceBookingCancellation,
   Cas1NonArrival,
   Cas1SpaceBooking,
+  Cas1UpdateSpaceBooking,
   DepartureReason,
   NonArrivalReason,
 } from '@approved-premises/api'
@@ -29,6 +30,17 @@ export default class PlacementService {
     const { token, ...remainingArgs } = args
     const placementClient = this.placementClientFactory(token)
     return placementClient.getTimeline(remainingArgs)
+  }
+
+  async updatePlacement(
+    token: string,
+    premisesId: string,
+    placementId: string,
+    data: Cas1UpdateSpaceBooking,
+  ): Promise<unknown> {
+    const placementClient = this.placementClientFactory(token)
+
+    return placementClient.updatePlacement(premisesId, placementId, data)
   }
 
   async createArrival(token: string, premisesId: string, placementId: string, newPlacementArrival: Cas1NewArrival) {

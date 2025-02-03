@@ -32,6 +32,9 @@
 
     <form action="{{ currentUrl }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="arrivalDate" value="{{ arrivalDate }}" />
+        <input type="hidden" name="departureDate" value="{{ departureDate }}" />
+        <input type="hidden" name="criteria" value="{{ criteria }}" />
 
         <div class="govuk-button-group">
             {{ govukButton({

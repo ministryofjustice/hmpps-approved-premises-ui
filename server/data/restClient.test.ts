@@ -127,6 +127,22 @@ describe('restClient', () => {
     })
   })
 
+  describe('patch', () => {
+    it('should filter out blank values', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = { some: 'data', empty: '', undefinedItem: undefined, nullItem: null, falseItem: false } as any
+
+      fakeApprovedPremisesApi
+        .patch(`/some/path`, { some: 'data', falseItem: false })
+        .reply(201, { some: 'data', falseItem: false })
+
+      const result = await restClient.patch({ path: '/some/path', data })
+
+      expect(result).toEqual({ some: 'data', falseItem: false })
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
   describe('pipe', () => {
     const response = createMock<Response>({})
     const mockReadStream = jest.fn().mockImplementation(() => {
