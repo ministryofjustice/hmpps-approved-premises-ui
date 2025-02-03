@@ -9,7 +9,11 @@ import {
   generateErrorMessages,
   generateErrorSummary,
 } from '../../../../utils/validation'
-import { occupancySummary, validateSpaceBooking } from '../../../../utils/match'
+import {
+  occupancySummary,
+  spaceBookingConfirmationSummaryListRows,
+  validateSpaceBooking,
+} from '../../../../utils/match'
 import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import { placementDatesSummary, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
@@ -37,6 +41,18 @@ interface ViewRequest extends Request {
     ObjectWithDateParts<'departureDate'> & {
       criteria: string
     }
+}
+
+interface ConfirmRequest extends Request {
+  params: {
+    premisesId: string
+    placementId: string
+  }
+  query: {
+    arrivalDate: string
+    departureDate: string
+    criteria: CriteriaQuery
+  }
 }
 
 export default class ChangesController {
@@ -160,14 +176,35 @@ export default class ChangesController {
   }
 
   confirm(): RequestHandler {
-    return async (req: ViewRequest, res: Response) => {
-      const { placementId } = req.params
+    return async (req: ConfirmRequest, res: Response) => {
+      const { token } = req.user
+      const { premisesId, placementId } = req.params
+      const { arrivalDate, departureDate, criteria: queryCriteria } = req.query
 
-      const placement = await this.placementService.getPlacement(req.user.token, placementId)
+      const [premises, placement] = await Promise.all([
+        this.premisesService.find(token, premisesId),
+        this.placementService.getPlacement(token, placementId),
+      ])
+
+      const backlink = `${managePaths.premises.placements.changes.new(req.params)}${createQueryString(
+        {
+          criteria: queryCriteria,
+          arrivalDate,
+          departureDate,
+        },
+        { arrayFormat: 'repeat', addQueryPrefix: true },
+      )}`
 
       return res.render('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',
+        backlink,
         placement,
+        summaryListRows: spaceBookingConfirmationSummaryListRows(
+          premises,
+          arrivalDate,
+          departureDate,
+          makeArrayOfType<Cas1SpaceBookingCharacteristic>(queryCriteria),
+        ),
       })
     }
   }

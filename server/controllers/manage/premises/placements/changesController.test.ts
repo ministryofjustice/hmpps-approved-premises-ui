@@ -9,7 +9,7 @@ import {
   cas1SpaceBookingFactory,
 } from '../../../../testutils/factories'
 import ChangesController from './changesController'
-import { occupancySummary } from '../../../../utils/match'
+import { occupancySummary, spaceBookingConfirmationSummaryListRows } from '../../../../utils/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import matchPaths from '../../../../paths/match'
 import managePaths from '../../../../paths/manage'
@@ -44,6 +44,7 @@ describe('changesController', () => {
     jest.clearAllMocks()
 
     placementService.getPlacement.mockResolvedValue(placement)
+    premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(capacity)
     request = createMock<Request>({
       user: { token },
@@ -285,13 +286,31 @@ describe('changesController', () => {
 
   describe('confirm', () => {
     it('renders the confirmation page with new booking information', async () => {
+      const query = {
+        arrivalDate: '2025-04-14',
+        departureDate: '2025-06-02',
+        criteria: ['hasEnSuite', 'isStepFreeDesignated'],
+      }
+
       const requestHandler = changesController.confirm()
-      await requestHandler(request, response, next)
+      await requestHandler({ ...request, query }, response, next)
+
+      const expectedBackLink = `${managePaths.premises.placements.changes.new({
+        premisesId: premises.id,
+        placementId: placement.id,
+      })}?criteria=hasEnSuite&criteria=isStepFreeDesignated&arrivalDate=2025-04-14&departureDate=2025-06-02`
 
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',
+        backlink: expectedBackLink,
         placement,
+        summaryListRows: spaceBookingConfirmationSummaryListRows(
+          premises,
+          query.arrivalDate,
+          query.departureDate,
+          query.criteria as Array<Cas1SpaceBookingCharacteristic>,
+        ),
       })
     })
   })
