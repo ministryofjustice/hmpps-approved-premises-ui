@@ -4,7 +4,6 @@ import {
   bookingSummaryFactory,
   personFactory,
   placementRequestFactory,
-  placementRequestTaskFactory,
   placementRequestWithFullPersonFactory,
   restrictedPersonFactory,
 } from '../../testutils/factories'
@@ -30,7 +29,6 @@ import { sortHeader } from '../sortHeader'
 import { laoName } from '../personUtils'
 import { FullPerson, PlacementRequestSortField } from '../../@types/shared'
 import { linkTo } from '../utils'
-import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
 
 jest.mock('../utils.ts')
@@ -41,17 +39,6 @@ describe('tableUtils', () => {
   })
 
   describe('nameCell', () => {
-    it('returns the name of the service user and a link with a task', () => {
-      const task = placementRequestTaskFactory.build()
-
-      nameCell(task)
-
-      expect(linkTo).toHaveBeenCalledWith(matchPaths.placementRequests.show({ id: task.id }), {
-        text: task.personName,
-        attributes: { 'data-cy-placementRequestId': task.id, 'data-cy-applicationId': task.applicationId },
-      })
-    })
-
     it('returns the name of the service user and a link with a placement request', () => {
       const placementRequest = placementRequestWithFullPersonFactory.build()
 
@@ -63,14 +50,6 @@ describe('tableUtils', () => {
           'data-cy-placementRequestId': placementRequest.id,
           'data-cy-applicationId': placementRequest.applicationId,
         },
-      })
-    })
-
-    it('returns an empty cell if the personName is blank', () => {
-      const task = placementRequestTaskFactory.build({ personName: undefined })
-
-      expect(nameCell(task)).toEqual({
-        html: '',
       })
     })
 
@@ -117,14 +96,6 @@ describe('tableUtils', () => {
   })
 
   describe('expectedArrivalDateCell', () => {
-    it('returns a formatted arrival date with a task', () => {
-      const task = placementRequestTaskFactory.build({ expectedArrival: '2022-01-01' })
-
-      expect(expectedArrivalDateCell(task)).toEqual({
-        text: DateFormats.isoDateToUIDate('2022-01-01'),
-      })
-    })
-
     it('returns a formatted arrival date with a placement request', () => {
       const task = placementRequestFactory.build({ expectedArrival: '2022-01-01' })
 
@@ -134,7 +105,7 @@ describe('tableUtils', () => {
     })
 
     it('returns a formatted arrival date in short format', () => {
-      const task = placementRequestTaskFactory.build({ expectedArrival: '2022-01-01' })
+      const task = placementRequestFactory.build({ expectedArrival: '2022-01-01' })
 
       expect(expectedArrivalDateCell(task, 'short')).toEqual({
         text: DateFormats.isoDateToUIDate('2022-01-01', { format: 'short' }),
@@ -203,7 +174,7 @@ describe('tableUtils', () => {
       DateFormats.differenceInBusinessDays = jest.fn().mockReturnValue(7)
 
       const arrivalDate = add(new Date(), { days: 14 })
-      const task = placementRequestTaskFactory.build({
+      const task = placementRequestFactory.build({
         expectedArrival: DateFormats.dateObjToIsoDate(arrivalDate),
       })
 
@@ -215,7 +186,7 @@ describe('tableUtils', () => {
 
   describe('releaseTypeCell', () => {
     it('returns the release type', () => {
-      const task = placementRequestTaskFactory.build({ releaseType: 'rotl' })
+      const task = placementRequestFactory.build({ releaseType: 'rotl' })
 
       expect(releaseTypeCell(task)).toEqual({ text: allReleaseTypes.rotl })
     })
@@ -223,16 +194,16 @@ describe('tableUtils', () => {
 
   describe('tableRows', () => {
     it('returns table rows for placement requests', () => {
-      const task = placementRequestTaskFactory.build()
+      const placementRequest = placementRequestFactory.build()
 
-      expect(tableRows([task])).toEqual([
+      expect(tableRows([placementRequest])).toEqual([
         [
-          nameCell(task),
-          crnCell(task),
-          tierCell(task),
-          expectedArrivalDateCell(task),
-          dueDateCell(task, 7),
-          releaseTypeCell(task),
+          nameCell(placementRequest),
+          crnCell(placementRequest.person),
+          tierCell(placementRequest.risks),
+          expectedArrivalDateCell(placementRequest),
+          dueDateCell(placementRequest, 7),
+          releaseTypeCell(placementRequest),
         ],
       ])
     })

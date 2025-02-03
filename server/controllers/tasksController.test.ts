@@ -326,7 +326,7 @@ describe('TasksController', () => {
   })
 
   describe('show', () => {
-    const task = taskFactory.build({ taskType: 'PlacementRequest' })
+    const task = taskFactory.build({ taskType: 'PlacementApplication' })
     const taskWrapper = taskWrapperFactory.build({ task })
     const application = applicationFactory.build()
     const cruManagementAreas = cruManagementAreaFactory.buildList(3)
@@ -345,7 +345,7 @@ describe('TasksController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/show', {
-        pageHeading: `Reallocate Placement Request`,
+        pageHeading: `Reallocate Request for Placement`,
         application,
         task: taskWrapper.task,
         users: taskWrapper.users,
@@ -396,7 +396,7 @@ describe('TasksController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/show', {
-        pageHeading: `Reallocate Placement Request`,
+        pageHeading: `Reallocate Request for Placement`,
         application,
         task: taskWrapper.task,
         users: taskWrapper.users,
@@ -417,7 +417,7 @@ describe('TasksController', () => {
       await requestHandler(requestWithQuery, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/show', {
-        pageHeading: `Reallocate Placement Request`,
+        pageHeading: `Reallocate Request for Placement`,
         application,
         errors: {},
         errorSummary: [],

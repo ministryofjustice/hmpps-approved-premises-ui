@@ -1,7 +1,7 @@
 import { when } from 'jest-when'
 import {
   assessmentSummaryFactory,
-  placementRequestTaskFactory,
+  placementApplicationTaskFactory,
   taskFactory,
   tierEnvelopeFactory,
 } from '../testutils/factories'
@@ -29,7 +29,7 @@ describe('tableUtils', () => {
   describe('tierCell', () => {
     it('returns the tier badge for the service user associated with the task', () => {
       const tier = tierEnvelopeFactory.build({ value: { level: 'A1' } })
-      const task = placementRequestTaskFactory.build({ tier })
+      const task = placementApplicationTaskFactory.build({ tier })
 
       expect(tierCell(task)).toEqual({ html: tierBadge('A1') })
     })

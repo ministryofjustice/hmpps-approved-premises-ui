@@ -4,7 +4,6 @@ import paths from '../paths/api'
 import {
   assessmentTaskFactory,
   placementApplicationTaskFactory,
-  placementRequestTaskFactory,
   taskFactory,
   taskWrapperFactory,
 } from '../testutils/factories'
@@ -88,11 +87,7 @@ describeClient('taskClient', provider => {
 
   describe('allForUser', () => {
     it('makes a get request to the tasks endpoint', async () => {
-      const tasks = [
-        placementApplicationTaskFactory.buildList(1),
-        placementRequestTaskFactory.buildList(1),
-        assessmentTaskFactory.buildList(1),
-      ].flat()
+      const tasks = [placementApplicationTaskFactory.buildList(1), assessmentTaskFactory.buildList(1)].flat()
 
       provider.addInteraction({
         state: 'Server is healthy',

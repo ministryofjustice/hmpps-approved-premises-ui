@@ -1,13 +1,6 @@
 import { addDays } from 'date-fns'
-import {
-  PlacementRequest,
-  PlacementRequestSortField,
-  PlacementRequestStatus,
-  PlacementRequestTask,
-  SortDirection,
-} from '../../@types/shared'
+import { PlacementRequest, PlacementRequestSortField, PlacementRequestStatus, SortDirection } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
-import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { linkTo } from '../utils'
@@ -19,12 +12,12 @@ import { placementRequestStatus } from '../formUtils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
 
-export const tableRows = (tasks: Array<PlacementRequestTask>): Array<TableRow> => {
-  return tasks.map((task: PlacementRequestTask) => {
+export const tableRows = (tasks: Array<PlacementRequest>): Array<TableRow> => {
+  return tasks.map((task: PlacementRequest) => {
     return [
       nameCell(task),
-      crnCell(task),
-      tierCell(task),
+      crnCell(task.person),
+      tierCell(task.risks),
       expectedArrivalDateCell(task),
       dueDateCell(task, DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE),
       releaseTypeCell(task),
@@ -72,7 +65,7 @@ export const durationCell = (placementRequest: PlacementRequest): TableCell => {
   return { text: DateFormats.formatDuration(daysToWeeksAndDays(placementRequest.duration), ['weeks', 'days']) }
 }
 
-export const dueDateCell = (task: PlacementRequestTask, differenceBetweenDueDateAndArrivalDate: number): TableCell => {
+export const dueDateCell = (task: PlacementRequest, differenceBetweenDueDateAndArrivalDate: number): TableCell => {
   const dateAsObject = DateFormats.isoToDateObj(task.expectedArrival)
 
   return {
@@ -83,10 +76,7 @@ export const dueDateCell = (task: PlacementRequestTask, differenceBetweenDueDate
   }
 }
 
-export const expectedArrivalDateCell = (
-  item: PlacementRequestTask | PlacementRequest,
-  format: 'short' | 'long' = 'long',
-): TableCell => ({
+export const expectedArrivalDateCell = (item: PlacementRequest, format: 'short' | 'long' = 'long'): TableCell => ({
   text: DateFormats.isoDateToUIDate(item.expectedArrival, { format }),
 })
 
@@ -98,15 +88,7 @@ export const applicationDateCell = (item: PlacementRequest): TableCell => ({
   text: DateFormats.isoDateToUIDate(item.applicationDate, { format: 'short' }),
 })
 
-export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCell => {
-  if ('personName' in item && item.personName) {
-    return {
-      html: linkTo(matchPaths.placementRequests.show({ id: item.id }), {
-        text: item.personName,
-        attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
-      }),
-    }
-  }
+export const nameCell = (item: PlacementRequest): TableCell => {
   if ('person' in item && item.person && isFullPerson(item.person)) {
     return {
       html: linkTo(adminPaths.admin.placementRequests.show({ id: item.id }), {
@@ -125,7 +107,7 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
   return { html: '' }
 }
 
-export const releaseTypeCell = (task: PlacementRequestTask) => {
+export const releaseTypeCell = (task: PlacementRequest) => {
   return {
     text: allReleaseTypes[task.releaseType],
   }
