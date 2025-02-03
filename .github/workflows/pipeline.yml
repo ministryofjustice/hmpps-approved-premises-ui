@@ -62,9 +62,53 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
 
+  type_checking:
+    name: "Type check 🔎"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4.1.7
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Installing dependencies
+        run: npm ci
+
+      - name: Pulling the latest type from the API repo
+        run: npm run generate-types
+
+      - name: Typechecking the code
+        run: npm run typecheck
+
+  linting:
+    name: "Linting 🔎"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4.1.7
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Installing dependencies
+        run: npm ci
+
+      - name: Running Lint checks
+        run: npm run lint
+
+      - name: Running shell scripts linting checks
+        run: npm run shellcheck
+
   unit_tests:
     name: "Unit testing 🧪"
-    runs-on: [self-hosted, hmpps-github-actions-runner ]
+    runs-on: [self-hosted, hmpps-github-actions-runner]
     steps:
       - name: Check out code
         uses: actions/checkout@v4.1.7
@@ -92,11 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ci_node_index:
-          - 0
-          - 1
-          - 2
-          - 3
+        ci_node_index: [ 0, 1, 2, 3 ]
     steps:
       - name: Check out code
         uses: actions/checkout@v4.1.7
@@ -113,16 +153,22 @@ jobs:
       - name: Building source
         run: npm run build
 
-      - uses: actions/download-artifact@v4
+      - name: Downloading test reports from previous runs
+        uses: dawidd6/action-download-artifact@v2
         with:
-          name: junit-xml-reports-${{ matrix.ci_node_index }}
-          path: tmp/integration-tests-reports
+          #branch: main
+          if_no_artifact_found: 'ignore'
+          allow_forks: false
+          name: integration-test-junit-xml-reports-.*
+          name_is_regexp: true
+          path: tmp/junit-xml-reports-downloaded
         continue-on-error: true
 
-      - uses: r7kamura/split-tests-by-timings@v0
+      - name: Determining tests splitting by timing
+        uses: r7kamura/split-tests-by-timings@v0
         id: split-tests
         with:
-          reports: tmp/integration-tests-reports
+          reports: tmp/junit-xml-reports-downloaded
           glob: integration_tests/tests/**/*.cy.ts
           index: ${{ matrix.ci_node_index }}
           total: 4
@@ -170,22 +216,6 @@ jobs:
       additional_docker_tag: ${{ inputs.additional_docker_tag }}
       push: ${{ inputs.push || true }}
       docker_multiplatform: ${{ inputs.docker_multiplatform || false }}
-
-  # request_deploy:
-  #   name: Request deployment approval
-  #   needs:
-  #     - build
-  #     - helm_lint
-  #   runs-on: ubuntu-latest
-  #   environment: development
-  #   steps:
-  #     - uses: trstringer/manual-approval@v1 # this has to be a specific process...
-  #       with:
-  #         approvers: approved-premises-team
-  #         minimum-approvals: 1
-  #         issue-title: "Deploy branch to development environment"
-  #         issue-body: "Please approve or deny the deployment this branch"
-  #         exclude-workflow-initiator-as-approver: false
 
   deploy_dev:
     name: Deploy to the development environment
