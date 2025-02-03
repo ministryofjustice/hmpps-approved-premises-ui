@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Cas1TimelineEventType } from './Cas1TimelineEventType';
 import type { NamedId } from './NamedId';
-import type { TimelineEventType } from './TimelineEventType';
 /**
  * Base schema for all timeline event payloads
  */
-export type TimelineEventContentPayload = {
-    type: TimelineEventType;
+export type Cas1TimelineEventContentPayload = {
+    type: Cas1TimelineEventType;
     premises: NamedId;
     schemaVersion: number;
 };
