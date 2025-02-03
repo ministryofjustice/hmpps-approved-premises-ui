@@ -67,11 +67,11 @@ describe('SpaceBookingsController', () => {
         placementRequest: placementRequestDetail,
         premises,
         summaryListRows: spaceBookingConfirmationSummaryListRows(
-          placementRequestDetail,
           premises,
           searchState.arrivalDate,
           searchState.departureDate,
           searchState.roomCriteria,
+          placementRequestDetail.releaseType,
         ),
         errorSummary: [],
         errors: {},

@@ -231,15 +231,21 @@ describe('matchUtils', () => {
   })
 
   describe('spaceBookingConfirmationSummaryListRows', () => {
-    it('returns summary list items for the space booking confirmation screen', () => {
-      const placementRequest = placementRequestDetailFactory.build()
-      const premises = cas1PremisesFactory.build()
-      const arrivalDate = '2025-05-23'
-      const departureDate = '2025-07-18'
-      const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
+    const placementRequest = placementRequestDetailFactory.build()
+    const premises = cas1PremisesFactory.build()
+    const arrivalDate = '2025-05-23'
+    const departureDate = '2025-07-18'
+    const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
 
+    it('returns summary list items for the space booking confirmation screen', () => {
       expect(
-        spaceBookingConfirmationSummaryListRows(placementRequest, premises, arrivalDate, departureDate, criteria),
+        spaceBookingConfirmationSummaryListRows(
+          premises,
+          arrivalDate,
+          departureDate,
+          criteria,
+          placementRequest.releaseType,
+        ),
       ).toEqual([
         { key: { text: 'Approved Premises' }, value: { text: premises.name } },
         { key: { text: 'Address' }, value: { text: `${premises.fullAddress}, ${premises.postcode}` } },
@@ -254,6 +260,12 @@ describe('matchUtils', () => {
         { key: { text: 'Length of stay' }, value: { text: '8 weeks' } },
         { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
       ])
+    })
+
+    it('returns summary list items with no release type for the space booking confirmation screen', () => {
+      const rows = spaceBookingConfirmationSummaryListRows(premises, arrivalDate, departureDate, criteria)
+
+      expect(rows).toHaveLength(6)
     })
   })
 

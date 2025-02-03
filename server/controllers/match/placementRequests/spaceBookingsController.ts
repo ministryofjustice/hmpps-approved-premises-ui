@@ -43,11 +43,11 @@ export default class {
       const backLink = matchPaths.v2Match.placementRequests.search.occupancy({ id, premisesId })
 
       const summaryListRows = spaceBookingConfirmationSummaryListRows(
-        placementRequest,
         premises,
         searchState.arrivalDate,
         searchState.departureDate,
         searchState.roomCriteria,
+        placementRequest.releaseType,
       )
 
       return res.render('match/placementRequests/spaceBookings/new', {

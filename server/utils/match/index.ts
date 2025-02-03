@@ -9,6 +9,7 @@ import {
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestDetail,
+  ReleaseTypeOption,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '@approved-premises/api'
@@ -33,11 +34,11 @@ export const placementLength = (lengthInDays: number): string => {
 }
 
 export const spaceBookingConfirmationSummaryListRows = (
-  placementRequest: PlacementRequestDetail,
   premises: Cas1Premises,
   arrivalDate: string,
   departureDate: string,
   criteria: Array<Cas1SpaceBookingCharacteristic>,
+  releaseType?: ReleaseTypeOption,
 ): Array<SummaryListItem> => {
   return [
     summaryListItem('Approved Premises', premises.name),
@@ -49,8 +50,8 @@ export const spaceBookingConfirmationSummaryListRows = (
       'Length of stay',
       DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))),
     ),
-    summaryListItem('Release type', allReleaseTypes[placementRequest.releaseType]),
-  ]
+    releaseType ? summaryListItem('Release type', allReleaseTypes[releaseType]) : undefined,
+  ].filter(Boolean)
 }
 
 export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<SpaceCharacteristic> => {
