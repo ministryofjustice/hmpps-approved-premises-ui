@@ -207,6 +207,8 @@ jobs:
   build:
     name: Build docker image from hmpps-github-actions
     needs:
+      - type_checking
+      - linting
       - unit_tests
       - integration_tests
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v1 # WORKFLOW_VERSION
