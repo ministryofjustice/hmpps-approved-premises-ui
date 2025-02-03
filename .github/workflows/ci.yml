@@ -103,7 +103,7 @@ jobs:
       - name: Downloading test reports from previous runs
         uses: dawidd6/action-download-artifact@v2
         with:
-          #branch: main
+          branch: main
           if_no_artifact_found: 'ignore'
           allow_forks: false
           name: integration-test-junit-xml-reports-.*
