@@ -14,7 +14,7 @@ import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import matchPaths from '../../../../paths/match'
 import managePaths from '../../../../paths/manage'
 import adminPaths from '../../../../paths/admin'
-import { placementOverviewSummary } from '../../../../utils/placements'
+import { placementDatesSummary, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { durationSelectOptions, occupancyCriteriaMap } from '../../../../utils/match/occupancy'
@@ -77,6 +77,7 @@ describe('changesController', () => {
         pageHeading: 'Change placement dates',
         placement,
         placementSummary: placementOverviewSummary(placement),
+        placementDatesSummary: placementDatesSummary(placement),
         durationOptions: durationSelectOptions(expectedDuration),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, expectedCriteria),
         startDate: placement.expectedArrivalDate,
@@ -283,7 +284,7 @@ describe('changesController', () => {
   })
 
   describe('confirm', () => {
-    it('renders the confirmation page', async () => {
+    it('renders the confirmation page with new booking information', async () => {
       const requestHandler = changesController.confirm()
       await requestHandler(request, response, next)
 
