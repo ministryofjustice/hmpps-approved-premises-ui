@@ -1,6 +1,5 @@
 import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premises/api'
 import { RadioItem, SelectOption } from '@approved-premises/ui'
-import { faker } from '@faker-js/faker/locale/en_GB'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
@@ -11,7 +10,6 @@ import {
   actions,
   arrivalInformation,
   departureInformation,
-  getBackLink,
   getKeyDetail,
   injectRadioConditionalHtml,
   otherBookings,
@@ -129,21 +127,6 @@ describe('placementUtils', () => {
       it('should allow nothing', () => {
         expect(actions(placementAfterDeparture, userDetails)).toEqual(null)
       })
-    })
-  })
-
-  describe('getBackLink', () => {
-    it('should return the correct back link, given the referrer', () => {
-      const premisesId = faker.string.uuid()
-      const bareUrl = `/manage/premises/${premisesId}`
-      const urlWithQuery = `/manage/premises/${premisesId}?activeTab=historic&sortBy=canonicalArrivalDate`
-      const urlOtherId = `/manage/premises/${faker.string.uuid()}`
-      expect(getBackLink(bareUrl, premisesId)).toEqual(bareUrl)
-      expect(getBackLink(urlWithQuery, premisesId)).toEqual(urlWithQuery)
-      expect(getBackLink('some string', premisesId)).toEqual(null)
-      expect(getBackLink('', premisesId)).toEqual(null)
-      expect(getBackLink(null, premisesId)).toEqual(null)
-      expect(getBackLink(urlOtherId, premisesId)).toEqual(null)
     })
   })
 

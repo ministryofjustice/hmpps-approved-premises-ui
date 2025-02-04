@@ -100,19 +100,6 @@ const formatTime = (time: string) => {
   return time ? DateFormats.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
 }
 
-export const getBackLink = (referrer: string, premisesId: string): string => {
-  const premisesShowPagePathRegex = paths.premises.show({ premisesId: '([0-9a-f-]{36})' })
-  const premisesViewMatch = new RegExp(`${premisesShowPagePathRegex}[^/]*$`).exec(referrer)
-  if (premisesViewMatch && premisesViewMatch[1] === premisesId) {
-    return referrer
-  }
-  const premisesChildMatch = new RegExp(premisesShowPagePathRegex).exec(referrer)
-  if (premisesChildMatch && premisesChildMatch[1] === premisesId) {
-    return paths.premises.show({ premisesId })
-  }
-  return null
-}
-
 const summaryRow = (key: string, value: string): SummaryListItem => value && summaryListItem(key, value)
 
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {

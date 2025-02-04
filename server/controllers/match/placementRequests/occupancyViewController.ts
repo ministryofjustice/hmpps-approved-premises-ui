@@ -197,7 +197,7 @@ export default class {
         return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
       }
 
-      const backlink = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
+      const backLink = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
@@ -205,7 +205,7 @@ export default class {
       const status = dayAvailabilityStatus(dayCapacity, searchState.roomCriteria)
 
       return res.render('match/placementRequests/occupancyView/viewDay', {
-        backlink,
+        backLink,
         pageHeading: dayAvailabilityStatusMap[status],
         placementRequest,
         premises,

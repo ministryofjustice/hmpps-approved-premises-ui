@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-import { ApplicationService } from '../../../services'
+import { ApplicationService, SessionService } from '../../../services'
 import {
   addErrorMessageToFlash,
   catchValidationErrorOrPropogate,
@@ -19,17 +19,20 @@ jest.mock('../../../utils/validation')
 describe('withdrawalsController', () => {
   const token = 'SOME_TOKEN'
   const applicationId = 'some-id'
+  const referrer = 'referrer/path'
 
   let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
   let response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
+  const sessionService = createMock<SessionService>()
+  sessionService.getPageBackLink.mockReturnValue(referrer)
 
   let withdrawalsController: WithdrawalsController
 
   beforeEach(() => {
-    withdrawalsController = new WithdrawalsController(applicationService)
+    withdrawalsController = new WithdrawalsController(applicationService, sessionService)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
@@ -98,7 +101,6 @@ describe('withdrawalsController', () => {
 
     describe('and no selectedWithdrawableType', () => {
       it('renders the select withdrawable view', async () => {
-        const referer = 'some-referer'
         const errorsAndUserInput = createMock<ErrorsAndUserInput>()
         ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
@@ -108,17 +110,22 @@ describe('withdrawalsController', () => {
         applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
 
         const requestHandler = withdrawalsController.new()
-
-        await requestHandler({ ...request, params: { id: applicationId }, headers: { referer } }, response, next)
+        const thisRequest = { ...request, params: { id: applicationId } }
+        await requestHandler(thisRequest, response, next)
 
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
           pageHeading: 'What do you want to withdraw?',
           id: applicationId,
           withdrawables: withdrawables.withdrawables,
-          referer,
           notes: withdrawables.notes,
+          backLink: referrer,
         })
+        expect(sessionService.getPageBackLink).toHaveBeenCalledWith('/applications/:id/withdrawals/new', thisRequest, [
+          '/admin/placement-requests/:id',
+          '/applications/:id',
+          '/applications',
+        ])
       })
     })
   })
@@ -140,6 +147,7 @@ describe('withdrawalsController', () => {
         id: applicationId,
         withdrawables: [],
         notes: withdrawables.notes,
+        backLink: referrer,
       })
     })
   })
@@ -202,7 +210,12 @@ describe('withdrawalsController', () => {
         `${paths.applications.withdraw.new({ id: request.params.id })}?selectedWithdrawableType=application`,
       )
       expect(addErrorMessageToFlash).toHaveBeenCalledWith(
-        { body: { otherReason: '', reason: 'other' }, params: { id: 'some-id' }, user: { token: 'SOME_TOKEN' } },
+        {
+          ...request,
+          body: { otherReason: '', reason: 'other' },
+          params: { id: 'some-id' },
+          user: { token: 'SOME_TOKEN' },
+        },
         'Enter a reason for withdrawing the application',
         'otherReason',
       )

@@ -1,19 +1,23 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import ApplicationService from '../../../services/applicationService'
 import {
   addErrorMessageToFlash,
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
 } from '../../../utils/validation'
 import paths from '../../../paths/apply'
+import adminPaths from '../../../paths/admin'
 import { NewWithdrawal } from '../../../@types/shared'
 import { SelectedWithdrawableType } from '../../../utils/applications/withdrawables'
+import { ApplicationService, SessionService } from '../../../services'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
 export default class WithdrawalsController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly sessionService: SessionService,
+  ) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -35,12 +39,18 @@ export default class WithdrawalsController {
         })
       }
 
+      const backLink = this.sessionService.getPageBackLink(paths.applications.withdraw.new.pattern, req, [
+        adminPaths.admin.placementRequests.show.pattern,
+        paths.applications.show.pattern,
+        paths.applications.index.pattern,
+      ])
+
       if (!selectedWithdrawableType) {
         return res.render('applications/withdrawables/new', {
           pageHeading: 'What do you want to withdraw?',
           id,
           withdrawables: withdrawables.withdrawables,
-          referer: req.headers.referer,
+          backLink,
           notes: withdrawables.notes,
         })
       }

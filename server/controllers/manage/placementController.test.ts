@@ -15,6 +15,7 @@ import type {
   PlacementRequestService,
   PlacementService,
   PremisesService,
+  SessionService,
 } from '../../services'
 import PlacementController from './placementController'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
@@ -28,12 +29,14 @@ describe('placementController', () => {
   const assessmentService = createMock<AssessmentService>({})
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
+  const sessionService = createMock<SessionService>({})
   const placementController = new PlacementController(
     applicationService,
     assessmentService,
     placementRequestService,
     placementService,
     premisesService,
+    sessionService,
   )
 
   const premisesId = 'premises-id'
@@ -63,12 +66,12 @@ describe('placementController', () => {
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.getPlacement.mockResolvedValue(placement)
     placementService.getTimeline.mockResolvedValue(timeLine)
+    sessionService.getPageBackLink.mockReturnValue(referrer)
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
       params: { premisesId, placementId: placement.id },
-      headers: { referer: referrer },
     })
     return { application, assessment, placementRequestDetail, timeLine, placement, request, response }
   }
@@ -85,7 +88,7 @@ describe('placementController', () => {
           placement,
           pageHeading: '16 Nov 2024 to 26 Mar 2025',
           user,
-          backLink: null,
+          backLink: referrer,
           activeTab: 'placement',
         }),
       )
@@ -94,6 +97,16 @@ describe('placementController', () => {
       expect(assessmentService.findAssessment).not.toHaveBeenCalled()
       expect(placementRequestService.getPlacementRequest).not.toHaveBeenCalled()
       expect(placementService.getTimeline).not.toHaveBeenCalled()
+      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+        '/manage/premises/:premisesId/placements/:placementId',
+        {},
+        [
+          '/manage/premises/:premisesId',
+          '/manage/premises/:premisesId/occupancy/day/:date',
+          '/applications/:id',
+          '/people/timeline/show',
+        ],
+      )
     })
 
     it('should render the placement view (on the application tab)', async () => {
@@ -191,7 +204,7 @@ describe('placementController', () => {
           placement,
           pageHeading: '16 Nov 2024 to 26 Mar 2025',
           user,
-          backLink: null,
+          backLink: referrer,
           activeTab: 'placement',
           isOfflineApplication: true,
         }),

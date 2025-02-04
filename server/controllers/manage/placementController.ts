@@ -11,11 +11,15 @@ import {
   PlacementRequestService,
   PlacementService,
   PremisesService,
+  SessionService,
 } from '../../services'
 
 import { DateFormats } from '../../utils/dateUtils'
-import { PlacementTab, getBackLink, placementTabItems } from '../../utils/placements'
+import { PlacementTab, placementTabItems } from '../../utils/placements'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
+import paths from '../../paths/manage'
+import applicationPaths from '../../paths/apply'
+import peoplePaths from '../../paths/people'
 
 export default class PlacementController {
   constructor(
@@ -24,6 +28,7 @@ export default class PlacementController {
     private readonly placementRequestService: PlacementRequestService,
     private readonly placementService: PlacementService,
     private readonly premisesService: PremisesService,
+    private readonly sessionService: SessionService,
   ) {}
 
   show(activeTab: PlacementTab = 'placement'): RequestHandler {
@@ -34,7 +39,12 @@ export default class PlacementController {
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
       const isOfflineApplication = !placement.assessmentId
       const tabItems = placementTabItems(placement, activeTab, isOfflineApplication)
-      const backLink = getBackLink(req.headers.referer, premisesId)
+      const backLink = this.sessionService.getPageBackLink(paths.premises.placements.show.pattern, req, [
+        paths.premises.show.pattern,
+        paths.premises.occupancy.day.pattern,
+        applicationPaths.applications.show.pattern,
+        peoplePaths.timeline.show.pattern,
+      ])
       const pageHeading = `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`
       let timelineEvents: Array<TimelineEvent> = []
       let application: ApprovedPremisesApplication = null
