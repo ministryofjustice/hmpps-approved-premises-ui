@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
-import type { TimelineEventContentPayload } from './TimelineEventContentPayload';
-export type BookingChangedContentPayload = (TimelineEventContentPayload & {
+import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContentPayload';
+export type Cas1BookingChangedContentPayload = (Cas1TimelineEventContentPayload & {
     expectedArrival: string;
     expectedDeparture: string;
     /**

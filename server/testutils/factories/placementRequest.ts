@@ -5,7 +5,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import userFactory from './user'
-import bookingSummary from './bookingSummary'
+import bookingSummary from './placementRequestBookingSummary'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { placementCriteriaLabels } from '../../utils/placementCriteriaUtils'
 
