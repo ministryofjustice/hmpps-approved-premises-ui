@@ -410,7 +410,6 @@ describe('OccupancyViewController', () => {
     it('should render the day occupancy view template with given approved premises and search state', async () => {
       const dayCapacity = cas1PremiseCapacityForDayFactory.build()
       const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
-        premise: premises,
         startDate: date,
         endDate: date,
         capacity: [dayCapacity],

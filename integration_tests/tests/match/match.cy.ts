@@ -160,7 +160,6 @@ context('Placement Requests', () => {
     const startDate = '2024-07-23'
     const endDate = '2024-08-07'
     const totalCapacity = 10
-    const managerDetails = 'John Doe'
 
     // Given I am signed in as a cru_member
     signIn(['cru_member'], ['cas1_space_booking_create'])
@@ -178,7 +177,6 @@ context('Placement Requests', () => {
     })
     const searchState = initialiseSearchState(placementRequest)
     const premiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premises.id, bedCount: totalCapacity, managerDetails },
       startDate,
       endDate,
     })
@@ -278,7 +276,6 @@ context('Placement Requests', () => {
     const newDuration = 'Up to 1 week'
     const newCriteria = ['Wheelchair accessible', 'Step-free']
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({
-      premise: { id: premises.id, bedCount: premises.bedCount },
       startDate: newStartDate,
       endDate: newEndDate,
     })
