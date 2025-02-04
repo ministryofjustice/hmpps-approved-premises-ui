@@ -12,6 +12,8 @@
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
+{%- from "./partials/_overbookingSummary.njk" import overbookingSummary -%}
+
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + premises.name %}
@@ -30,7 +32,10 @@
 {% endset %}
 
 {% block content %}
+    {{ overbookingSummary(premisesOverbookingSummary,viewSpacesLink) }}
+
     {% include "../../_messages.njk" %}
+
 
     {{ mojIdentityBar({
         title: {

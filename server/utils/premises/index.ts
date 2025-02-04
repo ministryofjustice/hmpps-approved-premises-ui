@@ -1,5 +1,6 @@
 import type {
   ApArea,
+  Cas1OverbookingRange,
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1SpaceBookingResidency,
@@ -7,7 +8,8 @@ import type {
   Cas1SpaceBookingSummarySortField,
   SortDirection,
 } from '@approved-premises/api'
-import { SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
+import { DateRange, SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
+import { differenceInDays } from 'date-fns'
 import { DateFormats } from '../dateUtils'
 import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import managePaths from '../../paths/manage'
@@ -168,3 +170,12 @@ export const placementTableRows = (
     }
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
   })
+
+export const premisesOverbookingSummary = (premises: Cas1Premises): Array<DateRange> => {
+  const { overbookingSummary } = premises
+  return overbookingSummary.map(({ startInclusive, endInclusive }: Cas1OverbookingRange) => ({
+    from: startInclusive,
+    to: endInclusive,
+    duration: differenceInDays(endInclusive, startInclusive) + 1,
+  }))
+}

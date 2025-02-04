@@ -1,12 +1,7 @@
 import type { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
+import { DateRange } from '@approved-premises/ui'
 import { dayAvailabilityCount } from './occupancy'
-
-type DateRange = {
-  from: string
-  to?: string
-  duration: number
-}
 
 const daysToRanges = (days: Array<Cas1PremiseCapacityForDay>): Array<DateRange> =>
   days.reduce((ranges: Array<DateRange>, { date }) => {

@@ -14,6 +14,7 @@ import {
   paginatedResponseFactory,
   staffMemberFactory,
 } from '../../../testutils/factories'
+import { premisesOverbookingSummary } from '../../../utils/premises'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -80,6 +81,8 @@ describe('V2PremisesController', () => {
         hrefPrefix: '/manage/premises/some-uuid?activeTab=upcoming&',
         placements: paginatedPlacements.data,
         keyworkersList,
+        premisesOverbookingSummary: premisesOverbookingSummary(premisesSummary),
+        viewSpacesLink: `/manage/premises/${premisesSummary.id}/occupancy`,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getKeyworkers).toHaveBeenCalledWith(token, premisesId)
@@ -97,18 +100,21 @@ describe('V2PremisesController', () => {
     it('should render the premises detail and list of placements on the default ("current") tab', async () => {
       const { premisesSummary, paginatedPlacements, keyworkersList } = await mockSummaryAndPlacements({})
 
-      expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-        premises: premisesSummary,
-        showPlacements: true,
-        sortBy: 'canonicalDepartureDate',
-        sortDirection: 'asc',
-        activeTab: 'current',
-        pageNumber: 1,
-        totalPages: 1,
-        hrefPrefix: '/manage/premises/some-uuid?activeTab=current&',
-        placements: paginatedPlacements.data,
-        keyworkersList,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/show',
+        expect.objectContaining({
+          premises: premisesSummary,
+          showPlacements: true,
+          sortBy: 'canonicalDepartureDate',
+          sortDirection: 'asc',
+          activeTab: 'current',
+          pageNumber: 1,
+          totalPages: 1,
+          hrefPrefix: '/manage/premises/some-uuid?activeTab=current&',
+          placements: paginatedPlacements.data,
+          keyworkersList,
+        }),
+      )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getKeyworkers).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getPlacements).toHaveBeenCalledWith({
@@ -123,19 +129,17 @@ describe('V2PremisesController', () => {
     })
 
     it('should render the premises detail and list of placements on the "historic" tab', async () => {
-      const { premisesSummary, paginatedPlacements } = await mockSummaryAndPlacements({ activeTab: 'historic' })
+      const { paginatedPlacements } = await mockSummaryAndPlacements({ activeTab: 'historic' })
 
-      expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-        premises: premisesSummary,
-        showPlacements: true,
-        sortBy: 'canonicalDepartureDate',
-        sortDirection: 'desc',
-        activeTab: 'historic',
-        pageNumber: 1,
-        totalPages: 1,
-        hrefPrefix: '/manage/premises/some-uuid?activeTab=historic&',
-        placements: paginatedPlacements.data,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/show',
+        expect.objectContaining({
+          sortBy: 'canonicalDepartureDate',
+          activeTab: 'historic',
+          hrefPrefix: '/manage/premises/some-uuid?activeTab=historic&',
+          placements: paginatedPlacements.data,
+        }),
+      )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getKeyworkers).not.toHaveBeenCalled()
       expect(premisesService.getPlacements).toHaveBeenCalledWith({
@@ -156,15 +160,18 @@ describe('V2PremisesController', () => {
         page: '2',
       })
 
-      expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-        premises: premisesSummary,
-        showPlacements: true,
-        ...queryParameters,
-        hrefPrefix: `/manage/premises/some-uuid?activeTab=historic&sortBy=personName&sortDirection=asc&`,
-        pageNumber: 1,
-        totalPages: 1,
-        placements: paginatedPlacements.data,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/show',
+        expect.objectContaining({
+          premises: premisesSummary,
+          showPlacements: true,
+          ...queryParameters,
+          hrefPrefix: `/manage/premises/some-uuid?activeTab=historic&sortBy=personName&sortDirection=asc&`,
+          pageNumber: 1,
+          totalPages: 1,
+          placements: paginatedPlacements.data,
+        }),
+      )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getPlacements).toHaveBeenCalledWith({
         token,
@@ -207,18 +214,21 @@ describe('V2PremisesController', () => {
             crnOrName,
           })
 
-          expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-            premises: premisesSummary,
-            showPlacements: true,
-            sortBy: 'canonicalArrivalDate',
-            sortDirection: 'desc',
-            activeTab: 'search',
-            crnOrName,
-            pageNumber: undefined,
-            totalPages: undefined,
-            hrefPrefix,
-            placements: undefined,
-          })
+          expect(response.render).toHaveBeenCalledWith(
+            'manage/premises/show',
+            expect.objectContaining({
+              premises: premisesSummary,
+              showPlacements: true,
+              sortBy: 'canonicalArrivalDate',
+              sortDirection: 'desc',
+              activeTab: 'search',
+              crnOrName,
+              pageNumber: undefined,
+              totalPages: undefined,
+              hrefPrefix,
+              placements: undefined,
+            }),
+          )
           expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
           expect(premisesService.getPlacements).not.toHaveBeenCalled()
         },
@@ -230,18 +240,19 @@ describe('V2PremisesController', () => {
           crnOrName: 'X123456',
         })
 
-        expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-          premises: premisesSummary,
-          showPlacements: true,
-          sortBy: 'canonicalArrivalDate',
-          sortDirection: 'desc',
-          activeTab: 'search',
-          crnOrName: 'X123456',
-          pageNumber: 1,
-          totalPages: 1,
-          hrefPrefix: `/manage/premises/some-uuid?activeTab=search&crnOrName=X123456&`,
-          placements: paginatedPlacements.data,
-        })
+        expect(response.render).toHaveBeenCalledWith(
+          'manage/premises/show',
+          expect.objectContaining({
+            premises: premisesSummary,
+            showPlacements: true,
+            sortBy: 'canonicalArrivalDate',
+            sortDirection: 'desc',
+            activeTab: 'search',
+            crnOrName: 'X123456',
+            hrefPrefix: `/manage/premises/some-uuid?activeTab=search&crnOrName=X123456&`,
+            placements: paginatedPlacements.data,
+          }),
+        )
         expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
         expect(premisesService.getPlacements).toHaveBeenCalledWith({
           token,
@@ -261,17 +272,20 @@ describe('V2PremisesController', () => {
         cas1PremisesFactory.build({ supportsSpaceBookings: false }),
       )
 
-      expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-        premises: premisesSummary,
-        showPlacements: false,
-        sortBy: 'canonicalDepartureDate',
-        sortDirection: 'asc',
-        activeTab: 'current',
-        pageNumber: undefined,
-        totalPages: undefined,
-        hrefPrefix: '/manage/premises/some-uuid?activeTab=current&',
-        placements: undefined,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/show',
+        expect.objectContaining({
+          premises: premisesSummary,
+          showPlacements: false,
+          sortBy: 'canonicalDepartureDate',
+          sortDirection: 'asc',
+          activeTab: 'current',
+          pageNumber: undefined,
+          totalPages: undefined,
+          hrefPrefix: '/manage/premises/some-uuid?activeTab=current&',
+          placements: undefined,
+        }),
+      )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getPlacements).not.toHaveBeenCalled()
     })

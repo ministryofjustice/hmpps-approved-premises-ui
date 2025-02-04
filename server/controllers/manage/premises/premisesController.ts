@@ -5,7 +5,7 @@ import { ApAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { hasPermission } from '../../../utils/users'
-import { PremisesTab } from '../../../utils/premises'
+import { PremisesTab, premisesOverbookingSummary } from '../../../utils/premises'
 
 type TabSettings = {
   pageSize: number
@@ -69,6 +69,8 @@ export default class PremisesController {
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
         pageNumber: Number(paginatedPlacements?.pageNumber) || undefined,
         totalPages: Number(paginatedPlacements?.totalPages) || undefined,
+        premisesOverbookingSummary: premisesOverbookingSummary(premises),
+        viewSpacesLink: managePaths.premises.occupancy.view({ premisesId: premises.id }),
       })
     }
   }
