@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type BookingSummary = {
+export type PlacementRequestBookingSummary = {
     id: string;
     premisesId: string;
     premisesName: string;

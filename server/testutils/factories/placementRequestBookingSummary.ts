@@ -2,10 +2,10 @@ import { Factory } from 'fishery'
 
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
-import type { BookingSummary } from '@approved-premises/api'
+import type { PlacementRequestBookingSummary } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
-export default Factory.define<BookingSummary>(() => ({
+export default Factory.define<PlacementRequestBookingSummary>(() => ({
   id: faker.string.uuid(),
   type: 'space',
   premisesId: faker.string.uuid(),
