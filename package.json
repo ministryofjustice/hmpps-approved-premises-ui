@@ -165,7 +165,7 @@
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@golevelup/ts-jest": "^0.5.0",
+    "@golevelup/ts-jest": "^0.6.0",
     "@pact-foundation/pact": "^13.2.0",
     "@types/bunyan": "^1.8.8",
     "@types/bunyan-format": "^0.2.5",
