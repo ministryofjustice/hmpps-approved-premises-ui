@@ -61,7 +61,6 @@ export type { BookingSearchResultRoomSummary } from './models/BookingSearchResul
 export type { BookingSearchResults } from './models/BookingSearchResults';
 export type { BookingSearchSortField } from './models/BookingSearchSortField';
 export type { BookingStatus } from './models/BookingStatus';
-export type { BookingSummary } from './models/BookingSummary';
 export type { CacheType } from './models/CacheType';
 export type { Cancellation } from './models/Cancellation';
 export type { CancellationReason } from './models/CancellationReason';
@@ -229,6 +228,7 @@ export type { PlacementApplicationType } from './models/PlacementApplicationType
 export type { PlacementCriteria } from './models/PlacementCriteria';
 export type { PlacementDates } from './models/PlacementDates';
 export type { PlacementRequest } from './models/PlacementRequest';
+export type { PlacementRequestBookingSummary } from './models/PlacementRequestBookingSummary';
 export type { PlacementRequestDetail } from './models/PlacementRequestDetail';
 export type { PlacementRequestRequestType } from './models/PlacementRequestRequestType';
 export type { PlacementRequestSortField } from './models/PlacementRequestSortField';

@@ -6,7 +6,13 @@ import type {
   TableCell,
   TableRow,
 } from '@approved-premises/ui'
-import type { BedSummary, Booking, BookingStatus, BookingSummary, PremisesBooking } from '@approved-premises/api'
+import type {
+  BedSummary,
+  Booking,
+  BookingStatus,
+  PlacementRequestBookingSummary,
+  PremisesBooking,
+} from '@approved-premises/api'
 import { addDays, isBefore, isEqual, isWithinInterval } from 'date-fns'
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
@@ -31,7 +37,7 @@ type ParsedConflictError = {
 
 export { bookingActions, v1BookingActions, v2BookingActions }
 
-export const bookingSummaryList = (booking: BookingSummary): SummaryListWithCard => {
+export const bookingSummaryList = (booking: PlacementRequestBookingSummary): SummaryListWithCard => {
   return {
     card: {
       title: {

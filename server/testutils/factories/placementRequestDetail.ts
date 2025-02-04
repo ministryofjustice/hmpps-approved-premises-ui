@@ -3,7 +3,7 @@ import { PlacementRequestDetail } from '../../@types/shared'
 
 import cancellationFactory from './cancellation'
 import { placementRequestFactory } from './placementRequest'
-import bookingSummaryFactory from './bookingSummary'
+import bookingSummaryFactory from './placementRequestBookingSummary'
 import applicationFactory from './application'
 
 export default Factory.define<PlacementRequestDetail>(() => ({
