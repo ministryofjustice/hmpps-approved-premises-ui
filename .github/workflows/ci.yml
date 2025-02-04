@@ -101,7 +101,7 @@ jobs:
         run: npm run build
 
       - name: Downloading test reports from previous runs
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           branch: main
           if_no_artifact_found: 'ignore'
