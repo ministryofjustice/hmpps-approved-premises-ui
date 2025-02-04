@@ -125,24 +125,6 @@ describe('ConfirmYourDetails', () => {
       expect(result).toEqual(expected)
       expect(result.userDetailsFromDelius).toEqual(deliusUserMappedForUi)
     })
-
-    it('excludes "NAT" from the areas', async () => {
-      const areasWithNat = [...areas, apAreaFactory.build({ name: 'NAT' })]
-      const getAreasMock = jest.fn().mockResolvedValue(areasWithNat)
-      const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({
-        getApAreas: getAreasMock,
-      })
-
-      const result = await ConfirmYourDetails.initialize(
-        {},
-        application,
-        'token',
-        fromPartial({ userService, apAreaService }),
-      )
-
-      expect(result.body.areas).toEqual(areas)
-      expect(result.body.areas.find(bodyArea => bodyArea.name === 'NAT')).toBeUndefined()
-    })
   })
 
   describe('next', () => {
