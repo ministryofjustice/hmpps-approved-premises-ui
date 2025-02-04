@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 export type PlacementRequestBookingSummary = {
     id: string;
     premisesId: string;
@@ -10,5 +11,6 @@ export type PlacementRequestBookingSummary = {
     departureDate: string;
     createdAt: string;
     type: 'space' | 'legacy';
+    characteristics?: Array<Cas1SpaceCharacteristic>;
 };
 
