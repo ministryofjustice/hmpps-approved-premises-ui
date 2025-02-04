@@ -114,6 +114,22 @@ describe('OptionalOasysSections', () => {
       expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
     })
 
+    it(`Don't error if an oasys section is null (APS-1772)`, async () => {
+      getOasysSelectionsMock.mockResolvedValue([...needsLinkedToHarm, null, ...needsLinkedToReoffending, ...otherNeeds])
+
+      const page = await OptionalOasysSections.initialize(
+        { needsLinkedToReoffending: [needsLinkedToReoffending[0]], otherNeeds: [otherNeeds[0], otherNeeds[1]] },
+        application,
+        'some-token',
+        fromPartial({
+          personService,
+          applicationService,
+        }),
+      )
+      expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
+      expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
+    })
+
     it('sets oasysSuccess to false if an OasysNotFoundError is thrown', async () => {
       getOasysSelectionsMock.mockImplementation(() => {
         throw new OasysNotFoundError('')

@@ -18,6 +18,22 @@ context('Apply - Missing information', () => {
     apply.completeOasysSection(oasysMissing)
   })
 
+  it('handles disappearing Oasys information - where a section is removed from Oasys after selection (APS-1772)', function test() {
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    // Given I start an application
+    apply.setupApplicationStubs(uiRisks)
+    apply.startApplication()
+    apply.completeBasicInformation({ isEmergencyApplication: false })
+    apply.completeTypeOfApSection()
+    // When I select all the oasys sections
+    apply.selectAllOasysSections()
+    // and remove one of the sections I selected from the mock
+    apply.stubOasysEndpoints(true)
+    // Then I can submit the page successfully
+    apply.submitOasysSectionsPage()
+  })
+
   it('handles missing Nomis information', function test() {
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
 
