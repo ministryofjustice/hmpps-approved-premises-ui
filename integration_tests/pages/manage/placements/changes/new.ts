@@ -4,7 +4,7 @@ import { placementOverviewSummary } from '../../../../../server/utils/placements
 
 export class ChangePlacementPage extends OccupancyFilterPage {
   constructor(private readonly placement: Cas1SpaceBooking) {
-    super('Change placement dates')
+    super('Change placement')
   }
 
   shouldShowPlacementOverview() {

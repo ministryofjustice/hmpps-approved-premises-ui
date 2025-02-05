@@ -45,7 +45,7 @@ const setup = ({
       premisesId: placementRequestDetail.booking.premisesId,
       placementId: placementRequestDetail.booking.id,
     }),
-    text: 'Change placement dates',
+    text: 'Change placement',
   }
   const actionWithdrawPlacement = {
     href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),

@@ -130,7 +130,7 @@ export default class ChangesController {
 
       return res.render('manage/premises/placements/changes/new', {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
-        pageHeading: 'Change placement dates',
+        pageHeading: 'Change placement',
         placement,
         startDate,
         ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),

@@ -63,7 +63,7 @@ context('Change Placement', () => {
     const placementRequestPage = ShowPage.visit(placementRequestDetail)
 
     // When I click on the amend booking button
-    placementRequestPage.clickAction('Change placement dates')
+    placementRequestPage.clickAction('Change placement')
 
     // Then I should see the Change Placement page
     const changePlacementPage = Page.verifyOnPage(ChangePlacementPage, placement)

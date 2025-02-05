@@ -76,7 +76,7 @@ describe('changesController', () => {
       })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
-        pageHeading: 'Change placement dates',
+        pageHeading: 'Change placement',
         placement,
         placementSummary: placementOverviewSummary(placement),
         placementDatesSummary: placementDatesSummary(placement),

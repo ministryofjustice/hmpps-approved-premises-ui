@@ -35,7 +35,7 @@ export const adminActions = (
                 premisesId: placementRequest.booking.premisesId,
                 placementId: placementRequest.booking.id,
               }),
-              text: 'Change placement dates',
+              text: 'Change placement',
             },
           ]
         : [
