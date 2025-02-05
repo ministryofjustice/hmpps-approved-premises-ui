@@ -207,6 +207,14 @@ export class DateFormats {
     return DateFormats.dateObjectToDateInputs(DateFormats.isoToDateObj(isoDate), key)
   }
 
+  static isoDateTimeToIsoDate(isoDateTime: string): string {
+    return formatISO(this.isoToDateObj(isoDateTime), { representation: 'date' })
+  }
+
+  static isoDateTimeToTime(isoDateTime: string): string {
+    return formatISO(this.isoToDateObj(isoDateTime), { representation: 'time' }).substring(0, 5)
+  }
+
   static formatDuration(
     duration: DurationWithNumberOrString,
     durationFormat: Array<'weeks' | 'days'> = ['weeks', 'days'],
@@ -368,11 +376,11 @@ export const timeIsValid24hrFormat = (time: string): Boolean => {
   return /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/.test(time)
 }
 
-export const isoDateAndTimeToDateObj = (isoDate:string,time:string):Date => {
+export const isoDateAndTimeToDateObj = (isoDate: string, time: string): Date => {
   const date = DateFormats.isoToDateObj(isoDate)
-  if(timeIsValid24hrFormat(time)) {
-    const [h,m] = time.split(':').map(Number)
-    date.setHours(h,m)
+  if (timeIsValid24hrFormat(time)) {
+    const [h, m] = time.split(':').map(Number)
+    date.setHours(h, m)
   }
   return date
 }

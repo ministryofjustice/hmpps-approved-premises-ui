@@ -4,9 +4,10 @@ import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Cas1NewArrival>(() => {
-  const arrivalDateTime = faker.date.recent({ days: 1 })
+  const arrivalDateTime = faker.date.recent({ days: 1 }).toISOString()
   return {
     expectedDepartureDate: DateFormats.dateObjToIsoDate(faker.date.soon({ days: 365, refDate: arrivalDateTime })),
-    arrivalDateTime: arrivalDateTime.toISOString(),
+    arrivalDate: DateFormats.isoDateTimeToIsoDate(arrivalDateTime),
+    arrivalTime: DateFormats.isoDateTimeToTime(arrivalDateTime),
   }
 })
