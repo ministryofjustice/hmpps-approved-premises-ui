@@ -1,20 +1,22 @@
-import { ApprovedPremises, PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
+import { ApprovedPremises, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../../page'
 
 import { bookingSummaryList } from '../../../../server/utils/bookings'
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
+import paths from '../../../../server/paths/admin'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
     super('Placement request')
   }
 
-  shouldShowSummary(): void {
-    this.shouldContainSummaryListItems(placementRequestSummaryList(this.placementRequest).rows)
+  static visit(placementRequestDetail: PlacementRequestDetail): ShowPage {
+    cy.visit(paths.admin.placementRequests.show({ id: placementRequestDetail.id }))
+    return new ShowPage(placementRequestDetail)
   }
 
-  clickPlacementRequest(placementRequest: PlacementRequest): void {
-    cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
+  shouldShowSummary(): void {
+    this.shouldContainSummaryListItems(placementRequestSummaryList(this.placementRequest).rows)
   }
 
   shouldNotShowBookingInformation() {

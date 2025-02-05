@@ -25,16 +25,28 @@ export const adminActions = (
   placementRequest: PlacementRequestDetail,
   user: UserDetails,
 ): Array<IdentityBarMenuItem> => {
-  if (placementRequest.status === 'matched') {
-    const matchedActions = [
-      {
-        href: managePaths.bookings.dateChanges.new({
-          premisesId: placementRequest?.booking?.premisesId || '',
-          bookingId: placementRequest?.booking?.id || '',
-        }),
-        text: 'Amend placement',
-      },
-    ]
+  if (placementRequest.status === 'matched' && placementRequest.booking) {
+    const bookingType = placementRequest.booking.type
+    const matchedActions =
+      bookingType === 'space'
+        ? [
+            {
+              href: managePaths.premises.placements.changes.new({
+                premisesId: placementRequest.booking.premisesId,
+                placementId: placementRequest.booking.id,
+              }),
+              text: 'Change placement dates',
+            },
+          ]
+        : [
+            {
+              href: managePaths.bookings.dateChanges.new({
+                premisesId: placementRequest.booking.premisesId,
+                bookingId: placementRequest.booking.id,
+              }),
+              text: 'Amend placement',
+            },
+          ]
     if (hasPermission(user, ['cas1_booking_withdraw'])) {
       matchedActions.push({
         href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),

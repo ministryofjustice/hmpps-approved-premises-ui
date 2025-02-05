@@ -25,6 +25,21 @@ export default {
       },
     }),
 
+  stubSpaceBookingUpdate: (args: { placementId: string; premisesId: string }) =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        url: paths.premises.placements.show({ placementId: args.placementId, premisesId: args.premisesId }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: {},
+      },
+    }),
+
   stubSpaceBookingShow: (placement: Cas1SpaceBooking) =>
     stubFor({
       request: {
