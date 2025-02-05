@@ -254,7 +254,7 @@ export default class ApplyHelper {
     cy.task('stubPrisonCaseNotes404', { person: this.person })
   }
 
-  private stubOasysEndpoints() {
+  stubOasysEndpoints(excludeSection = false) {
     // And there are OASys sections in the db
     const oasysSelectionA = oasysSelectionFactory.needsLinkedToReoffending().build({
       section: 1,
@@ -266,12 +266,14 @@ export default class ApplyHelper {
       linkedToHarm: false,
       linkedToReOffending: true,
     })
-    const oasysSelectionC = oasysSelectionFactory.needsNotLinkedToReoffending().build({
-      section: 3,
-      name: 'emotional',
-      linkedToHarm: false,
-      linkedToReOffending: false,
-    })
+    const oasysSelectionC = excludeSection
+      ? undefined
+      : oasysSelectionFactory.needsNotLinkedToReoffending().build({
+          section: 3,
+          name: 'emotional',
+          linkedToHarm: false,
+          linkedToReOffending: false,
+        })
     const oasysSelectionD = oasysSelectionFactory.needsNotLinkedToReoffending().build({
       section: 4,
       name: 'excluded',
@@ -680,8 +682,7 @@ export default class ApplyHelper {
     Page.verifyOnPage(ApplyPages.ApType, this.application)
   }
 
-  completeOasysSection(oasysMissing = false) {
-    // Given I click the 'Import Oasys' task
+  selectAllOasysSections(oasysMissing = false) {
     cy.get('[data-cy-task-name="oasys-import"]').click()
     const optionalOasysImportPage = new ApplyPages.OptionalOasysSectionsPage(this.application, oasysMissing)
 
@@ -689,6 +690,11 @@ export default class ApplyHelper {
     if (!oasysMissing) {
       optionalOasysImportPage.completeForm(this.oasysSectionsLinkedToReoffending, this.otherOasysSections)
     }
+  }
+
+  submitOasysSectionsPage(oasysMissing = false) {
+    const optionalOasysImportPage = new ApplyPages.OptionalOasysSectionsPage(this.application, oasysMissing)
+
     optionalOasysImportPage.clickSubmit()
 
     const roshSummaryPage = new ApplyPages.RoshSummaryPage(this.application, this.roshSummaries, oasysMissing)
@@ -752,6 +758,11 @@ export default class ApplyHelper {
     // And the Risk Management Features task should show as not started
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
     tasklistPage.shouldNotShowSubmitComponents()
+  }
+
+  completeOasysSection(oasysMissing = false) {
+    this.selectAllOasysSections(oasysMissing)
+    this.submitOasysSectionsPage(oasysMissing)
   }
 
   completeRiskManagementSection() {
