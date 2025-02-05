@@ -61,6 +61,10 @@ export default class ShowPage extends Page {
     this.buttonShouldExist('Amend placement')
   }
 
+  shouldShowChangePlacementOption() {
+    this.buttonShouldExist('Change placement')
+  }
+
   shouldShowCancelBookingOption() {
     this.buttonShouldExist('Withdraw placement')
   }
@@ -71,6 +75,10 @@ export default class ShowPage extends Page {
 
   shouldNotShowAmendBookingOption() {
     this.buttonShouldNotExist('Amend placement')
+  }
+
+  shouldNotShowChangePlacementOption() {
+    this.buttonShouldNotExist('Change placement')
   }
 
   shouldNotShowCancelBookingOption() {
