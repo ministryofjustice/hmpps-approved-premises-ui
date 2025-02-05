@@ -69,6 +69,7 @@ export const placementCriteriaLabels: Record<UiPlacementCriteria, string> = {
   hasTactileFlooring: 'Tactile flooring',
   hasHearingLoop: 'Hearing loop',
   isArsonDesignated: 'Designated arson room',
+  arsonOffences: 'Arson offences',
 }
 
 export const specialistApTypeCriteriaLabels = filterByType<SpecialistApTypeCriteria>(
