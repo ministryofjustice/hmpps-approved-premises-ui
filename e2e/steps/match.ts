@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test'
-import { addYears } from 'date-fns'
+import { addDays, addYears } from 'date-fns'
 import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
@@ -10,6 +10,8 @@ import { OccupancyViewPage } from '../pages/match/occupancyViewPage'
 import { DateFormats } from '../../server/utils/dateUtils'
 import { visitDashboard } from './signIn'
 import { ReleaseTypeLabel } from '../../server/utils/applications/releaseTypeUtils'
+import { ChangePlacementPage } from '../pages/manage/changePlacementPage'
+import { datePartStrings } from '../utils'
 
 export type E2EMatchAndBookResult = {
   premisesName: string
@@ -47,7 +49,7 @@ export const matchAndBookApplication = async ({
   // And I select the placement request
   await cruDashboard.choosePlacementApplicationWithId(applicationId)
 
-  const placementRequestPage = new PlacementRequestPage(page)
+  let placementRequestPage = new PlacementRequestPage(page)
 
   // And I click the 'Search for a space' button
   await placementRequestPage.clickSearchForASpace()
@@ -90,7 +92,7 @@ export const matchAndBookApplication = async ({
     releaseType,
   })
 
-  // Then enter valid dates into the 'Book you placement' form and submit
+  // Then enter valid dates into the 'Book your placement' form and submit
   const dateToday = new Date()
   const oneYearFromNow = addYears(dateToday, 1)
 
@@ -122,11 +124,29 @@ export const matchAndBookApplication = async ({
     'Matched',
   ])
 
+  // When I reopen the placement request to change the dates
+  await cruDashboard.choosePlacementApplicationWithId(applicationId)
+
+  placementRequestPage = new PlacementRequestPage(page)
+
+  // And I click the 'Change placement' button
+  await placementRequestPage.clickChangePlacement()
+
+  // Then I should see the Change placement page
+  const changePlacementPage = new ChangePlacementPage(page)
+
+  // When I enter new dates for the placement
+  const changedArrivalDate = addDays(dateToday, 1)
+  const changedDepartureDate = addDays(oneYearFromNow, 1)
+  await changePlacementPage.changePlacementDates(changedArrivalDate, changedDepartureDate)
+
+  // Then I should see the placement request page with a success banner
+  placementRequestPage = new PlacementRequestPage(page)
+
+  await placementRequestPage.shouldShowSuccessBanner('Booking changed successfully')
+
+  newDatesOfPlacement.startDate = DateFormats.dateObjToIsoDate(changedArrivalDate)
+  newDatesOfPlacement.endDate = DateFormats.dateObjToIsoDate(changedDepartureDate)
+
   return { premisesName, premisesId, newDatesOfPlacement }
 }
-
-const datePartStrings = (date: Date): { year: string; month: string; day: string } => ({
-  year: date.getFullYear().toString(),
-  month: (date.getMonth() + 1).toString(),
-  day: date.getDate().toString(),
-})
