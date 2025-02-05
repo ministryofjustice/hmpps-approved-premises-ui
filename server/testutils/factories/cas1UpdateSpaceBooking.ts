@@ -1,8 +1,9 @@
 import { Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
+import { occupancyCriteriaMap } from '../../utils/match/occupancy'
 import { DateFormats } from '../../utils/dateUtils'
-import { SpaceSearchRoomCriteria, spaceSearchCriteriaRoomLevelLabels } from '../../utils/match/spaceSearch'
+import { SpaceSearchRoomCriteria } from '../../utils/match/spaceSearch'
 
 export default Factory.define<Cas1UpdateSpaceBooking>(() => {
   const arrivalDate = faker.date.soon()
@@ -11,8 +12,6 @@ export default Factory.define<Cas1UpdateSpaceBooking>(() => {
   return {
     arrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
     departureDate: DateFormats.dateObjToIsoDate(departureDate),
-    characteristics: faker.helpers.arrayElements(
-      Object.keys(spaceSearchCriteriaRoomLevelLabels),
-    ) as Array<SpaceSearchRoomCriteria>,
+    characteristics: faker.helpers.arrayElements(Object.keys(occupancyCriteriaMap)) as Array<SpaceSearchRoomCriteria>,
   }
 })

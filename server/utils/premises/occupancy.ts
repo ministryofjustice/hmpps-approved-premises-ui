@@ -14,7 +14,7 @@ import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
 import { laoSummaryName } from '../personUtils'
-import { spaceSearchCriteriaRoomLevelLabels } from '../match/spaceSearch'
+import { joinWithCommas } from '../utils'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -89,10 +89,10 @@ export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): stri
     )
     .filter(Boolean)
   const messages: Array<string> = []
-  if (bookingCount > availableBedCount) messages.push('has bookings exceeding its available capacity')
+  if (bookingCount > availableBedCount) messages.push('is overbooked')
   if (overbookedCriteria.length)
     messages.push(
-      `is overbooked on spaces with the following ${overbookedCriteria.length > 1 ? 'criteria' : 'criterion'}: ${overbookedCriteria.map(characteristic => occupancyCriteriaMap[characteristic].toLowerCase()).join(', ')}`,
+      `is overbooked on: ${joinWithCommas(overbookedCriteria.map(characteristic => occupancyCriteriaMap[characteristic].toLowerCase()))}`,
     )
   return messages.length ? `This AP ${messages.join(' and ')}.` : ''
 }
@@ -173,9 +173,7 @@ export const placementTableRows = (
         canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
         releaseType: textValue(releaseType),
         spaceType: itemListHtml(
-          essentialCharacteristics
-            .map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic])
-            .filter(Boolean),
+          essentialCharacteristics.map(characteristic => occupancyCriteriaMap[characteristic]).filter(Boolean),
         ),
       }
       return placementColumnMap.map(({ fieldName }: ColumnDefinition<PlacementColumnField>) => fieldValues[fieldName])
@@ -197,7 +195,7 @@ export const outOfServiceBedTableRows = (
         })}" data-cy-id="${id}">${roomName}</a>`,
       ),
       characteristics: itemListHtml(
-        characteristics.map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic]).filter(Boolean),
+        characteristics.map(characteristic => occupancyCriteriaMap[characteristic]).filter(Boolean),
       ),
       startDate: textValue(DateFormats.isoDateToUIDate(startDate, { format: 'short' })),
       endDate: textValue(DateFormats.isoDateToUIDate(endDate, { format: 'short' })),

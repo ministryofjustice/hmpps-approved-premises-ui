@@ -30,7 +30,7 @@ import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { spaceSearchCriteriaRoomLevelLabels } from './spaceSearch'
+import { occupancyCriteriaMap } from './occupancy'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -308,11 +308,11 @@ describe('matchUtils', () => {
     })
 
     it('should only render requirements that exist in the provided labels', () => {
-      const result = requirementsHtmlString(placementRequest.essentialCriteria, spaceSearchCriteriaRoomLevelLabels)
+      const result = requirementsHtmlString(placementRequest.essentialCriteria, occupancyCriteriaMap)
 
       expect(result).toMatchStringIgnoringWhitespace(`
         <ul class="govuk-list govuk-list--bullet">
-          <li>${spaceSearchCriteriaRoomLevelLabels.isStepFreeDesignated}</li>
+          <li>${occupancyCriteriaMap.isStepFreeDesignated}</li>
         </ul>
       `)
     })

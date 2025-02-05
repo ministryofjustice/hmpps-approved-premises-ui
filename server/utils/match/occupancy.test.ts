@@ -144,7 +144,7 @@ describe('dayAvailabilitySummaryListItems', () => {
       expect(summaryList).toEqual([
         { key: { text: 'AP capacity' }, value: { text: '20' } },
         { key: { text: 'Booked spaces' }, value: { text: '21' } },
-        { key: { text: 'Suitable for sex offenders spaces available' }, value: { text: '3' } },
+        { key: { text: 'Suitable for sexual offence risk spaces available' }, value: { text: '3' } },
         { key: { text: 'Step-free spaces available' }, value: { text: '0' } },
       ])
     })
