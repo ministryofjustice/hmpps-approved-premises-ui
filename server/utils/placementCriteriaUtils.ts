@@ -1,7 +1,7 @@
 import { ApType, PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
 
-type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
+type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor' | 'arsonOffences'>
 export type SpecialistApTypeCriteria =
   | 'isPIPE'
   | 'isESAP'
