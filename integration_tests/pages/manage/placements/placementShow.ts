@@ -7,6 +7,7 @@ import {
   arrivalInformation,
   departureInformation,
   placementSummary,
+  requirementsInformation,
 } from '../../../../server/utils/placements'
 import { placementDates, placementLength } from '../../../../server/utils/match'
 
@@ -53,6 +54,7 @@ export default class PlacementShowPage extends Page {
     this.shouldContainSummaryListItems(placementSummary(placement).rows.filter(removeHiddenRows))
     this.shouldContainSummaryListItems(arrivalInformation(placement).rows.filter(removeHiddenRows))
     this.shouldContainSummaryListItems(departureInformation(placement).rows.filter(removeHiddenRows))
+    this.shouldContainSummaryListItems(requirementsInformation(placement).rows)
   }
 
   shouldNotShowUnpopulatedRows(placement: Cas1SpaceBooking, rows: Array<string>): void {

@@ -20,6 +20,9 @@ import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
 import { summaryListItem } from '../formUtils'
+import { requirementsHtmlString } from '../match'
+import { apTypeCriteriaLabels, specialistApTypeCriteria } from '../placementCriteriaUtils'
+import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 
 export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
@@ -166,6 +169,32 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
       summaryRow('Move on', placement.departure?.moveOnCategory?.name),
       summaryListItem('More information', placement.departure?.notes, 'textBlock', true),
     ].filter(Boolean),
+  }
+}
+
+export const requirementsInformation = (placement: Cas1SpaceBooking): SummaryList => {
+  const requirements = placement.requirements.essentialCharacteristics
+  const apType =
+    apTypeCriteriaLabels[requirements.find(requirement => specialistApTypeCriteria.includes(requirement)) || 'normal']
+  const apRequirements = filterApLevelCriteria(requirements)
+  const roomRequirements = filterRoomLevelCriteria(requirements)
+
+  const noneSelected = `<span class="text-grey">None</span>`
+
+  return {
+    rows: [
+      summaryListItem('AP type', apType),
+      summaryListItem(
+        'AP requirements',
+        apRequirements.length ? requirementsHtmlString(apRequirements) : noneSelected,
+        'html',
+      ),
+      summaryListItem(
+        'Room requirements',
+        roomRequirements.length ? requirementsHtmlString(roomRequirements) : noneSelected,
+        'html',
+      ),
+    ],
   }
 }
 

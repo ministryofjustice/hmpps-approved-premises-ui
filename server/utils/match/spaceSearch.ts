@@ -1,4 +1,9 @@
-import { Cas1SpaceSearchParameters, PlacementCriteria, PlacementRequestDetail } from '@approved-premises/api'
+import {
+  Cas1SpaceCharacteristic,
+  Cas1SpaceSearchParameters,
+  PlacementCriteria,
+  PlacementRequestDetail,
+} from '@approved-premises/api'
 import { CheckBoxItem, RadioItem } from '@approved-premises/ui'
 import { filterByType } from '../utils'
 import {
@@ -63,10 +68,10 @@ export const initialiseSearchState = (placementRequest: PlacementRequestDetail):
   }
 }
 
-export const filterApLevelCriteria = (criteria: Array<PlacementCriteria>) =>
+export const filterApLevelCriteria = (criteria: Array<PlacementCriteria | Cas1SpaceCharacteristic>) =>
   Object.keys(filterByType(criteria, spaceSearchCriteriaApLevelLabels)) as Array<SpaceSearchApCriteria>
 
-export const filterRoomLevelCriteria = (criteria: Array<PlacementCriteria>) =>
+export const filterRoomLevelCriteria = (criteria: Array<PlacementCriteria | Cas1SpaceCharacteristic>) =>
   Object.keys(filterByType(criteria, spaceSearchCriteriaRoomLevelLabels)) as Array<SpaceSearchRoomCriteria>
 
 export const spaceSearchStateToApiPayload = (state: SpaceSearchState): Cas1SpaceSearchParameters => {
