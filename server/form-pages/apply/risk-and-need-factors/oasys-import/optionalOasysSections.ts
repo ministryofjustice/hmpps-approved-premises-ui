@@ -49,11 +49,14 @@ export default class OptionalOasysSections implements TasklistPage {
       const oasysSelections = await dataServices.personService.getOasysSelections(token, application.person.crn)
 
       const allNeedsLinkedToReoffending = oasysSelections.filter(
-        section => !section.linkedToHarm && section.linkedToReOffending,
+        section => section && !section.linkedToHarm && section.linkedToReOffending,
       )
       const allOtherNeeds = oasysSelections.filter(
         section =>
-          !section.linkedToHarm && !section.linkedToReOffending && !oasysSectionsToExclude.includes(section.section),
+          section &&
+          !section.linkedToHarm &&
+          !section.linkedToReOffending &&
+          !oasysSectionsToExclude.includes(section.section),
       )
 
       if (body.needsLinkedToReoffending) {
