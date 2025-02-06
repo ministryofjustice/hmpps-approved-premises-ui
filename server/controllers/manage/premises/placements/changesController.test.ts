@@ -350,6 +350,8 @@ describe('changesController', () => {
         arrivalDate: query.arrivalDate,
         departureDate: query.departureDate,
         criteria: query.criteria,
+        errorSummary: [],
+        errors: {},
       })
     })
   })

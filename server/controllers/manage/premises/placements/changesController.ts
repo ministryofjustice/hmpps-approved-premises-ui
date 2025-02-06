@@ -191,6 +191,7 @@ export default class ChangesController {
       const { token } = req.user
       const { premisesId, placementId } = req.params
       const { arrivalDate, departureDate, criteria } = req.query
+      const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       const [premises, placement] = await Promise.all([
         this.premisesService.find(token, premisesId),
@@ -215,6 +216,8 @@ export default class ChangesController {
         arrivalDate,
         departureDate,
         criteria,
+        errors,
+        errorSummary,
       })
     }
   }
