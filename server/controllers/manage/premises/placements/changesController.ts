@@ -229,7 +229,7 @@ export default class ChangesController {
         const updatePlacementData: Cas1UpdateSpaceBooking = {
           arrivalDate,
           departureDate,
-          characteristics: makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria.split(',')),
+          characteristics: makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria.split(',')).filter(Boolean),
         }
 
         await this.placementService.updatePlacement(token, premisesId, placementId, updatePlacementData)

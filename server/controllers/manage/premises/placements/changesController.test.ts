@@ -362,7 +362,7 @@ describe('changesController', () => {
     }
 
     it('updates the placement and redirects the user to the placement request', async () => {
-      placementService.updatePlacement.mockResolvedValue(placement)
+      placementService.updatePlacement.mockResolvedValue({})
 
       const requestHandler = changesController.create()
       await requestHandler({ ...request, body }, response, next)
@@ -383,6 +383,29 @@ describe('changesController', () => {
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, params.placementId)
       expect(mockFlash).toHaveBeenCalledWith('success', 'Booking changed successfully')
       expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
+    })
+
+    it('updates the placement with empty criteria', async () => {
+      const bodyNoCriteria = {
+        ...body,
+        criteria: '',
+      }
+
+      const requestHandler = changesController.create()
+      await requestHandler({ ...request, body: bodyNoCriteria }, response, next)
+
+      const expectedUpdateBody: Cas1UpdateSpaceBooking = {
+        arrivalDate: '2025-05-05',
+        departureDate: '2025-07-05',
+        characteristics: [],
+      }
+
+      expect(placementService.updatePlacement).toHaveBeenCalledWith(
+        token,
+        params.premisesId,
+        params.placementId,
+        expectedUpdateBody,
+      )
     })
 
     describe('when errors are raised by the API', () => {
