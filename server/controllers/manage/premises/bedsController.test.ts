@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { bedDetailFactory, bedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
+import { bedDetailFactory, cas1PremisesBedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
 import paths from '../../../paths/manage'
 
 describe('V2BedsController', () => {
@@ -49,7 +49,7 @@ describe('V2BedsController', () => {
 
   describe('index', () => {
     it('should return the beds to the template', async () => {
-      const beds = bedSummaryFactory.buildList(1)
+      const beds = cas1PremisesBedSummaryFactory.buildList(1)
       const premisesId = 'premisesId'
       request.params.premisesId = premisesId
 

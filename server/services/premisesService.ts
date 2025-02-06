@@ -1,9 +1,9 @@
 import type {
   BedDetail,
-  BedSummary,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
+  Cas1PremisesBedSummary,
   Cas1PremisesDaySummary,
   Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummarySortField,
@@ -24,7 +24,7 @@ export default class PremisesService {
     return premises.sort((a, b) => a.name.localeCompare(b.name))
   }
 
-  async getBeds(token: string, premisesId: string): Promise<Array<BedSummary>> {
+  async getBeds(token: string, premisesId: string): Promise<Array<Cas1PremisesBedSummary>> {
     const premisesClient = this.premisesClientFactory(token)
 
     return premisesClient.getBeds(premisesId)

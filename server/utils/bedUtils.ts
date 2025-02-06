@@ -1,4 +1,4 @@
-import { BedDetail, BedSummary } from '@approved-premises/api'
+import { BedDetail, BedSummary, Cas1PremisesBedSummary } from '@approved-premises/api'
 import { SummaryListItem, TableCell } from '../@types/ui'
 import paths from '../paths/manage'
 import { linkTo, sentenceCase } from './utils'
@@ -9,17 +9,17 @@ import {
 } from './characteristicsUtils'
 import { summaryListItem } from './formUtils'
 
-export const bedNameCell = (item: { name: string }): TableCell => ({ text: item.name })
+export const bedNameCell = (item: { bedName: string }): TableCell => ({ text: item.bedName })
 
 export const roomNameCell = (item: { roomName: string }): TableCell => ({ text: item.roomName })
 
 export const statusCell = (bed: BedSummary): TableCell => ({ text: sentenceCase(bed.status) })
 
-export const actionCell = (bed: BedSummary, premisesId: string): TableCell => ({
+export const actionCell = (bed: Cas1PremisesBedSummary, premisesId: string): TableCell => ({
   html: bedLink(bed, premisesId),
 })
 
-export const bedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
+export const bedTableRows = (beds: Array<Cas1PremisesBedSummary>, premisesId: string) => {
   return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)])
 }
 
@@ -56,9 +56,9 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   }
 }
 
-export const bedLink = (bed: BedSummary, premisesId: string): string =>
+export const bedLink = (bed: Cas1PremisesBedSummary, premisesId: string): string =>
   linkTo(paths.premises.beds.show({ bedId: bed.id, premisesId }), {
     text: 'Manage',
-    hiddenText: `bed ${bed.name}`,
+    hiddenText: `bed ${bed.bedName}`,
     attributes: { 'data-cy-bedId': bed.id },
   })

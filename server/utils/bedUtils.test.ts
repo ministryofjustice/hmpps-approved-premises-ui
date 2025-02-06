@@ -1,5 +1,10 @@
 import paths from '../paths/manage'
-import { apCharacteristicPairFactory, bedDetailFactory, bedSummaryFactory } from '../testutils/factories'
+import {
+  apCharacteristicPairFactory,
+  bedDetailFactory,
+  bedSummaryFactory,
+  cas1PremisesBedSummaryFactory,
+} from '../testutils/factories'
 import {
   actionCell,
   bedActions,
@@ -16,6 +21,7 @@ import {
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
   const bed = bedSummaryFactory.build()
+  const cas1Bed = cas1PremisesBedSummaryFactory.build()
   const bedDetail = bedDetailFactory.build()
 
   describe('roomNameCell', () => {
@@ -26,7 +32,7 @@ describe('bedUtils', () => {
 
   describe('bedNameCell', () => {
     it('returns the name of the room', () => {
-      expect(bedNameCell(bed)).toEqual({ text: bed.name })
+      expect(bedNameCell(cas1Bed)).toEqual({ text: cas1Bed.bedName })
     })
   })
 
@@ -52,18 +58,18 @@ describe('bedUtils', () => {
 
   describe('actionCell', () => {
     it('returns a link to manage the room', () => {
-      expect(actionCell(bed, premisesId)).toEqual({
-        html: bedLink(bed, premisesId),
+      expect(actionCell(cas1Bed, premisesId)).toEqual({
+        html: bedLink(cas1Bed, premisesId),
       })
     })
   })
 
   describe('bedTableRows', () => {
     it('returns the table rows given the rooms', () => {
-      const beds = [bed]
+      const beds = [cas1Bed]
 
       expect(bedTableRows(beds, premisesId)).toEqual([
-        [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)],
+        [roomNameCell(cas1Bed), bedNameCell(cas1Bed), actionCell(cas1Bed, premisesId)],
       ])
     })
   })

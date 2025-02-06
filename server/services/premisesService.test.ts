@@ -11,9 +11,9 @@ import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
   bedDetailFactory,
-  bedSummaryFactory,
   cas1PremiseCapacityFactory,
   cas1PremisesBasicSummaryFactory,
+  cas1PremisesBedSummaryFactory,
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
@@ -76,7 +76,7 @@ describe('PremisesService', () => {
 
   describe('getBeds', () => {
     it('on success returns the beds given a premises ID', async () => {
-      const beds = bedSummaryFactory.buildList(1)
+      const beds = cas1PremisesBedSummaryFactory.buildList(1)
       premisesClient.getBeds.mockResolvedValue(beds)
 
       const result = await service.getBeds(token, premisesId)
