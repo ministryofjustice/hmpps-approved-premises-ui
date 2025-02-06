@@ -8,6 +8,6 @@ export class ChangePlacementPage extends BasePage {
     await this.fillNamedDateField(datePartStrings(changedDepartureDate), 'departureDate')
     await this.clickContinue()
 
-    await this.clickSubmit('Confirm and book')
+    await this.clickSubmit('Confirm changes')
   }
 }

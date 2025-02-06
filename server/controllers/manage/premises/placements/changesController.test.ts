@@ -24,7 +24,7 @@ import * as validationUtils from '../../../../utils/validation'
 import { ValidationError } from '../../../../utils/errors'
 
 describe('changesController', () => {
-  const token = 'SOME_TOKEN'
+  const token = 'TEST_TOKEN'
 
   const mockFlash = jest.fn()
   let request: DeepMocked<Request>
