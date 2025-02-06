@@ -152,7 +152,7 @@ export default class ChangesController {
 
   saveNew(): RequestHandler {
     return async (req: ViewRequest, res: Response) => {
-      const { body, params } = req
+      const { body, params, query } = req
 
       try {
         const errors = validateSpaceBooking(body)
@@ -167,6 +167,7 @@ export default class ChangesController {
 
         const redirectUrl = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
           {
+            ...query,
             arrivalDate,
             departureDate,
             criteria: criteria.split(','),
@@ -196,14 +197,10 @@ export default class ChangesController {
         this.placementService.getPlacement(token, placementId),
       ])
 
-      const backlink = `${managePaths.premises.placements.changes.new(req.params)}${createQueryString(
-        {
-          criteria,
-          arrivalDate,
-          departureDate,
-        },
-        { arrayFormat: 'repeat', addQueryPrefix: true },
-      )}`
+      const backlink = `${managePaths.premises.placements.changes.new(req.params)}${createQueryString(req.query, {
+        arrayFormat: 'repeat',
+        addQueryPrefix: true,
+      })}`
 
       return res.render('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',

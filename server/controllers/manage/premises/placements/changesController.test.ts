@@ -165,17 +165,17 @@ describe('changesController', () => {
   })
 
   describe('saveNew', () => {
-    it('should redirect to the confirmation screen with criteria when the submitted dates are valid', async () => {
-      const body = {
-        'arrivalDate-day': '23',
-        'arrivalDate-month': '6',
-        'arrivalDate-year': '2025',
-        'departureDate-day': '13',
-        'departureDate-month': '8',
-        'departureDate-year': '2025',
-        criteria: 'hasEnSuite,isArsonDesignated',
-      }
+    const validBody = {
+      'arrivalDate-day': '23',
+      'arrivalDate-month': '6',
+      'arrivalDate-year': '2025',
+      'departureDate-day': '13',
+      'departureDate-month': '8',
+      'departureDate-year': '2025',
+      criteria: 'hasEnSuite,isArsonDesignated',
+    }
 
+    it('should redirect to the confirmation screen with criteria when the submitted dates are valid', async () => {
       const expectedRedirectUrl = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
         {
           arrivalDate: '2025-06-23',
@@ -188,7 +188,34 @@ describe('changesController', () => {
       )}`
 
       const requestHandler = changesController.saveNew()
-      await requestHandler({ ...request, body }, response, next)
+      await requestHandler({ ...request, body: validBody }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
+    })
+
+    it('should include the current filtering query in the redirect', async () => {
+      const query = {
+        'startDate-day': '12',
+        'startDate-month': '5',
+        'startDate-year': '2025',
+        durationDays: '7',
+        criteria: ['hasEnSuite', 'isArsonDesignated'],
+      }
+
+      const expectedRedirectUrl = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
+        {
+          ...query,
+          arrivalDate: '2025-06-23',
+          departureDate: '2025-08-13',
+          criteria: ['hasEnSuite', 'isArsonDesignated'],
+        },
+        {
+          arrayFormat: 'repeat',
+        },
+      )}`
+
+      const requestHandler = changesController.saveNew()
+      await requestHandler({ ...request, body: validBody, query }, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
     })
@@ -288,6 +315,10 @@ describe('changesController', () => {
   describe('confirm', () => {
     it('renders the confirmation page with new booking information', async () => {
       const query = {
+        'startDate-day': '12',
+        'startDate-month': '5',
+        'startDate-year': '2025',
+        durationDays: '7',
         arrivalDate: '2025-04-14',
         departureDate: '2025-06-02',
         criteria: ['hasEnSuite', 'isStepFreeDesignated'],
@@ -299,7 +330,7 @@ describe('changesController', () => {
       const expectedBackLink = `${managePaths.premises.placements.changes.new({
         premisesId: premises.id,
         placementId: placement.id,
-      })}?criteria=hasEnSuite&criteria=isStepFreeDesignated&arrivalDate=2025-04-14&departureDate=2025-06-02`
+      })}?${createQueryString(query, { arrayFormat: 'repeat' })}`
 
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/confirm', {
