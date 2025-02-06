@@ -97,8 +97,13 @@ describe('restClient', () => {
 
   describe('post', () => {
     it('should filter out blank values', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const data = { some: 'data', empty: '', undefinedItem: undefined, nullItem: null, falseItem: false } as any
+      const data: Record<string, unknown> = {
+        some: 'data',
+        empty: '',
+        undefinedItem: undefined,
+        nullItem: null,
+        falseItem: false,
+      }
 
       fakeApprovedPremisesApi
         .post(`/some/path`, { some: 'data', falseItem: false })
@@ -113,8 +118,13 @@ describe('restClient', () => {
 
   describe('put', () => {
     it('should filter out blank values', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const data = { some: 'data', empty: '', undefinedItem: undefined, nullItem: null, falseItem: false } as any
+      const data: Record<string, unknown> = {
+        some: 'data',
+        empty: '',
+        undefinedItem: undefined,
+        nullItem: null,
+        falseItem: false,
+      }
 
       fakeApprovedPremisesApi
         .put(`/some/path`, { some: 'data', falseItem: false })
@@ -129,8 +139,13 @@ describe('restClient', () => {
 
   describe('patch', () => {
     it('should filter out blank values', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const data = { some: 'data', empty: '', undefinedItem: undefined, nullItem: null, falseItem: false } as any
+      const data: Record<string, unknown> = {
+        some: 'data',
+        empty: '',
+        undefinedItem: undefined,
+        nullItem: null,
+        falseItem: false,
+      }
 
       fakeApprovedPremisesApi
         .patch(`/some/path`, { some: 'data', falseItem: false })
