@@ -15,10 +15,12 @@ import {
   otherBookings,
   placementSummary,
   renderKeyworkersSelectOptions,
+  requirementsInformation,
 } from '.'
 import { DateFormats } from '../dateUtils'
 
 import paths from '../../paths/manage'
+import { requirementsHtmlString } from '../match'
 
 describe('placementUtils', () => {
   describe('actions', () => {
@@ -308,6 +310,65 @@ describe('placementUtils', () => {
                 html: `<span class="govuk-summary-list__textblock">${departedPlacement.departure?.notes}</span>`,
               },
             },
+          ],
+        })
+      })
+    })
+
+    describe('requirements information', () => {
+      it('should be returned for a placement in a standard AP', () => {
+        const placementStandardAp = cas1SpaceBookingFactory.build({
+          requirements: {
+            essentialCharacteristics: ['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
+          },
+        })
+
+        expect(requirementsInformation(placementStandardAp)).toEqual({
+          rows: [
+            { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
+            {
+              key: { text: 'AP requirements' },
+              value: { html: requirementsHtmlString(['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders']) },
+            },
+            { key: { text: 'Room requirements' }, value: { html: requirementsHtmlString(['hasEnSuite']) } },
+          ],
+        })
+      })
+
+      it('should be returned for a placement in a specialist AP', () => {
+        const placementSpecialistAp = cas1SpaceBookingFactory.build({
+          requirements: {
+            essentialCharacteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite', 'isWheelchairAccessible'],
+          },
+        })
+
+        expect(requirementsInformation(placementSpecialistAp)).toEqual({
+          rows: [
+            { key: { text: 'AP type' }, value: { text: 'Enhanced Security AP (ESAP)' } },
+            {
+              key: { text: 'AP requirements' },
+              value: { html: requirementsHtmlString(['acceptsChildSexOffenders']) },
+            },
+            {
+              key: { text: 'Room requirements' },
+              value: { html: requirementsHtmlString(['hasEnSuite', 'isWheelchairAccessible']) },
+            },
+          ],
+        })
+      })
+
+      it('should be returned for a placement with no requirements', () => {
+        const placementNoRequirements = cas1SpaceBookingFactory.build({
+          requirements: {
+            essentialCharacteristics: [],
+          },
+        })
+
+        expect(requirementsInformation(placementNoRequirements)).toEqual({
+          rows: [
+            { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
+            { key: { text: 'AP requirements' }, value: { html: `<span class="text-grey">None</span>` } },
+            { key: { text: 'Room requirements' }, value: { html: `<span class="text-grey">None</span>` } },
           ],
         })
       })
