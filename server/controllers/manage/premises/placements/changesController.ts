@@ -210,7 +210,7 @@ export default class ChangesController {
           premises,
           arrivalDate,
           departureDate,
-          makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria),
+          makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria) || [],
         ),
         arrivalDate,
         departureDate,

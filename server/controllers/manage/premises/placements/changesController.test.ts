@@ -313,7 +313,11 @@ describe('changesController', () => {
   })
 
   describe('confirm', () => {
-    it('renders the confirmation page with new booking information', async () => {
+    it.each([
+      ['with criteria', ['hasEnSuite', 'isStepFreeDesignated']],
+      ['with one criterion', 'hasEnSuite'],
+      ['with no criteria', undefined],
+    ])('renders the confirmation page with new booking information %s', async (_, criteria) => {
       const query = {
         'startDate-day': '12',
         'startDate-month': '5',
@@ -321,7 +325,7 @@ describe('changesController', () => {
         durationDays: '7',
         arrivalDate: '2025-04-14',
         departureDate: '2025-06-02',
-        criteria: ['hasEnSuite', 'isStepFreeDesignated'],
+        criteria,
       }
 
       const requestHandler = changesController.confirm()
@@ -341,7 +345,7 @@ describe('changesController', () => {
           premises,
           query.arrivalDate,
           query.departureDate,
-          query.criteria as Array<Cas1SpaceBookingCharacteristic>,
+          query.criteria ? makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.criteria) : [],
         ),
         arrivalDate: query.arrivalDate,
         departureDate: query.departureDate,
