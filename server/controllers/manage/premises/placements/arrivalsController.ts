@@ -4,7 +4,13 @@ import { PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import PlacementService from '../../../../services/placementService'
 import paths from '../../../../paths/manage'
-import { DateFormats, dateAndTimeInputsAreValidDates, timeIsValid24hrFormat } from '../../../../utils/dateUtils'
+import {
+  DateFormats,
+  dateAndTimeInputsAreValidDates,
+  dateIsToday,
+  datetimeIsInThePast,
+  timeIsValid24hrFormat,
+} from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 
 export default class ArrivalsController {
@@ -58,12 +64,21 @@ export default class ArrivalsController {
           errors.arrivalDateTime = 'You must enter a valid arrival date'
         }
 
+        if (!Object.keys(errors).length) {
+          if (!datetimeIsInThePast(arrivalDateTime)) {
+            if (dateIsToday(arrivalDateTime)) {
+              errors.arrivalTime = 'The time of arrival must be in the past'
+            } else errors.arrivalDateTime = 'The date of arrival must be today or in the past'
+          }
+        }
+
         if (Object.keys(errors).length) {
           throw new ValidationError(errors)
         }
 
         const placementArrival: Cas1NewArrival = {
-          arrivalDateTime,
+          arrivalTime: DateFormats.isoDateTimeToTime(arrivalDateTime),
+          arrivalDate: DateFormats.isoDateTimeToIsoDate(arrivalDateTime),
         }
 
         await this.placementService.createArrival(req.user.token, premisesId, placementId, placementArrival)

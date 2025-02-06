@@ -585,3 +585,22 @@ describe('isoDateAndTimeToDateObj', () => {
     expect(date.getTime()).toEqual(DateFormats.isoToDateObj(expected).getTime())
   })
 })
+
+describe('isoDateTimeToIsoDate', () => {
+  it.each([
+    ['2025-02-01T12:15', '2025-02-01'],
+    ['2024-12-31', '2024-12-31'],
+  ])('returns an iso date only from an iso datetime, %s', (dateStr, expected) => {
+    expect(DateFormats.isoDateTimeToIsoDate(dateStr)).toEqual(expected)
+  })
+})
+
+describe('isoDateTimeToIsoTime', () => {
+  it.each([
+    ['2025-02-01T09:15', '09:15'],
+    ['2025-02-01T23:45', '23:45'],
+    ['2024-12-31', '00:00'],
+  ])('returns an iso time only from an iso datetime, %s', (dateStr, expected) => {
+    expect(DateFormats.isoDateTimeToTime(dateStr)).toEqual(expected)
+  })
+})
