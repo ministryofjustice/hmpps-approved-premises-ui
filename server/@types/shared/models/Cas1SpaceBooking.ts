@@ -9,6 +9,7 @@ import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
 import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
 import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
 import type { Cas1SpaceBookingSummaryStatus } from './Cas1SpaceBookingSummaryStatus';
+import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { NamedId } from './NamedId';
 import type { Person } from './Person';
 import type { User } from './User';
@@ -61,5 +62,6 @@ export type Cas1SpaceBooking = {
     nonArrival?: Cas1SpaceBookingNonArrival;
     deliusEventNumber?: string;
     status?: Cas1SpaceBookingSummaryStatus;
+    characteristics: Array<Cas1SpaceCharacteristic>;
 };
 

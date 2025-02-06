@@ -17,6 +17,8 @@ import cas1SpaceBookingNonArrivalFactory from './cas1SpaceBookingNonArrival'
 import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
 import { departureReasonFactory } from './referenceData'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../utils/placements'
+import { filterOutAPTypes } from '../../utils/match'
+import { placementCriteria } from './placementRequest'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
@@ -109,6 +111,7 @@ export default Cas1SpaceBookingFactory.define(() => {
     person: fullPersonFactory.build() as Person,
     tier: faker.helpers.arrayElement(['A', 'B', 'C']),
     requirements: cas1SpaceBookingRequirementsFactory.build(),
+    characteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
     premises: {
       id: faker.string.uuid(),
       name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,

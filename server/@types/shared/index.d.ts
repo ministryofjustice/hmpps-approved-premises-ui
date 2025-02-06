@@ -90,6 +90,7 @@ export type { Cas1OutOfServiceBedStatus } from './models/Cas1OutOfServiceBedStat
 export type { Cas1OutOfServiceBedSummary } from './models/Cas1OutOfServiceBedSummary';
 export type { Cas1OverbookingRange } from './models/Cas1OverbookingRange';
 export type { Cas1PersonalTimeline } from './models/Cas1PersonalTimeline';
+export type { Cas1PlacementRequestSummary } from './models/Cas1PlacementRequestSummary';
 export type { Cas1PremiseCapacity } from './models/Cas1PremiseCapacity';
 export type { Cas1PremiseCapacityForDay } from './models/Cas1PremiseCapacityForDay';
 export type { Cas1PremiseCharacteristicAvailability } from './models/Cas1PremiseCharacteristicAvailability';

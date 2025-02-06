@@ -28,9 +28,6 @@ jobs:
       - name: Installing dependencies
         run: npm ci
 
-      - name: Pulling the latest type from the API repo
-        run: npm run generate-types
-
       - name: Typechecking the code
         run: npm run typecheck
 
