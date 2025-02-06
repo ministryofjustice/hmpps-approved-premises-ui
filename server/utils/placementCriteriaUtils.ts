@@ -1,7 +1,7 @@
 import { ApType, PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
 
-type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor' | 'arsonOffences'>
+type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
 export type SpecialistApTypeCriteria =
   | 'isPIPE'
   | 'isESAP'
@@ -69,6 +69,7 @@ export const placementCriteriaLabels: Record<UiPlacementCriteria, string> = {
   hasTactileFlooring: 'Tactile flooring',
   hasHearingLoop: 'Hearing loop',
   isArsonDesignated: 'Designated arson room',
+  arsonOffences: 'Arson Offences',
 }
 
 export const specialistApTypeCriteriaLabels = filterByType<SpecialistApTypeCriteria>(
