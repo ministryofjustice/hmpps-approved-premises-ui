@@ -72,6 +72,7 @@ export const dayAvailabilitySummaryListItems = (
 const durationOptionsMap: Record<number, string> = {
   '7': 'Up to 1 week',
   '42': 'Up to 6 weeks',
+  '56': 'Up to 8 weeks',
   '84': 'Up to 12 weeks',
   '182': 'Up to 26 weeks',
   '364': 'Up to 52 weeks',

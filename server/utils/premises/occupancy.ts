@@ -66,6 +66,7 @@ export const occupancyCalendar = (capacity: Array<Cas1PremiseCapacityForDay>, pr
 const durationOptionsMap: Record<number, string> = {
   '7': '1 week',
   '42': '6 weeks',
+  '56': '8 weeks',
   '84': '12 weeks',
   '182': '26 weeks',
   '364': '52 weeks',
