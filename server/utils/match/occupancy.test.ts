@@ -155,6 +155,7 @@ describe('durationSelectOptions', () => {
   const defaultOptions = [
     { text: 'Up to 1 week', value: '7' },
     { text: 'Up to 6 weeks', value: '42' },
+    { text: 'Up to 8 weeks', value: '56' },
     { text: 'Up to 12 weeks', value: '84' },
     { text: 'Up to 26 weeks', value: '182' },
     { text: 'Up to 52 weeks', value: '364' },
@@ -168,6 +169,8 @@ describe('durationSelectOptions', () => {
     ['Up to 1 week', 3],
     ['Up to 1 week', 7],
     ['Up to 6 weeks', 42],
+    ['Up to 8 weeks', 43],
+    ['Up to 8 weeks', 56],
     ['Up to 12 weeks', 80],
     ['Up to 12 weeks', 84],
     ['Up to 26 weeks', 85],

@@ -54,6 +54,7 @@ describe('apOccupancy utils', () => {
   const durationOptions: Array<SelectOption> = [
     { selected: undefined, text: '1 week', value: '7' },
     { selected: undefined, text: '6 weeks', value: '42' },
+    { selected: undefined, text: '8 weeks', value: '56' },
     { selected: undefined, text: '12 weeks', value: '84' },
     { selected: undefined, text: '26 weeks', value: '182' },
     { selected: undefined, text: '52 weeks', value: '364' },
