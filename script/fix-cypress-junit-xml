@@ -1,5 +1,4 @@
 #!/bin/sh
-
 # script/fix-cypress-junit-xml: adds the `file` attribute found in the 'Root Suite' testsuite node to all other
 #  testuite nodes, so the split-test utility can correctly identify test run times.
 
