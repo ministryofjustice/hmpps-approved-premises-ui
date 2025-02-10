@@ -162,7 +162,7 @@ describe('AP occupancyViewController', () => {
         nextDayLink: `${paths.premises.occupancy.day({ premisesId, date: '2025-01-02' })}`,
         daySummaryRows: daySummaryRows(premisesDaySummary),
         daySummaryText: generateDaySummaryText(premisesDaySummary),
-        formattedDate: 'Wed 1 Jan 2025',
+        placementTableCaption: 'People booked in on Wed 1 Jan 2025',
         placementTableHeader: tableHeader(
           placementColumnMap,
           'personName',
@@ -170,6 +170,7 @@ describe('AP occupancyViewController', () => {
           '/manage/premises/some-uuid/occupancy/day/2025-01-01',
         ),
         placementTableRows: placementTableRows(premisesId, premisesDaySummary.spaceBookings),
+        outOfServiceBedCaption: 'Out of service beds on Wed 1 Jan 2025',
         outOfServiceBedTableHeader: tableHeader(outOfServiceBedColumnMap, 'personName', 'asc', ''),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, premisesDaySummary.outOfServiceBeds),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, []),
@@ -189,7 +190,7 @@ describe('AP occupancyViewController', () => {
       const { premisesSummary } = await mockPremises(date, {
         sortBy: 'canonicalArrivalDate',
         sortDirection: 'desc',
-        characteristics: ['hasEnsuite'],
+        characteristics: ['hasEnSuite'],
       })
       const result = response.render.mock.calls[0][1]
       expect(result).toEqual(
@@ -198,16 +199,16 @@ describe('AP occupancyViewController', () => {
           previousDayLink: `${paths.premises.occupancy.day({
             premisesId,
             date: '2024-12-31',
-          })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnsuite`,
+          })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnSuite`,
           nextDayLink: `${paths.premises.occupancy.day({
             premisesId,
             date: '2025-01-02',
-          })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnsuite`,
+          })}?sortBy=canonicalArrivalDate&sortDirection=desc&characteristics=hasEnSuite`,
           placementTableHeader: tableHeader(
             placementColumnMap,
             'canonicalArrivalDate',
             'desc',
-            '/manage/premises/some-uuid/occupancy/day/2025-01-01?characteristics=hasEnsuite',
+            '/manage/premises/some-uuid/occupancy/day/2025-01-01?characteristics=hasEnSuite',
           ),
         }),
       )
@@ -218,7 +219,7 @@ describe('AP occupancyViewController', () => {
         date,
         bookingsSortBy: 'canonicalArrivalDate',
         bookingsSortDirection: 'desc',
-        bookingsCriteriaFilter: ['hasEnsuite'],
+        bookingsCriteriaFilter: ['hasEnSuite'],
       })
     })
   })

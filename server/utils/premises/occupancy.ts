@@ -2,11 +2,12 @@ import {
   Cas1OutOfServiceBedSummary,
   Cas1PremiseCapacityForDay,
   Cas1PremisesDaySummary,
+  Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummary,
   Cas1SpaceBookingDaySummarySortField,
   SortDirection,
 } from '@approved-premises/api'
-import { SelectOption, TableCell, TableRow } from '@approved-premises/ui'
+import { SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import { occupancyCriteriaMap } from '../match/occupancy'
@@ -14,7 +15,9 @@ import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
 import { laoSummaryName } from '../personUtils'
-import { joinWithCommas } from '../utils'
+import { joinWithCommas, pluralize } from '../utils'
+import { placementCriteriaLabels } from '../placementCriteriaUtils'
+import config from '../../config'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -97,19 +100,95 @@ export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): stri
   return messages.length ? `This AP ${messages.join(' and ')}.` : ''
 }
 
-export const daySummaryRows = (daySummary: Cas1PremisesDaySummary) => {
+const availabilityRow = (
+  name: string,
+  characteristic: Cas1SpaceBookingCharacteristic,
+  available: number,
+  booked: number,
+): SummaryListItem => {
+  return booked || available
+    ? {
+        key: { text: name },
+        value: {
+          html: `${pluralize('bed', available)}${booked ? `<a class="govuk-!-margin-left-2" href="${characteristic ? `?characteristics=${characteristic}` : '?'}">${pluralize('booking', booked)}</a>` : ''}${(booked || available) && booked >= available ? `<strong class="govuk-tag govuk-tag--${booked > available ? 'red' : 'yellow'} govuk-tag--float-right">${booked > available ? 'Overbooked' : 'Full'}</strong>` : ''}`,
+        },
+      }
+    : null
+}
+
+export const daySummaryRows = (
+  daySummary: Cas1PremisesDaySummary,
+  roomCharacteristics: Array<Cas1SpaceBookingCharacteristic> = null,
+  characteristicsMode: 'singleRow' | 'doubleRow' | 'none' = 'none',
+) => {
   const {
-    capacity: { totalBedCount, bookingCount, availableBedCount },
+    capacity: { totalBedCount, bookingCount, availableBedCount, characteristicAvailability },
   } = daySummary
 
-  return {
-    rows: [
-      summaryListItem('Capacity', String(totalBedCount)),
-      summaryListItem('Booked spaces', String(bookingCount)),
-      summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
-      summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
-    ],
-  }
+  const rows: Array<SummaryListItem> =
+    characteristicsMode === 'singleRow'
+      ? [availabilityRow('All rooms', null, availableBedCount, bookingCount)]
+      : [
+          summaryListItem('Capacity', String(totalBedCount)),
+          summaryListItem('Booked spaces', String(bookingCount)),
+          summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
+          summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
+        ]
+
+  if (characteristicsMode === 'doubleRow')
+    rows.push({ key: { html: '<div class="govuk-!-static-padding-top-5"></div>' }, value: null })
+
+  if (characteristicsMode !== 'none')
+    characteristicAvailability.forEach(({ characteristic, availableBedsCount, bookingsCount }) => {
+      if (!roomCharacteristics || roomCharacteristics.includes(characteristic)) {
+        if (characteristicsMode === 'singleRow') {
+          rows.push(
+            availabilityRow(placementCriteriaLabels[characteristic], characteristic, availableBedsCount, bookingsCount),
+          )
+        }
+
+        if (characteristicsMode === 'doubleRow') {
+          rows.push(summaryListItem(`${placementCriteriaLabels[characteristic]} capacity`, String(availableBedsCount)))
+          rows.push(
+            summaryListItem(
+              `${placementCriteriaLabels[characteristic]} available`,
+              String(availableBedsCount - bookingsCount),
+            ),
+          )
+        }
+      }
+    })
+
+  return { rows }
+}
+
+export const filterOutOfServiceBeds = (
+  daySummary: Cas1PremisesDaySummary,
+  characteristicsArray?: Array<Cas1SpaceBookingCharacteristic>,
+): Cas1PremisesDaySummary => {
+  const outOfServiceBeds =
+    characteristicsArray && characteristicsArray.length
+      ? daySummary.outOfServiceBeds.filter(({ characteristics }) =>
+          characteristicsArray.some(characteristic => characteristics.includes(characteristic)),
+        )
+      : daySummary.outOfServiceBeds
+  return { ...daySummary, outOfServiceBeds }
+}
+
+export const tableCaptions = (
+  daySummary: Cas1PremisesDaySummary,
+  characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
+): { placementTableCaption: string; outOfServiceBedCaption: string } => {
+  const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
+  return config.flags.pocEnabled
+    ? {
+        placementTableCaption: `${pluralize('resident', daySummary.spaceBookings?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
+        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, 'with')}`,
+      }
+    : {
+        placementTableCaption: `People booked in on ${formattedDate}`,
+        outOfServiceBedCaption: `Out of service beds on ${formattedDate}`,
+      }
 }
 
 const itemListHtml = (items: Array<string>): { html: string } =>
@@ -205,4 +284,15 @@ export const outOfServiceBedTableRows = (
       ({ fieldName }: ColumnDefinition<OutOfServiceBedColumnField>) => fieldValues[fieldName],
     )
   })
+}
+
+export const generateCharacteristicsSummary = (
+  characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
+  verb = 'requiring',
+) => {
+  return characteristicsArray?.length
+    ? ` ${verb}: ${joinWithCommas(
+        characteristicsArray.map(characteristic => occupancyCriteriaMap[characteristic].toLowerCase()),
+      )}`
+    : ''
 }

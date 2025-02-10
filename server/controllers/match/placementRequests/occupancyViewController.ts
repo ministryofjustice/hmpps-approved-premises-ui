@@ -1,7 +1,7 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
-import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
+import type { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
+import { PlacementRequestService, PremisesService, SessionService, SpaceSearchService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
@@ -9,17 +9,31 @@ import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../
 import {
   dayAvailabilityStatus,
   dayAvailabilityStatusMap,
-  dayAvailabilitySummaryListItems,
   durationSelectOptions,
   occupancyCriteriaMap,
 } from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
+import managePaths from '../../../paths/manage'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
 import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 import { filterRoomLevelCriteria } from '../../../utils/match/spaceSearch'
+import {
+  type OutOfServiceBedColumnField,
+  type PlacementColumnField,
+  daySummaryRows,
+  filterOutOfServiceBeds,
+  outOfServiceBedColumnMap,
+  outOfServiceBedTableRows,
+  placementColumnMap,
+  placementTableRows,
+  tableCaptions,
+  tableHeader,
+} from '../../../utils/premises/occupancy'
+import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+import config from '../../../config'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -47,6 +61,7 @@ export default class {
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
     private readonly spaceSearchService: SpaceSearchService,
+    private readonly sessionService: SessionService,
   ) {}
 
   view(): TypedRequestHandler<Request> {
@@ -209,25 +224,64 @@ export default class {
       const { id, premisesId, date } = req.params
       const { criteria = [], excludeSpaceBookingId } = req.query
 
-      const backLink = req.headers.referer
+      const backLink = this.sessionService.getPageBackLink(
+        paths.v2Match.placementRequests.search.dayOccupancy.pattern,
+        req,
+        [paths.v2Match.placementRequests.search.occupancy.pattern, managePaths.premises.placements.changes.new.pattern],
+      )
+
+      const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
+
+      const {
+        sortBy = 'personName',
+        sortDirection = 'asc',
+        hrefPrefix,
+      } = getPaginationDetails<Cas1SpaceBookingDaySummarySortField>(
+        req,
+        paths.v2Match.placementRequests.search.dayOccupancy({ id, premisesId, date }),
+      )
+      const getDayLink = (targetDate: string) =>
+        `${paths.v2Match.placementRequests.search.dayOccupancy({ id, premisesId, date: targetDate })}${createQueryString(req.query, { arrayFormat: 'repeat', addQueryPrefix: true })}`
+
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
+      const daySummary = filterOutOfServiceBeds(
+        await this.premisesService.getDaySummary({
+          token,
+          premisesId,
+          date,
+          bookingsSortBy: sortBy,
+          bookingsSortDirection: sortDirection,
+          bookingsCriteriaFilter: filteredCriteria,
+        }),
+        config.flags.pocEnabled ? filteredCriteria : undefined,
+      )
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
         startDate: date,
         excludeSpaceBookingId,
       })
+
       const dayCapacity = premisesCapacity.capacity[0]
-      const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
       const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
 
-      res.render('match/placementRequests/occupancyView/viewDay', {
+      return res.render('manage/premises/occupancy/dayView', {
         backLink,
-        pageHeading: dayAvailabilityStatusMap[status],
+        pageHeading: DateFormats.isoDateToUIDate(date),
+        dayAvailabilityStatus: dayAvailabilityStatusMap[status],
+        daySummaryRows: daySummaryRows(
+          daySummary,
+          filteredCriteria,
+          config.flags.pocEnabled ? 'singleRow' : 'doubleRow',
+        ),
         placementRequest,
         premises,
-        date,
-        status,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, filteredCriteria),
+        previousDayLink: getDayLink(daySummary.previousDate),
+        nextDayLink: getDayLink(daySummary.nextDate),
+        ...tableCaptions(daySummary, filteredCriteria),
+        placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
+        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
+        outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
+        outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
       })
     }
   }

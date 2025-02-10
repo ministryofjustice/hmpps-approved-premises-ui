@@ -11,12 +11,14 @@ import {
   type PlacementColumnField,
   daySummaryRows,
   durationSelectOptions,
+  filterOutOfServiceBeds,
   generateDaySummaryText,
   occupancyCalendar,
   outOfServiceBedColumnMap,
   outOfServiceBedTableRows,
   placementColumnMap,
   placementTableRows,
+  tableCaptions,
   tableHeader,
 } from '../../../utils/premises/occupancy'
 import { DateFormats, dateAndTimeInputsAreValidDates, daysToWeeksAndDays } from '../../../utils/dateUtils'
@@ -26,6 +28,7 @@ import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
 import { createQueryString, makeArrayOfType } from '../../../utils/utils'
+import config from '../../../config'
 
 export default class ApOccupancyViewController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -95,34 +98,41 @@ export default class ApOccupancyViewController {
         paths.premises.occupancy.day({ premisesId, date }),
         { characteristics: characteristicsArray },
       )
+
       const getDayLink = (targetDate: string) =>
         `${paths.premises.occupancy.day({
           premisesId,
           date: targetDate,
         })}${createQueryString(req.query, { indices: false, addQueryPrefix: true })}`
 
-      const daySummary = await this.premisesService.getDaySummary({
-        token,
-        premisesId,
-        date,
-        bookingsSortBy: sortBy,
-        bookingsSortDirection: sortDirection,
-        bookingsCriteriaFilter: characteristicsArray as Array<Cas1SpaceBookingCharacteristic>,
-      })
+      const daySummary = filterOutOfServiceBeds(
+        await this.premisesService.getDaySummary({
+          token,
+          premisesId,
+          date,
+          bookingsSortBy: sortBy,
+          bookingsSortDirection: sortDirection,
+          bookingsCriteriaFilter: characteristicsArray,
+        }),
+        config.flags.pocEnabled ? characteristicsArray : undefined,
+      )
+
       return res.render('manage/premises/occupancy/dayView', {
         premises,
         pageHeading: DateFormats.isoDateToUIDate(daySummary.forDate),
         backLink: paths.premises.occupancy.view({ premisesId }),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
-        daySummaryRows: daySummaryRows(daySummary),
+        daySummaryRows: daySummaryRows(daySummary, null, config.flags.pocEnabled ? 'singleRow' : 'none'),
         daySummaryText: generateDaySummaryText(daySummary),
-        formattedDate: DateFormats.isoDateToUIDate(daySummary.forDate),
+        ...tableCaptions(daySummary, characteristicsArray),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
         placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, characteristicsArray),
+        criteriaOptions: config.flags.pocEnabled
+          ? null
+          : convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, characteristicsArray),
       })
     }
   }

@@ -37,3 +37,10 @@
 .govuk-summary-list__textblock {
   white-space: pre-line;
 }
+
+.govuk-summary-list__row {
+  min-height: 1.5rem;
+}
+.govuk-tag--float-right {
+  float: right;
+}

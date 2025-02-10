@@ -202,7 +202,7 @@ export const filterByType = <T extends string>(
  * @param count how many of the word exist
  * @return A sentence with the count of noun(s)
  */
-export const pluralize = (noun: string, count: number): string => `${count} ${noun}${Math.abs(count) > 1 ? 's' : ''}`
+export const pluralize = (noun: string, count: number): string => `${count} ${noun}${Math.abs(count) !== 1 ? 's' : ''}`
 
 /**
  * Join a list of strings with commas and an "and"
