@@ -90,9 +90,18 @@ jobs:
 workflows:
   build-test-and-deploy:
     jobs:
-      - build
+      - build:
+          name: build
+          filters:
+            branches:
+              only:
+                - main
       - hmpps/helm_lint:
           name: helm_lint
+          filters:
+            branches:
+              only:
+                - main
       - hmpps/build_docker:
           name: build_docker
           filters:
