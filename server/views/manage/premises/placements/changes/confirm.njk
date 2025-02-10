@@ -1,0 +1,48 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
+
+{% extends "../../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block header %}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backlink
+    }) }}
+{% endblock %}
+
+{% block content %}
+    {{ showErrorSummary(errorSummary, errorTitle) }}
+
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    {{ govukSummaryList({
+        rows: summaryListRows
+    }) }}
+
+    <form action="{{ currentUrl }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="arrivalDate" value="{{ arrivalDate }}" />
+        <input type="hidden" name="departureDate" value="{{ departureDate }}" />
+        <input type="hidden" name="criteria" value="{{ criteria }}" />
+
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Confirm changes",
+                preventDoubleClick: true
+            }) }}
+
+            <a href="{{ backLink }}" class="govuk-button govuk-button--secondary">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

@@ -20,4 +20,9 @@ export class PlacementRequestPage extends BasePage {
   async shouldShowPlacementSuccessMessage() {
     await expect(this.page.locator('.govuk-notification-banner')).toContainText('Placement created')
   }
+
+  async clickChangePlacement() {
+    await this.clickActions()
+    await this.page.getByRole('menuitem', { name: 'Change placement' }).click()
+  }
 }

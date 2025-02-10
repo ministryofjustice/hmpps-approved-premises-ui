@@ -11,6 +11,7 @@ import {
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
+  cas1UpdateSpaceBookingFactory,
   departureReasonFactory,
   nonArrivalReasonsFactory,
   referenceDataFactory,
@@ -65,6 +66,20 @@ describe('PlacementService', () => {
       expect(result).toEqual(timeLine)
       expect(placementClientFactory).toHaveBeenCalledWith(token)
       expect(placementClient.getTimeline).toHaveBeenCalledWith({ premisesId, placementId })
+    })
+  })
+
+  describe('updatePlacement', () => {
+    it('updates the placement', async () => {
+      const placement = cas1SpaceBookingFactory.build()
+      const placementUpdate = cas1UpdateSpaceBookingFactory.build()
+      placementClient.updatePlacement.mockResolvedValue(placement)
+
+      const result = await placementService.updatePlacement(token, premisesId, placementId, placementUpdate)
+
+      expect(result).toEqual(placement)
+      expect(placementClientFactory).toHaveBeenCalledWith(token)
+      expect(placementClient.updatePlacement).toHaveBeenCalledWith(premisesId, placementId, placementUpdate)
     })
   })
 

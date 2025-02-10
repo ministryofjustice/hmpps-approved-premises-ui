@@ -27,6 +27,7 @@ export default function routes(controllers: Controllers, router: Router, service
     redirectController,
     keyworkerController,
     apOccupancyViewController,
+    changesController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -238,6 +239,23 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
     allowedPermissions: ['cas1_space_booking_withdraw'],
+  })
+  // Placement changes
+  get(paths.premises.placements.changes.new.pattern, changesController.new(), {
+    auditEvent: 'NEW_BOOKING_CHANGE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  post(paths.premises.placements.changes.new.pattern, changesController.saveNew(), {
+    auditEvent: 'SAVE_NEW_BOOKING_CHANGE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  get(paths.premises.placements.changes.confirm.pattern, changesController.confirm(), {
+    auditEvent: 'CONFIRM_BOOKING_CHANGE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  post(paths.premises.placements.changes.confirm.pattern, changesController.create(), {
+    auditEvent: 'CREATE_BOOKING_CHANGE',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
 
   // Occupancy

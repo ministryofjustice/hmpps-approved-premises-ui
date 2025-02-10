@@ -9,6 +9,7 @@ import {
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
+  cas1UpdateSpaceBookingFactory,
   timelineEventFactory,
 } from '../testutils/factories'
 
@@ -67,6 +68,32 @@ describeCas1NamespaceClient('PlacementClient', provider => {
       })
       const result = await placementClient.getTimeline({ premisesId, placementId })
       expect(result).toEqual(timeLine)
+    })
+  })
+
+  describe('updatePlacement', () => {
+    it('patches a placement and returns it', async () => {
+      const updatePlacement = cas1UpdateSpaceBookingFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to update a placement',
+        withRequest: {
+          method: 'PATCH',
+          path: paths.premises.placements.show({ premisesId, placementId }),
+          body: updatePlacement,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      const result = await placementClient.updatePlacement(premisesId, placementId, updatePlacement)
+
+      expect(result).toEqual({})
     })
   })
 

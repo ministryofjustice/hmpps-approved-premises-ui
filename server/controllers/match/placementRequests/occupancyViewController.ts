@@ -1,4 +1,5 @@
 import { Request, Response, TypedRequestHandler } from 'express'
+import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
@@ -17,6 +18,10 @@ import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
+import { createQueryString, makeArrayOfType } from '../../../utils/utils'
+import { filterRoomLevelCriteria } from '../../../utils/match/spaceSearch'
+
+export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
 interface ViewRequest extends Request {
   params: {
@@ -30,6 +35,10 @@ interface ViewDayRequest extends Request {
     id: string
     premisesId: string
     date: string
+  }
+  query: {
+    criteria?: CriteriaQuery
+    excludeSpaceBookingId?: string
   }
 }
 
@@ -75,17 +84,21 @@ export default class {
 
       if (!errors.startDate) {
         const capacityDates = placementDates(searchState.startDate, searchState.durationDays)
-        const capacity = await this.premisesService.getCapacity(
-          token,
-          premisesId,
-          capacityDates.startDate,
-          capacityDates.endDate,
-        )
-        const placeholderDetailsUrl = paths.v2Match.placementRequests.search.dayOccupancy({
+        const capacity = await this.premisesService.getCapacity(token, premisesId, {
+          startDate: capacityDates.startDate,
+          endDate: capacityDates.endDate,
+        })
+        const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
           id,
           premisesId,
           date: ':date',
-        })
+        })}${createQueryString(
+          { criteria: searchState.roomCriteria },
+          {
+            arrayFormat: 'repeat',
+            addQueryPrefix: true,
+          },
+        )}`
 
         summary = occupancySummary(capacity.capacity, searchState.roomCriteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, searchState.roomCriteria)
@@ -190,28 +203,27 @@ export default class {
     return async (req: ViewDayRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId, date } = req.params
+      const { criteria = [], excludeSpaceBookingId } = req.query
 
-      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
-
-      if (!searchState) {
-        return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
-      }
-
-      const backLink = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
+      const backLink = req.headers.referer
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
-      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, date)
+      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
+        startDate: date,
+        excludeSpaceBookingId,
+      })
       const dayCapacity = premisesCapacity.capacity[0]
-      const status = dayAvailabilityStatus(dayCapacity, searchState.roomCriteria)
+      const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
+      const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
 
-      return res.render('match/placementRequests/occupancyView/viewDay', {
+      res.render('match/placementRequests/occupancyView/viewDay', {
         backLink,
         pageHeading: dayAvailabilityStatusMap[status],
         placementRequest,
         premises,
         date,
         status,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, searchState.roomCriteria),
+        availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, filteredCriteria),
       })
     }
   }

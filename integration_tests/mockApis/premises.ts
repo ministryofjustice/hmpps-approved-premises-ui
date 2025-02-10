@@ -10,7 +10,6 @@ import type {
 
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
-import { createQueryString } from '../../server/utils/utils'
 
 const stubAllPremises = (premises: Array<PremisesSummary>) =>
   stubFor({
@@ -92,15 +91,18 @@ const stubPremiseCapacity = (args: {
   premisesId: string
   startDate: string
   endDate: string
+  excludeSpaceBookingId?: string
   premiseCapacity: Cas1PremiseCapacity
 }) =>
   stubFor({
     request: {
       method: 'GET',
-      url: `${paths.premises.capacity({ premisesId: args.premisesId })}?${createQueryString({
-        startDate: args.startDate,
-        endDate: args.endDate,
-      })}`,
+      urlPath: paths.premises.capacity({ premisesId: args.premisesId }),
+      queryParameters: {
+        startDate: { equalTo: args.startDate },
+        endDate: { equalTo: args.endDate },
+        excludeSpaceBookingId: args.excludeSpaceBookingId ? { equalTo: args.excludeSpaceBookingId } : undefined,
+      },
     },
     response: {
       status: 200,

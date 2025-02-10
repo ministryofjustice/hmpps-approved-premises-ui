@@ -5,6 +5,7 @@ import type {
   Cas1NewSpaceBookingCancellation,
   Cas1NonArrival,
   Cas1SpaceBooking,
+  Cas1UpdateSpaceBooking,
   TimelineEvent,
 } from '@approved-premises/api'
 import RestClient from './restClient'
@@ -28,6 +29,17 @@ export default class PlacementClient {
     return (await this.restClient.get({
       path: paths.premises.placements.timeline(args),
     })) as Array<TimelineEvent>
+  }
+
+  async updatePlacement(
+    premisesId: string,
+    placementId: string,
+    placementUpdate: Cas1UpdateSpaceBooking,
+  ): Promise<unknown> {
+    return this.restClient.patch({
+      path: paths.premises.placements.show({ premisesId, placementId }),
+      data: placementUpdate,
+    })
   }
 
   async createArrival(premisesId: string, placementId: string, newPlacementArrival: Cas1NewArrival): Promise<unknown> {

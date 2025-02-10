@@ -87,6 +87,25 @@ describe('occupancyCalendar', () => {
     ])
   })
 
+  it.each([
+    ['foo/:date', 'foo/2025-02-12'],
+    [':date', '2025-02-12'],
+    ['foo/:date?query', 'foo/2025-02-12?query'],
+    ['foo?date=:date', 'foo?date=2025-02-12'],
+  ])('returns a link for each calendar day based on the placeholder URL %s', (placeholder, expected) => {
+    const premisesCapacity = cas1PremiseCapacityFactory.build({
+      startDate: '2025-02-12',
+      endDate: '2025-02-12',
+    })
+
+    expect(occupancyCalendar(premisesCapacity.capacity, placeholder)).toEqual([
+      {
+        name: 'February 2025',
+        days: [expect.objectContaining({ link: expected })],
+      },
+    ])
+  })
+
   describe('when a filter criteria is provided', () => {
     const capacity: Array<Cas1PremiseCapacityForDay> = [
       cas1PremiseCapacityForDayFactory.build({

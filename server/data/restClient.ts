@@ -32,6 +32,8 @@ interface PostRequest {
 
 interface PutRequest extends PostRequest {}
 
+interface PatchRequest extends PostRequest {}
+
 interface StreamRequest {
   path?: string
   headers?: Record<string, string>
@@ -98,11 +100,15 @@ export default class RestClient {
   }
 
   async post(request: PostRequest = {}): Promise<unknown> {
-    return this.postOrPut('post', request)
+    return this.postOrPutOrPatch('post', request)
   }
 
   async put(request: PutRequest = {}): Promise<unknown> {
-    return this.postOrPut('put', request)
+    return this.postOrPutOrPatch('put', request)
+  }
+
+  async patch(request: PatchRequest = {}): Promise<unknown> {
+    return this.postOrPutOrPatch('patch', request)
   }
 
   async delete(path: string): Promise<unknown> {
@@ -227,14 +233,13 @@ export default class RestClient {
     }
   }
 
-  private async postOrPut(
-    method: 'post' | 'put',
+  private async postOrPutOrPatch(
+    method: 'post' | 'put' | 'patch',
     { path = '', headers = {}, responseType = '', data = {}, raw = false }: PutRequest | PostRequest = {},
   ): Promise<unknown> {
     logger.info(`${method} using user credentials: calling ${this.name}: ${path}`)
     try {
-      const request =
-        method === 'post' ? superagent.post(`${this.apiUrl()}${path}`) : superagent.put(`${this.apiUrl()}${path}`)
+      const request = superagent[method](`${this.apiUrl()}${path}`)
 
       const result = await request
         .send(this.filterBlanksFromData(data))

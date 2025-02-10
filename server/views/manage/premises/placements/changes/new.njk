@@ -6,38 +6,46 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "./partials/_occupancySummary.njk" import occupancySummary %}
-{% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "../../layout-with-details.njk" %}
+{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
+{% from "../../../../match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
+{% from "../../../../match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
+
+{% extends "../../../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
+{% block header %}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
 {% block beforeContent %}
     {{ govukBackLink({
-        text: "Back to other APs",
-        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id })
+        text: "Back",
+        href: backlink
     }) }}
 {% endblock %}
+
 
 {% block content %}
     {{ showErrorSummary(errorSummary) }}
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
-        {{ govukSummaryList(placementRequestInfoSummaryList) }}
+    {% call govukDetails({summaryText: "Your booked placement", open: true}) %}
+        {{ govukSummaryList(placementSummary) }}
     {% endcall %}
 
     <section>
         <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
             {% if not errors.startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
 
+        <p>Your current booking is not included in this calendar.</p>
+
         <div class="search-and-filter">
-            <form action="{{ currentUrl }}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <form action="{{ currentUrl }}" method="get">
 
                 <h3 class="govuk-heading-m">Filters</h3>
 
@@ -68,7 +76,7 @@
 
                 <div class="search-and-filter__row">
                     {{ govukCheckboxes({
-                        name: "roomCriteria",
+                        name: "criteria",
                         classes: "govuk-checkboxes--small govuk-checkboxes--inline",
                         fieldset: {
                             legend: {
@@ -117,10 +125,11 @@
 
     {% if not errors.startDate %}
         <section>
-            <h2 class="govuk-heading-l">Book your placement</h2>
+            <h2 class="govuk-heading-l">Change placement dates</h2>
 
-            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}"
-                  method="post">
+            {{ govukSummaryList(placementDatesSummary) }}
+
+            <form action="{{ currentUrl }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <input type="hidden" name="criteria" value="{{ criteria }}" />
@@ -165,20 +174,13 @@
                     {{ govukButton({
                         text: "Cancel",
                         classes: "govuk-button--secondary",
-                        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+                        href: backlink,
                         preventDoubleClick: true
                     }) }}
                 </div>
             </form>
-            <h3 class="govuk-heading-m">If you are not booking this placement</h3>
-            <p class="govuk-body">
-                <a href="{{ paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }) }}">Check for a
-                    space at another AP</a>
-            </p>
-            <p class="govuk-body">
-                <a href="{{ paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}) }}">Mark as unable
-                    to match</a>
-            </p>
         </section>
     {% endif %}
+
+
 {% endblock %}

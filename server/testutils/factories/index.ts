@@ -95,6 +95,7 @@ import cas1PremisesDaySummaryFactory from './cas1PremisesDaySummary'
 import cas1OutOfServiceBedSummaryFactory from './cas1OutOfServiceBedSummary'
 import cas1OverbookingRangeFactory from './cas1OverbookingRange'
 import spaceSearchStateFactory from './spaceSearchState'
+import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 
 export {
   acctAlertFactory,
@@ -137,6 +138,7 @@ export {
   cas1NonArrivalFactory,
   cas1OverbookingRangeFactory,
   cas1KeyworkerAllocationFactory,
+  cas1UpdateSpaceBookingFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,

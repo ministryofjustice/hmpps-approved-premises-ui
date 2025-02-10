@@ -168,9 +168,9 @@ export default abstract class Page {
   completeDateInputs(prefix: string, date: string): void {
     const [year, month, day] = date.split('-')
 
-    cy.get(`#${prefix}-day`).type(day)
-    cy.get(`#${prefix}-month`).type(month)
-    cy.get(`#${prefix}-year`).type(year)
+    if (day) cy.get(`#${prefix}-day`).type(day)
+    if (month) cy.get(`#${prefix}-month`).type(month)
+    if (year) cy.get(`#${prefix}-year`).type(year)
   }
 
   private stripLeadingZeros(value: string): string {

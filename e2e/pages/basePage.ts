@@ -8,8 +8,8 @@ export class BasePage {
     await this.page.getByRole('button', { name: 'Save and continue' }).click()
   }
 
-  async clickSubmit() {
-    await this.page.getByRole('button', { name: 'Submit' }).click()
+  async clickSubmit(name: string = 'Submit') {
+    await this.page.getByRole('button', { name }).click()
   }
 
   async clickContinue() {

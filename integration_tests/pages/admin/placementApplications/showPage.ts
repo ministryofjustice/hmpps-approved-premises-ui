@@ -1,28 +1,30 @@
-import { ApprovedPremises, PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
+import { ApprovedPremises, PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../../page'
 
 import { bookingSummaryList } from '../../../../server/utils/bookings'
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
+import paths from '../../../../server/paths/admin'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
     super('Placement request')
   }
 
+  static visit(placementRequestDetail: PlacementRequestDetail): ShowPage {
+    cy.visit(paths.admin.placementRequests.show({ id: placementRequestDetail.id }))
+    return new ShowPage(placementRequestDetail)
+  }
+
   shouldShowSummary(): void {
     this.shouldContainSummaryListItems(placementRequestSummaryList(this.placementRequest).rows)
   }
 
-  clickPlacementRequest(placementRequest: PlacementRequest): void {
-    cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
-  }
-
   shouldNotShowBookingInformation() {
-    cy.contains('Booked Placement').should('not.exist')
+    cy.contains('Booked placement').should('not.exist')
   }
 
   shouldShowBookingInformation() {
-    cy.contains('Booked Placement').should('exist')
+    cy.contains('Booked placement').should('exist')
     this.shouldContainSummaryListItems(bookingSummaryList(this.placementRequest.booking).rows)
   }
 
@@ -59,6 +61,10 @@ export default class ShowPage extends Page {
     this.buttonShouldExist('Amend placement')
   }
 
+  shouldShowChangePlacementOption() {
+    this.buttonShouldExist('Change placement')
+  }
+
   shouldShowCancelBookingOption() {
     this.buttonShouldExist('Withdraw placement')
   }
@@ -69,6 +75,10 @@ export default class ShowPage extends Page {
 
   shouldNotShowAmendBookingOption() {
     this.buttonShouldNotExist('Amend placement')
+  }
+
+  shouldNotShowChangePlacementOption() {
+    this.buttonShouldNotExist('Change placement')
   }
 
   shouldNotShowCancelBookingOption() {

@@ -1,8 +1,8 @@
 import type {
   BespokeError,
   SelectOption,
+  SummaryList,
   SummaryListItem,
-  SummaryListWithCard,
   TableCell,
   TableRow,
 } from '@approved-premises/ui'
@@ -37,48 +37,45 @@ type ParsedConflictError = {
 
 export { bookingActions, v1BookingActions, v2BookingActions }
 
-export const bookingSummaryList = (booking: PlacementRequestBookingSummary): SummaryListWithCard => {
-  return {
-    card: {
-      title: {
-        text: 'Placement information',
-      },
-    },
-    rows: [
-      {
-        key: {
-          text: 'Approved Premises',
-        },
-        value: {
-          text: booking.premisesName,
-        },
-      },
-      {
-        key: {
-          text: 'Date of match',
-        },
-        value: {
-          text: DateFormats.isoDateToUIDate(booking.createdAt),
-        },
-      },
-      {
-        key: {
-          text: 'Expected arrival date',
-        },
-        value: {
-          text: DateFormats.isoDateToUIDate(booking.arrivalDate),
-        },
-      },
-      {
-        key: {
-          text: 'Expected departure date',
-        },
-        value: {
-          text: DateFormats.isoDateToUIDate(booking.departureDate),
-        },
-      },
-    ],
-  }
+export const bookingSummaryList = (booking?: PlacementRequestBookingSummary): SummaryList => {
+  return booking
+    ? {
+        rows: [
+          {
+            key: {
+              text: 'Approved Premises',
+            },
+            value: {
+              text: booking.premisesName,
+            },
+          },
+          {
+            key: {
+              text: 'Date of match',
+            },
+            value: {
+              text: DateFormats.isoDateToUIDate(booking.createdAt),
+            },
+          },
+          {
+            key: {
+              text: 'Expected arrival date',
+            },
+            value: {
+              text: DateFormats.isoDateToUIDate(booking.arrivalDate),
+            },
+          },
+          {
+            key: {
+              text: 'Expected departure date',
+            },
+            value: {
+              text: DateFormats.isoDateToUIDate(booking.departureDate),
+            },
+          },
+        ],
+      }
+    : undefined
 }
 
 export const manageBookingLink = (premisesId: string, booking: Booking | PremisesBooking): string => {

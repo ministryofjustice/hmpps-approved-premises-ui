@@ -110,6 +110,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
     it('should return capacity data for a given premises', async () => {
       const startDate = '2025-03-14'
       const endDate = '2025-11-11'
+      const excludeSpaceBookingId = 'id-to-exclude'
       const premises = premisesFactory.build()
       const premiseCapacity = cas1PremiseCapacityFactory.build()
 
@@ -122,6 +123,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
           query: {
             startDate,
             endDate,
+            excludeSpaceBookingId,
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -133,7 +135,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
         },
       })
 
-      const output = await premisesClient.getCapacity(premises.id, startDate, endDate)
+      const output = await premisesClient.getCapacity(premises.id, startDate, endDate, excludeSpaceBookingId)
       expect(output).toEqual(premiseCapacity)
     })
   })
