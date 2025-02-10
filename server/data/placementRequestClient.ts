@@ -33,12 +33,6 @@ export default class PlacementRequestClient {
     this.restClient = new RestClient('placementRequestClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(): Promise<Array<PlacementRequest>> {
-    return (await this.restClient.get({ path: paths.placementRequests.index.pattern })) as Promise<
-      Array<PlacementRequest>
-    >
-  }
-
   async dashboard(
     allParams: DashboardQueryParams = {
       status: 'notMatched',

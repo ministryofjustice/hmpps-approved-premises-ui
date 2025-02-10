@@ -21,32 +21,6 @@ describeClient('placementRequestClient', provider => {
     placementRequestClient = new PlacementRequestClient(token)
   })
 
-  describe('all', () => {
-    it('makes a get request to the placementRequests endpoint', async () => {
-      const placementRequests = placementRequestFactory.buildList(2)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get all placement requests',
-        withRequest: {
-          method: 'GET',
-          path: paths.placementRequests.index.pattern,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: placementRequests,
-        },
-      })
-
-      const result = await placementRequestClient.all()
-
-      expect(result).toEqual(placementRequests)
-    })
-  })
-
   describe('dashboard', () => {
     const placementRequests = placementRequestFactory.buildList(2)
 
