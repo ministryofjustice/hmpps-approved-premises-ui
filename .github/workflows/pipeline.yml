@@ -3,7 +3,9 @@ name: Pipeline [test -> build -> deploy]
 on:
   push:
     branches:
-      - '**'
+      - main
+      - 'feature-test**'
+      - 'feature-dev**'
   workflow_dispatch:
     inputs:
       environment:
@@ -11,10 +13,10 @@ on:
         type: choice
         required: true
         options:
+          - test
           - dev
-          # - preprod
-          # - staging
-          # - prod
+          - preprod
+          - prod
         default: 'dev'
       version:
         description: Image version
@@ -156,7 +158,6 @@ jobs:
       - name: Downloading test reports from previous runs
         uses: dawidd6/action-download-artifact@v2
         with:
-          #branch: main
           if_no_artifact_found: 'ignore'
           allow_forks: false
           name: integration-test-junit-xml-reports-.*
@@ -184,21 +185,18 @@ jobs:
         with:
           name: integration-tests-reports-${{ matrix.ci_node_index }}
           path: test_results/cypress
-          retention-days: 5
 
       - name: Store Integration tests videos
         uses: actions/upload-artifact@v4
         with:
           name: integration-tests-videos-${{ matrix.ci_node_index }}
           path: integration_tests/videos
-          retention-days: 5
 
       - name: Store Integration tests screenshots
         uses: actions/upload-artifact@v4
         with:
           name: integration-tests-screenshots-${{ matrix.ci_node_index }}
           path: integration_tests/screenshots
-          retention-days: 5
 
   helm_lint:
     name: helm lint
@@ -222,32 +220,46 @@ jobs:
       push: ${{ inputs.push || true }}
       docker_multiplatform: ${{ inputs.docker_multiplatform || false }}
 
+  deploy_test:
+    name: Deploy to the test environment
+    needs:
+      - build
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test')
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
+    secrets: inherit
+    with:
+      environment: 'test'
+      app_version: '${{ needs.build.outputs.app_version }}'
+  
   deploy_dev:
     name: Deploy to the development environment
     needs:
       - build
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev')
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
     with:
       environment: 'development'
       app_version: '${{ needs.build.outputs.app_version }}'
-  # deploy_preprod:
-  #   name: Deploy to pre-production environment
-  #   needs: 
-  #     - build
-  #     - deploy_dev
-  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
-  #   secrets: inherit
-  #   with:
-  #     environment: 'preprod'
-  #     app_version: '${{ needs.build.outputs.app_version }}'
-  # deploy_prod:
-  #   name: Deploy to production environment
-  #   needs: 
-  #     - build
-  #     - deploy_preprod
-  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
-  #   secrets: inherit
-  #   with:
-  #     environment: 'prod'
-  #     app_version: '${{ needs.build.outputs.app_version }}'
+
+  deploy_preprod:
+    name: Deploy to pre-production environment
+    needs: 
+      - build
+      - deploy_dev
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
+    secrets: inherit
+    with:
+      environment: 'preprod'
+      app_version: '${{ needs.build.outputs.app_version }}'
+
+  deploy_prod:
+    name: Deploy to production environment
+    needs: 
+      - build
+      - deploy_preprod
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
+    secrets: inherit
+    with:
+      environment: 'prod'
+      app_version: '${{ needs.build.outputs.app_version }}'
