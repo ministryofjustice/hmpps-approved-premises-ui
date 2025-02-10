@@ -108,6 +108,13 @@ jobs:
       - name: Running shell scripts linting checks
         run: npm run shellcheck
 
+  helm_lint:
+    name: helm lint
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v1 # WORKFLOW_VERSION
+    secrets: inherit
+    with:
+      environment: ${{ github.event.inputs.environment || 'dev' }}
+
   unit_tests:
     name: "Unit testing 🧪"
     runs-on: [self-hosted, hmpps-github-actions-runner]
@@ -198,13 +205,6 @@ jobs:
           name: integration-tests-screenshots-${{ matrix.ci_node_index }}
           path: integration_tests/screenshots
 
-  helm_lint:
-    name: helm lint
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v1 # WORKFLOW_VERSION
-    secrets: inherit
-    with:
-      environment: ${{ github.event.inputs.environment || 'dev' }}
-
   build:
     name: Build docker image from hmpps-github-actions
     needs:
@@ -247,6 +247,7 @@ jobs:
     needs: 
       - build
       - deploy_dev
+    if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
     with:
@@ -258,6 +259,7 @@ jobs:
     needs: 
       - build
       - deploy_preprod
+    if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
     secrets: inherit
     with:
