@@ -157,7 +157,6 @@ export default {
     },
   },
   placementRequests: {
-    index: placementRequests,
     show: placementRequestsSingle,
     dashboard: placementRequests.path('dashboard'),
     booking: placementRequestsSingle.path('booking'),
