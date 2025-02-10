@@ -2,6 +2,7 @@ import {
   Cas1OutOfServiceBedSummary,
   Cas1PremiseCapacityForDay,
   Cas1PremisesDaySummary,
+  Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummary,
   Cas1SpaceBookingDaySummarySortField,
   SortDirection,
@@ -15,6 +16,8 @@ import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
 import { laoSummaryName } from '../personUtils'
 import { spaceSearchCriteriaRoomLevelLabels } from '../match/spaceSearch'
+import { pluralize } from '../utils'
+import { placementCriteriaLabels } from '../placementCriteriaUtils'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -97,19 +100,59 @@ export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): stri
   return messages.length ? `This AP ${messages.join(' and ')}.` : ''
 }
 
-export const daySummaryRows = (daySummary: Cas1PremisesDaySummary) => {
+const availabilityRow = (
+  name: string,
+  characteristic: Cas1SpaceBookingCharacteristic,
+  available: number,
+  booked: number,
+) => {
+  return booked || available
+    ? {
+        key: { text: name },
+        value: {
+          html: `${pluralize('bed', available)}${booked ? `<span class="govuk-!-padding-right-2"></span><a href="${characteristic ? `?characteristics=${characteristic}` : '?'}"> ${pluralize('booking', booked)}</a>` : ''} ${(booked || available) && booked >= available ? `<strong class="govuk-tag govuk-tag--${booked > available ? 'red' : 'yellow'} govuk-tag--float-right">${booked > available ? 'Overbooked' : 'Full'}</strong>` : ''}`,
+        },
+      }
+    : null
+}
+
+export const daySummaryRows = (
+  daySummary: Cas1PremisesDaySummary,
+  roomCharacteristics: Array<Cas1SpaceBookingCharacteristic> = null,
+  characteristicsMode: 'singleRow' | 'doubleRow' | 'none' = 'none',
+) => {
   const {
-    capacity: { totalBedCount, bookingCount, availableBedCount },
+    capacity: { totalBedCount, bookingCount, availableBedCount, characteristicAvailability },
   } = daySummary
 
-  return {
-    rows: [
-      summaryListItem('Capacity', String(totalBedCount)),
-      summaryListItem('Booked spaces', String(bookingCount)),
-      summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
-      summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
-    ],
+  const rows = [
+    summaryListItem('Capacity', String(totalBedCount)),
+    summaryListItem('Booked spaces', String(bookingCount)),
+    summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
+    summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
+  ]
+  if (characteristicsMode !== 'none') {
+    rows.push({ key: { html: '<div class="govuk-!-static-padding-top-5"></div>' }, value: { text: '' } })
+    characteristicAvailability.forEach(({ characteristic, availableBedsCount, bookingsCount }) => {
+      if (!roomCharacteristics || roomCharacteristics.includes(characteristic)) {
+        if (characteristicsMode === 'singleRow') {
+          rows.push(
+            availabilityRow(placementCriteriaLabels[characteristic], characteristic, availableBedsCount, bookingsCount),
+          )
+        }
+        if (characteristicsMode === 'doubleRow') {
+          rows.push(summaryListItem(`${placementCriteriaLabels[characteristic]} capacity`, String(availableBedsCount)))
+          rows.push(
+            summaryListItem(
+              `${placementCriteriaLabels[characteristic]} available`,
+              String(availableBedsCount - bookingsCount),
+            ),
+          )
+        }
+      }
+    })
   }
+  return { rows }
 }
 
 const itemListHtml = (items: Array<string>): { html: string } =>
@@ -207,4 +250,10 @@ export const outOfServiceBedTableRows = (
       ({ fieldName }: ColumnDefinition<OutOfServiceBedColumnField>) => fieldValues[fieldName],
     )
   })
+}
+
+export const generateCharacteristicsSummary = (characteristicsArray: Array<Cas1SpaceBookingCharacteristic>) => {
+  return characteristicsArray?.length
+    ? ` requiring: ${characteristicsArray.map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic].toLowerCase()).join(', ')}`
+    : ''
 }

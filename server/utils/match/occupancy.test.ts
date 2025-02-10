@@ -4,12 +4,11 @@ import { cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
 import {
   dayAvailabilityCount,
   dayAvailabilityStatus,
-  dayAvailabilitySummaryListItems,
   durationSelectOptions,
 } from './occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 
-const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDayFactory.build({
+export const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDayFactory.build({
   date: '2025-02-02',
   totalBedCount: 20,
   availableBedCount: 18,
@@ -117,36 +116,6 @@ describe('dayAvailabilityStatus', () => {
       it('returns overbooked if there is no availability for the given criteria', () => {
         expect(dayAvailabilityStatus(overbookedCapacity, ['hasEnSuite'])).toEqual('overbooked')
       })
-    })
-  })
-})
-
-describe('dayAvailabilitySummaryListItems', () => {
-  describe('when no criteria are provided', () => {
-    it('returns a summary list with main availability for the day', () => {
-      const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria)
-
-      expect(summaryList).toEqual([
-        { key: { text: 'AP capacity' }, value: { text: '20' } },
-        { key: { text: 'Booked spaces' }, value: { text: '21' } },
-        { key: { text: 'Available spaces' }, value: { text: '-3' } },
-      ])
-    })
-  })
-
-  describe('when criteria are provided', () => {
-    it('returns a summary list with detailed availability for the selected criteria', () => {
-      const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria, [
-        'isSuitedForSexOffenders',
-        'isStepFreeDesignated',
-      ])
-
-      expect(summaryList).toEqual([
-        { key: { text: 'AP capacity' }, value: { text: '20' } },
-        { key: { text: 'Booked spaces' }, value: { text: '21' } },
-        { key: { text: 'Suitable for sex offenders spaces available' }, value: { text: '3' } },
-        { key: { text: 'Step-free spaces available' }, value: { text: '0' } },
-      ])
     })
   })
 })

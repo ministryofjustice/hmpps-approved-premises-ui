@@ -11,6 +11,7 @@ import {
   type PlacementColumnField,
   daySummaryRows,
   durationSelectOptions,
+  generateCharacteristicsSummary,
   generateDaySummaryText,
   occupancyCalendar,
   outOfServiceBedColumnMap,
@@ -25,7 +26,7 @@ import { fetchErrorsAndUserInput, generateErrorMessages, generateErrorSummary } 
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
-import { createQueryString, makeArrayOfType } from '../../../utils/utils'
+import { createQueryString, makeArrayOfType, pluralize } from '../../../utils/utils'
 
 export default class ApOccupancyViewController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -95,6 +96,7 @@ export default class ApOccupancyViewController {
         paths.premises.occupancy.day({ premisesId, date }),
         { characteristics: characteristicsArray },
       )
+
       const getDayLink = (targetDate: string) =>
         `${paths.premises.occupancy.day({
           premisesId,
@@ -109,17 +111,19 @@ export default class ApOccupancyViewController {
         bookingsSortDirection: sortDirection,
         bookingsCriteriaFilter: characteristicsArray as Array<Cas1SpaceBookingCharacteristic>,
       })
+      const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
       return res.render('manage/premises/occupancy/dayView', {
         premises,
         pageHeading: DateFormats.isoDateToUIDate(daySummary.forDate),
         backLink: paths.premises.occupancy.view({ premisesId }),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
-        daySummaryRows: daySummaryRows(daySummary),
+        daySummaryRows: daySummaryRows(daySummary, undefined, 'none'),
         daySummaryText: generateDaySummaryText(daySummary),
-        formattedDate: DateFormats.isoDateToUIDate(daySummary.forDate),
+        placementTableCaption: `${pluralize('resident', daySummary.spaceBookings?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
         placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
+        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}`,
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, characteristicsArray),

@@ -27,6 +27,7 @@ import { premiseCharacteristicAvailability } from '../../testutils/factories/cas
 import { getTierOrBlank } from '../applications/helpers'
 import { laoSummaryName } from '../personUtils'
 import { spaceSearchCriteriaRoomLevelLabels } from '../match/spaceSearch'
+import { capacityWithCriteria } from '../match/occupancy.test'
 
 describe('apOccupancy utils', () => {
   describe('occupancyCalendar', () => {
@@ -133,23 +134,66 @@ describe('apOccupancy utils', () => {
   })
 
   describe('daySummaryRows', () => {
-    it('should generate a list of day summary rows', () => {
-      const capacityForDay = cas1PremiseCapacityForDayFactory.build({
-        totalBedCount: 20,
-        availableBedCount: 18,
-        bookingCount: 6,
-      })
+    it('should generate a list of day summary rows when no criteria are provided', () => {
       const daySummary = cas1PremisesDaySummaryFactory.build({
-        capacity: capacityForDay,
+        capacity: capacityWithCriteria,
       })
       const expected = [
         { key: { text: 'Capacity' }, value: { text: '20' } },
-        { key: { text: 'Booked spaces' }, value: { text: '6' } },
+        { key: { text: 'Booked spaces' }, value: { text: '21' } },
         { key: { text: 'Out of service beds' }, value: { text: '2' } },
-        { key: { text: 'Available spaces' }, value: { text: '12' } },
+        { key: { text: 'Available spaces' }, value: { text: '-3' } },
       ]
 
       expect(daySummaryRows(daySummary)).toEqual({
+        rows: expected,
+      })
+    })
+
+    it('should generate a list of day summary rows including criteria', () => {
+      const daySummary = cas1PremisesDaySummaryFactory.build({
+        capacity: capacityWithCriteria,
+      })
+      const expected = [
+        { key: { text: 'Capacity' }, value: { text: '20' } },
+        { key: { text: 'Booked spaces' }, value: { text: '21' } },
+        { key: { text: 'Out of service beds' }, value: { text: '2' } },
+        { key: { text: 'Available spaces' }, value: { text: '-3' } },
+        { key: { html: `<div class="govuk-!-static-padding-top-5"></div>` },value:{text:''} },
+        { key: { text: 'En-suite bathroom capacity' }, value: { text: '1' } },
+        { key: { text: 'En-suite bathroom available' }, value: { text: '-1' } },
+        { key: { text: 'Step-free access capacity' }, value: { text: '1' } },
+        { key: { text: 'Step-free access available' }, value: { text: '0' } },
+      ]
+      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated'], 'doubleRow')).toEqual({
+        rows: expected,
+      })
+    })
+
+    it('should generate a list of day summary rows in single-row/criterion mode', () => {
+      const daySummary = cas1PremisesDaySummaryFactory.build({
+        capacity: capacityWithCriteria,
+      })
+      const expected = [
+        { key: { text: 'Capacity' }, value: { text: '20' } },
+        { key: { text: 'Booked spaces' }, value: { text: '21' } },
+        { key: { text: 'Out of service beds' }, value: { text: '2' } },
+        { key: { text: 'Available spaces' }, value: { text: '-3' } },
+        { key: { html: `<div class="govuk-!-static-padding-top-5"></div>` },value:{text:''} },
+        {
+          key: { text: 'En-suite bathroom' },
+          value: {
+            html: `1 bed<span class="govuk-!-padding-right-2"></span><a href="?characteristics=hasEnSuite"> 2 bookings</a> <strong class="govuk-tag govuk-tag--red govuk-tag--float-right">Overbooked</strong>`,
+          },
+        },
+        {
+          key: { text: 'Step-free access' },
+          value: {
+            html: `1 bed<span class="govuk-!-padding-right-2"></span><a href="?characteristics=isStepFreeDesignated\"> 1 booking</a> <strong class="govuk-tag govuk-tag--yellow govuk-tag--float-right">Full</strong>`,
+          },
+        },
+      ]
+      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated'], 'singleRow')).toEqual({
         rows: expected,
       })
     })
@@ -225,4 +269,34 @@ describe('apOccupancy utils', () => {
       outOfServiceBeds.forEach((summary, index) => checkRow(summary, rows[index]))
     })
   })
+
+  // describe('dayAvailabilitySummaryListItems', () => {
+  //   describe('when no criteria are provided', () => {
+  //     it('returns a summary list with main availability for the day', () => {
+  //       const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria)
+  //
+  //       expect(summaryList).toEqual([
+  //         { key: { text: 'AP capacity' }, value: { text: '20' } },
+  //         { key: { text: 'Booked spaces' }, value: { text: '21' } },
+  //         { key: { text: 'Available spaces' }, value: { text: '-3' } },
+  //       ])
+  //     })
+  //   })
+  //
+  //   describe('when criteria are provided', () => {
+  //     it('returns a summary list with detailed availability for the selected criteria', () => {
+  //       const summaryList = dayAvailabilitySummaryListItems(capacityWithCriteria, [
+  //         'isSuitedForSexOffenders',
+  //         'isStepFreeDesignated',
+  //       ])
+  //
+  //       expect(summaryList).toEqual([
+  //         { key: { text: 'AP capacity' }, value: { text: '20' } },
+  //         { key: { text: 'Booked spaces' }, value: { text: '21' } },
+  //         { key: { text: 'Suitable for sex offenders spaces available' }, value: { text: '3' } },
+  //         { key: { text: 'Step-free spaces available' }, value: { text: '0' } },
+  //       ])
+  //     })
+  //   })
+  // })
 })

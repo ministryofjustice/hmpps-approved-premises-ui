@@ -21,7 +21,6 @@ import { DateFormats } from '../../../utils/dateUtils'
 import {
   dayAvailabilityStatus,
   dayAvailabilityStatusMap,
-  dayAvailabilitySummaryListItems,
   durationSelectOptions,
   occupancyCriteriaMap,
 } from '../../../utils/match/occupancy'
@@ -444,10 +443,6 @@ describe('OccupancyViewController', () => {
         premises,
         date,
         status: expectedStatus,
-        availabilitySummaryListItems: dayAvailabilitySummaryListItems(
-          dayCapacity,
-          filterRoomLevelCriteria(makeArrayOfType(criteria)),
-        ),
       })
     })
 
