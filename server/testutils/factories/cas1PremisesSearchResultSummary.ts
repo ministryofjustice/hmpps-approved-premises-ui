@@ -42,6 +42,7 @@ const characteristics: ReadonlyArray<Cas1SpaceCharacteristic> = [
   'isTopFloorVulnerable',
   'isWheelchairAccessible',
   'isWheelchairDesignated',
+  'arsonOffences',
 ]
 
 export default Factory.define<Cas1PremisesSearchResultSummary>(() => {
