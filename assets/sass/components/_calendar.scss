@@ -4,6 +4,7 @@
   .calendar__day {
     margin: 0;
     border-bottom: 1px solid $govuk-border-colour;
+    color: $govuk-text-colour;
 
     #calendar-key & {
       padding: govuk-spacing(2) 0;
