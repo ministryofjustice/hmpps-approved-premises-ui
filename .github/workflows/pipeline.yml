@@ -6,8 +6,7 @@ on:
       - main
   pull_request:
     branches:
-      - 'feature-test**' # This will run the pipeline on any branch with a PR that starts with 'feature-test'
-      - 'feature-dev**' # This will run the pipeline on any branch with a PR that starts with 'feature-test'
+      - main  # run on PRs targeting main
   workflow_dispatch:
     inputs:
       environment:
