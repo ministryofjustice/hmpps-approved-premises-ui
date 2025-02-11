@@ -18,6 +18,12 @@ const cas1SpaceBookings = cas1Namespace.path('placement-requests/:id/space-booki
 
 const cas1Reports = cas1Namespace.path('reports')
 
+const cas1People = cas1Namespace.path('people')
+const cas1Person = cas1People.path(':crn')
+
+const cas1Applications = cas1Namespace.path('applications')
+const cas1ApplicationsSingle = cas1Applications.path(':id')
+
 // Non-namespaced
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
@@ -121,7 +127,7 @@ export default {
     documents: applicationsSingle.path('documents'),
     assessment: applicationsSingle.path('assessment'),
     withdrawal: applicationsSingle.path('withdrawal'),
-    timeline: applicationsSingle.path('timeline'),
+    timeline: cas1ApplicationsSingle.path('timeline'),
     placementApplications: applicationsSingle.path('placement-applications'),
     requestsForPlacement: applicationsSingle.path('requests-for-placement'),
     addNote: applicationsSingle.path('notes'),
@@ -190,7 +196,7 @@ export default {
       selection: oasys.path('selection'),
       sections: oasys.path('sections'),
     },
-    timeline: person.path('timeline'),
+    timeline: cas1Person.path('timeline'),
   },
   users: {
     index: users,

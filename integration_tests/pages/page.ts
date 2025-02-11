@@ -1,7 +1,9 @@
+import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell } from '@approved-premises/ui'
 import {
   Adjudication,
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
+  Cas1TimelineEvent,
   Document,
   FullPerson,
   Cas1OutOfServiceBed as OutOfServiceBed,
@@ -12,9 +14,7 @@ import {
   PlacementRequestDetail,
   PrisonCaseNote,
   SortOrder,
-  TimelineEvent,
-} from '../../server/@types/shared'
-import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell } from '../../server/@types/ui'
+} from '@approved-premises/api'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { summaryListSections } from '../../server/utils/applications/summaryListUtils'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -543,7 +543,7 @@ export default abstract class Page {
     cy.get(`[value="${id}"]`).should('not.be.checked')
   }
 
-  shouldShowApplicationTimeline(timelineEvents: Array<TimelineEvent>, index: number = 0) {
+  shouldShowApplicationTimeline(timelineEvents: Array<Cas1TimelineEvent>, index: number = 0) {
     const sortedTimelineEvents = timelineEvents.sort((a, b) => {
       return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
     })
@@ -560,7 +560,7 @@ export default abstract class Page {
             if (timelineEvents[i].createdBy?.name) {
               cy.get('.moj-timeline__header > .moj-timeline__byline').should(
                 'contain',
-                timelineEvents[i].createdBy.name,
+                timelineEvents[i].triggerSource === 'system' ? 'System' : timelineEvents[i].createdBy.name,
               )
             }
             if (timelineEvents[i].associatedUrls?.length) {

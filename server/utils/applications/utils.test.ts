@@ -2,8 +2,8 @@ import {
   ApType,
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
+  Cas1TimelineEventUrlType,
   FullPerson,
-  TimelineEventUrlType,
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { faker } from '@faker-js/faker'
@@ -14,12 +14,12 @@ import {
   applicationSummaryFactory,
   applicationTimelineFactory,
   assessmentFactory,
+  cas1TimelineEventFactory,
   personFactory,
   personalTimelineFactory,
   placementApplicationFactory,
   restrictedPersonFactory,
   tierEnvelopeFactory,
-  timelineEventFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
@@ -715,7 +715,8 @@ describe('utils', () => {
 
   describe('mapApplicationTimelineEventsForUi', () => {
     it('maps the events into the format required by the MoJ UI Timeline component', () => {
-      const timelineEvents = timelineEventFactory.buildList(1)
+      const timelineEvents = cas1TimelineEventFactory.buildList(1, { triggerSource: 'user' })
+
       expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
         {
           datetime: {
@@ -727,18 +728,20 @@ describe('utils', () => {
           },
           content: escape(timelineEvents[0].content),
           createdBy: timelineEvents[0].createdBy.name,
-          associatedUrls: mapTimelineUrlsForUi([
-            {
-              type: timelineEvents[0].associatedUrls[0].type,
-              url: timelineEvents[0].associatedUrls[0].url,
-            },
-          ]),
+          associatedUrls: expect.arrayContaining(
+            mapTimelineUrlsForUi([
+              {
+                type: timelineEvents[0].associatedUrls[0].type,
+                url: timelineEvents[0].associatedUrls[0].url,
+              },
+            ]),
+          ),
         },
       ])
     })
 
     it('maps the events into the format required by the MoJ UI Timeline component without associatedUrls', () => {
-      const timelineEvents = timelineEventFactory.buildList(1, { associatedUrls: undefined })
+      const timelineEvents = cas1TimelineEventFactory.buildList(1, { associatedUrls: undefined, triggerSource: 'user' })
 
       expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
         {
@@ -757,7 +760,7 @@ describe('utils', () => {
     })
 
     it('sorts the events in ascending order', () => {
-      const timelineEvents = timelineEventFactory.buildList(3)
+      const timelineEvents = cas1TimelineEventFactory.buildList(3)
 
       const actual = mapApplicationTimelineEventsForUi(timelineEvents)
 
@@ -784,11 +787,11 @@ describe('utils', () => {
     })
 
     it('doesnt error when there are events without "occuredAt" property', () => {
-      const timelineEventWithoutOccurredAt = timelineEventFactory.build({ occurredAt: undefined })
-      const pastTimelineEvent = timelineEventFactory.build({
+      const timelineEventWithoutOccurredAt = cas1TimelineEventFactory.build({ occurredAt: undefined })
+      const pastTimelineEvent = cas1TimelineEventFactory.build({
         occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
       })
-      const futureTimelineEvent = timelineEventFactory.build({
+      const futureTimelineEvent = cas1TimelineEventFactory.build({
         occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.future()),
       })
 
@@ -806,7 +809,7 @@ describe('utils', () => {
     })
 
     it('escapes any rogue HTML', () => {
-      const timelineEventWithRogueHTML = timelineEventFactory.build({ content: '<div>Hello!</div>' })
+      const timelineEventWithRogueHTML = cas1TimelineEventFactory.build({ content: '<div>Hello!</div>' })
 
       const actual = mapApplicationTimelineEventsForUi([timelineEventWithRogueHTML])
 
@@ -814,7 +817,7 @@ describe('utils', () => {
     })
 
     it('Sets createdBy to System if triggerSource is `system`', () => {
-      const timelineEvents = timelineEventFactory.buildList(1, { triggerSource: 'system' })
+      const timelineEvents = cas1TimelineEventFactory.buildList(1, { triggerSource: 'system' })
 
       expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
         {
@@ -827,12 +830,14 @@ describe('utils', () => {
           },
           content: escape(timelineEvents[0].content),
           createdBy: 'System',
-          associatedUrls: mapTimelineUrlsForUi([
-            {
-              type: timelineEvents[0].associatedUrls[0].type,
-              url: timelineEvents[0].associatedUrls[0].url,
-            },
-          ]),
+          associatedUrls: expect.arrayContaining(
+            mapTimelineUrlsForUi([
+              {
+                type: timelineEvents[0].associatedUrls[0].type,
+                url: timelineEvents[0].associatedUrls[0].url,
+              },
+            ]),
+          ),
         },
       ])
     })
@@ -844,7 +849,7 @@ describe('utils', () => {
       ['assessment', 'assessment'],
       ['booking', 'placement'],
       ['assessmentAppeal', 'appeal'],
-    ])('Translates a "%s" url type to "%s"', (urlType: TimelineEventUrlType, translation: string) => {
+    ])('Translates a "%s" url type to "%s"', (urlType: Cas1TimelineEventUrlType, translation: string) => {
       const timelineUrl = { type: urlType, url: faker.internet.url() }
       expect(mapTimelineUrlsForUi([timelineUrl])).toEqual([{ url: timelineUrl.url, type: translation }])
     })

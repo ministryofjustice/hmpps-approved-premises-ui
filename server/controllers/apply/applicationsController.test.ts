@@ -14,11 +14,11 @@ import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/val
 import {
   activeOffenceFactory,
   applicationFactory,
+  cas1TimelineEventFactory,
   paginatedResponseFactory,
   personFactory,
   requestForPlacementFactory,
   restrictedPersonFactory,
-  timelineEventFactory,
 } from '../../testutils/factories'
 
 import paths from '../../paths/apply'
@@ -284,7 +284,7 @@ describe('applicationsController', () => {
 
     describe('when the tab=timeline query param is present', () => {
       it('calls the timeline method on the application service and passes the tab: "timeline" property', async () => {
-        const timelineEvents = timelineEventFactory.buildList(1)
+        const timelineEvents = cas1TimelineEventFactory.buildList(1)
         application.status = 'submitted'
 
         const requestHandler = applicationsController.show()

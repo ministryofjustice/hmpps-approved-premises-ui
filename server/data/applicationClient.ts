@@ -6,12 +6,12 @@ import type {
   ApplicationTimelineNote,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
+  Cas1TimelineEvent,
   Document,
   NewWithdrawal,
   RequestForPlacement,
   SortDirection,
   SubmitApprovedPremisesApplication,
-  TimelineEvent,
   UpdateApprovedPremisesApplication,
   Withdrawables,
 } from '@approved-premises/api'
@@ -96,10 +96,10 @@ export default class ApplicationClient {
     })
   }
 
-  async timeline(applicationId: string): Promise<Array<TimelineEvent>> {
+  async timeline(applicationId: string): Promise<Array<Cas1TimelineEvent>> {
     return (await this.restClient.get({
       path: paths.applications.timeline({ id: applicationId }),
-    })) as Array<TimelineEvent>
+    })) as Array<Cas1TimelineEvent>
   }
 
   async requestsForPlacement(applicationId: string): Promise<Array<RequestForPlacement>> {

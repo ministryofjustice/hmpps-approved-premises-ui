@@ -1,11 +1,11 @@
-import { FullPerson, PersonalTimeline } from '../../../../server/@types/shared'
+import { Cas1PersonalTimeline, FullPerson } from '@approved-premises/api'
 import Page from '../../page'
 import { ApplicationStatusTag } from '../../../../server/utils/applications/statusTag'
 
 export class ShowPage extends Page {
-  timeline: PersonalTimeline
+  timeline: Cas1PersonalTimeline
 
-  constructor(timeline: PersonalTimeline, person: FullPerson) {
+  constructor(timeline: Cas1PersonalTimeline, person: FullPerson) {
     super(`Application history for ${person.name}`)
     this.timeline = timeline
   }

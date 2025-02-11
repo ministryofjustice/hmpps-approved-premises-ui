@@ -6,8 +6,8 @@ import {
   applicationFactory,
   assessmentFactory,
   cas1SpaceBookingFactory,
+  cas1TimelineEventFactory,
   placementRequestDetailFactory,
-  timelineEventFactory,
 } from '../../testutils/factories'
 import type {
   ApplicationService,
@@ -53,7 +53,7 @@ describe('placementController', () => {
       applicationId: application.id,
       assessmentId: assessment.id,
     })
-    const timeLine = timelineEventFactory.buildList(10)
+    const timeLine = cas1TimelineEventFactory.buildList(10)
     const placement = cas1SpaceBookingFactory.build({
       applicationId: application.id,
       assessmentId: offlineApplication ? undefined : assessment.id,

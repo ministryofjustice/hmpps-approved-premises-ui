@@ -2,7 +2,7 @@ import type {
   Cas1SpaceBooking,
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
-  TimelineEvent,
+  Cas1TimelineEvent,
 } from '@approved-premises/api'
 
 import { PaginatedRequestParams, SortedRequestParams } from '@approved-premises/ui'
@@ -177,7 +177,7 @@ export default {
       },
     }),
 
-  stubSpaceBookingTimeline: (args: { placementId: string; premisesId: string; timeline: Array<TimelineEvent> }) =>
+  stubSpaceBookingTimeline: (args: { placementId: string; premisesId: string; timeline: Array<Cas1TimelineEvent> }) =>
     stubFor({
       request: {
         method: 'GET',

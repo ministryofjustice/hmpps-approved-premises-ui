@@ -63,7 +63,6 @@ import risksFactory, { tierEnvelopeFactory } from './risks'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
-import { applicationTimelineFactory, personalTimelineFactory, timelineEventFactory } from './timeline'
 import userFactory, { userSummaryFactory, userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
@@ -96,6 +95,7 @@ import cas1OutOfServiceBedSummaryFactory from './cas1OutOfServiceBedSummary'
 import cas1OverbookingRangeFactory from './cas1OverbookingRange'
 import spaceSearchStateFactory from './spaceSearchState'
 import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
+import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
 
 export {
   acctAlertFactory,
@@ -131,6 +131,7 @@ export {
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   cas1SpaceBookingDaySummaryFactory,
+  cas1TimelineEventFactory,
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
@@ -186,7 +187,6 @@ export {
   taskFactory,
   taskWrapperFactory,
   tierEnvelopeFactory,
-  timelineEventFactory,
   userFactory,
   userSummaryFactory,
   userDetailsFactory,

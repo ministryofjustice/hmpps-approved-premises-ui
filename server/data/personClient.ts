@@ -3,12 +3,12 @@ import type { Response } from 'express'
 import type {
   ActiveOffence,
   Adjudication,
+  Cas1PersonalTimeline,
   OASysSection,
   OASysSections,
   Person,
   PersonAcctAlert,
   PersonRisks,
-  PersonalTimeline,
   PrisonCaseNote,
 } from '@approved-premises/api'
 
@@ -103,7 +103,7 @@ export default class PersonClient {
     )
   }
 
-  async timeline(crn: string): Promise<PersonalTimeline> {
-    return (await this.restClient.get({ path: paths.people.timeline({ crn }) })) as Promise<PersonalTimeline>
+  async timeline(crn: string): Promise<Cas1PersonalTimeline> {
+    return (await this.restClient.get({ path: paths.people.timeline({ crn }) })) as Promise<Cas1PersonalTimeline>
   }
 }

@@ -3,11 +3,11 @@ import {
   applicationFactory,
   assessmentFactory,
   cas1SpaceBookingFactory,
+  cas1TimelineEventFactory,
   personFactory,
   placementRequestFactory,
   premisesSummaryFactory,
   restrictedPersonFactory,
-  timelineEventFactory,
 } from '../../../../server/testutils/factories'
 
 import { PlacementShowPage } from '../../../pages/manage'
@@ -37,7 +37,7 @@ context('Placements', () => {
         premises,
         person,
       })
-      const timeline = timelineEventFactory.buildList(10)
+      const timeline = cas1TimelineEventFactory.buildList(10)
 
       cy.task('stubSpaceBookingShow', placement)
       cy.task('stubApplicationGet', { application })
@@ -94,6 +94,7 @@ context('Placements', () => {
 
       // When I select the timeline tab
       placementShowPage.clickTab('Timeline')
+
       // Then I should see the timeline for this placement
       placementShowPage.shouldShowApplicationTimeline(
         timeline.map(event => ({
