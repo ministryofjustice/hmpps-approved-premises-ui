@@ -112,4 +112,8 @@ export default class OccupancyFilterPage extends Page {
 
     return Object.values(dates).filter(Boolean)
   }
+
+  shouldShowDateFieldHint(fieldName: string, hint: string) {
+    cy.get(`#${fieldName}-hint`).should('contain', hint)
+  }
 }

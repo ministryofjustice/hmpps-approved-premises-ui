@@ -77,6 +77,16 @@ context('Change Placement', () => {
     )
     changePlacementPage.shouldShowFilters(placement.expectedArrivalDate, 'Up to 12 weeks', selectedCriteria)
 
+    // And I can see the current placement dates in the hints
+    changePlacementPage.shouldShowDateFieldHint(
+      'arrivalDate',
+      `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
+    )
+    changePlacementPage.shouldShowDateFieldHint(
+      'departureDate',
+      `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
+    )
+
     // When I submit the filters with an invalid date
     changePlacementPage.filterAvailability({ newStartDate: '2025-14-45', newDuration: 'Up to 1 week' }, 'criteria')
 
