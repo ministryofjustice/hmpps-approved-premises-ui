@@ -94,12 +94,11 @@ export default class {
 
       let summary: OccupancySummary
       let calendar: Calendar
-
+      const capacityDates = placementDates(searchState.startDate, searchState.durationDays)
       if (!errors.startDate) {
-        const capacityDates = placementDates(searchState.startDate, searchState.durationDays)
         const capacity = await this.premisesService.getCapacity(token, premisesId, {
-          startDate: capacityDates.startDate,
-          endDate: capacityDates.endDate,
+          startDate: searchState.arrivalDate || capacityDates.startDate,
+          endDate: searchState.departureDate || capacityDates.endDate,
         })
         const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
           id,
@@ -118,13 +117,23 @@ export default class {
       }
 
       return res.render('match/placementRequests/occupancyView/view', {
-        pageHeading: `View spaces in ${premises.name}`,
+        pageHeading: `Book placement in ${premises.name}`,
         placementRequest,
         premises,
         ...formValues,
-        ...DateFormats.isoDateToDateInputs(formValues.startDate, 'startDate'),
+        ...DateFormats.isoDateToDateInputs(capacityDates.startDate, 'startDate'),
+        ...DateFormats.isoDateToDateInputs(capacityDates.endDate, 'endDate'),
         ...userInput,
-        durationOptions: durationSelectOptions(formValues.durationDays),
+        duration: DateFormats.formatDuration(
+          {
+            days: DateFormats.differenceInDays(
+              DateFormats.isoToDateObj(capacityDates.endDate),
+              DateFormats.isoToDateObj(capacityDates.startDate),
+            ).number,
+          },
+          ['days'],
+        ),
+        // durationOptions: durationSelectOptions(formValues.durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         summary,

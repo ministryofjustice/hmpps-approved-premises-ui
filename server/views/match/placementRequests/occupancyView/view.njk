@@ -27,19 +27,16 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
+    {{ occupancySummary(summary) }}
+    {% call govukDetails({summaryText: "Placement request information", open: false}) %}
         {{ govukSummaryList(placementRequestInfoSummaryList) }}
     {% endcall %}
 
     <section>
-        <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
-            {% if not errors.startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
-
-        <div class="search-and-filter">
             <form action="{{ currentUrl }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <h3 class="govuk-heading-m">Filters</h3>
+                <h3 class="govuk-heading-m">Booking</h3>
 
                 <div class="search-and-filter__row">
                     {{ govukDateInput({
@@ -47,7 +44,7 @@
                         namePrefix: "startDate",
                         fieldset: {
                             legend: {
-                                text: "Availability start date",
+                                text: "Check-in date",
                                 classes: "govuk-fieldset__legend--s"
                             }
                         },
@@ -55,24 +52,29 @@
                         errorMessage: errors.startDate
                     }) }}
 
-                    {{ govukSelect({
-                        id: 'durationDays',
-                        name: 'durationDays',
-                        label: {
-                            text: 'Length of availability',
-                            classes: 'govuk-label--s'
+                    {{ govukDateInput({
+                        id: "endDate",
+                        namePrefix: "endDate",
+                        fieldset: {
+                            legend: {
+                                text: "Check-out date",
+                                classes: "govuk-fieldset__legend--s"
+                            }
                         },
-                        items: durationOptions
+                        items: dateFieldValues('endDate', errors),
+                        errorMessage: errors.endDate
                     }) }}
+                    <div class="govuk-label">{{ duration }}</div>
+
                 </div>
 
                 <div class="search-and-filter__row">
                     {{ govukCheckboxes({
                         name: "roomCriteria",
-                        classes: "govuk-checkboxes--small govuk-checkboxes--inline",
+                        classes: "govuk-checkboxes--small",
                         fieldset: {
                             legend: {
-                                text: "Select following criteria",
+                                text: "Room requirements",
                                 classes: "govuk-fieldset__legend--s"
                             }
                         },
@@ -82,16 +84,16 @@
 
                 <div class="search-and-filter__row">
                     {{ govukButton({
-                        text: 'Apply filters',
+                        text: 'Update booking settings',
+                        classes: "govuk-button--secondary",
                         preventDoubleClick: true
                     }) }}
                 </div>
             </form>
-        </div>
 
         {% if not errors.startDate %}
 
-            {{ occupancySummary(summary) }}
+
 
             <section id="calendar-key">
                 <h3 class="govuk-heading-m">Key</h3>
@@ -101,10 +103,10 @@
                         Available
                     </li>
                     <li class="calendar__day govuk-tag--yellow">
-                        Available for your criteria
+                        Can be overbooked
                     </li>
                     <li class="calendar__day govuk-tag--red">
-                        Full or overbooked
+                        Not available
                     </li>
                 </ul>
             </section>
