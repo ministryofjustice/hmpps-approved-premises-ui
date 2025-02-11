@@ -15,6 +15,7 @@ import {
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
+import managePaths from '../../../paths/manage'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
 import { createQueryString, makeArrayOfType, pluralize } from '../../../utils/utils'
@@ -220,7 +221,7 @@ export default class {
       const backLink = this.sessionService.getPageBackLink(
         paths.v2Match.placementRequests.search.dayOccupancy.pattern,
         req,
-        [paths.v2Match.placementRequests.search.occupancy.pattern],
+        [paths.v2Match.placementRequests.search.occupancy.pattern, managePaths.premises.placements.changes.new.pattern],
       )
 
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
@@ -229,6 +230,7 @@ export default class {
       if (!searchState) {
         return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
       }
+
       const {
         sortBy = 'personName',
         sortDirection = 'asc',
