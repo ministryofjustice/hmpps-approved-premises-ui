@@ -140,7 +140,7 @@ export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryLi
     summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
     summaryListItem(
-      'Space type',
+      'Room criteria',
       requirementsHtmlString(placement.requirements.essentialCharacteristics, occupancyCriteriaMap),
       'html',
     ),

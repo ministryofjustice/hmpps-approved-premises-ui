@@ -250,7 +250,7 @@ describe('matchUtils', () => {
         { key: { text: 'Approved Premises' }, value: { text: premises.name } },
         { key: { text: 'Address' }, value: { text: `${premises.fullAddress}, ${premises.postcode}` } },
         {
-          key: { text: 'Space type' },
+          key: { text: 'Room criteria' },
           value: {
             html: '<ul class="govuk-list govuk-list--bullet"><li>En-suite bathroom</li><li>Arson offences</li></ul>',
           },

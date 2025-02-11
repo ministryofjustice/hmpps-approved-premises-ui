@@ -190,7 +190,7 @@ describe('placementUtils', () => {
           { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
           { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
           { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
-          { key: { text: 'Space type' }, value: { html: expectedSpaceTypeHtml } },
+          { key: { text: 'Room criteria' }, value: { html: expectedSpaceTypeHtml } },
         ],
       })
     })
