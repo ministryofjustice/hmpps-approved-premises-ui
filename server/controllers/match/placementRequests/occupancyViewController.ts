@@ -225,11 +225,6 @@ export default class {
       )
 
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
-      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
-
-      if (!searchState) {
-        return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
-      }
 
       const {
         sortBy = 'personName',
