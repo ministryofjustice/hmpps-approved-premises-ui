@@ -86,7 +86,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.view()
       await requestHandler(request, response, next)
 
-      const { startDate: requestedArrivalDate, endDate: requestedDepartureDate } = placementDates(
+      const { startDate, endDate } = placementDates(
         placementRequestDetail.expectedArrival,
         placementRequestDetail.duration,
       )
@@ -102,8 +102,8 @@ describe('OccupancyViewController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
-        requestedArrivalDate,
-        requestedDepartureDate,
+        arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
         ...searchState,
         ...DateFormats.isoDateToDateInputs(searchState.startDate, 'startDate'),

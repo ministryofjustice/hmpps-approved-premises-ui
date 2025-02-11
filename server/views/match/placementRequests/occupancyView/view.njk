@@ -137,7 +137,7 @@
                         }
                     },
                     hint: {
-                        text: 'Requested arrival date: ' + formatDate(requestedArrivalDate, { format: 'dateFieldHint' })
+                        text: arrivalDateHint
                     },
                     items: dateFieldValues('arrivalDate', errors),
                     errorMessage: errors.arrivalDate
@@ -153,7 +153,7 @@
                         }
                     },
                     hint: {
-                        text: 'Requested departure date: ' + formatDate(requestedDepartureDate, { format: 'dateFieldHint' })
+                        text: departureDateHint
                     },
                     items: dateFieldValues('departureDate', errors),
                     errorMessage: errors.departureDate

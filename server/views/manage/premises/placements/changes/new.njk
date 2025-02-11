@@ -144,7 +144,7 @@
                         }
                     },
                     hint: {
-                        text: 'Expected arrival date: ' + formatDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })
+                        text: arrivalDateHint
                     },
                     items: dateFieldValues('arrivalDate', errors),
                     errorMessage: errors.arrivalDate
@@ -160,7 +160,7 @@
                         }
                     },
                     hint: {
-                        text: 'Expected departure date: ' + formatDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })
+                        text: departureDateHint
                     },
                     items: dateFieldValues('departureDate', errors),
                     errorMessage: errors.departureDate
