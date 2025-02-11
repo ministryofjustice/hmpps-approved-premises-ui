@@ -77,6 +77,7 @@ export default class {
       }
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const { startDate, endDate } = placementDates(placementRequest.expectedArrival, placementRequest.duration)
       const premises = await this.premisesService.find(token, premisesId)
 
       let summary: OccupancySummary
@@ -107,6 +108,8 @@ export default class {
       return res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest,
+        arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
         ...formValues,
         ...DateFormats.isoDateToDateInputs(formValues.startDate, 'startDate'),

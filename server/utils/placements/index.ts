@@ -136,13 +136,6 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   }
 }
 
-export const placementDatesSummary = (placement: Cas1SpaceBooking): SummaryList => ({
-  rows: [
-    summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
-    summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-  ],
-})
-
 export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
     summaryRow('Approved premises', placement.premises.name),

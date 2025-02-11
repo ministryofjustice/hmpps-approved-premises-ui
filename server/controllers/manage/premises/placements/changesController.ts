@@ -15,7 +15,7 @@ import {
   validateSpaceBooking,
 } from '../../../../utils/match'
 import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
-import { placementDatesSummary, placementOverviewSummary } from '../../../../utils/placements'
+import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
@@ -132,12 +132,13 @@ export default class ChangesController {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
         pageHeading: 'Change placement',
         placement,
+        arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         startDate,
         ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),
         durationDays,
         criteria,
         placementSummary: placementOverviewSummary(placement),
-        placementDatesSummary: placementDatesSummary(placement),
         durationOptions: durationSelectOptions(durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteria),
         summary,

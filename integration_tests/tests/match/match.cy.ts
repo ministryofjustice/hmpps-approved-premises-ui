@@ -34,6 +34,8 @@ import {
 } from '../../../server/utils/match/spaceSearch'
 import { apType } from '../../../server/utils/placementCriteriaUtils'
 import premisesSearchResultSummary from '../../../server/testutils/factories/cas1PremisesSearchResultSummary'
+import { DateFormats } from '../../../server/utils/dateUtils'
+import { placementDates } from '../../../server/utils/match'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -175,6 +177,10 @@ context('Placement Requests', () => {
         licenceExpiryDate,
       }),
     })
+    const { startDate: requestedArrivalDate, endDate: requestedDepartureDate } = placementDates(
+      placementRequest.expectedArrival,
+      placementRequest.duration,
+    )
     const searchState = initialiseSearchState(placementRequest)
     const premiseCapacity = cas1PremiseCapacityFactory.build({
       startDate,
@@ -204,7 +210,16 @@ context('Placement Requests', () => {
     // Then I should see the details of the case I am matching
     occupancyViewPage.shouldShowMatchingDetails(startDate, durationDays, placementRequest)
 
-    return { occupancyViewPage, placementRequest, premiseCapacity, premises, startDate, searchState }
+    return {
+      occupancyViewPage,
+      placementRequest,
+      premiseCapacity,
+      premises,
+      startDate,
+      searchState,
+      requestedArrivalDate,
+      requestedDepartureDate,
+    }
   }
 
   const shouldShowDayDetailsAndReturn = (
@@ -292,11 +307,21 @@ context('Placement Requests', () => {
   })
 
   it('allows me to book a space', () => {
-    const { occupancyViewPage, premises, placementRequest, searchState } =
+    const { occupancyViewPage, premises, placementRequest, searchState, requestedArrivalDate, requestedDepartureDate } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     const arrivalDate = '2024-07-23'
     const departureDate = '2024-08-08'
+
+    // Then I can see the requested dates in the hints
+    occupancyViewPage.shouldShowDateFieldHint(
+      'arrivalDate',
+      `Requested arrival date: ${DateFormats.isoDateToUIDate(requestedArrivalDate, { format: 'dateFieldHint' })}`,
+    )
+    occupancyViewPage.shouldShowDateFieldHint(
+      'departureDate',
+      `Requested departure date: ${DateFormats.isoDateToUIDate(requestedDepartureDate, { format: 'dateFieldHint' })}`,
+    )
 
     // And I fill in the requested arrival and departure dates
     occupancyViewPage.completeForm(arrivalDate, departureDate)
