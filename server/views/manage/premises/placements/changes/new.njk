@@ -129,8 +129,6 @@
         <section>
             <h2 class="govuk-heading-l">Change placement dates</h2>
 
-            {{ govukSummaryList(placementDatesSummary) }}
-
             <form action="{{ currentUrl }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

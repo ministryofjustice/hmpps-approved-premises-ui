@@ -14,7 +14,7 @@ import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import matchPaths from '../../../../paths/match'
 import managePaths from '../../../../paths/manage'
 import adminPaths from '../../../../paths/admin'
-import { placementDatesSummary, placementOverviewSummary } from '../../../../utils/placements'
+import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { durationSelectOptions, occupancyCriteriaMap } from '../../../../utils/match/occupancy'
@@ -79,7 +79,6 @@ describe('changesController', () => {
         pageHeading: 'Change placement',
         placement,
         placementSummary: placementOverviewSummary(placement),
-        placementDatesSummary: placementDatesSummary(placement),
         durationOptions: durationSelectOptions(expectedDuration),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, expectedCriteria),
         startDate: placement.expectedArrivalDate,

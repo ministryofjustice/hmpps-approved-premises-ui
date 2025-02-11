@@ -15,7 +15,7 @@ import {
   validateSpaceBooking,
 } from '../../../../utils/match'
 import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
-import { placementDatesSummary, placementOverviewSummary } from '../../../../utils/placements'
+import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
@@ -137,7 +137,6 @@ export default class ChangesController {
         durationDays,
         criteria,
         placementSummary: placementOverviewSummary(placement),
-        placementDatesSummary: placementDatesSummary(placement),
         durationOptions: durationSelectOptions(durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteria),
         summary,
