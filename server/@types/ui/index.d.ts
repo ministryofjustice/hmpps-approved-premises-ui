@@ -19,7 +19,6 @@ import {
   PlacementApplication,
   PlacementApplicationTask,
   PlacementRequestStatus,
-  PlacementRequestTask,
   ReleaseTypeOption,
   RiskTier,
   RiskTierLevel,
@@ -318,11 +317,7 @@ export interface GroupedApplications {
   submitted: Array<ApplicationSummary>
 }
 
-export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask | PlacementRequestTask
-
-export type GroupedMatchTasks = Record<PlacementRequestStatus, Array<PlacementRequestTask>> & {
-  placementApplications: Array<PlacementApplicationTask>
-}
+export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask
 
 export type OasysImportArrays = Array<OASysQuestion> | Array<OASysSupportingInformationQuestion>
 
