@@ -16,11 +16,12 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
-  PersonalTimeline,
+  Cas1PersonalTimeline,
+  Cas1TimelineEvent,
+  Cas1TimelineEventAssociatedUrl,
+  Cas1TimelineEventType,
+  Cas1TimelineEventUrlType,
   SortDirection,
-  TimelineEvent,
-  TimelineEventAssociatedUrl,
-  TimelineEventType,
   TimelineEventUrlType,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
@@ -245,36 +246,31 @@ const getApplicationType = (application: Application): ApplicationType => {
   }
 }
 
-export const eventTypeTranslations: Record<TimelineEventType, string> = {
-  approved_premises_application_submitted: 'Application submitted',
-  approved_premises_application_assessed: 'Application assessed',
-  approved_premises_application_expired: 'Application expired',
-  approved_premises_assessment_appealed: 'Application appealed',
-  approved_premises_booking_made: 'Placement made',
-  approved_premises_booking_keyworker_assigned: 'Key worker assigned',
-  approved_premises_person_arrived: 'Person arrived',
-  approved_premises_person_not_arrived: 'Person not arrived',
-  approved_premises_person_departed: 'Person departed',
-  approved_premises_booking_not_made: 'Unable to match',
-  approved_premises_booking_cancelled: 'Placement cancelled',
-  approved_premises_booking_changed: 'Placement changed',
-  approved_premises_application_withdrawn: 'Application withdrawn',
-  approved_premises_placement_application_allocated: 'Request for placement allocated',
-  approved_premises_placement_application_withdrawn: 'Request for placement withdrawn',
-  approved_premises_information_request: 'Information request',
-  approved_premises_assessment_allocated: 'Assessment allocated',
-  approved_premises_request_for_placement_created: 'Placement requested',
-  approved_premises_request_for_placement_assessed: 'Request for placement assessed',
+export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
+  application_submitted: 'Application submitted',
+  application_assessed: 'Application assessed',
+  application_expired: 'Application expired',
+  assessment_appealed: 'Application appealed',
+  booking_made: 'Placement made',
+  booking_keyworker_assigned: 'Key worker assigned',
+  person_arrived: 'Person arrived',
+  person_not_arrived: 'Person not arrived',
+  person_departed: 'Person departed',
+  booking_not_made: 'Unable to match',
+  booking_cancelled: 'Placement cancelled',
+  booking_changed: 'Placement changed',
+  application_withdrawn: 'Application withdrawn',
+  placement_application_allocated: 'Request for placement allocated',
+  placement_application_withdrawn: 'Request for placement withdrawn',
+  information_request: 'Information request',
+  assessment_allocated: 'Assessment allocated',
+  request_for_placement_created: 'Placement requested',
+  request_for_placement_assessed: 'Request for placement assessed',
   application_timeline_note: 'Note added',
-  cas3_person_arrived: 'CAS3 person arrived',
-  cas3_person_departed: 'CAS3 person departed',
-  cas2_application_submitted: 'CAS2 application submitted',
-  cas2_note: 'CAS2 note added',
-  cas2_status_update: 'CAS2 status updated',
-  approved_premises_match_request_withdrawn: 'Request for placement withdrawn',
+  match_request_withdrawn: 'Request for placement withdrawn',
 }
 
-const mapApplicationTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
+const mapApplicationTimelineEventsForUi = (timelineEvents: Array<Cas1TimelineEvent>): Array<UiTimelineEvent> => {
   return timelineEvents
     .sort((a, b) => {
       if (b?.occurredAt && a?.occurredAt) {
@@ -304,11 +300,11 @@ const mapApplicationTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>)
     })
 }
 
-const mapTimelineUrlsForUi = (timelineUrls: Array<TimelineEventAssociatedUrl>) => {
+const mapTimelineUrlsForUi = (timelineUrls: Array<Cas1TimelineEventAssociatedUrl>) => {
   return timelineUrls.map(item => ({ url: item.url, type: urlTypeForUi(item.type) }))
 }
 
-const mapPersonalTimelineForUi = (personalTimeline: PersonalTimeline) => {
+const mapPersonalTimelineForUi = (personalTimeline: Cas1PersonalTimeline) => {
   return personalTimeline.applications.map(applicationTimeline => {
     return {
       ...applicationTimeline,
@@ -317,7 +313,7 @@ const mapPersonalTimelineForUi = (personalTimeline: PersonalTimeline) => {
   })
 }
 
-const urlTypeForUi = (type: TimelineEventUrlType) => {
+const urlTypeForUi = (type: Cas1TimelineEventUrlType) => {
   const translations: Record<TimelineEventUrlType, string> = {
     application: 'application',
     assessment: 'assessment',

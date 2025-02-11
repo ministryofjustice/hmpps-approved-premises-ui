@@ -2,8 +2,8 @@ import type { Request, RequestHandler, Response } from 'express'
 import type {
   ApprovedPremisesApplication,
   ApprovedPremisesAssessment,
+  Cas1TimelineEvent,
   PlacementRequestDetail,
-  TimelineEvent,
 } from '@approved-premises/api'
 import {
   ApplicationService,
@@ -46,7 +46,7 @@ export default class PlacementController {
         peoplePaths.timeline.show.pattern,
       ])
       const pageHeading = `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`
-      let timelineEvents: Array<TimelineEvent> = []
+      let timelineEvents: Array<Cas1TimelineEvent> = []
       let application: ApprovedPremisesApplication = null
       let assessment: ApprovedPremisesAssessment = null
       let placementRequestDetail: PlacementRequestDetail = null

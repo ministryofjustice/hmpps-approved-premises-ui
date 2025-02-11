@@ -6,14 +6,14 @@ import {
   applicationFactory,
   applicationSummaryFactory,
   assessmentFactory,
+  cas1TimelineEventFactory,
   documentFactory,
   noteFactory,
   requestForPlacementFactory,
-  timelineEventFactory,
   withdrawableFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
-import describeClient from '../testutils/describeClient'
+import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
 import withdrawablesFactory from '../testutils/factories/withdrawablesFactory'
 
@@ -428,32 +428,6 @@ describeClient('ApplicationClient', provider => {
     })
   })
 
-  describe('timeline', () => {
-    it('calls the timeline endpoint with the application ID', async () => {
-      const applicationId = 'applicationId'
-      const timelineEvents = timelineEventFactory.buildList(1)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for the timeline of an application',
-        withRequest: {
-          method: 'GET',
-          path: paths.applications.timeline({ id: applicationId }),
-          headers: {
-            authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: timelineEvents,
-        },
-      })
-
-      await applicationClient.timeline(applicationId)
-    })
-  })
-
   describe('requestsForPlacment', () => {
     it('calls the requests for placement endpoint with the application ID', async () => {
       const applicationId = 'applicationId'
@@ -531,6 +505,41 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.withdrawablesWithNotes(applicationId)
+    })
+  })
+})
+
+describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
+  let applicationClient: ApplicationClient
+
+  const token = 'test-token'
+
+  beforeEach(() => {
+    applicationClient = new ApplicationClient(token)
+  })
+
+  describe('timeline', () => {
+    it('calls the timeline endpoint with the application ID', async () => {
+      const applicationId = 'applicationId'
+      const timelineEvents = cas1TimelineEventFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for the timeline of an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.timeline({ id: applicationId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: timelineEvents,
+        },
+      })
+
+      await applicationClient.timeline(applicationId)
     })
   })
 })

@@ -1,4 +1,4 @@
-import type { Cas1SpaceBooking, TimelineEvent } from '@approved-premises/api'
+import type { Cas1SpaceBooking, Cas1TimelineEvent } from '@approved-premises/api'
 import PlacementClient from './placementClient'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
@@ -9,8 +9,8 @@ import {
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
+  cas1TimelineEventFactory,
   cas1UpdateSpaceBookingFactory,
-  timelineEventFactory,
 } from '../testutils/factories'
 
 const token = 'TEST_TOKEN'
@@ -50,7 +50,8 @@ describeCas1NamespaceClient('PlacementClient', provider => {
 
   describe('getTimeline', () => {
     it('gets the timeline for a placement', async () => {
-      const timeLine: Array<TimelineEvent> = timelineEventFactory.buildList(10)
+      const timeLine: Array<Cas1TimelineEvent> = cas1TimelineEventFactory.buildList(10)
+
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for placement timeline',

@@ -4,11 +4,11 @@ import Page from '../../pages/page'
 
 import {
   applicationFactory,
+  cas1TimelineEventFactory,
   cruManagementAreaFactory,
   personFactory,
   reallocationFactory,
   taskFactory,
-  timelineEventFactory,
   userFactory,
   userWithWorkloadFactory,
 } from '../../../server/testutils/factories'
@@ -196,7 +196,7 @@ context('Task Allocation', () => {
   })
 
   it('allows me to view timeline for task', function test() {
-    const timeline = timelineEventFactory.buildList(10)
+    const timeline = cas1TimelineEventFactory.buildList(10)
     cy.task('stubTaskAllocationCreate', {
       task: { ...this.task, applicationId: this.application.id, allocatedToStaffMember: this.selectedUser },
       reallocation: reallocationFactory.build({ taskType: this.task.taskType, user: this.selectedUser }),

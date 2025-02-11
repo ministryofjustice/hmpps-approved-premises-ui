@@ -6,10 +6,10 @@ import { setup } from './setup'
 import {
   applicationFactory,
   assessmentFactory,
+  cas1TimelineEventFactory,
   noteFactory,
   placementApplicationFactory,
   requestForPlacementFactory,
-  timelineEventFactory,
   withdrawableFactory,
 } from '../../../server/testutils/factories'
 import { defaultUserId } from '../../mockApis/auth'
@@ -23,7 +23,7 @@ context('show applications', () => {
 
   it('shows a read-only version of the application', function test() {
     // Given I have completed an application
-    const timeline = timelineEventFactory.buildList(10)
+    const timeline = cas1TimelineEventFactory.buildList(10)
 
     const updatedApplication = { ...this.application, status: 'submitted', document: applicationDocument }
     cy.task('stubApplicationGet', { application: updatedApplication })
@@ -256,7 +256,7 @@ context('show applications', () => {
       status: 'submitted',
     }
 
-    const timeline = timelineEventFactory.buildList(10)
+    const timeline = cas1TimelineEventFactory.buildList(10)
     const note = noteFactory.build()
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplications', [application])
@@ -270,7 +270,7 @@ context('show applications', () => {
     showPage.enterNote(note)
     showPage.clickAddNote()
 
-    const noteAsTimelineEvent = timelineEventFactory.build({
+    const noteAsTimelineEvent = cas1TimelineEventFactory.build({
       content: note.note,
       createdBy: note.createdByUser,
       id: 'some-id',

@@ -3,11 +3,11 @@ import type { PersonRisksUI } from '@approved-premises/ui'
 import type {
   ActiveOffence,
   Adjudication,
+  Cas1PersonalTimeline,
   OASysSection,
   OASysSections,
   Person,
   PersonAcctAlert,
-  PersonalTimeline,
   PrisonCaseNote,
 } from '@approved-premises/api'
 import { HttpError } from 'http-errors'
@@ -104,7 +104,7 @@ export default class PersonService {
     return personClient.document(crn, documentId, response)
   }
 
-  async getTimeline(token: string, crn: string): Promise<PersonalTimeline> {
+  async getTimeline(token: string, crn: string): Promise<Cas1PersonalTimeline> {
     const personClient = this.personClientFactory(token)
 
     return personClient.timeline(crn)

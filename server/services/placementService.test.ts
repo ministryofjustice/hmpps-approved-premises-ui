@@ -1,6 +1,6 @@
 import { createMock } from '@golevelup/ts-jest'
 import type { Request } from 'express'
-import type { Cas1SpaceBooking, TimelineEvent } from '@approved-premises/api'
+import type { Cas1SpaceBooking, Cas1TimelineEvent } from '@approved-premises/api'
 import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
 import { Cas1ReferenceDataClient } from '../data'
@@ -11,11 +11,11 @@ import {
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
+  cas1TimelineEventFactory,
   cas1UpdateSpaceBookingFactory,
   departureReasonFactory,
   nonArrivalReasonsFactory,
   referenceDataFactory,
-  timelineEventFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/placementClient')
@@ -57,7 +57,7 @@ describe('PlacementService', () => {
 
   describe('getTimeline', () => {
     it('gets a placement timeline', async () => {
-      const timeLine: Array<TimelineEvent> = timelineEventFactory.buildList(10)
+      const timeLine: Array<Cas1TimelineEvent> = cas1TimelineEventFactory.buildList(10)
 
       placementClient.getTimeline.mockResolvedValue(timeLine)
 

@@ -6,9 +6,9 @@ import type {
   ApplicationTimelineNote,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
+  Cas1TimelineEvent,
   RequestForPlacement,
   SortDirection,
-  TimelineEvent,
 } from '@approved-premises/api'
 import { Withdrawables } from '@approved-premises/api'
 import { ApplicationDashboardSearchOptions } from '@approved-premises/ui'
@@ -21,7 +21,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `/applications`,
+        url: paths.applications.index({}),
       },
       response: {
         status: 200,
@@ -122,7 +122,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `/applications/${args.application.id}`,
+        url: paths.applications.show({ id: args.application.id }),
       },
       response: {
         status: 200,
@@ -137,7 +137,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `/applications/${args.application.id}/documents`,
+        url: paths.applications.documents({ id: args.application.id }),
       },
       response: {
         status: 200,
@@ -149,7 +149,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: `/applications/${args.application.id}/submission`,
+        url: paths.applications.submission({ id: args.application.id }),
       },
       response: {
         status: 200,
@@ -167,7 +167,7 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     }),
-  stubApplicationTimeline: (args: { applicationId: string; timeline: Array<TimelineEvent> }): SuperAgentRequest =>
+  stubApplicationTimeline: (args: { applicationId: string; timeline: Array<Cas1TimelineEvent> }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
@@ -271,21 +271,21 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: `/applications?createWithRisks=true`,
+        url: `${paths.applications.index({})}?createWithRisks=true`,
       })
     ).body.requests,
   verifyApplicationUpdate: async (applicationId: string) =>
     (
       await getMatchingRequests({
         method: 'PUT',
-        url: `/applications/${applicationId}`,
+        url: paths.applications.update({ id: applicationId }),
       })
     ).body.requests,
   verifyApplicationSubmit: async (applicationId: string) =>
     (
       await getMatchingRequests({
         method: 'POST',
-        url: `/applications/${applicationId}/submission`,
+        url: paths.applications.submission({ id: applicationId }),
       })
     ).body.requests,
   verifyApplicationNoteAdded: async (args: { id: string }) =>

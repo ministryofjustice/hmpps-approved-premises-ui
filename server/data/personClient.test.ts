@@ -15,7 +15,7 @@ import {
 } from '../testutils/factories'
 import paths from '../paths/api'
 
-import describeClient from '../testutils/describeClient'
+import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
 
 describeClient('PersonClient', provider => {
@@ -328,6 +328,16 @@ describeClient('PersonClient', provider => {
 
       await personClient.document(crn, documentId, response)
     })
+  })
+})
+
+describeCas1NamespaceClient('cas1PersonClient', provider => {
+  let personClient: PersonClient
+
+  const token = 'test-token'
+
+  beforeEach(() => {
+    personClient = new PersonClient(token)
   })
 
   describe('timeline', () => {

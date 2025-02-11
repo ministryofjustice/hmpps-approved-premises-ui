@@ -5,13 +5,13 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   ActiveOffence,
   Adjudication,
+  Cas1PersonalTimeline,
   Document,
   OASysSection,
   OASysSections,
   Person,
   PersonAcctAlert,
   PersonRisks,
-  PersonalTimeline,
   PrisonCaseNote,
 } from '@approved-premises/api'
 
@@ -78,7 +78,7 @@ export default {
         jsonBody: args.offences,
       },
     }),
-  stubPersonalTimeline: (args: { person: Person; timeline: PersonalTimeline }): SuperAgentRequest =>
+  stubPersonalTimeline: (args: { person: Person; timeline: Cas1PersonalTimeline }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
