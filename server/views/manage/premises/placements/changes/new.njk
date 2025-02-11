@@ -99,7 +99,9 @@
 
         {% if not errors.startDate %}
 
-            {{ occupancySummary(summary) }}
+            <section class="govuk-visually-hidden">
+                {{ occupancySummary(summary) }}
+            </section>
 
             <section id="calendar-key">
                 <h3 class="govuk-heading-m">Key</h3>
