@@ -1,7 +1,7 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
-import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
+import type { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
+import { PlacementRequestService, PremisesService, SessionService, SpaceSearchService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
@@ -17,23 +17,22 @@ import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
-import { createQueryString, makeArrayOfType } from '../../../utils/utils'
+import { createQueryString, makeArrayOfType, pluralize } from '../../../utils/utils'
 import { filterRoomLevelCriteria } from '../../../utils/match/spaceSearch'
-
-export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
-import { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
 import {
+  type OutOfServiceBedColumnField,
+  type PlacementColumnField,
   daySummaryRows,
   generateCharacteristicsSummary,
-  type OutOfServiceBedColumnField,
   outOfServiceBedColumnMap,
   outOfServiceBedTableRows,
-  type PlacementColumnField,
   placementColumnMap,
   placementTableRows,
   tableHeader,
 } from '../../../utils/premises/occupancy'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+
+export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
 interface ViewRequest extends Request {
   params: {
@@ -59,6 +58,7 @@ export default class {
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
     private readonly spaceSearchService: SpaceSearchService,
+    private readonly sessionService: SessionService,
   ) {}
 
   view(): TypedRequestHandler<Request> {
@@ -217,18 +217,13 @@ export default class {
       const { id, premisesId, date } = req.params
       const { criteria = [], excludeSpaceBookingId } = req.query
 
-      const backLink = req.headers.referer
-      // const backLink = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
-      // const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
-      // const premises = await this.premisesService.find(token, premisesId)
-      // const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
-      //   startDate: date,
-      //   excludeSpaceBookingId,
-      // })
-      // const dayCapacity = premisesCapacity.capacity[0]
-      // const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
-      // const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
+      const backLink = this.sessionService.getPageBackLink(
+        paths.v2Match.placementRequests.search.dayOccupancy.pattern,
+        req,
+        [paths.v2Match.placementRequests.search.occupancy.pattern],
+      )
 
+      const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
       const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
 
       if (!searchState) {
@@ -245,41 +240,40 @@ export default class {
       const getDayLink = (targetDate: string) =>
         `${paths.v2Match.placementRequests.search.dayOccupancy({ id, premisesId, date: targetDate })}${createQueryString(req.query, { indices: false, addQueryPrefix: true })}`
 
-      const characteristicsArray = makeArrayOfType<Cas1SpaceBookingCharacteristic>(searchState.roomCriteria)
-
-
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
-      const premises = await this.premisesService.find(token, premisesId )
+      const premises = await this.premisesService.find(token, premisesId)
       const daySummary = await this.premisesService.getDaySummary({
         token,
         premisesId,
         date,
         bookingsSortBy: sortBy,
         bookingsSortDirection: sortDirection,
-        bookingsCriteriaFilter: characteristicsArray,
+        bookingsCriteriaFilter: filteredCriteria,
       })
-      // --- REMOVE THIS const dayCapacity = daySummary.capacity
+      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
+        startDate: date,
+        excludeSpaceBookingId,
+      })
 
-      const status = dayAvailabilityStatus(dayCapacity, characteristicsArray)
+      const dayCapacity = premisesCapacity.capacity[0]
+      const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
+      const formattedDate = DateFormats.isoDateToUIDate(date)
 
       return res.render('manage/premises/occupancy/dayView', {
         backLink,
         pageHeading: DateFormats.isoDateToUIDate(date),
         dayAvailabilityStatus: dayAvailabilityStatusMap[status],
-        daySummaryRows: daySummaryRows(daySummary, characteristicsArray, 'doubleRow'),
+        daySummaryRows: daySummaryRows(daySummary, filteredCriteria, 'doubleRow'),
         placementRequest,
         premises,
-        // date,
-        // status,
-        // availabilitySummaryListItems: dayAvailabilitySummaryListItems(dayCapacity, filteredCriteria),
-        formattedDate: DateFormats.isoDateToUIDate(daySummary.forDate),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
+        placementTableCaption: `${pluralize('resident', daySummary.spaceBookings?.length)} on ${formattedDate}${generateCharacteristicsSummary(filteredCriteria)}`,
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
         placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
+        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}`,
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
-        filterSummary: generateCharacteristicsSummary(characteristicsArray),
       })
     }
   }

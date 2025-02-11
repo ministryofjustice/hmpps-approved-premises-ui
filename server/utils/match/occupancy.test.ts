@@ -1,11 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
-import {
-  dayAvailabilityCount,
-  dayAvailabilityStatus,
-  durationSelectOptions,
-} from './occupancy'
+import { dayAvailabilityCount, dayAvailabilityStatus, durationSelectOptions } from './occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 
 export const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDayFactory.build({

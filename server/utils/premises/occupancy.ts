@@ -254,6 +254,8 @@ export const outOfServiceBedTableRows = (
 
 export const generateCharacteristicsSummary = (characteristicsArray: Array<Cas1SpaceBookingCharacteristic>) => {
   return characteristicsArray?.length
-    ? ` requiring: ${characteristicsArray.map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic].toLowerCase()).join(', ')}`
+    ? ` requiring: ${characteristicsArray
+        .map(characteristic => spaceSearchCriteriaRoomLevelLabels[characteristic].toLowerCase())
+        .join(', ')}`
     : ''
 }

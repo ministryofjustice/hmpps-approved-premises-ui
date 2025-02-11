@@ -159,7 +159,7 @@ describe('apOccupancy utils', () => {
         { key: { text: 'Booked spaces' }, value: { text: '21' } },
         { key: { text: 'Out of service beds' }, value: { text: '2' } },
         { key: { text: 'Available spaces' }, value: { text: '-3' } },
-        { key: { html: `<div class="govuk-!-static-padding-top-5"></div>` },value:{text:''} },
+        { key: { html: `<div class="govuk-!-static-padding-top-5"></div>` }, value: { text: '' } },
         { key: { text: 'En-suite bathroom capacity' }, value: { text: '1' } },
         { key: { text: 'En-suite bathroom available' }, value: { text: '-1' } },
         { key: { text: 'Step-free access capacity' }, value: { text: '1' } },
@@ -179,7 +179,7 @@ describe('apOccupancy utils', () => {
         { key: { text: 'Booked spaces' }, value: { text: '21' } },
         { key: { text: 'Out of service beds' }, value: { text: '2' } },
         { key: { text: 'Available spaces' }, value: { text: '-3' } },
-        { key: { html: `<div class="govuk-!-static-padding-top-5"></div>` },value:{text:''} },
+        { key: { html: `<div class="govuk-!-static-padding-top-5"></div>` }, value: { text: '' } },
         {
           key: { text: 'En-suite bathroom' },
           value: {
@@ -189,7 +189,7 @@ describe('apOccupancy utils', () => {
         {
           key: { text: 'Step-free access' },
           value: {
-            html: `1 bed<span class="govuk-!-padding-right-2"></span><a href="?characteristics=isStepFreeDesignated\"> 1 booking</a> <strong class="govuk-tag govuk-tag--yellow govuk-tag--float-right">Full</strong>`,
+            html: `1 bed<span class="govuk-!-padding-right-2"></span><a href="?characteristics=isStepFreeDesignated"> 1 booking</a> <strong class="govuk-tag govuk-tag--yellow govuk-tag--float-right">Full</strong>`,
           },
         },
       ]

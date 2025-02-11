@@ -32,7 +32,6 @@ export const dayAvailabilityStatus = (
       status = 'overbooked'
     }
   }
-
   return status
 }
 
