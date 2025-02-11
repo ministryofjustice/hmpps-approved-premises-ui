@@ -135,6 +135,8 @@
         <section>
             <h2 class="govuk-heading-l">Change placement dates</h2>
 
+            <p><strong>Room criteria:</strong> {{ selectedCriteria }}</p>
+
             <form action="{{ currentUrl }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

@@ -127,6 +127,8 @@
         <section>
             <h2 class="govuk-heading-l">Book your placement</h2>
 
+            <p><strong>Room criteria:</strong> {{ selectedCriteria }}</p>
+
             <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}"
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

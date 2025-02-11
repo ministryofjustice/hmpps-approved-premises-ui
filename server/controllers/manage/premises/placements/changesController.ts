@@ -132,6 +132,7 @@ export default class ChangesController {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
         pageHeading: 'Change placement',
         placement,
+        selectedCriteria: (criteria || []).map(criterion => occupancyCriteriaMap[criterion]).join(', '),
         arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         startDate,
