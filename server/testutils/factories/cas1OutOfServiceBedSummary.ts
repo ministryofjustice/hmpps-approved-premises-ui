@@ -5,8 +5,8 @@ import {
   Cas1OutOfServiceBedSummary,
   Cas1SpaceBookingCharacteristic,
 } from '@approved-premises/api'
+import { occupancyCriteriaMap } from '../../utils/match/occupancy'
 import { DateFormats } from '../../utils/dateUtils'
-import { spaceSearchCriteriaRoomLevelLabels } from '../../utils/match/spaceSearch'
 
 export default Factory.define<Cas1OutOfServiceBedSummary>(({ sequence }) => {
   const reason: Cas1OutOfServiceBedReason = {
@@ -14,7 +14,7 @@ export default Factory.define<Cas1OutOfServiceBedSummary>(({ sequence }) => {
     name: `${faker.word.verb()} ${faker.word.preposition()} ${faker.word.noun()}`,
     isActive: true,
   }
-  const characteristics = faker.helpers.arrayElements(Object.keys(spaceSearchCriteriaRoomLevelLabels), {
+  const characteristics = faker.helpers.arrayElements(Object.keys(occupancyCriteriaMap), {
     min: 0,
     max: 3,
   }) as Array<Cas1SpaceBookingCharacteristic>

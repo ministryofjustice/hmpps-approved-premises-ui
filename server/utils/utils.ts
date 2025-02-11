@@ -203,3 +203,14 @@ export const filterByType = <T extends string>(
  * @return A sentence with the count of noun(s)
  */
 export const pluralize = (noun: string, count: number): string => `${count} ${noun}${Math.abs(count) > 1 ? 's' : ''}`
+
+/**
+ * Join a list of strings with commas and an "and"
+ * Oxford commas not included!
+ * @param arr array of strings to join
+ * @return a string contaning the joined items
+ */
+export const joinWithCommas = (arr: Array<string>): string => {
+  if (arr.length <= 1) return arr[0] || ''
+  return `${arr.slice(0, arr.length - 1).join(', ')} and ${arr[arr.length - 1]}`
+}

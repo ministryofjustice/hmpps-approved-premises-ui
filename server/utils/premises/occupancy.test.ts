@@ -26,7 +26,6 @@ import { occupancyCriteriaMap } from '../match/occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 import { getTierOrBlank } from '../applications/helpers'
 import { laoSummaryName } from '../personUtils'
-import { spaceSearchCriteriaRoomLevelLabels } from '../match/spaceSearch'
 
 describe('apOccupancy utils', () => {
   describe('occupancyCalendar', () => {
@@ -100,29 +99,25 @@ describe('apOccupancy utils', () => {
 
     it('should generate the text for an premises day with an overbooking on a single characteristic', () => {
       const characteristicAvailability = buildDaySummary(['isSingle'])
-      expect(generateDaySummaryText(characteristicAvailability)).toEqual(
-        'This AP is overbooked on spaces with the following criterion: single room.',
-      )
+      expect(generateDaySummaryText(characteristicAvailability)).toEqual('This AP is overbooked on: single room.')
     })
 
     it('should generate the text for an premises day with an overbooking on multiple characteristics', () => {
       const characteristicAvailability = buildDaySummary(['isSingle', 'isArsonSuitable', 'isWheelchairDesignated'])
       expect(generateDaySummaryText(characteristicAvailability)).toEqual(
-        'This AP is overbooked on spaces with the following criteria: wheelchair accessible, single room, designated arson room.',
+        'This AP is overbooked on: wheelchair accessible, single room and suitable for active arson risk.',
       )
     })
 
     it('should generate the text for an premises day with an overall overbooking but no overbooked characteristics', () => {
       const characteristicAvailability = buildDaySummary([], true)
-      expect(generateDaySummaryText(characteristicAvailability)).toEqual(
-        'This AP has bookings exceeding its available capacity.',
-      )
+      expect(generateDaySummaryText(characteristicAvailability)).toEqual('This AP is overbooked.')
     })
 
     it('should generate the text for an premises day with an overall overbooking and overbooked characteristics', () => {
       const characteristicAvailability = buildDaySummary(['isSingle', 'isArsonSuitable'], true)
       expect(generateDaySummaryText(characteristicAvailability)).toEqual(
-        'This AP has bookings exceeding its available capacity and is overbooked on spaces with the following criteria: single room, designated arson room.',
+        'This AP is overbooked and is overbooked on: single room and suitable for active arson risk.',
       )
     })
 
@@ -195,7 +190,9 @@ describe('apOccupancy utils', () => {
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }))
       expect(row[4].text).toEqual(placement.releaseType)
-      expect(row[5].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list"><li>Arson room</li></ul>`)
+      expect(row[5].html).toMatchStringIgnoringWhitespace(
+        `<ul class="govuk-list govuk-list"><li>Suitable for active arson risk</li></ul>`,
+      )
     }
     it('should generate a list of placement table rows', () => {
       const placements = cas1SpaceBookingDaySummaryFactory.buildList(5, {
@@ -215,7 +212,7 @@ describe('apOccupancy utils', () => {
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(summary.startDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(summary.endDate, { format: 'short' }))
       expect(row[4].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list">
-        ${summary.characteristics.map((characteristic: Cas1SpaceBookingCharacteristic) => `<li>${spaceSearchCriteriaRoomLevelLabels[characteristic]}</li>`).join('')}
+        ${summary.characteristics.map((characteristic: Cas1SpaceBookingCharacteristic) => `<li>${occupancyCriteriaMap[characteristic]}</li>`).join('')}
       </ul>`)
     }
 

@@ -8,9 +8,9 @@ import {
   SpaceSearchRoomCriteria,
   SpaceSearchState,
   spaceSearchCriteriaApLevelLabels,
-  spaceSearchCriteriaRoomLevelLabels,
 } from '../../utils/match/spaceSearch'
 import { DateFormats } from '../../utils/dateUtils'
+import { occupancyCriteriaMap } from '../../utils/match/occupancy'
 
 export default Factory.define<SpaceSearchState>(() => {
   const arrivalDate = faker.date.soon()
@@ -24,9 +24,7 @@ export default Factory.define<SpaceSearchState>(() => {
     apCriteria: faker.helpers.arrayElements(
       Object.keys(spaceSearchCriteriaApLevelLabels),
     ) as Array<SpaceSearchApCriteria>,
-    roomCriteria: faker.helpers.arrayElements(
-      Object.keys(spaceSearchCriteriaRoomLevelLabels),
-    ) as Array<SpaceSearchRoomCriteria>,
+    roomCriteria: faker.helpers.arrayElements(Object.keys(occupancyCriteriaMap)) as Array<SpaceSearchRoomCriteria>,
     startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
     durationDays,
     arrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),

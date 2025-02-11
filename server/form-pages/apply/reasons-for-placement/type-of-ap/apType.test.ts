@@ -68,7 +68,7 @@ describe('SelectApType', () => {
         expect(items).toEqual([
           {
             value: 'normal',
-            text: 'Standard AP',
+            text: 'Standard (all AP types)',
             checked: false,
           },
           {
@@ -113,7 +113,7 @@ describe('SelectApType', () => {
       const page = new SelectApType({ type: 'standard' }, applicationMensEstate)
 
       expect(page.response()).toEqual({
-        [page.title]: 'Standard AP',
+        [page.title]: 'Standard (all AP types)',
       })
     })
   })
