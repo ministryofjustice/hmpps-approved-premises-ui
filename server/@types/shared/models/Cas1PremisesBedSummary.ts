@@ -2,6 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Task } from './Task';
-export type BookingAppealTask = Task;
+export type Cas1PremisesBedSummary = {
+    id: string;
+    roomName: string;
+    bedName: string;
+};
 

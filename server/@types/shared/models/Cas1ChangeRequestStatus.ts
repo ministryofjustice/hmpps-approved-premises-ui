@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type PlacementRequestTaskOutcome = 'matched' | 'unable_to_match';
+export type Cas1ChangeRequestStatus = 'resolved' | 'unresolved';
