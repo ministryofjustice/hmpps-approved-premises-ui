@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - main
-      - 'feature-test**'
-      - 'feature-dev**'
+  pull_request:
+    branches:
+      - 'feature-test**' # This will run the pipeline on any branch with a PR that starts with 'feature-test'
+      - 'feature-dev**' # This will run the pipeline on any branch with a PR that starts with 'feature-test'
   workflow_dispatch:
     inputs:
       environment:
@@ -60,12 +62,12 @@ permissions:
 
 jobs:
   checks:
-    uses: ./.github/workflows/ci.yml@main
+    uses: ./.github/workflows/ci.yml
 
   build:
     name: Build docker image from hmpps-github-actions
     needs: [checks]
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v1 # WORKFLOW_VERSION
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v1
     with:
       docker_registry: ${{ inputs.docker_registry || 'ghcr.io' }}
       registry_org: ${{ inputs.registry_org || 'ministryofjustice' }}
@@ -78,7 +80,7 @@ jobs:
     needs:
       - build
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test')
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1
     secrets: inherit
     with:
       environment: 'test'
@@ -89,7 +91,7 @@ jobs:
     needs:
       - build
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev')
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1
     secrets: inherit
     with:
       environment: 'development'
