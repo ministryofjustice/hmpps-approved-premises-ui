@@ -1,12 +1,15 @@
 name: Pipeline [test -> build -> deploy]
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
     branches:
       - main
   pull_request:
     branches:
-      - main  # run on PRs targeting main
+      - main  
   workflow_dispatch:
     inputs:
       environment:
@@ -60,12 +63,9 @@ permissions:
   packages: write
 
 jobs:
-  checks:
-    uses: ./.github/workflows/ci.yml
-
   build:
     name: Build docker image from hmpps-github-actions
-    needs: [checks]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v1
     with:
       docker_registry: ${{ inputs.docker_registry || 'ghcr.io' }}
