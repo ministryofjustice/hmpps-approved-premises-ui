@@ -5,7 +5,7 @@ import { PlacementRequestService, PremisesService, SessionService, SpaceSearchSe
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
-import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, daysToWeeksAndDays } from '../../../utils/dateUtils'
 import {
   dayAvailabilityStatus,
   dayAvailabilityStatusMap,
@@ -77,7 +77,9 @@ export default class {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       searchState.arrivalDate = searchState.arrivalDate || searchState.startDate
-      searchState.departureDate = searchState.departureDate || DateFormats.dateObjToIsoDate(addDays(DateFormats.isoToDateObj(searchState.startDate),searchState.durationDays))
+      searchState.departureDate =
+        searchState.departureDate ||
+        DateFormats.dateObjToIsoDate(addDays(DateFormats.isoToDateObj(searchState.startDate), searchState.durationDays))
       const arrivalDateInput = searchState.arrivalDate
         ? DateFormats.isoDateToDateInputs(searchState.arrivalDate, 'arrivalDate')
         : {}
@@ -100,8 +102,8 @@ export default class {
       const capacityDates = placementDates(searchState.startDate, searchState.durationDays)
       if (!errors.startDate) {
         const capacity = await this.premisesService.getCapacity(token, premisesId, {
-          startDate: searchState.arrivalDate || capacityDates.startDate,
-          endDate: searchState.departureDate || capacityDates.endDate,
+          startDate: searchState.arrivalDate,
+          endDate: searchState.departureDate,
         })
         const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
           id,
@@ -118,15 +120,14 @@ export default class {
         summary = occupancySummary(capacity.capacity, searchState.roomCriteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, searchState.roomCriteria)
       }
-
       const duration = DateFormats.formatDuration(
-        {
-          days: DateFormats.differenceInDays(
-            DateFormats.isoToDateObj(capacityDates.endDate),
-            DateFormats.isoToDateObj(capacityDates.startDate),
+        daysToWeeksAndDays(
+          DateFormats.differenceInDays(
+            DateFormats.isoToDateObj(searchState.departureDate),
+            DateFormats.isoToDateObj(searchState.arrivalDate),
           ).number,
-        },
-        ['days'],
+        ),
+        ['weeks', 'days'],
       )
 
       return res.render('match/placementRequests/occupancyView/view', {
@@ -137,7 +138,7 @@ export default class {
         ...DateFormats.isoDateToDateInputs(capacityDates.startDate, 'startDate'),
         ...DateFormats.isoDateToDateInputs(capacityDates.endDate, 'endDate'),
         ...userInput,
-        durationSummary: {rows:[{ key: { text: 'duration' }, value: { text: duration } }]},
+        durationSummary: { rows: [{ key: { text: 'Duration' }, value: { text: duration } }] },
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         summary,
