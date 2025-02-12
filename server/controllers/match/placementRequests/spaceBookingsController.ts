@@ -81,10 +81,10 @@ export default class {
       }
 
       try {
-        await this.spaceSearchService.createSpaceBooking(token, id, newSpaceBooking)
+        const placement = await this.spaceSearchService.createSpaceBooking(token, id, newSpaceBooking)
         req.flash(
           'success',
-          'You have now booked a place in this AP for this person. An email will be sent to the AP, to inform them of the booking.',
+          `You have now booked a place for ${placement.person.crn} at ${placement.premises.name}. A confirmation email will be sent to the AP and probation practitioner.`,
         )
         this.spaceSearchService.removeSpaceSearchState(id, req.session)
 
