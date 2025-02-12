@@ -5,6 +5,7 @@ import {
   camelCase,
   convertToTitleCase,
   initialiseName,
+  joinWithCommas,
   linebreaksToParagraphs,
   linkTo,
   makeArrayOfType,
@@ -336,5 +337,16 @@ describe('pluralize', () => {
     ['dog', 'dogs', -2],
   ])('pluralises %s to %s when count is %s', (noun: string, expected: string, count: number) => {
     expect(pluralize(noun, count)).toEqual(`${count} ${expected}`)
+  })
+})
+
+describe('joinWithCommas', () => {
+  it.each([
+    [['one'], 'one'],
+    [['one', 'two'], 'one and two'],
+    [['one', 'two', 'three', 'four'], 'one, two, three and four'],
+    [[], ''],
+  ])('joins %s giving %s', (list: Array<string>, expected: string) => {
+    expect(joinWithCommas(list)).toEqual(expected)
   })
 })

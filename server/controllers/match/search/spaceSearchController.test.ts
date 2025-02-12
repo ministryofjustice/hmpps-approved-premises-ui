@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
 import SpaceSearchController from './spaceSearchController'
 import {
   placementRequestDetailFactory,
@@ -17,7 +18,6 @@ import {
   checkBoxesForCriteria,
   initialiseSearchState,
   spaceSearchCriteriaApLevelLabels,
-  spaceSearchCriteriaRoomLevelLabels,
 } from '../../../utils/match/spaceSearch'
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
@@ -79,12 +79,7 @@ describe('spaceSearchController', () => {
             spaceSearchCriteriaApLevelLabels,
             searchState.apCriteria,
           ),
-          checkBoxesForCriteria(
-            'Room requirements',
-            'roomCriteria',
-            spaceSearchCriteriaRoomLevelLabels,
-            searchState.roomCriteria,
-          ),
+          checkBoxesForCriteria('Room requirements', 'roomCriteria', occupancyCriteriaMap, searchState.roomCriteria),
         ],
         errors: {},
         errorSummary: [],

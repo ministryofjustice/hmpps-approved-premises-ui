@@ -155,13 +155,13 @@ export const completeBasicInformationTask = async (
 }
 
 export const completeTypeOfApTask = async (page: Page) => {
-  const typeOfAp = 'Standard AP'
+  const typeOfAp = 'Standard (all AP types)'
 
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Type of AP required')
 
   const typeOfApPage = await ApplyPage.initialize(page, `Which type of AP does the person require?`)
-  await typeOfApPage.checkRadio('Standard AP')
+  await typeOfApPage.checkRadio('Standard (all AP types)')
   await typeOfApPage.clickSave()
 
   return typeOfAp

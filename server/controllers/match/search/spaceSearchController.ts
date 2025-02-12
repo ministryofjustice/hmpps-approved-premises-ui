@@ -11,10 +11,10 @@ import {
   checkBoxesForCriteria,
   initialiseSearchState,
   spaceSearchCriteriaApLevelLabels,
-  spaceSearchCriteriaRoomLevelLabels,
 } from '../../../utils/match/spaceSearch'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
+import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
 
 export default class SpaceSearchController {
   constructor(
@@ -68,12 +68,7 @@ export default class SpaceSearchController {
             spaceSearchCriteriaApLevelLabels,
             formValues.apCriteria,
           ),
-          checkBoxesForCriteria(
-            'Room requirements',
-            'roomCriteria',
-            spaceSearchCriteriaRoomLevelLabels,
-            formValues.roomCriteria,
-          ),
+          checkBoxesForCriteria('Room requirements', 'roomCriteria', occupancyCriteriaMap, formValues.roomCriteria),
         ],
       })
     }

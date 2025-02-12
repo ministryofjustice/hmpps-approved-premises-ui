@@ -95,9 +95,9 @@ export const durationSelectOptions = (duration?: number): Array<SelectOption> =>
 
 export const occupancyCriteriaMap: Record<Cas1SpaceBookingCharacteristic, string> = {
   isWheelchairDesignated: 'Wheelchair accessible',
-  isSingle: 'Single room',
   isStepFreeDesignated: 'Step-free',
   hasEnSuite: 'En-suite',
-  isSuitedForSexOffenders: 'Suitable for sex offenders',
-  isArsonSuitable: 'Designated arson room',
+  isSingle: 'Single room',
+  isArsonSuitable: 'Suitable for active arson risk',
+  isSuitedForSexOffenders: 'Suitable for sexual offence risk',
 }

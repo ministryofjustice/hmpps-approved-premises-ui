@@ -13,7 +13,7 @@ import {
   spaceSearchStateFactory,
 } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
-import { occupancySummary } from '../../../utils/match'
+import { occupancySummary, placementDates } from '../../../utils/match'
 import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
@@ -86,6 +86,11 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.view()
       await requestHandler(request, response, next)
 
+      const { startDate, endDate } = placementDates(
+        placementRequestDetail.expectedArrival,
+        placementRequestDetail.duration,
+      )
+
       expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
@@ -97,6 +102,8 @@ describe('OccupancyViewController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
+        arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
         ...searchState,
         ...DateFormats.isoDateToDateInputs(searchState.startDate, 'startDate'),

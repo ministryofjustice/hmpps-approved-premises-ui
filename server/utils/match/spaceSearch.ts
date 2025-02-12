@@ -14,31 +14,23 @@ import {
   placementCriteriaLabels,
 } from '../placementCriteriaUtils'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
+import { occupancyCriteriaMap } from './occupancy'
 
 export const spaceSearchCriteriaApLevelLabels = {
   acceptsSexOffenders: 'Sexual offences against adults',
   acceptsChildSexOffenders: 'Sexual offences against children',
-  acceptsNonSexualChildOffenders: 'Non sexual offences against children',
+  acceptsNonSexualChildOffenders: 'Non-sexual offences against children',
   isSuitableForVulnerable: 'Vulnerable to exploitation (removes ESAP APs)',
   isCatered: 'Catered',
 } as const
 
 export type SpaceSearchApCriteria = keyof typeof spaceSearchCriteriaApLevelLabels
 
-export const spaceSearchCriteriaRoomLevelLabels = {
-  isWheelchairDesignated: 'Wheelchair',
-  isStepFreeDesignated: 'Step-free',
-  hasEnSuite: 'En-suite',
-  isSingle: 'Single room',
-  isArsonSuitable: 'Arson room',
-  isSuitedForSexOffenders: 'Suitable for sexual offences',
-} as const
-
-export type SpaceSearchRoomCriteria = keyof typeof spaceSearchCriteriaRoomLevelLabels
+export type SpaceSearchRoomCriteria = keyof typeof occupancyCriteriaMap
 
 export const spaceSearchResultsCharacteristicsLabels = {
   ...spaceSearchCriteriaApLevelLabels,
-  ...spaceSearchCriteriaRoomLevelLabels,
+  ...occupancyCriteriaMap,
   isSuitableForVulnerable: placementCriteriaLabels.isSuitableForVulnerable,
 } as const
 
@@ -72,7 +64,7 @@ export const filterApLevelCriteria = (criteria: Array<PlacementCriteria | Cas1Sp
   Object.keys(filterByType(criteria, spaceSearchCriteriaApLevelLabels)) as Array<SpaceSearchApCriteria>
 
 export const filterRoomLevelCriteria = (criteria: Array<PlacementCriteria | Cas1SpaceCharacteristic>) =>
-  Object.keys(filterByType(criteria, spaceSearchCriteriaRoomLevelLabels)) as Array<SpaceSearchRoomCriteria>
+  Object.keys(filterByType(criteria, occupancyCriteriaMap)) as Array<SpaceSearchRoomCriteria>
 
 export const spaceSearchStateToApiPayload = (state: SpaceSearchState): Cas1SpaceSearchParameters => {
   return {

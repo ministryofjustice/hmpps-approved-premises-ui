@@ -1,13 +1,13 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
 import { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummary } from '@approved-premises/api'
+import { occupancyCriteriaMap } from '../../utils/match/occupancy'
 import { fullPersonSummaryFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
-import { spaceSearchCriteriaRoomLevelLabels } from '../../utils/match/spaceSearch'
 
 export default Factory.define<Cas1SpaceBookingDaySummary>(() => {
   const essentialCharacteristics = faker.helpers.arrayElements(
-    Object.keys(spaceSearchCriteriaRoomLevelLabels),
+    Object.keys(occupancyCriteriaMap),
   ) as Array<Cas1SpaceBookingCharacteristic>
   return {
     id: faker.string.uuid(),

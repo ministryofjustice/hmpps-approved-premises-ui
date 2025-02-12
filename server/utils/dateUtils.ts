@@ -37,6 +37,7 @@ const uiDateFormats = {
   short: 'd MMM y',
   long: 'ccc d MMM y',
   longNoYear: 'ccc d MMM',
+  dateFieldHint: 'd M y',
 }
 type UiDateFormat = keyof typeof uiDateFormats
 

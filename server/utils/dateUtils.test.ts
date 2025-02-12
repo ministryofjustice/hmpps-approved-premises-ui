@@ -77,6 +77,13 @@ describe('DateFormats', () => {
       expect(DateFormats.isoDateToUIDate(date, { format: 'longNoYear' })).toEqual(expectedUiDate)
     })
 
+    it.each([
+      ['2022-11-09T00:00:00.000Z', '9 11 2022'],
+      ['2022-04-11T00:00:00.000Z', '11 4 2022'],
+    ])('converts ISO8601 date %s to a date field hint format date', (date, expectedUiDate) => {
+      expect(DateFormats.isoDateToUIDate(date, { format: 'dateFieldHint' })).toEqual(expectedUiDate)
+    })
+
     it('raises an error if the date is not a valid ISO8601 date string', () => {
       const date = '23/11/2022'
 

@@ -129,8 +129,6 @@
         <section>
             <h2 class="govuk-heading-l">Change placement dates</h2>
 
-            {{ govukSummaryList(placementDatesSummary) }}
-
             <form action="{{ currentUrl }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -146,7 +144,7 @@
                         }
                     },
                     hint: {
-                        text: "For example, 17 5 2024"
+                        text: arrivalDateHint
                     },
                     items: dateFieldValues('arrivalDate', errors),
                     errorMessage: errors.arrivalDate
@@ -162,7 +160,7 @@
                         }
                     },
                     hint: {
-                        text: "For example, 17 5 2024"
+                        text: departureDateHint
                     },
                     items: dateFieldValues('departureDate', errors),
                     errorMessage: errors.departureDate

@@ -148,7 +148,7 @@ export const addressRow = (spaceSearchResult: SpaceSearchResult) =>
 
 export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
   return {
-    key: { text: 'Suitable for' },
+    key: { text: 'Criteria' },
     value: {
       html: requirementsHtmlString(spaceSearchResult.premises.characteristics, spaceSearchResultsCharacteristicsLabels),
     },
