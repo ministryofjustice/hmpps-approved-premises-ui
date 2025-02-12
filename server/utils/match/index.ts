@@ -43,7 +43,7 @@ export const spaceBookingConfirmationSummaryListRows = (
   return [
     summaryListItem('Approved Premises', premises.name),
     summaryListItem('Address', premisesAddress(premises)),
-    summaryListItem('Space type', requirementsHtmlString(criteria), 'html'),
+    summaryListItem('Room criteria', requirementsHtmlString(criteria), 'html'),
     summaryListItem('Arrival date', DateFormats.isoDateToUIDate(arrivalDate)),
     summaryListItem('Departure date', DateFormats.isoDateToUIDate(departureDate)),
     summaryListItem(

@@ -78,6 +78,7 @@ describe('changesController', () => {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
         pageHeading: 'Change placement',
         placement,
+        selectedCriteria: expectedCriteria.map(criterion => occupancyCriteriaMap[criterion]).join(', '),
         arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         placementSummary: placementOverviewSummary(placement),

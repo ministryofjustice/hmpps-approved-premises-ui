@@ -72,10 +72,12 @@ context('Change Placement', () => {
     changePlacementPage.shouldShowPlacementOverview()
 
     // And I should see the filter form with default populated values from the placement
-    const selectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics).map(
-      criterion => occupancyCriteriaMap[criterion],
-    )
-    changePlacementPage.shouldShowFilters(placement.expectedArrivalDate, 'Up to 12 weeks', selectedCriteria)
+    const selectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
+    const selectedCriteriaLabels = selectedCriteria.map(criterion => occupancyCriteriaMap[criterion])
+    changePlacementPage.shouldShowFilters(placement.expectedArrivalDate, 'Up to 12 weeks', selectedCriteriaLabels)
+
+    // And I can see the currently selected room criteria
+    changePlacementPage.shouldShowSelectedCriteria(selectedCriteria)
 
     // And I can see the current placement dates in the hints
     changePlacementPage.shouldShowDateFieldHint(
@@ -96,10 +98,12 @@ context('Change Placement', () => {
     })
 
     // When I update the filters with valid selections
+    const criteria = ['isWheelchairDesignated', 'isStepFreeDesignated']
+    const newCriteriaLabels = criteria.map(criterion => occupancyCriteriaMap[criterion])
     const newFilters = {
       newStartDate: placement.expectedArrivalDate,
       newDuration: 'Up to 12 weeks',
-      newCriteria: ['Wheelchair accessible', 'Step-free'],
+      newCriteria: newCriteriaLabels,
     }
     changePlacementPage.filterAvailability(newFilters, 'criteria')
 
@@ -119,7 +123,7 @@ context('Change Placement', () => {
     // When I submit valid updated dates for the booking
     const arrivalDate = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 2))
     const departureDate = DateFormats.dateObjToIsoDate(addDays(expectedDepartureDate, 2))
-    const criteria = ['isWheelchairDesignated', 'isStepFreeDesignated']
+
     changePlacementPage.completeForm(arrivalDate, departureDate)
     changePlacementPage.clickContinue()
 

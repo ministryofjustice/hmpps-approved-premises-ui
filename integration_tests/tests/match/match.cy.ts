@@ -304,6 +304,9 @@ context('Placement Requests', () => {
 
     // Then I should see the filter form with updated values
     occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteria)
+
+    // I can see the currently selected room criteria
+    occupancyViewPage.shouldShowSelectedCriteria(newCriteria as Array<Cas1SpaceBookingCharacteristic>)
   })
 
   it('allows me to book a space', () => {
@@ -313,7 +316,10 @@ context('Placement Requests', () => {
     const arrivalDate = '2024-07-23'
     const departureDate = '2024-08-08'
 
-    // Then I can see the requested dates in the hints
+    // Then I can see the currently selected room criteria
+    occupancyViewPage.shouldShowSelectedCriteria(searchState.roomCriteria)
+
+    // And I can see the requested dates in the hints
     occupancyViewPage.shouldShowDateFieldHint(
       'arrivalDate',
       `Requested arrival date: ${DateFormats.isoDateToUIDate(requestedArrivalDate, { format: 'dateFieldHint' })}`,

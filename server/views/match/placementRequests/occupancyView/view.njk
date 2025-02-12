@@ -99,16 +99,22 @@
                 <h3 class="govuk-heading-m">Key</h3>
 
                 <ul class="calendar__month govuk-list">
-                    <li class="calendar__day">
+                    <li class="calendar__day govuk-tag--green">
                         Available
                     </li>
-                    <li class="calendar__day govuk-tag--yellow">
-                        Available for your criteria
+                    <li class="calendar__day govuk-tag--yellow" aria-describedby="calendar-possibly-available">
+                        Possibly available <span aria-hidden="true">*</span>
                     </li>
                     <li class="calendar__day govuk-tag--red">
                         Full or overbooked
                     </li>
                 </ul>
+
+                <p id="calendar-possibly-available">
+                    <span aria-hidden="true">* Possibly available.</span>
+                    A room matching your criteria is currently booked for someone that does not require it. Check before
+                    booking.
+                </p>
             </section>
 
             <section aria-describedby="calendar-key">
@@ -120,6 +126,8 @@
     {% if not errors.startDate %}
         <section>
             <h2 class="govuk-heading-l">Book your placement</h2>
+
+            <p><strong>Room criteria:</strong> {{ selectedCriteria }}</p>
 
             <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}"
                   method="post">

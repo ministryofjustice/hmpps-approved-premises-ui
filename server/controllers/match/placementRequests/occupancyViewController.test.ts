@@ -102,6 +102,7 @@ describe('OccupancyViewController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
+        selectedCriteria: searchState.roomCriteria.map(criterion => occupancyCriteriaMap[criterion]).join(', '),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
