@@ -333,6 +333,7 @@ describe('pluralize', () => {
   it.each([
     ['dog', 'dogs', 2],
     ['dog', 'dog', 1],
+    ['dog', 'dogs', 0],
     ['dog', 'dogs', -2],
   ])('pluralises %s to %s when count is %s', (noun: string, expected: string, count: number) => {
     expect(pluralize(noun, count)).toEqual(`${count} ${expected}`)

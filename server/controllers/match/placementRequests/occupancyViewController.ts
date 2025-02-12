@@ -32,6 +32,7 @@ import {
   tableHeader,
 } from '../../../utils/premises/occupancy'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+import { addDays } from 'date-fns'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -75,6 +76,8 @@ export default class {
 
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
+      searchState.arrivalDate = searchState.arrivalDate || searchState.startDate
+      searchState.departureDate = searchState.departureDate || DateFormats.dateObjToIsoDate(addDays(DateFormats.isoToDateObj(searchState.startDate),searchState.durationDays))
       const arrivalDateInput = searchState.arrivalDate
         ? DateFormats.isoDateToDateInputs(searchState.arrivalDate, 'arrivalDate')
         : {}
@@ -116,6 +119,16 @@ export default class {
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, searchState.roomCriteria)
       }
 
+      const duration = DateFormats.formatDuration(
+        {
+          days: DateFormats.differenceInDays(
+            DateFormats.isoToDateObj(capacityDates.endDate),
+            DateFormats.isoToDateObj(capacityDates.startDate),
+          ).number,
+        },
+        ['days'],
+      )
+
       return res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `Book placement in ${premises.name}`,
         placementRequest,
@@ -124,16 +137,7 @@ export default class {
         ...DateFormats.isoDateToDateInputs(capacityDates.startDate, 'startDate'),
         ...DateFormats.isoDateToDateInputs(capacityDates.endDate, 'endDate'),
         ...userInput,
-        duration: DateFormats.formatDuration(
-          {
-            days: DateFormats.differenceInDays(
-              DateFormats.isoToDateObj(capacityDates.endDate),
-              DateFormats.isoToDateObj(capacityDates.startDate),
-            ).number,
-          },
-          ['days'],
-        ),
-        // durationOptions: durationSelectOptions(formValues.durationDays),
+        durationSummary: {rows:[{ key: { text: 'duration' }, value: { text: duration } }]},
         criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         summary,
@@ -148,25 +152,29 @@ export default class {
     return async (req: ViewRequest, res: Response) => {
       const { id, premisesId } = req.params
       const occupancyUrl = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
-
+      const ARRIVAL = 'arrivalDate'
+      const DEPARTURE = 'departureDate'
       try {
-        const { roomCriteria = [], durationDays, ...startDateInput } = req.body
+        const { roomCriteria = [], ...dateInputs } = req.body
 
-        if (dateIsBlank(startDateInput, 'startDate') || !dateAndTimeInputsAreValidDates(startDateInput, 'startDate')) {
-          throw new ValidationError({
-            startDate: 'Enter a valid date',
-          })
+        const errors = validateSpaceBooking(dateInputs)
+        if (Object.keys(errors).length) {
+          throw new ValidationError(errors)
         }
 
-        const { startDate } = DateFormats.dateAndTimeInputsToIsoString(
-          startDateInput as ObjectWithDateParts<'startDate'>,
-          'startDate',
+        const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(
+          dateInputs as ObjectWithDateParts<'arrivalDate'>,
+          ARRIVAL,
+        )
+        const { departureDate } = DateFormats.dateAndTimeInputsToIsoString(
+          dateInputs as ObjectWithDateParts<'departureDate'>,
+          DEPARTURE,
         )
 
         this.spaceSearchService.setSpaceSearchState(id, req.session, {
           roomCriteria,
-          startDate,
-          durationDays: Number(durationDays),
+          arrivalDate,
+          departureDate,
         })
 
         return req.session.save(() => {
@@ -184,20 +192,14 @@ export default class {
       const { body } = req
 
       try {
-        const errors = validateSpaceBooking(body)
+        // const errors = validateSpaceBooking(body)
+        //
+        // if (Object.keys(errors).length) {
+        //   throw new ValidationError(errors)
+        // }
 
-        if (Object.keys(errors).length) {
-          throw new ValidationError(errors)
-        }
-
-        const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(
-          body as ObjectWithDateParts<'arrivalDate'>,
-          'arrivalDate',
-        )
-        const { departureDate } = DateFormats.dateAndTimeInputsToIsoString(
-          body as ObjectWithDateParts<'departureDate'>,
-          'departureDate',
-        )
+        // TODO Validation of arrival and departure dates
+        const { arrivalDate, departureDate } = body
 
         this.spaceSearchService.setSpaceSearchState(id, req.session, {
           arrivalDate,

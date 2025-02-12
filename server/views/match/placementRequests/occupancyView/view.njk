@@ -33,68 +33,61 @@
     {% endcall %}
 
     <section>
-            <form action="{{ currentUrl }}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <form action="{{ currentUrl }}" method="post">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <h3 class="govuk-heading-m">Booking</h3>
+            <h3 class="govuk-heading-m">Confirm booking requirements</h3>
 
-                <div class="search-and-filter__row">
-                    {{ govukDateInput({
-                        id: "startDate",
-                        namePrefix: "startDate",
-                        fieldset: {
-                            legend: {
-                                text: "Check-in date",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        items: dateFieldValues('startDate', errors),
-                        errorMessage: errors.startDate
-                    }) }}
+            {{ govukDateInput({
+                id: "arrivalDate",
+                namePrefix: "arrivalDate",
+                fieldset: {
+                    legend: {
+                        text: "Check-in date",
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                items: dateFieldValues('arrivalDate', errors),
+                errorMessage: errors.arrivalDate
+            }) }}
 
-                    {{ govukDateInput({
-                        id: "endDate",
-                        namePrefix: "endDate",
-                        fieldset: {
-                            legend: {
-                                text: "Check-out date",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        items: dateFieldValues('endDate', errors),
-                        errorMessage: errors.endDate
-                    }) }}
-                    <div class="govuk-label">{{ duration }}</div>
+            {{ govukDateInput({
+                id: "departureDate",
+                namePrefix: "departureDate",
+                fieldset: {
+                    legend: {
+                        text: "Check-out date",
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                items: dateFieldValues('departureDate', errors),
+                errorMessage: errors.departureDate
+            }) }}
 
-                </div>
+            {{ govukSummaryList(durationSummary) }}
 
-                <div class="search-and-filter__row">
-                    {{ govukCheckboxes({
-                        name: "roomCriteria",
-                        classes: "govuk-checkboxes--small",
-                        fieldset: {
-                            legend: {
-                                text: "Room requirements",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        items: criteriaOptions
-                    }) }}
-                </div>
+            {{ govukCheckboxes({
+                name: "roomCriteria",
+                classes: "govuk-checkboxes--small",
+                fieldset: {
+                    legend: {
+                        text: "Room requirements",
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                items: criteriaOptions
+            }) }}
 
-                <div class="search-and-filter__row">
-                    {{ govukButton({
-                        text: 'Update booking settings',
-                        classes: "govuk-button--secondary",
-                        preventDoubleClick: true
-                    }) }}
-                </div>
-            </form>
+
+            {{ govukButton({
+                text: 'Update booking requirements',
+                classes: "govuk-button--secondary",
+                preventDoubleClick: true
+            }) }}
+        </form>
 
         {% if not errors.startDate %}
-
-
-
+            {% call govukDetails({summaryText: "Occupancy calendar", open: false}) %}
             <section id="calendar-key">
                 <h3 class="govuk-heading-m">Key</h3>
 
@@ -114,60 +107,23 @@
             <section aria-describedby="calendar-key">
                 {{ occupancyCalendar(calendar) }}
             </section>
+            {% endcall %}
         {% endif %}
     </section>
 
     {% if not errors.startDate %}
         <section>
-            <h2 class="govuk-heading-l">Book your placement</h2>
-
             <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}"
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <input type="hidden" name="criteria" value="{{ criteria }}" />
-
-                {{ govukDateInput({
-                    id: "arrivalDate",
-                    namePrefix: "arrivalDate",
-                    fieldset: {
-                        legend: {
-                            text: "Arrival date",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    hint: {
-                        text: "For example, 17 5 2024"
-                    },
-                    items: dateFieldValues('arrivalDate', errors),
-                    errorMessage: errors.arrivalDate
-                }) }}
-
-                {{ govukDateInput({
-                    id: "departureDate",
-                    namePrefix: "departureDate",
-                    fieldset: {
-                        legend: {
-                            text: "Departure date",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    hint: {
-                        text: "For example, 17 5 2024"
-                    },
-                    items: dateFieldValues('departureDate', errors),
-                    errorMessage: errors.departureDate
-                }) }}
+                <input type="hidden" name="arrivalDate" value="{{ arrivalDate }}">
+                <input type="hidden" name="departureDate" value="{{ departureDate }}">
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Continue",
-                        preventDoubleClick: true
-                    }) }}
-                    {{ govukButton({
-                        text: "Cancel",
-                        classes: "govuk-button--secondary",
-                        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+                        text: "Book placement",
                         preventDoubleClick: true
                     }) }}
                 </div>
