@@ -128,10 +128,10 @@ describe('SpaceBookingsController', () => {
         placementRequestDetail.id,
         newSpaceBooking,
       )
-      expect(flash).toHaveBeenCalledWith(
-        'success',
-        `You have now booked a place for ${spaceBooking.person.crn} at ${spaceBooking.premises.name}. A confirmation email will be sent to the AP and probation practitioner.`,
-      )
+      expect(flash).toHaveBeenCalledWith('success', {
+        heading: `Place booked for ${spaceBooking.person.crn} at ${spaceBooking.premises.name}`,
+        body: `<p>A confirmation email will be sent to the AP and probation practitioner.</p>`,
+      })
       expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
     })
