@@ -159,12 +159,14 @@ jobs:
           path: test_results/cypress
 
       - name: Store Integration tests videos
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: integration-tests-videos-${{ matrix.ci_node_index }}
           path: integration_tests/videos
 
       - name: Store Integration tests screenshots
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: integration-tests-screenshots-${{ matrix.ci_node_index }}
