@@ -19,6 +19,10 @@ export type Cas1SpaceBooking = {
     assessmentId?: string;
     person: Person;
     tier?: string;
+    /**
+     * Use 'characteristics' instead
+     * @deprecated
+     */
     requirements: Cas1SpaceBookingRequirements;
     premises: NamedId;
     apArea: NamedId;
