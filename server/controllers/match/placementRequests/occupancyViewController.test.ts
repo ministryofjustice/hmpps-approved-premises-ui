@@ -256,6 +256,23 @@ describe('OccupancyViewController', () => {
       expect(response.redirect).toHaveBeenCalledWith(occupancyViewUrl)
     })
 
+    it('saves an array of a single room criterion if only one is selected and is posted as a string (APS-1957)', async () => {
+      const filterBodyOneCriterion: Request['body'] = {
+        ...filterBody,
+        roomCriteria: 'isArsonSuitable',
+      }
+      const requestHandler = occupancyViewController.filterView()
+      await requestHandler({ ...request, body: filterBodyOneCriterion }, response, next)
+
+      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
+        placementRequestDetail.id,
+        request.session,
+        expect.objectContaining({
+          roomCriteria: ['isArsonSuitable'],
+        }),
+      )
+    })
+
     it('clears the selected room criteria when none are selected', async () => {
       const filterBodyNoCriteria: Request['body'] = {
         ...filterBody,

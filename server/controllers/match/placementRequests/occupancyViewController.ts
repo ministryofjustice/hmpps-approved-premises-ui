@@ -132,7 +132,7 @@ export default class {
       const occupancyUrl = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
 
       try {
-        const { roomCriteria = [], durationDays, ...startDateInput } = req.body
+        const { roomCriteria, durationDays, ...startDateInput } = req.body
 
         if (dateIsBlank(startDateInput, 'startDate') || !dateAndTimeInputsAreValidDates(startDateInput, 'startDate')) {
           throw new ValidationError({
@@ -146,7 +146,7 @@ export default class {
         )
 
         this.spaceSearchService.setSpaceSearchState(id, req.session, {
-          roomCriteria,
+          roomCriteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria) || [],
           startDate,
           durationDays: Number(durationDays),
         })
