@@ -57,7 +57,7 @@ describe('OccupancyViewController', () => {
     id: placementRequestDetail.id,
     premisesId: premises.id,
     date: ':date',
-  })}?${createQueryString({ criteria: searchState.roomCriteria }, { arrayFormat: 'repeat' })}`
+  })}${createQueryString({ criteria: searchState.roomCriteria }, { arrayFormat: 'repeat', addQueryPrefix: true })}`
 
   beforeEach(() => {
     jest.clearAllMocks()
