@@ -226,7 +226,7 @@ context('Premises day occupancy', () => {
         // I should see the occupancy summary for the day
         summaryPage.shouldShowDaySummaryDetails(premisesDaySummary)
         // And I should see a warning banner
-        summaryPage.shouldShowBanner('This AP is overbooked on: single room and en-suite')
+        summaryPage.shouldShowBanner('This AP is overbooked on: single room and en-suite.')
       })
 
       it('should allow navigation to the next day and back again', () => {

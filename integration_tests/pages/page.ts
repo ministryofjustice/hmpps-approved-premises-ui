@@ -104,11 +104,16 @@ export default abstract class Page {
     })
   }
 
-  shouldShowBanner(heading: string, body?: string): void {
-    cy.get('.govuk-notification-banner').contains(heading)
-    if (body) {
-      cy.get('.govuk-notification-banner').contains(body)
-    }
+  shouldShowBanner(text: string, options: { exact: boolean } = { exact: true }): void {
+    cy.get('.govuk-notification-banner__content').then(bannerElement => {
+      const { actual, expected } = parseHtml(bannerElement, text)
+
+      if (options.exact) {
+        expect(actual).to.equal(expected)
+      } else {
+        expect(actual).to.contain(expected)
+      }
+    })
   }
 
   shouldNotShowBanner(): void {

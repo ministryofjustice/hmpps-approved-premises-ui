@@ -26,8 +26,8 @@ export default class ListPage extends Page {
 
   shouldShowSpaceBookingConfirmation(crn: string, premisesName: string) {
     this.shouldShowBanner(
-      `Place booked for ${crn} at ${premisesName}`,
-      'A confirmation email will be sent to the AP and probation practitioner.',
+      `Place booked for ${crn} at ${premisesName} 
+      A confirmation email will be sent to the AP and probation practitioner.`,
     )
   }
 

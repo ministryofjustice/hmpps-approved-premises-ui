@@ -131,7 +131,10 @@ context('Placements', () => {
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // Then I should see the offline application warning banner
-      placementShowPage.shouldShowBanner('This booking was imported from NDelius')
+      placementShowPage.shouldShowBanner(
+        `This booking was imported from NDelius
+        As such, Assessment and Request for Placement information isn't available.`,
+      )
       // Then I wil be on the placement details tab
       placementShowPage.shouldHaveActiveTab('Placement details')
       // When I click on the assessment tab
