@@ -46,9 +46,7 @@
         }]
     }) }}
 
-    {{ govukSummaryList(
-        PremisesUtils.summaryListForPremises(premises)
-    ) }}
+    {{ govukSummaryList(summaryList) }}
 
     {% if showPlacements %}
         <section>

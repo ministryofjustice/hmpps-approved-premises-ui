@@ -5,7 +5,7 @@ import { ApAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { hasPermission } from '../../../utils/users'
-import { PremisesTab, premisesOverbookingSummary } from '../../../utils/premises'
+import { PremisesTab, premisesOverbookingSummary, summaryListForPremises } from '../../../utils/premises'
 
 type TabSettings = {
   pageSize: number
@@ -58,6 +58,7 @@ export default class PremisesController {
 
       return res.render('manage/premises/show', {
         premises,
+        summaryList: summaryListForPremises(premises),
         showPlacements,
         activeTab,
         crnOrName,
