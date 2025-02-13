@@ -35,15 +35,17 @@ export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
         key: textValue('Number of Beds'),
         value: textValue(premises.bedCount.toString()),
       },
-      {
-        key: textValue('Available Beds'),
-        value: textValue(premises.availableBeds.toString()),
-      },
+      premises.supportsSpaceBookings
+        ? {
+            key: textValue('Available Beds'),
+            value: textValue(premises.availableBeds.toString()),
+          }
+        : null,
       {
         key: textValue('Out of Service Beds'),
         value: textValue(premises.outOfServiceBeds.toString()),
       },
-    ],
+    ].filter(Boolean),
   }
 }
 

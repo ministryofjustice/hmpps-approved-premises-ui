@@ -14,7 +14,7 @@ import {
   paginatedResponseFactory,
   staffMemberFactory,
 } from '../../../testutils/factories'
-import { premisesOverbookingSummary } from '../../../utils/premises'
+import { premisesOverbookingSummary, summaryListForPremises } from '../../../utils/premises'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -72,6 +72,7 @@ describe('V2PremisesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         premises: premisesSummary,
+        summaryList: summaryListForPremises(premisesSummary),
         showPlacements: true,
         sortBy: 'canonicalArrivalDate',
         sortDirection: 'asc',

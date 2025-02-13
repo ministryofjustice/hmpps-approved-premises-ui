@@ -1,4 +1,5 @@
 import type { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
+import { TextItem } from '@approved-premises/ui'
 import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
@@ -63,6 +64,17 @@ describe('premisesUtils', () => {
           },
         ],
       })
+    })
+
+    it('should not show available beds count if the premises does not support space bookings', () => {
+      const premises = cas1PremisesFactory.build({
+        supportsSpaceBookings: false,
+      })
+
+      const summaryList = summaryListForPremises(premises)
+
+      expect(summaryList.rows).toHaveLength(4)
+      expect(summaryList.rows.find(row => (row.key as TextItem).text === 'Available Beds')).toBeUndefined()
     })
   })
 
