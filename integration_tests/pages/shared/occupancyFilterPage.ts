@@ -56,8 +56,8 @@ export default class OccupancyFilterPage extends Page {
     } else if (!summary.available) {
       this.shouldShowBanner('There are no spaces available for the dates you have selected.')
     } else {
-      this.shouldShowBanner('Available on:')
-      this.shouldShowBanner('Overbooked on:')
+      this.shouldShowBanner('Available on:', { exact: false })
+      this.shouldShowBanner('Overbooked on:', { exact: false })
     }
   }
 

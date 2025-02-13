@@ -37,7 +37,7 @@ const withdrawPlacementRequestOrApplication = async (
   confirmationPage.clickConfirm()
 
   // And I should see the confirmation message
-  showPage.shouldShowBanner('Request for placement')
+  showPage.shouldShowBanner('Request for placement for ', { exact: false })
 }
 
 export { withdrawPlacementRequestOrApplication }

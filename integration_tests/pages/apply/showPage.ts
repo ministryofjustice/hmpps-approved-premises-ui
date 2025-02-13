@@ -152,7 +152,7 @@ export default class ShowPage extends Page {
   }
 
   showsWithdrawalConfirmationMessage() {
-    this.shouldShowBanner('Request for placement')
+    this.shouldShowBanner('Request for placement for ', { exact: false })
   }
 
   showsNoteAddedConfirmationMessage() {

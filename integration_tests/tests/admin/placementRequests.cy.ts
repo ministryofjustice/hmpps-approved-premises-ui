@@ -257,7 +257,7 @@ context('Placement Requests', () => {
     createPage.clickSubmit()
 
     // Then I should see a confirmation message
-    showPage.shouldShowBanner('Placement created')
+    showPage.shouldShowBanner('Placement created for ', { exact: false })
 
     // And the booking details should have been sent to the API
     cy.task('verifyBookingFromPlacementRequest', unmatchedPlacementRequest).then(requests => {
@@ -299,7 +299,7 @@ context('Placement Requests', () => {
     createPage.clickSubmit()
 
     // Then I should see a confirmation message
-    showPage.shouldShowBanner('Placement created')
+    showPage.shouldShowBanner('Placement created for ', { exact: false })
 
     // And the booking details should have been sent to the API
     cy.task('verifyBookingFromPlacementRequest', unmatchedPlacementRequest).then(requests => {
