@@ -15,8 +15,8 @@ import { fullPersonFactory } from '../../../../server/testutils/factories/person
 import { filterRoomLevelCriteria } from '../../../../server/utils/match/spaceSearch'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import ChangePlacementConfirmPage from '../../../pages/manage/placements/changes/confirm'
-import { occupancyCriteriaMap } from '../../../../server/utils/match/occupancy'
 import apiPaths from '../../../../server/paths/api'
+import { roomCharacteristicMap } from '../../../../server/utils/characteristicsUtils'
 
 context('Change Placement', () => {
   const expectedArrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
@@ -73,7 +73,7 @@ context('Change Placement', () => {
 
     // And I should see the filter form with default populated values from the placement
     const selectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
-    const selectedCriteriaLabels = selectedCriteria.map(criterion => occupancyCriteriaMap[criterion])
+    const selectedCriteriaLabels = selectedCriteria.map(criterion => roomCharacteristicMap[criterion])
     changePlacementPage.shouldShowFilters(placement.expectedArrivalDate, 'Up to 12 weeks', selectedCriteriaLabels)
 
     // And I can see the currently selected room criteria
@@ -99,7 +99,7 @@ context('Change Placement', () => {
 
     // When I update the filters with valid selections
     const criteria = ['isWheelchairDesignated', 'isStepFreeDesignated']
-    const newCriteriaLabels = criteria.map(criterion => occupancyCriteriaMap[criterion])
+    const newCriteriaLabels = criteria.map(criterion => roomCharacteristicMap[criterion])
     const newFilters = {
       newStartDate: placement.expectedArrivalDate,
       newDuration: 'Up to 12 weeks',

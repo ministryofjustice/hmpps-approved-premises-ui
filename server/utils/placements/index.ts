@@ -23,7 +23,7 @@ import { summaryListItem } from '../formUtils'
 import { apTypeCriteriaLabels, specialistApTypeCriteria } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { requirementsHtmlString } from '../match'
-import { occupancyCriteriaMap } from '../match/occupancy'
+import { roomCharacteristicMap } from '../characteristicsUtils'
 
 export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
@@ -141,7 +141,7 @@ export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryLi
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
     summaryListItem(
       'Room criteria',
-      requirementsHtmlString(placement.requirements.essentialCharacteristics, occupancyCriteriaMap),
+      requirementsHtmlString(placement.requirements.essentialCharacteristics, roomCharacteristicMap),
       'html',
     ),
   ],

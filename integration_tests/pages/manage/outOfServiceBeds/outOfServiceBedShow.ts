@@ -3,7 +3,10 @@ import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
 import { DateFormats } from '../../../../server/utils/dateUtils'
-import { translateCharacteristic } from '../../../../server/utils/characteristicsUtils'
+import {
+  characteristicsPairToCharacteristics,
+  roomCharacteristicMap,
+} from '../../../../server/utils/characteristicsUtils'
 import { sentenceCase } from '../../../../server/utils/utils'
 
 export class OutOfServiceBedShowPage extends Page {
@@ -40,8 +43,8 @@ export class OutOfServiceBedShowPage extends Page {
   }
 
   shouldShowCharacteristics(bed: BedDetail): void {
-    bed.characteristics.forEach(characteristic => {
-      cy.get('li').contains(translateCharacteristic(characteristic))
+    characteristicsPairToCharacteristics(bed.characteristics).forEach(characteristic => {
+      cy.get('li').contains(roomCharacteristicMap[characteristic])
     })
   }
 
