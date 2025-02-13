@@ -1,0 +1,12 @@
+<p class="govuk-body">A placement at {{ premises.name }} has been changed:</p>
+<ul class="govuk-list govuk-list--bullet">
+    {% if previousExpectedArrival %}
+        <li>Arrival date changed from {{ previousExpectedArrival }} to {{ expectedArrival }}</li>
+    {% endif %}
+    {% if previousExpectedDeparture %}
+        <li>Departure date changed from {{ previousExpectedDeparture }} to {{ expectedDeparture }}</li>
+    {% endif %}
+    {% if previousCharacteristics !== 'None' or characteristics !== 'None' %}
+        <li>Room criteria changed from {{ previousCharacteristics }} to {{ characteristics }}</li>
+    {% endif %}
+</ul>

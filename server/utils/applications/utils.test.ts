@@ -51,8 +51,8 @@ import {
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
-import { escape } from '../formUtils'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
+import { renderTimelineEventContent } from '../timeline'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -726,7 +726,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: escape(timelineEvents[0].content),
+          content: renderTimelineEventContent(timelineEvents[0]),
           createdBy: timelineEvents[0].createdBy.name,
           associatedUrls: expect.arrayContaining(
             mapTimelineUrlsForUi([
@@ -752,7 +752,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: escape(timelineEvents[0].content),
+          content: renderTimelineEventContent(timelineEvents[0]),
           createdBy: timelineEvents[0].createdBy.name,
           associatedUrls: [],
         },
@@ -809,11 +809,14 @@ describe('utils', () => {
     })
 
     it('escapes any rogue HTML', () => {
-      const timelineEventWithRogueHTML = cas1TimelineEventFactory.build({ content: '<div>Hello!</div>' })
+      const timelineEventWithRogueHTML = cas1TimelineEventFactory.build({
+        content: '<div>Hello!</div>',
+        payload: undefined,
+      })
 
       const actual = mapApplicationTimelineEventsForUi([timelineEventWithRogueHTML])
 
-      expect(actual[0].content).toEqual('&lt;div&gt;Hello!&lt;/div&gt;')
+      expect(actual[0].content).toEqual('<p class="govuk-body">&lt;div&gt;Hello!&lt;/div&gt;</p>')
     })
 
     it('Sets createdBy to System if triggerSource is `system`', () => {
@@ -828,7 +831,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: escape(timelineEvents[0].content),
+          content: renderTimelineEventContent(timelineEvents[0]),
           createdBy: 'System',
           associatedUrls: expect.arrayContaining(
             mapTimelineUrlsForUi([

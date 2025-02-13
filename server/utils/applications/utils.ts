@@ -43,8 +43,8 @@ import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
-import { escape } from '../formUtils'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
+import { renderTimelineEventContent } from '../timeline'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -285,7 +285,7 @@ const mapApplicationTimelineEventsForUi = (timelineEvents: Array<Cas1TimelineEve
           timestamp: timelineEvent.occurredAt,
           date: timelineEvent.occurredAt ? DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt) : '',
         },
-        content: escape(timelineEvent.content),
+        content: renderTimelineEventContent(timelineEvent),
         associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
       }
 

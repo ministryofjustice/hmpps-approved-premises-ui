@@ -5,6 +5,7 @@ import {
   Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummary,
   Cas1SpaceBookingDaySummarySortField,
+  Cas1SpaceCharacteristic,
   SortDirection,
 } from '@approved-premises/api'
 import { SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
@@ -81,6 +82,9 @@ export const durationSelectOptions = (durationDays?: string): Array<SelectOption
     text: label,
     selected: value === durationDays || undefined,
   }))
+
+export const criteriaListInline = (criteria: Array<Cas1SpaceCharacteristic>): string =>
+  joinWithCommas(criteria.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase()))
 
 export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): string => {
   const {

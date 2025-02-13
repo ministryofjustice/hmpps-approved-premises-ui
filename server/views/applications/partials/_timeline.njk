@@ -4,25 +4,26 @@
 {% from "../../partials/_applicationTimeline.njk" import applicationTimeline %}
 {% macro timeline(timelineEvents, application, csrfToken) %}
 
-  <form action="{{ paths.applications.notes.new({id: application.id}) }}" method="post">
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+    <form action="{{ paths.applications.notes.new({id: application.id}) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-    {{ govukTextarea({
-          name: "note",
-          id: "note",
-          label: {
-            text: "Add a note to the application", 
-            classes: "govuk-label--m"
-          }
+        {{ govukTextarea({
+            name: "note",
+            id: "note",
+            label: {
+                text: "Add a note to the application",
+                classes: "govuk-label--m"
+            }
         }) }}
 
-    {{ govukButton({
-        text: "Add note",
-        preventDoubleClick: true
-    }) }}
-  </form>
+        {{ govukButton({
+            text: "Add note",
+            preventDoubleClick: true
+        }) }}
+    </form>
 
-  <h2 class="govuk-heading-m">Application history</h2>
-  {{applicationTimeline(timelineEvents)}}</div>
+    <h2 class="govuk-heading-m">Application history</h2>
+
+    {{ applicationTimeline(timelineEvents) }}
 
 {% endmacro %}
