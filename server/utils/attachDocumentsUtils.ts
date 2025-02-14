@@ -30,7 +30,7 @@ const tableRows = (
         html: `<a href="${paths.applications.people.documents({
           crn: application.person.crn,
           documentId: document.id,
-        })}" data-cy-documentId="${document.id}">Download</a>`,
+        })}" data-debounce-link data-cy-documentId="${document.id}">Download</a>`,
         classes: 'applications--pages--attach-document__column-download',
       },
       {

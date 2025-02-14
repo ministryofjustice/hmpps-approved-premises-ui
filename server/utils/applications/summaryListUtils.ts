@@ -91,7 +91,7 @@ export const getDocumentSummaryListItems = (
   documents.forEach(document => {
     const item: SummaryListItem = {
       key: {
-        html: `<a href="/applications/people/${personCrn}/documents/${document.id}" data-cy-documentId="${document.id}">${document.fileName}</a>`,
+        html: `<a href="/applications/people/${personCrn}/documents/${document.id}" data-debounce-link data-cy-documentId="${document.id}">${document.fileName}</a>`,
       },
       value: { text: document?.description },
       ...getAction(document.fileName),

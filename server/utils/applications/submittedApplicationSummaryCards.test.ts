@@ -252,13 +252,13 @@ describe('SumbmittedApplicationSummaryCards', () => {
     expect(cards[0].tasks[0].rows).toEqual([
       {
         key: {
-          html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-documentId="${documents[0].id}">${documents[0].fileName}</a>`,
+          html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-debounce-link data-cy-documentId="${documents[0].id}">${documents[0].fileName}</a>`,
         },
         value: { text: documents[0].description },
       },
       {
         key: {
-          html: `<a href="/applications/people/${application.person.crn}/documents/${documents[1].id}" data-cy-documentId="${documents[1].id}">${documents[1].fileName}</a>`,
+          html: `<a href="/applications/people/${application.person.crn}/documents/${documents[1].id}" data-debounce-link data-cy-documentId="${documents[1].id}">${documents[1].fileName}</a>`,
         },
         value: { text: documents[1].description },
       },
