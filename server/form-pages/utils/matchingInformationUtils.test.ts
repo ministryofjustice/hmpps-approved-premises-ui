@@ -43,7 +43,6 @@ describe('matchingInformationUtils', () => {
       cruInformation: undefined,
       hasEnSuite: undefined,
       isArsonDesignated: undefined,
-      isArsonSuitable: undefined,
       isCatered: undefined,
       isSingle: undefined,
       isStepFreeDesignated: undefined,
@@ -114,7 +113,6 @@ describe('matchingInformationUtils', () => {
         acceptsSexOffenders: 'relevant',
         apType: 'isPIPE',
         isArsonDesignated: 'essential',
-        isArsonSuitable: 'relevant',
         isCatered: 'essential',
         isSingle: 'essential',
         isSuitableForVulnerable: 'relevant',
@@ -133,7 +131,6 @@ describe('matchingInformationUtils', () => {
           acceptsSexOffenders: 'relevant',
           apType: 'isPIPE',
           isArsonDesignated: 'desirable',
-          isArsonSuitable: 'relevant',
           isCatered: 'desirable',
           isSingle: 'desirable',
           isSuitableForVulnerable: 'relevant',
@@ -295,30 +292,6 @@ describe('matchingInformationUtils', () => {
 
             expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
               expect.objectContaining({ isArsonDesignated: 'notRelevant' }),
-            )
-          })
-        })
-
-        describe('isArsonSuitable', () => {
-          truthyCurrentPreviousValues.forEach(value => {
-            it(`is set to 'relevant' when \`arsonOffence\` === ['${value.join("', '")}']`, () => {
-              when(retrieveOptionalQuestionResponseFromFormArtifact)
-                .calledWith(application, DateOfOffence, 'arsonOffence')
-                .mockReturnValue(value)
-
-              expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-                expect.objectContaining({ isArsonSuitable: 'relevant' }),
-              )
-            })
-          })
-
-          it("is set to 'notRelevant' when `arsonOffence` === undefined", () => {
-            when(retrieveOptionalQuestionResponseFromFormArtifact)
-              .calledWith(application, DateOfOffence, 'arsonOffence')
-              .mockReturnValue(undefined)
-
-            expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-              expect.objectContaining({ isArsonSuitable: 'notRelevant' }),
             )
           })
         })
