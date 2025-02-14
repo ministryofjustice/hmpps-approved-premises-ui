@@ -27,7 +27,6 @@ export const offenceAndRiskCriteria = [
   'acceptsChildSexOffenders',
   'acceptsNonSexualChildOffenders',
   'acceptsHateCrimeOffenders',
-  'isArsonSuitable',
 ] as const
 export const prepopulatablePlacementRequirementCriteria = [
   'isWheelchairDesignated',
