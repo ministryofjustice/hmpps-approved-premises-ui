@@ -5,7 +5,6 @@ import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 
 const offences = {
-  arsonOffence: 'Arson offence',
   hateCrime: 'Hate crime',
   nonSexualOffencesAgainstChildren: 'Non-sexual offences against children',
   contactSexualOffencesAgainstAdults: 'Contact sexual offences against adults',
@@ -72,7 +71,7 @@ export default class DateOfOffence implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!Object.keys(this.body).find(key => !!this.body[key])) {
-      errors.arsonOffence = 'You must enter a time period for one or more offence'
+      errors.hateCrime = 'You must enter a time period for one or more offence'
     }
 
     return errors
