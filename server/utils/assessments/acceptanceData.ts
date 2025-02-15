@@ -6,6 +6,7 @@ import {
   PlacementDates,
   PlacementRequirements,
 } from '@approved-premises/api'
+import { ShortNoticeReasons } from '../../form-pages/apply/reasons-for-placement/basic-information/reasonForShortNotice'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -26,6 +27,8 @@ import {
 } from '../placementCriteriaUtils'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
+import ApplicationTimeliness from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
+import type { ApplicationTimelinessBody } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 
 export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
@@ -36,6 +39,7 @@ export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => 
     placementDates: placementDates(assessment),
     notes,
     apType: apTypeFromAssessment(assessment),
+    ...timelinessDataFromAssessment(assessment),
   }
 }
 
@@ -59,6 +63,25 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
 export const apTypeFromAssessment = (assessment: Assessment): ApType => {
   const assessApType = retrieveQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'apType')
   return apType(assessApType)
+}
+
+export const timelinessDataFromAssessment = (
+  assessment: Assessment,
+): {
+  agreeWithShortNoticeReasonComments?: string
+  agreeWithShortNoticeReason?: boolean
+  reasonForLateApplication?: ShortNoticeReasons
+} => {
+  const { agreeWithShortNoticeReason, agreeWithShortNoticeReasonComments, reasonForLateApplication } =
+    pageDataFromApplicationOrAssessment(ApplicationTimeliness, assessment) as ApplicationTimelinessBody
+  let data = {}
+  if (agreeWithShortNoticeReason) {
+    data = { agreeWithShortNoticeReasonComments, agreeWithShortNoticeReason: agreeWithShortNoticeReason === 'yes' }
+    if (agreeWithShortNoticeReason === 'no') {
+      data = { ...data, reasonForLateApplication }
+    }
+  }
+  return data
 }
 
 export const placementRequestData = (assessment: Assessment): PlacementRequirements => {
