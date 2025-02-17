@@ -3,5 +3,7 @@
 
 {% block header %}
     {{ super() }}
-    {{ keyDetails(MatchUtils.keyDetails(placementRequest)) }}
+    {% if placementRequest %}
+        {{ keyDetails(MatchUtils.keyDetails(placementRequest)) }}
+    {% endif %}
 {% endblock %}

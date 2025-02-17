@@ -15,10 +15,12 @@ import {
   ColumnDefinition,
   daySummaryRows,
   durationSelectOptions,
+  filterOutOfServiceBeds,
   generateDaySummaryText,
   occupancyCalendar,
   outOfServiceBedTableRows,
   placementTableRows,
+  tableCaptions,
   tableHeader,
 } from './occupancy'
 import { DateFormats } from '../dateUtils'
@@ -26,6 +28,7 @@ import { occupancyCriteriaMap } from '../match/occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 import { getTierOrBlank } from '../applications/helpers'
 import { laoSummaryName } from '../personUtils'
+import config from '../../config'
 
 describe('apOccupancy utils', () => {
   describe('occupancyCalendar', () => {
@@ -128,23 +131,87 @@ describe('apOccupancy utils', () => {
   })
 
   describe('daySummaryRows', () => {
-    it('should generate a list of day summary rows', () => {
-      const capacityForDay = cas1PremiseCapacityForDayFactory.build({
+    const emptyRow = {
+      key: { html: `<div class="govuk-!-static-padding-top-5"></div>` },
+      value: null as { text: string },
+    }
+    const daySummary = cas1PremisesDaySummaryFactory.build({
+      capacity: cas1PremiseCapacityForDayFactory.build({
+        date: '2025-02-02',
         totalBedCount: 20,
         availableBedCount: 18,
-        bookingCount: 6,
-      })
-      const daySummary = cas1PremisesDaySummaryFactory.build({
-        capacity: capacityForDay,
-      })
+        bookingCount: 21,
+        characteristicAvailability: [
+          premiseCharacteristicAvailability.build({
+            characteristic: 'hasEnSuite',
+            availableBedsCount: 1,
+            bookingsCount: 2,
+          }),
+          premiseCharacteristicAvailability.build({
+            characteristic: 'isWheelchairDesignated',
+            availableBedsCount: 2,
+            bookingsCount: 1,
+          }),
+          premiseCharacteristicAvailability.build({
+            characteristic: 'isStepFreeDesignated',
+            availableBedsCount: 1,
+            bookingsCount: 1,
+          }),
+        ],
+      }),
+    })
+    it('should generate a list of day summary rows when no criteria are provided', () => {
       const expected = [
         { key: { text: 'Capacity' }, value: { text: '20' } },
-        { key: { text: 'Booked spaces' }, value: { text: '6' } },
+        { key: { text: 'Booked spaces' }, value: { text: '21' } },
         { key: { text: 'Out of service beds' }, value: { text: '2' } },
-        { key: { text: 'Available spaces' }, value: { text: '12' } },
+        { key: { text: 'Available spaces' }, value: { text: '-3' } },
       ]
 
       expect(daySummaryRows(daySummary)).toEqual({
+        rows: expected,
+      })
+    })
+
+    it('should generate a list of day summary rows including criteria', () => {
+      const expected = [
+        { key: { text: 'Capacity' }, value: { text: '20' } },
+        { key: { text: 'Booked spaces' }, value: { text: '21' } },
+        { key: { text: 'Out of service beds' }, value: { text: '2' } },
+        { key: { text: 'Available spaces' }, value: { text: '-3' } },
+        emptyRow,
+        { key: { text: 'En-suite bathroom capacity' }, value: { text: '1' } },
+        { key: { text: 'En-suite bathroom available' }, value: { text: '-1' } },
+        { key: { text: 'Step-free access capacity' }, value: { text: '1' } },
+        { key: { text: 'Step-free access available' }, value: { text: '0' } },
+      ]
+      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated'], 'doubleRow')).toEqual({
+        rows: expected,
+      })
+    })
+
+    it('should generate a list of day summary rows in single-row/criterion mode', () => {
+      const expected = [
+        {
+          key: { text: 'All rooms' },
+          value: {
+            html: `18 beds<a class="govuk-!-margin-left-2" href="?">21 bookings</a><strong class="govuk-tag govuk-tag--red govuk-tag--float-right">Overbooked</strong>`,
+          },
+        },
+        {
+          key: { text: 'En-suite bathroom' },
+          value: {
+            html: `1 bed<a class="govuk-!-margin-left-2" href="?characteristics=hasEnSuite">2 bookings</a><strong class="govuk-tag govuk-tag--red govuk-tag--float-right">Overbooked</strong>`,
+          },
+        },
+        {
+          key: { text: 'Step-free access' },
+          value: {
+            html: `1 bed<a class="govuk-!-margin-left-2" href="?characteristics=isStepFreeDesignated">1 booking</a><strong class="govuk-tag govuk-tag--yellow govuk-tag--float-right">Full</strong>`,
+          },
+        },
+      ]
+      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated'], 'singleRow')).toEqual({
         rows: expected,
       })
     })
@@ -221,5 +288,52 @@ describe('apOccupancy utils', () => {
       const rows = outOfServiceBedTableRows('premises-Id', outOfServiceBeds)
       outOfServiceBeds.forEach((summary, index) => checkRow(summary, rows[index]))
     })
+  })
+
+  describe('tableCaptions', () => {
+    const daySummary = cas1PremisesDaySummaryFactory.build({ forDate: '2025-02-12' })
+
+    afterEach(() => {
+      config.flags.pocEnabled = false
+    })
+
+    it('should generate table captions', () => {
+      const captions = tableCaptions(daySummary, ['isArsonSuitable'])
+      expect(captions).toEqual({
+        outOfServiceBedCaption: 'Out of service beds on Wed 12 Feb 2025',
+        placementTableCaption: 'People booked in on Wed 12 Feb 2025',
+      })
+    })
+
+    it('should generate POC table captions with no characteristics', () => {
+      config.flags.pocEnabled = true
+      const captions = tableCaptions(daySummary, [])
+      expect(captions).toEqual({
+        outOfServiceBedCaption: '5 out of service beds on Wed 12 Feb 2025',
+        placementTableCaption: '5 residents on Wed 12 Feb 2025',
+      })
+    })
+
+    it('should generate POC table captions with characteristics', () => {
+      config.flags.pocEnabled = true
+      const captions = tableCaptions(daySummary, ['isArsonSuitable', 'isStepFreeDesignated'])
+      expect(captions).toEqual({
+        outOfServiceBedCaption:
+          '5 out of service beds on Wed 12 Feb 2025 with: suitable for active arson risk and step-free',
+        placementTableCaption: '5 residents on Wed 12 Feb 2025 requiring: suitable for active arson risk and step-free',
+      })
+    })
+  })
+})
+
+describe('filterOutOfServiceBeds', () => {
+  const outOfServiceBeds = [
+    cas1OutOfServiceBedSummaryFactory.build({ characteristics: ['isStepFreeDesignated'] }),
+    cas1OutOfServiceBedSummaryFactory.build({ characteristics: ['isArsonSuitable', 'isStepFreeDesignated'] }),
+  ]
+  const daySummary = cas1PremisesDaySummaryFactory.build({ forDate: '2025-02-12', outOfServiceBeds })
+  it('should filter the oosb list in a day summary based on characteristics', () => {
+    const filtered = filterOutOfServiceBeds(daySummary, ['isArsonSuitable'])
+    expect(filtered.outOfServiceBeds).toEqual([outOfServiceBeds[1]])
   })
 })

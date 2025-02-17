@@ -10,6 +10,7 @@ import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   cas1PremiseCapacityFactory,
+  cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   personFactory,
@@ -242,11 +243,17 @@ context('Placement Requests', () => {
       premiseCapacity: premiseCapacityForDay,
     })
 
+    const premisesDaySummary = cas1PremisesDaySummaryFactory.build({
+      forDate: dayCapacity.date,
+      capacity: premiseCapacityForDay.capacity[0],
+    })
+    cy.task('stubPremisesDaySummary', { premisesId: premises.id, date: dayCapacity.date, premisesDaySummary })
+
     // When I click on a day on the calendar
     occupancyViewPage.clickCalendarDay(dayCapacity.date)
 
     // Then I should see the page showing details for the day
-    const dayAvailabilityPage = new DayAvailabilityPage(dayCapacity, criteria)
+    const dayAvailabilityPage = new DayAvailabilityPage(premises.id, premisesDaySummary, criteria)
 
     // And I should see availability details
     dayAvailabilityPage.shouldShowDayAvailability()

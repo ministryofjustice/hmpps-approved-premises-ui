@@ -1,5 +1,5 @@
 import { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { SelectOption, SummaryListItem } from '@approved-premises/ui'
+import { SelectOption } from '@approved-premises/ui'
 
 export const dayAvailabilityCount = (
   dayCapacity: Cas1PremiseCapacityForDay,
@@ -32,41 +32,17 @@ export const dayAvailabilityStatus = (
       status = 'overbooked'
     }
   }
-
   return status
 }
 
-export const dayAvailabilityStatusMap: Record<DayAvailabilityStatus, string> = {
-  available: 'Available',
-  availableForCriteria: 'Available for your criteria',
-  overbooked: 'Overbooked',
-}
-
-export const dayAvailabilitySummaryListItems = (
-  dayCapacity: Cas1PremiseCapacityForDay,
-  criteria: Array<Cas1SpaceBookingCharacteristic> = [],
-): Array<SummaryListItem> => {
-  const rows = [
-    { key: { text: 'AP capacity' }, value: { text: `${dayCapacity.totalBedCount}` } },
-    { key: { text: 'Booked spaces' }, value: { text: `${dayCapacity.bookingCount}` } },
-  ]
-
-  if (!criteria.length) {
-    rows.push({ key: { text: 'Available spaces' }, value: { text: `${dayAvailabilityCount(dayCapacity)}` } })
-  } else {
-    criteria.forEach(criterion => {
-      const dayCharacteristic = dayCapacity.characteristicAvailability.find(
-        characteristic => characteristic.characteristic === criterion,
-      )
-
-      rows.push({
-        key: { text: `${occupancyCriteriaMap[criterion]} spaces available` },
-        value: { text: `${dayCharacteristic.availableBedsCount - dayCharacteristic.bookingsCount}` },
-      })
-    })
-  }
-
-  return rows
+export const dayAvailabilityStatusMap: Record<DayAvailabilityStatus, { title: string; detail: string }> = {
+  available: { title: 'Available', detail: 'The space you require is available.' },
+  availableForCriteria: {
+    title: 'Available for your criteria',
+    detail:
+      'This AP is full or overbooked, but the space you require is available as it is occupied by someone who does not need it.',
+  },
+  overbooked: { title: 'Overbooked', detail: 'This AP is full or overbooked. The space you require is not available.' },
 }
 
 const durationOptionsMap: Record<number, string> = {
