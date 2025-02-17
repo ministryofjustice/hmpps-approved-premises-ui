@@ -358,7 +358,7 @@ context('Placement Requests', () => {
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     // And I should see a success message
-    cruDashboard.shouldShowSpaceBookingConfirmation()
+    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking.person.crn, spaceBooking.premises.name)
 
     // And the booking details should have been sent to the API
     cy.task('verifyApiPost', apiPaths.placementRequests.spaceBookings.create({ id: placementRequest.id })).then(
