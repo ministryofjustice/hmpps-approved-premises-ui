@@ -3,13 +3,14 @@ import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, datetimeIsInT
 
 export const validateSpaceBooking = (body: ObjectWithDateParts<string>): Record<string, string> => {
   const errors: Record<string, string> = {}
-
-  if (dateIsBlank(body, 'arrivalDate')) {
-    errors.arrivalDate = 'You must enter an arrival date'
-  } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'arrivalDate'>, 'arrivalDate')) {
-    errors.arrivalDate = 'The arrival date is an invalid date'
+  const { actualArrivalDate } = body
+  if (!actualArrivalDate) {
+    if (dateIsBlank(body, 'arrivalDate')) {
+      errors.arrivalDate = 'You must enter an arrival date'
+    } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'arrivalDate'>, 'arrivalDate')) {
+      errors.arrivalDate = 'The arrival date is an invalid date'
+    }
   }
-
   if (dateIsBlank(body, 'departureDate')) {
     errors.departureDate = 'You must enter a departure date'
   } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'departureDate'>, 'departureDate')) {
@@ -25,7 +26,8 @@ export const validateSpaceBooking = (body: ObjectWithDateParts<string>): Record<
       body as ObjectWithDateParts<'departureDate'>,
       'departureDate',
     )
-    if (datetimeIsInThePast(departureDate, arrivalDate) || departureDate === arrivalDate) {
+    const textArrivalDate = actualArrivalDate || arrivalDate
+    if (datetimeIsInThePast(departureDate, textArrivalDate) || departureDate === textArrivalDate) {
       errors.departureDate = 'The departure date must be after the arrival date'
     }
   }

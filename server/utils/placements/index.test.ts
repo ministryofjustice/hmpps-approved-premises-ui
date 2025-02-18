@@ -160,9 +160,7 @@ describe('placementUtils', () => {
       actualArrivalDateOnly: '2024-06-01',
       actualDepartureDateOnly: '2024-12-25',
       createdAt: '2024-03-03',
-      requirements: {
-        essentialCharacteristics: ['isESAP', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
-      },
+      characteristics: ['isESAP', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
     })
 
     it('should return the placement summary information', () => {
@@ -181,17 +179,41 @@ describe('placementUtils', () => {
       })
     })
 
-    it('should return an overview of the placement summary information', () => {
-      const expectedSpaceTypeHtml = `<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>`
+    describe('Overview placement summary', () => {
+      it('should return an overview of the placement summary information before arrival', () => {
+        const unarrivedPlacement: Cas1SpaceBooking = {
+          ...placement,
+          actualArrivalDateOnly: undefined,
+          actualDepartureDateOnly: undefined,
+        }
 
-      expect(placementOverviewSummary(placement)).toEqual({
-        rows: [
-          { key: { text: 'Approved premises' }, value: { text: placement.premises.name } },
-          { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
-          { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
-          { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
-          { key: { text: 'Room criteria' }, value: { html: expectedSpaceTypeHtml } },
-        ],
+        expect(placementOverviewSummary(unarrivedPlacement)).toEqual({
+          rows: [
+            { key: { text: 'Approved premises' }, value: { text: unarrivedPlacement.premises.name } },
+            { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
+            { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
+            { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
+            {
+              key: { text: 'Room criteria' },
+              value: { html: `<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>` },
+            },
+          ],
+        })
+      })
+
+      it('should return an overview of the placement summary information after arrival', () => {
+        const expectedSpaceTypeHtml = `<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>`
+
+        expect(placementOverviewSummary(placement)).toEqual({
+          rows: [
+            { key: { text: 'Approved premises' }, value: { text: placement.premises.name } },
+            { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
+            { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
+            { key: { text: 'Actual arrival date' }, value: { text: 'Sat 1 Jun 2024' } },
+            { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
+            { key: { text: 'Room criteria' }, value: { html: expectedSpaceTypeHtml } },
+          ],
+        })
       })
     })
 
@@ -339,9 +361,7 @@ describe('placementUtils', () => {
     describe('requirements information', () => {
       it('should be returned for a placement in a standard AP', () => {
         const placementStandardAp = cas1SpaceBookingFactory.build({
-          requirements: {
-            essentialCharacteristics: ['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
-          },
+          characteristics: ['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
         })
 
         expect(requirementsInformation(placementStandardAp)).toEqual({
@@ -358,9 +378,7 @@ describe('placementUtils', () => {
 
       it('should be returned for a placement in a specialist AP', () => {
         const placementSpecialistAp = cas1SpaceBookingFactory.build({
-          requirements: {
-            essentialCharacteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite', 'isWheelchairAccessible'],
-          },
+          characteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite', 'isWheelchairAccessible'],
         })
 
         expect(requirementsInformation(placementSpecialistAp)).toEqual({
@@ -380,9 +398,7 @@ describe('placementUtils', () => {
 
       it('should be returned for a placement with no requirements', () => {
         const placementNoRequirements = cas1SpaceBookingFactory.build({
-          requirements: {
-            essentialCharacteristics: [],
-          },
+          characteristics: [],
         })
 
         expect(requirementsInformation(placementNoRequirements)).toEqual({

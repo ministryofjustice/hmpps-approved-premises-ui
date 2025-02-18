@@ -61,7 +61,7 @@ describe('changesController', () => {
       const requestHandler = changesController.new()
       await requestHandler(request, response, next)
 
-      const expectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
+      const expectedCriteria = filterRoomLevelCriteria(placement.characteristics)
       const expectedPlaceholderDayUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
         id: placement.requestForPlacementId,
         premisesId: premises.id,
@@ -80,8 +80,8 @@ describe('changesController', () => {
         pageHeading: 'Change placement',
         placement,
         selectedCriteria: expectedCriteria.map(criterion => roomCharacteristicMap[criterion]).join(', '),
-        arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
-        departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
+        arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Current departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         placementSummary: placementOverviewSummary(placement),
         durationOptions: durationSelectOptions(expectedDuration),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, expectedCriteria),
