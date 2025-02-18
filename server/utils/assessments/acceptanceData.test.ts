@@ -1,7 +1,9 @@
 import { createMock } from '@golevelup/ts-jest'
 import { ApType } from '@approved-premises/api'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
-import { MatchingInformationBody } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
+import MatchingInformation, {
+  MatchingInformationBody,
+} from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import {
   acceptanceData,
   apTypeFromAssessment,
@@ -15,6 +17,10 @@ import { arrivalDateFromApplication } from '../applications/arrivalDateFromAppli
 import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
 import { ApTypeCriteria } from '../placementCriteriaUtils'
+import ApplicationTimeliness, {
+  ApplicationTimelinessBody,
+} from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
+import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -27,20 +33,50 @@ describe('acceptanceData', () => {
   const assessment = assessmentFactory.build()
 
   describe('acceptanceData', () => {
-    it('should return the acceptance data for the assessment', () => {
-      const matchingInformation = createMock<MatchingInformationBody>({ apType: 'normal' })
-      ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
+    const matchingInformation = createMock<MatchingInformationBody>({ apType: 'normal' })
+    let timelinessInformation = {}
+    const responses = { some: 'responses' }
 
+    beforeEach(() => {
+      ;(pageDataFromApplicationOrAssessment as jest.Mock).mockImplementation((page: TasklistPageInterface) => {
+        switch (page) {
+          case MatchingInformation:
+            return matchingInformation
+          case ApplicationTimeliness:
+            return timelinessInformation
+          default:
+            return {}
+        }
+      })
       mockOptionalQuestionResponse({ cruInformation: 'Some notes' })
-      const responses = { some: 'responses' }
       ;(getResponses as jest.Mock).mockReturnValue(responses)
+    })
 
+    it('should return the acceptance data for the assessment', () => {
       expect(acceptanceData(assessment)).toEqual({
         document: responses,
         requirements: placementRequestData(assessment),
         placementDates: placementDates(assessment),
         notes: 'Some notes',
         apType: apTypeFromAssessment(assessment),
+      })
+      expect(getResponses).toHaveBeenCalledWith(assessment)
+    })
+
+    it('should return the acceptance data for the assessment with optional timeliness information', () => {
+      timelinessInformation = createMock<ApplicationTimelinessBody>({
+        agreeWithShortNoticeReason: 'no',
+        agreeWithShortNoticeReasonComments: 'comments',
+        reasonForLateApplication: 'furtherOffence',
+      })
+      expect(acceptanceData(assessment)).toEqual({
+        document: responses,
+        requirements: placementRequestData(assessment),
+        placementDates: placementDates(assessment),
+        notes: 'Some notes',
+        apType: apTypeFromAssessment(assessment),
+        ...timelinessInformation,
+        agreeWithShortNoticeReason: false,
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
     })
