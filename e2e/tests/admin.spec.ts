@@ -26,15 +26,15 @@ test('download reports', async ({ page, reportViewer }) => {
   const month = '01'
   const year = '2023'
 
-  // When I download the lost beds report
-  const lostBedsDownload = await reportsPage.downloadLostBedsReports({ month, year })
+  // When I download the out of service beds report
+  const lostBedsDownload = await reportsPage.downloadOutOfServiceBedsReports({ month, year })
   // Then the file should be downloaded with the correct suggested name
-  expect(lostBedsDownload.suggestedFilename()).toMatch(/lost-beds-2023-01-[0-9_]*.xlsx/)
+  expect(lostBedsDownload.suggestedFilename()).toMatch(/out-of-service-beds-2023-01-[0-9_]*.xlsx/)
 
-  // When I download the applications report
-  const applicationsDownload = await reportsPage.downloadRawRequestsForPlacementsReports({ month, year })
+  // When I download the daily metrics report
+  const applicationsDownload = await reportsPage.downloadDailyMetricsReports({ month, year })
   // Then the file should be downloaded with the correct suggested name
-  expect(applicationsDownload.suggestedFilename()).toMatch(/placement-applications-2023-01-[0-9_]*.xlsx/)
+  expect(applicationsDownload.suggestedFilename()).toMatch(/daily-metrics-2023-01-[0-9_]*.xlsx/)
 })
 
 test('manage users', async ({ page, userToAddAndDelete, administrator }) => {

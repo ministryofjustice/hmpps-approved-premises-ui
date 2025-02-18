@@ -32,7 +32,12 @@ export const reportInputLabels = {
 
 export type ReportType = (keyof typeof reportInputLabels)[number]
 
-export const unusedReports = [] as Array<string>
+export const unusedReports = [
+  'applications',
+  'placementApplications',
+  'placementMatchingOutcomes',
+  'lostBeds',
+] as Array<string>
 
 export const reportOptions = Object.entries(reportInputLabels)
   .filter(([reportName]) => {
