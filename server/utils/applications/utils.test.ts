@@ -852,6 +852,7 @@ describe('utils', () => {
       ['assessment', 'assessment'],
       ['booking', 'placement'],
       ['assessmentAppeal', 'appeal'],
+      ['spaceBooking', 'placement'],
     ])('Translates a "%s" url type to "%s"', (urlType: Cas1TimelineEventUrlType, translation: string) => {
       const timelineUrl = { type: urlType, url: faker.internet.url() }
       expect(mapTimelineUrlsForUi([timelineUrl])).toEqual([{ url: timelineUrl.url, type: translation }])

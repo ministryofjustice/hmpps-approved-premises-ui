@@ -22,7 +22,6 @@ import type {
   Cas1TimelineEventType,
   Cas1TimelineEventUrlType,
   SortDirection,
-  TimelineEventUrlType,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
@@ -314,12 +313,12 @@ const mapPersonalTimelineForUi = (personalTimeline: Cas1PersonalTimeline) => {
 }
 
 const urlTypeForUi = (type: Cas1TimelineEventUrlType) => {
-  const translations: Record<TimelineEventUrlType, string> = {
+  const translations: Record<Cas1TimelineEventUrlType, string> = {
     application: 'application',
     assessment: 'assessment',
     booking: 'placement',
     assessmentAppeal: 'appeal',
-    cas1SpaceBooking: 'placement',
+    spaceBooking: 'placement',
   }
   return translations[type]
 }
