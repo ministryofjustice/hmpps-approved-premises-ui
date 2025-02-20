@@ -101,10 +101,7 @@ describe('timeline utilities', () => {
           `)
         })
 
-        it.each([
-          ['the same', ['hasEnSuite']],
-          ['both none', []],
-        ])('does not render room criteria changes if they are %s', (_, characteristics) => {
+        it('does not render the detailed changes if there is no previous value', () => {
           const timelineEvent = cas1TimelineEventFactory.build({
             payload: cas1TimelineEventContentPayloadFactory.build({
               type: 'booking_changed',
@@ -113,17 +110,23 @@ describe('timeline utilities', () => {
                 id: premises.id,
               },
               schemaVersion: 2,
-              characteristics,
-              previousCharacteristics: characteristics,
+              previousExpectedArrival: null,
+              previousExpectedDeparture: null,
+              previousCharacteristics: null,
+              expectedArrival: '2025-09-18',
+              expectedDeparture: '2025-12-18',
+              characteristics: ['isCatered', 'hasEnSuite'],
             } as Cas1TimelineEventContentPayload),
           })
 
           const result = renderTimelineEventContent(timelineEvent)
 
           expect(result).not.toContain('Room criteria changed from')
+          expect(result).not.toContain('Arrival date changed from')
+          expect(result).not.toContain('Departure date changed from')
         })
 
-        it('renders "none" if previous or current criteria were none', () => {
+        it('renders "none" if the previous room criteria were none', () => {
           const timelineEvent = cas1TimelineEventFactory.build({
             payload: cas1TimelineEventContentPayloadFactory.build({
               type: 'booking_changed',
@@ -140,6 +143,25 @@ describe('timeline utilities', () => {
           const result = renderTimelineEventContent(timelineEvent)
 
           expect(result).toContain('Room criteria changed from none to en-suite')
+        })
+
+        it('renders "none" if the updated room criteria are none', () => {
+          const timelineEvent = cas1TimelineEventFactory.build({
+            payload: cas1TimelineEventContentPayloadFactory.build({
+              type: 'booking_changed',
+              premises: {
+                name: premises.name,
+                id: premises.id,
+              },
+              schemaVersion: 2,
+              characteristics: [],
+              previousCharacteristics: ['isWheelchairDesignated', 'isSingle'],
+            } as Cas1TimelineEventContentPayload),
+          })
+
+          const result = renderTimelineEventContent(timelineEvent)
+
+          expect(result).toContain('Room criteria changed from wheelchair accessible and single room to none')
         })
       })
     })

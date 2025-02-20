@@ -17,10 +17,10 @@ type PayloadBookingChangedV2 = Cas1TimelineEventContentPayload & {
   schemaVersion: 2
   expectedArrival: string
   expectedDeparture: string
-  previousExpectedArrival?: string
-  previousExpectedDeparture?: string
   characteristics: Array<Cas1SpaceCharacteristic>
-  previousCharacteristics: Array<Cas1SpaceCharacteristic>
+  previousExpectedArrival: string | null
+  previousExpectedDeparture: string | null
+  previousCharacteristics: Array<Cas1SpaceCharacteristic> | null
 }
 
 export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => {
@@ -51,7 +51,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
           previousExpectedArrival: isoDateToUiDateOrUndefined(previousExpectedArrival),
           previousExpectedDeparture: isoDateToUiDateOrUndefined(previousExpectedDeparture),
           characteristics: roomCriteriaOrNone(characteristics),
-          previousCharacteristics: roomCriteriaOrNone(previousCharacteristics),
+          previousCharacteristics: previousCharacteristics ? roomCriteriaOrNone(previousCharacteristics) : undefined,
         }
 
         return nunjucks.render('booking_changed.njk', context)
