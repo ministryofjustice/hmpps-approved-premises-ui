@@ -392,6 +392,17 @@ describe('dateAndTimeInputsAreValidDates', () => {
 
     expect(result).toEqual(false)
   })
+
+  it('returns false when the date is an array (Pen-test APS-1951)', () => {
+    const obj: ObjectWithDateParts<'date'> = {
+      // @ts-expect-error Simulate array query parameters
+      'date-year': ['2020', '2021', '2022', '2023'],
+      'date-month': '12',
+      'date-day': '11',
+    }
+
+    expect(dateAndTimeInputsAreValidDates(obj, 'date')).toEqual(false)
+  })
 })
 
 describe('dateIsBlank', () => {
