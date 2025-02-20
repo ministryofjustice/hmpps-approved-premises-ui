@@ -292,7 +292,7 @@ export const generateCharacteristicsSummary = (
 ) => {
   return characteristicsArray?.length
     ? ` ${verb}: ${joinWithCommas(
-        characteristicsArray.map(characteristic => occupancyCriteriaMap[characteristic].toLowerCase()),
+        characteristicsArray.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase()),
       )}`
     : ''
 }

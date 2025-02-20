@@ -28,6 +28,7 @@ import { premiseCharacteristicAvailability } from '../../testutils/factories/cas
 import { getTierOrBlank } from '../applications/helpers'
 import { laoSummaryName } from '../personUtils'
 import config from '../../config'
+import { roomCharacteristicMap } from '../characteristicsUtils'
 
 describe('apOccupancy utils', () => {
   describe('occupancyCalendar', () => {

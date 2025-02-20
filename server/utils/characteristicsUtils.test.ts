@@ -1,11 +1,7 @@
-import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-} from './characteristicsUtils'
+import { characteristicsBulletList, characteristicsPairToCharacteristics } from './characteristicsUtils'
 import { Cas1SpaceBookingCharacteristic, CharacteristicPair } from '../@types/shared'
 
 describe('characteristicsUtils', () => {
-
   describe('characteristicsPairToCharacteristics', () => {
     it('should flatten and filter a list of characteristicPairs', () => {
       const charactisticPairList: Array<CharacteristicPair> = [

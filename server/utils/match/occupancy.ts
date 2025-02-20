@@ -1,6 +1,5 @@
 import { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { SelectOption, SummaryListItem } from '@approved-premises/ui'
-import { roomCharacteristicMap } from '../characteristicsUtils'
+import { SelectOption } from '@approved-premises/ui'
 
 export const dayAvailabilityCount = (
   dayCapacity: Cas1PremiseCapacityForDay,
