@@ -59,7 +59,7 @@ describe('timeline utilities', () => {
           const result = renderTimelineEventContent(timelineEvent)
 
           expect(result).toEqual(
-            `A placement at ${premises.name} had its arrival and/or departure date changed to Thu 17 Apr 2025 to Sat 21 Jun 2025.`,
+            `The placement at ${premises.name} had its arrival and/or departure date changed to Thu 17 Apr 2025 to Sat 21 Jun 2025.`,
           )
         })
       })
@@ -92,7 +92,7 @@ describe('timeline utilities', () => {
           const result = renderTimelineEventContent(timelineEvent)
 
           expect(result).toMatchStringIgnoringWhitespace(`
-            <p class="govuk-body">A placement at ${premises.name} has been changed:</p>
+            <p class="govuk-body">The placement at ${premises.name} has been changed:</p>
             <ul class="govuk-list govuk-list--bullet">
               <li>Arrival date changed from Tue 16 Sep 2025 to Thu 18 Sep 2025</li>
               <li>Departure date changed from Sat 20 Sep 2025 to Thu 18 Dec 2025</li>

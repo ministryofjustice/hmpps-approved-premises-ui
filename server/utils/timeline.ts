@@ -63,7 +63,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
         departureOn,
       } = event.payload as PayloadBookingChangedV1
 
-      return `A placement at ${premisesName} had its arrival and/or departure date changed to ${DateFormats.isoDateToUIDate(arrivalOn)} to ${DateFormats.isoDateToUIDate(departureOn)}.`
+      return `The placement at ${premisesName} had its arrival and/or departure date changed to ${DateFormats.isoDateToUIDate(arrivalOn)} to ${DateFormats.isoDateToUIDate(departureOn)}.`
     }
   }
 
