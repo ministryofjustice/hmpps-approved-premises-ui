@@ -100,6 +100,28 @@ describe('timeline utilities', () => {
             </ul>
           `)
         })
+
+        it.each([
+          ['the same', ['hasEnSuite']],
+          ['both none', []],
+        ])('does not render room criteria changes if they are %s', (_, characteristics) => {
+          const timelineEvent = cas1TimelineEventFactory.build({
+            payload: cas1TimelineEventContentPayloadFactory.build({
+              type: 'booking_changed',
+              premises: {
+                name: premises.name,
+                id: premises.id,
+              },
+              schemaVersion: 2,
+              characteristics,
+              previousCharacteristics: characteristics,
+            } as Cas1TimelineEventContentPayload),
+          })
+
+          const result = renderTimelineEventContent(timelineEvent)
+
+          expect(result).not.toContain('Room criteria changed from')
+        })
       })
     })
   })
