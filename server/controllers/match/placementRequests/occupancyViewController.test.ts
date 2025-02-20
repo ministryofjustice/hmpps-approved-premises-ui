@@ -19,12 +19,7 @@ import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
-import {
-  dayAvailabilityStatus,
-  dayAvailabilityStatusMap,
-  durationSelectOptions,
-  occupancyCriteriaMap,
-} from '../../../utils/match/occupancy'
+import { dayAvailabilityStatus, dayAvailabilityStatusMap, durationSelectOptions } from '../../../utils/match/occupancy'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
 import { filterRoomLevelCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
@@ -40,6 +35,7 @@ import {
   placementTableRows,
   tableHeader,
 } from '../../../utils/premises/occupancy'
+import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -119,14 +115,14 @@ describe('OccupancyViewController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
-        selectedCriteria: searchState.roomCriteria.map(criterion => occupancyCriteriaMap[criterion]).join(', '),
+        selectedCriteria: searchState.roomCriteria.map(criterion => roomCharacteristicMap[criterion]).join(', '),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
         ...searchState,
         ...DateFormats.isoDateToDateInputs(searchState.startDate, 'startDate'),
         durationOptions: durationSelectOptions(searchState.durationDays),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, searchState.roomCriteria),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, searchState.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
         summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
         calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),

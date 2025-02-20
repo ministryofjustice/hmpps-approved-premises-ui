@@ -23,7 +23,7 @@ import { summaryListItem } from '../formUtils'
 import { apTypeCriteriaLabels, specialistApTypeCriteria } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { requirementsHtmlString } from '../match'
-import { occupancyCriteriaMap } from '../match/occupancy'
+import { roomCharacteristicMap } from '../characteristicsUtils'
 
 export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
@@ -138,13 +138,10 @@ export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryLi
     summaryRow('Approved premises', placement.premises.name),
     summaryRow('Date of match', formatDate(placement.createdAt)),
     summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
+    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDateOnly)),
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-    summaryListItem(
-      'Room criteria',
-      requirementsHtmlString(placement.requirements.essentialCharacteristics, occupancyCriteriaMap),
-      'html',
-    ),
-  ],
+    summaryListItem('Room criteria', requirementsHtmlString(placement.characteristics, roomCharacteristicMap), 'html'),
+  ].filter(Boolean),
 })
 
 export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => {
@@ -188,7 +185,7 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
 }
 
 export const requirementsInformation = (placement: Cas1SpaceBooking): SummaryList => {
-  const requirements = placement.requirements.essentialCharacteristics
+  const requirements = placement.characteristics
   const apType =
     apTypeCriteriaLabels[requirements.find(requirement => specialistApTypeCriteria.includes(requirement)) || 'normal']
   const apRequirements = filterApLevelCriteria(requirements)

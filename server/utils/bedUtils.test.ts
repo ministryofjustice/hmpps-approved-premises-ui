@@ -7,13 +7,12 @@ import {
   bedLink,
   bedNameCell,
   bedTableRows,
-  characteristicsRow,
   roomNameCell,
   statusCell,
   statusRow,
   title,
 } from './bedUtils'
-import { translateCharacteristic } from './characteristicsUtils'
+import { roomCharacteristicMap } from './characteristicsUtils'
 
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
@@ -101,28 +100,24 @@ describe('bedUtils', () => {
 
   describe('characteristicsRow', () => {
     it('returns a list of translated characteristics', () => {
-      const characteristic1 = apCharacteristicPairFactory.build({ propertyName: 'hasStepFreeAccessToCommunalAreas' })
-      const characteristic2 = apCharacteristicPairFactory.build({ propertyName: 'isSuitedForSexOffenders' })
+      const characteristicPairList = [
+        apCharacteristicPairFactory.build({ propertyName: 'hasStepFreeAccessToCommunalAreas' }),
+        apCharacteristicPairFactory.build({ propertyName: 'isSuitedForSexOffenders' }),
+        apCharacteristicPairFactory.build({ propertyName: 'isArsonSuitable' }),
+      ]
 
-      const translatedCharacteristic1 = translateCharacteristic(characteristic1)
-      const translatedCharacteristic2 = translateCharacteristic(characteristic2)
+      const translatedList = characteristicPairList.map(({ propertyName }) => roomCharacteristicMap[propertyName])
 
-      bedDetail.characteristics = [characteristic1, characteristic2]
+      bedDetail.characteristics = characteristicPairList
 
-      expect(characteristicsRow(bedDetail)).toEqual({
-        key: { text: 'Characteristics' },
-        value: {
-          html:
-            '<ul class="govuk-list govuk-list--bullet">\n' +
-            `  <li>${translatedCharacteristic1}</li> <li>${translatedCharacteristic2}</li></ul>`,
+      expect(bedDetails(bedDetail)).toEqual([
+        {
+          key: { text: 'Characteristics' },
+          value: {
+            html: `<ul class="govuk-list govuk-list--bullet"><li>${translatedList[1]}</li><li>${translatedList[2]}</li></ul>`,
+          },
         },
-      })
-    })
-  })
-
-  describe('bedDetails', () => {
-    it('returns details for a bed', () => {
-      expect(bedDetails(bedDetail)).toEqual([characteristicsRow(bedDetail)])
+      ])
     })
   })
 
