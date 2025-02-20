@@ -6,12 +6,7 @@ import { occupancySummary, placementDates, validateSpaceBooking } from '../../..
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../utils/dateUtils'
-import {
-  dayAvailabilityStatus,
-  dayAvailabilityStatusMap,
-  durationSelectOptions,
-  occupancyCriteriaMap,
-} from '../../../utils/match/occupancy'
+import { dayAvailabilityStatus, dayAvailabilityStatusMap, durationSelectOptions } from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
@@ -34,6 +29,7 @@ import {
 } from '../../../utils/premises/occupancy'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import config from '../../../config'
+import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -123,7 +119,7 @@ export default class {
       return res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest,
-        selectedCriteria: searchState.roomCriteria.map(criterion => occupancyCriteriaMap[criterion]).join(', '),
+        selectedCriteria: searchState.roomCriteria.map(criterion => roomCharacteristicMap[criterion]).join(', '),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
@@ -131,7 +127,7 @@ export default class {
         ...DateFormats.isoDateToDateInputs(formValues.startDate, 'startDate'),
         ...userInput,
         durationOptions: durationSelectOptions(formValues.durationDays),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, formValues.roomCriteria),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         summary,
         calendar,

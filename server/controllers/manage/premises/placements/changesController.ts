@@ -21,12 +21,13 @@ import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 import { CriteriaQuery } from '../../../match/placementRequests/occupancyViewController'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
-import { durationSelectOptions, occupancyCriteriaMap } from '../../../../utils/match/occupancy'
+import { durationSelectOptions } from '../../../../utils/match/occupancy'
 import { OccupancySummary } from '../../../../utils/match/occupancySummary'
 import managePaths from '../../../../paths/manage'
 import matchPaths from '../../../../paths/match'
 import adminPaths from '../../../../paths/admin'
 import { ValidationError } from '../../../../utils/errors'
+import { roomCharacteristicMap } from '../../../../utils/characteristicsUtils'
 
 type RequestParams = {
   premisesId: string
@@ -132,7 +133,7 @@ export default class ChangesController {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
         pageHeading: 'Change placement',
         placement,
-        selectedCriteria: (criteria || []).map(criterion => occupancyCriteriaMap[criterion]).join(', '),
+        selectedCriteria: (criteria || []).map(criterion => roomCharacteristicMap[criterion]).join(', '),
         arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         startDate,
@@ -141,7 +142,7 @@ export default class ChangesController {
         criteria,
         placementSummary: placementOverviewSummary(placement),
         durationOptions: durationSelectOptions(durationDays),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteria),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, criteria),
         summary,
         calendar,
         errors,

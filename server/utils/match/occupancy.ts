@@ -68,12 +68,3 @@ export const durationSelectOptions = (duration?: number): Array<SelectOption> =>
     selected: selected === value || undefined,
   }))
 }
-
-export const occupancyCriteriaMap: Record<Cas1SpaceBookingCharacteristic, string> = {
-  isWheelchairDesignated: 'Wheelchair accessible',
-  isStepFreeDesignated: 'Step-free',
-  hasEnSuite: 'En-suite',
-  isSingle: 'Single room',
-  isArsonSuitable: 'Suitable for active arson risk',
-  isSuitedForSexOffenders: 'Suitable for sexual offence risk',
-}

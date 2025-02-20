@@ -26,9 +26,9 @@ import { placementDates } from '../../../utils/match'
 import { fetchErrorsAndUserInput, generateErrorMessages, generateErrorSummary } from '../../../utils/validation'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
-import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
 import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 import config from '../../../config'
+import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 export default class ApOccupancyViewController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -132,7 +132,7 @@ export default class ApOccupancyViewController {
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
         criteriaOptions: config.flags.pocEnabled
           ? null
-          : convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, characteristicsArray),
+          : convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, characteristicsArray),
       })
     }
   }
