@@ -122,6 +122,25 @@ describe('timeline utilities', () => {
 
           expect(result).not.toContain('Room criteria changed from')
         })
+
+        it('renders "none" if previous or current criteria were none', () => {
+          const timelineEvent = cas1TimelineEventFactory.build({
+            payload: cas1TimelineEventContentPayloadFactory.build({
+              type: 'booking_changed',
+              premises: {
+                name: premises.name,
+                id: premises.id,
+              },
+              schemaVersion: 2,
+              characteristics: ['hasEnSuite'],
+              previousCharacteristics: [],
+            } as Cas1TimelineEventContentPayload),
+          })
+
+          const result = renderTimelineEventContent(timelineEvent)
+
+          expect(result).toContain('Room criteria changed from none to en-suite')
+        })
       })
     })
   })

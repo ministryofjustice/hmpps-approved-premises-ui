@@ -42,7 +42,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
         const isoDateToUiDateOrUndefined = (isoDate: string) =>
           isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined
         const roomCriteriaOrNone = (criteria: Array<Cas1SpaceCharacteristic>) =>
-          criteriaListInline(filterRoomLevelCriteria(criteria || [])) || 'None'
+          criteriaListInline(filterRoomLevelCriteria(criteria || [])) || 'none'
 
         const context = {
           premises,
