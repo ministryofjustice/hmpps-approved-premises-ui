@@ -95,7 +95,7 @@ export default class {
       let calendar: Calendar
 
       if (!errors.startDate) {
-        const capacityDates = placementDates(searchState.startDate, searchState.durationDays)
+        const capacityDates = placementDates(searchState.startDate, searchState.durationDays - 1)
         const capacity = await this.premisesService.getCapacity(token, premisesId, {
           startDate: capacityDates.startDate,
           endDate: capacityDates.endDate,

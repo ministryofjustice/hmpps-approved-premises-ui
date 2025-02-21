@@ -65,7 +65,7 @@ describe('AP occupancyViewController', () => {
 
     it('should render the premises occupancy view with default date and duration', async () => {
       const startDate = '2024-01-01'
-      const endDate = '2024-03-25'
+      const endDate = '2024-03-24'
       const { premisesSummary, premisesCapacity } = await mockPremises(startDate)
 
       expect(response.render).toHaveBeenCalledWith(
@@ -104,7 +104,7 @@ describe('AP occupancyViewController', () => {
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premisesId, {
         startDate: '2024-06-20',
-        endDate: '2024-06-27',
+        endDate: '2024-06-26',
       })
     })
 
