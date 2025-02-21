@@ -214,12 +214,12 @@ describe('table', () => {
       })
       expect(nameAnchorCell(task)).toEqual({
         html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
-          text: `LAO CRN: ${personSummary.crn}`,
+          text: `LAO: ${personSummary.crn}`,
           attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
         }),
       })
     })
-    it('returns the not found CRN when the person summary is UnknownPersonSummary  in the task', () => {
+    it('returns the unknown person CRN when the person summary is UnknownPersonSummary  in the task', () => {
       const personSummary = fullPersonSummaryFactory.build({ personType: 'UnknownPersonSummary' })
       const task = taskFactory.build({
         taskType: 'Assessment',
@@ -227,7 +227,7 @@ describe('table', () => {
       })
       expect(nameAnchorCell(task)).toEqual({
         html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
-          text: `Not Found CRN: ${personSummary.crn}`,
+          text: `Unknown: ${personSummary.crn}`,
           attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
         }),
       })

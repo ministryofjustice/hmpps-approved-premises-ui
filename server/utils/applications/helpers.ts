@@ -1,28 +1,31 @@
 import { ApprovedPremisesApplicationSummary as ApplicationSummary, Person } from '../../@types/shared'
-import { isFullPerson, isUnknownPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
+import { displayName, isFullPerson, tierBadge } from '../personUtils'
 import paths from '../../paths/apply'
 
 export const createNameAnchorElement = (
   person: Person,
   applicationSummary: ApplicationSummary,
-  { linkInProgressApplications }: { linkInProgressApplications: boolean } = { linkInProgressApplications: true },
+  {
+    linkInProgressApplications,
+    showCrn,
+  }: {
+    linkInProgressApplications?: boolean
+    showCrn?: boolean
+  } = { linkInProgressApplications: true, showCrn: false },
 ) => {
+  const name = displayName(person, showCrn)
+
   if (!linkInProgressApplications && applicationSummary.status === 'started') {
-    return textValue(
-      nameOrPlaceholderCopy(
-        person,
-        isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO CRN: ${person.crn}`,
-      ),
-    )
+    return textValue(name)
   }
 
   return isFullPerson(person)
     ? htmlValue(
         `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${
-          person.name
+          name
         }</a>`,
       )
-    : textValue(isUnknownPerson(person) ? `Not Found CRN: ${person.crn}` : `LAO CRN: ${person.crn}`)
+    : textValue(name)
 }
 
 export const textValue = (value: string) => {

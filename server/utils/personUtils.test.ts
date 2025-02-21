@@ -6,15 +6,7 @@ import {
   unknownPersonFactory,
   unknownPersonSummaryFactory,
 } from '../testutils/factories/person'
-import {
-  isApplicableTier,
-  isFullPerson,
-  isUnknownPerson,
-  laoName,
-  laoSummaryName,
-  nameOrPlaceholderCopy,
-  tierBadge,
-} from './personUtils'
+import { displayName, isApplicableTier, isFullPerson, isUnknownPerson, tierBadge } from './personUtils'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
@@ -63,69 +55,81 @@ describe('personUtils', () => {
     })
   })
 
-  describe('laoName', () => {
-    it('if the person is not restricted it returns their name', () => {
-      const person = fullPersonFactory.build({ isRestricted: false })
+  describe('displayName', () => {
+    describe('with a Full Person', () => {
+      it('returns the name if not restricted', () => {
+        const person = fullPersonFactory.build({ isRestricted: false })
 
-      expect(laoName(person)).toEqual(person.name)
+        expect(displayName(person)).toEqual(person.name)
+      })
+
+      it('returns the name prefixed with "LAO:" if restricted', () => {
+        const person = fullPersonFactory.build({ isRestricted: true })
+
+        expect(displayName(person)).toEqual(`LAO: ${person.name}`)
+      })
     })
 
-    it('if the person is restricted it returns their name prefixed with LAO: ', () => {
-      const person = fullPersonFactory.build({ isRestricted: true })
+    describe('with a Full Person Summary', () => {
+      it('returns the name if not restricted', () => {
+        const person = fullPersonSummaryFactory.build({ isRestricted: false })
 
-      expect(laoName(person)).toEqual(`LAO: ${person.name}`)
-    })
-  })
+        expect(displayName(person)).toEqual(person.name)
+      })
 
-  describe('laoSummaryName', () => {
-    it('if the person is not restricted it returns their name', () => {
-      const person = fullPersonSummaryFactory.build({ isRestricted: false })
+      it('returns the name prefixed with "LAO:" if restricted', () => {
+        const person = fullPersonSummaryFactory.build({ isRestricted: true })
 
-      expect(laoSummaryName(person)).toEqual(person.name)
-    })
-
-    it('if the person is restricted but the API returns a full person summary, it returns their name prefixed with LAO:', () => {
-      const person = fullPersonSummaryFactory.build({ isRestricted: true })
-
-      expect(laoSummaryName(person)).toEqual(`LAO: ${person.name}`)
+        expect(displayName(person)).toEqual(`LAO: ${person.name}`)
+      })
     })
 
-    it('if the person is restricted and the API returns a restrictedPersonSummary, it returns LAO ', () => {
+    describe('with a Restricted Person', () => {
+      const person = restrictedPersonFactory.build()
+
+      it('returns "Limited Access Offender" without CRN', () => {
+        expect(displayName(person)).toEqual('Limited Access Offender')
+      })
+
+      it('returns "LAO: {crn}" with CRN', () => {
+        expect(displayName(person, true)).toEqual(`LAO: ${person.crn}`)
+      })
+    })
+
+    describe('with a Restricted Person Summary', () => {
       const person = restrictedPersonSummaryFactory.build()
 
-      expect(laoSummaryName(person)).toEqual(`LAO`)
+      it('returns "Limited Access Offender" without CRN', () => {
+        expect(displayName(person)).toEqual('Limited Access Offender')
+      })
+
+      it('returns "LAO: {crn}" with CRN', () => {
+        expect(displayName(person, true)).toEqual(`LAO: ${person.crn}`)
+      })
     })
 
-    it('if the person is unknown and the API returns an unknownPersonSummary, it returns Unknown ', () => {
+    describe('with an Unknown Person', () => {
+      const person = unknownPersonFactory.build()
+
+      it('returns "Unknown person" without CRN', () => {
+        expect(displayName(person)).toEqual('Unknown person')
+      })
+
+      it('returns "Unknown: {crn}" with CRN', () => {
+        expect(displayName(person, true)).toEqual(`Unknown: ${person.crn}`)
+      })
+    })
+
+    describe('with an Unknown Person Summary', () => {
       const person = unknownPersonSummaryFactory.build()
 
-      expect(laoSummaryName(person)).toEqual(`Unknown`)
-    })
-  })
+      it('returns "Unknown person" without CRN', () => {
+        expect(displayName(person)).toEqual('Unknown person')
+      })
 
-  describe('nameOrPlaceholderCopy', () => {
-    it('returns "the person" if passed a restrictedPerson', () => {
-      expect(nameOrPlaceholderCopy(restrictedPersonFactory.build())).toEqual('the person')
-    })
-
-    it('returns the persons name if passed a fullPerson', () => {
-      const person = fullPersonFactory.build()
-      expect(nameOrPlaceholderCopy(person)).toContain(person.name)
-    })
-
-    it('returns Unknown if the person is unknown', () => {
-      const person = unknownPersonFactory.build()
-      expect(nameOrPlaceholderCopy(person)).toEqual(`Unknown person`)
-    })
-
-    it('includes limited access offender text if showLaoLabel true and person is restricted to others', () => {
-      const person = fullPersonFactory.build({ isRestricted: true })
-      expect(nameOrPlaceholderCopy(person, 'the person', true)).toEqual(`${person.name} (Limited access offender)`)
-    })
-
-    it('does not include limited access offender text if showLaoLabel true and person is not restricted to others', () => {
-      const person = fullPersonFactory.build({ isRestricted: false })
-      expect(nameOrPlaceholderCopy(person, 'the person', true)).toEqual(person.name)
+      it('returns "Unknown: {crn}" with CRN', () => {
+        expect(displayName(person, true)).toEqual(`Unknown: ${person.crn}`)
+      })
     })
   })
 

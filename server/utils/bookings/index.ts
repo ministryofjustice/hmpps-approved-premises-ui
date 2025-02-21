@@ -1,11 +1,4 @@
-import type {
-  BespokeError,
-  SelectOption,
-  SummaryList,
-  SummaryListItem,
-  TableCell,
-  TableRow,
-} from '@approved-premises/ui'
+import type { BespokeError, SelectOption, SummaryList, SummaryListItem, TableRow } from '@approved-premises/ui'
 import type {
   BedSummary,
   Booking,
@@ -20,7 +13,7 @@ import assessPaths from '../../paths/assess'
 import { DateFormats, todayAtMidnight } from '../dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from '../utils'
-import { isFullPerson, laoName } from '../personUtils'
+import { displayName } from '../personUtils'
 import { convertObjectsToRadioItems } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
 import { bookingActions, v1BookingActions, v2BookingActions } from './bookingActions'
@@ -160,7 +153,9 @@ export const bookingsToTableRows = (
   type: 'arrival' | 'departure',
 ): Array<TableRow> => {
   return bookings.map(booking => [
-    nameCell(booking),
+    {
+      text: displayName(booking.person),
+    },
     {
       text: booking.person.crn,
     },
@@ -175,9 +170,6 @@ export const bookingsToTableRows = (
     },
   ])
 }
-
-export const nameCell = (booking: PremisesBooking): TableCell =>
-  isFullPerson(booking.person) ? { text: laoName(booking.person) } : { text: `LAO: ${booking.person.crn}` }
 
 export const generateConflictBespokeError = (
   err: SanitisedError,
@@ -236,7 +228,9 @@ export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
       key: {
         text: 'Name',
       },
-      value: nameCell(booking),
+      value: {
+        text: displayName(booking.person),
+      },
     },
     {
       key: {

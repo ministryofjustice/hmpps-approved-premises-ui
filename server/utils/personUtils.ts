@@ -1,4 +1,12 @@
-import { FullPerson, FullPersonSummary, Person, PersonSummary } from '../@types/shared'
+import {
+  FullPerson,
+  Person,
+  PersonSummary,
+  RestrictedPerson,
+  RestrictedPersonSummary,
+  UnknownPerson,
+  UnknownPersonSummary,
+} from '../@types/shared'
 
 const tierBadge = (tier: string): string => {
   if (!tier) return ''
@@ -19,43 +27,42 @@ const isApplicableTier = (sex: string, tier: string): boolean => {
 
 const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.type === 'FullPerson'
 
-const isUnknownPerson = (person?: Person): boolean => person?.type === 'UnknownPerson'
+const isUnknownPerson = (person?: Person): person is Person => person?.type === 'UnknownPerson'
 
-const laoName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.name}` : person.name)
+const fullPersonName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.name}` : person.name)
 
-const laoSummaryName = (personSummary: PersonSummary) => {
-  if (personSummary.personType === 'FullPersonSummary') {
-    const { name, isRestricted } = personSummary as FullPersonSummary
-    return isRestricted ? `LAO: ${name}` : name
-  }
-  return personSummary.personType === 'RestrictedPersonSummary' ? 'LAO' : 'Unknown'
-}
+const restrictedPersonName = (person: RestrictedPerson | RestrictedPersonSummary, showCrn = false) =>
+  showCrn ? `LAO: ${person.crn}` : 'Limited Access Offender'
+
+const unknownPersonName = (person: UnknownPerson | UnknownPersonSummary, showCrn = false) =>
+  showCrn ? `Unknown: ${person.crn}` : 'Unknown person'
 
 /**
- * Returns the person's name if they are a FullPerson, 'the person' or any other copy provided if they are LAO, or
- * 'Unknown person' if they are unknown.
- * @param {Person}    person
- * @param {string}    copyForRestrictedPerson the copy to use instead of the person's name if the person is LAO
- * @param {boolean}   showLaoLabel append ' (Limited access offender)' if the person is LAO
+ * Returns the person's name if they are a Full Person, 'Limited Access Offender' if they are a Restricted
+ * Person, or 'Unknown person' if they are an Unknown Person. This handles 'summary' types.
+ * @param {Person}    person The person whose name needs to be displayed
+ * @param {boolean}   showCrn Whether to show the CRN when the person name cannot be shown
  * @returns {string}  The name or text to display
  */
-const nameOrPlaceholderCopy = (
-  person: Person,
-  copyForRestrictedPerson: string = 'the person',
-  showLaoLabel: boolean = false,
-): string => {
-  if (isFullPerson(person)) {
-    return nameText(person, showLaoLabel)
+const displayName = (person: Person | PersonSummary, showCrn: boolean = false): string => {
+  let typeKey: 'type' | 'personType'
+
+  if ('type' in person) {
+    typeKey = 'type'
+  } else if ('personType' in person) {
+    typeKey = 'personType'
   }
-  return person.type === 'RestrictedPerson' ? copyForRestrictedPerson : 'Unknown person'
+
+  switch (person[typeKey]) {
+    case 'FullPerson':
+    case 'FullPersonSummary':
+      return fullPersonName(person as FullPerson)
+    case 'RestrictedPerson':
+    case 'RestrictedPersonSummary':
+      return restrictedPersonName(person, showCrn)
+    default:
+      return unknownPersonName(person, showCrn)
+  }
 }
 
-const nameText = (person: FullPerson, showLaoLabel: boolean) => {
-  let { name } = person
-  if (showLaoLabel && person.isRestricted) {
-    name += ' (Limited access offender)'
-  }
-  return name
-}
-
-export { tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName, laoSummaryName, isUnknownPerson }
+export { tierBadge, isApplicableTier, isFullPerson, displayName, isUnknownPerson }

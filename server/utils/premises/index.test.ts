@@ -20,7 +20,7 @@ import { statusTextMap } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
-import { laoSummaryName } from '../personUtils'
+import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 
 describe('premisesUtils', () => {
@@ -287,7 +287,7 @@ describe('premisesUtils', () => {
           const statusColumn = { text: statusTextMap[placement.status] }
           const baseColumns = [
             {
-              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoSummaryName(placement.person)}, ${placement.person.crn}</a>`,
+              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
             },
             { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
             { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },

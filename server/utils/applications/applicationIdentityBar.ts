@@ -1,11 +1,12 @@
-import { ApprovedPremisesApplication as Application, FullPerson } from '../../@types/shared'
+import { ApprovedPremisesApplication as Application } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 import paths from '../../paths/apply'
 import { ApplicationStatusTag } from './statusTag'
 import { hasPermission } from '../users'
+import { displayName } from '../personUtils'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
-  let heading = (application.person as FullPerson).name
+  let heading = displayName(application.person)
 
   if (application.type === 'Offline') {
     heading += '<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>'

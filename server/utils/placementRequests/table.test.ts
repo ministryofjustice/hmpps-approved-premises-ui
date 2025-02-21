@@ -26,8 +26,8 @@ import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { laoName } from '../personUtils'
-import { FullPerson, PlacementRequestSortField } from '../../@types/shared'
+import { displayName } from '../personUtils'
+import { PlacementRequestSortField } from '../../@types/shared'
 import { linkTo } from '../utils'
 import adminPaths from '../../paths/admin'
 
@@ -45,7 +45,7 @@ describe('tableUtils', () => {
       nameCell(placementRequest)
 
       expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
-        text: laoName(placementRequest.person as FullPerson),
+        text: displayName(placementRequest.person),
         attributes: {
           'data-cy-placementRequestId': placementRequest.id,
           'data-cy-applicationId': placementRequest.applicationId,
@@ -53,15 +53,7 @@ describe('tableUtils', () => {
       })
     })
 
-    it('returns an empty cell if the personName is not present', () => {
-      const task = placementRequestFactory.build({ person: undefined })
-
-      expect(nameCell(task)).toEqual({
-        html: '',
-      })
-    })
-
-    it('returns the crn cell if the person is a restrictedPerson', () => {
+    it('returns the crn cell with no link if the person is a restrictedPerson', () => {
       const restrictedPersonTask = placementRequestFactory.build()
       restrictedPersonTask.person = restrictedPersonFactory.build()
 
@@ -77,7 +69,7 @@ describe('tableUtils', () => {
       nameCell(restrictedPersonTask)
 
       expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: restrictedPersonTask.id }), {
-        text: laoName(restrictedPersonTask.person as FullPerson),
+        text: displayName(restrictedPersonTask.person),
         attributes: {
           'data-cy-placementRequestId': restrictedPersonTask.id,
           'data-cy-applicationId': restrictedPersonTask.applicationId,
@@ -90,7 +82,7 @@ describe('tableUtils', () => {
       unknownPersonTask.person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
 
       expect(nameCell(unknownPersonTask)).toEqual({
-        text: `Not Found CRN: ${unknownPersonTask.person.crn}`,
+        text: `Unknown: ${unknownPersonTask.person.crn}`,
       })
     })
   })

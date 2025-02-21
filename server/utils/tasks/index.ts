@@ -5,7 +5,7 @@ import { SelectOption, SummaryListItem, TaskSearchQualification } from '../../@t
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
-import { nameOrPlaceholderCopy } from '../personUtils'
+import { displayName } from '../personUtils'
 import {
   allocatedTableRows,
   completedTableHeader,
@@ -66,7 +66,7 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
         text: 'Name',
       },
       value: {
-        text: nameOrPlaceholderCopy(application.person, `LAO: ${application.person.crn}`, true),
+        text: displayName(application.person),
       },
     },
     {
