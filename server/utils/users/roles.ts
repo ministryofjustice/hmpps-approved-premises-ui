@@ -77,8 +77,12 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     hint: 'Assign to CRU Members who are in the Find and Book Beta. In addition to this role, Workflow manager must also be assigned to CRU members.',
   },
   report_viewer: {
-    label: 'Report Viewer',
+    label: 'Report viewer',
     hint: 'View and download reports',
+  },
+  report_viewer_with_pii: {
+    label: 'Report viewer with PII',
+    hint: 'View and download reports with personally identifiable information',
   },
   future_manager: {
     label: 'Future manager',

@@ -27,7 +27,12 @@ export type Cas1SpaceBooking = {
     premises: NamedId;
     apArea: NamedId;
     bookedBy?: User;
+    /**
+     * use the better named 'placementRequestId'
+     * @deprecated
+     */
     requestForPlacementId?: string;
+    placementRequestId?: string;
     expectedArrivalDate: string;
     expectedDepartureDate: string;
     /**

@@ -1,4 +1,4 @@
-import type { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
+import { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
 import { TextItem } from '@approved-premises/ui'
 import {
   cas1PremisesBasicSummaryFactory,
