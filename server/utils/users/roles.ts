@@ -17,6 +17,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'excluded_from_placement_application_allocation',
   'appeals_manager',
   'report_viewer',
+  'report_viewer_with_pii',
   'future_manager',
   'user_manager',
   'janitor',
