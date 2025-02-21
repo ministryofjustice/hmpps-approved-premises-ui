@@ -17,7 +17,7 @@ const isApplicableTier = (sex: string, tier: string): boolean => {
   return applicableTiers.includes(tier)
 }
 
-const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.name !== undefined
+const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.type === 'FullPerson'
 
 const isUnknownPerson = (person?: Person): boolean => person?.type === 'UnknownPerson'
 
@@ -32,16 +32,22 @@ const laoSummaryName = (personSummary: PersonSummary) => {
 }
 
 /**
- * Returns the person's name if they are a FullPerson, otherwise returns 'the person'
- * @param {Person} person
- * @returns 'the person' | person.name
+ * Returns the person's name if they are a FullPerson, 'the person' or any other copy provided if they are LAO, or
+ * 'Unknown person' if they are unknown.
+ * @param {Person}    person
+ * @param {string}    copyForRestrictedPerson the copy to use instead of the person's name if the person is LAO
+ * @param {boolean}   showLaoLabel append ' (Limited access offender)' if the person is LAO
+ * @returns {string}  The name or text to display
  */
 const nameOrPlaceholderCopy = (
   person: Person,
-  copyForRestrictedPerson = 'the person',
-  showLaoLabel = false,
+  copyForRestrictedPerson: string = 'the person',
+  showLaoLabel: boolean = false,
 ): string => {
-  return isFullPerson(person) ? nameText(person, showLaoLabel) : copyForRestrictedPerson
+  if (isFullPerson(person)) {
+    return nameText(person, showLaoLabel)
+  }
+  return person.type === 'RestrictedPerson' ? copyForRestrictedPerson : 'Unknown person'
 }
 
 const nameText = (person: FullPerson, showLaoLabel: boolean) => {

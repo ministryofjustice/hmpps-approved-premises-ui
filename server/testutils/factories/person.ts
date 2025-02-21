@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { FullPerson, PersonSummary, RestrictedPerson } from '@approved-premises/api'
+import type { FullPerson, PersonSummary, RestrictedPerson, UnknownPerson } from '@approved-premises/api'
 import { FullPersonSummary } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
@@ -23,6 +23,11 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
   crn: getCrn(),
   type: 'RestrictedPerson',
+}))
+
+export const unknownPersonFactory = Factory.define<UnknownPerson>(() => ({
+  crn: getCrn(),
+  type: 'UnknownPerson',
 }))
 
 export const personSummaryFactory = Factory.define<PersonSummary>(() => ({

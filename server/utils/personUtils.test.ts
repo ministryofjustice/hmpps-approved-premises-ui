@@ -3,6 +3,7 @@ import {
   fullPersonSummaryFactory,
   restrictedPersonFactory,
   restrictedPersonSummaryFactory,
+  unknownPersonFactory,
   unknownPersonSummaryFactory,
 } from '../testutils/factories/person'
 import {
@@ -106,9 +107,15 @@ describe('personUtils', () => {
     it('returns "the person" if passed a restrictedPerson', () => {
       expect(nameOrPlaceholderCopy(restrictedPersonFactory.build())).toEqual('the person')
     })
+
     it('returns the persons name if passed a fullPerson', () => {
       const person = fullPersonFactory.build()
       expect(nameOrPlaceholderCopy(person)).toContain(person.name)
+    })
+
+    it('returns Unknown if the person is unknown', () => {
+      const person = unknownPersonFactory.build()
+      expect(nameOrPlaceholderCopy(person)).toEqual(`Unknown person`)
     })
 
     it('includes limited access offender text if showLaoLabel true and person is restricted to others', () => {
