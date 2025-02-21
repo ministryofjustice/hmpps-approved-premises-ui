@@ -22,11 +22,15 @@ export const reportInputLabels = {
   dailyMetrics: { text: 'Daily metrics', hint: 'Counts of key actions across the service grouped by day.' },
   applicationsV2: {
     text: 'Raw Applications for Performance Hub',
-    hint: 'A raw data extract for applications submitted or withdrawn within the month. Does not include any PII.',
+    hint: 'A raw data extract for applications submitted or withdrawn within the month. Excludes PII.',
   },
   requestsForPlacement: {
     text: 'Raw Requests for Placement for Performance Hub',
-    hint: 'A raw data extract for requests for placements created or withdrawn within the month. Does not include any PII.',
+    hint: 'A raw data extract for requests for placements created or withdrawn within the month. Excludes PII.',
+  },
+  placementMatchingOutcomesV2: {
+    text: 'Raw Placement Matching Outcomes Reports (V2)',
+    hint: 'A raw data extract providing placement matching outcomes for placement requests with an expected arrival within the month. Excludes PII.',
   },
 } as const
 
