@@ -34,9 +34,23 @@ type CalendarMonth = {
   days: Array<CalendarDay>
 }
 export type Calendar = Array<CalendarMonth>
+const statusMap: Record<string, CalendarDayStatus> = { '-1': 'overbooked', '0': 'full', '1': 'available' }
+
+export const dayStatusFromDayCapacity = ({
+  bookingCount,
+  availableBedCount,
+  characteristicAvailability,
+}: Cas1PremiseCapacityForDay): CalendarDayStatus => {
+  let dayStatus: CalendarDayStatus = statusMap[Math.sign(availableBedCount - bookingCount)]
+  characteristicAvailability.forEach(({ availableBedsCount, bookingsCount }) => {
+    dayStatus = bookingsCount > availableBedsCount ? 'overbooked' : dayStatus
+  })
+  return dayStatus
+}
 
 export const occupancyCalendar = (capacity: Array<Cas1PremiseCapacityForDay>, premisesId: string): Calendar => {
-  return capacity.reduce<Calendar>((calendar, { availableBedCount, bookingCount, date }) => {
+  return capacity.reduce<Calendar>((calendar, dayCapacity) => {
+    const { availableBedCount, bookingCount, date } = dayCapacity
     const monthAndYear = DateFormats.isoDateToMonthAndYear(date)
     let currentMonth = calendar.find(month => month.name === monthAndYear)
 
@@ -48,14 +62,10 @@ export const occupancyCalendar = (capacity: Array<Cas1PremiseCapacityForDay>, pr
       calendar.push(currentMonth)
     }
 
-    const availability = availableBedCount - bookingCount
-    const statusMap: Record<string, CalendarDayStatus> = { '-1': 'overbooked', '0': 'full', '1': 'available' }
-    const status: CalendarDayStatus = statusMap[String(Math.sign(availability))]
-
     const calendarDay: CalendarDay = {
       name: DateFormats.isoDateToUIDate(date, { format: 'longNoYear' }),
-      status,
-      availability,
+      status: dayStatusFromDayCapacity(dayCapacity),
+      availability: availableBedCount - bookingCount,
       booked: bookingCount,
       link: managePaths.premises.occupancy.day({ premisesId, date }),
     }

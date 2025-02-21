@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import { ObjectWithDateParts } from '@approved-premises/ui'
 import { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
-import { PremisesService } from '../../../services'
+import { PremisesService, SessionService } from '../../../services'
 
 import paths from '../../../paths/manage'
 import {
@@ -31,7 +31,10 @@ import config from '../../../config'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 export default class ApOccupancyViewController {
-  constructor(private readonly premisesService: PremisesService) {}
+  constructor(
+    private readonly premisesService: PremisesService,
+    private readonly sessionService: SessionService,
+  ) {}
 
   view(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -120,7 +123,9 @@ export default class ApOccupancyViewController {
       return res.render('manage/premises/occupancy/dayView', {
         premises,
         pageHeading: DateFormats.isoDateToUIDate(daySummary.forDate),
-        backLink: paths.premises.occupancy.view({ premisesId }),
+        backLink: this.sessionService.getPageBackLink(paths.premises.placements.show.pattern, req, [
+          paths.premises.occupancy.view.pattern,
+        ]),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
         daySummaryRows: daySummaryRows(daySummary, null, config.flags.pocEnabled ? 'singleRow' : 'none'),

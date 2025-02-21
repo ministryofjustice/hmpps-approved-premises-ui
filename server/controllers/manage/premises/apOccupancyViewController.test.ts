@@ -2,7 +2,7 @@ import type { Cas1Premises, Cas1PremisesDaySummary } from '@approved-premises/ap
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { PremisesService } from 'server/services'
+import { PremisesService, SessionService } from 'server/services'
 import { ParsedQs } from 'qs'
 import ApOccupancyViewController from './apOccupancyViewController'
 
@@ -36,13 +36,15 @@ describe('AP occupancyViewController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
-  const occupancyViewController = new ApOccupancyViewController(premisesService)
+  const sessionService = createMock<SessionService>({})
+
+  const occupancyViewController = new ApOccupancyViewController(premisesService, sessionService)
 
   beforeEach(() => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId }, flash: jest.fn() })
     response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
-
+    sessionService.getPageBackLink.mockReturnValue('back-link')
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2024-01-01'))
   })
@@ -157,7 +159,7 @@ describe('AP occupancyViewController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', {
         premises: premisesSummary,
         pageHeading: DateFormats.isoDateToUIDate(date),
-        backLink: paths.premises.occupancy.view({ premisesId }),
+        backLink: 'back-link',
         previousDayLink: `${paths.premises.occupancy.day({ premisesId, date: '2024-12-31' })}`,
         nextDayLink: `${paths.premises.occupancy.day({ premisesId, date: '2025-01-02' })}`,
         daySummaryRows: daySummaryRows(premisesDaySummary),
