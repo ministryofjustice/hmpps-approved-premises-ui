@@ -5,7 +5,7 @@ context('Reports', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+    cy.task('stubAuthUser', { permissions: ['cas1_reports_view_with_pii'] })
 
     // Given I am logged in
     cy.signIn()
