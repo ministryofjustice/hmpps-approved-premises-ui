@@ -76,7 +76,7 @@ const allocationCell = (task: Task): TableCell => ({
 
 const nameAnchorCell = (task: Task): TableCell => ({
   html: linkTo(paths.tasks.show(taskParams(task)), {
-    text: displayName(task.personSummary, true),
+    text: displayName(task.personSummary, { showCrn: true }),
     attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
   }),
 })

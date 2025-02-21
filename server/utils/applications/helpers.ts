@@ -13,7 +13,7 @@ export const createNameAnchorElement = (
     showCrn?: boolean
   } = { linkInProgressApplications: true, showCrn: false },
 ) => {
-  const name = displayName(person, showCrn)
+  const name = displayName(person, { showCrn })
 
   if (!linkInProgressApplications && applicationSummary.status === 'started') {
     return textValue(name)

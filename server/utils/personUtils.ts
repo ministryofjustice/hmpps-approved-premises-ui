@@ -29,7 +29,12 @@ const isFullPerson = (person?: Person): person is FullPerson => (person as FullP
 
 const isUnknownPerson = (person?: Person): person is Person => person?.type === 'UnknownPerson'
 
-const fullPersonName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.name}` : person.name)
+const fullPersonName = (person: FullPerson, laoAsSuffix = false) => {
+  if (person.isRestricted) {
+    return laoAsSuffix ? `${person.name} (Limited access offender)` : `LAO: ${person.name}`
+  }
+  return person.name
+}
 
 const restrictedPersonName = (person: RestrictedPerson | RestrictedPersonSummary, showCrn = false) =>
   showCrn ? `LAO: ${person.crn}` : 'Limited Access Offender'
@@ -41,10 +46,15 @@ const unknownPersonName = (person: UnknownPerson | UnknownPersonSummary, showCrn
  * Returns the person's name if they are a Full Person, 'Limited Access Offender' if they are a Restricted
  * Person, or 'Unknown person' if they are an Unknown Person. This handles 'summary' types.
  * @param {Person}    person The person whose name needs to be displayed
- * @param {boolean}   showCrn Whether to show the CRN when the person name cannot be shown
+ * @param options
+ * @param {boolean}   options.showCrn Whether to show the CRN when the person name cannot be shown
+ * @param {boolean}   options.lasoAsSuffix Shows a full person with the LAO mark as a suffix instead of prefix
  * @returns {string}  The name or text to display
  */
-const displayName = (person: Person | PersonSummary, showCrn: boolean = false): string => {
+const displayName = (
+  person: Person | PersonSummary,
+  options: { showCrn?: boolean; laoAsSuffix?: boolean } = { showCrn: false, laoAsSuffix: false },
+): string => {
   let typeKey: 'type' | 'personType'
 
   if ('type' in person) {
@@ -56,12 +66,12 @@ const displayName = (person: Person | PersonSummary, showCrn: boolean = false): 
   switch (person[typeKey]) {
     case 'FullPerson':
     case 'FullPersonSummary':
-      return fullPersonName(person as FullPerson)
+      return fullPersonName(person as FullPerson, options.laoAsSuffix)
     case 'RestrictedPerson':
     case 'RestrictedPersonSummary':
-      return restrictedPersonName(person, showCrn)
+      return restrictedPersonName(person, options.showCrn)
     default:
-      return unknownPersonName(person, showCrn)
+      return unknownPersonName(person, options.showCrn)
   }
 }
 

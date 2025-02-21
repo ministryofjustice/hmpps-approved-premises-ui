@@ -68,6 +68,12 @@ describe('personUtils', () => {
 
         expect(displayName(person)).toEqual(`LAO: ${person.name}`)
       })
+
+      it('returns the name suffixed with "(Limited access offender)" if restricted and LAO as suffix specified', () => {
+        const person = fullPersonFactory.build({ isRestricted: true })
+
+        expect(displayName(person, { laoAsSuffix: true })).toEqual(`${person.name} (Limited access offender)`)
+      })
     })
 
     describe('with a Full Person Summary', () => {
@@ -92,7 +98,7 @@ describe('personUtils', () => {
       })
 
       it('returns "LAO: {crn}" with CRN', () => {
-        expect(displayName(person, true)).toEqual(`LAO: ${person.crn}`)
+        expect(displayName(person, { showCrn: true })).toEqual(`LAO: ${person.crn}`)
       })
     })
 
@@ -104,7 +110,7 @@ describe('personUtils', () => {
       })
 
       it('returns "LAO: {crn}" with CRN', () => {
-        expect(displayName(person, true)).toEqual(`LAO: ${person.crn}`)
+        expect(displayName(person, { showCrn: true })).toEqual(`LAO: ${person.crn}`)
       })
     })
 
@@ -116,7 +122,7 @@ describe('personUtils', () => {
       })
 
       it('returns "Unknown: {crn}" with CRN', () => {
-        expect(displayName(person, true)).toEqual(`Unknown: ${person.crn}`)
+        expect(displayName(person, { showCrn: true })).toEqual(`Unknown: ${person.crn}`)
       })
     })
 
@@ -128,7 +134,7 @@ describe('personUtils', () => {
       })
 
       it('returns "Unknown: {crn}" with CRN', () => {
-        expect(displayName(person, true)).toEqual(`Unknown: ${person.crn}`)
+        expect(displayName(person, { showCrn: true })).toEqual(`Unknown: ${person.crn}`)
       })
     })
   })

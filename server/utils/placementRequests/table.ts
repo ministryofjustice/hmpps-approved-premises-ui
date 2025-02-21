@@ -89,7 +89,7 @@ export const applicationDateCell = (item: PlacementRequest): TableCell => ({
 })
 
 export const nameCell = (item: PlacementRequest): TableCell => {
-  const name = displayName(item.person, true)
+  const name = displayName(item.person, { showCrn: true })
 
   if (isFullPerson(item.person)) {
     return {
