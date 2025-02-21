@@ -53,7 +53,7 @@
                 {% include "../../_messages.njk" %}
                 {{ outOfServiceBedTimeline(outOfServiceBed.revisionHistory) }}
             {% else %}
-                {{ outOfServiceBedDetails(outOfServiceBed, characteristics) }}
+                {{ outOfServiceBedDetails(outOfServiceBed, characteristicsHtml) }}
             {% endif %}
 
         </div>

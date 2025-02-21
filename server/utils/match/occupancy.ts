@@ -54,26 +54,17 @@ const durationOptionsMap: Record<number, string> = {
   '364': 'Up to 52 weeks',
 }
 
-export const durationSelectOptions = (duration?: number): Array<SelectOption> => {
-  let selected: string
+export const getClosestDuration = (duration: number): number => {
+  const values = Object.keys(durationOptionsMap)
+  return duration && Number(values.filter(value => Number(value) >= duration)[0] || values.slice(-1))
+}
 
-  if (duration) {
-    const values = Object.keys(durationOptionsMap)
-    selected = String(values.filter(value => Number(value) >= duration)[0] || values.slice(-1))
-  }
+export const durationSelectOptions = (duration?: number): Array<SelectOption> => {
+  const selected: string = String(getClosestDuration(duration))
 
   return Object.entries(durationOptionsMap).map(([value, label]) => ({
     value,
     text: label,
     selected: selected === value || undefined,
   }))
-}
-
-export const occupancyCriteriaMap: Record<Cas1SpaceBookingCharacteristic, string> = {
-  isWheelchairDesignated: 'Wheelchair accessible',
-  isStepFreeDesignated: 'Step-free',
-  hasEnSuite: 'En-suite',
-  isSingle: 'Single room',
-  isArsonSuitable: 'Suitable for active arson risk',
-  isSuitedForSexOffenders: 'Suitable for sexual offence risk',
 }

@@ -17,11 +17,12 @@ import adminPaths from '../../../../paths/admin'
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
-import { durationSelectOptions, occupancyCriteriaMap } from '../../../../utils/match/occupancy'
+import { durationSelectOptions } from '../../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
 import * as validationUtils from '../../../../utils/validation'
 import { ValidationError } from '../../../../utils/errors'
+import { roomCharacteristicMap } from '../../../../utils/characteristicsUtils'
 
 describe('changesController', () => {
   const token = 'TEST_TOKEN'
@@ -60,7 +61,7 @@ describe('changesController', () => {
       const requestHandler = changesController.new()
       await requestHandler(request, response, next)
 
-      const expectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
+      const expectedCriteria = filterRoomLevelCriteria(placement.characteristics)
       const expectedPlaceholderDayUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
         id: placement.requestForPlacementId,
         premisesId: premises.id,
@@ -78,12 +79,12 @@ describe('changesController', () => {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
         pageHeading: 'Change placement',
         placement,
-        selectedCriteria: expectedCriteria.map(criterion => occupancyCriteriaMap[criterion]).join(', '),
-        arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
-        departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
+        selectedCriteria: expectedCriteria.map(criterion => roomCharacteristicMap[criterion]).join(', '),
+        arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Current departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         placementSummary: placementOverviewSummary(placement),
         durationOptions: durationSelectOptions(expectedDuration),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, expectedCriteria),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, expectedCriteria),
         startDate: placement.expectedArrivalDate,
         ...DateFormats.isoDateToDateInputs(placement.expectedArrivalDate, 'startDate'),
         durationDays: expectedDuration,
@@ -126,7 +127,7 @@ describe('changesController', () => {
             summary: occupancySummary(capacity.capacity, filterCriteria),
             calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria),
             durationOptions: durationSelectOptions(Number(query.durationDays)),
-            criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, filterCriteria),
+            criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, filterCriteria),
             'startDate-day': '12',
             'startDate-month': '5',
             'startDate-year': '2025',
@@ -150,7 +151,7 @@ describe('changesController', () => {
             summary: undefined,
             calendar: undefined,
             durationOptions: durationSelectOptions(Number(query.durationDays)),
-            criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, []),
+            criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, []),
             errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
             errors: {
               startDate: {

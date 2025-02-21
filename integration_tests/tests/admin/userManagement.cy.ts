@@ -31,7 +31,6 @@ context('User management', () => {
 
     // When I visit the list page
     const listPage = ListPage.visit()
-    listPage.checkForBackButton('/')
 
     // Then I should see the users and their details
     listPage.shouldShowUsers(users)
@@ -106,7 +105,6 @@ context('User management', () => {
 
     // When I visit the list page
     const page = ListPage.visit()
-    page.checkForBackButton('/')
 
     // Then I should see the users and their details
     page.shouldShowUsers(initialUsers)
@@ -303,7 +301,6 @@ context('User management', () => {
 
     // When I visit the list page
     const page = ListPage.visit()
-    page.checkForBackButton('/')
 
     // Then I should see the users and their details
     page.shouldShowUsers(initialUsers)

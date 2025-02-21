@@ -25,7 +25,7 @@ import {
 } from '../../../utils/premises/occupancy'
 import { DateFormats } from '../../../utils/dateUtils'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
-import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
+import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 describe('AP occupancyViewController', () => {
   const token = 'TEST_TOKEN'
@@ -173,7 +173,7 @@ describe('AP occupancyViewController', () => {
         outOfServiceBedCaption: 'Out of service beds on Wed 1 Jan 2025',
         outOfServiceBedTableHeader: tableHeader(outOfServiceBedColumnMap, 'personName', 'asc', ''),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, premisesDaySummary.outOfServiceBeds),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, []),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, []),
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getDaySummary).toHaveBeenCalledWith({

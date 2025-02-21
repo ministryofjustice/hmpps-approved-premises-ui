@@ -7,8 +7,7 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
-{% block beforeContent %}{{ govukBackLink({"text": "Back", "href": "/"}) }}
-{% endblock %}
+
 {% block content %}
     {% include "../../_messages.njk" %}
     <div class="govuk-width-container">

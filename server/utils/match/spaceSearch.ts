@@ -14,7 +14,7 @@ import {
   placementCriteriaLabels,
 } from '../placementCriteriaUtils'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
-import { occupancyCriteriaMap } from './occupancy'
+import { roomCharacteristicMap } from '../characteristicsUtils'
 
 export const spaceSearchCriteriaApLevelLabels = {
   acceptsSexOffenders: 'Sexual offences against adults',
@@ -26,11 +26,11 @@ export const spaceSearchCriteriaApLevelLabels = {
 
 export type SpaceSearchApCriteria = keyof typeof spaceSearchCriteriaApLevelLabels
 
-export type SpaceSearchRoomCriteria = keyof typeof occupancyCriteriaMap
+export type SpaceSearchRoomCriteria = keyof typeof roomCharacteristicMap
 
 export const spaceSearchResultsCharacteristicsLabels = {
   ...spaceSearchCriteriaApLevelLabels,
-  ...occupancyCriteriaMap,
+  ...roomCharacteristicMap,
   isSuitableForVulnerable: placementCriteriaLabels.isSuitableForVulnerable,
 } as const
 
@@ -64,7 +64,7 @@ export const filterApLevelCriteria = (criteria: Array<PlacementCriteria | Cas1Sp
   Object.keys(filterByType(criteria, spaceSearchCriteriaApLevelLabels)) as Array<SpaceSearchApCriteria>
 
 export const filterRoomLevelCriteria = (criteria: Array<PlacementCriteria | Cas1SpaceCharacteristic>) =>
-  Object.keys(filterByType(criteria, occupancyCriteriaMap)) as Array<SpaceSearchRoomCriteria>
+  Object.keys(filterByType(criteria, roomCharacteristicMap)) as Array<SpaceSearchRoomCriteria>
 
 export const spaceSearchStateToApiPayload = (state: SpaceSearchState): Cas1SpaceSearchParameters => {
   return {
