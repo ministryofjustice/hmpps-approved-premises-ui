@@ -111,6 +111,7 @@ describe('userRolesSelectOptions', () => {
       { selected: false, text: 'Workflow manager', value: 'workflow_manager' },
       { selected: false, text: 'CRU member', value: 'cru_member' },
       { selected: false, text: 'Report viewer', value: 'report_viewer' },
+      { selected: false, text: 'Report viewer with PII', value: 'report_viewer_with_pii' },
       { selected: false, text: 'Excluded from assess allocation', value: 'excluded_from_assess_allocation' },
       { selected: false, text: 'Excluded from match allocation', value: 'excluded_from_match_allocation' },
       {
@@ -151,6 +152,7 @@ describe('userRolesSelectOptions', () => {
       { selected: false, text: 'Workflow manager', value: 'workflow_manager' },
       { selected: false, text: 'CRU member', value: 'cru_member' },
       { selected: false, text: 'Report viewer', value: 'report_viewer' },
+      { selected: false, text: 'Report viewer with PII', value: 'report_viewer_with_pii' },
       { selected: false, text: 'Excluded from assess allocation', value: 'excluded_from_assess_allocation' },
       { selected: false, text: 'Excluded from match allocation', value: 'excluded_from_match_allocation' },
       {

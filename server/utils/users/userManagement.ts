@@ -56,6 +56,7 @@ const userRoles: Record<RoleInUse, string> = {
   workflow_manager: 'Workflow manager',
   cru_member: 'CRU member',
   report_viewer: 'Report viewer',
+  report_viewer_with_pii: 'Report viewer with PII',
   excluded_from_assess_allocation: 'Excluded from assess allocation',
   excluded_from_match_allocation: 'Excluded from match allocation',
   excluded_from_placement_application_allocation: 'Excluded from placement application allocation',
