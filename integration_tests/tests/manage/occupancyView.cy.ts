@@ -20,11 +20,8 @@ import OccupancyDayViewPage from '../../pages/manage/occupancyDayView'
 import { Cas1PremisesDaySummary } from '../../../server/@types/shared/models/Cas1PremisesDaySummary'
 
 context('Premises occupancy', () => {
-  const startDateObj = new Date()
-  const endDateObj = addDays(startDateObj, 83)
-
-  const startDate = DateFormats.dateObjToIsoDate(startDateObj)
-  const endDate = DateFormats.dateObjToIsoDate(endDateObj)
+  const startDate = DateFormats.dateObjToIsoDate(new Date())
+  const endDate = DateFormats.dateObjToIsoDate(addDays(startDate, 84))
   const premises = cas1PremisesFactory.build()
   const premisesCapacity = cas1PremiseCapacityFactory.build({ startDate, endDate })
 
@@ -40,7 +37,12 @@ context('Premises occupancy', () => {
 
     // And it has a list of upcoming placements
     cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, residency: 'upcoming' })
-    cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity: premisesCapacity })
+    cy.task('stubPremiseCapacity', {
+      premisesId: premises.id,
+      startDate,
+      endDate: DateFormats.dateObjToIsoDate(addDays(endDate, -1)),
+      premiseCapacity: premisesCapacity,
+    })
   })
 
   describe('with premises view permission', () => {
@@ -57,22 +59,22 @@ context('Premises occupancy', () => {
       page.clickAction('View spaces')
       // Then I should navigate to the occupancy view
       const occPage = Page.verifyOnPage(OccupancyViewPage, `View spaces in ${premises.name}`)
-      occPage.shouldShowCalendarHeading(startDate, DateFormats.differenceInDays(endDateObj, startDateObj).number + 1)
+      occPage.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
       occPage.shouldShowCalendar(premisesCapacity)
     })
 
     it('should allow the user to change the calendar duration', () => {
-      const endDate26 = DateFormats.dateObjToIsoDate(addDays(startDateObj, 7 * 26 - 1))
+      const endDate26 = DateFormats.dateObjToIsoDate(addDays(startDate, 7 * 26))
       cy.task('stubPremiseCapacity', {
         premisesId: premises.id,
         startDate,
-        endDate: endDate26,
+        endDate: DateFormats.dateObjToIsoDate(addDays(endDate26, -1)),
         premiseCapacity: premisesCapacity,
       })
       // When I visit the occupancy view page
       const page = OccupancyViewPage.visit(premises)
       // Then I should be shown the default period
-      page.shouldShowCalendarHeading(startDate, DateFormats.differenceInDays(endDateObj, startDateObj).number + 1)
+      page.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
       // When I select a different duration
       page.getSelectInputByIdAndSelectAnEntry('durationDays', '26 weeks')
       // and click submit
@@ -84,19 +86,19 @@ context('Premises occupancy', () => {
     })
 
     it('should allow the user to change the start date', () => {
-      const newStartDate = DateFormats.dateObjToIsoDate(addDays(startDateObj, 5))
-      const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDateObj, 4 + 12 * 7))
+      const newStartDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5))
+      const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5 + 12 * 7))
 
       cy.task('stubPremiseCapacity', {
         premisesId: premises.id,
         startDate: newStartDate,
-        endDate: newEndDate,
+        endDate: DateFormats.dateObjToIsoDate(addDays(newEndDate, -1)),
         premiseCapacity: premisesCapacity,
       })
       // When I visit the occupancy view page
       const page = OccupancyViewPage.visit(premises)
       // Then I should be shown the default period
-      page.shouldShowCalendarHeading(startDate, DateFormats.differenceInDays(endDateObj, startDateObj).number + 1)
+      page.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
       // When I select a different start date
       page.clearAndCompleteDateInputs('startDate', newStartDate)
       // and click submit
@@ -110,20 +112,20 @@ context('Premises occupancy', () => {
     })
 
     it('should validate the start date', () => {
-      const newStartDate = DateFormats.dateObjToIsoDate(addDays(startDateObj, 5))
-      const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDateObj, 4 + 12 * 7))
+      const newStartDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5))
+      const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5 + 12 * 7))
       const badStartDate = '2023-02-29'
 
       cy.task('stubPremiseCapacity', {
         premisesId: premises.id,
         startDate: newStartDate,
-        endDate: newEndDate,
+        endDate: DateFormats.dateObjToIsoDate(addDays(newEndDate, -1)),
         premiseCapacity: premisesCapacity,
       })
       // When I visit the occupancy view page
       const page = OccupancyViewPage.visit(premises)
       // Then I should be shown the default period
-      page.shouldShowCalendarHeading(startDate, DateFormats.differenceInDays(endDateObj, startDateObj).number + 1)
+      page.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
       // When I select a bad start date and submit
       page.clearAndCompleteDateInputs('startDate', badStartDate)
       page.clickSubmit()

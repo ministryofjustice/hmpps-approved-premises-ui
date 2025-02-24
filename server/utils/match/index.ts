@@ -1,4 +1,3 @@
-import { differenceInDays } from 'date-fns'
 import {
   ApType,
   ApprovedPremisesApplication,
@@ -53,12 +52,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
       ? summaryListItem('Actual arrival date', DateFormats.isoDateToUIDate(actualArrivalDate))
       : summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(expectedArrivalDate)),
     summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(expectedDepartureDate)),
-    summaryListItem(
-      'Length of stay',
-      DateFormats.formatDuration(
-        daysToWeeksAndDays(differenceInDays(expectedDepartureDate, actualArrivalDate || expectedArrivalDate)),
-      ),
-    ),
+    summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
     releaseType ? summaryListItem('Release type', allReleaseTypes[releaseType]) : undefined,
   ].filter(Boolean)
 }

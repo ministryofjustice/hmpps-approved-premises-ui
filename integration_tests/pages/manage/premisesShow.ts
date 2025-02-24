@@ -1,5 +1,4 @@
 import type { Cas1OverbookingRange, Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/api'
-import { differenceInDays, formatDuration } from 'date-fns'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
@@ -112,7 +111,9 @@ export default class PremisesShowPage extends Page {
     PremisesShowPage.overbookingSummary.forEach(({ startInclusive, endInclusive }) => {
       const toText = startInclusive !== endInclusive ? ` to ${DateFormats.isoDateToUIDate(endInclusive)}` : ''
       const dateRangeText = `${DateFormats.isoDateToUIDate(startInclusive)}${toText}`
-      const duration = formatDuration({ days: differenceInDays(endInclusive, startInclusive) + 1 })
+      const duration = DateFormats.formatDuration({
+        days: DateFormats.durationBetweenDates(endInclusive, startInclusive).number + 1,
+      })
       cy.get('.govuk-notification-banner__content').contains(dateRangeText)
       cy.get('.govuk-notification-banner__content').contains(duration)
     })

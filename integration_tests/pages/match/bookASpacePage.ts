@@ -1,7 +1,6 @@
 import type { Cas1Premises, Cas1SpaceBookingCharacteristic, PlacementRequestDetail } from '@approved-premises/api'
-import { differenceInDays } from 'date-fns'
 import Page from '../page'
-import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
+import { DateFormats } from '../../../server/utils/dateUtils'
 import { requirementsHtmlString } from '../../../server/utils/match'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 
@@ -25,7 +24,7 @@ export default class BookASpacePage extends Page {
       { key: { text: 'Expected departure date' }, value: { text: DateFormats.isoDateToUIDate(departureDate) } },
       {
         key: { text: 'Length of stay' },
-        value: { text: DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))) },
+        value: { text: DateFormats.durationBetweenDates(departureDate, arrivalDate).ui },
       },
       { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
     ])

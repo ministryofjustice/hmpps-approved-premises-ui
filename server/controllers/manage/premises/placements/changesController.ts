@@ -1,7 +1,7 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { ObjectWithDateParts } from '@approved-premises/ui'
-import { addDays, differenceInDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
   catchValidationErrorOrPropogate,
@@ -84,12 +84,12 @@ export default class ChangesController {
       let pageHeading = 'Change placement'
       let startDate = placement.expectedArrivalDate
       let endDate = placement.expectedDepartureDate
-      let durationDays = differenceInDays(endDate, startDate)
+      let durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
 
       if (placement.actualArrivalDateOnly) {
         startDate = placement.actualArrivalDateOnly
         endDate = DateFormats.dateObjToIsoDate(addDays(startDate, getClosestDuration(durationDays)))
-        durationDays = differenceInDays(endDate, startDate)
+        durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
         pageHeading = 'Extend placement'
       }
 
