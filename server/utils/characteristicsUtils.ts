@@ -1,5 +1,5 @@
 import { Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic, CharacteristicPair } from '@approved-premises/api'
-import { makeArrayOfType } from './utils'
+import { joinWithCommas, makeArrayOfType } from './utils'
 
 export const roomCharacteristicMap: Record<Cas1SpaceBookingCharacteristic, string> = {
   isWheelchairDesignated: 'Wheelchair accessible',
@@ -22,3 +22,6 @@ export const characteristicsBulletList = (characteristics: Array<Cas1SpaceCharac
     .filter(characteristic => roomCharacteristicMap[characteristic])
     .map(characteristic => `<li>${roomCharacteristicMap[characteristic]}</li>`)
     .join('')}</ul>`
+
+export const characteristicsInlineList = (criteria: Array<Cas1SpaceCharacteristic>): string =>
+  joinWithCommas(criteria.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase()))

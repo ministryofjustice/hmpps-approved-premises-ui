@@ -72,8 +72,11 @@
 
             <div class="govuk-grid-column-full">
                 {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
+
                     {{ timeline(ApplyUtils.mapApplicationTimelineEventsForUi(timelineEvents), application, csrfToken) }}
+
                     {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
+
                     {{ requestAPlacement(requestsForPlacement, application, user, csrfToken) }}
                 {% else %}
                     {{ applicationReadonlyView(application) }}
