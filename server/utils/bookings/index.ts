@@ -229,7 +229,7 @@ export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
         text: 'Name',
       },
       value: {
-        text: displayName(booking.person, { laoAsSuffix: true }),
+        text: displayName(booking.person, { laoSuffix: true }),
       },
     },
     {

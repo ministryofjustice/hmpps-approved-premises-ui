@@ -29,10 +29,22 @@ const isFullPerson = (person?: Person): person is FullPerson => (person as FullP
 
 const isUnknownPerson = (person?: Person): person is Person => person?.type === 'UnknownPerson'
 
-const fullPersonName = (person: FullPerson, laoAsSuffix = false) => {
+const fullPersonName = (
+  person: FullPerson,
+  options: { laoPrefix?: boolean; laoSuffix?: boolean } = {
+    laoPrefix: true,
+    laoSuffix: false,
+  },
+) => {
   if (person.isRestricted) {
-    return laoAsSuffix ? `${person.name} (Limited access offender)` : `LAO: ${person.name}`
+    if (options.laoSuffix) {
+      return `${person.name} (Limited access offender)`
+    }
+    if (options.laoPrefix) {
+      return `LAO: ${person.name}`
+    }
   }
+
   return person.name
 }
 
@@ -47,14 +59,17 @@ const unknownPersonName = (person: UnknownPerson | UnknownPersonSummary, showCrn
  * Person, or 'Unknown person' if they are an Unknown Person. This handles 'summary' types.
  * @param {Person}    person The person whose name needs to be displayed
  * @param options
- * @param {boolean}   options.showCrn Whether to show the CRN when the person name cannot be shown
- * @param {boolean}   options.lasoAsSuffix Shows a full person with the LAO mark as a suffix instead of prefix
+ * @param {boolean}   options.showCrn Show the CRN when the person name cannot be shown
+ * @param {boolean}   options.laoPrefix Prefix person name with 'LAO: ' if restricted (default true)
+ * @param {boolean}   options.laoSuffix Append ' (Limited access offender)' to person name if restricted
  * @returns {string}  The name or text to display
  */
 const displayName = (
   person: Person | PersonSummary,
-  options: { showCrn?: boolean; laoAsSuffix?: boolean } = { showCrn: false, laoAsSuffix: false },
+  options: { showCrn?: boolean; laoPrefix?: boolean; laoSuffix?: boolean } = {},
 ): string => {
+  const { showCrn = false, laoPrefix = true, laoSuffix = false } = options
+
   let typeKey: 'type' | 'personType'
 
   if ('type' in person) {
@@ -66,12 +81,12 @@ const displayName = (
   switch (person[typeKey]) {
     case 'FullPerson':
     case 'FullPersonSummary':
-      return fullPersonName(person as FullPerson, options.laoAsSuffix)
+      return fullPersonName(person as FullPerson, { laoPrefix, laoSuffix })
     case 'RestrictedPerson':
     case 'RestrictedPersonSummary':
-      return restrictedPersonName(person, options.showCrn)
+      return restrictedPersonName(person, showCrn)
     default:
-      return unknownPersonName(person, options.showCrn)
+      return unknownPersonName(person, showCrn)
   }
 }
 

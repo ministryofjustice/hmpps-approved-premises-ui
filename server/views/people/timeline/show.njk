@@ -24,7 +24,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Application history
-                for {{ displayName(timeline.person, { lasoAsSuffix: true }) }}</h1>
+                for {{ displayName(timeline.person, { laoPrefix: false }) }}</h1>
             {{ personDetails(timeline.person, false) }}
             <h2 class="govuk-heading-m">Total applications: {{ applications | length }}</h2>
             <hr />

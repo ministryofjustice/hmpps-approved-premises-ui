@@ -588,7 +588,7 @@ export default abstract class Page {
 
   shouldShowPersonDetails(person: FullPerson, expectedStatus?: PersonStatus): void {
     cy.get('dl[data-cy-person-info],div[data-cy-section="person-details"]').within(() => {
-      this.assertDefinition('Name', displayName(person, { laoAsSuffix: true }))
+      this.assertDefinition('Name', displayName(person, { laoSuffix: true }))
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
       this.assertDefinition('NOMIS Number', person.nomsNumber)

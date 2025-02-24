@@ -66,7 +66,7 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
         text: 'Name',
       },
       value: {
-        text: displayName(application.person, { laoAsSuffix: true }),
+        text: displayName(application.person, { laoSuffix: true }),
       },
     },
     {

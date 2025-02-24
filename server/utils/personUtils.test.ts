@@ -72,7 +72,7 @@ describe('personUtils', () => {
       it('returns the name suffixed with "(Limited access offender)" if restricted and LAO as suffix specified', () => {
         const person = fullPersonFactory.build({ isRestricted: true })
 
-        expect(displayName(person, { laoAsSuffix: true })).toEqual(`${person.name} (Limited access offender)`)
+        expect(displayName(person, { laoSuffix: true })).toEqual(`${person.name} (Limited access offender)`)
       })
     })
 
@@ -83,10 +83,24 @@ describe('personUtils', () => {
         expect(displayName(person)).toEqual(person.name)
       })
 
-      it('returns the name prefixed with "LAO:" if restricted', () => {
-        const person = fullPersonSummaryFactory.build({ isRestricted: true })
+      describe('with a restricted person', () => {
+        it('returns the name prefixed with "LAO:" by default', () => {
+          const person = fullPersonSummaryFactory.build({ isRestricted: true })
 
-        expect(displayName(person)).toEqual(`LAO: ${person.name}`)
+          expect(displayName(person)).toEqual(`LAO: ${person.name}`)
+        })
+
+        it('returns the name suffixed with " (Limited access offender)" if specified', () => {
+          const person = fullPersonSummaryFactory.build({ isRestricted: true })
+
+          expect(displayName(person, { laoSuffix: true })).toEqual(`${person.name} (Limited access offender)`)
+        })
+
+        it('returns the name with no prefix or suffix', () => {
+          const person = fullPersonSummaryFactory.build({ isRestricted: true })
+
+          expect(displayName(person, { laoPrefix: false })).toEqual(person.name)
+        })
       })
     })
 

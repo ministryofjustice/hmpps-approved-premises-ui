@@ -7,7 +7,7 @@ export class ShowPage extends Page {
   timeline: Cas1PersonalTimeline
 
   constructor(timeline: Cas1PersonalTimeline, person: FullPerson) {
-    super(`Application history for ${displayName(person, { laoAsSuffix: true })}`)
+    super(`Application history for ${displayName(person, { laoPrefix: false })}`)
     this.timeline = timeline
   }
 
