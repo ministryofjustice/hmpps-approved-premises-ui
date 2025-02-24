@@ -216,12 +216,13 @@ export default class ChangesController {
         pageHeading: 'Confirm booking changes',
         backlink,
         placement,
-        summaryListRows: spaceBookingConfirmationSummaryListRows(
+        summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
-          arrivalDate || placement.expectedArrivalDate,
-          departureDate,
-          makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria) || [],
-        ),
+          actualArrivalDate: placement.actualArrivalDateOnly,
+          expectedArrivalDate: arrivalDate || placement.expectedArrivalDate,
+          expectedDepartureDate: departureDate,
+          criteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria) || [],
+        }),
         arrivalDate,
         departureDate,
         criteria,
