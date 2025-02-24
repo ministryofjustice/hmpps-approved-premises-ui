@@ -22,7 +22,6 @@ import type {
   Cas1TimelineEventType,
   Cas1TimelineEventUrlType,
   SortDirection,
-  TimelineEventUrlType,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
@@ -43,8 +42,8 @@ import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
-import { escape } from '../formUtils'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
+import { renderTimelineEventContent } from '../timeline'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -285,7 +284,7 @@ const mapApplicationTimelineEventsForUi = (timelineEvents: Array<Cas1TimelineEve
           timestamp: timelineEvent.occurredAt,
           date: timelineEvent.occurredAt ? DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt) : '',
         },
-        content: escape(timelineEvent.content),
+        content: renderTimelineEventContent(timelineEvent),
         associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
       }
 
@@ -314,12 +313,12 @@ const mapPersonalTimelineForUi = (personalTimeline: Cas1PersonalTimeline) => {
 }
 
 const urlTypeForUi = (type: Cas1TimelineEventUrlType) => {
-  const translations: Record<TimelineEventUrlType, string> = {
+  const translations: Record<Cas1TimelineEventUrlType, string> = {
     application: 'application',
     assessment: 'assessment',
     booking: 'placement',
     assessmentAppeal: 'appeal',
-    cas1SpaceBooking: 'placement',
+    spaceBooking: 'placement',
   }
   return translations[type]
 }
