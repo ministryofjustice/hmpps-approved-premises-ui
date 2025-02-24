@@ -12,13 +12,13 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 import { ApplicationShowPageTab, applicationShowPageTab } from '../../../server/utils/applications/utils'
 import paths from '../../../server/paths/apply'
-import { isFullPerson } from '../../../server/utils/personUtils'
+import { displayName } from '../../../server/utils/personUtils'
 import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
     super('Approved Premises application')
-    cy.get('h2').contains(isFullPerson(application.person) && application.person.name)
+    cy.get('h2').contains(displayName(application.person))
   }
 
   static visit(application: Application, tab?: ApplicationShowPageTab) {

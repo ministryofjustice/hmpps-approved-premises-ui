@@ -37,5 +37,24 @@ context('Application timeline', () => {
       timelinePage.shouldShowTimeline()
       timelinePage.shouldShowPersonDetails(person)
     })
+
+    it('shows the timeline for a Limited access offender', () => {
+      const person = personFactory.build({ isRestricted: true })
+      const timeline = personalTimelineFactory.build({ person })
+
+      cy.task('stubPersonalTimeline', { timeline, person })
+      cy.visit(paths.timeline.find({}))
+
+      // Given I am on the timeline find page
+      const findPage = Page.verifyOnPage(FindPage, person)
+
+      // When I enter a CRN
+      findPage.enterCrn()
+      // And click submit
+      findPage.clickSubmit()
+
+      // Then I should be on the timeline show page
+      Page.verifyOnPage(ShowPage, timeline, person)
+    })
   })
 })

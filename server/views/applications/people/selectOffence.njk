@@ -5,66 +5,64 @@
 {% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% extends "../../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-		text: "Back",
-		href: paths.applications.new({ crn: person.crn })
-	}) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.applications.new({ crn: person.crn })
+    }) }}
 
 {% endblock %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      {{ showErrorSummary(errorSummary, errorTitle) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
 
-      <h1>{{ pageHeading}}</h1>
+            <h1>{{ pageHeading }}</h1>
 
-      <p class="govuk-body">
-        Please select the main offence that will be used to assess {{ person.name }}'s sutability
-        for an Approved Premises (the 'index offence') below:
-      </p>
+            <p class="govuk-body">
+                Please select the main offence that will be used to assess {{ person.name }}'s suitability
+                for an Approved Premises (the 'index offence') below:
+            </p>
 
-      {{ govukWarningText({
-        text: "If the required offence is not visible here, you will not be able to proceed with the application until the offence has been added to NDelius",
-        iconFallbackText: "Warning"
-      }) }}
+            {{ govukWarningText({
+                text: "If the required offence is not visible here, you will not be able to proceed with the application until the offence has been added to NDelius",
+                iconFallbackText: "Warning"
+            }) }}
 
-      <form action="{{ paths.applications.create() }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="crn" value="{{ person.crn }}"/>
+            <form action="{{ paths.applications.create() }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="crn" value="{{ person.crn }}" />
 
-        {{
-            govukTable({
-              firstCellIsHeader: false,
-              head: [
-                {
-                  html: '<span class="govuk-visually-hidden">Select offence</span>'
-                },
-                {
-                  text: "Offence description"
-                },
-                {
-                  text: "Delius event number"
-                },
-                {
-                  text: "Offence date"
-                }
-              ],
-              rows: OffenceUtils.offenceTableRows(offences)
-            })
-          }}
+                {{ govukTable({
+                    firstCellIsHeader: false,
+                    head: [
+                        {
+                            html: '<span class="govuk-visually-hidden">Select offence</span>'
+                        },
+                        {
+                            text: "Offence description"
+                        },
+                        {
+                            text: "Delius event number"
+                        },
+                        {
+                            text: "Offence date"
+                        }
+                    ],
+                    rows: OffenceUtils.offenceTableRows(offences)
+                }) }}
 
-        {{ govukButton({
-            text: "Save and continue",
-            preventDoubleClick: true
-        }) }}
+                {{ govukButton({
+                    text: "Save and continue",
+                    preventDoubleClick: true
+                }) }}
 
-      </form>
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock %}

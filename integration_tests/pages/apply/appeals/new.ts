@@ -1,10 +1,11 @@
-import type { ApprovedPremisesApplication as Application, FullPerson, NewAppeal } from '@approved-premises/api'
+import type { ApprovedPremisesApplication as Application, NewAppeal } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/apply'
+import { displayName } from '../../../../server/utils/personUtils'
 
 export default class AppealsNewPage extends Page {
-  constructor(private readonly application: Application) {
-    super((application.person as FullPerson).name)
+  constructor(readonly application: Application) {
+    super(displayName(application.person))
   }
 
   static visit(application: Application): AppealsNewPage {
