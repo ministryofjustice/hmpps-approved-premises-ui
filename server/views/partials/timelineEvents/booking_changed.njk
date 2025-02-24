@@ -9,4 +9,7 @@
     {% if previousCharacteristics %}
         <li>Room criteria changed from {{ previousCharacteristics }} to {{ characteristics }}</li>
     {% endif %}
+    {% if not previousExpectedArrival and not previousExpectedDeparture and not previousCharacteristics %}
+        <li>No change</li>
+    {% endif %}
 </ul>

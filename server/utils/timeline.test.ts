@@ -124,6 +124,7 @@ describe('timeline utilities', () => {
           expect(result).not.toContain('Room criteria changed from')
           expect(result).not.toContain('Arrival date changed from')
           expect(result).not.toContain('Departure date changed from')
+          expect(result).toContain('No change')
         })
 
         it('renders "none" if the previous room criteria were none', () => {
