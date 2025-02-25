@@ -36,7 +36,7 @@ describe('attachDocumentsUtils', () => {
             html: `<a href="${paths.applications.people.documents({
               crn: application.person.crn,
               documentId: documents[0].id,
-            })}" data-cy-documentId="${documents[0].id}">Download</a>`,
+            })}" data-debounce-link data-cy-documentId="${documents[0].id}">Download</a>`,
             classes: 'applications--pages--attach-document__column-download',
           },
           {
@@ -60,7 +60,7 @@ describe('attachDocumentsUtils', () => {
             html: `<a href="${paths.applications.people.documents({
               crn: application.person.crn,
               documentId: documents[1].id,
-            })}" data-cy-documentId="${documents[1].id}">Download</a>`,
+            })}" data-debounce-link data-cy-documentId="${documents[1].id}">Download</a>`,
             classes: 'applications--pages--attach-document__column-download',
           },
           {

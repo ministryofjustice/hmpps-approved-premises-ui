@@ -276,8 +276,13 @@ export default abstract class Page {
 
   shouldBeAbleToDownloadDocuments(documents: Array<Document>) {
     documents.forEach(document => {
+      // Test debounce on download links
+      cy.clock()
       cy.get(`a[data-cy-documentId="${document.id}"]`).click()
-
+      cy.get(`a[data-cy-documentId="${document.id}"]`).should('have.class', 'link-disabled')
+      cy.tick(4000)
+      cy.get(`a[data-cy-documentId="${document.id}"]`).should('not.have.class', 'link-disabled')
+      cy.clock().invoke('restore')
       const downloadsFolder = Cypress.config('downloadsFolder')
       const downloadedFilename = `${downloadsFolder}/${document.fileName}`
       cy.readFile(downloadedFilename, 'binary', { timeout: 300 })

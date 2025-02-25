@@ -72,8 +72,11 @@
 
             <div class="govuk-grid-column-full">
                 {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
+
                     {{ timeline(ApplyUtils.mapApplicationTimelineEventsForUi(timelineEvents), application, csrfToken) }}
+
                     {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
+
                     {{ requestAPlacement(requestsForPlacement, application, user, csrfToken) }}
                 {% else %}
                     {{ applicationReadonlyView(application) }}
@@ -84,6 +87,7 @@
 {% endblock %}
 
 {% block extraScripts %}
+    <script type="text/javascript" src="/assets/js/linkDebounce.js"></script>
     <script type="text/javascript" nonce="{{ cspNonce }}">
       if ($('.application-identity-bar .moj-button-menu').length) {
         new MOJFrontend.ButtonMenu({

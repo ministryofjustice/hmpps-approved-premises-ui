@@ -57,17 +57,17 @@ export class SumbmittedApplicationSummaryCards {
   summaryCardRowsForDocuments = (): Array<SummaryListItem> => {
     return documentsFromApplication(this.application).map(document => ({
       key: {
-        html: `<a href="/applications/people/${this.application.person.crn}/documents/${document.id}" data-cy-documentId="${document.id}">${document.fileName}</a>`,
+        html: `<a href="/applications/people/${this.application.person.crn}/documents/${document.id}" data-debounce-link data-cy-documentId="${document.id}">${document.fileName}</a>`,
       },
       value: { text: document?.description || '' },
     }))
   }
 
-  questionToSummaryCardRow = (question: string, anwser: QuestionResponse): SummaryListItem => {
+  questionToSummaryCardRow = (question: string, answer: QuestionResponse): SummaryListItem => {
     const value =
-      typeof anwser === 'string' || anwser instanceof String
-        ? { html: linebreaksToParagraphs(anwser as string) }
-        : { html: embeddedSummaryListItem(anwser) }
+      typeof answer === 'string' || answer instanceof String
+        ? { html: linebreaksToParagraphs(answer as string) }
+        : { html: embeddedSummaryListItem(answer) }
 
     return {
       key: { text: question },
