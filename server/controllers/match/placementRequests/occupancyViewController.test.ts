@@ -109,7 +109,7 @@ describe('OccupancyViewController', () => {
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
         startDate: searchState.startDate,
-        endDate: DateFormats.dateObjToIsoDate(addDays(searchState.startDate, searchState.durationDays)),
+        endDate: DateFormats.dateObjToIsoDate(addDays(searchState.startDate, searchState.durationDays - 1)),
       })
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
