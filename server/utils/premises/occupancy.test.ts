@@ -1,6 +1,7 @@
 import type { SelectOption } from '@approved-premises/ui'
 import {
   Cas1OutOfServiceBedSummary,
+  Cas1PremiseCapacityForDay,
   type Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummary,
 } from '@approved-premises/api'
@@ -13,6 +14,7 @@ import {
 } from '../../testutils/factories'
 import {
   ColumnDefinition,
+  dayStatusFromDayCapacity,
   daySummaryRows,
   durationSelectOptions,
   filterOutOfServiceBeds,
@@ -31,6 +33,42 @@ import config from '../../config'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 
 describe('apOccupancy utils', () => {
+  describe('dayStatusFromDayCapacity', () => {
+    it('Returns the overall day status, to determine colouration, from a day capacity', () => {
+      const availableCharacteristics = premiseCharacteristicAvailability.available().buildList(3)
+      const overbookedCharacteristics = [
+        ...availableCharacteristics,
+        premiseCharacteristicAvailability.strictlyOverbooked().build(),
+      ]
+      const testData: Record<string, Cas1PremiseCapacityForDay> = {
+        available: cas1PremiseCapacityForDayFactory.build({
+          availableBedCount: 10,
+          bookingCount: 0,
+          characteristicAvailability: availableCharacteristics,
+        }),
+        overbooked: cas1PremiseCapacityForDayFactory.build({
+          availableBedCount: 10,
+          bookingCount: 15,
+          characteristicAvailability: availableCharacteristics,
+        }),
+        full: cas1PremiseCapacityForDayFactory.build({
+          availableBedCount: 10,
+          bookingCount: 10,
+          characteristicAvailability: availableCharacteristics,
+        }),
+        overbookedOnCharacteristics: cas1PremiseCapacityForDayFactory.build({
+          availableBedCount: 10,
+          bookingCount: 10,
+          characteristicAvailability: overbookedCharacteristics,
+        }),
+      }
+      expect(dayStatusFromDayCapacity(testData.available)).toEqual('available')
+      expect(dayStatusFromDayCapacity(testData.overbooked)).toEqual('overbooked')
+      expect(dayStatusFromDayCapacity(testData.full)).toEqual('full')
+      expect(dayStatusFromDayCapacity(testData.overbookedOnCharacteristics)).toEqual('overbooked')
+    })
+  })
+
   describe('occupancyCalendar', () => {
     it('converts the premises capacity to a calendar', () => {
       const capacity = cas1PremiseCapacityFactory.build({ startDate: '2024-12-01', endDate: '2024-12-07' })
@@ -39,9 +77,14 @@ describe('apOccupancy utils', () => {
       calendar.forEach(month => {
         expect(month.name).toEqual('December 2024')
         month.days.forEach((day, index) => {
-          const { date, availableBedCount, bookingCount } = capacity.capacity[index]
+          const { date, availableBedCount, bookingCount, characteristicAvailability } = capacity.capacity[index]
+          const characteristicOverbooking = characteristicAvailability.reduce(
+            (overBooked, { availableBedsCount, bookingsCount }) => overBooked || bookingsCount > availableBedsCount,
+            false,
+          )
           let expectedStatus = availableBedCount < bookingCount ? 'overbooked' : 'available'
           expectedStatus = availableBedCount === bookingCount ? 'full' : expectedStatus
+          expectedStatus = characteristicOverbooking ? 'overbooked' : expectedStatus
           expect(day).toEqual({
             link: `/manage/premises/test-premises-id/occupancy/day/${date}`,
             availability: availableBedCount - bookingCount,

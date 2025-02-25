@@ -2,6 +2,7 @@ import type { Cas1PremiseCapacity, Cas1Premises } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 import paths from '../../../server/paths/manage'
+import { dayStatusFromDayCapacity } from '../../../server/utils/premises/occupancy'
 
 export default class OccupancyViewPage extends Page {
   constructor(private pageTitle: string) {
@@ -35,14 +36,13 @@ export default class OccupancyViewPage extends Page {
     cy.get('#calendar')
       .find('li')
       .each((day, index) => {
-        const dayCapacity = premisesCapacity.capacity[index]
-        const expectedClass = { '-1': 'govuk-tag--red', '0': 'govuk-tag--yellow', '1': '' }[
-          String(Math.sign(dayCapacity.availableBedCount - dayCapacity.bookingCount))
-        ]
+        const { bookingCount, availableBedCount, date } = premisesCapacity.capacity[index]
+        const dayStatus = dayStatusFromDayCapacity(premisesCapacity.capacity[index])
+        const expectedClass = { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: '' }[dayStatus]
         cy.wrap(day).within(() => {
-          cy.contains(`${dayCapacity.bookingCount} booked`)
-          cy.contains(`${dayCapacity.availableBedCount - dayCapacity.bookingCount} available`)
-          cy.contains(DateFormats.isoDateToUIDate(dayCapacity.date, { format: 'longNoYear' }))
+          cy.contains(`${bookingCount} booked`)
+          cy.contains(`${availableBedCount - bookingCount} available`)
+          cy.contains(DateFormats.isoDateToUIDate(date, { format: 'longNoYear' }))
         })
         if (expectedClass) cy.wrap(day).should('have.class', expectedClass)
       })
