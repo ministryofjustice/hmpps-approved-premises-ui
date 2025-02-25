@@ -19,7 +19,7 @@ import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
-import { isFullPerson } from '../personUtils'
+import { displayName, isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import paths from '../../paths/apply'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearch'
@@ -226,7 +226,7 @@ export const keyDetails = (placementRequest: PlacementRequestDetail): KeyDetails
   return {
     header: {
       key: 'Name',
-      value: person.name,
+      value: displayName(person),
       showKey: false,
     },
     items: [

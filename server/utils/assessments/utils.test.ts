@@ -32,7 +32,7 @@ import {
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { nameOrPlaceholderCopy } from '../personUtils'
+import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import applyPaths from '../../paths/apply'
@@ -350,7 +350,7 @@ describe('utils', () => {
       expect(keyDetails(assessment)).toEqual({
         header: {
           key: 'Name',
-          value: nameOrPlaceholderCopy(person),
+          value: displayName(person),
           showKey: false,
         },
         items: [
@@ -383,7 +383,7 @@ describe('utils', () => {
       expect(keyDetails(assessment)).toEqual({
         header: {
           key: 'Name',
-          value: nameOrPlaceholderCopy(person),
+          value: displayName(person),
           showKey: false,
         },
         items: [

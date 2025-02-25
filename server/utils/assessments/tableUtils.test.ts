@@ -16,7 +16,7 @@ import { crnCell, daysUntilDueCell, tierCell } from '../tableUtils'
 import { AssessmentSortField, ApprovedPremisesAssessmentSummary as AssessmentSummary } from '../../@types/shared'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
-import { laoName } from '../personUtils'
+import { displayName } from '../personUtils'
 import { AssessmentStatusTag } from './statusTag'
 
 jest.mock('../applications/arrivalDateFromApplication')
@@ -35,7 +35,7 @@ describe('tableUtils', () => {
     it('returns a link to an assessment', () => {
       expect(assessmentLink(assessment, person)).toBe(
         linkTo(paths.assessments.show({ id: assessment.id }), {
-          text: laoName(person),
+          text: displayName(person),
           attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
         }),
       )

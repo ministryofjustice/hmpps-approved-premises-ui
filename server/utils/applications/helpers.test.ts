@@ -1,10 +1,9 @@
-import { when } from 'jest-when'
 import { applicationSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import paths from '../../paths/apply'
-import { isFullPerson, isUnknownPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
-
-jest.mock('../personUtils')
+import * as personUtils from '../personUtils'
+import { unknownPersonFactory } from '../../testutils/factories/person'
+import { displayName } from '../personUtils'
 
 describe('helpers', () => {
   beforeEach(() => {
@@ -12,64 +11,70 @@ describe('helpers', () => {
   })
 
   describe('createNameAnchorElement', () => {
-    it('returns a link to an application with a full person', () => {
+    describe('when the user can view the Full Person', () => {
+      const person = personFactory.build()
+
+      it("returns a link to an application with the person's name", () => {
+        const applicationSummary = applicationSummaryFactory.build()
+
+        expect(createNameAnchorElement(person, applicationSummary)).toEqual(
+          htmlValue(
+            `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${displayName(
+              person,
+            )}</a>`,
+          ),
+        )
+      })
+
+      describe('when the application status is started', () => {
+        const applicationSummary = applicationSummaryFactory.build({ status: 'started' })
+
+        it('returns name copy only when an application is in progress and linkInProgressApplications is false', () => {
+          expect(createNameAnchorElement(person, applicationSummary, { linkInProgressApplications: false })).toEqual(
+            textValue(displayName(person)),
+          )
+        })
+
+        it('returns a link to the application by default when the application is in progress', () => {
+          expect(createNameAnchorElement(person, applicationSummary)).toEqual(
+            htmlValue(
+              `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${displayName(
+                person,
+              )}</a>`,
+            ),
+          )
+        })
+      })
+    })
+
+    describe('when the user views a Restricted Person', () => {
+      const person = restrictedPersonFactory.build()
       const applicationSummary = applicationSummaryFactory.build()
-      const person = personFactory.build()
 
-      when(isFullPerson).calledWith(person).mockReturnValue(true)
+      it('returns "Limited Access Offender" with no link', () => {
+        expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Limited Access Offender`))
+      })
 
-      expect(createNameAnchorElement(person, applicationSummary)).toEqual(
-        htmlValue(
-          `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${
-            person.name
-          }</a>`,
-        ),
-      )
+      it('returns "LAO: crn" with no link when crn is requested', () => {
+        expect(createNameAnchorElement(person, applicationSummary, { showCrn: true })).toEqual(
+          textValue(`LAO: ${person.crn}`),
+        )
+      })
     })
 
-    it('returns an LAO placeholder for an LAO offender', () => {
+    describe('when the user views an Unknown Person', () => {
+      const person = unknownPersonFactory.build()
       const applicationSummary = applicationSummaryFactory.build()
-      const person = personFactory.build()
 
-      when(isFullPerson).calledWith(person).mockReturnValue(false)
+      it('returns "Unknown person" with no link', () => {
+        expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Unknown person`))
+      })
 
-      expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`LAO CRN: ${person.crn}`))
-    })
-
-    it('returns an LAO Not Found for person type Unknown', () => {
-      const applicationSummary = applicationSummaryFactory.build()
-      const person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
-
-      when(isFullPerson).calledWith(person).mockReturnValue(false)
-      when(isUnknownPerson).calledWith(person).mockReturnValue(true)
-
-      expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Not Found CRN: ${person.crn}`))
-    })
-
-    it('returns nameOrPlaceholder copy when an application is in progress and linkInProgressApplications is false', () => {
-      const applicationSummary = applicationSummaryFactory.build({ status: 'started' })
-      const person = personFactory.build()
-
-      expect(createNameAnchorElement(person, applicationSummary, { linkInProgressApplications: false })).toEqual(
-        textValue(nameOrPlaceholderCopy(person, `LAO: ${person.crn}`)),
-      )
-
-      expect(nameOrPlaceholderCopy).toHaveBeenCalledWith(person, `LAO: ${person.crn}`)
-    })
-
-    it('returns a link to the application by default when the application is in progress', () => {
-      const applicationSummary = applicationSummaryFactory.build({ status: 'started' })
-      const person = personFactory.build()
-
-      when(isFullPerson).calledWith(person).mockReturnValue(true)
-
-      expect(createNameAnchorElement(person, applicationSummary)).toEqual(
-        htmlValue(
-          `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${
-            person.name
-          }</a>`,
-        ),
-      )
+      it('returns "Unknown: crn" with no link when crn is requested', () => {
+        expect(createNameAnchorElement(person, applicationSummary, { showCrn: true })).toEqual(
+          textValue(`Unknown: ${person.crn}`),
+        )
+      })
     })
   })
 
@@ -86,19 +91,23 @@ describe('helpers', () => {
   })
 
   describe('getTierOrBlank', () => {
+    beforeEach(() => {
+      jest.spyOn(personUtils, 'tierBadge')
+    })
+
     it('should return the tier when present', () => {
-      expect(getTierOrBlank('foo')).toEqual(tierBadge('foo'))
-      expect(tierBadge).toHaveBeenCalledWith('foo')
+      expect(getTierOrBlank('foo')).toEqual(personUtils.tierBadge('foo'))
+      expect(personUtils.tierBadge).toHaveBeenCalledWith('foo')
     })
 
     it('should return an empty string when undefined', () => {
       expect(getTierOrBlank(undefined)).toEqual('')
-      expect(tierBadge).not.toHaveBeenCalled()
+      expect(personUtils.tierBadge).not.toHaveBeenCalled()
     })
 
     it('should return an empty string when null', () => {
       expect(getTierOrBlank(null)).toEqual('')
-      expect(tierBadge).not.toHaveBeenCalled()
+      expect(personUtils.tierBadge).not.toHaveBeenCalled()
     })
   })
 })

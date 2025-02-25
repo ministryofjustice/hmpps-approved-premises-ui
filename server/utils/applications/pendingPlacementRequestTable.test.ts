@@ -43,13 +43,13 @@ describe('pendingPlacementRequestTable', () => {
 
       expect(pendingPlacementRequestTableRows(summaries)).toEqual([
         [
-          createNameAnchorElement(summaries[0].person, summaries[0]),
+          createNameAnchorElement(summaries[0].person, summaries[0], { showCrn: true }),
           htmlValue(getTierOrBlank(summaries[0].risks?.tier?.value?.level)),
           textValue(DateFormats.isoDateToUIDate(summaries[0].createdAt, { format: 'short' })),
           textValue(allReleaseTypes[summaries[0].releaseType]),
         ],
         [
-          createNameAnchorElement(summaries[1].person, summaries[1]),
+          createNameAnchorElement(summaries[1].person, summaries[1], { showCrn: true }),
           htmlValue(getTierOrBlank(summaries[1].risks?.tier?.value?.level)),
           textValue(DateFormats.isoDateToUIDate(summaries[1].createdAt, { format: 'short' })),
           textValue(''),

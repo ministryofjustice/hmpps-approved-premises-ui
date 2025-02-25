@@ -75,6 +75,7 @@ import config from '../config'
 import { withdrawalRadioOptions } from './applications/withdrawalReasons'
 import { PersonStatusTag } from './people/personStatusTag'
 import { TaskStatusTag } from './tasks/statusTag'
+import { displayName } from './personUtils'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -117,6 +118,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   )
 
   njkEnv.addFilter('initialiseName', initialiseName)
+  njkEnv.addGlobal('displayName', displayName)
   njkEnv.addGlobal('dateFieldValues', dateFieldValues)
   njkEnv.addGlobal('formatDate', (date: string, options: { format: 'short' | 'long' } = { format: 'long' }) =>
     DateFormats.isoDateToUIDate(date, options),

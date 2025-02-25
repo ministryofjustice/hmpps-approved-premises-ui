@@ -5,7 +5,7 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationSummary,
 } from '../../../server/@types/shared'
-import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
+import { displayName } from '../../../server/utils/personUtils'
 
 export default class ListPage extends Page {
   constructor(
@@ -68,7 +68,7 @@ export default class ListPage extends Page {
 
   private shouldShowApplications(applications: Array<ApprovedPremisesApplicationSummary>, status: string): void {
     applications.forEach(application => {
-      const name = nameOrPlaceholderCopy(application.person)
+      const name = displayName(application.person)
       cy.contains(name)
         .should('have.attr', 'href', paths.applications.show({ id: application.id }))
         .parent()

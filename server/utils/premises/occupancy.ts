@@ -13,7 +13,7 @@ import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
-import { laoSummaryName } from '../personUtils'
+import { displayName } from '../personUtils'
 import { joinWithCommas, pluralize } from '../utils'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import config from '../../config'
@@ -255,7 +255,7 @@ export const placementTableRows = (
           `<a href="${managePaths.premises.placements.show({
             premisesId,
             placementId: id,
-          })}" data-cy-id="${id}">${laoSummaryName(person)}, ${person.crn}</a>`,
+          })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
         ),
         tier: htmlValue(getTierOrBlank(tier)),
         canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),

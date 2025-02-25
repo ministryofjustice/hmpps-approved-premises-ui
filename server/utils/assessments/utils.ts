@@ -15,7 +15,7 @@ import { getApplicationType } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { formattedArrivalDate } from './dateUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { nameOrPlaceholderCopy } from '../personUtils'
+import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
 import { TabItem } from '../tasks/listTable'
@@ -150,7 +150,7 @@ const keyDetails = (assessment: Assessment): KeyDetailsArgs => {
   return {
     header: {
       key: 'Name',
-      value: nameOrPlaceholderCopy(assessment.application.person),
+      value: displayName(assessment.application.person),
       showKey: false,
     },
     items: [

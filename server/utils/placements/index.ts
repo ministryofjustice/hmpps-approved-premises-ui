@@ -2,7 +2,6 @@ import type {
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummaryStatus,
-  FullPerson,
   StaffMember,
 } from '@approved-premises/api'
 import {
@@ -15,7 +14,7 @@ import {
 } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
-import { isFullPerson, nameOrPlaceholderCopy } from '../personUtils'
+import { displayName, isFullPerson } from '../personUtils'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
@@ -79,18 +78,18 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
 export const getKeyDetail = (placement: Cas1SpaceBooking): KeyDetailsArgs => {
   const { person, tier } = placement
   return {
-    header: { value: nameOrPlaceholderCopy(person), key: '', showKey: false },
+    header: { value: displayName(person), key: '', showKey: false },
     items: [
       { key: textValue('CRN'), value: textValue(person.crn) },
       { key: { text: 'Tier' }, value: { text: tier } },
-      {
-        key: { text: 'Date of birth' },
-        value: {
-          text: isFullPerson(person)
-            ? DateFormats.isoDateToUIDate((person as FullPerson).dateOfBirth, { format: 'short' })
-            : '-',
-        },
-      },
+      isFullPerson(person)
+        ? {
+            key: { text: 'Date of birth' },
+            value: {
+              text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+            },
+          }
+        : undefined,
     ],
   }
 }

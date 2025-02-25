@@ -7,7 +7,7 @@ import { linkTo } from '../utils'
 import { crnCell, tierCell } from '../tableUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { sortHeader } from '../sortHeader'
-import { isFullPerson, isUnknownPerson, laoName } from '../personUtils'
+import { displayName, isFullPerson } from '../personUtils'
 import { placementRequestStatus } from '../formUtils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
@@ -89,22 +89,20 @@ export const applicationDateCell = (item: PlacementRequest): TableCell => ({
 })
 
 export const nameCell = (item: PlacementRequest): TableCell => {
-  if ('person' in item && item.person && isFullPerson(item.person)) {
+  const name = displayName(item.person, { showCrn: true })
+
+  if (isFullPerson(item.person)) {
     return {
       html: linkTo(adminPaths.admin.placementRequests.show({ id: item.id }), {
-        text: laoName(item.person),
+        text: name,
         attributes: { 'data-cy-placementRequestId': item.id, 'data-cy-applicationId': item.applicationId },
       }),
     }
   }
 
-  if ('person' in item && item.person && !isFullPerson(item.person)) {
-    return {
-      text: isUnknownPerson(item.person) ? `Not Found CRN: ${item.person.crn}` : `LAO: ${item.person.crn}`,
-    }
+  return {
+    text: name,
   }
-
-  return { html: '' }
 }
 
 export const releaseTypeCell = (task: PlacementRequest) => {

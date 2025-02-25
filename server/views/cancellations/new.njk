@@ -14,95 +14,92 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-    text: "Back",
-	  href: backLink
-  }) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
 {% endblock %}
 
 {% block content %}
-  {{ showErrorSummary(errorSummary) }}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    {{ showErrorSummary(errorSummary) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-      <h1>{{pageHeading}}</h1>
+            <h1>{{ pageHeading }}</h1>
 
-      <form action="{{ formAction }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        {{ govukSummaryList({
-            rows: [
-                {
-                  key: {
-                    text: "Name"
-                  },
-                  value: {
-                    text: booking.person.name
-                  }
-                },
-                {
-                  key: {
-                    text: "CRN"
-                  },
-                  value: {
-                    text: booking.person.crn
-                  }
-                },
-                {
-                  key: {
-                    text: "Arrival Date"
-                  },
-                  value: {
-                    text: formatDate(booking.arrivalDate)
-                  }
-                },
-                {
-                  key: {
-                    text: "Departure Date"
-                  },
-                  value: {
-                    text: formatDate(booking.departureDate)
-                  }
-                }
-              ]
-          })
-        }}
-
+            <form action="{{ formAction }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                            text: "Name"
+                        },
+                            value: {
+                            text: displayName(booking.person, { laoSuffix: true })
+                        }
+                        },
+                        {
+                            key: {
+                            text: "CRN"
+                        },
+                            value: {
+                            text: booking.person.crn
+                        }
+                        },
+                        {
+                            key: {
+                            text: "Arrival Date"
+                        },
+                            value: {
+                            text: formatDate(booking.arrivalDate)
+                        }
+                        },
+                        {
+                            key: {
+                            text: "Departure Date"
+                        },
+                            value: {
+                            text: formatDate(booking.departureDate)
+                        }
+                        }
+                    ]
+                }) }}
 
 
-        {% set noteConditional %}
-        {{
-          govukTextarea(
-            {
-            name: "cancellation[otherReason]",
-            id: "otherReason",
-            errorMessage: errors.otherReason,
-            label: {
-              text: "Provide more information"
-            }
-            })
-          }}
 
-        {% endset -%}
+                {% set noteConditional %}
+                    {{ govukTextarea(
+                        {
+                            name: "cancellation[otherReason]",
+                            id: "otherReason",
+                            errorMessage: errors.otherReason,
+                            label: {
+                            text: "Provide more information"
+                        }
+                        }) }}
 
-        {{ govukRadios({
-          name: "cancellation[reason]",
-          id: "reason",
-          fieldset: {
-              legend: {
-              text: "Why is this placement being withdrawn?",
-              classes: "govuk-fieldset__legend--m"
-              }
-          },
-          errorMessage: errors.reason,
-          items: BookingUtils.cancellationReasonsRadioItems(cancellationReasons, noteConditional, fetchContext())
-          }) }}
+                {% endset -%}
 
-        {{ govukButton({
-            text: "Withdraw",
-            preventDoubleClick: true
-        }) }}
-      </form>
+                {{ govukRadios({
+                    name: "cancellation[reason]",
+                    id: "reason",
+                    fieldset: {
+                        legend: {
+                            text: "Why is this placement being withdrawn?",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: errors.reason,
+                    items: BookingUtils.cancellationReasonsRadioItems(cancellationReasons, noteConditional, fetchContext())
+                }) }}
 
+                {{ govukButton({
+                    text: "Withdraw",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+
+        </div>
     </div>
-  </div>
 {% endblock %}
