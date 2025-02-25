@@ -344,12 +344,12 @@ describe('changesController', () => {
         pageHeading: 'Confirm booking changes',
         backlink: expectedBackLink,
         placement,
-        summaryListRows: spaceBookingConfirmationSummaryListRows(
+        summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
-          query.arrivalDate,
-          query.departureDate,
-          query.criteria ? makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.criteria) : [],
-        ),
+          expectedArrivalDate: query.arrivalDate,
+          expectedDepartureDate: query.departureDate,
+          criteria: query.criteria ? makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.criteria) : [],
+        }),
         arrivalDate: query.arrivalDate,
         departureDate: query.departureDate,
         criteria: query.criteria,
