@@ -1,7 +1,7 @@
 import type {
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
-  Cas1SpaceBookingSummaryStatus,
+  Cas1SpaceBookingSummary,
   StaffMember,
 } from '@approved-premises/api'
 import {
@@ -12,6 +12,7 @@ import {
   SummaryListItem,
   UserDetails,
 } from '@approved-premises/ui'
+import { differenceInCalendarDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
 import { displayName, isFullPerson } from '../personUtils'
@@ -24,17 +25,114 @@ import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSe
 import { requirementsHtmlString } from '../match'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 
-export const statusTextMap: Record<Cas1SpaceBookingSummaryStatus, string> = {
+export const statusTextMap = {
+  upcoming: 'Upcoming',
+  arrived: 'Arrived',
+  notArrived: 'Not arrived',
+  departed: 'Departed',
+} as const
+
+export const detailedStatusTextMap = {
+  ...statusTextMap,
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
   arrivingWithin2Weeks: 'Arriving within 2 weeks',
   arrivingToday: 'Arriving today',
   overdueArrival: 'Overdue arrival',
-  arrived: 'Arrived',
-  notArrived: 'Not arrived',
   departingWithin2Weeks: 'Departing within 2 weeks',
   departingToday: 'Departing today',
   overdueDeparture: 'Overdue departure',
-  departed: 'Departed',
+} as const
+
+type SpaceBookingStatus = keyof typeof statusTextMap
+type SpaceBookingDetailedStatus = keyof typeof detailedStatusTextMap
+
+type PlacementStatus = {
+  overall: SpaceBookingStatus
+  detail: SpaceBookingDetailedStatus
+}
+
+type CutoffStatusMap = {
+  dateForDetail: 'expectedArrivalDate' | 'expectedDepartureDate'
+  overall: SpaceBookingStatus
+  cutoffs: Array<{ days: number; detail: SpaceBookingDetailedStatus }>
+}
+
+const upcomingMap: CutoffStatusMap = {
+  dateForDetail: 'expectedArrivalDate',
+  overall: 'upcoming',
+  cutoffs: [
+    { days: 6 * 7, detail: 'arrivingWithin6Weeks' },
+    { days: 2 * 7, detail: 'arrivingWithin2Weeks' },
+    { days: 0, detail: 'arrivingToday' },
+    { days: -1, detail: 'overdueArrival' },
+  ],
+}
+
+const arrivedMap: CutoffStatusMap = {
+  dateForDetail: 'expectedDepartureDate',
+  overall: 'arrived',
+  cutoffs: [
+    { days: 2 * 7, detail: 'departingWithin2Weeks' },
+    { days: 0, detail: 'departingToday' },
+    { days: -1, detail: 'overdueDeparture' },
+  ],
+}
+
+export const placementStatus = (placement: Cas1SpaceBookingSummary): PlacementStatus => {
+  if (placement.isNonArrival) {
+    return { overall: 'notArrived', detail: 'notArrived' }
+  }
+  if (placement.actualDepartureDate) {
+    return { overall: 'departed', detail: 'departed' }
+  }
+
+  const map = placement.actualArrivalDate ? arrivedMap : upcomingMap
+
+  const daysFromToday = differenceInCalendarDays(placement[map.dateForDetail], new Date())
+
+  return {
+    overall: map.overall,
+    detail: map.cutoffs.reduce(
+      (detail, cutoff) => (daysFromToday <= cutoff.days ? cutoff.detail : detail),
+      map.overall,
+    ),
+  }
+
+  // const status = {
+  //   overall: 'upcoming',
+  //   detail: 'upcoming',
+  // }
+  //
+  // if (placement.actualArrivalDate) {
+  //   status.overall = 'arrived'
+  //   status.detail = 'arrived'
+  //
+  //   const daysFromToday = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
+  //
+  //   if (daysFromToday < 0) {
+  //     status.detail = 'overdueDeparture'
+  //   } else if (daysFromToday === 0) {
+  //     status.detail = 'departingToday'
+  //   } else if (daysFromToday <= 2 * 7) {
+  //     status.detail = 'departingWithin2Weeks'
+  //   }
+  //
+  //   return status
+  // }
+
+  // const daysFromToday = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
+  //
+  // if (daysFromToday < 0) {
+  //   status.detail = 'overdueArrival'
+  // } else if (daysFromToday === 0) {
+  //   status.detail = 'arrivingToday'
+  // } else if (daysFromToday <= 2 * 7) {
+  //   status.detail = 'arrivingWithin2Weeks'
+  // } else if (daysFromToday <= 6 * 7) {
+  //   status.detail = 'arrivingWithin6Weeks'
+  // }
+  //
+  // return status
 }
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
