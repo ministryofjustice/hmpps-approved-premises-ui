@@ -90,7 +90,7 @@ export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDat
 
 export const departureDateRow = (departureDate: string) => ({
   key: {
-    text: 'Expected departure date',
+    text: 'Requested departure date',
   },
   value: {
     text: DateFormats.isoDateToUIDate(departureDate),

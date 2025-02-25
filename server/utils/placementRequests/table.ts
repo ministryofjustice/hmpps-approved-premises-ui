@@ -34,7 +34,7 @@ export const dashboardTableRows = (
       nameCell(placementRequest),
       tierCell(placementRequest.risks),
       expectedArrivalDateCell(placementRequest, 'short'),
-      actualArrivalDateCell(placementRequest),
+      bookingArrivalDateCell(placementRequest),
       applicationDateCell(placementRequest),
       status === 'matched' ? premisesNameCell(placementRequest) : durationCell(placementRequest),
       requestTypeCell(placementRequest),
@@ -80,7 +80,7 @@ export const expectedArrivalDateCell = (item: PlacementRequest, format: 'short' 
   text: DateFormats.isoDateToUIDate(item.expectedArrival, { format }),
 })
 
-export const actualArrivalDateCell = (item: PlacementRequest): TableCell => ({
+export const bookingArrivalDateCell = (item: PlacementRequest): TableCell => ({
   text: item.booking?.arrivalDate ? DateFormats.isoDateToUIDate(item.booking?.arrivalDate, { format: 'short' }) : 'N/A',
 })
 
@@ -130,7 +130,7 @@ export const dashboardTableHeader = (
       hrefPrefix,
     ),
     {
-      text: 'Actual arrival date',
+      text: 'Booked arrival date',
     },
     sortHeader<PlacementRequestSortField>('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
     status === 'matched'

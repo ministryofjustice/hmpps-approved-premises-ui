@@ -8,8 +8,8 @@ import {
   restrictedPersonFactory,
 } from '../../testutils/factories'
 import {
-  actualArrivalDateCell,
   applicationDateCell,
+  bookingArrivalDateCell,
   dashboardTableHeader,
   dashboardTableRows,
   dueDateCell,
@@ -118,14 +118,14 @@ describe('tableUtils', () => {
       const booking = bookingFactory.build({ arrivalDate: '2022-01-01' })
       const placementRequest = placementRequestFactory.build({ booking })
 
-      expect(actualArrivalDateCell(placementRequest)).toEqual({
+      expect(bookingArrivalDateCell(placementRequest)).toEqual({
         text: DateFormats.isoDateToUIDate(booking.arrivalDate, { format: 'short' }),
       })
     })
 
     it('returns N/A if there is no booking', () => {
       const placementRequest = placementRequestFactory.build({ booking: null })
-      expect(actualArrivalDateCell(placementRequest)).toEqual({
+      expect(bookingArrivalDateCell(placementRequest)).toEqual({
         text: 'N/A',
       })
     })
@@ -230,7 +230,7 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
-          actualArrivalDateCell(placementRequest),
+          bookingArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -247,7 +247,7 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
-          actualArrivalDateCell(placementRequest),
+          bookingArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           premisesNameCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -264,7 +264,7 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
-          actualArrivalDateCell(placementRequest),
+          bookingArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -291,7 +291,7 @@ describe('tableUtils', () => {
           hrefPrefix,
         ),
         {
-          text: 'Actual arrival date',
+          text: 'Booked arrival date',
         },
         sortHeader<PlacementRequestSortField>(
           'Application date',
@@ -320,7 +320,7 @@ describe('tableUtils', () => {
           hrefPrefix,
         ),
         {
-          text: 'Actual arrival date',
+          text: 'Booked arrival date',
         },
         sortHeader<PlacementRequestSortField>(
           'Application date',
