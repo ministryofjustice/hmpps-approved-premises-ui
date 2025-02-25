@@ -161,7 +161,7 @@ context('Placement Requests', () => {
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = (licenceExpiryDate: string | undefined) => {
     const durationDays = 15
     const startDate = '2024-07-23'
-    const endDate = '2024-08-07'
+    const endDate = '2024-08-06'
     const totalCapacity = 10
 
     // Given I am signed in as a cru_member
@@ -294,7 +294,7 @@ context('Placement Requests', () => {
 
     // When I filter for a different date and duration
     const newStartDate = '2024-08-01'
-    const newEndDate = '2024-08-08'
+    const newEndDate = '2024-08-07'
     const newDuration = 'Up to 1 week'
     const newCriteria = ['Wheelchair accessible', 'Step-free']
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({

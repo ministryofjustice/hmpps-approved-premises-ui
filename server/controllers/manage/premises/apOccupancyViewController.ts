@@ -60,7 +60,7 @@ export default class ApOccupancyViewController {
       const premises = await this.premisesService.find(req.user.token, premisesId)
       let calendar: Calendar = []
       if (!errorSummary.length) {
-        const capacityDates = placementDates(String(startDate), String(durationDays))
+        const capacityDates = placementDates(String(startDate), parseInt(String(durationDays), 10) - 1)
         const capacity = await this.premisesService.getCapacity(token, premisesId, {
           startDate: capacityDates.startDate,
           endDate: capacityDates.endDate,
