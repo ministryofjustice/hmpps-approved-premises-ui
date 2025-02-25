@@ -3,6 +3,7 @@ import { RadioItem, SelectOption } from '@approved-premises/ui'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingSummaryFactory,
   restrictedPersonFactory,
   staffMemberFactory,
   userDetailsFactory,
@@ -15,6 +16,7 @@ import {
   injectRadioConditionalHtml,
   otherBookings,
   placementOverviewSummary,
+  placementStatus,
   placementSummary,
   renderKeyworkersSelectOptions,
   requirementsInformation,
@@ -26,6 +28,92 @@ import { requirementsHtmlString } from '../match'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 
 describe('placementUtils', () => {
+  describe('placementStatus', () => {
+    const upcoming = cas1SpaceBookingSummaryFactory.upcoming()
+    const current = cas1SpaceBookingSummaryFactory.current()
+    const departed = cas1SpaceBookingSummaryFactory.departed()
+    const nonArrival = cas1SpaceBookingSummaryFactory.nonArrival()
+
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
+    })
+
+    const testCases = [
+      {
+        label: 'an upcoming placement',
+        factory: upcoming,
+        params: { expectedArrivalDate: '2025-05-01' },
+        expected: { overall: 'upcoming', detail: 'upcoming' },
+      },
+      {
+        label: 'an upcoming placement starting within 6 weeks',
+        factory: upcoming,
+        params: { expectedArrivalDate: '2025-04-11' },
+        expected: { overall: 'upcoming', detail: 'arrivingWithin6Weeks' },
+      },
+      {
+        label: 'an upcoming placement starting within 2 weeks',
+        factory: upcoming,
+        params: { expectedArrivalDate: '2025-03-14' },
+        expected: { overall: 'upcoming', detail: 'arrivingWithin2Weeks' },
+      },
+      {
+        label: 'an upcoming placement starting today',
+        factory: upcoming,
+        params: { expectedArrivalDate: '2025-03-01' },
+        expected: { overall: 'upcoming', detail: 'arrivingToday' },
+      },
+      {
+        label: 'an upcoming placement overdue arrival',
+        factory: upcoming,
+        params: { expectedArrivalDate: '2025-02-28' },
+        expected: { overall: 'upcoming', detail: 'overdueArrival' },
+      },
+      {
+        label: 'a current placement departing in more than 6 weeks',
+        factory: current,
+        params: { expectedDepartureDate: '2025-05-01' },
+        expected: { overall: 'arrived', detail: 'arrived' },
+      },
+      {
+        label: 'a current placement departing within 2 weeks',
+        factory: current,
+        params: { expectedDepartureDate: '2025-03-14' },
+        expected: { overall: 'arrived', detail: 'departingWithin2Weeks' },
+      },
+      {
+        label: 'a current placement departing today',
+        factory: current,
+        params: { expectedDepartureDate: '2025-03-01' },
+        expected: { overall: 'arrived', detail: 'departingToday' },
+      },
+      {
+        label: 'a current placement overdue departure',
+        factory: current,
+        params: { expectedDepartureDate: '2025-02-28' },
+        expected: { overall: 'arrived', detail: 'overdueDeparture' },
+      },
+      {
+        label: 'a departed placement',
+        factory: departed,
+        params: {},
+        expected: { overall: 'departed', detail: 'departed' },
+      },
+      {
+        label: 'a non-arrived placement',
+        factory: nonArrival,
+        params: {},
+        expected: { overall: 'notArrived', detail: 'notArrived' },
+      },
+    ]
+
+    it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
+      const placement = factory.build(params)
+
+      expect(placementStatus(placement)).toEqual(expected)
+    })
+  })
+
   describe('actions', () => {
     const userDetails = userDetailsFactory.build({
       permissions: [

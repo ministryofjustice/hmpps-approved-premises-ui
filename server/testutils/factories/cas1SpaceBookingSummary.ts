@@ -25,7 +25,50 @@ const statuses: Array<Cas1SpaceBookingSummaryStatus> = [
   'overdueDeparture',
 ]
 const arrivedStatusses = ['arrived', 'departingWithin2Weeks', 'departed', 'departingToday', 'overdueDeparture']
-export default Factory.define<Cas1SpaceBookingSummary>(() => {
+
+class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
+  upcoming() {
+    return this.params({
+      actualArrivalDate: undefined,
+      actualDepartureDate: undefined,
+      isNonArrival: false,
+    })
+  }
+
+  current() {
+    const arrivalDate = faker.date.recent()
+    const departureDate = faker.date.soon()
+
+    return this.params({
+      expectedArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
+      expectedDepartureDate: DateFormats.dateObjToIsoDate(departureDate),
+      actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
+      actualDepartureDate: undefined,
+      isNonArrival: false,
+    })
+  }
+
+  departed() {
+    const departureDate = faker.date.recent()
+    const arrivalDate = faker.date.recent({ refDate: departureDate })
+
+    return this.params({
+      expectedArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
+      expectedDepartureDate: DateFormats.dateObjToIsoDate(departureDate),
+      actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
+      actualDepartureDate: DateFormats.dateObjToIsoDate(departureDate),
+      isNonArrival: false,
+    })
+  }
+
+  nonArrival() {
+    return this.upcoming().params({
+      isNonArrival: true,
+    })
+  }
+}
+
+export default Cas1SpaceBookingSummaryFactory.define(() => {
   const canonicalArrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon({ days: 90 }))
   const canonicalDepartureDate = DateFormats.dateObjToIsoDate(
     faker.date.soon({ days: 365, refDate: canonicalArrivalDate }),
