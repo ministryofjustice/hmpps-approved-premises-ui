@@ -6,9 +6,8 @@ jest.mock('../../../../utils/formUtils')
 
 describe('DateOfOffence', () => {
   const body = {
-    arsonOffence: 'current',
     hateCrime: 'previous',
-    nonSexualOffencesAgainstChildren: ['current', 'previous'],
+    nonSexualOffencesAgainstChildren: 'current',
     contactSexualOffencesAgainstAdults: ['current', 'previous'],
     nonContactSexualOffencesAgainstAdults: ['current', 'previous'],
     contactSexualOffencesAgainstChildren: ['current', 'previous'],
@@ -19,7 +18,7 @@ describe('DateOfOffence', () => {
     it('should set the body', () => {
       const page = new DateOfOffence(body)
 
-      expect(page.body).toEqual({ ...body, arsonOffence: ['current'], hateCrime: ['previous'] })
+      expect(page.body).toEqual({ ...body, hateCrime: ['previous'], nonSexualOffencesAgainstChildren: ['current'] })
     })
   })
 
@@ -29,12 +28,12 @@ describe('DateOfOffence', () => {
 
   describe('errors', () => {
     it('should return an empty object if the time period for one offence is present', () => {
-      const page = new DateOfOffence({ arsonOffence: 'current' })
+      const page = new DateOfOffence({ hateCrime: 'current' })
       expect(page.errors()).toEqual({})
     })
-    it('should return an error object there is no reponsess', () => {
+    it('should return an error object there is no responses', () => {
       const page = new DateOfOffence({})
-      expect(page.errors()).toEqual({ arsonOffence: 'You must enter a time period for one or more offence' })
+      expect(page.errors()).toEqual({ hateCrime: 'You must enter a time period for one or more offence' })
     })
   })
 
@@ -43,13 +42,12 @@ describe('DateOfOffence', () => {
       const page = new DateOfOffence(body)
 
       expect(page.response()).toEqual({
-        'Is the arson offence current or previous?': 'Current',
         'Is the hate crime current or previous?': 'Previous',
         'Is the contact sexual offences against adults current or previous?': 'Current and previous',
         'Is the contact sexual offences against children current or previous?': 'Current and previous',
         'Is the non contact sexual offences against adults current or previous?': 'Current and previous',
         'Is the non contact sexual offences against children current or previous?': 'Current and previous',
-        'Is the non sexual offences against children current or previous?': 'Current and previous',
+        'Is the non sexual offences against children current or previous?': 'Current',
       })
     })
   })
@@ -78,11 +76,11 @@ describe('DateOfOffence', () => {
 
   describe('renderTableRow', () => {
     it('returns a table row', () => {
-      const result = new DateOfOffence({ arsonOffence: ['previous'] }).renderTableRow('arsonOffence')
+      const result = new DateOfOffence({ hateCrime: ['previous'] }).renderTableRow('hateCrime')
       expect(result).toEqual([
-        { text: 'Arson offence' },
-        DateOfOffence.checkbox('arsonOffence', 'current', false),
-        DateOfOffence.checkbox('arsonOffence', 'previous', true),
+        { text: 'Hate crime' },
+        DateOfOffence.checkbox('hateCrime', 'current', false),
+        DateOfOffence.checkbox('hateCrime', 'previous', true),
       ])
     })
   })
@@ -91,7 +89,6 @@ describe('DateOfOffence', () => {
     it('returns the table body', () => {
       const result = new DateOfOffence({}).renderTableBody()
       expect(result).toEqual([
-        new DateOfOffence({}).renderTableRow('arsonOffence'),
         new DateOfOffence({}).renderTableRow('hateCrime'),
         new DateOfOffence({}).renderTableRow('nonSexualOffencesAgainstChildren'),
         new DateOfOffence({}).renderTableRow('contactSexualOffencesAgainstAdults'),
@@ -104,12 +101,12 @@ describe('DateOfOffence', () => {
 
   describe('checkbox', () => {
     it('it renders the markup for a unselected checkbox', () => {
-      expect(DateOfOffence.checkbox('arsonOffence', 'current', false)).toEqual({
+      expect(DateOfOffence.checkbox('hateCrime', 'current', false)).toEqual({
         html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
           <div class="govuk-checkboxes__item">
-          <input class="govuk-checkboxes__input" id="arsonOffence-current" name="arsonOffence" type="checkbox" value="current" >
-              <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-current">
-                <span class="govuk-visually-hidden">Arson offence: current</span>
+          <input class="govuk-checkboxes__input" id="hateCrime-current" name="hateCrime" type="checkbox" value="current" >
+              <label class="govuk-label govuk-checkboxes__label" for="hateCrime-current">
+                <span class="govuk-visually-hidden">Hate crime: current</span>
               </label>
           </div>
         </div>`,
@@ -117,12 +114,12 @@ describe('DateOfOffence', () => {
     })
 
     it('it renders the markup for a selected checkbox', () => {
-      expect(DateOfOffence.checkbox('arsonOffence', 'previous', true)).toEqual({
+      expect(DateOfOffence.checkbox('hateCrime', 'previous', true)).toEqual({
         html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
           <div class="govuk-checkboxes__item">
-          <input class="govuk-checkboxes__input" id="arsonOffence-previous" name="arsonOffence" type="checkbox" value="previous" checked>
-              <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-previous">
-                <span class="govuk-visually-hidden">Arson offence: previous</span>
+          <input class="govuk-checkboxes__input" id="hateCrime-previous" name="hateCrime" type="checkbox" value="previous" checked>
+              <label class="govuk-label govuk-checkboxes__label" for="hateCrime-previous">
+                <span class="govuk-visually-hidden">Hate crime: previous</span>
               </label>
           </div>
         </div>`,

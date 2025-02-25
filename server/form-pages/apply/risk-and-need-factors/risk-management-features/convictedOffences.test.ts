@@ -43,7 +43,7 @@ describe('ConvictedOffences', () => {
       const page = new ConvictedOffences({ response: 'yes' })
 
       expect(page.response()).toEqual({
-        'Has the person ever been convicted of any arson offences, sexual offences, hate crimes or non-sexual offences against children?':
+        'Has the person ever been convicted of any sexual offences, hate crimes or non-sexual offences against children?':
           'Yes',
       })
     })

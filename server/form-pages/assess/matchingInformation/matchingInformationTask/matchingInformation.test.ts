@@ -31,7 +31,6 @@ const defaultArguments = {
   acceptsChildSexOffenders: 'relevant',
   acceptsNonSexualChildOffenders: 'relevant',
   acceptsHateCrimeOffenders: 'relevant',
-  isArsonSuitable: 'relevant',
   isSuitedForSexOffenders: 'notRelevant',
   lengthOfStayAgreed: 'yes',
   cruInformation: 'Some info',
@@ -44,7 +43,6 @@ const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBo
   acceptsSexOffenders: 'relevant',
   apType: 'isPIPE',
   isArsonDesignated: 'essential',
-  isArsonSuitable: 'relevant',
   isCatered: 'essential',
   isSingle: 'desirable',
   isSuitableForVulnerable: 'relevant',
@@ -127,7 +125,6 @@ describe('MatchingInformation', () => {
         'Sexual offences against children': 'Relevant',
         'Non sexual offences against children': 'Relevant',
         'Hate based offences': 'Relevant',
-        'Arson offences': 'Relevant',
         'Do you agree with the suggested length of stay?': 'Yes',
         'Information for Central Referral Unit (CRU) manager': 'Some info',
       })
