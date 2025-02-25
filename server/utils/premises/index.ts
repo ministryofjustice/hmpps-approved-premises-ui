@@ -16,7 +16,7 @@ import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
-import { laoSummaryName } from '../personUtils'
+import { displayName } from '../personUtils'
 import { statusTextMap } from '../placements'
 
 export { premisesActions } from './premisesActions'
@@ -162,7 +162,7 @@ export const placementTableRows = (
         `<a href="${managePaths.premises.placements.show({
           premisesId,
           placementId: id,
-        })}" data-cy-id="${id}">${laoSummaryName(person)}, ${person.crn}</a>`,
+        })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
       ),
       tier: htmlValue(getTierOrBlank(tier)),
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),

@@ -31,6 +31,7 @@ import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { roomCharacteristicMap } from '../characteristicsUtils'
+import { displayName } from '../personUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -328,7 +329,7 @@ describe('matchUtils', () => {
       expect(details).toEqual({
         header: {
           key: 'Name',
-          value: (placementRequest.person as FullPerson).name,
+          value: displayName(placementRequest.person),
           showKey: false,
         },
         items: [

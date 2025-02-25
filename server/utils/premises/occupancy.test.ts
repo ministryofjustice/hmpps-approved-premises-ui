@@ -28,7 +28,7 @@ import {
 import { DateFormats } from '../dateUtils'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 import { getTierOrBlank } from '../applications/helpers'
-import { laoSummaryName } from '../personUtils'
+import { displayName } from '../personUtils'
 import config from '../../config'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 
@@ -294,7 +294,7 @@ describe('apOccupancy utils', () => {
   describe('placementTableRows', () => {
     const checkRow = (placement: Cas1SpaceBookingDaySummary, row: Array<{ text?: string; html?: string }>) => {
       expect(row[0].html).toMatchStringIgnoringWhitespace(
-        `<a href="/manage/premises/premises-Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoSummaryName(placement.person)}, ${placement.person.crn}</a>`,
+        `<a href="/manage/premises/premises-Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
       )
       expect(row[1].html).toEqual(getTierOrBlank(placement.tier))
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }))

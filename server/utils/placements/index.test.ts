@@ -3,6 +3,7 @@ import { RadioItem, SelectOption } from '@approved-premises/ui'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
+  restrictedPersonFactory,
   staffMemberFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
@@ -22,6 +23,7 @@ import { DateFormats } from '../dateUtils'
 
 import paths from '../../paths/manage'
 import { requirementsHtmlString } from '../match'
+import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 
 describe('placementUtils', () => {
   describe('actions', () => {
@@ -148,6 +150,46 @@ describe('placementUtils', () => {
               text: DateFormats.isoDateToUIDate((placement.person as FullPerson).dateOfBirth, { format: 'short' }),
             },
           },
+        ],
+      })
+    })
+
+    it('should prefix the name with LAO if the person is LAO', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: fullPersonFactory.build({
+          isRestricted: true,
+        }),
+      })
+
+      const result = getKeyDetail(placement)
+
+      expect(result.header.value).toEqual(`LAO: ${(placement.person as FullPerson).name}`)
+    })
+
+    it('should not show the name or date of birth for a restricted person', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: restrictedPersonFactory.build(),
+      })
+
+      expect(getKeyDetail(placement)).toEqual({
+        header: { key: '', showKey: false, value: 'Limited Access Offender' },
+        items: [
+          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
+          { key: { text: 'Tier' }, value: { text: placement.tier } },
+        ],
+      })
+    })
+
+    it('should not show the name or date of birth for an unknown person', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: unknownPersonFactory.build(),
+      })
+
+      expect(getKeyDetail(placement)).toEqual({
+        header: { key: '', showKey: false, value: 'Unknown person' },
+        items: [
+          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
+          { key: { text: 'Tier' }, value: { text: placement.tier } },
         ],
       })
     })

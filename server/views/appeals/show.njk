@@ -6,37 +6,35 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-      text: "Back to timeline",
-      href: paths.applications.show({ id: application.id }) + "?tab=timeline"
+    {{ govukBackLink({
+        text: "Back to timeline",
+        href: paths.applications.show({ id: application.id }) + "?tab=timeline"
     }) }}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      <div class="moj-page-header-actions">
-        <div class="moj-page-header-actions__title">
-          <span class="govuk-caption-l">Assessment</span>
-          <h1 class="govuk-heading-l">
-            {{ application.person.name }}
-          </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="moj-page-header-actions">
+                <div class="moj-page-header-actions__title">
+                    <span class="govuk-caption-l">Assessment</span>
+                    <h1 class="govuk-heading-l">
+                        {{ displayName(application.person) }}
+                    </h1>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-three-quarters">
-      {{
-          govukSummaryList({
-              card: {
-                  title: {
-                    text: "Appeal decision"
-                  }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Appeal decision"
+                    }
                 },
-              rows: AppealsUtils.appealSummaryListItems(appeal)
-          })
-        }}
+                rows: AppealsUtils.appealSummaryListItems(appeal)
+            }) }}
+        </div>
     </div>
-  </div>
 {% endblock %} 

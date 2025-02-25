@@ -8,7 +8,7 @@ import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import paths from '../../../server/paths/manage'
 import { daySummaryRows } from '../../../server/utils/premises/occupancy'
-import { laoSummaryName } from '../../../server/utils/personUtils'
+import { displayName } from '../../../server/utils/personUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../../server/utils/match/spaceSearch'
 
 export default class OccupancyDayViewPage extends Page {
@@ -41,7 +41,7 @@ export default class OccupancyDayViewPage extends Page {
     placementSummaryList.forEach(
       ({ person, canonicalArrivalDate, canonicalDepartureDate, releaseType, essentialCharacteristics }) => {
         cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
-        cy.get('@row').contains(laoSummaryName(person))
+        cy.get('@row').contains(displayName(person))
         cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
         cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
         cy.get('@row').contains(releaseType)

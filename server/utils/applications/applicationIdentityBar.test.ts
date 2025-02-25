@@ -2,6 +2,7 @@ import { fromPartial } from '@total-typescript/shoehorn'
 import { applicationFactory, personFactory } from '../../testutils/factories'
 import { applicationIdentityBar, applicationMenuItems, applicationTitle } from './applicationIdentityBar'
 import paths from '../../paths/apply'
+import { displayName } from '../personUtils'
 
 describe('applicationIdentityBar', () => {
   describe('applicationTitle', () => {
@@ -11,7 +12,7 @@ describe('applicationIdentityBar', () => {
 
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-caption-l">heading</h1>
-        <h2 class="govuk-heading-l">${person.name}</h2>
+        <h2 class="govuk-heading-l">${displayName(person)}</h2>
         <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
@@ -23,7 +24,7 @@ describe('applicationIdentityBar', () => {
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-caption-l">heading</h1>
         <h2 class="govuk-heading-l">
-          ${person.name}
+          ${displayName(person)}
           <strong class="govuk-tag govuk-tag--grey govuk-!-margin-5" >Offline application</strong>
         </h2>
         <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
@@ -37,7 +38,7 @@ describe('applicationIdentityBar', () => {
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-caption-l">heading</h1>
         <h2 class="govuk-heading-l">
-          ${person.name}
+          ${displayName(person)}
           <strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="withdrawn">Application withdrawn</strong>
         </h2>
         <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
@@ -51,7 +52,7 @@ describe('applicationIdentityBar', () => {
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-caption-l">heading</h1>
         <h2 class="govuk-heading-l">
-          ${person.name}
+          ${displayName(person)}
           <strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="expired">Expired application</strong>
         </h2>
         <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>

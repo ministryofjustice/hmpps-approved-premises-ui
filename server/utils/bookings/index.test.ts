@@ -15,7 +15,6 @@ import {
   departingTodayOrLate,
   generateConflictBespokeError,
   manageBookingLink,
-  nameCell,
   upcomingArrivals,
   upcomingDepartures,
 } from '.'
@@ -29,14 +28,14 @@ import {
   departureFactory,
   personFactory,
   premisesBookingFactory,
-  restrictedPersonFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
 import applyPaths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { linebreaksToParagraphs, linkTo } from '../utils'
-import { BookingStatus, FullPerson } from '../../@types/shared'
+import { BookingStatus } from '../../@types/shared'
+import { displayName } from '../personUtils'
 
 describe('bookingUtils', () => {
   const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
@@ -103,7 +102,9 @@ describe('bookingUtils', () => {
     it('casts a group of bookings to table rows with the arrival date', () => {
       expect(bookingsToTableRows(bookings, premisesId, 'arrival')).toEqual([
         [
-          nameCell(bookings[0]),
+          {
+            text: displayName(bookings[0].person),
+          },
           {
             text: bookings[0].person.crn,
           },
@@ -118,7 +119,9 @@ describe('bookingUtils', () => {
           },
         ],
         [
-          nameCell(bookings[1]),
+          {
+            text: displayName(bookings[1].person),
+          },
           {
             text: bookings[1].person.crn,
           },
@@ -138,7 +141,9 @@ describe('bookingUtils', () => {
     it('casts a group of bookings to table rows with the departure date', () => {
       expect(bookingsToTableRows(bookings, premisesId, 'departure')).toEqual([
         [
-          nameCell(bookings[0]),
+          {
+            text: displayName(bookings[0].person),
+          },
           {
             text: bookings[0].person.crn,
           },
@@ -153,7 +158,9 @@ describe('bookingUtils', () => {
           },
         ],
         [
-          nameCell(bookings[1]),
+          {
+            text: displayName(bookings[1].person),
+          },
           {
             text: bookings[1].person.crn,
           },
@@ -169,29 +176,6 @@ describe('bookingUtils', () => {
           },
         ],
       ])
-    })
-  })
-
-  describe('nameCell', () => {
-    it('returns the persons name if they are a full person', () => {
-      const fullPerson = personFactory.build()
-      expect(nameCell(bookingFactory.build({ person: fullPerson }))).toEqual({ text: fullPerson.name })
-    })
-
-    it('returns "Limited access offender" if they are a restricted person', () => {
-      const booking = bookingFactory.build()
-      booking.person = restrictedPersonFactory.build()
-      expect(nameCell(booking)).toEqual({
-        text: `LAO: ${booking.person.crn}`,
-      })
-    })
-
-    it('returns the persons name prefixed with "LAO: " if they are a FullPerson but have the isRestricted flag', () => {
-      const booking = bookingFactory.build()
-      booking.person = personFactory.build({ isRestricted: true })
-      expect(nameCell(booking)).toEqual({
-        text: `LAO: ${(booking.person as FullPerson).name}`,
-      })
     })
   })
 
@@ -392,7 +376,9 @@ describe('bookingUtils', () => {
           key: {
             text: 'Name',
           },
-          value: nameCell(booking),
+          value: {
+            text: displayName(booking.person),
+          },
         },
         {
           key: {

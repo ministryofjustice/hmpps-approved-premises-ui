@@ -1,10 +1,10 @@
-import type { Cas1OverbookingRange, Cas1Premises, Cas1SpaceBookingSummary, FullPerson } from '@approved-premises/api'
+import type { Cas1OverbookingRange, Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { differenceInDays, formatDuration } from 'date-fns'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
-import { laoName } from '../../../server/utils/personUtils'
+import { displayName } from '../../../server/utils/personUtils'
 import { statusTextMap } from '../../../server/utils/placements'
 import { cas1OverbookingRangeFactory } from '../../../server/testutils/factories'
 
@@ -55,7 +55,7 @@ export default class PremisesShowPage extends Page {
       cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
       cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
       cy.get('@row').contains(tier)
-      cy.get('@row').contains(laoName(person as unknown as FullPerson))
+      cy.get('@row').contains(displayName(person))
       cy.get('@row').contains(statusTextMap[status])
     })
   }

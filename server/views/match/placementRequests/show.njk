@@ -11,96 +11,80 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container">
-      <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-l">{{placementRequest.person.name}}</h1>
-        <div class="search-identity-table govuk-body">
+    <h1 class="govuk-heading-l">{{ displayName(placementRequest.person) }}</h1>
 
-          <dl class="search-identity-table__column">
+    <div class="search-identity-table govuk-body">
+        <dl class="search-identity-table__column">
             <dt>
-              <strong>Tier</strong>
+                <strong>Tier</strong>
             </dt>
             <dd>{{ placementRequest.risks.tier.value.level }}</dd>
 
             <dt>
-              <strong>CRN</strong>
+                <strong>CRN</strong>
             </dt>
             <dd>{{ placementRequest.person.crn }}</dd>
 
             <dt>
-              <strong>Release Type</strong>
+                <strong>Release Type</strong>
             </dt>
             <dd>{{ PlacementRequestUtils.formatReleaseType(placementRequest) }}</dd>
-          </dl>
+        </dl>
 
-          <dl class="search-identity-table__column">
+        <dl class="search-identity-table__column">
             <dt>
-              <strong>Date assessed as suitable</strong>
+                <strong>Date assessed as suitable</strong>
             </dt>
             <dd>{{ formatDate(placementRequest.assessmentDate) }}</dd>
             <dt>
-              <strong>Expected arrival date</strong>
+                <strong>Expected arrival date</strong>
             </dt>
             <dd>{{ formatDate(placementRequest.expectedArrival) }}</dd>
-          </dl>
-
-        </div>
-      </div>
-      <hr/>
+        </dl>
     </div>
+
+    <hr />
+
     <div class="govuk-grid-row">
-      <div class="govuk-width-container">
         <div class="govuk-grid-column-two-thirds">
 
-          <h2 class="govuk-heading-m govuk-!-margin-top-4">Matching information</h2>
+            <h2 class="govuk-heading-m govuk-!-margin-top-4">Matching information</h2>
 
-          <p>The information below has been provided by the assessor. The results will be filtered automatically using the placement requirements and offence and risk information shown below. </p>
+            <p>The information below has been provided by the assessor. The results will be filtered
+                automatically using the placement requirements and offence and risk information shown
+                below. </p>
         </div>
-      </div>
     </div>
+  
     <div class="govuk-grid-row">
-      <div class="govuk-width-container">
         <div class="govuk-grid-column-full">
-          {{
-            govukSummaryList(PlacementRequestUtils.assessmentSummary(placementRequest))
-          }}
+            {{ govukSummaryList(PlacementRequestUtils.assessmentSummary(placementRequest)) }}
 
-          {{
-            govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest))
-          }}
+            {{ govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest)) }}
 
-          {{
-            govukSummaryList(PlacementRequestUtils.documentSummary(placementRequest))
-          }}
+            {{ govukSummaryList(PlacementRequestUtils.documentSummary(placementRequest)) }}
 
-          {% if placementRequest.cancellations|length > 0  %}
+            {% if placementRequest.cancellations|length > 0 %}
 
-            <h2 class="govuk-heading-m govuk-!-margin-top-4">Appealed bookings</h2>
+                <h2 class="govuk-heading-m govuk-!-margin-top-4">Appealed bookings</h2>
 
-            {% for cancellation in placementRequest.cancellations %}
-              {{
-                govukSummaryList(PlacementRequestUtils.cancellationSummary(cancellation))
-              }}
-            {% endfor %}
+                {% for cancellation in placementRequest.cancellations %}
+                    {{ govukSummaryList(PlacementRequestUtils.cancellationSummary(cancellation)) }}
+                {% endfor %}
 
-          {% endif %}
+            {% endif %}
 
         </div>
-      </div>
     </div>
     <div class="govuk-grid-row">
-      <div class="govuk-width-container">
         <div class="govuk-grid-column-two-thirds">
-          <h3 class="govuk-heading-m">Search for a bed</h3>
+            <h3 class="govuk-heading-m">Search for a bed</h3>
 
-          <p>Search for a suitable bed in an Approved Premises. Results will be filtered to include essential room attributes.</p>
+            <p>Search for a suitable bed in an Approved Premises. Results will be filtered to include essential
+                room attributes.</p>
 
-          {{
-            PlacementRequestUtils.searchButton(placementRequest) | safe
-          }}
+            {{ PlacementRequestUtils.searchButton(placementRequest) | safe }}
         </div>
-      </div>
     </div>
-  </div>
+    </div>
 {% endblock %}

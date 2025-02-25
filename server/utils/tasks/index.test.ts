@@ -1,5 +1,5 @@
 import { groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
-import { type ApprovedPremisesApplication, FullPerson, Task } from '../../@types/shared'
+import { type ApprovedPremisesApplication, Task } from '../../@types/shared'
 import { applicationFactory, placementDatesFactory, taskFactory, userFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
@@ -7,6 +7,7 @@ import { getApplicationType } from '../applications/utils'
 import paths from '../../paths/apply'
 import placementApplicationTask from '../../testutils/factories/placementApplicationTask'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
+import { displayName } from '../personUtils'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -48,7 +49,7 @@ describe('index', () => {
         expect(taskSummary(task, application)).toEqual([
           {
             key: { text: 'Name' },
-            value: { text: (application.person as FullPerson).name },
+            value: { text: displayName(application.person) },
           },
           {
             key: { text: 'CRN' },
@@ -83,6 +84,15 @@ describe('index', () => {
             value: { text: 'Men' },
           },
         ])
+      })
+
+      it('indicates if the person is a Limited access offender', () => {
+        const laoPerson = fullPersonFactory.build({ isRestricted: true })
+        const laoApplication = { ...application, person: laoPerson }
+
+        expect(taskSummary(task, laoApplication)[0].value).toEqual({
+          text: `${laoPerson.name} (Limited access offender)`,
+        })
       })
     })
 
