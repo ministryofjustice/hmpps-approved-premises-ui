@@ -10,6 +10,7 @@ import { fullPersonSummaryFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
+import cas1PremisesFactory from './cas1Premises'
 
 const statuses: Array<Cas1SpaceBookingSummaryStatus> = [
   'arrived',
@@ -30,8 +31,11 @@ export default Factory.define<Cas1SpaceBookingSummary>(() => {
     faker.date.soon({ days: 365, refDate: canonicalArrivalDate }),
   )
   const status = faker.helpers.arrayElement(statuses)
+  const { id, name } = cas1PremisesFactory.build()
+
   return {
     id: faker.string.uuid(),
+    premises: { id, name },
     person: fullPersonSummaryFactory.build() as PersonSummary,
     canonicalArrivalDate,
     canonicalDepartureDate,
