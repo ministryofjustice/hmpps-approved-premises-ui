@@ -24,21 +24,21 @@ describe('reportUtils', () => {
           value: 'applicationsV2',
           text: 'Raw Applications for Performance Hub',
           hint: {
-            text: 'A raw data extract for applications submitted or withdrawn within the month.',
+            text: 'Applications submitted or withdrawn within the requested month.',
           },
         },
         {
           value: 'requestsForPlacement',
           text: 'Raw Requests for Placement for Performance Hub',
           hint: {
-            text: 'A raw data extract for requests for placements created or withdrawn within the month.',
+            text: 'Requests for placements submitted or withdrawn within the requested month.',
           },
         },
         {
           value: 'placementMatchingOutcomesV2',
           text: 'Raw Placement Matching Outcomes Reports V2',
           hint: {
-            text: 'A raw data extract providing placement matching outcomes for placement requests with an expected arrival within the month.',
+            text: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
           },
         },
       ])
@@ -67,42 +67,42 @@ describe('reportUtils', () => {
           value: 'applicationsV2',
           text: 'Raw Applications for Performance Hub',
           hint: {
-            text: 'A raw data extract for applications submitted or withdrawn within the month.',
+            text: 'Applications submitted or withdrawn within the requested month.',
           },
         },
         {
           value: 'applicationsV2WithPii',
           text: 'Raw Applications for Performance Hub (PII)',
           hint: {
-            text: 'A raw data extract for applications submitted or withdrawn within the month, including PII.',
+            text: 'Includes additional columns of PII data.',
           },
         },
         {
           value: 'requestsForPlacement',
           text: 'Raw Requests for Placement for Performance Hub',
           hint: {
-            text: 'A raw data extract for requests for placements created or withdrawn within the month.',
+            text: 'Requests for placements submitted or withdrawn within the requested month.',
           },
         },
         {
           value: 'requestsForPlacementWithPii',
           text: 'Raw Requests for Placement for Performance Hub (PII)',
           hint: {
-            text: 'A raw data extract for requests for placements created or withdrawn within the month, including PII.',
+            text: 'Includes additional columns of PII data.',
           },
         },
         {
           value: 'placementMatchingOutcomesV2',
           text: 'Raw Placement Matching Outcomes Reports V2',
           hint: {
-            text: 'A raw data extract providing placement matching outcomes for placement requests with an expected arrival within the month.',
+            text: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
           },
         },
         {
           value: 'placementMatchingOutcomesV2WithPii',
           text: 'Raw Placement Matching Outcomes Reports V2 (PII)',
           hint: {
-            text: 'A raw data extract providing placement matching outcomes for placement requests with an expected arrival within the month, including PII.',
+            text: 'Includes additional columns of PII data.',
           },
         },
       ])
