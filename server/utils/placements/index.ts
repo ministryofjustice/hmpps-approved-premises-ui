@@ -43,21 +43,20 @@ export const statusTextMap = {
   overdueDeparture: 'Overdue departure',
 } as const
 
-type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
 type SpaceBookingStatus = keyof typeof statusTextMap
 
-export type PlacementStatus = {
-  overall: SpaceBookingOverallStatus
-  detail: SpaceBookingStatus
-}
+export const placementStatus = (
+  placement: Cas1SpaceBookingSummary,
+  type: 'detailed' | 'overall' = 'detailed',
+): SpaceBookingStatus => {
+  if (placement.isNonArrival) return 'notArrived'
 
-export const placementStatus = (placement: Cas1SpaceBookingSummary): PlacementStatus => {
-  if (placement.isNonArrival) return { overall: 'notArrived', detail: 'notArrived' }
-
-  if (placement.actualDepartureDate) return { overall: 'departed', detail: 'departed' }
+  if (placement.actualDepartureDate) return 'departed'
 
   if (placement.actualArrivalDate) {
-    let detail: PlacementStatus['detail'] = 'arrived'
+    if (type === 'overall') return 'arrived'
+
+    let detail: SpaceBookingStatus = 'arrived'
 
     const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
 
@@ -65,10 +64,12 @@ export const placementStatus = (placement: Cas1SpaceBookingSummary): PlacementSt
     else if (daysFromDeparture === 0) detail = 'departingToday'
     else if (daysFromDeparture <= 2 * 7) detail = 'departingWithin2Weeks'
 
-    return { overall: 'arrived', detail }
+    return detail
   }
 
-  let detail: PlacementStatus['detail'] = 'upcoming'
+  if (type === 'overall') return 'upcoming'
+
+  let detail: SpaceBookingStatus = 'upcoming'
 
   const daysFromArrival = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
 
@@ -77,7 +78,7 @@ export const placementStatus = (placement: Cas1SpaceBookingSummary): PlacementSt
   else if (daysFromArrival <= 2 * 7) detail = 'arrivingWithin2Weeks'
   else if (daysFromArrival <= 6 * 7) detail = 'arrivingWithin6Weeks'
 
-  return { overall: 'upcoming', detail }
+  return detail
 }
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
