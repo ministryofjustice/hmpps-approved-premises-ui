@@ -18,9 +18,9 @@ import { placementCriteria } from './placementRequest'
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
     return this.params({
-      actualArrivalDateOnly: undefined,
+      actualArrivalDate: undefined,
       actualArrivalTime: undefined,
-      actualDepartureDateOnly: undefined,
+      actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
     })
@@ -28,8 +28,8 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
 
   current() {
     return this.params({
-      actualArrivalDateOnly: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 180 })),
-      actualDepartureDateOnly: undefined,
+      actualArrivalDate: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 180 })),
+      actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
     })
@@ -37,9 +37,9 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
 
   nonArrival() {
     return this.params({
-      actualArrivalDateOnly: undefined,
+      actualArrivalDate: undefined,
       actualArrivalTime: undefined,
-      actualDepartureDateOnly: undefined,
+      actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
       nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
@@ -51,8 +51,8 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
     const actualArrivalDate = faker.date.past({ years: 1, refDate: actualDepartureDate })
 
     return this.params({
-      actualArrivalDateOnly: DateFormats.dateObjToIsoDate(actualArrivalDate),
-      actualDepartureDateOnly: DateFormats.dateObjToIsoDate(actualDepartureDate),
+      actualArrivalDate: DateFormats.dateObjToIsoDate(actualArrivalDate),
+      actualDepartureDate: DateFormats.dateObjToIsoDate(actualDepartureDate),
       departure: cas1SpaceBookingDepartureFactory.build({
         moveOnCategory: undefined,
       }),
@@ -84,9 +84,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
 export default Cas1SpaceBookingFactory.define(() => {
   const startDateTime = faker.date.soon({ days: 90 })
   const endDateTime = faker.date.soon({ days: 365, refDate: startDateTime })
-  const [actualArrivalDateOnly, actualDepartureDateOnly] = [startDateTime, endDateTime].map(
-    DateFormats.dateObjToIsoDate,
-  )
+  const [actualArrivalDate, actualDepartureDate] = [startDateTime, endDateTime].map(DateFormats.dateObjToIsoDate)
   const [actualArrivalTime, actualDepartureTime] = [startDateTime, endDateTime].map(DateFormats.dateObjTo24hrTime)
   const [canonicalArrivalDate, canonicalDepartureDate] = [startDateTime, endDateTime].map(DateFormats.dateObjToIsoDate)
   const [expectedArrivalDate, expectedDepartureDate] = faker.date
@@ -108,10 +106,10 @@ export default Cas1SpaceBookingFactory.define(() => {
     apArea: { id: faker.string.uuid(), name: `${faker.location.cardinalDirection()} ${faker.location.county()}` },
     bookedBy: userFactory.build(),
     expectedArrivalDate,
-    actualArrivalDateOnly,
+    actualArrivalDate,
     actualArrivalTime,
     expectedDepartureDate,
-    actualDepartureDateOnly,
+    actualDepartureDate,
     actualDepartureTime,
     canonicalArrivalDate,
     canonicalDepartureDate,

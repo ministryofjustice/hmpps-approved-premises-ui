@@ -294,8 +294,8 @@ describe('placementUtils', () => {
     const placement = cas1SpaceBookingFactory.build({
       expectedArrivalDate: '2024-05-30',
       expectedDepartureDate: '2024-12-24',
-      actualArrivalDateOnly: '2024-06-01',
-      actualDepartureDateOnly: '2024-12-25',
+      actualArrivalDate: '2024-06-01',
+      actualDepartureDate: '2024-12-25',
       createdAt: '2024-03-03',
       characteristics: ['isESAP', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
     })
@@ -320,8 +320,8 @@ describe('placementUtils', () => {
       it('should return an overview of the placement summary information before arrival', () => {
         const unarrivedPlacement: Cas1SpaceBooking = {
           ...placement,
-          actualArrivalDateOnly: undefined,
-          actualDepartureDateOnly: undefined,
+          actualArrivalDate: undefined,
+          actualDepartureDate: undefined,
         }
 
         expect(placementOverviewSummary(unarrivedPlacement)).toEqual({
@@ -363,7 +363,7 @@ describe('placementUtils', () => {
           },
           {
             key: { text: 'Actual arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDateOnly) },
+            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDate) },
           },
           {
             key: { text: 'Arrival time' },
@@ -413,7 +413,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
@@ -443,7 +443,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
@@ -474,7 +474,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
