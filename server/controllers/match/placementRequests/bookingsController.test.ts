@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import BookingsController from './bookingsController'
 
-import { PlacementRequestService } from '../../../services'
+import { PlacementRequestService, SessionService } from '../../../services'
 import { NewBookingNotMade } from '../../../@types/shared'
 
 import matchPaths from '../../../paths/match'
@@ -17,12 +17,14 @@ describe('BookingsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
+  const sessionService = createMock<SessionService>({})
 
   let bookingsController: BookingsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    bookingsController = new BookingsController(placementRequestService)
+    sessionService.getPageBackLink.mockReturnValue('/backlink')
+    bookingsController = new BookingsController(placementRequestService, sessionService)
   })
 
   describe('bookingNotMade', () => {
@@ -32,7 +34,8 @@ describe('BookingsController', () => {
       await requestHandler({ ...request, params: { id: placementRequestId } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/unable-to-match', {
-        pageHeading: 'Unable to match',
+        backLink: '/backlink',
+        pageHeading: 'Mark as unable to match',
         confirmPath: matchPaths.placementRequests.bookingNotMade.create({ id: placementRequestId }),
       })
     })
@@ -49,8 +52,8 @@ describe('BookingsController', () => {
       const requestHandler = bookingsController.createBookingNotMade()
       await requestHandler({ ...request, params: { id: placementRequestId }, body, flash }, response, next)
 
-      expect(flash).toHaveBeenCalledWith('success', 'Placement request marked unable to match')
-      expect(response.redirect).toHaveBeenCalledWith(adminPaths.admin.placementRequests.index({}))
+      expect(flash).toHaveBeenCalledWith('success', 'Placement request has been marked as unable to match')
+      expect(response.redirect).toHaveBeenCalledWith(adminPaths.admin.cruDashboard.index({}))
       expect(placementRequestService.bookingNotMade).toHaveBeenCalledWith(token, placementRequestId, body)
     })
   })

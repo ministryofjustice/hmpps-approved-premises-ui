@@ -498,7 +498,7 @@ context('Placement Requests', () => {
     unableToMatchConfirmationPage.clickSubmit()
 
     // Then I should see a confirmation message
-    showPage.shouldShowBanner('Application has been marked unable to match')
+    showPage.shouldShowBanner('Placement request has been marked as unable to match')
 
     // And the placement should have been marked unable to match in the API
     cy.task('verifyPlacementRequestedMarkedUnableToMatch', unmatchedPlacementRequest).then(requests => {
