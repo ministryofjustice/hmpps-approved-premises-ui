@@ -48,42 +48,38 @@ type SpaceBookingStatus = keyof typeof statusTextMap
 const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
   Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
 
-export const placementStatus = (
-  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking,
-  type: 'detailed' | 'overall' = 'detailed',
-): SpaceBookingStatus => {
+export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
   const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
 
   if (isNonArrival) return 'notArrived'
-
   if (placement.actualDepartureDate) return 'departed'
+  if (placement.actualArrivalDate) return 'arrived'
+  return 'upcoming'
+}
 
-  if (placement.actualArrivalDate) {
-    if (type === 'overall') return 'arrived'
+export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
+  const status = overallStatus(placement)
 
-    let detail: SpaceBookingStatus = 'arrived'
+  if (['notArrived', 'departed'].includes(status)) return status
 
+  if (status === 'arrived') {
     const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
 
-    if (daysFromDeparture < 0) detail = 'overdueDeparture'
-    else if (daysFromDeparture === 0) detail = 'departingToday'
-    else if (daysFromDeparture <= 2 * 7) detail = 'departingWithin2Weeks'
+    if (daysFromDeparture < 0) return 'overdueDeparture'
+    if (daysFromDeparture === 0) return 'departingToday'
+    if (daysFromDeparture <= 2 * 7) return 'departingWithin2Weeks'
 
-    return detail
+    return 'arrived'
   }
-
-  if (type === 'overall') return 'upcoming'
-
-  let detail: SpaceBookingStatus = 'upcoming'
 
   const daysFromArrival = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
 
-  if (daysFromArrival < 0) detail = 'overdueArrival'
-  else if (daysFromArrival === 0) detail = 'arrivingToday'
-  else if (daysFromArrival <= 2 * 7) detail = 'arrivingWithin2Weeks'
-  else if (daysFromArrival <= 6 * 7) detail = 'arrivingWithin6Weeks'
+  if (daysFromArrival < 0) return 'overdueArrival'
+  if (daysFromArrival === 0) return 'arrivingToday'
+  if (daysFromArrival <= 2 * 7) return 'arrivingWithin2Weeks'
+  if (daysFromArrival <= 6 * 7) return 'arrivingWithin6Weeks'
 
-  return detail
+  return 'upcoming'
 }
 
 export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary) => ({
@@ -93,24 +89,25 @@ export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSum
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
-  const arrived = !!placement.actualArrivalDate
-  const departed = !!placement.actualDepartureDate
-  const nonArrival = !!placement.nonArrival
+  const status = overallStatus(placement)
 
-  if (!departed && !nonArrival && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
+  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
     actionList.push({
       text: 'Edit keyworker',
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
-  if (!arrived && !nonArrival) {
-    if (hasPermission(user, ['cas1_space_booking_record_arrival']))
+
+  if (status === 'upcoming') {
+    if (hasPermission(user, ['cas1_space_booking_record_arrival'])) {
       actionList.push({
         text: 'Record arrival',
         classes: 'govuk-button--secondary',
         href: paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }),
       })
+    }
+
     if (hasPermission(user, ['cas1_space_booking_record_non_arrival'])) {
       actionList.push({
         text: 'Record non-arrival',
@@ -119,13 +116,15 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
       })
     }
   }
-  if (arrived && !departed && hasPermission(user, ['cas1_space_booking_record_departure'])) {
+
+  if (status === 'arrived' && hasPermission(user, ['cas1_space_booking_record_departure'])) {
     actionList.push({
       text: 'Record departure',
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
     })
   }
+
   return actionList.length ? [{ items: actionList }] : null
 }
 
@@ -165,7 +164,7 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
     rows: [
       summaryRow('AP name', placement.premises.name),
       summaryRow('Date allocated', formatDate(createdAt)),
-      summaryRow('Status', statusTextMap[placementStatus(placement)]),
+      summaryRow('Status', statusTextMap[detailedStatus(placement)]),
       summaryRow(
         'Actual length of stay',
         actualArrivalDate &&

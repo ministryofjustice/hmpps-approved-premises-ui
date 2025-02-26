@@ -4,7 +4,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { displayName } from '../../../server/utils/personUtils'
-import { canonicalDates, placementStatus, statusTextMap } from '../../../server/utils/placements'
+import { canonicalDates, detailedStatus, statusTextMap } from '../../../server/utils/placements'
 import { cas1OverbookingRangeFactory } from '../../../server/testutils/factories'
 
 export default class PremisesShowPage extends Page {
@@ -59,7 +59,7 @@ export default class PremisesShowPage extends Page {
       cy.get('@row').contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
       cy.get('@row').contains(tier)
       cy.get('@row').contains(displayName(person))
-      cy.get('@row').contains(statusTextMap[placementStatus(placement)])
+      cy.get('@row').contains(statusTextMap[detailedStatus(placement)])
     })
   }
 

@@ -13,11 +13,12 @@ import {
   arrivalInformation,
   canonicalDates,
   departureInformation,
+  detailedStatus,
   getKeyDetail,
   injectRadioConditionalHtml,
   otherBookings,
+  overallStatus,
   placementOverviewSummary,
-  placementStatus,
   placementSummary,
   renderKeyworkersSelectOptions,
   requirementsInformation,
@@ -29,7 +30,7 @@ import { requirementsHtmlString } from '../match'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 
 describe('placementUtils', () => {
-  describe('placementStatus', () => {
+  describe('placement status', () => {
     describe.each([
       ['placement summary', cas1SpaceBookingSummaryFactory],
       ['full placement', cas1SpaceBookingFactory],
@@ -115,9 +116,8 @@ describe('placementUtils', () => {
       it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
         const placement = factory.build(params)
 
-        expect(placementStatus(placement)).toEqual(expected.detailed)
-        expect(placementStatus(placement, 'detailed')).toEqual(expected.detailed)
-        expect(placementStatus(placement, 'overall')).toEqual(expected.overall)
+        expect(overallStatus(placement)).toEqual(expected.overall)
+        expect(detailedStatus(placement)).toEqual(expected.detailed)
       })
     })
   })
@@ -249,7 +249,7 @@ describe('placementUtils', () => {
     })
 
     describe('when the placement has both an arrival and a departure recorded', () => {
-      const placementAfterDeparture = cas1SpaceBookingFactory.build({ id: placementId, premises })
+      const placementAfterDeparture = cas1SpaceBookingFactory.departed().build({ id: placementId, premises })
       it('should allow nothing', () => {
         expect(actions(placementAfterDeparture, userDetails)).toEqual(null)
       })

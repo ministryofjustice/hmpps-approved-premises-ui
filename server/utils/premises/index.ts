@@ -16,7 +16,7 @@ import { createQueryString, linkTo } from '../utils'
 import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
-import { canonicalDates, placementStatus, statusTextMap } from '../placements'
+import { canonicalDates, detailedStatus, statusTextMap } from '../placements'
 
 export { premisesActions } from './premisesActions'
 export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
@@ -169,7 +169,7 @@ export const placementTableRows = (
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
       keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-      status: textValue(statusTextMap[placementStatus(placement)]),
+      status: textValue(statusTextMap[detailedStatus(placement)]),
     }
 
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])

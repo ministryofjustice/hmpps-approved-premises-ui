@@ -16,7 +16,7 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { canonicalDates, placementStatus, statusTextMap } from '../placements'
+import { canonicalDates, detailedStatus, statusTextMap } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -284,7 +284,7 @@ describe('premisesUtils', () => {
 
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
-          const statusColumn = { text: statusTextMap[placementStatus(placement)] }
+          const statusColumn = { text: statusTextMap[detailedStatus(placement)] }
           const { arrivalDate, departureDate } = canonicalDates(placement)
           const baseColumns = [
             {
