@@ -35,21 +35,21 @@ export type Cas1SpaceBooking = {
     placementRequestId?: string;
     expectedArrivalDate: string;
     expectedDepartureDate: string;
+    actualArrivalDate?: string;
     /**
-     * Use actualArrivalDateOnly and actualArrivalTime
+     * Use actualArrivalDate
      * @deprecated
      */
-    actualArrivalDate?: string;
     actualArrivalDateOnly?: string;
     /**
      * This value may not be defined even if an arrival date is
      */
     actualArrivalTime?: string;
+    actualDepartureDate?: string;
     /**
-     * Use actualDepartureDateOnly and actualDepartureTime
+     * Use actualDepartureDate
      * @deprecated
      */
-    actualDepartureDate?: string;
     actualDepartureDateOnly?: string;
     /**
      * This value may not be defined even if a departure date is
