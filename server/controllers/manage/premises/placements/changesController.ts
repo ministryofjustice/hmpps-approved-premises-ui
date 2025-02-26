@@ -86,8 +86,8 @@ export default class ChangesController {
       let endDate = placement.expectedDepartureDate
       let durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
 
-      if (placement.actualArrivalDateOnly) {
-        startDate = placement.actualArrivalDateOnly
+      if (placement.actualArrivalDate) {
+        startDate = placement.actualArrivalDate
         endDate = DateFormats.dateObjToIsoDate(addDays(startDate, getClosestDuration(durationDays)))
         durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
         pageHeading = 'Extend placement'
@@ -218,7 +218,7 @@ export default class ChangesController {
         placement,
         summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
-          actualArrivalDate: placement.actualArrivalDateOnly,
+          actualArrivalDate: placement.actualArrivalDate,
           expectedArrivalDate: arrivalDate || placement.expectedArrivalDate,
           expectedDepartureDate: departureDate,
           criteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria) || [],

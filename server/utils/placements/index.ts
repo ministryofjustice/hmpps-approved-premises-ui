@@ -53,16 +53,12 @@ export const placementStatus = (
   type: 'detailed' | 'overall' = 'detailed',
 ): SpaceBookingStatus => {
   const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
-  const actualDepartureDate = isSpaceBooking(placement)
-    ? placement.actualDepartureDateOnly
-    : placement.actualDepartureDate
-  const actualArrivalDate = isSpaceBooking(placement) ? placement.actualArrivalDateOnly : placement.actualArrivalDate
 
   if (isNonArrival) return 'notArrived'
 
-  if (actualDepartureDate) return 'departed'
+  if (placement.actualDepartureDate) return 'departed'
 
-  if (actualArrivalDate) {
+  if (placement.actualArrivalDate) {
     if (type === 'overall') return 'arrived'
 
     let detail: SpaceBookingStatus = 'arrived'
@@ -92,8 +88,8 @@ export const placementStatus = (
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
-  const arrived = !!placement.actualArrivalDateOnly
-  const departed = !!placement.actualDepartureDateOnly
+  const arrived = !!placement.actualArrivalDate
+  const departed = !!placement.actualDepartureDate
   const nonArrival = !!placement.nonArrival
 
   if (!departed && !nonArrival && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
@@ -159,8 +155,7 @@ const formatTime = (time: string) => {
 const summaryRow = (key: string, value: string): SummaryListItem => value && summaryListItem(key, value)
 
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
-  const { createdAt, actualArrivalDateOnly, actualDepartureDateOnly, keyWorkerAllocation, deliusEventNumber } =
-    placement
+  const { createdAt, actualArrivalDate, actualDepartureDate, keyWorkerAllocation, deliusEventNumber } = placement
   return {
     rows: [
       summaryRow('AP name', placement.premises.name),
@@ -168,13 +163,13 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
       summaryRow('Status', statusTextMap[placementStatus(placement)]),
       summaryRow(
         'Actual length of stay',
-        actualArrivalDateOnly &&
-          actualDepartureDateOnly &&
+        actualArrivalDate &&
+          actualDepartureDate &&
           DateFormats.formatDuration(
             daysToWeeksAndDays(
               DateFormats.durationBetweenDates(
-                DateFormats.isoToDateObj(actualDepartureDateOnly),
-                DateFormats.isoToDateObj(actualArrivalDateOnly),
+                DateFormats.isoToDateObj(actualDepartureDate),
+                DateFormats.isoToDateObj(actualArrivalDate),
               ).number,
             ),
           ),
@@ -190,19 +185,19 @@ export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryLi
     summaryRow('Approved premises', placement.premises.name),
     summaryRow('Date of match', formatDate(placement.createdAt)),
     summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
-    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDateOnly)),
+    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate)),
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
     summaryListItem('Room criteria', requirementsHtmlString(placement.characteristics, roomCharacteristicMap), 'html'),
   ].filter(Boolean),
 })
 
 export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => {
-  const { expectedArrivalDate, actualArrivalDateOnly, actualArrivalTime, nonArrival } = placement
+  const { expectedArrivalDate, actualArrivalDate, actualArrivalTime, nonArrival } = placement
   const { reason, notes, confirmedAt } = nonArrival || {}
   return {
     rows: [
       summaryRow('Expected arrival date', formatDate(expectedArrivalDate)),
-      summaryRow('Actual arrival date', formatDate(actualArrivalDateOnly)),
+      summaryRow('Actual arrival date', formatDate(actualArrivalDate)),
       summaryRow('Arrival time', formatTime(actualArrivalTime)),
       summaryRow(
         'Non arrival recorded at',
@@ -226,7 +221,7 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
   return {
     rows: [
       summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-      summaryRow('Actual departure date', formatDate(placement.actualDepartureDateOnly)),
+      summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
       summaryRow('Departure time', formatTime(placement.actualDepartureTime)),
       summaryRow('Departure reason', reason),
       summaryRow('Breach or recall', breachOrRecall),

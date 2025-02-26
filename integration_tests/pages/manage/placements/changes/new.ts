@@ -6,7 +6,7 @@ import { DateFormats, daysToWeeksAndDays } from '../../../../../server/utils/dat
 
 export class ChangePlacementPage extends OccupancyFilterPage {
   constructor(private readonly placement: Cas1SpaceBooking) {
-    super(placement.actualArrivalDateOnly ? 'Extend placement' : 'Change placement')
+    super(placement.actualArrivalDate ? 'Extend placement' : 'Change placement')
   }
 
   static visit(placement: Cas1SpaceBooking): ChangePlacementPage {

@@ -141,7 +141,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <input type="hidden" name="criteria" value="{{ criteria }}" />
-                {% if not placement.actualArrivalDateOnly %}
+                {% if not placement.actualArrivalDate %}
                     {{ govukDateInput({
                         id: "arrivalDate",
                         namePrefix: "arrivalDate",
@@ -158,7 +158,7 @@
                         errorMessage: errors.arrivalDate
                     }) }}
                 {% else %}
-                    <input type="hidden" name="actualArrivalDate" value="{{ placement.actualArrivalDateOnly }}" />
+                    <input type="hidden" name="actualArrivalDate" value="{{ placement.actualArrivalDate }}" />
                 {% endif %}
 
                 {{ govukDateInput({
