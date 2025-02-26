@@ -94,7 +94,7 @@ export default Cas1SpaceBookingFactory.define(() => {
     id: faker.string.uuid(),
     applicationId: faker.string.uuid(),
     assessmentId: faker.string.uuid(),
-    requestForPlacementId: faker.string.uuid(),
+    placementRequestId: faker.string.uuid(),
     person: fullPersonFactory.build() as Person,
     tier: faker.helpers.arrayElement(['A', 'B', 'C']),
     requirements: cas1SpaceBookingRequirementsFactory.build(),

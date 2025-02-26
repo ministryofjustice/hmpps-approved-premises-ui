@@ -32,7 +32,7 @@ context('Change Placement', () => {
       status: 'matched',
       booking: bookingSummaryFactory.fromSpaceBooking(placement).build(),
     })
-    placement.requestForPlacementId = placementRequestDetail.id
+    placement.placementRequestId = placementRequestDetail.id
     const capacity = cas1PremiseCapacityFactory.build()
     cy.task('stubSinglePremises', premises)
     cy.task('stubPremiseCapacity', {
