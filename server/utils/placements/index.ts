@@ -51,88 +51,33 @@ export type PlacementStatus = {
   detail: SpaceBookingStatus
 }
 
-type CutoffStatusMap = {
-  dateForDetail: 'expectedArrivalDate' | 'expectedDepartureDate'
-  overall: SpaceBookingStatus
-  cutoffs: Array<{ days: number; detail: SpaceBookingDetailedStatus }>
-}
-
-const upcomingMap: CutoffStatusMap = {
-  dateForDetail: 'expectedArrivalDate',
-  overall: 'upcoming',
-  cutoffs: [
-    { days: 6 * 7, detail: 'arrivingWithin6Weeks' },
-    { days: 2 * 7, detail: 'arrivingWithin2Weeks' },
-    { days: 0, detail: 'arrivingToday' },
-    { days: -1, detail: 'overdueArrival' },
-  ],
-}
-
-const arrivedMap: CutoffStatusMap = {
-  dateForDetail: 'expectedDepartureDate',
-  overall: 'arrived',
-  cutoffs: [
-    { days: 2 * 7, detail: 'departingWithin2Weeks' },
-    { days: 0, detail: 'departingToday' },
-    { days: -1, detail: 'overdueDeparture' },
-  ],
-}
-
 export const placementStatus = (placement: Cas1SpaceBookingSummary): PlacementStatus => {
-  if (placement.isNonArrival) {
-    return { overall: 'notArrived', detail: 'notArrived' }
-  }
-  if (placement.actualDepartureDate) {
-    return { overall: 'departed', detail: 'departed' }
-  }
+  if (placement.isNonArrival) return { overall: 'notArrived', detail: 'notArrived' }
 
-  const map = placement.actualArrivalDate ? arrivedMap : upcomingMap
+  if (placement.actualDepartureDate) return { overall: 'departed', detail: 'departed' }
 
-  const daysFromToday = differenceInCalendarDays(placement[map.dateForDetail], new Date())
+  if (placement.actualArrivalDate) {
+    let detail: PlacementStatus['detail'] = 'arrived'
 
-  return {
-    overall: map.overall,
-    detail: map.cutoffs.reduce(
-      (detail, cutoff) => (daysFromToday <= cutoff.days ? cutoff.detail : detail),
-      map.overall,
-    ),
+    const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
+
+    if (daysFromDeparture < 0) detail = 'overdueDeparture'
+    else if (daysFromDeparture === 0) detail = 'departingToday'
+    else if (daysFromDeparture <= 2 * 7) detail = 'departingWithin2Weeks'
+
+    return { overall: 'arrived', detail }
   }
 
-  // const status = {
-  //   overall: 'upcoming',
-  //   detail: 'upcoming',
-  // }
-  //
-  // if (placement.actualArrivalDate) {
-  //   status.overall = 'arrived'
-  //   status.detail = 'arrived'
-  //
-  //   const daysFromToday = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
-  //
-  //   if (daysFromToday < 0) {
-  //     status.detail = 'overdueDeparture'
-  //   } else if (daysFromToday === 0) {
-  //     status.detail = 'departingToday'
-  //   } else if (daysFromToday <= 2 * 7) {
-  //     status.detail = 'departingWithin2Weeks'
-  //   }
-  //
-  //   return status
-  // }
+  let detail: PlacementStatus['detail'] = 'upcoming'
 
-  // const daysFromToday = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
-  //
-  // if (daysFromToday < 0) {
-  //   status.detail = 'overdueArrival'
-  // } else if (daysFromToday === 0) {
-  //   status.detail = 'arrivingToday'
-  // } else if (daysFromToday <= 2 * 7) {
-  //   status.detail = 'arrivingWithin2Weeks'
-  // } else if (daysFromToday <= 6 * 7) {
-  //   status.detail = 'arrivingWithin6Weeks'
-  // }
-  //
-  // return status
+  const daysFromArrival = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
+
+  if (daysFromArrival < 0) detail = 'overdueArrival'
+  else if (daysFromArrival === 0) detail = 'arrivingToday'
+  else if (daysFromArrival <= 2 * 7) detail = 'arrivingWithin2Weeks'
+  else if (daysFromArrival <= 6 * 7) detail = 'arrivingWithin6Weeks'
+
+  return { overall: 'upcoming', detail }
 }
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
