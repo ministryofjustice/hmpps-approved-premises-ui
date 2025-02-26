@@ -278,7 +278,7 @@ describe('premisesUtils', () => {
       (activeTab: Cas1SpaceBookingResidency) => {
         const placements = [
           ...cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' }),
-          cas1SpaceBookingSummaryFactory.build({ tier: 'A', status: undefined }),
+          cas1SpaceBookingSummaryFactory.build({ tier: 'A' }),
           cas1SpaceBookingSummaryFactory.build({ tier: 'A', keyWorkerAllocation: undefined }),
         ]
 
