@@ -16,7 +16,7 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { statusTextMap } from '../placements'
+import { placementStatus, statusTextMap } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -284,7 +284,7 @@ describe('premisesUtils', () => {
 
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
-          const statusColumn = { text: statusTextMap[placement.status] }
+          const statusColumn = { text: statusTextMap[placementStatus(placement).detail] }
           const baseColumns = [
             {
               html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
