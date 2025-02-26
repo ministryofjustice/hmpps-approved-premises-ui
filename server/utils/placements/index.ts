@@ -119,7 +119,7 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
           actualDepartureDateOnly &&
           DateFormats.formatDuration(
             daysToWeeksAndDays(
-              DateFormats.differenceInDays(
+              DateFormats.durationBetweenDates(
                 DateFormats.isoToDateObj(actualDepartureDateOnly),
                 DateFormats.isoToDateObj(actualArrivalDateOnly),
               ).number,

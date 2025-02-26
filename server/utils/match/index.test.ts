@@ -234,8 +234,8 @@ describe('matchUtils', () => {
   describe('spaceBookingConfirmationSummaryListRows', () => {
     const placementRequest = placementRequestDetailFactory.build()
     const premises = cas1PremisesFactory.build()
-    const expectedArrivalDate = '2025-05-23'
-    const expectedDepartureDate = '2025-07-18'
+    const expectedArrivalDate = '2025-09-23'
+    const expectedDepartureDate = '2025-11-18'
     const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
 
     it('returns summary list items for the space booking confirmation screen', () => {
@@ -256,8 +256,8 @@ describe('matchUtils', () => {
             html: '<ul class="govuk-list govuk-list--bullet"><li>En-suite bathroom</li><li>Arson offences</li></ul>',
           },
         },
-        { key: { text: 'Expected arrival date' }, value: { text: 'Fri 23 May 2025' } },
-        { key: { text: 'Expected departure date' }, value: { text: 'Fri 18 Jul 2025' } },
+        { key: { text: 'Expected arrival date' }, value: { text: 'Tue 23 Sep 2025' } },
+        { key: { text: 'Expected departure date' }, value: { text: 'Tue 18 Nov 2025' } },
         { key: { text: 'Length of stay' }, value: { text: '8 weeks' } },
         { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
       ])
@@ -289,7 +289,7 @@ describe('matchUtils', () => {
       expect(rows).toEqual(
         expect.arrayContaining([
           { key: { text: 'Actual arrival date' }, value: { text: 'Fri 25 Apr 2025' } },
-          { key: { text: 'Length of stay' }, value: { text: '12 weeks' } },
+          { key: { text: 'Length of stay' }, value: { text: '8 weeks' } },
         ]),
       )
       expect(rows).toEqual(
