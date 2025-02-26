@@ -123,7 +123,7 @@ describe('placementRequestSummaryList', () => {
       },
       {
         key: {
-          text: 'Expected departure date',
+          text: 'Requested departure date',
         },
         value: {
           text: 'Sun 23 Nov 2025',
