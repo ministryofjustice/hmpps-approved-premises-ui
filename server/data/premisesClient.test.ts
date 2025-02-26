@@ -1,8 +1,8 @@
 import { Cas1SpaceBookingDaySummarySortField, SortDirection } from '@approved-premises/api'
 import {
   bedDetailFactory,
-  bedSummaryFactory,
   cas1PremiseCapacityFactory,
+  cas1PremisesBedSummaryFactory,
   cas1PremisesDaySummaryFactory,
   premisesFactory,
   staffMemberFactory,
@@ -18,32 +18,6 @@ describeClient('PremisesClient', provider => {
 
   beforeEach(() => {
     premisesClient = new PremisesClient(token)
-  })
-
-  describe('getBeds', () => {
-    it('should return a list of beds for a given premises', async () => {
-      const premises = premisesFactory.build()
-      const beds = bedSummaryFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get a list of beds for a premises',
-        withRequest: {
-          method: 'GET',
-          path: paths.premises.beds.index({ premisesId: premises.id }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: beds,
-        },
-      })
-
-      const output = await premisesClient.getBeds(premises.id)
-      expect(output).toEqual(beds)
-    })
   })
 
   describe('getBed', () => {
@@ -104,6 +78,32 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
 
   beforeEach(() => {
     premisesClient = new PremisesClient(token)
+  })
+
+  describe('getBeds', () => {
+    it('should return a list of beds for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const beds = cas1PremisesBedSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of beds for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.beds.index({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: beds,
+        },
+      })
+
+      const output = await premisesClient.getBeds(premises.id)
+      expect(output).toEqual(beds)
+    })
   })
 
   describe('getCapacity', () => {

@@ -76,6 +76,7 @@ import spaceBookingRequirementsFactory from './spaceBookingRequirements'
 import spaceSearchParametersFactory from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
+import cas1PremisesBedSummaryFactory from './cas1PremisesBedSummary'
 import cas1PremisesFactory from './cas1Premises'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 import cas1PremiseCapacityFactory, { cas1PremiseCapacityForDayFactory } from './cas1PremiseCapacity'
@@ -119,6 +120,7 @@ export {
   bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
+  cas1PremisesBedSummaryFactory,
   cas1OutOfServiceBedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremiseCapacityFactory,
