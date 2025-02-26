@@ -111,9 +111,7 @@ describe('SpaceBookingsController', () => {
         premisesId: premises.id,
         arrivalDate: searchState.arrivalDate,
         departureDate: searchState.departureDate,
-        requirements: {
-          essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        },
+        characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
       }
       const spaceBooking = cas1SpaceBookingFactory.build()
 

@@ -75,9 +75,7 @@ export default class {
         arrivalDate: searchState.arrivalDate,
         departureDate: searchState.departureDate,
         premisesId,
-        requirements: {
-          essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        },
+        characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
       }
 
       try {

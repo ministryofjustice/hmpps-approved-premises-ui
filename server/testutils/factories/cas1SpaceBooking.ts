@@ -3,7 +3,6 @@ import { faker } from '@faker-js/faker'
 import type { Cas1KeyWorkerAllocation, Cas1SpaceBooking, Person } from '@approved-premises/api'
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
-import cas1SpaceBookingRequirementsFactory from './spaceBookingRequirements'
 import userFactory from './user'
 
 import staffMemberFactory from './staffMember'
@@ -97,7 +96,6 @@ export default Cas1SpaceBookingFactory.define(() => {
     placementRequestId: faker.string.uuid(),
     person: fullPersonFactory.build() as Person,
     tier: faker.helpers.arrayElement(['A', 'B', 'C']),
-    requirements: cas1SpaceBookingRequirementsFactory.build(),
     characteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
     premises: {
       id: faker.string.uuid(),

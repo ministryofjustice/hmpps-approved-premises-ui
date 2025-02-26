@@ -367,9 +367,7 @@ context('Placement Requests', () => {
           arrivalDate,
           departureDate,
           premisesId: premises.id,
-          requirements: {
-            essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-          },
+          characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
         })
       },
     )
