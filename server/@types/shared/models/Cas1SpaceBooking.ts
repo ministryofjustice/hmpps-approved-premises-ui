@@ -7,7 +7,6 @@ import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellatio
 import type { Cas1SpaceBookingDates } from './Cas1SpaceBookingDates';
 import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
 import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
-import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
 import type { Cas1SpaceBookingSummaryStatus } from './Cas1SpaceBookingSummaryStatus';
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { NamedId } from './NamedId';
@@ -19,11 +18,6 @@ export type Cas1SpaceBooking = {
     assessmentId?: string;
     person: Person;
     tier?: string;
-    /**
-     * Use 'characteristics' instead
-     * @deprecated
-     */
-    requirements: Cas1SpaceBookingRequirements;
     premises: NamedId;
     apArea: NamedId;
     bookedBy?: User;
