@@ -45,15 +45,24 @@ export const statusTextMap = {
 
 type SpaceBookingStatus = keyof typeof statusTextMap
 
+const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
+  Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
+
 export const placementStatus = (
-  placement: Cas1SpaceBookingSummary,
+  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking,
   type: 'detailed' | 'overall' = 'detailed',
 ): SpaceBookingStatus => {
-  if (placement.isNonArrival) return 'notArrived'
+  const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
+  const actualDepartureDate = isSpaceBooking(placement)
+    ? placement.actualDepartureDateOnly
+    : placement.actualDepartureDate
+  const actualArrivalDate = isSpaceBooking(placement) ? placement.actualArrivalDateOnly : placement.actualArrivalDate
 
-  if (placement.actualDepartureDate) return 'departed'
+  if (isNonArrival) return 'notArrived'
 
-  if (placement.actualArrivalDate) {
+  if (actualDepartureDate) return 'departed'
+
+  if (actualArrivalDate) {
     if (type === 'overall') return 'arrived'
 
     let detail: SpaceBookingStatus = 'arrived'
@@ -150,13 +159,13 @@ const formatTime = (time: string) => {
 const summaryRow = (key: string, value: string): SummaryListItem => value && summaryListItem(key, value)
 
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
-  const { createdAt, actualArrivalDateOnly, actualDepartureDateOnly, keyWorkerAllocation, deliusEventNumber, status } =
+  const { createdAt, actualArrivalDateOnly, actualDepartureDateOnly, keyWorkerAllocation, deliusEventNumber } =
     placement
   return {
     rows: [
       summaryRow('AP name', placement.premises.name),
       summaryRow('Date allocated', formatDate(createdAt)),
-      summaryRow('Status', statusTextMap[status] || ''),
+      summaryRow('Status', statusTextMap[placementStatus(placement)]),
       summaryRow(
         'Actual length of stay',
         actualArrivalDateOnly &&

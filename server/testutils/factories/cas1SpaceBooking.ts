@@ -1,11 +1,6 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import type {
-  Cas1KeyWorkerAllocation,
-  Cas1SpaceBooking,
-  Cas1SpaceBookingSummaryStatus,
-  Person,
-} from '@approved-premises/api'
+import type { Cas1KeyWorkerAllocation, Cas1SpaceBooking, Person } from '@approved-premises/api'
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import cas1SpaceBookingRequirementsFactory from './spaceBookingRequirements'
@@ -28,11 +23,6 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualDepartureDateOnly: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
-      status: faker.helpers.arrayElement([
-        'arrivingToday',
-        'arrivingWithin6Weeks',
-        'arrivingWithin2Weeks',
-      ] as Array<Cas1SpaceBookingSummaryStatus>),
     })
   }
 
@@ -42,7 +32,6 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualDepartureDateOnly: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
-      status: 'arrived',
     })
   }
 
@@ -54,7 +43,6 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualDepartureTime: undefined,
       departure: undefined,
       nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
-      status: 'notArrived',
     })
   }
 
@@ -133,6 +121,5 @@ export default Cas1SpaceBookingFactory.define(() => {
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
     deliusEventNumber: String(faker.number.int()),
     nonArrival: undefined,
-    status: 'departed' as Cas1SpaceBookingSummaryStatus,
   }
 })
