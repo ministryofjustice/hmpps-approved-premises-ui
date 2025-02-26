@@ -25,15 +25,15 @@ import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSe
 import { requirementsHtmlString } from '../match'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 
-export const statusTextMap = {
+export const overallStatusTextMap = {
   upcoming: 'Upcoming',
   arrived: 'Arrived',
   notArrived: 'Not arrived',
   departed: 'Departed',
 } as const
 
-export const detailedStatusTextMap = {
-  ...statusTextMap,
+export const statusTextMap = {
+  ...overallStatusTextMap,
   arrivingWithin6Weeks: 'Arriving within 6 weeks',
   arrivingWithin2Weeks: 'Arriving within 2 weeks',
   arrivingToday: 'Arriving today',
@@ -43,12 +43,12 @@ export const detailedStatusTextMap = {
   overdueDeparture: 'Overdue departure',
 } as const
 
+type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
 type SpaceBookingStatus = keyof typeof statusTextMap
-type SpaceBookingDetailedStatus = keyof typeof detailedStatusTextMap
 
-type PlacementStatus = {
-  overall: SpaceBookingStatus
-  detail: SpaceBookingDetailedStatus
+export type PlacementStatus = {
+  overall: SpaceBookingOverallStatus
+  detail: SpaceBookingStatus
 }
 
 type CutoffStatusMap = {

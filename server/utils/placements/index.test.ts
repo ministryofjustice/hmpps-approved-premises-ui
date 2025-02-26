@@ -9,6 +9,7 @@ import {
   userDetailsFactory,
 } from '../../testutils/factories'
 import {
+  type PlacementStatus,
   actions,
   arrivalInformation,
   departureInformation,
