@@ -1,7 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
-import { differenceInDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
   cas1PremiseCapacityFactory,
@@ -37,7 +36,9 @@ describe('changesController', () => {
   const changesController = new ChangesController(placementService, premisesService)
 
   const premises = cas1PremisesFactory.build()
-  const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
+  const placement = cas1SpaceBookingFactory
+    .upcoming()
+    .build({ premises, expectedArrivalDate: '2025-10-02', expectedDepartureDate: '2025-11-02' })
   const capacity = cas1PremiseCapacityFactory.build()
   const params = { premisesId: premises.id, placementId: placement.id }
   const viewUrl = managePaths.premises.placements.changes.new(params)
@@ -67,7 +68,7 @@ describe('changesController', () => {
         premisesId: premises.id,
         date: ':date',
       })}?${createQueryString({ criteria: expectedCriteria, excludeSpaceBookingId: placement.id })}`
-      const expectedDuration = differenceInDays(placement.expectedDepartureDate, placement.expectedArrivalDate)
+      const expectedDuration = 31
 
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {

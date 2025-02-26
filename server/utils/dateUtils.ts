@@ -3,9 +3,8 @@ import {
   addBusinessDays as addBusinsessDaysWithoutBankHolidays,
   addDays,
   differenceInBusinessDays as differenceInBusinessDaysDateFns,
-  differenceInDays,
+  differenceInHours,
   format,
-  formatDistanceStrict,
   formatDuration,
   formatISO,
   isBefore,
@@ -20,8 +19,6 @@ import {
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
 import rawBankHolidays from '../data/bankHolidays/bank-holidays.json'
-
-type DifferenceInDays = { ui: string; number: number }
 
 type DurationWithNumberOrString = {
   years?: number | string
@@ -171,10 +168,12 @@ export class DateFormats {
   /**
    * @param date1 first day to compare.
    * @param date2 second day to compare.
-   * @returns {DifferenceInDays} an object with the difference in days as a string for UI purposes (EG '2 Days') and as a number.
+   * @returns an object with the difference in days as a string for UI purposes (EG '2 Days') and as a number.
    */
-  static differenceInDays(date1: Date, date2: Date): DifferenceInDays {
-    return { ui: formatDistanceStrict(date1, date2, { unit: 'day' }), number: differenceInDays(date1, date2) }
+  static durationBetweenDates(date1: string | Date, date2: string | Date): { number: number; ui: string } {
+    const days = Math.abs(Math.trunc(differenceInHours(date1, date2) / 24)) || 0
+    const formatted = formatDuration(daysToWeeksAndDays(days))
+    return { number: days, ui: formatted }
   }
 
   /**
