@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
+import { Cas1SpaceBooking, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import {
   bookingSummaryFactory,
@@ -17,8 +18,6 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 import ChangePlacementConfirmPage from '../../../pages/manage/placements/changes/confirm'
 import apiPaths from '../../../../server/paths/api'
 import { roomCharacteristicMap } from '../../../../server/utils/characteristicsUtils'
-import { Cas1SpaceBooking } from '../../../../server/@types/shared/models/Cas1SpaceBooking'
-import { Cas1UpdateSpaceBooking } from '../../../../server/@types/shared/models/Cas1UpdateSpaceBooking'
 
 context('Change Placement', () => {
   const expectedArrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
@@ -209,7 +208,7 @@ context('Change Placement', () => {
       departureDate: DateFormats.dateObjToIsoDate(addDays(arrivedPlacement.expectedDepartureDate, 5)),
       criteria: arrivedPlacement.characteristics.filter(characteristic => roomCharacteristicMap[characteristic]),
     })
-    confirmPage.shouldShowProposedChanges()
+    confirmPage.shouldShowProposedChanges(arrivedPlacement.actualArrivalDateOnly)
 
     // When I submit the confirmation page
     confirmPage.clickSubmit()

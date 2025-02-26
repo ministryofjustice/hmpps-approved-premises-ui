@@ -33,22 +33,31 @@ export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
 }
 
-export const spaceBookingConfirmationSummaryListRows = (
-  premises: Cas1Premises,
-  arrivalDate: string,
-  departureDate: string,
-  criteria: Array<Cas1SpaceBookingCharacteristic>,
-  releaseType?: ReleaseTypeOption,
-): Array<SummaryListItem> => {
+type SpaceBookingConfirmationData = {
+  premises: Cas1Premises
+  expectedArrivalDate: string
+  actualArrivalDate?: string
+  expectedDepartureDate: string
+  criteria: Array<Cas1SpaceBookingCharacteristic>
+  releaseType?: ReleaseTypeOption
+}
+
+export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfirmationData): Array<SummaryListItem> => {
+  const { premises, expectedArrivalDate, actualArrivalDate, expectedDepartureDate, criteria, releaseType } = data
+
   return [
     summaryListItem('Approved Premises', premises.name),
     summaryListItem('Address', premisesAddress(premises)),
     summaryListItem('Room criteria', requirementsHtmlString(criteria), 'html'),
-    summaryListItem('Arrival date', DateFormats.isoDateToUIDate(arrivalDate)),
-    summaryListItem('Departure date', DateFormats.isoDateToUIDate(departureDate)),
+    actualArrivalDate
+      ? summaryListItem('Actual arrival date', DateFormats.isoDateToUIDate(actualArrivalDate))
+      : summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(expectedArrivalDate)),
+    summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(expectedDepartureDate)),
     summaryListItem(
       'Length of stay',
-      DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))),
+      DateFormats.formatDuration(
+        daysToWeeksAndDays(differenceInDays(expectedDepartureDate, actualArrivalDate || expectedArrivalDate)),
+      ),
     ),
     releaseType ? summaryListItem('Release type', allReleaseTypes[releaseType]) : undefined,
   ].filter(Boolean)

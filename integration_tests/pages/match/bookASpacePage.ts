@@ -21,8 +21,8 @@ export default class BookASpacePage extends Page {
       { key: { text: 'Approved Premises' }, value: { text: premises.name } },
       { key: { text: 'Address' }, value: { text: `${premises.fullAddress}, ${premises.postcode}` } },
       { key: { text: 'Room criteria' }, value: { html: requirementsHtmlString(criteria) } },
-      { key: { text: 'Arrival date' }, value: { text: DateFormats.isoDateToUIDate(arrivalDate) } },
-      { key: { text: 'Departure date' }, value: { text: DateFormats.isoDateToUIDate(departureDate) } },
+      { key: { text: 'Expected arrival date' }, value: { text: DateFormats.isoDateToUIDate(arrivalDate) } },
+      { key: { text: 'Expected departure date' }, value: { text: DateFormats.isoDateToUIDate(departureDate) } },
       {
         key: { text: 'Length of stay' },
         value: { text: DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))) },

@@ -28,27 +28,27 @@ export const reportInputLabels = {
   },
   applicationsV2: {
     text: 'Raw Applications for Performance Hub',
-    hint: 'A raw data extract for applications submitted or withdrawn within the month.',
+    hint: 'Applications submitted or withdrawn within the requested month.',
   },
   applicationsV2WithPii: {
     text: 'Raw Applications for Performance Hub (PII)',
-    hint: 'A raw data extract for applications submitted or withdrawn within the month, including PII.',
+    hint: 'Includes additional columns of PII data.',
   },
   requestsForPlacement: {
     text: 'Raw Requests for Placement for Performance Hub',
-    hint: 'A raw data extract for requests for placements created or withdrawn within the month.',
+    hint: 'Requests for placements submitted or withdrawn within the requested month.',
   },
   requestsForPlacementWithPii: {
     text: 'Raw Requests for Placement for Performance Hub (PII)',
-    hint: 'A raw data extract for requests for placements created or withdrawn within the month, including PII.',
+    hint: 'Includes additional columns of PII data.',
   },
   placementMatchingOutcomesV2: {
     text: 'Raw Placement Matching Outcomes Reports V2',
-    hint: 'A raw data extract providing placement matching outcomes for placement requests with an expected arrival within the month.',
+    hint: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
   },
   placementMatchingOutcomesV2WithPii: {
     text: 'Raw Placement Matching Outcomes Reports V2 (PII)',
-    hint: 'A raw data extract providing placement matching outcomes for placement requests with an expected arrival within the month, including PII.',
+    hint: 'Includes additional columns of PII data.',
   },
 } as const
 
