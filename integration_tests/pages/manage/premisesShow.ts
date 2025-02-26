@@ -58,7 +58,7 @@ export default class PremisesShowPage extends Page {
       cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
       cy.get('@row').contains(tier)
       cy.get('@row').contains(displayName(person))
-      cy.get('@row').contains(statusTextMap[placementStatus(placement).detail])
+      cy.get('@row').contains(statusTextMap[placementStatus(placement)])
     })
   }
 

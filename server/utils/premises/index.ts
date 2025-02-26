@@ -168,7 +168,7 @@ export const placementTableRows = (
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
       keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-      status: textValue(statusTextMap[placementStatus(placement).detail]),
+      status: textValue(statusTextMap[placementStatus(placement)]),
     }
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
   })
