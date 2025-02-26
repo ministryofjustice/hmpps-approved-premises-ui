@@ -56,12 +56,12 @@ describe('placementController', () => {
       assessmentId: assessment.id,
     })
     const timeLine = cas1TimelineEventFactory.buildList(10)
-    const placement = cas1SpaceBookingFactory.build({
+    const placement = cas1SpaceBookingFactory.upcoming().build({
       applicationId: application.id,
       assessmentId: offlineApplication ? undefined : assessment.id,
       placementRequestId: offlineApplication ? undefined : placementRequestDetail.id,
-      canonicalArrivalDate: '2024-11-16',
-      canonicalDepartureDate: '2025-03-26',
+      expectedArrivalDate: '2024-11-16',
+      expectedDepartureDate: '2025-03-26',
     })
     applicationService.findApplication.mockResolvedValue(application)
     assessmentService.findAssessment.mockResolvedValue(assessment)

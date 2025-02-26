@@ -11,6 +11,7 @@ import {
 import {
   actions,
   arrivalInformation,
+  canonicalDates,
   departureInformation,
   getKeyDetail,
   injectRadioConditionalHtml,
@@ -117,6 +118,31 @@ describe('placementUtils', () => {
         expect(placementStatus(placement)).toEqual(expected.detailed)
         expect(placementStatus(placement, 'detailed')).toEqual(expected.detailed)
         expect(placementStatus(placement, 'overall')).toEqual(expected.overall)
+      })
+    })
+  })
+
+  describe('canonicalDates', () => {
+    describe.each([
+      ['placement summary', cas1SpaceBookingSummaryFactory],
+      ['full placement', cas1SpaceBookingFactory],
+    ])('when passed a %s', (_, typeFactory) => {
+      it('returns the actual arrival and departure if they are defined', () => {
+        const placement = typeFactory.departed().build()
+
+        expect(canonicalDates(placement)).toEqual({
+          arrivalDate: placement.actualArrivalDate,
+          departureDate: placement.actualDepartureDate,
+        })
+      })
+
+      it('returns the expected arrival and departure if actual dates are not defined', () => {
+        const placement = typeFactory.upcoming().build()
+
+        expect(canonicalDates(placement)).toEqual({
+          arrivalDate: placement.expectedArrivalDate,
+          departureDate: placement.expectedDepartureDate,
+        })
       })
     })
   })

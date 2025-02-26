@@ -4,7 +4,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { displayName } from '../../../server/utils/personUtils'
-import { placementStatus, statusTextMap } from '../../../server/utils/placements'
+import { canonicalDates, placementStatus, statusTextMap } from '../../../server/utils/placements'
 import { cas1OverbookingRangeFactory } from '../../../server/testutils/factories'
 
 export default class PremisesShowPage extends Page {
@@ -51,11 +51,12 @@ export default class PremisesShowPage extends Page {
     })
 
     placements.forEach(placement => {
-      const { person, canonicalArrivalDate, canonicalDepartureDate, tier } = placement
+      const { person, tier } = placement
+      const { arrivalDate, departureDate } = canonicalDates(placement)
 
       cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
-      cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
-      cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
       cy.get('@row').contains(tier)
       cy.get('@row').contains(displayName(person))
       cy.get('@row').contains(statusTextMap[placementStatus(placement)])

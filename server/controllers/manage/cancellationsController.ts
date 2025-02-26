@@ -8,6 +8,7 @@ import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
+import { canonicalDates } from '../../utils/placements'
 
 export default class CancellationsController {
   constructor(
@@ -35,11 +36,12 @@ export default class CancellationsController {
           ? paths.bookings.show({ premisesId, bookingId })
           : paths.premises.placements.show({ premisesId, placementId })
       }
+      const placementDates = placement && canonicalDates(placement)
       const consolidatedBooking = {
         id: booking?.id || placement?.id,
         person: booking?.person || placement?.person,
-        arrivalDate: booking?.arrivalDate || placement?.canonicalArrivalDate,
-        departureDate: booking?.departureDate || placement?.canonicalDepartureDate,
+        arrivalDate: booking?.arrivalDate || placementDates?.arrivalDate,
+        departureDate: booking?.departureDate || placementDates?.departureDate,
       }
       const formAction = booking
         ? paths.bookings.cancellations.create({ premisesId, bookingId })

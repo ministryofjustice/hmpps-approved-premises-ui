@@ -16,7 +16,7 @@ import { createQueryString, linkTo } from '../utils'
 import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
-import { placementStatus, statusTextMap } from '../placements'
+import { canonicalDates, placementStatus, statusTextMap } from '../placements'
 
 export { premisesActions } from './premisesActions'
 export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
@@ -156,7 +156,8 @@ export const placementTableRows = (
   placements: Array<Cas1SpaceBookingSummary>,
 ): Array<TableRow> =>
   placements.map(placement => {
-    const { id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation } = placement
+    const { id, person, tier, keyWorkerAllocation } = placement
+    const { arrivalDate, departureDate } = canonicalDates(placement)
     const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlValue(
         `<a href="${managePaths.premises.placements.show({
@@ -165,11 +166,12 @@ export const placementTableRows = (
         })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
       ),
       tier: htmlValue(getTierOrBlank(tier)),
-      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
-      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
+      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
+      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
       keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
       status: textValue(statusTextMap[placementStatus(placement)]),
     }
+
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
   })
 

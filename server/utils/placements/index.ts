@@ -86,6 +86,11 @@ export const placementStatus = (
   return detail
 }
 
+export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary) => ({
+  arrivalDate: placement.actualArrivalDate || placement.expectedArrivalDate,
+  departureDate: placement.actualDepartureDate || placement.expectedDepartureDate,
+})
+
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
   const arrived = !!placement.actualArrivalDate

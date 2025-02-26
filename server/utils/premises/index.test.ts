@@ -16,7 +16,7 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { placementStatus, statusTextMap } from '../placements'
+import { canonicalDates, placementStatus, statusTextMap } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -285,13 +285,14 @@ describe('premisesUtils', () => {
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
           const statusColumn = { text: statusTextMap[placementStatus(placement)] }
+          const { arrivalDate, departureDate } = canonicalDates(placement)
           const baseColumns = [
             {
               html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
             },
             { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
-            { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
-            { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
+            { text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
+            { text: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
           ]
           return activeTab === 'historic'
             ? [...baseColumns, statusColumn]
