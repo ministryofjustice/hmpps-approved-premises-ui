@@ -2,7 +2,7 @@ import Page from '../page'
 
 export default class UnableToMatch extends Page {
   constructor() {
-    super('Unable to match')
+    super('Mark as unable to match')
   }
 
   completeForm(): void {

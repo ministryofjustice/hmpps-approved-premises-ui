@@ -3,7 +3,6 @@
 import AdminPlacementRequestsController from './placementRequests/placementRequestsController'
 import PlacementRequestsBookingsController from './placementRequests/bookingsController'
 import PlacementRequestsWithdrawalsController from './placementRequests/withdrawalsController'
-import PlacementRequestUnableToMatchController from './placementRequests/unableToMatchController'
 import UserManagementController from './userManagementController'
 import DeliusUserController from './deliusUserController'
 import ReportsController from './reportsController'
@@ -26,7 +25,6 @@ export const controllers = (services: Services) => {
   )
   const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)
   const reportsController = new ReportsController(reportService)
-  const placementRequestUnableToMatchController = new PlacementRequestUnableToMatchController(placementRequestService)
   const userManagementController = new UserManagementController(services.userService, cruManagementAreaService)
   const deliusUserController = new DeliusUserController(services.userService)
 
@@ -36,7 +34,6 @@ export const controllers = (services: Services) => {
     placementRequestsBookingsController,
     placementRequestWithdrawalsController,
     reportsController,
-    placementRequestUnableToMatchController,
     userManagementController,
     deliusUserController,
   }
@@ -45,7 +42,6 @@ export const controllers = (services: Services) => {
 export {
   AdminPlacementRequestsController,
   PlacementRequestsBookingsController,
-  PlacementRequestUnableToMatchController,
   PlacementRequestsWithdrawalsController,
   ReportsController,
   DeliusUserController,
