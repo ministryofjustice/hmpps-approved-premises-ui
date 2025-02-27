@@ -2,7 +2,11 @@ import { BedDetail, BedSummary } from '@approved-premises/api'
 import { SummaryListItem, TableCell } from '../@types/ui'
 import paths from '../paths/manage'
 import { linkTo, sentenceCase } from './utils'
-import { characteristicsBulletList, characteristicsPairToCharacteristics } from './characteristicsUtils'
+import {
+  characteristicsBulletList,
+  characteristicsPairToCharacteristics,
+  roomCharacteristicMap,
+} from './characteristicsUtils'
 import { summaryListItem } from './formUtils'
 
 export const bedNameCell = (item: { name: string }): TableCell => ({ text: item.name })
@@ -22,7 +26,9 @@ export const bedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
 export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => [
   summaryListItem(
     'Characteristics',
-    characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics)),
+    characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics), {
+      labels: roomCharacteristicMap,
+    }),
     'html',
   ),
 ]

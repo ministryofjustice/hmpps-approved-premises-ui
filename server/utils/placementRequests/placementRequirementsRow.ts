@@ -1,7 +1,8 @@
 import { PlacementRequest } from '../../@types/shared'
 import { SummaryListItem } from '../../@types/ui'
 import { sentenceCase } from '../utils'
-import { requirementsHtmlString } from '../match'
+
+import { characteristicsBulletList } from '../characteristicsUtils'
 
 export const placementRequirementsRow = (
   placementRequest: PlacementRequest,
@@ -13,7 +14,7 @@ export const placementRequirementsRow = (
       text: `${sentenceCase(type)} Criteria`,
     },
     value: {
-      html: requirementsHtmlString(criteria),
+      html: characteristicsBulletList(criteria),
     },
   }
 }

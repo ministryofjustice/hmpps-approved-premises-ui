@@ -7,7 +7,6 @@ import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { occupancySummary } from '../../../server/utils/match'
 import { DayAvailabilityStatus, dayAvailabilityStatus } from '../../../server/utils/match/occupancy'
-import { roomCharacteristicMap } from '../../../server/utils/characteristicsUtils'
 
 export default class OccupancyFilterPage extends Page {
   shouldShowFilters(startDate: string, selectedDuration: string, newCriteria: Array<string>) {
@@ -114,10 +113,14 @@ export default class OccupancyFilterPage extends Page {
     return Object.values(dates).filter(Boolean)
   }
 
-  shouldShowSelectedCriteria(criteria: Array<Cas1SpaceBookingCharacteristic>) {
-    cy.contains('Room criteria:')
-      .parent('p')
-      .should('contain.text', criteria.map(criterion => roomCharacteristicMap[criterion]).join(', '))
+  shouldShowSelectedCriteria(criteria: Array<string>) {
+    if (criteria.length) {
+      criteria.forEach(criterion => {
+        cy.contains('Room criteria:').parent('p').should('contain.text', criterion.toLowerCase())
+      })
+    } else {
+      cy.contains('Room criteria:').parent('p').should('contain.text', 'no room criteria')
+    }
   }
 
   shouldShowDateFieldHint(fieldName: string, hint: string) {

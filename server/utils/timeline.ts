@@ -6,7 +6,7 @@ import { linebreaksToParagraphs } from './utils'
 import { DateFormats } from './dateUtils'
 import { filterRoomLevelCriteria } from './match/spaceSearch'
 
-import { characteristicsInlineList } from './characteristicsUtils'
+import { roomCharacteristicsInlineList } from './characteristicsUtils'
 
 type PayloadBookingChangedV1 = Cas1TimelineEventContentPayload & {
   schemaVersion: undefined
@@ -43,7 +43,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
         const isoDateToUiDateOrUndefined = (isoDate: string) =>
           isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined
         const roomCriteriaOrNone = (criteria: Array<Cas1SpaceCharacteristic>) =>
-          characteristicsInlineList(filterRoomLevelCriteria(criteria || [])) || 'none'
+          roomCharacteristicsInlineList(filterRoomLevelCriteria(criteria || []), 'none')
 
         const context = {
           premises,

@@ -12,7 +12,6 @@ import {
   statusRow,
   title,
 } from './bedUtils'
-import { roomCharacteristicMap } from './characteristicsUtils'
 
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
@@ -100,21 +99,17 @@ describe('bedUtils', () => {
 
   describe('characteristicsRow', () => {
     it('returns a list of translated characteristics', () => {
-      const characteristicPairList = [
+      bedDetail.characteristics = [
         apCharacteristicPairFactory.build({ propertyName: 'hasStepFreeAccessToCommunalAreas' }),
         apCharacteristicPairFactory.build({ propertyName: 'isSuitedForSexOffenders' }),
         apCharacteristicPairFactory.build({ propertyName: 'isArsonSuitable' }),
       ]
 
-      const translatedList = characteristicPairList.map(({ propertyName }) => roomCharacteristicMap[propertyName])
-
-      bedDetail.characteristics = characteristicPairList
-
       expect(bedDetails(bedDetail)).toEqual([
         {
           key: { text: 'Characteristics' },
           value: {
-            html: `<ul class="govuk-list govuk-list--bullet"><li>${translatedList[1]}</li><li>${translatedList[2]}</li></ul>`,
+            html: `<ul class="govuk-list govuk-list--bullet"><li>Suitable for active arson risk</li><li>Suitable for sexual offence risk</li></ul>`,
           },
         },
       ])
