@@ -32,7 +32,7 @@ context('Change Placement', () => {
       status: 'matched',
       booking: bookingSummaryFactory.fromSpaceBooking(placement).build(),
     })
-    placement.requestForPlacementId = placementRequestDetail.id
+    placement.placementRequestId = placementRequestDetail.id
     const capacity = cas1PremiseCapacityFactory.build()
     cy.task('stubSinglePremises', premises)
     cy.task('stubPremiseCapacity', {
@@ -160,19 +160,19 @@ context('Change Placement', () => {
   })
 
   it('allows me to extend the end date of placement after arrival', () => {
-    const actualArrivalDateOnly = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 20))
+    const actualArrivalDate = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 20))
     const arrivedPlacement = cas1SpaceBookingFactory.upcoming().build({
       premises: { name: premises.name, id: premises.id },
       expectedArrivalDate,
       expectedDepartureDate: DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 45)),
-      actualArrivalDateOnly,
+      actualArrivalDate,
     })
     const newDepartureDate = DateFormats.dateObjToIsoDate(addDays(arrivedPlacement.expectedDepartureDate, 5))
 
     const { placementRequestDetail } = setupMocks(
       arrivedPlacement,
-      actualArrivalDateOnly,
-      DateFormats.dateObjToIsoDate(addDays(actualArrivalDateOnly, 56)),
+      actualArrivalDate,
+      DateFormats.dateObjToIsoDate(addDays(actualArrivalDate, 56)),
     )
     // When I visit a placement request
 
@@ -188,7 +188,7 @@ context('Change Placement', () => {
     page.shouldShowPlacementOverview()
 
     // And I can see the calendar for the rounded-up period in the duration selector, from the actual arrival date
-    page.shouldShowCalendarHeading(actualArrivalDateOnly, 56)
+    page.shouldShowCalendarHeading(actualArrivalDate, 56)
 
     // And I can see the current placement dates in the departure date hint
     page.shouldShowDateFieldHint(
@@ -208,7 +208,7 @@ context('Change Placement', () => {
       departureDate: DateFormats.dateObjToIsoDate(addDays(arrivedPlacement.expectedDepartureDate, 5)),
       criteria: arrivedPlacement.characteristics.filter(characteristic => roomCharacteristicMap[characteristic]),
     })
-    confirmPage.shouldShowProposedChanges(arrivedPlacement.actualArrivalDateOnly)
+    confirmPage.shouldShowProposedChanges(arrivedPlacement.actualArrivalDate)
 
     // When I submit the confirmation page
     confirmPage.clickSubmit()

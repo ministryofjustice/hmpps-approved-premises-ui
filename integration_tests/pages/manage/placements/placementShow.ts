@@ -5,6 +5,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 import {
   PlacementTab,
   arrivalInformation,
+  canonicalDates,
   departureInformation,
   placementSummary,
   requirementsInformation,
@@ -15,7 +16,8 @@ export default class PlacementShowPage extends Page {
   constructor(placement: Cas1SpaceBooking | null, pageHeading?: string) {
     let title = pageHeading
     if (placement) {
-      title = `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`
+      const { arrivalDate, departureDate } = canonicalDates(placement)
+      title = `${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })}`
     }
     super(title)
     this.checkPhaseBanner('Give us your feedback')

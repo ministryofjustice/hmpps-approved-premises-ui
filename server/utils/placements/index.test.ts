@@ -3,6 +3,7 @@ import { RadioItem, SelectOption } from '@approved-premises/ui'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingSummaryFactory,
   restrictedPersonFactory,
   staffMemberFactory,
   userDetailsFactory,
@@ -10,10 +11,13 @@ import {
 import {
   actions,
   arrivalInformation,
+  canonicalDates,
   departureInformation,
+  detailedStatus,
   getKeyDetail,
   injectRadioConditionalHtml,
   otherBookings,
+  overallStatus,
   placementOverviewSummary,
   placementSummary,
   renderKeyworkersSelectOptions,
@@ -26,6 +30,123 @@ import { requirementsHtmlString } from '../match'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 
 describe('placementUtils', () => {
+  describe('placement status', () => {
+    describe.each([
+      ['placement summary', cas1SpaceBookingSummaryFactory],
+      ['full placement', cas1SpaceBookingFactory],
+    ])('when passed a %s', (_, typeFactory) => {
+      const upcoming = typeFactory.upcoming()
+      const current = typeFactory.current()
+      const departed = typeFactory.departed()
+      const nonArrival = typeFactory.nonArrival()
+
+      beforeEach(() => {
+        jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
+      })
+
+      const testCases = [
+        {
+          label: 'an upcoming placement',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-05-01' },
+          expected: { overall: 'upcoming', detailed: 'upcoming' },
+        },
+        {
+          label: 'an upcoming placement starting within 6 weeks',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-04-11' },
+          expected: { overall: 'upcoming', detailed: 'arrivingWithin6Weeks' },
+        },
+        {
+          label: 'an upcoming placement starting within 2 weeks',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-03-14' },
+          expected: { overall: 'upcoming', detailed: 'arrivingWithin2Weeks' },
+        },
+        {
+          label: 'an upcoming placement starting today',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-03-01' },
+          expected: { overall: 'upcoming', detailed: 'arrivingToday' },
+        },
+        {
+          label: 'an upcoming placement overdue arrival',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-02-28' },
+          expected: { overall: 'upcoming', detailed: 'overdueArrival' },
+        },
+        {
+          label: 'a current placement departing in more than 6 weeks',
+          factory: current,
+          params: { expectedDepartureDate: '2025-05-01' },
+          expected: { overall: 'arrived', detailed: 'arrived' },
+        },
+        {
+          label: 'a current placement departing within 2 weeks',
+          factory: current,
+          params: { expectedDepartureDate: '2025-03-14' },
+          expected: { overall: 'arrived', detailed: 'departingWithin2Weeks' },
+        },
+        {
+          label: 'a current placement departing today',
+          factory: current,
+          params: { expectedDepartureDate: '2025-03-01' },
+          expected: { overall: 'arrived', detailed: 'departingToday' },
+        },
+        {
+          label: 'a current placement overdue departure',
+          factory: current,
+          params: { expectedDepartureDate: '2025-02-28' },
+          expected: { overall: 'arrived', detailed: 'overdueDeparture' },
+        },
+        {
+          label: 'a departed placement',
+          factory: departed,
+          params: {},
+          expected: { overall: 'departed', detailed: 'departed' },
+        },
+        {
+          label: 'a non-arrived placement',
+          factory: nonArrival,
+          params: {},
+          expected: { overall: 'notArrived', detailed: 'notArrived' },
+        },
+      ]
+
+      it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
+        const placement = factory.build(params)
+
+        expect(overallStatus(placement)).toEqual(expected.overall)
+        expect(detailedStatus(placement)).toEqual(expected.detailed)
+      })
+    })
+  })
+
+  describe('canonicalDates', () => {
+    describe.each([
+      ['placement summary', cas1SpaceBookingSummaryFactory],
+      ['full placement', cas1SpaceBookingFactory],
+    ])('when passed a %s', (_, typeFactory) => {
+      it('returns the actual arrival and departure if they are defined', () => {
+        const placement = typeFactory.departed().build()
+
+        expect(canonicalDates(placement)).toEqual({
+          arrivalDate: placement.actualArrivalDate,
+          departureDate: placement.actualDepartureDate,
+        })
+      })
+
+      it('returns the expected arrival and departure if actual dates are not defined', () => {
+        const placement = typeFactory.upcoming().build()
+
+        expect(canonicalDates(placement)).toEqual({
+          arrivalDate: placement.expectedArrivalDate,
+          departureDate: placement.expectedDepartureDate,
+        })
+      })
+    })
+  })
+
   describe('actions', () => {
     const userDetails = userDetailsFactory.build({
       permissions: [
@@ -128,7 +249,7 @@ describe('placementUtils', () => {
     })
 
     describe('when the placement has both an arrival and a departure recorded', () => {
-      const placementAfterDeparture = cas1SpaceBookingFactory.build({ id: placementId, premises })
+      const placementAfterDeparture = cas1SpaceBookingFactory.departed().build({ id: placementId, premises })
       it('should allow nothing', () => {
         expect(actions(placementAfterDeparture, userDetails)).toEqual(null)
       })
@@ -199,8 +320,8 @@ describe('placementUtils', () => {
     const placement = cas1SpaceBookingFactory.build({
       expectedArrivalDate: '2024-05-30',
       expectedDepartureDate: '2024-12-24',
-      actualArrivalDateOnly: '2024-06-01',
-      actualDepartureDateOnly: '2024-12-25',
+      actualArrivalDate: '2024-06-01',
+      actualDepartureDate: '2024-12-25',
       createdAt: '2024-03-03',
       characteristics: ['isESAP', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
     })
@@ -225,8 +346,8 @@ describe('placementUtils', () => {
       it('should return an overview of the placement summary information before arrival', () => {
         const unarrivedPlacement: Cas1SpaceBooking = {
           ...placement,
-          actualArrivalDateOnly: undefined,
-          actualDepartureDateOnly: undefined,
+          actualArrivalDate: undefined,
+          actualDepartureDate: undefined,
         }
 
         expect(placementOverviewSummary(unarrivedPlacement)).toEqual({
@@ -268,7 +389,7 @@ describe('placementUtils', () => {
           },
           {
             key: { text: 'Actual arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDateOnly) },
+            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDate) },
           },
           {
             key: { text: 'Arrival time' },
@@ -318,7 +439,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
@@ -348,7 +469,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
@@ -379,7 +500,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },

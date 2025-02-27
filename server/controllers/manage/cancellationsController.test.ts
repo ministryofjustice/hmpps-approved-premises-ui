@@ -15,6 +15,7 @@ import {
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
+import { canonicalDates } from '../../utils/placements'
 
 jest.mock('../../utils/validation')
 
@@ -83,11 +84,17 @@ describe('cancellationsController', () => {
 
       await requestHandler({ ...request, params: { premisesId, placementId: placement.id } }, response, next)
 
-      const { canonicalArrivalDate, canonicalDepartureDate, person, id } = placement
+      const { person, id } = placement
+      const { arrivalDate, departureDate } = canonicalDates(placement)
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
         premisesId,
-        booking: { arrivalDate: canonicalArrivalDate, departureDate: canonicalDepartureDate, person, id },
+        booking: {
+          arrivalDate,
+          departureDate,
+          person,
+          id,
+        },
         backLink,
         cancellationReasons,
         pageHeading: 'Confirm withdrawn placement',

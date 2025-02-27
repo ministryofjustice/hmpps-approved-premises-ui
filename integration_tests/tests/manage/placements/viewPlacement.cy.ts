@@ -170,8 +170,8 @@ context('Placements', () => {
       // Given I am logged in with permission to view a placement
       // And the mocked placement has missing data
       const { placement } = setup(['cas1_space_booking_view'], {
-        actualArrivalDateOnly: undefined,
-        actualDepartureDateOnly: undefined,
+        actualArrivalDate: undefined,
+        actualDepartureDate: undefined,
       })
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)

@@ -86,8 +86,8 @@ export default class ChangesController {
       let endDate = placement.expectedDepartureDate
       let durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
 
-      if (placement.actualArrivalDateOnly) {
-        startDate = placement.actualArrivalDateOnly
+      if (placement.actualArrivalDate) {
+        startDate = placement.actualArrivalDate
         endDate = DateFormats.dateObjToIsoDate(addDays(startDate, getClosestDuration(durationDays)))
         durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
         pageHeading = 'Extend placement'
@@ -121,7 +121,7 @@ export default class ChangesController {
           excludeSpaceBookingId: placement.id,
         })
         const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-          id: placement.requestForPlacementId,
+          id: placement.placementRequestId,
           premisesId,
           date: ':date',
         })}${createQueryString(
@@ -137,7 +137,7 @@ export default class ChangesController {
       }
 
       return res.render('manage/premises/placements/changes/new', {
-        backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
+        backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
         pageHeading,
         placement,
         selectedCriteria: (criteria || []).map(criterion => roomCharacteristicMap[criterion]).join(', '),
@@ -218,7 +218,7 @@ export default class ChangesController {
         placement,
         summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
-          actualArrivalDate: placement.actualArrivalDateOnly,
+          actualArrivalDate: placement.actualArrivalDate,
           expectedArrivalDate: arrivalDate || placement.expectedArrivalDate,
           expectedDepartureDate: departureDate,
           criteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria) || [],
@@ -251,7 +251,7 @@ export default class ChangesController {
 
         req.flash('success', 'Booking changed successfully')
 
-        return res.redirect(adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }))
+        return res.redirect(adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }))
       } catch (error) {
         const redirectUrl = `${managePaths.premises.placements.changes.confirm({
           premisesId,

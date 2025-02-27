@@ -64,7 +64,7 @@ describe('changesController', () => {
 
       const expectedCriteria = filterRoomLevelCriteria(placement.characteristics)
       const expectedPlaceholderDayUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-        id: placement.requestForPlacementId,
+        id: placement.placementRequestId,
         premisesId: premises.id,
         date: ':date',
       })}?${createQueryString({ criteria: expectedCriteria, excludeSpaceBookingId: placement.id })}`
@@ -77,7 +77,7 @@ describe('changesController', () => {
         excludeSpaceBookingId: placement.id,
       })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
-        backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
+        backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
         pageHeading: 'Change placement',
         placement,
         selectedCriteria: expectedCriteria.map(criterion => roomCharacteristicMap[criterion]).join(', '),
@@ -113,7 +113,7 @@ describe('changesController', () => {
         await requestHandler({ ...request, query }, response, next)
 
         const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-          id: placement.requestForPlacementId,
+          id: placement.placementRequestId,
           premisesId: premises.id,
           date: ':date',
         })}?${createQueryString({ criteria: filterCriteria, excludeSpaceBookingId: placement.id })}`
@@ -378,7 +378,7 @@ describe('changesController', () => {
         departureDate: '2025-07-05',
         characteristics: ['isSuitedForSexOffenders', 'isStepFreeDesignated'],
       }
-      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId })
+      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({ id: placement.placementRequestId })
 
       expect(placementService.updatePlacement).toHaveBeenCalledWith(
         token,

@@ -11,7 +11,7 @@ import {
 } from '../../services'
 
 import { DateFormats } from '../../utils/dateUtils'
-import { PlacementTab, placementTabItems } from '../../utils/placements'
+import { PlacementTab, canonicalDates, placementTabItems } from '../../utils/placements'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
 import paths from '../../paths/manage'
 import applicationPaths from '../../paths/apply'
@@ -43,7 +43,8 @@ export default class PlacementController {
         applicationPaths.applications.show.pattern,
         peoplePaths.timeline.show.pattern,
       ])
-      const pageHeading = `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`
+      const { arrivalDate, departureDate } = canonicalDates(placement)
+      const pageHeading = `${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })}`
       let timelineEvents: Array<Cas1TimelineEvent> = []
       let application: ApprovedPremisesApplication = null
       let assessment: ApprovedPremisesAssessment = null
