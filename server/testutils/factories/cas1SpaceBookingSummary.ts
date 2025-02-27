@@ -20,8 +20,8 @@ class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
   }
 
   current() {
-    const arrivalDate = faker.date.recent()
-    const departureDate = faker.date.soon()
+    const arrivalDate = faker.date.recent({ days: 42 })
+    const departureDate = faker.date.soon({ days: 42 })
 
     return this.params({
       expectedArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
@@ -33,8 +33,8 @@ class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
   }
 
   departed() {
-    const departureDate = faker.date.recent()
-    const arrivalDate = faker.date.recent({ refDate: departureDate })
+    const departureDate = faker.date.recent({ days: 10 })
+    const arrivalDate = faker.date.recent({ days: 84, refDate: departureDate })
 
     return this.params({
       expectedArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
