@@ -23,7 +23,7 @@ export default class PremisesController {
     return async (req: Request, res: Response) => {
       const tabSettings: Record<PremisesTab, TabSettings> = {
         upcoming: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'asc' },
-        current: { pageSize: 2000, sortBy: 'canonicalDepartureDate', sortDirection: 'asc' },
+        current: { pageSize: 2000, sortBy: 'personName', sortDirection: 'asc' },
         historic: { pageSize: 20, sortBy: 'canonicalDepartureDate', sortDirection: 'desc' },
         search: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'desc' },
       }

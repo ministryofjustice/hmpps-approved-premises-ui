@@ -15,6 +15,7 @@ context('Premises', () => {
   describe('list', () => {
     it('should list all premises', () => {
       cy.task('reset')
+
       // Given I am logged in as a future manager
       signIn(['future_manager'])
       const premises = premisesSummaryFactory.buildList(5)
@@ -47,7 +48,7 @@ context('Premises', () => {
         premisesId: premises.id,
         placements,
         residency: 'current',
-        sortBy: 'canonicalDepartureDate',
+        sortBy: 'personName',
         sortDirection: 'asc',
         perPage: 2000,
       })
