@@ -33,7 +33,7 @@ context('Placements', () => {
         ...placementParameters,
         applicationId: application.id,
         assessmentId: mode === 'offline' ? undefined : assessment.id,
-        requestForPlacementId: mode === 'offline' ? undefined : placementRequest.id,
+        placementRequestId: mode === 'offline' ? undefined : placementRequest.id,
         premises,
         person,
       })
