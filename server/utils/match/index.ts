@@ -4,7 +4,6 @@ import {
   Cas1Premises,
   Cas1PremisesSearchResultSummary,
   Cas1SpaceBookingCharacteristic,
-  Cas1SpaceCharacteristic,
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestDetail,
@@ -14,7 +13,6 @@ import {
 } from '@approved-premises/api'
 import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
@@ -22,6 +20,7 @@ import { displayName, isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import paths from '../../paths/apply'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearch'
+import { characteristicsBulletList } from '../characteristicsUtils'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
@@ -47,7 +46,11 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
   return [
     summaryListItem('Approved Premises', premises.name),
     summaryListItem('Address', premisesAddress(premises)),
-    summaryListItem('Room criteria', requirementsHtmlString(criteria), 'html'),
+    summaryListItem(
+      'Room criteria',
+      characteristicsBulletList(criteria, { noneText: `<span class="text-grey">No room criteria</span>` }),
+      'html',
+    ),
     actualArrivalDate
       ? summaryListItem('Actual arrival date', DateFormats.isoDateToUIDate(actualArrivalDate))
       : summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(expectedArrivalDate)),
@@ -69,17 +72,6 @@ export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<
         'isSemiSpecialistMentalHealth',
       ].includes(requirement),
   ) as Array<SpaceCharacteristic>
-}
-
-export const requirementsHtmlString = (
-  requirements: Array<Cas1SpaceCharacteristic | PlacementCriteria>,
-  labels: Record<string, string> = placementCriteriaLabels,
-): string => {
-  const listItems = Object.keys(labels)
-    .filter(key => (requirements as Array<string>).includes(key))
-    .map(key => `<li>${labels[key]}</li>`)
-
-  return `<ul class="govuk-list govuk-list--bullet">${listItems.join('')}</ul>`
 }
 
 export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDate: string) => ({
@@ -153,7 +145,9 @@ export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
   return {
     key: { text: 'Criteria' },
     value: {
-      html: requirementsHtmlString(spaceSearchResult.premises.characteristics, spaceSearchResultsCharacteristicsLabels),
+      html: characteristicsBulletList(spaceSearchResult.premises.characteristics, {
+        labels: spaceSearchResultsCharacteristicsLabels,
+      }),
     },
   }
 }

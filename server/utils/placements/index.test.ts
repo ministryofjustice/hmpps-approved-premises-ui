@@ -26,8 +26,8 @@ import {
 import { DateFormats } from '../dateUtils'
 
 import paths from '../../paths/manage'
-import { requirementsHtmlString } from '../match'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
+import { characteristicsBulletList } from '../characteristicsUtils'
 
 describe('placementUtils', () => {
   describe('placement status', () => {
@@ -532,9 +532,11 @@ describe('placementUtils', () => {
             { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
             {
               key: { text: 'AP requirements' },
-              value: { html: requirementsHtmlString(['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders']) },
+              value: {
+                html: characteristicsBulletList(['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders']),
+              },
             },
-            { key: { text: 'Room requirements' }, value: { html: requirementsHtmlString(['hasEnSuite']) } },
+            { key: { text: 'Room requirements' }, value: { html: characteristicsBulletList(['hasEnSuite']) } },
           ],
         })
       })
@@ -549,11 +551,11 @@ describe('placementUtils', () => {
             { key: { text: 'AP type' }, value: { text: 'Enhanced Security AP (ESAP)' } },
             {
               key: { text: 'AP requirements' },
-              value: { html: requirementsHtmlString(['acceptsChildSexOffenders']) },
+              value: { html: characteristicsBulletList(['acceptsChildSexOffenders']) },
             },
             {
               key: { text: 'Room requirements' },
-              value: { html: requirementsHtmlString(['hasEnSuite', 'isWheelchairAccessible']) },
+              value: { html: characteristicsBulletList(['hasEnSuite', 'isWheelchairAccessible']) },
             },
           ],
         })

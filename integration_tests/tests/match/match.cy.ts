@@ -37,6 +37,7 @@ import { apType } from '../../../server/utils/placementCriteriaUtils'
 import premisesSearchResultSummary from '../../../server/testutils/factories/cas1PremisesSearchResultSummary'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { placementDates } from '../../../server/utils/match'
+import { roomCharacteristicMap } from '../../../server/utils/characteristicsUtils'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -296,7 +297,8 @@ context('Placement Requests', () => {
     const newStartDate = '2024-08-01'
     const newEndDate = '2024-08-07'
     const newDuration = 'Up to 1 week'
-    const newCriteria = ['Wheelchair accessible', 'Step-free']
+    const newCriteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isStepFreeDesignated']
+    const newCriteriaLabels = newCriteria.map(criterion => roomCharacteristicMap[criterion])
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({
       startDate: newStartDate,
       endDate: newEndDate,
@@ -307,13 +309,13 @@ context('Placement Requests', () => {
       endDate: newEndDate,
       premiseCapacity: newPremiseCapacity,
     })
-    occupancyViewPage.filterAvailability({ newStartDate, newDuration, newCriteria })
+    occupancyViewPage.filterAvailability({ newStartDate, newDuration, newCriteria: newCriteriaLabels })
 
     // Then I should see the filter form with updated values
-    occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteria)
+    occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteriaLabels)
 
     // I can see the currently selected room criteria
-    occupancyViewPage.shouldShowSelectedCriteria(newCriteria as Array<Cas1SpaceBookingCharacteristic>)
+    occupancyViewPage.shouldShowSelectedCriteria(newCriteriaLabels)
   })
 
   it('allows me to book a space', () => {
@@ -324,7 +326,9 @@ context('Placement Requests', () => {
     const departureDate = '2024-08-08'
 
     // Then I can see the currently selected room criteria
-    occupancyViewPage.shouldShowSelectedCriteria(searchState.roomCriteria)
+    occupancyViewPage.shouldShowSelectedCriteria(
+      searchState.roomCriteria.map(criterion => roomCharacteristicMap[criterion]),
+    )
 
     // And I can see the requested dates in the hints
     occupancyViewPage.shouldShowDateFieldHint(

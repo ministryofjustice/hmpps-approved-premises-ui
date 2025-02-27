@@ -1,6 +1,7 @@
 import { placementRequestDetailFactory } from '../../testutils/factories'
 import { placementRequirementsRow } from './placementRequirementsRow'
-import { requirementsHtmlString } from '../match'
+
+import { characteristicsBulletList } from '../characteristicsUtils'
 
 describe('placementRequirementsRow', () => {
   it('returns a list of desirable placement requirements in sentence case', () => {
@@ -11,7 +12,7 @@ describe('placementRequirementsRow', () => {
         text: `Desirable Criteria`,
       },
       value: {
-        html: requirementsHtmlString(placementRequest.desirableCriteria),
+        html: characteristicsBulletList(placementRequest.desirableCriteria),
       },
     })
   })
@@ -25,7 +26,7 @@ it('returns a list of essential placement requirements in sentence case', () => 
       text: `Essential Criteria`,
     },
     value: {
-      html: requirementsHtmlString(placementRequest.essentialCriteria),
+      html: characteristicsBulletList(placementRequest.essentialCriteria),
     },
   })
 })

@@ -25,7 +25,11 @@ import {
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
-import { characteristicsBulletList, characteristicsPairToCharacteristics } from '../../utils/characteristicsUtils'
+import {
+  characteristicsBulletList,
+  characteristicsPairToCharacteristics,
+  roomCharacteristicMap,
+} from '../../utils/characteristicsUtils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -204,7 +208,9 @@ describe('OutOfServiceBedsController', () => {
         bedId: bed.id,
         id: outOfServiceBed.id,
         activeTab,
-        characteristicsHtml: characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics)),
+        characteristicsHtml: characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics), {
+          labels: roomCharacteristicMap,
+        }),
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
         backLink,
       })

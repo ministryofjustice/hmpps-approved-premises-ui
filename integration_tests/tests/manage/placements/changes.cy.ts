@@ -81,7 +81,7 @@ context('Change Placement', () => {
     changePlacementPage.shouldShowFilters(placement.expectedArrivalDate, 'Up to 12 weeks', selectedCriteriaLabels)
 
     // And I can see the currently selected room criteria
-    changePlacementPage.shouldShowSelectedCriteria(selectedCriteria)
+    changePlacementPage.shouldShowSelectedCriteria(selectedCriteriaLabels)
 
     // And I can see the current placement dates in the hints
     changePlacementPage.shouldShowDateFieldHint(

@@ -175,7 +175,7 @@ describe('placementRequestSummaryList', () => {
           text: 'Desirable Criteria',
         },
         value: {
-          html: '<ul class="govuk-list govuk-list--bullet"></ul>',
+          html: '<span class="text-grey">None</span>',
         },
       },
       {

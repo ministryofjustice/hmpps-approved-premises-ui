@@ -21,16 +21,13 @@ import {
   preferredPostcodeRow,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
-  requirementsHtmlString,
   spaceBookingConfirmationSummaryListRows,
   startDateObjFromParams,
   summaryCardRows,
 } from '.'
-import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { roomCharacteristicMap } from '../characteristicsUtils'
 import { displayName } from '../personUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -312,38 +309,6 @@ describe('matchUtils', () => {
       const expected = ['hasBrailleSignage', 'hasTactileFlooring', 'hasHearingLoop']
 
       expect(filterOutAPTypes(requirements)).toEqual(expected)
-    })
-  })
-
-  describe('requirementsHtmlString', () => {
-    const placementRequest = placementRequestDetailFactory.build({
-      essentialCriteria: ['hasBrailleSignage', 'hasHearingLoop', 'isStepFreeDesignated'],
-      desirableCriteria: ['isArsonDesignated'],
-    })
-
-    it('should return HTML lists of the given requirements', () => {
-      expect(requirementsHtmlString(placementRequest.essentialCriteria)).toMatchStringIgnoringWhitespace(`
-        <ul class="govuk-list govuk-list--bullet">
-          <li>${placementCriteriaLabels.isStepFreeDesignated}</li>
-          <li>${placementCriteriaLabels.hasBrailleSignage}</li>
-          <li>${placementCriteriaLabels.hasHearingLoop}</li>
-        </ul>
-      `)
-      expect(requirementsHtmlString(placementRequest.desirableCriteria)).toMatchStringIgnoringWhitespace(`
-        <ul class="govuk-list govuk-list--bullet">
-          <li>${placementCriteriaLabels.isArsonDesignated}</li>
-        </ul>
-      `)
-    })
-
-    it('should only render requirements that exist in the provided labels', () => {
-      const result = requirementsHtmlString(placementRequest.essentialCriteria, roomCharacteristicMap)
-
-      expect(result).toMatchStringIgnoringWhitespace(`
-        <ul class="govuk-list govuk-list--bullet">
-          <li>${roomCharacteristicMap.isStepFreeDesignated}</li>
-        </ul>
-      `)
     })
   })
 

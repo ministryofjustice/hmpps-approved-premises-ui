@@ -21,7 +21,7 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
 import * as validationUtils from '../../../../utils/validation'
 import { ValidationError } from '../../../../utils/errors'
-import { roomCharacteristicMap } from '../../../../utils/characteristicsUtils'
+import { characteristicsInlineList, roomCharacteristicMap } from '../../../../utils/characteristicsUtils'
 
 describe('changesController', () => {
   const token = 'TEST_TOKEN'
@@ -80,7 +80,7 @@ describe('changesController', () => {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
         pageHeading: 'Change placement',
         placement,
-        selectedCriteria: expectedCriteria.map(criterion => roomCharacteristicMap[criterion]).join(', '),
+        selectedCriteria: characteristicsInlineList(expectedCriteria, 'no room criteria'),
         arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Current departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         placementSummary: placementOverviewSummary(placement),

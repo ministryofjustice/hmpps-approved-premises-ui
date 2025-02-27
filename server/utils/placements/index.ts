@@ -22,8 +22,7 @@ import { TabItem } from '../tasks/listTable'
 import { summaryListItem } from '../formUtils'
 import { apTypeCriteriaLabels, specialistApTypeCriteria } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
-import { requirementsHtmlString } from '../match'
-import { roomCharacteristicMap } from '../characteristicsUtils'
+import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
 
 export const overallStatusTextMap = {
   upcoming: 'Upcoming',
@@ -191,7 +190,14 @@ export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryLi
     summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
     summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate)),
     summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-    summaryListItem('Room criteria', requirementsHtmlString(placement.characteristics, roomCharacteristicMap), 'html'),
+    summaryListItem(
+      'Room criteria',
+      characteristicsBulletList(placement.characteristics, {
+        labels: roomCharacteristicMap,
+        noneText: `<span class="text-grey">No room criteria</span>`,
+      }),
+      'html',
+    ),
   ].filter(Boolean),
 })
 
@@ -242,21 +248,11 @@ export const requirementsInformation = (placement: Cas1SpaceBooking): SummaryLis
   const apRequirements = filterApLevelCriteria(requirements)
   const roomRequirements = filterRoomLevelCriteria(requirements)
 
-  const noneSelected = `<span class="text-grey">None</span>`
-
   return {
     rows: [
       summaryListItem('AP type', apType),
-      summaryListItem(
-        'AP requirements',
-        apRequirements.length ? requirementsHtmlString(apRequirements) : noneSelected,
-        'html',
-      ),
-      summaryListItem(
-        'Room requirements',
-        roomRequirements.length ? requirementsHtmlString(roomRequirements) : noneSelected,
-        'html',
-      ),
+      summaryListItem('AP requirements', characteristicsBulletList(apRequirements), 'html'),
+      summaryListItem('Room requirements', characteristicsBulletList(roomRequirements), 'html'),
     ],
   }
 }

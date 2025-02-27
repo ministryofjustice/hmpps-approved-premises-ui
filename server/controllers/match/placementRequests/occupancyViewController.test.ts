@@ -35,7 +35,7 @@ import {
   placementTableRows,
   tableHeader,
 } from '../../../utils/premises/occupancy'
-import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import { characteristicsInlineList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -115,7 +115,7 @@ describe('OccupancyViewController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest: placementRequestDetail,
-        selectedCriteria: searchState.roomCriteria.map(criterion => roomCharacteristicMap[criterion]).join(', '),
+        selectedCriteria: characteristicsInlineList(searchState.roomCriteria, 'no room criteria'),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
