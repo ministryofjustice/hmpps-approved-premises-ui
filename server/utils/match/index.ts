@@ -46,11 +46,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
   return [
     summaryListItem('Approved Premises', premises.name),
     summaryListItem('Address', premisesAddress(premises)),
-    summaryListItem(
-      'Room criteria',
-      characteristicsBulletList(criteria, { noneText: `<span class="text-grey">No room criteria</span>` }),
-      'html',
-    ),
+    summaryListItem('Room criteria', characteristicsBulletList(criteria, { noneText: 'No room criteria' }), 'html'),
     actualArrivalDate
       ? summaryListItem('Actual arrival date', DateFormats.isoDateToUIDate(actualArrivalDate))
       : summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(expectedArrivalDate)),

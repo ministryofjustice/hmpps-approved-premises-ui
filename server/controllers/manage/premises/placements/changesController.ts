@@ -27,7 +27,7 @@ import managePaths from '../../../../paths/manage'
 import matchPaths from '../../../../paths/match'
 import adminPaths from '../../../../paths/admin'
 import { ValidationError } from '../../../../utils/errors'
-import { characteristicsInlineList, roomCharacteristicMap } from '../../../../utils/characteristicsUtils'
+import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../../utils/characteristicsUtils'
 
 type RequestParams = {
   premisesId: string
@@ -140,7 +140,7 @@ export default class ChangesController {
         backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
         pageHeading,
         placement,
-        selectedCriteria: characteristicsInlineList(criteria || [], 'no room criteria'),
+        selectedCriteria: roomCharacteristicsInlineList(criteria, 'no room criteria'),
         arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Current departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         startDate,

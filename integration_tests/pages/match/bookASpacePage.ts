@@ -22,7 +22,7 @@ export default class BookASpacePage extends Page {
       {
         key: { text: 'Room criteria' },
         value: {
-          html: characteristicsBulletList(criteria, { noneText: `<span class="text-grey">No room criteria</span>` }),
+          html: characteristicsBulletList(criteria, { noneText: 'No room criteria' }),
         },
       },
       { key: { text: 'Expected arrival date' }, value: { text: DateFormats.isoDateToUIDate(arrivalDate) } },

@@ -27,17 +27,17 @@ export const characteristicsBulletList = (
   requirements: Array<Cas1SpaceCharacteristic | PlacementCriteria>,
   options: { labels?: Record<string, string>; noneText?: string } = {},
 ): string => {
-  const { labels = placementCriteriaLabels, noneText = `<span class="text-grey">None</span>` } = options
+  const { labels = placementCriteriaLabels, noneText = 'None' } = options
 
   const listItems = Object.keys(labels).filter(key => ((requirements || []) as Array<string>).includes(key))
 
   return listItems.length
     ? `<ul class="govuk-list govuk-list--bullet">${listItems.map(key => `<li>${labels[key]}</li>`).join('')}</ul>`
-    : noneText
+    : `<span class="text-grey">${noneText}</span>`
 }
 
-export const characteristicsInlineList = (
-  criteria: Array<Cas1SpaceCharacteristic> = [],
+export const roomCharacteristicsInlineList = (
+  criteria: Array<keyof typeof roomCharacteristicMap> = [],
   noneLabel: string = 'none',
 ): string =>
   joinWithCommas(criteria.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase())) || noneLabel

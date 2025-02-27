@@ -1,8 +1,8 @@
 import {
   characteristicsBulletList,
-  characteristicsInlineList,
   characteristicsPairToCharacteristics,
   roomCharacteristicMap,
+  roomCharacteristicsInlineList,
 } from './characteristicsUtils'
 import { Cas1SpaceBookingCharacteristic, CharacteristicPair } from '../@types/shared'
 import { placementRequestDetailFactory } from '../testutils/factories'
@@ -57,13 +57,21 @@ describe('characteristicsUtils', () => {
       expect(characteristicsBulletList([])).toEqual(`<span class="text-grey">None</span>`)
     })
 
+    it('should return the default "none" html if the list does not have any items from the labels', () => {
+      expect(
+        characteristicsBulletList(['isPIPE', 'acceptsNonSexualChildOffenders'], { labels: roomCharacteristicMap }),
+      ).toEqual(`<span class="text-grey">None</span>`)
+    })
+
     it('should return the specific text provided if the list is empty', () => {
-      expect(characteristicsBulletList([], { noneText: 'Nothing here' })).toEqual('Nothing here')
+      expect(characteristicsBulletList([], { noneText: 'Nothing here' })).toEqual(
+        '<span class="text-grey">Nothing here</span>',
+      )
     })
   })
 
-  describe('characteristicsInlineList', () => {
-    it('should render a lowercase, comma-separated list of characteristics', () => {
+  describe('roomCharacteristicsInlineList', () => {
+    it('should render a lowercase, comma-separated list of room characteristics', () => {
       const characteristics: Array<Cas1SpaceBookingCharacteristic> = [
         'isArsonSuitable',
         'isSingle',
@@ -71,17 +79,17 @@ describe('characteristicsUtils', () => {
         'isWheelchairDesignated',
       ]
 
-      expect(characteristicsInlineList(characteristics)).toEqual(
+      expect(roomCharacteristicsInlineList(characteristics)).toEqual(
         'suitable for active arson risk, single room, suitable for sexual offence risk and wheelchair accessible',
       )
     })
 
     it('should return the default "none" if the list is empty and no default is given', () => {
-      expect(characteristicsInlineList([])).toEqual('none')
+      expect(roomCharacteristicsInlineList([])).toEqual('none')
     })
 
     it('should return the specific default if one is provided the list is empty', () => {
-      expect(characteristicsInlineList([], 'Nothing to show')).toEqual('Nothing to show')
+      expect(roomCharacteristicsInlineList([], 'Nothing to show')).toEqual('Nothing to show')
     })
   })
 })

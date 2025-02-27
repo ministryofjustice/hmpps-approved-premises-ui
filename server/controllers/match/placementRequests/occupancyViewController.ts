@@ -29,7 +29,7 @@ import {
 } from '../../../utils/premises/occupancy'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import config from '../../../config'
-import { characteristicsInlineList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -119,7 +119,7 @@ export default class {
       return res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
         placementRequest,
-        selectedCriteria: characteristicsInlineList(searchState.roomCriteria, 'no room criteria'),
+        selectedCriteria: roomCharacteristicsInlineList(searchState.roomCriteria, 'no room criteria'),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,

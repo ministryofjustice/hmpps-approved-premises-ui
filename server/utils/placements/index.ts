@@ -194,7 +194,7 @@ export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryLi
       'Room criteria',
       characteristicsBulletList(placement.characteristics, {
         labels: roomCharacteristicMap,
-        noneText: `<span class="text-grey">No room criteria</span>`,
+        noneText: 'No room criteria',
       }),
       'html',
     ),
