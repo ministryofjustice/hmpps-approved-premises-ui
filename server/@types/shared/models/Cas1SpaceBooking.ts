@@ -50,11 +50,13 @@ export type Cas1SpaceBooking = {
      */
     actualDepartureTime?: string;
     /**
-     * actual arrival date or, if not known, the expected arrival date
+     * actual arrival date or, if not known, the expected arrival date.
+     * @deprecated
      */
     canonicalArrivalDate: string;
     /**
      * actual departure date or, if not known, the expected departure date
+     * @deprecated
      */
     canonicalDepartureDate: string;
     departure?: Cas1SpaceBookingDeparture;

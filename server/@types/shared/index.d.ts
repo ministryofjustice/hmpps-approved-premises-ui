@@ -104,7 +104,6 @@ export type { Cas1PremisesBedSummary } from './models/Cas1PremisesBedSummary';
 export type { Cas1PremisesDaySummary } from './models/Cas1PremisesDaySummary';
 export type { Cas1PremisesSearchResultSummary } from './models/Cas1PremisesSearchResultSummary';
 export type { Cas1ReportName } from './models/Cas1ReportName';
-export type { Cas1SpaceAvailability } from './models/Cas1SpaceAvailability';
 export type { Cas1SpaceBooking } from './models/Cas1SpaceBooking';
 export type { Cas1SpaceBookingCancellation } from './models/Cas1SpaceBookingCancellation';
 export type { Cas1SpaceBookingCharacteristic } from './models/Cas1SpaceBookingCharacteristic';
