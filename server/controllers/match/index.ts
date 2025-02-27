@@ -24,7 +24,7 @@ export const controllers = (services: Services) => {
     applicationService,
   )
   const spaceSearchController = new SpaceSearchController(spaceSearchService, placementRequestService)
-  const placementRequestBookingsController = new BookingsController(placementRequestService)
+  const placementRequestBookingsController = new BookingsController(placementRequestService, sessionService)
   const spaceBookingsController = new SpaceBookingsController(
     placementRequestService,
     premisesService,
