@@ -1,3 +1,4 @@
+import { TaskNames } from '@approved-premises/ui'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -26,8 +27,11 @@ jest.mock('../../form-pages/assess', () => {
 
 jest.mock('../personUtils')
 
+const firstApplySectionTask1Id = 'first-apply-section-task-1' as TaskNames
+const firstApplySectionTask2Id = 'first-apply-section-task-2' as TaskNames
+
 const applySection1Task1 = {
-  id: 'first-apply-section-task-1',
+  id: firstApplySectionTask1Id,
   title: 'First Apply section, task 1',
   actionText: '',
   pages: {
@@ -37,21 +41,21 @@ const applySection1Task1 = {
   },
 }
 const applySection1Task2 = {
-  id: 'first-apply-section-task-2',
+  id: firstApplySectionTask2Id,
   title: 'First Apply section, task 2',
   actionText: '',
   pages: {},
 }
 
 const applySection2Task1 = {
-  id: 'second-apply-section-task-1',
+  id: 'second-apply-section-task-1' as TaskNames,
   title: 'Second Apply section, task 1',
   actionText: '',
   pages: {},
 }
 
 const applySection2Task2 = {
-  id: 'second-apply-section-task-2',
+  id: 'second-apply-section-task-2' as TaskNames,
   title: 'Second Apply section, task 2',
   actionText: '',
   pages: {},
@@ -71,34 +75,34 @@ const applySection2 = {
 
 Apply.sections = [applySection1, applySection2]
 
-Apply.pages['first-apply-section-task-1'] = {
+Apply.pages[firstApplySectionTask1Id] = {
   first: FirstApplyPage,
   second: SecondApplyPage,
   third: ThirdApplyPage,
 }
 
 const assessSection1Task1 = {
-  id: 'first-assess-section-task-1',
+  id: 'first-apply-section-task-1' as TaskNames,
   title: 'First Apply section, task 1',
   actionText: '',
   pages: {},
 }
 const assessSection1Task2 = {
-  id: 'first-assess-section-task-2',
+  id: 'first-assess-section-task-2' as TaskNames,
   title: 'First Assess section, task 2',
   actionText: '',
   pages: {},
 }
 
 const assessSection2Task1 = {
-  id: 'second-assess-section-task-1',
+  id: 'second-assess-section-task-1' as TaskNames,
   title: 'Second Assess section, task 1',
   actionText: '',
   pages: {},
 }
 
 const assessSection2Task2 = {
-  id: 'second-assess-section-task-2',
+  id: 'second-assess-section-task-2' as TaskNames,
   title: 'Second Assess section, task 2',
   actionText: '',
   pages: {},
@@ -118,10 +122,12 @@ const assessSection2 = {
 
 Assess.sections = [assessSection1, assessSection2]
 
+// @ts-expect-error Test page ids
 Assess.pages['assess-page'] = {
   first: AssessPage,
 }
 
+// @ts-expect-error Test page ids
 PlacementRequest.pages['placement-request-page'] = {
   first: PlacementRequestPage,
 }
@@ -143,7 +149,7 @@ describe('forPagesInTask', () => {
 
     const application = applicationFactory.build({
       data: {
-        'first-apply-section-task-1': { first: { foo: 'bar' }, second: { bar: 'foo' } },
+        [firstApplySectionTask1Id]: { first: { foo: 'bar' }, second: { bar: 'foo' } },
       },
     })
 
@@ -166,7 +172,7 @@ describe('forPagesInTask', () => {
 
     const application = applicationFactory.build({
       data: {
-        'first-apply-section-task-1': { first: { foo: 'bar' }, second: { bar: 'foo' } },
+        [firstApplySectionTask1Id]: { first: { foo: 'bar' }, second: { bar: 'foo' } },
       },
     })
 
@@ -192,7 +198,7 @@ describe('forPagesInTask', () => {
 
     const application = applicationFactory.build({
       data: {
-        'first-apply-section-task-1': { first: undefined, second: { bar: 'foo' } },
+        [firstApplySectionTask1Id]: { first: undefined, second: { bar: 'foo' } },
       },
     })
 
@@ -219,7 +225,7 @@ describe('forPagesInTask', () => {
 
     const application = applicationFactory.build({
       data: {
-        'first-apply-section-task-1': { first: { foo: 'bar' }, second: { bar: 'foo' } },
+        [firstApplySectionTask1Id]: { first: { foo: 'bar' }, second: { bar: 'foo' } },
       },
     })
 
@@ -248,7 +254,7 @@ describe('forPagesInTask', () => {
 
     const application = applicationFactory.build({
       data: {
-        'first-apply-section-task-1': { first: { foo: 'bar' }, second: undefined, third: { bar: 'foo' } },
+        [firstApplySectionTask1Id]: { first: { foo: 'bar' }, second: undefined, third: { bar: 'foo' } },
       },
     })
 

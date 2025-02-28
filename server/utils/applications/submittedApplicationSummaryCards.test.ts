@@ -1,6 +1,6 @@
 import { createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
-import { FormSection, SummaryListActionItem, UiTask } from '../../@types/ui'
+import { FormSection, SummaryListActionItem, TaskNames, UiTask } from '../../@types/ui'
 import { applicationFactory, documentFactory } from '../../testutils/factories'
 import { SumbmittedApplicationSummaryCards } from './submittedApplicationSummaryCards'
 import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
@@ -26,7 +26,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
         }),
         createMock<UiTask>({
           title: 'Type of AP required',
-          id: 'type-of-ap-required',
+          id: 'type-of-ap',
         }),
       ],
     })
@@ -36,7 +36,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       tasks: [
         createMock<UiTask>({
           title: 'Add move on information',
-          id: 'move-on-information',
+          id: 'move-on',
         }),
       ],
     })
@@ -62,12 +62,12 @@ describe('SumbmittedApplicationSummaryCards', () => {
             'Sentence expiry date': 'No date supplied',
           },
         ],
-        'type-of-ap-required': [
+        'type-of-ap': [
           {
             'Which type of AP does the person require?': 'Standard AP',
           },
         ],
-        'move-on-information': [
+        'move-on': [
           {
             'Does this application require a different placement duration?': 'No',
           },
@@ -130,7 +130,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
           {
             card: {
               title: { text: 'Type of AP required', headingLevel: 2 },
-              attributes: { 'data-cy-section': 'type-of-ap-required' },
+              attributes: { 'data-cy-section': 'type-of-ap' },
             },
             rows: [
               {
@@ -147,7 +147,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
           {
             card: {
               title: { text: 'Add move on information', headingLevel: 2 },
-              attributes: { 'data-cy-section': 'move-on-information' },
+              attributes: { 'data-cy-section': 'move-on' },
             },
             rows: [
               {
@@ -181,7 +181,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       tasks: [
         createMock<UiTask>({
           title: 'Task 1',
-          id: 'task-1',
+          id: 'task-1' as TaskNames,
         }),
       ],
     })
@@ -237,7 +237,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       tasks: [
         createMock<UiTask>({
           title: 'Documents',
-          id: 'attach-required-documents',
+          id: 'attach-required-documents' as TaskNames,
         }),
       ],
     })
@@ -271,7 +271,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       tasks: [
         createMock<UiTask>({
           title: 'Task 1',
-          id: 'task-1',
+          id: 'task-1' as TaskNames,
         }),
       ],
     })
@@ -296,7 +296,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       tasks: [
         createMock<UiTask>({
           title: 'Task 1',
-          id: 'task-1',
+          id: 'task-1' as TaskNames,
         }),
       ],
     })
@@ -314,7 +314,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       tasks: [
         createMock<UiTask>({
           title: 'Task 1',
-          id: 'task-1',
+          id: 'task-1' as TaskNames,
         }),
       ],
     })

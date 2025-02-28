@@ -105,10 +105,10 @@ export function convertKeyValuePairToRadioItems<T extends object>(
   return Object.keys(object).map(key => {
     return {
       value: key,
-      text: object[key],
+      text: object[key as keyof T] as string,
       checked: checkedItem === key,
-      conditional: conditionals ? conditionals[key] : undefined,
-      hint: hints ? hints[key] : undefined,
+      conditional: conditionals ? conditionals[key as keyof T] : undefined,
+      hint: hints ? hints[key as keyof T] : undefined,
     }
   })
 }
@@ -120,7 +120,7 @@ export function convertKeyValuePairToCheckBoxItems<T extends object>(
 ): Array<CheckBoxItem> {
   const items: Array<CheckBoxItem> = Object.keys(object).map(key => ({
     value: key,
-    text: object[key],
+    text: object[key as keyof T] as string,
     checked: checkedItems.includes(key),
   }))
 
@@ -169,7 +169,7 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
   values: T,
   titles: Record<string, string>,
 ): Array<SummaryListItem> {
-  return Object.keys(values).map(key => summaryListItem(titles[key], values[key]))
+  return Object.keys(values).map(key => summaryListItem(titles[key], String(values[key as keyof T])))
 }
 
 export const summaryListItem = (
@@ -248,18 +248,19 @@ export const placementRequestStatus: Record<PlacementRequestStatus, string> = {
   unableToMatch: 'Unable to match',
   matched: 'Matched',
 }
+
 export const placementRequestStatusSelectOptions = (
   selectedOption: PlacementRequestStatus | undefined | null,
 ): Array<SelectOption> => {
-  const options = Object.keys(placementRequestStatus).map(status => ({
-    text: placementRequestStatus[status],
-    value: status,
-    selected: status === selectedOption,
+  const options = Object.entries(placementRequestStatus).map(([value, text]) => ({
+    text,
+    value,
+    selected: value === selectedOption,
   }))
 
   options.unshift({
     text: 'All statuses',
-    value: '',
+    value: '' as PlacementRequestStatus,
     selected: !selectedOption,
   })
 

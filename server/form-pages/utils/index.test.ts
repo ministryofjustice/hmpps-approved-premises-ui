@@ -3,6 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import 'reflect-metadata'
 
 // Use a wildcard import to allow us to use jest.spyOn on functions within this module
+import { TaskNames } from '@approved-premises/ui'
 import * as utils from './index'
 import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication } from '../../@types/shared'
@@ -110,13 +111,13 @@ describe('utils', () => {
             return {
               title: 'Section 1',
               name: 'Section1',
-              tasks: [{ id: 'foo', title: 'Foo', pages: { 'page-1': Page1, 'page-2': Page2 } }],
+              tasks: [{ id: 'foo' as TaskNames, title: 'Foo', pages: { 'page-1': Page1, 'page-2': Page2 } }],
             }
           }
           return {
             title: 'Section 2',
             name: 'Section2',
-            tasks: [{ id: 'bar', title: 'Bar', pages: { 'page-3': Page1, 'page-4': Page2 } }],
+            tasks: [{ id: 'bar' as TaskNames, title: 'Bar', pages: { 'page-3': Page1, 'page-4': Page2 } }],
           }
         })
 

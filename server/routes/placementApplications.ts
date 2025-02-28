@@ -2,6 +2,7 @@
 
 import type { Router } from 'express'
 
+import { TaskNames } from '@approved-premises/ui'
 import type { Controllers } from '../controllers'
 import type { Services } from '../services'
 
@@ -32,7 +33,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SUBMIT_PLACEMENT_APPLICATION',
   })
 
-  Object.keys(pages).forEach((taskKey: string) => {
+  Object.keys(pages).forEach((taskKey: TaskNames) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
       const { pattern } = paths.placementApplications.show.path(`tasks/${taskKey}/pages/${pageKey}`)
       get(pattern, placementApplicationPagesController.show(taskKey, pageKey), {

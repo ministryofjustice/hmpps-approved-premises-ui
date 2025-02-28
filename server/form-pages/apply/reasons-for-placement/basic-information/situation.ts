@@ -57,13 +57,11 @@ export default class Situation implements TasklistPage {
   }
 
   items() {
-    return Object.keys(this.situations).map(key => {
-      return {
-        value: key,
-        text: this.situations[key],
-        checked: this.body.situation === key,
-      }
-    })
+    return Object.entries(this.situations).map(([value, text]) => ({
+      value,
+      text,
+      checked: this.body.situation === value,
+    }))
   }
 
   getSituationsForSentenceType(

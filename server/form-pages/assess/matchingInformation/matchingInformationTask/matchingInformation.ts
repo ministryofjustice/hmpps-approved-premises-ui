@@ -1,6 +1,6 @@
 import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
-import { ApType, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import {
   defaultMatchingInformationValues,
   suggestedStaySummaryListOptions,
@@ -11,9 +11,10 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import {
-  ApTypeCriteria,
-  OffenceAndRiskCriteria,
-  PlacementRequirementCriteria,
+  type ApTypeCriteria,
+  type ApTypeSpecialist,
+  type OffenceAndRiskCriteria,
+  type PlacementRequirementCriteria,
   apTypeCriteriaLabels,
   applyApTypeToAssessApType,
   nonPrepopulatablePlacementRequirementCriteria,
@@ -93,14 +94,17 @@ export default class MatchingInformation implements TasklistPage {
     private _body: Partial<MatchingInformationBody>,
     public assessment: Assessment,
   ) {
-    const mappedWomensApTypes = womensApTypes.map(type => applyApTypeToAssessApType?.[type] || type)
+    const mappedWomensApTypes = womensApTypes.map((type: ApTypeSpecialist) => applyApTypeToAssessApType?.[type] || type)
     this.availableApTypes = assessment.application.isWomensApplication
-      ? (Object.entries(apTypeCriteriaLabels).reduce((types, [value, text]) => {
-          if (value === 'normal' || mappedWomensApTypes.includes(value as ApType)) {
-            types[value] = text
-          }
-          return types
-        }, {}) as Record<ApTypeCriteria, string>)
+      ? Object.entries(apTypeCriteriaLabels).reduce(
+          (types, [value, text]: [value: ApTypeCriteria, text: string]) => {
+            if (value === 'normal' || mappedWomensApTypes.includes(value)) {
+              types[value] = text
+            }
+            return types
+          },
+          {} as Record<ApTypeCriteria, string>,
+        )
       : apTypeCriteriaLabels
   }
 

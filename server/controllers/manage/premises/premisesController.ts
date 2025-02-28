@@ -13,6 +13,14 @@ type TabSettings = {
   sortDirection: SortDirection
 }
 
+interface ShowRequest extends Request {
+  query: {
+    crnOrName: string
+    keyworker: string
+    activeTab: PremisesTab
+  }
+}
+
 export default class PremisesController {
   constructor(
     private readonly premisesService: PremisesService,
@@ -20,14 +28,14 @@ export default class PremisesController {
   ) {}
 
   show(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: ShowRequest, res: Response) => {
       const tabSettings: Record<PremisesTab, TabSettings> = {
         upcoming: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'asc' },
         current: { pageSize: 2000, sortBy: 'personName', sortDirection: 'asc' },
         historic: { pageSize: 20, sortBy: 'canonicalDepartureDate', sortDirection: 'desc' },
         search: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'desc' },
       }
-      const { crnOrName, keyworker, activeTab = 'current' } = req.query as Record<string, string>
+      const { crnOrName, keyworker, activeTab = 'current' } = req.query
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1SpaceBookingSummarySortField>(
         req,
         managePaths.premises.show({ premisesId: req.params.premisesId }),

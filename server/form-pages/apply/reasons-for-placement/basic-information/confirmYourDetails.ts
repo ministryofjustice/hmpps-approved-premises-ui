@@ -1,5 +1,5 @@
 import { ApArea, ApprovedPremisesApplication as Application } from '@approved-premises/api'
-import type { DataServices, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { DataServices, PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { RestrictedPersonError } from '../../../../utils/errors'
 import { isApplicableTier, isFullPerson } from '../../../../utils/personUtils'
@@ -7,7 +7,7 @@ import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 
-const updatableDetailsLabels: Record<'area', string> = {
+const updatableDetailsLabels: Record<string, string> = {
   area: 'AP area',
 }
 
@@ -141,7 +141,7 @@ export default class ConfirmYourDetails implements TasklistPage {
   }
 
   response() {
-    const response: Record<string, string> = {}
+    const response: PageResponse = {}
 
     const detailsToUpdate = (this.body?.detailsToUpdate || [])
       .map(detail => {

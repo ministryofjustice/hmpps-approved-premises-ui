@@ -43,11 +43,11 @@ export default class PlacementRequestClient {
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
-    const params: DashboardQueryParams = {}
+    const params: DashboardQueryParams = { ...allParams }
 
-    Object.keys(allParams).forEach(key => {
-      if (allParams[key]) {
-        params[key] = allParams[key]
+    Object.keys(params).forEach((key: keyof DashboardQueryParams) => {
+      if (!params[key]) {
+        delete params[key]
       }
     })
 

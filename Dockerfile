@@ -1,4 +1,5 @@
 # Stage: base image
+
 FROM node:22.14-bullseye-slim as base
 
 ARG BUILD_NUMBER=1_0_0

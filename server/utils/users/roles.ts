@@ -37,7 +37,7 @@ export type AllocationRole = (typeof allocationRoles)[number]
 
 export type RoleInUse = Exclude<UserRole, UnusedRole>
 
-type BaseRole = Exclude<RoleInUse, AllocationRole>
+export type BaseRole = Exclude<RoleInUse, AllocationRole>
 
 export const managerRoles: ReadonlyArray<UserRole> = ['workflow_manager', 'future_manager'] as const
 

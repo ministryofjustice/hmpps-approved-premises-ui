@@ -17,7 +17,7 @@ import { displayName } from '../personUtils'
 import { joinWithCommas, pluralize } from '../utils'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import config from '../../config'
-import { roomCharacteristicMap } from '../characteristicsUtils'
+import { getRoomCharacteristicLabel, roomCharacteristicMap } from '../characteristicsUtils'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -262,7 +262,7 @@ export const placementTableRows = (
         canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
         releaseType: textValue(releaseType),
         spaceType: itemListHtml(
-          essentialCharacteristics.map(characteristic => roomCharacteristicMap[characteristic]).filter(Boolean),
+          essentialCharacteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
         ),
       }
       return placementColumnMap.map(({ fieldName }: ColumnDefinition<PlacementColumnField>) => fieldValues[fieldName])
@@ -284,7 +284,7 @@ export const outOfServiceBedTableRows = (
         })}" data-cy-id="${id}">${roomName}</a>`,
       ),
       characteristics: itemListHtml(
-        characteristics.map(characteristic => roomCharacteristicMap[characteristic]).filter(Boolean),
+        characteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
       ),
       startDate: textValue(DateFormats.isoDateToUIDate(startDate, { format: 'short' })),
       endDate: textValue(DateFormats.isoDateToUIDate(endDate, { format: 'short' })),

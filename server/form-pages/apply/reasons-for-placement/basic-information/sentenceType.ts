@@ -40,13 +40,11 @@ export default class SentenceType implements TasklistPage {
   }
 
   items(conditionalHtml: string) {
-    return Object.keys(sentenceTypes).map(key => {
-      return {
-        value: key,
-        text: sentenceTypes[key],
-        checked: this.body.sentenceType === key,
-        conditional: { html: key === 'nonStatutory' ? conditionalHtml : '' },
-      }
-    })
+    return Object.entries(sentenceTypes).map(([value, text]) => ({
+      value,
+      text,
+      checked: this.body.sentenceType === value,
+      conditional: { html: value === 'nonStatutory' ? conditionalHtml : '' },
+    }))
   }
 }

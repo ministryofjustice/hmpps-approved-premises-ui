@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesNoOrIDKWithDetail } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesNoOrIDKWithDetail } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
 
@@ -38,7 +38,7 @@ export default class PreviousPlacements implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
     response[this.questions.previousPlacement] = yesNoOrDontKnowResponseWithDetail<QuestionKeys>(
       'previousPlacement',

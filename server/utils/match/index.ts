@@ -186,9 +186,10 @@ export const licenceExpiryDateRow = (placementRequest: PlacementRequestDetail) =
 }
 
 export const startDateObjFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
-  if (params['startDate-day'] && params['startDate-month'] && params['startDate-year']) {
+  const dateParts = params as ObjectWithDateParts<'startDate'>
+  if (dateParts['startDate-day'] && dateParts['startDate-month'] && dateParts['startDate-year']) {
     return {
-      ...DateFormats.dateAndTimeInputsToIsoString(params as ObjectWithDateParts<'startDate'>, 'startDate'),
+      ...DateFormats.dateAndTimeInputsToIsoString(dateParts, 'startDate'),
     }
   }
 

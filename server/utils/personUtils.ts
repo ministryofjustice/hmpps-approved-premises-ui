@@ -70,15 +70,9 @@ const displayName = (
 ): string => {
   const { showCrn = false, laoPrefix = true, laoSuffix = false } = options
 
-  let typeKey: 'type' | 'personType'
+  const personType: string = (person as Person).type || (person as PersonSummary).personType
 
-  if ('type' in person) {
-    typeKey = 'type'
-  } else if ('personType' in person) {
-    typeKey = 'personType'
-  }
-
-  switch (person[typeKey]) {
+  switch (personType) {
     case 'FullPerson':
     case 'FullPersonSummary':
       return fullPersonName(person as FullPerson, { laoPrefix, laoSuffix })

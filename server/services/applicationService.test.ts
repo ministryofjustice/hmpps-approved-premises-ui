@@ -37,11 +37,11 @@ const SecondPage = jest.fn()
 
 jest.mock('../form-pages/apply', () => {
   return {
-    pages: { 'my-task': {} },
+    pages: { 'basic-information': {} },
   }
 })
 
-Apply.pages['my-task'] = {
+Apply.pages['basic-information'] = {
   first: FirstPage,
   second: SecondPage,
 }

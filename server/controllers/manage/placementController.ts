@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import type { ApprovedPremisesApplication, ApprovedPremisesAssessment, Cas1TimelineEvent } from '@approved-premises/api'
+import { ApprovedPremisesApplication, ApprovedPremisesAssessment, Cas1TimelineEvent } from '@approved-premises/api'
 import { SummaryListItem } from '@approved-premises/ui'
 import {
   ApplicationService,
@@ -76,10 +76,7 @@ export default class PlacementController {
         user,
         backLink,
         tabItems,
-        timelineEvents: mapApplicationTimelineEventsForUi(timelineEvents).map(event => ({
-          ...event,
-          associatedUrls: null,
-        })),
+        timelineEvents: mapApplicationTimelineEventsForUi(timelineEvents, { hideUrls: true }),
         activeTab,
         application,
         assessment,

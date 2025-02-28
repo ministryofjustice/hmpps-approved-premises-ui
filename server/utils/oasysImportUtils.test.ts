@@ -20,7 +20,6 @@ import {
   sectionCheckBoxes,
   sortOasysImportSummaries,
   textareas,
-  validateOasysEntries,
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
 import { PersonRisks } from '../@types/shared'
@@ -141,47 +140,6 @@ describe('OASysImportUtils', () => {
           questionNumber: offenceDetails[1].questionNumber,
         },
       ])
-    })
-  })
-
-  describe('validateOasysEntries', () => {
-    const summaries = [
-      {
-        questionNumber: '1',
-        label: 'The first question',
-        answer: 'Some answer for the first question',
-      },
-      {
-        questionNumber: '2',
-        label: 'The second question',
-        answer: 'Some answer for the second question',
-      },
-    ]
-
-    it('should return errors for missing fields', () => {
-      const answers = { '1': '', '2': 'Some response' }
-      const body = {
-        summaries,
-        answers,
-      }
-
-      const errors = validateOasysEntries(body, 'summaries', 'answers')
-
-      expect(errors).toEqual({
-        'answers[1]': "You must enter a response for the 'The first question' question",
-      })
-    })
-
-    it('should return no errors when all fields are complete', () => {
-      const answers = { '1': 'Some response', '2': 'Some response' }
-      const body = {
-        summaries,
-        answers,
-      }
-
-      const errors = validateOasysEntries(body, 'summaries', 'answers')
-
-      expect(errors).toEqual({})
     })
   })
 

@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -42,7 +42,7 @@ export default class TriggerPlan implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
     response[questions.planInPlace.question] = sentenceCase(this.body.planInPlace)
     response[questions.additionalConditions.question] = yesNoOrDontKnowResponseWithDetail(

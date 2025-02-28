@@ -2,6 +2,7 @@
 
 import type { Router } from 'express'
 
+import { TaskNames } from '@approved-premises/ui'
 import type { Controllers } from '../controllers'
 import type { Services } from '../services'
 
@@ -10,6 +11,7 @@ import paths from '../paths/assess'
 
 import actions from './utils'
 import { getPage } from '../utils/assessments/utils'
+import PagesController from '../controllers/placementApplications/pagesController'
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { pages } = Assess
@@ -25,12 +27,12 @@ export default function routes(controllers: Controllers, router: Router, service
 
   post(paths.assessments.submission.pattern, assessmentsController.submit(), { auditEvent: 'SUBMIT_ASSESSMENT' })
 
-  Object.keys(pages).forEach((taskKey: string) => {
+  Object.keys(pages).forEach((taskKey: TaskNames) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
       const { pattern } = paths.assessments.show.path(`tasks/${taskKey}/pages/${pageKey}`)
 
       const page = getPage(taskKey, pageKey)
-      const updateAction = Reflect.getMetadata('page:controllerActions:update', page)
+      const updateAction: keyof PagesController = Reflect.getMetadata('page:controllerActions:update', page)
 
       get(pattern, assessmentPagesController.show(taskKey, pageKey), {
         auditEvent: 'VIEW_ASSESSMENT',

@@ -1,4 +1,5 @@
 import { ApprovedPremisesUserRole } from '@approved-premises/api'
+import type { TaskNames } from '@approved-premises/ui'
 import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
@@ -40,6 +41,7 @@ import { getApplicationType } from '../applications/utils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
+const reviewApplication = 'review-application' as TaskNames
 
 jest.mock('../applications/utils')
 jest.mock('../applications/getResponseForPage')
@@ -87,7 +89,7 @@ jest.mock('../../form-pages/apply', () => {
   }
 })
 
-Assess.pages['review-application'] = {
+Assess.pages[reviewApplication] = {
   first: FirstPage,
   second: SecondPage,
 }
@@ -115,13 +117,13 @@ describe('utils', () => {
 
   describe('getPage', () => {
     it('should return a page if it exists', () => {
-      expect(getPage('review-application', 'first')).toEqual(FirstPage)
-      expect(getPage('review-application', 'second')).toEqual(SecondPage)
+      expect(getPage(reviewApplication, 'first')).toEqual(FirstPage)
+      expect(getPage(reviewApplication, 'second')).toEqual(SecondPage)
     })
 
     it('should raise an error if the page is not found', async () => {
       expect(() => {
-        getPage('review-application', 'bar')
+        getPage(reviewApplication, 'bar')
       }).toThrow(UnknownPageError)
     })
   })

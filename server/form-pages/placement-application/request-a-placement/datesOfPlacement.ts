@@ -78,8 +78,7 @@ export default class DatesOfPlacement implements TasklistPage {
   }
 
   errors() {
-    const errors: TaskListErrors<this> = {}
-
+    const errors: Record<string, string> = {}
     if (this.body.datesOfPlacement.length === 0) {
       errors[`datesOfPlacement_${this.body.datesOfPlacement.length}_arrivalDate`] =
         'You must enter a date for the placement'
@@ -100,7 +99,7 @@ export default class DatesOfPlacement implements TasklistPage {
       }
     })
 
-    return errors
+    return errors as TaskListErrors<this>
   }
 
   private lengthInDays(durationWeeks: string, durationDays: string): string | undefined {

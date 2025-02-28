@@ -87,7 +87,7 @@ export default class AdditionalDocuments implements TasklistPage {
   }
 
   errors() {
-    const errors: TaskListErrors<this> = {}
+    const errors: Record<string, string> = {}
     if (this.body.selectedDocuments.length > maxDocumentsToUpload) {
       errors[`selectedDocuments_${this.body.selectedDocuments[maxDocumentsToUpload].id}`] =
         `You can only select ${maxDocumentsToUpload} documents, remove ${this.body.selectedDocuments.length - maxDocumentsToUpload} to continue.`
@@ -100,6 +100,6 @@ export default class AdditionalDocuments implements TasklistPage {
         }
       })
     }
-    return errors
+    return errors as TaskListErrors<this>
   }
 }

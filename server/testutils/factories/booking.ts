@@ -2,7 +2,7 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { addDays, startOfToday } from 'date-fns'
 
-import type { Booking } from '@approved-premises/api'
+import type { Booking, Extension } from '@approved-premises/api'
 import arrivalFactory from './arrival'
 import departureFactory from './departure'
 import { fullPersonFactory, restrictedPersonFactory } from './person'
@@ -75,7 +75,7 @@ export default BookingFactory.define(() => {
     status: 'awaiting-arrival' as const,
     arrival: arrivalFactory.build(),
     departure: departureFactory.build(),
-    extensions: [],
+    extensions: [] as Array<Extension>,
     serviceName: 'approved-premises' as const,
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
     cancellations: cancellationFactory.buildList(1),

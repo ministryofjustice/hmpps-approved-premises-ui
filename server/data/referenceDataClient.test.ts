@@ -35,7 +35,7 @@ describeClient('ReferenceDataClient', provider => {
       'non-arrival-reasons': referenceDataFactory.nonArrivalReason().buildList(5) as Array<NonArrivalReason>,
     }
 
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key: keyof typeof data) => {
       it(`should return an array of ${key}`, async () => {
         provider.addInteraction({
           state: 'Server is healthy',

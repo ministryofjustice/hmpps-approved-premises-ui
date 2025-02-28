@@ -193,7 +193,7 @@ export const filterByType = <T extends string>(
 ): Record<T, string> => {
   return Object.keys(lookup)
     .filter(k => keys.includes(k))
-    .reduce((criteria, key) => ({ ...criteria, [key]: lookup[key] }), {}) as Record<T, string>
+    .reduce((criteria, key: T) => ({ ...criteria, [key]: lookup[key] }), {}) as Record<T, string>
 }
 
 /**

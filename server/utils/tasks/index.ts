@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { ApprovedPremisesApplication as Application, Task } from '../../@types/shared'
+import { ApprovedPremisesApplication as Application, Task, UserQualification } from '../../@types/shared'
 import { SelectOption, SummaryListItem, TaskSearchQualification } from '../../@types/ui'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
@@ -147,17 +147,13 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
 const userQualificationsSelectOptions = (
   selectedOption: TaskSearchQualification | undefined | null,
 ): Array<SelectOption> => {
-  const options = Object.keys(qualificationDictionary)
-    .filter(key => key !== 'lao')
-    .map(qualification => ({
-      text: qualificationDictionary[qualification],
-      value: qualification,
-      selected: qualification === selectedOption,
-    }))
+  const options = Object.entries(qualificationDictionary)
+    .filter(([key]) => key !== 'lao')
+    .map(([qualification, text]) => ({ text, value: qualification, selected: qualification === selectedOption }))
 
   options.unshift({
     text: 'All qualifications',
-    value: '',
+    value: '' as UserQualification,
     selected: !selectedOption,
   })
 

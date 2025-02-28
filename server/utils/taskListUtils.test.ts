@@ -1,5 +1,5 @@
 import { when } from 'jest-when'
-import { TaskStatus as TaskListStatus, TaskWithStatus } from '../@types/ui'
+import { TaskStatus as TaskListStatus, TaskNames, TaskWithStatus } from '../@types/ui'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import { applicationFactory, assessmentFactory } from '../testutils/factories'
@@ -21,7 +21,7 @@ afterEach(() => {
 })
 describe('taskListUtils', () => {
   const task = {
-    id: 'second-task',
+    id: 'second-task' as TaskNames,
     title: 'Second Task',
     pages: { foo: 'bar', bar: 'baz' },
     status: 'in_progress',
@@ -132,7 +132,7 @@ describe('Tasklist Statuses', () => {
 
   statuses.forEach(status => {
     it(`returns the correct tag for each person with a status of ${status}`, () => {
-      const id = 'id'
+      const id = 'id' as TaskNames
       expect(new TaskListStatusTag(status, id).html()).toEqual(
         `<strong class="govuk-tag govuk-tag--${TaskListStatusTag.colours[status]} app-task-list__tag " data-cy-status="${status}" id="${id}-status">${TaskListStatusTag.statuses[status]}</strong>`,
       )

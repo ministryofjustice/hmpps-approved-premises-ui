@@ -5,6 +5,8 @@ import { sortHeader } from '../sortHeader'
 import { emailCell } from '../tableUtils'
 import { linkTo } from '../utils'
 import {
+  AllocationRole,
+  BaseRole,
   allocationRoleLabelDictionary,
   filterAllocationRoles,
   qualificationDictionary,
@@ -44,7 +46,7 @@ export const nameCell = (user: User): TableCell => ({
 export const roleCell = (user: User): TableCell => {
   return {
     text: filterAllocationRoles(user.roles, { returnOnlyAllocationRoles: false })
-      .map(role => roleLabelDictionary[role].label)
+      .map((role: BaseRole) => roleLabelDictionary[role].label)
       .join(', '),
   }
 }
@@ -52,7 +54,7 @@ export const roleCell = (user: User): TableCell => {
 export const allocationCell = (user: User): TableCell => {
   const allocations = [
     ...filterAllocationRoles(user.roles, { returnOnlyAllocationRoles: true }).map(
-      role => allocationRoleLabelDictionary[role].label,
+      (role: AllocationRole) => allocationRoleLabelDictionary[role].label,
     ),
     ...user.qualifications.map(qualification => qualificationDictionary[qualification]),
   ].join(', ')

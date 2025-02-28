@@ -2,7 +2,7 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
-import { FormSections, TaskStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
+import { FormSections, TaskNames, TaskStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
 import getSections from '../utils/assessments/getSections'
 import Apply from '../form-pages/apply'
 import isAssessment from '../utils/assessments/isAssessment'
@@ -33,9 +33,9 @@ export default class TasklistService {
 
   get completeSectionCount() {
     return this.formSections.filter(section => {
-      const taskIds = section.tasks.map(s => s.id)
+      const taskIds: Array<TaskNames> = section.tasks.map(s => s.id)
       const completeTasks = Object.keys(this.taskStatuses)
-        .filter(k => taskIds.includes(k))
+        .filter((k: TaskNames) => taskIds.includes(k))
         .filter(k => this.taskStatuses[k] === 'complete')
       return completeTasks.length === taskIds.length
     }).length

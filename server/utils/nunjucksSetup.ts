@@ -76,6 +76,7 @@ import { withdrawalRadioOptions } from './applications/withdrawalReasons'
 import { PersonStatusTag } from './people/personStatusTag'
 import { TaskStatusTag } from './tasks/statusTag'
 import { displayName } from './personUtils'
+import { UiPlacementCriteria } from './placementCriteriaUtils'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -175,7 +176,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     'placementRequirementsTable',
     function sendPlacementRequirementsTable(
       headings: Array<string>,
-      requirements: Array<string>,
+      requirements: Array<UiPlacementCriteria>,
       preferences: Array<string>,
       body: Record<string, string>,
     ) {

@@ -23,13 +23,13 @@ export const yesNoOrDontKnowResponseWithDetail = <K extends string>(key: K, body
 }
 
 export const getTask = <T extends Record<string, unknown>>(task: T) => {
-  const taskPages = {}
+  const taskPages: Record<string, unknown> = {}
   const slug = Reflect.getMetadata('task:slug', task)
   const name = Reflect.getMetadata('task:name', task)
   const pageClasses = Reflect.getMetadata('task:pages', task)
 
   pageClasses.forEach(<PageType extends Record<string, unknown>>(page: PageType) => {
-    const pageName = Reflect.getMetadata('page:name', page)
+    const pageName: string = Reflect.getMetadata('page:name', page)
     taskPages[pageName] = page
   })
 
@@ -58,7 +58,7 @@ export const getSection = <T extends Record<string, unknown>>(section: T) => {
 }
 
 export const getPagesForSections = <T extends Record<string, unknown>>(sections: Array<T>) => {
-  const pages = {}
+  const pages: Record<string, unknown> = {}
   sections.forEach(sectionClass => {
     const section = getSection(sectionClass)
     const { tasks } = section
@@ -110,18 +110,21 @@ export const responsesForYesNoAndCommentsSections = (
   sections: Record<string, string>,
   body: Record<string, string>,
 ) => {
-  return Object.keys(sections).reduce((prev, section) => {
-    const response = {
-      ...prev,
-      [sections[section]]: sentenceCase(body[section]),
-    }
+  return Object.keys(sections).reduce(
+    (prev, section) => {
+      const response = {
+        ...prev,
+        [sections[section]]: sentenceCase(body[section]),
+      }
 
-    if (body[`${section}Comments`]) {
-      response[`${sections[section]} Additional comments`] = body[`${section}Comments`]
-    }
+      if (body[`${section}Comments`]) {
+        response[`${sections[section]} Additional comments`] = body[`${section}Comments`]
+      }
 
-    return response
-  }, {})
+      return response
+    },
+    {} as Record<string, unknown>,
+  )
 }
 
 export const pageBodyShallowEquals = (body1: Record<string, unknown>, body2: Record<string, unknown>) => {

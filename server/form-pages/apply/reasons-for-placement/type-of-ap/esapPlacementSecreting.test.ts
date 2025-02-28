@@ -12,7 +12,7 @@ jest.mock('../../../../utils/formUtils', () => {
   }
 })
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
-  return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => []) }
+  return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => [] as Array<never>) }
 })
 
 describe('EsapPlacementSecreting', () => {

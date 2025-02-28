@@ -1,6 +1,7 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
+import { TaskNames } from '@approved-premises/ui'
 import { ApplicationService, PlacementApplicationService } from '../../services'
 
 import {
@@ -19,7 +20,7 @@ export default class PagesController {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  show(taskName: string, pageName: string): RequestHandler {
+  show(taskName: TaskNames, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const Page = getPage(taskName, pageName, 'placement-applications')
@@ -52,7 +53,7 @@ export default class PagesController {
     }
   }
 
-  update(taskName: string, pageName: string) {
+  update(taskName: TaskNames, pageName: string) {
     return async (req: Request, res: Response) => {
       const Page = getPage(taskName, pageName, 'placement-applications')
       const page = await this.placementApplicationService.initializePage(Page, req, {

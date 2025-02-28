@@ -8,6 +8,7 @@ import { CheckBoxItem, RadioItem } from '@approved-premises/ui'
 import { filterByType } from '../utils'
 import {
   ApTypeCriteria,
+  type ApTypeSpecialist,
   apTypeCriteriaLabels,
   applyApTypeToAssessApType,
   placementCriteriaLabels,
@@ -51,7 +52,7 @@ export const initialiseSearchState = (placementRequest: PlacementRequestDetail):
   return {
     applicationId: placementRequest.applicationId,
     postcode: placementRequest.location,
-    apType: applyApTypeToAssessApType[placementRequest.type] || 'normal',
+    apType: applyApTypeToAssessApType[placementRequest.type as ApTypeSpecialist] || 'normal',
     apCriteria: filterApLevelCriteria(allCriteria),
     roomCriteria: filterRoomLevelCriteria(allCriteria),
     startDate: placementRequest.expectedArrival,

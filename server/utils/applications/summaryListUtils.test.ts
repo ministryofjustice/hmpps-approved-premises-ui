@@ -1,4 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
+import { TaskNames, UiTask } from '@approved-premises/ui'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { forPagesInTask } from './forPagesInTask'
 import { summaryListSections, taskResponsesAsSummaryListItems } from './summaryListUtils'
@@ -17,6 +18,8 @@ jest.mock('../assessments/getActionsForTaskId')
 
 describe('summaryListUtils', () => {
   describe('taskResponsesAsSummaryListItems', () => {
+    const fooBarTask: UiTask = { id: 'foo' as TaskNames, title: 'bar', pages: {} }
+
     it('calls reviewSections with the correct arguments', () => {
       const application = applicationFactory.build()
 
@@ -33,10 +36,10 @@ describe('summaryListUtils', () => {
       expect(reviewSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, false)
     })
 
-    it('returns an empty array if there isnt any responses for the task', () => {
+    it(`returns an empty array if there aren't any responses for the task`, () => {
       const application = applicationFactory.build()
 
-      expect(taskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application, true)).toEqual([])
+      expect(taskResponsesAsSummaryListItems(fooBarTask, application, true)).toEqual([])
     })
 
     describe('when the document is an application', () => {
@@ -56,7 +59,7 @@ describe('summaryListUtils', () => {
           title: 'response',
         }))
 
-        expect(taskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, true)).toEqual([
+        expect(taskResponsesAsSummaryListItems(fooBarTask, application, true)).toEqual([
           {
             actions: {
               items: [
@@ -95,7 +98,7 @@ describe('summaryListUtils', () => {
           title: 'response',
         }))
 
-        expect(taskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, assessment, true)).toEqual([
+        expect(taskResponsesAsSummaryListItems(fooBarTask, assessment, true)).toEqual([
           {
             actions: {
               items: [
@@ -124,7 +127,7 @@ describe('summaryListUtils', () => {
         title: 'response',
       }))
 
-      expect(taskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, false)).toEqual([
+      expect(taskResponsesAsSummaryListItems(fooBarTask, application, false)).toEqual([
         {
           key: {
             text: 'title',
@@ -158,9 +161,7 @@ describe('summaryListUtils', () => {
           },
         }
 
-        expect(
-          taskResponsesAsSummaryListItems({ id: 'attach-required-documents', title: 'bar', pages: {} }, application),
-        ).toEqual([
+        expect(taskResponsesAsSummaryListItems(fooBarTask, application)).toEqual([
           {
             key: {
               html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-debounce-link data-cy-documentId="${documents[0].id}">${documents[0].fileName}</a>`,
@@ -172,7 +173,7 @@ describe('summaryListUtils', () => {
             actions: {
               items: [
                 {
-                  href: `/applications/${application.id}/tasks/attach-required-documents/pages/attach-documents`,
+                  href: `/applications/${application.id}/tasks/foo/pages/attach-documents`,
                   text: 'Change',
                   visuallyHiddenText: documents[0].fileName,
                 },

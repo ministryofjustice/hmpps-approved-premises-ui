@@ -7,7 +7,7 @@ import {
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { faker } from '@faker-js/faker'
-import { ApplicationType } from '@approved-premises/ui'
+import { ApplicationType, TaskNames } from '@approved-premises/ui'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
@@ -76,7 +76,7 @@ jest.mock('../../form-pages/assess', () => {
 })
 
 const applySection1Task1 = {
-  id: 'first-apply-section-task-1',
+  id: 'first-apply-section-task-1' as TaskNames,
   title: 'First Apply section, task 1',
   actionText: '',
   pages: {
@@ -85,21 +85,21 @@ const applySection1Task1 = {
   },
 }
 const applySection1Task2 = {
-  id: 'first-apply-section-task-2',
+  id: 'first-apply-section-task-2' as TaskNames,
   title: 'First Apply section, task 2',
   actionText: '',
   pages: {},
 }
 
 const applySection2Task1 = {
-  id: 'second-apply-section-task-1',
+  id: 'second-apply-section-task-1' as TaskNames,
   title: 'Second Apply section, task 1',
   actionText: '',
   pages: {},
 }
 
 const applySection2Task2 = {
-  id: 'second-apply-section-task-2',
+  id: 'second-apply-section-task-2' as TaskNames,
   title: 'Second Apply section, task 2',
   actionText: '',
   pages: {},
@@ -119,33 +119,33 @@ const applySection2 = {
 
 Apply.sections = [applySection1, applySection2]
 
-Apply.pages['first-apply-section-task-1'] = {
+Apply.pages['first-apply-section-task-1' as TaskNames] = {
   first: FirstApplyPage,
   second: SecondApplyPage,
 }
 
 const assessSection1Task1 = {
-  id: 'first-assess-section-task-1',
+  id: 'first-assess-section-task-1' as TaskNames,
   title: 'First Apply section, task 1',
   actionText: '',
   pages: {},
 }
 const assessSection1Task2 = {
-  id: 'first-assess-section-task-2',
+  id: 'first-assess-section-task-2' as TaskNames,
   title: 'First Assess section, task 2',
   actionText: '',
   pages: {},
 }
 
 const assessSection2Task1 = {
-  id: 'second-assess-section-task-1',
+  id: 'second-assess-section-task-1' as TaskNames,
   title: 'Second Assess section, task 1',
   actionText: '',
   pages: {},
 }
 
 const assessSection2Task2 = {
-  id: 'second-assess-section-task-2',
+  id: 'second-assess-section-task-2' as TaskNames,
   title: 'Second Assess section, task 2',
   actionText: '',
   pages: {},
@@ -165,11 +165,11 @@ const assessSection2 = {
 
 Assess.sections = [assessSection1, assessSection2]
 
-Assess.pages['assess-page'] = {
+Assess.pages['assess-page' as TaskNames] = {
   first: AssessPage,
 }
 
-PlacementRequest.pages['placement-request-page'] = {
+PlacementRequest.pages['placement-request-page' as TaskNames] = {
   first: PlacementRequestPage,
 }
 

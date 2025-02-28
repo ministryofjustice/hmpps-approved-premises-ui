@@ -5,7 +5,7 @@ import {
   PlacementCriteria,
 } from '@approved-premises/api'
 import { joinWithCommas, makeArrayOfType } from './utils'
-import { placementCriteriaLabels } from './placementCriteriaUtils'
+import { UiPlacementCriteria, placementCriteriaLabels } from './placementCriteriaUtils'
 
 export const roomCharacteristicMap: Record<Cas1SpaceBookingCharacteristic, string> = {
   isWheelchairDesignated: 'Wheelchair accessible',
@@ -16,11 +16,20 @@ export const roomCharacteristicMap: Record<Cas1SpaceBookingCharacteristic, strin
   isSuitedForSexOffenders: 'Suitable for sexual offence risk',
 }
 
+export const getRoomCharacteristicLabel = (characteristic: Cas1SpaceCharacteristic): string => {
+  return roomCharacteristicMap[characteristic as Cas1SpaceBookingCharacteristic]
+}
+
 export const characteristicsPairToCharacteristics = (
   characteristicPairs: Array<CharacteristicPair>,
 ): Array<Cas1SpaceCharacteristic> =>
   (makeArrayOfType<CharacteristicPair>(characteristicPairs) || [])
-    .map(({ propertyName }) => (roomCharacteristicMap[propertyName] ? propertyName : null) as Cas1SpaceCharacteristic)
+    .map(
+      ({ propertyName }) =>
+        (getRoomCharacteristicLabel(propertyName as Cas1SpaceCharacteristic)
+          ? propertyName
+          : null) as Cas1SpaceCharacteristic,
+    )
     .filter(Boolean)
 
 export const characteristicsBulletList = (
@@ -32,7 +41,7 @@ export const characteristicsBulletList = (
   const listItems = Object.keys(labels).filter(key => ((requirements || []) as Array<string>).includes(key))
 
   return listItems.length
-    ? `<ul class="govuk-list govuk-list--bullet">${listItems.map(key => `<li>${labels[key]}</li>`).join('')}</ul>`
+    ? `<ul class="govuk-list govuk-list--bullet">${listItems.map((key: UiPlacementCriteria) => `<li>${labels[key]}</li>`).join('')}</ul>`
     : `<span class="text-grey">${noneText}</span>`
 }
 

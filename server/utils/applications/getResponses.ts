@@ -3,7 +3,7 @@ import { forPagesInTask } from './forPagesInTask'
 import { ApplicationOrAssessmentResponse, getSections } from './utils'
 
 export const getResponses = (formArtifact: FormArtifact): ApplicationOrAssessmentResponse => {
-  const responses = {}
+  const responses: Record<string, Array<PageResponse>> = {}
 
   const formSections = getSections(formArtifact)
 

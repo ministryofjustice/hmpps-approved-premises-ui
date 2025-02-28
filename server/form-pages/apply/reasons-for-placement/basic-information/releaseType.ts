@@ -73,11 +73,11 @@ export default class ReleaseType implements TasklistPage {
   }
 
   items() {
-    return Object.keys(this.releaseTypes).map(key => {
+    return Object.entries(this.releaseTypes).map(([value, text]) => {
       return {
-        value: key,
-        text: this.releaseTypes[key],
-        checked: this.body.releaseType === key,
+        value,
+        text,
+        checked: this.body.releaseType === value,
       }
     })
   }

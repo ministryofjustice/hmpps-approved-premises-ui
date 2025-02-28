@@ -221,7 +221,7 @@ export class DateFormats {
   ): string {
     const formattedDuration: Duration = {}
 
-    Object.keys(duration).forEach(k => {
+    Object.keys(duration).forEach((k: keyof Duration) => {
       formattedDuration[k] = Number(duration[k])
     })
 

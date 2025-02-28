@@ -1,4 +1,4 @@
-import { GroupedAssessments, KeyDetailsArgs, SummaryListItem, UserDetails } from '@approved-premises/ui'
+import { GroupedAssessments, KeyDetailsArgs, SummaryListItem, TaskNames, UserDetails } from '@approved-premises/ui'
 
 import {
   ApprovedPremisesAssessmentStatus,
@@ -86,7 +86,7 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   return summary
 }
 
-const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
+const getPage = (taskName: TaskNames, pageName: string): TasklistPageInterface => {
   const pageList = Assess.pages[taskName]
 
   const Page = pageList[pageName]

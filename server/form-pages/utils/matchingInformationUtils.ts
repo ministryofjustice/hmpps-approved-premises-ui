@@ -40,7 +40,11 @@ const apType = (
     return body.apType
   }
 
-  const applyValue = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
+  const applyValue: BackwardsCompatibleApplyApType = retrieveQuestionResponseFromFormArtifact(
+    application,
+    SelectApType,
+    'type',
+  )
   const applyAssessMap: Record<BackwardsCompatibleApplyApType, MatchingInformationBody['apType']> = {
     normal: 'normal',
     standard: 'normal',
