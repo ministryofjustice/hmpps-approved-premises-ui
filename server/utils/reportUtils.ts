@@ -43,11 +43,19 @@ export const reportInputLabels = {
     hint: 'Includes additional columns of PII data.',
   },
   placementMatchingOutcomesV2: {
-    text: 'Raw Placement Matching Outcomes Reports V2',
+    text: 'Raw Placement Matching Outcomes Report V2',
     hint: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
   },
   placementMatchingOutcomesV2WithPii: {
-    text: 'Raw Placement Matching Outcomes Reports V2 (PII)',
+    text: 'Raw Placement Matching Outcomes Report V2 (PII)',
+    hint: 'Includes additional columns of PII data.',
+  },
+  placements: {
+    text: 'Raw Placement Report',
+    hint: 'Placements where the following fall within the requested month - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+  },
+  placementsWithPii: {
+    text: 'Raw Placement Report (PII)',
     hint: 'Includes additional columns of PII data.',
   },
 } as const
@@ -65,6 +73,7 @@ export const piiReports = [
   'applicationsV2WithPii',
   'requestsForPlacementWithPii',
   'placementMatchingOutcomesV2WithPii',
+  'placementsWithPii',
 ] as Array<string>
 
 export const reportOptions = (user: UserDetails): Array<{ value: string; text: string; hint: { text: string } }> => {
