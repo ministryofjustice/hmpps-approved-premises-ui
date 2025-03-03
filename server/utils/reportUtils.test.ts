@@ -36,9 +36,16 @@ describe('reportUtils', () => {
         },
         {
           value: 'placementMatchingOutcomesV2',
-          text: 'Raw Placement Matching Outcomes Reports V2',
+          text: 'Raw Placement Matching Outcomes Report V2',
           hint: {
             text: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
+          },
+        },
+        {
+          value: 'placements',
+          text: 'Raw Placement Report',
+          hint: {
+            text: 'Placements where the following fall within the requested month - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
           },
         },
       ])
@@ -93,14 +100,28 @@ describe('reportUtils', () => {
         },
         {
           value: 'placementMatchingOutcomesV2',
-          text: 'Raw Placement Matching Outcomes Reports V2',
+          text: 'Raw Placement Matching Outcomes Report V2',
           hint: {
             text: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
           },
         },
         {
           value: 'placementMatchingOutcomesV2WithPii',
-          text: 'Raw Placement Matching Outcomes Reports V2 (PII)',
+          text: 'Raw Placement Matching Outcomes Report V2 (PII)',
+          hint: {
+            text: 'Includes additional columns of PII data.',
+          },
+        },
+        {
+          value: 'placements',
+          text: 'Raw Placement Report',
+          hint: {
+            text: 'Placements where the following fall within the requested month - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+          },
+        },
+        {
+          value: 'placementsWithPii',
+          text: 'Raw Placement Report (PII)',
           hint: {
             text: 'Includes additional columns of PII data.',
           },
