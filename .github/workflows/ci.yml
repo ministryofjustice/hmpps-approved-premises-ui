@@ -11,6 +11,10 @@ env:
   API_CLIENT_ID: approved-premises
   API_CLIENT_SECRET: clientsecret
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: "Build 🛠️"
