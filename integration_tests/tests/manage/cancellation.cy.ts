@@ -2,9 +2,9 @@ import type { Cancellation } from '@approved-premises/api'
 import {
   applicationFactory,
   bookingFactory,
+  bookingPremisesSummaryFactory,
   cancellationFactory,
   cas1SpaceBookingFactory,
-  extendedPremisesSummaryFactory,
   newCancellationFactory,
   premisesFactory,
   withdrawableFactory,
@@ -27,28 +27,29 @@ context('Cancellation', () => {
   it('should allow me to create a cancellation with a reason of "other" ', () => {
     // Given a booking is available
     const application = applicationFactory.build()
-    const booking = bookingFactory.arrivingToday().build({ applicationId: application.id })
-    const premises = extendedPremisesSummaryFactory.build({ bookings: [booking], id: booking.premises.id })
+    const booking = bookingFactory.arrivingToday().build({
+      applicationId: application.id,
+      premises: bookingPremisesSummaryFactory.build(),
+    })
 
-    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+    cy.task('stubBookingGet', { premisesId: booking.premises.id, booking })
 
     // When I navigate to the booking's cancellation page
     const cancellation = newCancellationFactory.withOtherReason().build({
       otherReason: 'other reason',
     })
     const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'booking' })
-    cy.task('stubPremisesSummary', premises)
     cy.task('stubWithdrawablesWithNotes', { applicationId: application.id, withdrawables: [withdrawable] })
     cy.task('stubBookingFindWithoutPremises', booking)
 
     // And I fill out the cancellation form with a reason of "other" but without a note
     cy.task('stubCancellationErrors', {
-      premisesId: premises.id,
+      premisesId: booking.premises.id,
       bookingId: booking.id,
       params: ['otherReason'],
     })
 
-    const cancellationPage = CancellationCreatePage.visit(premises.id, booking.id)
+    const cancellationPage = CancellationCreatePage.visit(booking.premises.id, booking.id)
     cancellationPage.completeForm({ ...cancellation, otherReason: '' })
 
     // Then I should see an error message
@@ -57,13 +58,13 @@ context('Cancellation', () => {
     })
 
     // Given I retry completing the form
-    cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
+    cy.task('stubCancellationCreate', { premisesId: booking.premises.id, bookingId: booking.id, cancellation })
     // When I complete the reason and notes
     cancellationPage.completeForm(cancellation)
 
     // Then a cancellation should have been created in the API
     cy.task('verifyCancellationCreate', {
-      premisesId: premises.id,
+      premisesId: booking.premises.id,
       bookingId: booking.id,
       cancellation,
     }).then(requests => {
@@ -150,7 +151,6 @@ context('Cancellation', () => {
 
     const cancellation = newCancellationFactory.withOtherReason().build()
     const withdrawable = withdrawableFactory.build({ id: placementId, type: 'space_booking' })
-    cy.task('stubPremisesSummary', premises)
     cy.task('stubWithdrawablesWithNotes', { applicationId: application.id, withdrawables: [withdrawable] })
     cy.task('stubSpaceBookingGetWithoutPremises', placement)
     cy.task('stubCancellationCreate', { premisesId, placementId, cancellation })

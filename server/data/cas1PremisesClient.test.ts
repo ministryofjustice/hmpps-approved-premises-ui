@@ -9,7 +9,6 @@ import {
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
-  extendedPremisesSummaryFactory,
   paginatedResponseFactory,
   premisesFactory,
 } from '../testutils/factories'
@@ -79,7 +78,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
     it.each(['upcoming', 'current', 'historic'] as const)(
       'should return a list of %s placements for a premises',
       async status => {
-        const premises = extendedPremisesSummaryFactory.build()
+        const premises = cas1PremisesBasicSummaryFactory.build()
         const paginatedPlacements = paginatedResponseFactory.build({
           data: cas1SpaceBookingSummaryFactory.buildList(3),
           pageSize: '20',
@@ -131,7 +130,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
     )
 
     it('should return a list of all placements matching a keyworker code, or a CRN or name, for a premises', async () => {
-      const premises = extendedPremisesSummaryFactory.build()
+      const premises = cas1PremisesBasicSummaryFactory.build()
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),
         pageSize: '20',
@@ -188,7 +187,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
 
   describe('getPlacement', () => {
     it('should return details of a single placement', async () => {
-      const premises = extendedPremisesSummaryFactory.build()
+      const premises = cas1PremisesBasicSummaryFactory.build()
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
 
       provider.addInteraction({

@@ -1,7 +1,7 @@
 import {
   bedDetailFactory,
+  cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
-  extendedPremisesSummaryFactory,
   outOfServiceBedFactory,
   premisesFactory,
 } from '../../../../server/testutils/factories'
@@ -90,14 +90,13 @@ context('OutOfServiceBeds', () => {
     signIn([], ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'])
 
     const bed = { name: 'abc', id: '123' }
-    const premises = extendedPremisesSummaryFactory.build()
+    const premises = cas1PremisesBasicSummaryFactory.build()
     const conflictingOutOfServiceBed = outOfServiceBedFactory.build({
       bed,
       startDate: '2022-02-11',
       endDate: '2022-03-11',
     })
 
-    cy.task('stubPremisesSummary', premises)
     cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed: conflictingOutOfServiceBed })
     const bedDetail = bedDetailFactory.build({ id: bed.id })
     cy.task('stubBed', { premisesId: premises.id, bedDetail })

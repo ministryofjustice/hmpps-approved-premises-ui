@@ -1,4 +1,4 @@
-import { BedDetail, ExtendedPremisesSummary, Premises } from '@approved-premises/api'
+import { BedDetail, Cas1Premises, Premises } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -22,7 +22,7 @@ export default class BedShowPage extends Page {
     this.shouldContainSummaryListItems(details)
   }
 
-  shouldLinkToPremises(premises: ExtendedPremisesSummary): void {
+  shouldLinkToPremises(premises: Cas1Premises): void {
     cy.get('a')
       .contains(premises.name)
       .should('have.attr', 'href', paths.premises.show({ premisesId: premises.id }))
