@@ -82,14 +82,26 @@ describe('Space search utils', () => {
 
       expect(spaceSearchStateToApiPayload(spaceSearchState)).toEqual({
         durationInDays: spaceSearchState.durationDays,
-        requirements: {
-          apType: 'esap',
-          spaceCharacteristics: ['acceptsChildSexOffenders', 'hasEnSuite'],
-        },
+        requirements: {},
+        spaceCharacteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite'],
         applicationId: spaceSearchState.applicationId,
         startDate: spaceSearchState.startDate,
         targetPostcodeDistrict: spaceSearchState.postcode,
       })
+    })
+
+    it('does not add the AP type to requirements when Standard AP is selected', () => {
+      const spaceSearchState = spaceSearchStateFactory.build({
+        apType: 'normal',
+        apCriteria: [],
+        roomCriteria: [],
+      })
+
+      expect(spaceSearchStateToApiPayload(spaceSearchState)).toEqual(
+        expect.objectContaining({
+          spaceCharacteristics: [],
+        }),
+      )
     })
   })
 
