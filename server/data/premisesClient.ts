@@ -27,7 +27,7 @@ export default class PremisesClient {
 
   async allCas1(filters: PremisesFilters): Promise<Array<Cas1PremisesBasicSummary>> {
     return (await this.restClient.get({
-      path: paths.premises.indexCas1({}),
+      path: paths.premises.index({}),
       query: { ...filters },
     })) as Array<Cas1PremisesBasicSummary>
   }

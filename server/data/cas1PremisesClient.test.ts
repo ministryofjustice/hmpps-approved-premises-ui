@@ -57,7 +57,7 @@ describeCas1NamespaceClient('Cas1PremisesClient', provider => {
         uponReceiving: 'A request to get all CAS1 premises summaries',
         withRequest: {
           method: 'GET',
-          path: paths.premises.indexCas1({ gender }),
+          path: paths.premises.index({ gender }),
           headers: {
             authorization: `Bearer ${sampleToken}`,
           },
