@@ -1,7 +1,7 @@
 import { NamedId, UpdateCas1OutOfServiceBed } from '@approved-premises/api'
 import {
   bedDetailFactory,
-  extendedPremisesSummaryFactory,
+  cas1PremisesBasicSummaryFactory,
   outOfServiceBedFactory,
 } from '../../../../server/testutils/factories'
 import Page from '../../../pages/page'
@@ -18,7 +18,7 @@ describe('Updating an out of service bed', () => {
 
   it('should allow me to update an out of service bed', () => {
     const bed: NamedId = { name: 'bed', id: '123' }
-    const premises = extendedPremisesSummaryFactory.build()
+    const premises = cas1PremisesBasicSummaryFactory.build()
     const outOfServiceBed = outOfServiceBedFactory.build({
       bed,
     })
@@ -78,7 +78,7 @@ describe('Updating an out of service bed', () => {
   dateFields.forEach(dateField => {
     it(`shows when the ${dateField} field is empty`, () => {
       const bed: NamedId = { name: 'bed', id: '123' }
-      const premises = extendedPremisesSummaryFactory.build()
+      const premises = cas1PremisesBasicSummaryFactory.build()
       const outOfServiceBed = outOfServiceBedFactory.build({
         bed,
       })
