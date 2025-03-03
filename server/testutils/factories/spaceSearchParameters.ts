@@ -22,5 +22,6 @@ export default Factory.define<Cas1SpaceSearchParameters>(() => {
     durationInDays: faker.number.int({ min: 1, max: 70 }),
     targetPostcodeDistrict: faker.location.zipCode(),
     requirements: spaceBookingRequirements.build(),
+    spaceCharacteristics: faker.helpers.arrayElements(placementCriteria),
   }
 })

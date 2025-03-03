@@ -8,7 +8,6 @@ import { CheckBoxItem, RadioItem } from '@approved-premises/ui'
 import { filterByType } from '../utils'
 import {
   ApTypeCriteria,
-  apType,
   apTypeCriteriaLabels,
   applyApTypeToAssessApType,
   placementCriteriaLabels,
@@ -71,10 +70,12 @@ export const spaceSearchStateToApiPayload = (state: SpaceSearchState): Cas1Space
     applicationId: state.applicationId,
     startDate: state.startDate,
     targetPostcodeDistrict: state.postcode,
-    requirements: {
-      apType: apType(state.apType),
-      spaceCharacteristics: [...state.apCriteria, ...state.roomCriteria],
-    },
+    requirements: {},
+    spaceCharacteristics: [
+      state.apType !== 'normal' ? (state.apType as Cas1SpaceCharacteristic) : undefined,
+      ...state.apCriteria,
+      ...state.roomCriteria,
+    ].filter(Boolean),
     durationInDays: state.durationDays,
   }
 }

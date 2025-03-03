@@ -33,7 +33,7 @@ import {
   filterRoomLevelCriteria,
   initialiseSearchState,
 } from '../../../server/utils/match/spaceSearch'
-import { apType } from '../../../server/utils/placementCriteriaUtils'
+import { applyApTypeToAssessApType } from '../../../server/utils/placementCriteriaUtils'
 import premisesSearchResultSummary from '../../../server/testutils/factories/cas1PremisesSearchResultSummary'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { placementDates } from '../../../server/utils/match'
@@ -104,10 +104,11 @@ context('Placement Requests', () => {
         durationInDays: placementRequest.duration,
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,
-        requirements: {
-          apType: placementRequest.type,
-          spaceCharacteristics: filteredPlacementCriteria,
-        },
+        requirements: {},
+        spaceCharacteristics: [
+          placementRequest.type !== 'normal' && applyApTypeToAssessApType[placementRequest.type],
+          ...filteredPlacementCriteria,
+        ].filter(Boolean),
       })
 
       // And the second request to the API should contain the new criteria I submitted
@@ -118,11 +119,13 @@ context('Placement Requests', () => {
         targetPostcodeDistrict: newSearchState.postcode,
       })
 
-      expect(secondSearchRequestBody.requirements.apType).to.equal(apType(newSearchState.apType))
-      expect(secondSearchRequestBody.requirements.spaceCharacteristics).to.contain.members([
-        ...newSearchState.apCriteria,
-        ...newSearchState.roomCriteria,
-      ])
+      expect(secondSearchRequestBody.spaceCharacteristics).to.contain.members(
+        [
+          newSearchState.apType !== 'normal' && newSearchState.apType,
+          ...newSearchState.apCriteria,
+          ...newSearchState.roomCriteria,
+        ].filter(Boolean),
+      )
     })
   })
 
