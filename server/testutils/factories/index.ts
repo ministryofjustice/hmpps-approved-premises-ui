@@ -44,7 +44,7 @@ import { fullPersonFactory as personFactory, restrictedPersonFactory } from './p
 import placementApplicationFactory from './placementApplication'
 import placementApplicationTaskFactory from './placementApplicationTask'
 import placementDatesFactory from './placementDates'
-import { placementRequestFactory, placementRequestWithFullPersonFactory } from './placementRequest'
+import placementRequestFactory from './placementRequest'
 import placementRequestDetailFactory from './placementRequestDetail'
 import premisesFactory from './premises'
 import premisesSummaryFactory from './premisesSummary'
@@ -167,7 +167,6 @@ export {
   placementApplicationDecisionEnvelopeFactory,
   placementDatesFactory,
   placementRequestFactory,
-  placementRequestWithFullPersonFactory,
   placementRequestDetailFactory,
   premisesFactory,
   premisesBookingFactory,

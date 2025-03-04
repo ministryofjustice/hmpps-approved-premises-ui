@@ -10,7 +10,7 @@ import {
   cruManagementAreaFactory,
   newCancellationFactory,
   placementRequestDetailFactory,
-  placementRequestWithFullPersonFactory,
+  placementRequestFactory,
   premisesFactory,
   withdrawableFactory,
 } from '../../../server/testutils/factories'
@@ -31,35 +31,37 @@ context('Placement Requests', () => {
   const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
     let application = applicationFactory.build(applicationData)
     const unmatchedPlacementRequests = [
-      placementRequestWithFullPersonFactory.build({ applicationId: application.id }),
-      placementRequestWithFullPersonFactory.build({ isParole: true }),
+      placementRequestFactory.notMatched().build({ applicationId: application.id }),
+      placementRequestFactory.notMatched().build({ isParole: true }),
     ]
-    const matchedPlacementRequests = placementRequestWithFullPersonFactory.buildList(3, { status: 'matched' })
-    const unableToMatchPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, {
-      status: 'unableToMatch',
-    })
+    const matchedPlacementRequests = placementRequestFactory.buildList(3)
+    const unableToMatchPlacementRequests = placementRequestFactory.unableToMatch().buildList(2)
 
     const unmatchedPlacementRequest = placementRequestDetailFactory.build({
       ...unmatchedPlacementRequests[0],
-      status: 'notMatched',
-      booking: undefined,
+      spaceBookings: [],
     })
 
-    const parolePlacementRequest = unmatchedPlacementRequests[1]
+    const parolePlacementRequest = placementRequestDetailFactory.build({
+      ...unmatchedPlacementRequests[1],
+      spaceBookings: [],
+    })
 
-    const matchedPlacementRequest = placementRequestDetailFactory.build({ ...matchedPlacementRequests[1] })
+    const matchedPlacementRequest = placementRequestDetailFactory.build(matchedPlacementRequests[1])
     const spaceBooking = bookingFactory.build({
       applicationId: application.id,
       premises: { id: matchedPlacementRequest.booking.premisesId },
       id: matchedPlacementRequest.booking.id,
     })
-    const matchedPlacementRequestWithLegacyBooking = placementRequestDetailFactory.build({
-      ...matchedPlacementRequests[2],
-      booking: bookingSummaryFactory.build({
-        type: 'legacy',
-      }),
+    const legacyBooking = bookingSummaryFactory.build({
+      type: 'legacy',
     })
-    const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
+    const matchedPlacementRequestWithLegacyBooking = placementRequestDetailFactory.withLegacyBooking().build({
+      ...matchedPlacementRequests[2],
+      booking: legacyBooking,
+      legacyBooking,
+    })
+    const unableToMatchPlacementRequest = placementRequestDetailFactory.build(unableToMatchPlacementRequests[0])
 
     const preferredAps = premisesFactory.buildList(3)
 
@@ -211,7 +213,7 @@ context('Placement Requests', () => {
     showPage.shouldShowCancelBookingOption()
 
     // And I should see the booking information
-    showPage.shouldShowBookingInformation()
+    showPage.shouldShowLegacyBookingInformation()
 
     // When I go back to the dashboard
     ListPage.visit()

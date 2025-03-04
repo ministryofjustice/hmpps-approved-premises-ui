@@ -1,21 +1,53 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import { PlacementCriteria, PlacementRequest } from '../../@types/shared'
+import {
+  ApType,
+  Gender,
+  PlacementCriteria,
+  PlacementRequest,
+  PlacementRequestRequestType,
+  PlacementRequestStatus,
+  type ReleaseTypeOption,
+  WithdrawPlacementRequestReason,
+} from '../../@types/shared'
 import { DateFormats } from '../../utils/dateUtils'
-import { fullPersonFactory, restrictedPersonFactory } from './person'
+import { fullPersonFactory } from './person'
 import risksFactory from './risks'
 import userFactory from './user'
 import bookingSummary from './placementRequestBookingSummary'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { placementCriteriaLabels } from '../../utils/placementCriteriaUtils'
+import { allReleaseTypes } from '../../utils/applications/releaseTypeUtils'
+import { apTypeLabels } from '../../utils/apTypeLabels'
 
-export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
+class PlacementRequestFactory extends Factory<PlacementRequest> {
+  withFullPerson() {
+    return this.params({
+      person: fullPersonFactory.build(),
+    })
+  }
+
+  notMatched() {
+    return this.params({
+      status: 'notMatched',
+      booking: undefined,
+    })
+  }
+
+  unableToMatch() {
+    return this.notMatched().params({
+      status: 'unableToMatch',
+    })
+  }
+}
+
+export default PlacementRequestFactory.define(() => {
   const essentialCriteria = faker.helpers.arrayElements(placementCriteria)
   const desirableCriteria = essentialCriteria.filter(criteria => !essentialCriteria.includes(criteria))
   return {
     id: faker.string.uuid(),
-    gender: faker.helpers.arrayElement(['male', 'female']),
-    type: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap']),
+    gender: faker.helpers.arrayElement(['male', 'female']) as Gender,
+    type: faker.helpers.arrayElement(Object.keys(apTypeLabels)) as ApType,
     expectedArrival: DateFormats.dateObjToIsoDate(faker.date.soon()),
     duration: faker.number.int({ min: 1, max: 12 }),
     location: faker.helpers.arrayElement(postcodeAreas),
@@ -23,12 +55,12 @@ export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
     essentialCriteria,
     desirableCriteria,
     mentalHealthSupport: faker.datatype.boolean(),
-    person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
+    person: fullPersonFactory.build(),
     risks: risksFactory.build(),
     applicationId: faker.string.uuid(),
     assessmentId: faker.string.uuid(),
-    releaseType: faker.helpers.arrayElement(['licence', 'rotl', 'hdc', 'pss', 'in_community']),
-    status: faker.helpers.arrayElement(['notMatched', 'unableToMatch', 'matched']),
+    releaseType: faker.helpers.arrayElement(Object.keys(allReleaseTypes)) as ReleaseTypeOption,
+    status: 'matched' as PlacementRequestStatus,
     assessmentDecision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const]),
     applicationDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessmentDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
@@ -36,14 +68,13 @@ export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
     isParole: false,
     booking: bookingSummary.build(),
     isWithdrawn: false,
-    withdrawalReason: faker.helpers.arrayElement(['DuplicatePlacementRequest', undefined]),
-    requestType: faker.helpers.arrayElement(['parole', 'standardRelease', undefined]),
+    withdrawalReason: faker.helpers.arrayElement([
+      'DuplicatePlacementRequest',
+      undefined,
+    ]) as WithdrawPlacementRequestReason,
+    requestType: faker.helpers.arrayElement(['parole', 'standardRelease', undefined]) as PlacementRequestRequestType,
     notes: faker.helpers.arrayElement([faker.lorem.sentences(), undefined]),
   }
-})
-
-export const placementRequestWithFullPersonFactory = Factory.define<PlacementRequest>(() => {
-  return { ...placementRequestFactory.build(), person: fullPersonFactory.build() }
 })
 
 export const placementCriteria = Object.keys(placementCriteriaLabels) as Array<PlacementCriteria>

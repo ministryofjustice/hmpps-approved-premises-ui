@@ -2,7 +2,7 @@ import { Factory } from 'fishery'
 import { Cas1SpaceBookingSummary, PlacementRequestDetail } from '../../@types/shared'
 
 import cancellationFactory from './cancellation'
-import { placementRequestFactory } from './placementRequest'
+import placementRequestFactory from './placementRequest'
 import applicationFactory from './application'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import bookingSummaryFactory from './placementRequestBookingSummary'

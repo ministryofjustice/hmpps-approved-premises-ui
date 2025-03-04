@@ -4,7 +4,6 @@ import {
   bookingSummaryFactory,
   personFactory,
   placementRequestFactory,
-  placementRequestWithFullPersonFactory,
   restrictedPersonFactory,
 } from '../../testutils/factories'
 import {
@@ -40,7 +39,7 @@ describe('tableUtils', () => {
 
   describe('nameCell', () => {
     it('returns the name of the service user and a link with a placement request', () => {
-      const placementRequest = placementRequestWithFullPersonFactory.build()
+      const placementRequest = placementRequestFactory.withFullPerson().build()
 
       nameCell(placementRequest)
 
@@ -54,8 +53,9 @@ describe('tableUtils', () => {
     })
 
     it('returns the crn cell with no link if the person is a restrictedPerson', () => {
-      const restrictedPersonTask = placementRequestFactory.build()
-      restrictedPersonTask.person = restrictedPersonFactory.build()
+      const restrictedPersonTask = placementRequestFactory.build({
+        person: restrictedPersonFactory.build(),
+      })
 
       expect(nameCell(restrictedPersonTask)).toEqual({
         text: `LAO: ${restrictedPersonTask.person.crn}`,
@@ -63,8 +63,9 @@ describe('tableUtils', () => {
     })
 
     it('returns the persons name prefixed with "LAO: " if the person is a FullPerson and has the isRestricted flag', () => {
-      const restrictedPersonTask = placementRequestFactory.build()
-      restrictedPersonTask.person = personFactory.build({ isRestricted: true })
+      const restrictedPersonTask = placementRequestFactory.build({
+        person: personFactory.build({ isRestricted: true }),
+      })
 
       nameCell(restrictedPersonTask)
 
