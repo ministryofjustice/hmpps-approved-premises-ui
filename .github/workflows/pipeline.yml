@@ -246,7 +246,8 @@ jobs:
     name: "E2E Environment Tests 🧪"
     needs:
       - deploy_dev
-    runs-on: [self-hosted, hmpps-github-actions-runner]
+    # runs-on: [self-hosted, hmpps-github-actions-runner] TODO - reimplement this
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev/') || startsWith(github.head_ref, 'feature-dev/')
     strategy:
       fail-fast: false
