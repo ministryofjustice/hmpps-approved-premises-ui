@@ -31,30 +31,6 @@ describe('placement summary list', () => {
     })
   })
 
-  it('renders the actual arrival date for a current booking', () => {
-    const spaceBooking = cas1SpaceBookingSummaryFactory.current().build()
-    const placementRequestDetail = placementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
-
-    const result = placementSummaryList(placementRequestDetail)
-
-    expect(result.rows).toEqual(
-      expect.arrayContaining([
-        {
-          key: { text: 'Actual arrival date' },
-          value: { text: DateFormats.isoDateToUIDate(spaceBooking.actualArrivalDate) },
-        },
-      ]),
-    )
-    expect(result.rows).not.toEqual(
-      expect.arrayContaining([
-        {
-          key: { text: 'Expected arrival date' },
-          value: { text: DateFormats.isoDateToUIDate(spaceBooking.expectedArrivalDate) },
-        },
-      ]),
-    )
-  })
-
   it('does not render the delius event number if not available', () => {
     const spaceBooking = cas1SpaceBookingSummaryFactory.current().build({
       deliusEventNumber: undefined,

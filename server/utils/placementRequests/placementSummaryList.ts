@@ -12,9 +12,7 @@ export const placementSummaryList = (placementRequest: PlacementRequestDetail): 
       rows: [
         summaryListItem('Approved Premises', booking.premises.name),
         summaryListItem('Date of match', DateFormats.isoDateToUIDate(placementRequest.booking.createdAt)),
-        booking.actualArrivalDate
-          ? summaryListItem('Actual arrival date', DateFormats.isoDateToUIDate(booking.actualArrivalDate))
-          : summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(booking.expectedArrivalDate)),
+        summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(booking.expectedArrivalDate)),
         summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(booking.expectedDepartureDate)),
         summaryListItem('Status', statusTextMap[detailedStatus(booking)]),
         booking.deliusEventNumber && summaryListItem('Delius event number', booking.deliusEventNumber),
