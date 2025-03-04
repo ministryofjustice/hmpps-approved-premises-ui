@@ -148,8 +148,8 @@ export default class CheckYourAnswersPage extends ApplyPage {
             cy.wrap($items).should('have.length', acctAlerts.length)
             acctAlerts.forEach((acctAlert, i) => {
               cy.wrap($items[i]).within(() => {
-                this.assertDefinition('Alert type', String(acctAlert.alertId))
-                this.assertDefinition('ACCT description', acctAlert.comment)
+                this.assertDefinition('Alert type', String(acctAlert.alertTypeDescription))
+                this.assertDefinition('ACCT description', acctAlert.description)
                 this.assertDefinition('Date created', DateFormats.isoDateToUIDate(acctAlert.dateCreated))
                 this.assertDefinition('Expiry date', DateFormats.isoDateToUIDate(acctAlert.dateExpires))
               })

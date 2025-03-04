@@ -359,10 +359,10 @@ export default abstract class Page {
     cy.get('a').contains('ACCT').click()
     acctAlerts.forEach(acctAlert => {
       cy.get('tr')
-        .contains(`${acctAlert.alertId}`)
+        .contains(`${acctAlert.alertTypeDescription}`)
         .parent()
         .within(() => {
-          cy.get('td').eq(1).contains(acctAlert.comment)
+          cy.get('td').eq(1).contains(acctAlert.description)
           cy.get('td').eq(2).contains(DateFormats.isoDateToUIDate(acctAlert.dateCreated))
           cy.get('td')
             .eq(3)

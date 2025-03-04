@@ -66,30 +66,30 @@ describe('adjudicationResponse', () => {
 describe('acctAlertResponse', () => {
   it('returns a response for an ACCT Alert', () => {
     const acctAlert = acctAlertFactory.build({
-      alertId: 123,
-      comment: 'Some description',
+      alertTypeDescription: 'Some alert type',
+      description: 'Some description',
       dateCreated: '2022-01-01T10:00:00Z',
       dateExpires: '2022-01-09T10:00:00Z',
     })
 
     expect(acctAlertResponse(acctAlert)).toEqual({
-      'Alert type': 123,
+      'Alert type': 'Some alert type',
       'ACCT description': 'Some description',
       'Date created': DateFormats.isoDateToUIDate(acctAlert.dateCreated),
       'Expiry date': DateFormats.isoDateToUIDate(acctAlert.dateExpires),
     })
   })
 
-  it('returns an empty string for the comment if it is undefined', () => {
+  it('returns an empty string for the description if it is undefined', () => {
     const acctAlert = acctAlertFactory.build({
-      alertId: 123,
-      comment: undefined,
+      alertTypeDescription: 'Some alert',
+      description: undefined,
       dateCreated: '2022-01-01T10:00:00Z',
       dateExpires: '2022-01-09T10:00:00Z',
     })
 
     expect(acctAlertResponse(acctAlert)).toEqual({
-      'Alert type': 123,
+      'Alert type': 'Some alert',
       'Date created': DateFormats.isoDateToUIDate(acctAlert.dateCreated),
       'Expiry date': DateFormats.isoDateToUIDate(acctAlert.dateExpires),
       'ACCT description': '',
