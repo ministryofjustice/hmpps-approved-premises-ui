@@ -268,6 +268,9 @@ jobs:
       - name: Install Playwright
         run: npx playwright install
 
+      - name: Install Playwright Dependencies
+        run: npx playwright install-deps
+
       - name: Run E2E Tests
         env:
           HMPPS_AUTH_USERNAME: ${{ secrets[format('HMPPS_AUTH_USERNAME_{0}', matrix.shard)] }}
