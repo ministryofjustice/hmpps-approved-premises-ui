@@ -14,7 +14,7 @@ import { DateFormats, todayAtMidnight } from '../dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from '../utils'
 import { displayName } from '../personUtils'
-import { convertObjectsToRadioItems } from '../formUtils'
+import { convertObjectsToRadioItems, summaryListItem } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
 import { bookingActions, v1BookingActions, v2BookingActions } from './bookingActions'
 import { EntityType } from '../../@types/ui'
@@ -34,38 +34,10 @@ export const bookingSummaryList = (booking?: PlacementRequestBookingSummary): Su
   return booking
     ? {
         rows: [
-          {
-            key: {
-              text: 'Approved Premises',
-            },
-            value: {
-              text: booking.premisesName,
-            },
-          },
-          {
-            key: {
-              text: 'Date of match',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(booking.createdAt),
-            },
-          },
-          {
-            key: {
-              text: 'Expected arrival date',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(booking.arrivalDate),
-            },
-          },
-          {
-            key: {
-              text: 'Expected departure date',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(booking.departureDate),
-            },
-          },
+          summaryListItem('Approved Premises', booking.premisesName),
+          summaryListItem('Date of match', DateFormats.isoDateToUIDate(booking.createdAt)),
+          summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(booking.arrivalDate)),
+          summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(booking.departureDate)),
         ],
       }
     : undefined

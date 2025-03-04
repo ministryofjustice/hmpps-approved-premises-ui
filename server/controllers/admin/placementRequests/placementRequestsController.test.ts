@@ -8,6 +8,7 @@ import { userDetailsFactory } from '../../../testutils/factories'
 import placementRequestDetail from '../../../testutils/factories/placementRequestDetail'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { bookingSummaryList } from '../../../utils/bookings'
+import { placementSummaryList } from '../../../utils/placementRequests/placementSummaryList'
 
 jest.mock('../../../utils/applications/utils')
 jest.mock('../../../utils/applications/getResponses')
@@ -31,7 +32,7 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('show', () => {
-    it('should render the placement request show template', async () => {
+    it('should render the placement request template with a space booking', async () => {
       const placementRequest = placementRequestDetail.build()
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
 
@@ -44,9 +45,27 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/show', {
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
-        bookingSummaryList: bookingSummaryList(placementRequest.booking),
+        bookingSummaryList: placementSummaryList(placementRequest),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, 'some-uuid')
+    })
+
+    it('should render the placement request template with a legacy booking', async () => {
+      const placementRequest = placementRequestDetail.withLegacyBooking().build()
+      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
+
+      const requestHandler = placementRequestsController.show()
+
+      request.params.id = 'some-uuid'
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'admin/placementRequests/show',
+        expect.objectContaining({
+          bookingSummaryList: bookingSummaryList(placementRequest.booking),
+        }),
+      )
     })
   })
 })

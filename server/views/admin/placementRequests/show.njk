@@ -72,12 +72,12 @@
 
                     {{ govukSummaryList(placementRequestSummaryList) }}
 
-                    {% if placementRequest.status === 'matched' %}
+                    {% if bookingSummaryList %}
                         <h2 class="govuk-heading-l">Booked placement</h2>
 
                         <h3 class="govuk-heading-m">Placement information</h3>
 
-                        {{ govukSummaryList(BookingUtils.bookingSummaryList(placementRequest.booking)) }}
+                        {{ govukSummaryList(bookingSummaryList) }}
                     {% endif %}
                 </div>
             </div>
