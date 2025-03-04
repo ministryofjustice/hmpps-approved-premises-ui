@@ -23,66 +23,53 @@
 {% block content %}
     {% include "../../_messages.njk" %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-width-container">
-            <div class="govuk-grid-column-full">
-                {{ mojIdentityBar(PlacementRequestUtils.adminIdentityBar(placementRequest, user)) }}
-            </div>
-        </div>
-        <div class="govuk-grid-row">
-            <div class="govuk-width-container">
-                <div class="govuk-grid-column-full">
-                    {% if placementRequest.isParole %}
-                        {% set html %}
-                            <p class="govuk-notification-banner__heading">
-                                Parole board directed release
-                            </p>
-                            <p class="govuk-body">
-                                The person's arrival date has been estimated
-                                as {{ formatDate(placementRequest.expectedArrival) }}.
-                                This is 6 weeks after the parole board's date of decision.
-                            </p>
-                            {% if placementRequest.booking %}
-                                <p class="govuk-body">
-                                    If needed, you can <a
-                                            href="{{ paths.bookings.dateChanges.new({ premisesId: placementRequest.booking.premisesId, bookingId: placementRequest.booking.id }) }}">change
-                                        the arrival date</a> in the Approved Premises service.
-                                </p>
-                            {% endif %}
+    {{ mojIdentityBar(adminIdentityBar) }}
 
-                        {% endset %}
+    {% if placementRequest.isParole %}
+        {% set html %}
+            <p class="govuk-notification-banner__heading">
+                Parole board directed release
+            </p>
+            <p class="govuk-body">
+                The person's arrival date has been estimated
+                as {{ formatDate(placementRequest.expectedArrival) }}.
+                This is 6 weeks after the parole board's date of decision.
+            </p>
+            {% if placementRequest.booking %}
+                <p class="govuk-body">
+                    If needed, you can <a
+                            href="{{ paths.bookings.dateChanges.new({ premisesId: placementRequest.booking.premisesId, bookingId: placementRequest.booking.id }) }}">change
+                        the arrival date</a> in the Approved Premises service.
+                </p>
+            {% endif %}
 
-                        {{ govukNotificationBanner({
-                            html: html
-                        }) }}
-                    {% endif %}
+        {% endset %}
 
-                    <ul class="govuk-list govuk-!-padding-top-3 govuk-!-padding-bottom-3">
-                        <li>
-                            <a href="{{ paths.applications.show({id: placementRequest.applicationId}) }}">View
-                                application</a>
-                            <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.applicationDate) }})</span>
-                        </li>
-                        <li>
-                            <a href="{{ paths.assessments.show({id: placementRequest.assessmentId}) }}">View
-                                assessment</a>
-                            <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.assessmentDate) }})</span>
-                        </li>
-                    </ul>
+        {{ govukNotificationBanner({
+            html: html
+        }) }}
+    {% endif %}
 
-                    {{ govukSummaryList(placementRequestSummaryList) }}
+    <ul class="govuk-list govuk-!-padding-top-3 govuk-!-padding-bottom-3">
+        <li>
+            <a href="{{ paths.applications.show({id: placementRequest.applicationId}) }}">View application</a>
+            <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.applicationDate) }})</span>
+        </li>
+        <li>
+            <a href="{{ paths.assessments.show({id: placementRequest.assessmentId}) }}">View assessment</a>
+            <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.assessmentDate) }})</span>
+        </li>
+    </ul>
 
-                    {% if bookingSummaryList %}
-                        <h2 class="govuk-heading-l">Booked placement</h2>
+    {{ govukSummaryList(placementRequestSummaryList) }}
 
-                        <h3 class="govuk-heading-m">Placement information</h3>
+    {% if bookingSummaryList %}
+        <h2 class="govuk-heading-l">Booked placement</h2>
 
-                        {{ govukSummaryList(bookingSummaryList) }}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
+        <h3 class="govuk-heading-m">Placement information</h3>
+
+        {{ govukSummaryList(bookingSummaryList) }}
+    {% endif %}
 {% endblock %}
 
 {% block extraScripts %}

@@ -9,6 +9,7 @@ import placementRequestDetail from '../../../testutils/factories/placementReques
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { bookingSummaryList } from '../../../utils/bookings'
 import { placementSummaryList } from '../../../utils/placementRequests/placementSummaryList'
+import { adminIdentityBar } from '../../../utils/placementRequests'
 
 jest.mock('../../../utils/applications/utils')
 jest.mock('../../../utils/applications/getResponses')
@@ -43,6 +44,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/show', {
+        adminIdentityBar: adminIdentityBar(placementRequest, response.locals.user),
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
         bookingSummaryList: placementSummaryList(placementRequest),
