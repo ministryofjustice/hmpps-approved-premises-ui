@@ -10,14 +10,14 @@ import {
 import { SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
-import { occupancyCriteriaMap } from '../match/occupancy'
 import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
-import { laoSummaryName } from '../personUtils'
+import { displayName } from '../personUtils'
 import { joinWithCommas, pluralize } from '../utils'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import config from '../../config'
+import { roomCharacteristicMap } from '../characteristicsUtils'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -34,9 +34,23 @@ type CalendarMonth = {
   days: Array<CalendarDay>
 }
 export type Calendar = Array<CalendarMonth>
+const statusMap: Record<string, CalendarDayStatus> = { '-1': 'overbooked', '0': 'full', '1': 'available' }
+
+export const dayStatusFromDayCapacity = ({
+  bookingCount,
+  availableBedCount,
+  characteristicAvailability,
+}: Cas1PremiseCapacityForDay): CalendarDayStatus => {
+  let dayStatus: CalendarDayStatus = statusMap[Math.sign(availableBedCount - bookingCount)]
+  characteristicAvailability.forEach(({ availableBedsCount, bookingsCount }) => {
+    dayStatus = bookingsCount > availableBedsCount ? 'overbooked' : dayStatus
+  })
+  return dayStatus
+}
 
 export const occupancyCalendar = (capacity: Array<Cas1PremiseCapacityForDay>, premisesId: string): Calendar => {
-  return capacity.reduce<Calendar>((calendar, { availableBedCount, bookingCount, date }) => {
+  return capacity.reduce<Calendar>((calendar, dayCapacity) => {
+    const { availableBedCount, bookingCount, date } = dayCapacity
     const monthAndYear = DateFormats.isoDateToMonthAndYear(date)
     let currentMonth = calendar.find(month => month.name === monthAndYear)
 
@@ -48,14 +62,10 @@ export const occupancyCalendar = (capacity: Array<Cas1PremiseCapacityForDay>, pr
       calendar.push(currentMonth)
     }
 
-    const availability = availableBedCount - bookingCount
-    const statusMap: Record<string, CalendarDayStatus> = { '-1': 'overbooked', '0': 'full', '1': 'available' }
-    const status: CalendarDayStatus = statusMap[String(Math.sign(availability))]
-
     const calendarDay: CalendarDay = {
       name: DateFormats.isoDateToUIDate(date, { format: 'longNoYear' }),
-      status,
-      availability,
+      status: dayStatusFromDayCapacity(dayCapacity),
+      availability: availableBedCount - bookingCount,
       booked: bookingCount,
       link: managePaths.premises.occupancy.day({ premisesId, date }),
     }
@@ -95,7 +105,7 @@ export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): stri
   if (bookingCount > availableBedCount) messages.push('is overbooked')
   if (overbookedCriteria.length)
     messages.push(
-      `is overbooked on: ${joinWithCommas(overbookedCriteria.map(characteristic => occupancyCriteriaMap[characteristic].toLowerCase()))}`,
+      `is overbooked on: ${joinWithCommas(overbookedCriteria.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase()))}`,
     )
   return messages.length ? `This AP ${messages.join(' and ')}.` : ''
 }
@@ -245,14 +255,14 @@ export const placementTableRows = (
           `<a href="${managePaths.premises.placements.show({
             premisesId,
             placementId: id,
-          })}" data-cy-id="${id}">${laoSummaryName(person)}, ${person.crn}</a>`,
+          })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
         ),
         tier: htmlValue(getTierOrBlank(tier)),
         canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
         canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
         releaseType: textValue(releaseType),
         spaceType: itemListHtml(
-          essentialCharacteristics.map(characteristic => occupancyCriteriaMap[characteristic]).filter(Boolean),
+          essentialCharacteristics.map(characteristic => roomCharacteristicMap[characteristic]).filter(Boolean),
         ),
       }
       return placementColumnMap.map(({ fieldName }: ColumnDefinition<PlacementColumnField>) => fieldValues[fieldName])
@@ -274,7 +284,7 @@ export const outOfServiceBedTableRows = (
         })}" data-cy-id="${id}">${roomName}</a>`,
       ),
       characteristics: itemListHtml(
-        characteristics.map(characteristic => occupancyCriteriaMap[characteristic]).filter(Boolean),
+        characteristics.map(characteristic => roomCharacteristicMap[characteristic]).filter(Boolean),
       ),
       startDate: textValue(DateFormats.isoDateToUIDate(startDate, { format: 'short' })),
       endDate: textValue(DateFormats.isoDateToUIDate(endDate, { format: 'short' })),
@@ -292,7 +302,7 @@ export const generateCharacteristicsSummary = (
 ) => {
   return characteristicsArray?.length
     ? ` ${verb}: ${joinWithCommas(
-        characteristicsArray.map(characteristic => occupancyCriteriaMap[characteristic].toLowerCase()),
+        characteristicsArray.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase()),
       )}`
     : ''
 }

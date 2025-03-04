@@ -21,16 +21,14 @@ import {
   preferredPostcodeRow,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
-  requirementsHtmlString,
   spaceBookingConfirmationSummaryListRows,
   startDateObjFromParams,
   summaryCardRows,
 } from '.'
-import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { occupancyCriteriaMap } from './occupancy'
+import { displayName } from '../personUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -233,19 +231,19 @@ describe('matchUtils', () => {
   describe('spaceBookingConfirmationSummaryListRows', () => {
     const placementRequest = placementRequestDetailFactory.build()
     const premises = cas1PremisesFactory.build()
-    const arrivalDate = '2025-05-23'
-    const departureDate = '2025-07-18'
+    const expectedArrivalDate = '2025-09-23'
+    const expectedDepartureDate = '2025-11-18'
     const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
 
     it('returns summary list items for the space booking confirmation screen', () => {
       expect(
-        spaceBookingConfirmationSummaryListRows(
+        spaceBookingConfirmationSummaryListRows({
           premises,
-          arrivalDate,
-          departureDate,
+          expectedArrivalDate,
+          expectedDepartureDate,
           criteria,
-          placementRequest.releaseType,
-        ),
+          releaseType: placementRequest.releaseType,
+        }),
       ).toEqual([
         { key: { text: 'Approved Premises' }, value: { text: premises.name } },
         { key: { text: 'Address' }, value: { text: `${premises.fullAddress}, ${premises.postcode}` } },
@@ -255,17 +253,45 @@ describe('matchUtils', () => {
             html: '<ul class="govuk-list govuk-list--bullet"><li>En-suite bathroom</li><li>Arson offences</li></ul>',
           },
         },
-        { key: { text: 'Arrival date' }, value: { text: 'Fri 23 May 2025' } },
-        { key: { text: 'Departure date' }, value: { text: 'Fri 18 Jul 2025' } },
+        { key: { text: 'Expected arrival date' }, value: { text: 'Tue 23 Sep 2025' } },
+        { key: { text: 'Expected departure date' }, value: { text: 'Tue 18 Nov 2025' } },
         { key: { text: 'Length of stay' }, value: { text: '8 weeks' } },
         { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
       ])
     })
 
     it('returns summary list items with no release type for the space booking confirmation screen', () => {
-      const rows = spaceBookingConfirmationSummaryListRows(premises, arrivalDate, departureDate, criteria)
+      const rows = spaceBookingConfirmationSummaryListRows({
+        premises,
+        expectedArrivalDate,
+        expectedDepartureDate,
+        criteria,
+      })
 
       expect(rows).toHaveLength(6)
+      expect(rows).toEqual(expect.not.arrayContaining([expect.objectContaining({ key: { text: 'Release type' } })]))
+    })
+
+    it('returns summary list items with the actual arrival date instead if one is provided and adjusts the length of stay accordingly', () => {
+      const rows = spaceBookingConfirmationSummaryListRows({
+        premises,
+        expectedArrivalDate,
+        expectedDepartureDate,
+        criteria,
+        releaseType: placementRequest.releaseType,
+        actualArrivalDate: '2025-04-25',
+      })
+
+      expect(rows).toHaveLength(7)
+      expect(rows).toEqual(
+        expect.arrayContaining([
+          { key: { text: 'Actual arrival date' }, value: { text: 'Fri 25 Apr 2025' } },
+          { key: { text: 'Length of stay' }, value: { text: '8 weeks' } },
+        ]),
+      )
+      expect(rows).toEqual(
+        expect.not.arrayContaining([{ key: { text: 'Arrival date' }, value: { text: 'Fri 23 May 2025' } }]),
+      )
     })
   })
 
@@ -286,38 +312,6 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('requirementsHtmlString', () => {
-    const placementRequest = placementRequestDetailFactory.build({
-      essentialCriteria: ['hasBrailleSignage', 'hasHearingLoop', 'isStepFreeDesignated'],
-      desirableCriteria: ['isArsonDesignated'],
-    })
-
-    it('should return HTML lists of the given requirements', () => {
-      expect(requirementsHtmlString(placementRequest.essentialCriteria)).toMatchStringIgnoringWhitespace(`
-        <ul class="govuk-list govuk-list--bullet">
-          <li>${placementCriteriaLabels.isStepFreeDesignated}</li>
-          <li>${placementCriteriaLabels.hasBrailleSignage}</li>
-          <li>${placementCriteriaLabels.hasHearingLoop}</li>
-        </ul>
-      `)
-      expect(requirementsHtmlString(placementRequest.desirableCriteria)).toMatchStringIgnoringWhitespace(`
-        <ul class="govuk-list govuk-list--bullet">
-          <li>${placementCriteriaLabels.isArsonDesignated}</li>
-        </ul>
-      `)
-    })
-
-    it('should only render requirements that exist in the provided labels', () => {
-      const result = requirementsHtmlString(placementRequest.essentialCriteria, occupancyCriteriaMap)
-
-      expect(result).toMatchStringIgnoringWhitespace(`
-        <ul class="govuk-list govuk-list--bullet">
-          <li>${occupancyCriteriaMap.isStepFreeDesignated}</li>
-        </ul>
-      `)
-    })
-  })
-
   describe('keyDetails', () => {
     it('should return the key details for a placement request', () => {
       const person = personFactory.build({ type: 'FullPerson' })
@@ -328,7 +322,7 @@ describe('matchUtils', () => {
       expect(details).toEqual({
         header: {
           key: 'Name',
-          value: (placementRequest.person as FullPerson).name,
+          value: displayName(placementRequest.person),
           showKey: false,
         },
         items: [

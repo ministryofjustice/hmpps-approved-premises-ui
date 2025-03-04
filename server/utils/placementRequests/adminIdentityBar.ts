@@ -62,7 +62,7 @@ export const adminActions = (
       text: 'Withdraw request for placement',
     },
     {
-      href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequest.id }),
+      href: matchPaths.placementRequests.bookingNotMade.confirm({ id: placementRequest.id }),
       text: 'Mark as unable to match',
     },
   ]

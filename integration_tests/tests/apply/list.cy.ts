@@ -2,8 +2,8 @@ import { ListPage, StartPage } from '../../pages/apply'
 
 import {
   applicationSummaryFactory,
+  personFactory,
   placementApplicationFactory,
-  restrictedPersonFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
@@ -68,7 +68,7 @@ context('Applications dashboard', () => {
     // And there are applications in the database
     const inProgressApplications = applicationSummaryFactory.buildList(1, {
       status: 'started',
-      person: restrictedPersonFactory.build(),
+      person: personFactory.build({ isRestricted: true }),
     })
     const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
     const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {

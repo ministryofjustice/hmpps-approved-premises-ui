@@ -1,7 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
-import { differenceInDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
   cas1PremiseCapacityFactory,
@@ -17,11 +16,12 @@ import adminPaths from '../../../../paths/admin'
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
-import { durationSelectOptions, occupancyCriteriaMap } from '../../../../utils/match/occupancy'
+import { durationSelectOptions } from '../../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
 import * as validationUtils from '../../../../utils/validation'
 import { ValidationError } from '../../../../utils/errors'
+import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../../utils/characteristicsUtils'
 
 describe('changesController', () => {
   const token = 'TEST_TOKEN'
@@ -36,7 +36,9 @@ describe('changesController', () => {
   const changesController = new ChangesController(placementService, premisesService)
 
   const premises = cas1PremisesFactory.build()
-  const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
+  const placement = cas1SpaceBookingFactory
+    .upcoming()
+    .build({ premises, expectedArrivalDate: '2025-10-02', expectedDepartureDate: '2025-11-02' })
   const capacity = cas1PremiseCapacityFactory.build()
   const params = { premisesId: premises.id, placementId: placement.id }
   const viewUrl = managePaths.premises.placements.changes.new(params)
@@ -60,13 +62,13 @@ describe('changesController', () => {
       const requestHandler = changesController.new()
       await requestHandler(request, response, next)
 
-      const expectedCriteria = filterRoomLevelCriteria(placement.requirements.essentialCharacteristics)
+      const expectedCriteria = filterRoomLevelCriteria(placement.characteristics)
       const expectedPlaceholderDayUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-        id: placement.requestForPlacementId,
+        id: placement.placementRequestId,
         premisesId: premises.id,
         date: ':date',
       })}?${createQueryString({ criteria: expectedCriteria, excludeSpaceBookingId: placement.id })}`
-      const expectedDuration = differenceInDays(placement.expectedDepartureDate, placement.expectedArrivalDate)
+      const expectedDuration = 31
 
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
@@ -75,15 +77,15 @@ describe('changesController', () => {
         excludeSpaceBookingId: placement.id,
       })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
-        backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
+        backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
         pageHeading: 'Change placement',
         placement,
-        selectedCriteria: expectedCriteria.map(criterion => occupancyCriteriaMap[criterion]).join(', '),
-        arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
-        departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
+        selectedCriteria: roomCharacteristicsInlineList(expectedCriteria, 'no room criteria'),
+        arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Current departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         placementSummary: placementOverviewSummary(placement),
         durationOptions: durationSelectOptions(expectedDuration),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, expectedCriteria),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, expectedCriteria),
         startDate: placement.expectedArrivalDate,
         ...DateFormats.isoDateToDateInputs(placement.expectedArrivalDate, 'startDate'),
         durationDays: expectedDuration,
@@ -111,7 +113,7 @@ describe('changesController', () => {
         await requestHandler({ ...request, query }, response, next)
 
         const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-          id: placement.requestForPlacementId,
+          id: placement.placementRequestId,
           premisesId: premises.id,
           date: ':date',
         })}?${createQueryString({ criteria: filterCriteria, excludeSpaceBookingId: placement.id })}`
@@ -126,7 +128,7 @@ describe('changesController', () => {
             summary: occupancySummary(capacity.capacity, filterCriteria),
             calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria),
             durationOptions: durationSelectOptions(Number(query.durationDays)),
-            criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, filterCriteria),
+            criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, filterCriteria),
             'startDate-day': '12',
             'startDate-month': '5',
             'startDate-year': '2025',
@@ -150,7 +152,7 @@ describe('changesController', () => {
             summary: undefined,
             calendar: undefined,
             durationOptions: durationSelectOptions(Number(query.durationDays)),
-            criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, []),
+            criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, []),
             errorSummary: [{ text: 'Enter a valid date', href: '#startDate' }],
             errors: {
               startDate: {
@@ -343,12 +345,12 @@ describe('changesController', () => {
         pageHeading: 'Confirm booking changes',
         backlink: expectedBackLink,
         placement,
-        summaryListRows: spaceBookingConfirmationSummaryListRows(
+        summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
-          query.arrivalDate,
-          query.departureDate,
-          query.criteria ? makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.criteria) : [],
-        ),
+          expectedArrivalDate: query.arrivalDate,
+          expectedDepartureDate: query.departureDate,
+          criteria: query.criteria ? makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.criteria) : [],
+        }),
         arrivalDate: query.arrivalDate,
         departureDate: query.departureDate,
         criteria: query.criteria,
@@ -376,7 +378,7 @@ describe('changesController', () => {
         departureDate: '2025-07-05',
         characteristics: ['isSuitedForSexOffenders', 'isStepFreeDesignated'],
       }
-      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId })
+      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({ id: placement.placementRequestId })
 
       expect(placementService.updatePlacement).toHaveBeenCalledWith(
         token,

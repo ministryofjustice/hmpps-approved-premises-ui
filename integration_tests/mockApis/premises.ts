@@ -3,7 +3,6 @@ import type {
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1PremisesDaySummary,
-  ExtendedPremisesSummary,
   ApprovedPremisesSummary as PremisesSummary,
   StaffMember,
 } from '@approved-premises/api'
@@ -41,21 +40,6 @@ const stubCas1AllPremises = (premises: Array<Cas1PremisesBasicSummary>) => {
     },
   })
 }
-
-const stubPremisesSummary = (premises: ExtendedPremisesSummary) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: paths.premises.summary({ premisesId: premises.id }),
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: premises,
-    },
-  })
 
 const stubSinglePremises = (premises: Cas1Premises) =>
   stubFor({
@@ -144,7 +128,6 @@ const verifyPremisesDaySummaryRequest = async ({ premisesId, date }: { premisesI
 export default {
   stubAllPremises,
   stubCas1AllPremises,
-  stubPremisesSummary,
   stubSinglePremises,
   stubPremisesStaffMembers,
   stubPremiseCapacity,

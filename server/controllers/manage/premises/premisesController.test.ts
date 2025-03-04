@@ -106,7 +106,7 @@ describe('V2PremisesController', () => {
         expect.objectContaining({
           premises: premisesSummary,
           showPlacements: true,
-          sortBy: 'canonicalDepartureDate',
+          sortBy: 'personName',
           sortDirection: 'asc',
           activeTab: 'current',
           pageNumber: 1,
@@ -124,7 +124,7 @@ describe('V2PremisesController', () => {
         status: 'current',
         page: 1,
         perPage: 2000,
-        sortBy: 'canonicalDepartureDate',
+        sortBy: 'personName',
         sortDirection: 'asc',
       })
     })
@@ -278,7 +278,7 @@ describe('V2PremisesController', () => {
         expect.objectContaining({
           premises: premisesSummary,
           showPlacements: false,
-          sortBy: 'canonicalDepartureDate',
+          sortBy: 'personName',
           sortDirection: 'asc',
           activeTab: 'current',
           pageNumber: undefined,

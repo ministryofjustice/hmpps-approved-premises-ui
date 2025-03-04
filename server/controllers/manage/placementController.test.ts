@@ -19,6 +19,8 @@ import type {
 } from '../../services'
 import PlacementController from './placementController'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
+import { adminSummary } from '../../utils/placementRequests'
+import { matchingInformationSummaryRows } from '../../utils/placementRequests/matchingInformationSummaryList'
 
 describe('placementController', () => {
   const token = 'TEST_TOKEN'
@@ -54,12 +56,12 @@ describe('placementController', () => {
       assessmentId: assessment.id,
     })
     const timeLine = cas1TimelineEventFactory.buildList(10)
-    const placement = cas1SpaceBookingFactory.build({
+    const placement = cas1SpaceBookingFactory.upcoming().build({
       applicationId: application.id,
       assessmentId: offlineApplication ? undefined : assessment.id,
-      requestForPlacementId: offlineApplication ? undefined : placementRequestDetail.id,
-      canonicalArrivalDate: '2024-11-16',
-      canonicalDepartureDate: '2025-03-26',
+      placementRequestId: offlineApplication ? undefined : placementRequestDetail.id,
+      expectedArrivalDate: '2024-11-16',
+      expectedDepartureDate: '2025-03-26',
     })
     applicationService.findApplication.mockResolvedValue(application)
     assessmentService.findAssessment.mockResolvedValue(assessment)
@@ -159,7 +161,10 @@ describe('placementController', () => {
         'manage/premises/placements/show',
         expect.objectContaining({
           placement,
-          placementRequestDetail,
+          placementRequestSummaryRows: [
+            ...adminSummary(placementRequestDetail).rows,
+            ...matchingInformationSummaryRows(placementRequestDetail),
+          ],
         }),
       )
 

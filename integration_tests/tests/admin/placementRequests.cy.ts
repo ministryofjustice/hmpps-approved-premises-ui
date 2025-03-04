@@ -323,7 +323,7 @@ context('Placement Requests', () => {
     })
     cy.task('stubBookingGet', {
       premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
-      booking: matchedPlacementRequestWithLegacyBooking.booking,
+      booking: bookingFactory.build({ id: matchedPlacementRequestWithLegacyBooking.booking.id }),
     })
 
     // When I visit the tasks dashboard
@@ -376,7 +376,7 @@ context('Placement Requests', () => {
     })
     cy.task('stubBookingGet', {
       premisesId: matchedPlacementRequest.booking.premisesId,
-      booking: matchedPlacementRequest.booking,
+      booking: bookingFactory.build({ id: matchedPlacementRequest.booking.id }),
     })
     cy.task('stubCancellationReferenceData')
     const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
@@ -498,7 +498,7 @@ context('Placement Requests', () => {
     unableToMatchConfirmationPage.clickSubmit()
 
     // Then I should see a confirmation message
-    showPage.shouldShowBanner('Application has been marked unable to match')
+    showPage.shouldShowBanner('Placement request has been marked as unable to match')
 
     // And the placement should have been marked unable to match in the API
     cy.task('verifyPlacementRequestedMarkedUnableToMatch', unmatchedPlacementRequest).then(requests => {

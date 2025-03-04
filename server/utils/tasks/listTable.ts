@@ -1,8 +1,6 @@
 import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import {
   AssessmentDecision,
-  FullPersonSummary,
-  PersonSummary,
   PlacementApplicationDecision,
   SortDirection,
   Task,
@@ -16,6 +14,7 @@ import { daysUntilDueCell } from '../tableUtils'
 import { DateFormats } from '../dateUtils'
 
 import { TaskStatusTag } from './statusTag'
+import { displayName } from '../personUtils'
 
 const statusCell = (task: Task): TableCell => ({
   html: new TaskStatusTag(task.status).html(),
@@ -75,22 +74,9 @@ const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name,
 })
 
-const getPersonName = (personSummary: PersonSummary): string => {
-  switch (personSummary.personType) {
-    case 'FullPersonSummary':
-      return (personSummary as FullPersonSummary).name
-    case 'RestrictedPersonSummary':
-      return `LAO CRN: ${personSummary.crn}`
-    case 'UnknownPersonSummary':
-      return `Not Found CRN: ${personSummary.crn}`
-    default:
-      return ''
-  }
-}
-
 const nameAnchorCell = (task: Task): TableCell => ({
   html: linkTo(paths.tasks.show(taskParams(task)), {
-    text: getPersonName(task.personSummary),
+    text: displayName(task.personSummary, { showCrn: true }),
     attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
   }),
 })

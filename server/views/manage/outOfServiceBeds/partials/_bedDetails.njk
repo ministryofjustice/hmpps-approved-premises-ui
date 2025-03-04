@@ -1,13 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% macro outOfServiceBedDetails(outOfServiceBed, characteristics)%}
-  {% set characteristicsHtml%}
-  <ul>
-    {% for translatedCharacteristicName in characteristics %}
-      <li>{{translatedCharacteristicName}}</li>
-    {% endfor %}
-  </ul>
-  {%endset%}
+{% macro outOfServiceBedDetails(outOfServiceBed, characteristicsHtml)%}
+
 
   {{
         govukSummaryList({

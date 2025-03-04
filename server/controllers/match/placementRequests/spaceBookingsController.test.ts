@@ -66,13 +66,13 @@ describe('SpaceBookingsController', () => {
         submitLink: matchPaths.v2Match.placementRequests.spaceBookings.create(params),
         placementRequest: placementRequestDetail,
         premises,
-        summaryListRows: spaceBookingConfirmationSummaryListRows(
+        summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
-          searchState.arrivalDate,
-          searchState.departureDate,
-          searchState.roomCriteria,
-          placementRequestDetail.releaseType,
-        ),
+          expectedArrivalDate: searchState.arrivalDate,
+          expectedDepartureDate: searchState.departureDate,
+          criteria: searchState.roomCriteria,
+          releaseType: placementRequestDetail.releaseType,
+        }),
         errorSummary: [],
         errors: {},
       })
@@ -111,9 +111,7 @@ describe('SpaceBookingsController', () => {
         premisesId: premises.id,
         arrivalDate: searchState.arrivalDate,
         departureDate: searchState.departureDate,
-        requirements: {
-          essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        },
+        characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
       }
       const spaceBooking = cas1SpaceBookingFactory.build()
 

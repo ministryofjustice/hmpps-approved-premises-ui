@@ -86,9 +86,8 @@
             attributes: {
                 'data-cy-section': "placement-request-summary"
             },
-            rows:PlacementRequestUtils.adminSummary(placementRequestDetail).rows
+            rows:placementRequestSummaryRows
         }) }}
-        {{ govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequestDetail)) }}
 
     {% else %}
 
@@ -112,6 +111,7 @@
 {% endblock %}
 
 {% block extraScripts %}
+    <script type="text/javascript" src="/assets/js/linkDebounce.js"></script>
     <script type="text/javascript" nonce="{{ cspNonce }}">
       const container = $('.moj-button-menu')
       if (container?.length) {

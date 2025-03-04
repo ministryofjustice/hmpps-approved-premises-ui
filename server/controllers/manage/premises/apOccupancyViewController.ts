@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import { ObjectWithDateParts } from '@approved-premises/ui'
 import { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
-import { PremisesService } from '../../../services'
+import { PremisesService, SessionService } from '../../../services'
 
 import paths from '../../../paths/manage'
 import {
@@ -26,12 +26,15 @@ import { placementDates } from '../../../utils/match'
 import { fetchErrorsAndUserInput, generateErrorMessages, generateErrorSummary } from '../../../utils/validation'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
-import { occupancyCriteriaMap } from '../../../utils/match/occupancy'
 import { createQueryString, makeArrayOfType } from '../../../utils/utils'
 import config from '../../../config'
+import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 export default class ApOccupancyViewController {
-  constructor(private readonly premisesService: PremisesService) {}
+  constructor(
+    private readonly premisesService: PremisesService,
+    private readonly sessionService: SessionService,
+  ) {}
 
   view(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -57,7 +60,7 @@ export default class ApOccupancyViewController {
       const premises = await this.premisesService.find(req.user.token, premisesId)
       let calendar: Calendar = []
       if (!errorSummary.length) {
-        const capacityDates = placementDates(String(startDate), String(durationDays))
+        const capacityDates = placementDates(String(startDate), parseInt(String(durationDays), 10) - 1)
         const capacity = await this.premisesService.getCapacity(token, premisesId, {
           startDate: capacityDates.startDate,
           endDate: capacityDates.endDate,
@@ -120,7 +123,9 @@ export default class ApOccupancyViewController {
       return res.render('manage/premises/occupancy/dayView', {
         premises,
         pageHeading: DateFormats.isoDateToUIDate(daySummary.forDate),
-        backLink: paths.premises.occupancy.view({ premisesId }),
+        backLink: this.sessionService.getPageBackLink(paths.premises.placements.show.pattern, req, [
+          paths.premises.occupancy.view.pattern,
+        ]),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
         daySummaryRows: daySummaryRows(daySummary, null, config.flags.pocEnabled ? 'singleRow' : 'none'),
@@ -132,7 +137,7 @@ export default class ApOccupancyViewController {
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
         criteriaOptions: config.flags.pocEnabled
           ? null
-          : convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, characteristicsArray),
+          : convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, characteristicsArray),
       })
     }
   }

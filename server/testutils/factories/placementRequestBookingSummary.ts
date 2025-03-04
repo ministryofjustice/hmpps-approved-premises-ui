@@ -2,11 +2,11 @@ import { Factory } from 'fishery'
 
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
-import type { Cas1SpaceBooking, PlacementRequestBookingSummary } from '@approved-premises/api'
+import type { Cas1SpaceBooking, Cas1SpaceBookingSummary, PlacementRequestBookingSummary } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 class BookingSummaryFactory extends Factory<PlacementRequestBookingSummary> {
-  fromSpaceBooking(spaceBooking: Cas1SpaceBooking) {
+  fromSpaceBooking(spaceBooking: Cas1SpaceBooking | Cas1SpaceBookingSummary) {
     return this.params({
       id: spaceBooking.id,
       premisesId: spaceBooking.premises.id,

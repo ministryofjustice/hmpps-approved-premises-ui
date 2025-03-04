@@ -3,7 +3,8 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { Cas1NewSpaceBooking } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import spaceBookingRequirementsFactory from './spaceBookingRequirements'
+import { filterOutAPTypes } from '../../utils/match'
+import { placementCriteria } from './placementRequest'
 
 export default Factory.define<Cas1NewSpaceBooking>(() => {
   const startDate = faker.date.soon()
@@ -12,6 +13,6 @@ export default Factory.define<Cas1NewSpaceBooking>(() => {
     arrivalDate: DateFormats.dateObjToIsoDate(startDate),
     departureDate: DateFormats.dateObjToIsoDate(endDate),
     premisesId: faker.string.uuid(),
-    requirements: spaceBookingRequirementsFactory.build(),
+    characteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
   }
 })

@@ -225,16 +225,22 @@ describe('DateFormats', () => {
     })
   })
 
-  describe('differenceInDays', () => {
-    const baseDate = new Date(2023, 3, 12)
+  describe('durationBetweenDates', () => {
+    const baseDate = '2023-10-12'
+    const baseDateObj = DateFormats.isoToDateObj(baseDate)
 
     it.each([
-      [new Date(2023, 3, 11), '1 day', 1],
-      [new Date(2023, 3, 15), '3 days', -3],
-      [new Date(2023, 4, 12), '30 days', -30],
-      [new Date(2023, 0, 1), '101 days', 101],
+      ['2023-10-13', '1 day', 1],
+      ['2023-10-15', '3 days', 3],
+      ['2023-11-12', '4 weeks 3 days', 31],
+      ['2024-01-01', '11 weeks 4 days', 81],
     ])('returns the different in days for %s', (compareDate, ui, number) => {
-      expect(DateFormats.differenceInDays(baseDate, compareDate)).toEqual({
+      expect(DateFormats.durationBetweenDates(baseDate, compareDate)).toEqual({
+        ui,
+        number,
+      })
+      const compareDateObj = DateFormats.isoDateToUIDate(compareDate)
+      expect(DateFormats.durationBetweenDates(baseDateObj, compareDateObj)).toEqual({
         ui,
         number,
       })
@@ -391,6 +397,17 @@ describe('dateAndTimeInputsAreValidDates', () => {
     const result = dateAndTimeInputsAreValidDates(obj, 'date')
 
     expect(result).toEqual(false)
+  })
+
+  it('returns false when the date is an array (Pen-test APS-1951)', () => {
+    const obj: ObjectWithDateParts<'date'> = {
+      // @ts-expect-error Simulate array query parameters
+      'date-year': ['2020', '2021', '2022', '2023'],
+      'date-month': '12',
+      'date-day': '11',
+    }
+
+    expect(dateAndTimeInputsAreValidDates(obj, 'date')).toEqual(false)
   })
 })
 

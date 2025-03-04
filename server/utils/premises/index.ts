@@ -9,15 +9,14 @@ import type {
   SortDirection,
 } from '@approved-premises/api'
 import { DateRange, SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
-import { differenceInDays } from 'date-fns'
 import { DateFormats } from '../dateUtils'
 import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
-import { laoSummaryName } from '../personUtils'
-import { statusTextMap } from '../placements'
+import { displayName } from '../personUtils'
+import { canonicalDates, detailedStatus, statusTextMap } from '../placements'
 
 export { premisesActions } from './premisesActions'
 export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
@@ -156,20 +155,23 @@ export const placementTableRows = (
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
 ): Array<TableRow> =>
-  placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, keyWorkerAllocation, status }) => {
+  placements.map(placement => {
+    const { id, person, tier, keyWorkerAllocation } = placement
+    const { arrivalDate, departureDate } = canonicalDates(placement)
     const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlValue(
         `<a href="${managePaths.premises.placements.show({
           premisesId,
           placementId: id,
-        })}" data-cy-id="${id}">${laoSummaryName(person)}, ${person.crn}</a>`,
+        })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
       ),
       tier: htmlValue(getTierOrBlank(tier)),
-      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
-      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
+      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
+      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
       keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-      status: textValue(statusTextMap[status]),
+      status: textValue(statusTextMap[detailedStatus(placement)]),
     }
+
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
   })
 
@@ -178,6 +180,6 @@ export const premisesOverbookingSummary = (premises: Cas1Premises): Array<DateRa
   return overbookingSummary.map(({ startInclusive, endInclusive }: Cas1OverbookingRange) => ({
     from: startInclusive,
     to: endInclusive,
-    duration: differenceInDays(endInclusive, startInclusive) + 1,
+    duration: DateFormats.durationBetweenDates(endInclusive, startInclusive).number + 1,
   }))
 }

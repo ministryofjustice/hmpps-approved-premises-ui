@@ -8,18 +8,13 @@ export class ReportsPage extends BasePage {
     return new ReportsPage(page)
   }
 
-  async downloadLostBedsReports({ month, year }: { month: string; year: string }) {
-    await this.checkRadio('Lost beds (no longer in use)')
+  async downloadOutOfServiceBedsReports({ month, year }: { month: string; year: string }) {
+    await this.checkRadio('Out of service beds')
     return this.downloadReports({ month, year })
   }
 
-  async downloadApplicationsReports({ month, year }: { month: string; year: string }) {
-    await this.checkRadio('Raw combined applications and placement requests')
-    return this.downloadReports({ month, year })
-  }
-
-  async downloadRawRequestsForPlacementsReports({ month, year }: { month: string; year: string }) {
-    await this.checkRadio('Raw requests for placement')
+  async downloadDailyMetricsReports({ month, year }: { month: string; year: string }) {
+    await this.checkRadio('Daily metrics')
     return this.downloadReports({ month, year })
   }
 

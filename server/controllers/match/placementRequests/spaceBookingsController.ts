@@ -42,13 +42,13 @@ export default class {
       const submitLink = matchPaths.v2Match.placementRequests.spaceBookings.create({ id, premisesId })
       const backLink = matchPaths.v2Match.placementRequests.search.occupancy({ id, premisesId })
 
-      const summaryListRows = spaceBookingConfirmationSummaryListRows(
+      const summaryListRows = spaceBookingConfirmationSummaryListRows({
         premises,
-        searchState.arrivalDate,
-        searchState.departureDate,
-        searchState.roomCriteria,
-        placementRequest.releaseType,
-      )
+        expectedArrivalDate: searchState.arrivalDate,
+        expectedDepartureDate: searchState.departureDate,
+        criteria: searchState.roomCriteria,
+        releaseType: placementRequest.releaseType,
+      })
 
       return res.render('match/placementRequests/spaceBookings/new', {
         backLink,
@@ -75,9 +75,7 @@ export default class {
         arrivalDate: searchState.arrivalDate,
         departureDate: searchState.departureDate,
         premisesId,
-        requirements: {
-          essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        },
+        characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
       }
 
       try {

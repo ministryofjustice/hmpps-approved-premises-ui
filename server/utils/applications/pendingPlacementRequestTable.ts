@@ -27,7 +27,7 @@ export const pendingPlacementRequestTableHeader = (
 
 export const pendingPlacementRequestTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
-    createNameAnchorElement(application.person, application),
+    createNameAnchorElement(application.person, application, { showCrn: true }),
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
     textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
     textValue(application.releaseType ? allReleaseTypes[application.releaseType] : ''),

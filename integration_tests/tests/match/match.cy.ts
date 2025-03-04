@@ -33,10 +33,11 @@ import {
   filterRoomLevelCriteria,
   initialiseSearchState,
 } from '../../../server/utils/match/spaceSearch'
-import { apType } from '../../../server/utils/placementCriteriaUtils'
+import { applyApTypeToAssessApType } from '../../../server/utils/placementCriteriaUtils'
 import premisesSearchResultSummary from '../../../server/testutils/factories/cas1PremisesSearchResultSummary'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { placementDates } from '../../../server/utils/match'
+import { roomCharacteristicMap } from '../../../server/utils/characteristicsUtils'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -103,10 +104,11 @@ context('Placement Requests', () => {
         durationInDays: placementRequest.duration,
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,
-        requirements: {
-          apType: placementRequest.type,
-          spaceCharacteristics: filteredPlacementCriteria,
-        },
+        requirements: {},
+        spaceCharacteristics: [
+          placementRequest.type !== 'normal' && applyApTypeToAssessApType[placementRequest.type],
+          ...filteredPlacementCriteria,
+        ].filter(Boolean),
       })
 
       // And the second request to the API should contain the new criteria I submitted
@@ -117,11 +119,13 @@ context('Placement Requests', () => {
         targetPostcodeDistrict: newSearchState.postcode,
       })
 
-      expect(secondSearchRequestBody.requirements.apType).to.equal(apType(newSearchState.apType))
-      expect(secondSearchRequestBody.requirements.spaceCharacteristics).to.contain.members([
-        ...newSearchState.apCriteria,
-        ...newSearchState.roomCriteria,
-      ])
+      expect(secondSearchRequestBody.spaceCharacteristics).to.contain.members(
+        [
+          newSearchState.apType !== 'normal' && newSearchState.apType,
+          ...newSearchState.apCriteria,
+          ...newSearchState.roomCriteria,
+        ].filter(Boolean),
+      )
     })
   })
 
@@ -161,7 +165,7 @@ context('Placement Requests', () => {
   const shouldVisitOccupancyViewPageAndShowMatchingDetails = (licenceExpiryDate: string | undefined) => {
     const durationDays = 15
     const startDate = '2024-07-23'
-    const endDate = '2024-08-07'
+    const endDate = '2024-08-06'
     const totalCapacity = 10
 
     // Given I am signed in as a cru_member
@@ -294,9 +298,10 @@ context('Placement Requests', () => {
 
     // When I filter for a different date and duration
     const newStartDate = '2024-08-01'
-    const newEndDate = '2024-08-08'
+    const newEndDate = '2024-08-07'
     const newDuration = 'Up to 1 week'
-    const newCriteria = ['Wheelchair accessible', 'Step-free']
+    const newCriteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isStepFreeDesignated']
+    const newCriteriaLabels = newCriteria.map(criterion => roomCharacteristicMap[criterion])
     const newPremiseCapacity = cas1PremiseCapacityFactory.build({
       startDate: newStartDate,
       endDate: newEndDate,
@@ -307,13 +312,13 @@ context('Placement Requests', () => {
       endDate: newEndDate,
       premiseCapacity: newPremiseCapacity,
     })
-    occupancyViewPage.filterAvailability({ newStartDate, newDuration, newCriteria })
+    occupancyViewPage.filterAvailability({ newStartDate, newDuration, newCriteria: newCriteriaLabels })
 
     // Then I should see the filter form with updated values
-    occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteria)
+    occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteriaLabels)
 
     // I can see the currently selected room criteria
-    occupancyViewPage.shouldShowSelectedCriteria(newCriteria as Array<Cas1SpaceBookingCharacteristic>)
+    occupancyViewPage.shouldShowSelectedCriteria(newCriteriaLabels)
   })
 
   it('allows me to book a space', () => {
@@ -324,7 +329,9 @@ context('Placement Requests', () => {
     const departureDate = '2024-08-08'
 
     // Then I can see the currently selected room criteria
-    occupancyViewPage.shouldShowSelectedCriteria(searchState.roomCriteria)
+    occupancyViewPage.shouldShowSelectedCriteria(
+      searchState.roomCriteria.map(criterion => roomCharacteristicMap[criterion]),
+    )
 
     // And I can see the requested dates in the hints
     occupancyViewPage.shouldShowDateFieldHint(
@@ -367,9 +374,7 @@ context('Placement Requests', () => {
           arrivalDate,
           departureDate,
           premisesId: premises.id,
-          requirements: {
-            essentialCharacteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-          },
+          characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
         })
       },
     )

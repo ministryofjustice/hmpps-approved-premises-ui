@@ -1,7 +1,7 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { ObjectWithDateParts } from '@approved-premises/ui'
-import { addDays, differenceInDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
   catchValidationErrorOrPropogate,
@@ -21,12 +21,13 @@ import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 import { CriteriaQuery } from '../../../match/placementRequests/occupancyViewController'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
-import { durationSelectOptions, occupancyCriteriaMap } from '../../../../utils/match/occupancy'
+import { durationSelectOptions, getClosestDuration } from '../../../../utils/match/occupancy'
 import { OccupancySummary } from '../../../../utils/match/occupancySummary'
 import managePaths from '../../../../paths/manage'
 import matchPaths from '../../../../paths/match'
 import adminPaths from '../../../../paths/admin'
 import { ValidationError } from '../../../../utils/errors'
+import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../../utils/characteristicsUtils'
 
 type RequestParams = {
   premisesId: string
@@ -42,6 +43,7 @@ interface ViewRequest extends Request {
   body: ObjectWithDateParts<'arrivalDate'> &
     ObjectWithDateParts<'departureDate'> & {
       criteria: string
+      actualArrivalDate: string
     }
 }
 
@@ -79,13 +81,19 @@ export default class ChangesController {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const placement = await this.placementService.getPlacement(token, placementId)
-
+      let pageHeading = 'Change placement'
       let startDate = placement.expectedArrivalDate
       let endDate = placement.expectedDepartureDate
-      let durationDays = differenceInDays(endDate, startDate)
-      let criteria: Array<Cas1SpaceBookingCharacteristic> = filterRoomLevelCriteria(
-        placement.requirements.essentialCharacteristics,
-      )
+      let durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
+
+      if (placement.actualArrivalDate) {
+        startDate = placement.actualArrivalDate
+        endDate = DateFormats.dateObjToIsoDate(addDays(startDate, getClosestDuration(durationDays)))
+        durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
+        pageHeading = 'Extend placement'
+      }
+
+      let criteria: Array<Cas1SpaceBookingCharacteristic> = filterRoomLevelCriteria(placement.characteristics)
 
       if (queryDurationDays) {
         durationDays = Number(queryDurationDays)
@@ -113,7 +121,7 @@ export default class ChangesController {
           excludeSpaceBookingId: placement.id,
         })
         const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-          id: placement.requestForPlacementId,
+          id: placement.placementRequestId,
           premisesId,
           date: ':date',
         })}${createQueryString(
@@ -129,19 +137,19 @@ export default class ChangesController {
       }
 
       return res.render('manage/premises/placements/changes/new', {
-        backlink: adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }),
-        pageHeading: 'Change placement',
+        backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
+        pageHeading,
         placement,
-        selectedCriteria: (criteria || []).map(criterion => occupancyCriteriaMap[criterion]).join(', '),
-        arrivalDateHint: `Expected arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
-        departureDateHint: `Expected departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
+        selectedCriteria: roomCharacteristicsInlineList(criteria, 'no room criteria'),
+        arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
+        departureDateHint: `Current departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
         startDate,
         ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),
         durationDays,
         criteria,
         placementSummary: placementOverviewSummary(placement),
         durationOptions: durationSelectOptions(durationDays),
-        criteriaOptions: convertKeyValuePairToCheckBoxItems(occupancyCriteriaMap, criteria),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, criteria),
         summary,
         calendar,
         errors,
@@ -199,7 +207,6 @@ export default class ChangesController {
         this.premisesService.find(token, premisesId),
         this.placementService.getPlacement(token, placementId),
       ])
-
       const backlink = `${managePaths.premises.placements.changes.new(req.params)}${createQueryString(req.query, {
         arrayFormat: 'repeat',
         addQueryPrefix: true,
@@ -209,12 +216,13 @@ export default class ChangesController {
         pageHeading: 'Confirm booking changes',
         backlink,
         placement,
-        summaryListRows: spaceBookingConfirmationSummaryListRows(
+        summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
-          arrivalDate,
-          departureDate,
-          makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria) || [],
-        ),
+          actualArrivalDate: placement.actualArrivalDate,
+          expectedArrivalDate: arrivalDate || placement.expectedArrivalDate,
+          expectedDepartureDate: departureDate,
+          criteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(criteria) || [],
+        }),
         arrivalDate,
         departureDate,
         criteria,
@@ -243,7 +251,7 @@ export default class ChangesController {
 
         req.flash('success', 'Booking changed successfully')
 
-        return res.redirect(adminPaths.admin.placementRequests.show({ id: placement.requestForPlacementId }))
+        return res.redirect(adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }))
       } catch (error) {
         const redirectUrl = `${managePaths.premises.placements.changes.confirm({
           premisesId,

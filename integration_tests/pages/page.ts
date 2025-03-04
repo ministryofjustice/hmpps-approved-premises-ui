@@ -22,7 +22,7 @@ import { sentenceCase } from '../../server/utils/utils'
 import { SumbmittedApplicationSummaryCards } from '../../server/utils/applications/submittedApplicationSummaryCards'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
 import { oasysSectionsToExclude } from '../../server/utils/oasysImportUtils'
-import { isFullPerson } from '../../server/utils/personUtils'
+import { displayName, isFullPerson } from '../../server/utils/personUtils'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
@@ -276,8 +276,13 @@ export default abstract class Page {
 
   shouldBeAbleToDownloadDocuments(documents: Array<Document>) {
     documents.forEach(document => {
+      // Test debounce on download links
+      cy.clock()
       cy.get(`a[data-cy-documentId="${document.id}"]`).click()
-
+      cy.get(`a[data-cy-documentId="${document.id}"]`).should('have.class', 'link-disabled')
+      cy.tick(4000)
+      cy.get(`a[data-cy-documentId="${document.id}"]`).should('not.have.class', 'link-disabled')
+      cy.clock().invoke('restore')
       const downloadsFolder = Cypress.config('downloadsFolder')
       const downloadedFilename = `${downloadsFolder}/${document.fileName}`
       cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
@@ -583,7 +588,7 @@ export default abstract class Page {
 
   shouldShowPersonDetails(person: FullPerson, expectedStatus?: PersonStatus): void {
     cy.get('dl[data-cy-person-info],div[data-cy-section="person-details"]').within(() => {
-      this.assertDefinition('Name', person.name)
+      this.assertDefinition('Name', displayName(person, { laoSuffix: true }))
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
       this.assertDefinition('NOMIS Number', person.nomsNumber)
@@ -650,7 +655,7 @@ export default abstract class Page {
       const { person } = placementRequest
       if (!isFullPerson(person)) throw new Error('test requires a Full Person')
 
-      cy.get('span').contains(person.name)
+      cy.get('span').contains(displayName(person))
       cy.get('span').contains(`CRN: ${person.crn}`)
       cy.get('span').contains(`Tier: ${placementRequest?.risks?.tier?.value.level}`)
       cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)

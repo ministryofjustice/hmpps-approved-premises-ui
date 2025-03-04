@@ -1,14 +1,8 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import type {
-  Cas1KeyWorkerAllocation,
-  Cas1SpaceBooking,
-  Cas1SpaceBookingSummaryStatus,
-  Person,
-} from '@approved-premises/api'
+import type { Cas1KeyWorkerAllocation, Cas1SpaceBooking, Person } from '@approved-premises/api'
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
-import cas1SpaceBookingRequirementsFactory from './spaceBookingRequirements'
 import userFactory from './user'
 
 import staffMemberFactory from './staffMember'
@@ -23,38 +17,31 @@ import { placementCriteria } from './placementRequest'
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
     return this.params({
-      actualArrivalDateOnly: undefined,
+      actualArrivalDate: undefined,
       actualArrivalTime: undefined,
-      actualDepartureDateOnly: undefined,
+      actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
-      status: faker.helpers.arrayElement([
-        'arrivingToday',
-        'arrivingWithin6Weeks',
-        'arrivingWithin2Weeks',
-      ] as Array<Cas1SpaceBookingSummaryStatus>),
     })
   }
 
   current() {
     return this.params({
-      actualArrivalDateOnly: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 180 })),
-      actualDepartureDateOnly: undefined,
+      actualArrivalDate: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 180 })),
+      actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
-      status: 'arrived',
     })
   }
 
   nonArrival() {
     return this.params({
-      actualArrivalDateOnly: undefined,
+      actualArrivalDate: undefined,
       actualArrivalTime: undefined,
-      actualDepartureDateOnly: undefined,
+      actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
       nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
-      status: 'notArrived',
     })
   }
 
@@ -63,8 +50,8 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
     const actualArrivalDate = faker.date.past({ years: 1, refDate: actualDepartureDate })
 
     return this.params({
-      actualArrivalDateOnly: DateFormats.dateObjToIsoDate(actualArrivalDate),
-      actualDepartureDateOnly: DateFormats.dateObjToIsoDate(actualDepartureDate),
+      actualArrivalDate: DateFormats.dateObjToIsoDate(actualArrivalDate),
+      actualDepartureDate: DateFormats.dateObjToIsoDate(actualDepartureDate),
       departure: cas1SpaceBookingDepartureFactory.build({
         moveOnCategory: undefined,
       }),
@@ -96,9 +83,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
 export default Cas1SpaceBookingFactory.define(() => {
   const startDateTime = faker.date.soon({ days: 90 })
   const endDateTime = faker.date.soon({ days: 365, refDate: startDateTime })
-  const [actualArrivalDateOnly, actualDepartureDateOnly] = [startDateTime, endDateTime].map(
-    DateFormats.dateObjToIsoDate,
-  )
+  const [actualArrivalDate, actualDepartureDate] = [startDateTime, endDateTime].map(DateFormats.dateObjToIsoDate)
   const [actualArrivalTime, actualDepartureTime] = [startDateTime, endDateTime].map(DateFormats.dateObjTo24hrTime)
   const [canonicalArrivalDate, canonicalDepartureDate] = [startDateTime, endDateTime].map(DateFormats.dateObjToIsoDate)
   const [expectedArrivalDate, expectedDepartureDate] = faker.date
@@ -108,10 +93,9 @@ export default Cas1SpaceBookingFactory.define(() => {
     id: faker.string.uuid(),
     applicationId: faker.string.uuid(),
     assessmentId: faker.string.uuid(),
-    requestForPlacementId: faker.string.uuid(),
+    placementRequestId: faker.string.uuid(),
     person: fullPersonFactory.build() as Person,
     tier: faker.helpers.arrayElement(['A', 'B', 'C']),
-    requirements: cas1SpaceBookingRequirementsFactory.build(),
     characteristics: faker.helpers.arrayElements(filterOutAPTypes(placementCriteria)),
     premises: {
       id: faker.string.uuid(),
@@ -120,10 +104,10 @@ export default Cas1SpaceBookingFactory.define(() => {
     apArea: { id: faker.string.uuid(), name: `${faker.location.cardinalDirection()} ${faker.location.county()}` },
     bookedBy: userFactory.build(),
     expectedArrivalDate,
-    actualArrivalDateOnly,
+    actualArrivalDate,
     actualArrivalTime,
     expectedDepartureDate,
-    actualDepartureDateOnly,
+    actualDepartureDate,
     actualDepartureTime,
     canonicalArrivalDate,
     canonicalDepartureDate,
@@ -133,6 +117,5 @@ export default Cas1SpaceBookingFactory.define(() => {
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
     deliusEventNumber: String(faker.number.int()),
     nonArrival: undefined,
-    status: 'departed' as Cas1SpaceBookingSummaryStatus,
   }
 })

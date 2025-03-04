@@ -1,9 +1,8 @@
 import type { Cas1Premises, Cas1SpaceBookingCharacteristic, PlacementRequestDetail } from '@approved-premises/api'
-import { differenceInDays } from 'date-fns'
 import Page from '../page'
-import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
-import { requirementsHtmlString } from '../../../server/utils/match'
+import { DateFormats } from '../../../server/utils/dateUtils'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
+import { characteristicsBulletList } from '../../../server/utils/characteristicsUtils'
 
 export default class BookASpacePage extends Page {
   constructor() {
@@ -20,12 +19,17 @@ export default class BookASpacePage extends Page {
     this.shouldContainSummaryListItems([
       { key: { text: 'Approved Premises' }, value: { text: premises.name } },
       { key: { text: 'Address' }, value: { text: `${premises.fullAddress}, ${premises.postcode}` } },
-      { key: { text: 'Room criteria' }, value: { html: requirementsHtmlString(criteria) } },
-      { key: { text: 'Arrival date' }, value: { text: DateFormats.isoDateToUIDate(arrivalDate) } },
-      { key: { text: 'Departure date' }, value: { text: DateFormats.isoDateToUIDate(departureDate) } },
+      {
+        key: { text: 'Room criteria' },
+        value: {
+          html: characteristicsBulletList(criteria, { noneText: 'No room criteria' }),
+        },
+      },
+      { key: { text: 'Expected arrival date' }, value: { text: DateFormats.isoDateToUIDate(arrivalDate) } },
+      { key: { text: 'Expected departure date' }, value: { text: DateFormats.isoDateToUIDate(departureDate) } },
       {
         key: { text: 'Length of stay' },
-        value: { text: DateFormats.formatDuration(daysToWeeksAndDays(differenceInDays(departureDate, arrivalDate))) },
+        value: { text: DateFormats.durationBetweenDates(departureDate, arrivalDate).ui },
       },
       { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
     ])

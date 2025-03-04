@@ -8,8 +8,8 @@ import {
   restrictedPersonFactory,
 } from '../../testutils/factories'
 import {
-  actualArrivalDateCell,
   applicationDateCell,
+  bookingArrivalDateCell,
   dashboardTableHeader,
   dashboardTableRows,
   dueDateCell,
@@ -26,8 +26,8 @@ import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { laoName } from '../personUtils'
-import { FullPerson, PlacementRequestSortField } from '../../@types/shared'
+import { displayName } from '../personUtils'
+import { PlacementRequestSortField } from '../../@types/shared'
 import { linkTo } from '../utils'
 import adminPaths from '../../paths/admin'
 
@@ -45,7 +45,7 @@ describe('tableUtils', () => {
       nameCell(placementRequest)
 
       expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
-        text: laoName(placementRequest.person as FullPerson),
+        text: displayName(placementRequest.person),
         attributes: {
           'data-cy-placementRequestId': placementRequest.id,
           'data-cy-applicationId': placementRequest.applicationId,
@@ -53,15 +53,7 @@ describe('tableUtils', () => {
       })
     })
 
-    it('returns an empty cell if the personName is not present', () => {
-      const task = placementRequestFactory.build({ person: undefined })
-
-      expect(nameCell(task)).toEqual({
-        html: '',
-      })
-    })
-
-    it('returns the crn cell if the person is a restrictedPerson', () => {
+    it('returns the crn cell with no link if the person is a restrictedPerson', () => {
       const restrictedPersonTask = placementRequestFactory.build()
       restrictedPersonTask.person = restrictedPersonFactory.build()
 
@@ -77,7 +69,7 @@ describe('tableUtils', () => {
       nameCell(restrictedPersonTask)
 
       expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: restrictedPersonTask.id }), {
-        text: laoName(restrictedPersonTask.person as FullPerson),
+        text: displayName(restrictedPersonTask.person),
         attributes: {
           'data-cy-placementRequestId': restrictedPersonTask.id,
           'data-cy-applicationId': restrictedPersonTask.applicationId,
@@ -90,7 +82,7 @@ describe('tableUtils', () => {
       unknownPersonTask.person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
 
       expect(nameCell(unknownPersonTask)).toEqual({
-        text: `Not Found CRN: ${unknownPersonTask.person.crn}`,
+        text: `Unknown: ${unknownPersonTask.person.crn}`,
       })
     })
   })
@@ -118,14 +110,14 @@ describe('tableUtils', () => {
       const booking = bookingFactory.build({ arrivalDate: '2022-01-01' })
       const placementRequest = placementRequestFactory.build({ booking })
 
-      expect(actualArrivalDateCell(placementRequest)).toEqual({
+      expect(bookingArrivalDateCell(placementRequest)).toEqual({
         text: DateFormats.isoDateToUIDate(booking.arrivalDate, { format: 'short' }),
       })
     })
 
     it('returns N/A if there is no booking', () => {
       const placementRequest = placementRequestFactory.build({ booking: null })
-      expect(actualArrivalDateCell(placementRequest)).toEqual({
+      expect(bookingArrivalDateCell(placementRequest)).toEqual({
         text: 'N/A',
       })
     })
@@ -230,7 +222,7 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
-          actualArrivalDateCell(placementRequest),
+          bookingArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -247,7 +239,7 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
-          actualArrivalDateCell(placementRequest),
+          bookingArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           premisesNameCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -264,7 +256,7 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
-          actualArrivalDateCell(placementRequest),
+          bookingArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -291,7 +283,7 @@ describe('tableUtils', () => {
           hrefPrefix,
         ),
         {
-          text: 'Actual arrival date',
+          text: 'Booked arrival date',
         },
         sortHeader<PlacementRequestSortField>(
           'Application date',
@@ -320,7 +312,7 @@ describe('tableUtils', () => {
           hrefPrefix,
         ),
         {
-          text: 'Actual arrival date',
+          text: 'Booked arrival date',
         },
         sortHeader<PlacementRequestSortField>(
           'Application date',

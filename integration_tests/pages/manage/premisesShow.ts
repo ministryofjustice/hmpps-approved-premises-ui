@@ -1,11 +1,10 @@
-import type { Cas1OverbookingRange, Cas1Premises, Cas1SpaceBookingSummary, FullPerson } from '@approved-premises/api'
-import { differenceInDays, formatDuration } from 'date-fns'
+import type { Cas1OverbookingRange, Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
-import { laoName } from '../../../server/utils/personUtils'
-import { statusTextMap } from '../../../server/utils/placements'
+import { displayName } from '../../../server/utils/personUtils'
+import { canonicalDates, detailedStatus, statusTextMap } from '../../../server/utils/placements'
 import { cas1OverbookingRangeFactory } from '../../../server/testutils/factories'
 
 export default class PremisesShowPage extends Page {
@@ -50,13 +49,17 @@ export default class PremisesShowPage extends Page {
     ;['Name and CRN', 'Arrival date', 'Departure date', 'Key worker'].forEach(heading => {
       cy.get('.govuk-table .govuk-table__head').contains(heading)
     })
-    placements.forEach(({ person, canonicalArrivalDate, canonicalDepartureDate, tier, status }) => {
+
+    placements.forEach(placement => {
+      const { person, tier } = placement
+      const { arrivalDate, departureDate } = canonicalDates(placement)
+
       cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
-      cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
-      cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
       cy.get('@row').contains(tier)
-      cy.get('@row').contains(laoName(person as unknown as FullPerson))
-      cy.get('@row').contains(statusTextMap[status])
+      cy.get('@row').contains(displayName(person))
+      cy.get('@row').contains(statusTextMap[detailedStatus(placement)])
     })
   }
 
@@ -112,7 +115,9 @@ export default class PremisesShowPage extends Page {
     PremisesShowPage.overbookingSummary.forEach(({ startInclusive, endInclusive }) => {
       const toText = startInclusive !== endInclusive ? ` to ${DateFormats.isoDateToUIDate(endInclusive)}` : ''
       const dateRangeText = `${DateFormats.isoDateToUIDate(startInclusive)}${toText}`
-      const duration = formatDuration({ days: differenceInDays(endInclusive, startInclusive) + 1 })
+      const duration = DateFormats.formatDuration({
+        days: DateFormats.durationBetweenDates(endInclusive, startInclusive).number + 1,
+      })
       cy.get('.govuk-notification-banner__content').contains(dateRangeText)
       cy.get('.govuk-notification-banner__content').contains(duration)
     })

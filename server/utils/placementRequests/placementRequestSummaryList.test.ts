@@ -123,7 +123,7 @@ describe('placementRequestSummaryList', () => {
       },
       {
         key: {
-          text: 'Expected departure date',
+          text: 'Requested departure date',
         },
         value: {
           text: 'Sun 23 Nov 2025',
@@ -175,7 +175,7 @@ describe('placementRequestSummaryList', () => {
           text: 'Desirable Criteria',
         },
         value: {
-          html: '<ul class="govuk-list govuk-list--bullet"></ul>',
+          html: '<span class="text-grey">None</span>',
         },
       },
       {

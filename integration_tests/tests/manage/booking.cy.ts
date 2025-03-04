@@ -2,9 +2,9 @@ import {
   applicationFactory,
   assessmentFactory,
   bookingFactory,
+  bookingPremisesSummaryFactory,
   cancellationFactory,
   cancellationReasonFactory,
-  extendedPremisesSummaryFactory,
   personFactory,
 } from '../../../server/testutils/factories'
 
@@ -14,7 +14,7 @@ import { signIn } from '../signIn'
 
 context('Booking', () => {
   const person = personFactory.build()
-  const premises = extendedPremisesSummaryFactory.build()
+  const premises = bookingPremisesSummaryFactory.build()
   const application = applicationFactory.build({
     status: 'submitted',
   })

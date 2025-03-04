@@ -1,4 +1,4 @@
-import type { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
+import { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
 import { TextItem } from '@approved-premises/ui'
 import {
   cas1PremisesBasicSummaryFactory,
@@ -16,11 +16,11 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { statusTextMap } from '../placements'
+import { canonicalDates, detailedStatus, statusTextMap } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
-import { laoSummaryName } from '../personUtils'
+import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 
 describe('premisesUtils', () => {
@@ -278,20 +278,21 @@ describe('premisesUtils', () => {
       (activeTab: Cas1SpaceBookingResidency) => {
         const placements = [
           ...cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' }),
-          cas1SpaceBookingSummaryFactory.build({ tier: 'A', status: undefined }),
+          cas1SpaceBookingSummaryFactory.build({ tier: 'A' }),
           cas1SpaceBookingSummaryFactory.build({ tier: 'A', keyWorkerAllocation: undefined }),
         ]
 
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
-          const statusColumn = { text: statusTextMap[placement.status] }
+          const statusColumn = { text: statusTextMap[detailedStatus(placement)] }
+          const { arrivalDate, departureDate } = canonicalDates(placement)
           const baseColumns = [
             {
-              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${laoSummaryName(placement.person)}, ${placement.person.crn}</a>`,
+              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
             },
             { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
-            { text: DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }) },
-            { text: DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }) },
+            { text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
+            { text: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
           ]
           return activeTab === 'historic'
             ? [...baseColumns, statusColumn]
@@ -305,14 +306,16 @@ describe('premisesUtils', () => {
   describe('premisesOverbookingSummary', () => {
     it('Should generate the premisesOverbooking summary', () => {
       const overbookingSummary: Array<Cas1OverbookingRange> = [
-        { startInclusive: '2025-01-10', endInclusive: '2025-01-20' },
-        { startInclusive: '2025-01-25', endInclusive: '2025-01-25' },
+        { startInclusive: '2025-03-01', endInclusive: '2025-04-01' },
+        { startInclusive: '2025-10-20', endInclusive: '2025-10-28' },
+        { startInclusive: '2025-10-30', endInclusive: '2025-10-30' },
       ]
 
       const premises = cas1PremisesFactory.build({ overbookingSummary })
       expect(premisesOverbookingSummary(premises)).toEqual([
-        { duration: 11, from: '2025-01-10', to: '2025-01-20' },
-        { duration: 1, from: '2025-01-25', to: '2025-01-25' },
+        { duration: 32, from: '2025-03-01', to: '2025-04-01' },
+        { duration: 9, from: '2025-10-20', to: '2025-10-28' },
+        { duration: 1, from: '2025-10-30', to: '2025-10-30' },
       ])
     })
     it('Should generate an empty premisesOverbooking summary', () => {

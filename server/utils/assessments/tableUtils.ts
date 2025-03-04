@@ -10,13 +10,13 @@ import { linkTo } from '../utils'
 import { daysSinceInfoRequest, daysSinceReceived, formatDays, formattedArrivalDate } from './dateUtils'
 import paths from '../../paths/assess'
 import { crnCell, daysUntilDueCell, tierCell } from '../tableUtils'
-import { isFullPerson, laoName } from '../personUtils'
+import { displayName, isFullPerson } from '../personUtils'
 import { sortHeader } from '../sortHeader'
 import { AssessmentStatusTag } from './statusTag'
 
 const assessmentLink = (assessment: AssessmentSummary, person: FullPerson, linkText = '', hiddenText = ''): string => {
   return linkTo(paths.assessments.show({ id: assessment.id }), {
-    text: linkText || laoName(person),
+    text: linkText || displayName(person),
     hiddenText,
     attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
   })

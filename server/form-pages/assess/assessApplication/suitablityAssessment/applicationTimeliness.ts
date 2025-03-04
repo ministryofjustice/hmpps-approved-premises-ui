@@ -24,6 +24,12 @@ export type ApplicationDetails = {
   arrivalDate: string
 }
 
+export type ApplicationTimelinessBody = {
+  agreeWithShortNoticeReason: YesOrNo
+  agreeWithShortNoticeReasonComments?: string
+  reasonForLateApplication: ShortNoticeReasons
+}
+
 @Page({
   name: 'application-timeliness',
   bodyProperties: ['agreeWithShortNoticeReason', 'agreeWithShortNoticeReasonComments', 'reasonForLateApplication'],
@@ -45,11 +51,7 @@ export default class ApplicationTimeliness implements TasklistPage {
   }))
 
   constructor(
-    public body: {
-      agreeWithShortNoticeReason: YesOrNo
-      agreeWithShortNoticeReasonComments?: string
-      reasonForLateApplication: ShortNoticeReasons
-    },
+    public body: ApplicationTimelinessBody,
     private readonly assessment: Assessment,
   ) {
     this.applicationDetails = this.retrieveShortNoticeApplicationDetails()

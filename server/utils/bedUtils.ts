@@ -2,7 +2,12 @@ import { BedDetail, BedSummary } from '@approved-premises/api'
 import { SummaryListItem, TableCell } from '../@types/ui'
 import paths from '../paths/manage'
 import { linkTo, sentenceCase } from './utils'
-import { translateCharacteristic } from './characteristicsUtils'
+import {
+  characteristicsBulletList,
+  characteristicsPairToCharacteristics,
+  roomCharacteristicMap,
+} from './characteristicsUtils'
+import { summaryListItem } from './formUtils'
 
 export const bedNameCell = (item: { name: string }): TableCell => ({ text: item.name })
 
@@ -18,22 +23,17 @@ export const bedTableRows = (beds: Array<BedSummary>, premisesId: string) => {
   return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)])
 }
 
-export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => {
-  return [characteristicsRow(bed)]
-}
+export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => [
+  summaryListItem(
+    'Characteristics',
+    characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics), {
+      labels: roomCharacteristicMap,
+    }),
+    'html',
+  ),
+]
 
-export const statusRow = (bed: BedDetail): SummaryListItem => ({
-  key: { text: 'Status' },
-  value: { text: sentenceCase(bed.status) },
-})
-
-export const characteristicsRow = (bed: BedDetail): SummaryListItem => ({
-  key: { text: 'Characteristics' },
-  value: {
-    html: `<ul class="govuk-list govuk-list--bullet">
-  ${bed.characteristics.map(characteristic => `<li>${translateCharacteristic(characteristic)}</li>`).join(' ')}</ul>`,
-  },
-})
+export const statusRow = (bed: BedDetail): SummaryListItem => summaryListItem('Status', sentenceCase(bed.status))
 
 export const title = (bed: BedDetail, pageTitle: string): string => {
   return `

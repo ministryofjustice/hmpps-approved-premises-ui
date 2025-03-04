@@ -15,14 +15,15 @@ export default class ChangePlacementConfirmPage extends Page {
     super('Confirm booking changes')
   }
 
-  shouldShowProposedChanges() {
+  shouldShowProposedChanges(actualArrivalDate?: string) {
     this.shouldContainSummaryListItems(
-      spaceBookingConfirmationSummaryListRows(
-        this.premises,
-        this.query.arrivalDate,
-        this.query.departureDate,
-        makeArrayOfType<Cas1SpaceBookingCharacteristic>(this.query.criteria),
-      ),
+      spaceBookingConfirmationSummaryListRows({
+        premises: this.premises,
+        expectedArrivalDate: this.query.arrivalDate,
+        actualArrivalDate,
+        expectedDepartureDate: this.query.departureDate,
+        criteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(this.query.criteria),
+      }),
     )
   }
 }

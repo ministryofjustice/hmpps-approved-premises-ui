@@ -7,7 +7,6 @@ import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellatio
 import type { Cas1SpaceBookingDates } from './Cas1SpaceBookingDates';
 import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
 import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
-import type { Cas1SpaceBookingRequirements } from './Cas1SpaceBookingRequirements';
 import type { Cas1SpaceBookingSummaryStatus } from './Cas1SpaceBookingSummaryStatus';
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { NamedId } from './NamedId';
@@ -19,43 +18,45 @@ export type Cas1SpaceBooking = {
     assessmentId?: string;
     person: Person;
     tier?: string;
-    /**
-     * Use 'characteristics' instead
-     * @deprecated
-     */
-    requirements: Cas1SpaceBookingRequirements;
     premises: NamedId;
     apArea: NamedId;
     bookedBy?: User;
-    requestForPlacementId?: string;
-    expectedArrivalDate: string;
-    expectedDepartureDate: string;
     /**
-     * Use actualArrivalDateOnly and actualArrivalTime
+     * use the better named 'placementRequestId'
      * @deprecated
      */
+    requestForPlacementId?: string;
+    placementRequestId?: string;
+    expectedArrivalDate: string;
+    expectedDepartureDate: string;
     actualArrivalDate?: string;
+    /**
+     * Use actualArrivalDate
+     * @deprecated
+     */
     actualArrivalDateOnly?: string;
     /**
      * This value may not be defined even if an arrival date is
      */
     actualArrivalTime?: string;
+    actualDepartureDate?: string;
     /**
-     * Use actualDepartureDateOnly and actualDepartureTime
+     * Use actualDepartureDate
      * @deprecated
      */
-    actualDepartureDate?: string;
     actualDepartureDateOnly?: string;
     /**
      * This value may not be defined even if a departure date is
      */
     actualDepartureTime?: string;
     /**
-     * actual arrival date or, if not known, the expected arrival date
+     * actual arrival date or, if not known, the expected arrival date.
+     * @deprecated
      */
     canonicalArrivalDate: string;
     /**
      * actual departure date or, if not known, the expected departure date
+     * @deprecated
      */
     canonicalDepartureDate: string;
     departure?: Cas1SpaceBookingDeparture;

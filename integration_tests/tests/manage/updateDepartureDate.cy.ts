@@ -1,9 +1,4 @@
-import {
-  bookingFactory,
-  extendedPremisesSummaryFactory,
-  personFactory,
-  premisesBookingFactory,
-} from '../../../server/testutils/factories'
+import { bookingFactory, bookingPremisesSummaryFactory, personFactory } from '../../../server/testutils/factories'
 
 import { DepartureDateChangeConfirmationPage, DepartureDateChangePage } from '../../pages/manage'
 import { signIn } from '../signIn'
@@ -20,18 +15,15 @@ context('Departure date', () => {
     const booking = bookingFactory.build({
       departureDate: '2022-06-03',
       person: personFactory.build(),
+      premises: bookingPremisesSummaryFactory.build(),
     })
     const newDepartureDate = '2022-07-03'
-    const premises = extendedPremisesSummaryFactory.build({
-      bookings: [premisesBookingFactory.build({ departureDate: booking.departureDate, person: booking.person })],
-    })
 
-    cy.task('stubBookingExtensionCreate', { premisesId: premises.id, booking })
-    cy.task('stubBookingGet', { premisesId: premises.id, booking })
-    cy.task('stubPremisesSummary', premises)
+    cy.task('stubBookingExtensionCreate', { premisesId: booking.premises.id, booking })
+    cy.task('stubBookingGet', { premisesId: booking.premises.id, booking })
 
     // When I visit the booking extension page
-    const page = DepartureDateChangePage.visit(premises.id, booking.id)
+    const page = DepartureDateChangePage.visit(booking.premises.id, booking.id)
 
     // And I fill in the extension form
     page.completeForm(newDepartureDate)
@@ -43,7 +35,10 @@ context('Departure date', () => {
     bookingConfirmationPage.verifyBookingIsVisible(booking)
 
     // And the extension should be created in the API
-    cy.task('verifyBookingExtensionCreate', { premisesId: premises.id, bookingId: booking.id }).then(requests => {
+    cy.task('verifyBookingExtensionCreate', {
+      premisesId: booking.premises.id,
+      bookingId: booking.id,
+    }).then(requests => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
@@ -54,21 +49,20 @@ context('Departure date', () => {
   it('should show errors', () => {
     const booking = bookingFactory.build({
       departureDate: new Date(Date.UTC(2022, 5, 3, 0, 0, 0)).toISOString(),
+      premises: bookingPremisesSummaryFactory.build(),
     })
 
-    const premises = extendedPremisesSummaryFactory.build({
-      bookings: [premisesBookingFactory.build({ departureDate: booking.departureDate })],
+    cy.task('stubBookingGet', {
+      premisesId: booking.premises.id,
+      booking: { ...booking, person: personFactory.build() },
     })
-
-    cy.task('stubPremisesSummary', premises)
-    cy.task('stubBookingGet', { premisesId: premises.id, booking: { ...booking, person: personFactory.build() } })
 
     // When I visit the booking extension page
-    const page = DepartureDateChangePage.visit(premises.id, booking.id)
+    const page = DepartureDateChangePage.visit(booking.premises.id, booking.id)
 
     // And I don't enter details into the field
     cy.task('stubBookingExtensionErrors', {
-      premisesId: premises.id,
+      premisesId: booking.premises.id,
       bookingId: booking.id,
       params: ['newDepartureDate'],
     })

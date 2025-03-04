@@ -1,10 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
-import type {
-  ApprovedPremisesApplication,
-  ApprovedPremisesAssessment,
-  Cas1TimelineEvent,
-  PlacementRequestDetail,
-} from '@approved-premises/api'
+import type { ApprovedPremisesApplication, ApprovedPremisesAssessment, Cas1TimelineEvent } from '@approved-premises/api'
+import { SummaryListItem } from '@approved-premises/ui'
 import {
   ApplicationService,
   AssessmentService,
@@ -15,11 +11,13 @@ import {
 } from '../../services'
 
 import { DateFormats } from '../../utils/dateUtils'
-import { PlacementTab, placementTabItems } from '../../utils/placements'
+import { PlacementTab, canonicalDates, placementTabItems } from '../../utils/placements'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
 import paths from '../../paths/manage'
 import applicationPaths from '../../paths/apply'
 import peoplePaths from '../../paths/people'
+import { matchingInformationSummaryRows } from '../../utils/placementRequests/matchingInformationSummaryList'
+import { adminSummary } from '../../utils/placementRequests'
 
 export default class PlacementController {
   constructor(
@@ -45,11 +43,12 @@ export default class PlacementController {
         applicationPaths.applications.show.pattern,
         peoplePaths.timeline.show.pattern,
       ])
-      const pageHeading = `${DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' })}`
+      const { arrivalDate, departureDate } = canonicalDates(placement)
+      const pageHeading = `${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })}`
       let timelineEvents: Array<Cas1TimelineEvent> = []
       let application: ApprovedPremisesApplication = null
       let assessment: ApprovedPremisesAssessment = null
-      let placementRequestDetail: PlacementRequestDetail = null
+      let placementRequestSummaryRows: Array<SummaryListItem> = null
 
       if (activeTab === 'timeline') {
         timelineEvents = await this.placementService.getTimeline({ token: req.user.token, premisesId, placementId })
@@ -61,10 +60,14 @@ export default class PlacementController {
         assessment = await this.assessmentService.findAssessment(req.user.token, placement.assessmentId)
       }
       if (activeTab === 'placementRequest') {
-        placementRequestDetail = await this.placementRequestService.getPlacementRequest(
+        const placementRequestDetail = await this.placementRequestService.getPlacementRequest(
           req.user.token,
-          placement.requestForPlacementId,
+          placement.placementRequestId,
         )
+        placementRequestSummaryRows = [
+          ...adminSummary(placementRequestDetail).rows,
+          ...matchingInformationSummaryRows(placementRequestDetail),
+        ]
       }
 
       return res.render(`manage/premises/placements/show`, {
@@ -80,7 +83,7 @@ export default class PlacementController {
         activeTab,
         application,
         assessment,
-        placementRequestDetail,
+        placementRequestSummaryRows,
         showTitle: true,
         isOfflineApplication,
       })

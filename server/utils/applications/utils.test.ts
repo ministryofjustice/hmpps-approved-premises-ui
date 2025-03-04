@@ -26,7 +26,7 @@ import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
 import { DateFormats } from '../dateUtils'
-import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
+import * as personUtils from '../personUtils'
 
 import {
   actionsLink,
@@ -51,8 +51,8 @@ import {
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
-import { escape } from '../formUtils'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
+import { renderTimelineEventContent } from '../timeline'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -74,8 +74,6 @@ jest.mock('../../form-pages/assess', () => {
     pages: { 'assess-page': {} },
   }
 })
-
-jest.mock('../personUtils')
 
 const applySection1Task1 = {
   id: 'first-apply-section-task-1',
@@ -178,16 +176,14 @@ PlacementRequest.pages['placement-request-page'] = {
 describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
+    jest.spyOn(personUtils, 'tierBadge')
   })
 
   describe('applicationTableRows', () => {
     const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
-    const person = personFactory.build({ name: 'My name' })
+    const person = personFactory.build()
 
     it('returns an array of applications as table rows', async () => {
-      ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
       const applicationA = applicationSummaryFactory.build({
         arrivalDate: undefined,
         person,
@@ -202,8 +198,6 @@ describe('utils', () => {
 
       const result = applicationTableRows([applicationA, applicationB])
 
-      expect(tierBadge).toHaveBeenCalledWith('A1')
-
       expect(result).toEqual([
         [
           {
@@ -215,7 +209,7 @@ describe('utils', () => {
             text: applicationA.person.crn,
           },
           {
-            html: 'TIER_BADGE',
+            html: personUtils.tierBadge('A1'),
           },
           {
             text: 'N/A',
@@ -256,9 +250,6 @@ describe('utils', () => {
 
     describe('when tier is undefined', () => {
       it('returns a blank tier badge', async () => {
-        ;(tierBadge as jest.Mock).mockClear()
-        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
         const application = applicationSummaryFactory.build({
           arrivalDate,
           person,
@@ -268,7 +259,7 @@ describe('utils', () => {
 
         const result = applicationTableRows([application])
 
-        expect(tierBadge).not.toHaveBeenCalled()
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -278,9 +269,6 @@ describe('utils', () => {
 
     describe('when risks is undefined', () => {
       it('returns a blank tier badge', async () => {
-        ;(tierBadge as jest.Mock).mockClear()
-        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
         const application = applicationSummaryFactory.build({
           arrivalDate,
           person,
@@ -289,7 +277,7 @@ describe('utils', () => {
 
         const result = applicationTableRows([application])
 
-        expect(tierBadge).not.toHaveBeenCalled()
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -329,9 +317,6 @@ describe('utils', () => {
     const person = personFactory.build({ name: 'A' })
 
     it('returns an array of applications as table rows', async () => {
-      ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
       const applicationA = applicationSummaryFactory.build({
         arrivalDate: undefined,
         person,
@@ -348,8 +333,6 @@ describe('utils', () => {
 
       const result = dashboardTableRows([applicationA, applicationB])
 
-      expect(tierBadge).toHaveBeenCalledWith('A1')
-
       expect(result).toEqual([
         [
           {
@@ -361,7 +344,7 @@ describe('utils', () => {
             text: applicationA.person.crn,
           },
           {
-            html: 'TIER_BADGE',
+            html: personUtils.tierBadge('A1'),
           },
           {
             text: 'N/A',
@@ -406,9 +389,6 @@ describe('utils', () => {
 
     describe('when tier is undefined', () => {
       it('returns a blank tier badge', async () => {
-        ;(tierBadge as jest.Mock).mockClear()
-        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
         const application = applicationSummaryFactory.build({
           arrivalDate,
           person,
@@ -418,7 +398,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(tierBadge).not.toHaveBeenCalled()
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -428,9 +408,6 @@ describe('utils', () => {
 
     describe('when risks is undefined', () => {
       it('returns a blank tier badge', async () => {
-        ;(tierBadge as jest.Mock).mockClear()
-        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
         const application = applicationSummaryFactory.build({
           arrivalDate,
           person,
@@ -439,7 +416,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(tierBadge).not.toHaveBeenCalled()
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -449,11 +426,7 @@ describe('utils', () => {
 
     describe('when linkInProgressApplications is false', () => {
       it('returns the rows with the name cell without linking to the application', () => {
-        ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
-        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-        ;(nameOrPlaceholderCopy as jest.MockedFunction<typeof nameOrPlaceholderCopy>).mockReturnValue(person.name)
-
-        const application = applicationSummaryFactory.build()
+        const application = applicationSummaryFactory.build({ person })
 
         const result = dashboardTableRows([application], { linkInProgressApplications: false })
 
@@ -466,7 +439,7 @@ describe('utils', () => {
               text: application.person.crn,
             },
             {
-              html: 'TIER_BADGE',
+              html: personUtils.tierBadge(application.tier),
             },
             {
               text: DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }),
@@ -520,19 +493,18 @@ describe('utils', () => {
 
   describe('firstPageOfApplicationJourney', () => {
     it('returns the sentence type page for an applicable application', () => {
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-      ;(isApplicableTier as jest.Mock).mockReturnValue(true)
+      jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(true)
       const application = applicationFactory.withFullPerson().build()
+
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'confirm-your-details' }),
       )
     })
 
     it('returns the "enter risk level" page for an application for a person without a tier', () => {
-      const application = applicationFactory.withFullPerson().build()
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
-      application.risks = undefined
+      const application = applicationFactory.withFullPerson().build({
+        risks: undefined,
+      })
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' }),
@@ -540,9 +512,7 @@ describe('utils', () => {
     })
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
-      ;(isApplicableTier as jest.Mock).mockReturnValue(false)
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
+      jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(false)
       const application = applicationFactory.withFullPerson().build()
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
@@ -551,8 +521,6 @@ describe('utils', () => {
     })
 
     it('throws an error if the person is not a Full Person', () => {
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(false)
-
       const restrictedPerson = restrictedPersonFactory.build()
       const application = applicationFactory.build({ person: restrictedPerson })
 
@@ -726,7 +694,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: escape(timelineEvents[0].content),
+          content: renderTimelineEventContent(timelineEvents[0]),
           createdBy: timelineEvents[0].createdBy.name,
           associatedUrls: expect.arrayContaining(
             mapTimelineUrlsForUi([
@@ -752,7 +720,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: escape(timelineEvents[0].content),
+          content: renderTimelineEventContent(timelineEvents[0]),
           createdBy: timelineEvents[0].createdBy.name,
           associatedUrls: [],
         },
@@ -809,11 +777,14 @@ describe('utils', () => {
     })
 
     it('escapes any rogue HTML', () => {
-      const timelineEventWithRogueHTML = cas1TimelineEventFactory.build({ content: '<div>Hello!</div>' })
+      const timelineEventWithRogueHTML = cas1TimelineEventFactory.build({
+        content: '<div>Hello!</div>',
+        payload: undefined,
+      })
 
       const actual = mapApplicationTimelineEventsForUi([timelineEventWithRogueHTML])
 
-      expect(actual[0].content).toEqual('&lt;div&gt;Hello!&lt;/div&gt;')
+      expect(actual[0].content).toEqual('<p class="govuk-body">&lt;div&gt;Hello!&lt;/div&gt;</p>')
     })
 
     it('Sets createdBy to System if triggerSource is `system`', () => {
@@ -828,7 +799,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: escape(timelineEvents[0].content),
+          content: renderTimelineEventContent(timelineEvents[0]),
           createdBy: 'System',
           associatedUrls: expect.arrayContaining(
             mapTimelineUrlsForUi([
@@ -849,6 +820,7 @@ describe('utils', () => {
       ['assessment', 'assessment'],
       ['booking', 'placement'],
       ['assessmentAppeal', 'appeal'],
+      ['spaceBooking', 'placement'],
     ])('Translates a "%s" url type to "%s"', (urlType: Cas1TimelineEventUrlType, translation: string) => {
       const timelineUrl = { type: urlType, url: faker.internet.url() }
       expect(mapTimelineUrlsForUi([timelineUrl])).toEqual([{ url: timelineUrl.url, type: translation }])
@@ -973,17 +945,16 @@ describe('utils', () => {
 
   describe('tierQualificationPage', () => {
     it('returns undefined for valid tier', () => {
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-      ;(isApplicableTier as jest.Mock).mockReturnValue(true)
+      jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(true)
       const application = applicationFactory.withFullPerson().build()
+
       expect(tierQualificationPage(application)).toBe(undefined)
     })
 
     it('returns the "enter risk level" page for an application for a person without a tier', () => {
-      const application = applicationFactory.withFullPerson().build()
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
-      application.risks = undefined
+      const application = applicationFactory.withFullPerson().build({
+        risks: undefined,
+      })
 
       expect(tierQualificationPage(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' }),
@@ -991,9 +962,7 @@ describe('utils', () => {
     })
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
-      ;(isApplicableTier as jest.Mock).mockReturnValue(false)
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
+      jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(false)
       const application = applicationFactory.withFullPerson().build()
 
       expect(tierQualificationPage(application)).toEqual(
@@ -1002,8 +971,6 @@ describe('utils', () => {
     })
 
     it('throws an error if the person is not a Full Person', () => {
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(false)
-
       const restrictedPerson = restrictedPersonFactory.build()
       const application = applicationFactory.build({ person: restrictedPerson })
 

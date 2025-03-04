@@ -3,16 +3,21 @@ import { RadioItem, SelectOption } from '@approved-premises/ui'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingSummaryFactory,
+  restrictedPersonFactory,
   staffMemberFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
 import {
   actions,
   arrivalInformation,
+  canonicalDates,
   departureInformation,
+  detailedStatus,
   getKeyDetail,
   injectRadioConditionalHtml,
   otherBookings,
+  overallStatus,
   placementOverviewSummary,
   placementSummary,
   renderKeyworkersSelectOptions,
@@ -21,9 +26,127 @@ import {
 import { DateFormats } from '../dateUtils'
 
 import paths from '../../paths/manage'
-import { requirementsHtmlString } from '../match'
+import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
+import { characteristicsBulletList } from '../characteristicsUtils'
 
 describe('placementUtils', () => {
+  describe('placement status', () => {
+    describe.each([
+      ['placement summary', cas1SpaceBookingSummaryFactory],
+      ['full placement', cas1SpaceBookingFactory],
+    ])('when passed a %s', (_, typeFactory) => {
+      const upcoming = typeFactory.upcoming()
+      const current = typeFactory.current()
+      const departed = typeFactory.departed()
+      const nonArrival = typeFactory.nonArrival()
+
+      beforeEach(() => {
+        jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
+      })
+
+      const testCases = [
+        {
+          label: 'an upcoming placement',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-05-01' },
+          expected: { overall: 'upcoming', detailed: 'upcoming' },
+        },
+        {
+          label: 'an upcoming placement starting within 6 weeks',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-04-11' },
+          expected: { overall: 'upcoming', detailed: 'arrivingWithin6Weeks' },
+        },
+        {
+          label: 'an upcoming placement starting within 2 weeks',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-03-14' },
+          expected: { overall: 'upcoming', detailed: 'arrivingWithin2Weeks' },
+        },
+        {
+          label: 'an upcoming placement starting today',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-03-01' },
+          expected: { overall: 'upcoming', detailed: 'arrivingToday' },
+        },
+        {
+          label: 'an upcoming placement overdue arrival',
+          factory: upcoming,
+          params: { expectedArrivalDate: '2025-02-28' },
+          expected: { overall: 'upcoming', detailed: 'overdueArrival' },
+        },
+        {
+          label: 'a current placement departing in more than 6 weeks',
+          factory: current,
+          params: { expectedDepartureDate: '2025-05-01' },
+          expected: { overall: 'arrived', detailed: 'arrived' },
+        },
+        {
+          label: 'a current placement departing within 2 weeks',
+          factory: current,
+          params: { expectedDepartureDate: '2025-03-14' },
+          expected: { overall: 'arrived', detailed: 'departingWithin2Weeks' },
+        },
+        {
+          label: 'a current placement departing today',
+          factory: current,
+          params: { expectedDepartureDate: '2025-03-01' },
+          expected: { overall: 'arrived', detailed: 'departingToday' },
+        },
+        {
+          label: 'a current placement overdue departure',
+          factory: current,
+          params: { expectedDepartureDate: '2025-02-28' },
+          expected: { overall: 'arrived', detailed: 'overdueDeparture' },
+        },
+        {
+          label: 'a departed placement',
+          factory: departed,
+          params: {},
+          expected: { overall: 'departed', detailed: 'departed' },
+        },
+        {
+          label: 'a non-arrived placement',
+          factory: nonArrival,
+          params: {},
+          expected: { overall: 'notArrived', detailed: 'notArrived' },
+        },
+      ]
+
+      it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
+        const placement = factory.build(params)
+
+        expect(overallStatus(placement)).toEqual(expected.overall)
+        expect(detailedStatus(placement)).toEqual(expected.detailed)
+      })
+    })
+  })
+
+  describe('canonicalDates', () => {
+    describe.each([
+      ['placement summary', cas1SpaceBookingSummaryFactory],
+      ['full placement', cas1SpaceBookingFactory],
+    ])('when passed a %s', (_, typeFactory) => {
+      it('returns the actual arrival and departure if they are defined', () => {
+        const placement = typeFactory.departed().build()
+
+        expect(canonicalDates(placement)).toEqual({
+          arrivalDate: placement.actualArrivalDate,
+          departureDate: placement.actualDepartureDate,
+        })
+      })
+
+      it('returns the expected arrival and departure if actual dates are not defined', () => {
+        const placement = typeFactory.upcoming().build()
+
+        expect(canonicalDates(placement)).toEqual({
+          arrivalDate: placement.expectedArrivalDate,
+          departureDate: placement.expectedDepartureDate,
+        })
+      })
+    })
+  })
+
   describe('actions', () => {
     const userDetails = userDetailsFactory.build({
       permissions: [
@@ -126,7 +249,7 @@ describe('placementUtils', () => {
     })
 
     describe('when the placement has both an arrival and a departure recorded', () => {
-      const placementAfterDeparture = cas1SpaceBookingFactory.build({ id: placementId, premises })
+      const placementAfterDeparture = cas1SpaceBookingFactory.departed().build({ id: placementId, premises })
       it('should allow nothing', () => {
         expect(actions(placementAfterDeparture, userDetails)).toEqual(null)
       })
@@ -151,18 +274,56 @@ describe('placementUtils', () => {
         ],
       })
     })
+
+    it('should prefix the name with LAO if the person is LAO', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: fullPersonFactory.build({
+          isRestricted: true,
+        }),
+      })
+
+      const result = getKeyDetail(placement)
+
+      expect(result.header.value).toEqual(`LAO: ${(placement.person as FullPerson).name}`)
+    })
+
+    it('should not show the name or date of birth for a restricted person', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: restrictedPersonFactory.build(),
+      })
+
+      expect(getKeyDetail(placement)).toEqual({
+        header: { key: '', showKey: false, value: 'Limited Access Offender' },
+        items: [
+          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
+          { key: { text: 'Tier' }, value: { text: placement.tier } },
+        ],
+      })
+    })
+
+    it('should not show the name or date of birth for an unknown person', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: unknownPersonFactory.build(),
+      })
+
+      expect(getKeyDetail(placement)).toEqual({
+        header: { key: '', showKey: false, value: 'Unknown person' },
+        items: [
+          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
+          { key: { text: 'Tier' }, value: { text: placement.tier } },
+        ],
+      })
+    })
   })
 
   describe('tabular information', () => {
     const placement = cas1SpaceBookingFactory.build({
       expectedArrivalDate: '2024-05-30',
       expectedDepartureDate: '2024-12-24',
-      actualArrivalDateOnly: '2024-06-01',
-      actualDepartureDateOnly: '2024-12-25',
+      actualArrivalDate: '2024-06-01',
+      actualDepartureDate: '2024-12-25',
       createdAt: '2024-03-03',
-      requirements: {
-        essentialCharacteristics: ['isESAP', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
-      },
+      characteristics: ['isESAP', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
     })
 
     it('should return the placement summary information', () => {
@@ -181,17 +342,41 @@ describe('placementUtils', () => {
       })
     })
 
-    it('should return an overview of the placement summary information', () => {
-      const expectedSpaceTypeHtml = `<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>`
+    describe('Overview placement summary', () => {
+      it('should return an overview of the placement summary information before arrival', () => {
+        const unarrivedPlacement: Cas1SpaceBooking = {
+          ...placement,
+          actualArrivalDate: undefined,
+          actualDepartureDate: undefined,
+        }
 
-      expect(placementOverviewSummary(placement)).toEqual({
-        rows: [
-          { key: { text: 'Approved premises' }, value: { text: placement.premises.name } },
-          { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
-          { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
-          { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
-          { key: { text: 'Room criteria' }, value: { html: expectedSpaceTypeHtml } },
-        ],
+        expect(placementOverviewSummary(unarrivedPlacement)).toEqual({
+          rows: [
+            { key: { text: 'Approved premises' }, value: { text: unarrivedPlacement.premises.name } },
+            { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
+            { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
+            { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
+            {
+              key: { text: 'Room criteria' },
+              value: { html: `<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>` },
+            },
+          ],
+        })
+      })
+
+      it('should return an overview of the placement summary information after arrival', () => {
+        const expectedSpaceTypeHtml = `<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>`
+
+        expect(placementOverviewSummary(placement)).toEqual({
+          rows: [
+            { key: { text: 'Approved premises' }, value: { text: placement.premises.name } },
+            { key: { text: 'Date of match' }, value: { text: 'Sun 3 Mar 2024' } },
+            { key: { text: 'Expected arrival date' }, value: { text: 'Thu 30 May 2024' } },
+            { key: { text: 'Actual arrival date' }, value: { text: 'Sat 1 Jun 2024' } },
+            { key: { text: 'Expected departure date' }, value: { text: 'Tue 24 Dec 2024' } },
+            { key: { text: 'Room criteria' }, value: { html: expectedSpaceTypeHtml } },
+          ],
+        })
       })
     })
 
@@ -204,7 +389,7 @@ describe('placementUtils', () => {
           },
           {
             key: { text: 'Actual arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDateOnly) },
+            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDate) },
           },
           {
             key: { text: 'Arrival time' },
@@ -254,7 +439,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
@@ -284,7 +469,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
@@ -315,7 +500,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Actual departure date' },
-              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDateOnly) },
+              value: { text: DateFormats.isoDateToUIDate(departedPlacement.actualDepartureDate) },
             },
             {
               key: { text: 'Departure time' },
@@ -339,9 +524,7 @@ describe('placementUtils', () => {
     describe('requirements information', () => {
       it('should be returned for a placement in a standard AP', () => {
         const placementStandardAp = cas1SpaceBookingFactory.build({
-          requirements: {
-            essentialCharacteristics: ['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
-          },
+          characteristics: ['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
         })
 
         expect(requirementsInformation(placementStandardAp)).toEqual({
@@ -349,18 +532,18 @@ describe('placementUtils', () => {
             { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
             {
               key: { text: 'AP requirements' },
-              value: { html: requirementsHtmlString(['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders']) },
+              value: {
+                html: characteristicsBulletList(['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders']),
+              },
             },
-            { key: { text: 'Room requirements' }, value: { html: requirementsHtmlString(['hasEnSuite']) } },
+            { key: { text: 'Room requirements' }, value: { html: characteristicsBulletList(['hasEnSuite']) } },
           ],
         })
       })
 
       it('should be returned for a placement in a specialist AP', () => {
         const placementSpecialistAp = cas1SpaceBookingFactory.build({
-          requirements: {
-            essentialCharacteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite', 'isWheelchairAccessible'],
-          },
+          characteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite', 'isWheelchairAccessible'],
         })
 
         expect(requirementsInformation(placementSpecialistAp)).toEqual({
@@ -368,11 +551,11 @@ describe('placementUtils', () => {
             { key: { text: 'AP type' }, value: { text: 'Enhanced Security AP (ESAP)' } },
             {
               key: { text: 'AP requirements' },
-              value: { html: requirementsHtmlString(['acceptsChildSexOffenders']) },
+              value: { html: characteristicsBulletList(['acceptsChildSexOffenders']) },
             },
             {
               key: { text: 'Room requirements' },
-              value: { html: requirementsHtmlString(['hasEnSuite', 'isWheelchairAccessible']) },
+              value: { html: characteristicsBulletList(['hasEnSuite', 'isWheelchairAccessible']) },
             },
           ],
         })
@@ -380,9 +563,7 @@ describe('placementUtils', () => {
 
       it('should be returned for a placement with no requirements', () => {
         const placementNoRequirements = cas1SpaceBookingFactory.build({
-          requirements: {
-            essentialCharacteristics: [],
-          },
+          characteristics: [],
         })
 
         expect(requirementsInformation(placementNoRequirements)).toEqual({
