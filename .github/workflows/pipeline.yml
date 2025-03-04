@@ -235,7 +235,7 @@ jobs:
     name: Deploy to the development environment
     needs:
       - build
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev')
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev-') || startsWith(github.head_ref, 'feature-dev-')
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1
     secrets: inherit
     with:
