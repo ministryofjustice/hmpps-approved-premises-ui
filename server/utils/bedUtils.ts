@@ -1,4 +1,4 @@
-import { BedDetail, BedSummary, Cas1PremisesBedSummary } from '@approved-premises/api'
+import { BedDetail, Cas1PremisesBedSummary } from '@approved-premises/api'
 import { SummaryListItem, TableCell } from '../@types/ui'
 import paths from '../paths/manage'
 import { linkTo, sentenceCase } from './utils'
@@ -9,11 +9,9 @@ import {
 } from './characteristicsUtils'
 import { summaryListItem } from './formUtils'
 
-export const bedNameCell = (item: { bedName: string }): TableCell => ({ text: item.bedName })
+export const bedNameCell = (item: Cas1PremisesBedSummary): TableCell => ({ text: item.bedName })
 
-export const roomNameCell = (item: { roomName: string }): TableCell => ({ text: item.roomName })
-
-export const statusCell = (bed: BedSummary): TableCell => ({ text: sentenceCase(bed.status) })
+export const roomNameCell = (item: Cas1PremisesBedSummary): TableCell => ({ text: item.roomName })
 
 export const actionCell = (bed: Cas1PremisesBedSummary, premisesId: string): TableCell => ({
   html: bedLink(bed, premisesId),
