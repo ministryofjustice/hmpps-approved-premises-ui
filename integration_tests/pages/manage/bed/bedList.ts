@@ -1,4 +1,4 @@
-import { BedDetail, BedSummary, Premises } from '@approved-premises/api'
+import { BedDetail, Cas1PremisesBedSummary, Premises } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -15,7 +15,7 @@ export default class BedsListPage extends Page {
     return new BedsListPage()
   }
 
-  shouldShowBeds(beds: Array<BedSummary>, premisesId: Premises['id']): void {
+  shouldShowBeds(beds: Array<Cas1PremisesBedSummary>, premisesId: Premises['id']): void {
     const rows = bedTableRows(beds, premisesId)
     this.shouldContainTableRows(rows)
   }

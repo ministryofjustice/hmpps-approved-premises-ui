@@ -1,10 +1,5 @@
 import paths from '../paths/manage'
-import {
-  apCharacteristicPairFactory,
-  bedDetailFactory,
-  bedSummaryFactory,
-  cas1PremisesBedSummaryFactory,
-} from '../testutils/factories'
+import { apCharacteristicPairFactory, bedDetailFactory, cas1PremisesBedSummaryFactory } from '../testutils/factories'
 import {
   actionCell,
   bedActions,
@@ -13,63 +8,41 @@ import {
   bedNameCell,
   bedTableRows,
   roomNameCell,
-  statusCell,
   statusRow,
   title,
 } from './bedUtils'
 
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
-  const bed = bedSummaryFactory.build()
-  const cas1Bed = cas1PremisesBedSummaryFactory.build()
+  const bedSummary = cas1PremisesBedSummaryFactory.build()
   const bedDetail = bedDetailFactory.build()
 
   describe('roomNameCell', () => {
     it('returns the name of the room', () => {
-      expect(roomNameCell(bed)).toEqual({ text: bed.roomName })
+      expect(roomNameCell(bedSummary)).toEqual({ text: bedSummary.roomName })
     })
   })
 
   describe('bedNameCell', () => {
     it('returns the name of the room', () => {
-      expect(bedNameCell(cas1Bed)).toEqual({ text: cas1Bed.bedName })
-    })
-  })
-
-  describe('statusCell', () => {
-    it('returns the status of an available room in sentence case', () => {
-      bed.status = 'available'
-
-      expect(statusCell(bed)).toEqual({ text: 'Available' })
-    })
-
-    it('returns the status of an occupied room in sentence case', () => {
-      bed.status = 'occupied'
-
-      expect(statusCell(bed)).toEqual({ text: 'Occupied' })
-    })
-
-    it('returns the status of an out of service room in sentence case', () => {
-      bed.status = 'out_of_service'
-
-      expect(statusCell(bed)).toEqual({ text: 'Out of service' })
+      expect(bedNameCell(bedSummary)).toEqual({ text: bedSummary.bedName })
     })
   })
 
   describe('actionCell', () => {
     it('returns a link to manage the room', () => {
-      expect(actionCell(cas1Bed, premisesId)).toEqual({
-        html: bedLink(cas1Bed, premisesId),
+      expect(actionCell(bedSummary, premisesId)).toEqual({
+        html: bedLink(bedSummary, premisesId),
       })
     })
   })
 
   describe('bedTableRows', () => {
     it('returns the table rows given the rooms', () => {
-      const beds = [cas1Bed]
+      const beds = [bedSummary]
 
       expect(bedTableRows(beds, premisesId)).toEqual([
-        [roomNameCell(cas1Bed), bedNameCell(cas1Bed), actionCell(cas1Bed, premisesId)],
+        [roomNameCell(bedSummary), bedNameCell(bedSummary), actionCell(bedSummary, premisesId)],
       ])
     })
   })
