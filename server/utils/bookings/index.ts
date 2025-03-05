@@ -1,11 +1,5 @@
 import type { BespokeError, SelectOption, SummaryList, SummaryListItem } from '@approved-premises/ui'
-import type {
-  BedSummary,
-  Booking,
-  BookingStatus,
-  PlacementRequestBookingSummary,
-  PremisesBooking,
-} from '@approved-premises/api'
+import type { Booking, BookingStatus, PlacementRequestBookingSummary } from '@approved-premises/api'
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
