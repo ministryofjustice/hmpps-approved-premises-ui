@@ -280,9 +280,6 @@
       "response": "yes"
     },
     "date-of-offence": {
-      "arsonOffence": [
-        "current"
-      ],
       "hateCrime": [
         "previous"
       ],

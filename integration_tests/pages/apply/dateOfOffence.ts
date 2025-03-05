@@ -19,7 +19,6 @@ export default class DateOfOffence extends ApplyPage {
   }
 
   completeForm(): void {
-    this.checkCheckboxesFromPageBody('arsonOffence')
     this.checkCheckboxesFromPageBody('hateCrime')
     this.checkCheckboxesFromPageBody('nonSexualOffencesAgainstChildren')
     this.checkCheckboxesFromPageBody('contactSexualOffencesAgainstAdults')
