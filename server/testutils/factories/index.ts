@@ -10,7 +10,6 @@ import arrivalFactory from './arrival'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
-import bedSummaryFactory from './bedSummary'
 import bedDetailFactory, { apCharacteristicPairFactory } from './bedDetail'
 import bookingSummaryFactory from './placementRequestBookingSummary'
 import bookingFactory from './booking'
@@ -65,7 +64,6 @@ import taskWrapperFactory from './taskWrapperFactory'
 import userFactory, { userSummaryFactory, userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
-import premisesBookingFactory from './premisesBooking'
 import bookingPremisesSummaryFactory from './bookingPremisesSummary'
 import withdrawableFactory from './withdrawableFactory'
 import cancellationReasonFactory from './cancellationReason'
@@ -110,7 +108,6 @@ export {
   assessmentTaskFactory,
   assessmentFactory,
   assessmentSummaryFactory,
-  bedSummaryFactory,
   bedDetailFactory,
   bookingSummaryFactory,
   bookingFactory,
@@ -171,7 +168,6 @@ export {
   placementRequestFactory,
   placementRequestDetailFactory,
   premisesFactory,
-  premisesBookingFactory,
   premisesSummaryFactory,
   prisonCaseNotesFactory,
   probationRegionFactory,
