@@ -7,6 +7,7 @@ import {
   applicationSummaryFactory,
   bookingFactory,
   cas1PremisesBasicSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
   cruManagementAreaFactory,
   newCancellationFactory,
   placementRequestDetailFactory,
@@ -47,7 +48,9 @@ context('Placement Requests', () => {
       spaceBookings: [],
     })
 
-    const matchedPlacementRequest = placementRequestDetailFactory.build(matchedPlacementRequests[1])
+    const matchedPlacementRequest = placementRequestDetailFactory
+      .withSpaceBooking(cas1SpaceBookingSummaryFactory.upcoming().build())
+      .build(matchedPlacementRequests[1])
     const spaceBooking = bookingFactory.build({
       applicationId: application.id,
       premises: { id: matchedPlacementRequest.booking.premisesId },
