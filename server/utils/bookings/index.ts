@@ -1,4 +1,4 @@
-import type { BespokeError, SelectOption, SummaryList, SummaryListItem, TableRow } from '@approved-premises/ui'
+import type { BespokeError, SelectOption, SummaryList, SummaryListItem } from '@approved-premises/ui'
 import type {
   BedSummary,
   Booking,
@@ -6,11 +6,10 @@ import type {
   PlacementRequestBookingSummary,
   PremisesBooking,
 } from '@approved-premises/api'
-import { addDays, isBefore, isEqual, isWithinInterval } from 'date-fns'
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
-import { DateFormats, todayAtMidnight } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from '../utils'
 import { displayName } from '../personUtils'
@@ -18,8 +17,6 @@ import { convertObjectsToRadioItems, summaryListItem } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
 import { bookingActions, v1BookingActions, v2BookingActions } from './bookingActions'
 import { EntityType } from '../../@types/ui'
-
-const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
 type ConflictingEntityType = EntityType
 
@@ -41,106 +38,6 @@ export const bookingSummaryList = (booking?: PlacementRequestBookingSummary): Su
         ],
       }
     : undefined
-}
-
-export const manageBookingLink = (premisesId: string, booking: Booking | PremisesBooking): string => {
-  return booking.id && booking.person
-    ? `<a href="${paths.bookings.show({
-        premisesId,
-        bookingId: booking.id,
-      })}" data-cy-booking-id="${booking.id}">
-    Manage
-    <span class="govuk-visually-hidden">
-      booking for ${booking.person.crn}
-    </span>
-  </a>`
-    : 'Unable to manage booking'
-}
-
-export const arrivingTodayOrLate = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
-  const filteredBookings = bookings
-    .filter(booking => booking.status === 'awaiting-arrival')
-    .filter(
-      booking =>
-        isEqual(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight()) ||
-        isBefore(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight()),
-    )
-
-  return bookingsToTableRows(filteredBookings, premisesId, 'arrival')
-}
-
-export const departingTodayOrLate = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
-  const filteredBookings = bookings
-    .filter(booking => booking.status === 'arrived')
-    .filter(
-      booking =>
-        isEqual(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight()) ||
-        isBefore(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight()),
-    )
-
-  return bookingsToTableRows(filteredBookings, premisesId, 'departure')
-}
-
-export const upcomingArrivals = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
-  return bookingsToTableRows(
-    bookings.filter(
-      booking =>
-        booking.status === 'awaiting-arrival' &&
-        isWithinInterval(DateFormats.isoToDateObj(booking.arrivalDate), {
-          start: addDays(todayAtMidnight(), 1),
-          end: addDays(todayAtMidnight(), UPCOMING_WINDOW_IN_DAYS + 1),
-        }),
-    ),
-    premisesId,
-    'arrival',
-  )
-}
-
-export const upcomingDepartures = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
-  return bookingsToTableRows(
-    bookings.filter(
-      booking =>
-        booking.status === 'arrived' &&
-        isWithinInterval(DateFormats.isoToDateObj(booking.departureDate), {
-          start: addDays(todayAtMidnight(), 1),
-          end: addDays(todayAtMidnight(), UPCOMING_WINDOW_IN_DAYS + 1),
-        }),
-    ),
-    premisesId,
-    'departure',
-  )
-}
-
-export const arrivedBookings = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
-  return bookingsToTableRows(
-    bookings.filter(booking => booking.status === 'arrived'),
-    premisesId,
-    'departure',
-  )
-}
-
-export const bookingsToTableRows = (
-  bookings: Array<PremisesBooking>,
-  premisesId: string,
-  type: 'arrival' | 'departure',
-): Array<TableRow> => {
-  return bookings.map(booking => [
-    {
-      text: displayName(booking.person),
-    },
-    {
-      text: booking.person.crn,
-    },
-    {
-      text: DateFormats.isoDateToUIDate(type === 'arrival' ? booking.arrivalDate : booking.departureDate),
-    },
-    {
-      text: booking.bed?.name || 'Not allocated',
-    },
-    {
-      html: manageBookingLink(premisesId, booking),
-    },
-  ])
 }
 
 export const generateConflictBespokeError = (
@@ -184,14 +81,6 @@ const parseConflictError = (detail: string): ParsedConflictError => {
   const [message, conflictingEntityId] = detail.split(':').map((s: string) => s.trim())
   const conflictingEntityType = message.includes('out-of-service bed') ? 'lost-bed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
-}
-
-export const bedsAsSelectItems = (beds: Array<BedSummary>, selectedId: string): Array<SelectOption> => {
-  return beds.map(bed => ({
-    text: `Bed name: ${bed.name}, room name: ${bed.roomName}`,
-    value: bed.id,
-    selected: selectedId === bed.id,
-  }))
 }
 
 export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
