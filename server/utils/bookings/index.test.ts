@@ -1,33 +1,22 @@
 import { SanitisedError } from '../../sanitisedError'
 import {
   BookingStatusTag,
-  arrivedBookings,
-  arrivingTodayOrLate,
-  bedsAsSelectItems,
   bookingArrivalRows,
   bookingDepartureRows,
   bookingPersonRows,
   bookingShowDocumentRows,
   bookingSummaryList,
-  bookingsToTableRows,
   cancellationReasonsRadioItems,
   cancellationRows,
-  departingTodayOrLate,
   generateConflictBespokeError,
-  manageBookingLink,
-  upcomingArrivals,
-  upcomingDepartures,
 } from '.'
 import {
   arrivalFactory,
-  bedSummaryFactory,
   bookingFactory,
   bookingSummaryFactory,
   cancellationFactory,
   cancellationReasonFactory,
   departureFactory,
-  personFactory,
-  premisesBookingFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
@@ -49,134 +38,6 @@ describe('bookingUtils', () => {
 
   afterEach(() => {
     process.env = OLD_ENV
-  })
-
-  describe('manageBookingLink', () => {
-    it('returns a link for a booking', () => {
-      const booking = bookingFactory.build()
-
-      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
-        premisesId,
-        bookingId: booking.id,
-      })}" data-cy-booking-id="${booking.id}">
-      Manage
-      <span class="govuk-visually-hidden">
-        booking for ${booking.person.crn}
-      </span>
-    </a>`)
-    })
-
-    it('returns a link for a booking', () => {
-      const booking = bookingFactory.build()
-
-      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
-        premisesId,
-        bookingId: booking.id,
-      })}" data-cy-booking-id="${booking.id}">
-      Manage
-      <span class="govuk-visually-hidden">
-        booking for ${booking.person.crn}
-      </span>
-    </a>`)
-    })
-  })
-
-  describe('bookingsToTableRows', () => {
-    const bookings = [
-      bookingFactory.build({
-        person: personFactory.build({ crn: 'ABC123' }),
-        arrivalDate: '2022-01-01',
-        departureDate: '2022-03-01',
-        bed: undefined,
-      }),
-      bookingFactory.build({
-        person: personFactory.build({ crn: 'XYZ345' }),
-        arrivalDate: '2022-01-02',
-        departureDate: '2022-03-02',
-        bed: {
-          name: 'Bed 1',
-        },
-      }),
-    ]
-
-    it('casts a group of bookings to table rows with the arrival date', () => {
-      expect(bookingsToTableRows(bookings, premisesId, 'arrival')).toEqual([
-        [
-          {
-            text: displayName(bookings[0].person),
-          },
-          {
-            text: bookings[0].person.crn,
-          },
-          {
-            text: DateFormats.isoDateToUIDate(bookings[0].arrivalDate),
-          },
-          {
-            text: 'Not allocated',
-          },
-          {
-            html: manageBookingLink(premisesId, bookings[0]),
-          },
-        ],
-        [
-          {
-            text: displayName(bookings[1].person),
-          },
-          {
-            text: bookings[1].person.crn,
-          },
-          {
-            text: DateFormats.isoDateToUIDate(bookings[1].arrivalDate),
-          },
-          {
-            text: 'Bed 1',
-          },
-          {
-            html: manageBookingLink(premisesId, bookings[1]),
-          },
-        ],
-      ])
-    })
-
-    it('casts a group of bookings to table rows with the departure date', () => {
-      expect(bookingsToTableRows(bookings, premisesId, 'departure')).toEqual([
-        [
-          {
-            text: displayName(bookings[0].person),
-          },
-          {
-            text: bookings[0].person.crn,
-          },
-          {
-            text: DateFormats.isoDateToUIDate(bookings[0].departureDate),
-          },
-          {
-            text: 'Not allocated',
-          },
-          {
-            html: manageBookingLink(premisesId, bookings[0]),
-          },
-        ],
-        [
-          {
-            text: displayName(bookings[1].person),
-          },
-          {
-            text: bookings[1].person.crn,
-          },
-
-          {
-            text: DateFormats.isoDateToUIDate(bookings[1].departureDate),
-          },
-          {
-            text: 'Bed 1',
-          },
-          {
-            html: manageBookingLink(premisesId, bookings[1]),
-          },
-        ],
-      ])
-    })
   })
 
   describe('generateConflictBespokeError', () => {
@@ -244,17 +105,6 @@ describe('bookingUtils', () => {
           },
         ],
       })
-    })
-  })
-
-  describe('bedsAsSelectItems', () => {
-    it('should return an array of select items', () => {
-      const beds = bedSummaryFactory.buildList(2)
-
-      expect(bedsAsSelectItems(beds, beds[0].id)).toEqual([
-        { text: `Bed name: ${beds[0].name}, room name: ${beds[0].roomName}`, value: beds[0].id, selected: true },
-        { text: `Bed name: ${beds[1].name}, room name: ${beds[1].roomName}`, value: beds[1].id, selected: false },
-      ])
     })
   })
 
@@ -477,74 +327,6 @@ describe('bookingUtils', () => {
           },
         },
       ])
-    })
-  })
-
-  describe('sorting bookings', () => {
-    const bookingsArrivingToday = premisesBookingFactory.arrivingToday().buildList(1)
-    const bookingsMarkedAsArrived = premisesBookingFactory.arrivedToday().buildList(1)
-
-    const bookingsDepartingToday = premisesBookingFactory.departingToday().buildList(1)
-    const departedBookings = premisesBookingFactory.departedToday().buildList(1)
-
-    const bookingsArrivingSoon = premisesBookingFactory.arrivingSoon().buildList(1)
-
-    const cancelledBookingsWithFutureArrivalDate = premisesBookingFactory.cancelledWithFutureArrivalDate().buildList(1)
-
-    const bookingsDepartingSoon = premisesBookingFactory.departingSoon().buildList(2)
-
-    const bookings = [
-      ...bookingsArrivingToday,
-      ...bookingsMarkedAsArrived,
-      ...bookingsDepartingToday,
-      ...departedBookings,
-      ...bookingsArrivingSoon,
-      ...cancelledBookingsWithFutureArrivalDate,
-      ...bookingsDepartingSoon,
-    ]
-
-    describe('arrivingTodayOrLate', () => {
-      it('returns all bookings arriving today or late', () => {
-        expect(arrivingTodayOrLate(bookings, premisesId)).toEqual(
-          bookingsToTableRows(bookingsArrivingToday, premisesId, 'arrival'),
-        )
-      })
-    })
-
-    describe('departingTodayOrLate', () => {
-      it('returns all bookings departing today or late', () => {
-        expect(departingTodayOrLate(bookings, premisesId)).toEqual(
-          bookingsToTableRows(bookingsDepartingToday, premisesId, 'departure'),
-        )
-      })
-    })
-
-    describe('upcomingArrivals', () => {
-      it('returns all upcoming arrivals', () => {
-        expect(upcomingArrivals(bookings, premisesId)).toEqual(
-          bookingsToTableRows(bookingsArrivingSoon, premisesId, 'arrival'),
-        )
-      })
-    })
-
-    describe('upcomingDepartures', () => {
-      it('returns all upcoming departures', () => {
-        expect(upcomingDepartures(bookings, premisesId)).toEqual(
-          bookingsToTableRows([...bookingsMarkedAsArrived, ...bookingsDepartingSoon], premisesId, 'departure'),
-        )
-      })
-    })
-
-    describe('arrivedBookings', () => {
-      it('returns all arrived bookings', () => {
-        expect(arrivedBookings(bookings, premisesId)).toEqual(
-          bookingsToTableRows(
-            [...bookingsMarkedAsArrived, ...bookingsDepartingToday, ...bookingsDepartingSoon],
-            premisesId,
-            'departure',
-          ),
-        )
-      })
     })
   })
 
