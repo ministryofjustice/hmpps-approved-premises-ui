@@ -157,13 +157,13 @@
       ],
       "ACCT Alerts": [
         {
-          "Alert type": 47419,
+          "Alert type": "AcctAlert type one",
           "ACCT description": "Soluta harum harum hic maxime reprehenderit quis harum necessitatibus.",
           "Date created": "Mon 5 Dec 2022",
           "Expiry date": "Mon 29 May 2023"
         },
         {
-          "Alert type": 429,
+          "Alert type": "AcctAlert type two",
           "ACCT description": "Quia ex nisi deserunt voluptatibus sit ipsa.",
           "Date created": "Sat 21 May 2022",
           "Expiry date": "Sat 16 Dec 2023"

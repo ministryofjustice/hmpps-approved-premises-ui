@@ -387,16 +387,16 @@ export default class ApplyHelper {
 
   private stubAcctAlertsEndpoint() {
     const acctAlert1 = acctAlertFactory.build({
-      alertId: 47419,
+      alertTypeDescription: 'AcctAlert type one',
       dateCreated: '2022-12-05',
       dateExpires: '2023-05-29',
-      comment: 'Soluta harum harum hic maxime reprehenderit quis harum necessitatibus.',
+      description: 'Soluta harum harum hic maxime reprehenderit quis harum necessitatibus.',
     })
     const acctAlert2 = acctAlertFactory.build({
-      alertId: 429,
+      alertTypeDescription: 'AcctAlert type two',
       dateCreated: '2022-05-21',
       dateExpires: '2023-12-16',
-      comment: 'Quia ex nisi deserunt voluptatibus sit ipsa.',
+      description: 'Quia ex nisi deserunt voluptatibus sit ipsa.',
     })
 
     this.acctAlerts = [acctAlert1, acctAlert2]
