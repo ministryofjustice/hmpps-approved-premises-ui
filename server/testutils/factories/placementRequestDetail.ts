@@ -1,5 +1,5 @@
 import { Factory } from 'fishery'
-import { Cas1SpaceBookingSummary, PlacementRequestDetail } from '../../@types/shared'
+import { Cas1SpaceBookingSummary, PlacementRequestDetail, type PlacementRequestStatus } from '../../@types/shared'
 
 import cancellationFactory from './cancellation'
 import placementRequestFactory from './placementRequest'
@@ -28,16 +28,18 @@ class PlacementRequestDetailFactory extends Factory<PlacementRequestDetail> {
   }
 }
 
-export default PlacementRequestDetailFactory.define(() => {
-  const spaceBooking = cas1SpaceBookingSummaryFactory.build()
+export default PlacementRequestDetailFactory.define(({ params }) => {
+  const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build()
   const bookingSummary = bookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
 
+  const skipBooking = (['notMatched', 'unableToMatch'] as Array<PlacementRequestStatus>).includes(params.status)
+
   return {
-    ...placementRequestFactory.build(),
+    ...placementRequestFactory.build(params),
     cancellations: cancellationFactory.buildList(2),
-    booking: bookingSummary,
+    booking: skipBooking ? undefined : bookingSummary,
     legacyBooking: undefined,
-    spaceBookings: [spaceBooking],
+    spaceBookings: skipBooking ? [] : [spaceBooking],
     application: applicationFactory.build(),
   }
 })

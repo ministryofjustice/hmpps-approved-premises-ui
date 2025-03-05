@@ -6,8 +6,9 @@ import {
   applicationFactory,
   applicationSummaryFactory,
   bookingFactory,
+  bookingSummaryFactory,
   cas1PremisesBasicSummaryFactory,
-  cas1SpaceBookingSummaryFactory,
+  cas1SpaceBookingFactory,
   cruManagementAreaFactory,
   newCancellationFactory,
   placementRequestDetailFactory,
@@ -26,7 +27,6 @@ import paths from '../../../server/paths/api'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
-import bookingSummaryFactory from '../../../server/testutils/factories/placementRequestBookingSummary'
 
 context('Placement Requests', () => {
   const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
@@ -48,10 +48,8 @@ context('Placement Requests', () => {
       spaceBookings: [],
     })
 
-    const matchedPlacementRequest = placementRequestDetailFactory
-      .withSpaceBooking(cas1SpaceBookingSummaryFactory.upcoming().build())
-      .build(matchedPlacementRequests[1])
-    const spaceBooking = bookingFactory.build({
+    const matchedPlacementRequest = placementRequestDetailFactory.build(matchedPlacementRequests[1])
+    const spaceBooking = cas1SpaceBookingFactory.build({
       applicationId: application.id,
       premises: { id: matchedPlacementRequest.booking.premisesId },
       id: matchedPlacementRequest.booking.id,
@@ -59,10 +57,11 @@ context('Placement Requests', () => {
     const legacyBooking = bookingSummaryFactory.build({
       type: 'legacy',
     })
-    const matchedPlacementRequestWithLegacyBooking = placementRequestDetailFactory.withLegacyBooking().build({
+    const matchedPlacementRequestWithLegacyBooking = placementRequestDetailFactory.build({
       ...matchedPlacementRequests[2],
       booking: legacyBooking,
       legacyBooking,
+      spaceBookings: [],
     })
     const unableToMatchPlacementRequest = placementRequestDetailFactory.build(unableToMatchPlacementRequests[0])
 
