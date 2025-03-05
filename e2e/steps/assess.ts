@@ -150,7 +150,6 @@ export const addMatchingInformation = async (page: Page) => {
     'Is suitable for vulnerable',
     'Accepts child sex offenders',
     'Is arson designated',
-    'Is arson suitable',
   ]
 
   const essentialCharacteristics = ['Is catered', 'Has en suite']
