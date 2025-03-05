@@ -4,6 +4,7 @@ import Page from '../../page'
 import { bookingSummaryList } from '../../../../server/utils/bookings'
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
 import paths from '../../../../server/paths/admin'
+import { placementSummaryList } from '../../../../server/utils/placementRequests/placementSummaryList'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
@@ -23,9 +24,14 @@ export default class ShowPage extends Page {
     cy.contains('Booked placement').should('not.exist')
   }
 
-  shouldShowBookingInformation() {
+  shouldShowLegacyBookingInformation() {
     cy.contains('Booked placement').should('exist')
     this.shouldContainSummaryListItems(bookingSummaryList(this.placementRequest.booking).rows)
+  }
+
+  shouldShowBookingInformation() {
+    cy.contains('Booked placement').should('exist')
+    this.shouldContainSummaryListItems(placementSummaryList(this.placementRequest).rows)
   }
 
   clickCreateBooking() {

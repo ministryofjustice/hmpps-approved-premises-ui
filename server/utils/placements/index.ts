@@ -42,12 +42,13 @@ export const statusTextMap = {
   overdueDeparture: 'Overdue departure',
 } as const
 
+type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
 type SpaceBookingStatus = keyof typeof statusTextMap
 
 const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
   Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
 
-export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
+export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingOverallStatus => {
   const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
 
   if (isNonArrival) return 'notArrived'

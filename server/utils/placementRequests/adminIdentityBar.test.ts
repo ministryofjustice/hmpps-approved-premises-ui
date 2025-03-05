@@ -1,7 +1,7 @@
 import { fromPartial } from '@total-typescript/shoehorn'
 import { ApprovedPremisesUserPermission, PlacementRequestDetail } from '@approved-premises/api'
 import {
-  bookingSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
   personFactory,
   placementRequestDetailFactory,
   userDetailsFactory,
@@ -51,7 +51,11 @@ const setup = ({
     href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
     text: 'Withdraw placement',
   }
-  const adminActionsResult = adminActions(placementRequestDetail, fromPartial(user))
+  const actionWithdrawPlacementRequest = {
+    href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
+    text: 'Withdraw request for placement',
+  }
+  const adminActionsResult = adminActions(placementRequestDetail, user)
   return {
     placementRequestDetail,
     actionCreatePlacement,
@@ -59,6 +63,7 @@ const setup = ({
     actionAmendLegacyBooking,
     actionChangePlacement,
     actionWithdrawPlacement,
+    actionWithdrawPlacementRequest,
     adminActionsResult,
   }
 }
@@ -77,49 +82,70 @@ describe('adminIdentityBar', () => {
     })
 
     describe('if the status of the placement request is `matched`', () => {
-      it('should return actions to amend a legacy booking', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({
-          status: 'matched',
-          booking: bookingSummaryFactory.build({ type: 'legacy' }),
-        })
+      describe('if the placement request has a legacy booking', () => {
+        const placementRequestDetail = placementRequestDetailFactory.withLegacyBooking().build()
 
-        const { adminActionsResult, actionAmendLegacyBooking } = setup({
-          placementRequestDetail,
-          permissions: [],
+        it('should return an action to amend the booking', () => {
+          const { adminActionsResult, actionAmendLegacyBooking } = setup({
+            placementRequestDetail,
+            permissions: [],
+          })
+          expect(adminActionsResult).toEqual([actionAmendLegacyBooking])
         })
-        expect(adminActionsResult).toEqual([actionAmendLegacyBooking])
       })
 
-      it('should return actions to amend a space booking', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({
-          status: 'matched',
-          booking: bookingSummaryFactory.build({ type: 'space' }),
+      describe('if the placement request has a space booking', () => {
+        it.each([
+          ['upcoming', cas1SpaceBookingSummaryFactory.upcoming().build()],
+          ['arrived', cas1SpaceBookingSummaryFactory.current().build()],
+        ])('should return an action to change the placement if it is %s', (_, spaceBooking) => {
+          const placementRequestDetail = placementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+
+          const { adminActionsResult, actionChangePlacement } = setup({
+            placementRequestDetail,
+            permissions: [],
+          })
+          expect(adminActionsResult).toEqual([actionChangePlacement])
         })
 
-        const { adminActionsResult, actionChangePlacement } = setup({
-          placementRequestDetail,
-          permissions: [],
+        it.each([
+          ['not arrived', cas1SpaceBookingSummaryFactory.nonArrival().build()],
+          ['departed', cas1SpaceBookingSummaryFactory.departed().build()],
+        ])('should return no change placement action if the placement is %s', (_, spaceBooking) => {
+          const placementRequestDetail = placementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+
+          const { adminActionsResult, actionChangePlacement } = setup({
+            placementRequestDetail,
+            permissions: [],
+          })
+          expect(adminActionsResult).not.toContainAction(actionChangePlacement)
         })
-        expect(adminActionsResult).toEqual([actionChangePlacement])
       })
 
-      it('should return actions to amend and withdraw a booking if the status is `matched` and user has the withdraw permission ', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build({
-          status: 'matched',
-        })
+      it('should return an action to withdraw the placement if the user has the withdraw permission', () => {
+        const placementRequestDetail = placementRequestDetailFactory.build()
 
-        const { adminActionsResult, actionChangePlacement, actionWithdrawPlacement } = setup({
+        const { adminActionsResult, actionWithdrawPlacement } = setup({
           placementRequestDetail,
           permissions: ['cas1_booking_withdraw'],
         })
 
-        expect(adminActionsResult).toEqual([actionChangePlacement, actionWithdrawPlacement])
+        expect(adminActionsResult).toContainAction(actionWithdrawPlacement)
       })
     })
 
     describe('if the status of the placement request is `not matched`', () => {
       const placementRequestDetail = placementRequestDetailFactory.build({
         status: 'notMatched',
+      })
+
+      it('should return an action to withdraw the placement request if the user has the withdraw permission', () => {
+        const { adminActionsResult, actionWithdrawPlacementRequest } = setup({
+          placementRequestDetail,
+          permissions: ['cas1_booking_withdraw'],
+        })
+
+        expect(adminActionsResult).toContainAction(actionWithdrawPlacementRequest)
       })
 
       describe('if ENABLE_V2_MATCH is false', () => {

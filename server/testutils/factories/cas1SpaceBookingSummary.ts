@@ -74,5 +74,6 @@ export default Cas1SpaceBookingSummaryFactory.define(() => {
     tier: faker.helpers.arrayElement(['A', 'B', 'C']),
     keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(),
     characteristics: faker.helpers.arrayElements(Object.keys(roomCharacteristicMap)) as Array<Cas1SpaceCharacteristic>,
+    deliusEventNumber: faker.string.numeric({ length: 6 }),
   }
 })

@@ -7,6 +7,7 @@ import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
 import config from '../../config'
 import { hasPermission } from '../users'
+import { overallStatus } from '../placements'
 
 export const adminIdentityBar = (placementRequest: PlacementRequestDetail, user: UserDetails): IdentityBar => {
   const identityBar: IdentityBar = {
@@ -26,33 +27,38 @@ export const adminActions = (
   user: UserDetails,
 ): Array<IdentityBarMenuItem> => {
   if (placementRequest.status === 'matched' && placementRequest.booking) {
-    const bookingType = placementRequest.booking.type
-    const matchedActions =
-      bookingType === 'space'
-        ? [
-            {
-              href: managePaths.premises.placements.changes.new({
-                premisesId: placementRequest.booking.premisesId,
-                placementId: placementRequest.booking.id,
-              }),
-              text: 'Change placement',
-            },
-          ]
-        : [
-            {
-              href: managePaths.bookings.dateChanges.new({
-                premisesId: placementRequest.booking.premisesId,
-                bookingId: placementRequest.booking.id,
-              }),
-              text: 'Amend placement',
-            },
-          ]
+    const matchedActions = []
+
+    if (placementRequest.booking.type === 'legacy') {
+      matchedActions.push({
+        href: managePaths.bookings.dateChanges.new({
+          premisesId: placementRequest.booking.premisesId,
+          bookingId: placementRequest.booking.id,
+        }),
+        text: 'Amend placement',
+      })
+    }
+
+    if (
+      placementRequest.booking.type === 'space' &&
+      ['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))
+    ) {
+      matchedActions.push({
+        href: managePaths.premises.placements.changes.new({
+          premisesId: placementRequest.booking.premisesId,
+          placementId: placementRequest.booking.id,
+        }),
+        text: 'Change placement',
+      })
+    }
+
     if (hasPermission(user, ['cas1_booking_withdraw'])) {
       matchedActions.push({
         href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
         text: 'Withdraw placement',
       })
     }
+
     return matchedActions
   }
 
