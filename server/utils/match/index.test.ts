@@ -250,7 +250,7 @@ describe('matchUtils', () => {
         {
           key: { text: 'Room criteria' },
           value: {
-            html: '<ul class="govuk-list govuk-list--bullet"><li>En-suite bathroom</li><li>Arson offences</li></ul>',
+            html: '<ul class="govuk-list govuk-list--bullet"><li>En-suite bathroom</li><li>Suitable for active arson risk</li></ul>',
           },
         },
         { key: { text: 'Expected arrival date' }, value: { text: 'Tue 23 Sep 2025' } },
