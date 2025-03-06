@@ -3,16 +3,15 @@ import { addDays } from 'date-fns'
 import { Cas1SpaceBooking, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import {
-  bookingSummaryFactory,
   cas1PremiseCapacityFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingSummaryFactory,
   placementRequestDetailFactory,
 } from '../../../../server/testutils/factories'
 import ShowPage from '../../../pages/admin/placementApplications/showPage'
 import Page from '../../../pages/page'
 import { ChangePlacementPage } from '../../../pages/manage/placements/changes/new'
-import { fullPersonFactory } from '../../../../server/testutils/factories/person'
 import { filterRoomLevelCriteria } from '../../../../server/utils/match/spaceSearch'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import ChangePlacementConfirmPage from '../../../pages/manage/placements/changes/confirm'
@@ -23,15 +22,12 @@ context('Change Placement', () => {
   const expectedArrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
   const expectedDepartureDate = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 84))
 
-  const person = fullPersonFactory.build()
   const premises = cas1PremisesFactory.build()
 
   const setupMocks = (placement: Cas1SpaceBooking, startDate?: string, endDate?: string) => {
-    const placementRequestDetail = placementRequestDetailFactory.build({
-      person,
-      status: 'matched',
-      booking: bookingSummaryFactory.fromSpaceBooking(placement).build(),
-    })
+    const placementRequestDetail = placementRequestDetailFactory
+      .withSpaceBooking(cas1SpaceBookingSummaryFactory.build(placement))
+      .build()
     placement.placementRequestId = placementRequestDetail.id
     const capacity = cas1PremiseCapacityFactory.build()
     cy.task('stubSinglePremises', premises)

@@ -33,20 +33,26 @@ const setup = ({
     href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
     text: 'Search for a space',
   }
-  const actionAmendLegacyBooking = {
-    href: managePaths.bookings.dateChanges.new({
-      premisesId: placementRequestDetail.booking.premisesId,
-      bookingId: placementRequestDetail.booking.id,
-    }),
-    text: 'Amend placement',
-  }
-  const actionChangePlacement = {
-    href: managePaths.premises.placements.changes.new({
-      premisesId: placementRequestDetail.booking.premisesId,
-      placementId: placementRequestDetail.booking.id,
-    }),
-    text: 'Change placement',
-  }
+  const actionAmendLegacyBooking = placementRequestDetail.booking
+    ? {
+        href: managePaths.bookings.dateChanges.new({
+          premisesId: placementRequestDetail.booking.premisesId,
+          bookingId: placementRequestDetail.booking.id,
+        }),
+        text: 'Amend placement',
+      }
+    : undefined
+
+  const actionChangePlacement = placementRequestDetail.booking
+    ? {
+        href: managePaths.premises.placements.changes.new({
+          premisesId: placementRequestDetail.booking.premisesId,
+          placementId: placementRequestDetail.booking.id,
+        }),
+        text: 'Change placement',
+      }
+    : undefined
+
   const actionWithdrawPlacement = {
     href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
     text: 'Withdraw placement',
