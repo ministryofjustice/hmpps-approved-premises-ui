@@ -83,7 +83,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.assess)
   }
 
-  if (hasRole(user, 'future_manager')) {
+  if (hasPermission(user, ['cas1_premises_view'])) {
     items.push(sections.manage)
   }
 

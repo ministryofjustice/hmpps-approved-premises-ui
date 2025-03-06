@@ -8,7 +8,7 @@ context('Departure date', () => {
     cy.task('reset')
 
     // Given I am signed in
-    signIn(['future_manager'])
+    signIn([], ['cas1_booking_change_dates'])
   })
 
   it('should show a form to change a bookings departure date', () => {

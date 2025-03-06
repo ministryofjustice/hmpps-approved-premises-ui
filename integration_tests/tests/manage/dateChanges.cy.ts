@@ -9,11 +9,9 @@ context('Date Changes', () => {
 
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
 
     // Given I am signed in
-    signIn(['future_manager'])
+    signIn([], ['cas1_booking_change_dates'])
 
     // And I have a booking for a premises
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
