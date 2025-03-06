@@ -20,7 +20,7 @@ import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
 import { TabItem } from '../tasks/listTable'
 import assessPaths from '../../paths/assess'
-import { hasRole } from '../users'
+import { hasPermission } from '../users'
 
 const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<ApprovedPremisesAssessmentStatus>
 
@@ -202,7 +202,7 @@ const assessmentsTabItems = (user: UserDetails, activeTab?: string): Array<TabIt
     active: activeTab === 'requests_for_placement',
   }
 
-  if (hasRole(user, 'workflow_manager') || hasRole(user, 'matcher') || hasRole(user, 'assessor')) {
+  if (hasPermission(user, ['cas1_assess_placement_application'])) {
     tabItems.splice(1, 0, requestForPlacementTabItem)
   }
 
