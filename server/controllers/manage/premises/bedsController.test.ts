@@ -50,21 +50,23 @@ describe('V2BedsController', () => {
   describe('index', () => {
     it('should return the beds to the template', async () => {
       const beds = cas1PremisesBedSummaryFactory.buildList(1)
-      const premisesId = 'premisesId'
-      request.params.premisesId = premisesId
+      const premises = cas1PremisesFactory.build()
+      request.params.premisesId = premises.id
 
       premisesService.getBeds.mockResolvedValue(beds)
+      premisesService.find.mockResolvedValue(premises)
 
       const requestHandler = bedsController.index()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/beds/index', {
         beds,
-        premisesId,
+        premises,
         pageHeading: 'Manage beds',
       })
 
-      expect(premisesService.getBeds).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
+      expect(premisesService.getBeds).toHaveBeenCalledWith(token, premises.id)
     })
   })
 })
