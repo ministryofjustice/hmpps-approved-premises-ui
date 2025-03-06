@@ -19,43 +19,38 @@
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full-width">
+    {{ mojIdentityBar({
+        title: {
+            html: outOfServiceBedPageHeading('Out of service bed record', outOfServiceBed)
+        },
+        menus: [{
+            items: [
+                {
+                    text: "Update record",
+                    href: paths.outOfServiceBeds.update({premisesId: premisesId, id: id, bedId: bedId})
+                }
+            ]
+        }]
+    }) }}
 
-            {{ mojIdentityBar({
-                title: {
-                    html: outOfServiceBedPageHeading('Out of service bed record', outOfServiceBed)
-                },
-                menus: [{
-                    items: [
-                        {
-                            text: "Update record",
-                            href: paths.outOfServiceBeds.update({premisesId: premisesId, id: id, bedId: bedId})
-                        }
-                    ]
-                }]
-            }) }}
+    {{ mojSubNavigation({
+        label: 'Sub navigation',
+        items: [{
+            text: 'Details',
+            href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }),
+            active: activeTab === 'details'
+        }, {
+            text: 'Timeline',
+            href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'timeline' }),
+            active: activeTab === 'timeline'
+        }]
+    }) }}
 
-            {{ mojSubNavigation({
-                label: 'Sub navigation',
-                items: [{
-                    text: 'Details',
-                    href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }),
-                    active: activeTab === 'details'
-                }, {
-                    text: 'Timeline',
-                    href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'timeline' }),
-                    active: activeTab === 'timeline'
-                }]
-            }) }}
+    {% if activeTab === 'timeline' %}
+        {% include "../../_messages.njk" %}
+        {{ outOfServiceBedTimeline(outOfServiceBed.revisionHistory) }}
+    {% else %}
+        {{ outOfServiceBedDetails(outOfServiceBed, characteristicsHtml) }}
+    {% endif %}
 
-            {% if activeTab === 'timeline' %}
-                {% include "../../_messages.njk" %}
-                {{ outOfServiceBedTimeline(outOfServiceBed.revisionHistory) }}
-            {% else %}
-                {{ outOfServiceBedDetails(outOfServiceBed, characteristicsHtml) }}
-            {% endif %}
-
-        </div>
-    </div>
 {% endblock %}
