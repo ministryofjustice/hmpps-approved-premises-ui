@@ -20,7 +20,7 @@ const weAssessment = assessmentFactory.build({
 
 const defaultArguments = {
   apType: 'isESAP' as const,
-  isArsonDesignated: 'essential',
+  isArsonSuitable: 'essential',
   isWheelchairDesignated: 'essential',
   isSingle: 'desirable',
   isStepFreeDesignated: 'desirable',
@@ -42,7 +42,7 @@ const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBo
   acceptsHateCrimeOffenders: 'relevant',
   acceptsSexOffenders: 'relevant',
   apType: 'isPIPE',
-  isArsonDesignated: 'essential',
+  isArsonSuitable: 'essential',
   isCatered: 'essential',
   isSingle: 'desirable',
   isSuitableForVulnerable: 'relevant',
@@ -113,7 +113,7 @@ describe('MatchingInformation', () => {
 
       expect(page.response()).toEqual({
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
-        'Designated arson room': 'Essential',
+        'Suitable for active arson risk': 'Essential',
         'Room suitable for a person with sexual offences': 'Not relevant',
         'Wheelchair accessible': 'Essential',
         'Single room': 'Desirable',

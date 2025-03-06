@@ -3,6 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
 import type { DataServices, FormPages, TaskNames } from '@approved-premises/ui'
+import { Unit } from '@approved-premises/api'
 import PagesController from './pagesController'
 import { AssessmentService } from '../../../services'
 import TasklistPage from '../../../form-pages/tasklistPage'
@@ -18,6 +19,7 @@ import paths from '../../../paths/assess'
 import { viewPath } from '../../../form-pages/utils'
 
 import { assessmentFactory, clarificationNoteFactory } from '../../../testutils/factories'
+import * as matchingInformationUtils from '../../../form-pages/utils/matchingInformationUtils'
 
 const PageConstructor = jest.fn()
 
@@ -57,6 +59,9 @@ describe('pagesController', () => {
   describe('show', () => {
     const request: DeepMocked<Request> = createMock<Request>({ url: 'assessments' })
     const errorsAndUserInput = { errors: {}, errorSummary: [] as Array<never>, userInput: {} }
+    const mockedRemapArsonAssessmentData = jest
+      .spyOn(matchingInformationUtils, 'remapArsonAssessmentData')
+      .mockImplementation((assessmentData: Unit) => assessmentData)
 
     beforeEach(() => {
       ;(viewPath as jest.Mock).mockReturnValue('assessments/pages/some/view')
@@ -67,7 +72,7 @@ describe('pagesController', () => {
     it('renders a page', async () => {
       const requestHandler = pagesController.show(someTask, 'some-page')
       await requestHandler(request, response, next)
-
+      expect(mockedRemapArsonAssessmentData).toHaveBeenCalledWith(assessment.data)
       expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, assessment, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,

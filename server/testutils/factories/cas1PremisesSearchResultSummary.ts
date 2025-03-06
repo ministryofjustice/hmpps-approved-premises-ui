@@ -28,7 +28,6 @@ const characteristics: ReadonlyArray<Cas1SpaceCharacteristic> = [
   'hasWideAccessToCommunalAreas',
   'hasWideDoor',
   'hasWideStepFreeAccess',
-  'isArsonDesignated',
   'isArsonSuitable',
   'isCatered',
   'isFullyFm',

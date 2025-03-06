@@ -1,5 +1,6 @@
 import { when } from 'jest-when'
 import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
+import { Unit } from '@approved-premises/api'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -10,6 +11,7 @@ import { MatchingInformationBody } from '../assess/matchingInformation/matchingI
 import {
   TaskListPageField,
   defaultMatchingInformationValues,
+  remapArsonAssessmentData,
   suggestedStaySummaryListOptions,
 } from './matchingInformationUtils'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
@@ -32,29 +34,28 @@ describe('matchingInformationUtils', () => {
   afterEach(() => {
     jest.resetAllMocks()
   })
-
+  const bodyWithUndefinedValues: MatchingInformationBody = {
+    acceptsChildSexOffenders: undefined,
+    acceptsHateCrimeOffenders: undefined,
+    acceptsNonSexualChildOffenders: undefined,
+    acceptsSexOffenders: undefined,
+    apType: undefined,
+    cruInformation: undefined,
+    hasEnSuite: undefined,
+    isArsonSuitable: undefined,
+    isArsonDesignated: undefined,
+    isCatered: undefined,
+    isSingle: undefined,
+    isStepFreeDesignated: undefined,
+    isSuitableForVulnerable: undefined,
+    isSuitedForSexOffenders: undefined,
+    isWheelchairDesignated: undefined,
+    lengthOfStay: undefined,
+    lengthOfStayAgreed: undefined,
+    lengthOfStayDays: undefined,
+    lengthOfStayWeeks: undefined,
+  }
   describe('defaultMatchingInformationValues', () => {
-    const bodyWithUndefinedValues: MatchingInformationBody = {
-      acceptsChildSexOffenders: undefined,
-      acceptsHateCrimeOffenders: undefined,
-      acceptsNonSexualChildOffenders: undefined,
-      acceptsSexOffenders: undefined,
-      apType: undefined,
-      cruInformation: undefined,
-      hasEnSuite: undefined,
-      isArsonDesignated: undefined,
-      isCatered: undefined,
-      isSingle: undefined,
-      isStepFreeDesignated: undefined,
-      isSuitableForVulnerable: undefined,
-      isSuitedForSexOffenders: undefined,
-      isWheelchairDesignated: undefined,
-      lengthOfStay: undefined,
-      lengthOfStayAgreed: undefined,
-      lengthOfStayDays: undefined,
-      lengthOfStayWeeks: undefined,
-    }
-
     const adultSexualOffencesFields = ['contactSexualOffencesAgainstAdults', 'nonContactSexualOffencesAgainstAdults']
     const childSexualOffencesFields = [
       'contactSexualOffencesAgainstChildren',
@@ -112,7 +113,7 @@ describe('matchingInformationUtils', () => {
         acceptsNonSexualChildOffenders: 'relevant',
         acceptsSexOffenders: 'relevant',
         apType: 'isPIPE',
-        isArsonDesignated: 'essential',
+        isArsonSuitable: 'essential',
         isCatered: 'essential',
         isSingle: 'essential',
         isSuitableForVulnerable: 'relevant',
@@ -130,7 +131,7 @@ describe('matchingInformationUtils', () => {
           acceptsNonSexualChildOffenders: 'relevant',
           acceptsSexOffenders: 'relevant',
           apType: 'isPIPE',
-          isArsonDesignated: 'desirable',
+          isArsonSuitable: 'desirable',
           isCatered: 'desirable',
           isSingle: 'desirable',
           isSuitableForVulnerable: 'relevant',
@@ -276,14 +277,14 @@ describe('matchingInformationUtils', () => {
           })
         })
 
-        describe('isArsonDesignated', () => {
+        describe('isArsonSuitable', () => {
           it("is set to 'essential' when `arson` === 'yes'", () => {
             when(retrieveQuestionResponseFromFormArtifact)
               .calledWith(application, Arson, 'arson')
               .mockReturnValue('yes')
 
             expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-              expect.objectContaining({ isArsonDesignated: 'essential' }),
+              expect.objectContaining({ isArsonSuitable: 'essential' }),
             )
           })
 
@@ -291,7 +292,7 @@ describe('matchingInformationUtils', () => {
             when(retrieveQuestionResponseFromFormArtifact).calledWith(application, Arson, 'arson').mockReturnValue('no')
 
             expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-              expect.objectContaining({ isArsonDesignated: 'notRelevant' }),
+              expect.objectContaining({ isArsonSuitable: 'notRelevant' }),
             )
           })
         })
@@ -425,6 +426,42 @@ describe('matchingInformationUtils', () => {
             )
           })
         })
+      })
+    })
+
+    describe('remapArsonAssessmentData', () => {
+      it('copies the value of isArsonDesignated to isArsonSuitable if it not populated', () => {
+        const matchingInformationBody: MatchingInformationBody = {
+          ...bodyWithUndefinedValues,
+          isArsonDesignated: 'essential',
+          isWheelchairDesignated: 'desirable',
+        }
+        const assessmentData: Unit = {
+          'matching-information': {
+            'matching-information': matchingInformationBody,
+          },
+        }
+        expect(remapArsonAssessmentData(assessmentData)).not.toEqual(assessmentData)
+        expect(remapArsonAssessmentData(assessmentData)).toEqual({
+          'matching-information': {
+            'matching-information': { ...matchingInformationBody, isArsonSuitable: 'essential' },
+          },
+        })
+      })
+
+      it('leaves the value of isArsonSuitable if it is populated', () => {
+        const matchingInformationBody: MatchingInformationBody = {
+          ...bodyWithUndefinedValues,
+          isArsonDesignated: 'essential',
+          isWheelchairDesignated: 'desirable',
+          isArsonSuitable: 'notRelevant',
+        }
+        const assessmentData: Unit = {
+          'matching-information': {
+            'matching-information': matchingInformationBody,
+          },
+        }
+        expect(remapArsonAssessmentData(assessmentData)).toEqual(assessmentData)
       })
     })
 

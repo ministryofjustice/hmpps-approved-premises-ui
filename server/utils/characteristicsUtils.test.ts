@@ -25,7 +25,7 @@ describe('characteristicsUtils', () => {
   describe('characteristicsBulletList', () => {
     const placementRequest = placementRequestDetailFactory.build({
       essentialCriteria: ['hasBrailleSignage', 'hasHearingLoop', 'isStepFreeDesignated'],
-      desirableCriteria: ['isArsonDesignated'],
+      desirableCriteria: ['isArsonSuitable'],
     })
 
     it('should return HTML lists of the given requirements', () => {
@@ -38,7 +38,7 @@ describe('characteristicsUtils', () => {
       `)
       expect(characteristicsBulletList(placementRequest.desirableCriteria)).toMatchStringIgnoringWhitespace(`
         <ul class="govuk-list govuk-list--bullet">
-          <li>${placementCriteriaLabels.isArsonDesignated}</li>
+          <li>${placementCriteriaLabels.isArsonSuitable}</li>
         </ul>
       `)
     })
