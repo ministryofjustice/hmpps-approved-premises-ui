@@ -103,21 +103,21 @@ export default function routes(controllers: Controllers, router: Router, service
   // Premises
   get(paths.premises.index.pattern, premisesController.index(), {
     auditEvent: 'LIST_PREMISES',
-    allowedRoles: ['future_manager'],
+    allowedPermissions: ['cas1_premises_view'],
   })
   post(paths.premises.index.pattern, premisesController.index(), {
     auditEvent: 'FILTER_PREMISES',
-    allowedRoles: ['future_manager'],
+    allowedPermissions: ['cas1_premises_view'],
   })
   get(paths.premises.show.pattern, premisesController.show(), {
     auditEvent: 'SHOW_PREMISES',
-    allowedRoles: ['future_manager'],
+    allowedPermissions: ['cas1_premises_view'],
   })
 
   // Beds
   get(paths.premises.beds.index.pattern, bedsController.index(), {
     auditEvent: 'LIST_BEDS',
-    allowedRoles: ['future_manager'],
+    allowedPermissions: ['cas1_premises_view'],
   })
   get(paths.premises.beds.show.pattern, bedsController.show(), {
     auditEvent: 'SHOW_BED',
@@ -240,6 +240,7 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedPermissions: ['cas1_space_booking_withdraw'],
   })
+
   // Placement changes
   get(paths.premises.placements.changes.new.pattern, changesController.new(), {
     auditEvent: 'NEW_BOOKING_CHANGE',
@@ -278,23 +279,23 @@ export default function routes(controllers: Controllers, router: Router, service
   // Booking date changes
   get(paths.bookings.dateChanges.new.pattern, dateChangesController.new(), {
     auditEvent: 'NEW_DATE_CHANGE',
-    allowedRoles: ['workflow_manager', 'future_manager'],
+    allowedPermissions: ['cas1_booking_change_dates'],
   })
   post(paths.bookings.dateChanges.create.pattern, dateChangesController.create(), {
     auditEvent: 'DATE_CHANGE_SUCCESS',
+    allowedPermissions: ['cas1_booking_change_dates'],
     redirectAuditEventSpecs: [
       {
         path: paths.bookings.dateChanges.new.pattern,
         auditEvent: 'DATE_CHANGE_FAILURE',
       },
     ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
   })
 
   // Booking extensions
   get(paths.bookings.extensions.new.pattern, bookingExtensionsController.new(), {
     auditEvent: 'NEW_BOOKING_EXTENSION',
-    allowedRoles: ['future_manager'],
+    allowedPermissions: ['cas1_booking_change_dates'],
   })
   post(paths.bookings.extensions.create.pattern, bookingExtensionsController.create(), {
     redirectAuditEventSpecs: [
@@ -307,14 +308,16 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'CREATE_BOOKING_EXTENSION_SUCCESS',
       },
     ],
-    allowedRoles: ['future_manager'],
+    allowedPermissions: ['cas1_booking_change_dates'],
   })
-  get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
+  get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm(), {
+    allowedPermissions: ['cas1_booking_change_dates'],
+  })
 
   // Booking cancellations
   get(paths.bookings.cancellations.new.pattern, cancellationsController.new(), {
     auditEvent: 'NEW_CANCELLATION',
-    allowedRoles: ['workflow_manager', 'future_manager'],
+    allowedPermissions: ['cas1_booking_withdraw'],
   })
   post(paths.bookings.cancellations.create.pattern, cancellationsController.create(), {
     auditEvent: 'CREATE_CANCELLATION_SUCCESS',
@@ -324,13 +327,12 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'CREATE_CANCELLATION_FAILURE',
       },
     ],
-    allowedRoles: ['workflow_manager', 'future_manager'],
+    allowedPermissions: ['cas1_booking_withdraw'],
   })
 
   // Out of service beds
   get(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.new(), {
     auditEvent: 'NEW_OUT_OF_SERVICE_BED',
-    allowedRoles: [],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
   post(paths.outOfServiceBeds.create.pattern, outOfServiceBedsController.create(), {
@@ -341,22 +343,18 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'CREATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
-    allowedRoles: [],
-    allowedPermissions: ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'],
+    allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
   get(paths.outOfServiceBeds.premisesIndex.pattern, outOfServiceBedsController.premisesIndex(), {
     auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
-    allowedRoles: [],
     allowedPermissions: ['cas1_view_out_of_service_beds'],
   })
   get(paths.outOfServiceBeds.update.pattern, updateOutOfServiceBedsController.new(), {
     auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
-    allowedRoles: [],
-    allowedPermissions: ['cas1_view_out_of_service_beds'],
+    allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
   post(paths.outOfServiceBeds.update.pattern, updateOutOfServiceBedsController.create(), {
     auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
-    allowedRoles: [],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
     redirectAuditEventSpecs: [
       {
@@ -367,12 +365,10 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
-    allowedRoles: [],
     allowedPermissions: ['cas1_view_out_of_service_beds'],
   })
   get(paths.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
     auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
-    allowedRoles: [],
     allowedPermissions: ['cas1_view_out_of_service_beds'],
   })
 

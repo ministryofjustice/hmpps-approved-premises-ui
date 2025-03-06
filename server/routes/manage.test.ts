@@ -87,7 +87,6 @@ describe('manage routes', () => {
 
     expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.new(), {
       auditEvent: 'NEW_OUT_OF_SERVICE_BED',
-      allowedRoles: [],
       allowedPermissions: ['cas1_out_of_service_bed_create'],
     })
   })
@@ -103,8 +102,7 @@ describe('manage routes', () => {
           auditEvent: 'CREATE_OUT_OF_SERVICE_BED_FAILURE',
         },
       ],
-      allowedRoles: [],
-      allowedPermissions: ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'],
+      allowedPermissions: ['cas1_out_of_service_bed_create'],
     })
   })
 
@@ -116,19 +114,17 @@ describe('manage routes', () => {
       outOfServiceBedsController.premisesIndex(),
       {
         auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
-        allowedRoles: [],
         allowedPermissions: ['cas1_view_out_of_service_beds'],
       },
     )
   })
 
-  it('should allow a user with permission cas1 view out of service beds to to access the update out of service bed view', () => {
+  it('should allow a user with permission cas1 out of service beds create to access the update out of service bed view', () => {
     manageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.update.pattern, updateOutOfServiceBedsController.new(), {
       auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
-      allowedRoles: [],
-      allowedPermissions: ['cas1_view_out_of_service_beds'],
+      allowedPermissions: ['cas1_out_of_service_bed_create'],
     })
   })
 
@@ -140,7 +136,6 @@ describe('manage routes', () => {
       updateOutOfServiceBedsController.create(),
       {
         auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
-        allowedRoles: [],
         allowedPermissions: ['cas1_out_of_service_bed_create'],
         redirectAuditEventSpecs: [
           {
@@ -157,7 +152,6 @@ describe('manage routes', () => {
 
     expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
       auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
-      allowedRoles: [],
       allowedPermissions: ['cas1_view_out_of_service_beds'],
     })
   })
@@ -167,7 +161,6 @@ describe('manage routes', () => {
 
     expect(getSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
       auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
-      allowedRoles: [],
       allowedPermissions: ['cas1_view_out_of_service_beds'],
     })
   })
