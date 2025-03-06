@@ -39,12 +39,11 @@ export default class OccupancyDayViewPage extends Page {
 
   shouldShowListOfPlacements(placementSummaryList: Array<Cas1SpaceBookingDaySummary>) {
     placementSummaryList.forEach(
-      ({ person, canonicalArrivalDate, canonicalDepartureDate, releaseType, essentialCharacteristics }) => {
+      ({ person, canonicalArrivalDate, canonicalDepartureDate, essentialCharacteristics }) => {
         cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
         cy.get('@row').contains(displayName(person))
         cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
         cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
-        cy.get('@row').contains(releaseType)
         essentialCharacteristics.forEach(characteristic => {
           if (spaceSearchCriteriaApLevelLabels[characteristic])
             cy.get('@row').contains(spaceSearchCriteriaApLevelLabels[characteristic])

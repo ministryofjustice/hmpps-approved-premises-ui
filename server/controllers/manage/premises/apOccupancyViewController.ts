@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { ObjectWithDateParts } from '@approved-premises/ui'
-import { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
+import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { PremisesService, SessionService } from '../../../services'
 
 import paths from '../../../paths/manage'
@@ -9,6 +9,7 @@ import {
   Calendar,
   type OutOfServiceBedColumnField,
   type PlacementColumnField,
+  type SortablePlacementColumnField,
   daySummaryRows,
   durationSelectOptions,
   filterOutOfServiceBeds,
@@ -96,11 +97,9 @@ export default class ApOccupancyViewController {
         sortBy = 'personName',
         sortDirection = 'asc',
         hrefPrefix,
-      } = getPaginationDetails<Cas1SpaceBookingDaySummarySortField>(
-        req,
-        paths.premises.occupancy.day({ premisesId, date }),
-        { characteristics: characteristicsArray },
-      )
+      } = getPaginationDetails<SortablePlacementColumnField>(req, paths.premises.occupancy.day({ premisesId, date }), {
+        characteristics: characteristicsArray,
+      })
 
       const getDayLink = (targetDate: string) =>
         `${paths.premises.occupancy.day({

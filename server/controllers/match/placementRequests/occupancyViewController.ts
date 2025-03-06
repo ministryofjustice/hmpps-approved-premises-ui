@@ -1,6 +1,6 @@
 import { Request, Response, TypedRequestHandler } from 'express'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
-import type { Cas1SpaceBookingCharacteristic, Cas1SpaceBookingDaySummarySortField } from '@approved-premises/api'
+import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService, SessionService, SpaceSearchService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
@@ -18,6 +18,7 @@ import { filterRoomLevelCriteria } from '../../../utils/match/spaceSearch'
 import {
   type OutOfServiceBedColumnField,
   type PlacementColumnField,
+  SortablePlacementColumnField,
   daySummaryRows,
   filterOutOfServiceBeds,
   outOfServiceBedColumnMap,
@@ -232,7 +233,7 @@ export default class {
         sortBy = 'personName',
         sortDirection = 'asc',
         hrefPrefix,
-      } = getPaginationDetails<Cas1SpaceBookingDaySummarySortField>(
+      } = getPaginationDetails<SortablePlacementColumnField>(
         req,
         paths.v2Match.placementRequests.search.dayOccupancy({ id, premisesId, date }),
       )

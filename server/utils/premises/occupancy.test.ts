@@ -299,8 +299,7 @@ describe('apOccupancy utils', () => {
       expect(row[1].html).toEqual(getTierOrBlank(placement.tier))
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }))
-      expect(row[4].text).toEqual(placement.releaseType)
-      expect(row[5].html).toMatchStringIgnoringWhitespace(
+      expect(row[4].html).toMatchStringIgnoringWhitespace(
         `<ul class="govuk-list govuk-list"><li>Suitable for active arson risk</li></ul>`,
       )
     }
