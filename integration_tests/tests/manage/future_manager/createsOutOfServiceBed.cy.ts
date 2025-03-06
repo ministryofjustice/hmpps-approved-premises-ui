@@ -1,9 +1,8 @@
 import {
-  bedDetailFactory,
+  cas1BedDetailFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   outOfServiceBedFactory,
-  premisesFactory,
 } from '../../../../server/testutils/factories'
 import BedShowPage from '../../../pages/manage/bed/bedShow'
 import Page from '../../../pages/page'
@@ -28,7 +27,7 @@ context('OutOfServiceBeds', () => {
     cy.task('stubOutOfServiceBedCreate', { premisesId: premises.id, outOfServiceBed })
 
     // stub ultimate API call when redirecting to bed page
-    const bedDetail = bedDetailFactory.build({ id: outOfServiceBed.bed.id, name: bedName })
+    const bedDetail = cas1BedDetailFactory.build({ id: outOfServiceBed.bed.id, name: bedName })
     cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // Given I am signed in with permissions to view and create out of service beds
@@ -68,7 +67,7 @@ context('OutOfServiceBeds', () => {
     signIn([], ['cas1_out_of_service_bed_create'])
 
     // And a out of service bed is available
-    const premises = premisesFactory.build()
+    const premises = cas1PremisesFactory.build()
 
     // When I navigate to the out of service bed form
     const page = OutOfServiceBedCreatePage.visit(premises.id, 'bedId')
@@ -98,7 +97,7 @@ context('OutOfServiceBeds', () => {
     })
 
     cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed: conflictingOutOfServiceBed })
-    const bedDetail = bedDetailFactory.build({ id: bed.id })
+    const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
     cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // When I navigate to the out of service bed form

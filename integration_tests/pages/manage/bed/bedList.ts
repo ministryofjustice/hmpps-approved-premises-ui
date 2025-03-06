@@ -1,4 +1,4 @@
-import { BedDetail, Cas1PremisesBedSummary, Premises } from '@approved-premises/api'
+import { Cas1BedDetail, Cas1PremisesBedSummary, Premises } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -20,7 +20,7 @@ export default class BedsListPage extends Page {
     this.shouldContainTableRows(rows)
   }
 
-  clickBed(bed: BedDetail): void {
+  clickBed(bed: Cas1BedDetail): void {
     cy.get(`a[data-cy-bedid="${bed.id}"]`).click()
   }
 

@@ -16,7 +16,7 @@ import {
 import paths from '../../paths/manage'
 import {
   apAreaFactory,
-  bedDetailFactory,
+  cas1BedDetailFactory,
   cas1PremisesFactory,
   outOfServiceBedFactory,
   paginatedResponseFactory,
@@ -25,11 +25,7 @@ import {
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
-import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-} from '../../utils/characteristicsUtils'
+import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -181,7 +177,7 @@ describe('OutOfServiceBedsController', () => {
   describe('show', () => {
     it('shows the outOfService bed', async () => {
       const activeTab = 'details'
-      const bed = bedDetailFactory.build({ id: outOfServiceBed.bed.id })
+      const bed = cas1BedDetailFactory.build({ id: outOfServiceBed.bed.id })
       premisesService.getBed.mockResolvedValue(bed)
 
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
@@ -208,7 +204,7 @@ describe('OutOfServiceBedsController', () => {
         bedId: bed.id,
         id: outOfServiceBed.id,
         activeTab,
-        characteristicsHtml: characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics), {
+        characteristicsHtml: characteristicsBulletList(bed.characteristics, {
           labels: roomCharacteristicMap,
         }),
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
