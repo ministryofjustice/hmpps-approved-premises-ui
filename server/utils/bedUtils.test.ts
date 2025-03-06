@@ -60,7 +60,7 @@ describe('bedUtils', () => {
     })
   })
 
-  describe('bedTableRows', () => {
+  describe('bedsTableRows', () => {
     it('returns the table rows given the rooms', () => {
       const beds = [bedSummary]
 
