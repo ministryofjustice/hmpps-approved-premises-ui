@@ -65,7 +65,7 @@ export const placementCriteriaLabels: Record<UiPlacementCriteria, string> = {
   isCatered: 'Catering required',
   hasEnSuite: 'En-suite bathroom',
   isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
-  isArsonSuitable: 'Arson offences',
+  isArsonSuitable: 'Suitable for active arson risk',
   hasBrailleSignage: 'Braille signage',
   hasTactileFlooring: 'Tactile flooring',
   hasHearingLoop: 'Hearing loop',
