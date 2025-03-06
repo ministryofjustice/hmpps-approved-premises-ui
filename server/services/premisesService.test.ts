@@ -10,7 +10,7 @@ import type {
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
-  bedDetailFactory,
+  cas1BedDetailFactory,
   cas1PremiseCapacityFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesBedSummaryFactory,
@@ -90,7 +90,7 @@ describe('PremisesService', () => {
 
   describe('getBed', () => {
     it('on success returns a bed given a premises ID and bed ID', async () => {
-      const bed = bedDetailFactory.build()
+      const bed = cas1BedDetailFactory.build()
       premisesClient.getBed.mockResolvedValue(bed)
 
       const result = await service.getBed(token, premisesId, bed.id)

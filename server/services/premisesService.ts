@@ -1,5 +1,5 @@
 import type {
-  BedDetail,
+  Cas1BedDetail,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
@@ -30,7 +30,7 @@ export default class PremisesService {
     return premisesClient.getBeds(premisesId)
   }
 
-  async getBed(token: string, premisesId: string, bedId: string): Promise<BedDetail> {
+  async getBed(token: string, premisesId: string, bedId: string): Promise<Cas1BedDetail> {
     const premisesClient = this.premisesClientFactory(token)
 
     return premisesClient.getBed(premisesId, bedId)

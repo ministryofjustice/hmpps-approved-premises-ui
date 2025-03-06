@@ -31,9 +31,7 @@
         {{ BedUtils.title(bed, pageHeading) | safe }}
     {% endif %}
 
-    {{ govukSummaryList({
-        rows: BedUtils.bedDetails(bed)
-    }) }}
+    {{ govukSummaryList(characteristicsSummaryList) }}
 
 {% endblock %}
 
