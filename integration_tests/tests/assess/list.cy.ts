@@ -7,7 +7,7 @@ context('List assessments', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser', { id: defaultUserId, roles: ['workflow_manager'] })
+    cy.task('stubAuthUser', { id: defaultUserId, permissions: ['cas1_view_assigned_assessments'] })
   })
 
   it('should list assessments', () => {
@@ -61,8 +61,12 @@ context('List assessments', () => {
   })
 
   it('should list placement applications', () => {
-    // Given I am signed in
+    // Given I am signed in as a user with placement application permission
     cy.signIn()
+    cy.task('stubAuthUser', {
+      id: defaultUserId,
+      permissions: ['cas1_view_assigned_assessments', 'cas1_assess_placement_application'],
+    })
     const awaitingAssessments = assessmentSummaryFactory.buildList(6)
 
     cy.task('stubAssessments', {
@@ -184,8 +188,6 @@ context('List assessments', () => {
   })
 
   it('supports pagination', () => {
-    cy.task('stubAuthUser')
-
     // Given I am logged in
     cy.signIn()
 

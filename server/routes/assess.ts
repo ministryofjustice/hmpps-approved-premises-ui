@@ -18,14 +18,24 @@ export default function routes(controllers: Controllers, router: Router, service
   const { get, put, post } = actions(router, services.auditService)
   const { assessmentsController, assessmentPagesController, supportingInformationController } = controllers
 
-  get(paths.assessments.index.pattern, assessmentsController.index(), { auditEvent: 'LIST_ASSESSMENTS' })
-  get(paths.assessments.show.pattern, assessmentsController.show(), { auditEvent: 'SHOW_ASSESSMENT' })
+  get(paths.assessments.index.pattern, assessmentsController.index(), {
+    auditEvent: 'LIST_ASSESSMENTS',
+    allowedPermissions: ['cas1_view_assigned_assessments'],
+  })
+
+  get(paths.assessments.show.pattern, assessmentsController.show(), {
+    auditEvent: 'SHOW_ASSESSMENT',
+  })
 
   get(paths.assessments.supportingInformationPath.pattern, supportingInformationController.show(), {
     auditEvent: 'SHOW_SUPPORTING_INFORMATION',
+    allowedPermissions: ['cas1_assess_application'],
   })
 
-  post(paths.assessments.submission.pattern, assessmentsController.submit(), { auditEvent: 'SUBMIT_ASSESSMENT' })
+  post(paths.assessments.submission.pattern, assessmentsController.submit(), {
+    auditEvent: 'SUBMIT_ASSESSMENT',
+    allowedPermissions: ['cas1_assess_application'],
+  })
 
   Object.keys(pages).forEach((taskKey: TaskNames) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
@@ -37,6 +47,7 @@ export default function routes(controllers: Controllers, router: Router, service
       get(pattern, assessmentPagesController.show(taskKey, pageKey), {
         auditEvent: 'VIEW_ASSESSMENT',
         additionalMetadata: { task: taskKey, page: pageKey },
+        allowedPermissions: ['cas1_assess_application'],
       })
 
       let controllerAction
@@ -61,6 +72,7 @@ export default function routes(controllers: Controllers, router: Router, service
             auditEvent: 'UPDATE_ASSESSMENT_FAILURE',
           },
         ],
+        allowedPermissions: ['cas1_assess_application'],
       })
     })
   })
