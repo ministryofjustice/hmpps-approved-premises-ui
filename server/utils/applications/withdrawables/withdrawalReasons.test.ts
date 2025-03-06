@@ -1,4 +1,5 @@
 import { placementApplicationWithdrawalReasons } from './withdrawalReasons'
+import { userDetailsFactory } from '../../../testutils/factories'
 
 describe('placementApplicationWithdrawalReasons', () => {
   const placementNoLongerNeededDividerAndRadioItems = [
@@ -57,9 +58,11 @@ describe('placementApplicationWithdrawalReasons', () => {
     },
   ]
 
-  describe("when the user roles include 'workflow_manager'", () => {
+  describe('when the user is a CRU member', () => {
     it('returns all the reasons for withdrawing a placement application', () => {
-      expect(placementApplicationWithdrawalReasons(['assessor', 'matcher', 'workflow_manager'])).toEqual(
+      const user = userDetailsFactory.build({ permissions: ['cas1_view_cru_dashboard'] })
+
+      expect(placementApplicationWithdrawalReasons(user)).toEqual(
         [
           placementNoLongerNeededDividerAndRadioItems,
           noCapacityDividerAndRadioItems,
@@ -69,9 +72,11 @@ describe('placementApplicationWithdrawalReasons', () => {
     })
   })
 
-  describe("when the user roles do not include 'workflow_manager'", () => {
+  describe('when the user roles is not a CRU member', () => {
     it('returns reasons for withdrawing a placement application excluding those relating to lack of capacity', () => {
-      expect(placementApplicationWithdrawalReasons(['applicant'])).toEqual(
+      const user = userDetailsFactory.build({ permissions: [] })
+
+      expect(placementApplicationWithdrawalReasons(user)).toEqual(
         [placementNoLongerNeededDividerAndRadioItems, problemInPlacementDividerAndRadioItems].flat(),
       )
     })

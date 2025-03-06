@@ -66,7 +66,7 @@ describe('withdrawalsController', () => {
         ...errorsAndUserInput.userInput,
       })
       expect(placementApplicationService.getPlacementApplication).toHaveBeenCalledWith(token, placementApplicationId)
-      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user.roles)
+      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user)
     })
   })
 

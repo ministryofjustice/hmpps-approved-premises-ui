@@ -95,11 +95,11 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.cruDashboard)
   }
 
-  if (hasRole(user, 'report_viewer')) {
+  if (hasPermission(user, ['cas1_reports_view'])) {
     items.push(sections.reports)
   }
 
-  if (hasRole(user, 'user_manager')) {
+  if (hasPermission(user, ['cas1_user_management'])) {
     items.push(sections.userManagement)
   }
 

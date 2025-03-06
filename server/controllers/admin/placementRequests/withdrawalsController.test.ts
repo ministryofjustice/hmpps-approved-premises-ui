@@ -68,7 +68,7 @@ describe('withdrawalsController', () => {
         errorSummary: errorsAndUserInput.errorSummary,
         withdrawalReasonsRadioItems: placementApplicationWithdrawalReasonsReturnValue,
       })
-      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user.roles)
+      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user)
       expect(flash).toHaveBeenCalledWith('applicationId')
     })
 
