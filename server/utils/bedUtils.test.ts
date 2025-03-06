@@ -1,6 +1,15 @@
 import paths from '../paths/manage'
-import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory } from '../testutils/factories'
-import { actionCell, bedActions, bedDetails, bedLink, bedNameCell, bedTableRows, roomNameCell, title } from './bedUtils'
+import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory, userDetailsFactory } from '../testutils/factories'
+import {
+  actionCell,
+  bedActions,
+  bedDetails,
+  bedLink,
+  bedNameCell,
+  bedTableRows,
+  bedsActions,
+  roomNameCell,
+} from './bedUtils'
 
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
@@ -56,27 +65,51 @@ describe('bedUtils', () => {
     })
   })
 
-  describe('title', () => {
-    it('returns the title for the bed manage page', () => {
-      bedDetail.name = 'Bed name'
+  describe('bedActions', () => {
+    it('returns the actions menu for the bed manage page if the user has the right permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_out_of_service_bed_create'] })
 
-      expect(title(bedDetail, 'Page title')).toMatchStringIgnoringWhitespace(
-        '<h1 class="govuk-heading-l"><span class="govuk-caption-l">Bed name</span>Page title</h1>',
-      )
+      expect(bedActions(bedDetail, premisesId, user)).toEqual([
+        {
+          items: [
+            {
+              text: 'Create out of service bed record',
+              classes: 'govuk-button--secondary',
+              href: paths.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
+            },
+          ],
+        },
+      ])
+    })
+
+    it('returns no actions menu for the bed manage page if the user does not have the right permission', () => {
+      const user = userDetailsFactory.build({ permissions: [] })
+
+      expect(bedActions(bedDetail, premisesId, user)).toEqual([])
     })
   })
 
-  describe('bedActions', () => {
-    it('returns the actions for the bed manage page', () => {
-      expect(bedActions(bedDetail, premisesId)).toEqual({
-        items: [
-          {
-            text: 'Create out of service bed record',
-            classes: 'govuk-button--secondary',
-            href: paths.outOfServiceBeds.new({ premisesId, bedId: bedDetail.id }),
-          },
-        ],
-      })
+  describe('bedsActions', () => {
+    it('returns an action to View out of service beds if the user has the right permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_view_out_of_service_beds'] })
+
+      expect(bedsActions(premisesId, user)).toEqual([
+        {
+          items: [
+            {
+              text: 'Manage out of service beds',
+              classes: 'govuk-button--secondary',
+              href: paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }),
+            },
+          ],
+        },
+      ])
+    })
+
+    it('returns no action if the user does not have the right permission', () => {
+      const user = userDetailsFactory.build({ permissions: [] })
+
+      expect(bedsActions(premisesId, user)).toEqual([])
     })
   })
 })

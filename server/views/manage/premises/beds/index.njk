@@ -27,13 +27,7 @@
         title: {
             html: headingHtml
         },
-        menus: [{
-            items: [ {
-                text: "Manage out of service beds",
-                classes: "govuk-button--secondary",
-                href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' })
-            }]
-        }]
+        menus: actions
     }) }}
 
     {{ govukTable({

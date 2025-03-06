@@ -3,15 +3,20 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
+import {
+  cas1BedDetailFactory,
+  cas1PremisesBedSummaryFactory,
+  cas1PremisesFactory,
+  userDetailsFactory,
+} from '../../../testutils/factories'
 import paths from '../../../paths/manage'
-import { bedDetails } from '../../../utils/bedUtils'
+import { bedActions, bedDetails, bedsActions } from '../../../utils/bedUtils'
 
 describe('V2BedsController', () => {
   const token = 'SOME_TOKEN'
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  const response: DeepMocked<Response> = createMock<Response>({})
+  const response: DeepMocked<Response> = createMock<Response>({ locals: { user: userDetailsFactory.build() } })
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
@@ -41,6 +46,7 @@ describe('V2BedsController', () => {
         premises,
         pageHeading: `Bed ${bed.name}`,
         backLink: paths.premises.beds.index({ premisesId: premises.id }),
+        actions: bedActions(bed, premises.id, response.locals.user),
         characteristicsSummaryList: bedDetails(bed),
       })
 
@@ -65,6 +71,7 @@ describe('V2BedsController', () => {
         beds,
         premises,
         pageHeading: 'Manage beds',
+        actions: bedsActions(premises.id, response.locals.user),
       })
 
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
