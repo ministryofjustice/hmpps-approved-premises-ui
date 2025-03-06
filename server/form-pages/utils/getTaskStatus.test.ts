@@ -1,4 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
+import { TaskNames, UiTask } from '@approved-premises/ui'
 import { applicationFactory } from '../../testutils/factories'
 import getTaskStatus from './getTaskStatus'
 import TasklistPage from '../tasklistPage'
@@ -12,8 +13,10 @@ describe('getTaskStatus', () => {
   const Page2 = jest.fn(() => page2Instance)
   const Page3 = jest.fn(() => page3Instance)
 
-  const task = {
-    id: 'my-task',
+  const myTaskId = 'my-task' as TaskNames
+
+  const task: UiTask = {
+    id: myTaskId,
     title: 'My Task',
     pages: {
       'page-1': Page1,
@@ -37,7 +40,7 @@ describe('getTaskStatus', () => {
   })
 
   it('returns in_progress when there is no data for the second question in the task', () => {
-    const application = applicationFactory.build({ data: { 'my-task': { 'page-1': { foo: 'bar' } } } })
+    const application = applicationFactory.build({ data: { [myTaskId]: { 'page-1': { foo: 'bar' } } } })
 
     page1Instance.errors.mockReturnValue({})
     page1Instance.next.mockReturnValue('page-2')
@@ -53,7 +56,7 @@ describe('getTaskStatus', () => {
 
   it('returns in_progress when there are errors', () => {
     const application = applicationFactory.build({
-      data: { 'my-task': { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' } } },
+      data: { [myTaskId]: { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' } } },
     })
 
     page1Instance.next.mockReturnValue('')
@@ -68,7 +71,7 @@ describe('getTaskStatus', () => {
 
   it('returns complete when the second page does not have a next page', () => {
     const application = applicationFactory.build({
-      data: { 'my-task': { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' } } },
+      data: { [myTaskId]: { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' } } },
     })
 
     page1Instance.errors.mockReturnValue({})
@@ -92,7 +95,7 @@ describe('getTaskStatus', () => {
 
   it('returns complete when the third page does not have a next page', () => {
     const application = applicationFactory.build({
-      data: { 'my-task': { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' }, 'page-3': { foo: 'bar' } } },
+      data: { [myTaskId]: { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' }, 'page-3': { foo: 'bar' } } },
     })
 
     page1Instance.errors.mockReturnValue({})
@@ -121,7 +124,7 @@ describe('getTaskStatus', () => {
 
   it('returns complete when the first page does not have data, but subsequent ones do', () => {
     const application = applicationFactory.build({
-      data: { 'my-task': { 'page-2': { foo: 'bar' }, 'page-3': { foo: 'bar' } } },
+      data: { [myTaskId]: { 'page-2': { foo: 'bar' }, 'page-3': { foo: 'bar' } } },
     })
 
     page2Instance.errors.mockReturnValue({})
@@ -147,7 +150,7 @@ describe('getTaskStatus', () => {
 
   it('throws if the saved data creates an infinite loop', () => {
     const application = applicationFactory.build({
-      data: { 'my-task': { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' }, 'page-3': { foo: 'bar' } } },
+      data: { [myTaskId]: { 'page-1': { foo: 'bar' }, 'page-2': { foo: 'bar' }, 'page-3': { foo: 'bar' } } },
     })
 
     page1Instance.errors.mockReturnValue({})

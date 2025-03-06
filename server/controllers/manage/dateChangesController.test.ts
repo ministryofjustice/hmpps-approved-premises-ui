@@ -151,28 +151,29 @@ describe('dateChangesController', () => {
       },
     }
 
-    it.each(Object.keys(bodies))('creates a Date Change and redirects to the confirmation page %s', async key => {
-      const { expectedPayload, body } = bodies[key]
+    it.each(Object.keys(bodies) as Array<keyof typeof bodies>)(
+      'creates a Date Change and redirects to the confirmation page %s',
+      async key => {
+        const { expectedPayload, body } = bodies[key]
 
-      const requestHandler = controller.create()
+        const requestHandler = controller.create()
 
-      body.backLink = backLink
+        request = createMock<Request>({ ...requestParams, body: { ...body, backLink } })
 
-      request = createMock<Request>({ ...requestParams, body })
+        await requestHandler(request, response, next)
 
-      await requestHandler(request, response, next)
+        expect(bookingService.changeDates).toHaveBeenCalledWith(
+          token,
+          request.params.premisesId,
+          request.params.bookingId,
+          expectedPayload,
+        )
 
-      expect(bookingService.changeDates).toHaveBeenCalledWith(
-        token,
-        request.params.premisesId,
-        request.params.bookingId,
-        expectedPayload,
-      )
+        expect(request.flash).toHaveBeenCalledWith('success', 'Booking changed successfully')
 
-      expect(request.flash).toHaveBeenCalledWith('success', 'Booking changed successfully')
-
-      expect(response.redirect).toHaveBeenCalledWith(backLink)
-    })
+        expect(response.redirect).toHaveBeenCalledWith(backLink)
+      },
+    )
 
     describe('errors', () => {
       const errors = {
@@ -210,7 +211,7 @@ describe('dateChangesController', () => {
         )
       })
 
-      it.each(Object.keys(errors))(
+      it.each(Object.keys(errors) as Array<keyof typeof errors>)(
         'should catch a validation error with the correct data when %s but the dates are empty',
         async key => {
           const { body, expectedErrorParams } = errors[key]

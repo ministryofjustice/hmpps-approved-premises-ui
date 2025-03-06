@@ -14,7 +14,7 @@ import paths from '../../../paths/assess'
 import { UnknownPageError } from '../../../utils/errors'
 import { viewPath } from '../../../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../../../form-pages/tasklistPage'
-import { DataServices } from '../../../@types/ui'
+import { DataServices, TaskNames } from '../../../@types/ui'
 
 export default class PagesController {
   constructor(
@@ -22,7 +22,7 @@ export default class PagesController {
     private readonly dataServices: DataServices,
   ) {}
 
-  show(taskName: string, pageName: string): RequestHandler {
+  show(taskName: TaskNames, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
@@ -56,7 +56,7 @@ export default class PagesController {
     }
   }
 
-  update(taskName: string, pageName: string) {
+  update(taskName: TaskNames, pageName: string) {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
       const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
@@ -72,7 +72,7 @@ export default class PagesController {
     }
   }
 
-  updateInformationRecieved(taskName: string, pageName: string) {
+  updateInformationRecieved(taskName: TaskNames, pageName: string) {
     return async (req: Request, res: Response) => {
       if (req.body.informationReceived === 'yes') {
         const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
@@ -98,7 +98,7 @@ export default class PagesController {
 
   private async saveAndValidate(
     assessment: Assessment,
-    taskName: string,
+    taskName: TaskNames,
     pageName: string,
     req: Request,
     res: Response,

@@ -1,4 +1,4 @@
-import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { ObjectWithDateParts, PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
 
@@ -82,13 +82,14 @@ export default class RequiredActions implements TasklistPage {
   }
 
   response() {
-    const reponse = {}
+    const response: PageResponse = {}
+
     if (this.body.concernsOfUnmanagableRisk === 'yes') {
-      reponse[this.areaManagerQuestions.name] = this.body.nameOfAreaManager
-      reponse[this.areaManagerQuestions.dateOfDiscussion] = DateFormats.isoDateToUIDate(this.body.dateOfDiscussion)
-      reponse[this.areaManagerQuestions.outlineOfDiscussion] = this.body.outlineOfDiscussion
+      response[this.areaManagerQuestions.name] = this.body.nameOfAreaManager
+      response[this.areaManagerQuestions.dateOfDiscussion] = DateFormats.isoDateToUIDate(this.body.dateOfDiscussion)
+      response[this.areaManagerQuestions.outlineOfDiscussion] = this.body.outlineOfDiscussion
     }
-    return { ...reponse, ...responsesForYesNoAndCommentsSections(this.sections, this.body) }
+    return { ...response, ...responsesForYesNoAndCommentsSections(this.sections, this.body) } as PageResponse
   }
 
   errors() {

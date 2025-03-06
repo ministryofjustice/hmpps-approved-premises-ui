@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import ReasonForShortNotice, {
   ShortNoticeReasons,
   shortNoticeReasons,
@@ -45,10 +45,7 @@ export default class ApplicationTimeliness implements TasklistPage {
 
   applicationDetails: ApplicationDetails
 
-  reasonsForLateApplicationReasons = Object.keys(shortNoticeReasons).map(key => ({
-    text: shortNoticeReasons[key],
-    value: key,
-  }))
+  reasonsForLateApplicationReasons = Object.entries(shortNoticeReasons).map(([value, text]) => ({ text, value }))
 
   constructor(
     public body: ApplicationTimelinessBody,
@@ -59,7 +56,7 @@ export default class ApplicationTimeliness implements TasklistPage {
 
   retrieveShortNoticeApplicationDetails(): ApplicationDetails {
     const applicationDate = DateFormats.isoDateToUIDate(this.assessment.application.submittedAt, { format: 'short' })
-    const lateApplicationReasonId = retrieveOptionalQuestionResponseFromFormArtifact(
+    const lateApplicationReasonId: ShortNoticeReasons = retrieveOptionalQuestionResponseFromFormArtifact(
       this.assessment.application,
       ReasonForShortNotice,
       'reason',
@@ -92,7 +89,7 @@ export default class ApplicationTimeliness implements TasklistPage {
   response() {
     const response = {
       ...responsesForYesNoAndCommentsSections({ agreeWithShortNoticeReason: this.question }, this.body),
-    }
+    } as PageResponse
 
     if (this.body.agreeWithShortNoticeReason === 'no') {
       response[this.reasonForLateApplicationQuestion] =

@@ -1,7 +1,7 @@
 import { ApType, PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
 
-type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
+export type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
 export type SpecialistApTypeCriteria =
   | 'isPIPE'
   | 'isESAP'
@@ -12,7 +12,9 @@ export type SpecialistApTypeCriteria =
 // The ordering of AP types is meaningful to users
 export const apTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap', 'rfap', 'mhapElliottHouse', 'mhapStJosephs']
 
-export const applyApTypeToAssessApType: Record<Exclude<ApType, 'normal'>, SpecialistApTypeCriteria> = {
+export type ApTypeSpecialist = Exclude<ApType, 'normal'>
+
+export const applyApTypeToAssessApType: Record<ApTypeSpecialist, SpecialistApTypeCriteria> = {
   pipe: 'isPIPE',
   esap: 'isESAP',
   mhapElliottHouse: 'isMHAPElliottHouse',
@@ -20,7 +22,7 @@ export const applyApTypeToAssessApType: Record<Exclude<ApType, 'normal'>, Specia
   rfap: 'isRecoveryFocussed',
 }
 
-export const specialistApTypeCriteria = apTypes.map(type => applyApTypeToAssessApType[type])
+export const specialistApTypeCriteria = apTypes.map((type: ApTypeSpecialist) => applyApTypeToAssessApType[type])
 export const offenceAndRiskCriteria = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',

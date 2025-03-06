@@ -71,15 +71,15 @@ const userRoles: Record<RoleInUse, string> = {
 export const userRolesSelectOptions = (
   selectedOption: ApprovedPremisesUserRole | undefined | null,
 ): Array<SelectOption> => {
-  const options = Object.keys(userRoles).map(role => ({
-    text: userRoles[role],
-    value: role,
-    selected: role === selectedOption,
+  const options = Object.entries(userRoles).map(([value, text]) => ({
+    text,
+    value,
+    selected: value === selectedOption,
   }))
 
   options.unshift({
     text: 'All roles',
-    value: '',
+    value: '' as RoleInUse,
     selected: !selectedOption,
   })
 
@@ -89,15 +89,15 @@ export const userRolesSelectOptions = (
 export const userQualificationsSelectOptions = (
   selectedOption: UserQualification | undefined | null,
 ): Array<SelectOption> => {
-  const options = Object.keys(qualificationDictionary).map(qualification => ({
-    text: qualificationDictionary[qualification],
-    value: qualification,
-    selected: qualification === selectedOption,
+  const options = Object.entries(qualificationDictionary).map(([value, text]) => ({
+    text,
+    value,
+    selected: value === selectedOption,
   }))
 
   options.unshift({
     text: 'All qualifications',
-    value: '',
+    value: '' as UserQualification,
     selected: !selectedOption,
   })
 

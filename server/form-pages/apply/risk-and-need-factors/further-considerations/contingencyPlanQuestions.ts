@@ -2,6 +2,7 @@ import {
   ContingencyPlanQuestionId,
   ContingencyPlanQuestionsBody,
   ContingencyPlanQuestionsRecord,
+  PageResponse,
   TaskListErrors,
 } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
@@ -96,9 +97,9 @@ export default class ContingencyPlanQuestions implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
-    Object.entries(this.body).forEach(([key, value]) => {
+    Object.entries(this.body).forEach(([key, value]: [ContingencyPlanQuestionId, string]) => {
       response[this.questions[key].question] = value
     })
 

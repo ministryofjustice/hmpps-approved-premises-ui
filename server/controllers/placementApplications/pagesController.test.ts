@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
-import type { DataServices, ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
+import type { DataServices, ErrorsAndUserInput, FormPages, TaskNames } from '@approved-premises/ui'
 import PagesController from './pagesController'
 import { ApplicationService, PlacementApplicationService } from '../../services'
 import TasklistPage from '../../form-pages/tasklistPage'
@@ -27,6 +27,7 @@ jest.mock('../../form-pages/placement-application', () => {
 })
 
 PlacementRequest.pages = {} as FormPages
+const someTask: TaskNames = 'basic-information'
 
 describe('pagesController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
@@ -61,11 +62,11 @@ describe('pagesController', () => {
         return { errors: {}, errorSummary: [], userInput: {} }
       })
 
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask, 'some-page')
 
       await requestHandler(request, response, next)
 
-      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page', 'placement-applications')
+      expect(getPage).toHaveBeenCalledWith(someTask, 'some-page', 'placement-applications')
       expect(placementApplicationService.initializePage).toHaveBeenCalledWith(
         PageConstructor,
         request,
@@ -75,7 +76,7 @@ describe('pagesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('placement-application/pages/some/view', {
         placementApplicationId: request.params.id,
-        task: 'some-task',
+        task: someTask,
         page,
         errors: {},
         errorSummary: [],
@@ -87,7 +88,7 @@ describe('pagesController', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask, 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -100,7 +101,7 @@ describe('pagesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('placement-application/pages/some/view', {
         placementApplicationId: request.params.id,
-        task: 'some-task',
+        task: someTask,
         page,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -113,7 +114,7 @@ describe('pagesController', () => {
         throw new UnknownPageError('some-page')
       })
 
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask, 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -127,7 +128,7 @@ describe('pagesController', () => {
         throw genericError
       })
 
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask, 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -149,14 +150,14 @@ describe('pagesController', () => {
 
       placementApplicationService.save.mockResolvedValue()
 
-      const requestHandler = pagesController.update('some-task', 'page-name')
+      const requestHandler = pagesController.update(someTask, 'page-name')
 
       await requestHandler({ ...request }, response)
 
       expect(placementApplicationService.save).toHaveBeenCalledWith(page, request)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.placementApplications.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
+        paths.placementApplications.pages.show({ id: request.params.id, task: someTask, page: 'next-page' }),
       )
     })
 
@@ -166,7 +167,7 @@ describe('pagesController', () => {
         throw err
       })
 
-      const requestHandler = pagesController.update('some-task', 'page-name')
+      const requestHandler = pagesController.update(someTask, 'page-name')
 
       await requestHandler(request, response)
 
@@ -176,7 +177,7 @@ describe('pagesController', () => {
         request,
         response,
         err,
-        paths.placementApplications.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+        paths.placementApplications.pages.show({ id: request.params.id, task: someTask, page: 'page-name' }),
       )
     })
   })

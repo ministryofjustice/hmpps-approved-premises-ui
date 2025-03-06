@@ -138,6 +138,7 @@
     "csrf-sync": "^4.0.3",
     "date-fns": "^3.0.0",
     "dotenv": "^16.4.4",
+    "eslint": "^8.57.1",
     "express": "^4.21.2",
     "express-prom-bundle": "^7.0.0",
     "express-session": "^1.18.1",
@@ -194,7 +195,6 @@
     "cypress": "^13.6.5",
     "cypress-axe": "^1.4.0",
     "cypress-multi-reporters": "^1.6.1",
-    "eslint": "^8.24.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^3.5.1",
@@ -220,6 +220,9 @@
     "supertest": "^7.0.0",
     "swagger-mock-validator": "^11.0.0",
     "ts-jest": "^29.1.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.7.3"
+  },
+  "overrides": {
+    "cross-spawn": "7.0.5"
   }
 }

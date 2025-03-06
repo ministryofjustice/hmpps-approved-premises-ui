@@ -1,3 +1,4 @@
+import { FormSection, TaskNames, UiTask } from '@approved-premises/ui'
 import Apply from '../../form-pages/apply'
 import { applicationFactory } from '../../testutils/factories'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
@@ -8,43 +9,39 @@ jest.mock('../journeyTypeFromArtifact')
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()
 
-const applySection1Task1 = {
-  id: 'first-apply-section-task-1',
+const applySection1Task1: UiTask = {
+  id: 'first-apply-section-task-1' as TaskNames,
   title: 'First Apply section, task 1',
-  actionText: '',
   pages: {
     first: FirstApplyPage,
     second: SecondApplyPage,
   },
 }
-const applySection1Task2 = {
-  id: 'first-apply-section-task-2',
+const applySection1Task2: UiTask = {
+  id: 'first-apply-section-task-2' as TaskNames,
   title: 'First Apply section, task 2',
-  actionText: '',
   pages: {},
 }
 
-const applySection2Task1 = {
-  id: 'second-apply-section-task-1',
+const applySection2Task1: UiTask = {
+  id: 'second-apply-section-task-1' as TaskNames,
   title: 'Second Apply section, task 1',
-  actionText: '',
   pages: {},
 }
 
-const applySection2Task2 = {
-  id: 'second-apply-section-task-2',
+const applySection2Task2: UiTask = {
+  id: 'second-apply-section-task-2' as TaskNames,
   title: 'Second Apply section, task 2',
-  actionText: '',
   pages: {},
 }
 
-const applySection1 = {
+const applySection1: FormSection = {
   name: 'first-apply-section',
   title: 'First Apply section',
   tasks: [applySection1Task1, applySection1Task2],
 }
 
-const applySection2 = {
+const applySection2: FormSection = {
   name: 'second-apply-section',
   title: 'Second Apply section',
   tasks: [applySection2Task1, applySection2Task2],
@@ -52,6 +49,7 @@ const applySection2 = {
 
 Apply.sections = [applySection1, applySection2]
 
+// @ts-expect-error Test page ids
 Apply.pages['first-apply-section-task-1'] = {
   first: FirstApplyPage,
   second: SecondApplyPage,

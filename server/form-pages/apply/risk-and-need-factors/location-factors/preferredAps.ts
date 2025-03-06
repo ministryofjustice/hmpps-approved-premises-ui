@@ -1,4 +1,4 @@
-import type { DataServices, TaskListErrors } from '@approved-premises/ui'
+import type { DataServices, PageResponse, TaskListErrors } from '@approved-premises/ui'
 import { ApprovedPremisesApplication as Application, Cas1PremisesBasicSummary } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
@@ -93,8 +93,8 @@ export default class PreferredAps implements TasklistPage {
   }
 
   response() {
-    const response = {}
-    this.preferredApOptions.forEach((key, i) => {
+    const response: PageResponse = {}
+    this.preferredApOptions.forEach((key: keyof PreferredApsBody, i) => {
       const apName = this.body.selectedAps.find(premises => premises.id === this.body[key])?.name
 
       response[this.preferredApLabels[i]] = apName ?? 'No preference'

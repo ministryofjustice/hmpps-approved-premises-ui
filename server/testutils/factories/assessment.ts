@@ -2,7 +2,7 @@
 
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import type { ApprovedPremisesAssessment } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment, ClarificationNote } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import applicationFactory from './application'
@@ -36,7 +36,7 @@ export default AssessmentFactory.define(() => ({
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   decision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
   data: {},
-  clarificationNotes: [],
+  clarificationNotes: [] as Array<ClarificationNote>,
   rejectionRationale: faker.lorem.sentence(),
   createdFromAppeal: false,
 }))

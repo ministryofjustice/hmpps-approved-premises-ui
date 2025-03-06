@@ -18,7 +18,13 @@ export default class SupportingInformationController {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
       if (req.params.category === 'risk-information') {
-        const oasys = oasysInformationFromAssessment(assessment)
+        const oasys = oasysInformationFromAssessment(assessment) as unknown as {
+          'rosh-summary': { roshSummaries: unknown }
+          'offence-details': { offenceDetailsSummaries: unknown }
+          'supporting-information': { supportingInformationSummaries: unknown }
+          'risk-management-plan': { riskManagementSummaries: unknown }
+          'risk-to-self': { riskToSelfSummaries: unknown }
+        }
 
         res.render('assessments/pages/risk-information/oasys-information', {
           pageHeading: 'Review risk information',

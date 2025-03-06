@@ -75,10 +75,11 @@ export default class ContingencyPlanPartners implements TasklistPage {
       return errors
     }
 
-    this.body.partnerAgencyDetails.forEach((detail, i) => {
-      Object.keys(fields).forEach(property => {
+    this.body.partnerAgencyDetails.forEach((detail: PartnerAgencyDetails, i: number) => {
+      Object.keys(fields).forEach((property: keyof PartnerAgencyDetails) => {
         if (!detail?.[property]) {
-          errors[`partnerAgencyDetails_${i}_${property}`] = `You must specify a ${lowerCase(property)}`
+          errors[`partnerAgencyDetails_${i}_${property}` as keyof typeof errors] =
+            `You must specify a ${lowerCase(property)}`
         }
       })
     })

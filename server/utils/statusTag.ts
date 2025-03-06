@@ -57,7 +57,7 @@ export const createTag = <T extends Status>(
   let id = ''
 
   if (Object.keys(colours).length) {
-    classes += `govuk-tag--${colours[status]} `
+    classes += `govuk-tag--${colours[status as T]} `
   }
 
   if (options?.addLeftMargin) {
@@ -76,5 +76,5 @@ export const createTag = <T extends Status>(
     id = `id="${options.id}-status"`
   }
 
-  return `<strong class="govuk-tag ${classes}" data-cy-status="${status}" ${id}>${statuses[status]}</strong>`
+  return `<strong class="govuk-tag ${classes}" data-cy-status="${status}" ${id}>${statuses[status as T]}</strong>`
 }

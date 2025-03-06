@@ -1,4 +1,5 @@
 import { cell, heading, radioMatrixTable, row } from './radioMatrixTable'
+import { UiPlacementCriteria } from './placementCriteriaUtils'
 
 jest.mock('./placementCriteriaUtils', () => {
   return {
@@ -33,7 +34,7 @@ describe('radioMatrixTable', () => {
 
   describe('row', () => {
     it('returns the markup given the name and preferences', () => {
-      const rowName = 'test'
+      const rowName = 'test' as UiPlacementCriteria
       const options = ['foo', 'bar']
       const selectedOption = 'foo'
       expect(row(rowName, options, selectedOption)).toMatchStringIgnoringWhitespace(`<tr>
@@ -57,7 +58,7 @@ describe('radioMatrixTable', () => {
   describe('radioMatrixTable', () => {
     it('returns the markup given the name and preferences', () => {
       const columnHeadings = ['heading one', 'heading two']
-      const values = ['valueOne', 'valueTwo']
+      const values = ['valueOne', 'valueTwo'] as unknown as Array<UiPlacementCriteria>
       const preferences = ['preferenceOne', 'preferenceTwo']
       const body = {
         valueOne: 'preferenceTwo',

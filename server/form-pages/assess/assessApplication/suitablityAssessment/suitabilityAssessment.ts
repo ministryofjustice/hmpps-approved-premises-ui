@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
@@ -62,7 +62,7 @@ export default class SuitabilityAssessment implements TasklistPage {
   }
 
   response() {
-    return responsesForYesNoAndCommentsSections(this.sections, this.body)
+    return responsesForYesNoAndCommentsSections(this.sections, this.body) as PageResponse
   }
 
   errors() {

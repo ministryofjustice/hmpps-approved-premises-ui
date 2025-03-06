@@ -21,7 +21,7 @@ const formArtifacts = {
 }
 
 describe('updateFormArtifactData', () => {
-  describe.each([['assessment'], ['application']])('with an %s', artifactType => {
+  describe.each([['assessment'], ['application']])('with an %s', (artifactType: keyof typeof formArtifacts) => {
     const artifact = formArtifacts[artifactType].factory.build()
     const PageClass = formArtifacts[artifactType].pageClass
 

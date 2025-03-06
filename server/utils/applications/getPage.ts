@@ -1,9 +1,9 @@
-import { JourneyType } from '../../@types/ui'
+import { JourneyType, TaskNames } from '../../@types/ui'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import { UnknownPageError } from '../errors'
 import { journeyPages } from './utils'
 
-export const getPage = (taskName: string, pageName: string, journeyType: JourneyType): TasklistPageInterface => {
+export const getPage = (taskName: TaskNames, pageName: string, journeyType: JourneyType): TasklistPageInterface => {
   const pageList = journeyPages(journeyType)[taskName]
 
   const Page = pageList[pageName]

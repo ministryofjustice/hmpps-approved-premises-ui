@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import { Page } from '../../utils/decorators'
 import { yesOrNoResponseWithDetailForYes } from '../../utils'
@@ -87,7 +87,7 @@ export default class UpdatesToApplication implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
     response[this.questions.significantEvents] = yesOrNoResponseWithDetailForYes('significantEvents', this.body)
     response[this.questions.changedCirumstances] = yesOrNoResponseWithDetailForYes('changedCirumstances', this.body)

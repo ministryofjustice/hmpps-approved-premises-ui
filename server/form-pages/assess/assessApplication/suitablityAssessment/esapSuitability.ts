@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
@@ -44,7 +44,7 @@ export default class EsapSuitability implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
     if (this.body.esapPlacementNeccessary === 'yes') {
       response[this.questions.esapPlacementNecessary] = `Yes - ${this.body.yesDetail}`

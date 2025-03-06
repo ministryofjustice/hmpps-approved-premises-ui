@@ -20,7 +20,7 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
         .buildList(5) as Array<LostBedReason>,
     }
 
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key: keyof typeof data) => {
       it(`should return an array of ${key}`, async () => {
         provider.addInteraction({
           state: 'Server is healthy',

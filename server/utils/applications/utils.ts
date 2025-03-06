@@ -269,7 +269,11 @@ export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
   match_request_withdrawn: 'Request for placement withdrawn',
 }
 
-const mapApplicationTimelineEventsForUi = (timelineEvents: Array<Cas1TimelineEvent>): Array<UiTimelineEvent> => {
+const mapApplicationTimelineEventsForUi = (
+  timelineEvents: Array<Cas1TimelineEvent>,
+  params: { hideUrls: boolean } = { hideUrls: false },
+): Array<UiTimelineEvent> => {
+  const { hideUrls } = params
   return timelineEvents
     .sort((a, b) => {
       if (b?.occurredAt && a?.occurredAt) {
@@ -278,14 +282,16 @@ const mapApplicationTimelineEventsForUi = (timelineEvents: Array<Cas1TimelineEve
       return 1
     })
     .map(timelineEvent => {
-      const event = {
+      const event: UiTimelineEvent = {
         label: { text: eventTypeTranslations[timelineEvent.type] },
         datetime: {
           timestamp: timelineEvent.occurredAt,
           date: timelineEvent.occurredAt ? DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt) : '',
         },
         content: renderTimelineEventContent(timelineEvent),
-        associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
+      }
+      if (!hideUrls) {
+        event.associatedUrls = timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : []
       }
 
       const createdBy = timelineEvent.triggerSource === 'system' ? 'System' : timelineEvent.createdBy?.name
@@ -394,7 +400,7 @@ const appealDecisionRadioItems = (selectedOption: AppealDecision | undefined) =>
     rejected: 'Appeal unsuccessful',
   }
 
-  return Object.keys(appealDecisions).map(status => ({
+  return Object.keys(appealDecisions).map((status: AppealDecision) => ({
     text: appealDecisions[status],
     value: status,
     checked: status === selectedOption,

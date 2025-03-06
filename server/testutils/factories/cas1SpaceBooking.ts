@@ -1,6 +1,11 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import type { Cas1KeyWorkerAllocation, Cas1SpaceBooking, Person } from '@approved-premises/api'
+import type {
+  Cas1KeyWorkerAllocation,
+  Cas1SpaceBooking,
+  Cas1SpaceBookingNonArrival,
+  Person,
+} from '@approved-premises/api'
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import userFactory from './user'
@@ -116,6 +121,6 @@ export default Cas1SpaceBookingFactory.define(() => {
     keyWorkerAllocation: { keyWorker: staffMemberFactory.build() } as Cas1KeyWorkerAllocation,
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
     deliusEventNumber: String(faker.number.int()),
-    nonArrival: undefined,
+    nonArrival: undefined as Cas1SpaceBookingNonArrival,
   }
 })

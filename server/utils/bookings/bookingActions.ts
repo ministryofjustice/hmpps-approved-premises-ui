@@ -1,4 +1,4 @@
-import type { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
+import type { IdentityBarMenu, IdentityBarMenuItem, UserDetails } from '@approved-premises/ui'
 
 import type { Booking } from '@approved-premises/api'
 import paths from '../../paths/manage'
@@ -33,7 +33,7 @@ class MenuItems {
     return this.applicationWithdrawalPath()
   }
 
-  items = {
+  items: Record<string, IdentityBarMenuItem> = {
     changeDates: {
       text: 'Change placement dates',
       classes: 'govuk-button--secondary',
@@ -66,7 +66,7 @@ export const v2BookingActions = (user: UserDetails, booking: Booking): Array<Ide
   const menuItems = new MenuItems(booking)
 
   if (booking.status === 'awaiting-arrival') {
-    const items = []
+    const items: Array<IdentityBarMenuItem> = []
 
     if (hasPermission(user, ['cas1_booking_withdraw'])) {
       items.push(menuItems.item('withdrawPlacement'))

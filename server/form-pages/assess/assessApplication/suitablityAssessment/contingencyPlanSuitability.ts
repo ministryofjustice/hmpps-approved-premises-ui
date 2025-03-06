@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
@@ -41,7 +41,7 @@ export default class ContingencyPlanSuitability implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
     response[this.questions.contingencyPlanSufficient] = sentenceCase(this.body.contingencyPlanSufficient)
     response[`${this.questions.contingencyPlanSufficient} Additional comments`] = this.body.additionalComments

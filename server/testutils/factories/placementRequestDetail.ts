@@ -1,5 +1,10 @@
 import { Factory } from 'fishery'
-import { Cas1SpaceBookingSummary, PlacementRequestDetail, type PlacementRequestStatus } from '../../@types/shared'
+import {
+  Cas1SpaceBookingSummary,
+  PlacementRequestBookingSummary,
+  PlacementRequestDetail,
+  type PlacementRequestStatus,
+} from '../../@types/shared'
 
 import cancellationFactory from './cancellation'
 import placementRequestFactory from './placementRequest'
@@ -38,7 +43,7 @@ export default PlacementRequestDetailFactory.define(({ params }) => {
     ...placementRequestFactory.build(params),
     cancellations: cancellationFactory.buildList(2),
     booking: skipBooking ? undefined : bookingSummary,
-    legacyBooking: undefined,
+    legacyBooking: undefined as PlacementRequestBookingSummary,
     spaceBookings: skipBooking ? [] : [spaceBooking],
     application: applicationFactory.build(),
   }

@@ -1,4 +1,4 @@
-import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
+import type { ObjectWithDateParts, PageResponse, TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
@@ -61,10 +61,11 @@ export default class RelevantDates implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
-    relevantDateKeys.forEach(key => {
-      response[this.relevantDatesDictionary[key]] =
+    relevantDateKeys.forEach((key: keyof typeof relevantDatesDictionary) => {
+      const responseKey: string = this.relevantDatesDictionary[key]
+      response[responseKey] =
         this.body.selectedDates?.includes(key) && !dateIsBlank(this.body, key)
           ? DateFormats.dateAndTimeInputsToUiDate(this._body, key)
           : 'No date supplied'

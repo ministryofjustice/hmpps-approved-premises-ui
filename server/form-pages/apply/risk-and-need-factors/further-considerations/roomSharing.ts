@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -71,7 +71,7 @@ export default class RoomSharing implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
     questionKeys.forEach((k: QuestionKeys) => {
       response[this.questions[k]] = yesOrNoResponseWithDetailForYes<QuestionKeys>(k, this.body)
@@ -83,7 +83,7 @@ export default class RoomSharing implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    questionKeys.forEach((question: string) => {
+    questionKeys.forEach(question => {
       if (!this.body[question]) {
         errors[question] = `You must specify if there is ${this.questionPredicates[question]}`
       }

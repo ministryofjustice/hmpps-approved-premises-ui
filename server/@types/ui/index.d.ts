@@ -55,6 +55,8 @@ export type TaskNames =
   | 'further-considerations'
   | 'move-on'
   | 'check-your-answers'
+  | 'request-a-placement'
+  | 'make-a-decision'
 
 export type YesOrNoWithDetail<T extends string> = {
   [K in T]: YesOrNo
@@ -69,7 +71,7 @@ export type YesNoOrIDKWithDetail<T extends string> = {
 }
 
 export type UiTask = {
-  id: string
+  id: TaskNames
   title: string
   pages: Record<string, unknown>
 }
@@ -194,9 +196,9 @@ export interface IdentityBarMenuItem {
 
 export type UiTimelineEvent = {
   label: { text: string }
-  datetime: { timestamp: string; type?: 'datetime' }
+  datetime: { timestamp: string; type?: 'datetime'; date: string }
   content: string
-  associatedUrls: Array<TimelineEventAssociatedUrl>
+  associatedUrls?: Array<TimelineEventAssociatedUrl>
 }
 
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Very High'

@@ -2,6 +2,8 @@ import { UserQualification, ApprovedPremisesUserRole as UserRole } from '@approv
 import { CheckBoxItem } from '@approved-premises/ui'
 import {
   AllocationRoleLabelDictionary,
+  BaseRole,
+  RoleLabel,
   RoleLabelDictionary,
   allocationRoleLabelDictionary,
   filterAllocationRoles,
@@ -14,13 +16,14 @@ export const roleCheckboxItem = (
   dictionary: RoleLabelDictionary | AllocationRoleLabelDictionary,
   selectedRoles: Array<UserRole> = [],
 ): CheckBoxItem => {
+  const dictionaryRole: RoleLabel = (dictionary as RoleLabelDictionary)[role as BaseRole]
   const checkbox: CheckBoxItem = {
     value: role,
-    text: dictionary[role].label,
+    text: dictionaryRole.label,
     checked: selectedRoles.includes(role),
   }
 
-  if (dictionary[role]?.hint) checkbox.hint = { text: dictionary[role].hint }
+  if (dictionaryRole?.hint) checkbox.hint = { text: dictionaryRole.hint }
 
   return checkbox
 }

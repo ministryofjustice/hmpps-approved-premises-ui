@@ -8,8 +8,9 @@ type Constructor = new (...args: Array<any>) => {}
 interface Type<T> extends Function {
   new (...args: Array<any>): T
 }
+export type Pages = Array<Type<TasklistPage>>
 
-const Task = (options: { name: string; slug: string; pages: Array<Type<TasklistPage>> }) => {
+const Task = (options: { name: string; slug: string; pages: Pages }) => {
   return <T extends Constructor>(constructor: T) => {
     Reflect.defineMetadata('task:slug', options.slug, constructor)
     Reflect.defineMetadata('task:name', options.name, constructor)

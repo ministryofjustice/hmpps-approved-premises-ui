@@ -1,11 +1,11 @@
 import type {
-  ApArea,
   Cas1OverbookingRange,
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
+  NamedId,
   SortDirection,
 } from '@approved-premises/api'
 import { DateRange, SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
@@ -53,10 +53,13 @@ export const groupCas1SummaryPremisesSelectOptions = (
   context: Record<string, unknown>,
   fieldName: string = 'premisesId',
 ): Array<SelectGroup> => {
-  const apAreas: Record<string, ApArea> = premises.reduce((map, { apArea }) => {
-    map[apArea.id] = apArea
-    return map
-  }, {})
+  const apAreas = premises.reduce(
+    (map, { apArea }) => {
+      map[apArea.id] = apArea
+      return map
+    },
+    {} as Record<string, NamedId>,
+  )
   return Object.values(apAreas).map(({ id, name }) => ({
     label: name,
     items: premises
@@ -140,7 +143,7 @@ const columnMap: Record<PremisesTab, Array<ColumnDefinition>> = {
 }
 
 export const placementTableHeader = (
-  activeTab: string,
+  activeTab: PremisesTab,
   sortBy: Cas1SpaceBookingSummarySortField,
   sortDirection: SortDirection,
   hrefPrefix: string,
@@ -151,7 +154,7 @@ export const placementTableHeader = (
 }
 
 export const placementTableRows = (
-  activeTab: string,
+  activeTab: PremisesTab,
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
 ): Array<TableRow> =>

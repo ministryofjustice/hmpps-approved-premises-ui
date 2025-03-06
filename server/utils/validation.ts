@@ -12,6 +12,8 @@ interface InvalidParams {
   errorType: string
 }
 
+type ErrorLookup = Record<string, { conflict?: string }>
+
 export const generateConflictErrorAndRedirect = (
   request: Request,
   response: Response,
@@ -25,7 +27,7 @@ export const generateConflictErrorAndRedirect = (
   const errors = {} as ErrorMessages
 
   fields.forEach(f => {
-    errors[f] = errorMessage(f, errorLookup[f].conflict)
+    errors[f] = errorMessage(f, (errorLookup as ErrorLookup)[f].conflict)
   })
 
   request.flash('errorTitle', errorDetails.errorTitle)
@@ -99,8 +101,10 @@ export const errorMessage = (field: string, text: string): ErrorMessage => {
 
 const extractValidationErrors = (error: SanitisedError | Error): Record<string, string> | string => {
   if ('data' in error && error.data) {
-    if (Array.isArray(error.data['invalid-params']) && error.data['invalid-params'].length) {
-      return generateErrors(error.data['invalid-params'])
+    type ErrorData = { detail?: unknown; 'invalid-params'?: Array<InvalidParams> }
+    const { data } = error as { data: ErrorData }
+    if (Array.isArray(data['invalid-params']) && data['invalid-params'].length) {
+      return generateErrors(data['invalid-params'])
     }
     if (typeof error.data === 'object' && error.data !== null && 'detail' in error.data) {
       return error.data.detail as string

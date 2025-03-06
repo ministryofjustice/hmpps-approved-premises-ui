@@ -20,7 +20,12 @@ import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
 import { summaryListItem } from '../formUtils'
-import { apTypeCriteriaLabels, specialistApTypeCriteria } from '../placementCriteriaUtils'
+import {
+  ApTypeCriteria,
+  SpecialistApTypeCriteria,
+  apTypeCriteriaLabels,
+  specialistApTypeCriteria,
+} from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
 
@@ -245,7 +250,10 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
 export const requirementsInformation = (placement: Cas1SpaceBooking): SummaryList => {
   const requirements = placement.characteristics
   const apType =
-    apTypeCriteriaLabels[requirements.find(requirement => specialistApTypeCriteria.includes(requirement)) || 'normal']
+    apTypeCriteriaLabels[
+      (requirements.find(requirement => specialistApTypeCriteria.includes(requirement as SpecialistApTypeCriteria)) ||
+        'normal') as ApTypeCriteria
+    ]
   const apRequirements = filterApLevelCriteria(requirements)
   const roomRequirements = filterRoomLevelCriteria(requirements)
 

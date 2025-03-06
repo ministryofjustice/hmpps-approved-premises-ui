@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
-import type { DataServices, FormPages } from '@approved-premises/ui'
+import type { DataServices, FormPages, TaskNames } from '@approved-premises/ui'
 import PagesController from './pagesController'
 import { AssessmentService } from '../../../services'
 import TasklistPage from '../../../form-pages/tasklistPage'
@@ -44,6 +44,8 @@ describe('pagesController', () => {
 
   const pagesController = new PagesController(assessmentService, dataServices)
 
+  const someTask = 'some-task' as TaskNames
+
   beforeEach(() => {
     assessmentService.initializePage.mockResolvedValue(page)
   })
@@ -63,14 +65,14 @@ describe('pagesController', () => {
     })
 
     it('renders a page', async () => {
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask, 'some-page')
       await requestHandler(request, response, next)
 
       expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, assessment, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         assessment,
-        task: 'some-task',
+        task: someTask,
         page,
         errors: {},
         errorSummary: errorsAndUserInput.errorSummary,
@@ -79,7 +81,7 @@ describe('pagesController', () => {
     })
 
     it('shows errors and user input when returning from an error state', async () => {
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask as TaskNames, 'some-page')
       await requestHandler(request, response, next)
 
       expect(assessmentService.initializePage).toHaveBeenCalledWith(
@@ -93,7 +95,7 @@ describe('pagesController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         assessment,
-        task: 'some-task',
+        task: someTask,
         page,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -106,7 +108,7 @@ describe('pagesController', () => {
         throw new UnknownPageError('some-page')
       })
 
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask, 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -118,7 +120,7 @@ describe('pagesController', () => {
       assessmentService.initializePage.mockImplementation(() => {
         throw genericError
       })
-      const requestHandler = pagesController.show('some-task', 'some-page')
+      const requestHandler = pagesController.show(someTask, 'some-page')
       await requestHandler(request, response, next)
       expect(catchAPIErrorOrPropogate).toHaveBeenCalledWith(request, response, genericError)
     })
@@ -137,21 +139,21 @@ describe('pagesController', () => {
 
         assessmentService.save.mockResolvedValue()
 
-        const requestHandler = pagesController.update('some-task', 'page-name')
+        const requestHandler = pagesController.update(someTask, 'page-name')
 
         await requestHandler(request, response)
 
         expect(assessmentService.save).toHaveBeenCalledWith(page, request)
 
         expect(response.redirect).toHaveBeenCalledWith(
-          paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
+          paths.assessments.pages.show({ id: request.params.id, task: someTask, page: 'next-page' }),
         )
       })
 
       it('redirects to the tasklist if there is no next page', async () => {
         page.next.mockReturnValue(undefined)
 
-        const requestHandler = pagesController.update('some-task', 'page-name')
+        const requestHandler = pagesController.update(someTask, 'page-name')
 
         await requestHandler(request, response)
 
@@ -166,7 +168,7 @@ describe('pagesController', () => {
           throw err
         })
 
-        const requestHandler = pagesController.update('some-task', 'page-name')
+        const requestHandler = pagesController.update(someTask, 'page-name')
 
         await requestHandler(request, response)
 
@@ -176,7 +178,7 @@ describe('pagesController', () => {
           request,
           response,
           err,
-          paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+          paths.assessments.pages.show({ id: request.params.id, task: someTask, page: 'page-name' }),
         )
       })
     })
@@ -201,7 +203,7 @@ describe('pagesController', () => {
       it('updates the assessment and the correct clarification note if informationReceived is yes', async () => {
         assessmentService.save.mockResolvedValue()
 
-        const requestHandler = pagesController.updateInformationRecieved('some-task', 'page-name')
+        const requestHandler = pagesController.updateInformationRecieved(someTask, 'page-name')
 
         await requestHandler(
           { ...request, body: { informationReceived: 'yes', response: 'some text', responseReceivedOn: '2022-01-02' } },
@@ -220,7 +222,7 @@ describe('pagesController', () => {
       })
 
       it('catches an error if informationReceived is yes but the body is invalid', async () => {
-        const requestHandler = pagesController.updateInformationRecieved('some-task', 'page-name')
+        const requestHandler = pagesController.updateInformationRecieved(someTask, 'page-name')
 
         const err = new Error()
 
@@ -236,12 +238,12 @@ describe('pagesController', () => {
           request,
           res,
           err,
-          paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+          paths.assessments.pages.show({ id: request.params.id, task: someTask, page: 'page-name' }),
         )
       })
 
       it('forwards to the update action if informationReceived is no', async () => {
-        const requestHandler = pagesController.updateInformationRecieved('some-task', 'page-name')
+        const requestHandler = pagesController.updateInformationRecieved(someTask, 'page-name')
 
         const res = createMock<Response>()
 
@@ -249,7 +251,7 @@ describe('pagesController', () => {
 
         expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
 
-        expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
+        expect(updateSpy).toHaveBeenCalledWith(someTask, 'page-name')
         expect(updateHandler).toHaveBeenCalledWith(request, res)
       })
     })

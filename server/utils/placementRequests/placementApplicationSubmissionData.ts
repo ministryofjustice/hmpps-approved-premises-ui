@@ -65,9 +65,9 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
     return datesOfPlacement
   }
 
-  const dateOfPlacement = {}
+  const dateOfPlacement = {} as DateOfPlacement
 
-  const legacyProperties = [
+  const legacyProperties: Array<keyof DateOfPlacement> = [
     'arrivalDate',
     'arrivalDate-day',
     'arrivalDate-month',

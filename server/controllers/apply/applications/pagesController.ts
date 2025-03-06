@@ -1,7 +1,7 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
-import type { DataServices } from '@approved-premises/ui'
+import type { DataServices, TaskNames } from '@approved-premises/ui'
 import { ApplicationService } from '../../../services'
 
 import {
@@ -20,7 +20,7 @@ export default class PagesController {
     private readonly dataServices: DataServices,
   ) {}
 
-  show(taskName: string, pageName: string): RequestHandler {
+  show(taskName: TaskNames, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const Page = getPage(taskName, pageName, 'applications')
@@ -46,7 +46,7 @@ export default class PagesController {
     }
   }
 
-  update(taskName: string, pageName: string) {
+  update(taskName: TaskNames, pageName: string) {
     return async (req: Request, res: Response) => {
       const Page = getPage(taskName, pageName, 'applications')
       const page = await this.applicationService.initializePage(Page, req, this.dataServices)

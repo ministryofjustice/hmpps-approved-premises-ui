@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import type { Router } from 'express'
+import { TaskNames } from '@approved-premises/ui'
 import type { Services } from '../services'
 import Apply from '../form-pages/apply'
 
@@ -78,7 +79,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'CREATE_APPEAL',
   })
 
-  Object.keys(pages).forEach((taskKey: string) => {
+  Object.keys(pages).forEach((taskKey: TaskNames) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
       const { pattern } = paths.applications.show.path(`tasks/${taskKey}/pages/${pageKey}`)
       get(pattern, pagesController.show(taskKey, pageKey), {

@@ -184,10 +184,7 @@ describe('placementController', () => {
         'manage/premises/placements/show',
         expect.objectContaining({
           placement,
-          timelineEvents: mapApplicationTimelineEventsForUi(timeLine).map(event => ({
-            ...event,
-            associatedUrls: null,
-          })),
+          timelineEvents: mapApplicationTimelineEventsForUi(timeLine, { hideUrls: true }),
         }),
       )
 

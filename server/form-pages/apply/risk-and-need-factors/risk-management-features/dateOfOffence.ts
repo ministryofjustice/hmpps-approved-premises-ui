@@ -34,7 +34,7 @@ export default class DateOfOffence implements TasklistPage {
   }
 
   public set body(value: Partial<Record<Offence, Response>>) {
-    this._body = offencesList.reduce((prev, offence) => {
+    this._body = offencesList.reduce((prev, offence: Offence) => {
       if (value[offence]) {
         return { ...prev, [offence]: [value[offence]].flat() as Response }
       }
@@ -52,7 +52,7 @@ export default class DateOfOffence implements TasklistPage {
 
   response() {
     return offencesList.reduce(
-      (prev, curr) => ({
+      (prev, curr: keyof typeof this.body) => ({
         ...prev,
         [`Is the ${lowerCase(curr)} current or previous?`]: this.getPlainEnglishAnswerFromFormData(this.body[curr]),
       }),
@@ -70,7 +70,7 @@ export default class DateOfOffence implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!Object.keys(this.body).find(key => !!this.body[key])) {
+    if (!Object.values(this.body).find(value => !!value)) {
       errors.hateCrime = 'You must enter a time period for one or more offence'
     }
 
@@ -84,8 +84,8 @@ export default class DateOfOffence implements TasklistPage {
   renderTableRow(offence: string) {
     return [
       this.textValue(sentenceCase(offence)),
-      DateOfOffence.checkbox(offence, 'current', this.isSelected(offence, 'current')),
-      DateOfOffence.checkbox(offence, 'previous', this.isSelected(offence, 'previous')),
+      DateOfOffence.checkbox(offence, 'current', this.isSelected(offence as keyof typeof this.body, 'current')),
+      DateOfOffence.checkbox(offence, 'previous', this.isSelected(offence as keyof typeof this.body, 'previous')),
     ]
   }
 
@@ -118,7 +118,9 @@ export default class DateOfOffence implements TasklistPage {
     return { html: value }
   }
 
-  private isSelected(offence: string, timePeriod: string) {
-    return Boolean(this?.body?.[offence]?.find((item: string) => item === timePeriod))
+  private isSelected(offence: keyof typeof this.body, timePeriod: string) {
+    return Boolean(
+      this.body?.[offence] && (this.body?.[offence] as Array<string>).find((item: string) => item === timePeriod),
+    )
   }
 }

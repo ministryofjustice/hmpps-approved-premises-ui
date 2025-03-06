@@ -4,7 +4,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../utils/formUtils'
 import { ApprovedPremisesApplication, OASysSection } from '../../../../@types/shared'
-import { DataServices } from '../../../../@types/ui'
+import { DataServices, type PageResponse } from '../../../../@types/ui'
 import { sentenceCase } from '../../../../utils/utils'
 import { oasysSectionsToExclude } from '../../../../utils/oasysImportUtils'
 
@@ -118,7 +118,7 @@ export default class OptionalOasysSections implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: PageResponse = {}
 
     if (this.body.needsLinkedToReoffending && this.getResponseForTypeOfNeed(this.body.needsLinkedToReoffending))
       response[this.needsLinkedToReoffendingHeading] = this.getResponseForTypeOfNeed(this.body.needsLinkedToReoffending)

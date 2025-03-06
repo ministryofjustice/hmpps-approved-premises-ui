@@ -35,15 +35,15 @@ export const pendingPlacementRequestTableRows = (applications: Array<Application
 }
 
 export const releaseTypeSelectOptions = (selectedOption: ReleaseTypeOption | undefined | null): Array<SelectOption> => {
-  const options = Object.keys(allReleaseTypes).map(releaseType => ({
-    text: allReleaseTypes[releaseType],
+  const options = Object.entries(allReleaseTypes).map(([releaseType, text]) => ({
+    text,
     value: releaseType,
     selected: releaseType === selectedOption,
   }))
 
   options.unshift({
     text: 'All release types',
-    value: '',
+    value: '' as ReleaseTypeOption,
     selected: !selectedOption,
   })
 

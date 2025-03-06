@@ -1,8 +1,8 @@
-import { FormArtifact, PageResponse } from '../../@types/ui'
+import { FormArtifact, PageResponse, TaskNames } from '../../@types/ui'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { getPage } from './getPage'
 
-export const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageName: string): PageResponse => {
+export const getResponseForPage = (formArtifact: FormArtifact, taskName: TaskNames, pageName: string): PageResponse => {
   const Page = getPage(taskName, pageName, journeyTypeFromArtifact(formArtifact))
 
   const body = formArtifact?.data?.[taskName]?.[pageName]
