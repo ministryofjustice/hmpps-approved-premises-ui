@@ -17,10 +17,14 @@ export default function routes(controllers: Controllers, router: Router, service
     allowedRoles: [],
     allowedPermissions: ['cas1_view_manage_tasks'],
   })
-  get(paths.tasks.show.pattern, tasksController.show(), { auditEvent: 'SHOW_TASK' })
+  get(paths.tasks.show.pattern, tasksController.show(), {
+    auditEvent: 'SHOW_TASK',
+    allowedPermissions: ['cas1_view_manage_tasks'],
+  })
   post(paths.tasks.allocations.create.pattern, allocationsController.create(), {
     auditEvent: 'REALLOCATE_TASK_SUCCESS',
     redirectAuditEventSpecs: [{ path: paths.tasks.show.pattern, auditEvent: 'REALLOCATE_TASK_FAILURE' }],
+    allowedPermissions: ['cas1_view_manage_tasks'],
   })
 
   return router
