@@ -1,5 +1,5 @@
 import type {
-  BedDetail,
+  Cas1BedDetail,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
@@ -42,8 +42,8 @@ export default class PremisesClient {
     })) as Array<Cas1PremisesBedSummary>
   }
 
-  async getBed(premisesId: string, bedId: string): Promise<BedDetail> {
-    return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
+  async getBed(premisesId: string, bedId: string): Promise<Cas1BedDetail> {
+    return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as Cas1BedDetail
   }
 
   async getCapacity(

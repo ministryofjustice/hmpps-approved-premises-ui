@@ -1,12 +1,8 @@
-import { BedDetail, Cas1PremisesBedSummary } from '@approved-premises/api'
-import { SummaryListItem, TableCell } from '../@types/ui'
+import { Cas1BedDetail, Cas1PremisesBedSummary } from '@approved-premises/api'
+import { SummaryList, TableCell } from '../@types/ui'
 import paths from '../paths/manage'
-import { linkTo, sentenceCase } from './utils'
-import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-} from './characteristicsUtils'
+import { linkTo } from './utils'
+import { characteristicsBulletList, roomCharacteristicMap } from './characteristicsUtils'
 import { summaryListItem } from './formUtils'
 
 export const bedNameCell = (item: Cas1PremisesBedSummary): TableCell => ({ text: item.bedName })
@@ -21,19 +17,17 @@ export const bedTableRows = (beds: Array<Cas1PremisesBedSummary>, premisesId: st
   return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)])
 }
 
-export const bedDetails = (bed: BedDetail): Array<SummaryListItem> => [
-  summaryListItem(
-    'Characteristics',
-    characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics), {
-      labels: roomCharacteristicMap,
-    }),
-    'html',
-  ),
-]
+export const bedDetails = (bed: Cas1BedDetail): SummaryList => ({
+  rows: [
+    summaryListItem(
+      'Characteristics',
+      characteristicsBulletList(bed.characteristics, { labels: roomCharacteristicMap }),
+      'html',
+    ),
+  ],
+})
 
-export const statusRow = (bed: BedDetail): SummaryListItem => summaryListItem('Status', sentenceCase(bed.status))
-
-export const title = (bed: BedDetail, pageTitle: string): string => {
+export const title = (bed: Cas1BedDetail, pageTitle: string): string => {
   return `
   <h1 class="govuk-heading-l">
     <span class="govuk-caption-l">${bed.name}</span>
@@ -42,7 +36,7 @@ export const title = (bed: BedDetail, pageTitle: string): string => {
   `
 }
 
-export const bedActions = (bed: BedDetail, premisesId: string) => {
+export const bedActions = (bed: Cas1BedDetail, premisesId: string) => {
   return {
     items: [
       {

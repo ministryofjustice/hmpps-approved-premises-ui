@@ -3,8 +3,9 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { bedDetailFactory, cas1PremisesBedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
+import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
 import paths from '../../../paths/manage'
+import { bedDetails } from '../../../utils/bedUtils'
 
 describe('V2BedsController', () => {
   const token = 'SOME_TOKEN'
@@ -17,7 +18,7 @@ describe('V2BedsController', () => {
   const bedsController = new BedsController(premisesService)
 
   describe('show', () => {
-    const bed = bedDetailFactory.build()
+    const bed = cas1BedDetailFactory.build()
     const premises = cas1PremisesFactory.build()
     const bedId = 'bedId'
 
@@ -40,6 +41,7 @@ describe('V2BedsController', () => {
         premises,
         pageHeading: `Bed ${bed.name}`,
         backLink: paths.premises.beds.index({ premisesId: premises.id }),
+        characteristicsSummaryList: bedDetails(bed),
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)

@@ -12,11 +12,7 @@ import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
 import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
-import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-} from '../../utils/characteristicsUtils'
+import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
 
 export default class OutOfServiceBedsController {
   constructor(
@@ -217,9 +213,7 @@ export default class OutOfServiceBedsController {
       ])
 
       outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
-      const characteristicsHtml = characteristicsBulletList(characteristicsPairToCharacteristics(characteristics), {
-        labels: roomCharacteristicMap,
-      })
+      const characteristicsHtml = characteristicsBulletList(characteristics, { labels: roomCharacteristicMap })
 
       return res.render('manage/outOfServiceBeds/show', {
         outOfServiceBed,

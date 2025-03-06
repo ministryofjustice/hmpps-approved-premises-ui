@@ -28,7 +28,6 @@ const cas1ApplicationsSingle = cas1Applications.path(':id')
 // Non-namespaced
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
-const beds = premisesSingle.path('beds')
 const rooms = premisesSingle.path('rooms')
 const booking = premisesSingle.path('bookings/:bookingId')
 
@@ -91,7 +90,7 @@ export default {
     },
     beds: {
       index: cas1Beds,
-      show: beds.path(':bedId'),
+      show: cas1Beds.path(':bedId'),
     },
     rooms,
     room: rooms.path(':roomId'),

@@ -2,6 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import PremisesService from '../../../services/premisesService'
 import paths from '../../../paths/manage'
+import { bedDetails } from '../../../utils/bedUtils'
 
 export default class BedsController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -41,6 +42,7 @@ export default class BedsController {
         premises,
         pageHeading: `Bed ${bed.name}`,
         backLink,
+        characteristicsSummaryList: bedDetails(bed),
       })
     }
   }

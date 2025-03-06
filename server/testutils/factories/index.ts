@@ -10,7 +10,6 @@ import arrivalFactory from './arrival'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
-import bedDetailFactory, { apCharacteristicPairFactory } from './bedDetail'
 import bookingSummaryFactory from './placementRequestBookingSummary'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
@@ -93,6 +92,7 @@ import cas1OverbookingRangeFactory from './cas1OverbookingRange'
 import spaceSearchStateFactory from './spaceSearchState'
 import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
+import cas1BedDetailFactory from './cas1BedDetail'
 
 export {
   acctAlertFactory,
@@ -100,7 +100,6 @@ export {
   adjudicationFactory,
   appealFactory,
   apAreaFactory,
-  apCharacteristicPairFactory,
   applicationFactory,
   applicationSummaryFactory,
   applicationTimelineFactory,
@@ -108,13 +107,13 @@ export {
   assessmentTaskFactory,
   assessmentFactory,
   assessmentSummaryFactory,
-  bedDetailFactory,
   bookingSummaryFactory,
   bookingFactory,
   bookingExtensionFactory,
   bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
+  cas1BedDetailFactory,
   cas1PremisesBedSummaryFactory,
   cas1OutOfServiceBedSummaryFactory,
   cas1PremisesBasicSummaryFactory,

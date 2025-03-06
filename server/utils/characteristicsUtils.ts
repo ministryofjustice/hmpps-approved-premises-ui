@@ -1,10 +1,5 @@
-import {
-  Cas1SpaceBookingCharacteristic,
-  Cas1SpaceCharacteristic,
-  CharacteristicPair,
-  PlacementCriteria,
-} from '@approved-premises/api'
-import { joinWithCommas, makeArrayOfType } from './utils'
+import { Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic, PlacementCriteria } from '@approved-premises/api'
+import { joinWithCommas } from './utils'
 import { UiPlacementCriteria, placementCriteriaLabels } from './placementCriteriaUtils'
 
 export const roomCharacteristicMap: Record<Cas1SpaceBookingCharacteristic, string> = {
@@ -19,18 +14,6 @@ export const roomCharacteristicMap: Record<Cas1SpaceBookingCharacteristic, strin
 export const getRoomCharacteristicLabel = (characteristic: Cas1SpaceCharacteristic): string => {
   return roomCharacteristicMap[characteristic as Cas1SpaceBookingCharacteristic]
 }
-
-export const characteristicsPairToCharacteristics = (
-  characteristicPairs: Array<CharacteristicPair>,
-): Array<Cas1SpaceCharacteristic> =>
-  (makeArrayOfType<CharacteristicPair>(characteristicPairs) || [])
-    .map(
-      ({ propertyName }) =>
-        (getRoomCharacteristicLabel(propertyName as Cas1SpaceCharacteristic)
-          ? propertyName
-          : null) as Cas1SpaceCharacteristic,
-    )
-    .filter(Boolean)
 
 export const characteristicsBulletList = (
   requirements: Array<Cas1SpaceCharacteristic | PlacementCriteria>,
