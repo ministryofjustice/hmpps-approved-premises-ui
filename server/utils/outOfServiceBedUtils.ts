@@ -5,11 +5,10 @@ import {
   Premises,
   SortDirection,
 } from '@approved-premises/api'
-import { SummaryList, SummaryListItem, TableCell, UserDetails } from '@approved-premises/ui'
+import { SummaryList, SummaryListItem, TableCell } from '@approved-premises/ui'
 
 import paths from '../paths/manage'
 import { linkTo } from './utils'
-import { hasRole } from './users'
 import { DateFormats } from './dateUtils'
 import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
@@ -54,73 +53,39 @@ export const allOutOfServiceBedsTableHeaders = (
   ]
 }
 
-export const allOutOfServiceBedsTableRows = (beds: Array<OutOfServiceBed>) => {
-  return beds.map(bed => {
-    const rows = [
-      textValue(bed.premises.name),
-      textValue(bed.room.name),
-      textValue(bed.bed.name),
-      textValue(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
-      textValue(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
-      textValue(bed.reason.name),
-      referenceNumberCell(bed.referenceNumber),
-      textValue(bed.daysLostCount.toString()),
-      actionCell(bed, bed.premises.id),
-    ]
+export const allOutOfServiceBedsTableRows = (beds: Array<OutOfServiceBed>) =>
+  beds.map(bed => [
+    textValue(bed.premises.name),
+    textValue(bed.room.name),
+    textValue(bed.bed.name),
+    textValue(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
+    textValue(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
+    textValue(bed.reason.name),
+    referenceNumberCell(bed.referenceNumber),
+    textValue(bed.daysLostCount.toString()),
+    actionCell(bed, bed.premises.id),
+  ])
 
-    return rows
-  })
-}
+export const outOfServiceBedTableHeaders = () => [
+  { text: 'Bed' },
+  { text: 'Room' },
+  { text: 'Start date' },
+  { text: 'Out of service until' },
+  { text: 'Reason' },
+  { text: 'Ref number' },
+  { text: 'Manage' },
+]
 
-export const outOfServiceBedTableHeaders = (user: UserDetails) => {
-  const headers = [
-    {
-      text: 'Bed',
-    },
-    {
-      text: 'Room',
-    },
-    {
-      text: 'Start date',
-    },
-    {
-      text: 'Out of service until',
-    },
-    {
-      text: 'Reason',
-    },
-    {
-      text: 'Ref number',
-    },
-  ]
-
-  if (hasRole(user, 'workflow_manager') || hasRole(user, 'future_manager')) {
-    headers.push({
-      text: 'Manage',
-    })
-  }
-
-  return headers
-}
-
-export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesId: string, user: UserDetails) => {
-  return beds.map(bed => {
-    const rows = [
-      textValue(bed.bed.name),
-      textValue(bed.room.name),
-      textValue(bed.startDate),
-      textValue(bed.endDate),
-      textValue(bed.reason.name),
-      referenceNumberCell(bed.referenceNumber),
-    ]
-
-    if (hasRole(user, 'workflow_manager') || hasRole(user, 'future_manager')) {
-      rows.push(actionCell(bed, premisesId))
-    }
-
-    return rows
-  })
-}
+export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesId: string) =>
+  beds.map(bed => [
+    textValue(bed.bed.name),
+    textValue(bed.room.name),
+    textValue(bed.startDate),
+    textValue(bed.endDate),
+    textValue(bed.reason.name),
+    referenceNumberCell(bed.referenceNumber),
+    actionCell(bed, premisesId),
+  ])
 
 export const referenceNumberCell = (value: string): TableCell => ({ text: value || 'Not provided' })
 export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): TableCell => ({
