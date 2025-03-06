@@ -117,7 +117,7 @@ context('Placement Requests', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    signIn(['workflow_manager'], ['cas1_booking_create', 'cas1_booking_withdraw'])
+    signIn([], ['cas1_view_cru_dashboard', 'cas1_booking_create', 'cas1_booking_withdraw', 'cas1_booking_change_dates'])
   })
 
   it('allows me to view all placement requests', () => {

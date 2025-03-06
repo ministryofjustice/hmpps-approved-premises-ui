@@ -7,8 +7,6 @@ import { PlacementRequestService } from '../../../services'
 import { ErrorWithData } from '../../../utils/errors'
 import { withdrawalMessage } from '../../../utils/placementRequests/utils'
 
-export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
-
 export default class WithdrawalsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
 
@@ -16,7 +14,7 @@ export default class WithdrawalsController {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
-      const withdrawalReasonsRadioItems = placementApplicationWithdrawalReasons(req.session.user.roles)
+      const withdrawalReasonsRadioItems = placementApplicationWithdrawalReasons(req.session.user)
 
       const applicationId = req.flash('applicationId')?.[0] || ''
 

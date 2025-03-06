@@ -1,7 +1,8 @@
 import { ApprovedPremisesUserRole, WithdrawPlacementRequestReason } from '@approved-premises/api'
-import { RadioItem } from '../../../@types/ui'
+import { RadioItem, UserDetails } from '../../../@types/ui'
 import { convertKeyValuePairToRadioItems } from '../../formUtils'
 import { filterByType } from '../../utils'
+import { hasPermission } from '../../users'
 
 type UserFacingWithdrawalReasons = Exclude<
   WithdrawPlacementRequestReason,
@@ -61,10 +62,8 @@ const problemInPlacementDividerAndRadioItems = [
   ...convertKeyValuePairToRadioItems(problemInPlacementOptions),
 ]
 
-export const placementApplicationWithdrawalReasons = (
-  userRoles: Array<ApprovedPremisesUserRole>,
-): Array<RadioItem | { divider: string }> => {
-  return userRoles.includes('workflow_manager')
+export const placementApplicationWithdrawalReasons = (user: UserDetails): Array<RadioItem | { divider: string }> => {
+  return hasPermission(user, ['cas1_view_cru_dashboard'])
     ? [
         placementNoLongerNeededDividerAndRadioItems,
         noCapacityDividerAndRadioItems,
