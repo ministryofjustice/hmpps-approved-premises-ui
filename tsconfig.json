@@ -33,7 +33,9 @@
     "coverage/**",
     "e2e/playwright/**",
     "e2e/test-results/**",
-    "playwright-report"
+    "playwright-report",
+    "esbuild",
+    "eslint.config.mjs"
   ],
   "include": ["**/*.js", "**/*.ts"]
 }
