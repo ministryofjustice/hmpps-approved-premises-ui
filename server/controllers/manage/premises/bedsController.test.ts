@@ -3,8 +3,9 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { bedDetailFactory, bedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
+import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
 import paths from '../../../paths/manage'
+import { bedDetails } from '../../../utils/bedUtils'
 
 describe('V2BedsController', () => {
   const token = 'SOME_TOKEN'
@@ -17,7 +18,7 @@ describe('V2BedsController', () => {
   const bedsController = new BedsController(premisesService)
 
   describe('show', () => {
-    const bed = bedDetailFactory.build()
+    const bed = cas1BedDetailFactory.build()
     const premises = cas1PremisesFactory.build()
     const bedId = 'bedId'
 
@@ -40,6 +41,7 @@ describe('V2BedsController', () => {
         premises,
         pageHeading: `Bed ${bed.name}`,
         backLink: paths.premises.beds.index({ premisesId: premises.id }),
+        characteristicsSummaryList: bedDetails(bed),
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)
@@ -49,22 +51,24 @@ describe('V2BedsController', () => {
 
   describe('index', () => {
     it('should return the beds to the template', async () => {
-      const beds = bedSummaryFactory.buildList(1)
-      const premisesId = 'premisesId'
-      request.params.premisesId = premisesId
+      const beds = cas1PremisesBedSummaryFactory.buildList(1)
+      const premises = cas1PremisesFactory.build()
+      request.params.premisesId = premises.id
 
       premisesService.getBeds.mockResolvedValue(beds)
+      premisesService.find.mockResolvedValue(premises)
 
       const requestHandler = bedsController.index()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/beds/index', {
         beds,
-        premisesId,
+        premises,
         pageHeading: 'Manage beds',
       })
 
-      expect(premisesService.getBeds).toHaveBeenCalledWith(token, premisesId)
+      expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
+      expect(premisesService.getBeds).toHaveBeenCalledWith(token, premises.id)
     })
   })
 })

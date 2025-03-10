@@ -2,12 +2,16 @@ import Page from '../../../pages/page'
 import { signIn } from '../../signIn'
 import BedsListPage from '../../../pages/manage/bed/bedList'
 import BedShowPage from '../../../pages/manage/bed/bedShow'
-import { bedDetailFactory, bedSummaryFactory, cas1PremisesFactory } from '../../../../server/testutils/factories'
+import {
+  cas1BedDetailFactory,
+  cas1PremisesBedSummaryFactory,
+  cas1PremisesFactory,
+} from '../../../../server/testutils/factories'
 
 context('Beds', () => {
   const premisesId = 'premisesId'
-  const bedSummaries = bedSummaryFactory.buildList(5)
-  const bedDetail = bedDetailFactory.build({ ...bedSummaries[0] })
+  const bedSummaries = cas1PremisesBedSummaryFactory.buildList(5)
+  const bedDetail = cas1BedDetailFactory.build({ ...bedSummaries[0], name: bedSummaries[1].bedName })
   const premises = cas1PremisesFactory.build({ id: premisesId })
 
   beforeEach(() => {

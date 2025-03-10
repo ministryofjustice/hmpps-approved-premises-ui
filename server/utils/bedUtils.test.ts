@@ -1,118 +1,58 @@
 import paths from '../paths/manage'
-import { apCharacteristicPairFactory, bedDetailFactory, bedSummaryFactory } from '../testutils/factories'
-import {
-  actionCell,
-  bedActions,
-  bedDetails,
-  bedLink,
-  bedNameCell,
-  bedTableRows,
-  roomNameCell,
-  statusCell,
-  statusRow,
-  title,
-} from './bedUtils'
+import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory } from '../testutils/factories'
+import { actionCell, bedActions, bedDetails, bedLink, bedNameCell, bedTableRows, roomNameCell, title } from './bedUtils'
 
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
-  const bed = bedSummaryFactory.build()
-  const bedDetail = bedDetailFactory.build()
+  const bedSummary = cas1PremisesBedSummaryFactory.build()
+  const bedDetail = cas1BedDetailFactory.build()
 
   describe('roomNameCell', () => {
     it('returns the name of the room', () => {
-      expect(roomNameCell(bed)).toEqual({ text: bed.roomName })
+      expect(roomNameCell(bedSummary)).toEqual({ text: bedSummary.roomName })
     })
   })
 
   describe('bedNameCell', () => {
     it('returns the name of the room', () => {
-      expect(bedNameCell(bed)).toEqual({ text: bed.name })
-    })
-  })
-
-  describe('statusCell', () => {
-    it('returns the status of an available room in sentence case', () => {
-      bed.status = 'available'
-
-      expect(statusCell(bed)).toEqual({ text: 'Available' })
-    })
-
-    it('returns the status of an occupied room in sentence case', () => {
-      bed.status = 'occupied'
-
-      expect(statusCell(bed)).toEqual({ text: 'Occupied' })
-    })
-
-    it('returns the status of an out of service room in sentence case', () => {
-      bed.status = 'out_of_service'
-
-      expect(statusCell(bed)).toEqual({ text: 'Out of service' })
+      expect(bedNameCell(bedSummary)).toEqual({ text: bedSummary.bedName })
     })
   })
 
   describe('actionCell', () => {
     it('returns a link to manage the room', () => {
-      expect(actionCell(bed, premisesId)).toEqual({
-        html: bedLink(bed, premisesId),
+      expect(actionCell(bedSummary, premisesId)).toEqual({
+        html: bedLink(bedSummary, premisesId),
       })
     })
   })
 
   describe('bedTableRows', () => {
     it('returns the table rows given the rooms', () => {
-      const beds = [bed]
+      const beds = [bedSummary]
 
       expect(bedTableRows(beds, premisesId)).toEqual([
-        [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)],
+        [roomNameCell(bedSummary), bedNameCell(bedSummary), actionCell(bedSummary, premisesId)],
       ])
     })
   })
 
-  describe('statusRow', () => {
-    it('returns the status of an available room in sentence case', () => {
-      bedDetail.status = 'available'
-
-      expect(statusRow(bedDetail)).toEqual({
-        key: { text: 'Status' },
-        value: { text: 'Available' },
+  describe('bedDetails', () => {
+    it('returns a summary list of characteristics', () => {
+      const bed = cas1BedDetailFactory.build({
+        characteristics: ['hasStepFreeAccessToCommunalAreas', 'isSuitedForSexOffenders', 'isArsonSuitable'],
       })
-    })
 
-    it('returns the status of an occupied room in sentence case', () => {
-      bedDetail.status = 'occupied'
-
-      expect(statusRow(bedDetail)).toEqual({
-        key: { text: 'Status' },
-        value: { text: 'Occupied' },
-      })
-    })
-
-    it('returns the status of an out of service room in sentence case', () => {
-      bedDetail.status = 'out_of_service'
-
-      expect(statusRow(bedDetail)).toEqual({
-        key: { text: 'Status' },
-        value: { text: 'Out of service' },
-      })
-    })
-  })
-
-  describe('characteristicsRow', () => {
-    it('returns a list of translated characteristics', () => {
-      bedDetail.characteristics = [
-        apCharacteristicPairFactory.build({ propertyName: 'hasStepFreeAccessToCommunalAreas' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isSuitedForSexOffenders' }),
-        apCharacteristicPairFactory.build({ propertyName: 'isArsonSuitable' }),
-      ]
-
-      expect(bedDetails(bedDetail)).toEqual([
-        {
-          key: { text: 'Characteristics' },
-          value: {
-            html: `<ul class="govuk-list govuk-list--bullet"><li>Suitable for active arson risk</li><li>Suitable for sexual offence risk</li></ul>`,
+      expect(bedDetails(bed)).toEqual({
+        rows: [
+          {
+            key: { text: 'Characteristics' },
+            value: {
+              html: `<ul class="govuk-list govuk-list--bullet"><li>Suitable for active arson risk</li><li>Suitable for sexual offence risk</li></ul>`,
+            },
           },
-        },
-      ])
+        ],
+      })
     })
   })
 

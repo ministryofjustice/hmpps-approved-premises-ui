@@ -1,9 +1,9 @@
 import type {
-  BedDetail,
-  BedSummary,
+  Cas1BedDetail,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
+  Cas1PremisesBedSummary,
   Cas1PremisesDaySummary,
   Cas1SpaceBooking,
   Cas1SpaceBookingCharacteristic,
@@ -36,12 +36,14 @@ export default class PremisesClient {
     return (await this.restClient.get({ path: paths.premises.show({ premisesId: id }) })) as Cas1Premises
   }
 
-  async getBeds(premisesId: string): Promise<Array<BedSummary>> {
-    return (await this.restClient.get({ path: paths.premises.beds.index({ premisesId }) })) as Array<BedSummary>
+  async getBeds(premisesId: string): Promise<Array<Cas1PremisesBedSummary>> {
+    return (await this.restClient.get({
+      path: paths.premises.beds.index({ premisesId }),
+    })) as Array<Cas1PremisesBedSummary>
   }
 
-  async getBed(premisesId: string, bedId: string): Promise<BedDetail> {
-    return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as BedDetail
+  async getBed(premisesId: string, bedId: string): Promise<Cas1BedDetail> {
+    return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as Cas1BedDetail
   }
 
   async getCapacity(
