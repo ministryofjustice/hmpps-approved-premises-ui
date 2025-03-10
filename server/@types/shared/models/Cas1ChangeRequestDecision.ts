@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ChangeRequestStatus = 'resolved' | 'unresolved';
+export type Cas1ChangeRequestDecision = 'approved' | 'rejected';

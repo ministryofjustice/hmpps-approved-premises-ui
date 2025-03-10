@@ -70,8 +70,9 @@ export type { Cas1ApprovedPremisesGender } from './models/Cas1ApprovedPremisesGe
 export type { Cas1AssignKeyWorker } from './models/Cas1AssignKeyWorker';
 export type { Cas1BedDetail } from './models/Cas1BedDetail';
 export type { Cas1BookingChangedContentPayload } from './models/Cas1BookingChangedContentPayload';
+export type { Cas1ChangeRequest } from './models/Cas1ChangeRequest';
+export type { Cas1ChangeRequestDecision } from './models/Cas1ChangeRequestDecision';
 export type { Cas1ChangeRequestSortField } from './models/Cas1ChangeRequestSortField';
-export type { Cas1ChangeRequestStatus } from './models/Cas1ChangeRequestStatus';
 export type { Cas1ChangeRequestSummary } from './models/Cas1ChangeRequestSummary';
 export type { Cas1ChangeRequestType } from './models/Cas1ChangeRequestType';
 export type { Cas1CruManagementArea } from './models/Cas1CruManagementArea';
@@ -103,6 +104,7 @@ export type { Cas1PremisesBasicSummary } from './models/Cas1PremisesBasicSummary
 export type { Cas1PremisesBedSummary } from './models/Cas1PremisesBedSummary';
 export type { Cas1PremisesDaySummary } from './models/Cas1PremisesDaySummary';
 export type { Cas1PremisesSearchResultSummary } from './models/Cas1PremisesSearchResultSummary';
+export type { Cas1RejectChangeRequest } from './models/Cas1RejectChangeRequest';
 export type { Cas1ReportName } from './models/Cas1ReportName';
 export type { Cas1SpaceBooking } from './models/Cas1SpaceBooking';
 export type { Cas1SpaceBookingCancellation } from './models/Cas1SpaceBookingCancellation';
