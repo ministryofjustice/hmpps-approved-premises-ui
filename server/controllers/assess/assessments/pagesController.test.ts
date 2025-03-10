@@ -18,6 +18,7 @@ import paths from '../../../paths/assess'
 import { viewPath } from '../../../form-pages/utils'
 
 import { assessmentFactory, clarificationNoteFactory } from '../../../testutils/factories'
+import * as matchingInformationUtils from '../../../form-pages/utils/matchingInformationUtils'
 
 const PageConstructor = jest.fn()
 
@@ -57,6 +58,7 @@ describe('pagesController', () => {
   describe('show', () => {
     const request: DeepMocked<Request> = createMock<Request>({ url: 'assessments' })
     const errorsAndUserInput = { errors: {}, errorSummary: [] as Array<never>, userInput: {} }
+    const spyRemapArsonAssessmentData = jest.spyOn(matchingInformationUtils, 'remapArsonAssessmentData')
 
     beforeEach(() => {
       ;(viewPath as jest.Mock).mockReturnValue('assessments/pages/some/view')
@@ -67,7 +69,7 @@ describe('pagesController', () => {
     it('renders a page', async () => {
       const requestHandler = pagesController.show(someTask, 'some-page')
       await requestHandler(request, response, next)
-
+      expect(spyRemapArsonAssessmentData).toHaveBeenCalledWith(assessment.data)
       expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, assessment, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,

@@ -176,7 +176,7 @@ describe('changesController', () => {
       'departureDate-day': '13',
       'departureDate-month': '8',
       'departureDate-year': '2025',
-      criteria: 'hasEnSuite,isArsonDesignated',
+      criteria: 'hasEnSuite,isArsonSuitable',
     }
 
     it('should redirect to the confirmation screen with criteria when the submitted dates are valid', async () => {
@@ -184,7 +184,7 @@ describe('changesController', () => {
         {
           arrivalDate: '2025-06-23',
           departureDate: '2025-08-13',
-          criteria: ['hasEnSuite', 'isArsonDesignated'],
+          criteria: ['hasEnSuite', 'isArsonSuitable'],
         },
         {
           arrayFormat: 'repeat',
@@ -203,7 +203,7 @@ describe('changesController', () => {
         'startDate-month': '5',
         'startDate-year': '2025',
         durationDays: '7',
-        criteria: ['hasEnSuite', 'isArsonDesignated'],
+        criteria: ['hasEnSuite', 'isArsonSuitable'],
       }
 
       const expectedRedirectUrl = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
@@ -211,7 +211,7 @@ describe('changesController', () => {
           ...query,
           arrivalDate: '2025-06-23',
           departureDate: '2025-08-13',
-          criteria: ['hasEnSuite', 'isArsonDesignated'],
+          criteria: ['hasEnSuite', 'isArsonSuitable'],
         },
         {
           arrayFormat: 'repeat',
@@ -232,7 +232,7 @@ describe('changesController', () => {
       it(`should redirect to the view when dates are empty`, async () => {
         const body = {}
         const query = {
-          criteria: ['hasEnSuite', 'isArsonDesignated'],
+          criteria: ['hasEnSuite', 'isArsonSuitable'],
         }
 
         const requestHandler = changesController.saveNew()
@@ -247,7 +247,7 @@ describe('changesController', () => {
           request,
           response,
           new ValidationError({}),
-          `${viewUrl}?criteria=hasEnSuite&criteria=isArsonDesignated`,
+          `${viewUrl}?criteria=hasEnSuite&criteria=isArsonSuitable`,
         )
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data

@@ -6,9 +6,10 @@ import { AssessmentService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
-import { AssessmentSortField, AssessmentStatus, TaskSortField } from '../../@types/shared'
+import { ApprovedPremisesAssessment, AssessmentSortField, AssessmentStatus, TaskSortField } from '../../@types/shared'
 import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { remapArsonAssessmentData } from '../../form-pages/utils/matchingInformationUtils'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
@@ -112,7 +113,13 @@ export default class AssessmentsController {
 
   submit(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+      const rawAssessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+
+      // TODO: remove once arson remapping (APS-1876) is completed
+      const assessment: ApprovedPremisesAssessment = {
+        ...rawAssessment,
+        data: remapArsonAssessmentData(rawAssessment.data),
+      }
 
       if (req.body?.confirmation !== 'confirmed') {
         addErrorMessageToFlash(

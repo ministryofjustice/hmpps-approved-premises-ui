@@ -32,7 +32,7 @@ export const offenceAndRiskCriteria = [
 ] as const
 export const prepopulatablePlacementRequirementCriteria = [
   'isWheelchairDesignated',
-  'isArsonDesignated',
+  'isArsonSuitable',
   'isSingle',
   'isCatered',
   'isSuitedForSexOffenders',
@@ -45,7 +45,7 @@ export const placementRequirementCriteria = [
 
 export type ApTypeCriteria = SpecialistApTypeCriteria | 'normal'
 export type OffenceAndRiskCriteria = (typeof offenceAndRiskCriteria)[number]
-export type PlacementRequirementCriteria = (typeof placementRequirementCriteria)[number]
+export type PlacementRequirementCriteria = (typeof placementRequirementCriteria)[number] | 'isArsonDesignated'
 
 export const placementCriteriaLabels: Record<UiPlacementCriteria, string> = {
   isPIPE: 'Psychologically Informed Planned Environment (PIPE)',

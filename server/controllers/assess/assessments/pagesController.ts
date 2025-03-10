@@ -15,6 +15,7 @@ import { UnknownPageError } from '../../../utils/errors'
 import { viewPath } from '../../../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../../../form-pages/tasklistPage'
 import { DataServices, TaskNames } from '../../../@types/ui'
+import { remapArsonAssessmentData } from '../../../form-pages/utils/matchingInformationUtils'
 
 export default class PagesController {
   constructor(
@@ -26,7 +27,13 @@ export default class PagesController {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+        const rawAssessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+
+        // TODO: remove once arson remapping (APS-1876) is completed
+        const assessment: Assessment = {
+          ...rawAssessment,
+          data: remapArsonAssessmentData(rawAssessment.data),
+        }
 
         const Page: TasklistPageInterface = getPage(taskName, pageName)
         const page: TasklistPage = await this.assessmentService.initializePage(
