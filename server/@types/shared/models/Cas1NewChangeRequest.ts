@@ -3,9 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
+import type { Unit } from './Unit';
 export type Cas1NewChangeRequest = {
-    space_booking_id: string;
+    spaceBookingId?: string;
     type: Cas1ChangeRequestType;
-    requester_notes: string;
+    requestJson: Record<string, Unit>;
+    reasonId: string;
 };
 
