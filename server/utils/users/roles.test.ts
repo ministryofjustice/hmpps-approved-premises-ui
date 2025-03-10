@@ -42,7 +42,7 @@ describe('roles utilities', () => {
         filterAllocationRoles(
           [
             'assessor',
-            'matcher',
+            'appeals_manager',
             'janitor',
             'excluded_from_assess_allocation',
             'excluded_from_match_allocation',
@@ -50,7 +50,7 @@ describe('roles utilities', () => {
           ],
           { returnOnlyAllocationRoles: false },
         ),
-      ).toEqual(['assessor', 'matcher', 'janitor'])
+      ).toEqual(['assessor', 'appeals_manager', 'janitor'])
     })
 
     it('when passed returnOnlyAllocationRoles = false filters out the non-allocation preferences roles', () => {
@@ -58,7 +58,7 @@ describe('roles utilities', () => {
         filterAllocationRoles(
           [
             'assessor',
-            'matcher',
+            'appeals_manager',
             'janitor',
             'excluded_from_assess_allocation',
             'excluded_from_match_allocation',

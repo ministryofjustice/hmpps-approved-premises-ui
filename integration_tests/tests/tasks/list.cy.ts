@@ -21,7 +21,7 @@ context('Task Allocation', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
+    cy.task('stubUserSummaryList', { users, roles: ['assessor', 'appeals_manager'] })
     cy.task('stubAuthUser', { apArea })
     cy.task('stubApAreaReferenceData', { apArea, additionalAreas: [additionalArea] })
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })

@@ -17,7 +17,7 @@ export default class TasksController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const users = await this.userService.getUserList(req.user.token, ['assessor', 'matcher'])
+      const users = await this.userService.getUserList(req.user.token, ['assessor', 'appeals_manager'])
 
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
       const activeTab = req.query.activeTab || 'allocated'
