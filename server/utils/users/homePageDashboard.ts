@@ -6,7 +6,7 @@ import managePaths from '../../paths/manage'
 import taskPaths from '../../paths/tasks'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
-import { hasPermission, hasRole } from './roles'
+import { hasPermission } from './roles'
 
 export const sections = {
   apply: {

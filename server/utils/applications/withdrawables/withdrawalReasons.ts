@@ -1,4 +1,4 @@
-import { ApprovedPremisesUserRole, WithdrawPlacementRequestReason } from '@approved-premises/api'
+import { WithdrawPlacementRequestReason } from '@approved-premises/api'
 import { RadioItem, UserDetails } from '../../../@types/ui'
 import { convertKeyValuePairToRadioItems } from '../../formUtils'
 import { filterByType } from '../../utils'
