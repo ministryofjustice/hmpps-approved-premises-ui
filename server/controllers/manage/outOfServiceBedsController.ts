@@ -12,11 +12,7 @@ import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
 import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
-import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-} from '../../utils/characteristicsUtils'
+import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
 
 export default class OutOfServiceBedsController {
   constructor(
@@ -102,15 +98,16 @@ export default class OutOfServiceBedsController {
         },
       )
 
-      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds({
-        token: req.user.token,
-        premisesId,
-        temporality,
-        page: pageNumber,
-        perPage: 50,
-      })
-
-      const premises = await this.premisesService.find(req.user.token, premisesId)
+      const [outOfServiceBeds, premises] = await Promise.all([
+        this.outOfServiceBedService.getAllOutOfServiceBeds({
+          token: req.user.token,
+          premisesId,
+          temporality,
+          page: pageNumber,
+          perPage: 50,
+        }),
+        this.premisesService.find(req.user.token, premisesId),
+      ])
       const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.premisesIndex.pattern, req, [
         paths.premises.beds.index.pattern,
         paths.premises.show.pattern,
@@ -209,14 +206,14 @@ export default class OutOfServiceBedsController {
         paths.outOfServiceBeds.index.pattern,
         paths.premises.occupancy.day.pattern,
       ])
-      const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
+
+      const [outOfServiceBed, { characteristics }] = await Promise.all([
+        this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id),
+        this.premisesService.getBed(req.user.token, premisesId, bedId),
+      ])
 
       outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
-
-      const { characteristics } = await this.premisesService.getBed(req.user.token, premisesId, bedId)
-      const characteristicsHtml = characteristicsBulletList(characteristicsPairToCharacteristics(characteristics), {
-        labels: roomCharacteristicMap,
-      })
+      const characteristicsHtml = characteristicsBulletList(characteristics, { labels: roomCharacteristicMap })
 
       return res.render('manage/outOfServiceBeds/show', {
         outOfServiceBed,

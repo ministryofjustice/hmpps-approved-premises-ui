@@ -345,7 +345,7 @@ describe('UserManagementController', () => {
       })
       const updatedRoles = {
         allocationRoles: ['excluded_from_assess_allocation'],
-        roles: ['assessor', 'matcher'],
+        roles: ['assessor', 'appeals_manager'],
       }
       const updatedCruManagementArea = cruManagementAreaFactory.build()
       const updatedUser = {

@@ -10,8 +10,6 @@ import arrivalFactory from './arrival'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
-import bedSummaryFactory from './bedSummary'
-import bedDetailFactory, { apCharacteristicPairFactory } from './bedDetail'
 import bookingSummaryFactory from './placementRequestBookingSummary'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
@@ -65,7 +63,6 @@ import taskWrapperFactory from './taskWrapperFactory'
 import userFactory, { userSummaryFactory, userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
-import premisesBookingFactory from './premisesBooking'
 import bookingPremisesSummaryFactory from './bookingPremisesSummary'
 import withdrawableFactory from './withdrawableFactory'
 import cancellationReasonFactory from './cancellationReason'
@@ -74,6 +71,7 @@ import cas1PremisesSearchResultSummaryFactory from './cas1PremisesSearchResultSu
 import spaceSearchParametersFactory from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
+import cas1PremisesBedSummaryFactory from './cas1PremisesBedSummary'
 import cas1PremisesFactory from './cas1Premises'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 import cas1PremiseCapacityFactory, { cas1PremiseCapacityForDayFactory } from './cas1PremiseCapacity'
@@ -94,6 +92,7 @@ import cas1OverbookingRangeFactory from './cas1OverbookingRange'
 import spaceSearchStateFactory from './spaceSearchState'
 import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
+import cas1BedDetailFactory from './cas1BedDetail'
 
 export {
   acctAlertFactory,
@@ -101,7 +100,6 @@ export {
   adjudicationFactory,
   appealFactory,
   apAreaFactory,
-  apCharacteristicPairFactory,
   applicationFactory,
   applicationSummaryFactory,
   applicationTimelineFactory,
@@ -109,14 +107,14 @@ export {
   assessmentTaskFactory,
   assessmentFactory,
   assessmentSummaryFactory,
-  bedSummaryFactory,
-  bedDetailFactory,
   bookingSummaryFactory,
   bookingFactory,
   bookingExtensionFactory,
   bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
+  cas1BedDetailFactory,
+  cas1PremisesBedSummaryFactory,
   cas1OutOfServiceBedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremiseCapacityFactory,
@@ -169,7 +167,6 @@ export {
   placementRequestFactory,
   placementRequestDetailFactory,
   premisesFactory,
-  premisesBookingFactory,
   premisesSummaryFactory,
   prisonCaseNotesFactory,
   probationRegionFactory,

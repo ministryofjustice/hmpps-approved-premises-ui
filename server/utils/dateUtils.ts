@@ -358,8 +358,6 @@ export const bankHolidays = () => {
   return (rawBankHolidays as RawBankHolidays)['england-and-wales'].events.map(event => new Date(event.date))
 }
 
-export const todayAtMidnight = () => new Date(new Date().setHours(0, 0, 0, 0))
-
 export class InvalidDateStringError extends Error {}
 
 export const daysToWeeksAndDays = (days: string | number): { days: number; weeks: number } => {

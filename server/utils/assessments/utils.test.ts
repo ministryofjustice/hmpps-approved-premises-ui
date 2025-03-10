@@ -1,4 +1,3 @@
-import { ApprovedPremisesUserRole } from '@approved-premises/api'
 import type { TaskNames } from '@approved-premises/ui'
 import {
   acctAlertsFromAssessment,
@@ -413,39 +412,36 @@ describe('utils', () => {
   })
 
   describe('assessmentsTabItems', () => {
-    it.each([['workflow_manager'], ['matcher'], ['assessor']])(
-      `returns the all assessment tab items for user with role %s`,
-      (role: ApprovedPremisesUserRole) => {
-        const user = userDetailsFactory.build({ roles: [role] })
+    it(`returns all assessment tab items for user with assess placement application permission`, () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_assess_placement_application'] })
 
-        expect(assessmentsTabItems(user)).toEqual([
-          {
-            active: true,
-            href: '/assessments?activeTab=awaiting_assessment',
-            text: 'Applications to assess',
-          },
-          {
-            active: false,
-            href: '/assessments?activeTab=requests_for_placement',
-            text: 'Requests for placement',
-          },
-          {
-            active: false,
-            href: '/assessments?activeTab=awaiting_response',
-            text: 'Requested further information',
-          },
-          {
-            active: false,
-            href: '/assessments?activeTab=completed',
-            text: 'Completed',
-          },
-        ])
-      },
-    )
+      expect(assessmentsTabItems(user)).toEqual([
+        {
+          active: true,
+          href: '/assessments?activeTab=awaiting_assessment',
+          text: 'Applications to assess',
+        },
+        {
+          active: false,
+          href: '/assessments?activeTab=requests_for_placement',
+          text: 'Requests for placement',
+        },
+        {
+          active: false,
+          href: '/assessments?activeTab=awaiting_response',
+          text: 'Requested further information',
+        },
+        {
+          active: false,
+          href: '/assessments?activeTab=completed',
+          text: 'Completed',
+        },
+      ])
+    })
   })
 
-  it('returns the all assessment tab items except requests for placement for user with out roles workflow_manager, matcher or assessor', () => {
-    const user = userDetailsFactory.build({ roles: ['future_manager'] })
+  it('returns the all assessment tab items except requests for placement for user without the assess placement application permission', () => {
+    const user = userDetailsFactory.build({ permissions: [] })
 
     expect(assessmentsTabItems(user)).toEqual([
       {

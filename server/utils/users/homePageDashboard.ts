@@ -6,7 +6,7 @@ import managePaths from '../../paths/manage'
 import taskPaths from '../../paths/tasks'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
-import { hasPermission, hasRole } from './roles'
+import { hasPermission } from './roles'
 
 export const sections = {
   apply: {
@@ -83,7 +83,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.assess)
   }
 
-  if (hasRole(user, 'future_manager')) {
+  if (hasPermission(user, ['cas1_premises_view'])) {
     items.push(sections.manage)
   }
 
@@ -95,11 +95,11 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.cruDashboard)
   }
 
-  if (hasRole(user, 'report_viewer')) {
+  if (hasPermission(user, ['cas1_reports_view'])) {
     items.push(sections.reports)
   }
 
-  if (hasRole(user, 'user_manager')) {
+  if (hasPermission(user, ['cas1_user_management'])) {
     items.push(sections.userManagement)
   }
 

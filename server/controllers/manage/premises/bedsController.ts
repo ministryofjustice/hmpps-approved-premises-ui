@@ -2,18 +2,28 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import PremisesService from '../../../services/premisesService'
 import paths from '../../../paths/manage'
+import { bedActions, bedDetails, bedsActions } from '../../../utils/bedUtils'
 
 export default class BedsController {
   constructor(private readonly premisesService: PremisesService) {}
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const beds = await this.premisesService.getBeds(req.user.token, req.params.premisesId)
+      const {
+        user: { token },
+        params: { premisesId },
+      } = req
+
+      const [premises, beds] = await Promise.all([
+        this.premisesService.find(token, premisesId),
+        this.premisesService.getBeds(token, premisesId),
+      ])
 
       return res.render('manage/premises/beds/index', {
         beds,
-        premisesId: req.params.premisesId,
+        premises,
         pageHeading: 'Manage beds',
+        actions: bedsActions(premises.id, res.locals.user),
       })
     }
   }
@@ -23,14 +33,18 @@ export default class BedsController {
       const { premisesId } = req.params
 
       const backLink = paths.premises.beds.index({ premisesId })
-      const bed = await this.premisesService.getBed(req.user.token, premisesId, req.params.bedId)
-      const premises = await this.premisesService.find(req.user.token, premisesId)
+      const [premises, bed] = await Promise.all([
+        this.premisesService.find(req.user.token, premisesId),
+        this.premisesService.getBed(req.user.token, premisesId, req.params.bedId),
+      ])
 
       return res.render('manage/premises/beds/show', {
         bed,
         premises,
         pageHeading: `Bed ${bed.name}`,
         backLink,
+        actions: bedActions(bed, premises.id, res.locals.user),
+        characteristicsSummaryList: bedDetails(bed),
       })
     }
   }

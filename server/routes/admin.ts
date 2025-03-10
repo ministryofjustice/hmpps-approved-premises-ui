@@ -23,22 +23,28 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.admin.cruDashboard.index.pattern, cruDashboardController.index(), {
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
+    allowedPermissions: ['cas1_view_cru_dashboard'],
   })
   post(paths.admin.placementRequests.index.pattern, cruDashboardController.index(), {
     auditEvent: 'ADMIN_LIST_FILTER_PLACEMENT_REQUESTS',
+    allowedPermissions: ['cas1_view_cru_dashboard'],
   })
   get(paths.admin.cruDashboard.search.pattern, cruDashboardController.search(), {
     auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
+    allowedPermissions: ['cas1_view_cru_dashboard'],
   })
 
   get(paths.admin.placementRequests.index.pattern, redirectController.redirect(paths.admin.cruDashboard.index), {
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
+    allowedPermissions: ['cas1_view_cru_dashboard'],
   })
   post(paths.admin.placementRequests.index.pattern, redirectController.redirect(paths.admin.cruDashboard.index), {
     auditEvent: 'ADMIN_LIST_FILTER_PLACEMENT_REQUESTS',
+    allowedPermissions: ['cas1_view_cru_dashboard'],
   })
   get(paths.admin.placementRequests.search.pattern, redirectController.redirect(paths.admin.cruDashboard.search), {
     auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
+    allowedPermissions: ['cas1_view_cru_dashboard'],
   })
 
   get(paths.admin.placementRequests.show.pattern, adminPlacementRequestsController.show(), {
@@ -47,6 +53,7 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.admin.placementRequests.bookings.new.pattern, placementRequestsBookingsController.new(), {
     auditEvent: 'ADMIN_PLACEMENT_REQUEST_NEW_BOOKING',
+    allowedPermissions: ['cas1_booking_create'],
   })
 
   post(paths.admin.placementRequests.bookings.create.pattern, placementRequestsBookingsController.create(), {
@@ -60,8 +67,10 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'ADMIN_PLACEMENT_REQUEST_CREATE_BOOKING_SUCCESS',
       },
     ],
+    allowedPermissions: ['cas1_booking_create'],
   })
 
+  // TODO: determine permissions required for placement request withdrawals
   get(paths.admin.placementRequests.withdrawal.new.pattern, placementRequestWithdrawalsController.new(), {
     auditEvent: 'ADMIN_NEW_PLACEMENT_REQUEST_WITHDRAWL',
   })
@@ -84,6 +93,7 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.admin.reports.new.pattern, reportsController.new(), {
     auditEvent: 'ADMIN_ACCESS_REPORTS_SECTION',
+    allowedPermissions: ['cas1_reports_view'],
   })
 
   post(paths.admin.reports.create.pattern, reportsController.create(), {
@@ -94,32 +104,41 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'ADMIN_GENERATE_LOST_BEDS_REPORT_ERROR',
       },
     ],
+    allowedPermissions: ['cas1_reports_view'],
   })
 
   get(paths.admin.userManagement.index.pattern, userManagementController.index(), {
     auditEvent: 'ADMIN_USER_MANAGEMENT_DASHBOARD',
+    allowedPermissions: ['cas1_user_management'],
   })
   get(paths.admin.userManagement.new.pattern, deliusUserController.new(), {
     auditEvent: 'ADMIN_DELIUS_SEARCH_FOR_USER',
+    allowedPermissions: ['cas1_user_management'],
   })
   get(paths.admin.userManagement.edit.pattern, userManagementController.edit(), {
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
+    allowedPermissions: ['cas1_user_management'],
   })
   get(paths.admin.userManagement.confirmDelete.pattern, userManagementController.confirmDelete(), {
     auditEvent: 'ADMIN_USER_DELETION_CONFIRMATION_PAGE',
+    allowedPermissions: ['cas1_user_management'],
   })
   deleteAction(paths.admin.userManagement.delete.pattern, userManagementController.delete(), {
     auditEvent: 'ADMIN_USER_DELETION',
+    allowedPermissions: ['cas1_user_management'],
   })
 
   post(paths.admin.userManagement.searchDelius.pattern, deliusUserController.search(), {
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
+    allowedPermissions: ['cas1_user_management'],
   })
   put(paths.admin.userManagement.update.pattern, userManagementController.update(), {
     auditEvent: 'ADMIN_UPDATE_USER_PERMISSIONS_SUCCESS',
+    allowedPermissions: ['cas1_user_management'],
   })
   post(paths.admin.userManagement.search.pattern, userManagementController.search(), {
     auditEvent: 'ADMIN_SEARCH_USERS',
+    allowedPermissions: ['cas1_user_management'],
   })
 
   return router

@@ -30,7 +30,7 @@ context('Assess', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+    cy.task('stubAuthUser', { permissions: ['cas1_view_assigned_assessments', 'cas1_assess_application'] })
   })
   beforeEach(() => {
     // Given I am logged in
