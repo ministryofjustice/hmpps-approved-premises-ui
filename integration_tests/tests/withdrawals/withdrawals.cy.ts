@@ -1,4 +1,4 @@
-import { ApprovedPremisesUserRole } from '@approved-premises/api'
+import { ApprovedPremisesUserPermission } from '@approved-premises/api'
 import {
   applicationFactory,
   applicationSummaryFactory,
@@ -14,6 +14,7 @@ import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
 import { CancellationCreatePage } from '../../pages/manage'
 import PrListPage from '../../pages/admin/placementApplications/listPage'
 import PlacementApplicationWithdrawalConfirmationPage from '../../pages/match/placementApplicationWithdrawalConfirmationPage'
+import DashboardPage from '../../pages/apply/dashboard'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
 import paths from '../../../server/paths/apply'
@@ -28,15 +29,15 @@ context('Withdrawals', () => {
   })
 
   describe('as a CRU user', () => {
-    const userRoles: Array<ApprovedPremisesUserRole> = ['workflow_manager']
+    const userPermissions: Array<ApprovedPremisesUserPermission> = ['cas1_view_cru_dashboard', 'cas1_booking_withdraw']
 
     beforeEach(() => {
       // Given I am logged in
-      signIn(userRoles)
+      signIn([], userPermissions)
     })
 
     it('withdraws a placement request, showing all options for withdrawal reason', () =>
-      withdrawsAPlacementRequest(userRoles))
+      withdrawsAPlacementRequest(userPermissions))
 
     it('withdraws a placement application', () => {
       const application = applicationFactory.build({ status: 'submitted' })
@@ -175,15 +176,15 @@ context('Withdrawals', () => {
   })
 
   describe('as a non-CRU user', () => {
-    const userRoles: Array<ApprovedPremisesUserRole> = ['applicant']
+    const userPermissions: Array<ApprovedPremisesUserPermission> = []
 
     beforeEach(() => {
-      // Given I am logged in
-      signIn(userRoles)
+      // Given I am logged in as an applicant
+      signIn([], userPermissions)
     })
 
     it('withdraws a placement request, showing all options for withdrawal reason excluding those relating to lack of capacity', () =>
-      withdrawsAPlacementRequest(userRoles))
+      withdrawsAPlacementRequest(userPermissions))
 
     it('shows a warning message if there are no withdrawables', () => {
       const application = applicationSummaryFactory.build({
@@ -217,7 +218,7 @@ context('Withdrawals', () => {
   })
 })
 
-const withdrawsAPlacementRequest = (userRoles: Array<ApprovedPremisesUserRole>) => {
+const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermission>) => {
   const application = applicationSummaryFactory.build()
   const placementRequest = placementRequestFactory.build({ applicationId: application.id })
   const placementRequestWithdrawable = withdrawableFactory.build({
@@ -274,7 +275,7 @@ const withdrawsAPlacementRequest = (userRoles: Array<ApprovedPremisesUserRole>) 
   const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage)
 
   // With the appropriate withdrawal reasons for my role(s)
-  if (userRoles.includes('workflow_manager')) {
+  if (permissions.includes('cas1_view_cru_dashboard')) {
     confirmationPage.shouldShowAllReasons()
   } else {
     confirmationPage.shouldShowReasonsUnrelatedToCapacity()
@@ -285,6 +286,14 @@ const withdrawsAPlacementRequest = (userRoles: Array<ApprovedPremisesUserRole>) 
   confirmationPage.selectReason(withdrawalReason)
   confirmationPage.clickConfirm()
 
-  // Then I am taken to the confirmation page
-  Page.verifyOnPage(PrListPage)
+  // Then I am taken to the dashboard
+  let successPage: Page
+  if (permissions.includes('cas1_view_cru_dashboard')) {
+    successPage = Page.verifyOnPage(PrListPage)
+  } else {
+    successPage = Page.verifyOnPage(DashboardPage)
+  }
+
+  // And I see a confirmation
+  successPage.shouldShowBanner('withdrawn successfully', { exact: false })
 }

@@ -7,6 +7,7 @@ import { PlacementRequestService } from '../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 
 import paths from '../../../paths/admin'
+import applyPaths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
 import { ErrorWithData } from '../../../utils/errors'
 import { placementRequestDetailFactory } from '../../../testutils/factories'
@@ -31,7 +32,11 @@ describe('withdrawalsController', () => {
 
   beforeEach(() => {
     withdrawalsController = new WithdrawalsController(placementRequestService)
-    request = createMock<Request>({ session: { user: { roles: ['workflow_manager'] } }, user: { token }, flash })
+    request = createMock<Request>({
+      session: { user: { permissions: ['cas1_view_cru_dashboard'] } },
+      user: { token },
+      flash,
+    })
     response = createMock<Response>({})
     jest.clearAllMocks()
   })
@@ -108,7 +113,7 @@ describe('withdrawalsController', () => {
       }
     })
 
-    it('calls the service method, redirects to the index screen and shows a confirmation message', async () => {
+    it('calls the service method, redirects to the CRU dashboard and shows a confirmation message', async () => {
       const withdrawalMessageContent = 'some message'
       const requestHandler = withdrawalsController.create()
 
@@ -169,6 +174,27 @@ describe('withdrawalsController', () => {
 
       expect(errorData).toEqual({
         'invalid-params': [{ propertyName: `$.reason`, errorType: 'empty' }],
+      })
+    })
+
+    describe('when the user does not have view CRU dashboard permissions', () => {
+      beforeEach(() => {
+        request.session.user.permissions = []
+      })
+
+      it('redirects to the applications dashboard', async () => {
+        const requestHandler = withdrawalsController.create()
+
+        placementRequestService.withdraw.mockResolvedValue(placementRequestDetail)
+
+        await requestHandler(request, response, next)
+
+        expect(placementRequestService.withdraw).toHaveBeenCalledWith(
+          token,
+          applicationId,
+          placementRequestDetail.withdrawalReason,
+        )
+        expect(response.redirect).toHaveBeenCalledWith(applyPaths.applications.index({}))
       })
     })
   })
