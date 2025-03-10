@@ -57,10 +57,12 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.placementApplications.review.show.pattern, placementApplicationReviewController.show('review'), {
     auditEvent: 'VIEW_PLACEMENT_APPLICATION',
     additionalMetadata: { page: 'review' },
+    allowedPermissions: ['cas1_assess_placement_application'],
   })
   post(paths.placementApplications.review.update.pattern, placementApplicationReviewController.update(), {
     auditEvent: 'REVIEW_PLACEMENT_APPLICATION_UPDATE_SUCCESS',
     additionalMetadata: { page: 'review' },
+    allowedPermissions: ['cas1_assess_placement_application'],
     redirectAuditEventSpecs: [
       {
         path: paths.placementApplications.review.show.pattern,
@@ -71,9 +73,11 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.placementApplications.review.decision.pattern, placementApplicationReviewController.show('decision'), {
     auditEvent: 'VIEW_PLACEMENT_APPLICATION',
     additionalMetadata: { page: 'decision' },
+    allowedPermissions: ['cas1_assess_placement_application'],
   })
   post(paths.placementApplications.review.submission.pattern, placementApplicationReviewController.submit(), {
     auditEvent: 'SUBMIT_PLACEMENT_APPLICATION_SUCCESS',
+    allowedPermissions: ['cas1_assess_placement_application'],
     redirectAuditEventSpecs: [
       {
         path: paths.placementApplications.review.decision.pattern,
@@ -81,7 +85,10 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
   })
-  get(paths.placementApplications.review.confirm.pattern, placementApplicationReviewController.confirm())
+  get(paths.placementApplications.review.confirm.pattern, placementApplicationReviewController.confirm(), {
+    allowedPermissions: ['cas1_assess_placement_application'],
+  })
+
   get(paths.placementApplications.withdraw.new.pattern, placementApplicationWithdrawalsController.new())
   post(paths.placementApplications.withdraw.create.pattern, placementApplicationWithdrawalsController.create())
 
