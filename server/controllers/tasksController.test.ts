@@ -59,7 +59,7 @@ describe('TasksController', () => {
     beforeEach(() => {
       when(cruManagementAreaService.getCruManagementAreas).calledWith(token).mockResolvedValue(cruManagementAreas)
       when(taskService.getAll).calledWith(expect.anything()).mockResolvedValue(paginatedResponse)
-      when(userService.getUserList).calledWith(token, ['assessor', 'matcher']).mockResolvedValue(users)
+      when(userService.getUserList).calledWith(token, ['assessor', 'appeals_manager']).mockResolvedValue(users)
 
       response.locals.user = user
     })
