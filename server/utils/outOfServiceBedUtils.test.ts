@@ -5,7 +5,6 @@ import {
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
   bedRevisionDetails,
-  outOfServiceBedCount,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   overwriteOoSBedWithUserInput,
@@ -165,26 +164,6 @@ describe('outOfServiceBedUtils', () => {
       ]
       const rows = outOfServiceBedTableRows([outOfServiceBed], premisesId, user)
       expect(rows).toEqual(expectedRows)
-    })
-  })
-
-  describe('outOfServiceBedCount', () => {
-    describe('when the count is 0', () => {
-      it('returns a plural string', () => {
-        expect(outOfServiceBedCount(0)).toEqual('0 beds')
-      })
-    })
-
-    describe('when the count is 1', () => {
-      it('returns a singular string', () => {
-        expect(outOfServiceBedCount(1)).toEqual('1 bed')
-      })
-    })
-
-    describe('when the count is 2', () => {
-      it('returns a plural string', () => {
-        expect(outOfServiceBedCount(2)).toEqual('2 beds')
-      })
     })
   })
 

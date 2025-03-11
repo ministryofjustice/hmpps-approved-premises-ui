@@ -10,44 +10,35 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: paths.premises.show({ premisesId: premisesId })
+        href: backLink
     }) }}
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full-width">
-            {{ mojIdentityBar({
-                title: {
-                    html: "<h1>" + pageHeading + "</h1>"
-                },
-                menus: [{
-                    items: [ {
-                        text: "Manage out of service beds",
-                        classes: "govuk-button--secondary",
-                        href: paths.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'})
-                    }]
-                }]
-            }) }}
+    {% set headingHtml %}
+        <span class="govuk-caption-l">
+            <a href="{{ backLink }}">{{ premises.name }}</a>
+        </span>
+        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+    {% endset %}
 
-            {{ govukTable({
-                captionClasses: "govuk-table__caption--m",
-                firstCellIsHeader: true,
-                head: [
-                    {
-                        text: "Room Name"
-                    },
-                    {
-                        text: "Bed Name"
-                    },
-                    {
-                        text: 'Action'
-                    }
-                ],
-                rows: BedUtils.bedTableRows(beds, premisesId, user)
-            }) }}
-        </div>
-    </div>
+    {{ mojIdentityBar({
+        title: {
+            html: headingHtml
+        },
+        menus: actions
+    }) }}
+
+    {{ govukTable({
+        captionClasses: "govuk-table__caption--m",
+        firstCellIsHeader: true,
+        head: [
+            { text: "Room Name" },
+            { text: "Bed Name" },
+            { text: "Action" }
+        ],
+        rows: tableRows
+    }) }}
 {% endblock %}
 
 {% block extraScripts %}

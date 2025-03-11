@@ -11,12 +11,23 @@ import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
-import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
 import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-} from '../../utils/characteristicsUtils'
+  outOfServiceBedTableHeaders,
+  outOfServiceBedTableRows,
+  outOfServiceBedTabs,
+  premisesIndexTabs,
+  sortOutOfServiceBedRevisionsByUpdatedAt,
+} from '../../utils/outOfServiceBedUtils'
+import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
+
+interface ShowRequest extends Request {
+  params: {
+    premisesId: string
+    bedId: string
+    id: string
+    tab: 'details' | 'timeline'
+  }
+}
 
 export default class OutOfServiceBedsController {
   constructor(
@@ -102,15 +113,16 @@ export default class OutOfServiceBedsController {
         },
       )
 
-      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds({
-        token: req.user.token,
-        premisesId,
-        temporality,
-        page: pageNumber,
-        perPage: 50,
-      })
-
-      const premises = await this.premisesService.find(req.user.token, premisesId)
+      const [outOfServiceBeds, premises] = await Promise.all([
+        this.outOfServiceBedService.getAllOutOfServiceBeds({
+          token: req.user.token,
+          premisesId,
+          temporality,
+          page: pageNumber,
+          perPage: 50,
+        }),
+        this.premisesService.find(req.user.token, premisesId),
+      ])
       const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.premisesIndex.pattern, req, [
         paths.premises.beds.index.pattern,
         paths.premises.show.pattern,
@@ -118,11 +130,12 @@ export default class OutOfServiceBedsController {
 
       return res.render('manage/outOfServiceBeds/premisesIndex', {
         backLink,
-        outOfServiceBeds: outOfServiceBeds.data,
         pageHeading: 'Out of service beds',
+        tabs: premisesIndexTabs(premisesId, temporality),
         premises: { id: premisesId, name: premises.name },
-        temporality,
         pageNumber: Number(outOfServiceBeds.pageNumber),
+        tableHeaders: outOfServiceBedTableHeaders(req.session.user),
+        tableRows: outOfServiceBedTableRows(outOfServiceBeds.data, premisesId, req.session.user),
         totalPages: Number(outOfServiceBeds.totalPages),
         totalResults: Number(outOfServiceBeds.totalResults),
         hrefPrefix,
@@ -202,21 +215,21 @@ export default class OutOfServiceBedsController {
   }
 
   show(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: ShowRequest, res: Response) => {
       const { premisesId, bedId, id, tab = 'details' } = req.params
       const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.show.pattern, req, [
         paths.outOfServiceBeds.premisesIndex.pattern,
         paths.outOfServiceBeds.index.pattern,
         paths.premises.occupancy.day.pattern,
       ])
-      const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
+
+      const [outOfServiceBed, { characteristics }] = await Promise.all([
+        this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id),
+        this.premisesService.getBed(req.user.token, premisesId, bedId),
+      ])
 
       outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
-
-      const { characteristics } = await this.premisesService.getBed(req.user.token, premisesId, bedId)
-      const characteristicsHtml = characteristicsBulletList(characteristicsPairToCharacteristics(characteristics), {
-        labels: roomCharacteristicMap,
-      })
+      const characteristicsHtml = characteristicsBulletList(characteristics, { labels: roomCharacteristicMap })
 
       return res.render('manage/outOfServiceBeds/show', {
         outOfServiceBed,
@@ -227,6 +240,17 @@ export default class OutOfServiceBedsController {
         activeTab: tab,
         characteristicsHtml,
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
+        actions: [
+          {
+            items: [
+              {
+                text: 'Update record',
+                href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+              },
+            ],
+          },
+        ],
+        tabs: outOfServiceBedTabs(premisesId, bedId, id, tab),
       })
     }
   }
