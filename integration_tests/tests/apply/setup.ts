@@ -8,14 +8,13 @@ import {
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { defaultUserId } from '../../mockApis/auth'
+import { signIn } from '../signIn'
 
 export const setup = () => {
   cy.task('reset')
-  cy.task('stubSignIn')
-  cy.task('stubAuthUser', { id: defaultUserId })
 
-  // Given I am logged in
-  cy.signIn()
+  // Given I am logged in as an applicant
+  signIn({ id: defaultUserId })
 
   cy.fixture('applicationData.json').then(applicationData => {
     const person = personFactory.build()

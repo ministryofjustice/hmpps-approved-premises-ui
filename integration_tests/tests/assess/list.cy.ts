@@ -2,18 +2,17 @@ import { assessmentSummaryFactory, placementApplicationTaskFactory } from '../..
 import { ListPage } from '../../pages/assess'
 import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
 import { defaultUserId } from '../../mockApis/auth'
+import { signIn } from '../signIn'
 
 context('List assessments', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser', { id: defaultUserId, permissions: ['cas1_view_assigned_assessments'] })
+
+    // Given I am logged in as an assessor
+    signIn({ id: defaultUserId, permissions: ['cas1_view_assigned_assessments', 'cas1_assess_placement_application'] })
   })
 
   it('should list assessments', () => {
-    // Given I am logged in
-    cy.signIn()
-
     // And I have some assessments
     const awaitingAssessments = assessmentSummaryFactory.buildList(6)
     const awaitingResponseAssessments = assessmentSummaryFactory.buildList(6)
@@ -61,12 +60,6 @@ context('List assessments', () => {
   })
 
   it('should list placement applications', () => {
-    // Given I am signed in as a user with placement application permission
-    cy.signIn()
-    cy.task('stubAuthUser', {
-      id: defaultUserId,
-      permissions: ['cas1_view_assigned_assessments', 'cas1_assess_placement_application'],
-    })
     const awaitingAssessments = assessmentSummaryFactory.buildList(6)
 
     cy.task('stubAssessments', {
@@ -127,9 +120,6 @@ context('List assessments', () => {
   })
 
   it('supports sorting', () => {
-    // Given I am logged in
-    cy.signIn()
-
     // And I have some assessments
     const awaitingAssessments = assessmentSummaryFactory.buildList(6)
 
@@ -188,9 +178,6 @@ context('List assessments', () => {
   })
 
   it('supports pagination', () => {
-    // Given I am logged in
-    cy.signIn()
-
     const awaitingAssessmentsPage1 = assessmentSummaryFactory.buildList(10)
     const awaitingAssessmentsPage2 = assessmentSummaryFactory.buildList(10)
     const awaitingAssessmentsPage9 = assessmentSummaryFactory.buildList(10)

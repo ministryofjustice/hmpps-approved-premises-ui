@@ -25,16 +25,15 @@ import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/ut
 import { addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import paths from '../../../server/paths/assess'
+import { signIn } from '../signIn'
 
 context('Assess', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser', { permissions: ['cas1_view_assigned_assessments', 'cas1_assess_application'] })
-  })
-  beforeEach(() => {
-    // Given I am logged in
-    cy.signIn()
+
+    // Given I am signed in as an assessor
+    signIn({ permissions: ['cas1_view_assigned_assessments', 'cas1_assess_application'] })
+
     // And there is an application awaiting assessment
     cy.fixture('applicationData.json').then(applicationData => {
       cy.fixture('assessmentData.json').then(assessmentData => {

@@ -1,16 +1,14 @@
-import { signInWithRolesAndPermissions } from '../helpers'
 import DashboardPage from '../pages/dashboard'
+import { signIn } from './signIn'
 
 context('Dashboard', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
   })
 
   it('displays all services when a user has all permissions required', () => {
-    signInWithRolesAndPermissions(
-      [],
-      [
+    signIn({
+      permissions: [
         'cas1_view_assigned_assessments',
         'cas1_view_manage_tasks',
         'cas1_view_cru_dashboard',
@@ -19,7 +17,7 @@ context('Dashboard', () => {
         'cas1_reports_view',
         'cas1_user_management',
       ],
-    )
+    })
 
     const dashboardPage = DashboardPage.visit()
 
@@ -35,7 +33,7 @@ context('Dashboard', () => {
   })
 
   it('only displays the apply and timeline services when someone has no permissions', () => {
-    signInWithRolesAndPermissions([], [])
+    signIn()
 
     const dashboardPage = DashboardPage.visit()
 

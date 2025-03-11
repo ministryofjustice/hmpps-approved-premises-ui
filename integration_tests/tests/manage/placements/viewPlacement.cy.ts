@@ -23,7 +23,10 @@ context('Placements', () => {
       mode: Mode = 'normal',
     ) => {
       cy.task('reset')
-      signIn([], permissions)
+
+      // Given I am signed in
+      signIn({ permissions })
+
       const premises = premisesSummaryFactory.build()
       const person = mode === 'lao' ? restrictedPersonFactory.build() : personFactory.build()
       const application = applicationFactory.build({ person, personStatusOnSubmission: (person as FullPerson).status })

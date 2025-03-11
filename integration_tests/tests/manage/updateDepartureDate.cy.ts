@@ -7,8 +7,8 @@ context('Departure date', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in
-    signIn([], ['cas1_booking_change_dates'])
+    // Given I am signed in as a CRU member
+    signIn({ permissions: ['cas1_booking_change_dates'] })
   })
 
   it('should show a form to change a bookings departure date', () => {

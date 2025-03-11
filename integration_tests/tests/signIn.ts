@@ -1,7 +1,7 @@
-import { ApprovedPremisesUserPermission } from '@approved-premises/api'
+import { ApprovedPremisesUser } from '@approved-premises/api'
 
-export const signIn = (roles: Array<string>, permissions?: Array<ApprovedPremisesUserPermission>) => {
+export const signIn = (user?: Partial<ApprovedPremisesUser>) => {
   cy.task('stubSignIn')
-  cy.task('stubAuthUser', { roles, permissions })
+  cy.task('stubAuthUser', user)
   cy.signIn()
 }

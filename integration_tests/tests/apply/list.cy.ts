@@ -7,19 +7,18 @@ import {
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
+import { signIn } from '../signIn'
 
 context('Applications dashboard', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+
+    // Given I am signed in as an applicant
+    signIn()
   })
 
   it('shows the dashboard ', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And there are applications in the database
+    // Given there are applications in the database
     const inProgressApplications = applicationSummaryFactory.buildList(5, { status: 'started' })
     const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
     const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
@@ -62,10 +61,7 @@ context('Applications dashboard', () => {
   })
 
   it('shows the dashboard lao', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And there are applications in the database
+    // Given there are applications in the database
     const inProgressApplications = applicationSummaryFactory.buildList(1, {
       status: 'started',
       person: personFactory.build({ isRestricted: true }),
@@ -112,10 +108,7 @@ context('Applications dashboard', () => {
 
   it('request for placement for my application status awaiting placement ', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
-      // Given I am logged in
-      cy.signIn()
-
-      // And there are applications in the database
+      // Given there are applications in the database
       const inProgressApplications = applicationSummaryFactory.buildList(5, {
         status: 'started',
         hasRequestsForPlacement: false,

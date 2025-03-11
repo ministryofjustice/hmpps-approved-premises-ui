@@ -6,6 +6,7 @@ import { userProfileFactory } from '../../server/testutils/factories/user'
 import { userFactory } from '../../server/testutils/factories'
 import DeliusMissingStaffDetails from '../pages/deliusMissingStaffDetails'
 import ShowPage from '../pages/admin/userManagement/showPage'
+import { signIn } from './signIn'
 
 context('SignIn', () => {
   beforeEach(() => {
@@ -25,21 +26,23 @@ context('SignIn', () => {
   })
 
   it('User name visible in header', () => {
-    cy.task('stubAuthUser', { name: 'J. Smith' })
-    cy.signIn()
+    signIn({ name: 'J. Smith' })
+
     const indexPage = Page.verifyOnPage(DashboardPage)
     indexPage.headerUserName().should('contain.text', 'J. Smith')
   })
 
   it('User can log out', () => {
-    cy.signIn()
+    signIn()
+
     const indexPage = Page.verifyOnPage(DashboardPage)
     indexPage.signOut().click()
     Page.verifyOnPage(AuthSignInPage)
   })
 
   it('User can manage their details', () => {
-    cy.signIn()
+    signIn()
+
     const indexPage = Page.verifyOnPage(DashboardPage)
 
     indexPage.manageDetails().get('a').invoke('removeAttr', 'target')
@@ -48,7 +51,8 @@ context('SignIn', () => {
   })
 
   it('Token verification failure takes user to sign in page', () => {
-    cy.signIn()
+    signIn()
+
     Page.verifyOnPage(DashboardPage)
     cy.task('stubVerifyToken', false)
 
@@ -57,7 +61,8 @@ context('SignIn', () => {
   })
 
   it('Token verification failure clears user session', () => {
-    cy.signIn()
+    signIn()
+
     const indexPage = Page.verifyOnPage(DashboardPage)
     cy.task('stubVerifyToken', false)
 
@@ -65,8 +70,7 @@ context('SignIn', () => {
     cy.request('/').its('body').should('contain', 'Sign in')
 
     cy.task('stubVerifyToken', true)
-    cy.task('stubAuthUser', { name: 'B. BROWN' })
-    cy.signIn()
+    signIn({ name: 'B. BROWN' })
 
     indexPage.headerUserName().contains('B. Brown')
   })
@@ -75,6 +79,7 @@ context('SignIn', () => {
     const profile = userProfileFactory.build({ user: userFactory.build(), loadError: 'staff_record_not_found' })
     cy.task('stubAuthUser', { name: 'J. Smith', profile })
     cy.signIn()
+
     Page.verifyOnPage(DeliusMissingStaffDetails)
   })
 

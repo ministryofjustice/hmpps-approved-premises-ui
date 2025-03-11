@@ -44,8 +44,8 @@ context('Departures', () => {
       moveOnCategoryId: undefined,
     })
 
-    // Given I am logged in as a user with the correct permissions
-    signIn(['future_manager'], ['cas1_space_booking_view', 'cas1_space_booking_record_departure'])
+    // Given I am logged in as a future manager
+    signIn({ permissions: ['cas1_space_booking_view', 'cas1_space_booking_record_departure'] })
 
     // When I view a new placement
     const placementPage = PlacementShowPage.visit(placement)
@@ -168,8 +168,8 @@ context('Departures', () => {
   })
 
   it('Requires the correct permission to record a departure', () => {
-    // Given I am logged in and have permission to view the placement
-    signIn(['future_manager'], ['cas1_space_booking_view'])
+    // Given I am logged in as a future manager
+    signIn({ permissions: ['cas1_space_booking_view'] })
 
     // And I am on the placement page
     const placementPage = PlacementShowPage.visit(placement)

@@ -4,15 +4,14 @@ import { ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import AppealsShowPage from '../../pages/apply/appeals/show'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import { signIn } from '../signIn'
 
 context('Appeals', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser', { roles: ['appeals_manager'], permissions: ['cas1_process_an_appeal'] })
 
-    // Given I am logged in
-    cy.signIn()
+    // Given I am signed in as an appeals manager
+    signIn({ permissions: ['cas1_process_an_appeal'] })
   })
 
   it('should create an appeal', () => {

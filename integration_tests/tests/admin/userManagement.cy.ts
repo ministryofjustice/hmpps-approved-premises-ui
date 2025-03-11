@@ -7,15 +7,14 @@ import ListPage from '../../pages/admin/userManagement/listPage'
 import SearchDeliusPage from '../../pages/admin/userManagement/searchDeliusPage'
 import ShowPage from '../../pages/admin/userManagement/showPage'
 import Page from '../../pages/page'
+import { signIn } from '../signIn'
 
 context('User management', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser', { permissions: ['cas1_user_management'] })
 
-    // Given I am logged in
-    cy.signIn()
+    // Given I am signed in as a User manager
+    signIn({ permissions: ['cas1_user_management'] })
   })
 
   it('allows the user to view and update users', () => {

@@ -1,5 +1,6 @@
 import { addDays } from 'date-fns'
 import { faker } from '@faker-js/faker'
+import { Cas1PremisesDaySummary } from '@approved-premises/api'
 import {
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
@@ -17,7 +18,6 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../../pages/page'
 import { premiseCharacteristicAvailability } from '../../../server/testutils/factories/cas1PremiseCapacity'
 import OccupancyDayViewPage from '../../pages/manage/occupancyDayView'
-import { Cas1PremisesDaySummary } from '../../../server/@types/shared/models/Cas1PremisesDaySummary'
 
 context('Premises occupancy', () => {
   const startDate = DateFormats.dateObjToIsoDate(new Date())
@@ -47,8 +47,8 @@ context('Premises occupancy', () => {
 
   describe('with premises view permission', () => {
     beforeEach(() => {
-      // Given I am logged in as a future manager with premises_view permission
-      signIn(['future_manager'], ['cas1_premises_view'])
+      // Given I am logged in as a future manager
+      signIn({ permissions: ['cas1_premises_view'] })
     })
 
     it('should show the next 12 weeks if navigated from premises page', () => {
@@ -156,9 +156,9 @@ context('Premises occupancy', () => {
     })
   })
   describe('Without premises view permission', () => {
-    it('should not be availble if the user lacks premises_view permission', () => {
-      // Given I am logged in as a future manager without premises_view permission
-      signIn(['future_manager'])
+    it('should not be available if the user lacks premises_view permission', () => {
+      // Given I am logged in as an applicant
+      signIn()
       // When I navigate to the view premises occupancy page
       // Then I should see an error
       OccupancyViewPage.visitUnauthorised(premises)
@@ -199,8 +199,8 @@ context('Premises day occupancy', () => {
 
   describe('with premises view permission', () => {
     beforeEach(() => {
-      // Given I am logged in as a future manager with premises_view permission
-      signIn(['future_manager'], ['cas1_premises_view'])
+      // Given I am logged in as a future manager
+      signIn({ permissions: ['cas1_premises_view'] })
     })
 
     it('should show the day summary if spaces available', () => {
@@ -287,9 +287,9 @@ context('Premises day occupancy', () => {
   })
 
   describe('Without premises view permission', () => {
-    it('should not be availble if the user lacks premises_view permission', () => {
-      // Given I am logged in as a future manager without premises_view permission
-      signIn(['future_manager'])
+    it('should not be available if the user lacks premises_view permission', () => {
+      // Given I am logged in as an applicant
+      signIn()
       // When I navigate to the view premises occupancy page
       // Then I should see an error
       OccupancyDayViewPage.visitUnauthorised(premises, date)

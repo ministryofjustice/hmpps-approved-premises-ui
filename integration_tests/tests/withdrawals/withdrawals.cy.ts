@@ -23,8 +23,6 @@ import withdrawablesFactory from '../../../server/testutils/factories/withdrawab
 context('Withdrawals', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
     cy.task('stubCruManagementAreaReferenceData')
   })
 
@@ -33,7 +31,7 @@ context('Withdrawals', () => {
 
     beforeEach(() => {
       // Given I am logged in
-      signIn([], userPermissions)
+      signIn({ permissions: userPermissions })
     })
 
     it('withdraws a placement request, showing all options for withdrawal reason', () =>
@@ -180,7 +178,7 @@ context('Withdrawals', () => {
 
     beforeEach(() => {
       // Given I am logged in as an applicant
-      signIn([], userPermissions)
+      signIn({ permissions: userPermissions })
     })
 
     it('withdraws a placement request, showing all options for withdrawal reason excluding those relating to lack of capacity', () =>

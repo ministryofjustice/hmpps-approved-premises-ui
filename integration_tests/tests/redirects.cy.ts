@@ -3,7 +3,9 @@ import { signIn } from './signIn'
 context('Redirects', () => {
   beforeEach(() => {
     cy.task('reset')
-    signIn([])
+
+    // Given I am signed in as an applicant
+    signIn()
   })
 
   const redirects = [
