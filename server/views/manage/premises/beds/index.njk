@@ -6,19 +6,18 @@
 {% extends "../../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
-{% set premisesLink = paths.premises.show({ premisesId: premises.id }) %}
 
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: premisesLink
+        href: backLink
     }) }}
 {% endblock %}
 
 {% block content %}
     {% set headingHtml %}
         <span class="govuk-caption-l">
-            <a href="{{ premisesLink }}">{{ premises.name }}</a>
+            <a href="{{ backLink }}">{{ premises.name }}</a>
         </span>
         <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
     {% endset %}
@@ -27,30 +26,18 @@
         title: {
             html: headingHtml
         },
-        menus: [{
-            items: [ {
-                text: "Manage out of service beds",
-                classes: "govuk-button--secondary",
-                href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' })
-            }]
-        }]
+        menus: actions
     }) }}
 
     {{ govukTable({
         captionClasses: "govuk-table__caption--m",
         firstCellIsHeader: true,
         head: [
-            {
-                text: "Room Name"
-            },
-            {
-                text: "Bed Name"
-            },
-            {
-                text: 'Action'
-            }
+            { text: "Room Name" },
+            { text: "Bed Name" },
+            { text: "Action" }
         ],
-        rows: BedUtils.bedTableRows(beds, premises.id, user)
+        rows: tableRows
     }) }}
 {% endblock %}
 

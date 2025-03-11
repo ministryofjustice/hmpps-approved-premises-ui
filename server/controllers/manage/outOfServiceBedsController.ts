@@ -11,8 +11,23 @@ import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
-import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../utils/outOfServiceBedUtils'
+import {
+  outOfServiceBedTableHeaders,
+  outOfServiceBedTableRows,
+  outOfServiceBedTabs,
+  premisesIndexTabs,
+  sortOutOfServiceBedRevisionsByUpdatedAt,
+} from '../../utils/outOfServiceBedUtils'
 import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
+
+interface ShowRequest extends Request {
+  params: {
+    premisesId: string
+    bedId: string
+    id: string
+    tab: 'details' | 'timeline'
+  }
+}
 
 export default class OutOfServiceBedsController {
   constructor(
@@ -115,11 +130,12 @@ export default class OutOfServiceBedsController {
 
       return res.render('manage/outOfServiceBeds/premisesIndex', {
         backLink,
-        outOfServiceBeds: outOfServiceBeds.data,
         pageHeading: 'Out of service beds',
+        tabs: premisesIndexTabs(premisesId, temporality),
         premises: { id: premisesId, name: premises.name },
-        temporality,
         pageNumber: Number(outOfServiceBeds.pageNumber),
+        tableHeaders: outOfServiceBedTableHeaders(req.session.user),
+        tableRows: outOfServiceBedTableRows(outOfServiceBeds.data, premisesId, req.session.user),
         totalPages: Number(outOfServiceBeds.totalPages),
         totalResults: Number(outOfServiceBeds.totalResults),
         hrefPrefix,
@@ -199,7 +215,7 @@ export default class OutOfServiceBedsController {
   }
 
   show(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: ShowRequest, res: Response) => {
       const { premisesId, bedId, id, tab = 'details' } = req.params
       const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.show.pattern, req, [
         paths.outOfServiceBeds.premisesIndex.pattern,
@@ -224,6 +240,17 @@ export default class OutOfServiceBedsController {
         activeTab: tab,
         characteristicsHtml,
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
+        actions: [
+          {
+            items: [
+              {
+                text: 'Update record',
+                href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+              },
+            ],
+          },
+        ],
+        tabs: outOfServiceBedTabs(premisesId, bedId, id, tab),
       })
     }
   }

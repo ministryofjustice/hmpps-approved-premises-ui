@@ -28,41 +28,24 @@
 
     {{ govukSummaryList({
         classes: 'govuk-summary-list--no-border',
-        rows: [            {
-            key: {
-                text: "Total out of service beds matching filters"
-            },
-            value: {
-                text: OutOfServiceBedUtils.outOfServiceBedCount(totalResults)
-            }
-        }
-        ]
+        rows: [{
+            key: { text: "Total out of service beds matching filters" },
+            value: { text: '1 bed' if totalResults === 1 else totalResults + ' beds' }
+        }]
     }) }}
 
     {{ mojSubNavigation({
         label: 'Sub navigation',
-        items: [{
-            text: 'Current',
-            href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'current'}),
-            active: temporality === 'current'
-        }, {
-            text: 'Future',
-            href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'future'}),
-            active: temporality === 'future'
-        }, {
-            text: 'Historic',
-            href: paths.outOfServiceBeds.premisesIndex({premisesId: premises.id, temporality: 'past'}),
-            active: temporality === 'past'
-        }]
+        items: tabs
     }) }}
 
-    {% if outOfServiceBeds %}
+    {% if totalResults > 0 %}
 
         {{ govukTable({
             caption: "Out of service",
             captionClasses: "govuk-table__caption--m",
-            head: OutOfServiceBedUtils.outOfServiceBedTableHeaders(user),
-            rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premises.id, user)
+            head: tableHeader,
+            rows: tableRows
         }) }}
 
         {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}

@@ -23,27 +23,12 @@
         title: {
             html: outOfServiceBedPageHeading('Out of service bed record', outOfServiceBed)
         },
-        menus: [{
-            items: [
-                {
-                    text: "Update record",
-                    href: paths.outOfServiceBeds.update({premisesId: premisesId, id: id, bedId: bedId})
-                }
-            ]
-        }]
+        menus: actions
     }) }}
 
     {{ mojSubNavigation({
         label: 'Sub navigation',
-        items: [{
-            text: 'Details',
-            href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }),
-            active: activeTab === 'details'
-        }, {
-            text: 'Timeline',
-            href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'timeline' }),
-            active: activeTab === 'timeline'
-        }]
+        items: tabs
     }) }}
 
     {% if activeTab === 'timeline' %}

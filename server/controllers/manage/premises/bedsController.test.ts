@@ -3,14 +3,22 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory, cas1PremisesFactory } from '../../../testutils/factories'
+import {
+  cas1BedDetailFactory,
+  cas1PremisesBedSummaryFactory,
+  cas1PremisesFactory,
+  userDetailsFactory,
+} from '../../../testutils/factories'
 import paths from '../../../paths/manage'
-import { bedDetails } from '../../../utils/bedUtils'
+import { bedActions, bedDetails, bedsActions, bedsTableRows } from '../../../utils/bedUtils'
 
 describe('V2BedsController', () => {
   const token = 'SOME_TOKEN'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
+  const request: DeepMocked<Request> = createMock<Request>({
+    user: { token },
+    session: { user: userDetailsFactory.build() },
+  })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -37,10 +45,11 @@ describe('V2BedsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/beds/show', {
+        backLink: paths.premises.beds.index({ premisesId: premises.id }),
         bed,
         premises,
         pageHeading: `Bed ${bed.name}`,
-        backLink: paths.premises.beds.index({ premisesId: premises.id }),
+        actions: bedActions(bed, premises.id, request.session.user),
         characteristicsSummaryList: bedDetails(bed),
       })
 
@@ -62,9 +71,11 @@ describe('V2BedsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/beds/index', {
-        beds,
+        backLink: paths.premises.show({ premisesId: premises.id }),
         premises,
         pageHeading: 'Manage beds',
+        actions: bedsActions(premises.id, request.session.user),
+        tableRows: bedsTableRows(beds, premises.id),
       })
 
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)

@@ -16,7 +16,7 @@ export default class BedShowPage extends Page {
   }
 
   shouldShowBedDetails(bed: Cas1BedDetail): void {
-    cy.get('h1').contains(bed.roomName)
+    cy.get('.govuk-caption-l').contains(bed.roomName)
     cy.get('h1').contains(bed.name)
 
     this.shouldContainSummaryListItems(bedDetails(bed).rows)

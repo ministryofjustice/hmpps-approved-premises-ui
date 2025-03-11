@@ -3,7 +3,7 @@ import { Cas1BedDetail, Cas1PremisesBedSummary, Premises } from '@approved-premi
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { bedTableRows } from '../../../../server/utils/bedUtils'
+import { bedsTableRows } from '../../../../server/utils/bedUtils'
 
 export default class BedsListPage extends Page {
   constructor() {
@@ -16,7 +16,7 @@ export default class BedsListPage extends Page {
   }
 
   shouldShowBeds(beds: Array<Cas1PremisesBedSummary>, premisesId: Premises['id']): void {
-    const rows = bedTableRows(beds, premisesId)
+    const rows = bedsTableRows(beds, premisesId)
     this.shouldContainTableRows(rows)
   }
 

@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import PremisesService from '../../../services/premisesService'
 import paths from '../../../paths/manage'
-import { bedDetails } from '../../../utils/bedUtils'
+import { bedActions, bedDetails, bedsActions, bedsTableRows } from '../../../utils/bedUtils'
 
 export default class BedsController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -20,9 +20,11 @@ export default class BedsController {
       ])
 
       return res.render('manage/premises/beds/index', {
-        beds,
+        backLink: paths.premises.show({ premisesId }),
         premises,
         pageHeading: 'Manage beds',
+        actions: bedsActions(premisesId, req.session.user),
+        tableRows: bedsTableRows(beds, premisesId),
       })
     }
   }
@@ -38,10 +40,11 @@ export default class BedsController {
       ])
 
       return res.render('manage/premises/beds/show', {
+        backLink,
         bed,
         premises,
         pageHeading: `Bed ${bed.name}`,
-        backLink,
+        actions: bedActions(bed, premisesId, req.session.user),
         characteristicsSummaryList: bedDetails(bed),
       })
     }

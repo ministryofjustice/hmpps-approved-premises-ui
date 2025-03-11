@@ -1,9 +1,25 @@
 import { Cas1BedDetail, Cas1PremisesBedSummary } from '@approved-premises/api'
-import { SummaryList, TableCell } from '../@types/ui'
+import { SummaryList, TableCell, UserDetails } from '../@types/ui'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { characteristicsBulletList, roomCharacteristicMap } from './characteristicsUtils'
 import { summaryListItem } from './formUtils'
+import { hasPermission } from './users'
+
+export const bedsActions = (premisesId: string, user: UserDetails) =>
+  hasPermission(user, ['cas1_out_of_service_bed_create'])
+    ? [
+        {
+          items: [
+            {
+              text: 'Manage out of service beds',
+              classes: 'govuk-button--secondary',
+              href: paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }),
+            },
+          ],
+        },
+      ]
+    : null
 
 export const bedNameCell = (item: Cas1PremisesBedSummary): TableCell => ({ text: item.bedName })
 
@@ -13,7 +29,7 @@ export const actionCell = (bed: Cas1PremisesBedSummary, premisesId: string): Tab
   html: bedLink(bed, premisesId),
 })
 
-export const bedTableRows = (beds: Array<Cas1PremisesBedSummary>, premisesId: string) => {
+export const bedsTableRows = (beds: Array<Cas1PremisesBedSummary>, premisesId: string) => {
   return beds.map(bed => [roomNameCell(bed), bedNameCell(bed), actionCell(bed, premisesId)])
 }
 
@@ -27,25 +43,20 @@ export const bedDetails = (bed: Cas1BedDetail): SummaryList => ({
   ],
 })
 
-export const title = (bed: Cas1BedDetail, pageTitle: string): string => {
-  return `
-  <h1 class="govuk-heading-l">
-    <span class="govuk-caption-l">${bed.name}</span>
-    ${pageTitle}
-  </h1>
-  `
-}
-
-export const bedActions = (bed: Cas1BedDetail, premisesId: string) => {
-  return {
-    items: [
-      {
-        text: 'Create out of service bed record',
-        classes: 'govuk-button--secondary',
-        href: paths.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
-      },
-    ],
-  }
+export const bedActions = (bed: Cas1BedDetail, premisesId: string, user: UserDetails) => {
+  return hasPermission(user, ['cas1_out_of_service_bed_create'])
+    ? [
+        {
+          items: [
+            {
+              text: 'Create out of service bed record',
+              classes: 'govuk-button--secondary',
+              href: paths.outOfServiceBeds.new({ premisesId, bedId: bed.id }),
+            },
+          ],
+        },
+      ]
+    : null
 }
 
 export const bedLink = (bed: Cas1PremisesBedSummary, premisesId: string): string =>
