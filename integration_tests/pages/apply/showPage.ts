@@ -40,10 +40,6 @@ export default class ShowPage extends Page {
     cy.get('button').contains('Add note').click()
   }
 
-  clickActions() {
-    cy.get('.moj-button-menu > .govuk-button').click()
-  }
-
   clickAppealLink() {
     cy.get(`[data-cy-appeal-application="${this.application.id}"]`).click()
   }

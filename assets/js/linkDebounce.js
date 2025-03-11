@@ -1,5 +1,4 @@
-;(() => {
-  function debounce(link, delay = 3000) {
+export function debounce(link, delay = 3000) {
     /**
      *  Adds a debounce of a given duration to the provided element
      *  @param link the element to be debounced
@@ -19,6 +18,3 @@
       }
     })
   }
-
-  document.querySelectorAll('a[data-debounce-link]').forEach(link => debounce(link))
-})()

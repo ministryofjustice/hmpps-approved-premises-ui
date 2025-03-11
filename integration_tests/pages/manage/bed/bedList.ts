@@ -30,7 +30,7 @@ export default class BedsListPage extends Page {
   }
 
   shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId: Premises['id']): void {
-    cy.get('.moj-button-menu__toggle-button').click()
+    this.clickOpenActionsMenu()
     cy.get(`a[href="${paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' })}"]`).contains(
       'Manage out of service beds',
     )

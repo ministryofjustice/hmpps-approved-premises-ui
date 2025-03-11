@@ -205,14 +205,23 @@ export default abstract class Page {
     cy.get('a').contains('Back').click()
   }
 
+  clickOpenActionsMenu() {
+    cy.get('.moj-button-menu').then($menu => {
+      const actionButton = $menu.find('button:contains("Actions")')
+      if (actionButton.length) {
+        actionButton.click()
+      }
+    })
+  }
+
   clickAction(actionLabel: string): void {
-    cy.get('.moj-button-menu > button').contains('Actions').click()
-    cy.get('[role="menuitem"]').contains(actionLabel).click()
+    this.clickOpenActionsMenu()
+    cy.get('.moj-button-menu').contains(actionLabel).click()
   }
 
   actionShouldNotExist(actionLabel: string): void {
-    cy.get('.moj-button-menu > button').contains('Actions').click()
-    cy.get('[role="menuitem"]').contains(actionLabel).should('not.exist')
+    this.clickOpenActionsMenu()
+    cy.get('.moj-button-menu').contains(actionLabel).should('not.exist')
   }
 
   actionMenuShouldNotExist(): void {

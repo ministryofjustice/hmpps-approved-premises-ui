@@ -86,16 +86,3 @@
     </div>
 {% endblock %}
 
-{% block extraScripts %}
-    <script type="text/javascript" src="/assets/js/linkDebounce.js"></script>
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-      if ($('.application-identity-bar .moj-button-menu').length) {
-        new MOJFrontend.ButtonMenu({
-          container: $('.application-identity-bar .moj-button-menu'),
-          mq: '(min-width: 200em)',
-          buttonText: 'Actions',
-          menuClasses: 'moj-button-menu__wrapper--right',
-        })
-      }
-    </script>
-{% endblock %}
