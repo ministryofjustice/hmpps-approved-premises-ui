@@ -276,8 +276,8 @@ describe('OutOfServiceBedsController', () => {
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         totalResults: Number(paginatedResponse.totalResults),
-        tableHeaders: outOfServiceBedTableHeaders(req.session.user),
-        tableRows: outOfServiceBedTableRows(paginatedResponse.data, premisesId, req.session.user),
+        tableHeaders: outOfServiceBedTableHeaders(),
+        tableRows: outOfServiceBedTableRows(paginatedResponse.data, premisesId),
         backLink,
       })
 
