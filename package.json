@@ -128,6 +128,7 @@
     "@total-typescript/shoehorn": "^0.1.0",
     "agentkeepalive": "^4.2.1",
     "applicationinsights": "^2.9.6",
+    "axios": "^1.8.2",
     "body-parser": "^1.20.0",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
