@@ -1,12 +1,4 @@
-export {
-  hasRole,
-  hasManagerRole,
-  hasPermission,
-  qualificationDictionary,
-  roles,
-  qualifications,
-  AllocationRole,
-} from './roles'
+export { hasRole, hasPermission, qualificationDictionary, roles, qualifications, AllocationRole } from './roles'
 export { sectionsForUser } from './homePageDashboard'
 export { userSummaryListItems, userRolesSelectOptions, userQualificationsSelectOptions } from './userManagement'
 export {

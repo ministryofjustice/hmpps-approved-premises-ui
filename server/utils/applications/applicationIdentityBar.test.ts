@@ -1,5 +1,4 @@
-import { fromPartial } from '@total-typescript/shoehorn'
-import { applicationFactory, personFactory } from '../../testutils/factories'
+import { applicationFactory, personFactory, userDetailsFactory } from '../../testutils/factories'
 import { applicationIdentityBar, applicationMenuItems, applicationTitle } from './applicationIdentityBar'
 import paths from '../../paths/apply'
 import { displayName } from '../personUtils'
@@ -61,11 +60,11 @@ describe('applicationIdentityBar', () => {
   })
 
   describe('applicationMenuItems', () => {
-    const userId = 'some-id'
+    const user = userDetailsFactory.build({ id: 'some-id' })
 
     it('should return the option to withdraw an application', () => {
-      const application = applicationFactory.build({ createdByUserId: userId })
-      expect(applicationMenuItems(application, fromPartial({ roles: ['applicant'], id: userId }))).toEqual([
+      const application = applicationFactory.build({ createdByUserId: user.id })
+      expect(applicationMenuItems(application, user)).toEqual([
         {
           text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
@@ -79,8 +78,8 @@ describe('applicationIdentityBar', () => {
 
     describe('if the application is withdrawn', () => {
       it('should return the Withdraw menu item', () => {
-        const application = applicationFactory.build({ createdByUserId: userId })
-        expect(applicationMenuItems(application, fromPartial({ roles: ['workflow_manager'], id: userId }))).toEqual([
+        const application = applicationFactory.build({ createdByUserId: user.id })
+        expect(applicationMenuItems(application, user)).toEqual([
           {
             text: 'Withdraw application or placement request',
             href: paths.applications.withdraw.new({ id: application.id }),
@@ -94,10 +93,8 @@ describe('applicationIdentityBar', () => {
     })
 
     it('should return an appeals link when user has cas1 process an appeal permission and the application has been rejected', () => {
-      const application = applicationFactory.build({ status: 'rejected', createdByUserId: userId })
-      expect(
-        applicationMenuItems(application, fromPartial({ permissions: ['cas1_process_an_appeal'], id: userId })),
-      ).toEqual([
+      const application = applicationFactory.build({ status: 'rejected', createdByUserId: user.id })
+      expect(applicationMenuItems(application, { ...user, permissions: ['cas1_process_an_appeal'] })).toEqual([
         {
           text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
@@ -118,10 +115,8 @@ describe('applicationIdentityBar', () => {
     })
 
     it('should not return an appeals link when user has cas1 process an appeal permission and the application has not been rejected', () => {
-      const application = applicationFactory.build({ status: 'assesmentInProgress', createdByUserId: userId })
-      expect(
-        applicationMenuItems(application, fromPartial({ permissions: ['cas1_process_an_appeal'], id: userId })),
-      ).toEqual([
+      const application = applicationFactory.build({ status: 'assesmentInProgress', createdByUserId: user.id })
+      expect(applicationMenuItems(application, { ...user, permissions: ['cas1_process_an_appeal'] })).toEqual([
         {
           text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
@@ -134,8 +129,8 @@ describe('applicationIdentityBar', () => {
     })
 
     it('should not return an appeals link when user does not have cas1 process an appeal permission and the application has been rejected', () => {
-      const application = applicationFactory.build({ status: 'rejected', createdByUserId: userId })
-      expect(applicationMenuItems(application, fromPartial({ permissions: [], id: userId }))).toEqual([
+      const application = applicationFactory.build({ status: 'rejected', createdByUserId: user.id })
+      expect(applicationMenuItems(application, { ...user, permissions: [] })).toEqual([
         {
           text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
@@ -149,22 +144,22 @@ describe('applicationIdentityBar', () => {
   })
 
   describe('applicationIdentityBar', () => {
-    it('should return the identity bar', () => {
-      const userId = 'some-id'
-      const user = { roles: ['appeals_manager' as const], id: userId }
-      const application = applicationFactory.build({ createdByUserId: userId })
+    const user = userDetailsFactory.build({ id: 'some-id' })
 
-      expect(applicationIdentityBar(application, 'title', fromPartial(user))).toEqual({
+    it('should return the identity bar', () => {
+      const application = applicationFactory.build({ createdByUserId: user.id })
+
+      expect(applicationIdentityBar(application, 'title', user)).toEqual({
         title: { html: applicationTitle(application, 'title') },
         classes: 'application-identity-bar',
-        menus: [{ items: applicationMenuItems(application, fromPartial(user)) }],
+        menus: [{ items: applicationMenuItems(application, user) }],
       })
     })
 
     it('should not return the menus property if applicationMenuItems returns undefined', () => {
       const application = applicationFactory.build({ status: 'withdrawn' })
 
-      expect(applicationIdentityBar(application, 'title', fromPartial({ roles: ['appeals_manager'] }))).toEqual({
+      expect(applicationIdentityBar(application, 'title', user)).toEqual({
         title: { html: applicationTitle(application, 'title') },
         classes: 'application-identity-bar',
       })

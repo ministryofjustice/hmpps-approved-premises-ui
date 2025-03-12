@@ -4,8 +4,8 @@ import paths from '../../paths/manage'
 import userDetails from '../../testutils/factories/userDetails'
 
 describe('premisesActions', () => {
-  describe('for users with the role "workflow_manager"', () => {
-    const user = userDetails.build({ roles: ['workflow_manager'], permissions: ['cas1_adhoc_booking_create'] })
+  describe('for users with premises view permissions', () => {
+    const user = userDetails.build({ permissions: ['cas1_premises_view'] })
     const premises = cas1PremisesFactory.build()
 
     it('does NOT include the OUT OF SERVICE BEDS action', () => {
@@ -25,8 +25,8 @@ describe('premisesActions', () => {
     })
   })
 
-  describe('for users with the role "future_manager"', () => {
-    const user = userDetails.build({ roles: ['future_manager'] })
+  describe('for users with the create OOSB permission', () => {
+    const user = userDetails.build({ permissions: ['cas1_out_of_service_bed_create'] })
     const premises = cas1PremisesFactory.build()
 
     it('includes the MANAGE BEDS action', () => {
@@ -46,8 +46,8 @@ describe('premisesActions', () => {
     })
   })
 
-  describe('for users with no role', () => {
-    const user = userDetails.build({ roles: [] })
+  describe('for users with no permissions', () => {
+    const user = userDetails.build({ permissions: [] })
     const premises = cas1PremisesFactory.build()
 
     it('does NOT include the OUT OF SERVICE BEDS action', () => {

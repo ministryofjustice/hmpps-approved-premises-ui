@@ -39,8 +39,6 @@ export type RoleInUse = Exclude<UserRole, UnusedRole>
 
 export type BaseRole = Exclude<RoleInUse, AllocationRole>
 
-export const managerRoles: ReadonlyArray<UserRole> = ['workflow_manager', 'future_manager'] as const
-
 export const qualifications: ReadonlyArray<UserQualification> = [
   'pipe',
   'emergency',
@@ -121,8 +119,6 @@ export const qualificationDictionary: QualificationLabelDictionary = {
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
 }
-
-export const hasManagerRole = (user: UserDetails) => managerRoles.some(role => hasRole(user, role))
 
 export const hasPermission = (
   user: UserDetails,

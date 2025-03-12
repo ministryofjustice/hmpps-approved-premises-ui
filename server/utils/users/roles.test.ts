@@ -1,4 +1,4 @@
-import { filterAllocationRoles, hasManagerRole, hasPermission, hasRole, managerRoles } from './roles'
+import { filterAllocationRoles, hasPermission, hasRole } from './roles'
 import { userDetailsFactory } from '../../testutils/factories'
 
 describe('roles utilities', () => {
@@ -13,12 +13,6 @@ describe('roles utilities', () => {
       const user = userDetailsFactory.build({ roles: ['assessor'] })
 
       expect(hasRole(user, 'applicant')).toEqual(false)
-    })
-  })
-
-  describe('hasManagerRole', () => {
-    it.each(managerRoles)('returns true if the user has the role %s', role => {
-      expect(hasManagerRole(userDetailsFactory.build({ roles: [role] }))).toBe(true)
     })
   })
 
