@@ -30,7 +30,7 @@ describe('Updating an out of service bed', () => {
     const showPage = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
     // When I click 'Update record'
-    showPage.clickUpdateRecord()
+    showPage.clickAction('Update record')
 
     // Then I should be taken to the OoS bed update page
     const updatePage = Page.verifyOnPage(OutOfServiceBedUpdatePage, outOfServiceBed)

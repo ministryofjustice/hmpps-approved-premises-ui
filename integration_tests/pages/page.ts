@@ -206,12 +206,7 @@ export default abstract class Page {
   }
 
   clickOpenActionsMenu() {
-    cy.get('.moj-button-menu').then($menu => {
-      const actionButton = $menu.find('button:contains("Actions")')
-      if (actionButton.length) {
-        actionButton.click()
-      }
-    })
+    cy.get('.moj-button-menu__toggle-button').should('contain.text', 'Actions').click()
   }
 
   clickAction(actionLabel: string): void {
