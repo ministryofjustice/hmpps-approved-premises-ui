@@ -245,9 +245,9 @@ jobs:
   e2e_test:
     name: "E2E Environment Tests 🧪"
     needs:
-      - deploy_dev
-    # runs-on: [self-hosted, hmpps-github-actions-runner] TODO - reimplement this
-    runs-on: ubuntu-22.04
+      - deploy_test # TODO - change to deploy_dev after successfull e2e run
+    # runs-on: [self-hosted, hmpps-github-actions-runner] TODO - reimplement this when playwrite deps are fixed
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev/') || startsWith(github.head_ref, 'feature-dev/')
     strategy:
       fail-fast: false
@@ -267,10 +267,7 @@ jobs:
         run: npm ci --no-audit
 
       - name: Install Playwright
-        run: npx playwright install
-
-      - name: Install Playwright Dependencies
-        run: npx playwright install-deps
+        run: npx playwright install --with-deps chromium
 
       - name: Run E2E Tests
         env:
