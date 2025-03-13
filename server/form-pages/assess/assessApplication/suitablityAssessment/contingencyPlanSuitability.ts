@@ -56,7 +56,8 @@ export default class ContingencyPlanSuitability implements TasklistPage {
       errors.contingencyPlanSufficient =
         'You must confirm if the contingency plan is sufficient to manage behaviour or a failure to return out of hours'
 
-    if (!this.body.additionalComments) errors.additionalComments = 'You must provide additional comments'
+    if (this.body.contingencyPlanSufficient === 'no' && !this.body.additionalComments)
+      errors.additionalComments = 'You must provide additional comments'
 
     return errors
   }

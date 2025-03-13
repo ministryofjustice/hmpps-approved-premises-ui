@@ -44,10 +44,29 @@ describe('ContingencyPlanSuitability', () => {
       const page = new ContingencyPlanSuitability({} as ContingencyPlanSuitabilityBody, assessment)
 
       expect(page.errors()).toEqual({
-        additionalComments: 'You must provide additional comments',
         contingencyPlanSufficient:
           'You must confirm if the contingency plan is sufficient to manage behaviour or a failure to return out of hours',
       })
+    })
+
+    it('should show an error if the answer is yes and there are no comments', () => {
+      const page = new ContingencyPlanSuitability(
+        { contingencyPlanSufficient: 'no' } as ContingencyPlanSuitabilityBody,
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        additionalComments: 'You must provide additional comments',
+      })
+    })
+
+    it('should not show an error if the answer is no and there are no additional comments', () => {
+      const page = new ContingencyPlanSuitability(
+        { contingencyPlanSufficient: 'yes' } as ContingencyPlanSuitabilityBody,
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({})
     })
   })
 
