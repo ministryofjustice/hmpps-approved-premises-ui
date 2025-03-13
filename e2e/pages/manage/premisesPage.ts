@@ -43,7 +43,7 @@ export class PremisesPage extends PaginatedPage {
 
   async viewOutOfServiceBedRecords() {
     await this.page.getByRole('button', { name: 'Actions' }).click()
-    await this.page.getByRole('button', { name: 'Manage out of service bed records' }).click()
+    await this.page.getByRole('button', { name: 'View out of service bed records' }).click()
   }
 
   async openBookingFromRow(bookingRow: Locator) {
