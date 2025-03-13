@@ -9,12 +9,12 @@ export class PlacementRequestPage extends BasePage {
 
   async clickSearchForASpace() {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Search for a space' }).click()
+    await this.page.getByRole('button', { name: 'Search for a space' }).click()
   }
 
   async clickCreatePlacement() {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Create placement' }).click()
+    await this.page.getByRole('button', { name: 'Create placement' }).click()
   }
 
   async shouldShowPlacementSuccessMessage() {
@@ -23,6 +23,6 @@ export class PlacementRequestPage extends BasePage {
 
   async clickChangePlacement() {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Change placement' }).click()
+    await this.page.getByRole('button', { name: 'Change placement' }).click()
   }
 }

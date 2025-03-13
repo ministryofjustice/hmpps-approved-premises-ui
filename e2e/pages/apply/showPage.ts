@@ -18,7 +18,7 @@ export class ShowPage extends BasePage {
 
   async appealApplication(decision: AppealDecision): Promise<void> {
     await this.page.getByRole('button', { name: 'Actions' }).click()
-    await this.page.getByRole('menuitem', { name: 'Process an appeal' }).click()
+    await this.page.getByRole('button', { name: 'Process an appeal' }).click()
 
     const appealApplicationPage = new AppealApplicationPage(this.page)
     await appealApplicationPage.fillForm(decision)
