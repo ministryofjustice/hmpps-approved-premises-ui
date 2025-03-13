@@ -1,6 +1,6 @@
 import { NamedId, UpdateCas1OutOfServiceBed } from '@approved-premises/api'
 import {
-  bedDetailFactory,
+  cas1BedDetailFactory,
   cas1PremisesBasicSummaryFactory,
   outOfServiceBedFactory,
 } from '../../../../server/testutils/factories'
@@ -22,7 +22,7 @@ describe('Updating an out of service bed', () => {
     const outOfServiceBed = outOfServiceBedFactory.build({
       bed,
     })
-    const bedDetail = bedDetailFactory.build({ id: bed.id })
+    const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
 
     // Given I am viewing an out of service bed
     cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
@@ -30,7 +30,7 @@ describe('Updating an out of service bed', () => {
     const showPage = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
     // When I click 'Update record'
-    showPage.clickUpdateRecord()
+    showPage.clickAction('Update record')
 
     // Then I should be taken to the OoS bed update page
     const updatePage = Page.verifyOnPage(OutOfServiceBedUpdatePage, outOfServiceBed)

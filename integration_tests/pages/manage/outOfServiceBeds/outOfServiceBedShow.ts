@@ -1,12 +1,9 @@
-import { BedDetail, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
+import { Cas1BedDetail, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
 import { DateFormats } from '../../../../server/utils/dateUtils'
-import {
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-} from '../../../../server/utils/characteristicsUtils'
+import { roomCharacteristicMap } from '../../../../server/utils/characteristicsUtils'
 import { sentenceCase } from '../../../../server/utils/utils'
 
 export class OutOfServiceBedShowPage extends Page {
@@ -42,8 +39,8 @@ export class OutOfServiceBedShowPage extends Page {
     if (this.outOfServiceBed.notes) this.assertDefinition('Additional information', this.outOfServiceBed.notes)
   }
 
-  shouldShowCharacteristics(bed: BedDetail): void {
-    characteristicsPairToCharacteristics(bed.characteristics).forEach(characteristic => {
+  shouldShowCharacteristics(bed: Cas1BedDetail): void {
+    bed.characteristics.forEach(characteristic => {
       cy.get('li').contains(roomCharacteristicMap[characteristic])
     })
   }

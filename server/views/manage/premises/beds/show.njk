@@ -1,10 +1,6 @@
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
-{% from "./partials/_pageHeading.njk" import bedPageHeading %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -18,39 +14,24 @@
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full-width">
-            {% include "../../../_messages.njk" %}
+    {% include "../../../_messages.njk" %}
 
-            {% if UserUtils.hasManagerRole(user) %}
-                {{ mojIdentityBar({
-                    title: {
-                        html: bedPageHeading(pageHeading, bed, premises)
-                    },
-                    menus: [BedUtils.bedActions(bed, premises.id)]
-                }) }}
-            {% else %}
-                {{ BedUtils.title(bed, pageHeading) | safe }}
-            {% endif %}
-        </div>
-    </div>
+    {% set headingHtml %}
+        <span class="govuk-caption-l">
+            <a href="{{ paths.premises.show({premisesId: premises.id}) }}">{{ premises.name }}</a>
+        </span>
+        <span class="govuk-caption-l">Room {{ bed.roomName }}</span>
+        <h1 class="govuk-heading-l">Bed {{ bed.name }}</h1>
+    {% endset %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ govukSummaryList({
-                rows: BedUtils.bedDetails(bed)
-            }) }}
-        </div>
-    </div>
+    {{ mojIdentityBar({
+        title: {
+            html: headingHtml
+        },
+        menus: actions
+    }) }}
+
+    {{ govukSummaryList(characteristicsSummaryList) }}
+
 {% endblock %}
 
-{% block extraScripts %}
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-      new MOJFrontend.ButtonMenu({
-        container: $('.moj-button-menu'),
-        mq: '(min-width: 200em)',
-        buttonText: 'Actions',
-        menuClasses: 'moj-button-menu__wrapper--right',
-      })
-    </script>
-{% endblock %}

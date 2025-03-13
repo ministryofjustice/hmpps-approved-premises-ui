@@ -50,7 +50,7 @@ context('show applications', () => {
     showPage.shouldShowPersonInformation()
     showPage.shouldShowResponses()
 
-    showPage.clickActions()
+    showPage.clickOpenActionsMenu()
     showPage.shouldHaveWithdrawalLink()
 
     // When I click on the 'Timeline' tab

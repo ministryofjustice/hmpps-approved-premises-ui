@@ -1,31 +1,13 @@
-import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-  roomCharacteristicsInlineList,
-} from './characteristicsUtils'
-import { Cas1SpaceBookingCharacteristic, CharacteristicPair } from '../@types/shared'
+import { characteristicsBulletList, roomCharacteristicMap, roomCharacteristicsInlineList } from './characteristicsUtils'
+import { Cas1SpaceBookingCharacteristic } from '../@types/shared'
 import { placementRequestDetailFactory } from '../testutils/factories'
 import { placementCriteriaLabels } from './placementCriteriaUtils'
 
 describe('characteristicsUtils', () => {
-  describe('characteristicsPairToCharacteristics', () => {
-    it('should flatten and filter a list of characteristicPairs', () => {
-      const charactisticPairList: Array<CharacteristicPair> = [
-        { propertyName: 'isArsonSuitable', name: 'Arson' },
-        { propertyName: 'isSingle', name: 'Single' },
-        { propertyName: 'NotARoomCharacteristic', name: 'Bad' },
-      ]
-
-      const expected: Array<Cas1SpaceBookingCharacteristic> = ['isArsonSuitable', 'isSingle']
-      expect(characteristicsPairToCharacteristics(charactisticPairList)).toEqual(expected)
-    })
-  })
-
   describe('characteristicsBulletList', () => {
     const placementRequest = placementRequestDetailFactory.build({
       essentialCriteria: ['hasBrailleSignage', 'hasHearingLoop', 'isStepFreeDesignated'],
-      desirableCriteria: ['isArsonDesignated'],
+      desirableCriteria: ['isArsonSuitable'],
     })
 
     it('should return HTML lists of the given requirements', () => {
@@ -38,7 +20,7 @@ describe('characteristicsUtils', () => {
       `)
       expect(characteristicsBulletList(placementRequest.desirableCriteria)).toMatchStringIgnoringWhitespace(`
         <ul class="govuk-list govuk-list--bullet">
-          <li>${placementCriteriaLabels.isArsonDesignated}</li>
+          <li>${placementCriteriaLabels.isArsonSuitable}</li>
         </ul>
       `)
     })

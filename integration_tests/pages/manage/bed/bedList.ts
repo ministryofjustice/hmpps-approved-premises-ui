@@ -1,9 +1,9 @@
-import { BedDetail, BedSummary, Premises } from '@approved-premises/api'
+import { Cas1BedDetail, Cas1PremisesBedSummary, Premises } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { bedTableRows } from '../../../../server/utils/bedUtils'
+import { bedsTableRows } from '../../../../server/utils/bedUtils'
 
 export default class BedsListPage extends Page {
   constructor() {
@@ -15,12 +15,12 @@ export default class BedsListPage extends Page {
     return new BedsListPage()
   }
 
-  shouldShowBeds(beds: Array<BedSummary>, premisesId: Premises['id']): void {
-    const rows = bedTableRows(beds, premisesId)
+  shouldShowBeds(beds: Array<Cas1PremisesBedSummary>, premisesId: Premises['id']): void {
+    const rows = bedsTableRows(beds, premisesId)
     this.shouldContainTableRows(rows)
   }
 
-  clickBed(bed: BedDetail): void {
+  clickBed(bed: Cas1BedDetail): void {
     cy.get(`a[data-cy-bedid="${bed.id}"]`).click()
   }
 
@@ -30,7 +30,7 @@ export default class BedsListPage extends Page {
   }
 
   shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId: Premises['id']): void {
-    cy.get('.moj-button-menu__toggle-button').click()
+    this.clickOpenActionsMenu()
     cy.get(`a[href="${paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' })}"]`).contains(
       'Manage out of service beds',
     )

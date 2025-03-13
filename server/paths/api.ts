@@ -5,6 +5,7 @@ const cas1Namespace = path('/cas1')
 
 const cas1Premises = cas1Namespace.path('premises')
 const cas1PremisesSingle = cas1Premises.path(':premisesId')
+const cas1Beds = cas1PremisesSingle.path('beds')
 const cas1LostBeds = cas1PremisesSingle.path('lost-beds')
 const cas1LostBedsSingle = cas1LostBeds.path(':id')
 const cas1LostBedsCancellations = cas1LostBedsSingle.path('cancellations')
@@ -27,7 +28,6 @@ const cas1ApplicationsSingle = cas1Applications.path(':id')
 // Non-namespaced
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
-const beds = premisesSingle.path('beds')
 const rooms = premisesSingle.path('rooms')
 const booking = premisesSingle.path('bookings/:bookingId')
 
@@ -89,8 +89,8 @@ export default {
       index: premisesSingle.path('staff'),
     },
     beds: {
-      index: beds,
-      show: beds.path(':bedId'),
+      index: cas1Beds,
+      show: cas1Beds.path(':bedId'),
     },
     rooms,
     room: rooms.path(':roomId'),

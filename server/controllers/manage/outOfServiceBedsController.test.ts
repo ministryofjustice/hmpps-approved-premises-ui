@@ -16,20 +16,23 @@ import {
 import paths from '../../paths/manage'
 import {
   apAreaFactory,
-  bedDetailFactory,
+  cas1BedDetailFactory,
   cas1PremisesFactory,
   outOfServiceBedFactory,
   paginatedResponseFactory,
   premisesSummaryFactory,
+  userDetailsFactory,
 } from '../../testutils/factories'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { createQueryString } from '../../utils/utils'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
+import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import {
-  characteristicsBulletList,
-  characteristicsPairToCharacteristics,
-  roomCharacteristicMap,
-} from '../../utils/characteristicsUtils'
+  outOfServiceBedTableHeaders,
+  outOfServiceBedTableRows,
+  outOfServiceBedTabs,
+  premisesIndexTabs,
+} from '../../utils/outOfServiceBedUtils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -61,6 +64,9 @@ describe('OutOfServiceBedsController', () => {
     jest.resetAllMocks()
     request = createMock<Request>({
       user: { token },
+      session: {
+        user: userDetailsFactory.build(),
+      },
       params: {
         premisesId,
         bedId: outOfServiceBed.bed.id,
@@ -181,7 +187,7 @@ describe('OutOfServiceBedsController', () => {
   describe('show', () => {
     it('shows the outOfService bed', async () => {
       const activeTab = 'details'
-      const bed = bedDetailFactory.build({ id: outOfServiceBed.bed.id })
+      const bed = cas1BedDetailFactory.build({ id: outOfServiceBed.bed.id })
       premisesService.getBed.mockResolvedValue(bed)
 
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
@@ -208,11 +214,22 @@ describe('OutOfServiceBedsController', () => {
         bedId: bed.id,
         id: outOfServiceBed.id,
         activeTab,
-        characteristicsHtml: characteristicsBulletList(characteristicsPairToCharacteristics(bed.characteristics), {
+        characteristicsHtml: characteristicsBulletList(bed.characteristics, {
           labels: roomCharacteristicMap,
         }),
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
         backLink,
+        actions: [
+          {
+            items: [
+              {
+                text: 'Update record',
+                href: paths.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id, bedId: bed.id }),
+              },
+            ],
+          },
+        ],
+        tabs: outOfServiceBedTabs(premisesId, bed.id, outOfServiceBed.id, activeTab),
       })
       expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/:id/:tab',
@@ -252,14 +269,15 @@ describe('OutOfServiceBedsController', () => {
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
 
       expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/premisesIndex', {
-        outOfServiceBeds: paginatedResponse.data,
         pageHeading: 'Out of service beds',
+        tabs: premisesIndexTabs(premisesId, temporality),
         premises: { id: premisesId, name: 'Hope House' },
         hrefPrefix: paginationDetails.hrefPrefix,
-        temporality,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         totalResults: Number(paginatedResponse.totalResults),
+        tableHeaders: outOfServiceBedTableHeaders(req.session.user),
+        tableRows: outOfServiceBedTableRows(paginatedResponse.data, premisesId, req.session.user),
         backLink,
       })
 

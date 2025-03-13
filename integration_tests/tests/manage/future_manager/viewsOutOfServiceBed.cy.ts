@@ -1,5 +1,5 @@
 import {
-  bedDetailFactory,
+  cas1BedDetailFactory,
   outOfServiceBedFactory,
   outOfServiceBedRevisionFactory,
   premisesFactory,
@@ -24,7 +24,7 @@ context('OutOfServiceBeds', () => {
       const premises = premisesFactory.build()
       const outOfServiceBed = outOfServiceBedFactory.build({ bed })
       outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
-      const bedDetail = bedDetailFactory.build({ id: bed.id })
+      const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
 
       cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
       cy.task('stubBed', { premisesId: premises.id, bedDetail })
@@ -69,7 +69,7 @@ context('OutOfServiceBeds', () => {
         bed,
         revisionHistory: [outOfServiceBedRevision],
       })
-      const bedDetail = bedDetailFactory.build({ id: bed.id })
+      const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
 
       cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
       cy.task('stubBed', { premisesId: premises.id, bedDetail })

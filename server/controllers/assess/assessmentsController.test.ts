@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApprovedPremisesAssessmentSummary as AssessmentSummary, Task } from '@approved-premises/api'
+import { ApprovedPremisesAssessmentSummary as AssessmentSummary, Task, Unit } from '@approved-premises/api'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
@@ -306,7 +306,6 @@ describe('assessmentsController', () => {
 
     describe('if the "confirmation" input is "confirmed"', () => {
       it('renders the success view', async () => {
-        request.params.id = 'some-id'
         request.body.confirmation = 'confirmed'
 
         const requestHandler = assessmentsController.submit()
@@ -314,9 +313,34 @@ describe('assessmentsController', () => {
         await requestHandler(request, response, next)
 
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        expect(assessmentService.submit).toHaveBeenCalledWith(token, assessment)
         expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
           pageHeading: 'Assessment submission confirmed',
           assessment,
+        })
+      })
+
+      it('copies legacy isArsonDesignated to isArsonSuitable (APS-1876)', async () => {
+        const data: Unit = { 'matching-information': { 'matching-information': { isArsonDesignated: 'essential' } } }
+        const expectedData: Unit = {
+          'matching-information': {
+            'matching-information': { isArsonDesignated: 'essential', isArsonSuitable: 'essential' },
+          },
+        }
+        const assessmentWithData = assessmentFactory.build({ data })
+        const expectedAssessment = { ...assessmentWithData, data: expectedData }
+
+        assessmentService.findAssessment.mockResolvedValue(assessmentWithData)
+        request.body.confirmation = 'confirmed'
+        const requestHandler = assessmentsController.submit()
+
+        await requestHandler(request, response, next)
+
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        expect(assessmentService.submit).toHaveBeenCalledWith(token, expectedAssessment)
+        expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
+          pageHeading: 'Assessment submission confirmed',
+          assessment: expectedAssessment,
         })
       })
     })

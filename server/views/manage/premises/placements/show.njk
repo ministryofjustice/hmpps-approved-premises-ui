@@ -110,17 +110,3 @@
     {% endif %}
 {% endblock %}
 
-{% block extraScripts %}
-    <script type="text/javascript" src="/assets/js/linkDebounce.js"></script>
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-      const container = $('.moj-button-menu')
-      if (container?.length) {
-        new MOJFrontend.ButtonMenu({
-          container: container,
-          mq: '(min-width: 200em)',
-          buttonText: 'Actions',
-          menuClasses: 'moj-button-menu__wrapper--right',
-        })
-      }
-    </script>
-{% endblock %}

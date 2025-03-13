@@ -1,9 +1,10 @@
 import { Cas1SpaceBookingDaySummarySortField, SortDirection } from '@approved-premises/api'
 import {
-  bedDetailFactory,
-  bedSummaryFactory,
+  cas1BedDetailFactory,
   cas1PremiseCapacityFactory,
+  cas1PremisesBedSummaryFactory,
   cas1PremisesDaySummaryFactory,
+  cas1PremisesFactory,
   premisesFactory,
   staffMemberFactory,
 } from '../testutils/factories'
@@ -18,58 +19,6 @@ describeClient('PremisesClient', provider => {
 
   beforeEach(() => {
     premisesClient = new PremisesClient(token)
-  })
-
-  describe('getBeds', () => {
-    it('should return a list of beds for a given premises', async () => {
-      const premises = premisesFactory.build()
-      const beds = bedSummaryFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get a list of beds for a premises',
-        withRequest: {
-          method: 'GET',
-          path: paths.premises.beds.index({ premisesId: premises.id }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: beds,
-        },
-      })
-
-      const output = await premisesClient.getBeds(premises.id)
-      expect(output).toEqual(beds)
-    })
-  })
-
-  describe('getBed', () => {
-    it('should return a bed for a given premises', async () => {
-      const premises = premisesFactory.build()
-      const bed = bedDetailFactory.build()
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get a bed for a premises',
-        withRequest: {
-          method: 'GET',
-          path: paths.premises.beds.show({ premisesId: premises.id, bedId: bed.id }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: bed,
-        },
-      })
-
-      const output = await premisesClient.getBed(premises.id, bed.id)
-      expect(output).toEqual(bed)
-    })
   })
 
   describe('getStaff', () => {
@@ -101,9 +50,60 @@ describeClient('PremisesClient', provider => {
 
 describeCas1NamespaceClient('PremisesCas1Client', provider => {
   let premisesClient: PremisesClient
+  const premises = cas1PremisesFactory.build()
 
   beforeEach(() => {
     premisesClient = new PremisesClient(token)
+  })
+
+  describe('getBeds', () => {
+    it('should return a list of beds for a given premises', async () => {
+      const beds = cas1PremisesBedSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of beds for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.beds.index({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: beds,
+        },
+      })
+
+      const output = await premisesClient.getBeds(premises.id)
+      expect(output).toEqual(beds)
+    })
+  })
+
+  describe('getBed', () => {
+    it('should return a bed for a given premises', async () => {
+      const bed = cas1BedDetailFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a bed for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.beds.show({ premisesId: premises.id, bedId: bed.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bed,
+        },
+      })
+
+      const output = await premisesClient.getBed(premises.id, bed.id)
+      expect(output).toEqual(bed)
+    })
   })
 
   describe('getCapacity', () => {
@@ -111,7 +111,6 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       const startDate = '2025-03-14'
       const endDate = '2025-11-11'
       const excludeSpaceBookingId = 'id-to-exclude'
-      const premises = premisesFactory.build()
       const premiseCapacity = cas1PremiseCapacityFactory.build()
 
       provider.addInteraction({
@@ -143,7 +142,6 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
   describe('getDaySummary', () => {
     it('should return capacity and occupancy data for a given premises for a given day', async () => {
       const date = '2025-03-14'
-      const premises = premisesFactory.build()
       const premiseCapacity = cas1PremisesDaySummaryFactory.build()
       const bookingsSortDirection: SortDirection = 'asc'
       const bookingsSortBy: Cas1SpaceBookingDaySummarySortField = 'personName'

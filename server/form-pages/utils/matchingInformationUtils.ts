@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Unit } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
 import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/match/placementDates'
@@ -153,9 +153,9 @@ const defaultMatchingInformationValues = (
       'notRelevant',
     ),
     apType: apType(body, application),
-    isArsonDesignated: getValue<GetValuePlacementRequirement>(
+    isArsonSuitable: getValue<GetValuePlacementRequirement>(
       body,
-      'isArsonDesignated',
+      'isArsonSuitable',
       application,
       [{ name: 'arson', page: Arson }],
       ['yes'],
@@ -221,6 +221,25 @@ const defaultMatchingInformationValues = (
     ),
     lengthOfStay: lengthOfStay(body),
   }
+}
+
+// TODO: remove once arson remapping (APS-1876) is completed
+export const remapArsonAssessmentData = (assessmentData: Unit): Unit => {
+  if (assessmentData?.['matching-information']?.['matching-information']) {
+    const matchingInformationBody: MatchingInformationBody = {
+      ...assessmentData['matching-information']['matching-information'],
+    }
+    matchingInformationBody.isArsonSuitable =
+      matchingInformationBody.isArsonSuitable || matchingInformationBody.isArsonDesignated
+    return {
+      ...assessmentData,
+      'matching-information': {
+        ...assessmentData['matching-information'],
+        'matching-information': matchingInformationBody,
+      },
+    }
+  }
+  return assessmentData
 }
 
 const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplication): SummaryList => {

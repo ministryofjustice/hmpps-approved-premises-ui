@@ -14,6 +14,24 @@ import { DateFormats } from './dateUtils'
 import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
 
+export const premisesIndexTabs = (premisesId: string, temporality: 'current' | 'future' | 'past') => [
+  {
+    text: 'Current',
+    href: paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }),
+    active: temporality === 'current',
+  },
+  {
+    text: 'Future',
+    href: paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'future' }),
+    active: temporality === 'future',
+  },
+  {
+    text: 'Historic',
+    href: paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'past' }),
+    active: temporality === 'past',
+  },
+]
+
 export const allOutOfServiceBedsTableHeaders = (
   sortBy: OutOfServiceBedSortField,
   sortDirection: SortDirection,
@@ -109,16 +127,30 @@ export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): Ta
   html: bedLink(bed, premisesId),
 })
 
-export const outOfServiceBedCount = (totalResults: number): string => {
-  return totalResults === 1 ? '1 bed' : `${totalResults} beds`
-}
-
 const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
   linkTo(paths.outOfServiceBeds.show({ id: bed.id, bedId: bed.bed.id, premisesId, tab: 'details' }), {
     text: 'View',
     hiddenText: `Out of service bed ${bed.bed.name}`,
     attributes: { 'data-cy-bedId': bed.bed.id },
   })
+
+export const outOfServiceBedTabs = (
+  premisesId: string,
+  bedId: string,
+  id: string,
+  activeTab: 'details' | 'timeline',
+) => [
+  {
+    text: 'Details',
+    href: paths.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'details' }),
+    active: activeTab === 'details',
+  },
+  {
+    text: 'Timeline',
+    href: paths.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'timeline' }),
+    active: activeTab === 'timeline',
+  },
+]
 
 export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): SummaryList['rows'] => {
   const summaryListItems: Array<SummaryListItem> = []
