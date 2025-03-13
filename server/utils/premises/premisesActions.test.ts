@@ -25,8 +25,8 @@ describe('premisesActions', () => {
     })
   })
 
-  describe('for users with the create OOSB permission', () => {
-    const user = userDetails.build({ permissions: ['cas1_out_of_service_bed_create'] })
+  describe('for users with view OOSB permission', () => {
+    const user = userDetails.build({ permissions: ['cas1_view_out_of_service_beds'] })
     const premises = cas1PremisesFactory.build()
 
     it('includes the MANAGE BEDS action', () => {
@@ -39,7 +39,7 @@ describe('premisesActions', () => {
 
     it('includes the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).toContainAction({
-        text: 'Manage out of service bed records',
+        text: 'View out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })

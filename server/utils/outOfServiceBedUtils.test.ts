@@ -1,10 +1,11 @@
-import { outOfServiceBedFactory, outOfServiceBedRevisionFactory } from '../testutils/factories'
+import { outOfServiceBedFactory, outOfServiceBedRevisionFactory, userDetailsFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
   actionCell,
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
   bedRevisionDetails,
+  outOfServiceBedActions,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   overwriteOoSBedWithUserInput,
@@ -13,6 +14,7 @@ import {
 } from './outOfServiceBedUtils'
 import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
 import { sortHeader } from './sortHeader'
+import paths from '../paths/manage'
 
 describe('outOfServiceBedUtils', () => {
   describe('allOutOfServiceBedsTableHeaders', () => {
@@ -80,7 +82,7 @@ describe('outOfServiceBedUtils', () => {
         { text: 'Out of service until' },
         { text: 'Reason' },
         { text: 'Ref number' },
-        { text: 'Manage' },
+        { text: 'Details' },
       ])
     })
   })
@@ -104,6 +106,33 @@ describe('outOfServiceBedUtils', () => {
       const rows = outOfServiceBedTableRows([outOfServiceBed], premisesId)
 
       expect(rows).toEqual(expectedRows)
+    })
+  })
+
+  describe('outOfServiceBedActions', () => {
+    const premisesId = 'premisesId'
+    const bedId = 'bedId'
+    const id = 'oosbId'
+
+    it('should return null if the user does not have the create OOSB permission', () => {
+      const user = userDetailsFactory.build({ permissions: [] })
+
+      expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual(null)
+    })
+
+    it('should return an action to update the OOSB if the user has the create OOSB permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_out_of_service_bed_create'] })
+
+      expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual([
+        {
+          items: [
+            {
+              text: 'Update record',
+              href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+            },
+          ],
+        },
+      ])
     })
   })
 

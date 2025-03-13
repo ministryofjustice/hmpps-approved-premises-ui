@@ -5,13 +5,14 @@ import {
   Premises,
   SortDirection,
 } from '@approved-premises/api'
-import { SummaryList, SummaryListItem, TableCell } from '@approved-premises/ui'
+import { type IdentityBarMenu, SummaryList, SummaryListItem, TableCell, UserDetails } from '@approved-premises/ui'
 
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { DateFormats } from './dateUtils'
 import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
+import { hasPermission } from './users'
 
 export const premisesIndexTabs = (premisesId: string, temporality: 'current' | 'future' | 'past') => [
   {
@@ -73,7 +74,7 @@ export const outOfServiceBedTableHeaders = () => [
   { text: 'Out of service until' },
   { text: 'Reason' },
   { text: 'Ref number' },
-  { text: 'Manage' },
+  { text: 'Details' },
 ]
 
 export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesId: string) =>
@@ -98,6 +99,25 @@ const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
     hiddenText: `Out of service bed ${bed.bed.name}`,
     attributes: { 'data-cy-bedId': bed.bed.id },
   })
+
+export const outOfServiceBedActions = (
+  user: UserDetails,
+  premisesId: string,
+  bedId: string,
+  id: string,
+): Array<IdentityBarMenu> =>
+  hasPermission(user, ['cas1_out_of_service_bed_create'])
+    ? [
+        {
+          items: [
+            {
+              text: 'Update record',
+              href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+            },
+          ],
+        },
+      ]
+    : null
 
 export const outOfServiceBedTabs = (
   premisesId: string,

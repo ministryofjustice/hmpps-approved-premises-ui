@@ -12,6 +12,7 @@ import { SanitisedError } from '../../sanitisedError'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
 import {
+  outOfServiceBedActions,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   outOfServiceBedTabs,
@@ -240,16 +241,7 @@ export default class OutOfServiceBedsController {
         activeTab: tab,
         characteristicsHtml,
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
-        actions: [
-          {
-            items: [
-              {
-                text: 'Update record',
-                href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
-              },
-            ],
-          },
-        ],
+        actions: outOfServiceBedActions(req.session.user, premisesId, bedId, id),
         tabs: outOfServiceBedTabs(premisesId, bedId, id, tab),
       })
     }

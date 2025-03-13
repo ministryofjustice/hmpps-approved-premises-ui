@@ -14,9 +14,9 @@ export const premisesActions = (user: UserDetails, premises: Cas1Premises) => {
     href: premisesBedsPath,
   })
 
-  if (hasPermission(user, ['cas1_out_of_service_bed_create'])) {
+  if (hasPermission(user, ['cas1_view_out_of_service_beds'])) {
     actions.push({
-      text: 'Manage out of service bed records',
+      text: 'View out of service bed records',
       classes: 'govuk-button--secondary',
       href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
     })

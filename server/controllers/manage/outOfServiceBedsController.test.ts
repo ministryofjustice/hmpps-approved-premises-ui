@@ -28,6 +28,7 @@ import { createQueryString } from '../../utils/utils'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
 import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import {
+  outOfServiceBedActions,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   outOfServiceBedTabs,
@@ -219,16 +220,7 @@ describe('OutOfServiceBedsController', () => {
         }),
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
         backLink,
-        actions: [
-          {
-            items: [
-              {
-                text: 'Update record',
-                href: paths.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id, bedId: bed.id }),
-              },
-            ],
-          },
-        ],
+        actions: outOfServiceBedActions(request.session.user, premisesId, bed.id, outOfServiceBed.id),
         tabs: outOfServiceBedTabs(premisesId, bed.id, outOfServiceBed.id, activeTab),
       })
       expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
