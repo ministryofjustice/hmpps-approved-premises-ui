@@ -32,7 +32,7 @@ context('Appeals', () => {
     let showPage = ShowPage.visit(application)
 
     // And I lodge an appeal
-    showPage.clickActions()
+    showPage.clickOpenActionsMenu()
     showPage.clickAppealLink()
 
     // Then I should be on the appeals page

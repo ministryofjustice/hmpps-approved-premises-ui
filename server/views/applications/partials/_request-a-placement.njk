@@ -3,9 +3,7 @@
 
 {% macro requestAPlacement(requestsForPlacement, application, user, csrfToken) %}
 
-    <div class="moj-page-header-actions__actions">
-        <div class="moj-button-menu">
-            <div class="moj-button-menu__wrapper">
+
                 {% if application.assessmentDecision === 'accepted' and application.status !== 'withdrawn' and application.status !== 'expired' %}
                     <form action="{{ paths.placementApplications.create({}) }}" method="post">
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -16,9 +14,7 @@
                         }) }}
                     </form>
                 {% endif %}
-            </div>
-        </div>
-    </div>
+
 
     {% set requestsForPlacement = PlacementRequestUtils.mapRequestsForPlacementToSummaryCards(requestsForPlacement, application, user) %}
 
