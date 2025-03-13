@@ -204,6 +204,26 @@ describe('SuitabilityAssessment', () => {
           'You must confirm if the application explains how an AP placement would be beneficial for risk management',
       })
     })
+
+    it('should show errors if the answers are no and no comments are provided', () => {
+      const page = new SuitabilityAssessment(
+        {
+          riskFactors: 'no',
+          riskManagement: 'no',
+          locationOfPlacement: 'no',
+          moveOnPlan: 'no',
+        },
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        moveOnPlanComments: 'You must explain why the move on plan is insufficient',
+        riskFactorsComments:
+          'You must explain how the application fails to identify the risk factors that an AP placement can support',
+        riskManagementComments:
+          'You must explain how the application fails to identify how an AP placement would be beneficial for risk management',
+      })
+    })
   })
 
   describe('response', () => {
