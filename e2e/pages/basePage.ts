@@ -26,7 +26,7 @@ export class BasePage {
 
   async clickAction(label: string) {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: label }).click()
+    await this.page.getByRole('button', { name: label }).click()
   }
 
   async fillField(label: string, value: string) {

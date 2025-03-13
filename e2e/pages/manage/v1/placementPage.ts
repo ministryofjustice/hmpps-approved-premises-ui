@@ -11,7 +11,7 @@ export class PlacementPage extends BasePage {
 
   async clickMarkCancelled() {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Withdraw placement' }).click()
+    await this.page.getByRole('button', { name: 'Withdraw placement' }).click()
   }
 
   async showsCancellationLoggedMessage() {
@@ -20,7 +20,7 @@ export class PlacementPage extends BasePage {
 
   async clickChangePlacementDates() {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Change placement dates' }).click()
+    await this.page.getByRole('button', { name: 'Change placement dates' }).click()
   }
 
   async showsPlacementDateChangeSuccessMessage() {

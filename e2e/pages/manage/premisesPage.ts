@@ -11,7 +11,7 @@ export class PremisesPage extends PaginatedPage {
 
   async viewRooms() {
     await this.page.getByRole('button', { name: 'Actions' }).click()
-    await this.page.getByRole('menuitem', { name: 'Manage beds' }).click()
+    await this.page.getByRole('button', { name: 'Manage beds' }).click()
   }
 
   async showsLostBedLoggedMessage() {
@@ -38,12 +38,12 @@ export class PremisesPage extends PaginatedPage {
 
   async clickCreatePlacement() {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Create a placement' }).click()
+    await this.page.getByRole('button', { name: 'Create a placement' }).click()
   }
 
   async viewOutOfServiceBedRecords() {
     await this.page.getByRole('button', { name: 'Actions' }).click()
-    await this.page.getByRole('menuitem', { name: 'Manage out of service bed records' }).click()
+    await this.page.getByRole('button', { name: 'Manage out of service bed records' }).click()
   }
 
   async openBookingFromRow(bookingRow: Locator) {
