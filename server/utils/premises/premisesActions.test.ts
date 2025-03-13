@@ -10,7 +10,7 @@ describe('premisesActions', () => {
 
     it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({
-        text: 'Manage out of service bed records',
+        text: 'View out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })
@@ -52,7 +52,7 @@ describe('premisesActions', () => {
 
     it('does NOT include the OUT OF SERVICE BEDS action', () => {
       expect(premisesActions(user, premises)).not.toContainAction({
-        text: 'Manage out of service bed records',
+        text: 'View out of service bed records',
         classes: 'govuk-button--secondary',
         href: paths.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })
