@@ -71,15 +71,23 @@ export default class SuitabilityAssessment implements TasklistPage {
     if (!this.body.riskFactors)
       errors.riskFactors =
         'You must confirm if the application identifies the risk factors that an AP placement can support'
+    if (this.body.riskFactors === 'no' && !this.body.riskFactorsComments)
+      errors.riskFactorsComments =
+        'You must explain how the application fails to identify the risk factors that an AP placement can support'
 
     if (!this.body.riskManagement)
       errors.riskManagement =
         'You must confirm if the application explains how an AP placement would be beneficial for risk management'
+    if (this.body.riskManagement === 'no' && !this.body.riskManagementComments)
+      errors.riskManagementComments =
+        'You must explain how the application fails to identify how an AP placement would be beneficial for risk management'
 
     if (!this.body.locationOfPlacement)
       errors.locationOfPlacement = 'You must confirm if there factors to consider regarding the location of placement'
 
     if (!this.body.moveOnPlan) errors.moveOnPlan = 'You must confirm if the move on plan is sufficient'
+    if (this.body.moveOnPlan === 'no' && !this.body.moveOnPlanComments)
+      errors.moveOnPlanComments = 'You must explain why the move on plan is insufficient'
 
     return errors
   }
