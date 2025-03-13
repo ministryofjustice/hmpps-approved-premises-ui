@@ -18,7 +18,7 @@ describe('User service', () => {
   const userClient: jest.Mocked<UserClient> = new UserClient(null) as jest.Mocked<UserClient>
   const userClientFactory = jest.fn()
   const referenceDataClientFactory = jest.fn()
-  const approvedPremisesUser = userFactory.build({ roles: ['workflow_manager', 'assessor'] })
+  const approvedPremisesUser = userFactory.build({ roles: ['assessor', 'future_manager'] })
   const userProfile = userProfileFactory.build({ user: approvedPremisesUser })
   const referenceDataClient = new ReferenceDataClient(null) as jest.Mocked<ReferenceDataClient>
 

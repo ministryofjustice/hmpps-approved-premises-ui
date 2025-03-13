@@ -9,18 +9,17 @@ import { applicationSuitableStatuses } from '../../../server/utils/applications/
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import DashboardPage from '../../pages/apply/dashboard'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
+import { signIn } from '../signIn'
 
 context('All applications', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+
+    // Given I am signed in as an applicant
+    signIn()
   })
 
   it('lists all applications with pagination', () => {
-    // Given I am logged in
-    cy.signIn()
-
     // Given there are multiple pages of applications
     const page1Applications = applicationSummaryFactory.buildList(10)
     const page2Applications = applicationSummaryFactory.buildList(10)
@@ -62,9 +61,6 @@ context('All applications', () => {
   })
 
   it('lists all applications for lao', () => {
-    // Given I am logged in
-    cy.signIn()
-
     // Given there is a page of application
     const page1Applications = applicationSummaryFactory.buildList(1)
 
@@ -84,10 +80,7 @@ context('All applications', () => {
   })
 
   it('supports sorting by createdAt', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And there is a page of applications
+    // Given there is a page of applications
     const applications = applicationSummaryFactory.buildList(10)
 
     cy.task('stubAllApplications', { applications, page: '1' })
@@ -137,10 +130,7 @@ context('All applications', () => {
   })
 
   it('supports filtering', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And there is a page of applications
+    // Given there is a page of applications
     const applications = applicationSummaryFactory.buildList(10)
     const statusFilter: ApplicationStatus = 'rejected'
     cy.task('stubAllApplications', { applications })
@@ -198,10 +188,7 @@ context('All applications', () => {
 
   it('request for placement for application status awaiting placement', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
-      // Given I am logged in
-      cy.signIn()
-
-      // And there is a page of applications
+      // Given there is a page of applications
       const applications = applicationSummaryFactory.buildList(1, {
         status: 'awaitingPlacement',
         hasRequestsForPlacement: false,
@@ -234,10 +221,7 @@ context('All applications', () => {
   })
 
   it('navigate to request for placement tab for application with at least one request for placement', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And there is a page of applications
+    // Given there is a page of applications
     const applications = applicationSummaryFactory.buildList(1, {
       status: 'awaitingPlacement',
       hasRequestsForPlacement: true,
@@ -269,10 +253,7 @@ context('All applications', () => {
   })
 
   const shouldSortByField = (field: string) => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And there is a page of applications
+    // Given there is a page of applications
     const applications = applicationSummaryFactory.buildList(10)
 
     cy.task('stubAllApplications', { applications, page: '1' })

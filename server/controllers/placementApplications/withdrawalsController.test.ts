@@ -31,7 +31,7 @@ describe('withdrawalsController', () => {
 
   beforeEach(() => {
     withdrawalsController = new WithdrawalsController(placementApplicationService)
-    request = createMock<Request>({ session: { user: { roles: ['workflow_manager'] } }, user: { token } })
+    request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
   })
@@ -66,7 +66,7 @@ describe('withdrawalsController', () => {
         ...errorsAndUserInput.userInput,
       })
       expect(placementApplicationService.getPlacementApplication).toHaveBeenCalledWith(token, placementApplicationId)
-      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user.roles)
+      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user)
     })
   })
 

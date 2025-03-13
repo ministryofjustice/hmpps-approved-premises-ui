@@ -24,39 +24,51 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.placementRequests.bookingNotMade.confirm.pattern, placementRequestBookingsController.bookingNotMade(), {
     auditEvent: 'NEW_BOOKING_NOT_MADE',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
   post(
     paths.placementRequests.bookingNotMade.create.pattern,
     placementRequestBookingsController.createBookingNotMade(),
-    { auditEvent: 'CREATE_BOOKING_NOT_MADE' },
+    {
+      auditEvent: 'CREATE_BOOKING_NOT_MADE',
+      allowedPermissions: ['cas1_space_booking_create'],
+    },
   )
 
   get(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
     auditEvent: 'SPACE_SEARCH',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
   post(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.filterSearch(), {
     auditEvent: 'SPACE_SEARCH_FILTER',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
 
   get(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.view(), {
     auditEvent: 'OCCUPANCY_VIEW',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
   post(paths.v2Match.placementRequests.search.occupancy.pattern, occupancyViewController.filterView(), {
     auditEvent: 'OCCUPANCY_VIEW_FILTER',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
   post(paths.v2Match.placementRequests.search.occupancyBook.pattern, occupancyViewController.bookSpace(), {
     auditEvent: 'OCCUPANCY_VIEW_BOOK_SPACE',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
 
   get(paths.v2Match.placementRequests.search.dayOccupancy.pattern, occupancyViewController.viewDay(), {
     auditEvent: 'OCCUPANCY_VIEW_DAY',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
 
   get(paths.v2Match.placementRequests.spaceBookings.new.pattern, spaceBookingsController.new(), {
     auditEvent: 'NEW_SPACE_BOOKING',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
   post(paths.v2Match.placementRequests.spaceBookings.create.pattern, spaceBookingsController.create(), {
     auditEvent: 'CREATE_SPACE_BOOKING',
+    allowedPermissions: ['cas1_space_booking_create'],
   })
 
   return router

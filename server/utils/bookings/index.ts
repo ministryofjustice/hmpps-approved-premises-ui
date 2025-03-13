@@ -9,7 +9,7 @@ import { linebreaksToParagraphs, linkTo } from '../utils'
 import { displayName } from '../personUtils'
 import { convertObjectsToRadioItems, summaryListItem } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
-import { bookingActions, v1BookingActions, v2BookingActions } from './bookingActions'
+import { bookingActions } from './bookingActions'
 import { EntityType } from '../../@types/ui'
 
 type ConflictingEntityType = EntityType
@@ -19,7 +19,7 @@ type ParsedConflictError = {
   conflictingEntityType: ConflictingEntityType
 }
 
-export { bookingActions, v1BookingActions, v2BookingActions }
+export { bookingActions }
 
 export const bookingSummaryList = (booking?: PlacementRequestBookingSummary): SummaryList => {
   return booking

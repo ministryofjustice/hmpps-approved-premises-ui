@@ -1,22 +1,23 @@
-import { signInWithRolesAndPermissions } from '../helpers'
 import DashboardPage from '../pages/dashboard'
+import { signIn } from './signIn'
 
 context('Dashboard', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
   })
 
-  it('displays all services when a user has all roles and permissions required', () => {
-    signInWithRolesAndPermissions(
-      ['assessor', 'future_manager', 'report_viewer', 'user_manager'],
-      [
+  it('displays all services when a user has all permissions required', () => {
+    signIn({
+      permissions: [
         'cas1_view_assigned_assessments',
         'cas1_view_manage_tasks',
         'cas1_view_cru_dashboard',
         'cas1_view_out_of_service_beds',
+        'cas1_premises_view',
+        'cas1_reports_view',
+        'cas1_user_management',
       ],
-    )
+    })
 
     const dashboardPage = DashboardPage.visit()
 
@@ -31,48 +32,20 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('outOfServiceBeds')
   })
 
-  it('only displays the apply and assess services to users with "cas1_view_assigned_assessments" permission', () => {
-    signInWithRolesAndPermissions([], ['cas1_view_assigned_assessments'])
+  it('only displays the apply and timeline services when someone has no permissions', () => {
+    signIn()
 
     const dashboardPage = DashboardPage.visit()
 
     dashboardPage.shouldShowCard('apply')
-    dashboardPage.shouldShowCard('assess')
-
-    dashboardPage.shouldNotShowCard('manage')
-  })
-
-  it('only displays the apply service when someone has no roles', () => {
-    signInWithRolesAndPermissions([])
-
-    const dashboardPage = DashboardPage.visit()
-
-    dashboardPage.shouldShowCard('apply')
+    dashboardPage.shouldShowCard('timeline')
 
     dashboardPage.shouldNotShowCard('assess')
     dashboardPage.shouldNotShowCard('manage')
-  })
-
-  it('only displays the apply and manage services to managers', () => {
-    signInWithRolesAndPermissions(['future_manager'])
-
-    const dashboardPage = DashboardPage.visit()
-
-    dashboardPage.shouldShowCard('manage')
-    dashboardPage.shouldShowCard('apply')
-
-    dashboardPage.shouldNotShowCard('assess')
-  })
-
-  it('displays the apply and user management services to users with "user_manager"', () => {
-    signInWithRolesAndPermissions(['user_manager'])
-
-    const dashboardPage = DashboardPage.visit()
-
-    dashboardPage.shouldShowCard('apply')
-    dashboardPage.shouldShowCard('userManagement')
-
-    dashboardPage.shouldNotShowCard('assess')
-    dashboardPage.shouldNotShowCard('manage')
+    dashboardPage.shouldNotShowCard('workflow')
+    dashboardPage.shouldNotShowCard('cruDashboard')
+    dashboardPage.shouldNotShowCard('reports')
+    dashboardPage.shouldNotShowCard('userManagement')
+    dashboardPage.shouldNotShowCard('outOfServiceBeds')
   })
 })

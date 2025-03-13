@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
 
-import { ProfileResponse, User } from '@approved-premises/api'
+import { ApprovedPremisesUser, ProfileResponse } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from './setup'
 import tokenVerification from './tokenVerification'
@@ -145,7 +145,7 @@ export default {
   stubSignIn: (): Promise<[Response, Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
   stubAuthUser: (
-    args: Partial<User> & {
+    args: Partial<ApprovedPremisesUser> & {
       profile?: ProfileResponse
     } = {},
   ): Promise<Response> =>
@@ -154,6 +154,8 @@ export default {
         userProfileFactory.build({
           user: userFactory.build({
             ...args,
+            roles: args.roles || [],
+            permissions: args.permissions || [],
             isActive: true,
           }),
         }),

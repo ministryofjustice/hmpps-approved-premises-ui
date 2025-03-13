@@ -3,11 +3,11 @@ import type { Request, RequestHandler, Response } from 'express'
 import { placementApplicationWithdrawalReasons } from '../../../utils/applications/utils'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
+import applyPaths from '../../../paths/apply'
 import { PlacementRequestService } from '../../../services'
 import { ErrorWithData } from '../../../utils/errors'
 import { withdrawalMessage } from '../../../utils/placementRequests/utils'
-
-export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
+import { hasPermission } from '../../../utils/users'
 
 export default class WithdrawalsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -16,7 +16,7 @@ export default class WithdrawalsController {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
-      const withdrawalReasonsRadioItems = placementApplicationWithdrawalReasons(req.session.user.roles)
+      const withdrawalReasonsRadioItems = placementApplicationWithdrawalReasons(req.session.user)
 
       const applicationId = req.flash('applicationId')?.[0] || ''
 
@@ -55,7 +55,12 @@ export default class WithdrawalsController {
         } catch (error) {
           req.flash('success', 'Placement application withdrawn')
         }
-        return res.redirect(paths.admin.cruDashboard.index({}))
+
+        const redirect = hasPermission(req.session.user, ['cas1_view_cru_dashboard'])
+          ? paths.admin.cruDashboard.index({})
+          : applyPaths.applications.index({})
+
+        return res.redirect(redirect)
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

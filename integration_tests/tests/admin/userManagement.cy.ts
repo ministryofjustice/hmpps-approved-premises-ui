@@ -7,15 +7,14 @@ import ListPage from '../../pages/admin/userManagement/listPage'
 import SearchDeliusPage from '../../pages/admin/userManagement/searchDeliusPage'
 import ShowPage from '../../pages/admin/userManagement/showPage'
 import Page from '../../pages/page'
+import { signIn } from '../signIn'
 
 context('User management', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
 
-    // Given I am logged in
-    cy.signIn()
+    // Given I am signed in as a User manager
+    signIn({ permissions: ['cas1_user_management'] })
   })
 
   it('allows the user to view and update users', () => {
@@ -23,11 +22,9 @@ context('User management', () => {
     const users = userFactory.buildList(10, { roles: ['assessor'], cruManagementAreaOverride: undefined })
     const user = users[0]
     const cruManagementAreas = cruManagementAreaFactory.buildList(5)
-    const roles = ['matcher', 'workflow_manager']
     cy.task('stubFindUser', { user, id: user.id })
     cy.task('stubUsers', { users })
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
-    cy.task('stubAuthUser', { roles })
 
     // When I visit the list page
     const listPage = ListPage.visit()
@@ -48,7 +45,7 @@ context('User management', () => {
     // When I update the user's CRU management area, roles and qualifications
     const updatedCruManagementArea = cruManagementAreas[1]
     const updatedRoles = {
-      roles: ['matcher', 'workflow_manager'] as const,
+      roles: ['cru_member', 'report_viewer'] as const,
       allocationRoles: [
         'excluded_from_assess_allocation',
         'excluded_from_match_allocation',
@@ -94,7 +91,7 @@ context('User management', () => {
     const revisitedListPage = ListPage.visit()
     revisitedListPage.shouldShowUsers(users)
     revisitedListPage.clickUser(user.name)
-    showPage.shouldHaveCriteriaSelected(roles)
+    showPage.shouldHaveCriteriaSelected(updatedRoles.roles as unknown as Array<string>)
   })
 
   it('allows searching for users', () => {

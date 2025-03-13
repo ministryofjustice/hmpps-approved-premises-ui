@@ -1,4 +1,4 @@
-import { filterAllocationRoles, hasManagerRole, hasPermission, hasRole, managerRoles } from './roles'
+import { filterAllocationRoles, hasPermission, hasRole } from './roles'
 import { userDetailsFactory } from '../../testutils/factories'
 
 describe('roles utilities', () => {
@@ -13,12 +13,6 @@ describe('roles utilities', () => {
       const user = userDetailsFactory.build({ roles: ['assessor'] })
 
       expect(hasRole(user, 'applicant')).toEqual(false)
-    })
-  })
-
-  describe('hasManagerRole', () => {
-    it.each(managerRoles)('returns true if the user has the role %s', role => {
-      expect(hasManagerRole(userDetailsFactory.build({ roles: [role] }))).toBe(true)
     })
   })
 
@@ -42,7 +36,7 @@ describe('roles utilities', () => {
         filterAllocationRoles(
           [
             'assessor',
-            'matcher',
+            'appeals_manager',
             'janitor',
             'excluded_from_assess_allocation',
             'excluded_from_match_allocation',
@@ -50,7 +44,7 @@ describe('roles utilities', () => {
           ],
           { returnOnlyAllocationRoles: false },
         ),
-      ).toEqual(['assessor', 'matcher', 'janitor'])
+      ).toEqual(['assessor', 'appeals_manager', 'janitor'])
     })
 
     it('when passed returnOnlyAllocationRoles = false filters out the non-allocation preferences roles', () => {
@@ -58,7 +52,7 @@ describe('roles utilities', () => {
         filterAllocationRoles(
           [
             'assessor',
-            'matcher',
+            'appeals_manager',
             'janitor',
             'excluded_from_assess_allocation',
             'excluded_from_match_allocation',

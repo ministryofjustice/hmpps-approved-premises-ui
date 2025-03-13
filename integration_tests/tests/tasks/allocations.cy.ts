@@ -15,6 +15,7 @@ import {
 import { qualificationFactory } from '../../../server/testutils/factories/user'
 import { applicationUserDetailsFactory } from '../../../server/testutils/factories/application'
 import { fullPersonFactory } from '../../../server/testutils/factories/person'
+import { signIn } from '../signIn'
 
 context('Task Allocation', () => {
   beforeEach(() => {
@@ -73,12 +74,11 @@ context('Task Allocation', () => {
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
-    cy.task('stubUserSummaryList', { users, roles: ['assessor', 'matcher'] })
-    cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
+    cy.task('stubUserSummaryList', { users, roles: ['assessor', 'appeals_manager'] })
+    cy.task('stubUserList', { users, roles: ['assessor', 'appeals_manager'] })
 
-    // And I am logged in with the cas1 view manage tasks permission
-    cy.task('stubAuthUser', { roles: [], permissions: ['cas1_view_manage_tasks'], cruManagementArea })
-    cy.signIn()
+    // And I am signed in as a CRU member
+    signIn({ permissions: ['cas1_view_manage_tasks'], cruManagementArea })
 
     // When I visit the task list page
     const taskListPage = TaskListPage.visit(tasks, [])

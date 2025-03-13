@@ -33,8 +33,8 @@ context('Booking', () => {
   })
 
   it('should allow me to see a booking', () => {
-    // Given I am signed in as a user with no specific role
-    signIn([])
+    // Given I am signed in as an applicant
+    signIn()
 
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
 

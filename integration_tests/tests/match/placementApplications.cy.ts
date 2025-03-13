@@ -27,16 +27,17 @@ import { addResponseToFormArtifact } from '../../../server/testutils/addToApplic
 import ReviewApplicationConfirmPage from '../../pages/match/reviewApplicationForm/confirmPage'
 import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import { signIn } from '../signIn'
 
 context('Placement Applications', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser', { id: defaultUserId, roles: ['workflow_manager'] })
-  })
 
-  beforeEach(() => {
-    cy.signIn()
+    // Given I am signed in as an assessor
+    signIn({
+      id: defaultUserId,
+      permissions: ['cas1_view_assigned_assessments', 'cas1_assess_placement_application'],
+    })
   })
 
   it('allows me to complete form if the reason for placement is ROTL', () => {

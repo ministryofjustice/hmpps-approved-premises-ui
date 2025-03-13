@@ -3,15 +3,14 @@ import { applicationTimelineFactory, personFactory, personalTimelineFactory } fr
 import Page from '../../pages/page'
 import { FindPage } from '../../pages/people/timeline/find'
 import { ShowPage } from '../../pages/people/timeline/show'
+import { signIn } from '../signIn'
 
 context('Application timeline', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser', { roles: [] })
 
-    // Given I am logged in
-    cy.signIn()
+    // Given I am signed in as an applicant
+    signIn()
   })
   ;([true, false] as const).forEach(isOfflineApplication => {
     it(`shows the timeline for a CRN if isOfflineApplication is: ${isOfflineApplication}`, () => {

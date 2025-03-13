@@ -17,7 +17,8 @@ context('Premises', () => {
       cy.task('reset')
 
       // Given I am logged in as a future manager
-      signIn(['future_manager'])
+      signIn({ permissions: ['cas1_premises_view'] })
+
       const premises = premisesSummaryFactory.buildList(5)
       cy.task('stubAllPremises', premises)
       cy.task('stubCas1AllPremises', premises)
@@ -71,8 +72,8 @@ context('Premises', () => {
 
     describe('with placement list permission', () => {
       beforeEach(() => {
-        // Given I am logged in as a future manager with placement list view permission
-        signIn(['future_manager'], ['cas1_space_booking_list'])
+        // Given I am logged in as a future manager
+        signIn({ permissions: ['cas1_premises_view', 'cas1_space_booking_list'] })
       })
 
       it('should show a single premises details page', () => {
@@ -266,7 +267,7 @@ context('Premises', () => {
     describe('without placement list view permission', () => {
       beforeEach(() => {
         // Given I am logged in as a user without placement list view permission
-        signIn(['future_manager'], ['cas1_premises_view'])
+        signIn({ permissions: ['cas1_premises_view'] })
       })
 
       it('should not show the placements section', () => {

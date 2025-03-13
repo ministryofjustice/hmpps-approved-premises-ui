@@ -45,11 +45,9 @@ context('Change Placement', () => {
 
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
 
-    // Given I am signed in
-    signIn(['workflow_manager', 'future_manager'], ['cas1_space_booking_create'])
+    // Given I am signed in as a CRU member
+    signIn({ permissions: ['cas1_space_booking_create'] })
   })
 
   it('allows me to change the dates and criteria of a space booking', () => {

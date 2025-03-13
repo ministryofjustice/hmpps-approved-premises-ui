@@ -1,11 +1,9 @@
 import { add } from 'date-fns'
 import {
   ApprovedPremisesApplication,
-  ApprovedPremisesUserPermission,
   OASysQuestion,
   OASysSupportingInformationQuestion,
   Unit,
-  ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 import { TableCell, TableRow } from '@approved-premises/ui'
 
@@ -81,11 +79,6 @@ const updateApplicationReleaseDate = (data: Unit) => {
   }
 }
 
-const signInWithRolesAndPermissions = (roles: Array<UserRole>, permissions?: Array<ApprovedPremisesUserPermission>) => {
-  cy.task('stubAuthUser', { roles, permissions })
-  cy.signIn()
-}
-
 export {
   roshSummariesFromApplication,
   offenceDetailSummariesFromApplication,
@@ -96,5 +89,4 @@ export {
   updateApplicationReleaseDate,
   shouldShowTableRows,
   uiObjectValue,
-  signInWithRolesAndPermissions,
 }

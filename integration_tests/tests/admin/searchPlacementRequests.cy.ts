@@ -1,8 +1,9 @@
+import { PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import SearchPage from '../../pages/admin/placementApplications/searchPage'
 
 import { placementRequestFactory } from '../../../server/testutils/factories'
-import { PlacementRequestDashboardSearchOptions } from '../../../server/@types/ui'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
+import { signIn } from '../signIn'
 
 context('Search placement Requests', () => {
   const placementRequests = placementRequestFactory.buildList(3)
@@ -18,11 +19,9 @@ context('Search placement Requests', () => {
 
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
 
-    // Given I am logged in
-    cy.signIn()
+    // Given I am logged in as a CRU member
+    signIn({ permissions: ['cas1_view_cru_dashboard'] })
 
     cy.task('stubPlacementRequestsSearch', { placementRequests })
     cy.task('stubPlacementRequestsSearch', {

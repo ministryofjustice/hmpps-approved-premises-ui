@@ -15,17 +15,15 @@ import AssessHelper from '../../helpers/assess'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import { signIn } from '../signIn'
 
 describe('Short notice assessments', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
-  })
 
-  beforeEach(() => {
-    // Given I am logged in
-    cy.signIn()
+    // Given I am signed in as an assessor
+    signIn({ permissions: ['cas1_view_assigned_assessments', 'cas1_assess_application'] })
+
     // And there is a short notice application awaiting assessment
     cy.fixture('applicationData.json').then(applicationData => {
       cy.fixture('assessmentData.json').then(assessmentData => {

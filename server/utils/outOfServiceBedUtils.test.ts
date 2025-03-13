@@ -5,18 +5,18 @@ import {
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
   bedRevisionDetails,
+  outOfServiceBedActions,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   overwriteOoSBedWithUserInput,
   referenceNumberCell,
   sortOutOfServiceBedRevisionsByUpdatedAt,
 } from './outOfServiceBedUtils'
-import { ApprovedPremisesUserRole, Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
+import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
 import { sortHeader } from './sortHeader'
+import paths from '../paths/manage'
 
 describe('outOfServiceBedUtils', () => {
-  const managerRoles: ReadonlyArray<ApprovedPremisesUserRole> = ['workflow_manager', 'future_manager'] as const
-
   describe('allOutOfServiceBedsTableHeaders', () => {
     it('returns the table headers', () => {
       const sortBy = 'bedName'
@@ -74,56 +74,15 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('outOfServiceBedTableHeaders', () => {
-    it.each(managerRoles)('returns table headers for a %s', role => {
-      const user = userDetailsFactory.build({ roles: [role] })
-
-      expect(outOfServiceBedTableHeaders(user)).toEqual([
-        {
-          text: 'Bed',
-        },
-        {
-          text: 'Room',
-        },
-        {
-          text: 'Start date',
-        },
-        {
-          text: 'Out of service until',
-        },
-        {
-          text: 'Reason',
-        },
-        {
-          text: 'Ref number',
-        },
-        {
-          text: 'Manage',
-        },
-      ])
-    })
-
-    it('returns table headers for a user who is not a manager', () => {
-      const user = userDetailsFactory.build({ roles: [] })
-
-      expect(outOfServiceBedTableHeaders(user)).toEqual([
-        {
-          text: 'Bed',
-        },
-        {
-          text: 'Room',
-        },
-        {
-          text: 'Start date',
-        },
-        {
-          text: 'Out of service until',
-        },
-        {
-          text: 'Reason',
-        },
-        {
-          text: 'Ref number',
-        },
+    it('returns all table headers', () => {
+      expect(outOfServiceBedTableHeaders()).toEqual([
+        { text: 'Bed' },
+        { text: 'Room' },
+        { text: 'Start date' },
+        { text: 'Out of service until' },
+        { text: 'Reason' },
+        { text: 'Ref number' },
+        { text: 'Details' },
       ])
     })
   })
@@ -132,9 +91,7 @@ describe('outOfServiceBedUtils', () => {
     const outOfServiceBed = outOfServiceBedFactory.build({ referenceNumber: '123' })
     const premisesId = 'premisesId'
 
-    it.each(managerRoles)('returns table rows for a %s', role => {
-      const user = userDetailsFactory.build({ roles: [role] })
-
+    it('returns table rows', () => {
       const expectedRows = [
         [
           { text: outOfServiceBed.bed.name },
@@ -146,24 +103,36 @@ describe('outOfServiceBedUtils', () => {
           actionCell(outOfServiceBed, premisesId),
         ],
       ]
-      const rows = outOfServiceBedTableRows([outOfServiceBed], premisesId, user)
+      const rows = outOfServiceBedTableRows([outOfServiceBed], premisesId)
+
       expect(rows).toEqual(expectedRows)
     })
+  })
 
-    it('returns table rows for a user who is not a manager', () => {
-      const user = userDetailsFactory.build({ roles: [] })
-      const expectedRows = [
-        [
-          { text: outOfServiceBed.bed.name },
-          { text: outOfServiceBed.room.name },
-          { text: outOfServiceBed.startDate },
-          { text: outOfServiceBed.endDate },
-          { text: outOfServiceBed.reason.name },
-          { text: outOfServiceBed.referenceNumber || 'Not provided' },
-        ],
-      ]
-      const rows = outOfServiceBedTableRows([outOfServiceBed], premisesId, user)
-      expect(rows).toEqual(expectedRows)
+  describe('outOfServiceBedActions', () => {
+    const premisesId = 'premisesId'
+    const bedId = 'bedId'
+    const id = 'oosbId'
+
+    it('should return null if the user does not have the create OOSB permission', () => {
+      const user = userDetailsFactory.build({ permissions: [] })
+
+      expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual(null)
+    })
+
+    it('should return an action to update the OOSB if the user has the create OOSB permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_out_of_service_bed_create'] })
+
+      expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual([
+        {
+          items: [
+            {
+              text: 'Update record',
+              href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+            },
+          ],
+        },
+      ])
     })
   })
 

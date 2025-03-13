@@ -24,8 +24,8 @@ context('Beds', () => {
   })
 
   it('should allow me to visit a bed from the bed list page', () => {
-    // Given I am signed in as a workflow manager
-    signIn(['future_manager'], ['cas1_premises_view', 'cas1_out_of_service_bed_create'])
+    // Given I am signed in as a future manager
+    signIn({ permissions: ['cas1_premises_view', 'cas1_out_of_service_bed_create'] })
 
     // When I visit the beds page
     const bedsPage = BedsListPage.visit(premisesId)

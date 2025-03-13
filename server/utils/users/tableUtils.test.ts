@@ -79,8 +79,7 @@ describe('tableUtils', () => {
       const user = userFactory.build({
         roles: [
           'assessor',
-          'matcher',
-          'workflow_manager',
+          'appeals_manager',
           'user_manager',
 
           'excluded_from_assess_allocation',
@@ -89,7 +88,7 @@ describe('tableUtils', () => {
         ],
       })
       expect(roleCell(user)).toEqual({
-        text: 'Assessor, Matcher, Workflow manager, User manager',
+        text: 'Assessor, Appeals manager, User manager',
       })
     })
   })
@@ -99,8 +98,7 @@ describe('tableUtils', () => {
       const user = userFactory.build({
         roles: [
           'assessor',
-          'matcher',
-          'workflow_manager',
+          'appeals_manager',
           'applicant',
           'user_manager',
           'report_viewer',

@@ -44,15 +44,13 @@ context('Placement Requests', () => {
     process.env.ENABLE_V2_MATCH = 'true'
 
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
     cy.task('stubCruManagementAreaReferenceData')
   })
   const defaultLicenceExpiryDate = '2030-06-05'
 
   it('allows me to search for an available space', () => {
-    // Given I am signed in as a cru_member
-    signIn(['cru_member'], ['cas1_space_booking_create'])
+    // Given I am signed in as a CRU member
+    signIn({ permissions: ['cas1_view_cru_dashboard', 'cas1_space_booking_create'] })
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
@@ -168,8 +166,8 @@ context('Placement Requests', () => {
     const endDate = '2024-08-06'
     const totalCapacity = 10
 
-    // Given I am signed in as a cru_member
-    signIn(['cru_member'], ['cas1_space_booking_create'])
+    // Given I am signed in as a CRU member
+    signIn({ permissions: ['cas1_view_cru_dashboard', 'cas1_space_booking_create'] })
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
@@ -381,7 +379,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to mark a placement request as unable to match', () => {
-    signIn(['cru_member'], ['cas1_space_booking_create'])
+    // Given I am signed in as a CRU member
+    signIn({ permissions: ['cas1_view_cru_dashboard', 'cas1_space_booking_create'] })
 
     // Given there is a placement request waiting for me to match
     const placementRequest = placementRequestDetailFactory.build({
