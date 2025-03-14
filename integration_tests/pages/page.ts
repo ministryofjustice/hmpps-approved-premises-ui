@@ -201,8 +201,12 @@ export default abstract class Page {
     cy.get('button').contains('Continue').click()
   }
 
+  clickLink(text: string): void {
+    cy.get('a').contains(text).click()
+  }
+
   clickBack(): void {
-    cy.get('a').contains('Back').click()
+    this.clickLink('Back')
   }
 
   clickOpenActionsMenu() {

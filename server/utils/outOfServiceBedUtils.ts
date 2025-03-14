@@ -71,7 +71,7 @@ export const outOfServiceBedTableHeaders = () => [
   { text: 'Bed' },
   { text: 'Room' },
   { text: 'Start date' },
-  { text: 'Out of service until' },
+  { text: 'End date' },
   { text: 'Reason' },
   { text: 'Ref number' },
   { text: 'Details' },
@@ -81,8 +81,8 @@ export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesI
   beds.map(bed => [
     textValue(bed.bed.name),
     textValue(bed.room.name),
-    textValue(bed.startDate),
-    textValue(bed.endDate),
+    textValue(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
+    textValue(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
     textValue(bed.reason.name),
     referenceNumberCell(bed.referenceNumber),
     actionCell(bed, premisesId),
@@ -111,7 +111,11 @@ export const outOfServiceBedActions = (
         {
           items: [
             {
-              text: 'Update record',
+              text: 'Cancel out of service bed',
+              href: paths.outOfServiceBeds.cancel({ premisesId, id, bedId }),
+            },
+            {
+              text: 'Update out of service bed',
               href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
             },
           ],

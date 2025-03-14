@@ -10,6 +10,7 @@ import {
   DeparturesController,
   KeyworkerController,
   NonArrivalsController,
+  OutOfServiceBedCancellationController,
   OutOfServiceBedsController,
   PlacementController,
   PremisesController,
@@ -41,6 +42,8 @@ describe('manage routes', () => {
   const outOfServiceBedsController: DeepMocked<OutOfServiceBedsController> = createMock<OutOfServiceBedsController>({})
   const updateOutOfServiceBedsController: DeepMocked<UpdateOutOfServiceBedsController> =
     createMock<UpdateOutOfServiceBedsController>({})
+  const outOfServiceBedCancellationController: DeepMocked<OutOfServiceBedCancellationController> =
+    createMock<OutOfServiceBedCancellationController>({})
   const dateChangesController: DeepMocked<DateChangeController> = createMock<DateChangeController>({})
 
   const cancellationsController: DeepMocked<CancellationsController> = createMock<CancellationsController>({})
@@ -54,6 +57,7 @@ describe('manage routes', () => {
     bookingsController,
     bedsController,
     outOfServiceBedsController,
+    outOfServiceBedCancellationController,
     updateOutOfServiceBedsController,
     dateChangesController,
     premisesController,
@@ -143,6 +147,32 @@ describe('manage routes', () => {
             auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED_FAILURE',
           },
         ],
+      },
+    )
+  })
+
+  it('should allow a user with permission cas1 out of service beds create to access the cancel out of service bed confirmation view', () => {
+    manageRoutes(controllers, router, services)
+
+    expect(getSpy).toHaveBeenCalledWith(
+      paths.outOfServiceBeds.cancel.pattern,
+      outOfServiceBedCancellationController.new(),
+      {
+        auditEvent: 'SHOW_CANCEL_OUT_OF_SERVICE_BED',
+        allowedPermissions: ['cas1_out_of_service_bed_create'],
+      },
+    )
+  })
+
+  it('should allow a user with permission cas1 out of service beds create to cancel an out of service bed', () => {
+    manageRoutes(controllers, router, services)
+
+    expect(postSpy).toHaveBeenCalledWith(
+      paths.outOfServiceBeds.cancel.pattern,
+      outOfServiceBedCancellationController.cancel(),
+      {
+        auditEvent: 'CANCEL_OUT_OF_SERVICE_BED',
+        allowedPermissions: ['cas1_out_of_service_bed_create'],
       },
     )
   })

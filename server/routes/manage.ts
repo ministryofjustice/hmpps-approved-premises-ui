@@ -23,6 +23,7 @@ export default function routes(controllers: Controllers, router: Router, service
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
+    outOfServiceBedCancellationController,
     cancellationsController,
     redirectController,
     keyworkerController,
@@ -362,6 +363,16 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
+  })
+  get(paths.outOfServiceBeds.cancel.pattern, outOfServiceBedCancellationController.new(), {
+    auditEvent: 'SHOW_CANCEL_OUT_OF_SERVICE_BED',
+    // TODO: get the right permission for this
+    allowedPermissions: ['cas1_out_of_service_bed_create'],
+  })
+  post(paths.outOfServiceBeds.cancel.pattern, outOfServiceBedCancellationController.cancel(), {
+    auditEvent: 'CANCEL_OUT_OF_SERVICE_BED',
+    // TODO: get the right permission for this
+    allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
   get(paths.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',

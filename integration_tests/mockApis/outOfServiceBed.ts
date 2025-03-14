@@ -147,29 +147,6 @@ export default {
   stubOutOfServiceBedErrors: ({ premisesId, params }): SuperAgentRequest =>
     stubFor(errorStub(params, paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }))),
 
-  verifyOutOfServiceBedCreate: async ({ premisesId }) =>
-    (
-      await getMatchingRequests({
-        method: 'POST',
-        url: paths.manage.premises.outOfServiceBeds.create({ premisesId }),
-      })
-    ).body.requests,
-
-  verifyOutOfServiceBedUpdate: async ({ premisesId, outOfServiceBed }) =>
-    (
-      await getMatchingRequests({
-        method: 'PUT',
-        url: paths.manage.premises.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id }),
-      })
-    ).body.requests,
-
-  verifyOutOfServiceBedCancel: async ({ premisesId, outOfServiceBedId }) =>
-    (
-      await getMatchingRequests({
-        method: 'POST',
-        url: paths.manage.premises.outOfServiceBeds.cancel({ premisesId, id: outOfServiceBedId }),
-      })
-    ).body.requests,
   verifyOutOfServiceBedsDashboard: async ({
     page = 1,
     sortBy,

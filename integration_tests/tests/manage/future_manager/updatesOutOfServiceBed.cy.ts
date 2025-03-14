@@ -8,6 +8,7 @@ import Page from '../../../pages/page'
 
 import { OutOfServiceBedShowPage, OutOfServiceBedUpdatePage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
+import paths from '../../../../server/paths/api'
 
 describe('Updating an out of service bed', () => {
   beforeEach(() => {
@@ -32,7 +33,7 @@ describe('Updating an out of service bed', () => {
     const showPage = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
     // When I click 'Update record'
-    showPage.clickAction('Update record')
+    showPage.clickAction('Update out of service bed')
 
     // Then I should be taken to the OoS bed update page
     const updatePage = Page.verifyOnPage(OutOfServiceBedUpdatePage, outOfServiceBed)
@@ -50,11 +51,10 @@ describe('Updating an out of service bed', () => {
     updatePage.clickSubmit()
 
     // Then the update is sent to the API
-    cy.task('verifyOutOfServiceBedUpdate', { premisesId: premises.id, outOfServiceBed }).then(requests => {
-      expect(requests).to.have.length(1)
-
-      const body = JSON.parse(requests[0].body)
-
+    cy.task(
+      'verifyApiPut',
+      paths.manage.premises.outOfServiceBeds.update({ premisesId: premises.id, id: outOfServiceBed.id }),
+    ).then(body => {
       const expectedBody: UpdateCas1OutOfServiceBed = {
         reason: updatedOutOfServiceBed.reason.id,
         notes: updatedOutOfServiceBed.notes,

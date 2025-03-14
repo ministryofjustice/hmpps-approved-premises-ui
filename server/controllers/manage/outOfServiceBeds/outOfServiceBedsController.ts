@@ -5,12 +5,12 @@ import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
   generateConflictErrorAndRedirect,
-} from '../../utils/validation'
-import paths from '../../paths/manage'
-import { DateFormats } from '../../utils/dateUtils'
-import { SanitisedError } from '../../sanitisedError'
-import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
+} from '../../../utils/validation'
+import paths from '../../../paths/manage'
+import { DateFormats } from '../../../utils/dateUtils'
+import { SanitisedError } from '../../../sanitisedError'
+import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../../services'
 import {
   outOfServiceBedActions,
   outOfServiceBedTableHeaders,
@@ -18,8 +18,8 @@ import {
   outOfServiceBedTabs,
   premisesIndexTabs,
   sortOutOfServiceBedRevisionsByUpdatedAt,
-} from '../../utils/outOfServiceBedUtils'
-import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
+} from '../../../utils/outOfServiceBedUtils'
+import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 interface ShowRequest extends Request {
   params: {
@@ -100,7 +100,6 @@ export default class OutOfServiceBedsController {
   premisesIndex(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { temporality, premisesId } = req.params as { temporality: Temporality; premisesId: string }
-
       if (!['current', 'future', 'past'].includes(temporality)) {
         return res.redirect(paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       }
@@ -244,28 +243,6 @@ export default class OutOfServiceBedsController {
         actions: outOfServiceBedActions(req.session.user, premisesId, bedId, id),
         tabs: outOfServiceBedTabs(premisesId, bedId, id, tab),
       })
-    }
-  }
-
-  cancel(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      const { premisesId, bedId, id } = req.params
-      const { notes = '' } = req.body
-
-      try {
-        await this.outOfServiceBedService.cancelOutOfServiceBed(req.user.token, id, premisesId, { notes })
-
-        req.flash('success', 'Out of service bed removed')
-
-        return res.redirect(paths.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
-      } catch (error) {
-        return catchValidationErrorOrPropogate(
-          req,
-          res,
-          error as Error,
-          paths.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'details' }),
-        )
-      }
     }
   }
 }

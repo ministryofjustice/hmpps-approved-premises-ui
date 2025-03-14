@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { BookingService, CancellationService, PlacementService } from '../../services'
-import CancellationsController from './cancellationsController'
+import CancellationsController from '../manage/cancellationsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
 import {
