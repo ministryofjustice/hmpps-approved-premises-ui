@@ -79,7 +79,7 @@ describe('outOfServiceBedUtils', () => {
         { text: 'Bed' },
         { text: 'Room' },
         { text: 'Start date' },
-        { text: 'Out of service until' },
+        { text: 'End date' },
         { text: 'Reason' },
         { text: 'Ref number' },
         { text: 'Details' },
@@ -96,8 +96,8 @@ describe('outOfServiceBedUtils', () => {
         [
           { text: outOfServiceBed.bed.name },
           { text: outOfServiceBed.room.name },
-          { text: outOfServiceBed.startDate },
-          { text: outOfServiceBed.endDate },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'short' }) },
           { text: outOfServiceBed.reason.name },
           { text: outOfServiceBed.referenceNumber || 'Not provided' },
           actionCell(outOfServiceBed, premisesId),
@@ -127,7 +127,11 @@ describe('outOfServiceBedUtils', () => {
         {
           items: [
             {
-              text: 'Update record',
+              text: 'Cancel out of service bed',
+              href: paths.outOfServiceBeds.cancel({ premisesId, id, bedId }),
+            },
+            {
+              text: 'Update out of service bed',
               href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
             },
           ],

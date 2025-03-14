@@ -12,6 +12,7 @@ import PlacementController from './placementController'
 import BedsController from './premises/bedsController'
 import OutOfServiceBedsController from './outOfServiceBedsController'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
+import OutOfServiceBedCancellationController from './outOfServiceBedCancellationController'
 import ArrivalsController from './premises/placements/arrivalsController'
 import NonArrivalsController from './premises/placements/nonArrivalsController'
 import KeyworkerController from './premises/placements/keyworkerController'
@@ -28,7 +29,9 @@ export const controllers = (services: Services) => {
     services.sessionService,
   )
   const updateOutOfServiceBedsController = new UpdateOutOfServiceBedsController(services.outOfServiceBedService)
-
+  const outOfServiceBedCancellationController = new OutOfServiceBedCancellationController(
+    services.outOfServiceBedService,
+  )
   const bookingsController = new BookingsController(services.bookingService)
   const bookingExtensionsController = new BookingExtensionsController(services.bookingService)
   const cancellationsController = new CancellationsController(
@@ -60,6 +63,7 @@ export const controllers = (services: Services) => {
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
+    outOfServiceBedCancellationController,
     bookingsController,
     bookingExtensionsController,
     dateChangesController,
