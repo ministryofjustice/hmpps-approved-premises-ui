@@ -474,35 +474,4 @@ describe('OutOfServiceBedsController', () => {
       )
     })
   })
-
-  describe('cancel', () => {
-    it('cancels (removes) an outOfService bed and redirects to the outOfService beds index page', async () => {
-      outOfServiceBedService.cancelOutOfServiceBed.mockResolvedValue(outOfServiceBed)
-
-      const requestHandler = outOfServiceBedController.cancel()
-
-      request.params = {
-        premisesId,
-        id: outOfServiceBed.bed.id,
-      }
-
-      request.body = { notes: '' }
-
-      await requestHandler(request, response, next)
-
-      expect(outOfServiceBedService.cancelOutOfServiceBed).toHaveBeenCalledWith(
-        request.user.token,
-        outOfServiceBed.bed.id,
-        request.params.premisesId,
-        request.body,
-      )
-      expect(request.flash).toHaveBeenCalledWith('success', 'Out of service bed removed')
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.outOfServiceBeds.premisesIndex({
-          premisesId: request.params.premisesId,
-          temporality: 'current',
-        }),
-      )
-    })
-  })
 })

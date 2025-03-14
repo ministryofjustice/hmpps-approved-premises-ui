@@ -170,6 +170,7 @@ export default {
         url: paths.manage.premises.outOfServiceBeds.cancel({ premisesId, id: outOfServiceBedId }),
       })
     ).body.requests,
+
   verifyOutOfServiceBedsDashboard: async ({
     page = 1,
     sortBy,
