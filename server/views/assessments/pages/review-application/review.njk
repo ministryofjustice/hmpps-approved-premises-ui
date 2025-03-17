@@ -5,142 +5,140 @@
 {% extends "../layout.njk" %}
 
 {% set columnClasses= "govuk-grid-column-full" %}
-{% set nomsNumber = page.document.application.person.nomsNumber if page.document.application.person.nomsNumber else 
-  "" %}
+{% set nomsNumber = page.document.application.person.nomsNumber if page.document.application.person.nomsNumber else
+    "" %}
 
 {% block questions %}
 
-  <h1 class="govuk-heading-xl">
-    {{ page.title }}
-  </h1>
+    <h1 class="govuk-heading-xl">
+        {{ page.title }}
+    </h1>
 
-  {{ mojSubNavigation({
+    {{ mojSubNavigation({
         label: 'Sub navigation',
         items: AssessmentUtils.getReviewNavigationItems()
-      }) }}
+    }) }}
 
-  {{
-    govukSummaryList({
-      card: {
-          title: {
-            text: "Person Details",
-            headingLevel: "2"
-          },
-          attributes: {
-            'data-cy-section': "person-details"
-          }
+    {{ govukSummaryList({
+        card: {
+            title: {
+                text: "Person Details",
+                headingLevel: "2"
+            },
+            attributes: {
+                'data-cy-section': "person-details"
+            }
         },
         rows: ([
-          {
-            key: {
-              text: "Names"
+            {
+                key: {
+                text: "Names"
             },
-            value: {
-              text: page.document.application.person.name
+                value: {
+                text: page.document.application.person.name
             }
-          },
-          {
-            key: {
-              text: "CRN"
             },
-            value: {
-              text: page.document.application.person.crn
-            }
-          },
-          {
-            key: {
-              text: "Date of Birth"
+            {
+                key: {
+                text: "CRN"
             },
-            value: {
-              text: formatDate(page.document.application.person.dateOfBirth, { format: 'short' })
+                value: {
+                text: page.document.application.person.crn
             }
-          },
-          {
-            key: {
-              text: "NOMIS Number"
             },
-            value: {
-              text: nomsNumber
-            }
-          },
-          {
-            key: {
-              text: "Nationality"
+            {
+                key: {
+                text: "Date of Birth"
             },
-            value: {
-              text: page.document.application.person.nationality
+                value: {
+                text: formatDate(page.document.application.person.dateOfBirth, { format: 'short' })
             }
-          },
-          {
-            key: {
-              text: "Religion or belief"
             },
-            value: {
-              text: page.document.application.person.religionOrBelief
-            }
-          },
-          {
-            key: {
-              text: "Sex"
+            {
+                key: {
+                text: "NOMIS Number"
             },
-            value: {
-              text: page.document.application.person.sex
+                value: {
+                text: nomsNumber
             }
-          },
-          {
-            key: {
-              text: "Gender Identity"
             },
-            value: {
-              text: page.document.application.person.genderIdentity
-            }
-          },
-          {
-            key: {
-              text: "Status on Submission"
+            {
+                key: {
+                text: "Nationality"
             },
-            value: {
-              html: personStatusTag(page.document.application.personStatusOnSubmission)
+                value: {
+                text: page.document.application.person.nationality
             }
-          },
-          {
-            key: {
-              text: "Prison"
             },
-            value: {
-              text: page.document.application.person.prisonName
+            {
+                key: {
+                text: "Religion or belief"
+            },
+                value: {
+                text: page.document.application.person.religionOrBelief
             }
-          }
+            },
+            {
+                key: {
+                text: "Sex"
+            },
+                value: {
+                text: page.document.application.person.sex
+            }
+            },
+            {
+                key: {
+                text: "Gender Identity"
+            },
+                value: {
+                text: page.document.application.person.genderIdentity
+            }
+            },
+            {
+                key: {
+                text: "Status on Submission"
+            },
+                value: {
+                html: personStatusTag(page.document.application.personStatusOnSubmission)
+            }
+            },
+            {
+                key: {
+                text: "Prison"
+            },
+                value: {
+                text: page.document.application.person.prisonName
+            }
+            }
         ])
-    })
-  }}
+    }) }}
 
-  {% for section in getSummaryCardsForApplication(page.document.application, assessmentId) %}
-    <h2 class="govuk-heading-l" id={{section.title | kebabCase }}>{{ section.title }}</h2>
-    {% for task in section.tasks %}
-      {{ govukSummaryList(task) }}
+    {% for section in getSummaryCardsForApplication(page.document.application, assessmentId) %}
+        <h2 class="govuk-heading-l" id={{ section.title | kebabCase }}>{{ section.title }}</h2>
+        {% for task in section.tasks %}
+            {{ govukSummaryList(task) }}
+        {% endfor %}
     {% endfor %}
-  {% endfor %}
 
-  {{ formPageRadios({
-          fieldName: "reviewed",
-          fieldset: {
+    {{ formPageRadios({
+        fieldName: "reviewed",
+        fieldset: {
             legend: {
-              text: page.question,
-              classes: "govuk-fieldset__legend--m"
+                text: page.question,
+                classes: "govuk-fieldset__legend--m"
             }
-          },
-          items: [
+        },
+        items: [
             {
-              value: "yes",
-              text: "Yes"
+                value: "yes",
+                text: "Yes"
             },
             {
-              value: "no",
-              text: "No"
+                value: "no",
+                text: "No"
             }
-          ]
-        },fetchContext()) }}
+        ]
+    },fetchContext()) }}
 
 {% endblock %}
 
