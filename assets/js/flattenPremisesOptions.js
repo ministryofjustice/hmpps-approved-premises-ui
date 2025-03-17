@@ -1,13 +1,13 @@
 function flattenPremisesOptions(select, index) {
-  var formGroup = select.parentNode
-  var formElement = formGroup.parentNode
-  var optgroups = select.getElementsByTagName('optgroup')
-  var selectedArea
+  const formGroup = select.parentNode
+  const formElement = formGroup.parentNode
+  const optgroups = select.getElementsByTagName('optgroup')
+  let selectedArea
 
   function hideSelect() {
     formGroup.classList.add('govuk-visually-hidden')
 
-    var options = select.getElementsByTagName('option')
+    const options = select.getElementsByTagName('option')
 
     for (let r = 0; r < options.length; ++r) {
       options[r].setAttribute('hidden', true)
@@ -15,7 +15,7 @@ function flattenPremisesOptions(select, index) {
   }
 
   function getAreas() {
-    var areas = []
+    const areas = []
 
     for (let i = 0; i < optgroups.length; ++i) {
       areas.push(optgroups[i].label)
@@ -25,10 +25,10 @@ function flattenPremisesOptions(select, index) {
   }
 
   function flattenOptions() {
-    var ungroupedOptions = []
+    const ungroupedOptions = []
 
     for (let i = 0; i < optgroups.length; ++i) {
-      var options = optgroups[i].getElementsByTagName('option')
+      const options = optgroups[i].getElementsByTagName('option')
 
       for (let r = 0; r < options.length; ++r) {
         options[r].dataset.area = optgroups[i].label
@@ -49,13 +49,13 @@ function flattenPremisesOptions(select, index) {
   }
 
   function createAreaSelect(areas) {
-    var areaFormGroup = formGroup.cloneNode(true)
-    var areaSelect = areaFormGroup.querySelector('select')
-    var areaLabel = areaFormGroup.querySelector('label')
-    var formName = 'area' + index
+    const areaFormGroup = formGroup.cloneNode(true)
+    const areaSelect = areaFormGroup.querySelector('select')
+    const areaLabel = areaFormGroup.querySelector('label')
+    const formName = 'area' + index
 
-    var prompt = document.createElement('option')
-    var promptText = select.dataset.areaPrompt ? select.dataset.areaPrompt : 'Select an area'
+    const prompt = document.createElement('option')
+    const promptText = select.dataset.areaPrompt ? select.dataset.areaPrompt : 'Select an area'
 
     areaSelect.innerHTML = ''
     prompt.innerText = promptText
@@ -68,7 +68,7 @@ function flattenPremisesOptions(select, index) {
     areaLabel.setAttribute('for', formName)
 
     for (let i = 0; i < areas.length; ++i) {
-      var option = document.createElement('option')
+      const option = document.createElement('option')
       option.innerText = areas[i]
       option.selected = option.innerText === selectedArea
       areaSelect.appendChild(option)
@@ -78,11 +78,11 @@ function flattenPremisesOptions(select, index) {
 
     areaSelect.addEventListener('change', function (e) {
       hideSelect()
-      var area = e.target.value
+      const area = e.target.value
 
       formGroup.classList.remove('govuk-visually-hidden')
 
-      var premisesWithArea = formGroup.querySelectorAll('option[data-area="' + area + '"]')
+      const premisesWithArea = formGroup.querySelectorAll('option[data-area="' + area + '"]')
 
       for (let i = 0; i < premisesWithArea.length; ++i) {
         premisesWithArea[i].removeAttribute('hidden')
@@ -90,7 +90,7 @@ function flattenPremisesOptions(select, index) {
     })
   }
 
-  var areas = getAreas()
+  const areas = getAreas()
 
   flattenOptions()
 
@@ -102,8 +102,4 @@ function flattenPremisesOptions(select, index) {
   }
 }
 
-var selectItems = document.querySelectorAll('[data-premises-with-areas]')
-
-for (let i = 0; i < selectItems.length; ++i) {
-  flattenPremisesOptions(selectItems[i], i)
-}
+export default flattenPremisesOptions
