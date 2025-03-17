@@ -1,25 +1,21 @@
 {% extends "govuk/template.njk" %}
 
 {% block head %}
-  {% include "./applicationInsightsScript.njk" %}
+    {% include "./applicationInsightsScript.njk" %}
 
-  <link href="/assets/stylesheets/application.css?{{ version }}" rel="stylesheet"/>
-
+    <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet" />
 {% endblock %}
 
-{% block pageTitle %}{{pageTitle | default(applicationName)}}
+{% block pageTitle %}{{ pageTitle | default(applicationName) }}
 {% endblock %}
 
 {% block header %}
-  {% include "./header.njk" %}
+    {% include "./header.njk" %}
 {% endblock %}
 
 {% block bodyStart %}{% endblock %}
 
 {% block bodyEnd %}
-  {# Run JavaScript at end of the
-  <body>, to avoid blocking the initial render. #}
-  <script type="module" src="/assets/govukFrontendInit.js"></script>
-  <script src="/assets/moj/all.js"></script>
-  {% block extraScripts %}{% endblock %}
+    <script type="module" src="{{ '/assets/js/app.js' | assetMap }}"></script>
+    {% block extraScripts %}{% endblock %}
 {% endblock %}
