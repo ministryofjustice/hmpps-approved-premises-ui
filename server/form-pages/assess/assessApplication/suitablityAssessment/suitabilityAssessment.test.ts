@@ -185,7 +185,7 @@ describe('SuitabilityAssessment', () => {
   )
 
   describe('errors', () => {
-    it('should have an error if there is no answers', () => {
+    it('should have an error if there are no answers', () => {
       const page = new SuitabilityAssessment(
         {
           riskFactors: '' as YesOrNo,
@@ -197,7 +197,7 @@ describe('SuitabilityAssessment', () => {
       )
 
       expect(page.errors()).toEqual({
-        locationOfPlacement: 'You must confirm if there factors to consider regarding the location of placement',
+        locationOfPlacement: 'You must confirm if there are factors to consider regarding the location of placement',
         moveOnPlan: 'You must confirm if the move on plan is sufficient',
         riskFactors: 'You must confirm if the application identifies the risk factors that an AP placement can support',
         riskManagement:
@@ -220,6 +220,7 @@ describe('SuitabilityAssessment', () => {
         moveOnPlanComments: 'You must explain why the move on plan is insufficient',
         riskFactorsComments:
           'You must explain how the application fails to identify the risk factors that an AP placement can support',
+        locationOfPlacementComments: 'You must comment on how location factors have not been considered',
         riskManagementComments:
           'You must explain how the application fails to identify how an AP placement would be beneficial for risk management',
       })

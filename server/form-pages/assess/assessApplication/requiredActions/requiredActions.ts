@@ -102,6 +102,9 @@ export default class RequiredActions implements TasklistPage {
     if (!this.body.curfewsOrSignIns)
       errors.curfewsOrSignIns = 'You must state if there are any additional curfews or sign ins recommended'
 
+    if (this.body.curfewsOrSignIns === 'yes' && !this.body.curfewsOrSignInsComments)
+      errors.curfewsOrSignInsComments = 'You must detail the additional curfews or sign ins recommended'
+
     if (!this.body.concernsOfUnmanagableRisk)
       errors.concernsOfUnmanagableRisk =
         'You must state if there are any concerns that the person poses an potentially unmanageable risk to staff or others'
@@ -123,6 +126,9 @@ export default class RequiredActions implements TasklistPage {
 
     if (!this.body.additionalRecommendations)
       errors.additionalRecommendations = 'You must state if there are any additional recommendations'
+
+    if (this.body.additionalRecommendations === 'yes' && !this.body.additionalRecommendationsComments)
+      errors.additionalRecommendationsComments = 'You must add more detail about the additional recommendations'
 
     return errors
   }

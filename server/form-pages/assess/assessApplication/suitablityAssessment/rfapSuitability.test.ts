@@ -51,6 +51,33 @@ describe('RfapSuitability', () => {
           'You must confirm if a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement',
       })
     })
+
+    it('should show an error if the RFAP is identified as suitable but the corresponding comments box is not populated', () => {
+      const page = new RfapSuitability(
+        {
+          rfapIdentifiedAsSuitable: 'yes',
+        } as RfapSuitabilityBody,
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        yesDetail: 'You must provide details to support the decision',
+      })
+    })
+
+    it('should show an error if the ESAP is identified as not suitable but the corresponding comments box and the rationale box are not populated', () => {
+      const page = new RfapSuitability(
+        {
+          rfapIdentifiedAsSuitable: 'no',
+        } as RfapSuitabilityBody,
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        noDetail: 'You must provide details to support the decision',
+        unsuitabilityForRfapRationale: 'You must provide a summary of the rationale',
+      })
+    })
   })
 
   describe('response', () => {

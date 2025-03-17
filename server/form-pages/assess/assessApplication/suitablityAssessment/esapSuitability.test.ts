@@ -52,6 +52,32 @@ describe('EsapSuitability', () => {
           'You must confirm if a Enhanced Security Approved Premises (ESAP) has been identified as a suitable placement',
       })
     })
+
+    it('should show an error if the ESAP is identified as suitable but the corresponding comments box is not populated', () => {
+      const page = new EsapSuitability(
+        {
+          esapPlacementNeccessary: 'yes',
+        } as EsapSuitabilityBody,
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        yesDetail: 'You must provide details to support the decision',
+      })
+    })
+    it('should show an error if the ESAP is identified as not suitable but the corresponding comments box and the rationale box are not populated', () => {
+      const page = new EsapSuitability(
+        {
+          esapPlacementNeccessary: 'no',
+        } as EsapSuitabilityBody,
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        noDetail: 'You must provide details to support the decision',
+        unsuitabilityForEsapRationale: 'You must provide a summary of the rationale',
+      })
+    })
   })
 
   describe('response', () => {
