@@ -15,7 +15,7 @@ describe('Cancelling an out of service bed', () => {
     cy.task('reset')
 
     // Given I am signed in as a future manager
-    signIn({ permissions: ['cas1_view_out_of_service_beds', 'cas1_out_of_service_bed_create'] })
+    signIn({ permissions: ['cas1_view_out_of_service_beds', 'cas1_out_of_service_bed_cancel'] })
   })
 
   it('should allow me to cancel an out of service bed', () => {
