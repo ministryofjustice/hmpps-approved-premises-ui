@@ -5,7 +5,14 @@ import {
   Premises,
   SortDirection,
 } from '@approved-premises/api'
-import { type IdentityBarMenu, SummaryList, SummaryListItem, TableCell, UserDetails } from '@approved-premises/ui'
+import {
+  type IdentityBarMenu,
+  IdentityBarMenuItem,
+  SummaryList,
+  SummaryListItem,
+  TableCell,
+  UserDetails,
+} from '@approved-premises/ui'
 
 import paths from '../paths/manage'
 import { linkTo } from './utils'
@@ -105,23 +112,24 @@ export const outOfServiceBedActions = (
   premisesId: string,
   bedId: string,
   id: string,
-): Array<IdentityBarMenu> =>
-  hasPermission(user, ['cas1_out_of_service_bed_create'])
-    ? [
-        {
-          items: [
-            {
-              text: 'Cancel out of service bed',
-              href: paths.outOfServiceBeds.cancel({ premisesId, id, bedId }),
-            },
-            {
-              text: 'Update out of service bed',
-              href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
-            },
-          ],
-        },
-      ]
-    : null
+): Array<IdentityBarMenu> => {
+  const cancelItem = {
+    text: 'Cancel out of service bed',
+    href: paths.outOfServiceBeds.cancel({ premisesId, id, bedId }),
+  }
+
+  const updateItem = {
+    text: 'Update out of service bed',
+    href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+  }
+
+  const items: Array<IdentityBarMenuItem> = [
+    hasPermission(user, ['cas1_out_of_service_bed_cancel']) && cancelItem,
+    hasPermission(user, ['cas1_out_of_service_bed_create']) && updateItem,
+  ].filter(Boolean)
+
+  return items.length ? [{ items }] : null
+}
 
 export const outOfServiceBedTabs = (
   premisesId: string,

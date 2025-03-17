@@ -114,7 +114,7 @@ describe('outOfServiceBedUtils', () => {
     const bedId = 'bedId'
     const id = 'oosbId'
 
-    it('should return null if the user does not have the create OOSB permission', () => {
+    it('should return null if the user does not have any permissions', () => {
       const user = userDetailsFactory.build({ permissions: [] })
 
       expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual(null)
@@ -127,12 +127,23 @@ describe('outOfServiceBedUtils', () => {
         {
           items: [
             {
-              text: 'Cancel out of service bed',
-              href: paths.outOfServiceBeds.cancel({ premisesId, id, bedId }),
-            },
-            {
               text: 'Update out of service bed',
               href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+            },
+          ],
+        },
+      ])
+    })
+
+    it('should return an action to cancel the OOSB if the user has the cancel OOSB permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_out_of_service_bed_cancel'] })
+
+      expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual([
+        {
+          items: [
+            {
+              text: 'Cancel out of service bed',
+              href: paths.outOfServiceBeds.cancel({ premisesId, id, bedId }),
             },
           ],
         },

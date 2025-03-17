@@ -35,9 +35,9 @@ import {
   premisesIndexTabs,
 } from '../../../utils/outOfServiceBedUtils'
 
-jest.mock('../../utils/validation')
-jest.mock('../../utils/bookings')
-jest.mock('../../utils/getPaginationDetails')
+jest.mock('../../../utils/validation')
+jest.mock('../../../utils/bookings')
+jest.mock('../../../utils/getPaginationDetails')
 
 describe('OutOfServiceBedsController', () => {
   const token = 'SOME_TOKEN'

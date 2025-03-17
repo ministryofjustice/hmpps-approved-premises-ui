@@ -18,7 +18,7 @@ import {
 import { SanitisedError } from '../../../sanitisedError'
 import * as OoSBedUtils from '../../../utils/outOfServiceBedUtils'
 
-jest.mock('../../utils/validation')
+jest.mock('../../../utils/validation')
 
 describe('updateOutOfServiceBedController', () => {
   const token = 'SOME_TOKEN'

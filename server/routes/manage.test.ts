@@ -159,12 +159,12 @@ describe('manage routes', () => {
       outOfServiceBedCancellationController.new(),
       {
         auditEvent: 'SHOW_CANCEL_OUT_OF_SERVICE_BED',
-        allowedPermissions: ['cas1_out_of_service_bed_create'],
+        allowedPermissions: ['cas1_out_of_service_bed_cancel'],
       },
     )
   })
 
-  it('should allow a user with permission cas1 out of service beds create to cancel an out of service bed', () => {
+  it('should allow a user with permission cas1_out_of_service_bed_cancel to cancel an out of service bed', () => {
     manageRoutes(controllers, router, services)
 
     expect(postSpy).toHaveBeenCalledWith(
@@ -172,7 +172,7 @@ describe('manage routes', () => {
       outOfServiceBedCancellationController.cancel(),
       {
         auditEvent: 'CANCEL_OUT_OF_SERVICE_BED',
-        allowedPermissions: ['cas1_out_of_service_bed_create'],
+        allowedPermissions: ['cas1_out_of_service_bed_cancel'],
       },
     )
   })

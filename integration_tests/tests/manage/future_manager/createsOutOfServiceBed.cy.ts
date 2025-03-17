@@ -1,3 +1,4 @@
+import { Cas1NewOutOfServiceBed } from '@approved-premises/api'
 import {
   cas1BedDetailFactory,
   cas1PremisesBasicSummaryFactory,
@@ -9,7 +10,6 @@ import Page from '../../../pages/page'
 import { OutOfServiceBedCreatePage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
 import paths from '../../../../server/paths/api'
-import { Cas1NewOutOfServiceBed } from '@approved-premises/api'
 
 context('OutOfServiceBeds', () => {
   beforeEach(() => {

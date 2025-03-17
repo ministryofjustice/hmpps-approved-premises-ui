@@ -366,13 +366,11 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.outOfServiceBeds.cancel.pattern, outOfServiceBedCancellationController.new(), {
     auditEvent: 'SHOW_CANCEL_OUT_OF_SERVICE_BED',
-    // TODO: get the right permission for this
-    allowedPermissions: ['cas1_out_of_service_bed_create'],
+    allowedPermissions: ['cas1_out_of_service_bed_cancel'],
   })
   post(paths.outOfServiceBeds.cancel.pattern, outOfServiceBedCancellationController.cancel(), {
     auditEvent: 'CANCEL_OUT_OF_SERVICE_BED',
-    // TODO: get the right permission for this
-    allowedPermissions: ['cas1_out_of_service_bed_create'],
+    allowedPermissions: ['cas1_out_of_service_bed_cancel'],
   })
   get(paths.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
