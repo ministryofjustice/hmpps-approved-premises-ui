@@ -2,9 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Cas1ChangeRequestDecision } from './Cas1ChangeRequestDecision';
 import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
+import type { NamedId } from './NamedId';
 import type { PersonSummary } from './PersonSummary';
-export type Cas1ChangeRequestSummary = {
+import type { Unit } from './Unit';
+export type Cas1ChangeRequest = {
     id: string;
     person: PersonSummary;
     type: Cas1ChangeRequestType;
@@ -13,5 +16,10 @@ export type Cas1ChangeRequestSummary = {
     expectedArrivalDate?: string;
     actualArrivalDate?: string;
     lengthOfStayDays: number;
+    requestReason: NamedId;
+    decision?: Cas1ChangeRequestDecision;
+    decisionJson?: Record<string, Unit>;
+    rejectionReason?: NamedId;
+    updatedAt: string;
 };
 

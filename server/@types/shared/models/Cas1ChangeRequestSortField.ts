@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ChangeRequestSortField = 'created_at' | 'type';
+export type Cas1ChangeRequestSortField = 'name' | 'tier' | 'canonicalArrivalDate' | 'lengthOfStay';
