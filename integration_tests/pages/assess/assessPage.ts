@@ -21,5 +21,6 @@ export default class AssessPage extends FormPage {
 
     this.tasklistPage = new Class(assessment.data?.[taskName]?.[pageName], assessment)
     this.shouldShowKeyDetails(keyDetails(assessment))
+    this.shouldShowMenuItem('Assess')
   }
 }
