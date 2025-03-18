@@ -9,7 +9,7 @@ export class OutOfServiceBedPage extends BasePage {
 
   async selectUpdateRecord() {
     await this.page.getByRole('button', { name: 'Actions' }).click()
-    await this.page.getByRole('button', { name: 'Update record' }).click()
+    await this.page.getByRole('button', { name: 'Update out of service bed' }).click()
   }
 
   async shouldShowUpdatedDetails(update: Record<string, string>) {
