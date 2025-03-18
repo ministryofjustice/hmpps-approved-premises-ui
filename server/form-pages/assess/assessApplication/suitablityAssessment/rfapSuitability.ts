@@ -71,6 +71,9 @@ export default class RfapSuitability implements TasklistPage {
       errors.rfapIdentifiedAsSuitable =
         'You must confirm if a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement'
 
+    if (this.body.rfapIdentifiedAsSuitable === 'no' && !this.body.unsuitabilityForRfapRationale)
+      errors.unsuitabilityForRfapRationale = 'Provide a summary of the rationale'
+
     return errors
   }
 }

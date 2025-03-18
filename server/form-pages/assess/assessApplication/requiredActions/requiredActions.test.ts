@@ -104,12 +104,25 @@ describe('RequiredActions', () => {
       })
     })
 
+    it('must show an error if the answer to "curfewsAndSigns" or "additionalRecommendationsComments",  is yes and there are no corresponding additional comments', () => {
+      const page = new RequiredActions({
+        additionalActions: 'no',
+        curfewsOrSignIns: 'yes',
+        additionalRecommendations: 'yes',
+        concernsOfUnmanagableRisk: 'no',
+      })
+      expect(page.errors()).toEqual({
+        additionalRecommendationsComments: 'Add detail about the additional recommendations',
+        curfewsOrSignInsComments: 'You must detail the additional curfews or sign ins recommended',
+      })
+    })
+
     it('if the answer to "concernsOfUnmanagableRisk" is "yes" then there must be comments in the "additionalRecommendations" box', () => {
       const page = new RequiredActions({
         additionalActions: 'yes',
-        curfewsOrSignIns: 'yes',
+        curfewsOrSignIns: 'no',
         concernsOfUnmanagableRisk: 'yes',
-        additionalRecommendations: 'yes',
+        additionalRecommendations: 'no',
       })
 
       expect(page.errors()).toEqual({
