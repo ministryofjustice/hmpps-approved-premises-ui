@@ -65,7 +65,8 @@ describe('EsapSuitability', () => {
         yesDetail: 'You must provide details to support the decision',
       })
     })
-    it('should show an error if the ESAP is identified as not suitable but the corresponding comments box and the rationale box are not populated', () => {
+
+    it('should show two errors if the ESAP is identified as not suitable but the corresponding comments box and the rationale box are not populated', () => {
       const page = new EsapSuitability(
         {
           esapPlacementNeccessary: 'no',
@@ -75,13 +76,27 @@ describe('EsapSuitability', () => {
 
       expect(page.errors()).toEqual({
         noDetail: 'You must provide details to support the decision',
-        unsuitabilityForEsapRationale: 'You must provide a summary of the rationale',
+        unsuitabilityForEsapRationale: 'Provide a summary of the rationale',
+      })
+    })
+
+    it('should show an error if the ESAP is identified as not suitable but the rationale box is not populated', () => {
+      const page = new EsapSuitability(
+        {
+          esapPlacementNeccessary: 'no',
+          noDetail: 'some detail',
+        } as EsapSuitabilityBody,
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        unsuitabilityForEsapRationale: 'Provide a summary of the rationale',
       })
     })
   })
 
   describe('response', () => {
-    it('returns the response when the asnwer is yes', () => {
+    it('returns the response when the answer is yes', () => {
       const page = new EsapSuitability(body, assessment)
 
       expect(page.response()).toEqual({
@@ -92,7 +107,7 @@ describe('EsapSuitability', () => {
       })
     })
 
-    it('returns the response when the asnwer is no', () => {
+    it('returns the response when the answer is no', () => {
       const page = new EsapSuitability(
         { ...body, esapPlacementNeccessary: 'no', noDetail: 'Some no detail' },
         assessment,

@@ -112,7 +112,7 @@ describe('RequiredActions', () => {
         concernsOfUnmanagableRisk: 'no',
       })
       expect(page.errors()).toEqual({
-        additionalRecommendationsComments: 'You must add more detail about the additional recommendations',
+        additionalRecommendationsComments: 'Add detail about the additional recommendations',
         curfewsOrSignInsComments: 'You must detail the additional curfews or sign ins recommended',
       })
     })

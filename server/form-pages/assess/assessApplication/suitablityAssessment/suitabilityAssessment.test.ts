@@ -210,19 +210,17 @@ describe('SuitabilityAssessment', () => {
         {
           riskFactors: 'no',
           riskManagement: 'no',
-          locationOfPlacement: 'no',
+          locationOfPlacement: 'yes',
           moveOnPlan: 'no',
         },
         assessment,
       )
 
       expect(page.errors()).toEqual({
-        moveOnPlanComments: 'You must explain why the move on plan is insufficient',
-        riskFactorsComments:
-          'You must explain how the application fails to identify the risk factors that an AP placement can support',
-        locationOfPlacementComments: 'You must comment on how location factors have not been considered',
-        riskManagementComments:
-          'You must explain how the application fails to identify how an AP placement would be beneficial for risk management',
+        moveOnPlanComments: 'Explain how the move on plan is insufficient',
+        riskFactorsComments: 'Identify the risk factors',
+        locationOfPlacementComments: 'State the risk factors regarding location',
+        riskManagementComments: 'Explain why the AP cannot manage the risk factors identified',
       })
     })
   })

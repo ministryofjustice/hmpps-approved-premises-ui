@@ -128,7 +128,7 @@ export default class RequiredActions implements TasklistPage {
       errors.additionalRecommendations = 'You must state if there are any additional recommendations'
 
     if (this.body.additionalRecommendations === 'yes' && !this.body.additionalRecommendationsComments)
-      errors.additionalRecommendationsComments = 'You must add more detail about the additional recommendations'
+      errors.additionalRecommendationsComments = 'Add detail about the additional recommendations'
 
     return errors
   }
