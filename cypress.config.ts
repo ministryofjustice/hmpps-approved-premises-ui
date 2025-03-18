@@ -10,7 +10,7 @@ import outOfServiceBed from './integration_tests/mockApis/outOfServiceBed'
 import person from './integration_tests/mockApis/person'
 import reports from './integration_tests/mockApis/reports'
 import applications from './integration_tests/mockApis/applications'
-import { stubJourney, verifyApiPatch, verifyApiPost } from './integration_tests/mockApis/journeyUtils'
+import { stubJourney, verifyApiPatch, verifyApiPost, verifyApiPut } from './integration_tests/mockApis/journeyUtils'
 import assessments from './integration_tests/mockApis/assessments'
 import users from './integration_tests/mockApis/users'
 import tasks from './integration_tests/mockApis/tasks'
@@ -59,6 +59,7 @@ export default defineConfig({
         stubJourney,
         verifyApiPost,
         verifyApiPatch,
+        verifyApiPut,
       })
     },
     baseUrl: 'http://localhost:3007',

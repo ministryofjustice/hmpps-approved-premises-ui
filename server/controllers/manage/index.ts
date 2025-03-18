@@ -10,8 +10,9 @@ import PremisesController from './premises/premisesController'
 import ApOccupancyViewController from './premises/apOccupancyViewController'
 import PlacementController from './placementController'
 import BedsController from './premises/bedsController'
-import OutOfServiceBedsController from './outOfServiceBedsController'
-import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
+import OutOfServiceBedsController from './outOfServiceBeds/outOfServiceBedsController'
+import UpdateOutOfServiceBedsController from './outOfServiceBeds/updateOutOfServiceBedsController'
+import OutOfServiceBedCancellationController from './outOfServiceBeds/outOfServiceBedCancellationController'
 import ArrivalsController from './premises/placements/arrivalsController'
 import NonArrivalsController from './premises/placements/nonArrivalsController'
 import KeyworkerController from './premises/placements/keyworkerController'
@@ -28,7 +29,9 @@ export const controllers = (services: Services) => {
     services.sessionService,
   )
   const updateOutOfServiceBedsController = new UpdateOutOfServiceBedsController(services.outOfServiceBedService)
-
+  const outOfServiceBedCancellationController = new OutOfServiceBedCancellationController(
+    services.outOfServiceBedService,
+  )
   const bookingsController = new BookingsController(services.bookingService)
   const bookingExtensionsController = new BookingExtensionsController(services.bookingService)
   const cancellationsController = new CancellationsController(
@@ -60,6 +63,7 @@ export const controllers = (services: Services) => {
     bedsController,
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
+    outOfServiceBedCancellationController,
     bookingsController,
     bookingExtensionsController,
     dateChangesController,
@@ -81,6 +85,7 @@ export {
   BedsController,
   OutOfServiceBedsController,
   UpdateOutOfServiceBedsController,
+  OutOfServiceBedCancellationController,
   BookingsController,
   BookingExtensionsController,
   ApOccupancyViewController,

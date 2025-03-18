@@ -79,7 +79,7 @@ describe('outOfServiceBedUtils', () => {
         { text: 'Bed' },
         { text: 'Room' },
         { text: 'Start date' },
-        { text: 'Out of service until' },
+        { text: 'End date' },
         { text: 'Reason' },
         { text: 'Ref number' },
         { text: 'Details' },
@@ -96,8 +96,8 @@ describe('outOfServiceBedUtils', () => {
         [
           { text: outOfServiceBed.bed.name },
           { text: outOfServiceBed.room.name },
-          { text: outOfServiceBed.startDate },
-          { text: outOfServiceBed.endDate },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'short' }) },
           { text: outOfServiceBed.reason.name },
           { text: outOfServiceBed.referenceNumber || 'Not provided' },
           actionCell(outOfServiceBed, premisesId),
@@ -114,7 +114,7 @@ describe('outOfServiceBedUtils', () => {
     const bedId = 'bedId'
     const id = 'oosbId'
 
-    it('should return null if the user does not have the create OOSB permission', () => {
+    it('should return null if the user does not have any permissions', () => {
       const user = userDetailsFactory.build({ permissions: [] })
 
       expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual(null)
@@ -127,8 +127,23 @@ describe('outOfServiceBedUtils', () => {
         {
           items: [
             {
-              text: 'Update record',
+              text: 'Update out of service bed',
               href: paths.outOfServiceBeds.update({ premisesId, id, bedId }),
+            },
+          ],
+        },
+      ])
+    })
+
+    it('should return an action to cancel the OOSB if the user has the cancel OOSB permission', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_out_of_service_bed_cancel'] })
+
+      expect(outOfServiceBedActions(user, premisesId, bedId, id)).toEqual([
+        {
+          items: [
+            {
+              text: 'Cancel out of service bed',
+              href: paths.outOfServiceBeds.cancel({ premisesId, id, bedId }),
             },
           ],
         },

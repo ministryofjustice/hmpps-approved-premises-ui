@@ -1,15 +1,15 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { OutOfServiceBedService } from '../../services'
-import { DateFormats } from '../../utils/dateUtils'
+import { OutOfServiceBedService } from '../../../services'
+import { DateFormats } from '../../../utils/dateUtils'
 
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
   generateConflictErrorAndRedirect,
-} from '../../utils/validation'
-import paths from '../../paths/manage'
-import { SanitisedError } from '../../sanitisedError'
-import { overwriteOoSBedWithUserInput } from '../../utils/outOfServiceBedUtils'
+} from '../../../utils/validation'
+import paths from '../../../paths/manage'
+import { SanitisedError } from '../../../sanitisedError'
+import { overwriteOoSBedWithUserInput } from '../../../utils/outOfServiceBedUtils'
 
 export default class UpdateOutOfServiceBedsController {
   constructor(private readonly outOfServiceBedService: OutOfServiceBedService) {}

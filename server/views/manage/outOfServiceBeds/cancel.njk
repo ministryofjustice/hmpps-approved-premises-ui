@@ -1,0 +1,39 @@
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "moj/components/interruption-card/macro.njk" import interruptionCard %}
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+    <form action="{{ selfLink }}"
+          method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ showErrorSummary(errorSummary, errorTitle) }}
+
+        {% call interruptionCard({
+            heading: "Cancel this out of service bed?",
+            primaryAction: {
+                text: "Cancel out of service bed"
+            },
+            secondaryAction: {
+                text: "Go back",
+                href: backLink
+            }
+        }) -%}
+
+            <p>You are about to cancel an out of service bed record.</p>
+            <ul>
+                <li>Bed: {{ outOfServiceBed.room.name }} {{ outOfServiceBed.bed.name }}</li>
+                <li>Start date: {{ formatDate(outOfServiceBed.startDate) }}</li>
+                <li>End date: {{ formatDate(outOfServiceBed.endDate) }}</li>
+            </ul>
+            <p>Do not cancel an out of service bed record to bring a bed back into service. Instead, you must update
+                the record and amend the planned end date to the date it will be brought back into service.</p>
+        {%- endcall %}
+
+    </form>
+
+
+{% endblock %}

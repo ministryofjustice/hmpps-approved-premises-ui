@@ -4,21 +4,21 @@ import { when } from 'jest-when'
 
 import { UpdateCas1OutOfServiceBed } from '@approved-premises/api'
 import { ErrorsAndUserInput } from '@approved-premises/ui'
-import { OutOfServiceBedService } from '../../services'
-import { outOfServiceBedFactory } from '../../testutils/factories'
+import { OutOfServiceBedService } from '../../../services'
+import { outOfServiceBedFactory } from '../../../testutils/factories'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
 
-import { DateFormats } from '../../utils/dateUtils'
-import paths from '../../paths/manage'
+import { DateFormats } from '../../../utils/dateUtils'
+import paths from '../../../paths/manage'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
   generateConflictErrorAndRedirect,
-} from '../../utils/validation'
-import { SanitisedError } from '../../sanitisedError'
-import * as OoSBedUtils from '../../utils/outOfServiceBedUtils'
+} from '../../../utils/validation'
+import { SanitisedError } from '../../../sanitisedError'
+import * as OoSBedUtils from '../../../utils/outOfServiceBedUtils'
 
-jest.mock('../../utils/validation')
+jest.mock('../../../utils/validation')
 
 describe('updateOutOfServiceBedController', () => {
   const token = 'SOME_TOKEN'

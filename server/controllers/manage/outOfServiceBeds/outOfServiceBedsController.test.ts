@@ -5,15 +5,15 @@ import { when } from 'jest-when'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { PaginatedResponse } from '@approved-premises/ui'
 import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
-import { SanitisedError } from '../../sanitisedError'
+import { SanitisedError } from '../../../sanitisedError'
 import OutOfServiceBedsController from './outOfServiceBedsController'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
   generateConflictErrorAndRedirect,
-} from '../../utils/validation'
+} from '../../../utils/validation'
 
-import paths from '../../paths/manage'
+import paths from '../../../paths/manage'
 import {
   apAreaFactory,
   cas1BedDetailFactory,
@@ -22,22 +22,22 @@ import {
   paginatedResponseFactory,
   premisesSummaryFactory,
   userDetailsFactory,
-} from '../../testutils/factories'
-import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { createQueryString } from '../../utils/utils'
-import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../services'
-import { characteristicsBulletList, roomCharacteristicMap } from '../../utils/characteristicsUtils'
+} from '../../../testutils/factories'
+import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+import { createQueryString } from '../../../utils/utils'
+import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../../services'
+import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import {
   outOfServiceBedActions,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   outOfServiceBedTabs,
   premisesIndexTabs,
-} from '../../utils/outOfServiceBedUtils'
+} from '../../../utils/outOfServiceBedUtils'
 
-jest.mock('../../utils/validation')
-jest.mock('../../utils/bookings')
-jest.mock('../../utils/getPaginationDetails')
+jest.mock('../../../utils/validation')
+jest.mock('../../../utils/bookings')
+jest.mock('../../../utils/getPaginationDetails')
 
 describe('OutOfServiceBedsController', () => {
   const token = 'SOME_TOKEN'
@@ -470,37 +470,6 @@ describe('OutOfServiceBedsController', () => {
           apAreas: allApAreas,
           disablePremisesSelect: false,
           allPremises,
-        }),
-      )
-    })
-  })
-
-  describe('cancel', () => {
-    it('cancels (removes) an outOfService bed and redirects to the outOfService beds index page', async () => {
-      outOfServiceBedService.cancelOutOfServiceBed.mockResolvedValue(outOfServiceBed)
-
-      const requestHandler = outOfServiceBedController.cancel()
-
-      request.params = {
-        premisesId,
-        id: outOfServiceBed.bed.id,
-      }
-
-      request.body = { notes: '' }
-
-      await requestHandler(request, response, next)
-
-      expect(outOfServiceBedService.cancelOutOfServiceBed).toHaveBeenCalledWith(
-        request.user.token,
-        outOfServiceBed.bed.id,
-        request.params.premisesId,
-        request.body,
-      )
-      expect(request.flash).toHaveBeenCalledWith('success', 'Out of service bed removed')
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.outOfServiceBeds.premisesIndex({
-          premisesId: request.params.premisesId,
-          temporality: 'current',
         }),
       )
     })
