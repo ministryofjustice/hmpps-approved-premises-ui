@@ -5,48 +5,13 @@ import {
   cas1PremisesBedSummaryFactory,
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
-  premisesFactory,
   staffMemberFactory,
 } from '../testutils/factories'
 import PremisesClient from './premisesClient'
 import paths from '../paths/api'
-import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
 const token = 'test-token-1'
-
-describeClient('PremisesClient', provider => {
-  let premisesClient: PremisesClient
-
-  beforeEach(() => {
-    premisesClient = new PremisesClient(token)
-  })
-
-  describe('getStaff', () => {
-    it('should return a list of staff for a given premises', async () => {
-      const premises = premisesFactory.build()
-      const staffList = staffMemberFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get a list of staff for a premises',
-        withRequest: {
-          method: 'GET',
-          path: paths.premises.staffMembers.index({ premisesId: premises.id }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: staffList,
-        },
-      })
-
-      const output = await premisesClient.getStaff(premises.id)
-      expect(output).toEqual(staffList)
-    })
-  })
-})
 
 describeCas1NamespaceClient('PremisesCas1Client', provider => {
   let premisesClient: PremisesClient
@@ -175,6 +140,31 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
         bookingsCriteriaFilter: ['hasEnSuite'],
       })
       expect(output).toEqual(premiseCapacity)
+    })
+  })
+
+  describe('getStaff', () => {
+    it('should return a list of staff for a given premises', async () => {
+      const staffList = staffMemberFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of staff for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.staffMembers.index({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: staffList,
+        },
+      })
+
+      const output = await premisesClient.getStaff(premises.id)
+      expect(output).toEqual(staffList)
     })
   })
 })
