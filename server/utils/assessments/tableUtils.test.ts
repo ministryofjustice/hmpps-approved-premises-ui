@@ -82,7 +82,7 @@ describe('tableUtils', () => {
           {
             text: 'Tier',
           },
-          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Expected arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Current location',
           },
@@ -105,7 +105,7 @@ describe('tableUtils', () => {
           {
             text: 'Current location',
           },
-          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Expected arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Days since received',
           },
@@ -125,7 +125,7 @@ describe('tableUtils', () => {
           {
             text: 'Tier',
           },
-          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Expected arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: completedTableRows(assessments),

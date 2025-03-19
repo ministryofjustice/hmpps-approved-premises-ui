@@ -86,7 +86,7 @@ const assessmentTable = (
           {
             text: 'Current location',
           },
-          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Expected arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Days since received',
           },
@@ -104,7 +104,7 @@ const assessmentTable = (
           {
             text: 'Tier',
           },
-          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Expected arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: completedTableRows(assessments),
@@ -118,7 +118,7 @@ const assessmentTable = (
           {
             text: 'Tier',
           },
-          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Expected arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Current location',
           },
