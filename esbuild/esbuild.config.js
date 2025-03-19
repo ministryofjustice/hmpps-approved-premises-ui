@@ -5,6 +5,7 @@ const { glob } = require('glob')
 const chokidar = require('chokidar')
 const buildAssets = require('./assets.config')
 const buildApp = require('./app.config')
+const e = require('express')
 
 const cwd = process.cwd()
 
@@ -67,6 +68,7 @@ const main = () => {
     chokidar.watch(['dist']).on('all', () => {
       if (serverProcess) serverProcess.kill()
       serverProcess = spawn('node', ['--env-file=.env', 'dist/server.js'], { stdio: 'inherit' })
+      process.stdout.write(`Started new server process with pid ${serverProcess.pid}\n`)
     })
   }
   if (args.includes('--dev-test-server')) {
@@ -74,6 +76,7 @@ const main = () => {
     chokidar.watch(['dist']).on('all', () => {
       if (serverProcess) serverProcess.kill()
       serverProcess = spawn('node', ['--env-file=feature.env', 'dist/server.js'], { stdio: 'inherit' })
+      process.stdout.write(`Started new server process with pid ${serverProcess.pid}\n`)
     })
   }
 
