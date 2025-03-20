@@ -7,17 +7,7 @@ context('Dashboard', () => {
   })
 
   it('displays all services when a user has all permissions required', () => {
-    signIn({
-      permissions: [
-        'cas1_view_assigned_assessments',
-        'cas1_view_manage_tasks',
-        'cas1_view_cru_dashboard',
-        'cas1_view_out_of_service_beds',
-        'cas1_premises_view',
-        'cas1_reports_view',
-        'cas1_user_management',
-      ],
-    })
+    signIn('janitor')
 
     const dashboardPage = DashboardPage.visit()
 
@@ -33,7 +23,7 @@ context('Dashboard', () => {
   })
 
   it('only displays the apply and timeline services when someone has no permissions', () => {
-    signIn()
+    signIn('applicant')
 
     const dashboardPage = DashboardPage.visit()
 

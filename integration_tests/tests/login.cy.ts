@@ -26,14 +26,14 @@ context('SignIn', () => {
   })
 
   it('User name visible in header', () => {
-    signIn({ name: 'J. Smith' })
+    signIn('applicant', { name: 'J. Smith' })
 
     const indexPage = Page.verifyOnPage(DashboardPage)
     indexPage.headerUserName().should('contain.text', 'J. Smith')
   })
 
   it('User can log out', () => {
-    signIn()
+    signIn('applicant')
 
     const indexPage = Page.verifyOnPage(DashboardPage)
     indexPage.signOut().click()
@@ -41,7 +41,7 @@ context('SignIn', () => {
   })
 
   it('User can manage their details', () => {
-    signIn()
+    signIn('applicant')
 
     const indexPage = Page.verifyOnPage(DashboardPage)
 
@@ -51,7 +51,7 @@ context('SignIn', () => {
   })
 
   it('Token verification failure takes user to sign in page', () => {
-    signIn()
+    signIn('applicant')
 
     Page.verifyOnPage(DashboardPage)
     cy.task('stubVerifyToken', false)
@@ -61,7 +61,7 @@ context('SignIn', () => {
   })
 
   it('Token verification failure clears user session', () => {
-    signIn()
+    signIn('applicant')
 
     const indexPage = Page.verifyOnPage(DashboardPage)
     cy.task('stubVerifyToken', false)
@@ -70,7 +70,7 @@ context('SignIn', () => {
     cy.request('/').its('body').should('contain', 'Sign in')
 
     cy.task('stubVerifyToken', true)
-    signIn({ name: 'B. BROWN' })
+    signIn('applicant', { name: 'B. BROWN' })
 
     indexPage.headerUserName().contains('B. Brown')
   })

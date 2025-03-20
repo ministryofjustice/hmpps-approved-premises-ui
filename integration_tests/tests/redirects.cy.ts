@@ -5,7 +5,7 @@ context('Redirects', () => {
     cy.task('reset')
 
     // Given I am signed in as an applicant
-    signIn()
+    signIn('applicant')
   })
 
   const redirects = [

@@ -11,7 +11,7 @@ context('Appeals', () => {
     cy.task('reset')
 
     // Given I am signed in as an appeals manager
-    signIn({ permissions: ['cas1_process_an_appeal'] })
+    signIn('appeals_manager')
   })
 
   it('should create an appeal', () => {

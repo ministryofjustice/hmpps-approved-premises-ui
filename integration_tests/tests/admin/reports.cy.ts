@@ -6,8 +6,8 @@ context('Reports', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am logged in as a report viewer
-    signIn({ permissions: ['cas1_reports_view', 'cas1_reports_view_with_pii'] })
+    // Given I am signed in as a report viewer
+    signIn('report_viewer_with_pii')
   })
 
   it('allows me to download reports', () => {

@@ -34,9 +34,8 @@ context('Placement Applications', () => {
     cy.task('reset')
 
     // Given I am signed in as an assessor
-    signIn({
+    signIn('assessor', {
       id: defaultUserId,
-      permissions: ['cas1_view_assigned_assessments', 'cas1_assess_placement_application'],
     })
   })
 

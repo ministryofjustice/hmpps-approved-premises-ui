@@ -8,8 +8,8 @@ context('List assessments', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am logged in as an assessor
-    signIn({ id: defaultUserId, permissions: ['cas1_view_assigned_assessments', 'cas1_assess_placement_application'] })
+    // Given I am signed in as an assessor
+    signIn('assessor', { id: defaultUserId })
   })
 
   it('should list assessments', () => {
