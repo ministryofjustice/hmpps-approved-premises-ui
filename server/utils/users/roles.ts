@@ -20,6 +20,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'report_viewer_with_pii',
   'future_manager',
   'user_manager',
+  'change_request_dev',
   'janitor',
 ]
 
@@ -90,6 +91,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   user_manager: {
     label: 'User manager',
     hint: 'Add, update and disable users',
+  },
+  change_request_dev: {
+    label: 'Change request development',
+    hint: 'For digital team use only',
   },
   janitor: {
     label: 'Janitor',

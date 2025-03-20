@@ -136,6 +136,7 @@ describe('userRolesSelectOptions', () => {
         value: 'future_manager',
       },
       { selected: false, text: 'User manager', value: 'user_manager' },
+      { selected: false, text: 'Change request development', value: 'change_request_dev' },
       {
         selected: false,
         text: 'Janitor',
@@ -177,6 +178,7 @@ describe('userRolesSelectOptions', () => {
         value: 'future_manager',
       },
       { selected: false, text: 'User manager', value: 'user_manager' },
+      { selected: false, text: 'Change request development', value: 'change_request_dev' },
       {
         selected: false,
         text: 'Janitor',
