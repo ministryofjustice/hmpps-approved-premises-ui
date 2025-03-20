@@ -86,7 +86,7 @@ export default {
       cancel: cas1LostBedsCancellations,
     },
     staffMembers: {
-      index: premisesSingle.path('staff'),
+      index: cas1PremisesSingle.path('staff'),
     },
     beds: {
       index: cas1Beds,
