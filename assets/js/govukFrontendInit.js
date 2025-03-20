@@ -13,3 +13,7 @@ document.querySelectorAll('.moj-button-menu').forEach(container => {
 document.querySelectorAll('a[data-debounce-link]').forEach(link => {
   debounce(link)
 })
+
+document.querySelectorAll('[data-module="moj-sortable-table"]').forEach((table) => {
+  new MOJFrontend.SortableTable({ table })
+})

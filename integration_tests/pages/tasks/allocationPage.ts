@@ -39,6 +39,13 @@ export default class AllocationsPage extends Page {
     shouldShowTableRows(userTableRows(users, task, 'csrfToken' as string))
   }
 
+  shouldBeSortableBy(label: string) {
+    cy.get('.govuk-table__header').contains(label).click()
+    cy.get('.govuk-table__header').contains(label).closest('th').should('have.attr', 'aria-sort', 'ascending')
+    cy.get('.govuk-table__header').contains(label).click()
+    cy.get('.govuk-table__header').contains(label).closest('th').should('have.attr', 'aria-sort', 'descending')
+  }
+
   clickAllocateToUser(user: User) {
     cy.get(`button[data-cy-userId="${user.id}"]`).click()
   }
