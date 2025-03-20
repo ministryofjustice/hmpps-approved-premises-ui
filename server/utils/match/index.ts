@@ -3,6 +3,7 @@ import {
   ApprovedPremisesApplication,
   Cas1Premises,
   Cas1PremisesSearchResultSummary,
+  type Cas1SpaceBooking,
   Cas1SpaceBookingCharacteristic,
   PlacementCriteria,
   PlacementRequest,
@@ -239,3 +240,10 @@ export const keyDetails = (placementRequest: PlacementRequestDetail): KeyDetails
     ],
   }
 }
+
+export const creationNotificationBody = (
+  placement: Cas1SpaceBooking,
+  placementRequest: PlacementRequest,
+) => `<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>
+<li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequest.applicationDate, { format: 'short' })}</li></ul>
+<p>A confirmation email will be sent to the AP and probation practitioner.</p>`

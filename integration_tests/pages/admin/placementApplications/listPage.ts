@@ -1,7 +1,9 @@
 import {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary,
+  Cas1SpaceBooking,
   PlacementRequest,
+  PlacementRequestDetail,
   PlacementRequestSortField,
   PlacementRequestStatus,
   SortOrder,
@@ -12,6 +14,7 @@ import paths from '../../../../server/paths/admin'
 import { shouldShowTableRows, tableRowsToArrays } from '../../../helpers'
 import { dashboardTableRows } from '../../../../server/utils/placementRequests/table'
 import { pendingPlacementRequestTableRows } from '../../../../server/utils/applications/pendingPlacementRequestTable'
+import { creationNotificationBody } from '../../../../server/utils/match'
 
 export default class ListPage extends Page {
   constructor() {
@@ -24,11 +27,9 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowSpaceBookingConfirmation(crn: string, premisesName: string) {
-    this.shouldShowBanner(
-      `Place booked for ${crn} at ${premisesName} 
-      A confirmation email will be sent to the AP and probation practitioner.`,
-    )
+  shouldShowSpaceBookingConfirmation(spaceBooking: Cas1SpaceBooking, placementRequest: PlacementRequestDetail) {
+    const body = creationNotificationBody(spaceBooking, placementRequest)
+    this.shouldShowBanner(`Place booked for ${spaceBooking.person.crn} ${body}`)
   }
 
   shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>, status?: PlacementRequestStatus): void {
