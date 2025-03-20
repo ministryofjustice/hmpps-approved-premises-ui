@@ -16,7 +16,7 @@ context('All applications', () => {
     cy.task('reset')
 
     // Given I am signed in as an applicant
-    signIn()
+    signIn('applicant')
   })
 
   it('lists all applications with pagination', () => {

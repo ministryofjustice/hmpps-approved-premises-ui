@@ -37,6 +37,13 @@ context('Premises occupancy', () => {
 
     // And it has a list of upcoming placements
     cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, residency: 'upcoming' })
+    cy.task('stubSpaceBookingSummaryList', {
+      premisesId: premises.id,
+      placements,
+      residency: 'current',
+      sortBy: 'personName',
+      perPage: 2000,
+    })
     cy.task('stubPremiseCapacity', {
       premisesId: premises.id,
       startDate,
@@ -47,8 +54,8 @@ context('Premises occupancy', () => {
 
   describe('with premises view permission', () => {
     beforeEach(() => {
-      // Given I am logged in as a future manager
-      signIn({ permissions: ['cas1_premises_view'] })
+      // Given I am signed in as a future manager
+      signIn('future_manager')
     })
 
     it('should show the next 12 weeks if navigated from premises page', () => {
@@ -157,8 +164,8 @@ context('Premises occupancy', () => {
   })
   describe('Without premises view permission', () => {
     it('should not be available if the user lacks premises_view permission', () => {
-      // Given I am logged in as an applicant
-      signIn()
+      // Given I am signed in as an applicant
+      signIn('applicant')
       // When I navigate to the view premises occupancy page
       // Then I should see an error
       OccupancyViewPage.visitUnauthorised(premises)
@@ -199,8 +206,8 @@ context('Premises day occupancy', () => {
 
   describe('with premises view permission', () => {
     beforeEach(() => {
-      // Given I am logged in as a future manager
-      signIn({ permissions: ['cas1_premises_view'] })
+      // Given I am signed in as a future manager
+      signIn('future_manager')
     })
 
     it('should show the day summary if spaces available', () => {
@@ -288,8 +295,8 @@ context('Premises day occupancy', () => {
 
   describe('Without premises view permission', () => {
     it('should not be available if the user lacks premises_view permission', () => {
-      // Given I am logged in as an applicant
-      signIn()
+      // Given I am signed in as an applicant
+      signIn('applicant')
       // When I navigate to the view premises occupancy page
       // Then I should see an error
       OccupancyDayViewPage.visitUnauthorised(premises, date)

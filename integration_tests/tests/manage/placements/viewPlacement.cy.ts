@@ -1,4 +1,4 @@
-import { ApprovedPremisesUserPermission, Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
+import { Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
 import {
   applicationFactory,
   assessmentFactory,
@@ -17,16 +17,11 @@ import { signIn } from '../../signIn'
 type Mode = 'normal' | 'lao' | 'offline'
 context('Placements', () => {
   describe('show', () => {
-    const setup = (
-      permissions: Array<ApprovedPremisesUserPermission>,
-      placementParameters = {},
-      mode: Mode = 'normal',
-    ) => {
+    beforeEach(() => {
       cy.task('reset')
+    })
 
-      // Given I am signed in
-      signIn({ permissions })
-
+    const setup = (placementParameters = {}, mode: Mode = 'normal') => {
       const premises = premisesSummaryFactory.build()
       const person = mode === 'lao' ? restrictedPersonFactory.build() : personFactory.build()
       const application = applicationFactory.build({ person, personStatusOnSubmission: (person as FullPerson).status })
@@ -57,8 +52,10 @@ context('Placements', () => {
     }
 
     it('should show a placement', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement } = setup(['cas1_space_booking_view'])
+      // Given that I am signed in as a future manager
+      signIn('future_manager')
+      // And there is an existing placement
+      const { placement } = setup()
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // Then I should see the person information in the header
@@ -70,8 +67,10 @@ context('Placements', () => {
     })
 
     it('should show placement details tabs', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement, application, assessment, timeline, placementRequest } = setup(['cas1_space_booking_view'])
+      // Given that I am signed in as a future manager
+      signIn('future_manager')
+      // And there is an existing placement
+      const { placement, application, assessment, timeline, placementRequest } = setup()
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // And I select the application tab
@@ -110,8 +109,10 @@ context('Placements', () => {
     })
 
     it('should disable tabs if person is LAO', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement for a Limited Access person
-      const { placement } = setup(['cas1_space_booking_view'], {}, 'lao')
+      // Given that I am signed in as a future manager
+      signIn('future_manager')
+      // And there is an existing placement for a Limited Access person
+      const { placement } = setup({}, 'lao')
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // And I click on the application tab
@@ -129,8 +130,10 @@ context('Placements', () => {
     })
 
     it('should disable tabs if offline application', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement for an offline application
-      const { placement } = setup(['cas1_space_booking_view'], {}, 'offline')
+      // Given that I am signed in as a future manager
+      signIn('future_manager')
+      // And there is an existing placement for an offline application
+      const { placement } = setup({}, 'offline')
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
       // Then I should see the offline application warning banner
@@ -159,8 +162,10 @@ context('Placements', () => {
     })
 
     it('should select a tab from the path', () => {
-      // Given that I am logged in with permission to view a placement and a mocked placement
-      const { placement, application } = setup(['cas1_space_booking_view'])
+      // Given that I am signed in as a future manager
+      signIn('future_manager')
+      // And there is an existing placement
+      const { placement, application } = setup()
       // When I visit the placement page with the timeline tab selected
       const placementShowPage = PlacementShowPage.visit(placement, 'application')
       // Then I should see the application for this placement
@@ -170,9 +175,10 @@ context('Placements', () => {
     })
 
     it('should show a placement with missing fields', () => {
-      // Given I am logged in with permission to view a placement
-      // And the mocked placement has missing data
-      const { placement } = setup(['cas1_space_booking_view'], {
+      // Given that I am signed in as a future manager
+      signIn('future_manager')
+      // And there is an existing placement with missing data
+      const { placement } = setup({
         actualArrivalDate: undefined,
         actualDepartureDate: undefined,
       })
@@ -184,11 +190,14 @@ context('Placements', () => {
     })
 
     it('should show a list of linked placements', () => {
+      // Given that I am signed in as a future manager
+      signIn('future_manager')
+      // And there is an existing placement
       const placementList = [
         { id: '1234', canonicalArrivalDate: '2024-06-10', canonicalDepartureDate: '2024-09-10' },
         { id: '1235', canonicalArrivalDate: '2026-01-02', canonicalDepartureDate: '2027-03-04' },
       ] as Array<Cas1SpaceBookingDates>
-      const { placement } = setup(['cas1_space_booking_view'], {
+      const { placement } = setup({
         otherBookingsInPremisesForCrn: placementList,
       })
 
@@ -202,8 +211,10 @@ context('Placements', () => {
     })
 
     it('should require the correct permission to view a placement', () => {
-      // Given I am logged in with permission to view a placement and a mocked placement
-      const { placement } = setup([])
+      // Given that I am signed in as an applicant
+      signIn('applicant')
+      // And there is an existing placement
+      const { placement } = setup()
       // When I visit the placement page
       // I should get an authorsation error
       PlacementShowPage.visitUnauthorised(placement)
