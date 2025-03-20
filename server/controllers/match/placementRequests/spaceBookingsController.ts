@@ -4,7 +4,7 @@ import { PlacementRequestService, PremisesService, SpaceSearchService } from '..
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
-import { spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
+import { creationNotificationBody, spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
 
 interface NewRequest extends Request {
   params: {
@@ -80,9 +80,13 @@ export default class {
 
       try {
         const placement = await this.spaceSearchService.createSpaceBooking(token, id, newSpaceBooking)
+        const placementRequest = await this.placementRequestService.getPlacementRequest(
+          token,
+          placement.placementRequestId,
+        )
         req.flash('success', {
-          heading: `Place booked for ${placement.person.crn} at ${placement.premises.name}`,
-          body: '<p>A confirmation email will be sent to the AP and probation practitioner.</p>',
+          heading: `Place booked for ${placement.person.crn}`,
+          body: creationNotificationBody(placement, placementRequest),
         })
         this.spaceSearchService.removeSpaceSearchState(id, req.session)
 

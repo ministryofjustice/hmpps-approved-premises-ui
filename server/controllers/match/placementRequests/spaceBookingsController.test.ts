@@ -15,6 +15,7 @@ import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import * as validationUtils from '../../../utils/validation'
 import { spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
+import { DateFormats } from '../../../utils/dateUtils'
 
 describe('SpaceBookingsController', () => {
   const token = 'SOME_TOKEN'
@@ -116,6 +117,7 @@ describe('SpaceBookingsController', () => {
       const spaceBooking = cas1SpaceBookingFactory.build()
 
       spaceSearchService.createSpaceBooking.mockResolvedValue(spaceBooking)
+
       const flash = jest.fn()
 
       const requestHandler = spaceBookingsController.create()
@@ -127,8 +129,10 @@ describe('SpaceBookingsController', () => {
         newSpaceBooking,
       )
       expect(flash).toHaveBeenCalledWith('success', {
-        heading: `Place booked for ${spaceBooking.person.crn} at ${spaceBooking.premises.name}`,
-        body: `<p>A confirmation email will be sent to the AP and probation practitioner.</p>`,
+        heading: `Place booked for ${spaceBooking.person.crn}`,
+        body: `<ul><li><strong>Approved Premises:</strong> ${spaceBooking.premises.name}</li>
+<li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequestDetail.applicationDate, { format: 'short' })}</li></ul>
+<p>A confirmation email will be sent to the AP and probation practitioner.</p>`,
       })
       expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(`${paths.admin.cruDashboard.index({})}?status=matched`)
