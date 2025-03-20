@@ -65,6 +65,7 @@ const userRoles: Record<RoleInUse, string> = {
   appeals_manager: 'Appeals manager',
   future_manager: 'Future manager',
   user_manager: 'User manager',
+  change_request_dev: 'Change request development',
   janitor: 'Janitor',
 }
 
