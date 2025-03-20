@@ -7,7 +7,6 @@ import TasklistPage from '../../../tasklistPage'
 export default class NotEligible implements TasklistPage {
   title = 'This application is not eligible'
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(public readonly body: Record<string, unknown>) {}
 
   previous() {

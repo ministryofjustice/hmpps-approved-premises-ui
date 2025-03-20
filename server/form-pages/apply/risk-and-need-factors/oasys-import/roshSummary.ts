@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
 import type { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
