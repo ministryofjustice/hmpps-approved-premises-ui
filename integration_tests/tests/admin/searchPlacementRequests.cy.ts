@@ -20,8 +20,8 @@ context('Search placement Requests', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am logged in as a CRU member
-    signIn({ permissions: ['cas1_view_cru_dashboard'] })
+    // Given I am signed in as a CRU member
+    signIn('cru_member')
 
     cy.task('stubPlacementRequestsSearch', { placementRequests })
     cy.task('stubPlacementRequestsSearch', {

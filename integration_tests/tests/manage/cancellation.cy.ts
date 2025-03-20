@@ -21,7 +21,7 @@ context('Cancellation', () => {
     cy.task('stubCancellationReferenceData')
 
     // Given I am signed in as a CRU member
-    signIn({ permissions: ['cas1_booking_withdraw', 'cas1_space_booking_withdraw'] })
+    signIn('cru_member')
   })
 
   it('should allow me to create a cancellation with a reason of "other" ', () => {

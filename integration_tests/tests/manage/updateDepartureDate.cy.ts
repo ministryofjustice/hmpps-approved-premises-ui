@@ -8,7 +8,7 @@ context('Departure date', () => {
     cy.task('reset')
 
     // Given I am signed in as a CRU member
-    signIn({ permissions: ['cas1_booking_change_dates'] })
+    signIn('cru_member')
   })
 
   it('should show a form to change a bookings departure date', () => {

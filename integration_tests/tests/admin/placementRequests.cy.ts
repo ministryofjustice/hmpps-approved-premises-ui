@@ -118,15 +118,7 @@ context('Placement Requests', () => {
     cy.task('reset')
 
     // Given I am signed in as a CRU member
-    signIn({
-      permissions: [
-        'cas1_view_cru_dashboard',
-        'cas1_booking_create',
-        'cas1_booking_withdraw',
-        'cas1_booking_change_dates',
-        'cas1_space_booking_create',
-      ],
-    })
+    signIn('cru_member')
   })
 
   it('allows me to view all placement requests', () => {
