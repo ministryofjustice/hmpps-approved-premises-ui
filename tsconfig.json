@@ -15,13 +15,22 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "experimentalDecorators": true,
-    "typeRoots": ["./server/@types", "./node_modules/@types"],
+    "typeRoots": [
+      "./server/@types",
+      "./node_modules/@types"
+    ],
     "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {
-      "@approved-premises/api": ["server/@types/shared/index.d.ts"],
-      "@approved-premises/ui": ["server/@types/ui/index.d.ts"],
-      "@approved-premises/e2e": ["e2e/types/index.d.ts"]
+      "@approved-premises/api": [
+        "server/@types/shared/index.d.ts"
+      ],
+      "@approved-premises/ui": [
+        "server/@types/ui/index.d.ts"
+      ],
+      "@approved-premises/e2e": [
+        "e2e/types/index.d.ts"
+      ]
     }
   },
   "exclude": [
@@ -29,11 +38,15 @@
     "assets/**/*.js",
     "integration_tests",
     "dist",
+    "esbuild",
     "cypress.config.ts",
     "coverage/**",
     "e2e/playwright/**",
     "e2e/test-results/**",
     "playwright-report"
   ],
-  "include": ["**/*.js", "**/*.ts"]
+  "include": [
+    "**/*.js",
+    "**/*.ts"
+  ]
 }

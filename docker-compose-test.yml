@@ -1,4 +1,3 @@
-version: '3.1'
 services:
 
   redis:
@@ -13,7 +12,7 @@ services:
   wiremock:
     image: wiremock/wiremock
     networks:
-    - hmpps_int
+      - hmpps_int
     container_name: wiremock_test
     restart: always
     command: --local-response-templating
