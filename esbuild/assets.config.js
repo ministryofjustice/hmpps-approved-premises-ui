@@ -59,7 +59,7 @@ const buildAssets = buildConfig => {
  * @returns {Promise}
  */
 module.exports = buildConfig => {
-  process.stderr.write('\u{1b}[1m\u{2728} Building assets...\u{1b}[0m\n')
+  process.stdout.write('\u{1b}[1m\u{2728} Building assets...\u{1b}[0m\n')
 
   return Promise.all([buildAssets(buildConfig), buildAdditionalAssets(buildConfig)])
 }
