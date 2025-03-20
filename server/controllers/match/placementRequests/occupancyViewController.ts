@@ -253,7 +253,6 @@ export default class {
           date,
           bookingsSortBy: sortBy,
           bookingsSortDirection: sortDirection,
-          bookingsCriteriaFilter: filteredCriteria,
         }),
         config.flags.pocEnabled ? filteredCriteria : undefined,
       )
