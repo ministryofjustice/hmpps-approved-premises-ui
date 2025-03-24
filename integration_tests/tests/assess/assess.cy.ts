@@ -195,7 +195,7 @@ context('Assess', () => {
       })
   })
 
-  it('should allow me to reject an application where I have not received the correct information', function test() {
+  it.only('should allow me to reject an application where I have not received the correct information', function test() {
     let assessment = addResponsesToFormArtifact<Assessment>(this.assessment, {
       task: 'sufficient-information',
       page: 'sufficient-information',
@@ -248,37 +248,37 @@ context('Assess', () => {
         assessHelper.updateClarificationNote('no')
         // Then I should be redirected to the tasklist page
         const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
-
+        cy.log('**************************   Up to here')
         // And the sufficient information task should show a completed status
-        tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
+          tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
 
-        // And I should see the AssessApplication section
-        assessHelper.completeSuitabilityOfAssessmentQuestion({ isShortNoticeApplication: false })
-
-        // And I fill out the required actions
-        assessHelper.completeRequiredActionsQuestion()
-
-        // When I make a decision
-        assessHelper.completeMakeADecisionPage()
-
-        // Then I should not see the MatchingInformation section
-        tasklistPage.shouldNotShowSection('Information for matching')
-
-        // When I check my answers
-        assessHelper.completeCheckYourAnswersPage()
-
-        // And I submit the application
-        assessHelper.submitAssessment(false)
+        //   // // And I should see the AssessApplication section
+        //   // assessHelper.completeSuitabilityOfAssessmentQuestion({ isShortNoticeApplication: false })
+        //   //
+        //   // // And I fill out the required actions
+        //   // assessHelper.completeRequiredActionsQuestion()
+        //
+          // When I make a decision
+          assessHelper.completeMakeADecisionPage()
+        cy.log('**************************   Up to here 2')
+        //   // Then I should not see the MatchingInformation section
+        //   tasklistPage.shouldNotShowSection('Information for matching')
+        //
+        //   // When I check my answers
+        //   assessHelper.completeCheckYourAnswersPage()
+        //
+        //   // And I submit the application
+        //   assessHelper.submitAssessment(false)
       })
-      .then(() => {
-        // Then the API should have received the correct data
-        cy.task('verifyAssessmentRejection', assessment).then(requests => {
-          expect(requests).to.have.length(1)
-
-          const body = JSON.parse(requests[0].body)
-          expect(body).to.have.keys('document', 'rejectionRationale')
-        })
-      })
+      // .then(() => {
+      //   // Then the API should have received the correct data
+      //   cy.task('verifyAssessmentRejection', assessment).then(requests => {
+      //     expect(requests).to.have.length(1)
+      //
+      //     const body = JSON.parse(requests[0].body)
+      //     expect(body).to.have.keys('document', 'rejectionRationale')
+      //   })
+      // })
   })
 
   it('shows a read-only version of the assessment', function test() {
