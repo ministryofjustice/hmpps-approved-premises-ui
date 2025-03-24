@@ -354,16 +354,17 @@ context('Placement Requests', () => {
     page.shouldShowBookingDetails(placementRequest, premises, arrivalDate, departureDate, searchState.roomCriteria)
 
     // And when I complete the form
-    const spaceBooking = cas1SpaceBookingFactory.upcoming().build()
+    const spaceBooking = cas1SpaceBookingFactory.upcoming().build({ placementRequestId: placementRequest.id })
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
+    cy.task('stubPlacementRequest', placementRequest)
     page.clickSubmit()
 
     // Then I should be redirected to the 'Matched' tab
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     // And I should see a success message
-    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking.person.crn, spaceBooking.premises.name)
+    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequest)
 
     // And the booking details should have been sent to the API
     cy.task('verifyApiPost', apiPaths.placementRequests.spaceBookings.create({ id: placementRequest.id })).then(

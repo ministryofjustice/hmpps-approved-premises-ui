@@ -3,6 +3,7 @@ import applyPaths from '../../paths/apply'
 import {
   cas1PremisesFactory,
   cas1PremisesSearchResultSummaryFactory,
+  cas1SpaceBookingFactory,
   personFactory,
   placementRequestDetailFactory,
   restrictedPersonFactory,
@@ -14,6 +15,7 @@ import {
   apTypeRow,
   apTypeWithViewTimelineActionRow,
   characteristicsRow,
+  creationNotificationBody,
   distanceRow,
   filterOutAPTypes,
   keyDetails,
@@ -350,6 +352,17 @@ describe('matchUtils', () => {
       placementRequest.person = restrictedPerson
 
       expect(() => keyDetails(placementRequest)).toThrow('Restricted person')
+    })
+  })
+
+  describe('creationNotificationBody', () => {
+    it('Should build the notification body', () => {
+      const placementRequest = placementRequestDetailFactory.build()
+      const placement = cas1SpaceBookingFactory.build()
+      expect(creationNotificationBody(placement, placementRequest))
+        .toEqual(`<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>
+<li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequest.applicationDate, { format: 'short' })}</li></ul>
+<p>A confirmation email will be sent to the AP and probation practitioner.</p>`)
     })
   })
 })
