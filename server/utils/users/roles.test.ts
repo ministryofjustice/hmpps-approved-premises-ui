@@ -1,7 +1,24 @@
-import { filterAllocationRoles, hasPermission, hasRole } from './roles'
+import { ApprovedPremisesUserRole } from '@approved-premises/api'
+import { filterAllocationRoles, hasPermission, hasRole, roleToPermissions } from './roles'
 import { userDetailsFactory } from '../../testutils/factories'
 
 describe('roles utilities', () => {
+  describe('roleToPermissions', () => {
+    it('returns an array of permissions for the given role', () => {
+      expect(roleToPermissions('user_manager')).toEqual(['cas1_user_list', 'cas1_user_management'])
+      expect(roleToPermissions('assessor')).toEqual([
+        'cas1_assess_appealed_application',
+        'cas1_assess_application',
+        'cas1_assess_placement_application',
+        'cas1_view_assigned_assessments',
+      ])
+    })
+
+    it('returns an empty array for a role that does not have a mapping', () => {
+      expect(roleToPermissions('not_a_role' as ApprovedPremisesUserRole)).toEqual([])
+    })
+  })
+
   describe('hasRole', () => {
     it('returns true when the user has the role', () => {
       const user = userDetailsFactory.build({ roles: ['applicant'] })

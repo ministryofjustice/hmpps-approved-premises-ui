@@ -28,8 +28,8 @@ context('Non-arrivals', () => {
   }
 
   it('Records a non-arrival against a placement', () => {
-    // Given I am logged in as a future manager
-    signIn({ permissions: ['cas1_space_booking_view', 'cas1_space_booking_record_non_arrival'] })
+    // Given I am signed in as a future manager
+    signIn('future_manager')
 
     // And I am on the placement page
     let placementPage = PlacementShowPage.visit(placement)
@@ -82,8 +82,8 @@ context('Non-arrivals', () => {
   })
 
   it('Requires the correct permission to record a non-arrival against a placement', () => {
-    // Given I am logged in and have permission to view the placement, but not record non-arrival
-    signIn({ permissions: ['cas1_space_booking_view'] })
+    // Given I am signed in as a CRU member
+    signIn('cru_member')
 
     // And I am on the placement page
     const placementPage = PlacementShowPage.visit(placement)

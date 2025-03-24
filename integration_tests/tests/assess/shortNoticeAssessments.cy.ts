@@ -22,7 +22,7 @@ describe('Short notice assessments', () => {
     cy.task('reset')
 
     // Given I am signed in as an assessor
-    signIn({ permissions: ['cas1_view_assigned_assessments', 'cas1_assess_application'] })
+    signIn('assessor')
 
     // And there is a short notice application awaiting assessment
     cy.fixture('applicationData.json').then(applicationData => {

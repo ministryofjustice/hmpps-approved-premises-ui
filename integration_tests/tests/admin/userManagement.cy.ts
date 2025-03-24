@@ -14,7 +14,7 @@ context('User management', () => {
     cy.task('reset')
 
     // Given I am signed in as a User manager
-    signIn({ permissions: ['cas1_user_management'] })
+    signIn('user_manager')
   })
 
   it('allows the user to view and update users', () => {

@@ -77,8 +77,8 @@ context('Task Allocation', () => {
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'appeals_manager'] })
     cy.task('stubUserList', { users, roles: ['assessor', 'appeals_manager'] })
 
-    // And I am signed in as a CRU member
-    signIn({ permissions: ['cas1_view_manage_tasks'], cruManagementArea })
+    // And I am signed in as a CRU member with the correct CRU management area
+    signIn('cru_member', { cruManagementArea })
 
     // When I visit the task list page
     const taskListPage = TaskListPage.visit(tasks, [])
