@@ -10,9 +10,9 @@
 
 {% block beforeContent %}
     {{ govukBackLink({
-		text: "Back",
-		href: paths.assessments.pages.show({ task: 'review-application', page: 'review', id: assessmentId })
-	}) }}
+        text: "Back",
+        href: paths.assessments.pages.show({ task: 'review-application', page: 'review', id: assessmentId })
+    }) }}
 {% endblock %}
 
 {% block content %}
@@ -22,58 +22,58 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <div>
-                <p>Imported from OASys: <strong>{{dateOfImport}}</strong>
+                <p>Imported from OASys: <strong>{{ dateOfImport }}</strong>
                 </p>
 
             </div>
 
             {{ mojSubNavigation({
                 label: 'Sub navigation',
+                attributes: { 'data-sub-navigation-as-tabs': true },
                 items: [{
                     text: 'RoSH summary',
                     href: '#roshSummary',
                     attributes: {
                         'aria-controls': 'roshSummary',
-                        'id': 'roshSummaryTab',
-                        'aria-selected': true
-                        }
+                        'id': 'roshSummaryTab'
+                    }
                 },
-                {
-                    text: 'Offence details',
-                    href: '#offenceDetails',
-                    attributes: {
+                    {
+                        text: 'Offence details',
+                        href: '#offenceDetails',
+                        attributes: {
                         'aria-controls': 'offenceDetails',
                         'id': 'offenceDetailsTab'
-                        }
-                },
-                {
-                    text: 'Supporting information',
-                    href: '#supportingInformation',
-                    attributes: {
+                    }
+                    },
+                    {
+                        text: 'Supporting information',
+                        href: '#supportingInformation',
+                        attributes: {
                         'aria-controls': 'supportingInformation',
                         'id': 'supportingInformationTab'
-                        }
-                },
-                {
-                    text: 'Risk management plan',
-                    href: '#riskManagementPlan',
-                    attributes: {
+                    }
+                    },
+                    {
+                        text: 'Risk management plan',
+                        href: '#riskManagementPlan',
+                        attributes: {
                         'aria-controls': 'riskManagementPlan',
                         'id': 'riskManagementPlanTab'
-                        }
-                },
-                {
-                    text: 'Risk to self',
-                    href: '#riskToSelf',
-                    attributes: {
+                    }
+                    },
+                    {
+                        text: 'Risk to self',
+                        href: '#riskToSelf',
+                        attributes: {
                         'aria-controls': 'riskToSelf',
                         'id': 'riskToSelfTab'
-                        }
-                }
+                    }
+                    }
                 ]
             }) }}
 
-            {{OASysUtils.oasysTableTabs(oasysSections) | safe}}
+            {{ OASysUtils.oasysTableTabs(oasysSections) | safe }}
 
         </div>
         <div class="govuk-grid-column-one-third">
@@ -81,9 +81,6 @@
         </div>
     </div>
 
-    <a href="{{paths.assessments.pages.show({ task: 'review-application', page: 'review', id: assessmentId })}}" class="govuk-link"> Back to application</a>
-{% endblock %}
-
-{% block extraScripts %}
-    <script type="text/javascript" nonce="{{ cspNonce }}" src="../../../../../assets/tabPanelTableScript.js"></script>
+    <a href="{{ paths.assessments.pages.show({ task: 'review-application', page: 'review', id: assessmentId }) }}"
+       class="govuk-link"> Back to application</a>
 {% endblock %}
