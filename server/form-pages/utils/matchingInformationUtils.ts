@@ -109,7 +109,7 @@ const defaultMatchingInformationValues = (
   body: MatchingInformationBody,
   application: ApprovedPremisesApplication,
 ): Partial<MatchingInformationBody> => {
-  return {
+  const defaults = {
     acceptsChildSexOffenders: getValue<GetValueOffenceAndRisk>(
       body,
       'acceptsChildSexOffenders',
@@ -153,6 +153,15 @@ const defaultMatchingInformationValues = (
       'notRelevant',
     ),
     apType: apType(body, application),
+    isArsonDesignated: getValue<GetValuePlacementRequirement>(
+      body,
+      'isArsonDesignated',
+      application,
+      [],
+      [],
+      undefined,
+      undefined,
+    ),
     isArsonSuitable: getValue<GetValuePlacementRequirement>(
       body,
       'isArsonSuitable',
@@ -219,8 +228,11 @@ const defaultMatchingInformationValues = (
       'essential',
       'notRelevant',
     ),
-    lengthOfStay: lengthOfStay(body),
   }
+  const filteredDefaults = Object.entries(defaults).reduce((out, [key, value]) => {
+    return value ? { ...out, [key]: value } : out
+  }, {})
+  return { ...filteredDefaults, lengthOfStay: lengthOfStay(body) }
 }
 
 // TODO: remove once arson remapping (APS-1876) is completed
