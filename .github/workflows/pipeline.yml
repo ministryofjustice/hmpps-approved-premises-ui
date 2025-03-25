@@ -245,7 +245,8 @@ jobs:
   e2e_test:
     name: "E2E Environment Tests 🧪"
     needs:
-      - deploy_test # TODO - change to deploy_dev after successfull e2e run
+      - build #TODO - switch back
+      # - deploy_test # TODO - change to deploy_dev after successfull e2e run
     # runs-on: [self-hosted, hmpps-github-actions-runner] TODO - reimplement this when playwrite deps are fixed
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev/') || startsWith(github.head_ref, 'feature-dev/')
