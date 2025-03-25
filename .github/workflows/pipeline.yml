@@ -248,7 +248,8 @@ jobs:
       - build #TODO - switch back
       # - deploy_test # TODO - change to deploy_dev after successfull e2e run
     # runs-on: [self-hosted, hmpps-github-actions-runner] TODO - reimplement this when playwrite deps are fixed
-    runs-on: ubuntu-latest
+    runs-on:
+      labels: moj-cloud-platform
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test/') || startsWith(github.head_ref, 'feature-test/')
     strategy:
       fail-fast: false
@@ -264,11 +265,13 @@ jobs:
           node-version-file: '.node-version'
           cache: 'npm'
 
-      - name: Install Dependencies
-        run: npm ci --no-audit
-
+      - name: Install dependencies
+        run: npm ci
       - name: Install Playwright
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install
+      - name: Run Playwright tests
+        id: playwright-tests
+        run: npx playwright test --project=chromium
 
       - name: Run E2E Tests
         env:
