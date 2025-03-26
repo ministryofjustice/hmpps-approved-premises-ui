@@ -273,12 +273,15 @@ export default class AseessHelper {
     page.clickSubmit()
 
     this.pages.makeADecision.push(page)
+    this.pages.assessSuitability.push(page)
+
+    cy.log(JSON.stringify(this.pages, null, 3))
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the make-a-decision application task should show a completed status
-   // tasklistPage.shouldShowTaskStatus('make-a-decision', 'Completed')
+    tasklistPage.shouldShowTaskStatus('make-a-decision', 'Completed')
   }
 
   private completeMatchingInformationPage() {
