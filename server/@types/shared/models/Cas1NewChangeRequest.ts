@@ -5,9 +5,9 @@
 import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
 import type { Unit } from './Unit';
 export type Cas1NewChangeRequest = {
-    spaceBookingId?: string;
+    spaceBookingId: string;
     type: Cas1ChangeRequestType;
-    requestJson: Record<string, Unit>;
+    requestJson: Unit;
     reasonId: string;
 };
 
