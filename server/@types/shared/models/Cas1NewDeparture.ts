@@ -3,6 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1NewDeparture = {
+    /**
+     * use seperate date/time fields
+     * @deprecated
+     */
     departureDateTime?: string;
     departureDate?: string;
     departureTime?: string;
