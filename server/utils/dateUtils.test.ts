@@ -586,16 +586,25 @@ describe('timeIsValid24hrFormat', () => {
 })
 
 describe('dateObjToIsoTime', () => {
-  it.each([
-    ['00:00', 0, 0, 0],
-    ['12:01', 12, 1, 1],
-    ['23:59', 23, 59, 59],
-  ])('returns the iso time part of the date with time like %s', (expected, h, m, s) => {
-    const date = new Date()
-    date.setUTCHours(h)
-    date.setUTCMinutes(m)
-    date.setUTCSeconds(s)
-    expect(DateFormats.dateObjTo24hrTime(date)).toBe(expected)
+  describe.each([
+    ['British Summer Time', '2025-04-01'],
+    ['Greenwich Mean Time (UTC)', '2025-01-01'],
+  ])('during %s', (_, timezoneDate) => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date(timezoneDate))
+    })
+
+    it.each([
+      ['00:00', 0, 0, 0],
+      ['12:01', 12, 1, 1],
+      ['23:59', 23, 59, 59],
+    ])('returns the local 24-hour time part of the date with time like %s', (expected, h, m, s) => {
+      const date = new Date()
+      date.setHours(h)
+      date.setMinutes(m)
+      date.setSeconds(s)
+      expect(DateFormats.dateObjTo24hrTime(date)).toBe(expected)
+    })
   })
 })
 
