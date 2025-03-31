@@ -112,7 +112,8 @@ const recordDeparture = async ({ page }: { page: Page }) => {
   const recordDeparturePage = await RecordDeparturePage.initialize(page, 'Record a departure')
 
   // When I record the person as arrived
-  const { departureDateTime, reason, notes } = await recordDeparturePage.recordDeparture()
+  const { departureDateTime, reason, breachOrRecallReason, moveOnCategory, notes } =
+    await recordDeparturePage.recordDeparture()
 
   // Then I should see the placement page with a success banner
   await recordDeparturePage.shouldShowSuccessBanner('You have recorded this person as departed')
@@ -124,5 +125,9 @@ const recordDeparture = async ({ page }: { page: Page }) => {
   )
   await recordDeparturePage.shouldShowSummaryItem('Departure time', DateFormats.timeFromDate(departureDateTime))
   await recordDeparturePage.shouldShowSummaryItem('Departure reason', reason)
+  await recordDeparturePage.shouldShowSummaryItem('Move on', moveOnCategory || 'Not Applicable')
+  if (breachOrRecallReason) {
+    await recordDeparturePage.shouldShowSummaryItem('Breach or recall', breachOrRecallReason)
+  }
   await recordDeparturePage.shouldShowSummaryItem('More information', notes)
 }
