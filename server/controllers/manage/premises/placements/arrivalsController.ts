@@ -77,7 +77,7 @@ export default class ArrivalsController {
         }
 
         const placementArrival: Cas1NewArrival = {
-          arrivalTime: DateFormats.isoDateTimeToTime(arrivalDateTime),
+          arrivalTime,
           arrivalDate: DateFormats.isoDateTimeToIsoDate(arrivalDateTime),
         }
 

@@ -57,19 +57,12 @@ describe('ArrivalsController', () => {
 
   describe('create', () => {
     let arrivalPath: string
-    const validBody = {
-      'arrivalDateTime-year': '2024',
-      'arrivalDateTime-month': '11',
-      'arrivalDateTime-day': '5',
-      arrivalTime: '9:45',
-    }
 
     beforeEach(() => {
       arrivalPath = paths.premises.placements.arrival({
         premisesId: request.params.premisesId,
         placementId: request.params.placementId,
       })
-      request.body = validBody
     })
 
     const checkDateErrors = async (body: Record<string, string>, expectedErrorData: Record<string, string>) => {
@@ -91,14 +84,25 @@ describe('ArrivalsController', () => {
       expect(errorData).toEqual(expectedErrorData)
     }
 
-    it('creates the arrival and redirects to the placement page', async () => {
+    it.each([
+      ['2024-11-05', '09:45'],
+      ['2025-03-31', '12:13'],
+    ])('creates the arrival for %s at %s and redirects to the placement page', async (date, time) => {
+      const [year, month, day] = date.split('-').map(part => part.replace(/^0+/g, ''))
+      request.body = {
+        'arrivalDateTime-year': year,
+        'arrivalDateTime-month': month,
+        'arrivalDateTime-day': day,
+        arrivalTime: time,
+      }
+
       const requestHandler = arrivalsController.create()
 
       await requestHandler(request, response, next)
 
       expect(placementService.createArrival).toHaveBeenCalledWith(token, premisesId, placement.id, {
-        arrivalDate: '2024-11-05',
-        arrivalTime: '09:45',
+        arrivalDate: date,
+        arrivalTime: time,
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as arrived')
       expect(response.redirect).toHaveBeenCalledWith(
@@ -188,6 +192,13 @@ describe('ArrivalsController', () => {
 
     describe('when errors are raised by the API', () => {
       it('should call catchValidationErrorOrPropogate with a standard error', async () => {
+        request.body = {
+          'arrivalDateTime-year': '2024',
+          'arrivalDateTime-month': '11',
+          'arrivalDateTime-day': '5',
+          arrivalTime: '9:45',
+        }
+
         const requestHandler = arrivalsController.create()
 
         const err = new Error()
