@@ -2,6 +2,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
 import type { NextFunction, Request, Response } from 'express'
+import { addDays } from 'date-fns'
 import * as validationUtils from '../../../../utils/validation'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
@@ -684,31 +685,45 @@ describe('DeparturesController', () => {
   })
 
   describe('create', () => {
-    it('creates the departure, clears the session and redirects to the placement page', async () => {
-      placementService.getDepartureSessionData.mockReturnValue({
-        ...departureFormData,
-        reasonId: rootDepartureReason1.id,
-      })
+    it.each([
+      ['2024-10-08', '09:35'],
+      ['2025-03-31', '11:15'],
+    ])(
+      'creates the departure on %s at %s, clears the session and redirects to the placement page',
+      async (date, time) => {
+        jest.setSystemTime(addDays(new Date(date), 1))
+        const [year, month, day] = date.split('-').map(part => part.replace(/^0+/g, ''))
+        placementService.getDepartureSessionData.mockReturnValue({
+          ...departureFormData,
+          'departureDate-day': day,
+          'departureDate-month': month,
+          'departureDate-year': year,
+          departureDate: date,
+          departureTime: time,
+          reasonId: rootDepartureReason1.id,
+        })
 
-      request.body = {
-        notes: 'Some notes',
-      }
-      const requestHandler = departuresController.create()
+        request.body = {
+          notes: 'Some notes',
+        }
+        const requestHandler = departuresController.create()
 
-      await requestHandler(request, response, next)
+        await requestHandler(request, response, next)
 
-      expect(placementService.createDeparture).toHaveBeenCalledWith(token, premisesId, placement.id, {
-        departureDateTime: '2024-10-08T09:35:00.000Z',
-        reasonId: rootDepartureReason1.id,
-        notes: 'Some notes',
-      })
-      expect(placementService.removeDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session)
-      expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as departed')
-      expect(mockSessionSave).toHaveBeenCalled()
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.premises.placements.show({ premisesId, placementId: placement.id }),
-      )
-    })
+        expect(placementService.createDeparture).toHaveBeenCalledWith(token, premisesId, placement.id, {
+          departureDate: date,
+          departureTime: time,
+          reasonId: rootDepartureReason1.id,
+          notes: 'Some notes',
+        })
+        expect(placementService.removeDepartureSessionData).toHaveBeenCalledWith(placement.id, request.session)
+        expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as departed')
+        expect(mockSessionSave).toHaveBeenCalled()
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.premises.placements.show({ premisesId, placementId: placement.id }),
+        )
+      },
+    )
 
     describe('when errors are raised by the API', () => {
       it('should call catchValidationErrorOrPropogate with a standard error', async () => {
