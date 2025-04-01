@@ -12,6 +12,9 @@ export type Cas1OutOfServiceBed = {
     id: string;
     createdAt: string;
     startDate: string;
+    /**
+     * This date is inclusive. The bed will be unavailable for the whole of the day
+     */
     endDate: string;
     bed: NamedId;
     room: NamedId;
