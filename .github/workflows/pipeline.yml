@@ -224,7 +224,7 @@ jobs:
     name: Deploy to the test environment
     needs:
       - build
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test-') || startsWith(github.head_ref, 'feature-test-')
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test/') || startsWith(github.head_ref, 'feature-test/')
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1
     secrets: inherit
     with:
@@ -245,7 +245,8 @@ jobs:
   e2e_test:
     name: "E2E Environment Tests 🧪"
     needs:
-      - build # TODO - switch back
+      - build
+      - deploy_test
     runs-on: [self-hosted, james-bootstrap]
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test/') || startsWith(github.head_ref, 'feature-test/')
     strategy:
