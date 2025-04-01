@@ -55,6 +55,10 @@ on:
         default: true
         type: boolean
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   packages: write
@@ -62,7 +66,9 @@ permissions:
 jobs:
   node_build:
     name: "Node Build 🛠️"
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v1
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2
+    with:
+      node_version_file: '.node-version'
     secrets: inherit
 
   type_checking:
@@ -70,18 +76,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'npm'
 
-      - name: Installing dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Typechecking the code
+      - name: Run type check
         run: npm run typecheck
 
   linting:
@@ -89,21 +95,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'npm'
 
-      - name: Installing dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Running Lint checks
+      - name: Run lint checks
         run: npm run lint
 
-      - name: Running shell scripts linting checks
+      - name: Run shell scripts lint checks
         run: npm run shellcheck
 
   helm_lint:
@@ -118,24 +124,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'npm'
 
-      - name: Installing dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Running Unit tests
+      - name: Run Unit tests
         run: npm run test:ci
 
       - name: Check coverage
         run: |
           npx nyc report -t ./coverage --reporter=text --reporter=text-summary
           npx nyc check-coverage -t ./coverage
+
 
   integration_test:
     name: "Integration testing 🧪"
@@ -146,21 +153,21 @@ jobs:
         ci_node_index: [ 0, 1, 2, 3 ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'npm'
 
-      - name: Installing dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Building source
+      - name: Build source
         run: npm run build
 
-      - name: Downloading test reports from previous runs
+      - name: Download test reports from previous runs
         uses: dawidd6/action-download-artifact@v6
         with:
           branch: main
@@ -171,7 +178,7 @@ jobs:
           path: tmp/junit-xml-reports-downloaded
         continue-on-error: true
 
-      - name: Determining tests splitting by timing
+      - name: Determine tests splitting by timing
         uses: r7kamura/split-tests-by-timings@v0
         id: split-tests
         with:
@@ -180,7 +187,7 @@ jobs:
           index: ${{ matrix.ci_node_index }}
           total: 4
 
-      - name: Running Integration tests
+      - name: Run Integration tests
         run: TEST_RUN_ARGS="--spec $(echo ${{ steps.split-tests.outputs.paths }} | sed -E 's/ /,/g')" npm run test:integration
 
       - name: Fix Cypress JUnit XML reports
@@ -208,11 +215,13 @@ jobs:
     name: Build docker image from hmpps-github-actions
     needs:
       - node_build
+      - type_checking
       - linting
       - helm_lint
       - unit_test
       - integration_test
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v1
+    if: github.ref == 'refs/heads/main' || inputs.environment == 'test'
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2
     with:
       docker_registry: ${{ inputs.docker_registry || 'ghcr.io' }}
       registry_org: ${{ inputs.registry_org || 'ministryofjustice' }}
@@ -220,61 +229,76 @@ jobs:
       push: ${{ inputs.push || true }}
       docker_multiplatform: ${{ inputs.docker_multiplatform || false }}
 
-  deploy_test:
-    name: Deploy to the test environment
-    needs:
-      - build
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test-') || startsWith(github.head_ref, 'feature-test-')
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1
-    secrets: inherit
-    with:
-      environment: 'test'
-      app_version: '${{ needs.build.outputs.app_version }}'
-  
   deploy_dev:
     name: Deploy to the development environment
     needs:
       - build
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev-') || startsWith(github.head_ref, 'feature-dev-')
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
     secrets: inherit
     with:
       environment: 'development'
       app_version: '${{ needs.build.outputs.app_version }}'
 
+  deploy_test:
+    name: Deploy to the test environment
+    needs:
+      - build
+    if: github.ref == 'refs/heads/main' || inputs.environment == 'test'
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: 'test'
+      app_version: '${{ needs.build.outputs.app_version }}'
+
   e2e_test:
     name: "E2E Environment Tests 🧪"
     needs:
-      - deploy_test # TODO - change to deploy_dev after successfull e2e run
-    # runs-on: [self-hosted, hmpps-github-actions-runner] TODO - reimplement this when playwrite deps are fixed
+      - deploy_dev
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-dev/') || startsWith(github.head_ref, 'feature-dev/')
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test/') || startsWith(github.head_ref, 'feature-test/')
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [ 1, 2, 3, 4 ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'npm'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci --no-audit
 
       - name: Install Playwright
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Run E2E Tests
         env:
-          HMPPS_AUTH_USERNAME: ${{ secrets[format('HMPPS_AUTH_USERNAME_{0}', matrix.shard)] }}
-          HMPPS_AUTH_PASSWORD: ${{ secrets[format('HMPPS_AUTH_PASSWORD_{0}', matrix.shard)] }}
-          HMPPS_AUTH_EMAIL: ${{ secrets[format('HMPPS_AUTH_EMAIL_{0}', matrix.shard)] }}
-          HMPPS_AUTH_NAME: ${{ secrets[format('HMPPS_AUTH_NAME_{0}', matrix.shard)] }}
+          # TODO: Tidy this up!
+          CAS1_E2E_ADMINISTRATOR_PASSWORD: ${{ secrets.E2E_USER_DA_AP_USER_TEST_2_PASSWORD }}
+          CAS1_E2E_ADMINISTRATOR_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_2_USERNAME }}
+          CAS1_E2E_ASSESSOR_EMAIL: stuart.harrison2+test1@digital.justice.gov.uk
+          CAS1_E2E_ASSESSOR_NAME: AP_USER TEST_1
+          CAS1_E2E_ASSESSOR_PASSWORD: ${{ secrets.E2E_USER_DA_AP_USER_TEST_1_PASSWORD }}
+          CAS1_E2E_ASSESSOR_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_1_USERNAME }}
+          CAS1_E2E_CRU_MEMBER_PASSWORD: ${{ secrets.E2E_USER_DA_AP_USER_TEST_4_PASSWORD }}
+          CAS1_E2E_CRU_MEMBER_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_4_USERNAME }}
+          CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE: JOSEPHHOLLINSHEAD
+          CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO: AP_USER TEST_1
+          CAS1_E2E_FUTURE_MANAGER_PASSWORD: ${{ secrets.E2E_USER_DA_AP_USER_TEST_4_PASSWORD }}
+          CAS1_E2E_FUTURE_MANAGER_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_4_USERNAME }}
+          CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN: X349420
+          CAS1_E2E_REPORT_VIEWER_PASSWORD: ${{ secrets.E2E_USER_DA_AP_USER_TEST_2_PASSWORD }}
+          CAS1_E2E_REPORT_VIEWER_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_2_USERNAME }}
+          CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD: ${{ secrets.E2E_USER_DA_AP_USER_TEST_1_PASSWORD }}
+          CAS1_E2E_USER_WITHOUT_ROLES_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_1_USERNAME }}
+          HMPPS_AUTH_PASSWORD: ${{ secrets.E2E_USER_DA_AP_USER_TEST_1_PASSWORD }}
+          HMPPS_AUTH_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_1_USERNAME }}
         run: npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
 
       - name: Upload Playwright Report
@@ -292,7 +316,7 @@ jobs:
           name: test-results-${{ matrix.shard }}
           path: test-results
           retention-days: 30
-# TODO - uncomment when e2e tests run successfully
+  # TODO - uncomment when e2e tests run successfully
   # deploy_preprod:
   #   name: Deploy to pre-production environment
   #   needs: 
@@ -300,7 +324,7 @@ jobs:
   #     - deploy_dev
   #     - e2e_test
   #   if: github.ref == 'refs/heads/main'
-  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
+  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
   #   secrets: inherit
   #   with:
   #     environment: 'preprod'
@@ -312,7 +336,7 @@ jobs:
   #     - build
   #     - deploy_preprod
   #   if: github.ref == 'refs/heads/main'
-  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v1 # WORKFLOW_VERSION
+  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
   #   secrets: inherit
   #   with:
   #     environment: 'prod'
