@@ -90,8 +90,6 @@ export default class MatchingInformation implements TasklistPage {
 
   availableApTypes: Record<ApTypeCriteria, string>
 
-  rawBody: MatchingInformationBody
-
   constructor(
     private _body: Partial<MatchingInformationBody>,
     public assessment: Assessment,
@@ -111,7 +109,6 @@ export default class MatchingInformation implements TasklistPage {
   }
 
   set body(value: MatchingInformationBody) {
-    this.rawBody = { ...this.body }
     this._body = { ...value, ...defaultMatchingInformationValues(this.body, this.assessment.application) }
   }
 
@@ -131,16 +128,10 @@ export default class MatchingInformation implements TasklistPage {
     const response = {
       [this.questions.apType]: apTypeCriteriaLabels[this.body.apType],
     }
-    let placementCriteria: Array<PlacementRequirementCriteria> = [...this.placementRequirementCriteria]
 
-    if (this.rawBody.isArsonDesignated && !this.rawBody.isArsonSuitable)
-      placementCriteria = [...placementRequirementCriteria, 'isArsonDesignated'].filter(
-        placementCriterion => placementCriterion !== 'isArsonSuitable',
-      ) as Array<PlacementRequirementCriteria>
-
-    placementCriteria.forEach(placementRequirementCriterion => {
+    this.placementRequirementCriteria.forEach(placementRequirementCriterion => {
       response[`${placementCriteriaLabels[placementRequirementCriterion]}`] =
-        `${sentenceCase(this.rawBody[placementRequirementCriterion])}`
+        `${sentenceCase(this.body[placementRequirementCriterion])}`
     })
 
     this.offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {

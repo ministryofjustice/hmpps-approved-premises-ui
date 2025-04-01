@@ -426,18 +426,6 @@ describe('matchingInformationUtils', () => {
             )
           })
         })
-
-        describe('isArsonDesignated (legacy)', () => {
-          it('is set if isArsonDesignated is defined in the stored data', () => {
-            const matchingInformationBody: MatchingInformationBody = {
-              ...bodyWithUndefinedValues,
-              isArsonDesignated: 'essential',
-            }
-            expect(defaultMatchingInformationValues(matchingInformationBody, application)).toEqual(
-              expect.objectContaining({ isArsonDesignated: 'essential' }),
-            )
-          })
-        })
       })
     })
 
