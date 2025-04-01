@@ -15,6 +15,9 @@ export type Cas1ChangeRequest = {
     tier?: string;
     expectedArrivalDate?: string;
     actualArrivalDate?: string;
+    /**
+     * Current placement's length of stay, using canonical arrival date
+     */
     lengthOfStayDays: number;
     requestReason: NamedId;
     decision?: Cas1ChangeRequestDecision;
