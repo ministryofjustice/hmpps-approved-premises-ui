@@ -1,9 +1,9 @@
 import { createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
-import { FormSection, SummaryListActionItem, TaskNames, UiTask } from '../../@types/ui'
+import { FormSection, SummaryListActionItem, TaskNames, UiTask } from '@approved-premises/ui'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
-import { SumbmittedApplicationSummaryCards } from './submittedApplicationSummaryCards'
-import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
+import { SubmittedDocumentRenderer } from './submittedDocumentRenderer'
+import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { linebreaksToParagraphs } from '../utils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
@@ -13,7 +13,7 @@ import Assess from '../../form-pages/assess'
 jest.mock('../assessments/documentUtils')
 jest.mock('../assessments/getActionsForTaskId')
 
-describe('SumbmittedApplicationSummaryCards', () => {
+describe('Submitted document renderer', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
@@ -21,7 +21,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
   it('should use sections for the Apply form if the form is an application', () => {
     const submittedForm = applicationFactory.build()
 
-    const renderer = new SumbmittedApplicationSummaryCards(submittedForm)
+    const renderer = new SubmittedDocumentRenderer(submittedForm)
 
     expect(renderer.sections).toEqual(Apply.sections.slice(0, -1))
   })
@@ -29,7 +29,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
   it('should use sections for the Assess form if the form is an assessment', () => {
     const submittedForm = assessmentFactory.build()
 
-    const renderer = new SumbmittedApplicationSummaryCards(submittedForm)
+    const renderer = new SubmittedDocumentRenderer(submittedForm)
 
     expect(renderer.sections).toEqual(Assess.sections.slice(0, -1))
   })
@@ -46,7 +46,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       ],
     })
 
-    const renderer = new SumbmittedApplicationSummaryCards(submittedForm, null, [section])
+    const renderer = new SubmittedDocumentRenderer(submittedForm, null, [section])
 
     expect(renderer.sections).toEqual([section])
   })
@@ -121,7 +121,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       },
     })
 
-    const cards = new SumbmittedApplicationSummaryCards(application, null, sections).response
+    const cards = new SubmittedDocumentRenderer(application, null, sections).response
 
     expect(cards).toEqual([
       {
@@ -242,7 +242,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
       },
     })
 
-    const cards = new SumbmittedApplicationSummaryCards(application, null, [section]).response
+    const cards = new SubmittedDocumentRenderer(application, null, [section]).response
 
     expect(cards[0].tasks[0].rows[0]).toEqual({
       key: { text: 'Question 1' },
@@ -282,7 +282,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
 
     when(documentsFromApplication).calledWith(application).mockReturnValue(documents)
 
-    const cards = new SumbmittedApplicationSummaryCards(application, null, [section]).response
+    const cards = new SubmittedDocumentRenderer(application, null, [section]).response
 
     expect(cards[0].tasks[0].rows).toEqual([
       {
@@ -318,7 +318,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
 
     when(getActionsForTaskId).calledWith(section.tasks[0].id, assessmentId).mockReturnValue(summaryListActionItems)
 
-    const cards = new SumbmittedApplicationSummaryCards(application, assessmentId, [section]).response
+    const cards = new SubmittedDocumentRenderer(application, assessmentId, [section]).response
 
     expect(getActionsForTaskId).toHaveBeenCalledWith(section.tasks[0].id, assessmentId)
 
@@ -337,7 +337,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
     })
 
     const application = applicationFactory.build()
-    const cards = new SumbmittedApplicationSummaryCards(application, null, [section]).response
+    const cards = new SubmittedDocumentRenderer(application, null, [section]).response
 
     expect(getActionsForTaskId).not.toHaveBeenCalled()
     expect(cards[0].tasks[0].card.actions).toEqual(undefined)
@@ -355,7 +355,7 @@ describe('SumbmittedApplicationSummaryCards', () => {
     })
 
     const application = applicationFactory.build({ type: 'offline', document: undefined, status: undefined })
-    const cards = new SumbmittedApplicationSummaryCards(application, null, [section]).response
+    const cards = new SubmittedDocumentRenderer(application, null, [section]).response
 
     cards.forEach(card => {
       card.tasks.forEach(task => {

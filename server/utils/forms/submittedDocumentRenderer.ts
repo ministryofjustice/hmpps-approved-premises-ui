@@ -1,13 +1,13 @@
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
-} from '../../@types/shared'
-import { FormSections, SummaryListItem, UiTask } from '../../@types/ui'
+} from '@approved-premises/api'
+import { FormSections, SummaryListItem, UiTask } from '@approved-premises/ui'
 import Apply from '../../form-pages/apply'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { linebreaksToParagraphs } from '../utils'
-import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
+import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import Assess from '../../form-pages/assess'
 
 type QuestionResponse = string | Array<Record<string, unknown>>
@@ -19,7 +19,7 @@ type TaskResponse = Array<PageResponse>
 const isApplication = (submittedForm?: Application | Assessment): submittedForm is Application =>
   'person' in (submittedForm as Application)
 
-export class SumbmittedApplicationSummaryCards {
+export class SubmittedDocumentRenderer {
   sections: FormSections
 
   constructor(

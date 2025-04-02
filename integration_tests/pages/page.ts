@@ -19,7 +19,7 @@ import errorLookups from '../../server/i18n/en/errors.json'
 import { summaryListSections } from '../../server/utils/applications/summaryListUtils'
 import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
-import { SumbmittedApplicationSummaryCards } from '../../server/utils/applications/submittedApplicationSummaryCards'
+import { SubmittedDocumentRenderer } from '../../server/utils/forms/submittedDocumentRenderer'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
 import { oasysSectionsToExclude } from '../../server/utils/oasysImportUtils'
 import { displayName, isFullPerson } from '../../server/utils/personUtils'
@@ -304,7 +304,7 @@ export default abstract class Page {
   }
 
   shouldShowResponseFromSubmittedApplication(application: Application) {
-    const sections = new SumbmittedApplicationSummaryCards(application).response
+    const sections = new SubmittedDocumentRenderer(application).response
 
     sections.forEach(section => {
       cy.get('h2.govuk-heading-l').contains(section.title).should('exist')
