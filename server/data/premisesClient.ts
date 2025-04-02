@@ -14,6 +14,7 @@ import type {
   StaffMember,
 } from '@approved-premises/api'
 import type { PaginatedResponse, PremisesFilters } from '@approved-premises/ui'
+import type { Response } from 'express'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -104,5 +105,15 @@ export default class PremisesClient {
     return (await this.restClient.get({
       path: paths.premises.staffMembers.index({ premisesId }),
     })) as Array<StaffMember>
+  }
+
+  async getOccupancyReport(response: Response): Promise<void> {
+    return this.restClient.pipe(
+      {
+        path: paths.premises.occupancyReport({}),
+        passThroughHeaders: ['content-disposition'],
+      },
+      response,
+    )
   }
 }

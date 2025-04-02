@@ -109,6 +109,7 @@ export default {
       timeline: cas1SpaceBookingSingle.path('timeline'),
     },
     calendar: premisesSingle.path('calendar'),
+    occupancyReport: cas1Premises.path('occupancy-report'),
   },
   bookings: {
     bookingWithoutPremisesPath: path('/bookings/:bookingId'),

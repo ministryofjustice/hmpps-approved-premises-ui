@@ -1,3 +1,4 @@
+import { formatDate } from 'date-fns/format'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
@@ -229,6 +230,22 @@ context('Placement Requests', () => {
 
     // And I should see the parole notification banner
     showPage.shouldShowParoleNotification()
+  })
+
+  it('allows me to download the CRU occupancy report', () => {
+    stubArtifacts()
+    const filename = `premises-occupancy_${formatDate(new Date(), 'yyyyMMdd_HHmm')}.csv`
+    cy.task('stubOccupancyReportDownload', { filename })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // And I click the 'Download CRU occupancy report' action
+    listPage.expectDownload()
+    listPage.clickAction('Download CRU occupancy report')
+
+    // Then the report should be downloaded
+    listPage.shouldHaveDownloadedFile(filename)
   })
 
   it('allows me to create a booking', () => {

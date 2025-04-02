@@ -6,6 +6,8 @@ import {
 } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker'
+import { createMock } from '@golevelup/ts-jest'
+import { Response } from 'express'
 import {
   cas1BedDetailFactory,
   cas1PremiseCapacityFactory,
@@ -364,6 +366,30 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
 
       const output = await premisesClient.getStaff(premises.id)
       expect(output).toEqual(staffList)
+    })
+  })
+
+  describe('getOccupancyReport', () => {
+    it('should pipe the occupancy report', async () => {
+      const response = createMock<Response>({})
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to download the occupancy report',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.occupancyReport({}),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await premisesClient.getOccupancyReport(response)
     })
   })
 })

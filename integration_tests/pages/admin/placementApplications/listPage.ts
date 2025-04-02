@@ -77,7 +77,7 @@ export default class ListPage extends Page {
   }
 
   clickApplyFilters(): void {
-    this.clickSubmit()
+    cy.get('button').contains('Apply filters').click()
   }
 
   shouldBeSortedByField(field: PlacementRequestSortField | ApplicationSortField, order: SortOrder): void {
