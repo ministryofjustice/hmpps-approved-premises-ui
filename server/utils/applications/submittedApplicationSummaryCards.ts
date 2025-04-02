@@ -1,10 +1,14 @@
-import { ApprovedPremisesApplication as Application } from '../../@types/shared'
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesAssessment as Assessment,
+} from '../../@types/shared'
 import { FormSections, SummaryListItem, UiTask } from '../../@types/ui'
 import Apply from '../../form-pages/apply'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { linebreaksToParagraphs } from '../utils'
 import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
+import Assess from '../../form-pages/assess'
 
 type QuestionResponse = string | Array<Record<string, unknown>>
 
@@ -12,12 +16,23 @@ type PageResponse = Record<string, QuestionResponse>
 
 type TaskResponse = Array<PageResponse>
 
+const isApplication = (submittedForm?: Application | Assessment): submittedForm is Application =>
+  'person' in (submittedForm as Application)
+
 export class SumbmittedApplicationSummaryCards {
+  sections: FormSections
+
   constructor(
-    private readonly application: Application,
+    private readonly submittedForm: Application | Assessment,
     private readonly assessmentId?: string,
-    private readonly sections: FormSections = Apply.sections.slice(0, -1), // Defaults to all Apply sections except the final "Check your answers" section
-  ) {}
+    readonly sectionsToRender?: FormSections,
+  ) {
+    if (sectionsToRender) {
+      this.sections = sectionsToRender
+    } else {
+      this.sections = (isApplication(submittedForm) ? Apply : Assess).sections.slice(0, -1)
+    }
+  }
 
   get response() {
     return this.sections.map(section => {
@@ -42,7 +57,7 @@ export class SumbmittedApplicationSummaryCards {
   }
 
   summaryCardRowsForTaskId = (taskId: string): Array<SummaryListItem> => {
-    const pages = (this.application.document?.[taskId] as TaskResponse) || []
+    const pages = (this.submittedForm.document?.[taskId] as TaskResponse) || []
     if (taskId === 'attach-required-documents') {
       return this.summaryCardRowsForDocuments()
     }
@@ -55,12 +70,17 @@ export class SumbmittedApplicationSummaryCards {
   }
 
   summaryCardRowsForDocuments = (): Array<SummaryListItem> => {
-    return documentsFromApplication(this.application).map(document => ({
-      key: {
-        html: `<a href="/applications/people/${this.application.person.crn}/documents/${document.id}" data-debounce-link data-cy-documentId="${document.id}">${document.fileName}</a>`,
-      },
-      value: { text: document?.description || '' },
-    }))
+    if (isApplication(this.submittedForm)) {
+      const { crn } = this.submittedForm.person
+      return documentsFromApplication(this.submittedForm).map(document => ({
+        key: {
+          html: `<a href="/applications/people/${crn}/documents/${document.id}" data-debounce-link data-cy-documentId="${document.id}">${document.fileName}</a>`,
+        },
+        value: { text: document?.description || '' },
+      }))
+    }
+
+    return undefined
   }
 
   questionToSummaryCardRow = (question: string, answer: QuestionResponse): SummaryListItem => {

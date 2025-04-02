@@ -1,12 +1,14 @@
 import { createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import { FormSection, SummaryListActionItem, TaskNames, UiTask } from '../../@types/ui'
-import { applicationFactory, documentFactory } from '../../testutils/factories'
+import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { SumbmittedApplicationSummaryCards } from './submittedApplicationSummaryCards'
 import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
 import { linebreaksToParagraphs } from '../utils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
+import Apply from '../../form-pages/apply'
+import Assess from '../../form-pages/assess'
 
 jest.mock('../assessments/documentUtils')
 jest.mock('../assessments/getActionsForTaskId')
@@ -14,6 +16,39 @@ jest.mock('../assessments/getActionsForTaskId')
 describe('SumbmittedApplicationSummaryCards', () => {
   beforeEach(() => {
     jest.resetAllMocks()
+  })
+
+  it('should use sections for the Apply form if the form is an application', () => {
+    const submittedForm = applicationFactory.build()
+
+    const renderer = new SumbmittedApplicationSummaryCards(submittedForm)
+
+    expect(renderer.sections).toEqual(Apply.sections.slice(0, -1))
+  })
+
+  it('should use sections for the Assess form if the form is an assessment', () => {
+    const submittedForm = assessmentFactory.build()
+
+    const renderer = new SumbmittedApplicationSummaryCards(submittedForm)
+
+    expect(renderer.sections).toEqual(Assess.sections.slice(0, -1))
+  })
+
+  it('should use sections provided', () => {
+    const submittedForm = applicationFactory.build()
+    const section = createMock<FormSection>({
+      title: 'Section title',
+      tasks: [
+        createMock<UiTask>({
+          title: 'Basic information',
+          id: 'basic-information',
+        }),
+      ],
+    })
+
+    const renderer = new SumbmittedApplicationSummaryCards(submittedForm, null, [section])
+
+    expect(renderer.sections).toEqual([section])
   })
 
   it('should return a summary card for each section', () => {

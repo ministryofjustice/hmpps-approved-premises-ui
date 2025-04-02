@@ -9,6 +9,7 @@ import type { ErrorMessages, TaskStatus as TaskListStatus, UiTask } from '@appro
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
+  ApprovedPremisesAssessment as Assessment,
   PersonStatus,
   TaskStatus,
 } from '@approved-premises/api'
@@ -268,7 +269,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal(
     'getSummaryCardsForApplication',
-    (application: Application, assessmentId?: string) =>
-      new SumbmittedApplicationSummaryCards(application, assessmentId).response,
+    (submittedEntity: Application | Assessment, assessmentId?: string) =>
+      new SumbmittedApplicationSummaryCards(submittedEntity, assessmentId).response,
   )
 }

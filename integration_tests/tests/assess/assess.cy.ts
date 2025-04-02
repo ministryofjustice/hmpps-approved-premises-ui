@@ -26,6 +26,7 @@ import { addResponsesToFormArtifact } from '../../../server/testutils/addToAppli
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import paths from '../../../server/paths/assess'
 import { signIn } from '../signIn'
+import { getResponses } from '../../../server/utils/applications/getResponses'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -283,7 +284,7 @@ context('Assess', () => {
 
   it('shows a read-only version of the assessment', function test() {
     // Given I have completed an assessment
-    const updatedAssessment = { ...this.assessment, status: 'completed' }
+    const updatedAssessment = { ...this.assessment, status: 'completed', document: getResponses(this.assessment) }
     const updatedAssessmentSummary = assessmentSummaryFactory.build({
       id: this.assessment.id,
       status: 'completed',
