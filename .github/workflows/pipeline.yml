@@ -263,6 +263,9 @@ jobs:
           node-version-file: '.node-version'
           cache: 'npm'
 
+      - name: Installing dependencies
+        run: npm ci
+
       - name: Run E2E Tests
         env:
           HMPPS_AUTH_USERNAME: ${{ secrets[format('HMPPS_AUTH_USERNAME_{0}', matrix.shard)] }}
