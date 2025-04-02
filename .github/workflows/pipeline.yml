@@ -252,7 +252,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2]
     steps:
       - name: Check out code
         uses: actions/checkout@v4.1.7
@@ -264,7 +264,7 @@ jobs:
           cache: 'npm'
 
       - name: Installing dependencies
-        run: npm ci
+        run: NODE_OPTIONS="--max_old_space_size=2048" npm ci
 
       - name: Run E2E Tests
         env:
@@ -272,7 +272,7 @@ jobs:
           HMPPS_AUTH_PASSWORD: ${{ secrets[format('HMPPS_AUTH_PASSWORD_{0}', matrix.shard)] }}
           HMPPS_AUTH_EMAIL: ${{ secrets[format('HMPPS_AUTH_EMAIL_{0}', matrix.shard)] }}
           HMPPS_AUTH_NAME: ${{ secrets[format('HMPPS_AUTH_NAME_{0}', matrix.shard)] }}
-        run: npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
+        run: npm run test:e2e:ci -- --shard=${{ matrix.shard }}/2
 
       - name: Upload Playwright Report
         if: always()
