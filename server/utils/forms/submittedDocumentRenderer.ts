@@ -30,7 +30,9 @@ export class SubmittedDocumentRenderer {
     if (sectionsToRender) {
       this.sections = sectionsToRender
     } else {
-      this.sections = (isApplication(submittedForm) ? Apply : Assess).sections.slice(0, -1)
+      this.sections = (isApplication(submittedForm) ? Apply : Assess).sections.filter(
+        section => section.name !== 'CheckYourAnswers',
+      )
     }
   }
 

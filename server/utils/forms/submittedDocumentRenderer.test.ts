@@ -18,7 +18,7 @@ describe('Submitted document renderer', () => {
     jest.resetAllMocks()
   })
 
-  it('should use sections for the Apply form if the form is an application', () => {
+  it('should use sections for the Apply form if the form is an application, apart from "Check your answers"', () => {
     const submittedForm = applicationFactory.build()
 
     const renderer = new SubmittedDocumentRenderer(submittedForm)
@@ -26,7 +26,7 @@ describe('Submitted document renderer', () => {
     expect(renderer.sections).toEqual(Apply.sections.slice(0, -1))
   })
 
-  it('should use sections for the Assess form if the form is an assessment', () => {
+  it('should use sections for the Assess form if the form is an assessment, apart from "Check your answers"', () => {
     const submittedForm = assessmentFactory.build()
 
     const renderer = new SubmittedDocumentRenderer(submittedForm)
