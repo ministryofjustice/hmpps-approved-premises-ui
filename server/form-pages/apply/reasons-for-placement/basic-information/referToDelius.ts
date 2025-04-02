@@ -7,7 +7,6 @@ import TasklistPage from '../../../tasklistPage'
 export default class ReferToDelius implements TasklistPage {
   title = 'Refer to NDelius to complete an Approved Premises (AP) application'
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(public readonly body: Record<string, unknown>) {}
 
   previous() {
