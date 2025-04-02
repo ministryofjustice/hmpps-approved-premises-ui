@@ -273,6 +273,9 @@ export default class AseessHelper {
     page.clickSubmit()
 
     this.pages.makeADecision.push(page)
+    this.pages.assessSuitability.push(page)
+
+    cy.log(JSON.stringify(this.pages, null, 3))
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
