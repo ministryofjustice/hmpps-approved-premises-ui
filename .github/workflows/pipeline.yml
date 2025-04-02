@@ -247,7 +247,7 @@ jobs:
     needs:
       - build
       - deploy_test
-    runs-on: [self-hosted, hmpps-github-actions-runner]
+    runs-on: [self-hosted, james-bootstrap]
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test/') || startsWith(github.head_ref, 'feature-test/')
     strategy:
       fail-fast: false
