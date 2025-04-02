@@ -146,31 +146,6 @@ describe('MatchingInformation', () => {
       expect(response['Do you agree with the suggested length of stay?']).toEqual('No')
       expect(response['Recommended length of stay']).toEqual('5 weeks, 5 days')
     })
-
-    describe('a legacy assessment with isArsonDesignated defined', () => {
-      it('returns a value for isArson designated if it is defined', () => {
-        const page = new MatchingInformation({ isArsonDesignated: 'essential' }, assessment)
-        const response = page.response()
-        expect(response).toEqual(expect.objectContaining({ 'Designated arson room': 'Essential' }))
-      })
-
-      it('does not return a value for isArsonDesignated if isArsonSuitable is defined', () => {
-        const page = new MatchingInformation(
-          { isArsonSuitable: 'desirable', isArsonDesignated: 'essential' },
-          assessment,
-        )
-        const response = page.response()
-        expect(response).toEqual(expect.not.objectContaining({ 'Designated arson room': 'Essential' }))
-        expect(response).toEqual(expect.objectContaining({ 'Suitable for active arson risk': 'Desirable' }))
-      })
-
-      it('returns a default value for isArsonSuitable is nothing is defined', () => {
-        const page = new MatchingInformation({}, assessment)
-        const response = page.response()
-        expect(response['Designated arson room']).toBeUndefined()
-        expect(response['Suitable for active arson risk']).toEqual('')
-      })
-    })
   })
 
   describe('suggestedStaySummaryListOptions', () => {

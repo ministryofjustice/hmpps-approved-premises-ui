@@ -10,32 +10,29 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {% if referrer %}
-    {{ govukBackLink({
-      text: "Back",
-      href: referrer
-    }) }}
-  {% endif %}
+    {% if referrer %}
+        {{ govukBackLink({
+            text: "Back",
+            href: referrer
+        }) }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container">
-      <h1 class="govuk-heading-xl">
-        {{ pageHeading }}
-      </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container">
+            <h1 class="govuk-heading-xl">
+                {{ pageHeading }}
+            </h1>
 
-      {{ personDetails(assessment.application.person, statusOnSubmission = assessment.application.personStatusOnSubmission) }}
+            {{ personDetails(assessment.application.person, statusOnSubmission = assessment.application.personStatusOnSubmission) }}
 
-      {% for section in SummaryListUtils.summaryListSections(assessment, false) %}
-        <h2 class="govuk-heading-l">{{ section.title }}</h3>
-        {% for task in section.tasks %}
-          {{
-            govukSummaryList(task)
-          }}
-        {% endfor %}
-      {% endfor %}
-
+            {% for section in getDocumentSections(assessment) %}
+                <h2 class="govuk-heading-l">{{ section.title }}</h2>
+                {% for task in section.tasks %}
+                    {{ govukSummaryList(task) }}
+                {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-  </div>
 {% endblock %}

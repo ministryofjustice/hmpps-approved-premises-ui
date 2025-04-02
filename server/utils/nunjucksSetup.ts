@@ -9,6 +9,7 @@ import type { ErrorMessages, TaskStatus as TaskListStatus, UiTask } from '@appro
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
+  ApprovedPremisesAssessment as Assessment,
   PersonStatus,
   TaskStatus,
 } from '@approved-premises/api'
@@ -36,7 +37,7 @@ import { ApplicationStatusTag } from './applications/statusTag'
 import { DateFormats, daysToWeeksAndDays, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
 import { pagination } from './pagination'
 import { sortHeader } from './sortHeader'
-import { SumbmittedApplicationSummaryCards } from './applications/submittedApplicationSummaryCards'
+import { SubmittedDocumentRenderer } from './forms/submittedDocumentRenderer'
 
 import * as ApplyUtils from './applications/utils'
 import * as AssessmentUtils from './assessments/utils'
@@ -267,8 +268,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('AppealsUtils', AppealsUtils)
 
   njkEnv.addGlobal(
-    'getSummaryCardsForApplication',
-    (application: Application, assessmentId?: string) =>
-      new SumbmittedApplicationSummaryCards(application, assessmentId).response,
+    'getDocumentSections',
+    (submittedForm: Application | Assessment, assessmentId?: string) =>
+      new SubmittedDocumentRenderer(submittedForm, assessmentId).response,
   )
 }
