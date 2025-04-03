@@ -264,7 +264,13 @@ jobs:
           cache: 'npm'
 
       - name: Installing dependencies
-        run: NODE_OPTIONS="--max_old_space_size=2048" npm ci
+        if: steps.refresh-cache.outputs.cache-hit != 'true'
+        run: NODE_OPTIONS="--max_old_space_size=2048" npm ci --no-audit
+
+      - name: install playwright
+        shell: bash
+        run: |
+          npx playwright install
 
       - name: Run E2E Tests
         env:
