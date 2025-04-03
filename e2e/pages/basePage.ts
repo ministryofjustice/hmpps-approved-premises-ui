@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test'
 import { Premises } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 
 export class BasePage {
   constructor(public readonly page: Page) {}
@@ -44,6 +45,17 @@ export class BasePage {
       })
       .getByLabel(label, { exact: true })
       .check()
+  }
+
+  async selectAnyRadioOption(fieldName: string, excludeOptions: Array<string> = []) {
+    const options = (await this.page.locator(`[name="${fieldName}"] + label`).allTextContents())
+      .map(label => label.trim())
+      .filter(label => !excludeOptions.includes(label))
+
+    const optionLabel = faker.helpers.arrayElement(options)
+    await this.checkRadio(optionLabel)
+
+    return optionLabel
   }
 
   async checkCheckBoxes(labels: Array<string> | ReadonlyArray<string>) {
