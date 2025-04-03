@@ -13,6 +13,7 @@ import {
   PersonStatus,
   TaskStatus,
 } from '@approved-premises/api'
+import fs from 'fs'
 import {
   initialiseName,
   kebabCase,
@@ -78,8 +79,7 @@ import { PersonStatusTag } from './people/personStatusTag'
 import { TaskStatusTag } from './tasks/statusTag'
 import { displayName } from './personUtils'
 import { UiPlacementCriteria } from './placementCriteriaUtils'
-
-const production = process.env.NODE_ENV === 'production'
+import logger from '../../logger'
 
 export default function nunjucksSetup(app: express.Express, path: pathModule.PlatformPath): void {
   app.set('view engine', 'njk')
@@ -88,16 +88,15 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.locals.applicationName = 'Approved Premises'
   app.locals.applicationInsightsConnectionString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING || undefined
 
-  // Cachebusting version string
-  if (production) {
-    // Version only changes on reboot
-    app.locals.version = Date.now().toString()
-  } else {
-    // Version changes every request
-    app.use((req, res, next) => {
-      res.locals.version = Date.now().toString()
-      return next()
-    })
+  let assetManifest: Record<string, string> = {}
+
+  try {
+    const assetMetadataPath = path.resolve(__dirname, '../../assets/manifest.json')
+    assetManifest = JSON.parse(fs.readFileSync(assetMetadataPath, 'utf8'))
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'test') {
+      logger.error(e, 'Could not read asset manifest file')
+    }
   }
 
   app.use((req, res, next) => {
@@ -109,9 +108,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     [
       path.join(__dirname, '../../server/views'),
       'node_modules/govuk-frontend/dist',
-      'node_modules/govuk-frontend/dist/components/',
-      'node_modules/@ministryofjustice/frontend/',
-      'node_modules/@ministryofjustice/frontend/moj/components/',
+      'node_modules/@ministryofjustice/frontend',
     ],
     {
       autoescape: true,
@@ -272,4 +269,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     (submittedForm: Application | Assessment, assessmentId?: string) =>
       new SubmittedDocumentRenderer(submittedForm, assessmentId).response,
   )
+
+  njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
 }
