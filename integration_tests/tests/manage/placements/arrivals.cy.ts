@@ -15,8 +15,8 @@ context('Arrivals', () => {
     cy.task('stubSpaceBookingShow', placement)
     cy.task('stubSpaceBookingArrivalCreate', { premisesId: premises.id, placementId: placement.id })
 
-    // Given I am logged in as a future manager
-    signIn({ permissions: ['cas1_space_booking_view', 'cas1_space_booking_record_arrival'] })
+    // Given I am signed in as a future manager
+    signIn('future_manager')
 
     // When I view a new placement
     let placementPage = PlacementShowPage.visit(placement)

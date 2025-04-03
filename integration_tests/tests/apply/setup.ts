@@ -13,8 +13,8 @@ import { signIn } from '../signIn'
 export const setup = () => {
   cy.task('reset')
 
-  // Given I am logged in as an applicant
-  signIn({ id: defaultUserId })
+  // Given I am signed in as an applicant
+  signIn('applicant', { id: defaultUserId })
 
   cy.fixture('applicationData.json').then(applicationData => {
     const person = personFactory.build()

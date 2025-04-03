@@ -46,8 +46,8 @@ context('Change Placement', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as a CRU member
-    signIn({ permissions: ['cas1_space_booking_create'] })
+    // Given I am signed in as a CRU member with Beta access
+    signIn('cru_member_find_and_book_beta')
   })
 
   it('allows me to change the dates and criteria of a space booking', () => {

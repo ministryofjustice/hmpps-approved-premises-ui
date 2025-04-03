@@ -21,4 +21,10 @@ echo "==> Renaming the declaration file..."
 
 mv ./server/@types/shared/index.ts ./server/@types/shared/index.d.ts
 
+echo "==> Copying roles to permissions mapping..."
 
+curl -o ./server/utils/users/data/rolesToPermissions.json -s "https://raw.githubusercontent.com/ministryofjustice/hmpps-approved-premises-api/$branch/src/main/resources/static/codegen/built-cas1-roles.json"
+
+echo "==> Tidying up roles to permissions formatting..."
+
+npx prettier --write ./server/utils/users/data/rolesToPermissions.json

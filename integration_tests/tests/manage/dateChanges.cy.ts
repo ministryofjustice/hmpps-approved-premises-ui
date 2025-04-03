@@ -11,7 +11,7 @@ context('Date Changes', () => {
     cy.task('reset')
 
     // Given I am signed in as a CRU member
-    signIn({ permissions: ['cas1_booking_change_dates'] })
+    signIn('cru_member')
 
     // And I have a booking for a premises
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
