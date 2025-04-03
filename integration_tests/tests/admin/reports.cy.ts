@@ -29,7 +29,7 @@ context('Reports', () => {
         page.downloadReport('8', '2023', reportName)
 
         // Then the report should be downloaded
-        page.shouldHaveDownloadedFile(month, year, reportName)
+        page.shouldHaveDownloadedReport(month, year, reportName)
       })
   })
 

@@ -12,6 +12,7 @@ import type {
   StaffMember,
 } from '@approved-premises/api'
 import type { PremisesFilters } from '@approved-premises/ui'
+import type { Response } from 'express'
 import type { PremisesClient, RestClientBuilder } from '../data'
 
 export default class PremisesService {
@@ -102,5 +103,10 @@ export default class PremisesService {
 
   async getKeyworkers(token: string, premisesId: string) {
     return this.getStaff(token, premisesId).then(result => result.filter(member => member.keyWorker))
+  }
+
+  async getOccupancyReport(token: string, response: Response) {
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getOccupancyReport(response)
   }
 }

@@ -669,4 +669,10 @@ export default abstract class Page {
       cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)
     })
   }
+
+  shouldHaveDownloadedFile(fileName: string): void {
+    const downloadsFolder = Cypress.config('downloadsFolder')
+    const downloadedFilename = `${downloadsFolder}/${fileName}`
+    cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
+  }
 }

@@ -3,11 +3,16 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "moj/components/identity-bar/macro.njk" import mojIdentityBar %}
 
 {% from "./_navigation.njk" import navigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
+
+{% set titleHtml %}
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+{% endset %}
 
 {% block content %}
 
@@ -15,12 +20,17 @@
         <div class="govuk-grid-column-full">
             {% include "../../_messages.njk" %}
 
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {{ mojIdentityBar({
+                title: {
+                    html: titleHtml
+                },
+                menus: actions
+            }) }}
 
             <p class="govuk-body">
                 {{ subheading }}
             </p>
-            
+
             <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get" class="search-and-filter">
                 <input type="hidden" name="status" value="{{ status }}">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

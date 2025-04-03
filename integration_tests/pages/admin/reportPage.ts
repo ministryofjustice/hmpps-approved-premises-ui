@@ -23,10 +23,9 @@ export default class ReportPage extends Page {
     cy.get('button').contains('Download data').click()
   }
 
-  shouldHaveDownloadedFile(month: string, year: string, reportName: ReportType): void {
-    const downloadsFolder = Cypress.config('downloadsFolder')
-    const downloadedFilename = `${downloadsFolder}/${reportName}-${year}-${month.padStart(2, '0')}.xlsx`
-    cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
+  shouldHaveDownloadedReport(month: string, year: string, reportName: ReportType): void {
+    const reportFilename = `${reportName}-${year}-${month.padStart(2, '0')}.xlsx`
+    return this.shouldHaveDownloadedFile(reportFilename)
   }
 
   shouldShowErrorMessages() {

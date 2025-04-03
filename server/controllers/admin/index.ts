@@ -18,6 +18,7 @@ export const controllers = (services: Services) => {
     placementRequestService,
     cruManagementAreaService,
     applicationService,
+    premisesService,
   )
   const placementRequestsBookingsController = new PlacementRequestsBookingsController(
     placementRequestService,
