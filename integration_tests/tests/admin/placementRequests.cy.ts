@@ -115,478 +115,415 @@ context('Placement Requests', () => {
     }
   }
 
-  beforeEach(() => {
-    cy.task('reset')
+  describe('as a CRU member', () => {
+    beforeEach(() => {
+      cy.task('reset')
 
-    // Given I am signed in as a CRU member
-    signIn('cru_member')
-  })
-
-  it('allows me to view all placement requests', () => {
-    const {
-      unmatchedPlacementRequest,
-      unmatchedPlacementRequests,
-      unableToMatchPlacementRequests,
-      matchedPlacementRequests,
-      matchedPlacementRequest,
-      matchedPlacementRequestWithLegacyBooking,
-      parolePlacementRequest,
-    } = stubArtifacts()
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
-
-    // Then I should see a list of unmatched placement requests
-    listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
-
-    // When I click the unable to match link
-    listPage.clickUnableToMatch()
-
-    // Then I should see a list of unable to match palcement requests
-    listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests, 'unableToMatch')
-
-    // When I click the matched link
-    listPage.clickMatched()
-
-    // Then I should see a list of matched placement requests
-    listPage.shouldShowPlacementRequests(matchedPlacementRequests, 'matched')
-
-    // When I click the awaiting match link
-    listPage.clickReadyToMatch()
-
-    // And I choose a placement request
-    listPage.clickPlacementRequest(unmatchedPlacementRequest)
-
-    // Then I should be taken to the placement request page
-    let showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
-
-    // And I should see the Key-person details in the blue banner
-    showPage.shouldShowKeyPersonDetails(unmatchedPlacementRequest)
-
-    // And I should see the information about the placement request
-    showPage.shouldShowSummary()
-
-    // And I should not see any booking information
-    showPage.shouldNotShowBookingInformation()
-
-    showPage.shouldShowCreateBookingOption()
-    showPage.shouldNotShowAmendBookingOption()
-    showPage.shouldNotShowChangePlacementOption()
-    showPage.shouldNotShowCancelBookingOption()
-
-    // When I go back to the dashboard
-    ListPage.visit()
-
-    // And I click the matched link
-    listPage.clickMatched()
-
-    // And I click the placement request with a space booking
-    listPage.clickPlacementRequest(matchedPlacementRequest)
-
-    // Then I should be taken to the placement request page
-    showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
-
-    // And I should see the information about the placement request
-    showPage.shouldShowSummary()
-
-    showPage.shouldNotShowCreateBookingOption()
-    showPage.shouldNotShowAmendBookingOption()
-    showPage.shouldShowChangePlacementOption()
-    showPage.shouldShowCancelBookingOption()
-
-    // And I should see the booking information
-    showPage.shouldShowBookingInformation()
-
-    // When I go back to the dashboard
-    ListPage.visit()
-
-    // And I click the matched link
-    listPage.clickMatched()
-
-    // And I click the placement request with a legacy booking
-    listPage.clickPlacementRequest(matchedPlacementRequestWithLegacyBooking)
-
-    // Then I should be taken to the placement request page
-    showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequestWithLegacyBooking)
-
-    // And I should see the information about the placement request
-    showPage.shouldShowSummary()
-
-    showPage.shouldNotShowCreateBookingOption()
-    showPage.shouldShowAmendBookingOption()
-    showPage.shouldNotShowChangePlacementOption()
-    showPage.shouldShowCancelBookingOption()
-
-    // And I should see the booking information
-    showPage.shouldShowLegacyBookingInformation()
-
-    // When I go back to the dashboard
-    ListPage.visit()
-
-    // And I click the parole placement request
-    listPage.clickPlacementRequest(parolePlacementRequest)
-
-    // Then I should be taken to the placement request page
-    showPage = Page.verifyOnPage(ShowPage, parolePlacementRequest)
-
-    // And I should see the parole notification banner
-    showPage.shouldShowParoleNotification()
-  })
-
-  it('allows me to download the CRU occupancy report', () => {
-    stubArtifacts()
-    const filename = `premises-occupancy_${formatDate(new Date(), 'yyyyMMdd_HHmm')}.csv`
-    cy.task('stubOccupancyReportDownload', { filename })
-
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
-
-    // And I click the 'Download CRU occupancy report' action
-    listPage.expectDownload()
-    listPage.clickAction('Download CRU occupancy report')
-
-    // Then the report should be downloaded
-    listPage.shouldHaveDownloadedFile(filename)
-  })
-
-  it('allows me to create a booking', () => {
-    const { unmatchedPlacementRequest, cas1premises, cas1SpaceBookingPremises } = stubArtifacts({
-      isWomensApplication: false,
+      // Given I am signed in as a CRU member
+      signIn('cru_member')
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
+    it('allows me to view all placement requests', () => {
+      const {
+        unmatchedPlacementRequest,
+        unmatchedPlacementRequests,
+        unableToMatchPlacementRequests,
+        matchedPlacementRequests,
+        matchedPlacementRequest,
+        matchedPlacementRequestWithLegacyBooking,
+        parolePlacementRequest,
+      } = stubArtifacts()
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
 
-    // And I choose a placement request
-    listPage.clickPlacementRequest(unmatchedPlacementRequest)
+      // Then I should see a list of unmatched placement requests
+      listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
-    // Then I should be taken to the placement request page
-    const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+      // When I click the unable to match link
+      listPage.clickUnableToMatch()
 
-    // When I click on the create booking button
-    showPage.clickCreateBooking()
+      // Then I should see a list of unable to match palcement requests
+      listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests, 'unableToMatch')
 
-    // Then I should be on the create a booking page
-    const createPage = Page.verifyOnPage(CreatePlacementPage, unmatchedPlacementRequest)
+      // When I click the matched link
+      listPage.clickMatched()
 
-    // And the dates should be prepopulated
-    createPage.dateInputsShouldBePrepopulated()
+      // Then I should see a list of matched placement requests
+      listPage.shouldShowPlacementRequests(matchedPlacementRequests, 'matched')
 
-    // And only legacy premises, that don't support space bookings, are available for selection
-    createPage.premisesShouldNotBeAvailable(cas1SpaceBookingPremises[0])
+      // When I click the awaiting match link
+      listPage.clickReadyToMatch()
 
-    // When I complete the form
-    createPage.completeForm('2022-01-01', '2022-02-01', cas1premises[0])
-    createPage.clickSubmit()
+      // And I choose a placement request
+      listPage.clickPlacementRequest(unmatchedPlacementRequest)
 
-    // Then I should see a confirmation message
-    showPage.shouldShowBanner('Placement created for ', { exact: false })
+      // Then I should be taken to the placement request page
+      let showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
-    // And the booking details should have been sent to the API
-    cy.task('verifyBookingFromPlacementRequest', unmatchedPlacementRequest).then(requests => {
-      expect(requests).to.have.length(1)
+      // And I should see the Key-person details in the blue banner
+      showPage.shouldShowKeyPersonDetails(unmatchedPlacementRequest)
 
-      const body = JSON.parse(requests[0].body)
+      // And I should see the information about the placement request
+      showPage.shouldShowSummary()
 
-      expect(body).to.contain({
-        premisesId: cas1premises[0].id,
-        arrivalDate: '2022-01-01',
-        departureDate: '2022-02-01',
+      // And I should not see any booking information
+      showPage.shouldNotShowBookingInformation()
+
+      showPage.shouldShowCreateBookingOption()
+      showPage.shouldNotShowAmendBookingOption()
+      showPage.shouldNotShowChangePlacementOption()
+      showPage.shouldNotShowCancelBookingOption()
+
+      // When I go back to the dashboard
+      ListPage.visit()
+
+      // And I click the matched link
+      listPage.clickMatched()
+
+      // And I click the placement request with a space booking
+      listPage.clickPlacementRequest(matchedPlacementRequest)
+
+      // Then I should be taken to the placement request page
+      showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
+
+      // And I should see the information about the placement request
+      showPage.shouldShowSummary()
+
+      showPage.shouldNotShowCreateBookingOption()
+      showPage.shouldNotShowAmendBookingOption()
+      showPage.shouldShowChangePlacementOption()
+      showPage.shouldShowCancelBookingOption()
+
+      // And I should see the booking information
+      showPage.shouldShowBookingInformation()
+
+      // When I go back to the dashboard
+      ListPage.visit()
+
+      // And I click the matched link
+      listPage.clickMatched()
+
+      // And I click the placement request with a legacy booking
+      listPage.clickPlacementRequest(matchedPlacementRequestWithLegacyBooking)
+
+      // Then I should be taken to the placement request page
+      showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequestWithLegacyBooking)
+
+      // And I should see the information about the placement request
+      showPage.shouldShowSummary()
+
+      showPage.shouldNotShowCreateBookingOption()
+      showPage.shouldShowAmendBookingOption()
+      showPage.shouldNotShowChangePlacementOption()
+      showPage.shouldShowCancelBookingOption()
+
+      // And I should see the booking information
+      showPage.shouldShowLegacyBookingInformation()
+
+      // When I go back to the dashboard
+      ListPage.visit()
+
+      // And I click the parole placement request
+      listPage.clickPlacementRequest(parolePlacementRequest)
+
+      // Then I should be taken to the placement request page
+      showPage = Page.verifyOnPage(ShowPage, parolePlacementRequest)
+
+      // And I should see the parole notification banner
+      showPage.shouldShowParoleNotification()
+    })
+
+    it('allows me to create a booking', () => {
+      const { unmatchedPlacementRequest, cas1premises, cas1SpaceBookingPremises } = stubArtifacts({
+        isWomensApplication: false,
+      })
+
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
+
+      // And I choose a placement request
+      listPage.clickPlacementRequest(unmatchedPlacementRequest)
+
+      // Then I should be taken to the placement request page
+      const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+
+      // When I click on the create booking button
+      showPage.clickCreateBooking()
+
+      // Then I should be on the create a booking page
+      const createPage = Page.verifyOnPage(CreatePlacementPage, unmatchedPlacementRequest)
+
+      // And the dates should be prepopulated
+      createPage.dateInputsShouldBePrepopulated()
+
+      // And only legacy premises, that don't support space bookings, are available for selection
+      createPage.premisesShouldNotBeAvailable(cas1SpaceBookingPremises[0])
+
+      // When I complete the form
+      createPage.completeForm('2022-01-01', '2022-02-01', cas1premises[0])
+      createPage.clickSubmit()
+
+      // Then I should see a confirmation message
+      showPage.shouldShowBanner('Placement created for ', { exact: false })
+
+      // And the booking details should have been sent to the API
+      cy.task('verifyBookingFromPlacementRequest', unmatchedPlacementRequest).then(requests => {
+        expect(requests).to.have.length(1)
+
+        const body = JSON.parse(requests[0].body)
+
+        expect(body).to.contain({
+          premisesId: cas1premises[0].id,
+          arrivalDate: '2022-01-01',
+          departureDate: '2022-02-01',
+        })
       })
     })
-  })
 
-  it('allows me to create a booking for the womens estate', () => {
-    const { unmatchedPlacementRequest, cas1premises } = stubArtifacts({ isWomensApplication: true })
+    it('allows me to create a booking for the womens estate', () => {
+      const { unmatchedPlacementRequest, cas1premises } = stubArtifacts({ isWomensApplication: true })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
 
-    // And I choose a placement request
-    listPage.clickPlacementRequest(unmatchedPlacementRequest)
+      // And I choose a placement request
+      listPage.clickPlacementRequest(unmatchedPlacementRequest)
 
-    // Then I should be taken to the placement request page
-    const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+      // Then I should be taken to the placement request page
+      const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
-    // When I click on the create booking button
-    showPage.clickCreateBooking()
+      // When I click on the create booking button
+      showPage.clickCreateBooking()
 
-    // Then I should be on the create a booking page
-    const createPage = Page.verifyOnPage(CreatePlacementPage, unmatchedPlacementRequest)
+      // Then I should be on the create a booking page
+      const createPage = Page.verifyOnPage(CreatePlacementPage, unmatchedPlacementRequest)
 
-    // And the dates should be prepopulated
-    createPage.dateInputsShouldBePrepopulated()
+      // And the dates should be prepopulated
+      createPage.dateInputsShouldBePrepopulated()
 
-    // When I complete the form
-    createPage.completeForm('2022-01-01', '2022-02-01', cas1premises[0])
-    createPage.clickSubmit()
+      // When I complete the form
+      createPage.completeForm('2022-01-01', '2022-02-01', cas1premises[0])
+      createPage.clickSubmit()
 
-    // Then I should see a confirmation message
-    showPage.shouldShowBanner('Placement created for ', { exact: false })
+      // Then I should see a confirmation message
+      showPage.shouldShowBanner('Placement created for ', { exact: false })
 
-    // And the booking details should have been sent to the API
-    cy.task('verifyBookingFromPlacementRequest', unmatchedPlacementRequest).then(requests => {
-      expect(requests).to.have.length(1)
+      // And the booking details should have been sent to the API
+      cy.task('verifyBookingFromPlacementRequest', unmatchedPlacementRequest).then(requests => {
+        expect(requests).to.have.length(1)
 
-      const body = JSON.parse(requests[0].body)
+        const body = JSON.parse(requests[0].body)
 
-      expect(body).to.contain({
-        premisesId: cas1premises[0].id,
-        arrivalDate: '2022-01-01',
-        departureDate: '2022-02-01',
+        expect(body).to.contain({
+          premisesId: cas1premises[0].id,
+          arrivalDate: '2022-01-01',
+          departureDate: '2022-02-01',
+        })
       })
     })
-  })
 
-  it('allows me to amend a legacy booking', () => {
-    const { matchedPlacementRequestWithLegacyBooking } = stubArtifacts()
-    cy.task('stubDateChange', {
-      premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
-      bookingId: matchedPlacementRequestWithLegacyBooking.booking.id,
-    })
-    cy.task('stubBookingGet', {
-      premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
-      booking: bookingFactory.build({ id: matchedPlacementRequestWithLegacyBooking.booking.id }),
-    })
+    it('allows me to amend a legacy booking', () => {
+      const { matchedPlacementRequestWithLegacyBooking } = stubArtifacts()
+      cy.task('stubDateChange', {
+        premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
+        bookingId: matchedPlacementRequestWithLegacyBooking.booking.id,
+      })
+      cy.task('stubBookingGet', {
+        premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
+        booking: bookingFactory.build({ id: matchedPlacementRequestWithLegacyBooking.booking.id }),
+      })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
 
-    // And I click the matched link
-    listPage.clickMatched()
+      // And I click the matched link
+      listPage.clickMatched()
 
-    // And I choose a placement request
-    listPage.clickPlacementRequest(matchedPlacementRequestWithLegacyBooking)
+      // And I choose a placement request
+      listPage.clickPlacementRequest(matchedPlacementRequestWithLegacyBooking)
 
-    // Then I should be taken to the placement request page
-    const showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequestWithLegacyBooking)
+      // Then I should be taken to the placement request page
+      const showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequestWithLegacyBooking)
 
-    // When I click on the create booking button
-    showPage.clickAmendBooking()
+      // When I click on the create booking button
+      showPage.clickAmendBooking()
 
-    // Then I should be on the amend a booking page
-    const dateChangePage = Page.verifyOnPage(NewDateChangePage, matchedPlacementRequestWithLegacyBooking)
+      // Then I should be on the amend a booking page
+      const dateChangePage = Page.verifyOnPage(NewDateChangePage, matchedPlacementRequestWithLegacyBooking)
 
-    // And I change the date of my booking
-    dateChangePage.completeForm('2023-01-01', '2023-03-02')
-    dateChangePage.clickSubmit()
+      // And I change the date of my booking
+      dateChangePage.completeForm('2023-01-01', '2023-03-02')
+      dateChangePage.clickSubmit()
 
-    // Then I should see a confirmation message
-    showPage.shouldShowBanner('Booking changed successfully')
+      // Then I should see a confirmation message
+      showPage.shouldShowBanner('Booking changed successfully')
 
-    // And the change booking endpoint should have been called with the correct parameters
-    cy.task('verifyDateChange', {
-      premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
-      bookingId: matchedPlacementRequestWithLegacyBooking.booking.id,
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
+      // And the change booking endpoint should have been called with the correct parameters
+      cy.task('verifyDateChange', {
+        premisesId: matchedPlacementRequestWithLegacyBooking.booking.premisesId,
+        bookingId: matchedPlacementRequestWithLegacyBooking.booking.id,
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+        const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.newArrivalDate).equal('2023-01-01')
-      expect(requestBody.newDepartureDate).equal('2023-03-02')
-    })
-  })
-
-  it('allows me to cancel a booking', () => {
-    const { matchedPlacementRequest, spaceBooking } = stubArtifacts()
-    const cancellation = newCancellationFactory.build()
-    const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
-    cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
-    cy.task('stubCancellationCreate', {
-      premisesId: matchedPlacementRequest.booking.premisesId,
-      bookingId: matchedPlacementRequest.booking.id,
-      cancellation,
-    })
-    cy.task('stubBookingGet', {
-      premisesId: matchedPlacementRequest.booking.premisesId,
-      booking: bookingFactory.build({ id: matchedPlacementRequest.booking.id }),
-    })
-    cy.task('stubCancellationReferenceData')
-    const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
-
-    cy.task('stubWithdrawablesWithNotes', {
-      applicationId: matchedPlacementRequest.applicationId,
-      withdrawables,
-    })
-    cy.task('stubBookingFindWithoutPremises', spaceBooking)
-
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
-
-    // And I click the matched link
-    listPage.clickMatched()
-
-    // And I choose a placement request
-    listPage.clickPlacementRequest(matchedPlacementRequest)
-
-    // Then I should be taken to the placement request page
-    const showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
-
-    // When I click on the create booking button
-    showPage.clickWithdrawBooking()
-
-    const withdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
-    withdrawableTypePage.selectType('placement')
-    withdrawableTypePage.clickSubmit()
-
-    const withdrawablePage = new NewWithdrawalPage('Select your placement')
-    withdrawablePage.shouldShowWithdrawableGuidance('placement')
-    withdrawablePage.selectWithdrawable(withdrawable.id)
-    withdrawablePage.clickSubmit()
-
-    // Then I should be on the cancel a booking page
-    const cancellationPage = Page.verifyOnPage(CancellationCreatePage, matchedPlacementRequest)
-
-    // And I cancel my booking
-    cancellationPage.completeForm(cancellation)
-
-    // Then I should see a confirmation message
-    const confirmationPage = new BookingCancellationConfirmPage()
-    confirmationPage.shouldShowPanel()
-
-    // And a cancellation should have been created in the API
-    cy.task('verifyCancellationCreate', {
-      premisesId: matchedPlacementRequest.booking.premisesId,
-      bookingId: matchedPlacementRequest.booking.id,
-      cancellation,
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
-
-      expect(requestBody.reason).equal(cancellation.reason)
-    })
-  })
-
-  it('allows me to withdraw a placement request', () => {
-    const { matchedPlacementRequest, unmatchedPlacementRequest, application } = stubArtifacts()
-    cy.task('stubPlacementRequestWithdrawal', unmatchedPlacementRequest)
-    const withdrawable = withdrawableFactory.build({ id: unmatchedPlacementRequest.id, type: 'placement_request' })
-    const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
-
-    cy.task('stubWithdrawablesWithNotes', {
-      applicationId: matchedPlacementRequest.applicationId,
-      withdrawables,
-    })
-    cy.task('stubWithdrawablesWithNotes', {
-      applicationId: application.id,
-      withdrawables,
+        expect(requestBody.newArrivalDate).equal('2023-01-01')
+        expect(requestBody.newDepartureDate).equal('2023-03-02')
+      })
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
+    it('allows me to cancel a booking', () => {
+      const { matchedPlacementRequest, spaceBooking } = stubArtifacts()
+      const cancellation = newCancellationFactory.build()
+      const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
+      cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
+      cy.task('stubCancellationCreate', {
+        premisesId: matchedPlacementRequest.booking.premisesId,
+        bookingId: matchedPlacementRequest.booking.id,
+        cancellation,
+      })
+      cy.task('stubBookingGet', {
+        premisesId: matchedPlacementRequest.booking.premisesId,
+        booking: bookingFactory.build({ id: matchedPlacementRequest.booking.id }),
+      })
+      cy.task('stubCancellationReferenceData')
+      const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
-    // And I choose a placement request
-    listPage.clickPlacementRequest(unmatchedPlacementRequest)
+      cy.task('stubWithdrawablesWithNotes', {
+        applicationId: matchedPlacementRequest.applicationId,
+        withdrawables,
+      })
+      cy.task('stubBookingFindWithoutPremises', spaceBooking)
 
-    // Then I should be taken to the placement request page
-    const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
 
-    // When I click on the withdraw button
-    showPage.clickWithdraw()
+      // And I click the matched link
+      listPage.clickMatched()
 
-    withdrawPlacementRequestOrApplication(withdrawable, showPage, application.id)
+      // And I choose a placement request
+      listPage.clickPlacementRequest(matchedPlacementRequest)
 
-    // And the API should have been called with the withdrawal reason
-    cy.task('verifyPlacementRequestWithdrawal', withdrawable).then(requests => {
-      expect(requests).to.have.length(1)
+      // Then I should be taken to the placement request page
+      const showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
 
-      expect(requests[0].url).to.equal(paths.placementRequests.withdrawal.create({ id: withdrawable.id }))
+      // When I click on the create booking button
+      showPage.clickWithdrawBooking()
 
-      const body = JSON.parse(requests[0].body)
+      const withdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
+      withdrawableTypePage.selectType('placement')
+      withdrawableTypePage.clickSubmit()
 
-      expect(body.reason).to.equal('DuplicatePlacementRequest')
-    })
-  })
+      const withdrawablePage = new NewWithdrawalPage('Select your placement')
+      withdrawablePage.shouldShowWithdrawableGuidance('placement')
+      withdrawablePage.selectWithdrawable(withdrawable.id)
+      withdrawablePage.clickSubmit()
 
-  it('allows me to mark a placement request as unable to match', () => {
-    const { unmatchedPlacementRequest } = stubArtifacts()
-    cy.task('stubPlacementRequestUnableToMatch', unmatchedPlacementRequest)
+      // Then I should be on the cancel a booking page
+      const cancellationPage = Page.verifyOnPage(CancellationCreatePage, matchedPlacementRequest)
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
+      // And I cancel my booking
+      cancellationPage.completeForm(cancellation)
 
-    // And I choose a placement request
-    listPage.clickPlacementRequest(unmatchedPlacementRequest)
+      // Then I should see a confirmation message
+      const confirmationPage = new BookingCancellationConfirmPage()
+      confirmationPage.shouldShowPanel()
 
-    // Then I should be taken to the placement request page
-    const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+      // And a cancellation should have been created in the API
+      cy.task('verifyCancellationCreate', {
+        premisesId: matchedPlacementRequest.booking.premisesId,
+        bookingId: matchedPlacementRequest.booking.id,
+        cancellation,
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+        const requestBody = JSON.parse(requests[0].body)
 
-    // When I click on the unable to match button
-    showPage.clickUnableToMatch()
-
-    // Then I should be on the unable to match confirmation page
-    const unableToMatchConfirmationPage = Page.verifyOnPage(UnableToMatchPage)
-
-    // When I confirm I am unable to match the placement
-    unableToMatchConfirmationPage.clickSubmit()
-
-    // Then I should see a confirmation message
-    showPage.shouldShowBanner('Placement request has been marked as unable to match')
-
-    // And the placement should have been marked unable to match in the API
-    cy.task('verifyPlacementRequestedMarkedUnableToMatch', unmatchedPlacementRequest).then(requests => {
-      expect(requests).to.have.length(1)
-    })
-  })
-
-  it('supports pagination', () => {
-    const { unmatchedPlacementRequests } = stubArtifacts()
-    cy.task('stubPlacementRequestsDashboard', {
-      placementRequests: unmatchedPlacementRequests,
-      status: 'notMatched',
-      page: '2',
-    })
-    cy.task('stubPlacementRequestsDashboard', {
-      placementRequests: unmatchedPlacementRequests,
-      status: 'notMatched',
-      page: '9',
-    })
-
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
-
-    // Then I should see a list of placement requests
-    listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
-
-    // When I click next
-    listPage.clickNext()
-
-    // Then the API should have received a request for the next page
-    cy.task('verifyPlacementRequestsDashboard', { page: '2', status: 'notMatched' }).then(requests => {
-      expect(requests).to.have.length(1)
+        expect(requestBody.reason).equal(cancellation.reason)
+      })
     })
 
-    // When I click on a page number
-    listPage.clickPageNumber('9')
+    it('allows me to withdraw a placement request', () => {
+      const { matchedPlacementRequest, unmatchedPlacementRequest, application } = stubArtifacts()
+      cy.task('stubPlacementRequestWithdrawal', unmatchedPlacementRequest)
+      const withdrawable = withdrawableFactory.build({ id: unmatchedPlacementRequest.id, type: 'placement_request' })
+      const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
-    // Then the API should have received a request for the that page number
-    cy.task('verifyPlacementRequestsDashboard', { page: '9', status: 'notMatched' }).then(requests => {
-      expect(requests).to.have.length(1)
+      cy.task('stubWithdrawablesWithNotes', {
+        applicationId: matchedPlacementRequest.applicationId,
+        withdrawables,
+      })
+      cy.task('stubWithdrawablesWithNotes', {
+        applicationId: application.id,
+        withdrawables,
+      })
+
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
+
+      // And I choose a placement request
+      listPage.clickPlacementRequest(unmatchedPlacementRequest)
+
+      // Then I should be taken to the placement request page
+      const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+
+      // When I click on the withdraw button
+      showPage.clickWithdraw()
+
+      withdrawPlacementRequestOrApplication(withdrawable, showPage, application.id)
+
+      // And the API should have been called with the withdrawal reason
+      cy.task('verifyPlacementRequestWithdrawal', withdrawable).then(requests => {
+        expect(requests).to.have.length(1)
+
+        expect(requests[0].url).to.equal(paths.placementRequests.withdrawal.create({ id: withdrawable.id }))
+
+        const body = JSON.parse(requests[0].body)
+
+        expect(body.reason).to.equal('DuplicatePlacementRequest')
+      })
     })
-  })
-  ;(
-    [
-      'expected_arrival',
-      'person_name',
-      'person_risks_tier',
-      'expected_arrival',
-      'application_date',
-      'duration',
-      'request_type',
-    ] as const
-  ).forEach(field => {
-    it(`supports sorting by ${field}`, () => {
+
+    it('allows me to mark a placement request as unable to match', () => {
+      const { unmatchedPlacementRequest } = stubArtifacts()
+      cy.task('stubPlacementRequestUnableToMatch', unmatchedPlacementRequest)
+
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
+
+      // And I choose a placement request
+      listPage.clickPlacementRequest(unmatchedPlacementRequest)
+
+      // Then I should be taken to the placement request page
+      const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+
+      // When I click on the unable to match button
+      showPage.clickUnableToMatch()
+
+      // Then I should be on the unable to match confirmation page
+      const unableToMatchConfirmationPage = Page.verifyOnPage(UnableToMatchPage)
+
+      // When I confirm I am unable to match the placement
+      unableToMatchConfirmationPage.clickSubmit()
+
+      // Then I should see a confirmation message
+      showPage.shouldShowBanner('Placement request has been marked as unable to match')
+
+      // And the placement should have been marked unable to match in the API
+      cy.task('verifyPlacementRequestedMarkedUnableToMatch', unmatchedPlacementRequest).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+    })
+
+    it('supports pagination', () => {
       const { unmatchedPlacementRequests } = stubArtifacts()
       cy.task('stubPlacementRequestsDashboard', {
         placementRequests: unmatchedPlacementRequests,
         status: 'notMatched',
-        sortBy: field,
-        sortDirection: 'asc',
+        page: '2',
       })
       cy.task('stubPlacementRequestsDashboard', {
         placementRequests: unmatchedPlacementRequests,
         status: 'notMatched',
-        sortBy: field,
-        sortDirection: 'desc',
+        page: '9',
       })
 
       // When I visit the tasks dashboard
@@ -595,167 +532,168 @@ context('Placement Requests', () => {
       // Then I should see a list of placement requests
       listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
 
-      // When I sort by expected arrival in ascending order
-      listPage.clickSortBy(field)
+      // When I click next
+      listPage.clickNext()
 
-      // Then the dashboard should be sorted by expected arrival
-      listPage.shouldBeSortedByField(field, 'ascending')
+      // Then the API should have received a request for the next page
+      cy.task('verifyPlacementRequestsDashboard', { page: '2', status: 'notMatched' }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
 
-      // And the API should have received a request for the correct sort order
-      cy.task('verifyPlacementRequestsDashboard', {
+      // When I click on a page number
+      listPage.clickPageNumber('9')
+
+      // Then the API should have received a request for the that page number
+      cy.task('verifyPlacementRequestsDashboard', { page: '9', status: 'notMatched' }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+    })
+    ;(
+      [
+        'expected_arrival',
+        'person_name',
+        'person_risks_tier',
+        'expected_arrival',
+        'application_date',
+        'duration',
+        'request_type',
+      ] as const
+    ).forEach(field => {
+      it(`supports sorting by ${field}`, () => {
+        const { unmatchedPlacementRequests } = stubArtifacts()
+        cy.task('stubPlacementRequestsDashboard', {
+          placementRequests: unmatchedPlacementRequests,
+          status: 'notMatched',
+          sortBy: field,
+          sortDirection: 'asc',
+        })
+        cy.task('stubPlacementRequestsDashboard', {
+          placementRequests: unmatchedPlacementRequests,
+          status: 'notMatched',
+          sortBy: field,
+          sortDirection: 'desc',
+        })
+
+        // When I visit the tasks dashboard
+        const listPage = ListPage.visit()
+
+        // Then I should see a list of placement requests
+        listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
+
+        // When I sort by expected arrival in ascending order
+        listPage.clickSortBy(field)
+
+        // Then the dashboard should be sorted by expected arrival
+        listPage.shouldBeSortedByField(field, 'ascending')
+
+        // And the API should have received a request for the correct sort order
+        cy.task('verifyPlacementRequestsDashboard', {
+          status: 'notMatched',
+          sortBy: field,
+          sortDirection: 'asc',
+        }).then(requests => {
+          expect(requests).to.have.length(1)
+        })
+
+        // When I sort by expected arrival in descending order
+        listPage.clickSortBy(field)
+
+        // Then the dashboard should be sorted by expected arrival in descending order
+        listPage.shouldBeSortedByField(field, 'descending')
+
+        // And the API should have received a request for the correct sort order
+        cy.task('verifyPlacementRequestsDashboard', {
+          status: 'notMatched',
+          sortBy: field,
+          sortDirection: 'desc',
+        }).then(requests => {
+          expect(requests).to.have.length(1)
+        })
+      })
+    })
+
+    it(`supports filtering`, () => {
+      const {
+        unmatchedPlacementRequests,
+        matchedPlacementRequests,
+        unableToMatchPlacementRequests,
+        cruManagementAreas,
+      } = stubArtifacts()
+      cy.task('stubPlacementRequestsDashboard', {
+        placementRequests: [
+          ...unmatchedPlacementRequests,
+          ...matchedPlacementRequests,
+          ...unableToMatchPlacementRequests,
+        ],
         status: 'notMatched',
-        sortBy: field,
+        sortBy: 'created_at',
         sortDirection: 'asc',
-      }).then(requests => {
-        expect(requests).to.have.length(1)
       })
+      cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
 
-      // When I sort by expected arrival in descending order
-      listPage.clickSortBy(field)
+      // Given I am on the placement request dashboard
+      const listPage = ListPage.visit()
 
-      // Then the dashboard should be sorted by expected arrival in descending order
-      listPage.shouldBeSortedByField(field, 'descending')
+      // When I filter by AP area and request type
+      listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[1].name)
+      listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
+      listPage.clickApplyFilters()
 
-      // And the API should have received a request for the correct sort order
+      // Then the API should receive a request with the correct query parameters
       cy.task('verifyPlacementRequestsDashboard', {
         status: 'notMatched',
-        sortBy: field,
-        sortDirection: 'desc',
       }).then(requests => {
-        expect(requests).to.have.length(1)
+        expect(requests).to.have.length(2)
+        const { cruManagementAreaId, requestType } = requests[1].queryParams
+
+        expect(cruManagementAreaId.values).to.deep.equal([cruManagementAreas[1].id])
+        expect(requestType.values).to.deep.equal(['parole'])
       })
-    })
-  })
 
-  it(`supports filtering`, () => {
-    const { unmatchedPlacementRequests, matchedPlacementRequests, unableToMatchPlacementRequests, cruManagementAreas } =
-      stubArtifacts()
-    cy.task('stubPlacementRequestsDashboard', {
-      placementRequests: [
-        ...unmatchedPlacementRequests,
-        ...matchedPlacementRequests,
-        ...unableToMatchPlacementRequests,
-      ],
-      status: 'notMatched',
-      sortBy: 'created_at',
-      sortDirection: 'asc',
-    })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
+      // When I click the matched link tab
+      listPage.clickMatched()
 
-    // Given I am on the placement request dashboard
-    const listPage = ListPage.visit()
-
-    // When I filter by AP area and request type
-    listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[1].name)
-    listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
-    listPage.clickApplyFilters()
-
-    // Then the API should receive a request with the correct query parameters
-    cy.task('verifyPlacementRequestsDashboard', {
-      status: 'notMatched',
-    }).then(requests => {
-      expect(requests).to.have.length(2)
-      const { cruManagementAreaId, requestType } = requests[1].queryParams
-
-      expect(cruManagementAreaId.values).to.deep.equal([cruManagementAreas[1].id])
-      expect(requestType.values).to.deep.equal(['parole'])
+      // Then the page should retain the area and request type filter
+      listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
+      listPage.shouldHaveSelectText('requestType', 'Parole')
     })
 
-    // When I click the matched link tab
-    listPage.clickMatched()
+    it('retains the status filter when applying other filters', () => {
+      const {
+        unmatchedPlacementRequests,
+        matchedPlacementRequests,
+        unableToMatchPlacementRequests,
+        cruManagementAreas,
+      } = stubArtifacts()
+      cy.task('stubPlacementRequestsDashboard', {
+        placementRequests: [
+          ...unmatchedPlacementRequests,
+          ...matchedPlacementRequests,
+          ...unableToMatchPlacementRequests,
+        ],
+        status: 'notMatched',
+        sortBy: 'created_at',
+        sortDirection: 'asc',
+      })
 
-    // Then the page should retain the area and request type filter
-    listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
-    listPage.shouldHaveSelectText('requestType', 'Parole')
-  })
+      // Given I am on the placement request dashboard filtering by the unableToMatch status
+      const listPage = ListPage.visit('status=unableToMatch')
 
-  it('retains the status filter when applying other filters', () => {
-    const { unmatchedPlacementRequests, matchedPlacementRequests, unableToMatchPlacementRequests, cruManagementAreas } =
-      stubArtifacts()
-    cy.task('stubPlacementRequestsDashboard', {
-      placementRequests: [
-        ...unmatchedPlacementRequests,
-        ...matchedPlacementRequests,
-        ...unableToMatchPlacementRequests,
-      ],
-      status: 'notMatched',
-      sortBy: 'created_at',
-      sortDirection: 'asc',
+      // When I filter by AP area and request type
+      listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[2].name)
+      listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
+      listPage.clickApplyFilters()
+
+      // Then the status filter should be retained
+      listPage.shouldHaveActiveTab('Unable to match')
     })
 
-    // Given I am on the placement request dashboard filtering by the unableToMatch status
-    const listPage = ListPage.visit('status=unableToMatch')
+    it('should list applications that have no placement request', () => {
+      const { cruManagementAreas } = stubArtifacts()
 
-    // When I filter by AP area and request type
-    listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[2].name)
-    listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
-    listPage.clickApplyFilters()
-
-    // Then the status filter should be retained
-    listPage.shouldHaveActiveTab('Unable to match')
-  })
-
-  it('should list applications that have no placement request', () => {
-    const { cruManagementAreas } = stubArtifacts()
-
-    const applications = applicationSummaryFactory.buildList(2)
-
-    cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
-
-    // Given I am on the placement request dashboard filtering by the pendingPlacement status
-    const listPage = ListPage.visit('status=pendingPlacement')
-
-    // Then I should see a list of applications with no placement requests
-    listPage.shouldShowApplications(applications)
-
-    cy.task('verifyDashboardRequest', { status: 'pendingPlacementRequest', sortDirection: 'asc' }).then(requests => {
-      expect(requests).to.have.length(1)
-    })
-
-    // And the Request Type filter should not be visible
-    listPage.shouldNotShowRequestTypeFilter()
-
-    // When I filter by AP area
-    const areaApplications = applicationSummaryFactory.buildList(2)
-    cy.task('stubAllApplications', {
-      applications: areaApplications,
-      page: '1',
-      sortDirection: 'asc',
-      searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
-    })
-    listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[3].name)
-    listPage.getSelectInputByIdAndSelectAnEntry('releaseType', allReleaseTypes.rotl)
-    listPage.clickApplyFilters()
-
-    // Then I should see a list of applications with no placement requests for that area
-    listPage.shouldShowApplications(areaApplications)
-
-    cy.task('verifyDashboardRequest', {
-      status: 'pendingPlacementRequest',
-      sortDirection: 'asc',
-      searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-    })
-  })
-  ;(['tier', 'releaseType'] as const).forEach(field => {
-    it(`supports pending placement requests sorting by ${field}`, () => {
-      stubArtifacts()
       const applications = applicationSummaryFactory.buildList(2)
-      cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
-      cy.task('stubAllApplications', {
-        applications,
-        sortBy: field,
-        sortDirection: 'asc',
-        searchOptions: { status: 'pendingPlacementRequest' },
-      })
 
-      cy.task('stubAllApplications', {
-        applications,
-        sortBy: field,
-        sortDirection: 'desc',
-        searchOptions: { status: 'pendingPlacementRequest' },
-      })
+      cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
 
       // Given I am on the placement request dashboard filtering by the pendingPlacement status
       const listPage = ListPage.visit('status=pendingPlacement')
@@ -763,35 +701,116 @@ context('Placement Requests', () => {
       // Then I should see a list of applications with no placement requests
       listPage.shouldShowApplications(applications)
 
-      // When I sort by expected arrival in ascending order
-      listPage.clickSortBy(field)
+      cy.task('verifyDashboardRequest', { status: 'pendingPlacementRequest', sortDirection: 'asc' }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
 
-      // Then the dashboard should be sorted by field
-      listPage.shouldBeSortedByField(field, 'ascending')
+      // And the Request Type filter should not be visible
+      listPage.shouldNotShowRequestTypeFilter()
 
-      // And the API should have received a request for the correct sort order
-      cy.task('verifyDashboardRequest', {
-        status: 'pendingPlacementRequest',
-        sortBy: field,
+      // When I filter by AP area
+      const areaApplications = applicationSummaryFactory.buildList(2)
+      cy.task('stubAllApplications', {
+        applications: areaApplications,
+        page: '1',
         sortDirection: 'asc',
-      }).then(requests => {
-        expect(requests).to.have.length(1)
+        searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
       })
+      listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[3].name)
+      listPage.getSelectInputByIdAndSelectAnEntry('releaseType', allReleaseTypes.rotl)
+      listPage.clickApplyFilters()
 
-      // When I sort by  descending order
-      listPage.clickSortBy(field)
+      // Then I should see a list of applications with no placement requests for that area
+      listPage.shouldShowApplications(areaApplications)
 
-      // Then the dashboard should be sorted in descending order
-      listPage.shouldBeSortedByField(field, 'descending')
-
-      // And the API should have received a request for the correct sort order
       cy.task('verifyDashboardRequest', {
         status: 'pendingPlacementRequest',
-        sortBy: field,
-        sortDirection: 'desc',
+        sortDirection: 'asc',
+        searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
       }).then(requests => {
         expect(requests).to.have.length(1)
       })
+    })
+    ;(['tier', 'releaseType'] as const).forEach(field => {
+      it(`supports pending placement requests sorting by ${field}`, () => {
+        stubArtifacts()
+        const applications = applicationSummaryFactory.buildList(2)
+        cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
+        cy.task('stubAllApplications', {
+          applications,
+          sortBy: field,
+          sortDirection: 'asc',
+          searchOptions: { status: 'pendingPlacementRequest' },
+        })
+
+        cy.task('stubAllApplications', {
+          applications,
+          sortBy: field,
+          sortDirection: 'desc',
+          searchOptions: { status: 'pendingPlacementRequest' },
+        })
+
+        // Given I am on the placement request dashboard filtering by the pendingPlacement status
+        const listPage = ListPage.visit('status=pendingPlacement')
+
+        // Then I should see a list of applications with no placement requests
+        listPage.shouldShowApplications(applications)
+
+        // When I sort by expected arrival in ascending order
+        listPage.clickSortBy(field)
+
+        // Then the dashboard should be sorted by field
+        listPage.shouldBeSortedByField(field, 'ascending')
+
+        // And the API should have received a request for the correct sort order
+        cy.task('verifyDashboardRequest', {
+          status: 'pendingPlacementRequest',
+          sortBy: field,
+          sortDirection: 'asc',
+        }).then(requests => {
+          expect(requests).to.have.length(1)
+        })
+
+        // When I sort by  descending order
+        listPage.clickSortBy(field)
+
+        // Then the dashboard should be sorted in descending order
+        listPage.shouldBeSortedByField(field, 'descending')
+
+        // And the API should have received a request for the correct sort order
+        cy.task('verifyDashboardRequest', {
+          status: 'pendingPlacementRequest',
+          sortBy: field,
+          sortDirection: 'desc',
+        }).then(requests => {
+          expect(requests).to.have.length(1)
+        })
+      })
+    })
+  })
+
+  describe('as a CRU member with access to the Beta', () => {
+    beforeEach(() => {
+      cy.task('reset')
+
+      // Given I am signed in as a CRU member with access to the Beta
+      signIn('cru_member_find_and_book_beta')
+    })
+
+    it('allows me to download the CRU occupancy report', () => {
+      stubArtifacts()
+      const filename = `premises-occupancy_${formatDate(new Date(), 'yyyyMMdd_HHmm')}.csv`
+      cy.task('stubOccupancyReportDownload', { filename })
+
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
+
+      // And I click the 'Download CRU occupancy report' action
+      listPage.expectDownload()
+      listPage.clickAction('Download CRU occupancy report')
+
+      // Then the report should be downloaded
+      listPage.shouldHaveDownloadedFile(filename)
     })
   })
 })
