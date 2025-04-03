@@ -8,46 +8,45 @@
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% set nomsNumber = page.application.person.nomsNumber if page.application.person.nomsNumber else 
-  "" %}
+{% set nomsNumber = page.application.person.nomsNumber if page.application.person.nomsNumber else
+    "" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-      text: "Back",
-      href: paths.applications.show({ id: page.application.id })
-  }) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.applications.show({ id: page.application.id })
+    }) }}
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container">
-      <h1 class="govuk-heading-xl">
-        {{ page.title }}
-      </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container">
+            <h1 class="govuk-heading-xl">
+                {{ page.title }}
+            </h1>
 
-      {{ personDetails(page.application.person) }}
+            {{ personDetails(page.application.person) }}
 
-      {% for section in SummaryListUtils.summaryListSections(page.application) %}
-        <h2 class="govuk-heading-l">{{ section.title }}</h2>
-        {% for task in section.tasks %}
-          {{
-            govukSummaryList(task)
-          }}
-        {% endfor %}
-      {% endfor %}
+            {% for section in SummaryListUtils.summaryListSections(page.application) %}
+                <h2 class="govuk-heading-l">{{ section.title }}</h2>
+                {% for task in section.tasks %}
+                    {{ govukSummaryList(task) }}
+                {% endfor %}
+            {% endfor %}
 
-      <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        <input type="hidden" name="reviewed" value="1"/>
+                <input type="hidden" name="reviewed" value="1" />
 
-        {{ govukButton({
-            text: "Continue",
-            preventDoubleClick: true
-        }) }}
-      </form>
+                {{ govukButton({
+                    text: "Continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
 
+        </div>
     </div>
-  </div>
 {% endblock %}
 

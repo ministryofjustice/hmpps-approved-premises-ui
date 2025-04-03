@@ -10,108 +10,97 @@
 
 {% extends "../../../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {{ govukBackLink({
-		text: "Back",
-		href: paths.admin.placementRequests.show({ id: placementRequest.id })
-	}) }}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.admin.placementRequests.show({ id: placementRequest.id })
+    }) }}
 {% endblock %}
 
 
 {% block content %}
-  {% include "../../../_messages.njk" %}
+    {% include "../../../_messages.njk" %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.admin.placementRequests.bookings.create({ id: placementRequest.id }) }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <h1 class="govuk-heading-l">
-          {{ pageHeading }}
-        </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form action="{{ paths.admin.placementRequests.bookings.create({ id: placementRequest.id }) }}"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <h1 class="govuk-heading-l">
+                    {{ pageHeading }}
+                </h1>
 
-        {{ showErrorSummary(errorSummary) }}
-        {% if isWomensApplication %}
-          {{ 
-            formPageRadios(
-              {
-                fieldName: "premisesId",
-                fieldset: {
-                  legend: {
-                    text: "Select a property"
-                  }
-                },
-                items: PremisesUtils.cas1PremisesSummaryRadioOptions(premises,fetchContext())
-              },
-              fetchContext()
-            ) 
-          }}
-        {% else %}
-        <p class="govuk-body">
-          Provide details for an AP placement that has been confirmed by the receiving AP
-        </p>
-          {{       
-            govukSelectWithOptgroup({
-              label: {
-                classes: "govuk-fieldset__legend--m",
-                html: 'Select an Approved Premises'
-              },
-              attributes: {
-                "data-premises-with-areas": true
-              },
-              prompt: "Select a premises",
-              id: "premisesId",
-              name: "premisesId",
-              items: PremisesUtils.groupCas1SummaryPremisesSelectOptions(premises, fetchContext()),
-              errorMessage: errors.premisesId
-            }) 
-          }}
-        {% endif %}
+                {{ showErrorSummary(errorSummary) }}
+                {% if isWomensApplication %}
+                    {{ formPageRadios(
+                        {
+                            fieldName: "premisesId",
+                            fieldset: {
+                            legend: {
+                                text: "Select a property"
+                            }
+                        },
+                            items: PremisesUtils.cas1PremisesSummaryRadioOptions(premises,fetchContext())
+                        },
+                        fetchContext()
+                    ) }}
+                {% else %}
+                    <p class="govuk-body">
+                        Provide details for an AP placement that has been confirmed by the receiving AP
+                    </p>
+                    {{ govukSelectWithOptgroup({
+                        label: {
+                            classes: "govuk-fieldset__legend--m",
+                            html: 'Select an Approved Premises'
+                        },
+                        attributes: {
+                            "data-premises-with-areas": true
+                        },
+                        prompt: "Select a premises",
+                        id: "premisesId",
+                        name: "premisesId",
+                        items: PremisesUtils.groupCas1SummaryPremisesSelectOptions(premises, fetchContext()),
+                        errorMessage: errors.premisesId
+                    }) }}
+                {% endif %}
 
-        {{
-          formPageDateInput(
-            {
-              fieldName: "arrivalDate",
-              fieldset: {
-                legend: {
-                  classes: "govuk-fieldset__legend--m",
-                  text: "What is the arrival date?"
-                }
-              },
-              items: dateFieldValues('arrivalDate', errors)
-            },
-            fetchContext()
-          )
-        }}
+                {{ formPageDateInput(
+                    {
+                        fieldName: "arrivalDate",
+                        fieldset: {
+                        legend: {
+                            classes: "govuk-fieldset__legend--m",
+                            text: "What is the arrival date?"
+                        }
+                    },
+                        items: dateFieldValues('arrivalDate', errors)
+                    },
+                    fetchContext()
+                ) }}
 
-        {{
-          formPageDateInput(
-            {
-              fieldName: "departureDate",
-              fieldset: {
-                legend: {
-                  classes: "govuk-fieldset__legend--m",
-                  text: "What is the departure date?"
-                }
-              },
-              items: dateFieldValues('departureDate', errors)
-            },
-            fetchContext()
-          )
-        }}
+                {{ formPageDateInput(
+                    {
+                        fieldName: "departureDate",
+                        fieldset: {
+                        legend: {
+                            classes: "govuk-fieldset__legend--m",
+                            text: "What is the departure date?"
+                        }
+                    },
+                        items: dateFieldValues('departureDate', errors)
+                    },
+                    fetchContext()
+                ) }}
 
-        {{ govukButton({
+                {{ govukButton({
                     name: 'submit',
                     text: "Save and continue",
                     preventDoubleClick: true
                 }) }}
-      </form>
+            </form>
+        </div>
     </div>
-  </div>
-{% endblock %}
-
-{% block extraScripts %}
-  <script type="text/javascript" src="/assets/js/flattenPremisesOptions.js"></script>
 {% endblock %}
