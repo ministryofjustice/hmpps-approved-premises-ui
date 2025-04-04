@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -e
 # shellcheck disable=SC3040
@@ -30,7 +30,9 @@ npx playwright install
 echo "script dir $SCRIPT_DIR"
 
 echo "==> Creating .env file and resolving secrets"
+
+secret_names=("hmpps-cas-test-users" "hmpps-approved-premises-ui")
 resolve_secrets "$SCRIPT_DIR/../.env.local-dev-upstream" \
                 "$SCRIPT_DIR/../.env" \
                 "hmpps-community-accommodation-dev" \
-                "hmpps-cas-test-users"
+                "${secret_names[@]}"
