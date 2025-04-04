@@ -61,6 +61,7 @@ export type { CacheType } from './models/CacheType';
 export type { Cancellation } from './models/Cancellation';
 export type { CancellationReason } from './models/CancellationReason';
 export type { Cas1ApplicationStatus } from './models/Cas1ApplicationStatus';
+export type { Cas1ApplicationSummary } from './models/Cas1ApplicationSummary';
 export type { Cas1ApplicationTimeline } from './models/Cas1ApplicationTimeline';
 export type { Cas1ApplicationTimelinessCategory } from './models/Cas1ApplicationTimelinessCategory';
 export type { Cas1ApplicationUserDetails } from './models/Cas1ApplicationUserDetails';

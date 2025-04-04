@@ -2,15 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ApplicationSummary } from './ApplicationSummary';
 import type { ApprovedPremisesApplicationStatus } from './ApprovedPremisesApplicationStatus';
+import type { Person } from './Person';
 import type { PersonRisks } from './PersonRisks';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
-/**
- * Use Cas1ApplicationSummary
- * @deprecated
- */
-export type ApprovedPremisesApplicationSummary = (ApplicationSummary & {
+export type Cas1ApplicationSummary = {
+    id: string;
+    person: Person;
+    createdAt: string;
+    submittedAt?: string;
     isWomensApplication?: boolean;
     isPipeApplication?: boolean;
     isEmergencyApplication?: boolean;
@@ -23,5 +23,5 @@ export type ApprovedPremisesApplicationSummary = (ApplicationSummary & {
     isWithdrawn: boolean;
     releaseType?: ReleaseTypeOption;
     hasRequestsForPlacement: boolean;
-});
+};
 
