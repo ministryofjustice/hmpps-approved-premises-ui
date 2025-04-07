@@ -11,8 +11,8 @@
 
 {% block beforeContent %}
     {{ govukBackLink({
-      text: "Back",
-      href: paths.placementApplications.pages.show({ id: placementApplicationId, task: 'request-a-placement', page: 'updates-to-application' })
+        text: "Back",
+        href: paths.placementApplications.pages.show({ id: placementApplicationId, task: 'request-a-placement', page: 'updates-to-application' })
     }) }}
 {% endblock %}
 
@@ -29,20 +29,20 @@
                 {{ govukSummaryList(summaryList) }}
             {% endfor %}
 
-            <form action="{{paths.placementApplications.submit({id: placementApplicationId })}}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                <input type="hidden" name="reviewed" value="1"/>
+            <form action="{{ paths.placementApplications.submit({id: placementApplicationId }) }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="reviewed" value="1" />
                 <h2 class="govuk-heading-m"> Submit placement request</h2>
 
                 {{ govukCheckboxes({
                     name: "confirmation",
                     items: [
                         {
-                        value: "1",
-                        text: "I confirm the information provided is complete, accurate and up to date."
+                            value: "1",
+                            text: "I confirm the information provided is complete, accurate and up to date."
                         }
                     ]
-                    }) }}
+                }) }}
 
                 {{ govukButton({
                     text: "Submit",
