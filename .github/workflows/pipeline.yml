@@ -247,11 +247,12 @@ jobs:
     needs:
       - build
       - deploy_test
-    runs-on: [self-hosted, james-bootstrap]
+    runs-on: [self-hosted, james-bootstrap] #TODO - change this back to hmpps-github-actions-runner when dependancies have been updated - OR to our own
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature-test/') || startsWith(github.head_ref, 'feature-test/')
     strategy:
       fail-fast: false
       matrix:
+        # TODO - change to 4 where there is more 'oomphf'
         shard: [1, 2]
     steps:
       - name: Check out code
