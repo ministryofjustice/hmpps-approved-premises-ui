@@ -21,12 +21,14 @@ export class RecordDeparturePage extends BasePage {
 
     const reason = await this.selectAnyRadioOption('reasonId')
     await this.clickContinue()
+    await this.page.waitForLoadState()
 
     let breachOrRecallReason: string
 
     if (await this.page.getByText('Breach or recall').isVisible()) {
       breachOrRecallReason = await this.selectAnyRadioOption('breachOrRecallReasonId')
       await this.clickContinue()
+      await this.page.waitForLoadState()
     }
 
     let moveOnCategory: string
