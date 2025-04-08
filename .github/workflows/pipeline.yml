@@ -241,6 +241,7 @@ jobs:
 
   e2e_test:
     name: "E2E Environment Tests 🧪"
+    environment: test
     #    needs:
     #      - build
     #      - deploy_test
