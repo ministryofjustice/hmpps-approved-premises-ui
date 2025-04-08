@@ -19,13 +19,15 @@ export default defineConfig<TestOptions>({
     {
       name: 'setup-dev',
       testMatch: /.*\.setup\.ts/,
-      use: { baseURL: 'https://approved-premises-dev.hmpps.service.justice.gov.uk' },
+      // TODO: Revert baseURL to dev env when done testing pipeline
+      use: { baseURL: 'https://approved-premises-test.hmpps.service.justice.gov.uk' },
     },
     {
       name: 'dev',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: 'https://approved-premises-dev.hmpps.service.justice.gov.uk',
+        // TODO: Revert baseURL to dev env when done testing pipeline
+        baseURL: 'https://approved-premises-test.hmpps.service.justice.gov.uk',
       },
       dependencies: ['setup-dev'],
     },
