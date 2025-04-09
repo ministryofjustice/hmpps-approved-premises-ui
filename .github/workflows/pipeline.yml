@@ -150,7 +150,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ci_node_index: [ 0, 1, 2, 3 ]
+        shard: [ 1, 2, 3, 4 ]
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -173,10 +173,14 @@ jobs:
           branch: main
           if_no_artifact_found: 'ignore'
           allow_forks: false
-          name: integration-test-junit-xml-reports-.*
+          name: integration-test-junit-xml-report-.*-of-4
           name_is_regexp: true
           path: tmp/junit-xml-reports-downloaded
         continue-on-error: true
+
+      - name: Resolve zero-based index for splitting tests
+        id: offset-index
+        run: echo "ZERO_BASED=$((${{ matrix.shard }}-1))" >> "$GITHUB_OUTPUT"
 
       - name: Determine tests splitting by timing
         uses: chaosaffe/split-tests@v1
@@ -184,7 +188,7 @@ jobs:
         with:
           junit-path: tmp/junit-xml-reports-downloaded
           glob: integration_tests/tests/**/*.cy.ts
-          split-index: ${{ matrix.ci_node_index }}
+          split-index: ${{ steps.offset-index.outputs.ZERO_BASED }}
           split-total: 4
 
       - name: Run Integration tests
@@ -193,23 +197,21 @@ jobs:
       - name: Fix Cypress JUnit XML reports
         run: script/fix-cypress-junit-xml
 
-      - name: Store Integration tests reports
+      - name: Upload Integration test report
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: integration-test-junit-xml-reports-${{ matrix.ci_node_index }}
+          name: integration-test-junit-xml-report-${{ matrix.shard }}-of-4
           path: test_results/cypress
 
-      - name: Store Integration tests videos
+      - name: Upload Integration test artefacts
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: integration-tests-videos-${{ matrix.ci_node_index }}
-          path: integration_tests/videos
-
-      - name: Store Integration tests screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-tests-screenshots-${{ matrix.ci_node_index }}
-          path: integration_tests/screenshots
+          name: integration-test-artefacts-${{ matrix.shard }}-of-4
+          path: |
+            integration_tests/videos
+            integration_tests/screenshots
 
   build:
     name: Build docker image from hmpps-github-actions
