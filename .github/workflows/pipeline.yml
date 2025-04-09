@@ -301,21 +301,24 @@ jobs:
           HMPPS_AUTH_USERNAME: ${{ secrets.E2E_USER_DA_AP_USER_TEST_1_USERNAME }}
         run: npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
 
-      - name: Upload Playwright Report
-        if: always()
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.shard }}
+          name: E2E-playwright-report-${{ matrix.shard }}-of-4
           path: playwright-report
           retention-days: 30
+          if-no-files-found: ignore
 
-      - name: Upload Test Results
-        if: always()
+      - name: Upload failure artefacts
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.shard }}
+          name: E2E-failure-artefacts-${{ matrix.shard }}-of-4
           path: test-results
           retention-days: 30
+          if-no-files-found: ignore
+
   # TODO - uncomment when e2e tests run successfully
   # deploy_preprod:
   #   name: Deploy to pre-production environment
