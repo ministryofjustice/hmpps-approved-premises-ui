@@ -179,16 +179,16 @@ jobs:
         continue-on-error: true
 
       - name: Determine tests splitting by timing
-        uses: r7kamura/split-tests-by-timings@v0
+        uses: chaosaffe/split-tests@v1
         id: split-tests
         with:
-          reports: tmp/junit-xml-reports-downloaded
+          junit-path: tmp/junit-xml-reports-downloaded
           glob: integration_tests/tests/**/*.cy.ts
-          index: ${{ matrix.ci_node_index }}
-          total: 4
+          split-index: ${{ matrix.ci_node_index }}
+          split-total: 4
 
       - name: Run Integration tests
-        run: TEST_RUN_ARGS="--spec $(echo ${{ steps.split-tests.outputs.paths }} | sed -E 's/ /,/g')" npm run test:integration
+        run: TEST_RUN_ARGS="--spec $(echo ${{ steps.split-tests.outputs.test-suite }} | sed -E 's/ /,/g')" npm run test:integration
 
       - name: Fix Cypress JUnit XML reports
         run: script/fix-cypress-junit-xml
