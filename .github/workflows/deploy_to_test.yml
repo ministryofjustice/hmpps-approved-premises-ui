@@ -1,0 +1,10 @@
+name: Deploy to test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pipeline_deploy_to_test:
+    name: Deploy to test
+    uses: ./.github/workflows/pipeline.yml
+    secrets: inherit
