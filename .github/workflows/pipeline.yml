@@ -247,26 +247,24 @@ jobs:
     uses: ./.github/workflows/e2e_tests.yml
     secrets: inherit
 
-  # TODO - uncomment when e2e tests run successfully
-  # deploy_preprod:
-  #   name: Deploy to pre-production environment
-  #   needs: 
-  #     - deploy_dev
-  #     - e2e_test
-  #   if: github.ref == 'refs/heads/main'
-  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
-  #   secrets: inherit
-  #   with:
-  #     environment: 'preprod'
-  #     app_version: '${{ needs.build.outputs.app_version }}'
+  deploy_preprod:
+    name: Deploy to pre-production environment
+    needs:
+      - e2e_test
+    if: github.ref == 'refs/heads/main'
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: 'preprod'
+      app_version: '${{ needs.build.outputs.app_version }}'
 
-  # deploy_prod:
-  #   name: Deploy to production environment
-  #   needs: 
-  #     - deploy_preprod
-  #   if: github.ref == 'refs/heads/main'
-  #   uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
-  #   secrets: inherit
-  #   with:
-  #     environment: 'prod'
-  #     app_version: '${{ needs.build.outputs.app_version }}'
+  deploy_prod:
+    name: Deploy to production environment
+    needs:
+      - deploy_preprod
+    if: github.ref == 'refs/heads/main'
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: 'prod'
+      app_version: '${{ needs.build.outputs.app_version }}'
