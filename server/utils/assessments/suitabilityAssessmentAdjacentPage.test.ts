@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-
 import { when } from 'jest-when'
 import { ApType, ApprovedPremisesAssessment } from '@approved-premises/api'
 import { assessmentFactory } from '../../testutils/factories'
