@@ -46,7 +46,7 @@ jobs:
           category: '/language:javascript'
 
   node_build:
-    name: "Node Build 🛠️"
+    name: "Build 🛠️"
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2
     with:
       node_version_file: '.node-version'
@@ -197,7 +197,7 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-  build:
+  docker_build:
     name: Build docker image from hmpps-github-actions
     needs:
       - node_build
@@ -218,7 +218,7 @@ jobs:
   deploy_dev:
     name: Deploy to the development environment
     needs:
-      - build
+      - docker_build
     # Do not allow deployment to dev unless on main branch when not triggered manually
     if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
@@ -230,7 +230,7 @@ jobs:
   deploy_test:
     name: Deploy to the test environment
     needs:
-      - build
+      - docker_build
     # Allow deployment to test on main branch or when workflow triggered manually
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
