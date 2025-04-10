@@ -20,14 +20,30 @@ permissions:
   packages: write
 
 jobs:
-  debug:
-    name: Debug workflow
+  codeQL:
+    name: CodeQL
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
     steps:
-      - name: Print workflow debug information
-        run: |
-          echo "GitHub event name: ${{ github.event_name }}"
-          echo "GitHub ref: ${{ github.ref }}"
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.7
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'javascript'
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript'
 
   node_build:
     name: "Node Build 🛠️"
