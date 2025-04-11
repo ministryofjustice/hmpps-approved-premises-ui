@@ -1,6 +1,11 @@
-import 'dotenv/config'
+import { config } from 'dotenv'
 import { defineConfig, devices } from '@playwright/test'
 import { TestOptions } from '@approved-premises/e2e'
+
+config({
+  path: `e2e.env`,
+  override: true,
+})
 
 export default defineConfig<TestOptions>({
   testDir: './',
@@ -30,19 +35,6 @@ export default defineConfig<TestOptions>({
       dependencies: ['setup-dev'],
     },
     {
-      name: 'setup-local-dev-upstream',
-      testMatch: /.*\.setup\.ts/,
-      use: { baseURL: 'http://localhost:3000' },
-    },
-    {
-      name: 'local-dev-upstream',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: 'http://localhost:3000',
-      },
-      dependencies: ['setup-local-dev-upstream'],
-    },
-    {
       name: 'setup-local',
       testMatch: /.*\.setup\.ts/,
       use: { baseURL: 'http://localhost:3000' },
@@ -52,20 +44,6 @@ export default defineConfig<TestOptions>({
       use: {
         ...devices['Desktop Chrome'],
         baseURL: 'http://localhost:3000',
-        person: {
-          name: 'Aadland Bertrand',
-          crn: 'X320741',
-          tier: 'D2',
-        },
-        indexOffenceRequired: true,
-        oasysSections: [
-          '6. Relationships',
-          '7. Lifestyle',
-          '10. Emotional',
-          '11. Thinking and behavioural',
-          '12. Attitude',
-          '13. Health',
-        ],
       },
       dependencies: ['setup-local'],
     },

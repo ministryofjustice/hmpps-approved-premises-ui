@@ -24,8 +24,6 @@
     "test:e2e:ui": "npm run test:e2e:ci -- --ui",
     "test:e2e:local": "npx playwright test --config ./e2e/playwright.config.ts --project=local",
     "test:e2e:local:ui": "npm run test:e2e:local -- --ui",
-    "test:e2e:local-dev-upstream": "npx playwright test --config ./e2e/playwright.config.ts --project=local-dev-upstream",
-    "test:e2e:local-dev-upstream:ui": "npm run test:e2e:local-dev-upstream -- --ui",
     "install-playwright": "npx playwright install",
     "security_audit": "npx audit-ci --config audit-ci.json",
     "int-test": "cypress run --config video=false $TEST_RUN_ARGS",
