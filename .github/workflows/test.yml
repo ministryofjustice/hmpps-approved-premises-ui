@@ -1,0 +1,164 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  codeQL:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.7
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'javascript'
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript'
+
+  helm_lint:
+    name: "Helm config linting 🔎"
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2
+    strategy:
+      matrix:
+        environments: [ 'dev', 'test', 'preprod', 'prod' ]
+
+  node_build:
+    name: "Build 🛠️"
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2
+    with:
+      node_version_file: '.node-version'
+    secrets: inherit
+
+  type_checking:
+    name: "Type check 🔎"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run type check
+        run: npm run typecheck
+
+  linting:
+    name: "Linting 🔎"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint checks
+        run: npm run lint
+
+      - name: Run shell scripts lint checks
+        run: npm run shellcheck
+
+  unit_test:
+    name: "Unit testing 🧪"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Unit tests
+        run: npm run test:ci
+
+      - name: Check coverage
+        run: |
+          npx nyc report -t ./coverage --reporter=text --reporter=text-summary
+          npx nyc check-coverage -t ./coverage
+
+  integration_test:
+    name: "Integration testing 🧪"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [ 1, 2, 3, 4 ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build source
+        run: npm run build
+
+      - name: Resolve zero-based index for splitting tests
+        id: offset-index
+        run: echo "ZERO_BASED=$((${{ matrix.shard }}-1))" >> "$GITHUB_OUTPUT"
+
+      - name: Determine tests splitting
+        uses: chaosaffe/split-tests@v1
+        id: split-tests
+        with:
+          glob: integration_tests/tests/**/*.cy.ts
+          split-index: ${{ steps.offset-index.outputs.ZERO_BASED }}
+          split-total: 4
+
+      - name: Run Integration tests
+        run: TEST_RUN_ARGS="--spec $(echo ${{ steps.split-tests.outputs.test-suite }} | sed -E 's/ /,/g')" npm run test:integration
+
+      - name: Upload Integration test artefacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-artefacts-${{ matrix.shard }}-of-4
+          path: |
+            integration_tests/videos
+            integration_tests/screenshots
+          retention-days: 30
+          if-no-files-found: ignore
