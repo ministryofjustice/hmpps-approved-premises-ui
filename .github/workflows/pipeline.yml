@@ -33,7 +33,7 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
     secrets: inherit
     with:
-      environment: 'development'
+      environment: 'dev'
       app_version: '${{ needs.build.outputs.app_version }}'
 
   deploy_test:
