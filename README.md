@@ -27,7 +27,8 @@ script/bootstrap
 
 ### Using AP Tools
 
-In order to spin up a full stack of a working API and other dependent services use [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
+In order to spin up a full stack of a working API and other dependent services we recommend
+using [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
 
 NB. The approach AP Tools takes solves a critical limitation for working in
 development. Due to how the frontend and API authenticate requests they both
@@ -144,18 +145,40 @@ notify:
   guest-list-api-key: aforementioned NOTIFY_API_KEY value
 ```
 
+#### CLI commands
+
+Headless:
+
+```bash
+npm run test:e2e:local
+# -> npx playwright test --config ./e2e/playwright.config.ts --project=local
+```
+
+With UI:
+
+```bash
+npm run test:e2e:local:ui
+# -> npx playwright test --config ./e2e/playwright.config.ts --project=local --ui
+```
+
+When running with UI it may select 'setupLocal' project by default. Click on projects and select 'local' too to see all
+tests
+
 ## Feature flags
 
 We currently use environment variables for feature flags.
 
 ## Updating API Schema Types
 
-The following script can be used to update the local type models (defined in server/@types). These are pulled from the approved-premises open-api definitions on the main branch 
+The following script can be used to update the local type models (defined in server/@types). These are pulled from the
+approved-premises open-api definitions on the main branch
 
 ```
 /script/generate-types
 ```
 
-There is also a github workflow that will automatically generate PRs to update the local model whenever the API open api definition is changed.
+There is also a github workflow that will automatically generate PRs to update the local model whenever the API open api
+definition is changed.
 
-Once the script has been ran, manual updates may be required to the factories defined in testutils/factories to add any new fields
+Once the script has been ran, manual updates may be required to the factories defined in testutils/factories to add any
+new fields
