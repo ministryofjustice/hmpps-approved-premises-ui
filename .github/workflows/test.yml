@@ -41,6 +41,8 @@ jobs:
     strategy:
       matrix:
         environments: [ 'development', 'test', 'preprod', 'prod' ]
+    with:
+      environment: ${{ matrix.environments }}
 
   node_build:
     name: "Build 🛠️"
