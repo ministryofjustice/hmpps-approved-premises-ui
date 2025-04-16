@@ -64,3 +64,4 @@ jobs:
     with:
       environment: 'prod'
       app_version: '${{ needs.docker_build.outputs.app_version }}'
+      slack_notification: 'true'
