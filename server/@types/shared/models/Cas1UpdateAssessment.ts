@@ -2,4 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ChangeRequestType = 'placementAppeal' | 'placementExtension' | 'plannedTransfer';
+import type { Unit } from './Unit';
+export type Cas1UpdateAssessment = {
+    data: Record<string, Unit>;
+};
+
