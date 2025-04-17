@@ -24,6 +24,7 @@ import paths from '../../paths/tasks'
 import { daysUntilDueCell } from '../tableUtils'
 import { TaskStatusTag } from './statusTag'
 import { fullPersonSummaryFactory } from '../../testutils/factories/person'
+import { DateFormats } from '../dateUtils'
 
 describe('table', () => {
   beforeEach(() => {
@@ -39,6 +40,11 @@ describe('table', () => {
           [
             nameAnchorCell(task),
             daysUntilDueCell(task, 'task--index__warning'),
+            {
+              text: task.expectedArrivalDate
+                ? DateFormats.isoDateToUIDate(task.expectedArrivalDate, { format: 'short' })
+                : '',
+            },
             {
               text: task?.allocatedToStaffMember?.name,
             },
@@ -62,6 +68,11 @@ describe('table', () => {
           [
             nameAnchorCell(task),
             daysUntilDueCell(task, 'task--index__warning'),
+            {
+              text: task.expectedArrivalDate
+                ? DateFormats.isoDateToUIDate(task.expectedArrivalDate, { format: 'short' })
+                : '',
+            },
             {
               text: task?.allocatedToStaffMember?.name,
             },
@@ -90,6 +101,11 @@ describe('table', () => {
             nameAnchorCell(task),
             daysUntilDueCell(task, 'task--index__warning'),
             {
+              text: task.expectedArrivalDate
+                ? DateFormats.isoDateToUIDate(task.expectedArrivalDate, { format: 'short' })
+                : '',
+            },
+            {
               html: new TaskStatusTag(task.status).html(),
             },
             {
@@ -107,6 +123,11 @@ describe('table', () => {
           [
             nameAnchorCell(task),
             daysUntilDueCell(task, 'task--index__warning'),
+            {
+              text: task.expectedArrivalDate
+                ? DateFormats.isoDateToUIDate(task.expectedArrivalDate, { format: 'short' })
+                : '',
+            },
             {
               html: new TaskStatusTag(task.status).html(),
             },
@@ -131,6 +152,7 @@ describe('table', () => {
       expect(tasksTableHeader('unallocated', sortBy, sortDirection, hrefPrefix)).toEqual([
         sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
         sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Arrival date', 'expectedArrivalDate', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',
         },
@@ -153,6 +175,7 @@ describe('table', () => {
       expect(tasksTableHeader('allocated', sortBy, sortDirection, hrefPrefix)).toEqual([
         sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
         sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Arrival date', 'expectedArrivalDate', sortBy, sortDirection, hrefPrefix),
         sortHeader<TaskSortField>('Allocated to', 'allocatedTo', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',

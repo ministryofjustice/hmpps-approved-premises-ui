@@ -70,6 +70,10 @@ const taskTypeCell = (task: Task): TableCell => ({
   html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
 })
 
+const arrivalDateCell = (task: Task): TableCell => ({
+  text: task.expectedArrivalDate ? DateFormats.isoDateToUIDate(task.expectedArrivalDate, { format: 'short' }) : '',
+})
+
 const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name,
 })
@@ -91,6 +95,7 @@ const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
     rows.push([
       nameAnchorCell(task),
       daysUntilDueCell(task, 'task--index__warning'),
+      arrivalDateCell(task),
       allocationCell(task),
       statusCell(task),
       taskTypeCell(task),
@@ -108,6 +113,7 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
     rows.push([
       nameAnchorCell(task),
       daysUntilDueCell(task, 'task--index__warning'),
+      arrivalDateCell(task),
       statusCell(task),
       taskTypeCell(task),
       apAreaCell(task),
@@ -159,6 +165,7 @@ const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
   return [
     sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
     sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
+    sortHeader<TaskSortField>('Arrival date', 'expectedArrivalDate', sortBy, sortDirection, hrefPrefix),
     sortHeader<TaskSortField>('Allocated to', 'allocatedTo', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Status',
@@ -176,6 +183,7 @@ const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirect
   return [
     sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
     sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
+    sortHeader<TaskSortField>('Arrival date', 'expectedArrivalDate', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Status',
     },
