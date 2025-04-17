@@ -34,6 +34,7 @@ export const overallStatusTextMap = {
   arrived: 'Arrived',
   notArrived: 'Not arrived',
   departed: 'Departed',
+  cancelled: 'Cancelled',
 } as const
 
 export const statusTextMap = {
@@ -53,9 +54,13 @@ type SpaceBookingStatus = keyof typeof statusTextMap
 const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
   Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
 
+const isCancelled = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
+  Boolean((placement as Cas1SpaceBooking).cancellation)
+
 export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingOverallStatus => {
   const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
 
+  if (isCancelled(placement)) return 'cancelled'
   if (isNonArrival) return 'notArrived'
   if (placement.actualDepartureDate) return 'departed'
   if (placement.actualArrivalDate) return 'arrived'
@@ -65,7 +70,7 @@ export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBook
 export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
   const status = overallStatus(placement)
 
-  if (['notArrived', 'departed'].includes(status)) return status
+  if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
 
   if (status === 'arrived') {
     const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
