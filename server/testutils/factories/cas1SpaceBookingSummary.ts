@@ -71,6 +71,7 @@ export default Cas1SpaceBookingSummaryFactory.define(() => {
     actualArrivalDate: arrivedStatuses.includes(status) ? canonicalArrivalDate : undefined,
     actualDepartureDate: status === 'departed' ? canonicalDepartureDate : undefined,
     isNonArrival: status === 'notArrived',
+    isCancelled: status === 'cancelled',
     tier: faker.helpers.arrayElement(['A', 'B', 'C']),
     keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(),
     characteristics: faker.helpers.arrayElements(Object.keys(roomCharacteristicMap)) as Array<Cas1SpaceCharacteristic>,
