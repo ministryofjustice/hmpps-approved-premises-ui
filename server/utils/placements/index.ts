@@ -54,8 +54,8 @@ type SpaceBookingStatus = keyof typeof statusTextMap
 const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
   Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
 
-const isCancelled = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
-  Boolean((placement as Cas1SpaceBooking).cancellation)
+const isCancelled = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): boolean =>
+  'isCancelled' in placement ? placement.isCancelled : Boolean(placement.cancellation)
 
 export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingOverallStatus => {
   const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival

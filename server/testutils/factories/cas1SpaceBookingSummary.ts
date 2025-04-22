@@ -50,6 +50,15 @@ class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
       isNonArrival: true,
     })
   }
+
+  cancelled() {
+    return this.params({
+      actualArrivalDate: undefined,
+      actualDepartureDate: undefined,
+      isNonArrival: false,
+      isCancelled: true,
+    })
+  }
 }
 
 export default Cas1SpaceBookingSummaryFactory.define(() => {
@@ -71,7 +80,7 @@ export default Cas1SpaceBookingSummaryFactory.define(() => {
     actualArrivalDate: arrivedStatuses.includes(status) ? canonicalArrivalDate : undefined,
     actualDepartureDate: status === 'departed' ? canonicalDepartureDate : undefined,
     isNonArrival: status === 'notArrived',
-    isCancelled: status === 'cancelled',
+    isCancelled: false,
     tier: faker.helpers.arrayElement(['A', 'B', 'C']),
     keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(),
     characteristics: faker.helpers.arrayElements(Object.keys(roomCharacteristicMap)) as Array<Cas1SpaceCharacteristic>,

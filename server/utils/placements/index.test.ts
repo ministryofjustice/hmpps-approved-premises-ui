@@ -39,7 +39,7 @@ describe('placementUtils', () => {
       const current = typeFactory.current()
       const departed = typeFactory.departed()
       const nonArrival = typeFactory.nonArrival()
-      const cancelled = cas1SpaceBookingFactory.cancelled()
+      const cancelled = typeFactory.cancelled()
 
       beforeEach(() => {
         jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
