@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ChangeRequestType = 'placementAppeal' | 'placementExtension' | 'plannedTransfer';
+export type Cas1AssessmentStatus = 'awaiting_response' | 'completed' | 'reallocated' | 'in_progress' | 'not_started';
