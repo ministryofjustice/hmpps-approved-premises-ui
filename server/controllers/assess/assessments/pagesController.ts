@@ -88,12 +88,14 @@ export default class PagesController {
         const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
 
         if (page) {
-          await this.assessmentService.updateClarificationNote(
-            req.user.token,
-            req.params.id,
-            clarificationNote.id,
-            page.body as UpdatedClarificationNote,
-          )
+          if (clarificationNote) {
+            await this.assessmentService.updateClarificationNote(
+              req.user.token,
+              req.params.id,
+              clarificationNote.id,
+              page.body as UpdatedClarificationNote,
+            )
+          }
           res.redirect(paths.assessments.show({ id: req.params.id }))
         }
       } else {
