@@ -245,6 +245,7 @@ describe('manage routes', () => {
       },
     )
   })
+
   it('should allow users with permission cas1_transfer_create to create a planned transfer change request', () => {
     manageRoutes(controllers, router, services)
 

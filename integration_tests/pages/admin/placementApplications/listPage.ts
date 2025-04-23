@@ -1,9 +1,9 @@
 import {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary,
+  Cas1PlacementRequestDetail,
   Cas1SpaceBooking,
   PlacementRequest,
-  PlacementRequestDetail,
   PlacementRequestSortField,
   PlacementRequestStatus,
   SortOrder,
@@ -27,7 +27,7 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowSpaceBookingConfirmation(spaceBooking: Cas1SpaceBooking, placementRequest: PlacementRequestDetail) {
+  shouldShowSpaceBookingConfirmation(spaceBooking: Cas1SpaceBooking, placementRequest: Cas1PlacementRequestDetail) {
     const body = creationNotificationBody(spaceBooking, placementRequest)
     this.shouldShowBanner(`Place booked for ${spaceBooking.person.crn} ${body}`)
   }

@@ -208,4 +208,18 @@ export default {
         status: 200,
       },
     }),
+
+  stubApprovePlacementAppeal: (placement: Cas1SpaceBooking) =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.premises.placements.appeal({
+          premisesId: placement.premises.id,
+          placementId: placement.id,
+        }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }

@@ -11,7 +11,7 @@ import {
   Person,
   PersonAcctAlert,
   PersonStatus,
-  PlacementRequestDetail,
+  Cas1PlacementRequestDetail,
   PrisonCaseNote,
   SortOrder,
 } from '@approved-premises/api'
@@ -104,8 +104,8 @@ export default abstract class Page {
     })
   }
 
-  shouldShowBanner(text: string, options: { exact: boolean } = { exact: true }): void {
-    cy.get('.govuk-notification-banner__content').then(bannerElement => {
+  private elementShouldContainText(selector: string, text: string, options: { exact: boolean }) {
+    cy.get(selector).then(bannerElement => {
       const { actual, expected } = parseHtml(bannerElement, text)
 
       if (options.exact) {
@@ -116,8 +116,20 @@ export default abstract class Page {
     })
   }
 
+  shouldShowBanner(text: string, options: { exact: boolean } = { exact: true }): void {
+    return this.elementShouldContainText('.govuk-notification-banner__content', text, options)
+  }
+
   shouldNotShowBanner(): void {
     cy.get('.govuk-notification-banner').should('not.exist')
+  }
+
+  shouldShowTicketPanel(text: string, options: { exact: boolean } = { exact: true }): void {
+    return this.elementShouldContainText('.moj-ticket-panel__content', text, options)
+  }
+
+  shouldNotShowTicketPanel(): void {
+    cy.get('.moj-ticket-panel__content').should('not.exist')
   }
 
   radioByNameAndValueShouldNotExist(name: string, option: string): void {
@@ -679,7 +691,7 @@ export default abstract class Page {
     cy.get('[aria-label="Primary navigation"] a').contains(label).click()
   }
 
-  shouldShowKeyPersonDetails(placementRequest: PlacementRequestDetail) {
+  shouldShowKeyPersonDetails(placementRequest: Cas1PlacementRequestDetail) {
     cy.get('.prisoner-info').within(() => {
       const { person } = placementRequest
       if (!isFullPerson(person)) throw new Error('test requires a Full Person')

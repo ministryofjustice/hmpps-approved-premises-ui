@@ -1,9 +1,9 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { ApprovedPremisesUserPermission, PlacementRequestDetail } from '@approved-premises/api'
+import { ApprovedPremisesUserPermission, Cas1PlacementRequestDetail } from '@approved-premises/api'
 import {
   cas1SpaceBookingSummaryFactory,
   personFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
@@ -19,7 +19,7 @@ const setup = ({
   placementRequestDetail,
   permissions,
 }: {
-  placementRequestDetail: PlacementRequestDetail
+  placementRequestDetail: Cas1PlacementRequestDetail
   permissions: Array<ApprovedPremisesUserPermission>
 }) => {
   const userId = 'some-id'
@@ -89,7 +89,7 @@ describe('adminIdentityBar', () => {
 
     describe('if the status of the placement request is `matched`', () => {
       describe('if the placement request has a legacy booking', () => {
-        const placementRequestDetail = placementRequestDetailFactory.withLegacyBooking().build()
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.withLegacyBooking().build()
 
         it('should return an action to amend the booking', () => {
           const { adminActionsResult, actionAmendLegacyBooking } = setup({
@@ -105,7 +105,7 @@ describe('adminIdentityBar', () => {
           ['upcoming', cas1SpaceBookingSummaryFactory.upcoming().build()],
           ['arrived', cas1SpaceBookingSummaryFactory.current().build()],
         ])('should return an action to change the placement if it is %s', (_, spaceBooking) => {
-          const placementRequestDetail = placementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+          const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
 
           const { adminActionsResult, actionChangePlacement } = setup({
             placementRequestDetail,
@@ -118,7 +118,7 @@ describe('adminIdentityBar', () => {
           ['not arrived', cas1SpaceBookingSummaryFactory.nonArrival().build()],
           ['departed', cas1SpaceBookingSummaryFactory.departed().build()],
         ])('should return no change placement action if the placement is %s', (_, spaceBooking) => {
-          const placementRequestDetail = placementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+          const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
 
           const { adminActionsResult, actionChangePlacement } = setup({
             placementRequestDetail,
@@ -129,7 +129,7 @@ describe('adminIdentityBar', () => {
       })
 
       it('should return an action to withdraw the placement if the user has the withdraw permission', () => {
-        const placementRequestDetail = placementRequestDetailFactory.build()
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
 
         const { adminActionsResult, actionWithdrawPlacement } = setup({
           placementRequestDetail,
@@ -141,7 +141,7 @@ describe('adminIdentityBar', () => {
     })
 
     describe('if the status of the placement request is `not matched`', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build({
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
         status: 'notMatched',
       })
 
@@ -204,7 +204,7 @@ describe('adminIdentityBar', () => {
 
   describe('title', () => {
     it('should return HTML for the title', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build({ person: personFactory.build() })
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ person: personFactory.build() })
 
       expect(title(placementRequestDetail)).toMatchStringIgnoringWhitespace(`
       <h1 class="govuk-heading-l">Placement request</h1>
@@ -212,7 +212,7 @@ describe('adminIdentityBar', () => {
     })
 
     it('should return a withdrawn tag if the request for placement has been withdrawn', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build({
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
         isWithdrawn: true,
         person: fullPersonFactory.build(),
       })
@@ -228,7 +228,7 @@ Placement request
 
   describe('adminIdentityBar', () => {
     it('should return the admin identity bar', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build()
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
       const userId = 'some-id'
       const user = { roles: ['appeals_manager' as const], id: userId }
 
@@ -241,7 +241,7 @@ Placement request
     })
 
     it('should return the bar without a menu if the placement request has been withdrawn', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build({ isWithdrawn: true })
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ isWithdrawn: true })
       const userId = 'some-id'
       const user = { roles: ['appeals_manager' as const], id: userId }
 

@@ -6,7 +6,7 @@ import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   cas1PremisesBasicSummaryFactory,
   newPlacementRequestBookingConfirmationFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
 } from '../../../testutils/factories'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 
@@ -19,7 +19,7 @@ jest.mock('../../../utils/validation')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
-  const placementRequest = placementRequestDetailFactory.build({ expectedArrival: '2022-01-01', duration: 14 })
+  const placementRequest = cas1PlacementRequestDetailFactory.build({ expectedArrival: '2022-01-01', duration: 14 })
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token }, params: { id: placementRequest.id } })
   const response: DeepMocked<Response> = createMock<Response>({})

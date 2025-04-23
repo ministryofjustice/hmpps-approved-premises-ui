@@ -1,4 +1,4 @@
-import { placementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
@@ -6,7 +6,7 @@ import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('getPreferredApsFromApplication', () => {
-  const placementRequestDetail = placementRequestDetailFactory.build()
+  const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
 
   it('should return a list of preferred APs', () => {
     const preferredAps = premisesFactory.buildList(3)

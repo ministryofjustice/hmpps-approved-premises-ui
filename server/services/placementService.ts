@@ -1,4 +1,5 @@
-import type {
+import {
+  Cas1ApprovedPlacementAppeal,
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
@@ -115,5 +116,16 @@ export default class PlacementService {
     const placementClient = this.placementClientFactory(token)
 
     return placementClient.createEmergencyTransfer(premisesId, placementId, newEmergencyTransfer)
+  }
+
+  async approvePlacementAppeal(
+    token: string,
+    premisesId: string,
+    placementId: string,
+    approvedPlacementAppeal: Cas1ApprovedPlacementAppeal,
+  ) {
+    const placementClient = this.placementClientFactory(token)
+
+    return placementClient.approvePlacementAppeal(premisesId, placementId, approvedPlacementAppeal)
   }
 }
