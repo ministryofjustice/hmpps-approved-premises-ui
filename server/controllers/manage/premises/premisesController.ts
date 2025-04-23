@@ -49,6 +49,7 @@ export default class PremisesController {
         showPlacements && (activeTab === 'upcoming' || activeTab === 'current')
           ? await this.premisesService.getKeyworkers(req.user.token, req.params.premisesId)
           : undefined
+
       const paginatedPlacements =
         showPlacements &&
         (activeTab !== 'search' || Boolean(crnOrName)) &&
