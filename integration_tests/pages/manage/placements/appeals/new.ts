@@ -1,11 +1,9 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
 import paths from '../../../../../server/paths/manage'
-import Page from '../../../page'
 
-type FieldType = 'text' | 'textArea' | 'date' | 'radio'
-export type FieldDetails = Record<string, { type: FieldType; error?: string; value: string; label: string }>
+import FormPage, { FieldDetails } from '../../../formPage'
 
-export class NewPlacementAppealPage extends Page {
+export class NewPlacementAppealPage extends FormPage {
   fieldDetails: FieldDetails = {
     areaManagerName: {
       type: 'text',
@@ -54,31 +52,6 @@ export class NewPlacementAppealPage extends Page {
   static visit(placement: Cas1SpaceBooking): NewPlacementAppealPage {
     cy.visit(paths.premises.placements.appeal.new({ placementId: placement.id, premisesId: placement.premises.id }))
     return new NewPlacementAppealPage(placement)
-  }
-
-  shouldShowFormControls(fieldDetails: FieldDetails) {
-    Object.values(fieldDetails).forEach(({ type, label }) => {
-      if (['date', 'radio'].includes(type)) this.getLegend(label)
-      else this.getLabel(label)
-    })
-  }
-
-  shouldShowErrorMessages(fieldDetails: FieldDetails) {
-    Object.entries(fieldDetails).forEach(([field, { error }]) => {
-      if (error) {
-        cy.get('.govuk-error-summary').should('contain', error)
-        cy.get(`[data-cy-error-${field.toLowerCase()}]`).should('contain', error)
-      }
-    })
-  }
-
-  completeForm(fieldDetails: FieldDetails) {
-    Object.entries(fieldDetails).forEach(([field, { type, value }]) => {
-      if (type === 'text') this.completeTextInput(field, value)
-      if (type === 'textArea') this.completeTextArea(field, value)
-      if (type === 'date') this.clearAndCompleteDateInputs(field, value)
-      if (type === 'radio') this.checkRadioByNameAndValue(field, value)
-    })
   }
 
   getRequestJson() {

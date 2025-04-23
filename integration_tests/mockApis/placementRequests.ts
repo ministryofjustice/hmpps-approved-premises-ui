@@ -319,4 +319,15 @@ export default {
         status: 200,
       },
     }),
+
+  stubPlannedTransferCreate: (placementRequestId: string) =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.placementRequests.plannedTransfer({ id: placementRequestId }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }

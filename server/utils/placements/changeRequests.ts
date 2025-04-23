@@ -5,15 +5,25 @@ import { isAfter } from 'date-fns'
 import { dateAndTimeInputsAreValidDates, DateFormats } from '../dateUtils'
 import { ValidationError } from '../errors'
 import { summaryListItem } from '../formUtils'
+import { sentenceCase } from '../utils'
 
-type AppealReason =
+export type AppealReason =
   | 'staffConflictOfInterest'
   | 'exclusionZoneOrProximityToVictim'
   | 'offenceNotAccepted'
   | 'apCannotMeetSpecificNeeds'
   | 'residentMixOrNonAssociates'
+  | 'extendingThePlacementNoCapacityAtCurrentAp'
+  | 'placementPrioritisation'
+  | 'movingPersonCloserToResettlementArea'
+  | 'conflictWithStaff'
+  | 'localCommunityIssue'
+  | 'riskToResident'
+  | 'publicProtection'
+  | 'apClosure'
+  | 'other'
 
-export const appealReasonRadioDefinitions: Record<AppealReason, { text: string; conditionalQuestion: string }> = {
+export const appealReasonRadioDefinitions: Record<AppealReason, { text: string; conditionalQuestion?: string }> = {
   staffConflictOfInterest: {
     text: 'Staff conflict of interest',
     conditionalQuestion:
@@ -36,6 +46,16 @@ export const appealReasonRadioDefinitions: Record<AppealReason, { text: string; 
     text: 'Resident mix or non-associates',
     conditionalQuestion: 'Say which applies and give details. ',
   },
+
+  extendingThePlacementNoCapacityAtCurrentAp: { text: 'Extending the placement (no capacity at current AP)' },
+  placementPrioritisation: { text: 'Placement prioritisation ' },
+  movingPersonCloserToResettlementArea: { text: 'Moving person closer to resettlement area' },
+  conflictWithStaff: { text: 'Conflict with staff ' },
+  localCommunityIssue: { text: 'Local community issue ' },
+  riskToResident: { text: 'Risk to resident ' },
+  publicProtection: { text: 'Public protection ' },
+  apClosure: { text: 'AP closure ' },
+  other: { text: 'Out of service bed or refurbishment' }, // TODO:Check that this is the right text for the code
 }
 
 export const getConditionalHtml = (name: string, conditionalQuestion: string, context: Record<string, unknown>) => {
@@ -50,23 +70,33 @@ export const getConditionalHtml = (name: string, conditionalQuestion: string, co
   return nunjucks.render('partials/detailsTextarea.njk', textboxContext)
 }
 
-export const mapAppealReasonsToRadios = (
+export const mapChangeRequestReasonsToRadios = (
   appealReasons: Array<NamedId>,
+  fieldName: string,
   context: Record<string, unknown>,
 ): Array<RadioItem> => {
-  const selectedValue = context.appealReason
-  return (appealReasons as Array<{ name: AppealReason }>)
+  const selectedValue = context[fieldName]
+  return appealReasons
     .map(({ name }) => {
-      if (!appealReasonRadioDefinitions[name]) return null
-      const { text, conditionalQuestion } = appealReasonRadioDefinitions[name]
-      const conditionalHtml = getConditionalHtml(`${name}Detail`, conditionalQuestion, context)
-      return { value: name, text, conditional: { html: conditionalHtml }, checked: selectedValue === name }
+      if (!appealReasonRadioDefinitions[name as AppealReason])
+        return { value: name, text: sentenceCase(name), checked: selectedValue === name }
+      const { text, conditionalQuestion } = appealReasonRadioDefinitions[name as AppealReason]
+      const conditionalHtml = conditionalQuestion
+        ? { html: getConditionalHtml(`${name}Detail`, conditionalQuestion, context) }
+        : undefined
+      return { value: name, text, conditional: conditionalHtml, checked: selectedValue === name }
     })
     .filter(Boolean)
 }
 
 export const getAppealReasonId = (reasonName: string, reasonList: Array<NamedId>): string => {
   return reasonList.find(({ name }) => name === reasonName)?.id
+}
+
+export const getChangeRequestReasonText = (changeRequestReason: AppealReason) => {
+  return appealReasonRadioDefinitions[changeRequestReason]
+    ? appealReasonRadioDefinitions[changeRequestReason].text
+    : sentenceCase(changeRequestReason)
 }
 
 export const getAppealReasonText = (body: AppealFormData): string => {

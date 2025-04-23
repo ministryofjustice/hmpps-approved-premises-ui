@@ -32,6 +32,7 @@ describe('placementRequestService', () => {
   const service = new PlacementRequestService(placementRequestClientFactory, cas1ReferenceDataClientFactory)
 
   const token = 'SOME_TOKEN'
+  const id = 'some-uuid'
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -153,7 +154,6 @@ describe('placementRequestService', () => {
       const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
       placementRequestClient.createBooking.mockResolvedValue(bookingConfirmation)
 
-      const id = 'some-uuid'
       const newBooking = {
         bedId: 'some-other-uuid',
         arrivalDate: '2022-01-01',
@@ -174,7 +174,6 @@ describe('placementRequestService', () => {
       const bookingNotMade = bookingNotMadeFactory.build()
       placementRequestClient.bookingNotMade.mockResolvedValue(bookingNotMade)
 
-      const id = 'some-uuid'
       const body = {
         notes: 'some notes',
       }
@@ -194,7 +193,6 @@ describe('placementRequestService', () => {
       placementRequestClient.withdraw.mockResolvedValue(placementRequestDetail)
 
       const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
-      const id = 'some-uuid'
 
       await service.withdraw(token, id, reason)
 
@@ -221,8 +219,7 @@ describe('placementRequestService', () => {
 
   describe('createPlacementAppeal', () => {
     it('it should call the service to create a placement appeal', async () => {
-      const id = 'some-uuid'
-      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build()
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'placementAppeal' })
 
       await service.createPlacementAppeal(token, id, newChangeRequest)
 
@@ -253,6 +250,30 @@ describe('placementRequestService', () => {
         sortBy,
         sortDirection,
       )
+    })
+  })
+
+  describe('createPlannedTransfer', () => {
+    it('it should call the service to create a planned transfer', async () => {
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'plannedTransfer' })
+
+      await service.createPlannedTransfer(token, id, newChangeRequest)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.createPlannedTransfer).toHaveBeenCalledWith(id, newChangeRequest)
+    })
+  })
+
+  describe('createExtension', () => {
+    it('it should call the service to create a placement extension change request', async () => {
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({
+        type: 'placementExtension',
+      })
+
+      await service.createExtension(token, id, newChangeRequest)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.createExtension).toHaveBeenCalledWith(id, newChangeRequest)
     })
   })
 })
