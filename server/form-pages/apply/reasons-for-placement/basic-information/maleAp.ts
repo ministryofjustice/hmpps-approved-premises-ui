@@ -2,19 +2,16 @@ import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import config from '../../../../config'
 
 @Page({ name: 'male-ap', bodyProperties: ['shouldPersonBePlacedInMaleAp'] })
 export default class MaleAp implements TasklistPage {
-  question = config.flags.weEnabled
-    ? 'What type of AP has the complex case board agreed to?'
-    : 'Has the Complex Case Board determined that the person should be placed in a male AP?'
+  question = 'What type of AP has the complex case board agreed to?'
 
   title = this.question
 
-  yesText = config.flags.weEnabled ? "Men's AP" : 'Yes'
+  yesText = "Men's AP"
 
-  noText = config.flags.weEnabled ? "Women's AP" : 'No'
+  noText = "Women's AP"
 
   constructor(public body: { shouldPersonBePlacedInMaleAp: YesOrNo }) {}
 
@@ -23,9 +20,7 @@ export default class MaleAp implements TasklistPage {
   }
 
   next() {
-    return this.body.shouldPersonBePlacedInMaleAp === 'yes' || config.flags.weEnabled
-      ? 'relevant-dates'
-      : 'refer-to-delius'
+    return 'relevant-dates'
   }
 
   response() {
@@ -38,9 +33,7 @@ export default class MaleAp implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.shouldPersonBePlacedInMaleAp) {
-      errors.shouldPersonBePlacedInMaleAp = config.flags.weEnabled
-        ? 'You must specify what type of AP the complex case board has agreed to'
-        : 'You must specify if the Complex Case Board determined that the person should be placed in a male AP'
+      errors.shouldPersonBePlacedInMaleAp = 'You must specify what type of AP the complex case board has agreed to'
     }
 
     return errors

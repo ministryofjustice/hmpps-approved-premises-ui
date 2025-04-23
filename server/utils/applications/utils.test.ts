@@ -572,29 +572,28 @@ describe('utils', () => {
   })
 
   describe('isWomensApplication', () => {
-    it(`should return false if the person from NDelius has a sex of 'Male'`, () => {
-      const application = applicationFactory.build()
-      const fp = application.person as FullPerson
-      fp.sex = 'Male'
-
-      expect(isWomensApplication(application)).toEqual(false)
-    })
-    it(`should return true if the person from NDelius has a sex of 'Female'`, () => {
-      const application = applicationFactory.build()
-      const fp = application.person as FullPerson
-      fp.sex = 'Female'
-
-      expect(isWomensApplication(application)).toEqual(true)
-    })
-
-    it('should return true if the person is Male but the applicant answered no to the shouldPersonBePlacedInMaleAp question', () => {
-      const application = applicationFactory.build()
-      const fp = application.person as FullPerson
-      fp.sex = 'Male'
-
-      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
-      expect(isWomensApplication(application)).toEqual(true)
-    })
+    it.each([
+      ['Male', null, null, false],
+      ['Female', null, null, true],
+      ['Male', 'yes', 'yes', false],
+      ['Female', 'yes', 'yes', false],
+      ['Male', 'yes', 'no', true],
+      ['Male', 'yes', 'no', true],
+      ['Female', 'no', 'yes', true],
+      ['Female', null, 'yes', true],
+    ])(
+      'Person is %s, transgender is %s caseboard result is %s should return %s',
+      (sex, isTrans, caseBoardSaysMale, expected) => {
+        const application = applicationFactory.build()
+        const fp = application.person as FullPerson
+        fp.sex = sex
+        mockOptionalQuestionResponse({
+          transgenderOrHasTransgenderHistory: isTrans,
+          shouldPersonBePlacedInMaleAp: caseBoardSaysMale,
+        })
+        expect(isWomensApplication(application)).toEqual(expected)
+      },
+    )
   })
 
   describe('getApplicationType', () => {
