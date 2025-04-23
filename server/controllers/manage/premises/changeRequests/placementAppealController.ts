@@ -5,7 +5,7 @@ import { Cas1NewChangeRequest, Unit } from '@approved-premises/api'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import { PlacementRequestService, PremisesService } from '../../../../services'
 import {
-  mapAppealReasonsToRadios,
+  mapChangeRequestReasonsToRadios,
   getAppealReasonId,
   validateNewAppealResponse,
   getConfirmationSummary,
@@ -34,7 +34,7 @@ export default class PlacementAppealController {
         req.user.token,
         'placementAppeal',
       )
-      const appealReasonRadioItems = mapAppealReasonsToRadios(appealReasons, context)
+      const appealReasonRadioItems = mapChangeRequestReasonsToRadios(appealReasons, 'appealReason', context)
 
       return res.render('manage/premises/placements/appeals/new', {
         pageHeading: 'Request an appeal against a placement',
@@ -111,7 +111,6 @@ export default class PlacementAppealController {
           sessionData as ObjectWithDateParts<'approvalDate'>,
           'approvalDate',
         )
-
         const reasonDetailKey: keyof AppealJson<string> = `${appealReason}Detail`
 
         const requestJson: AppealJson<string> = {

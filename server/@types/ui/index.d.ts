@@ -482,6 +482,9 @@ export type TransferFormData = Partial<
 > & {
   destinationPremisesId?: string
   destinationPremisesName?: string
+  isFlexible?: string
+  transferReason?: string
+  notes?: string
 }
 
 export type MultiPageFormData = {
