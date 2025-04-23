@@ -15,6 +15,7 @@ import { DateFormats } from '../dateUtils'
 import { ValidationError } from '../errors'
 import { addDays } from 'date-fns'
 
+
 const appealReasons: Array<NamedId> = [
   { name: 'staffConflictOfInterest', id: 'id1' },
   { name: 'exclusionZoneOrProximityToVictim', id: 'id2' },
