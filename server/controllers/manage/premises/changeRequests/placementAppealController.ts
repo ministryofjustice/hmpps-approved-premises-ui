@@ -34,10 +34,11 @@ export default class PlacementAppealController {
         req.user.token,
         'placementAppeal',
       )
+
       const appealReasonRadioItems = mapChangeRequestReasonsToRadios(appealReasons, 'appealReason', context)
 
       return res.render('manage/premises/placements/appeals/new', {
-        pageHeading: 'Request an appeal against a placement',
+        pageHeading: 'Appeal against a placement',
         postUrl: managePaths.premises.placements.appeal.new({ premisesId, placementId }),
         placement,
         appealReasonRadioItems,

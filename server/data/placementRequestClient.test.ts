@@ -1,16 +1,24 @@
-import { Cas1NewChangeRequest, Cas1ChangeRequestSummary, WithdrawPlacementRequestReason } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
+import {
+  Cas1ChangeRequestSummary,
+  type Cas1NewChangeRequest,
+  Cas1RejectChangeRequest,
+  WithdrawPlacementRequestReason,
+} from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import PlacementRequestClient from './placementRequestClient'
 import paths from '../paths/api'
 
 import {
   bookingNotMadeFactory,
+  cas1ChangeRequestFactory,
   cas1ChangeRequestSummaryFactory,
   cas1NewChangeRequestFactory,
+  cas1PlacementRequestDetailFactory,
+  cas1RejectChangeRequestFactory,
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
   paginatedResponseFactory,
-  placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
 import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
@@ -282,32 +290,6 @@ describeClient('placementRequestClient', provider => {
     })
   })
 
-  describe('find', () => {
-    it('makes a get request to the placementRequest endpoint', async () => {
-      const placementRequestDetail = placementRequestDetailFactory.build()
-
-      await provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get a placement request',
-        withRequest: {
-          method: 'GET',
-          path: paths.placementRequests.show({ id: placementRequestDetail.id }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: placementRequestDetail,
-        },
-      })
-
-      const result = await placementRequestClient.find(placementRequestDetail.id)
-
-      expect(result).toEqual(placementRequestDetail)
-    })
-  })
-
   describe('createBooking', () => {
     it('creates and returns a booking', async () => {
       const placementRequest = placementRequestFactory.build()
@@ -402,6 +384,32 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
     placementRequestClient = new PlacementRequestClient(token)
   })
 
+  describe('find', () => {
+    it('makes a get request to the placementRequest endpoint', async () => {
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a placement request',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.show({ id: placementRequestDetail.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequestDetail,
+        },
+      })
+
+      const result = await placementRequestClient.find(placementRequestDetail.id)
+
+      expect(result).toEqual(placementRequestDetail)
+    })
+  })
+
   describe('getChangeRequests', () => {
     it('makes a get request to the placementRequests change requests endpoint with default parameters', async () => {
       const paginatedResponse = paginatedResponseFactory.build({
@@ -409,7 +417,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         data: cas1ChangeRequestSummaryFactory.buildList(5),
       }) as PaginatedResponse<Cas1ChangeRequestSummary>
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get open change requests',
         withRequest: {
@@ -446,7 +454,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         data: cas1ChangeRequestSummaryFactory.buildList(5),
       }) as PaginatedResponse<Cas1ChangeRequestSummary>
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get open change requests',
         withRequest: {
@@ -481,6 +489,33 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
       )
 
       expect(result).toEqual(paginatedResponse)
+    })
+  })
+
+  describe('getChangeRequest', () => {
+    it('makes a get request to retrieve a change request', async () => {
+      const changeRequest = cas1ChangeRequestFactory.build()
+      const parameters = { placementRequestId: faker.string.uuid(), changeRequestId: changeRequest.id }
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a change request',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.changeRequest(parameters),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: changeRequest,
+        },
+      })
+
+      const result = await placementRequestClient.getChangeRequest(parameters)
+
+      expect(result).toEqual(changeRequest)
     })
   })
 
@@ -552,6 +587,41 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         },
       })
       const result = await placementRequestClient.createExtension(placementRequestId, newChangeRequest)
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('rejectChangeRequest', () => {
+    it('rejects a changeRequest against a placementRequest', async () => {
+      const placementRequestId = 'placement-request-id'
+      const changeRequestId = 'change-request-id'
+      // TODO: remove override once API type corrected - APS-2353
+      const rejectChangeRequest: Cas1RejectChangeRequest = cas1RejectChangeRequestFactory.build({
+        decisionJson: { notes: { innerKey: 'inner' } },
+      })
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to reject a changeRequest against a placementRequest',
+        withRequest: {
+          method: 'PATCH',
+          path: paths.placementRequests.changeRequest({ placementRequestId, changeRequestId }),
+          body: rejectChangeRequest,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      const result = await placementRequestClient.rejectChangeRequest({
+        placementRequestId,
+        changeRequestId,
+        rejectChangeRequest,
+      })
+
       expect(result).toEqual({})
     })
   })

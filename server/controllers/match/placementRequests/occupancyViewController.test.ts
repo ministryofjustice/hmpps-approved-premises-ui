@@ -6,11 +6,11 @@ import { addDays } from 'date-fns'
 import { Cas1SpaceBookingCharacteristic, PlacementCriteria } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService, SessionService, SpaceSearchService } from '../../../services'
 import {
+  cas1PlacementRequestDetailFactory,
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
-  placementRequestDetailFactory,
   spaceSearchStateFactory,
 } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
@@ -50,7 +50,7 @@ describe('OccupancyViewController', () => {
 
   let occupancyViewController: OccupancyViewController
   const premises = cas1PremisesFactory.build()
-  const placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
+  const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ duration: 84 })
   const searchState = initialiseSearchState(placementRequestDetail)
   const premiseCapacity = cas1PremiseCapacityFactory.build()
 

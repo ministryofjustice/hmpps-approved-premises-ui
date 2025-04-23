@@ -6,9 +6,9 @@ import SpaceBookingsController from './spaceBookingsController'
 
 import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
 import {
+  cas1PlacementRequestDetailFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
-  placementRequestDetailFactory,
   spaceSearchStateFactory,
 } from '../../../testutils/factories'
 import paths from '../../../paths/admin'
@@ -30,7 +30,7 @@ describe('SpaceBookingsController', () => {
   const spaceSearchService = createMock<SpaceSearchService>({})
 
   const premises = cas1PremisesFactory.build()
-  const placementRequestDetail = placementRequestDetailFactory.build({ duration: 84 })
+  const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ duration: 84 })
   const searchState = spaceSearchStateFactory.build()
 
   const params = { id: placementRequestDetail.id, premisesId: premises.id }

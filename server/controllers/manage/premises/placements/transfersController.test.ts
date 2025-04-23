@@ -159,7 +159,7 @@ describe('transfersController', () => {
     })
   })
 
-  describe('emergencyDetails', () => {
+  describe('details', () => {
     const sessionData = {
       transferDate: '2025-04-28',
       'transferDate-year': '2025',
@@ -217,7 +217,7 @@ describe('transfersController', () => {
     })
   })
 
-  describe('saveEmergencyDetails', () => {
+  describe('saveDetails', () => {
     const sessionData = {
       transferDate: '2025-04-28',
       'transferDate-year': '2025',

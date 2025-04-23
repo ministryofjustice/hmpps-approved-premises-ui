@@ -127,6 +127,27 @@ const stubChangeRequestReasonsReferenceData = ({
     },
   })
 
+const stubChangeRequestRejectionReasonsReferenceData = ({
+  changeRequestType,
+  reasons,
+}: {
+  changeRequestType: Cas1ChangeRequestType
+  reasons: Array<NamedId>
+}) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: `/cas1/reference-data/change-request-rejection-reasons/${changeRequestType}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: reasons,
+    },
+  })
+
 export default {
   stubApAreaReferenceData,
   stubCruManagementAreaReferenceData,
@@ -134,4 +155,5 @@ export default {
   stubDepartureReasonsReferenceData,
   stubMoveOnCategoriesReferenceData,
   stubChangeRequestReasonsReferenceData,
+  stubChangeRequestRejectionReasonsReferenceData,
 }

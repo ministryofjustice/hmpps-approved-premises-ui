@@ -1,8 +1,8 @@
 import {
+  Cas1PlacementRequestDetail,
   Cas1SpaceCharacteristic,
   Cas1SpaceSearchParameters,
   PlacementCriteria,
-  PlacementRequestDetail,
 } from '@approved-premises/api'
 import {
   CheckBoxItem,
@@ -22,7 +22,7 @@ import { convertKeyValuePairToRadioItems } from '../formUtils'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from './spaceSearchLabels'
 
-export const initialiseSearchState = (placementRequest: PlacementRequestDetail): SpaceSearchFormData => {
+export const initialiseSearchState = (placementRequest: Cas1PlacementRequestDetail): SpaceSearchFormData => {
   const allCriteria = [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria]
 
   return {

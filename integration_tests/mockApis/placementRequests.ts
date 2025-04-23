@@ -330,4 +330,15 @@ export default {
         status: 200,
       },
     }),
+
+  stubRejectChangeRequest: (params: { placementRequestId: string; changeRequestId: string }) =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPattern: paths.placementRequests.changeRequest(params),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }

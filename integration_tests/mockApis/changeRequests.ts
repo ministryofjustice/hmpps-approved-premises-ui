@@ -1,5 +1,6 @@
-import { Cas1ChangeRequestSummary } from '@approved-premises/api'
+import { Cas1ChangeRequest, Cas1ChangeRequestSummary } from '@approved-premises/api'
 import { PaginatedRequestParams, SortedRequestParams } from '@approved-premises/ui'
+import { SuperAgentRequest } from 'superagent'
 import { stubFor } from './setup'
 import paths from '../../server/paths/api'
 
@@ -35,6 +36,31 @@ export default {
           'X-Pagination-TotalResults': String(args.changeRequests.length),
         },
         jsonBody: args.changeRequests.slice((page - 1) * perPage, page * perPage),
+      },
+    })
+  },
+
+  stubChangeRequest: ({
+    placementRequestId,
+    changeRequest,
+  }: {
+    placementRequestId: string
+    changeRequest: Cas1ChangeRequest
+  }): SuperAgentRequest => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: paths.placementRequests.changeRequest({
+          changeRequestId: changeRequest.id,
+          placementRequestId,
+        }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: changeRequest,
       },
     })
   },

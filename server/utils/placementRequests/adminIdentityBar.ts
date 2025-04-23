@@ -1,4 +1,4 @@
-import { PlacementRequestDetail } from '../../@types/shared'
+import { Cas1PlacementRequestDetail } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 
 import managePaths from '../../paths/manage'
@@ -9,7 +9,7 @@ import config from '../../config'
 import { hasPermission } from '../users'
 import { overallStatus } from '../placements'
 
-export const adminIdentityBar = (placementRequest: PlacementRequestDetail, user: UserDetails): IdentityBar => {
+export const adminIdentityBar = (placementRequest: Cas1PlacementRequestDetail, user: UserDetails): IdentityBar => {
   const identityBar: IdentityBar = {
     title: {
       html: title(placementRequest),
@@ -23,7 +23,7 @@ export const adminIdentityBar = (placementRequest: PlacementRequestDetail, user:
 }
 
 export const adminActions = (
-  placementRequest: PlacementRequestDetail,
+  placementRequest: Cas1PlacementRequestDetail,
   user: UserDetails,
 ): Array<IdentityBarMenuItem> => {
   if (placementRequest.status === 'matched' && placementRequest.booking) {
@@ -92,7 +92,7 @@ export const adminActions = (
   return actions
 }
 
-export const title = (placementRequest: PlacementRequestDetail) => {
+export const title = (placementRequest: Cas1PlacementRequestDetail) => {
   let heading = ''
   if (placementRequest.isWithdrawn) {
     heading += `<strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>`

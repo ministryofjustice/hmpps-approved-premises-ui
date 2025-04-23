@@ -1,4 +1,4 @@
-import { placementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
 import { matchingInformationSummary } from './matchingInformationSummaryList'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 import { preferredApsRow } from './preferredApsRow'
@@ -10,7 +10,7 @@ describe('matchingInformationSummaryList', () => {
   describe('matchingInformationSummary', () => {
     it('should return a summary of the matching information', () => {
       ;(getPreferredApsFromApplication as jest.Mock).mockReturnValue([])
-      const placementRequest = placementRequestDetailFactory.build({ notes: undefined })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ notes: undefined })
 
       expect(matchingInformationSummary(placementRequest)).toEqual({
         card: {
@@ -28,7 +28,7 @@ describe('matchingInformationSummaryList', () => {
     it('should add notes if provided', () => {
       ;(getPreferredApsFromApplication as jest.Mock).mockReturnValue([])
 
-      const placementRequest = placementRequestDetailFactory.build({ notes: 'Some notes' })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ notes: 'Some notes' })
 
       expect(matchingInformationSummary(placementRequest)).toEqual({
         card: {
@@ -53,7 +53,7 @@ describe('matchingInformationSummaryList', () => {
 
     it('should add preferred APs if provided', () => {
       ;(getPreferredApsFromApplication as jest.Mock).mockReturnValue(premisesFactory.buildList(4))
-      const placementRequest = placementRequestDetailFactory.build({ notes: undefined })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ notes: undefined })
 
       expect(matchingInformationSummary(placementRequest)).toEqual({
         card: {

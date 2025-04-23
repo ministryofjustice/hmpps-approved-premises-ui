@@ -1,14 +1,16 @@
 import {
   BookingNotMade,
+  Cas1ChangeRequest,
   Cas1ChangeRequestSortField,
   Cas1ChangeRequestSummary,
   Cas1CruManagementArea,
   type Cas1NewChangeRequest,
+  Cas1PlacementRequestDetail,
+  Cas1RejectChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
-  PlacementRequestDetail,
   PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
@@ -21,11 +23,11 @@ import paths from '../paths/api'
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
 import { normaliseCrn } from '../utils/normaliseCrn'
 
-type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
-
 export type GetChangeRequestsQueryParams = {
   cruManagementAreaId?: string
 }
+
+type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
 
 export type DashboardFilters = {
   status?: PlacementRequestStatus
@@ -69,10 +71,10 @@ export default class PlacementRequestClient {
     })
   }
 
-  async find(id: string): Promise<PlacementRequestDetail> {
+  async find(id: string): Promise<Cas1PlacementRequestDetail> {
     return (await this.restClient.get({
       path: paths.placementRequests.show({ id }),
-    })) as Promise<PlacementRequestDetail>
+    })) as Promise<Cas1PlacementRequestDetail>
   }
 
   async createBooking(
@@ -131,5 +133,23 @@ export default class PlacementRequestClient {
       path: paths.placementRequests.extension({ id }),
       data: newChangeRequest,
     })
+  }
+
+  async getChangeRequest(params: { placementRequestId: string; changeRequestId: string }) {
+    return this.restClient.get({
+      path: paths.placementRequests.changeRequest(params),
+    }) as Promise<Cas1ChangeRequest>
+  }
+
+  async rejectChangeRequest(params: {
+    placementRequestId: string
+    changeRequestId: string
+    rejectChangeRequest: Cas1RejectChangeRequest
+  }) {
+    const { rejectChangeRequest, ...pathParams } = params
+    return this.restClient.patch({
+      path: paths.placementRequests.changeRequest(pathParams),
+      data: rejectChangeRequest,
+    }) as Promise<Cas1ChangeRequest>
   }
 }

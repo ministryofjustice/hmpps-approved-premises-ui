@@ -25,6 +25,8 @@
 
     {{ mojIdentityBar(adminIdentityBar) }}
 
+    {% include "./_change-request-banner.njk" %}
+
     {% if placementRequest.isParole %}
         {% set html %}
             <p class="govuk-notification-banner__heading">
@@ -49,6 +51,7 @@
             html: html
         }) }}
     {% endif %}
+
 
     <ul class="govuk-list govuk-!-padding-top-3 govuk-!-padding-bottom-3">
         <li>

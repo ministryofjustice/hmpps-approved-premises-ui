@@ -5,7 +5,7 @@ import { addDays, isBefore } from 'date-fns'
 import { Params } from 'static-path'
 import { dateAndTimeInputsAreValidDates, DateFormats } from '../dateUtils'
 import { summaryListItem } from '../formUtils'
-import { AppealReason, getChangeRequestReasonText } from './changeRequests'
+import { ChangeRequestReason, getChangeRequestReasonText } from './changeRequests'
 import { sentenceCase } from '../utils'
 import { ValidationError } from '../errors'
 import managePaths from '../../paths/manage'
@@ -42,7 +42,7 @@ export const plannedTransferSummaryList = (formData: TransferFormData): SummaryL
   rows: [
     summaryListItem('Date of transfer', DateFormats.isoDateToUIDate(formData.transferDate)),
     summaryListItem('Is the date flexible', sentenceCase(formData.isFlexible)),
-    summaryListItem('Reason for transfer', getChangeRequestReasonText(formData.transferReason as AppealReason)),
+    summaryListItem('Reason for transfer', getChangeRequestReasonText(formData.transferReason as ChangeRequestReason)),
     summaryListItem('Any other information', formData.notes, 'textBlock'),
   ],
 })

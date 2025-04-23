@@ -1,4 +1,4 @@
-import type { Cas1SpaceBooking, Cas1TimelineEvent } from '@approved-premises/api'
+import { Cas1ApprovedPlacementAppeal, Cas1SpaceBooking, Cas1TimelineEvent } from '@approved-premises/api'
 import PlacementClient from './placementClient'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
@@ -12,6 +12,7 @@ import {
   cas1SpaceBookingFactory,
   cas1TimelineEventFactory,
   cas1UpdateSpaceBookingFactory,
+  cas1ApprovedPlacementAppealfactory,
 } from '../testutils/factories'
 
 const token = 'TEST_TOKEN'
@@ -245,6 +246,30 @@ describeCas1NamespaceClient('PlacementClient', provider => {
         },
       })
       const result = await placementClient.createEmergencyTransfer(premisesId, placementId, newEmergencyTransfer)
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('approvePlacementAppeal', () => {
+    it('approves a placement appeal', async () => {
+      const approvedPlacementAppeal: Cas1ApprovedPlacementAppeal = cas1ApprovedPlacementAppealfactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to approve a placement appeal',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.placements.appeal({ premisesId, placementId }),
+          body: approvedPlacementAppeal,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+      const result = await placementClient.approvePlacementAppeal(premisesId, placementId, approvedPlacementAppeal)
       expect(result).toEqual({})
     })
   })

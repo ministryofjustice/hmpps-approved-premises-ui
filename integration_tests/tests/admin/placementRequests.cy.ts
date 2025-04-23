@@ -12,7 +12,7 @@ import {
   cas1SpaceBookingFactory,
   cruManagementAreaFactory,
   newCancellationFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
   placementRequestFactory,
   premisesFactory,
   withdrawableFactory,
@@ -39,17 +39,17 @@ context('Placement Requests', () => {
     const matchedPlacementRequests = placementRequestFactory.buildList(3)
     const unableToMatchPlacementRequests = placementRequestFactory.unableToMatch().buildList(2)
 
-    const unmatchedPlacementRequest = placementRequestDetailFactory.build({
+    const unmatchedPlacementRequest = cas1PlacementRequestDetailFactory.build({
       ...unmatchedPlacementRequests[0],
       spaceBookings: [],
     })
 
-    const parolePlacementRequest = placementRequestDetailFactory.build({
+    const parolePlacementRequest = cas1PlacementRequestDetailFactory.build({
       ...unmatchedPlacementRequests[1],
       spaceBookings: [],
     })
 
-    const matchedPlacementRequest = placementRequestDetailFactory.build(matchedPlacementRequests[1])
+    const matchedPlacementRequest = cas1PlacementRequestDetailFactory.build(matchedPlacementRequests[1])
     const spaceBooking = cas1SpaceBookingFactory.build({
       applicationId: application.id,
       premises: { id: matchedPlacementRequest.booking.premisesId },
@@ -58,13 +58,13 @@ context('Placement Requests', () => {
     const legacyBooking = bookingSummaryFactory.build({
       type: 'legacy',
     })
-    const matchedPlacementRequestWithLegacyBooking = placementRequestDetailFactory.build({
+    const matchedPlacementRequestWithLegacyBooking = cas1PlacementRequestDetailFactory.build({
       ...matchedPlacementRequests[2],
       booking: legacyBooking,
       legacyBooking,
       spaceBookings: [],
     })
-    const unableToMatchPlacementRequest = placementRequestDetailFactory.build(unableToMatchPlacementRequests[0])
+    const unableToMatchPlacementRequest = cas1PlacementRequestDetailFactory.build(unableToMatchPlacementRequests[0])
 
     const preferredAps = premisesFactory.buildList(3)
 

@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import SpaceSearchController from './spaceSearchController'
 import {
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
   spaceSearchResultsFactory,
   spaceSearchStateFactory,
 } from '../../../testutils/factories'
@@ -21,7 +21,7 @@ import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSear
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
-  const placementRequestDetail = placementRequestDetailFactory.build()
+  const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
   const spaceSearchResults = spaceSearchResultsFactory.build()
 
   let request: DeepMocked<Request>

@@ -7,14 +7,14 @@ import {
   initialiseSearchState,
   spaceSearchStateToApiPayload,
 } from './spaceSearch'
-import { placementRequestDetailFactory, spaceSearchStateFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory, spaceSearchStateFactory } from '../../testutils/factories'
 import * as formUtils from '../formUtils'
 import { ApTypeCriteria, apTypeCriteriaLabels } from '../placementCriteriaUtils'
 
 describe('Space search utils', () => {
   describe('initialiseSearchState', () => {
     it('returns a search state from a placement request', () => {
-      const placementRequest = placementRequestDetailFactory.build({
+      const placementRequest = cas1PlacementRequestDetailFactory.build({
         type: 'rfap',
         essentialCriteria: ['acceptsNonSexualChildOffenders', 'isStepFreeDesignated'],
         desirableCriteria: ['hasEnSuite'],
@@ -32,7 +32,7 @@ describe('Space search utils', () => {
     })
 
     it('can set the AP type to normal', () => {
-      const placementRequest = placementRequestDetailFactory.build({
+      const placementRequest = cas1PlacementRequestDetailFactory.build({
         type: 'normal',
       })
 

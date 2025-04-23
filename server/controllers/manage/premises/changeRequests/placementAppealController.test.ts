@@ -29,7 +29,6 @@ describe('placementAppealController', () => {
 
   const appealReasons: Array<NamedId> = [{ name: 'staffConflictOfInterest', id: 'staffConflictOfInterestId' }]
   const appealReasonRadioItems: Array<RadioItem> = [{ text: 'name', value: 'test' }]
-
   const sessionData: AppealFormData & { staffConflictOfInterestDetail: string } = {
     areaManagerName: 'testName',
     areaManagerEmail: 'testEmail',

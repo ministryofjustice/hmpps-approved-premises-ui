@@ -12,7 +12,7 @@ import { DateFormats } from './dateUtils'
 import { filterRoomLevelCriteria } from './match/spaceSearch'
 
 import { roomCharacteristicsInlineList } from './characteristicsUtils'
-import { AppealReason, getChangeRequestReasonText } from './placements/changeRequests'
+import { ChangeRequestReason, getChangeRequestReasonText } from './placements/changeRequests'
 
 const isoDateToUiDateOrUndefined = (isoDate: string) => (isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined)
 const templatePath = path.join(__dirname, '../views/partials/timelineEvents')
@@ -69,7 +69,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
         eventType,
         expectedArrival: isoDateToUiDateOrUndefined(arrivalDate),
         expectedDeparture: isoDateToUiDateOrUndefined(departureDate),
-        reasonText: getChangeRequestReasonText(reasonName as AppealReason),
+        reasonText: getChangeRequestReasonText(reasonName as ChangeRequestReason),
       })
     }
   }
