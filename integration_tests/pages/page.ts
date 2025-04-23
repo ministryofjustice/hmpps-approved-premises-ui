@@ -202,6 +202,10 @@ export default abstract class Page {
     cy.get(`#${prefix}-year`).invoke('val').then(this.stripLeadingZeros).should('equal', year)
   }
 
+  clickButton(text: string): void {
+    cy.get('button').contains(text).click()
+  }
+
   clickSubmit(): void {
     cy.get('button').click()
   }

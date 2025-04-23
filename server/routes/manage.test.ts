@@ -16,6 +16,7 @@ import {
   PremisesController,
   TransfersController,
   UpdateOutOfServiceBedsController,
+  PlacementAppealController,
 } from '../controllers/manage'
 import manageRoutes from './manage'
 import { type Controllers } from '../controllers'
@@ -53,6 +54,7 @@ describe('manage routes', () => {
   const apOccupancyViewController: DeepMocked<ApOccupancyViewController> = createMock<ApOccupancyViewController>({})
   const changesController: DeepMocked<ChangesController> = createMock<ChangesController>({})
   const transfersController: DeepMocked<TransfersController> = createMock<TransfersController>({})
+  const placementAppealController: DeepMocked<PlacementAppealController> = createMock<PlacementAppealController>({})
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
     bookingExtensionsController,
@@ -73,6 +75,7 @@ describe('manage routes', () => {
     apOccupancyViewController,
     changesController,
     transfersController,
+    placementAppealController,
   })
   const services: DeepMocked<Services> = createMock<Services>({})
 
@@ -205,5 +208,38 @@ describe('manage routes', () => {
       auditEvent: 'NEW_DEPARTURE',
       allowedPermissions: ['cas1_space_booking_record_departure'],
     })
+  })
+
+  it('should allow users with permission cas1 to create a placement appeal', () => {
+    manageRoutes(controllers, router, services)
+
+    expect(getSpy).toHaveBeenCalledWith(paths.premises.placements.appeal.new.pattern, placementAppealController.new(), {
+      auditEvent: 'NEW_PLACEMENT_APPEAL',
+      allowedPermissions: ['cas1_placement_appeal_create'],
+    })
+    expect(postSpy).toHaveBeenCalledWith(
+      paths.premises.placements.appeal.new.pattern,
+      placementAppealController.newSave(),
+      {
+        auditEvent: 'SAVE_PLACEMENT_APPEAL',
+        allowedPermissions: ['cas1_placement_appeal_create'],
+      },
+    )
+    expect(getSpy).toHaveBeenCalledWith(
+      paths.premises.placements.appeal.confirm.pattern,
+      placementAppealController.confirm(),
+      {
+        auditEvent: 'CONFIRM_PLACEMENT_APPEAL',
+        allowedPermissions: ['cas1_placement_appeal_create'],
+      },
+    )
+    expect(postSpy).toHaveBeenCalledWith(
+      paths.premises.placements.appeal.confirm.pattern,
+      placementAppealController.create(),
+      {
+        auditEvent: 'CREATE_PLACEMENT_APPEAL',
+        allowedPermissions: ['cas1_placement_appeal_create'],
+      },
+    )
   })
 })
