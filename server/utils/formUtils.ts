@@ -70,20 +70,21 @@ export const convertObjectsToRadioItems = (
 
 export const convertObjectsToSelectOptions = (
   items: Array<Record<string, string>>,
-  prompt: string,
+  selectAllPrompt: string,
   textKey: string,
   valueKey: string,
   fieldName: string,
-  selectAllValue: string,
-  context: Record<string, unknown>,
+  selectAllValue: string = '',
+  context: Record<string, unknown> = {},
 ): Array<SelectOption> => {
-  const options = [
-    {
+  const options = []
+  if (selectAllPrompt) {
+    options.push({
       value: selectAllValue,
-      text: prompt,
+      text: selectAllPrompt,
       selected: !context[fieldName] || context[fieldName] === '',
-    },
-  ]
+    })
+  }
 
   items.forEach(item => {
     options.push({

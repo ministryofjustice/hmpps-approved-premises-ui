@@ -1,6 +1,7 @@
 import {
   BookingNotMade,
   Cas1CruManagementArea,
+  type Cas1NewChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
@@ -90,5 +91,12 @@ export default class PlacementRequestClient {
       path: paths.placementRequests.withdrawal.create({ id }),
       data: { reason },
     })) as Promise<PlacementRequest>
+  }
+
+  async createPlacementAppeal(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.appeal({ id }),
+      data: newChangeRequest,
+    })
   }
 }

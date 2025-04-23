@@ -308,4 +308,15 @@ export default {
         }),
       },
     }),
+
+  stubPlacementAppealCreate: (placementRequestId: string) =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.placementRequests.appeal({ id: placementRequestId }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }
