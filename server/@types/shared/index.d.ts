@@ -65,6 +65,7 @@ export type { Cas1ApplicationSummary } from './models/Cas1ApplicationSummary';
 export type { Cas1ApplicationTimeline } from './models/Cas1ApplicationTimeline';
 export type { Cas1ApplicationTimelinessCategory } from './models/Cas1ApplicationTimelinessCategory';
 export type { Cas1ApplicationUserDetails } from './models/Cas1ApplicationUserDetails';
+export type { Cas1ApprovedPlacementAppeal } from './models/Cas1ApprovedPlacementAppeal';
 export type { Cas1ApprovedPremisesGender } from './models/Cas1ApprovedPremisesGender';
 export type { Cas1Assessment } from './models/Cas1Assessment';
 export type { Cas1AssessmentAcceptance } from './models/Cas1AssessmentAcceptance';
@@ -104,6 +105,9 @@ export type { Cas1OutOfServiceBedStatus } from './models/Cas1OutOfServiceBedStat
 export type { Cas1OutOfServiceBedSummary } from './models/Cas1OutOfServiceBedSummary';
 export type { Cas1OverbookingRange } from './models/Cas1OverbookingRange';
 export type { Cas1PersonalTimeline } from './models/Cas1PersonalTimeline';
+export type { Cas1PlacementAppealAcceptedPayload } from './models/Cas1PlacementAppealAcceptedPayload';
+export type { Cas1PlacementAppealCreatedPayload } from './models/Cas1PlacementAppealCreatedPayload';
+export type { Cas1PlacementAppealRejectedPayload } from './models/Cas1PlacementAppealRejectedPayload';
 export type { Cas1PlacementRequestSummary } from './models/Cas1PlacementRequestSummary';
 export type { Cas1PremiseCapacity } from './models/Cas1PremiseCapacity';
 export type { Cas1PremiseCapacityForDay } from './models/Cas1PremiseCapacityForDay';
