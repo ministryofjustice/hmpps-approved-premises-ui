@@ -21,4 +21,4 @@ jobs:
     secrets: inherit
     with:
       environment: 'test'
-      app_version: '${{ needs.build.outputs.app_version }}'
+      app_version: '${{ needs.docker_build.outputs.app_version }}'
