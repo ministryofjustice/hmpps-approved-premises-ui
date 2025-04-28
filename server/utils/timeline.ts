@@ -1,4 +1,9 @@
-import { Cas1SpaceCharacteristic, Cas1TimelineEvent, Cas1TimelineEventContentPayload } from '@approved-premises/api'
+import {
+  Cas1BookingChangedContentPayload,
+  Cas1SpaceCharacteristic,
+  Cas1TimelineEvent,
+  Cas1TimelineEventContentPayload,
+} from '@approved-premises/api'
 import nunjucks from 'nunjucks'
 import path from 'path'
 import { escape } from './formUtils'
@@ -12,16 +17,6 @@ type PayloadBookingChangedV1 = Cas1TimelineEventContentPayload & {
   schemaVersion: undefined
   arrivalOn: string
   departureOn: string
-}
-
-type PayloadBookingChangedV2 = Cas1TimelineEventContentPayload & {
-  schemaVersion: 2
-  expectedArrival: string
-  expectedDeparture: string
-  characteristics: Array<Cas1SpaceCharacteristic>
-  previousExpectedArrival: string | null
-  previousExpectedDeparture: string | null
-  previousCharacteristics: Array<Cas1SpaceCharacteristic> | null
 }
 
 export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => {
@@ -38,7 +33,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
           previousExpectedDeparture,
           characteristics,
           previousCharacteristics,
-        } = event.payload as PayloadBookingChangedV2
+        } = event.payload as Cas1BookingChangedContentPayload
 
         const isoDateToUiDateOrUndefined = (isoDate: string) =>
           isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined

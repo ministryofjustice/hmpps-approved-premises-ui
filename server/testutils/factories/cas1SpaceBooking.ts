@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker'
 import type {
   Cas1KeyWorkerAllocation,
   Cas1SpaceBooking,
+  Cas1SpaceBookingCancellation,
   Cas1SpaceBookingNonArrival,
   Person,
 } from '@approved-premises/api'
@@ -14,6 +15,7 @@ import staffMemberFactory from './staffMember'
 import { DateFormats } from '../../utils/dateUtils'
 import cas1SpaceBookingNonArrivalFactory from './cas1SpaceBookingNonArrival'
 import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
+import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
 import { departureReasonFactory } from './referenceData'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../utils/placements'
 import { filterOutAPTypes } from '../../utils/match'
@@ -83,6 +85,12 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       }),
     })
   }
+
+  cancelled() {
+    return this.params({
+      cancellation: cas1NewSpaceBookingCancellationFactory.build(),
+    })
+  }
 }
 
 export default Cas1SpaceBookingFactory.define(() => {
@@ -122,5 +130,6 @@ export default Cas1SpaceBookingFactory.define(() => {
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
     deliusEventNumber: String(faker.number.int()),
     nonArrival: undefined as Cas1SpaceBookingNonArrival,
+    cancellation: undefined as Cas1SpaceBookingCancellation,
   }
 })

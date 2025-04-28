@@ -39,6 +39,7 @@ describe('placementUtils', () => {
       const current = typeFactory.current()
       const departed = typeFactory.departed()
       const nonArrival = typeFactory.nonArrival()
+      const cancelled = typeFactory.cancelled()
 
       beforeEach(() => {
         jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
@@ -110,6 +111,12 @@ describe('placementUtils', () => {
           factory: nonArrival,
           params: {},
           expected: { overall: 'notArrived', detailed: 'notArrived' },
+        },
+        {
+          label: 'a cancelled placement',
+          factory: cancelled,
+          params: { expectedArrivalDate: '2025-05-01' },
+          expected: { overall: 'cancelled', detailed: 'cancelled' },
         },
       ]
 
@@ -252,6 +259,13 @@ describe('placementUtils', () => {
       const placementAfterDeparture = cas1SpaceBookingFactory.departed().build({ id: placementId, premises })
       it('should allow nothing', () => {
         expect(actions(placementAfterDeparture, userDetails)).toEqual(null)
+      })
+    })
+
+    describe('when the placement has been cancelled', () => {
+      const placementCancelled = cas1SpaceBookingFactory.cancelled().build({ id: placementId, premises })
+      it('should allow nothing', () => {
+        expect(actions(placementCancelled, userDetails)).toEqual(null)
       })
     })
   })

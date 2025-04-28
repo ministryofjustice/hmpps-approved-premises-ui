@@ -32,7 +32,7 @@ interface TasklistPage {
   body: Record<string, unknown>
 }
 
-interface PersonService {}
+type PersonService = object
 
 // A utility type that allows us to define an object with a date attribute split into
 // date, month, year (and optionally, time) attributes. Designed for use with the GOV.UK
