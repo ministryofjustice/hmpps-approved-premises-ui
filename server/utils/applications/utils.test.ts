@@ -573,23 +573,28 @@ describe('utils', () => {
 
   describe('isWomensApplication', () => {
     it.each([
-      ['Male', null, null, false],
-      ['Female', null, null, true],
-      ['Male', 'yes', 'yes', false],
-      ['Female', 'yes', 'yes', false],
-      ['Male', 'yes', 'no', true],
-      ['Male', 'yes', 'no', true],
-      ['Female', 'no', 'yes', true],
-      ['Female', null, 'yes', true],
+      ['Male', 'yes', 'yes', 'yes', 'yes', false],
+      ['Female', 'yes', 'yes', 'yes', 'yes', false],
+      ['Male', 'yes', 'yes', 'yes', 'no', true],
+      ['Female', 'yes', 'yes', 'yes', 'no', true],
+      ['Male', 'no', undefined, undefined, undefined, false],
+      ['Female', 'no', undefined, undefined, undefined, true],
+      ['Male', 'yes', 'no', undefined, undefined, false],
+      ['Male', 'yes', 'yes', 'no', undefined, false],
+      ['Male', 'no', 'yes', 'yes', 'yes', false],
+      ['Male', 'yes', 'no', 'yes', 'yes', false],
+      ['Male', 'yes', 'yes', 'no', 'yes', false],
     ])(
-      'Person is %s, transgender is %s caseboard result is %s should return %s',
-      (sex, isTrans, caseBoardSaysMale, expected) => {
+      'Person is %s, is transgender:%s, caseboard:%s, has met:%s, result-male:%s should return %s',
+      (sex, isTrans, reviewRequired, hasBoardTakenPlace, caseBoardSaysMale, expected) => {
         const application = applicationFactory.build()
         const fp = application.person as FullPerson
         fp.sex = sex
         mockOptionalQuestionResponse({
           transgenderOrHasTransgenderHistory: isTrans,
           shouldPersonBePlacedInMaleAp: caseBoardSaysMale,
+          reviewRequired,
+          hasBoardTakenPlace,
         })
         expect(isWomensApplication(application)).toEqual(expected)
       },
