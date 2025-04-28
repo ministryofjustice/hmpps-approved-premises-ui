@@ -12,6 +12,7 @@
     "checkJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "experimentalDecorators": true,
