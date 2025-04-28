@@ -1,3 +1,4 @@
+import { Cas1NewOutOfServiceBed } from '@approved-premises/api'
 import {
   cas1BedDetailFactory,
   cas1PremisesBasicSummaryFactory,
@@ -8,6 +9,7 @@ import BedShowPage from '../../../pages/manage/bed/bedShow'
 import Page from '../../../pages/page'
 import { OutOfServiceBedCreatePage } from '../../../pages/manage/outOfServiceBeds'
 import { signIn } from '../../signIn'
+import paths from '../../../../server/paths/api'
 
 context('OutOfServiceBeds', () => {
   beforeEach(() => {
@@ -31,7 +33,7 @@ context('OutOfServiceBeds', () => {
     cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // Given I am signed in as a future manager
-    signIn({ permissions: ['cas1_premises_view', 'cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'] })
+    signIn('future_manager')
 
     // When I navigate to the out of service bed form
     const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
@@ -41,19 +43,15 @@ context('OutOfServiceBeds', () => {
     page.clickSubmit()
 
     // Then a POST to the API should be made to create the OOSB record
-    cy.task('verifyOutOfServiceBedCreate', {
-      premisesId: premises.id,
-      outOfServiceBed,
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-      const requestBody = JSON.parse(requests[0].body)
-
-      expect(requestBody.startDate).equal(outOfServiceBed.startDate)
-      expect(requestBody.endDate).equal(outOfServiceBed.endDate)
-      expect(requestBody.notes).equal(outOfServiceBed.notes)
-      expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
-      expect(requestBody.reason).equal(outOfServiceBed.reason.id)
-    })
+    cy.task('verifyApiPost', paths.manage.premises.outOfServiceBeds.create({ premisesId: premises.id })).then(
+      (requestBody: Cas1NewOutOfServiceBed) => {
+        expect(requestBody.startDate).equal(outOfServiceBed.startDate)
+        expect(requestBody.endDate).equal(outOfServiceBed.endDate)
+        expect(requestBody.notes).equal(outOfServiceBed.notes)
+        expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
+        expect(requestBody.reason).equal(outOfServiceBed.reason.id)
+      },
+    )
 
     // And I should be redirected to the bed page
     const bedPage = Page.verifyOnPage(BedShowPage, bedName)
@@ -64,7 +62,7 @@ context('OutOfServiceBeds', () => {
 
   it('should show errors', () => {
     // Given I am signed in as a future manager
-    signIn({ permissions: ['cas1_out_of_service_bed_create'] })
+    signIn('future_manager')
 
     // And a out of service bed is available
     const premises = cas1PremisesFactory.build()
@@ -86,7 +84,7 @@ context('OutOfServiceBeds', () => {
 
   it('should show an error when there are out of service bed conflicts', () => {
     // Given I am signed in as a future manager
-    signIn({ permissions: ['cas1_out_of_service_bed_create', 'cas1_view_out_of_service_beds'] })
+    signIn('future_manager')
 
     const bed = { name: 'abc', id: '123' }
     const premises = cas1PremisesBasicSummaryFactory.build()

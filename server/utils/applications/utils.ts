@@ -267,6 +267,9 @@ export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
   request_for_placement_assessed: 'Request for placement assessed',
   application_timeline_note: 'Note added',
   match_request_withdrawn: 'Request for placement withdrawn',
+  placement_appeal_accepted: 'Placement appeal accepted',
+  placement_appeal_created: 'Placement appeal created',
+  placement_appeal_rejected: 'Placement appeal rejected',
 }
 
 const mapApplicationTimelineEventsForUi = (

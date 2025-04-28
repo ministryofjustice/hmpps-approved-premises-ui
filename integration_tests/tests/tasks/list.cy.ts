@@ -21,7 +21,6 @@ context('Task Allocation', () => {
   const user: Partial<ApprovedPremisesUser> = {
     apArea,
     cruManagementArea: cruManagementAreas[0],
-    permissions: ['cas1_view_manage_tasks'],
   }
 
   beforeEach(() => {
@@ -32,8 +31,8 @@ context('Task Allocation', () => {
   })
 
   it('returns unauthorised if user does not have the cas1 view manage task permission', () => {
-    // Given I am logged in without the required permissions
-    signIn({ apArea, permissions: [] })
+    // Given I am signed in as an applicant with the correct AP area
+    signIn('applicant', { apArea })
 
     const path = paths.tasks.index({})
     cy.request({ url: path, failOnStatusCode: false }).should(response => {
@@ -42,8 +41,8 @@ context('Task Allocation', () => {
   })
 
   it('shows a list of tasks for LAO', () => {
-    // Given I am signed in as a user with tasks allocation permission
-    signIn(user)
+    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    signIn('cru_member', user)
 
     const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(5)
     const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(5, { allocatedToStaffMember: undefined })
@@ -96,8 +95,8 @@ context('Task Allocation', () => {
   })
 
   it('shows a list of tasks', () => {
-    // Given I am signed in as a user with tasks allocation permission
-    signIn(user)
+    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    signIn('cru_member', user)
 
     const allocatedTasks = taskFactory.buildList(1, { personSummary: fullPersonSummaryFactory.build() })
     const unallocatedTasks = taskFactory.buildList(1, {
@@ -139,8 +138,8 @@ context('Task Allocation', () => {
   })
 
   it('supports pagination', () => {
-    // Given I am signed in as a user with tasks allocation permission
-    signIn(user)
+    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    signIn('cru_member', user)
 
     const allocatedTasksPage1 = restrictedPersonSummaryTaskFactory.buildList(10)
     const allocatedTasksPage2 = restrictedPersonSummaryTaskFactory.buildList(10)
@@ -197,8 +196,8 @@ context('Task Allocation', () => {
   })
 
   it('supports sorting', () => {
-    // Given I am signed in as a user with tasks allocation permission
-    signIn(user)
+    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    signIn('cru_member', user)
 
     const sortFields = ['dueAt', 'person', 'allocatedTo']
     const tasks = restrictedPersonSummaryTaskFactory.buildList(10)
@@ -284,8 +283,8 @@ context('Task Allocation', () => {
 
   Object.keys(filterOptions).forEach(key => {
     it(`allows filter by ${key}`, () => {
-      // Given I am signed in as a user with tasks allocation permission
-      signIn(user)
+      // Given I am signed in as a CRU member with the correct AP area and CRU management area
+      signIn('cru_member', user)
 
       const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
       const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1)
@@ -328,8 +327,8 @@ context('Task Allocation', () => {
   })
 
   it('maintains filter on tab change', () => {
-    // Given I am signed in as a user with tasks allocation permission
-    signIn(user)
+    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    signIn('cru_member', user)
 
     const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
     const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1)
@@ -379,8 +378,8 @@ context('Task Allocation', () => {
   })
 
   it('retains the unallocated filter when applying other filters', () => {
-    // Given I am signed in as a user with tasks allocation permission
-    signIn(user)
+    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    signIn('cru_member', user)
 
     const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
     const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10, { allocatedToStaffMember: undefined })
@@ -424,8 +423,8 @@ context('Task Allocation', () => {
   })
 
   it('defaults to user area but allows filter by all areas', () => {
-    // Given I am signed in as a user with tasks allocation permission
-    signIn(user)
+    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    signIn('cru_member', user)
 
     const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1)
     const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(10)
@@ -496,8 +495,8 @@ context('Task Allocation', () => {
   })
   ;(['taskType', 'decision', 'completedAt'] as const).forEach(sortField => {
     it(`supports pending placement requests sorting by ${sortField}`, () => {
-      // Given I am signed in as a user with tasks allocation permission
-      signIn(user)
+      // Given I am signed in as a CRU member with the correct AP area and CRU management area
+      signIn('cru_member', user)
 
       cy.task('stubGetAllTasks', {
         tasks: [],

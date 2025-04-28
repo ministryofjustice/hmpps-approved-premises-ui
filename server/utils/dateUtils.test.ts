@@ -36,10 +36,22 @@ jest.mock('../data/bankHolidays/bank-holidays.json', () => {
 
 describe('DateFormats', () => {
   describe('convertIsoToDateObj', () => {
-    it('converts a ISO8601 date string', () => {
-      const date = '2022-11-11T00:00:00.000Z'
+    it('converts a local ISO8601 GMT date string', () => {
+      const date = '2022-11-11T00:00'
 
-      expect(DateFormats.isoToDateObj(date)).toEqual(new Date(2022, 10, 11))
+      expect(DateFormats.isoToDateObj(date)).toEqual(new Date('2022-11-11T00:00:00.000Z'))
+    })
+
+    it('converts a local ISO8601 BST date string', () => {
+      const date = '2022-04-01T00:00'
+
+      expect(DateFormats.isoToDateObj(date)).toEqual(new Date('2022-03-31T23:00:00.000Z'))
+    })
+
+    it('converts an ISO8601 UTC date string', () => {
+      const date = '2022-04-11T00:00:00.000Z'
+
+      expect(DateFormats.isoToDateObj(date)).toEqual(new Date('2022-04-11T00:00:00.000Z'))
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {
@@ -57,30 +69,38 @@ describe('DateFormats', () => {
 
   describe('isoDateToUIDate', () => {
     it.each([
-      ['2022-11-08T00:00:00.000Z', 'Tue 8 Nov 2022'],
-      ['2022-11-11T00:00:00.000Z', 'Fri 11 Nov 2022'],
+      ['2022-11-08T00:00', 'Tue 8 Nov 2022'],
+      ['2022-11-11T00:00', 'Fri 11 Nov 2022'],
+      ['2025-04-02T23:30', 'Wed 2 Apr 2025'],
+      ['2025-04-02T23:30:00.000Z', 'Thu 3 Apr 2025'],
     ])('converts ISO8601 date string %s to a GOV.UK formatted date', (date, expectedUiDate) => {
       expect(DateFormats.isoDateToUIDate(date)).toEqual(expectedUiDate)
     })
 
     it.each([
-      ['2022-11-09T00:00:00.000Z', '9 Nov 2022'],
-      ['2022-11-11T00:00:00.000Z', '11 Nov 2022'],
+      ['2022-11-09T00:00', '9 Nov 2022'],
+      ['2022-11-11T00:00', '11 Nov 2022'],
+      ['2025-04-02T00:00', '2 Apr 2025'],
+      ['2025-04-02T23:30:00.000Z', '3 Apr 2025'],
     ])('converts ISO8601 date %s to a short format date', (date, expectedUiDate) => {
       expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual(expectedUiDate)
     })
 
     it.each([
-      ['2022-11-09T00:00:00.000Z', 'Wed 9 Nov'],
-      ['2022-11-11T00:00:00.000Z', 'Fri 11 Nov'],
+      ['2022-11-09T00:00', 'Wed 9 Nov'],
+      ['2022-11-11T00:00', 'Fri 11 Nov'],
+      ['2025-04-02T00:00', 'Wed 2 Apr'],
+      ['2025-04-02T23:30:00.000Z', 'Thu 3 Apr'],
     ])('converts ISO8601 date %s to a long format date with no year', (date, expectedUiDate) => {
       expect(DateFormats.isoDateToUIDate(date, { format: 'longNoYear' })).toEqual(expectedUiDate)
     })
 
     it.each([
-      ['2022-11-09T00:00:00.000Z', '9 11 2022'],
-      ['2022-04-11T00:00:00.000Z', '11 4 2022'],
-    ])('converts ISO8601 date %s to a date field hint format date', (date, expectedUiDate) => {
+      ['2022-11-09T00:00', '9 11 2022'],
+      ['2022-04-11T00:00', '11 4 2022'],
+      ['2025-04-02T00:00', '2 4 2025'],
+      ['2025-04-02T23:30:00.000Z', '3 4 2025'],
+    ])('converts local ISO8601 date %s to a date field hint format date', (date, expectedUiDate) => {
       expect(DateFormats.isoDateToUIDate(date, { format: 'dateFieldHint' })).toEqual(expectedUiDate)
     })
 
@@ -99,9 +119,11 @@ describe('DateFormats', () => {
 
   describe('isoDateTimeToUIDateTime', () => {
     it.each([
-      ['2022-11-09T16:35:00.000Z', '9 Nov 2022, 16:35'],
-      ['2022-11-11T10:00:00.000Z', '11 Nov 2022, 10:00'],
-    ])('converts a ISO8601 date %s to a GOV.UK formatted date and time', (date, expectedUiDateTime) => {
+      ['2022-11-09T16:35', '9 Nov 2022, 16:35'],
+      ['2022-11-11T10:00', '11 Nov 2022, 10:00'],
+      ['2025-04-02T08:13', '2 Apr 2025, 08:13'],
+      ['2025-04-02T23:30:00.000Z', '3 Apr 2025, 00:30'],
+    ])('converts ISO8601 date %s to a GOV.UK formatted date and time', (date, expectedUiDateTime) => {
       expect(DateFormats.isoDateTimeToUIDateTime(date)).toEqual(expectedUiDateTime)
     })
 
@@ -123,16 +145,19 @@ describe('DateFormats', () => {
   })
 
   describe('convertDateAndTimeInputsToIsoString', () => {
-    it('converts a date object', () => {
+    it('converts date inputs to a local date object', () => {
       const obj: ObjectWithDateParts<'date'> = {
-        'date-year': '2022',
-        'date-month': '12',
-        'date-day': '11',
+        'date-year': '2025',
+        'date-month': '03',
+        'date-day': '29',
       }
 
       const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
-      expect(result.date).toEqual('2022-12-11')
+      expect(result).toEqual({
+        ...obj,
+        date: '2025-03-29',
+      })
     })
 
     it('pads the months and days', () => {
@@ -147,7 +172,7 @@ describe('DateFormats', () => {
       expect(result.date).toEqual('2022-01-01')
     })
 
-    it('returns the date with a time if passed one', () => {
+    it('returns the local date with a time if passed one', () => {
       const obj: ObjectWithDateParts<'date'> = {
         'date-year': '2022',
         'date-month': '1',
@@ -157,7 +182,7 @@ describe('DateFormats', () => {
 
       const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
-      expect(result.date).toEqual('2022-01-01T12:35:00.000Z')
+      expect(result.date).toEqual('2022-01-01T12:35')
     })
 
     it('pads the time', () => {
@@ -170,7 +195,7 @@ describe('DateFormats', () => {
 
       const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
-      expect(result.date).toEqual('2022-01-01T08:15:00.000Z')
+      expect(result.date).toEqual('2022-01-01T08:15')
     })
 
     it('returns an empty string when given empty strings as input', () => {
@@ -212,7 +237,7 @@ describe('DateFormats', () => {
 
   describe('dateAndTimeInputsToUiDate', () => {
     it('converts a date and time input object to a human readable date', () => {
-      const date = new Date('2022-11-11T10:00:00.000Z')
+      const date = new Date('2022-11-11T10:00')
       const dateTimeInputs = DateFormats.dateObjectToDateInputs(date, 'key')
 
       expect(DateFormats.dateAndTimeInputsToUiDate(dateTimeInputs, 'key')).toEqual(DateFormats.dateObjtoUIDate(date))
@@ -478,11 +503,15 @@ describe('datetimeIsInThePast', () => {
   it('returns false if the date is the same as the reference date', () => {
     expect(datetimeIsInThePast('2023-01-12', '2023-01-12')).toEqual(false)
   })
+
+  it('handles UTC to BST conversion', () => {
+    expect(datetimeIsInThePast('2023-04-01T12:00', '2023-04-01T11:01:00.000Z')).toEqual(true)
+  })
 })
 
 describe('dateIsToday', () => {
   beforeEach(() => {
-    jest.useFakeTimers().setSystemTime(new Date('2022-01-01'))
+    jest.useFakeTimers().setSystemTime(new Date('2022-04-01'))
   })
 
   afterEach(() => {
@@ -490,19 +519,31 @@ describe('dateIsToday', () => {
   })
 
   it('returns true if the date is today', () => {
-    expect(dateIsToday('2022-01-01')).toEqual(true)
+    expect(dateIsToday('2022-04-01')).toEqual(true)
   })
 
   it('returns false if the date is not today', () => {
-    expect(dateIsToday('2022-01-02')).toEqual(false)
+    expect(dateIsToday('2022-04-02')).toEqual(false)
   })
 
   it('returns true if the date is the same as the reference date', () => {
-    expect(dateIsToday('2022-01-28', '2022-01-28')).toEqual(true)
+    expect(dateIsToday('2022-04-28', '2022-04-28')).toEqual(true)
+  })
+
+  it('returns true if the date is the same as the reference date with different time', () => {
+    expect(dateIsToday('2022-04-28T09:30', '2022-04-28T13:45')).toEqual(true)
   })
 
   it('returns false if the date is not the same as the reference date', () => {
     expect(dateIsToday('2022-01-01', '2022-05-21')).toEqual(false)
+  })
+
+  it('returns true if the local date is the same as the UTC reference date', () => {
+    expect(dateIsToday('2022-04-02', '2022-04-01T23:30:00.000Z')).toEqual(true)
+  })
+
+  it('returns true if the dates compared are both UTC but different times', () => {
+    expect(dateIsToday('2022-04-01T12:00:00.000Z', '2022-04-01T22:00:00.000Z')).toEqual(true)
   })
 })
 
@@ -585,17 +626,26 @@ describe('timeIsValid24hrFormat', () => {
   )
 })
 
-describe('dateObjToIsoTime', () => {
-  it.each([
-    ['00:00', 0, 0, 0],
-    ['12:01', 12, 1, 1],
-    ['23:59', 23, 59, 59],
-  ])('returns the iso time part of the date with time like %s', (expected, h, m, s) => {
-    const date = new Date()
-    date.setUTCHours(h)
-    date.setUTCMinutes(m)
-    date.setUTCSeconds(s)
-    expect(DateFormats.dateObjTo24hrTime(date)).toBe(expected)
+describe('dateObjTo24hrTime', () => {
+  describe.each([
+    ['British Summer Time', '2025-04-01'],
+    ['Greenwich Mean Time (UTC)', '2025-01-01'],
+  ])('during %s', (_, timezoneDate) => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date(timezoneDate))
+    })
+
+    it.each([
+      ['00:00', 0, 0, 0],
+      ['12:01', 12, 1, 1],
+      ['23:59', 23, 59, 59],
+    ])('returns the local 24-hour time part of the date with time like %s', (expected, h, m, s) => {
+      const date = new Date()
+      date.setHours(h)
+      date.setMinutes(m)
+      date.setSeconds(s)
+      expect(DateFormats.dateObjTo24hrTime(date)).toBe(expected)
+    })
   })
 })
 
@@ -603,8 +653,10 @@ describe('isoDateAndTimeToDateObj', () => {
   it.each([
     ['2024-01-01', '05:22', '2024-01-01T05:22'],
     ['2024-12-31', '13:22', '2024-12-31T13:22'],
+    ['2025-03-31', '23:30', '2025-03-31T23:30'], // Local date (BST)
+    ['2025-04-01', '00:30', '2025-03-31T23:30:00.000Z'], // UTC date (GMT)
     ['2024-12-31', null, '2024-12-31'],
-  ])('returns a date from an iso date and time, %s %s', (dateStr, timeStr, expected) => {
+  ])('returns a local date from an iso date and time, %s %s', (dateStr, timeStr, expected) => {
     const date = isoDateAndTimeToDateObj(dateStr, timeStr)
     expect(date.getTime()).toEqual(DateFormats.isoToDateObj(expected).getTime())
   })
@@ -613,6 +665,8 @@ describe('isoDateAndTimeToDateObj', () => {
 describe('isoDateTimeToIsoDate', () => {
   it.each([
     ['2025-02-01T12:15', '2025-02-01'],
+    ['2025-03-31T23:30', '2025-03-31'], // Local date (BST)
+    ['2025-03-31T23:30:00.000Z', '2025-04-01'], // UTC date (GMT)
     ['2024-12-31', '2024-12-31'],
   ])('returns an iso date only from an iso datetime, %s', (dateStr, expected) => {
     expect(DateFormats.isoDateTimeToIsoDate(dateStr)).toEqual(expected)
@@ -624,7 +678,11 @@ describe('isoDateTimeToIsoTime', () => {
     ['2025-02-01T09:15', '09:15'],
     ['2025-02-01T23:45', '23:45'],
     ['2024-12-31', '00:00'],
-  ])('returns an iso time only from an iso datetime, %s', (dateStr, expected) => {
+    ['2025-03-30T00:00', '00:00'],
+    ['2025-04-01T09:30', '09:30'],
+    ['2025-04-01T09:30:00.000Z', '10:30'], // UTC date during BST
+    ['2025-01-01T09:30:00.000Z', '09:30'], // UTC date during GMT
+  ])('returns an iso time only from a local iso datetime, %s', (dateStr, expected) => {
     expect(DateFormats.isoDateTimeToTime(dateStr)).toEqual(expected)
   })
 })

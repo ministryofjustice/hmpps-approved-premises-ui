@@ -17,6 +17,7 @@ export default {
     cruDashboard: {
       index: cruDashboardPath,
       search: cruDashboardPath.path('search'),
+      downloadOccupancyReport: cruDashboardPath.path('occupancy-report'),
     },
     placementRequests: {
       index: placementRequestsPath,

@@ -33,6 +33,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
     allowedPermissions: ['cas1_view_cru_dashboard'],
   })
+  get(paths.admin.cruDashboard.downloadOccupancyReport.pattern, cruDashboardController.downloadReport(), {
+    auditEvent: 'ADMIN_DOWNLOAD_OCCUPANCY_REPORT',
+    allowedPermissions: ['cas1_premises_capacity_report_view'],
+  })
 
   get(paths.admin.placementRequests.index.pattern, redirectController.redirect(paths.admin.cruDashboard.index), {
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',

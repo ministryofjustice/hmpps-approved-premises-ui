@@ -1,9 +1,11 @@
 import {
   ApprovedPremisesUserPermission,
+  ApprovedPremisesUserRole,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 import { UserDetails } from '../../@types/ui'
+import rolesToPermissions from './data/rolesToPermissions.json'
 
 export const roles: ReadonlyArray<RoleInUse> = [
   'assessor',
@@ -20,6 +22,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'report_viewer_with_pii',
   'future_manager',
   'user_manager',
+  'change_request_dev',
   'janitor',
 ]
 
@@ -91,6 +94,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'User manager',
     hint: 'Add, update and disable users',
   },
+  change_request_dev: {
+    label: 'Change request development',
+    hint: 'For digital team use only',
+  },
   janitor: {
     label: 'Janitor',
     hint: 'For digital team use only',
@@ -115,6 +122,16 @@ export const qualificationDictionary: QualificationLabelDictionary = {
   recovery_focused: 'Recovery-focused APs',
   mental_health_specialist: 'Specialist Mental Health APs',
 }
+
+type RoleToPermissionMapping = {
+  name: ApprovedPremisesUserRole
+  permissions: Array<ApprovedPremisesUserPermission>
+}
+
+export const permissionsMap = rolesToPermissions as Array<RoleToPermissionMapping>
+
+export const roleToPermissions = (role: ApprovedPremisesUserRole) =>
+  permissionsMap.find(mapping => mapping.name === role)?.permissions || []
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)

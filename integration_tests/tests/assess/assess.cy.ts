@@ -26,13 +26,14 @@ import { addResponsesToFormArtifact } from '../../../server/testutils/addToAppli
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import paths from '../../../server/paths/assess'
 import { signIn } from '../signIn'
+import { getResponses } from '../../../server/utils/applications/getResponses'
 
 context('Assess', () => {
   beforeEach(() => {
     cy.task('reset')
 
     // Given I am signed in as an assessor
-    signIn({ permissions: ['cas1_view_assigned_assessments', 'cas1_assess_application'] })
+    signIn('assessor')
 
     // And there is an application awaiting assessment
     cy.fixture('applicationData.json').then(applicationData => {
@@ -252,12 +253,6 @@ context('Assess', () => {
         // And the sufficient information task should show a completed status
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
 
-        // And I should see the AssessApplication section
-        assessHelper.completeSuitabilityOfAssessmentQuestion({ isShortNoticeApplication: false })
-
-        // And I fill out the required actions
-        assessHelper.completeRequiredActionsQuestion()
-
         // When I make a decision
         assessHelper.completeMakeADecisionPage()
 
@@ -283,7 +278,7 @@ context('Assess', () => {
 
   it('shows a read-only version of the assessment', function test() {
     // Given I have completed an assessment
-    const updatedAssessment = { ...this.assessment, status: 'completed' }
+    const updatedAssessment = { ...this.assessment, status: 'completed', document: getResponses(this.assessment) }
     const updatedAssessmentSummary = assessmentSummaryFactory.build({
       id: this.assessment.id,
       status: 'completed',

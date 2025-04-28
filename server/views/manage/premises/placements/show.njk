@@ -73,7 +73,7 @@
 
     {% elseif activeTab==='assessment' %}
 
-        {% for section in SummaryListUtils.summaryListSections(assessment, false) %}
+        {% for section in getDocumentSections(assessment) %}
             <h2 class="govuk-heading-l">{{ section.title }}</h2>
             {% for task in section.tasks %}
                 {{ govukSummaryList(task) }}

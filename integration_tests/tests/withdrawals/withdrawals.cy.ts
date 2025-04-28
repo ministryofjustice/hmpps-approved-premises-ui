@@ -19,6 +19,7 @@ import Page from '../../pages/page'
 import { signIn } from '../signIn'
 import paths from '../../../server/paths/apply'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
+import { roleToPermissions } from '../../../server/utils/users/roles'
 
 context('Withdrawals', () => {
   beforeEach(() => {
@@ -27,15 +28,13 @@ context('Withdrawals', () => {
   })
 
   describe('as a CRU user', () => {
-    const userPermissions: Array<ApprovedPremisesUserPermission> = ['cas1_view_cru_dashboard', 'cas1_booking_withdraw']
-
     beforeEach(() => {
-      // Given I am logged in
-      signIn({ permissions: userPermissions })
+      // Given I am signed in as a CRU member
+      signIn('cru_member')
     })
 
     it('withdraws a placement request, showing all options for withdrawal reason', () =>
-      withdrawsAPlacementRequest(userPermissions))
+      withdrawsAPlacementRequest(roleToPermissions('cru_member')))
 
     it('withdraws a placement application', () => {
       const application = applicationFactory.build({ status: 'submitted' })
@@ -174,15 +173,13 @@ context('Withdrawals', () => {
   })
 
   describe('as a non-CRU user', () => {
-    const userPermissions: Array<ApprovedPremisesUserPermission> = []
-
     beforeEach(() => {
-      // Given I am logged in as an applicant
-      signIn({ permissions: userPermissions })
+      // Given I am signed in as an applicant
+      signIn('applicant')
     })
 
     it('withdraws a placement request, showing all options for withdrawal reason excluding those relating to lack of capacity', () =>
-      withdrawsAPlacementRequest(userPermissions))
+      withdrawsAPlacementRequest(roleToPermissions('applicant')))
 
     it('shows a warning message if there are no withdrawables', () => {
       const application = applicationSummaryFactory.build({

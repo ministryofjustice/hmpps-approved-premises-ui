@@ -361,13 +361,8 @@ export default class DeparturesController {
         }
 
         const placementDeparture: Cas1NewDeparture = {
-          departureDateTime: DateFormats.dateAndTimeInputsToIsoString(
-            {
-              ...departureData,
-              'departureDate-time': departureData.departureTime,
-            } as ObjectWithDateParts<'departureDate'>,
-            'departureDate',
-          ).departureDate,
+          departureDate: departureData.departureDate,
+          departureTime: departureData.departureTime,
           reasonId,
           moveOnCategoryId,
           notes,

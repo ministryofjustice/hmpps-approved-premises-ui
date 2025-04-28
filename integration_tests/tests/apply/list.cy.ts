@@ -14,7 +14,7 @@ context('Applications dashboard', () => {
     cy.task('reset')
 
     // Given I am signed in as an applicant
-    signIn()
+    signIn('applicant')
   })
 
   it('shows the dashboard ', () => {

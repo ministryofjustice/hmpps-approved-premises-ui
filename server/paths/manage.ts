@@ -130,6 +130,7 @@ const paths = {
     index: outOfServiceBedsIndexPath.path(':temporality'),
     show: outOfServiceBedPath.path(':tab'),
     update: outOfServiceBedPath.path('update'),
+    cancel: outOfServiceBedPath.path('cancel'),
   },
 }
 

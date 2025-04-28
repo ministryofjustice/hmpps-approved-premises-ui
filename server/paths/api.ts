@@ -86,7 +86,7 @@ export default {
       cancel: cas1LostBedsCancellations,
     },
     staffMembers: {
-      index: premisesSingle.path('staff'),
+      index: cas1PremisesSingle.path('staff'),
     },
     beds: {
       index: cas1Beds,
@@ -109,6 +109,7 @@ export default {
       timeline: cas1SpaceBookingSingle.path('timeline'),
     },
     calendar: premisesSingle.path('calendar'),
+    occupancyReport: cas1Premises.path('occupancy-report'),
   },
   bookings: {
     bookingWithoutPremisesPath: path('/bookings/:bookingId'),

@@ -476,6 +476,15 @@ describe('OccupancyViewController', () => {
       const pathPrefix = `/match/placement-requests/${placementRequestDetail.id}/space-search/occupancy/${premises.id}`
 
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, { startDate: date })
+
+      expect(premisesService.getDaySummary).toHaveBeenCalledWith({
+        bookingsSortBy: 'personName',
+        bookingsSortDirection: 'asc',
+        date,
+        premisesId: premises.id,
+        token,
+      })
+
       expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', {
         pageHeading: 'Sun 23 Mar 2025',
         backLink: '/backlink',

@@ -10,7 +10,7 @@ context('Application timeline', () => {
     cy.task('reset')
 
     // Given I am signed in as an applicant
-    signIn()
+    signIn('applicant')
   })
   ;([true, false] as const).forEach(isOfflineApplication => {
     it(`shows the timeline for a CRN if isOfflineApplication is: ${isOfflineApplication}`, () => {

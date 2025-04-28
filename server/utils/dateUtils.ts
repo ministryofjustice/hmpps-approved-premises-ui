@@ -132,7 +132,7 @@ export class DateFormats {
     const o: { [P in K]?: string } = dateInputObj
     if (day && month && year) {
       if (time) {
-        o[key] = `${year}-${month}-${day}T${time}:00.000Z`
+        o[key] = `${year}-${month}-${day}T${time}`
       } else {
         o[key] = `${year}-${month}-${day}`
       }

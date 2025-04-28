@@ -49,8 +49,8 @@ context('Placement Requests', () => {
   const defaultLicenceExpiryDate = '2030-06-05'
 
   it('allows me to search for an available space', () => {
-    // Given I am signed in as a CRU member
-    signIn({ permissions: ['cas1_view_cru_dashboard', 'cas1_space_booking_create'] })
+    // Given I am signed in as a CRU member with Beta access
+    signIn('cru_member_find_and_book_beta')
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
@@ -166,8 +166,8 @@ context('Placement Requests', () => {
     const endDate = '2024-08-06'
     const totalCapacity = 10
 
-    // Given I am signed in as a CRU member
-    signIn({ permissions: ['cas1_view_cru_dashboard', 'cas1_space_booking_create'] })
+    // Given I am signed in as a CRU member with Beta access
+    signIn('cru_member_find_and_book_beta')
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
@@ -354,16 +354,17 @@ context('Placement Requests', () => {
     page.shouldShowBookingDetails(placementRequest, premises, arrivalDate, departureDate, searchState.roomCriteria)
 
     // And when I complete the form
-    const spaceBooking = cas1SpaceBookingFactory.upcoming().build()
+    const spaceBooking = cas1SpaceBookingFactory.upcoming().build({ placementRequestId: placementRequest.id })
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
+    cy.task('stubPlacementRequest', placementRequest)
     page.clickSubmit()
 
     // Then I should be redirected to the 'Matched' tab
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     // And I should see a success message
-    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking.person.crn, spaceBooking.premises.name)
+    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequest)
 
     // And the booking details should have been sent to the API
     cy.task('verifyApiPost', apiPaths.placementRequests.spaceBookings.create({ id: placementRequest.id })).then(
@@ -379,8 +380,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to mark a placement request as unable to match', () => {
-    // Given I am signed in as a CRU member
-    signIn({ permissions: ['cas1_view_cru_dashboard', 'cas1_space_booking_create'] })
+    // Given I am signed in as a CRU member with Beta access
+    signIn('cru_member_find_and_book_beta')
 
     // Given there is a placement request waiting for me to match
     const placementRequest = placementRequestDetailFactory.build({

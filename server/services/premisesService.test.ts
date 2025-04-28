@@ -7,6 +7,8 @@ import type {
   SortDirection,
 } from '@approved-premises/api'
 
+import { createMock } from '@golevelup/ts-jest'
+import { Response } from 'express'
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
@@ -303,6 +305,17 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getOccupancyReport', () => {
+    const response = createMock<Response>({})
+
+    it('calls the download report method on the client', async () => {
+      await service.getOccupancyReport(token, response)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getOccupancyReport).toHaveBeenCalledWith(response)
     })
   })
 })

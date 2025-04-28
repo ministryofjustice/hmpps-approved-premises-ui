@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApplicationService, CruManagementAreaService, PlacementRequestService } from '../../services'
+import { ApplicationService, CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import {
   ApplicationSortField,
   Cas1CruManagementArea,
@@ -12,12 +12,14 @@ import adminPaths from '../../paths/admin'
 import { PlacementRequestDashboardSearchOptions } from '../../@types/ui'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
+import { cruDashboardActions } from '../../utils/admin/cruDashboardUtils'
 
 export default class CruDashboardController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly cruManagementAreaService: CruManagementAreaService,
     private readonly applicationService: ApplicationService,
+    private readonly premisesService: PremisesService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
@@ -30,6 +32,7 @@ export default class CruDashboardController {
 
       res.render('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
+        actions: cruDashboardActions(res.locals.user),
         cruManagementAreas,
         ...viewArgs,
       })
@@ -139,6 +142,12 @@ export default class CruDashboardController {
       hrefPrefix,
       sortBy,
       sortDirection,
+    }
+  }
+
+  downloadReport(): TypedRequestHandler<Request> {
+    return async (req: Request, res: Response) => {
+      return this.premisesService.getOccupancyReport(req.user.token, res)
     }
   }
 }

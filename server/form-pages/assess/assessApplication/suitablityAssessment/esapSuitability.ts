@@ -71,6 +71,8 @@ export default class EsapSuitability implements TasklistPage {
       errors.esapPlacementNeccessary =
         'You must confirm if a Enhanced Security Approved Premises (ESAP) has been identified as a suitable placement'
 
+    if (this.body.esapPlacementNeccessary === 'no' && !this.body.unsuitabilityForEsapRationale)
+      errors.unsuitabilityForEsapRationale = 'Provide a summary of the rationale'
     return errors
   }
 }

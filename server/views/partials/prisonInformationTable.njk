@@ -4,13 +4,13 @@
 
     {{ mojSubNavigation({
         label: 'Sub navigation',
+        attributes: { 'data-sub-navigation-as-tabs': true },
         items: [{
             text: 'Prison case notes',
             href: '#caseNotes',
             attributes: {
                 'aria-controls': 'caseNotes',
-                'id': 'caseNotesTab',
-                'aria-selected': true
+                'id': 'caseNotesTab'
             }
         },
             {
@@ -31,13 +31,11 @@
             }]
     }) }}
 
-    <div class="govuk-column-full-width" id="caseNotes" role="tabpanel" aria-labelledby="caseNotesTab"
-         class="govuk-visually-hidden">
+    <div class="govuk-column-full-width" id="caseNotes" role="tabpanel" aria-labelledby="caseNotesTab">
         {{ caseNotes | safe }}
     </div>
 
-    <div class="govuk-column-full-width" id="adjudications" role="tabpanel" aria-labelledby="adjudicationsTab"
-         class="govuk-visually-hidden">
+    <div class="govuk-column-full-width" id="adjudications" role="tabpanel" aria-labelledby="adjudicationsTab">
         <table class="govuk-table">
             <caption class="govuk-table__caption govuk-table__caption--m">Adjudications</caption>
 
@@ -65,13 +63,12 @@
         </table>
     </div>
 
-    <div class="govuk-column-full-width" id="acct" role="tabpanel" aria-labelledby="acctTab"
-         class="govuk-visually-hidden">
+    <div class="govuk-column-full-width" id="acct" role="tabpanel" aria-labelledby="acctTab">
         <table class="govuk-table">
             <caption class="govuk-table__caption govuk-table__caption--m">ACCT</caption>
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header" style="width:100px;">Alert type</th>
+                <th scope="col" class="govuk-table__header">Alert type</th>
                 <th scope="col" class="govuk-table__header">ACCT description</th>
                 <th scope="col" class="govuk-table__header">Date created</th>
                 <th scope="col" class="govuk-table__header">Expiry date</th>
@@ -90,10 +87,4 @@
             </tbody>
         </table>
     </div>
-
-    {% block extraScripts %}
-        <script type="text/javascript" nonce="{{ cspNonce }}"
-                src="../../../../../assets/tabPanelTableScript.js"></script>
-    {% endblock %}
-
 {% endmacro %}

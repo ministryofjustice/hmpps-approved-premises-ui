@@ -4,8 +4,10 @@ import {
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
 
+import { UiTask } from '@approved-premises/ui'
 import { bulkStub, getMatchingRequests } from './setup'
 import isAssessment from '../../server/utils/assessments/isAssessment'
+import getSections from '../../server/utils/assessments/getSections'
 
 export const generateStubsForPage = (
   page: string,
@@ -152,7 +154,10 @@ export const copyCompleteTasksToData = ({ completeTasks, form }) => {
   return data
 }
 
-export const verifyApiRequest = async (url: string, method: 'POST' | 'PATCH'): Promise<Record<string, unknown>> => {
+export const verifyApiRequest = async (
+  url: string,
+  method: 'POST' | 'PATCH' | 'PUT',
+): Promise<Record<string, unknown>> => {
   const result = await getMatchingRequests({
     method,
     url,
@@ -163,6 +168,7 @@ export const verifyApiRequest = async (url: string, method: 'POST' | 'PATCH'): P
 
 export const verifyApiPost = (url: string) => verifyApiRequest(url, 'POST')
 export const verifyApiPatch = (url: string) => verifyApiRequest(url, 'PATCH')
+export const verifyApiPut = (url: string) => verifyApiRequest(url, 'PUT')
 
 export const stubJourney = (form: Application | Assessment): SuperAgentRequest => {
   type JourneyType =
@@ -214,7 +220,13 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
     },
   ] as Array<Record<string, unknown>>
 
-  const tasks = Object.keys(form.data)
+  const tasks = isAssessment(form)
+    ? getSections(form as Assessment)
+        .reduce((taskList, section) => {
+          return [...taskList, ...section.tasks]
+        }, [] as Array<UiTask>)
+        .map(({ id }): string => id)
+    : Object.keys(form.data)
 
   tasks.forEach((task, taskIndex) => {
     const previousTask = taskIndex > 0 ? tasks[taskIndex - 1] : undefined

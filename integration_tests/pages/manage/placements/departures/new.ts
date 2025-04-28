@@ -4,22 +4,12 @@ import { DateFormats } from '../../../../../server/utils/dateUtils'
 import paths from '../../../../../server/paths/manage'
 
 export class DepartureNewPage extends Page {
-  departureDate: string
-
-  departureTime: string
-
   constructor(
     private readonly placement: Cas1SpaceBooking,
     private readonly newDeparture?: Cas1NewDeparture,
     title: string = 'Record a departure',
   ) {
     super(title)
-
-    if (this.newDeparture) {
-      const [isoDate, hours, minutes] = this.newDeparture.departureDateTime.split(/T|:/)
-      this.departureDate = isoDate
-      this.departureTime = `${hours}:${minutes}`
-    }
   }
 
   shouldShowFormAndExpectedDepartureDate(): void {
@@ -35,14 +25,14 @@ export class DepartureNewPage extends Page {
   }
 
   completeForm(reasonId?: string) {
-    this.clearAndCompleteDateInputs('departureDate', this.departureDate)
-    this.clearAndCompleteTextInputById('departureTime', this.departureTime)
+    this.clearAndCompleteDateInputs('departureDate', this.newDeparture.departureDate)
+    this.clearAndCompleteTextInputById('departureTime', this.newDeparture.departureTime)
     this.checkRadioByNameAndValue('reasonId', reasonId || this.newDeparture.reasonId)
   }
 
   shouldShowPopulatedForm(reasonId?: string) {
-    this.dateInputsShouldContainDate('departureDate', this.departureDate)
-    this.verifyTextInputContentsById('departureTime', this.departureTime)
+    this.dateInputsShouldContainDate('departureDate', this.newDeparture.departureDate)
+    this.verifyTextInputContentsById('departureTime', this.newDeparture.departureTime)
     this.verifyRadioInputByName('reasonId', reasonId || this.newDeparture.reasonId)
   }
 

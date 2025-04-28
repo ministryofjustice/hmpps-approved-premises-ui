@@ -77,8 +77,8 @@ context('Task Allocation', () => {
     cy.task('stubUserSummaryList', { users, roles: ['assessor', 'appeals_manager'] })
     cy.task('stubUserList', { users, roles: ['assessor', 'appeals_manager'] })
 
-    // And I am signed in as a CRU member
-    signIn({ permissions: ['cas1_view_manage_tasks'], cruManagementArea })
+    // And I am signed in as a CRU member with the correct CRU management area
+    signIn('cru_member', { cruManagementArea })
 
     // When I visit the task list page
     const taskListPage = TaskListPage.visit(tasks, [])
@@ -162,6 +162,12 @@ context('Task Allocation', () => {
 
     // And I should see a list of staff members who can be allocated to that task
     allocationsPage.shouldShowUserTable(this.users, this.task)
+
+    // And the table should be sortable
+    allocationsPage.shouldBeSortableBy('Tasks pending')
+    allocationsPage.shouldBeSortableBy('Name')
+    allocationsPage.shouldBeSortableBy('Tasks completed in previous 7 days')
+    allocationsPage.shouldBeSortableBy('Tasks completed in previous 30 days')
 
     // When I filter by CRU Management Area
     allocationsPage.searchBy('cruManagementAreaId', this.cruManagementArea.id)

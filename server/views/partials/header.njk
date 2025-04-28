@@ -45,7 +45,6 @@
 {% endif %}
 
 {% block phaseBanner %}
-  {% if not hidePhaseBanner %}
     {{ govukPhaseBanner({
     attributes: { "data-cy-phase-banner": "phase-banner" },
     classes: "hmpps-header__container",
@@ -54,5 +53,4 @@
     },
     html: 'This is a new service. <a class="govuk-link" href="https://forms.office.com/e/jSiRQFF82r">Give us your feedback</a> or <a class="govuk-link" href="mailto:APServiceSupport@digital.justice.gov.uk">email us</a> to report a bug'
   }) }}
-  {% endif %}
 {% endblock %}

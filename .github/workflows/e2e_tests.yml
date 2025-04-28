@@ -1,0 +1,86 @@
+name: CAS1 UI E2E tests
+
+on:
+  workflow_call:
+
+jobs:
+  e2e_test:
+    name: "CAS1 E2E Tests 🧪"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [ 1, 2, 3, 4 ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          # Repository is specified to run the workflow from the API repository
+          repository: 'ministryofjustice/hmpps-approved-premises-ui'
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit
+
+      - name: Install Playwright
+        run: npx playwright install chromium
+
+      - name: Run E2E Tests
+        env:
+          CAS1_E2E_ADMINISTRATOR_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_2_PASSWORD }}
+          CAS1_E2E_ADMINISTRATOR_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_2_USERNAME }}
+          CAS1_E2E_ASSESSOR_EMAIL: stuart.harrison2+test1@digital.justice.gov.uk
+          CAS1_E2E_ASSESSOR_NAME: AP_USER TEST_1
+          CAS1_E2E_ASSESSOR_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
+          CAS1_E2E_ASSESSOR_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
+          CAS1_E2E_CRU_MEMBER_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_4_PASSWORD }}
+          CAS1_E2E_CRU_MEMBER_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_4_USERNAME }}
+          CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE: JOSEPHHOLLINSHEAD
+          CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO: AP_USER TEST_1
+          CAS1_E2E_FUTURE_MANAGER_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_4_PASSWORD }}
+          CAS1_E2E_FUTURE_MANAGER_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_4_USERNAME }}
+          CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN: X349420
+          CAS1_E2E_REPORT_VIEWER_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_2_PASSWORD }}
+          CAS1_E2E_REPORT_VIEWER_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_2_USERNAME }}
+          CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
+          CAS1_E2E_USER_WITHOUT_ROLES_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
+          HMPPS_AUTH_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
+          HMPPS_AUTH_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
+        run: npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: E2E-playwright-report-${{ matrix.shard }}-of-4
+          path: playwright-report
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload E2E artefacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: E2E-artefacts-${{ matrix.shard }}-of-4
+          path: test-results
+          retention-days: 30
+          if-no-files-found: ignore
+
+  e2e_test_notify_slack:
+    name: "E2E test failure notification"
+    needs: e2e_test
+    if: ${{ always() && needs.e2e_test.result == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        uses: ministryofjustice/hmpps-approved-premises-ui/.github/actions/slack_failure_notification@main
+        with:
+          title: "CAS1 E2E Tests"
+          job: "e2e_test"
+          channel_id: ${{ vars.SECURITY_ALERTS_SLACK_CHANNEL_ID }}
+          slack_bot_token: ${{ secrets.HMPPS_SRE_SLACK_BOT_TOKEN }}

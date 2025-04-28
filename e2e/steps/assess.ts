@@ -77,7 +77,7 @@ export const assessSuitability = async (page: Page, applicationType: Application
     'Does the application explain how an AP placement would be beneficial for risk management?',
     'Yes',
   )
-  await assessPage.checkRadioInGroup('Are there factors to consider regarding the location of placement?', 'Yes')
+  await assessPage.checkRadioInGroup('Are there factors to consider regarding the location of placement?', 'No')
   await assessPage.checkRadioInGroup('Is the move on plan sufficient?', 'Yes')
   await assessPage.clickSubmit()
 

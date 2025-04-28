@@ -6,6 +6,8 @@ import type {
   PlacementRequestStatus,
   RiskTierLevel,
 } from '@approved-premises/api'
+import { readFileSync } from 'fs'
+import path from 'path'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { bookingNotMadeFactory, newPlacementRequestBookingConfirmationFactory } from '../../server/testutils/factories'
@@ -289,4 +291,21 @@ export default {
         url: paths.placementRequests.bookingNotMade({ id: placementRequest.id }),
       })
     ).body.requests,
+  stubOccupancyReportDownload: (args: { filename: string }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.premises.occupancyReport({}),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'content-disposition': `attachment; filename=${args.filename}`,
+        },
+        base64Body: readFileSync(path.resolve(__dirname, '..', 'fixtures', 'premises-occupancy.csv'), {
+          encoding: 'base64',
+        }),
+      },
+    }),
 }

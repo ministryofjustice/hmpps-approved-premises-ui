@@ -1,6 +1,6 @@
 # Stage: base image
 
-FROM node:22.14-bullseye-slim as base
+FROM node:22.14-bullseye-slim AS base
 
 ARG BUILD_NUMBER=1_0_0
 ARG GIT_REF=not-available
@@ -16,7 +16,7 @@ RUN addgroup --gid 2000 --system appgroup && \
 WORKDIR /app
 
 # Cache breaking
-ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
+ENV BUILD_NUMBER=${BUILD_NUMBER:-1_0_0}
 
 RUN apt-get update && \
         apt-get upgrade -y && \
@@ -24,7 +24,7 @@ RUN apt-get update && \
         rm -rf /var/lib/apt/lists/*
 
 # Stage: build assets
-FROM base as build
+FROM base AS build
 
 ARG BUILD_NUMBER=1_0_0
 ARG GIT_REF=not-available
@@ -54,9 +54,6 @@ COPY --from=build --chown=appuser:appgroup \
 
 COPY --from=build --chown=appuser:appgroup \
         /app/build-info.json ./dist/build-info.json
-
-COPY --from=build --chown=appuser:appgroup \
-        /app/assets ./assets
 
 COPY --from=build --chown=appuser:appgroup \
         /app/dist ./dist

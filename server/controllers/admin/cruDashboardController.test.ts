@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import CruDashboardController from './cruDashboardController'
 
-import { ApplicationService, CruManagementAreaService, PlacementRequestService } from '../../services'
+import { ApplicationService, CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import {
   applicationSummaryFactory,
   cruManagementAreaFactory,
@@ -21,6 +21,7 @@ import {
 } from '../../@types/shared'
 import paths from '../../paths/admin'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { cruDashboardActions } from '../../utils/admin/cruDashboardUtils'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
@@ -37,6 +38,7 @@ describe('CruDashboardController', () => {
   const placementRequestService = createMock<PlacementRequestService>({})
   const cruManagementAreaService = createMock<CruManagementAreaService>({})
   const applicationService = createMock<ApplicationService>({})
+  const premisesService = createMock<PremisesService>({})
 
   let cruDashboardController: CruDashboardController
 
@@ -46,6 +48,7 @@ describe('CruDashboardController', () => {
       placementRequestService,
       cruManagementAreaService,
       applicationService,
+      premisesService,
     )
   })
 
@@ -76,6 +79,7 @@ describe('CruDashboardController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
+        actions: cruDashboardActions(response.locals.user),
         subheading:
           'All applications that have been assessed as suitable and require matching to an AP are listed below',
         placementRequests: paginatedResponse.data,
@@ -190,6 +194,7 @@ describe('CruDashboardController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
+        actions: cruDashboardActions(response.locals.user),
         subheading:
           'All applications that have been accepted but do not yet have an associated placement request are shown below',
         status: 'pendingPlacement',
@@ -361,6 +366,16 @@ describe('CruDashboardController', () => {
       expect(getPaginationDetails).toHaveBeenCalledWith(searchRequest, hrefPrefix, {
         crnOrName: 'CRN123',
       })
+    })
+  })
+
+  describe('downloadReport', () => {
+    it('should call the premises client and pipe the report', async () => {
+      const requestHandler = cruDashboardController.downloadReport()
+
+      await requestHandler(request, response, next)
+
+      expect(premisesService.getOccupancyReport).toHaveBeenCalled()
     })
   })
 })
