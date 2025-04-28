@@ -45,7 +45,7 @@ export class ListPage extends PaginatedPage {
     expect(actualDeadlineInDays).toBeLessThanOrEqual(expectedDeadlineInDays + 4)
 
     if (user) {
-      await expect(row.locator('td').nth(1)).toContainText(user)
+      await expect(row.locator('td').nth(2)).toContainText(user)
     }
   }
 
