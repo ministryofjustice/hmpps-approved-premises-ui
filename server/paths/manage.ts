@@ -57,6 +57,7 @@ const singlePlacementPath = singlePremisesPath.path('placements/:placementId')
 const departurePath = singlePlacementPath.path('departure')
 const placementCancellationsPath = singlePlacementPath.path('cancellations')
 const placementChangesPath = singlePlacementPath.path('changes')
+const placementTransfersPath = singlePlacementPath.path('transfers')
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
 const bedsPath = singlePremisesPath.path('beds')
@@ -96,6 +97,9 @@ const paths = {
       changes: {
         new: placementChangesPath.path('new'),
         confirm: placementChangesPath.path('confirm'),
+      },
+      transfers: {
+        new: placementTransfersPath.path('new'),
       },
     },
     occupancy: {

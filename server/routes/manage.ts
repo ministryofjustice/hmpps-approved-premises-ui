@@ -29,6 +29,7 @@ export default function routes(controllers: Controllers, router: Router, service
     keyworkerController,
     apOccupancyViewController,
     changesController,
+    transfersController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -258,6 +259,12 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.premises.placements.changes.confirm.pattern, changesController.create(), {
     auditEvent: 'CREATE_BOOKING_CHANGE',
     allowedPermissions: ['cas1_space_booking_create'],
+  })
+
+  // Placement transfers
+  get(paths.premises.placements.transfers.new.pattern, transfersController.new(), {
+    auditEvent: 'NEW_TRANSFER_REQUEST',
+    allowedPermissions: ['cas1_planned_transfer_create'],
   })
 
   // Occupancy

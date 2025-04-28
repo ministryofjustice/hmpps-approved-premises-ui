@@ -125,12 +125,22 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     }
   }
 
-  if (status === 'arrived' && hasPermission(user, ['cas1_space_booking_record_departure'])) {
-    actionList.push({
-      text: 'Record departure',
-      classes: 'govuk-button--secondary',
-      href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
-    })
+  if (status === 'arrived') {
+    if (hasPermission(user, ['cas1_space_booking_record_departure'])) {
+      actionList.push({
+        text: 'Record departure',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
+
+    if (hasPermission(user, ['cas1_planned_transfer_create'])) {
+      actionList.push({
+        text: 'Request a transfer',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.transfers.new({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
   }
 
   return actionList.length ? [{ items: actionList }] : null
