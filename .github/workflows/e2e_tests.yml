@@ -51,13 +51,13 @@ jobs:
           CAS1_E2E_USER_WITHOUT_ROLES_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
           HMPPS_AUTH_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
           HMPPS_AUTH_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
-        run: npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
+        run: npm run test:e2e:ci -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: E2E-playwright-report-${{ matrix.shard }}-of-4
+          name: E2E-playwright-report-${{ matrix.shard }}-of-${{ strategy.job-total }}
           path: playwright-report
           retention-days: 30
           if-no-files-found: ignore
@@ -66,7 +66,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: E2E-artefacts-${{ matrix.shard }}-of-4
+          name: E2E-artefacts-${{ matrix.shard }}-of-${{ strategy.job-total }}
           path: test-results
           retention-days: 30
           if-no-files-found: ignore
