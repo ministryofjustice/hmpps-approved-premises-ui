@@ -1,4 +1,6 @@
 import { FullPerson } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
+import { addDays } from 'date-fns'
 import { cas1PremisesFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
 import { PlacementShowPage } from '../../../pages/manage'
 import { signIn } from '../../signIn'
@@ -30,5 +32,23 @@ context('Transfers', () => {
     const transferRequestPage = new TransferRequestPage()
     transferRequestPage.shouldShowPersonHeader(placement.person as FullPerson)
     transferRequestPage.shouldShowForm()
+
+    // When I complete the form and put a transfer date more than a week ago
+    const overAWeekAgo = faker.date.recent({ refDate: addDays(new Date(), -7) })
+    transferRequestPage.completeForm(overAWeekAgo)
+
+    // Then I should see an error
+    transferRequestPage.shouldShowErrorMessagesForFields(['transferDate'], {
+      transferDate: 'The date of transfer must be today or in the last 7 days',
+    })
+
+    // When I complete the form and put a transfer date of tomorrow
+    const tomorrow = addDays(new Date(), 1)
+    transferRequestPage.completeForm(tomorrow)
+
+    // Then I should see an error
+    transferRequestPage.shouldShowErrorMessagesForFields(['transferDate'], {
+      transferDate: 'The date of transfer must be today or in the last 7 days',
+    })
   })
 })

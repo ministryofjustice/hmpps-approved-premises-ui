@@ -266,6 +266,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_TRANSFER_REQUEST',
     allowedPermissions: ['cas1_planned_transfer_create'],
   })
+  post(paths.premises.placements.transfers.new.pattern, transfersController.saveNew(), {
+    auditEvent: 'NEW_TRANSFER_REQUEST_SAVE',
+    allowedPermissions: ['cas1_planned_transfer_create'],
+  })
 
   // Occupancy
   get(paths.premises.occupancy.view.pattern, apOccupancyViewController.view(), {

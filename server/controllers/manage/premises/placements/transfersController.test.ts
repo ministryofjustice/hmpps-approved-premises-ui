@@ -7,6 +7,8 @@ import { cas1PremisesFactory, cas1SpaceBookingFactory } from '../../../../testut
 import { PlacementService } from '../../../../services'
 import managePaths from '../../../../paths/manage'
 import * as validationUtils from '../../../../utils/validation'
+import { DateFormats } from '../../../../utils/dateUtils'
+import { ValidationError } from '../../../../utils/errors'
 
 describe('transfersController', () => {
   const token = 'TEST_TOKEN'
@@ -52,6 +54,41 @@ describe('transfersController', () => {
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
       })
+    })
+  })
+
+  describe('saveNew', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(DateFormats.isoToDateObj('2025-04-29'))
+    })
+
+    it.each([
+      ['empty', '', 'You must enter a transfer date'],
+      ['incomplete', '2025-04', 'You must enter a valid transfer date'],
+      ['invalid', '2025-02-37', 'You must enter a valid transfer date'],
+      ['more than a week ago', '2025-04-21', 'The date of transfer must be today or in the last 7 days'],
+      ['tomorrow', '2025-04-30', 'The date of transfer must be today or in the last 7 days'],
+    ])('shows an error if the date is %s', async (_, date, errorMessage) => {
+      const requestHandler = transfersController.saveNew()
+      const [year, month, day] = date.split('-')
+      request.body = {
+        'transferDate-year': year,
+        'transferDate-month': month,
+        'transferDate-day': day,
+      }
+
+      await requestHandler(request, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        managePaths.premises.placements.transfers.new(params),
+      )
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({ transferDate: errorMessage })
     })
   })
 })

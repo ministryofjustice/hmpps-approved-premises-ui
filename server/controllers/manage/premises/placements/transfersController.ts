@@ -1,7 +1,10 @@
 import type { Request, Response, RequestHandler } from 'express'
+import { addDays } from 'date-fns'
 import { PlacementService } from '../../../../services'
-import { fetchErrorsAndUserInput } from '../../../../utils/validation'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
+import { ValidationError } from '../../../../utils/errors'
+import { dateAndTimeInputsAreValidDates, DateFormats, datetimeIsInThePast } from '../../../../utils/dateUtils'
 
 export default class TransfersController {
   constructor(private readonly placementService: PlacementService) {}
@@ -20,6 +23,46 @@ export default class TransfersController {
         errorSummary,
         ...userInput,
       })
+    }
+  }
+
+  saveNew(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, placementId } = req.params
+
+      try {
+        const errors: Record<string, string> = {}
+
+        const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'transferDate')
+
+        if (!transferDate) {
+          errors.transferDate = 'You must enter a transfer date'
+        } else if (!dateAndTimeInputsAreValidDates(req.body, 'transferDate')) {
+          errors.transferDate = 'You must enter a valid transfer date'
+        } else {
+          // TODO: this validation will need to be updated when standard transfers are added.
+          const oneWeekAgo = DateFormats.dateObjToIsoDate(addDays(new Date(), -7))
+          const tomorrow = DateFormats.dateObjToIsoDate(addDays(new Date(), 1))
+
+          if (datetimeIsInThePast(transferDate, oneWeekAgo) || !datetimeIsInThePast(transferDate, tomorrow)) {
+            errors.transferDate = 'The date of transfer must be today or in the last 7 days'
+          }
+        }
+
+        if (Object.keys(errors).length) {
+          throw new ValidationError(errors)
+        }
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          managePaths.premises.placements.transfers.new({
+            premisesId,
+            placementId,
+          }),
+        )
+      }
     }
   }
 }
