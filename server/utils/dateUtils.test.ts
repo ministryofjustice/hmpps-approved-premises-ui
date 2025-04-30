@@ -144,7 +144,7 @@ describe('DateFormats', () => {
     })
   })
 
-  describe('convertDateAndTimeInputsToIsoString', () => {
+  describe('dateAndTimeInputsToIsoString', () => {
     it('converts date inputs to a local date object', () => {
       const obj: ObjectWithDateParts<'date'> = {
         'date-year': '2025',
@@ -198,7 +198,20 @@ describe('DateFormats', () => {
       expect(result.date).toEqual('2022-01-01T08:15')
     })
 
-    it('returns an empty string when given empty strings as input', () => {
+    it.each(['day', 'month', 'year'])('returns undefined for the date if the %s is undefined', part => {
+      const obj: ObjectWithDateParts<'date'> = {
+        'date-year': '2025',
+        'date-month': '3',
+        'date-day': '14',
+      }
+      delete obj[`date-${part}` as keyof ObjectWithDateParts<'date'>]
+
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
+
+      expect(result.date).toBeUndefined()
+    })
+
+    it('returns undefined for the date when given empty strings as input', () => {
       const obj: ObjectWithDateParts<'date'> = {
         'date-year': '',
         'date-month': '',

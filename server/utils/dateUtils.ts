@@ -124,10 +124,10 @@ export class DateFormats {
     dateInputObj: ObjectWithDateParts<K>,
     key: K,
   ): ObjectWithDateParts<K> {
-    const day = `0${dateInputObj[`${key}-day`]}`.slice(-2)
-    const month = `0${dateInputObj[`${key}-month`]}`.slice(-2)
+    const day = dateInputObj[`${key}-day`] && `0${dateInputObj[`${key}-day`]}`.slice(-2)
+    const month = dateInputObj[`${key}-month`] && `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
-    const time = dateInputObj[`${key}-time`] ? `0${dateInputObj[`${key}-time`]}`.slice(-5) : undefined
+    const time = dateInputObj[`${key}-time`] && `0${dateInputObj[`${key}-time`]}`.slice(-5)
 
     const o: { [P in K]?: string } = dateInputObj
     if (day && month && year) {
