@@ -1,13 +1,18 @@
-import type { Request, Response, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 import { addDays } from 'date-fns'
 import { PlacementService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
 import { dateAndTimeInputsAreValidDates, DateFormats, datetimeIsInThePast } from '../../../../utils/dateUtils'
+import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 
 export default class TransfersController {
-  constructor(private readonly placementService: PlacementService) {}
+  formData: MultiPageFormManager<'transfers'>
+
+  constructor(private readonly placementService: PlacementService) {
+    this.formData = new MultiPageFormManager('transfers')
+  }
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -15,12 +20,15 @@ export default class TransfersController {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
       const placement = await this.placementService.getPlacement(req.user.token, placementId)
 
+      const formData = this.formData.get(placementId, req.session)
+
       return res.render('manage/premises/placements/transfers/new', {
         backlink: managePaths.premises.placements.show({ premisesId, placementId }),
         pageHeading: 'Request a transfer',
         placement,
         errors,
         errorSummary,
+        ...formData,
         ...userInput,
       })
     }
@@ -52,6 +60,12 @@ export default class TransfersController {
         if (Object.keys(errors).length) {
           throw new ValidationError(errors)
         }
+
+        this.formData.update(placementId, req.session, req.body)
+
+        return req.session.save(() => {
+          res.redirect(managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }))
+        })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -63,6 +77,30 @@ export default class TransfersController {
           }),
         )
       }
+    }
+  }
+
+  emergencyDetails(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, placementId } = req.params
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+      const placement = await this.placementService.getPlacement(req.user.token, placementId)
+
+      const formData = this.formData.get(placementId, req.session)
+
+      if (!formData) {
+        res.redirect(managePaths.premises.placements.transfers.new({ premisesId, placementId }))
+      }
+
+      res.render('manage/premises/placements/transfers/emergency-details', {
+        backlink: managePaths.premises.placements.transfers.new({ premisesId, placementId }),
+        pageHeading: 'Enter the emergency transfer details',
+        placement,
+        errors,
+        errorSummary,
+        ...formData,
+        ...userInput,
+      })
     }
   }
 }

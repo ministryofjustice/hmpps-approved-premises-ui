@@ -100,6 +100,7 @@ const paths = {
       },
       transfers: {
         new: placementTransfersPath.path('new'),
+        emergencyDetails: placementTransfersPath.path('emergency'),
       },
     },
     occupancy: {

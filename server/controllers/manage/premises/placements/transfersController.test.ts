@@ -24,6 +24,7 @@ describe('transfersController', () => {
   const placement = cas1SpaceBookingFactory.current().build()
 
   const params = { premisesId: premises.id, placementId: placement.id }
+  const errorsAndUserInput = createMock<ErrorsAndUserInput>()
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -40,7 +41,6 @@ describe('transfersController', () => {
 
   describe('new', () => {
     it('renders the new transfer form with errors and user input', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
       const requestHandler = transfersController.new()
@@ -54,6 +54,29 @@ describe('transfersController', () => {
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
       })
+    })
+
+    it('renders the new transfer form with session data if it exists', async () => {
+      const sessionData = {
+        transferDate: '2025-04-30',
+        'transferDate-year': '2025',
+        'transferDate-month': '4',
+        'transferDate-day': '30',
+      }
+      request.session.multiPageFormData = {
+        transfers: {
+          [placement.id]: sessionData,
+        },
+      }
+      when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+
+      const requestHandler = transfersController.new()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/placements/transfers/new',
+        expect.objectContaining(sessionData),
+      )
     })
   })
 
@@ -89,6 +112,49 @@ describe('transfersController', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({ transferDate: errorMessage })
+    })
+  })
+
+  describe('emergencyDetails', () => {
+    const sessionData = {
+      transferDate: '2025-04-30',
+      'transferDate-year': '2025',
+      'transferDate-month': '4',
+      'transferDate-day': '30',
+    }
+
+    beforeEach(() => {
+      request.session.multiPageFormData = {
+        transfers: {
+          [placement.id]: sessionData,
+        },
+      }
+    })
+
+    it('redirects to the new transfer page if there is no data in the session', async () => {
+      request.session.multiPageFormData = undefined
+
+      const requestHandler = transfersController.emergencyDetails()
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.new(params))
+    })
+
+    it('renders the form with errors and user input', async () => {
+      when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+
+      const requestHandler = transfersController.emergencyDetails()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/emergency-details', {
+        backlink: managePaths.premises.placements.transfers.new(params),
+        pageHeading: 'Enter the emergency transfer details',
+        placement,
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        ...sessionData,
+        ...errorsAndUserInput.userInput,
+      })
     })
   })
 })

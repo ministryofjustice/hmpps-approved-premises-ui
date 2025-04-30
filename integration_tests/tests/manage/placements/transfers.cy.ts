@@ -6,6 +6,8 @@ import { PlacementShowPage } from '../../../pages/manage'
 import { signIn } from '../../signIn'
 import { TransferRequestPage } from '../../../pages/manage/placements/transfers/new'
 import { roleToPermissions } from '../../../../server/utils/users/roles'
+import Page from '../../../pages/page'
+import { EmergencyDetailsPage } from '../../../pages/manage/placements/transfers/emergencyDetails'
 
 context('Transfers', () => {
   it('lets a future manager request an emergency transfer', () => {
@@ -29,12 +31,12 @@ context('Transfers', () => {
     placementPage.clickAction('Request a transfer')
 
     // Then I should see the form to request a transfer
-    const transferRequestPage = new TransferRequestPage()
+    const transferRequestPage = Page.verifyOnPage(TransferRequestPage)
     transferRequestPage.shouldShowPersonHeader(placement.person as FullPerson)
     transferRequestPage.shouldShowForm()
 
     // When I complete the form and put a transfer date more than a week ago
-    const overAWeekAgo = faker.date.recent({ refDate: addDays(new Date(), -7) })
+    const overAWeekAgo = faker.date.recent({ refDate: addDays(new Date(), -8) })
     transferRequestPage.completeForm(overAWeekAgo)
 
     // Then I should see an error
@@ -50,5 +52,13 @@ context('Transfers', () => {
     transferRequestPage.shouldShowErrorMessagesForFields(['transferDate'], {
       transferDate: 'The date of transfer must be today or in the last 7 days',
     })
+
+    // When I complete the form and put a transfer date of today or within the last week
+    const todayOrWithinTheLastWeek = faker.date.recent({ days: 7, refDate: addDays(new Date(), 1) })
+    transferRequestPage.completeForm(todayOrWithinTheLastWeek)
+
+    // Then I should see the form to add details for the emergency transfer
+    const emergencyTransferDetailsPage = Page.verifyOnPage(EmergencyDetailsPage)
+    emergencyTransferDetailsPage.shouldShowPersonHeader(placement.person as FullPerson)
   })
 })
