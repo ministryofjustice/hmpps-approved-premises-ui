@@ -1,6 +1,6 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewDeparture, Cas1SpaceBooking } from '@approved-premises/api'
-import { DepartureFormSessionData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
+import { DepartureFormData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import {
@@ -20,6 +20,7 @@ import {
   MOVE_TO_AP_REASON_ID,
   PLANNED_MOVE_ON_REASON_ID,
 } from '../../../../utils/placements'
+import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 
 const {
   premises: {
@@ -28,7 +29,7 @@ const {
 } = paths
 
 type DepartureFormErrors = {
-  [K in keyof DepartureFormSessionData]: string
+  [K in keyof DepartureFormData]?: string
 }
 
 type FormPageData = {
@@ -36,24 +37,28 @@ type FormPageData = {
   premisesId: string
   placementId: string
   placement: Cas1SpaceBooking
-  departureFormSessionData: DepartureFormSessionData
+  departureFormSessionData: DepartureFormData
   errorsAndUserInput: ErrorsAndUserInput
 }
 
 const isMoveOnReason = [PLANNED_MOVE_ON_REASON_ID, LICENCE_EXPIRED_REASON_ID, BED_WITHDRAWN_REASON_ID]
 
 export default class DeparturesController {
+  formData: MultiPageFormManager<'departures'>
+
   constructor(
     private readonly premisesService: PremisesService,
     private readonly placementService: PlacementService,
-  ) {}
+  ) {
+    this.formData = new MultiPageFormManager('departures')
+  }
 
   private async getFormPageData(req: Request): Promise<FormPageData> {
     const { token } = req.user
     const { premisesId, placementId } = req.params
     const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
     const errorsAndUserInput = fetchErrorsAndUserInput(req)
-    const departureFormSessionData = this.placementService.getDepartureSessionData(placementId, req.session)
+    const departureFormSessionData = this.formData.get(placementId, req.session)
 
     return {
       token,
@@ -91,7 +96,7 @@ export default class DeparturesController {
     }
   }
 
-  private newErrors(body: DepartureFormSessionData, placement: Cas1SpaceBooking): DepartureFormErrors | null {
+  private newErrors(body: DepartureFormData, placement: Cas1SpaceBooking): DepartureFormErrors | null {
     const errors: DepartureFormErrors = {}
 
     const { departureTime, reasonId } = body
@@ -160,7 +165,7 @@ export default class DeparturesController {
           throw new ValidationError(errors)
         }
 
-        this.placementService.setDepartureSessionData(placementId, session, body)
+        this.formData.update(placementId, session, body)
 
         let redirect = departurePaths.notes({ premisesId, placementId })
 
@@ -198,6 +203,7 @@ export default class DeparturesController {
       } = await this.getFormPageData(req)
 
       if (
+        !departureFormSessionData ||
         this.newErrors(departureFormSessionData, placement) ||
         departureFormSessionData.reasonId !== BREACH_OR_RECALL_REASON_ID
       ) {
@@ -230,7 +236,7 @@ export default class DeparturesController {
           throw new ValidationError({ breachOrRecallReasonId: 'You must select a breach or recall reason' })
         }
 
-        this.placementService.setDepartureSessionData(placementId, req.session, req.body)
+        this.formData.update(placementId, req.session, req.body)
 
         return req.session.save(() => {
           res.redirect(departurePaths.notes({ premisesId, placementId }))
@@ -257,6 +263,7 @@ export default class DeparturesController {
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
       if (
+        !departureFormSessionData ||
         this.newErrors(departureFormSessionData, placement) ||
         !isMoveOnReason.includes(departureFormSessionData.reasonId)
       ) {
@@ -293,7 +300,7 @@ export default class DeparturesController {
           throw new ValidationError({ apName: 'You must select the destination AP' })
         }
 
-        this.placementService.setDepartureSessionData(placementId, req.session, req.body)
+        this.formData.update(placementId, req.session, req.body)
 
         return req.session.save(() => {
           res.redirect(departurePaths.notes({ premisesId, placementId }))
@@ -319,7 +326,7 @@ export default class DeparturesController {
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
 
-      if (this.newErrors(departureFormSessionData, placement)) {
+      if (!departureFormSessionData || this.newErrors(departureFormSessionData, placement)) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
@@ -343,7 +350,7 @@ export default class DeparturesController {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
 
-      const departureData = this.placementService.getDepartureSessionData(placementId, req.session)
+      const departureData = this.formData.get(placementId, req.session)
       let { notes } = req.body
 
       try {
@@ -370,7 +377,7 @@ export default class DeparturesController {
 
         await this.placementService.createDeparture(req.user.token, premisesId, placementId, placementDeparture)
 
-        this.placementService.removeDepartureSessionData(placementId, req.session)
+        this.formData.remove(placementId, req.session)
         req.flash('success', 'You have recorded this person as departed')
 
         return req.session.save(() => {

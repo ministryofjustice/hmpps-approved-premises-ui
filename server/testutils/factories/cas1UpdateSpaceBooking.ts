@@ -1,8 +1,8 @@
 import { Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
+import { SpaceSearchRoomCriteria } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
-import { SpaceSearchRoomCriteria } from '../../utils/match/spaceSearch'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 
 export default Factory.define<Cas1UpdateSpaceBooking>(() => {

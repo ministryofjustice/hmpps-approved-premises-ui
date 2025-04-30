@@ -9,8 +9,7 @@ import type {
   DepartureReason,
   NonArrivalReason,
 } from '@approved-premises/api'
-import type { Request } from 'express'
-import { DepartureFormSessionData, ReferenceData } from '@approved-premises/ui'
+import { ReferenceData } from '@approved-premises/ui'
 import type { Cas1ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
@@ -93,23 +92,6 @@ export default class PlacementService {
     const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
 
     return cas1ReferenceDataClient.getReferenceData('move-on-categories') as Promise<Array<ReferenceData>>
-  }
-
-  getDepartureSessionData(placementId: string, session: Request['session']): DepartureFormSessionData {
-    return session?.departureForms?.[placementId] || {}
-  }
-
-  setDepartureSessionData(placementId: string, session: Request['session'], data: DepartureFormSessionData) {
-    session.departureForms = session.departureForms || {}
-
-    session.departureForms[placementId] = {
-      ...this.getDepartureSessionData(placementId, session),
-      ...data,
-    }
-  }
-
-  removeDepartureSessionData(placementId: string, session: Request['session']) {
-    delete session?.departureForms?.[placementId]
   }
 
   async createCancellation(

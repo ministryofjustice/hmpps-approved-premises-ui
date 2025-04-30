@@ -1,5 +1,3 @@
-import { createMock } from '@golevelup/ts-jest'
-import type { Request } from 'express'
 import type { Cas1SpaceBooking, Cas1TimelineEvent } from '@approved-premises/api'
 import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
@@ -134,73 +132,6 @@ describe('PlacementService', () => {
       expect(result).toEqual(nonArrivalReasons)
       expect(cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
       expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenCalledWith('non-arrival-reasons')
-    })
-  })
-
-  describe('departure session data', () => {
-    const page1Data = {
-      departureDate: '2024-12-14T12:30:00.000Z',
-      reasonId: 'reason-id',
-    }
-    const page2Data = {
-      breachOrRecallReasonId: 'new-reason-id',
-    }
-
-    it('returns an empty session data object if no session departure data exists', async () => {
-      const request = createMock<Request>()
-
-      const result = placementService.getDepartureSessionData(placementId, request.session)
-
-      expect(result).toEqual({})
-    })
-
-    it('returns the departure data for the given placement', () => {
-      const request = createMock<Request>({
-        session: { departureForms: { 'placement-id': page1Data } },
-      })
-
-      const result = placementService.getDepartureSessionData(placementId, request.session)
-
-      expect(result).toEqual(page1Data)
-    })
-
-    it('sets the given departure data in session against the placement id', () => {
-      const request = createMock<Request>()
-
-      placementService.setDepartureSessionData(placementId, request.session, page1Data)
-
-      expect(request.session).toEqual(
-        expect.objectContaining({
-          departureForms: {
-            'placement-id': page1Data,
-          },
-        }),
-      )
-    })
-
-    it('updates the existing data in session', () => {
-      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
-
-      placementService.setDepartureSessionData(placementId, request.session, page2Data)
-
-      expect(request.session).toEqual(
-        expect.objectContaining({
-          departureForms: {
-            'placement-id': {
-              ...page1Data,
-              breachOrRecallReasonId: 'new-reason-id',
-            },
-          },
-        }),
-      )
-    })
-
-    it('removes the existing data from session', () => {
-      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
-
-      placementService.removeDepartureSessionData(placementId, request.session)
-
-      expect(request.session.departureForms).not.toHaveProperty('placement-id')
     })
   })
 

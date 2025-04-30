@@ -20,13 +20,12 @@ import { textValue } from '../applications/helpers'
 import { displayName, isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import paths from '../../paths/apply'
-import { spaceSearchResultsCharacteristicsLabels } from './spaceSearch'
 import { characteristicsBulletList } from '../characteristicsUtils'
+import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
-export type { SpaceSearchState } from './spaceSearch'
 
 export const placementLength = (lengthInDays: number): string => {
   return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])

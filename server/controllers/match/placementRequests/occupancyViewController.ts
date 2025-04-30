@@ -31,6 +31,7 @@ import {
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import config from '../../../config'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
+import MultiPageFormManager from '../../../utils/multiPageFormManager'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -54,19 +55,23 @@ interface ViewDayRequest extends Request {
 }
 
 export default class {
+  formData: MultiPageFormManager<'spaceSearch'>
+
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
     private readonly spaceSearchService: SpaceSearchService,
     private readonly sessionService: SessionService,
-  ) {}
+  ) {
+    this.formData = new MultiPageFormManager('spaceSearch')
+  }
 
   view(): TypedRequestHandler<Request> {
     return async (req: ViewRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId } = req.params
 
-      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
+      const searchState = this.formData.get(id, req.session)
 
       if (!searchState) {
         return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
@@ -157,7 +162,7 @@ export default class {
           'startDate',
         )
 
-        this.spaceSearchService.setSpaceSearchState(id, req.session, {
+        this.formData.update(id, req.session, {
           roomCriteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria) || [],
           startDate,
           durationDays: Number(durationDays),
@@ -193,7 +198,7 @@ export default class {
           'departureDate',
         )
 
-        this.spaceSearchService.setSpaceSearchState(id, req.session, {
+        this.formData.update(id, req.session, {
           arrivalDate,
           departureDate,
         })
