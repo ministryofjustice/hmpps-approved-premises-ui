@@ -5,6 +5,7 @@ import {
   camelCase,
   convertToTitleCase,
   initialiseName,
+  isCardinal,
   joinWithCommas,
   linebreaksToParagraphs,
   linkTo,
@@ -350,5 +351,20 @@ describe('joinWithCommas', () => {
     [[], ''],
   ])('joins %s giving %s', (list: Array<string>, expected: string) => {
     expect(joinWithCommas(list)).toEqual(expected)
+  })
+})
+
+describe('isCardinal', () => {
+  it.each([
+    ['1', true],
+    ['0', true],
+    ['1234567890', true],
+    ['-1', false],
+    ['1.1', false],
+    ['', false],
+    [' ', false],
+    ['1a', false],
+  ])('tests "%s" giving %s', (str, expected) => {
+    expect(isCardinal(str)).toBe(expected)
   })
 })

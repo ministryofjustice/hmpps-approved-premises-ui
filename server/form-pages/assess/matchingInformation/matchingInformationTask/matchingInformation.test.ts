@@ -87,16 +87,28 @@ describe('MatchingInformation', () => {
       })
     })
 
-    it('should add an error if lengthOfStayAgreed is no and the details are not provided', () => {
-      const page = new MatchingInformation(
-        { ...defaultArguments, lengthOfStayAgreed: 'no', lengthOfStayWeeks: null, lengthOfStayDays: null },
-        assessment,
-      )
+    it.each([
+      ['1', undefined, true],
+      ['1', '', true],
+      ['-1', '5', true],
+      ['7', '0', false],
+    ])(
+      'if lengthOfStayAgreed is "no", weeks is "%s" and days is "%s" it should error %s',
+      (weeks: string, days: string, shouldError: boolean) => {
+        const page = new MatchingInformation(
+          { ...defaultArguments, lengthOfStayAgreed: 'no', lengthOfStayWeeks: weeks, lengthOfStayDays: days },
+          assessment,
+        )
 
-      expect(page.errors()).toEqual({
-        lengthOfStay: 'You must provide a recommended length of stay',
-      })
-    })
+        expect(page.errors()).toEqual(
+          shouldError
+            ? {
+                lengthOfStay: 'You must provide a recommended length of stay in whole weeks and days',
+              }
+            : {},
+        )
+      },
+    )
 
     it("should return an error if the type is not available for a women's application", () => {
       const page = new MatchingInformation({ ...defaultArguments, apType: 'isMHAPElliottHouse' }, weAssessment)
@@ -135,8 +147,7 @@ describe('MatchingInformation', () => {
         {
           ...defaultArguments,
           lengthOfStayAgreed: 'no',
-          lengthOfStayDays: '5',
-          lengthOfStayWeeks: '5',
+          lengthOfStay: '40',
         },
         assessment,
       )

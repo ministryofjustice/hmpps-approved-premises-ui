@@ -24,7 +24,7 @@
     {% if context.errors[fieldName] %}
       <p id="{{ fieldname }}-error" class="govuk-error-message" data-cy-error-{{ fieldname }}="true">
         <span class="govuk-visually-hidden">Error:</span>
-        {{ context.errors[fieldname].text }}
+        {{ context.errors[fieldName].text }}
       </p>
     {% endif %}
 
