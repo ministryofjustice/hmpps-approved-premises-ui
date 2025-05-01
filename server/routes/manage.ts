@@ -263,15 +263,27 @@ export default function routes(controllers: Controllers, router: Router, service
 
   // Placement transfers
   get(paths.premises.placements.transfers.new.pattern, transfersController.new(), {
-    auditEvent: 'NEW_TRANSFER_REQUEST',
+    auditEvent: 'TRANSFER_REQUEST_NEW',
     allowedPermissions: ['cas1_planned_transfer_create'],
   })
   post(paths.premises.placements.transfers.new.pattern, transfersController.saveNew(), {
-    auditEvent: 'NEW_TRANSFER_REQUEST_SAVE',
+    auditEvent: 'TRANSFER_REQUEST_NEW_SAVE',
     allowedPermissions: ['cas1_planned_transfer_create'],
   })
   get(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.emergencyDetails(), {
-    auditEvent: 'EMERGENCY_TRANSFER_REQUEST_DETAILS',
+    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS',
+    allowedPermissions: ['cas1_planned_transfer_create'],
+  })
+  post(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.saveEmergencyDetails(), {
+    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS_SAVE',
+    allowedPermissions: ['cas1_planned_transfer_create'],
+  })
+  get(paths.premises.placements.transfers.confirm.pattern, transfersController.confirm(), {
+    auditEvent: 'TRANSFER_REQUEST_CONFIRM',
+    allowedPermissions: ['cas1_planned_transfer_create'],
+  })
+  post(paths.premises.placements.transfers.confirm.pattern, transfersController.create(), {
+    auditEvent: 'TRANSFER_REQUEST_CREATE',
     allowedPermissions: ['cas1_planned_transfer_create'],
   })
 

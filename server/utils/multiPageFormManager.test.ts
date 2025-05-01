@@ -34,10 +34,12 @@ describe('multiPageFormManager', () => {
   })
 
   it('updates the data provided against the correct id', () => {
-    const updated = formData.update('placement-one-id', mockSession, { receivingAPId: 'testId' })
+    const updated = formData.update('placement-one-id', mockSession, { destinationPremisesId: 'testId' })
 
-    expect(updated).toEqual(expect.objectContaining({ receivingAPId: 'testId' }))
-    expect(formData.get('placement-one-id', mockSession)).toEqual(expect.objectContaining({ receivingAPId: 'testId' }))
+    expect(updated).toEqual(expect.objectContaining({ destinationPremisesId: 'testId' }))
+    expect(formData.get('placement-one-id', mockSession)).toEqual(
+      expect.objectContaining({ destinationPremisesId: 'testId' }),
+    )
   })
 
   it('removes the data for the provided id', () => {

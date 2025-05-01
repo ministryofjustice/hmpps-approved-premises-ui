@@ -93,6 +93,7 @@ import spaceSearchStateFactory from './spaceSearchState'
 import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
 import cas1BedDetailFactory from './cas1BedDetail'
+import cas1NewEmergencyTransferFactory from './cas1NewEmergencyTransfer'
 
 export {
   acctAlertFactory,
@@ -131,6 +132,7 @@ export {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
+  cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1OverbookingRangeFactory,

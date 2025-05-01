@@ -480,7 +480,7 @@ export type DepartureFormData = ObjectWithDateParts<'departureDate'> & {
 export type TransferFormData = Partial<
   ObjectWithDateParts<'transferDate'> & ObjectWithDateParts<'placementEndDate'>
 > & {
-  receivingAPId?: string
+  destinationPremisesId?: string
 }
 
 export type MultiPageFormData = {

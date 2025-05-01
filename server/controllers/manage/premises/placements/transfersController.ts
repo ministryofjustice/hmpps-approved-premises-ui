@@ -1,10 +1,17 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { addDays } from 'date-fns'
+import { TransferFormData } from '@approved-premises/ui'
+import { Cas1NewEmergencyTransfer } from '@approved-premises/api'
 import { PlacementService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
-import { dateAndTimeInputsAreValidDates, DateFormats, datetimeIsInThePast } from '../../../../utils/dateUtils'
+import {
+  dateAndTimeInputsAreValidDates,
+  DateFormats,
+  dateIsToday,
+  datetimeIsInThePast,
+} from '../../../../utils/dateUtils'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 
 export default class TransfersController {
@@ -34,30 +41,36 @@ export default class TransfersController {
     }
   }
 
+  private getSaveNewErrors(body: TransferFormData) {
+    const errors: Record<string, string> = {}
+
+    const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'transferDate')
+
+    if (!transferDate) {
+      errors.transferDate = 'You must enter a transfer date'
+    } else if (!dateAndTimeInputsAreValidDates(body, 'transferDate')) {
+      errors.transferDate = 'You must enter a valid transfer date'
+    } else {
+      // TODO: this validation will need to be updated when standard transfers are added.
+      const oneWeekAgo = DateFormats.dateObjToIsoDate(addDays(new Date(), -7))
+      const tomorrow = DateFormats.dateObjToIsoDate(addDays(new Date(), 1))
+
+      if (datetimeIsInThePast(transferDate, oneWeekAgo) || !datetimeIsInThePast(transferDate, tomorrow)) {
+        errors.transferDate = 'The date of transfer must be today or in the last 7 days'
+      }
+    }
+
+    return Object.keys(errors).length ? errors : undefined
+  }
+
   saveNew(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
 
       try {
-        const errors: Record<string, string> = {}
+        const errors = this.getSaveNewErrors(req.body)
 
-        const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'transferDate')
-
-        if (!transferDate) {
-          errors.transferDate = 'You must enter a transfer date'
-        } else if (!dateAndTimeInputsAreValidDates(req.body, 'transferDate')) {
-          errors.transferDate = 'You must enter a valid transfer date'
-        } else {
-          // TODO: this validation will need to be updated when standard transfers are added.
-          const oneWeekAgo = DateFormats.dateObjToIsoDate(addDays(new Date(), -7))
-          const tomorrow = DateFormats.dateObjToIsoDate(addDays(new Date(), 1))
-
-          if (datetimeIsInThePast(transferDate, oneWeekAgo) || !datetimeIsInThePast(transferDate, tomorrow)) {
-            errors.transferDate = 'The date of transfer must be today or in the last 7 days'
-          }
-        }
-
-        if (Object.keys(errors).length) {
+        if (errors) {
           throw new ValidationError(errors)
         }
 
@@ -88,11 +101,11 @@ export default class TransfersController {
 
       const formData = this.formData.get(placementId, req.session)
 
-      if (!formData) {
-        res.redirect(managePaths.premises.placements.transfers.new({ premisesId, placementId }))
+      if (!formData || this.getSaveNewErrors(formData)) {
+        return res.redirect(managePaths.premises.placements.transfers.new({ premisesId, placementId }))
       }
 
-      res.render('manage/premises/placements/transfers/emergency-details', {
+      return res.render('manage/premises/placements/transfers/emergency-details', {
         backlink: managePaths.premises.placements.transfers.new({ premisesId, placementId }),
         pageHeading: 'Enter the emergency transfer details',
         placement,
@@ -101,6 +114,118 @@ export default class TransfersController {
         ...formData,
         ...userInput,
       })
+    }
+  }
+
+  private getSaveEmergencyDetailsErrors(req: Request, placementId: string) {
+    const errors: Record<string, string> = {}
+
+    if (!req.body.destinationPremisesId) {
+      errors.destinationPremisesId = 'You must enter the Approved Premises the person being transferred to'
+    }
+
+    const { placementEndDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'placementEndDate')
+
+    if (!placementEndDate) {
+      errors.placementEndDate = 'You must enter a placement end date'
+    } else if (!dateAndTimeInputsAreValidDates(req.body, 'placementEndDate')) {
+      errors.placementEndDate = 'You must enter a valid placement end date'
+    } else {
+      const { transferDate } = this.formData.get(placementId, req.session)
+
+      if (datetimeIsInThePast(placementEndDate, transferDate) || dateIsToday(placementEndDate, transferDate)) {
+        errors.placementEndDate = `The placement end date must be after the transfer date, ${DateFormats.isoDateToUIDate(transferDate, { format: 'short' })}`
+      }
+    }
+
+    return Object.keys(errors).length ? errors : undefined
+  }
+
+  saveEmergencyDetails(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, placementId } = req.params
+
+      try {
+        const errors = this.getSaveEmergencyDetailsErrors(req, placementId)
+
+        if (errors) {
+          throw new ValidationError(errors)
+        }
+
+        this.formData.update(placementId, req.session, req.body)
+
+        return req.session.save(() => {
+          res.redirect(managePaths.premises.placements.transfers.confirm({ premisesId, placementId }))
+        })
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          managePaths.premises.placements.transfers.emergencyDetails({
+            premisesId,
+            placementId,
+          }),
+        )
+      }
+    }
+  }
+
+  confirm(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, placementId } = req.params
+      const { errors, errorSummary } = fetchErrorsAndUserInput(req)
+      const placement = await this.placementService.getPlacement(req.user.token, placementId)
+
+      const formData = this.formData.get(placementId, req.session)
+
+      if (!formData) {
+        return res.redirect(managePaths.premises.placements.transfers.new({ premisesId, placementId }))
+      }
+
+      return res.render('manage/premises/placements/transfers/confirm', {
+        backlink: managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }),
+        pageHeading: 'Check the details of the transfer',
+        placement,
+        errors,
+        errorSummary,
+        ...formData,
+      })
+    }
+  }
+
+  create(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, placementId } = req.params
+
+      const formData = this.formData.get(placementId, req.session)
+
+      try {
+        const transferRequest: Cas1NewEmergencyTransfer = {
+          arrivalDate: formData.transferDate,
+          departureDate: formData.placementEndDate,
+          destinationPremisesId: formData.destinationPremisesId,
+        }
+
+        await this.placementService.createEmergencyTransfer(req.user.token, premisesId, placementId, transferRequest)
+
+        this.formData.remove(placementId, req.session)
+        req.flash(
+          'success',
+          'The emergency transfer has been recorded. You must now record the person as departed, and use the move-on category for transfer.',
+        )
+
+        return req.session.save(() => {
+          res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
+        })
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          managePaths.premises.placements.transfers.confirm({ premisesId, placementId }),
+        )
+      }
     }
   }
 }

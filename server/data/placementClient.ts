@@ -2,6 +2,7 @@ import type {
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
+  Cas1NewEmergencyTransfer,
   Cas1NewSpaceBookingCancellation,
   Cas1NonArrival,
   Cas1SpaceBooking,
@@ -78,6 +79,13 @@ export default class PlacementClient {
     return this.restClient.post({
       path: paths.premises.placements.cancel({ premisesId, placementId }),
       data: cancellation,
+    })
+  }
+
+  async createEmergencyTransfer(premisesId: string, placementId: string, transferRequest: Cas1NewEmergencyTransfer) {
+    return this.restClient.post({
+      path: paths.premises.placements.emergencyTransfer({ premisesId, placementId }),
+      data: transferRequest,
     })
   }
 }

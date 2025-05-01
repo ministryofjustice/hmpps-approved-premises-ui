@@ -31,14 +31,22 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
         {{ govukSelect({
-            id: "receivingAP",
-            name: "receivingAP",
+            id: "destinationPremisesId",
+            name: "destinationPremisesId",
             label: {
                 text: "Where is the person being transferred to?",
                 classes: "govuk-fieldset__legend--m"
             },
-            items: allApprovedPremises,
-            errorMessage: errors.receivingAP
+            items: [{
+                value: "",
+                text: "Please select"
+            },
+                {
+                    value: "test",
+                    text: "Test"
+                }],
+            value: destinationPremisesId,
+            errorMessage: errors.destinationPremisesId
         }) }}
 
         {{ govukDateInput({

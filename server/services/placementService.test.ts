@@ -6,6 +6,7 @@ import {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
+  cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
@@ -187,6 +188,19 @@ describe('PlacementService', () => {
       expect(result).toEqual({})
       expect(placementClientFactory).toHaveBeenCalledWith(token)
       expect(placementClient.cancel).toHaveBeenCalledWith(premisesId, placementId, cancellation)
+    })
+  })
+
+  describe('createEmergencyTransfer', () => {
+    it('calls the createEmergencyTransfer method of the placement client and returns a response', async () => {
+      const transferRequest = cas1NewEmergencyTransferFactory.build()
+      placementClient.createEmergencyTransfer.mockResolvedValue({})
+
+      const result = await placementService.createEmergencyTransfer(token, premisesId, placementId, transferRequest)
+
+      expect(result).toEqual({})
+      expect(placementClientFactory).toHaveBeenCalledWith(token)
+      expect(placementClient.createEmergencyTransfer).toHaveBeenCalledWith(premisesId, placementId, transferRequest)
     })
   })
 })
