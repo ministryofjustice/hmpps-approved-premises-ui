@@ -10,7 +10,6 @@ import {
 import { PlacementShowPage } from '../../../pages/manage'
 import { signIn } from '../../signIn'
 import { NewTransferPage } from '../../../pages/manage/placements/transfers/new'
-import { roleToPermissions } from '../../../../server/utils/users/roles'
 import Page from '../../../pages/page'
 import { EmergencyDetailsPage } from '../../../pages/manage/placements/transfers/emergencyDetails'
 import { DateFormats } from '../../../../server/utils/dateUtils'
