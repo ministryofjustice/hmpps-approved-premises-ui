@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 import { addDays } from 'date-fns'
 import { TransferFormData } from '@approved-premises/ui'
 import { Cas1NewEmergencyTransfer } from '@approved-premises/api'
-import { PlacementService } from '../../../../services'
+import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
@@ -13,11 +13,15 @@ import {
   datetimeIsInThePast,
 } from '../../../../utils/dateUtils'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
+import { allApprovedPremisesOptions, transferRequestSummaryList } from '../../../../utils/match/transfers'
 
 export default class TransfersController {
   formData: MultiPageFormManager<'transfers'>
 
-  constructor(private readonly placementService: PlacementService) {
+  constructor(
+    private readonly placementService: PlacementService,
+    private readonly premisesService: PremisesService,
+  ) {
     this.formData = new MultiPageFormManager('transfers')
   }
 
@@ -95,9 +99,11 @@ export default class TransfersController {
 
   emergencyDetails(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { token } = req.user
       const { premisesId, placementId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-      const placement = await this.placementService.getPlacement(req.user.token, placementId)
+      const placement = await this.placementService.getPlacement(token, placementId)
+      const approvedPremises = await this.premisesService.getCas1All(token)
 
       const formData = this.formData.get(placementId, req.session)
 
@@ -109,6 +115,7 @@ export default class TransfersController {
         backlink: managePaths.premises.placements.transfers.new({ premisesId, placementId }),
         pageHeading: 'Enter the emergency transfer details',
         placement,
+        approvedPremisesOptions: allApprovedPremisesOptions(approvedPremises),
         errors,
         errorSummary,
         ...formData,
@@ -152,7 +159,12 @@ export default class TransfersController {
           throw new ValidationError(errors)
         }
 
-        this.formData.update(placementId, req.session, req.body)
+        const destinationPremises = await this.premisesService.find(req.user.token, req.body.destinationPremisesId)
+
+        this.formData.update(placementId, req.session, {
+          ...req.body,
+          destinationPremisesName: destinationPremises.name,
+        })
 
         return req.session.save(() => {
           res.redirect(managePaths.premises.placements.transfers.confirm({ premisesId, placementId }))
@@ -187,6 +199,7 @@ export default class TransfersController {
         backlink: managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }),
         pageHeading: 'Check the details of the transfer',
         placement,
+        summaryList: transferRequestSummaryList(formData),
         errors,
         errorSummary,
         ...formData,

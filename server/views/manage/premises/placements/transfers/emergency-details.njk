@@ -37,14 +37,7 @@
                 text: "Where is the person being transferred to?",
                 classes: "govuk-fieldset__legend--m"
             },
-            items: [{
-                value: "",
-                text: "Please select"
-            },
-                {
-                    value: "test",
-                    text: "Test"
-                }],
+            items: approvedPremisesOptions,
             value: destinationPremisesId,
             errorMessage: errors.destinationPremisesId
         }) }}
@@ -59,7 +52,7 @@
                 }
             },
             hint: {
-                text: "Enter the expected departure date. The current departure date is []."
+                text: "Enter the expected departure date. The current departure date is " + formatDate(placement.expectedDepartureDate)
             },
             items: dateFieldValues('placementEndDate', errors),
             errorMessage: errors.placementEndDate

@@ -55,7 +55,7 @@ export const controllers = (services: Services) => {
   const departuresController = new DeparturesController(services.premisesService, services.placementService)
   const apOccupancyViewController = new ApOccupancyViewController(services.premisesService, services.sessionService)
   const changesController = new ChangesController(services.placementService, services.premisesService)
-  const transfersController = new TransfersController(services.placementService)
+  const transfersController = new TransfersController(services.placementService, services.premisesService)
 
   return {
     premisesController,

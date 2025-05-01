@@ -481,6 +481,7 @@ export type TransferFormData = Partial<
   ObjectWithDateParts<'transferDate'> & ObjectWithDateParts<'placementEndDate'>
 > & {
   destinationPremisesId?: string
+  destinationPremisesName?: string
 }
 
 export type MultiPageFormData = {

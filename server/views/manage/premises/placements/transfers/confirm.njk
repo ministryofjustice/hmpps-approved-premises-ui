@@ -1,4 +1,5 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
@@ -28,6 +29,7 @@
     <form action="{{ currentUrl }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
+        {{ govukSummaryList(summaryList) }}
 
         {{ govukButton({
             text: "Continue",

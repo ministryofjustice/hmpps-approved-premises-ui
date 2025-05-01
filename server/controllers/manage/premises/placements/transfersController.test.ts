@@ -2,13 +2,19 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
+import { Cas1Premises } from '@approved-premises/api'
 import TransfersController from './transfersController'
-import { cas1PremisesFactory, cas1SpaceBookingFactory } from '../../../../testutils/factories'
-import { PlacementService } from '../../../../services'
+import {
+  cas1PremisesBasicSummaryFactory,
+  cas1PremisesFactory,
+  cas1SpaceBookingFactory,
+} from '../../../../testutils/factories'
+import { PlacementService, PremisesService } from '../../../../services'
 import managePaths from '../../../../paths/manage'
 import * as validationUtils from '../../../../utils/validation'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
+import { allApprovedPremisesOptions, transferRequestSummaryList } from '../../../../utils/match/transfers'
 
 describe('transfersController', () => {
   const token = 'TEST_TOKEN'
@@ -19,9 +25,12 @@ describe('transfersController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>()
 
   const placementService = createMock<PlacementService>()
-  const transfersController = new TransfersController(placementService)
+  const premisesService = createMock<PremisesService>()
+  const transfersController = new TransfersController(placementService, premisesService)
 
   const premises = cas1PremisesFactory.build()
+  const allPremises = cas1PremisesBasicSummaryFactory.buildList(5)
+  const destinationAp = allPremises[2]
   const placement = cas1SpaceBookingFactory.current().build()
 
   const params = { premisesId: premises.id, placementId: placement.id }
@@ -31,6 +40,8 @@ describe('transfersController', () => {
     jest.useFakeTimers().setSystemTime(DateFormats.isoToDateObj('2025-04-29'))
 
     placementService.getPlacement.mockResolvedValue(placement)
+    premisesService.getCas1All.mockResolvedValue(allPremises)
+    premisesService.find.mockResolvedValue(destinationAp as Cas1Premises)
     request = createMock<Request>({
       user: { token },
       params,
@@ -188,6 +199,7 @@ describe('transfersController', () => {
         backlink: managePaths.premises.placements.transfers.new(params),
         pageHeading: 'Enter the emergency transfer details',
         placement,
+        approvedPremisesOptions: allApprovedPremisesOptions(allPremises),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...sessionData,
@@ -212,7 +224,7 @@ describe('transfersController', () => {
       }
     })
 
-    it('shows an error if the receiving AP has not been selected', async () => {
+    it('shows an error if the destination AP has not been selected', async () => {
       const requestHandler = transfersController.saveEmergencyDetails()
       request.body = {
         'placementEndDate-year': '2025',
@@ -246,7 +258,7 @@ describe('transfersController', () => {
       const requestHandler = transfersController.saveEmergencyDetails()
       const [year, month, day] = date.split('-')
       request.body = {
-        destinationPremisesId: 'some-id',
+        destinationPremisesId: destinationAp.id,
         'placementEndDate-year': year,
         'placementEndDate-month': month,
         'placementEndDate-day': day,
@@ -268,7 +280,7 @@ describe('transfersController', () => {
 
     it('saves the emergency transfer request details and redirects to the confirmation page', async () => {
       request.body = {
-        destinationPremisesId: 'some-api-id',
+        destinationPremisesId: destinationAp.id,
         'placementEndDate-year': '2025',
         'placementEndDate-month': '5',
         'placementEndDate-day': '14',
@@ -278,8 +290,10 @@ describe('transfersController', () => {
 
       await requestHandler(request, response, next)
 
+      expect(premisesService.find).toHaveBeenCalledWith(token, destinationAp.id)
       expect(transfersController.formData.update).toHaveBeenCalledWith(placement.id, request.session, {
-        destinationPremisesId: 'some-api-id',
+        destinationPremisesId: destinationAp.id,
+        destinationPremisesName: destinationAp.name,
         placementEndDate: '2025-05-14',
         'placementEndDate-year': '2025',
         'placementEndDate-month': '5',
@@ -296,7 +310,8 @@ describe('transfersController', () => {
       'transferDate-year': '2025',
       'transferDate-month': '4',
       'transferDate-day': '28',
-      destinationPremisesId: 'some-ap-id',
+      destinationPremisesId: destinationAp.id,
+      destinationPremisesName: destinationAp.name,
       placementEndDate: '2025-06-12',
       'placementEndDate-year': '2025',
       'placementEndDate-month': '6',
@@ -320,7 +335,7 @@ describe('transfersController', () => {
       expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.new(params))
     })
 
-    it('renders the confirmation page', async () => {
+    it('renders the confirmation page with a summary of the emergency transfer', async () => {
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
       const requestHandler = transfersController.confirm()
@@ -330,6 +345,7 @@ describe('transfersController', () => {
         backlink: managePaths.premises.placements.transfers.emergencyDetails(params),
         pageHeading: 'Check the details of the transfer',
         placement,
+        summaryList: transferRequestSummaryList(sessionData),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...sessionData,
@@ -343,7 +359,8 @@ describe('transfersController', () => {
       'transferDate-year': '2025',
       'transferDate-month': '4',
       'transferDate-day': '28',
-      destinationPremisesId: 'some-ap-id',
+      destinationPremisesId: destinationAp.id,
+      destinationPremisesName: destinationAp.name,
       placementEndDate: '2025-06-12',
       'placementEndDate-year': '2025',
       'placementEndDate-month': '6',
