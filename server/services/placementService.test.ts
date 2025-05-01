@@ -193,14 +193,14 @@ describe('PlacementService', () => {
 
   describe('createEmergencyTransfer', () => {
     it('calls the createEmergencyTransfer method of the placement client and returns a response', async () => {
-      const transferRequest = cas1NewEmergencyTransferFactory.build()
+      const newTransfer = cas1NewEmergencyTransferFactory.build()
       placementClient.createEmergencyTransfer.mockResolvedValue({})
 
-      const result = await placementService.createEmergencyTransfer(token, premisesId, placementId, transferRequest)
+      const result = await placementService.createEmergencyTransfer(token, premisesId, placementId, newTransfer)
 
       expect(result).toEqual({})
       expect(placementClientFactory).toHaveBeenCalledWith(token)
-      expect(placementClient.createEmergencyTransfer).toHaveBeenCalledWith(premisesId, placementId, transferRequest)
+      expect(placementClient.createEmergencyTransfer).toHaveBeenCalledWith(premisesId, placementId, newTransfer)
     })
   })
 })

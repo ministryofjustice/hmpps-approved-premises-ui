@@ -9,13 +9,13 @@ import {
 } from '../../../../server/testutils/factories'
 import { PlacementShowPage } from '../../../pages/manage'
 import { signIn } from '../../signIn'
-import { TransferRequestPage } from '../../../pages/manage/placements/transfers/new'
+import { NewTransferPage } from '../../../pages/manage/placements/transfers/new'
 import { roleToPermissions } from '../../../../server/utils/users/roles'
 import Page from '../../../pages/page'
 import { EmergencyDetailsPage } from '../../../pages/manage/placements/transfers/emergencyDetails'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import { TransferConfirmPage } from '../../../pages/manage/placements/transfers/confirm'
-import { transferRequestSummaryList } from '../../../../server/utils/placements/transfers'
+import { transferSummaryList } from '../../../../server/utils/placements/transfers'
 import apiPaths from '../../../../server/paths/api'
 
 context('Transfers', () => {
@@ -26,7 +26,7 @@ context('Transfers', () => {
     })
     const allApprovedPremises = cas1PremisesBasicSummaryFactory.buildList(5)
     const destinationAp = allApprovedPremises[2]
-    const newTransferRequest = cas1NewEmergencyTransferFactory.build({
+    const newEmergencyTransfer = cas1NewEmergencyTransferFactory.build({
       destinationPremisesId: destinationAp.id,
     })
 
@@ -48,30 +48,30 @@ context('Transfers', () => {
     placementPage.clickAction('Request a transfer')
 
     // Then I should see the form to request a transfer
-    const transferRequestPage = Page.verifyOnPage(TransferRequestPage)
-    transferRequestPage.shouldShowPersonHeader(placement.person as FullPerson)
-    transferRequestPage.shouldShowForm()
+    const newTransferPage = Page.verifyOnPage(NewTransferPage)
+    newTransferPage.shouldShowPersonHeader(placement.person as FullPerson)
+    newTransferPage.shouldShowForm()
 
     // When I complete the form and put a transfer date more than a week ago
     const overAWeekAgo = faker.date.recent({ refDate: addDays(new Date(), -8) })
-    transferRequestPage.completeForm(DateFormats.dateObjToIsoDate(overAWeekAgo))
+    newTransferPage.completeForm(DateFormats.dateObjToIsoDate(overAWeekAgo))
 
     // Then I should see an error
-    transferRequestPage.shouldShowErrorMessagesForFields(['transferDate'], {
+    newTransferPage.shouldShowErrorMessagesForFields(['transferDate'], {
       transferDate: 'The date of transfer must be today or in the last 7 days',
     })
 
     // When I complete the form and put a transfer date of tomorrow
     const tomorrow = addDays(new Date(), 1)
-    transferRequestPage.completeForm(DateFormats.dateObjToIsoDate(tomorrow))
+    newTransferPage.completeForm(DateFormats.dateObjToIsoDate(tomorrow))
 
     // Then I should see an error
-    transferRequestPage.shouldShowErrorMessagesForFields(['transferDate'], {
+    newTransferPage.shouldShowErrorMessagesForFields(['transferDate'], {
       transferDate: 'The date of transfer must be today or in the last 7 days',
     })
 
     // When I complete the form and put an acceptable transfer date
-    transferRequestPage.completeForm(newTransferRequest.arrivalDate)
+    newTransferPage.completeForm(newEmergencyTransfer.arrivalDate)
 
     // Then I should see the form to add details for the emergency transfer
     const emergencyTransferDetailsPage = Page.verifyOnPage(EmergencyDetailsPage, placement)
@@ -88,14 +88,14 @@ context('Transfers', () => {
     })
 
     // When I complete the form
-    emergencyTransferDetailsPage.completeForm(destinationAp.name, newTransferRequest.departureDate)
+    emergencyTransferDetailsPage.completeForm(destinationAp.name, newEmergencyTransfer.departureDate)
 
     // Then I should see the confirmation page
     const emergencyTransferConfirmationPage = Page.verifyOnPage(TransferConfirmPage)
     emergencyTransferConfirmationPage.shouldContainSummaryListItems(
-      transferRequestSummaryList({
-        transferDate: newTransferRequest.arrivalDate,
-        placementEndDate: newTransferRequest.departureDate,
+      transferSummaryList({
+        transferDate: newEmergencyTransfer.arrivalDate,
+        placementEndDate: newEmergencyTransfer.departureDate,
         destinationPremisesName: destinationAp.name,
       }).rows,
     )
@@ -116,9 +116,9 @@ context('Transfers', () => {
       apiPaths.premises.placements.emergencyTransfer({ premisesId: premises.id, placementId: placement.id }),
     ).then(body => {
       const { arrivalDate, departureDate, destinationPremisesId } = body as Cas1NewEmergencyTransfer
-      expect(arrivalDate).equal(newTransferRequest.arrivalDate)
-      expect(departureDate).equal(newTransferRequest.departureDate)
-      expect(destinationPremisesId).equal(newTransferRequest.destinationPremisesId)
+      expect(arrivalDate).equal(newEmergencyTransfer.arrivalDate)
+      expect(departureDate).equal(newEmergencyTransfer.departureDate)
+      expect(destinationPremisesId).equal(newEmergencyTransfer.destinationPremisesId)
     })
   })
 })

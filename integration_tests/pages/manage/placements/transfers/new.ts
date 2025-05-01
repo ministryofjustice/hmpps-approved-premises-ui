@@ -1,6 +1,6 @@
 import Page from '../../../page'
 
-export class TransferRequestPage extends Page {
+export class NewTransferPage extends Page {
   constructor() {
     super('Request a transfer')
   }

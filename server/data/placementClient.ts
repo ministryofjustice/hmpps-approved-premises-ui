@@ -82,10 +82,14 @@ export default class PlacementClient {
     })
   }
 
-  async createEmergencyTransfer(premisesId: string, placementId: string, transferRequest: Cas1NewEmergencyTransfer) {
+  async createEmergencyTransfer(
+    premisesId: string,
+    placementId: string,
+    newEmergencyTransfer: Cas1NewEmergencyTransfer,
+  ) {
     return this.restClient.post({
       path: paths.premises.placements.emergencyTransfer({ premisesId, placementId }),
-      data: transferRequest,
+      data: newEmergencyTransfer,
     })
   }
 }

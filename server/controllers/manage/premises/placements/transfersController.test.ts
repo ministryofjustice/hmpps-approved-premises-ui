@@ -14,7 +14,7 @@ import managePaths from '../../../../paths/manage'
 import * as validationUtils from '../../../../utils/validation'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
-import { allApprovedPremisesOptions, transferRequestSummaryList } from '../../../../utils/placements/transfers'
+import { allApprovedPremisesOptions, transferSummaryList } from '../../../../utils/placements/transfers'
 
 describe('transfersController', () => {
   const token = 'TEST_TOKEN'
@@ -345,7 +345,7 @@ describe('transfersController', () => {
         backlink: managePaths.premises.placements.transfers.emergencyDetails(params),
         pageHeading: 'Check the details of the transfer',
         placement,
-        summaryList: transferRequestSummaryList(sessionData),
+        summaryList: transferSummaryList(sessionData),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...sessionData,

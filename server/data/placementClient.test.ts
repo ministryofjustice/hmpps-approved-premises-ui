@@ -227,7 +227,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
 
   describe('createEmergencyTransfer', () => {
     it('creates an emergency transfer', async () => {
-      const transferRequest = cas1NewEmergencyTransferFactory.build()
+      const newEmergencyTransfer = cas1NewEmergencyTransferFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -235,7 +235,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
         withRequest: {
           method: 'POST',
           path: paths.premises.placements.emergencyTransfer({ premisesId, placementId }),
-          body: transferRequest,
+          body: newEmergencyTransfer,
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -244,7 +244,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
           status: 200,
         },
       })
-      const result = await placementClient.createEmergencyTransfer(premisesId, placementId, transferRequest)
+      const result = await placementClient.createEmergencyTransfer(premisesId, placementId, newEmergencyTransfer)
       expect(result).toEqual({})
     })
   })

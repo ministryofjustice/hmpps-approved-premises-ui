@@ -1,5 +1,5 @@
 import { TransferFormData } from '@approved-premises/ui'
-import { allApprovedPremisesOptions, transferRequestSummaryList } from './transfers'
+import { allApprovedPremisesOptions, transferSummaryList } from './transfers'
 import { cas1PremisesBasicSummaryFactory } from '../../testutils/factories'
 
 describe('allApprovedPremisesOptions', () => {
@@ -23,15 +23,15 @@ describe('allApprovedPremisesOptions', () => {
   })
 })
 
-describe('transferRequestSummaryRows', () => {
-  it('returns a summary list for the requested transfer', () => {
+describe('transferSummaryRows', () => {
+  it('returns a summary list for the transfer', () => {
     const formData: TransferFormData = {
       transferDate: '2025-05-23',
       placementEndDate: '2025-06-30',
       destinationPremisesName: 'Approved Premises Name',
     }
 
-    expect(transferRequestSummaryList(formData)).toMatchObject({
+    expect(transferSummaryList(formData)).toMatchObject({
       rows: [
         {
           key: { text: 'Date of transfer' },

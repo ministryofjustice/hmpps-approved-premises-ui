@@ -13,7 +13,7 @@ import {
   datetimeIsInThePast,
 } from '../../../../utils/dateUtils'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
-import { allApprovedPremisesOptions, transferRequestSummaryList } from '../../../../utils/placements/transfers'
+import { allApprovedPremisesOptions, transferSummaryList } from '../../../../utils/placements/transfers'
 
 export default class TransfersController {
   formData: MultiPageFormManager<'transfers'>
@@ -199,7 +199,7 @@ export default class TransfersController {
         backlink: managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }),
         pageHeading: 'Check the details of the transfer',
         placement,
-        summaryList: transferRequestSummaryList(formData),
+        summaryList: transferSummaryList(formData),
         errors,
         errorSummary,
         ...formData,
@@ -214,13 +214,18 @@ export default class TransfersController {
       const formData = this.formData.get(placementId, req.session)
 
       try {
-        const transferRequest: Cas1NewEmergencyTransfer = {
+        const newEmergencyTransfer: Cas1NewEmergencyTransfer = {
           arrivalDate: formData.transferDate,
           departureDate: formData.placementEndDate,
           destinationPremisesId: formData.destinationPremisesId,
         }
 
-        await this.placementService.createEmergencyTransfer(req.user.token, premisesId, placementId, transferRequest)
+        await this.placementService.createEmergencyTransfer(
+          req.user.token,
+          premisesId,
+          placementId,
+          newEmergencyTransfer,
+        )
 
         this.formData.remove(placementId, req.session)
         req.flash('success', {

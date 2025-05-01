@@ -13,7 +13,7 @@ export const allApprovedPremisesOptions = (approvedPremises: Array<Cas1PremisesB
   })),
 ]
 
-export const transferRequestSummaryList = (formData: TransferFormData): SummaryList => {
+export const transferSummaryList = (formData: TransferFormData): SummaryList => {
   return {
     rows: [
       {

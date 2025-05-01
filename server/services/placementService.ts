@@ -110,10 +110,10 @@ export default class PlacementService {
     token: string,
     premisesId: string,
     placementId: string,
-    transferRequest: Cas1NewEmergencyTransfer,
+    newEmergencyTransfer: Cas1NewEmergencyTransfer,
   ) {
     const placementClient = this.placementClientFactory(token)
 
-    return placementClient.createEmergencyTransfer(premisesId, placementId, transferRequest)
+    return placementClient.createEmergencyTransfer(premisesId, placementId, newEmergencyTransfer)
   }
 }
