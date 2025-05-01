@@ -7,10 +7,12 @@ export const allApprovedPremisesOptions = (approvedPremises: Array<Cas1PremisesB
     value: null,
     text: 'Select an Approved Premises',
   },
-  ...approvedPremises.map(premises => ({
-    value: premises.id,
-    text: `${premises.name} (${premises.apArea.name})`,
-  })),
+  ...approvedPremises
+    .filter(premises => premises.supportsSpaceBookings)
+    .map(premises => ({
+      value: premises.id,
+      text: `${premises.name} (${premises.apArea.name})`,
+    })),
 ]
 
 export const transferSummaryList = (formData: TransferFormData): SummaryList => {

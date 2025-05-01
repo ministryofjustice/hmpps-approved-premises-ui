@@ -23,7 +23,7 @@ context('Transfers', () => {
     const placement = cas1SpaceBookingFactory.current().build({
       premises,
     })
-    const allApprovedPremises = cas1PremisesBasicSummaryFactory.buildList(5)
+    const allApprovedPremises = cas1PremisesBasicSummaryFactory.buildList(5, { supportsSpaceBookings: true })
     const destinationAp = allApprovedPremises[2]
     const newEmergencyTransfer = cas1NewEmergencyTransferFactory.build({
       destinationPremisesId: destinationAp.id,

@@ -3,8 +3,24 @@ import { allApprovedPremisesOptions, transferSummaryList } from './transfers'
 import { cas1PremisesBasicSummaryFactory } from '../../testutils/factories'
 
 describe('allApprovedPremisesOptions', () => {
-  it('returns a list of approved premises for use in a govuk select', () => {
-    const premises = cas1PremisesBasicSummaryFactory.buildList(2)
+  it('returns a list of approved premises that accept space bookings for use in a govuk select', () => {
+    const premises = [
+      cas1PremisesBasicSummaryFactory.build({
+        name: 'Premises 1',
+        supportsSpaceBookings: true,
+        apArea: { name: 'Area 1' },
+      }),
+      cas1PremisesBasicSummaryFactory.build({
+        name: 'Premises 2',
+        supportsSpaceBookings: false,
+        apArea: { name: 'Area 2' },
+      }),
+      cas1PremisesBasicSummaryFactory.build({
+        name: 'Premises 3',
+        supportsSpaceBookings: true,
+        apArea: { name: 'Area 1' },
+      }),
+    ]
 
     expect(allApprovedPremisesOptions(premises)).toEqual([
       {
@@ -13,11 +29,11 @@ describe('allApprovedPremisesOptions', () => {
       },
       {
         value: premises[0].id,
-        text: `${premises[0].name} (${premises[0].apArea.name})`,
+        text: `Premises 1 (Area 1)`,
       },
       {
-        value: premises[1].id,
-        text: `${premises[1].name} (${premises[1].apArea.name})`,
+        value: premises[2].id,
+        text: `Premises 3 (Area 1)`,
       },
     ])
   })
