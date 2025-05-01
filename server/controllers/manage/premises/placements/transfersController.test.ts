@@ -393,10 +393,10 @@ describe('transfersController', () => {
         },
       )
       expect(transfersController.formData.remove).toHaveBeenCalledWith(placement.id, request.session)
-      expect(request.flash).toHaveBeenCalledWith(
-        'success',
-        'The emergency transfer has been recorded. You must now record the person as departed, and use the move-on category for transfer.',
-      )
+      expect(request.flash).toHaveBeenCalledWith('success', {
+        heading: 'Emergency transfer recorded',
+        body: 'You must now record the person as departed, and use the move-on category for transfer.',
+      })
       expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.show(params))
     })

@@ -223,10 +223,10 @@ export default class TransfersController {
         await this.placementService.createEmergencyTransfer(req.user.token, premisesId, placementId, transferRequest)
 
         this.formData.remove(placementId, req.session)
-        req.flash(
-          'success',
-          'The emergency transfer has been recorded. You must now record the person as departed, and use the move-on category for transfer.',
-        )
+        req.flash('success', {
+          heading: 'Emergency transfer recorded',
+          body: 'You must now record the person as departed, and use the move-on category for transfer.',
+        })
 
         return req.session.save(() => {
           res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
