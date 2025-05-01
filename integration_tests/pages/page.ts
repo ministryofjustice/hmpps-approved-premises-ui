@@ -132,6 +132,10 @@ export default abstract class Page {
     cy.get('legend').should('contain', legendName)
   }
 
+  getHint(hint: string): void {
+    cy.get('.govuk-hint').should('contain', hint)
+  }
+
   getTextInputByIdAndEnterDetails(id: string, details: string): void {
     cy.get(`#${id}`).type(details)
   }

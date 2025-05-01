@@ -2,12 +2,16 @@ import { SummaryList, TransferFormData } from '@approved-premises/ui'
 import { Cas1PremisesBasicSummary } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 
-export const allApprovedPremisesOptions = (approvedPremises: Array<Cas1PremisesBasicSummary>) => {
-  return approvedPremises.map(premises => ({
+export const allApprovedPremisesOptions = (approvedPremises: Array<Cas1PremisesBasicSummary>) => [
+  {
+    value: null,
+    text: 'Select an Approved Premises',
+  },
+  ...approvedPremises.map(premises => ({
     value: premises.id,
     text: `${premises.name} (${premises.apArea.name})`,
-  }))
-}
+  })),
+]
 
 export const transferRequestSummaryList = (formData: TransferFormData): SummaryList => {
   return {

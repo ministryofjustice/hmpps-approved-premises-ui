@@ -13,7 +13,7 @@ import {
   datetimeIsInThePast,
 } from '../../../../utils/dateUtils'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
-import { allApprovedPremisesOptions, transferRequestSummaryList } from '../../../../utils/match/transfers'
+import { allApprovedPremisesOptions, transferRequestSummaryList } from '../../../../utils/placements/transfers'
 
 export default class TransfersController {
   formData: MultiPageFormManager<'transfers'>
@@ -128,7 +128,8 @@ export default class TransfersController {
     const errors: Record<string, string> = {}
 
     if (!req.body.destinationPremisesId) {
-      errors.destinationPremisesId = 'You must enter the Approved Premises the person being transferred to'
+      errors.destinationPremisesId =
+        'You must select a destination Approved Premises for the person to be transferred to'
     }
 
     const { placementEndDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'placementEndDate')

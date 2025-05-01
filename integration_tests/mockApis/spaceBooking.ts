@@ -6,7 +6,7 @@ import type {
 } from '@approved-premises/api'
 
 import { PaginatedRequestParams, SortedRequestParams } from '@approved-premises/ui'
-import { getMatchingRequests, stubFor } from './setup'
+import { stubFor } from './setup'
 import paths from '../../server/paths/api'
 
 export default {
@@ -195,11 +195,17 @@ export default {
       },
     }),
 
-  verifySpaceBookingDepartureCreate: async (placement: Cas1SpaceBooking) =>
-    (
-      await getMatchingRequests({
+  stubSpaceBookingEmergencyTransferCreate: (placement: Cas1SpaceBooking) =>
+    stubFor({
+      request: {
         method: 'POST',
-        url: paths.premises.placements.departure({ premisesId: placement.premises.id, placementId: placement.id }),
-      })
-    ).body.requests,
+        urlPattern: paths.premises.placements.emergencyTransfer({
+          premisesId: placement.premises.id,
+          placementId: placement.id,
+        }),
+      },
+      response: {
+        status: 200,
+      },
+    }),
 }

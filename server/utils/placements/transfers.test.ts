@@ -8,6 +8,10 @@ describe('allApprovedPremisesOptions', () => {
 
     expect(allApprovedPremisesOptions(premises)).toEqual([
       {
+        text: 'Select an Approved Premises',
+        value: null,
+      },
+      {
         value: premises[0].id,
         text: `${premises[0].name} (${premises[0].apArea.name})`,
       },

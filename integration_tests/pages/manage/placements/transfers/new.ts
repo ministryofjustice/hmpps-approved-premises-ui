@@ -1,5 +1,4 @@
 import Page from '../../../page'
-import { DateFormats } from '../../../../../server/utils/dateUtils'
 
 export class TransferRequestPage extends Page {
   constructor() {
@@ -10,8 +9,8 @@ export class TransferRequestPage extends Page {
     this.getLegend('When does the person need to be transferred?')
   }
 
-  completeForm(date: Date) {
-    this.clearAndCompleteDateInputs('transferDate', DateFormats.dateObjToIsoDate(date))
+  completeForm(date: string) {
+    this.clearAndCompleteDateInputs('transferDate', date)
     this.clickContinue()
   }
 }
