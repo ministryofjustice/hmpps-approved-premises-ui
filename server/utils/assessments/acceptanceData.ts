@@ -29,6 +29,7 @@ import { placementDurationFromApplication } from './placementDurationFromApplica
 import { getResponses } from '../applications/getResponses'
 import ApplicationTimeliness from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 import type { ApplicationTimelinessBody } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
+import { lengthOfStay } from '../../form-pages/utils/matchingInformationUtils'
 
 export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
@@ -51,7 +52,7 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
   }
 
   const placementDuration =
-    retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'lengthOfStay') ||
+    lengthOfStay(pageDataFromApplicationOrAssessment(MatchingInformation, assessment)) ||
     placementDurationFromApplication(assessment.application)
 
   return {

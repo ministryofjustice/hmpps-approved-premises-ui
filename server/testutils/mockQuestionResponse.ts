@@ -92,7 +92,6 @@ export const mockOptionalQuestionResponse = ({
   isExceptionalCase,
   shouldPersonBePlacedInMaleAp,
   agreedCaseWithManager,
-  lengthOfStay,
   cruInformation,
   pssDate,
   situation,
@@ -116,7 +115,6 @@ export const mockOptionalQuestionResponse = ({
   reviewRequired?: string
   hasBoardTakenPlace?: string
   agreedCaseWithManager?: string
-  lengthOfStay?: string
   cruInformation?: string
   pssDate?: string
   situation?: string
@@ -174,10 +172,6 @@ export const mockOptionalQuestionResponse = ({
 
       if (question === 'agreedCaseWithManager') {
         return agreedCaseWithManager
-      }
-
-      if (question === 'lengthOfStay') {
-        return lengthOfStay
       }
 
       if (question === 'cruInformation') {

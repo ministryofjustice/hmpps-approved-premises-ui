@@ -221,5 +221,5 @@ export const joinWithCommas = (arr: Array<string>): string => {
  * @return true iff string is cardinal
  */
 export const isCardinal = (str: string): boolean => {
-  return /^\d+$/.test(str)
+  return /^\s*\d+\s*$/.test(str)
 }

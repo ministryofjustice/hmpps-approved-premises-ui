@@ -3,13 +3,14 @@ import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import {
   defaultMatchingInformationValues,
+  lengthOfStay,
   suggestedStaySummaryListOptions,
 } from '../../../utils/matchingInformationUtils'
 import { DateFormats, daysToWeeksAndDays } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { isCardinal, lowerCase, sentenceCase } from '../../../../utils/utils'
+import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import {
   type ApTypeCriteria,
   type ApTypeSpecialist,
@@ -54,7 +55,6 @@ export type MatchingInformationBody = {
     'lengthOfStayAgreed',
     'lengthOfStayWeeks',
     'lengthOfStayDays',
-    'lengthOfStay',
     'cruInformation',
     ...placementRequirementCriteria,
     ...offenceAndRiskCriteria,
@@ -143,7 +143,7 @@ export default class MatchingInformation implements TasklistPage {
     response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
 
     if (this.body.lengthOfStayAgreed === 'no') {
-      response['Recommended length of stay'] = DateFormats.formatDuration(daysToWeeksAndDays(this.body.lengthOfStay), [
+      response['Recommended length of stay'] = DateFormats.formatDuration(daysToWeeksAndDays(lengthOfStay(this.body)), [
         'weeks',
         'days',
       ])
@@ -183,8 +183,8 @@ export default class MatchingInformation implements TasklistPage {
     }
 
     if (this.body.lengthOfStayAgreed === 'no') {
-      if (!isCardinal(this.body.lengthOfStayWeeks) || !isCardinal(this.body.lengthOfStayDays)) {
-        errors.lengthOfStay = 'You must provide a recommended length of stay in whole weeks and days'
+      if (!(Number(lengthOfStay(this.body)) > 0)) {
+        errors.lengthOfStay = 'You must provide a recommended length of stay'
       }
     }
 
