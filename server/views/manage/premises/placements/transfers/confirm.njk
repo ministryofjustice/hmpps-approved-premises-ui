@@ -26,16 +26,19 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    <form action="{{ currentUrl }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form action="{{ currentUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukSummaryList(summaryList) }}
+                {{ govukSummaryList(summaryList) }}
 
-        {{ govukButton({
-            text: "Continue",
-            preventDoubleClick: true
-        }) }}
-    </form>
-
+                {{ govukButton({
+                    text: "Continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
