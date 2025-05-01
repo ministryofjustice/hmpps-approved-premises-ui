@@ -161,7 +161,7 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_departure',
         'cas1_space_booking_record_keyworker',
         'cas1_space_booking_record_non_arrival',
-        'cas1_planned_transfer_create',
+        'cas1_transfer_create',
       ],
     })
     const premises = cas1PremisesFactory.build()
@@ -268,7 +268,7 @@ describe('placementUtils', () => {
           actions(
             placementAfterArrival,
             userDetailsFactory.build({
-              permissions: ['cas1_planned_transfer_create'],
+              permissions: ['cas1_transfer_create'],
             }),
           ),
         ).toEqual([{ items: [requestTransferOption] }])

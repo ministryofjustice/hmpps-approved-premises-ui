@@ -37,7 +37,7 @@ context('Transfers', () => {
     cy.task('stubSpaceBookingEmergencyTransferCreate', placement)
 
     // Given I am signed in as a future manager
-    // TODO: change role to `future_manager` once the `cas1_planned_transfer_create` permission has been assigned
+    // TODO: change role to `future_manager` once the `cas1_transfer_create` permission has been assigned
     signIn('janitor')
     // signIn('future_manager')
 

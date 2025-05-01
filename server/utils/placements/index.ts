@@ -134,7 +134,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
       })
     }
 
-    if (hasPermission(user, ['cas1_planned_transfer_create'])) {
+    if (hasPermission(user, ['cas1_transfer_create'])) {
       actionList.push({
         text: 'Request a transfer',
         classes: 'govuk-button--secondary',
