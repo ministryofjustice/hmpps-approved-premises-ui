@@ -230,7 +230,7 @@ export default class TransfersController {
         this.formData.remove(placementId, req.session)
         req.flash('success', {
           heading: 'Emergency transfer recorded',
-          body: 'You must now record the person as departed, and use the move-on category for transfer.',
+          body: '<p>You must now record the person as departed, and use the move-on category for transfer.</p>',
         })
 
         return req.session.save(() => {
