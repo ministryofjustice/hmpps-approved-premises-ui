@@ -128,8 +128,7 @@ export default class TransfersController {
     const errors: Record<string, string> = {}
 
     if (!req.body.destinationPremisesId) {
-      errors.destinationPremisesId =
-        'You must select a destination Approved Premises for the person to be transferred to'
+      errors.destinationPremisesId = 'You must select aa Approved Premises for the person to be transferred to'
     }
 
     const { placementEndDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'placementEndDate')

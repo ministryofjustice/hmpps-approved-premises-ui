@@ -245,7 +245,7 @@ describe('transfersController', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
-        destinationPremisesId: 'You must enter the Approved Premises the person being transferred to',
+        destinationPremisesId: 'You must select aa Approved Premises for the person to be transferred to',
       })
     })
 

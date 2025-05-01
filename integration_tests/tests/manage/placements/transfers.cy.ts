@@ -83,7 +83,7 @@ context('Transfers', () => {
 
     // Then I should see errors
     emergencyTransferDetailsPage.shouldShowErrorMessagesForFields(['destinationPremisesId', 'placementEndDate'], {
-      destinationPremisesId: 'You must select a destination Approved Premises for the person to be transferred to',
+      destinationPremisesId: 'You must select aa Approved Premises for the person to be transferred to',
       placementEndDate: 'You must enter a placement end date',
     })
 
