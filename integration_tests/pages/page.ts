@@ -177,6 +177,11 @@ export default abstract class Page {
     cy.get(`textarea[name="${name}"]`).type(value)
   }
 
+  completeAutocompleteInput(id: string, optionLabel: string): void {
+    cy.get(`input[id="${id}"]`).type(optionLabel.slice(0, 3))
+    cy.get('.autocomplete__option').contains(optionLabel).click()
+  }
+
   completeDateInputs(prefix: string, date: string): void {
     const [year, month, day] = date.split('-')
 

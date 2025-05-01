@@ -88,10 +88,7 @@ context('Transfers', () => {
     })
 
     // When I complete the form
-    emergencyTransferDetailsPage.completeForm(
-      newTransferRequest.destinationPremisesId,
-      newTransferRequest.departureDate,
-    )
+    emergencyTransferDetailsPage.completeForm(destinationAp.name, newTransferRequest.departureDate)
 
     // Then I should see the confirmation page
     const emergencyTransferConfirmationPage = Page.verifyOnPage(TransferConfirmPage)

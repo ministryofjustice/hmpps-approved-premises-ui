@@ -114,6 +114,7 @@
     "@sentry/node": "^7.14.1",
     "@sentry/tracing": "^7.14.1",
     "@total-typescript/shoehorn": "^0.1.0",
+    "accessible-autocomplete": "^3.0.1",
     "agentkeepalive": "^4.2.1",
     "applicationinsights": "^2.9.6",
     "body-parser": "^1.20.0",

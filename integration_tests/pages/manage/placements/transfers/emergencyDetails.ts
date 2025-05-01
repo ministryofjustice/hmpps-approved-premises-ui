@@ -15,8 +15,8 @@ export class EmergencyDetailsPage extends Page {
     )
   }
 
-  completeForm(destinationApId: string, placementEndDate: string) {
-    this.getSelectInputByIdAndSelectAnEntry('destinationPremisesId', destinationApId)
+  completeForm(destinationPremisesName: string, placementEndDate: string) {
+    this.completeAutocompleteInput('destinationPremisesId', destinationPremisesName)
     this.clearAndCompleteDateInputs('placementEndDate', placementEndDate)
     this.clickContinue()
   }
