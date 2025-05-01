@@ -214,3 +214,12 @@ export const joinWithCommas = (arr: Array<string>): string => {
   if (arr.length <= 1) return arr[0] || ''
   return `${arr.slice(0, arr.length - 1).join(', ')} and ${arr[arr.length - 1]}`
 }
+
+/**
+ * Return true if a string contains a cardinal number (including 0)
+ * @param str string to test
+ * @return true iff string is cardinal
+ */
+export const isCardinal = (str: string): boolean => {
+  return /^\s*\d+\s*$/.test(str)
+}
