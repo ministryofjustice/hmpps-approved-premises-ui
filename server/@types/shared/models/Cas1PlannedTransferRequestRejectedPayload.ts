@@ -4,7 +4,9 @@
 /* eslint-disable */
 import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContentPayload';
 import type { Cas1TimelineEventPayloadBookingSummary } from './Cas1TimelineEventPayloadBookingSummary';
-export type Cas1PlacementAppealAcceptedPayload = (Cas1TimelineEventContentPayload & {
+import type { NamedId } from './NamedId';
+export type Cas1PlannedTransferRequestRejectedPayload = (Cas1TimelineEventContentPayload & {
     booking: Cas1TimelineEventPayloadBookingSummary;
+    reason: NamedId;
 });
 
