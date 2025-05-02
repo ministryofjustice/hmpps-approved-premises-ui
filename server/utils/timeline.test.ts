@@ -43,24 +43,27 @@ describe('timeline utilities', () => {
       describe('if there is no schema version', () => {
         it('renders a basic description of changes', () => {
           const timelineEvent = cas1TimelineEventFactory.build({
-            type: 'booking_changed',
             payload: cas1TimelineEventContentPayloadFactory.build({
               type: 'booking_changed',
               premises: {
                 name: premises.name,
                 id: premises.id,
               },
+              expectedArrival: '2025-09-18',
+              expectedDeparture: '2025-12-18',
               schemaVersion: undefined,
-              arrivalOn: '2025-04-17',
-              departureOn: '2025-06-21',
+              previousExpectedArrival: null,
+              previousExpectedDeparture: null,
+              characteristics: null,
+              previousCharacteristics: null,
             } as Cas1TimelineEventContentPayload),
           })
 
           const result = renderTimelineEventContent(timelineEvent)
 
-          expect(result).toEqual(
-            `The placement at ${premises.name} had its arrival and/or departure date changed to Thu 17 Apr 2025 to Sat 21 Jun 2025.`,
-          )
+          expect(result).toMatchStringIgnoringWhitespace(`
+            <p class="govuk-body">The placement at ${premises.name} had its arrival and/or departure dates changed to Thu 18 Sep 2025 to Thu 18 Dec 2025.</p>
+          `)
         })
       })
 
