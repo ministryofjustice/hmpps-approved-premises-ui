@@ -3,11 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContentPayload';
+import type { Cas1TimelineEventPayloadBookingSummary } from './Cas1TimelineEventPayloadBookingSummary';
 import type { NamedId } from './NamedId';
 export type Cas1PlacementAppealCreatedPayload = (Cas1TimelineEventContentPayload & {
-    premises: NamedId;
-    expectedArrival: string;
-    expectedDeparture: string;
-    appealReason: NamedId;
+    booking: Cas1TimelineEventPayloadBookingSummary;
+    reason: NamedId;
 });
 
