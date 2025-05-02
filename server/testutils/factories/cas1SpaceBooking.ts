@@ -20,6 +20,7 @@ import { departureReasonFactory } from './referenceData'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../utils/placements'
 import { filterOutAPTypes } from '../../utils/match'
 import { placementCriteria } from './placementRequest'
+import cas1ChangeRequestSummary from './cas1ChangeRequestSummary'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
@@ -131,5 +132,7 @@ export default Cas1SpaceBookingFactory.define(() => {
     deliusEventNumber: String(faker.number.int()),
     nonArrival: undefined as Cas1SpaceBookingNonArrival,
     cancellation: undefined as Cas1SpaceBookingCancellation,
+    allowedActions: {},
+    openChangeRequests: cas1ChangeRequestSummary.buildList(3),
   }
 })

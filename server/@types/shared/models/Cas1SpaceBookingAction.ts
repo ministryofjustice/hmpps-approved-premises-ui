@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type BedSearchAttributes = 'isSharedProperty' | 'isSingleOccupancy' | 'isWheelchairAccessible';
+export type Cas1SpaceBookingAction = 'appealCreate' | 'plannedTransferRequest' | 'emergencyTransferCreate' | 'shorten';

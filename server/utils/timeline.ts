@@ -38,7 +38,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
 
       nunjucks.configure(path.join(__dirname, '../views/partials/timelineEvents'))
 
-      if (event.payload.schemaVersion === 2) {
+      if (event.schemaVersion === 2) {
         return nunjucks.render('booking_changed_v2.njk', context)
       }
       return nunjucks.render('booking_changed.njk', context)

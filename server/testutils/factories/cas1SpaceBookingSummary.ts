@@ -1,6 +1,11 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import { Cas1SpaceBookingSummary, Cas1SpaceCharacteristic, PersonSummary } from '@approved-premises/api'
+import {
+  Cas1ChangeRequestType,
+  Cas1SpaceBookingSummary,
+  Cas1SpaceCharacteristic,
+  PersonSummary,
+} from '@approved-premises/api'
 import { fullPersonSummaryFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
@@ -87,5 +92,6 @@ export default Cas1SpaceBookingSummaryFactory.define(() => {
     deliusEventNumber: faker.string.numeric({ length: 6 }),
     plannedTransferRequested: false,
     appealRequested: false,
+    openChangeRequestTypes: [] as Array<Cas1ChangeRequestType>,
   }
 })

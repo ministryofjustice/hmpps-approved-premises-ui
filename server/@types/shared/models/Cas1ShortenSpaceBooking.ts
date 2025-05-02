@@ -2,4 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ChangeRequestSortField = 'name' | 'tier' | 'canonicalArrivalDate';
+export type Cas1ShortenSpaceBooking = {
+    /**
+     * Updated departure date
+     */
+    departureDate: string;
+};
+
