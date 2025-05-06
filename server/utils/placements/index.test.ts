@@ -242,7 +242,7 @@ describe('placementUtils', () => {
     describe('when the placement has an arrival recorded, but no departure', () => {
       const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises })
 
-      it('should allow nothing if teh user does not have the relevant permissions', () => {
+      it('should allow nothing if the user does not have the relevant permissions', () => {
         expect(actions(placementAfterArrival, userDetailsFactory.build({ permissions: [] }))).toEqual(null)
       })
 
@@ -666,7 +666,7 @@ describe('placementUtils', () => {
   })
 
   describe('injectRadioConditionalHtml', () => {
-    it('should inject the supplied html into the radio list as a condtional', () => {
+    it('should inject the supplied html into the radio list as a conditional', () => {
       const radioList: Array<RadioItem> = [
         { text: 'One', value: 'one' },
         { text: 'Two', value: 'two' },
