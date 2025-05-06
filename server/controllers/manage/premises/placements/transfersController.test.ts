@@ -19,7 +19,6 @@ import { allApprovedPremisesOptions, transferSummaryList } from '../../../../uti
 describe('transfersController', () => {
   const token = 'TEST_TOKEN'
 
-  const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>()
   const next: DeepMocked<NextFunction> = createMock<NextFunction>()
@@ -46,7 +45,7 @@ describe('transfersController', () => {
       user: { token },
       params,
       session: {
-        save: mockSessionSave,
+        save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
       },
     })
 
@@ -150,7 +149,6 @@ describe('transfersController', () => {
         'transferDate-month': '4',
         'transferDate-day': '27',
       })
-      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.emergencyDetails(params))
     })
   })
@@ -299,7 +297,6 @@ describe('transfersController', () => {
         'placementEndDate-month': '5',
         'placementEndDate-day': '14',
       })
-      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.confirm(params))
     })
   })
@@ -397,7 +394,6 @@ describe('transfersController', () => {
         heading: 'Emergency transfer recorded',
         body: '<p>You must now record the person as departed, and use the move-on category for transfer.</p>',
       })
-      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.show(params))
     })
 

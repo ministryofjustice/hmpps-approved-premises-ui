@@ -78,11 +78,9 @@ export default class TransfersController {
           throw new ValidationError(errors)
         }
 
-        this.formData.update(placementId, req.session, req.body)
+        await this.formData.update(placementId, req.session, req.body)
 
-        return req.session.save(() => {
-          res.redirect(managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }))
-        })
+        return res.redirect(managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -161,14 +159,12 @@ export default class TransfersController {
 
         const destinationPremises = await this.premisesService.find(req.user.token, req.body.destinationPremisesId)
 
-        this.formData.update(placementId, req.session, {
+        await this.formData.update(placementId, req.session, {
           ...req.body,
           destinationPremisesName: destinationPremises.name,
         })
 
-        return req.session.save(() => {
-          res.redirect(managePaths.premises.placements.transfers.confirm({ premisesId, placementId }))
-        })
+        return res.redirect(managePaths.premises.placements.transfers.confirm({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -227,15 +223,14 @@ export default class TransfersController {
           newEmergencyTransfer,
         )
 
-        this.formData.remove(placementId, req.session)
+        await this.formData.remove(placementId, req.session)
+
         req.flash('success', {
           heading: 'Emergency transfer recorded',
           body: '<p>You must now record the person as departed, and use the move-on category for transfer.</p>',
         })
 
-        return req.session.save(() => {
-          res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
-        })
+        return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

@@ -37,7 +37,7 @@ export default class SpaceSearchController {
 
       const searchState =
         this.formData.get(id, req.session) ||
-        this.formData.update(placementRequest.id, req.session, initialiseSearchState(placementRequest))
+        (await this.formData.update(placementRequest.id, req.session, initialiseSearchState(placementRequest)))
 
       const spaceSearchResults = await this.spaceSearchService.search(token, searchState)
 
@@ -80,16 +80,14 @@ export default class SpaceSearchController {
           })
         }
 
-        this.formData.update(req.params.id, req.session, {
+        await this.formData.update(req.params.id, req.session, {
           postcode,
           apType,
           apCriteria,
           roomCriteria,
         })
 
-        return req.session.save(() => {
-          res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
-        })
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

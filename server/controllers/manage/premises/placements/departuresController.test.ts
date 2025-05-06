@@ -26,7 +26,6 @@ describe('DeparturesController', () => {
   const token = 'SOME_TOKEN'
 
   let request: DeepMocked<Request>
-  const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
   const response: DeepMocked<Response> = createMock<Response>()
   const next: DeepMocked<NextFunction> = createMock<NextFunction>()
 
@@ -86,7 +85,7 @@ describe('DeparturesController', () => {
       user: { token },
       params: { premisesId, placementId: placement.id },
       session: {
-        save: mockSessionSave,
+        save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
         multiPageFormData: { departures: { [placement.id]: departureFormData } },
       },
     })
@@ -297,7 +296,6 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
-        expect(mockSessionSave).toHaveBeenCalled()
         expect(response.redirect).toHaveBeenCalledWith(
           paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
         )
@@ -315,7 +313,6 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
-        expect(mockSessionSave).toHaveBeenCalled()
         expect(response.redirect).toHaveBeenCalledWith(
           paths.premises.placements.departure.breachOrRecallReason({ premisesId, placementId: placement.id }),
         )
@@ -333,7 +330,6 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
-        expect(mockSessionSave).toHaveBeenCalled()
         expect(response.redirect).toHaveBeenCalledWith(
           paths.premises.placements.departure.moveOnCategory({ premisesId, placementId: placement.id }),
         )
@@ -434,7 +430,6 @@ describe('DeparturesController', () => {
       expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, {
         breachOrRecallReasonId: childDepartureReason1.id,
       })
-      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(
         paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
       )
@@ -571,7 +566,6 @@ describe('DeparturesController', () => {
       expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, {
         moveOnCategoryId: moveOnCategories[1].id,
       })
-      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(
         paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
       )
@@ -692,7 +686,6 @@ describe('DeparturesController', () => {
         })
         expect(departuresController.formData.remove).toHaveBeenCalledWith(placement.id, request.session)
         expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as departed')
-        expect(mockSessionSave).toHaveBeenCalled()
         expect(response.redirect).toHaveBeenCalledWith(
           paths.premises.placements.show({ premisesId, placementId: placement.id }),
         )

@@ -165,7 +165,7 @@ export default class DeparturesController {
           throw new ValidationError(errors)
         }
 
-        this.formData.update(placementId, session, body)
+        await this.formData.update(placementId, session, body)
 
         let redirect = departurePaths.notes({ premisesId, placementId })
 
@@ -177,9 +177,7 @@ export default class DeparturesController {
           redirect = departurePaths.moveOnCategory({ premisesId, placementId })
         }
 
-        return req.session.save(() => {
-          res.redirect(redirect)
-        })
+        return res.redirect(redirect)
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -236,11 +234,9 @@ export default class DeparturesController {
           throw new ValidationError({ breachOrRecallReasonId: 'You must select a breach or recall reason' })
         }
 
-        this.formData.update(placementId, req.session, req.body)
+        await this.formData.update(placementId, req.session, req.body)
 
-        return req.session.save(() => {
-          res.redirect(departurePaths.notes({ premisesId, placementId }))
-        })
+        return res.redirect(departurePaths.notes({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -300,11 +296,9 @@ export default class DeparturesController {
           throw new ValidationError({ apName: 'You must select the destination AP' })
         }
 
-        this.formData.update(placementId, req.session, req.body)
+        await this.formData.update(placementId, req.session, req.body)
 
-        return req.session.save(() => {
-          res.redirect(departurePaths.notes({ premisesId, placementId }))
-        })
+        return res.redirect(departurePaths.notes({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -377,12 +371,10 @@ export default class DeparturesController {
 
         await this.placementService.createDeparture(req.user.token, premisesId, placementId, placementDeparture)
 
-        this.formData.remove(placementId, req.session)
+        await this.formData.remove(placementId, req.session)
         req.flash('success', 'You have recorded this person as departed')
 
-        return req.session.save(() => {
-          res.redirect(placementPath({ premisesId, placementId }))
-        })
+        return res.redirect(placementPath({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

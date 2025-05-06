@@ -8,11 +8,11 @@ export default class MultiPageFormManager<K extends keyof MultiPageFormData> {
     return session.multiPageFormData?.[this.sessionKey]?.[itemKey]
   }
 
-  update<T extends keyof MultiPageFormData[K]>(
+  async update<T extends keyof MultiPageFormData[K]>(
     itemKey: T,
     session: Request['session'],
     updateData: Partial<MultiPageFormData[K][T]>,
-  ): MultiPageFormData[K][T] {
+  ): Promise<MultiPageFormData[K][T]> {
     session.multiPageFormData = session.multiPageFormData || {}
     session.multiPageFormData[this.sessionKey] = session.multiPageFormData[this.sessionKey] || {}
 
@@ -21,10 +21,18 @@ export default class MultiPageFormManager<K extends keyof MultiPageFormData> {
       ...updateData,
     }
 
-    return session.multiPageFormData[this.sessionKey][itemKey]
+    return new Promise(resolve => {
+      session.save(() => resolve(session.multiPageFormData[this.sessionKey][itemKey]))
+    })
   }
 
-  remove<T extends keyof MultiPageFormData[K]>(itemKey: T, session: Request['session']): void {
-    delete session.multiPageFormData?.[this.sessionKey]?.[itemKey]
+  remove<T extends keyof MultiPageFormData[K]>(itemKey: T, session: Request['session']): Promise<void> {
+    return new Promise(resolve => {
+      delete session.multiPageFormData?.[this.sessionKey]?.[itemKey]
+
+      session.save(() => {
+        resolve()
+      })
+    })
   }
 }

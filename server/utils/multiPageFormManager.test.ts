@@ -17,6 +17,7 @@ describe('multiPageFormManager', () => {
           'placement-two-id': DateFormats.isoDateToDateInputs('2025-04-22', 'transferDate'),
         },
       },
+      save: jest.fn().mockImplementation(callback => (callback ? callback() : undefined)),
     })
   })
 
@@ -33,18 +34,23 @@ describe('multiPageFormManager', () => {
     expect(formData.get('does-not-exist-id', mockSession)).toEqual(undefined)
   })
 
-  it('updates the data provided against the correct id', () => {
-    const updated = formData.update('placement-one-id', mockSession, { destinationPremisesId: 'testId' })
+  it('updates the data provided against the correct id and forces a session save', async () => {
+    const updated = await formData.update('placement-one-id', mockSession, { destinationPremisesId: 'testId' })
 
     expect(updated).toEqual(expect.objectContaining({ destinationPremisesId: 'testId' }))
+    expect(mockSession.save).toHaveBeenCalled()
     expect(formData.get('placement-one-id', mockSession)).toEqual(
       expect.objectContaining({ destinationPremisesId: 'testId' }),
     )
   })
 
-  it('removes the data for the provided id', () => {
-    formData.remove('placement-one-id', mockSession)
+  it('removes the data for the provided id only and forces a session save', async () => {
+    await formData.remove('placement-one-id', mockSession)
 
     expect(formData.get('placement-one-id', mockSession)).toEqual(undefined)
+    expect(mockSession.save).toHaveBeenCalled()
+    expect(formData.get('placement-two-id', mockSession)).toEqual(
+      mockSession.multiPageFormData.transfers['placement-two-id'],
+    )
   })
 })
