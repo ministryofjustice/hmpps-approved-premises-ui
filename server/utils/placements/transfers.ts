@@ -1,6 +1,7 @@
 import { SummaryList, TransferFormData } from '@approved-premises/ui'
 import { Cas1PremisesBasicSummary } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
+import { summaryListItem } from '../formUtils'
 
 export const allApprovedPremisesOptions = (approvedPremises: Array<Cas1PremisesBasicSummary>) => [
   {
@@ -18,22 +19,10 @@ export const allApprovedPremisesOptions = (approvedPremises: Array<Cas1PremisesB
 export const transferSummaryList = (formData: TransferFormData): SummaryList => {
   return {
     rows: [
-      {
-        key: { text: 'Date of transfer' },
-        value: { text: DateFormats.isoDateToUIDate(formData.transferDate) },
-      },
-      {
-        key: { text: 'Reason for transfer' },
-        value: { text: 'Emergency transfer' },
-      },
-      {
-        key: { text: 'Transfer AP' },
-        value: { text: formData.destinationPremisesName },
-      },
-      {
-        key: { text: 'Placement end date' },
-        value: { text: DateFormats.isoDateToUIDate(formData.placementEndDate) },
-      },
+      summaryListItem('Date of transfer', DateFormats.isoDateToUIDate(formData.transferDate)),
+      summaryListItem('Reason for transfer', 'Emergency transfer'),
+      summaryListItem('Transfer AP', formData.destinationPremisesName),
+      summaryListItem('Placement end date', DateFormats.isoDateToUIDate(formData.placementEndDate)),
     ],
   }
 }
