@@ -1,5 +1,6 @@
 import type { ObjectWithDateParts } from '@approved-premises/ui'
-import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, datetimeIsInThePast } from '../dateUtils'
+import { isBefore } from 'date-fns'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../dateUtils'
 
 export const validateSpaceBooking = (body: ObjectWithDateParts<string>): Record<string, string> => {
   const errors: Record<string, string> = {}
@@ -27,7 +28,7 @@ export const validateSpaceBooking = (body: ObjectWithDateParts<string>): Record<
       'departureDate',
     )
     const textArrivalDate = actualArrivalDate || arrivalDate
-    if (datetimeIsInThePast(departureDate, textArrivalDate) || departureDate === textArrivalDate) {
+    if (isBefore(departureDate, textArrivalDate) || departureDate === textArrivalDate) {
       errors.departureDate = 'The departure date must be after the arrival date'
     }
   }

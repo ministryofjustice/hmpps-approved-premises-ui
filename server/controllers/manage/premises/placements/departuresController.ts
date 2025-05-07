@@ -1,15 +1,15 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewDeparture, Cas1SpaceBooking } from '@approved-premises/api'
 import { DepartureFormData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
+import { isBefore, isPast, isToday } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import {
   DateFormats,
   dateAndTimeInputsAreValidDates,
-  dateIsToday,
-  datetimeIsInThePast,
   isoDateAndTimeToDateObj,
   timeIsValid24hrFormat,
+  dateIsPast,
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import paths from '../../../../paths/manage'
@@ -109,12 +109,9 @@ export default class DeparturesController {
       errors.departureDate = 'You must enter a date of departure'
     } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'departureDate'>, 'departureDate')) {
       errors.departureDate = 'You must enter a valid date of departure'
-    } else if (!datetimeIsInThePast(departureDate)) {
+    } else if (!dateIsPast(departureDate) && !isToday(departureDate)) {
       errors.departureDate = 'The date of departure must be today or in the past'
-    } else if (
-      !dateIsToday(departureDate, placement.actualArrivalDate) &&
-      datetimeIsInThePast(departureDate, placement.actualArrivalDate)
-    ) {
+    } else if (isBefore(departureDate, placement.actualArrivalDate)) {
       const actualArrivalDate = DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })
       errors.departureDate = `The date of departure must be the same as or after ${actualArrivalDate}, when the person arrived`
     }
@@ -123,20 +120,15 @@ export default class DeparturesController {
       errors.departureTime = 'You must enter a time of departure'
     } else if (!timeIsValid24hrFormat(departureTime)) {
       errors.departureTime = 'You must enter a valid time of departure in 24-hour format'
-    } else if (dateIsToday(departureDate)) {
+    } else if (isToday(departureDate)) {
       const departureDateObj = isoDateAndTimeToDateObj(departureDate, departureTime)
-      if (!datetimeIsInThePast(DateFormats.dateObjToIsoDateTime(departureDateObj))) {
+      if (!isPast(departureDateObj)) {
         errors.departureTime = 'The time of departure must be in the past'
       }
-    } else if (dateIsToday(departureDate, placement.actualArrivalDate)) {
+    } else if (departureDate === placement.actualArrivalDate) {
       const departureDateObj = isoDateAndTimeToDateObj(departureDate, departureTime)
       const arrivalDateObj = isoDateAndTimeToDateObj(placement.actualArrivalDate, placement.actualArrivalTime)
-      if (
-        datetimeIsInThePast(
-          DateFormats.dateObjToIsoDateTime(departureDateObj),
-          DateFormats.dateObjToIsoDateTime(arrivalDateObj),
-        )
-      ) {
+      if (isBefore(departureDateObj, arrivalDateObj)) {
         errors.departureTime = `The time of departure must be after the time of arrival, ${placement.actualArrivalTime} on ${DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })}`
       }
     }
