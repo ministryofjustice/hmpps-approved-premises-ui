@@ -1,6 +1,7 @@
 import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import Page from '../page'
-import { SpaceSearchState, summaryCardRows } from '../../../server/utils/match'
+import { summaryCardRows } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
 
@@ -44,7 +45,7 @@ export default class SearchPage extends Page {
     cy.get(`a[href*="${spaceSearchResult.premises.id}"]`).click()
   }
 
-  changeSearchParameters(searchState: SpaceSearchState): void {
+  changeSearchParameters(searchState: SpaceSearchFormData): void {
     this.getTextInputByIdAndClear('postcode')
     this.getTextInputByIdAndEnterDetails('postcode', searchState.postcode)
     cy.get('[type="checkbox"]').uncheck()
@@ -59,7 +60,7 @@ export default class SearchPage extends Page {
     })
   }
 
-  shouldShowSearchParametersInInputs(searchState: SpaceSearchState): void {
+  shouldShowSearchParametersInInputs(searchState: SpaceSearchFormData): void {
     this.verifyTextInputContentsById('postcode', searchState.postcode)
 
     cy.get(`input[name="apType"][value="${searchState.apType}"]`)

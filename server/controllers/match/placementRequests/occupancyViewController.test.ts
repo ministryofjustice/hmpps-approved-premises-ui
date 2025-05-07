@@ -84,14 +84,21 @@ describe('OccupancyViewController', () => {
       },
       session: {
         save: mockSessionSave,
+        multiPageFormData: {
+          spaceSearch: {
+            [placementRequestDetail.id]: searchState,
+          },
+        },
       },
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
-    spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
     sessionService.getPageBackLink.mockReturnValue('/backlink')
+
+    jest.spyOn(occupancyViewController.formData, 'get')
+    jest.spyOn(occupancyViewController.formData, 'update')
   })
 
   describe('view', () => {
@@ -104,7 +111,7 @@ describe('OccupancyViewController', () => {
         placementRequestDetail.duration,
       )
 
-      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(occupancyViewController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
@@ -132,7 +139,7 @@ describe('OccupancyViewController', () => {
     })
 
     it('should redirect to the suitability search if there is no search state in session', async () => {
-      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
+      request.session.multiPageFormData = undefined
 
       const requestHandler = occupancyViewController.view()
       await requestHandler(request, response, next)
@@ -232,7 +239,7 @@ describe('OccupancyViewController', () => {
 
     it('should render the occupancy view with the arrival and departure dates populated if the user has come back from confirm', async () => {
       const fullSearchState = spaceSearchStateFactory.build()
-      spaceSearchService.getSpaceSearchState.mockReturnValue(fullSearchState)
+      request.session.multiPageFormData.spaceSearch[placementRequestDetail.id] = fullSearchState
 
       const requestHandler = occupancyViewController.view()
       await requestHandler(request, response, next)
@@ -260,7 +267,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.filterView()
       await requestHandler({ ...request, body: filterBody }, response, next)
 
-      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+      expect(occupancyViewController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
         startDate: '2025-03-23',
         roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
         durationDays: 42,
@@ -277,7 +284,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.filterView()
       await requestHandler({ ...request, body: filterBodyOneCriterion }, response, next)
 
-      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
+      expect(occupancyViewController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
         request.session,
         expect.objectContaining({
@@ -295,7 +302,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.filterView()
       await requestHandler({ ...request, body: filterBodyNoCriteria }, response, next)
 
-      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
+      expect(occupancyViewController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
         request.session,
         expect.objectContaining({
@@ -324,7 +331,7 @@ describe('OccupancyViewController', () => {
         new ValidationError({}),
         occupancyViewUrl,
       )
-      expect(spaceSearchService.setSpaceSearchState).not.toHaveBeenCalled()
+      expect(occupancyViewController.formData.update).not.toHaveBeenCalled()
 
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
@@ -348,7 +355,7 @@ describe('OccupancyViewController', () => {
       const requestHandler = occupancyViewController.bookSpace()
       await requestHandler({ ...request, body: validBookingBody }, response, next)
 
-      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+      expect(occupancyViewController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
         arrivalDate: '2026-02-11',
         departureDate: '2026-02-21',
       })

@@ -29,6 +29,7 @@ export default function routes(controllers: Controllers, router: Router, service
     keyworkerController,
     apOccupancyViewController,
     changesController,
+    transfersController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -258,6 +259,32 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.premises.placements.changes.confirm.pattern, changesController.create(), {
     auditEvent: 'CREATE_BOOKING_CHANGE',
     allowedPermissions: ['cas1_space_booking_create'],
+  })
+
+  // Placement transfers
+  get(paths.premises.placements.transfers.new.pattern, transfersController.new(), {
+    auditEvent: 'TRANSFER_REQUEST_NEW',
+    allowedPermissions: ['cas1_transfer_create'],
+  })
+  post(paths.premises.placements.transfers.new.pattern, transfersController.saveNew(), {
+    auditEvent: 'TRANSFER_REQUEST_NEW_SAVE',
+    allowedPermissions: ['cas1_transfer_create'],
+  })
+  get(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.emergencyDetails(), {
+    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS',
+    allowedPermissions: ['cas1_transfer_create'],
+  })
+  post(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.saveEmergencyDetails(), {
+    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS_SAVE',
+    allowedPermissions: ['cas1_transfer_create'],
+  })
+  get(paths.premises.placements.transfers.confirm.pattern, transfersController.confirm(), {
+    auditEvent: 'TRANSFER_REQUEST_CONFIRM',
+    allowedPermissions: ['cas1_transfer_create'],
+  })
+  post(paths.premises.placements.transfers.confirm.pattern, transfersController.create(), {
+    auditEvent: 'TRANSFER_REQUEST_CREATE',
+    allowedPermissions: ['cas1_transfer_create'],
   })
 
   // Occupancy

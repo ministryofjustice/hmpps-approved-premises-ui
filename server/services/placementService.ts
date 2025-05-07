@@ -2,6 +2,7 @@ import type {
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
+  Cas1NewEmergencyTransfer,
   Cas1NewSpaceBookingCancellation,
   Cas1NonArrival,
   Cas1SpaceBooking,
@@ -9,8 +10,7 @@ import type {
   DepartureReason,
   NonArrivalReason,
 } from '@approved-premises/api'
-import type { Request } from 'express'
-import { DepartureFormSessionData, ReferenceData } from '@approved-premises/ui'
+import { ReferenceData } from '@approved-premises/ui'
 import type { Cas1ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementClient from '../data/placementClient'
 
@@ -95,23 +95,6 @@ export default class PlacementService {
     return cas1ReferenceDataClient.getReferenceData('move-on-categories') as Promise<Array<ReferenceData>>
   }
 
-  getDepartureSessionData(placementId: string, session: Request['session']): DepartureFormSessionData {
-    return session?.departureForms?.[placementId] || {}
-  }
-
-  setDepartureSessionData(placementId: string, session: Request['session'], data: DepartureFormSessionData) {
-    session.departureForms = session.departureForms || {}
-
-    session.departureForms[placementId] = {
-      ...this.getDepartureSessionData(placementId, session),
-      ...data,
-    }
-  }
-
-  removeDepartureSessionData(placementId: string, session: Request['session']) {
-    delete session?.departureForms?.[placementId]
-  }
-
   async createCancellation(
     token: string,
     premisesId: string,
@@ -121,5 +104,16 @@ export default class PlacementService {
     const placementClient = this.placementClientFactory(token)
 
     return placementClient.cancel(premisesId, placementId, cancellation)
+  }
+
+  async createEmergencyTransfer(
+    token: string,
+    premisesId: string,
+    placementId: string,
+    newEmergencyTransfer: Cas1NewEmergencyTransfer,
+  ) {
+    const placementClient = this.placementClientFactory(token)
+
+    return placementClient.createEmergencyTransfer(premisesId, placementId, newEmergencyTransfer)
   }
 }

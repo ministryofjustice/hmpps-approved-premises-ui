@@ -132,6 +132,10 @@ export default abstract class Page {
     cy.get('legend').should('contain', legendName)
   }
 
+  getHint(hint: string): void {
+    cy.get('.govuk-hint').should('contain', hint)
+  }
+
   getTextInputByIdAndEnterDetails(id: string, details: string): void {
     cy.get(`#${id}`).type(details)
   }
@@ -171,6 +175,11 @@ export default abstract class Page {
   completeTextArea(name: string, value: string): void {
     cy.get(`textarea[name="${name}"]`).clear()
     cy.get(`textarea[name="${name}"]`).type(value)
+  }
+
+  completeAutocompleteInput(id: string, optionLabel: string): void {
+    cy.get(`input[id="${id}"]`).type(optionLabel.slice(0, 3))
+    cy.get('.autocomplete__option').contains(optionLabel).click()
   }
 
   completeDateInputs(prefix: string, date: string): void {

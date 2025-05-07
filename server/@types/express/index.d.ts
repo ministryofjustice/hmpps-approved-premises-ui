@@ -1,11 +1,5 @@
-import type { DepartureFormSessionData, ErrorMessages } from '@approved-premises/ui'
-import type {
-  ApprovedPremisesApplication,
-  Cas1SpaceBooking,
-  PlacementApplicationDecisionEnvelope,
-  PlacementRequestDetail,
-} from '@approved-premises/api'
-import { SpaceSearchState } from '../../utils/match'
+import type { ErrorMessages, MultiPageFormData } from '@approved-premises/ui'
+import type { ApprovedPremisesApplication, PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
 
 export default {}
 
@@ -18,9 +12,8 @@ declare module 'express-session' {
     user: UserDetails
     placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
     messages: Array<string>
-    departureForms: Record<Cas1SpaceBooking['id'], DepartureFormSessionData>
-    spaceSearch: Record<PlacementRequestDetail['id'], SpaceSearchState>
     pageReferers: Record<string, string>
+    multiPageFormData: MultiPageFormData
   }
 }
 

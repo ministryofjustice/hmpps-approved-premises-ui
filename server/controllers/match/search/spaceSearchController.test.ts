@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import SpaceSearchController from './spaceSearchController'
 import {
   placementRequestDetailFactory,
@@ -11,32 +12,19 @@ import {
 import { PlacementRequestService, SpaceSearchService } from '../../../services'
 import matchPaths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
-import {
-  SpaceSearchState,
-  apTypeRadioItems,
-  checkBoxesForCriteria,
-  initialiseSearchState,
-  spaceSearchCriteriaApLevelLabels,
-} from '../../../utils/match/spaceSearch'
+import { apTypeRadioItems, checkBoxesForCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import paths from '../../../paths/admin'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
   const placementRequestDetail = placementRequestDetailFactory.build()
   const spaceSearchResults = spaceSearchResultsFactory.build()
 
-  const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
-  const request: DeepMocked<Request> = createMock<Request>({
-    params: { id: placementRequestDetail.id },
-    user: { token },
-    session: {
-      save: mockSessionSave,
-    },
-    flash: jest.fn(),
-  })
+  let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -50,16 +38,30 @@ describe('spaceSearchController', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
+    request = createMock<Request>({
+      params: { id: placementRequestDetail.id },
+      user: { token },
+      session: {
+        save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
+      },
+      flash: jest.fn(),
+    })
+
     spaceSearchController = new SpaceSearchController(spaceSearchService, placementRequestService)
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     spaceSearchService.search.mockResolvedValue(spaceSearchResults)
+    jest.spyOn(spaceSearchController.formData, 'get')
+    jest.spyOn(spaceSearchController.formData, 'update')
+    jest.spyOn(spaceSearchController.formData, 'remove')
   })
 
   describe('search', () => {
     it('it should render the search template with the search state found in session', async () => {
       const searchState = spaceSearchStateFactory.build()
-      spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
+      request.session.multiPageFormData = {
+        spaceSearch: { [placementRequestDetail.id]: searchState },
+      }
 
       const requestHandler = spaceSearchController.search()
       await requestHandler(request, response, next)
@@ -84,16 +86,13 @@ describe('spaceSearchController', () => {
         errors: {},
         errorSummary: [],
       })
-      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceSearchController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(spaceSearchService.search).toHaveBeenCalledWith(token, searchState)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
 
     it('should create the space search state if not found in session', async () => {
-      const searchState = spaceSearchStateFactory.build()
-
-      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
-      spaceSearchService.setSpaceSearchState.mockReturnValue(searchState)
+      const expectedSearchState = initialiseSearchState(placementRequestDetail)
 
       const requestHandler = spaceSearchController.search()
       await requestHandler(request, response, next)
@@ -101,14 +100,14 @@ describe('spaceSearchController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'match/search',
         expect.objectContaining({
-          ...searchState,
+          ...expectedSearchState,
         }),
       )
-      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
-      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
+      expect(spaceSearchController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceSearchController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
         request.session,
-        initialiseSearchState(placementRequestDetail),
+        expectedSearchState,
       )
     })
 
@@ -118,7 +117,7 @@ describe('spaceSearchController', () => {
       const requestHandler = spaceSearchController.search()
       await requestHandler(request, response, next)
 
-      expect(spaceSearchService.removeSpaceSearchState).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceSearchController.formData.remove).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
     })
 
     it('should render search errors and user input', async () => {
@@ -145,7 +144,9 @@ describe('spaceSearchController', () => {
       })
 
       const searchState = spaceSearchStateFactory.build()
-      spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
+      request.session.multiPageFormData = {
+        spaceSearch: { [placementRequestDetail.id]: searchState },
+      }
 
       const requestHandler = spaceSearchController.search()
       await requestHandler(request, response, next)
@@ -163,7 +164,7 @@ describe('spaceSearchController', () => {
   })
 
   describe('filterSearch', () => {
-    const searchParams: Partial<SpaceSearchState> = {
+    const searchParams: SpaceSearchFormData = {
       postcode: 'M14',
       apType: 'isMHAPElliottHouse',
       apCriteria: ['acceptsSexOffenders', 'isCatered'],
@@ -174,17 +175,16 @@ describe('spaceSearchController', () => {
       const requestHandler = spaceSearchController.filterSearch()
       await requestHandler({ ...request, body: searchParams }, response, next)
 
-      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
+      expect(spaceSearchController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
         request.session,
         searchParams,
       )
-      expect(mockSessionSave).toHaveBeenCalled()
       expect(response.redirect).toHaveBeenCalledWith(searchPath)
     })
 
     it('clears the selected criteria when none are selected', async () => {
-      const searchParamsNoCriteria: Partial<SpaceSearchState> = {
+      const searchParamsNoCriteria: SpaceSearchFormData = {
         ...searchParams,
         apCriteria: undefined,
         roomCriteria: undefined,
@@ -193,7 +193,7 @@ describe('spaceSearchController', () => {
       const requestHandler = spaceSearchController.filterSearch()
       await requestHandler({ ...request, body: searchParamsNoCriteria }, response, next)
 
-      expect(spaceSearchService.setSpaceSearchState).toHaveBeenCalledWith(
+      expect(spaceSearchController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
         request.session,
         expect.objectContaining({
@@ -206,7 +206,7 @@ describe('spaceSearchController', () => {
     it('returns an error if the postcode is missing', async () => {
       jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
 
-      const searchParamsNoPostcode: Partial<SpaceSearchState> = {
+      const searchParamsNoPostcode: SpaceSearchFormData = {
         ...searchParams,
         postcode: undefined,
       }
@@ -220,7 +220,7 @@ describe('spaceSearchController', () => {
         new ValidationError({}),
         searchPath,
       )
-      expect(spaceSearchService.setSpaceSearchState).not.toHaveBeenCalled()
+      expect(spaceSearchController.formData.update).not.toHaveBeenCalled()
 
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 

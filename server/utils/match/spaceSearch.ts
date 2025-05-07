@@ -4,49 +4,25 @@ import {
   PlacementCriteria,
   PlacementRequestDetail,
 } from '@approved-premises/api'
-import { CheckBoxItem, RadioItem } from '@approved-premises/ui'
+import {
+  CheckBoxItem,
+  RadioItem,
+  SpaceSearchApCriteria,
+  SpaceSearchFormData,
+  SpaceSearchRoomCriteria,
+} from '@approved-premises/ui'
 import { filterByType } from '../utils'
 import {
-  ApTypeCriteria,
-  type ApTypeSpecialist,
-  apTypeCriteriaLabels,
   applyApTypeToAssessApType,
-  placementCriteriaLabels,
+  ApTypeCriteria,
+  apTypeCriteriaLabels,
+  type ApTypeSpecialist,
 } from '../placementCriteriaUtils'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
 import { roomCharacteristicMap } from '../characteristicsUtils'
+import { spaceSearchCriteriaApLevelLabels } from './spaceSearchLabels'
 
-export const spaceSearchCriteriaApLevelLabels = {
-  acceptsSexOffenders: 'Sexual offences against adults',
-  acceptsChildSexOffenders: 'Sexual offences against children',
-  acceptsNonSexualChildOffenders: 'Non-sexual offences against children',
-  isSuitableForVulnerable: 'Vulnerable to exploitation (removes ESAP APs)',
-  isCatered: 'Catered',
-} as const
-
-export type SpaceSearchApCriteria = keyof typeof spaceSearchCriteriaApLevelLabels
-
-export type SpaceSearchRoomCriteria = keyof typeof roomCharacteristicMap
-
-export const spaceSearchResultsCharacteristicsLabels = {
-  ...spaceSearchCriteriaApLevelLabels,
-  ...roomCharacteristicMap,
-  isSuitableForVulnerable: placementCriteriaLabels.isSuitableForVulnerable,
-} as const
-
-export type SpaceSearchState = {
-  applicationId: string
-  postcode: string
-  apType: ApTypeCriteria
-  apCriteria: Array<SpaceSearchApCriteria>
-  roomCriteria: Array<SpaceSearchRoomCriteria>
-  startDate: string
-  durationDays: number
-  arrivalDate?: string
-  departureDate?: string
-}
-
-export const initialiseSearchState = (placementRequest: PlacementRequestDetail): SpaceSearchState => {
+export const initialiseSearchState = (placementRequest: PlacementRequestDetail): SpaceSearchFormData => {
   const allCriteria = [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria]
 
   return {
@@ -66,7 +42,7 @@ export const filterApLevelCriteria = (criteria: Array<PlacementCriteria | Cas1Sp
 export const filterRoomLevelCriteria = (criteria: Array<PlacementCriteria | Cas1SpaceCharacteristic>) =>
   Object.keys(filterByType(criteria, roomCharacteristicMap)) as Array<SpaceSearchRoomCriteria>
 
-export const spaceSearchStateToApiPayload = (state: SpaceSearchState): Cas1SpaceSearchParameters => {
+export const spaceSearchStateToApiPayload = (state: SpaceSearchFormData): Cas1SpaceSearchParameters => {
   return {
     applicationId: state.applicationId,
     startDate: state.startDate,

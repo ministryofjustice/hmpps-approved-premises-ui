@@ -1,5 +1,3 @@
-import { createMock } from '@golevelup/ts-jest'
-import type { Request } from 'express'
 import type { Cas1SpaceBooking, Cas1TimelineEvent } from '@approved-premises/api'
 import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
@@ -8,6 +6,7 @@ import {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
+  cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
@@ -137,73 +136,6 @@ describe('PlacementService', () => {
     })
   })
 
-  describe('departure session data', () => {
-    const page1Data = {
-      departureDate: '2024-12-14T12:30:00.000Z',
-      reasonId: 'reason-id',
-    }
-    const page2Data = {
-      breachOrRecallReasonId: 'new-reason-id',
-    }
-
-    it('returns an empty session data object if no session departure data exists', async () => {
-      const request = createMock<Request>()
-
-      const result = placementService.getDepartureSessionData(placementId, request.session)
-
-      expect(result).toEqual({})
-    })
-
-    it('returns the departure data for the given placement', () => {
-      const request = createMock<Request>({
-        session: { departureForms: { 'placement-id': page1Data } },
-      })
-
-      const result = placementService.getDepartureSessionData(placementId, request.session)
-
-      expect(result).toEqual(page1Data)
-    })
-
-    it('sets the given departure data in session against the placement id', () => {
-      const request = createMock<Request>()
-
-      placementService.setDepartureSessionData(placementId, request.session, page1Data)
-
-      expect(request.session).toEqual(
-        expect.objectContaining({
-          departureForms: {
-            'placement-id': page1Data,
-          },
-        }),
-      )
-    })
-
-    it('updates the existing data in session', () => {
-      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
-
-      placementService.setDepartureSessionData(placementId, request.session, page2Data)
-
-      expect(request.session).toEqual(
-        expect.objectContaining({
-          departureForms: {
-            'placement-id': {
-              ...page1Data,
-              breachOrRecallReasonId: 'new-reason-id',
-            },
-          },
-        }),
-      )
-    })
-
-    it('removes the existing data from session', () => {
-      const request = createMock<Request>({ session: { departureForms: { 'placement-id': page1Data } } })
-
-      placementService.removeDepartureSessionData(placementId, request.session)
-
-      expect(request.session.departureForms).not.toHaveProperty('placement-id')
-    })
-  })
-
   describe('createDeparture', () => {
     it('calls the createDeparture method of the placement client and returns a response', async () => {
       const newPlacementDeparture = cas1NewDepartureFactory.build()
@@ -256,6 +188,19 @@ describe('PlacementService', () => {
       expect(result).toEqual({})
       expect(placementClientFactory).toHaveBeenCalledWith(token)
       expect(placementClient.cancel).toHaveBeenCalledWith(premisesId, placementId, cancellation)
+    })
+  })
+
+  describe('createEmergencyTransfer', () => {
+    it('calls the createEmergencyTransfer method of the placement client and returns a response', async () => {
+      const newTransfer = cas1NewEmergencyTransferFactory.build()
+      placementClient.createEmergencyTransfer.mockResolvedValue({})
+
+      const result = await placementService.createEmergencyTransfer(token, premisesId, placementId, newTransfer)
+
+      expect(result).toEqual({})
+      expect(placementClientFactory).toHaveBeenCalledWith(token)
+      expect(placementClient.createEmergencyTransfer).toHaveBeenCalledWith(premisesId, placementId, newTransfer)
     })
   })
 })

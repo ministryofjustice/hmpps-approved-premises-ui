@@ -107,6 +107,7 @@ export default {
       departure: cas1SpaceBookingSingle.path('departure'),
       cancel: cas1SpaceBookingSingle.path('cancellations'),
       timeline: cas1SpaceBookingSingle.path('timeline'),
+      emergencyTransfer: cas1SpaceBookingSingle.path('emergency-transfer'),
     },
     calendar: premisesSingle.path('calendar'),
     occupancyReport: cas1Premises.path('occupancy-report'),
