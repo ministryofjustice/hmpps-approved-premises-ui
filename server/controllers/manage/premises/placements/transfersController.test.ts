@@ -33,7 +33,22 @@ describe('transfersController', () => {
   const placement = cas1SpaceBookingFactory.current().build()
 
   const params = { premisesId: premises.id, placementId: placement.id }
+  const transfersNewPath = managePaths.premises.placements.transfers.new(params)
+  const emergencyDetailsPath = managePaths.premises.placements.transfers.emergencyDetails(params)
+  const confirmPath = managePaths.premises.placements.transfers.confirm(params)
+
   const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+
+  const expectRedirectWithErrors = (req: Request, res: Response, errors: Record<string, string>, redirect: string) => {
+    expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+      req,
+      res,
+      new ValidationError({}),
+      redirect,
+    )
+    const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+    expect(errorData).toEqual(errors)
+  }
 
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(DateFormats.isoToDateObj('2025-04-29'))
@@ -119,17 +134,9 @@ describe('transfersController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        new ValidationError({}),
-        managePaths.premises.placements.transfers.new(params),
-      )
+      expectRedirectWithErrors(request, response, { transferDate: errorMessage }, transfersNewPath)
+
       expect(transfersController.formData.update).not.toHaveBeenCalled()
-
-      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
-
-      expect(errorData).toEqual({ transferDate: errorMessage })
     })
 
     it('saves the transfer date and redirects to the emergency transfer details page', async () => {
@@ -149,7 +156,7 @@ describe('transfersController', () => {
         'transferDate-month': '4',
         'transferDate-day': '27',
       })
-      expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.emergencyDetails(params))
+      expect(response.redirect).toHaveBeenCalledWith(emergencyDetailsPath)
     })
   })
 
@@ -169,22 +176,27 @@ describe('transfersController', () => {
       }
     })
 
-    it('redirects to the new transfer page if there is no data in the session', async () => {
+    it('redirects to the new transfer page with errors if there is no data in the session', async () => {
       request.session.multiPageFormData = undefined
 
       const requestHandler = transfersController.emergencyDetails()
       await requestHandler(request, response, next)
 
-      expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.new(params))
+      expectRedirectWithErrors(request, response, { transferDate: 'You must enter a transfer date' }, transfersNewPath)
     })
 
-    it('redirects to the new transfer page if there are errors with the session data', async () => {
+    it('redirects to the new transfer page with errors if there are errors with the session data', async () => {
       request.session.multiPageFormData.transfers[placement.id]['transferDate-day'] = '42'
 
       const requestHandler = transfersController.emergencyDetails()
       await requestHandler(request, response, next)
 
-      expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.new(params))
+      expectRedirectWithErrors(
+        request,
+        response,
+        { transferDate: 'You must enter a valid transfer date' },
+        transfersNewPath,
+      )
     })
 
     it('renders the form with errors and user input', async () => {
@@ -194,7 +206,7 @@ describe('transfersController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/emergency-details', {
-        backlink: managePaths.premises.placements.transfers.new(params),
+        backlink: transfersNewPath,
         pageHeading: 'Enter the emergency transfer details',
         placement,
         approvedPremisesOptions: allApprovedPremisesOptions(allPremises),
@@ -232,19 +244,16 @@ describe('transfersController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+      expectRedirectWithErrors(
         request,
         response,
-        new ValidationError({}),
-        managePaths.premises.placements.transfers.emergencyDetails(params),
+        {
+          destinationPremisesId: 'You must select aa Approved Premises for the person to be transferred to',
+        },
+        emergencyDetailsPath,
       )
+
       expect(transfersController.formData.update).not.toHaveBeenCalled()
-
-      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
-
-      expect(errorData).toEqual({
-        destinationPremisesId: 'You must select aa Approved Premises for the person to be transferred to',
-      })
     })
 
     it.each([
@@ -264,16 +273,7 @@ describe('transfersController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        new ValidationError({}),
-        managePaths.premises.placements.transfers.emergencyDetails(params),
-      )
-
-      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
-
-      expect(errorData).toEqual({ placementEndDate: errorMessage })
+      expectRedirectWithErrors(request, response, { placementEndDate: errorMessage }, emergencyDetailsPath)
     })
 
     it('saves the emergency transfer request details and redirects to the confirmation page', async () => {
@@ -297,7 +297,7 @@ describe('transfersController', () => {
         'placementEndDate-month': '5',
         'placementEndDate-day': '14',
       })
-      expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.confirm(params))
+      expect(response.redirect).toHaveBeenCalledWith(confirmPath)
     })
   })
 
@@ -329,7 +329,35 @@ describe('transfersController', () => {
       const requestHandler = transfersController.confirm()
       await requestHandler(request, response, next)
 
-      expect(response.redirect).toHaveBeenCalledWith(managePaths.premises.placements.transfers.new(params))
+      expectRedirectWithErrors(request, response, { transferDate: 'You must enter a transfer date' }, transfersNewPath)
+    })
+
+    it('redirects to the new transfer page if there are errors with the session data', async () => {
+      request.session.multiPageFormData.transfers[placement.id]['transferDate-day'] = '42'
+
+      const requestHandler = transfersController.confirm()
+      await requestHandler(request, response, next)
+
+      expectRedirectWithErrors(
+        request,
+        response,
+        { transferDate: 'You must enter a valid transfer date' },
+        transfersNewPath,
+      )
+    })
+
+    it('redirects to the emergency transfer details page if there are errors with the session data', async () => {
+      request.session.multiPageFormData.transfers[placement.id]['placementEndDate-day'] = '42'
+
+      const requestHandler = transfersController.confirm()
+      await requestHandler(request, response, next)
+
+      expectRedirectWithErrors(
+        request,
+        response,
+        { placementEndDate: 'You must enter a valid placement end date' },
+        emergencyDetailsPath,
+      )
     })
 
     it('renders the confirmation page with a summary of the emergency transfer', async () => {

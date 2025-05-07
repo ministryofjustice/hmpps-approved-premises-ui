@@ -2,6 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 import { addDays } from 'date-fns'
 import { TransferFormData } from '@approved-premises/ui'
 import { Cas1NewEmergencyTransfer } from '@approved-premises/api'
+import { Params } from 'static-path'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
@@ -45,7 +46,7 @@ export default class TransfersController {
     }
   }
 
-  private getSaveNewErrors(body: TransferFormData) {
+  private validateNew(req: Request, res: Response, body: TransferFormData = {}): void {
     const errors: Record<string, string> = {}
 
     const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'transferDate')
@@ -64,7 +65,11 @@ export default class TransfersController {
       }
     }
 
-    return Object.keys(errors).length ? errors : undefined
+    if (Object.keys(errors).length) {
+      throw new ValidationError(errors, managePaths.premises.placements.transfers.new(req.params as Params<string>))
+    }
+
+    return undefined
   }
 
   saveNew(): RequestHandler {
@@ -72,11 +77,7 @@ export default class TransfersController {
       const { premisesId, placementId } = req.params
 
       try {
-        const errors = this.getSaveNewErrors(req.body)
-
-        if (errors) {
-          throw new ValidationError(errors)
-        }
+        this.validateNew(req, res, req.body)
 
         await this.formData.update(placementId, req.session, req.body)
 
@@ -85,11 +86,12 @@ export default class TransfersController {
         return catchValidationErrorOrPropogate(
           req,
           res,
-          error as Error,
-          managePaths.premises.placements.transfers.new({
-            premisesId,
-            placementId,
-          }),
+          error,
+          error.redirect ||
+            managePaths.premises.placements.transfers.new({
+              premisesId,
+              placementId,
+            }),
         )
       }
     }
@@ -105,8 +107,10 @@ export default class TransfersController {
 
       const formData = this.formData.get(placementId, req.session)
 
-      if (!formData || this.getSaveNewErrors(formData)) {
-        return res.redirect(managePaths.premises.placements.transfers.new({ premisesId, placementId }))
+      try {
+        this.validateNew(req, res, formData)
+      } catch (error) {
+        return catchValidationErrorOrPropogate(req, res, error, error.redirect)
       }
 
       return res.render('manage/premises/placements/transfers/emergency-details', {
@@ -122,40 +126,46 @@ export default class TransfersController {
     }
   }
 
-  private getSaveEmergencyDetailsErrors(req: Request, placementId: string) {
+  private validateEmergencyDetails(req: Request, res: Response, body: TransferFormData = {}): void {
     const errors: Record<string, string> = {}
 
-    if (!req.body.destinationPremisesId) {
+    if (!body.destinationPremisesId) {
       errors.destinationPremisesId = 'You must select aa Approved Premises for the person to be transferred to'
     }
 
-    const { placementEndDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'placementEndDate')
+    const { placementEndDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'placementEndDate')
 
     if (!placementEndDate) {
       errors.placementEndDate = 'You must enter a placement end date'
-    } else if (!dateAndTimeInputsAreValidDates(req.body, 'placementEndDate')) {
+    } else if (!dateAndTimeInputsAreValidDates(body, 'placementEndDate')) {
       errors.placementEndDate = 'You must enter a valid placement end date'
     } else {
-      const { transferDate } = this.formData.get(placementId, req.session)
+      const { transferDate } = this.formData.get(req.params.placementId, req.session)
 
       if (datetimeIsInThePast(placementEndDate, transferDate) || dateIsToday(placementEndDate, transferDate)) {
         errors.placementEndDate = `The placement end date must be after the transfer date, ${DateFormats.isoDateToUIDate(transferDate, { format: 'short' })}`
       }
     }
 
-    return Object.keys(errors).length ? errors : undefined
+    if (Object.keys(errors).length) {
+      throw new ValidationError(
+        errors,
+        managePaths.premises.placements.transfers.emergencyDetails(req.params as Params<string>),
+      )
+    }
+
+    return undefined
   }
 
   saveEmergencyDetails(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
 
-      try {
-        const errors = this.getSaveEmergencyDetailsErrors(req, placementId)
+      const formData = this.formData.get(placementId, req.session)
 
-        if (errors) {
-          throw new ValidationError(errors)
-        }
+      try {
+        this.validateNew(req, res, formData)
+        this.validateEmergencyDetails(req, res, req.body)
 
         const destinationPremises = await this.premisesService.find(req.user.token, req.body.destinationPremisesId)
 
@@ -169,11 +179,12 @@ export default class TransfersController {
         return catchValidationErrorOrPropogate(
           req,
           res,
-          error as Error,
-          managePaths.premises.placements.transfers.emergencyDetails({
-            premisesId,
-            placementId,
-          }),
+          error,
+          error.redirect ||
+            managePaths.premises.placements.transfers.emergencyDetails({
+              premisesId,
+              placementId,
+            }),
         )
       }
     }
@@ -187,8 +198,11 @@ export default class TransfersController {
 
       const formData = this.formData.get(placementId, req.session)
 
-      if (!formData) {
-        return res.redirect(managePaths.premises.placements.transfers.new({ premisesId, placementId }))
+      try {
+        this.validateNew(req, res, formData)
+        this.validateEmergencyDetails(req, res, formData)
+      } catch (error) {
+        return catchValidationErrorOrPropogate(req, res, error, error.redirect)
       }
 
       return res.render('manage/premises/placements/transfers/confirm', {
@@ -210,6 +224,9 @@ export default class TransfersController {
       const formData = this.formData.get(placementId, req.session)
 
       try {
+        this.validateNew(req, res, formData)
+        this.validateEmergencyDetails(req, res, formData)
+
         const newEmergencyTransfer: Cas1NewEmergencyTransfer = {
           arrivalDate: formData.transferDate,
           departureDate: formData.placementEndDate,
@@ -235,8 +252,8 @@ export default class TransfersController {
         return catchValidationErrorOrPropogate(
           req,
           res,
-          error as Error,
-          managePaths.premises.placements.transfers.confirm({ premisesId, placementId }),
+          error,
+          error.redirect || managePaths.premises.placements.transfers.confirm({ premisesId, placementId }),
         )
       }
     }
