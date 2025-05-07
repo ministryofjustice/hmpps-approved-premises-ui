@@ -212,7 +212,6 @@ export default class TransfersController {
         summaryList: transferSummaryList(formData),
         errors,
         errorSummary,
-        ...formData,
       })
     }
   }

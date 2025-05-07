@@ -373,7 +373,6 @@ describe('transfersController', () => {
         summaryList: transferSummaryList(sessionData),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        ...sessionData,
       })
     })
   })
