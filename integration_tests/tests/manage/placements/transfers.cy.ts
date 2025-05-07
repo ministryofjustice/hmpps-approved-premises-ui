@@ -36,9 +36,8 @@ context('Transfers', () => {
     cy.task('stubSpaceBookingEmergencyTransferCreate', placement)
 
     // Given I am signed in as a future manager
-    // TODO: change role to `future_manager` once the `cas1_transfer_create` permission has been assigned
-    signIn('janitor')
-    // signIn('future_manager')
+    // TODO: remove 'change_request_dev' role once transfer create permissions assigned to 'future_manager'
+    signIn(['future_manager', 'change_request_dev'])
 
     // When I view a current placement
     let placementPage = PlacementShowPage.visit(placement)
