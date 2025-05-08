@@ -10,11 +10,11 @@ import type {
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
   ApplicationTimelineNote,
-  ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
   NewWithdrawal,
   SortDirection,
+  Cas1ApplicationSummary,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -51,7 +51,7 @@ export default class ApplicationService {
     sortBy: ApplicationSortField = 'createdAt',
     sortDirection: SortDirection = 'asc',
     searchOptions: ApplicationDashboardSearchOptions = {},
-  ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
+  ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     const applicationClient = this.applicationClientFactory(token)
 
     return applicationClient.dashboard(page, sortBy, sortDirection, searchOptions)
