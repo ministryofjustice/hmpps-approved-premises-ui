@@ -25,9 +25,9 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
     allowedPermissions: ['cas1_view_cru_dashboard'],
   })
-  post(paths.admin.placementRequests.index.pattern, cruDashboardController.index(), {
-    auditEvent: 'ADMIN_LIST_FILTER_PLACEMENT_REQUESTS',
-    allowedPermissions: ['cas1_view_cru_dashboard'],
+  get(paths.admin.cruDashboard.changeRequests.pattern, cruDashboardController.changeRequests(), {
+    auditEvent: 'ADMIN_LIST_CHANGE_REQUESTS',
+    allowedPermissions: ['cas1_change_request_list'],
   })
   get(paths.admin.cruDashboard.search.pattern, cruDashboardController.search(), {
     auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
