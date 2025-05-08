@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { addDays } from 'date-fns'
+import { addDays, isBefore } from 'date-fns'
 import { TransferFormData } from '@approved-premises/ui'
 import { Cas1NewEmergencyTransfer } from '@approved-premises/api'
 import { Params } from 'static-path'
@@ -7,12 +7,7 @@ import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
-import {
-  dateAndTimeInputsAreValidDates,
-  DateFormats,
-  dateIsToday,
-  datetimeIsInThePast,
-} from '../../../../utils/dateUtils'
+import { dateAndTimeInputsAreValidDates, DateFormats } from '../../../../utils/dateUtils'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 import { allApprovedPremisesOptions, transferSummaryList } from '../../../../utils/placements/transfers'
 
@@ -60,7 +55,7 @@ export default class TransfersController {
       const oneWeekAgo = DateFormats.dateObjToIsoDate(addDays(new Date(), -7))
       const tomorrow = DateFormats.dateObjToIsoDate(addDays(new Date(), 1))
 
-      if (datetimeIsInThePast(transferDate, oneWeekAgo) || !datetimeIsInThePast(transferDate, tomorrow)) {
+      if (isBefore(transferDate, oneWeekAgo) || !isBefore(transferDate, tomorrow)) {
         errors.transferDate = 'The date of transfer must be today or in the last 7 days'
       }
     }
@@ -142,7 +137,7 @@ export default class TransfersController {
     } else {
       const { transferDate } = this.formData.get(req.params.placementId, req.session)
 
-      if (datetimeIsInThePast(placementEndDate, transferDate) || dateIsToday(placementEndDate, transferDate)) {
+      if (isBefore(placementEndDate, transferDate) || placementEndDate === transferDate) {
         errors.placementEndDate = `The placement end date must be after the transfer date, ${DateFormats.isoDateToUIDate(transferDate, { format: 'short' })}`
       }
     }
