@@ -1,6 +1,7 @@
 import {
+  Cas1ChangeRequestSummary,
   Cas1ChangeRequestType,
-  type Cas1NewChangeRequest,
+  Cas1NewChangeRequest,
   PlacementRequest,
   PlacementRequestDetail,
   WithdrawPlacementRequestReason,
@@ -8,6 +9,7 @@ import {
 import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
+  cas1ChangeRequestSummaryFactory,
   cas1NewChangeRequestFactory,
   newPlacementRequestBookingConfirmationFactory,
   paginatedResponseFactory,
@@ -226,6 +228,31 @@ describe('placementRequestService', () => {
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.createPlacementAppeal).toHaveBeenCalledWith(id, newChangeRequest)
+    })
+  })
+
+  describe('getChangeRequests', () => {
+    it('should call the service', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: cas1ChangeRequestSummaryFactory.buildList(5),
+      }) as PaginatedResponse<Cas1ChangeRequestSummary>
+
+      placementRequestClient.getChangeRequests.mockResolvedValue(paginatedResponse)
+
+      const cruManagementAreaId = 'some-id'
+      const page = 3
+      const sortBy = 'tier'
+      const sortDirection = 'desc'
+
+      await service.getChangeRequests(token, { cruManagementAreaId }, page, sortBy, sortDirection)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.getChangeRequests).toHaveBeenCalledWith(
+        { cruManagementAreaId },
+        page,
+        sortBy,
+        sortDirection,
+      )
     })
   })
 })
