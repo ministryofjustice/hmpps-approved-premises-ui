@@ -1,9 +1,4 @@
-import {
-  ApplicationSortField,
-  ApprovedPremisesApplicationSummary as ApplicationSummary,
-  ReleaseTypeOption,
-  SortDirection,
-} from '../../@types/shared'
+import { ApplicationSortField, Cas1ApplicationSummary, ReleaseTypeOption, SortDirection } from '../../@types/shared'
 import { SelectOption, TableCell, TableRow } from '../../@types/ui'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
@@ -25,7 +20,7 @@ export const pendingPlacementRequestTableHeader = (
   ]
 }
 
-export const pendingPlacementRequestTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
+export const pendingPlacementRequestTableRows = (applications: Array<Cas1ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
     createNameAnchorElement(application.person, application, { showCrn: true }),
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),

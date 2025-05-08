@@ -27,7 +27,7 @@ export const tableRows = (tasks: Array<PlacementRequest>): Array<TableRow> => {
 
 export const dashboardTableRows = (
   placementRequests: Array<PlacementRequest>,
-  status: PlacementRequestStatus | undefined,
+  status?: PlacementRequestStatus,
 ): Array<TableRow> => {
   return placementRequests.map((placementRequest: PlacementRequest) => {
     return [

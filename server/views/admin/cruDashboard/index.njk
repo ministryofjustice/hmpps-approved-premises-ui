@@ -4,8 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "moj/components/identity-bar/macro.njk" import mojIdentityBar %}
-
-{% from "./_navigation.njk" import navigation %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -31,9 +30,8 @@
                 {{ subheading }}
             </p>
 
-            <form action="{{ paths.admin.cruDashboard.index({}) }}" method="get" class="search-and-filter">
-                <input type="hidden" name="status" value="{{ status }}">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <form action="{{ currentUrl }}" method="get" class="search-and-filter">
+                <input type="hidden" name="status" value="{{ activeTab }}">
 
                 <h2 class="govuk-heading-m">Filters</h2>
 
@@ -49,7 +47,7 @@
                         items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementArea', 'all', context)
                     }) }}
 
-                    {% if status != "pendingPlacement" %}
+                    {% if activeTab != "pendingPlacement" %}
                         {{ govukSelect({
                             label: {
                                 text: "Request type",
@@ -61,7 +59,7 @@
                         }) }}
                     {% endif %}
 
-                    {% if status === "pendingPlacement" %}
+                    {% if activeTab === "pendingPlacement" %}
                         {{ govukSelect({
                             label: {
                                 text: "Release type",
@@ -69,35 +67,30 @@
                             },
                             id: "releaseType",
                             name: "releaseType",
-                            items: ApplyUtils.releaseTypeSelectOptions(releaseType)
+                            items: releaseTypes
                         }) }}
                     {% endif %}
 
                     {{ govukButton({
-                        "name": "submit",
-                        "text": "Apply filters",
-                        "preventDoubleClick": true
+                        type: "submit",
+                        text: "Apply filters",
+                        preventDoubleClick: true
                     }) }}
                 </div>
             </form>
 
-            {{ navigation(status, cruManagementArea, requestType) }}
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: tabs
+            }) }}
 
-            {% if status == "pendingPlacement" %}
-                {{ govukTable({
-                    firstCellIsHeader: true,
-                    head: ApplyUtils.pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
-                    rows: ApplyUtils.pendingPlacementRequestTableRows(applications)
-                }) }}
-            {% else %}
-                {{ govukTable({
-                    firstCellIsHeader: true,
-                    head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
-                    rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests, status)
-                }) }}
-            {% endif %}
+            {{ govukTable({
+                firstCellIsHeader: true,
+                head: tableHead,
+                rows: tableRows
+            }) }}
 
-            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+            {{ govukPagination(pagination) }}
 
         </div>
     </div>

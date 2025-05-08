@@ -1,10 +1,10 @@
-import { ApprovedPremisesApplicationSummary as ApplicationSummary, Person } from '../../@types/shared'
+import { Cas1ApplicationSummary, Person } from '../../@types/shared'
 import { displayName, isFullPerson, tierBadge } from '../personUtils'
 import paths from '../../paths/apply'
 
 export const createNameAnchorElement = (
   person: Person,
-  applicationSummary: ApplicationSummary,
+  applicationSummary: Cas1ApplicationSummary,
   {
     linkInProgressApplications,
     showCrn,

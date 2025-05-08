@@ -6,9 +6,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 
-{%- from "moj/components/search/macro.njk" import mojSearch -%}
-
-{% from "./_navigation.njk" import navigation %}
+{% from "moj/components/search/macro.njk" import mojSearch %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -21,14 +20,12 @@
 
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-            {{ navigation("search") }}
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: tabs
+            }) }}
 
-
-            <form action="{{ paths.admin.cruDashboard.search({}) }}" method="get" class="search-and-filter">
-
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-
+            <form action="{{ currentUrl }}" method="get" class="search-and-filter">
                 <div class="govuk-form-group">
                     <label class="search-and-filter__crn-label" for="crnOrName">
                         Find a placement
@@ -40,7 +37,6 @@
 
                     <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search"
                            aria-describedby="crn-hint" value="{{ crnOrName }}">
-
                 </div>
 
                 <h2 class="govuk-heading-m">Filters</h2>
@@ -53,7 +49,7 @@
                         },
                         id: "tier",
                         name: "tier",
-                        items: FormUtils.tierSelectOptions(tier)
+                        items: tierOptions
                     }) }}
 
                     {{ govukSelect({
@@ -63,7 +59,7 @@
                         },
                         id: "status",
                         name: "status",
-                        items: FormUtils.placementRequestStatusSelectOptions(status)
+                        items: statusOptions
                     }) }}
 
                     <div class="govuk-form-group">
@@ -85,7 +81,7 @@
                     </div>
 
                     {{ govukButton({
-                        name: 'submit',
+                        type: 'submit',
                         text: 'Apply filters',
                         preventDoubleClick: true
                     }) }}
@@ -94,11 +90,11 @@
 
             {{ govukTable({
                 firstCellIsHeader: true,
-                head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
-                rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)
+                head: tableHead,
+                rows: tableRows
             }) }}
 
-            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+            {{ govukPagination(pagination) }}
 
         </div>
     </div>
