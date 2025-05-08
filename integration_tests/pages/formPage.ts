@@ -1,8 +1,13 @@
 import TasklistPage from '../../server/form-pages/tasklistPage'
 import Page from './page'
 
+type FieldType = 'text' | 'textArea' | 'date' | 'radio'
+export type FieldDetails = Record<string, { type: FieldType; error?: string; value: string; label: string }>
+
 export default class FormPage extends Page {
   tasklistPage: TasklistPage
+
+  fieldDetails: FieldDetails
 
   constructor(title: string, backLink?: string, checkPhaseBanner: boolean = true) {
     super(title)
@@ -40,5 +45,37 @@ export default class FormPage extends Page {
 
   selectSelectOptionFromPageBody(fieldName: string) {
     this.getSelectInputByIdAndSelectAnEntry(fieldName, this.tasklistPage.body[fieldName] as string)
+  }
+
+  shouldShowFormControls(fieldDetails?: FieldDetails) {
+    Object.values(fieldDetails || this.fieldDetails).forEach(({ type, label }) => {
+      if (['date', 'radio'].includes(type)) this.getLegend(label)
+      else this.getLabel(label)
+    })
+  }
+
+  shouldShowErrorMessages(fieldDetails?: FieldDetails) {
+    Object.entries(fieldDetails || this.fieldDetails).forEach(([field, { error }]) => {
+      if (error) {
+        cy.get('.govuk-error-summary').should('contain', error)
+        cy.get(`[data-cy-error-${field.toLowerCase()}]`).should('contain', error)
+      }
+    })
+  }
+
+  shouldCompleteForm(fieldDetails?: FieldDetails) {
+    Object.entries(fieldDetails || this.fieldDetails).forEach(([field, { type, value }]) => {
+      if (type === 'text') this.completeTextInput(field, value)
+      if (type === 'textArea') this.completeTextArea(field, value)
+      if (type === 'date') this.clearAndCompleteDateInputs(field, value)
+      if (type === 'radio') this.checkRadioByNameAndValue(field, value)
+    })
+  }
+
+  getFieldValueMap<T>(fieldDetails?: FieldDetails) {
+    return Object.entries(fieldDetails || this.fieldDetails).reduce((out, [key, { value }]) => {
+      out[key] = value
+      return out as T
+    }, {})
   }
 }

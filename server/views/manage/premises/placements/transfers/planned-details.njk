@@ -1,0 +1,102 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
+
+{% extends "../../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% set noteHintBlock %}
+    <p>Give any information that could help the receiving AP.</p>
+
+    <p>And, if known, please include:</p>
+    <ul>
+        <li>
+            the name of the AP receiving the transfer
+        </li>
+        <li>
+            placement end date
+        </li>
+        <li>
+            whether you have arranged to swap a booking
+        </li>
+    </ul>
+{% endset %}
+
+{% block header %}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backlink
+    }) }}
+{% endblock %}
+
+{% block content %}
+    {{ showErrorSummary(errorSummary) }}
+
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form action="{{ currentUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Is the date flexible?",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "This will help when requests are being prioritised"
+                    },
+                    idPrefix: "isFlexible",
+                    errorMessage: errors.isFlexible,
+                    name: "isFlexible",
+                    items: isFlexibleRadioItems
+                }) }}
+
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Select a reason for the transfer",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    idPrefix: "transferReason",
+                    errorMessage: errors.transferReason,
+                    name: "transferReason",
+                    items: transferReasonRadioItems
+                }) }}
+
+                {{ govukTextarea({
+                    name: "notes",
+                    id: "notes",
+                    label: {
+                        text: "Provide details about the transfer",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        html:noteHintBlock
+                    },
+                    value: notes,
+                    errorMessage: errors.notes
+                }) }}
+
+                {{ govukButton({
+                    text: "Save and continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

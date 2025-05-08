@@ -2,11 +2,11 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
 import { AppealSessionData } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
-import { appealReasonRadioDefinitions } from '../../utils/placements/changeRequests'
+import { transferRequestReasonRadioDefinitions } from '../../utils/placements/changeRequests'
 
 export default Factory.define<AppealSessionData>(() => {
   const approvalDate = faker.date.recent({ days: 5 })
-  const appealReason = faker.helpers.arrayElement(Object.keys(appealReasonRadioDefinitions))
+  const appealReason = faker.helpers.arrayElement(Object.keys(transferRequestReasonRadioDefinitions))
   const appealReasonDetails = { [`${appealReason}Detail`]: faker.lorem.lines(3) }
   return {
     areaManagerName: faker.person.fullName(),

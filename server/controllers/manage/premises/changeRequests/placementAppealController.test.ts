@@ -63,7 +63,7 @@ describe('placementAppealController', () => {
     premisesService.getPlacement.mockResolvedValue(placement)
     placementRequestService.getChangeRequestReasons.mockResolvedValue(appealReasons)
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
-    jest.spyOn(changeRequestUtils, 'mapAppealReasonsToRadios').mockReturnValue(appealReasonRadioItems)
+    jest.spyOn(changeRequestUtils, 'mapChangeRequestReasonsToRadios').mockReturnValue(appealReasonRadioItems)
     jest.spyOn(placementAppealController.formData, 'update')
     jest.spyOn(placementAppealController.formData, 'remove')
   })
@@ -77,7 +77,11 @@ describe('placementAppealController', () => {
 
       expect(placementRequestService.getChangeRequestReasons).toHaveBeenCalledWith(token, 'placementAppeal')
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
-      expect(changeRequestUtils.mapAppealReasonsToRadios).toHaveBeenCalledWith(appealReasons, errorsAndUserInput)
+      expect(changeRequestUtils.mapChangeRequestReasonsToRadios).toHaveBeenCalledWith(
+        appealReasons,
+        'appealReason',
+        errorsAndUserInput,
+      )
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/placements/changeRequests/appealNew',
         expect.objectContaining({
@@ -90,12 +94,16 @@ describe('placementAppealController', () => {
     })
 
     it('should populate appeal form from session', async () => {
+      when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
       jest.spyOn(placementAppealController.formData, 'get').mockReturnValue(sessionData)
 
       const requestHandler = placementAppealController.new()
       await requestHandler(request, response, next)
 
-      expect(changeRequestUtils.mapAppealReasonsToRadios).toHaveBeenCalledWith(appealReasons, sessionData)
+      expect(changeRequestUtils.mapChangeRequestReasonsToRadios).toHaveBeenCalledWith(appealReasons, 'appealReason', {
+        ...sessionData,
+        ...errorsAndUserInput,
+      })
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/placements/changeRequests/appealNew',
         expect.objectContaining({

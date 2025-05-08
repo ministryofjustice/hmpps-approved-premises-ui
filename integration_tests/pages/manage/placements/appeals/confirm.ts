@@ -1,9 +1,9 @@
 import { AppealSessionData } from '@approved-premises/ui'
-import type { FieldDetails } from './new'
 import { DateFormats } from '../../../../../server/utils/dateUtils'
 import Page from '../../../page'
 import { summaryListItem } from '../../../../../server/utils/formUtils'
 import { getAppealReasonText } from '../../../../../server/utils/placements/changeRequests'
+import { FieldDetails } from '../../../formPage'
 
 export class ConfirmPage extends Page {
   constructor() {

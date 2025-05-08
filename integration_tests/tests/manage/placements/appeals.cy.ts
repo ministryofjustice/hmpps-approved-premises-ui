@@ -4,7 +4,7 @@ import { cas1PremisesFactory, cas1SpaceBookingFactory } from '../../../../server
 import { PlacementShowPage } from '../../../pages/manage'
 import { NewPlacementAppealPage } from '../../../pages/manage/placements/appeals/new'
 import { ConfirmPage } from '../../../pages/manage/placements/appeals/confirm'
-import { appealReasonRadioDefinitions } from '../../../../server/utils/placements/changeRequests'
+import { transferRequestReasonRadioDefinitions } from '../../../../server/utils/placements/changeRequests'
 import apiPath from '../../../../server/paths/api'
 
 context('Appeals', () => {
@@ -14,7 +14,7 @@ context('Appeals', () => {
       premises,
     })
 
-    const changeRequestReasons: Array<NamedId> = Object.keys(appealReasonRadioDefinitions).map(name => ({
+    const changeRequestReasons: Array<NamedId> = Object.keys(transferRequestReasonRadioDefinitions).map(name => ({
       name,
       id: name,
     }))
@@ -47,7 +47,7 @@ context('Appeals', () => {
     newPage.shouldShowErrorMessages(newPage.fieldDetails)
 
     // When I complete and submit the form
-    newPage.completeForm(newPage.fieldDetails)
+    newPage.shouldCompleteForm(newPage.fieldDetails)
     newPage.clickSubmit()
 
     // Then I should see an error for the selected reason details
@@ -55,7 +55,7 @@ context('Appeals', () => {
     newPage.shouldShowErrorMessages(newPage.reasonDetailsFieldDetails)
 
     // When I add details and submit
-    newPage.completeForm(newPage.reasonDetailsFieldDetails)
+    newPage.shouldCompleteForm(newPage.reasonDetailsFieldDetails)
     newPage.clickSubmit()
 
     // Then I should be on the confirm screen

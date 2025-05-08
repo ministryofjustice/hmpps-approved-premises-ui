@@ -1,27 +1,26 @@
 import nunjucks from 'nunjucks'
 import { NamedId } from '@approved-premises/api'
 import { AppealSessionData } from '@approved-premises/ui'
+import { addDays } from 'date-fns'
 import { appealSessionDataFactory } from '../../testutils/factories'
 import {
   getAppealReasonText,
   getConfirmationSummary,
   validateNewAppealResponse,
   getConditionalHtml,
-  mapAppealReasonsToRadios,
+  mapChangeRequestReasonsToRadios,
   getAppealReasonId,
 } from './changeRequests'
 import { summaryListItem } from '../formUtils'
 import { DateFormats } from '../dateUtils'
 import { ValidationError } from '../errors'
-import { addDays } from 'date-fns'
-
 
 const appealReasons: Array<NamedId> = [
   { name: 'staffConflictOfInterest', id: 'id1' },
   { name: 'exclusionZoneOrProximityToVictim', id: 'id2' },
 ]
 
-describe('changeRequestUtils', () => {
+describe('changeRequest utilities', () => {
   describe('getConditionalHtml', () => {
     it('renders html for a conditional text area', () => {
       const renderedHtml = '<p>Test</p>'
@@ -40,7 +39,9 @@ describe('changeRequestUtils', () => {
       const conditional = 'conditional'
       jest.spyOn(nunjucks, 'render').mockImplementation(() => conditional)
 
-      const result = mapAppealReasonsToRadios(appealReasons, { appealReason: 'staffConflictOfInterest' })
+      const result = mapChangeRequestReasonsToRadios(appealReasons, 'appealReason', {
+        appealReason: 'staffConflictOfInterest',
+      })
       expect(result).toEqual([
         {
           checked: true,

@@ -9,7 +9,11 @@ import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
 import { dateAndTimeInputsAreValidDates, DateFormats } from '../../../../utils/dateUtils'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
-import { allApprovedPremisesOptions, transferSummaryList } from '../../../../utils/placements/transfers'
+import {
+  allApprovedPremisesOptions,
+  emergencyTransferSummaryList,
+  validateNew,
+} from '../../../../utils/placements/transfers'
 
 export default class TransfersController {
   formData: MultiPageFormManager<'transfers'>
@@ -41,42 +45,20 @@ export default class TransfersController {
     }
   }
 
-  private validateNew(req: Request, res: Response, body: TransferFormData = {}): void {
-    const errors: Record<string, string> = {}
-
-    const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'transferDate')
-
-    if (!transferDate) {
-      errors.transferDate = 'You must enter a transfer date'
-    } else if (!dateAndTimeInputsAreValidDates(body, 'transferDate')) {
-      errors.transferDate = 'You must enter a valid transfer date'
-    } else {
-      // TODO: this validation will need to be updated when standard transfers are added.
-      const oneWeekAgo = DateFormats.dateObjToIsoDate(addDays(new Date(), -7))
-      const tomorrow = DateFormats.dateObjToIsoDate(addDays(new Date(), 1))
-
-      if (isBefore(transferDate, oneWeekAgo) || !isBefore(transferDate, tomorrow)) {
-        errors.transferDate = 'The date of transfer must be today or in the last 7 days'
-      }
-    }
-
-    if (Object.keys(errors).length) {
-      throw new ValidationError(errors, managePaths.premises.placements.transfers.new(req.params as Params<string>))
-    }
-
-    return undefined
-  }
-
   saveNew(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
 
       try {
-        this.validateNew(req, res, req.body)
-
+        validateNew(req, res, req.body)
         await this.formData.update(placementId, req.session, req.body)
 
-        return res.redirect(managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }))
+        const tomorrow = DateFormats.dateObjToIsoDate(addDays(new Date(), 1))
+        const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'transferDate')
+        if (isBefore(transferDate, tomorrow)) {
+          return res.redirect(managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }))
+        }
+        return res.redirect(managePaths.premises.placements.transfers.plannedDetails({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -103,7 +85,7 @@ export default class TransfersController {
       const formData = this.formData.get(placementId, req.session)
 
       try {
-        this.validateNew(req, res, formData)
+        validateNew(req, res, formData)
       } catch (error) {
         return catchValidationErrorOrPropogate(req, res, error, error.redirect)
       }
@@ -121,7 +103,7 @@ export default class TransfersController {
     }
   }
 
-  private validateEmergencyDetails(req: Request, res: Response, body: TransferFormData = {}): void {
+  private validateEmergencyDetails(req: Request, body: TransferFormData = {}): void {
     const errors: Record<string, string> = {}
 
     if (!body.destinationPremisesId) {
@@ -159,8 +141,8 @@ export default class TransfersController {
       const formData = this.formData.get(placementId, req.session)
 
       try {
-        this.validateNew(req, res, formData)
-        this.validateEmergencyDetails(req, res, req.body)
+        validateNew(req, res, formData)
+        this.validateEmergencyDetails(req, req.body)
 
         const destinationPremises = await this.premisesService.find(req.user.token, req.body.destinationPremisesId)
 
@@ -169,7 +151,7 @@ export default class TransfersController {
           destinationPremisesName: destinationPremises.name,
         })
 
-        return res.redirect(managePaths.premises.placements.transfers.confirm({ premisesId, placementId }))
+        return res.redirect(managePaths.premises.placements.transfers.emergencyConfirm({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -185,7 +167,7 @@ export default class TransfersController {
     }
   }
 
-  confirm(): RequestHandler {
+  confirmEmergency(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
@@ -194,17 +176,17 @@ export default class TransfersController {
       const formData = this.formData.get(placementId, req.session)
 
       try {
-        this.validateNew(req, res, formData)
-        this.validateEmergencyDetails(req, res, formData)
+        validateNew(req, res, formData)
+        this.validateEmergencyDetails(req, formData)
       } catch (error) {
         return catchValidationErrorOrPropogate(req, res, error, error.redirect)
       }
 
       return res.render('manage/premises/placements/transfers/confirm', {
         backlink: managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }),
-        pageHeading: 'Check the details of the transfer',
+        pageHeading: 'Confirm emergency transfer',
         placement,
-        summaryList: transferSummaryList(formData),
+        summaryList: emergencyTransferSummaryList(formData),
         errors,
         errorSummary,
       })
@@ -218,8 +200,8 @@ export default class TransfersController {
       const formData = this.formData.get(placementId, req.session)
 
       try {
-        this.validateNew(req, res, formData)
-        this.validateEmergencyDetails(req, res, formData)
+        validateNew(req, res, formData)
+        this.validateEmergencyDetails(req, formData)
 
         const newEmergencyTransfer: Cas1NewEmergencyTransfer = {
           arrivalDate: formData.transferDate,
@@ -247,7 +229,7 @@ export default class TransfersController {
           req,
           res,
           error,
-          error.redirect || managePaths.premises.placements.transfers.confirm({ premisesId, placementId }),
+          error.redirect || managePaths.premises.placements.transfers.emergencyConfirm({ premisesId, placementId }),
         )
       }
     }

@@ -26,6 +26,7 @@ import actions from './utils'
 import paths from '../paths/manage'
 import CancellationsController from '../controllers/manage/cancellationsController'
 import RedirectController from '../controllers/redirectController'
+import PlannedTransfersController from '../controllers/manage/premises/changeRequests/plannedTransferController'
 
 jest.mock('./utils')
 
@@ -55,6 +56,7 @@ describe('manage routes', () => {
   const changesController: DeepMocked<ChangesController> = createMock<ChangesController>({})
   const transfersController: DeepMocked<TransfersController> = createMock<TransfersController>({})
   const placementAppealController: DeepMocked<PlacementAppealController> = createMock<PlacementAppealController>({})
+  const plannedTransferController: DeepMocked<PlannedTransfersController> = createMock<PlannedTransfersController>()
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
     bookingExtensionsController,
@@ -76,6 +78,7 @@ describe('manage routes', () => {
     changesController,
     transfersController,
     placementAppealController,
+    plannedTransferController,
   })
   const services: DeepMocked<Services> = createMock<Services>({})
 
@@ -210,7 +213,7 @@ describe('manage routes', () => {
     })
   })
 
-  it('should allow users with permission cas1 to create a placement appeal', () => {
+  it('should allow users with permission cas1_placement_appeal_create to create a placement appeal', () => {
     manageRoutes(controllers, router, services)
 
     expect(getSpy).toHaveBeenCalledWith(paths.premises.placements.appeal.new.pattern, placementAppealController.new(), {
@@ -239,6 +242,42 @@ describe('manage routes', () => {
       {
         auditEvent: 'CREATE_PLACEMENT_APPEAL',
         allowedPermissions: ['cas1_placement_appeal_create'],
+      },
+    )
+  })
+  it('should allow users with permission cas1_transfer_create to create a planned transfer change request', () => {
+    manageRoutes(controllers, router, services)
+
+    expect(getSpy).toHaveBeenCalledWith(
+      paths.premises.placements.transfers.plannedDetails.pattern,
+      plannedTransferController.details(),
+      {
+        auditEvent: 'PLANNED_TRANSFER_REQUEST_DETAILS',
+        allowedPermissions: ['cas1_transfer_create'],
+      },
+    )
+    expect(postSpy).toHaveBeenCalledWith(
+      paths.premises.placements.transfers.plannedDetails.pattern,
+      plannedTransferController.detailsSave(),
+      {
+        auditEvent: 'PLANNED_TRANSFER_REQUEST_DETAILS_SAVE',
+        allowedPermissions: ['cas1_transfer_create'],
+      },
+    )
+    expect(getSpy).toHaveBeenCalledWith(
+      paths.premises.placements.transfers.plannedConfirm.pattern,
+      plannedTransferController.confirm(),
+      {
+        auditEvent: 'PLANNED_TRANSFER_REQUEST_CONFIRM',
+        allowedPermissions: ['cas1_transfer_create'],
+      },
+    )
+    expect(postSpy).toHaveBeenCalledWith(
+      paths.premises.placements.transfers.plannedConfirm.pattern,
+      plannedTransferController.create(),
+      {
+        auditEvent: 'PLANNED_TRANSFER_REQUEST_CREATE',
+        allowedPermissions: ['cas1_transfer_create'],
       },
     )
   })

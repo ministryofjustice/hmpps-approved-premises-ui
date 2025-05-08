@@ -1,12 +1,13 @@
 import { NamedId } from '@approved-premises/api'
 import { AppealSessionData, ObjectWithDateParts, RadioItem, SummaryListItem } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
+import { isAfter } from 'date-fns'
 import { dateAndTimeInputsAreValidDates, DateFormats } from '../dateUtils'
 import { ValidationError } from '../errors'
 import { summaryListItem } from '../formUtils'
-import { isAfter } from 'date-fns'
+import { sentenceCase } from '../utils'
 
-export const appealReasonRadioDefinitions: Record<string, { text: string; conditionalQuestion: string }> = {
+export const transferRequestReasonRadioDefinitions: Record<string, { text: string; conditionalQuestion?: string }> = {
   staffConflictOfInterest: {
     text: 'Staff conflict of interest',
     conditionalQuestion:
@@ -29,6 +30,16 @@ export const appealReasonRadioDefinitions: Record<string, { text: string; condit
     text: 'Resident mix or non-associates',
     conditionalQuestion: 'Say which applies and give details. ',
   },
+
+  extendingThePlacementNoCapacityAtCurrentAp: { text: 'Extending the placement (no capacity at current AP)' },
+  placementPrioritisation: { text: 'Placement prioritisation ' },
+  movingPersonCloserToResettlementArea: { text: 'Moving person closer to resettlement area' },
+  conflictWithStaff: { text: 'Conflict with staff ' },
+  localCommunityIssue: { text: 'Local community issue ' },
+  riskToResident: { text: 'Risk to resident ' },
+  publicProtection: { text: 'Public protection ' },
+  apClosure: { text: 'AP closure ' },
+  other: { text: 'Out of service bed or refurbishment' }, // TODO:Check that this is the right text for the code
 }
 
 export const getConditionalHtml = (name: string, conditionalQuestion: string, context: Record<string, unknown>) => {
@@ -43,17 +54,21 @@ export const getConditionalHtml = (name: string, conditionalQuestion: string, co
   return nunjucks.render('manage/premises/placements/changeRequests/detailsTextarea.njk', textboxContext)
 }
 
-export const mapAppealReasonsToRadios = (
+export const mapChangeRequestReasonsToRadios = (
   appealReasons: Array<NamedId>,
+  name: string,
   context: Record<string, unknown>,
 ): Array<RadioItem> => {
-  const selectedValue = context.appealReason
+  const selectedValue = context[name]
   return appealReasons
-    .map(({ name }) => {
-      if (!appealReasonRadioDefinitions[name]) return null
-      const { text, conditionalQuestion } = appealReasonRadioDefinitions[name]
-      const conditionalHtml = getConditionalHtml(`${name}Detail`, conditionalQuestion, context)
-      return { value: name, text, conditional: { html: conditionalHtml }, checked: selectedValue === name }
+    .map(({ name: reasonName }) => {
+      if (!transferRequestReasonRadioDefinitions[reasonName])
+        return { value: reasonName, text: sentenceCase(reasonName), checked: selectedValue === reasonName }
+      const { text, conditionalQuestion } = transferRequestReasonRadioDefinitions[reasonName]
+      const conditionalHtml = conditionalQuestion
+        ? { html: getConditionalHtml(`${reasonName}Detail`, conditionalQuestion, context) }
+        : undefined
+      return { value: reasonName, text, conditional: conditionalHtml, checked: selectedValue === reasonName }
     })
     .filter(Boolean)
 }
@@ -62,10 +77,16 @@ export const getAppealReasonId = (reasonName: string, reasonList: Array<NamedId>
   return reasonList.find(({ name }) => name === reasonName)?.id
 }
 
+export const getChangeRequestReasonText = (changeRequestReason: string) => {
+  return transferRequestReasonRadioDefinitions[changeRequestReason]
+    ? transferRequestReasonRadioDefinitions[changeRequestReason].text
+    : sentenceCase(changeRequestReason)
+}
+
 export const getAppealReasonText = (body: AppealSessionData): string => {
   const { appealReason } = body
   const detailKey = `${appealReason}Detail` as keyof AppealSessionData
-  const definition = appealReasonRadioDefinitions[appealReason]
+  const definition = transferRequestReasonRadioDefinitions[appealReason]
   return definition ? `${definition.text}\n\n${body[detailKey]}` : ''
 }
 
@@ -87,7 +108,7 @@ export const validateNewAppealResponse = (body: AppealSessionData): void => {
     errors.approvalDate = 'You must enter the date of the approval'
   } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'approvalDate'>, 'approvalDate')) {
     errors.approvalDate = 'You must enter a valid approval date'
-  } else if (isAfter(approvalDate,new Date())) {
+  } else if (isAfter(approvalDate, new Date())) {
     errors.approvalDate = 'The approval date must be today or in the past'
   }
   if (!appealReason) {

@@ -86,4 +86,16 @@ export default class PlacementRequestService {
 
     return placementRequestClient.createPlacementAppeal(id, newChangeRequest)
   }
+
+  async createPlannedTransfer(token: string, id: string, newChangeRequest: Cas1NewChangeRequest) {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.createPlannedTransfer(id, newChangeRequest)
+  }
+
+  async createExtension(token: string, id: string, newChangeRequest: Cas1NewChangeRequest) {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.createExtension(id, newChangeRequest)
+  }
 }

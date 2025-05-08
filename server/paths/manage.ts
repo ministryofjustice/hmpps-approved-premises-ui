@@ -102,7 +102,9 @@ const paths = {
       transfers: {
         new: placementTransfersPath.path('new'),
         emergencyDetails: placementTransfersPath.path('emergency'),
-        confirm: placementTransfersPath.path('confirm'),
+        plannedDetails: placementTransfersPath.path('planned'),
+        emergencyConfirm: placementTransfersPath.path('confirm-emergency'),
+        plannedConfirm: placementTransfersPath.path('confirm-planned'),
       },
       appeal: {
         new: placementAppealPath.path('new'),
