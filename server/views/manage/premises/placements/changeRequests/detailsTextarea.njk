@@ -1,0 +1,12 @@
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{{ govukTextarea({
+    id: name,
+    name: name,
+    label: {
+        text: conditionalQuestion
+    },
+    value: value,
+    classes: 'govuk-textarea govuk-input--width-20',
+    errorMessage: errorMessage
+}) }}
