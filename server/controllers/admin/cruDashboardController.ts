@@ -13,6 +13,15 @@ import { PlacementRequestDashboardSearchOptions } from '../../@types/ui'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 import { cruDashboardActions } from '../../utils/admin/cruDashboardUtils'
+import {
+  pendingPlacementRequestTableHeader,
+  pendingPlacementRequestTableRows,
+  releaseTypeSelectOptions,
+} from '../../utils/applications/utils'
+import { pagination } from '../../utils/pagination'
+import { placementRequestTabItems } from '../../utils/placementRequests'
+import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementRequests/table'
+import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
 
 export default class CruDashboardController {
   constructor(
@@ -64,13 +73,13 @@ export default class CruDashboardController {
 
       res.render('admin/cruDashboard/search', {
         pageHeading: 'CRU Dashboard',
-        placementRequests: dashboard.data,
+        tabs: placementRequestTabItems('search'),
         ...searchOptions,
-        pageNumber: Number(dashboard.pageNumber),
-        totalPages: Number(dashboard.totalPages),
-        hrefPrefix,
-        sortBy,
-        sortDirection,
+        tierOptions: tierSelectOptions(searchOptions.tier),
+        statusOptions: placementRequestStatusSelectOptions(searchOptions.status),
+        tableHead: dashboardTableHeader(undefined, sortBy, sortDirection, hrefPrefix),
+        tableRows: dashboardTableRows(dashboard.data),
+        pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),
       })
     }
   }
@@ -93,17 +102,15 @@ export default class CruDashboardController {
     })
 
     return {
-      status: 'pendingPlacement',
+      cruManagementArea,
+      releaseTypes: releaseTypeSelectOptions(releaseType),
+      activeTab: 'pendingPlacement',
       subheading:
         'All applications that have been accepted but do not yet have an associated placement request are shown below',
-      applications: applications.data,
-      pageNumber: Number(applications.pageNumber),
-      totalPages: Number(applications.totalPages),
-      hrefPrefix,
-      sortBy,
-      sortDirection,
-      cruManagementArea,
-      releaseType,
+      tabs: placementRequestTabItems('pendingPlacement', cruManagementArea),
+      tableHead: pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
+      tableRows: pendingPlacementRequestTableRows(applications.data),
+      pagination: pagination(Number(applications.pageNumber), Number(applications.totalPages), hrefPrefix),
     }
   }
 
@@ -132,16 +139,14 @@ export default class CruDashboardController {
     )
 
     return {
-      placementRequests: dashboard.data,
-      subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
-      status,
       cruManagementArea,
       requestType,
-      pageNumber: Number(dashboard.pageNumber),
-      totalPages: Number(dashboard.totalPages),
-      hrefPrefix,
-      sortBy,
-      sortDirection,
+      activeTab: status,
+      subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
+      tabs: placementRequestTabItems(status, cruManagementArea, requestType),
+      tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
+      tableRows: dashboardTableRows(dashboard.data, status),
+      pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),
     }
   }
 
