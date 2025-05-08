@@ -125,7 +125,7 @@ export default class TransfersController {
     const errors: Record<string, string> = {}
 
     if (!body.destinationPremisesId) {
-      errors.destinationPremisesId = 'You must select aa Approved Premises for the person to be transferred to'
+      errors.destinationPremisesId = 'You must select an Approved Premises for the person to be transferred to'
     }
 
     const { placementEndDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'placementEndDate')
