@@ -94,6 +94,7 @@ import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
 import cas1BedDetailFactory from './cas1BedDetail'
 import cas1NewEmergencyTransferFactory from './cas1NewEmergencyTransfer'
+import cas1ChangeRequestSummaryFactory from './cas1ChangeRequestSummary'
 
 export {
   acctAlertFactory,
@@ -115,6 +116,7 @@ export {
   bookingNotMadeFactory,
   cancellationFactory,
   cas1BedDetailFactory,
+  cas1ChangeRequestSummaryFactory,
   cas1PremisesBedSummaryFactory,
   cas1OutOfServiceBedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
