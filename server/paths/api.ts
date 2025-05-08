@@ -25,7 +25,7 @@ const cas1Person = cas1People.path(':crn')
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
 
-const cas1PlacementRequests = cas1Namespace.path('placement-requests')
+const cas1PlacementRequests = cas1Namespace.path('placement-request')
 
 // Non-namespaced
 const premises = path('/premises')
