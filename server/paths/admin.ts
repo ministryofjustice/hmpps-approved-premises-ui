@@ -16,6 +16,7 @@ export default {
   admin: {
     cruDashboard: {
       index: cruDashboardPath,
+      changeRequests: cruDashboardPath.path('change-requests'),
       search: cruDashboardPath.path('search'),
       downloadOccupancyReport: cruDashboardPath.path('occupancy-report'),
     },

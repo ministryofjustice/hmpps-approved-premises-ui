@@ -75,6 +75,11 @@ describe('utils', () => {
         },
         {
           active: false,
+          href: '/admin/cru-dashboard/change-requests?cruManagementArea=cru-management-area-id',
+          text: 'Change requests',
+        },
+        {
+          active: false,
           href: '/admin/cru-dashboard/search',
           text: 'Search',
         },

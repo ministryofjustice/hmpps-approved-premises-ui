@@ -112,9 +112,10 @@ export default class PlacementRequestClient {
     sortBy: Cas1ChangeRequestSortField = 'name',
     sortDirection: SortDirection = 'asc',
   ) {
-    return (await this.restClient.get({
+    return this.restClient.getPaginatedResponse<Cas1ChangeRequestSummary>({
       path: paths.placementRequests.changeRequests({}),
-      query: { ...filterParams, page: page.toString(), sortBy, sortDirection },
-    })) as Promise<PaginatedResponse<Cas1ChangeRequestSummary>>
+      page: page.toString(),
+      query: { ...filterParams, sortBy, sortDirection },
+    })
   }
 }
