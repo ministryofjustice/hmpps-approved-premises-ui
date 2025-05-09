@@ -64,6 +64,13 @@ describe('reportUtils', () => {
           },
         },
         {
+          value: 'outOfServiceBedsWithPii',
+          text: 'Out of service beds (PII)',
+          hint: {
+            text: 'Includes additional columns of PII data.',
+          },
+        },
+        {
           value: 'dailyMetrics',
           text: 'Daily metrics',
           hint: {
