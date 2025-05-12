@@ -1,5 +1,7 @@
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import {
+  Cas1ChangeRequestSortField,
+  Cas1ChangeRequestSummary,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
@@ -7,10 +9,10 @@ import {
   PlacementRequestDetail,
   PlacementRequestSortField,
   SortDirection,
+  WithdrawPlacementRequestReason,
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
-import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
-import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
+import PlacementRequestClient, { DashboardFilters, GetChangeRequestsQueryParams } from '../data/placementRequestClient'
 
 export default class PlacementRequestService {
   constructor(private readonly placementRequestClientFactory: RestClientBuilder<PlacementRequestClient>) {}
@@ -65,5 +67,17 @@ export default class PlacementRequestService {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.withdraw(id, reason)
+  }
+
+  async getChangeRequests(
+    token: string,
+    filterParams?: GetChangeRequestsQueryParams,
+    page?: number,
+    sortBy?: Cas1ChangeRequestSortField,
+    sortDirection?: SortDirection,
+  ): Promise<PaginatedResponse<Cas1ChangeRequestSummary>> {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.getChangeRequests(filterParams, page, sortBy, sortDirection)
   }
 }

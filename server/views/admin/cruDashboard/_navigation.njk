@@ -1,8 +1,0 @@
-{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
-
-{% macro navigation(activeTab, cruManagementArea, requestType) %}
-    {{ mojSubNavigation({
-        label: 'Sub navigation',
-        items: PlacementRequestUtils.placementRequestTabItems(activeTab, cruManagementArea, requestType)
-    }) }}
-{% endmacro %}

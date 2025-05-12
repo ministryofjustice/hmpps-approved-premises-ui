@@ -81,6 +81,14 @@ export const placementRequestTabItems = (
       )}`,
     },
     {
+      text: 'Change requests',
+      active: activeTab === 'changeRequests',
+      href: `${pathsAdmin.admin.cruDashboard.changeRequests({})}${createQueryString(
+        { cruManagementArea },
+        { addQueryPrefix: true },
+      )}`,
+    },
+    {
       text: 'Search',
       active: activeTab === 'search',
       href: pathsAdmin.admin.cruDashboard.search({}),

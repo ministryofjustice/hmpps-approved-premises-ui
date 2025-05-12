@@ -2,9 +2,8 @@ import type {
   ActiveOffence,
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
-  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApplicationTimelineNote,
-  ApprovedPremisesApplicationSummary,
+  Cas1ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Cas1TimelineEvent,
   Document,
@@ -50,10 +49,10 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async all(): Promise<Array<ApplicationSummary>> {
+  async all(): Promise<Array<Cas1ApplicationSummary>> {
     return (await this.restClient.get({
       path: paths.applications.index.pattern,
-    })) as Array<ApplicationSummary>
+    })) as Array<Cas1ApplicationSummary>
   }
 
   async dashboard(
@@ -61,9 +60,9 @@ export default class ApplicationClient {
     sortBy: ApplicationSortField,
     sortDirection: SortDirection,
     searchOptions: ApplicationDashboardSearchOptions,
-  ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
+  ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     searchOptions.crnOrName = normaliseCrn(searchOptions.crnOrName)
-    return this.restClient.getPaginatedResponse<ApprovedPremisesApplicationSummary>({
+    return this.restClient.getPaginatedResponse<Cas1ApplicationSummary>({
       path: paths.applications.all.pattern,
       page: page.toString(),
       query: { ...searchOptions, sortBy, sortDirection },
