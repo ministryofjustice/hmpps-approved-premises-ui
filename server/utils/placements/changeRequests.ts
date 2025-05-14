@@ -1,10 +1,10 @@
 import { NamedId } from '@approved-premises/api'
 import { AppealSessionData, ObjectWithDateParts, RadioItem, SummaryListItem } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
+import { isAfter } from 'date-fns'
 import { dateAndTimeInputsAreValidDates, DateFormats } from '../dateUtils'
 import { ValidationError } from '../errors'
 import { summaryListItem } from '../formUtils'
-import { isAfter } from 'date-fns'
 
 export const appealReasonRadioDefinitions: Record<string, { text: string; conditionalQuestion: string }> = {
   staffConflictOfInterest: {
@@ -87,7 +87,7 @@ export const validateNewAppealResponse = (body: AppealSessionData): void => {
     errors.approvalDate = 'You must enter the date of the approval'
   } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'approvalDate'>, 'approvalDate')) {
     errors.approvalDate = 'You must enter a valid approval date'
-  } else if (isAfter(approvalDate,new Date())) {
+  } else if (isAfter(approvalDate, new Date())) {
     errors.approvalDate = 'The approval date must be today or in the past'
   }
   if (!appealReason) {

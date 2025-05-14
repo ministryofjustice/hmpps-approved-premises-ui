@@ -1,6 +1,7 @@
 import nunjucks from 'nunjucks'
 import { NamedId } from '@approved-premises/api'
 import { AppealSessionData } from '@approved-premises/ui'
+import { addDays } from 'date-fns'
 import { appealSessionDataFactory } from '../../testutils/factories'
 import {
   getAppealReasonText,
@@ -13,7 +14,6 @@ import {
 import { summaryListItem } from '../formUtils'
 import { DateFormats } from '../dateUtils'
 import { ValidationError } from '../errors'
-import { addDays } from 'date-fns'
 
 const appealReasons: Array<NamedId> = [
   { name: 'staffConflictOfInterest', id: 'id1' },
