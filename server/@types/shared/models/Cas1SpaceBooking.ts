@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Cas1ChangeRequestSummary } from './Cas1ChangeRequestSummary';
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
 import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellation';
 import type { Cas1SpaceBookingDates } from './Cas1SpaceBookingDates';
@@ -68,5 +69,7 @@ export type Cas1SpaceBooking = {
     deliusEventNumber?: string;
     status?: Cas1SpaceBookingSummaryStatus;
     characteristics: Array<Cas1SpaceCharacteristic>;
+    allowedActions: any;
+    openChangeRequests: Array<Cas1ChangeRequestSummary>;
 };
 

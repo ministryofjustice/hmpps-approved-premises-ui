@@ -78,7 +78,6 @@ describe('timeline utilities', () => {
               },
               expectedArrival: '2025-09-18',
               expectedDeparture: '2025-12-18',
-              schemaVersion: 2,
               previousExpectedArrival: '2025-09-16',
               previousExpectedDeparture: '2025-09-20',
               characteristics: [
@@ -90,6 +89,7 @@ describe('timeline utilities', () => {
               ],
               previousCharacteristics: ['acceptsNonSexualChildOffenders', 'isCatered', 'hasEnSuite'],
             } as Cas1TimelineEventContentPayload),
+            schemaVersion: 2,
           })
 
           const result = renderTimelineEventContent(timelineEvent)
@@ -112,7 +112,6 @@ describe('timeline utilities', () => {
                 name: premises.name,
                 id: premises.id,
               },
-              schemaVersion: 2,
               previousExpectedArrival: null,
               previousExpectedDeparture: null,
               previousCharacteristics: null,
@@ -120,6 +119,7 @@ describe('timeline utilities', () => {
               expectedDeparture: '2025-12-18',
               characteristics: ['isCatered', 'hasEnSuite'],
             } as Cas1TimelineEventContentPayload),
+            schemaVersion: 2,
           })
 
           const result = renderTimelineEventContent(timelineEvent)
@@ -138,10 +138,10 @@ describe('timeline utilities', () => {
                 name: premises.name,
                 id: premises.id,
               },
-              schemaVersion: 2,
               characteristics: ['hasEnSuite'],
               previousCharacteristics: [],
             } as Cas1TimelineEventContentPayload),
+            schemaVersion: 2,
           })
 
           const result = renderTimelineEventContent(timelineEvent)
@@ -157,10 +157,10 @@ describe('timeline utilities', () => {
                 name: premises.name,
                 id: premises.id,
               },
-              schemaVersion: 2,
               characteristics: [],
               previousCharacteristics: ['isWheelchairDesignated', 'isSingle'],
             } as Cas1TimelineEventContentPayload),
+            schemaVersion: 2,
           })
 
           const result = renderTimelineEventContent(timelineEvent)
