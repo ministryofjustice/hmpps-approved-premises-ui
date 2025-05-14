@@ -22,7 +22,6 @@ export type { ApprovedPremisesApplicationSummary } from './models/ApprovedPremis
 export type { ApprovedPremisesAssessment } from './models/ApprovedPremisesAssessment';
 export type { ApprovedPremisesAssessmentStatus } from './models/ApprovedPremisesAssessmentStatus';
 export type { ApprovedPremisesAssessmentSummary } from './models/ApprovedPremisesAssessmentSummary';
-export type { ApprovedPremisesSummary } from './models/ApprovedPremisesSummary';
 export type { ApprovedPremisesUser } from './models/ApprovedPremisesUser';
 export type { ApprovedPremisesUserPermission } from './models/ApprovedPremisesUserPermission';
 export type { ApprovedPremisesUserRole } from './models/ApprovedPremisesUserRole';
@@ -252,7 +251,6 @@ export type { PlacementRequirements } from './models/PlacementRequirements';
 export type { PlacementType } from './models/PlacementType';
 export type { Premises } from './models/Premises';
 export type { PremisesBooking } from './models/PremisesBooking';
-export type { PremisesSummary } from './models/PremisesSummary';
 export type { PrisonCaseNote } from './models/PrisonCaseNote';
 export type { ProbationDeliveryUnit } from './models/ProbationDeliveryUnit';
 export type { ProbationRegion } from './models/ProbationRegion';
@@ -306,7 +304,6 @@ export type { TemporaryAccommodationAssessment } from './models/TemporaryAccommo
 export type { TemporaryAccommodationAssessmentStatus } from './models/TemporaryAccommodationAssessmentStatus';
 export type { TemporaryAccommodationAssessmentSummary } from './models/TemporaryAccommodationAssessmentSummary';
 export type { TemporaryAccommodationPremises } from './models/TemporaryAccommodationPremises';
-export type { TemporaryAccommodationPremisesSummary } from './models/TemporaryAccommodationPremisesSummary';
 export type { TemporaryAccommodationUser } from './models/TemporaryAccommodationUser';
 export type { TemporaryAccommodationUserRole } from './models/TemporaryAccommodationUserRole';
 export type { TimelineEventType } from './models/TimelineEventType';
