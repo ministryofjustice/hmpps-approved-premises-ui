@@ -1,4 +1,4 @@
-import type { ApprovedPremisesSummary as PremisesSummary, ProbationRegion } from '@approved-premises/api'
+import type { Cas1PremisesBasicSummary, ProbationRegion } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
@@ -14,8 +14,8 @@ export default class PremisesListPage extends Page {
     return new PremisesListPage()
   }
 
-  shouldShowPremises(premises: Array<PremisesSummary>): void {
-    premises.forEach((item: PremisesSummary) => {
+  shouldShowPremises(premises: Array<Cas1PremisesBasicSummary>): void {
+    premises.forEach((item: Cas1PremisesBasicSummary) => {
       cy.contains(item.name)
         .parent()
         .within(() => {
@@ -29,8 +29,8 @@ export default class PremisesListPage extends Page {
     })
   }
 
-  shouldNotShowPremises(premises: Array<PremisesSummary>): void {
-    premises.forEach((item: PremisesSummary) => {
+  shouldNotShowPremises(premises: Array<Cas1PremisesBasicSummary>): void {
+    premises.forEach((item: Cas1PremisesBasicSummary) => {
       cy.get('td').should('not.contain', item.name)
     })
   }

@@ -47,7 +47,6 @@ export const spaceSearchStateToApiPayload = (state: SpaceSearchFormData): Cas1Sp
     applicationId: state.applicationId,
     startDate: state.startDate,
     targetPostcodeDistrict: state.postcode,
-    requirements: {},
     spaceCharacteristics: [
       state.apType !== 'normal' ? (state.apType as Cas1SpaceCharacteristic) : undefined,
       ...state.apCriteria,

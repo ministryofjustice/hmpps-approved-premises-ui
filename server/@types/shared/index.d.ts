@@ -137,13 +137,14 @@ export type { Cas1SpaceBookingSummaryStatus } from './models/Cas1SpaceBookingSum
 export type { Cas1SpaceCategory } from './models/Cas1SpaceCategory';
 export type { Cas1SpaceCharacteristic } from './models/Cas1SpaceCharacteristic';
 export type { Cas1SpaceSearchParameters } from './models/Cas1SpaceSearchParameters';
-export type { Cas1SpaceSearchRequirements } from './models/Cas1SpaceSearchRequirements';
 export type { Cas1SpaceSearchResult } from './models/Cas1SpaceSearchResult';
 export type { Cas1SpaceSearchResults } from './models/Cas1SpaceSearchResults';
 export type { Cas1TimelineEvent } from './models/Cas1TimelineEvent';
 export type { Cas1TimelineEventAssociatedUrl } from './models/Cas1TimelineEventAssociatedUrl';
 export type { Cas1TimelineEventContentPayload } from './models/Cas1TimelineEventContentPayload';
 export type { Cas1TimelineEventPayloadBookingSummary } from './models/Cas1TimelineEventPayloadBookingSummary';
+export type { Cas1TimelineEventTransferInfo } from './models/Cas1TimelineEventTransferInfo';
+export type { Cas1TimelineEventTransferType } from './models/Cas1TimelineEventTransferType';
 export type { Cas1TimelineEventType } from './models/Cas1TimelineEventType';
 export type { Cas1TimelineEventUrlType } from './models/Cas1TimelineEventUrlType';
 export type { Cas1TriggerSourceType } from './models/Cas1TriggerSourceType';

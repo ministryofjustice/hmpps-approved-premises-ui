@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContentPayload';
 import type { Cas1TimelineEventPayloadBookingSummary } from './Cas1TimelineEventPayloadBookingSummary';
-export type Cas1BookingCancelledContentPayload = (Cas1TimelineEventContentPayload & {
+import type { Cas1TimelineEventTransferType } from './Cas1TimelineEventTransferType';
+export type Cas1TimelineEventTransferInfo = {
+    type: Cas1TimelineEventTransferType;
+    changeRequestId?: string;
     booking: Cas1TimelineEventPayloadBookingSummary;
-    cancellationReason: string;
-    appealChangeRequestId?: string;
-});
+};
 

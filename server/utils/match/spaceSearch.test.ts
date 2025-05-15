@@ -82,7 +82,6 @@ describe('Space search utils', () => {
 
       expect(spaceSearchStateToApiPayload(spaceSearchState)).toEqual({
         durationInDays: spaceSearchState.durationDays,
-        requirements: {},
         spaceCharacteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite'],
         applicationId: spaceSearchState.applicationId,
         startDate: spaceSearchState.startDate,
