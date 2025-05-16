@@ -58,6 +58,7 @@ const departurePath = singlePlacementPath.path('departure')
 const placementCancellationsPath = singlePlacementPath.path('cancellations')
 const placementChangesPath = singlePlacementPath.path('changes')
 const placementTransfersPath = singlePlacementPath.path('transfers')
+const placementAppealPath = singlePlacementPath.path('appeal')
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
 const bedsPath = singlePremisesPath.path('beds')
@@ -101,7 +102,13 @@ const paths = {
       transfers: {
         new: placementTransfersPath.path('new'),
         emergencyDetails: placementTransfersPath.path('emergency'),
-        confirm: placementTransfersPath.path('confirm'),
+        plannedDetails: placementTransfersPath.path('planned'),
+        emergencyConfirm: placementTransfersPath.path('confirm-emergency'),
+        plannedConfirm: placementTransfersPath.path('confirm-planned'),
+      },
+      appeal: {
+        new: placementAppealPath.path('new'),
+        confirm: placementAppealPath.path('confirm'),
       },
     },
     occupancy: {

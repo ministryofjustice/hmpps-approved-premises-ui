@@ -1,6 +1,7 @@
 import {
   BookingNotMade,
   Cas1CruManagementArea,
+  type Cas1NewChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
@@ -90,5 +91,26 @@ export default class PlacementRequestClient {
       path: paths.placementRequests.withdrawal.create({ id }),
       data: { reason },
     })) as Promise<PlacementRequest>
+  }
+
+  async createPlacementAppeal(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.appeal({ id }),
+      data: newChangeRequest,
+    })
+  }
+
+  async createPlannedTransfer(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.plannedTransfer({ id }),
+      data: newChangeRequest,
+    })
+  }
+
+  async createExtension(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.extension({ id }),
+      data: newChangeRequest,
+    })
   }
 }

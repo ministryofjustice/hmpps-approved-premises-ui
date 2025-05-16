@@ -14,7 +14,7 @@ import managePaths from '../../../../paths/manage'
 import * as validationUtils from '../../../../utils/validation'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
-import { allApprovedPremisesOptions, transferSummaryList } from '../../../../utils/placements/transfers'
+import { allApprovedPremisesOptions, emergencyTransferSummaryList } from '../../../../utils/placements/transfers'
 
 describe('transfersController', () => {
   const token = 'TEST_TOKEN'
@@ -35,7 +35,7 @@ describe('transfersController', () => {
   const params = { premisesId: premises.id, placementId: placement.id }
   const transfersNewPath = managePaths.premises.placements.transfers.new(params)
   const emergencyDetailsPath = managePaths.premises.placements.transfers.emergencyDetails(params)
-  const confirmPath = managePaths.premises.placements.transfers.confirm(params)
+  const confirmPath = managePaths.premises.placements.transfers.emergencyConfirm(params)
 
   const errorsAndUserInput = createMock<ErrorsAndUserInput>()
 
@@ -121,8 +121,7 @@ describe('transfersController', () => {
       ['empty', '', 'You must enter a transfer date'],
       ['incomplete', '2025-04', 'You must enter a transfer date'],
       ['invalid', '2025-02-37', 'You must enter a valid transfer date'],
-      ['more than a week ago', '2025-04-21', 'The date of transfer must be today or in the last 7 days'],
-      ['tomorrow', '2025-04-30', 'The date of transfer must be today or in the last 7 days'],
+      ['more than a week ago', '2025-04-21', 'The date of transfer cannot be earlier than one week ago'],
     ])('shows an error if the transfer date is %s', async (_, date, errorMessage) => {
       const requestHandler = transfersController.saveNew()
       const [year, month, day] = date.split('-')
@@ -301,7 +300,7 @@ describe('transfersController', () => {
     })
   })
 
-  describe('confirm', () => {
+  describe('confirmEmergency', () => {
     const sessionData = {
       transferDate: '2025-04-28',
       'transferDate-year': '2025',
@@ -326,7 +325,7 @@ describe('transfersController', () => {
     it('redirects to the new transfer page if there is no data in the session', async () => {
       request.session.multiPageFormData = undefined
 
-      const requestHandler = transfersController.confirm()
+      const requestHandler = transfersController.confirmEmergency()
       await requestHandler(request, response, next)
 
       expectRedirectWithErrors(request, response, { transferDate: 'You must enter a transfer date' }, transfersNewPath)
@@ -335,7 +334,7 @@ describe('transfersController', () => {
     it('redirects to the new transfer page if there are errors with the session data', async () => {
       request.session.multiPageFormData.transfers[placement.id]['transferDate-day'] = '42'
 
-      const requestHandler = transfersController.confirm()
+      const requestHandler = transfersController.confirmEmergency()
       await requestHandler(request, response, next)
 
       expectRedirectWithErrors(
@@ -349,7 +348,7 @@ describe('transfersController', () => {
     it('redirects to the emergency transfer details page if there are errors with the session data', async () => {
       request.session.multiPageFormData.transfers[placement.id]['placementEndDate-day'] = '42'
 
-      const requestHandler = transfersController.confirm()
+      const requestHandler = transfersController.confirmEmergency()
       await requestHandler(request, response, next)
 
       expectRedirectWithErrors(
@@ -363,21 +362,21 @@ describe('transfersController', () => {
     it('renders the confirmation page with a summary of the emergency transfer', async () => {
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = transfersController.confirm()
+      const requestHandler = transfersController.confirmEmergency()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/confirm', {
         backlink: managePaths.premises.placements.transfers.emergencyDetails(params),
-        pageHeading: 'Check the details of the transfer',
+        pageHeading: 'Confirm emergency transfer',
         placement,
-        summaryList: transferSummaryList(sessionData),
+        summaryList: emergencyTransferSummaryList(sessionData),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
       })
     })
   })
 
-  describe('create', () => {
+  describe('createEmergencyTransfer', () => {
     const sessionData = {
       transferDate: '2025-04-28',
       'transferDate-year': '2025',
@@ -426,19 +425,18 @@ describe('transfersController', () => {
 
     describe('when errors are raised by the API', () => {
       it('should call catchValidationErrorOrPropogate with a standard error', async () => {
-        const requestHandler = transfersController.create()
-
         const err = new Error()
 
         placementService.createEmergencyTransfer.mockRejectedValue(err)
 
+        const requestHandler = transfersController.create()
         await requestHandler(request, response, next)
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
           request,
           response,
           err,
-          managePaths.premises.placements.transfers.confirm(params),
+          managePaths.premises.placements.transfers.emergencyConfirm(params),
         )
       })
     })

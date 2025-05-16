@@ -482,13 +482,27 @@ export type TransferFormData = Partial<
 > & {
   destinationPremisesId?: string
   destinationPremisesName?: string
+  isFlexible?: string
+  transferReason?: string
+  notes?: string
 }
 
 export type MultiPageFormData = {
   departures?: Record<Cas1SpaceBooking['id'], DepartureFormData>
   spaceSearch?: Record<PlacementRequestDetail['id'], SpaceSearchFormData>
   transfers?: Record<Cas1SpaceBooking['id'], TransferFormData>
+  appeals?: Record<Cas1SpaceBooking[id], AppealSessionData>
 }
+
+export type AppealJson = {
+  areaManagerName: string
+  areaManagerEmail: string
+  appealReason: string
+  notes: string
+  approvalDate: string
+}
+
+export type AppealSessionData = Partial<ObjectWithDateParts<'approvalDate'>> & AppealJson
 
 export type DateRange = {
   from: string

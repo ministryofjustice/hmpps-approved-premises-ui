@@ -90,6 +90,18 @@ export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBoo
   return 'upcoming'
 }
 
+export const placementStatusHtml = (placement: Cas1SpaceBookingSummary): { html: string } => {
+  const statusElements: Array<string> = []
+  statusElements.push(statusTextMap[detailedStatus(placement)])
+  if (placement.appealRequested) {
+    statusElements.push('Appeal requested')
+  }
+  if (placement.plannedTransferRequested) {
+    statusElements.push('Transfer requested')
+  }
+  return { html: statusElements.join('<br/>') }
+}
+
 export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary) => ({
   arrivalDate: placement.actualArrivalDate || placement.expectedArrivalDate,
   departureDate: placement.actualDepartureDate || placement.expectedDepartureDate,
@@ -121,6 +133,15 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
         text: 'Record non-arrival',
         classes: 'govuk-button--secondary',
         href: paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
+
+    // TODO: Check that there are no existing appeals
+    if (hasPermission(user, ['cas1_placement_appeal_create'])) {
+      actionList.push({
+        text: 'Request an appeal',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.appeal.new({ premisesId: placement.premises.id, placementId: placement.id }),
       })
     }
   }
