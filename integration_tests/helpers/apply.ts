@@ -34,7 +34,6 @@ import {
   documentFactory,
   oasysSectionsFactory,
   oasysSelectionFactory,
-  premisesSummaryFactory,
   prisonCaseNotesFactory,
   userFactory,
 } from '../../server/testutils/factories'
@@ -95,7 +94,6 @@ export default class ApplyHelper {
     this.uiRisks = uiRisks
     this.stubPersonEndpoints()
     this.stubApplicationEndpoints()
-    this.stubPremisesEndpoint()
     this.stubCas1PremisesEndpoint()
     if (oasysMissing) {
       this.stubOasys404()
@@ -204,13 +202,6 @@ export default class ApplyHelper {
       ...this.pages.moveOn,
       ...this.selectedDocuments,
     ].length
-  }
-
-  private stubPremisesEndpoint() {
-    const premises1 = premisesSummaryFactory.build({ id: '1', apArea: 'area1' })
-    const premises2 = premisesSummaryFactory.build({ id: '2', apArea: 'area2' })
-    const premises3 = premisesSummaryFactory.build({ id: '3', apArea: 'area3' })
-    cy.task('stubAllPremises', [premises1, premises2, premises3])
   }
 
   private stubCas1PremisesEndpoint() {

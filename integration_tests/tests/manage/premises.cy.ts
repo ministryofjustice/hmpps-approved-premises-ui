@@ -1,9 +1,9 @@
 import { PersonSummary } from '@approved-premises/api'
 import {
   cas1KeyworkerAllocationFactory,
+  cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
-  premisesSummaryFactory,
   staffMemberFactory,
 } from '../../../server/testutils/factories'
 
@@ -19,8 +19,7 @@ context('Premises', () => {
       // Given I am signed in as a future manager
       signIn('future_manager')
 
-      const premises = premisesSummaryFactory.buildList(5)
-      cy.task('stubAllPremises', premises)
+      const premises = cas1PremisesBasicSummaryFactory.buildList(5)
       cy.task('stubCas1AllPremises', premises)
       cy.task('stubApAreaReferenceData')
 

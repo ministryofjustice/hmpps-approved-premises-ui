@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContentPayload';
+import type { Cas1TimelineEventTransferInfo } from './Cas1TimelineEventTransferInfo';
 import type { NamedId } from './NamedId';
 export type Cas1BookingChangedContentPayload = (Cas1TimelineEventContentPayload & {
     premises: NamedId;
@@ -27,5 +28,6 @@ export type Cas1BookingChangedContentPayload = (Cas1TimelineEventContentPayload 
      * @deprecated
      */
     schemaVersion?: number;
+    transferredTo?: Cas1TimelineEventTransferInfo;
 });
 

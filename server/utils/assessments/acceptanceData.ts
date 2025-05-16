@@ -101,7 +101,6 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
   const criteria = criteriaFromMatchingInformation(matchingInformation)
 
   return {
-    gender: 'male', // Hardcoded for now as we only support Male APs
     type: apType(matchingInformation.apType),
     location,
     radius: alternativeRadius || 50,

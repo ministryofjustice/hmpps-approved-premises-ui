@@ -95,14 +95,12 @@ context('Placement Requests', () => {
         ...filterApLevelCriteria(allPlacementCriteria),
         ...filterRoomLevelCriteria(allPlacementCriteria),
       ]
-
       // And the first request to the API should contain the criteria from the placement request
       expect(initialSearchRequestBody).to.deep.equal({
         applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
         startDate: placementRequest.expectedArrival,
         targetPostcodeDistrict: placementRequest.location,
-        requirements: {},
         spaceCharacteristics: [
           placementRequest.type !== 'normal' && applyApTypeToAssessApType[placementRequest.type],
           ...filteredPlacementCriteria,

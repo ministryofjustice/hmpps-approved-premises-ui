@@ -130,7 +130,6 @@ describe('acceptanceData', () => {
       })
 
       expect(placementRequestData(assessment)).toEqual({
-        gender: 'male',
         type: 'normal',
         location: 'ABC123',
         radius: '100',

@@ -12,6 +12,9 @@ export type Cas1TimelineEvent = {
     type: Cas1TimelineEventType;
     id: string;
     occurredAt: string;
+    /**
+     * Timeline description. If a value is provided for 'payload', that should be instead be used to build a description
+     */
     content?: string;
     /**
      * Use createdBySummary

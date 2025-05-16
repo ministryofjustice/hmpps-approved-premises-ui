@@ -45,7 +45,6 @@ import placementDatesFactory from './placementDates'
 import placementRequestFactory from './placementRequest'
 import placementRequestDetailFactory from './placementRequestDetail'
 import premisesFactory from './premises'
-import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory, {
@@ -169,7 +168,6 @@ export {
   placementRequestFactory,
   placementRequestDetailFactory,
   premisesFactory,
-  premisesSummaryFactory,
   prisonCaseNotesFactory,
   probationRegionFactory,
   reallocationFactory,
