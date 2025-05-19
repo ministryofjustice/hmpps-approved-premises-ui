@@ -5,7 +5,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
-import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { dateBodyInputProperties } from '../../../utils/dateBodyProperties'
 
 export type RequiredActionsSections = {
   additionalActions: string
@@ -26,9 +26,10 @@ export type RequiredActionsSections = {
     'additionalRecommendations',
     'additionalRecommendationsComments',
     'nameOfAreaManager',
-    ...dateBodyProperties('dateOfDiscussion'),
+    ...dateBodyInputProperties('dateOfDiscussion'),
     'outlineOfDiscussion',
   ],
+  mergeBody: true,
 })
 export default class RequiredActions implements TasklistPage {
   name = 'required-actions'
@@ -65,10 +66,7 @@ export default class RequiredActions implements TasklistPage {
     } & Partial<ObjectWithDateParts<'dateOfDiscussion'>>,
   ) {
     this.body = {
-      dateOfDiscussion: DateFormats.dateAndTimeInputsToIsoString(
-        body as ObjectWithDateParts<'dateOfDiscussion'>,
-        'dateOfDiscussion',
-      ).dateOfDiscussion,
+      ...DateFormats.dateAndTimeInputsToIsoString(body as ObjectWithDateParts<'dateOfDiscussion'>, 'dateOfDiscussion'),
       ...this.body,
     }
   }

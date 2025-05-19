@@ -223,3 +223,12 @@ export const joinWithCommas = (arr: Array<string>): string => {
 export const isCardinal = (str: string): boolean => {
   return /^\s*\d+\s*$/.test(str)
 }
+
+export const objectFilter = (obj: Record<string, unknown>, fields: Array<string>) => {
+  return Object.entries(obj).reduce((out, [key, value]) => {
+    if (fields.includes(key)) {
+      return { ...out, [key]: value }
+    }
+    return out
+  }, {})
+}

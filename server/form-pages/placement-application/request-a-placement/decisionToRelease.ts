@@ -11,12 +11,13 @@ export type Body = {
 @Page({
   name: 'decision-to-release',
   bodyProperties: [
-    'decisionToReleaseDate',
+    // 'decisionToReleaseDate',
     'decisionToReleaseDate-day',
     'decisionToReleaseDate-month',
     'decisionToReleaseDate-year',
     'informationFromDirectionToRelease',
   ],
+  mergeBody: true,
 })
 export default class DecisionToRelease implements TasklistPage {
   title = 'Release details'

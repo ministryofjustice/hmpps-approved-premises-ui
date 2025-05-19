@@ -15,13 +15,13 @@ export type Body = ObjectWithDateParts<'lastPlacementDate'> & {
   name: 'previous-rotl-placement',
   bodyProperties: [
     'previousRotlPlacement',
-    'lastPlacementDate',
     'lastPlacementDate-year',
     'lastPlacementDate-month',
     'lastPlacementDate-day',
     'lastAp',
     'details',
   ],
+  mergeBody: true,
 })
 export default class PreviousRotlPlacement implements TasklistPage {
   title = 'Previous ROTL placements'

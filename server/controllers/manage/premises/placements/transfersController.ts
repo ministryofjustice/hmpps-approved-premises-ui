@@ -44,7 +44,7 @@ export default class TransfersController {
   private validateNew(req: Request, res: Response, body: TransferFormData = {}): void {
     const errors: Record<string, string> = {}
 
-    const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'transferDate')
+    const { transferDate } = body
 
     if (!transferDate) {
       errors.transferDate = 'You must enter a transfer date'
@@ -72,6 +72,7 @@ export default class TransfersController {
       const { premisesId, placementId } = req.params
 
       try {
+        req.body.transferDate = DateFormats.dateAndTimeInputsToIsoString(req.body, 'transferDate').transferDate
         this.validateNew(req, res, req.body)
 
         await this.formData.update(placementId, req.session, req.body)
@@ -128,14 +129,17 @@ export default class TransfersController {
       errors.destinationPremisesId = 'You must select an Approved Premises for the person to be transferred to'
     }
 
-    const { placementEndDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'placementEndDate')
+    const { placementEndDate } = body
 
     if (!placementEndDate) {
       errors.placementEndDate = 'You must enter a placement end date'
     } else if (!dateAndTimeInputsAreValidDates(body, 'placementEndDate')) {
       errors.placementEndDate = 'You must enter a valid placement end date'
     } else {
-      const { transferDate } = this.formData.get(req.params.placementId, req.session)
+      const { transferDate } = DateFormats.dateAndTimeInputsToIsoString(
+        this.formData.get(req.params.placementId, req.session),
+        'transferDate',
+      )
 
       if (isBefore(placementEndDate, transferDate) || placementEndDate === transferDate) {
         errors.placementEndDate = `The placement end date must be after the transfer date, ${DateFormats.isoDateToUIDate(transferDate, { format: 'short' })}`
@@ -160,6 +164,10 @@ export default class TransfersController {
 
       try {
         this.validateNew(req, res, formData)
+        req.body.placementEndDate = DateFormats.dateAndTimeInputsToIsoString(
+          req.body,
+          'placementEndDate',
+        ).placementEndDate
         this.validateEmergencyDetails(req, res, req.body)
 
         const destinationPremises = await this.premisesService.find(req.user.token, req.body.destinationPremisesId)
