@@ -123,6 +123,11 @@ export class DateFormats {
     dateInputObj: ObjectWithDateParts<K>,
     key: K,
   ): ObjectWithDateParts<K> {
+    // Validate the key to prevent prototype pollution
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      throw new Error(`Invalid key: ${key}`)
+    }
+
     const day = dateInputObj[`${key}-day`] && `0${dateInputObj[`${key}-day`]}`.slice(-2)
     const month = dateInputObj[`${key}-month`] && `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
