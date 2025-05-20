@@ -6,7 +6,6 @@ import { DateFormats } from '../../../utils/dateUtils'
 
 describe('DecisionToRelease', () => {
   const body = {
-    duration: '12',
     informationFromDirectionToRelease: 'Some information',
     'decisionToReleaseDate-year': '2023',
     'decisionToReleaseDate-month': '12',

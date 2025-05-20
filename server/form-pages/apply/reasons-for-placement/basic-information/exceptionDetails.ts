@@ -4,7 +4,7 @@ import { Page } from '../../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
-import { dateBodyInputProperties } from '../../../utils/dateBodyProperties'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type ExceptionDetailsBody = ObjectWithDateParts<'agreementDate'> & {
   agreedCaseWithManager: YesOrNo
@@ -14,12 +14,7 @@ export type ExceptionDetailsBody = ObjectWithDateParts<'agreementDate'> & {
 
 @Page({
   name: 'exception-details',
-  bodyProperties: [
-    'agreedCaseWithManager',
-    'managerName',
-    ...dateBodyInputProperties('agreementDate'),
-    'agreementSummary',
-  ],
+  bodyProperties: ['agreedCaseWithManager', 'managerName', ...dateBodyProperties('agreementDate'), 'agreementSummary'],
   mergeBody: true,
 })
 export default class ExceptionDetails implements TasklistPage {

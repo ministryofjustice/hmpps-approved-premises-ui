@@ -3,6 +3,7 @@ import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { dateBodyProperties } from '../../utils/dateBodyProperties'
 
 export type Body = {
   informationFromDirectionToRelease: string
@@ -10,13 +11,7 @@ export type Body = {
 
 @Page({
   name: 'decision-to-release',
-  bodyProperties: [
-    // 'decisionToReleaseDate',
-    'decisionToReleaseDate-day',
-    'decisionToReleaseDate-month',
-    'decisionToReleaseDate-year',
-    'informationFromDirectionToRelease',
-  ],
+  bodyProperties: [...dateBodyProperties('decisionToReleaseDate'), 'informationFromDirectionToRelease'],
   mergeBody: true,
 })
 export default class DecisionToRelease implements TasklistPage {
@@ -32,14 +27,10 @@ export default class DecisionToRelease implements TasklistPage {
 
   constructor(_body: Body) {
     this.body = {
-      'decisionToReleaseDate-year': _body['decisionToReleaseDate-year'],
-      'decisionToReleaseDate-month': _body['decisionToReleaseDate-month'],
-      'decisionToReleaseDate-day': _body['decisionToReleaseDate-day'],
-      decisionToReleaseDate: DateFormats.dateAndTimeInputsToIsoString(
+      ...DateFormats.dateAndTimeInputsToIsoString(
         _body as ObjectWithDateParts<'decisionToReleaseDate'>,
         'decisionToReleaseDate',
-      ).decisionToReleaseDate,
-
+      ),
       informationFromDirectionToRelease: _body.informationFromDirectionToRelease,
     }
   }

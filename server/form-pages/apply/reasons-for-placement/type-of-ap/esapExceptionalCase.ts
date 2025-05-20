@@ -4,7 +4,7 @@ import { Page } from '../../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
-import { dateBodyInputProperties } from '../../../utils/dateBodyProperties'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type EsapExceptionalCaseBody = ObjectWithDateParts<'agreementDate'> & {
   agreedCaseWithCommunityHopp: YesOrNo
@@ -17,7 +17,7 @@ export type EsapExceptionalCaseBody = ObjectWithDateParts<'agreementDate'> & {
   bodyProperties: [
     'agreedCaseWithCommunityHopp',
     'communityHoppName',
-    ...dateBodyInputProperties('agreementDate'),
+    ...dateBodyProperties('agreementDate'),
     'agreementSummary',
   ],
   mergeBody: true,

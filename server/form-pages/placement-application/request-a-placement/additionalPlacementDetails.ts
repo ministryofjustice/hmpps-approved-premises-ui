@@ -4,6 +4,7 @@ import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { dateBodyProperties } from '../../utils/dateBodyProperties'
 
 export type Body = {
   duration: string
@@ -14,16 +15,7 @@ export type Body = {
 
 @Page({
   name: 'additional-placement-details',
-  bodyProperties: [
-    'arrivalDate',
-    'arrivalDate-day',
-    'arrivalDate-month',
-    'arrivalDate-year',
-    'duration',
-    'durationDays',
-    'durationWeeks',
-    'reason',
-  ],
+  bodyProperties: [...dateBodyProperties('arrivalDate'), 'duration', 'durationDays', 'durationWeeks', 'reason'],
 })
 export default class AdditionalPlacementDetails implements TasklistPage {
   title = 'Placement details'
@@ -38,13 +30,7 @@ export default class AdditionalPlacementDetails implements TasklistPage {
 
   get body() {
     return {
-      'arrivalDate-year': this._body['arrivalDate-year'],
-      'arrivalDate-month': this._body['arrivalDate-month'],
-      'arrivalDate-day': this._body['arrivalDate-day'],
-      arrivalDate: DateFormats.dateAndTimeInputsToIsoString(
-        this._body as ObjectWithDateParts<'arrivalDate'>,
-        'arrivalDate',
-      ).arrivalDate,
+      ...DateFormats.dateAndTimeInputsToIsoString(this._body as ObjectWithDateParts<'arrivalDate'>, 'arrivalDate'),
       durationDays: this._body.durationDays,
       durationWeeks: this._body.durationWeeks,
       duration: this.lengthInDays(),

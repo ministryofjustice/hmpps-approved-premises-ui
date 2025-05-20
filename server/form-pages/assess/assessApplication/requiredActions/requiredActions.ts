@@ -5,7 +5,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
-import { dateBodyInputProperties } from '../../../utils/dateBodyProperties'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type RequiredActionsSections = {
   additionalActions: string
@@ -26,7 +26,7 @@ export type RequiredActionsSections = {
     'additionalRecommendations',
     'additionalRecommendationsComments',
     'nameOfAreaManager',
-    ...dateBodyInputProperties('dateOfDiscussion'),
+    ...dateBodyProperties('dateOfDiscussion'),
     'outlineOfDiscussion',
   ],
   mergeBody: true,
