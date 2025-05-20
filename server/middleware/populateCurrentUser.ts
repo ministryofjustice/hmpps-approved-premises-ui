@@ -15,7 +15,7 @@ export default function populateCurrentUser(userService: UserService): RequestHa
           user = await userService.getActingUser(res.locals.user.token)
           req.session.user = user
           if (user) {
-            logger.info(
+            logger.debug(
               `Updated user from API${currentVersion !== user.version ? ` (version: ${currentVersion} -> ${user.version})` : ''}`,
             )
           }
