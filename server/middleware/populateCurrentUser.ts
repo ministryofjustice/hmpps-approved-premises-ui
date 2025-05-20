@@ -29,7 +29,7 @@ export default function populateCurrentUser(userService: UserService): RequestHa
         }
 
         if (!req.session.user.active) {
-          logger.error(`User ${req.session.user.name} is inactive`)
+          logger.error(`User is inactive: ${req.session.user.id}`)
           return res.redirect('/autherror')
         }
       }
@@ -39,7 +39,7 @@ export default function populateCurrentUser(userService: UserService): RequestHa
         logger.error('Delius account missing staff details')
         return res.redirect('/deliusMissingStaffDetails')
       }
-      logger.error(error, `Failed to retrieve user for: ${res.locals.user && res.locals.user.username}`)
+      logger.error(error, `Failed to retrieve user: ${res.locals.user?.id}`)
       return next(error)
     }
   }

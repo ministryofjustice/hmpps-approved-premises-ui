@@ -10,7 +10,7 @@ export default function authorisationMiddleware(authorisedRoles: Array<string> =
       const { authorities: roles = [] } = jwtDecode(res.locals.user.token) as { authorities?: Array<string> }
 
       if (authorisedRoles.length && !roles.some(role => authorisedRoles.includes(role))) {
-        logger.error(`User ${res.locals.user} does not have any of the the required roles ${roles.join(', ')}`)
+        logger.error(`User ${res.locals.user?.id} does not have any of the the required roles ${roles.join(', ')}`)
         return res.redirect('/autherror')
       }
 
