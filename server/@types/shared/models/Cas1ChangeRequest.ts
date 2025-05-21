@@ -13,7 +13,9 @@ export type Cas1ChangeRequest = {
     requestReason: NamedId;
     decision?: Cas1ChangeRequestDecision;
     decisionJson?: Unit;
+    requestJson: Unit;
     rejectionReason?: NamedId;
+    spaceBookingId: string;
     updatedAt: string;
 };
 
