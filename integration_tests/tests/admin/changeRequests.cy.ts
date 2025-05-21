@@ -62,7 +62,9 @@ context('Change Requests', () => {
 
       // When I click on a change request
       const placementRequestPersonName = `${displayName(changeRequestsUserArea[0].person)}, ${changeRequestsUserArea[0].person.crn}`
-      const placementRequestDetail = placementRequestDetailFactory.build({ id: changeRequestsUserArea[0].id })
+      const placementRequestDetail = placementRequestDetailFactory.build({
+        id: changeRequestsUserArea[0].placementRequestId,
+      })
       cy.task('stubPlacementRequest', placementRequestDetail)
 
       changeRequestsListPage.clickLink(placementRequestPersonName)

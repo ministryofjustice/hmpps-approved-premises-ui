@@ -61,7 +61,7 @@ describe('changeRequestsUtils', () => {
       expect(changeRequestsTableRows(changeRequests)).toEqual([
         [
           {
-            html: `<a href="${adminPaths.admin.placementRequests.show({ id: changeRequests[0].id })}"  >John Smith, C123456</a>`,
+            html: `<a href="${adminPaths.admin.placementRequests.show({ id: changeRequests[0].placementRequestId })}"  >John Smith, C123456</a>`,
           },
           { html: tierBadge('B3') },
           { text: '6 May 2025' },
@@ -70,7 +70,7 @@ describe('changeRequestsUtils', () => {
         ],
         [
           {
-            html: `<a href="${adminPaths.admin.placementRequests.show({ id: changeRequests[1].id })}"  >Limited Access Offender, X987654</a>`,
+            html: `<a href="${adminPaths.admin.placementRequests.show({ id: changeRequests[1].placementRequestId })}"  >Limited Access Offender, X987654</a>`,
           },
           { html: tierBadge('A1') },
           { text: '12 Jul 2025' },
@@ -79,7 +79,7 @@ describe('changeRequestsUtils', () => {
         ],
         [
           {
-            html: `<a href="${adminPaths.admin.placementRequests.show({ id: changeRequests[2].id })}"  >Unknown person, A333444</a>`,
+            html: `<a href="${adminPaths.admin.placementRequests.show({ id: changeRequests[2].placementRequestId })}"  >Unknown person, A333444</a>`,
           },
           { html: tierBadge('C1') },
           { text: '6 Jun 2025' },
