@@ -42,7 +42,7 @@ const nameCell = (changeRequest: Cas1ChangeRequestSummary): TableCell => {
   const name = displayName(changeRequest.person)
 
   return {
-    html: linkTo(adminPaths.admin.placementRequests.show({ id: changeRequest.id }), {
+    html: linkTo(adminPaths.admin.placementRequests.show({ id: changeRequest.placementRequestId }), {
       text: `${name}, ${changeRequest.person.crn}`,
     }),
   }
