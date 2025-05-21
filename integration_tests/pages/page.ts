@@ -515,12 +515,20 @@ export default abstract class Page {
     cy.get(`th[data-cy-sort-field="${field}"] a`).click()
   }
 
+  clickSortByColumn(columnHeading: string): void {
+    cy.contains('th a', columnHeading).click()
+  }
+
   searchBy(id: string, item: string): void {
     this.getSelectInputByIdAndSelectAnEntry(id, item)
   }
 
   clickApplyFilter(): void {
     cy.get('button').contains('Apply filters').click()
+  }
+
+  shouldBeSortedByColumn(columnHeading: string, order: SortOrder): void {
+    cy.contains('th', columnHeading).should('have.attr', 'aria-sort', order)
   }
 
   shouldBeSortedByField(field: string, order: SortOrder): void {
