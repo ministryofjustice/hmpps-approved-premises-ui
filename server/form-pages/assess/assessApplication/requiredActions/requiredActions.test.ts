@@ -32,7 +32,7 @@ describe('RequiredActions', () => {
         additionalRecommendations: 'yes',
         additionalRecommendationsComments: '',
         nameOfAreaManager: 'frank',
-        dateOfDiscussion: '2023-2-1',
+        dateOfDiscussion: '2023-01-02',
         'dateOfDiscussion-year': '2023',
         'dateOfDiscussion-month': '1',
         'dateOfDiscussion-day': '2',

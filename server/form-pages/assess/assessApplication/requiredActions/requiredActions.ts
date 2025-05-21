@@ -29,6 +29,7 @@ export type RequiredActionsSections = {
     ...dateBodyProperties('dateOfDiscussion'),
     'outlineOfDiscussion',
   ],
+  mergeBody: true,
 })
 export default class RequiredActions implements TasklistPage {
   name = 'required-actions'
@@ -65,10 +66,7 @@ export default class RequiredActions implements TasklistPage {
     } & Partial<ObjectWithDateParts<'dateOfDiscussion'>>,
   ) {
     this.body = {
-      dateOfDiscussion: DateFormats.dateAndTimeInputsToIsoString(
-        body as ObjectWithDateParts<'dateOfDiscussion'>,
-        'dateOfDiscussion',
-      ).dateOfDiscussion,
+      ...DateFormats.dateAndTimeInputsToIsoString(body as ObjectWithDateParts<'dateOfDiscussion'>, 'dateOfDiscussion'),
       ...this.body,
     }
   }

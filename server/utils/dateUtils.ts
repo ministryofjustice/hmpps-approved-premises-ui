@@ -123,28 +123,24 @@ export class DateFormats {
     dateInputObj: ObjectWithDateParts<K>,
     key: K,
   ): ObjectWithDateParts<K> {
-    // Validate the key to prevent prototype pollution
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
-      throw new Error(`Invalid key: ${key}`)
-    }
-
     const day = dateInputObj[`${key}-day`] && `0${dateInputObj[`${key}-day`]}`.slice(-2)
     const month = dateInputObj[`${key}-month`] && `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
     const time = dateInputObj[`${key}-time`] && `0${dateInputObj[`${key}-time`]}`.slice(-5)
 
-    const o: { [P in K]?: string } = dateInputObj
+    let isoDate: string
     if (day && month && year) {
       if (time) {
-        o[key] = `${year}-${month}-${day}T${time}`
+        isoDate = `${year}-${month}-${day}T${time}`
       } else {
-        o[key] = `${year}-${month}-${day}`
+        isoDate = `${year}-${month}-${day}`
       }
-    } else {
-      o[key] = undefined
     }
 
-    return dateInputObj
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      throw new Error(`Invalid property ${key}`)
+    }
+    return { ...dateInputObj, [key]: isoDate }
   }
 
   /**
