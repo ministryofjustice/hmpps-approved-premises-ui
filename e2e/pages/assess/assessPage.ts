@@ -9,15 +9,14 @@ export class AssessPage extends BasePage {
     return new AssessPage(page)
   }
 
-  checkListOfRequirements(
+  async checkListOfRequirements(
     requirements: Array<string>,
     relevancy: 'essential' | 'desirable' | 'notRelevant' | 'relevant',
   ) {
-    return Promise.all(
-      requirements.map(async requirement => {
-        await this.checkRequirement(requirement, relevancy)
-      }),
-    )
+    for (const requirement of requirements) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.checkRequirement(requirement, relevancy)
+    }
   }
 
   async checkRequirement(requirement: string, status: string) {
