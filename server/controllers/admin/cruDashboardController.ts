@@ -73,8 +73,8 @@ export default class CruDashboardController {
       res.render('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
         subheading: 'Requests for changes to placements.',
-        actions: cruDashboardActions(res.locals.user),
-        tabs: cruDashboardTabItems('changeRequests', cruManagementArea),
+        actions: cruDashboardActions(user),
+        tabs: cruDashboardTabItems(user, 'changeRequests', cruManagementArea),
         activeTab: 'changeRequests',
         cruManagementAreas,
         cruManagementArea,
@@ -110,7 +110,7 @@ export default class CruDashboardController {
 
       res.render('admin/cruDashboard/search', {
         pageHeading: 'CRU Dashboard',
-        tabs: cruDashboardTabItems('search'),
+        tabs: cruDashboardTabItems(res.locals.user, 'search'),
         activeTab: 'search',
         ...searchOptions,
         tierOptions: tierSelectOptions(searchOptions.tier),
@@ -124,8 +124,9 @@ export default class CruDashboardController {
 
   private async getPendingApplications(req: Request, res: Response) {
     const { status } = req.query
+    const { user } = res.locals
     const cruManagementArea: Cas1CruManagementArea['id'] | 'all' =
-      req.query.cruManagementArea || res.locals.user.cruManagementArea?.id
+      req.query.cruManagementArea || user.cruManagementArea?.id
     const releaseType = req.query.releaseType as ReleaseTypeOption
 
     const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<ApplicationSortField>(
@@ -145,7 +146,7 @@ export default class CruDashboardController {
       activeTab: 'pendingPlacement',
       subheading:
         'All applications that have been accepted but do not yet have an associated placement request are shown below',
-      tabs: cruDashboardTabItems('pendingPlacement', cruManagementArea),
+      tabs: cruDashboardTabItems(user, 'pendingPlacement', cruManagementArea),
       tableHead: pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
       tableRows: pendingPlacementRequestTableRows(applications.data),
       pagination: pagination(Number(applications.pageNumber), Number(applications.totalPages), hrefPrefix),
@@ -153,9 +154,10 @@ export default class CruDashboardController {
   }
 
   private async getPlacementRequests(req: Request, res: Response) {
+    const { user } = res.locals
     const status = (req.query.status ? req.query.status : 'notMatched') as PlacementRequestStatus
     const cruManagementArea: Cas1CruManagementArea['id'] | 'all' =
-      req.query.cruManagementArea || res.locals.user.cruManagementArea?.id
+      req.query.cruManagementArea || user.cruManagementArea?.id
     const requestType = req.query.requestType as PlacementRequestRequestType
 
     const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
@@ -181,7 +183,7 @@ export default class CruDashboardController {
       requestType,
       activeTab: status,
       subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
-      tabs: cruDashboardTabItems(status, cruManagementArea, requestType),
+      tabs: cruDashboardTabItems(user, status, cruManagementArea, requestType),
       tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
       tableRows: dashboardTableRows(dashboard.data, status),
       pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),

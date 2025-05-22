@@ -90,7 +90,7 @@ describe('CruDashboardController', () => {
         subheading:
           'All applications that have been assessed as suitable and require matching to an AP are listed below',
         activeTab: 'notMatched',
-        tabs: cruDashboardTabItems('notMatched', user.cruManagementArea.id),
+        tabs: cruDashboardTabItems(user, 'notMatched', user.cruManagementArea.id),
         tableHead: dashboardTableHeader('notMatched', 'name' as PlacementRequestSortField, 'asc', expectedHrefPrefix),
         tableRows: dashboardTableRows(paginatedResponse.data, undefined),
         pagination: pagination(
@@ -209,7 +209,7 @@ describe('CruDashboardController', () => {
         subheading:
           'All applications that have been accepted but do not yet have an associated placement request are shown below',
         activeTab: 'pendingPlacement',
-        tabs: cruDashboardTabItems('pendingPlacement', cruManagementArea),
+        tabs: cruDashboardTabItems(user, 'pendingPlacement', cruManagementArea),
         tableHead: pendingPlacementRequestTableHeader('name' as ApplicationSortField, 'asc', expectedHrefPrefix),
         tableRows: pendingPlacementRequestTableRows(paginatedApplications.data),
         pagination: pagination(
@@ -248,7 +248,7 @@ describe('CruDashboardController', () => {
         actions: cruDashboardActions(response.locals.user),
         subheading: 'Requests for changes to placements.',
         activeTab: 'changeRequests',
-        tabs: cruDashboardTabItems('changeRequests', user.cruManagementArea.id),
+        tabs: cruDashboardTabItems(user, 'changeRequests', user.cruManagementArea.id),
         tableHead: changeRequestsTableHeader('name', 'asc', expectedHrefPrefix),
         tableRows: changeRequestsTableRows(paginatedResponse.data),
         pagination: pagination(
@@ -284,7 +284,7 @@ describe('CruDashboardController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'admin/cruDashboard/index',
         expect.objectContaining({
-          tabs: cruDashboardTabItems('changeRequests', 'some-other-id'),
+          tabs: cruDashboardTabItems(user, 'changeRequests', 'some-other-id'),
           tableHead: changeRequestsTableHeader('tier', 'desc', expectedHrefPrefix),
           pagination: pagination(2, Number(paginatedResponse.totalPages), expectedHrefPrefix),
           cruManagementArea: 'some-other-id',
@@ -316,7 +316,7 @@ describe('CruDashboardController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/search', {
         pageHeading: 'CRU Dashboard',
-        tabs: cruDashboardTabItems('search'),
+        tabs: cruDashboardTabItems(user, 'search'),
         activeTab: 'search',
         crnOrName: undefined,
         tierOptions: tierSelectOptions(undefined),
