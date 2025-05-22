@@ -1,5 +1,5 @@
 import { placementRequestFactory } from '../../testutils/factories'
-import { assessmentLink, formatReleaseType, placementRequestTabItems, searchButton, withdrawalMessage } from './utils'
+import { assessmentLink, formatReleaseType, searchButton, withdrawalMessage } from './utils'
 import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
@@ -47,43 +47,6 @@ describe('utils', () => {
       expect(withdrawalMessage(15, date)).toEqual(
         `Request for placement for 2 weeks, 1 day starting on ${DateFormats.isoDateToUIDate(date, { format: 'short' })} withdrawn successfully`,
       )
-    })
-  })
-
-  describe('placementRequestTabItems', () => {
-    it('returns placement request tab items', () => {
-      expect(placementRequestTabItems('notMatched', 'cru-management-area-id', 'parole')).toEqual([
-        {
-          active: false,
-          text: 'Pending Request for Placement',
-          href: `/admin/cru-dashboard?cruManagementArea=cru-management-area-id&status=pendingPlacement`,
-        },
-        {
-          active: true,
-          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole',
-          text: 'Ready to match',
-        },
-        {
-          active: false,
-          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=unableToMatch',
-          text: 'Unable to match',
-        },
-        {
-          active: false,
-          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=matched',
-          text: 'Matched',
-        },
-        {
-          active: false,
-          href: '/admin/cru-dashboard/change-requests?cruManagementArea=cru-management-area-id',
-          text: 'Change requests',
-        },
-        {
-          active: false,
-          href: '/admin/cru-dashboard/search',
-          text: 'Search',
-        },
-      ])
     })
   })
 })

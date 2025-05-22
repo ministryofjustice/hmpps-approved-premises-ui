@@ -13,14 +13,13 @@ import adminPaths from '../../paths/admin'
 import { PlacementRequestDashboardSearchOptions } from '../../@types/ui'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
-import { cruDashboardActions } from '../../utils/admin/cruDashboardUtils'
+import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
 import {
   pendingPlacementRequestTableHeader,
   pendingPlacementRequestTableRows,
   releaseTypeSelectOptions,
 } from '../../utils/applications/utils'
 import { pagination } from '../../utils/pagination'
-import { placementRequestTabItems } from '../../utils/placementRequests'
 import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementRequests/table'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
 import { changeRequestsTableHeader, changeRequestsTableRows } from '../../utils/placementRequests/changeRequestsUtils'
@@ -75,7 +74,7 @@ export default class CruDashboardController {
         pageHeading: 'CRU Dashboard',
         subheading: 'Requests for changes to placements.',
         actions: cruDashboardActions(res.locals.user),
-        tabs: placementRequestTabItems('changeRequests', cruManagementArea),
+        tabs: cruDashboardTabItems('changeRequests', cruManagementArea),
         activeTab: 'changeRequests',
         cruManagementAreas,
         cruManagementArea,
@@ -111,7 +110,7 @@ export default class CruDashboardController {
 
       res.render('admin/cruDashboard/search', {
         pageHeading: 'CRU Dashboard',
-        tabs: placementRequestTabItems('search'),
+        tabs: cruDashboardTabItems('search'),
         activeTab: 'search',
         ...searchOptions,
         tierOptions: tierSelectOptions(searchOptions.tier),
@@ -146,7 +145,7 @@ export default class CruDashboardController {
       activeTab: 'pendingPlacement',
       subheading:
         'All applications that have been accepted but do not yet have an associated placement request are shown below',
-      tabs: placementRequestTabItems('pendingPlacement', cruManagementArea),
+      tabs: cruDashboardTabItems('pendingPlacement', cruManagementArea),
       tableHead: pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
       tableRows: pendingPlacementRequestTableRows(applications.data),
       pagination: pagination(Number(applications.pageNumber), Number(applications.totalPages), hrefPrefix),
@@ -182,7 +181,7 @@ export default class CruDashboardController {
       requestType,
       activeTab: status,
       subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
-      tabs: placementRequestTabItems(status, cruManagementArea, requestType),
+      tabs: cruDashboardTabItems(status, cruManagementArea, requestType),
       tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
       tableRows: dashboardTableRows(dashboard.data, status),
       pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),
