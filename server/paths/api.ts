@@ -26,6 +26,8 @@ const cas1Person = cas1People.path(':crn')
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
 
+const cas1PlacementRequests = cas1Namespace.path('placement-requests')
+
 // Non-namespaced
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
@@ -167,6 +169,7 @@ export default {
   placementRequests: {
     show: placementRequestsSingle,
     dashboard: placementRequests.path('dashboard'),
+    changeRequests: cas1PlacementRequests.path('change-requests'),
     booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
