@@ -359,6 +359,8 @@ export const timeIsValid24hrFormat = (time: string): Boolean => {
   return /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/.test(time)
 }
 
+export const timeAddLeadingZero = (time: string): string => time.padStart(5, '0')
+
 export const isoDateAndTimeToDateObj = (isoDate: string, time: string): Date => {
   const date = DateFormats.isoToDateObj(isoDate)
   if (timeIsValid24hrFormat(time)) {
