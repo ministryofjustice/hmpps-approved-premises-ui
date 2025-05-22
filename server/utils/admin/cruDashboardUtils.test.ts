@@ -31,8 +31,10 @@ describe('CRU dashboard utilities', () => {
   })
 
   describe('cruDashboardTabItems', () => {
-    it('returns CRU dashboard tab items', () => {
-      expect(cruDashboardTabItems('notMatched', 'cru-management-area-id', 'parole')).toEqual([
+    it('returns CRU all dashboard tab items for a user with all permissions', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_change_request_list'] })
+
+      expect(cruDashboardTabItems(user, 'notMatched', 'cru-management-area-id', 'parole')).toEqual([
         {
           active: false,
           text: 'Pending Request for Placement',
@@ -57,6 +59,38 @@ describe('CRU dashboard utilities', () => {
           active: false,
           href: '/admin/cru-dashboard/change-requests?cruManagementArea=cru-management-area-id',
           text: 'Change requests',
+        },
+        {
+          active: false,
+          href: '/admin/cru-dashboard/search',
+          text: 'Search',
+        },
+      ])
+    })
+
+    it('returns CRU dashboard tab items without change requests for a user without change request list permission', () => {
+      const user = userDetailsFactory.build({ permissions: [] })
+
+      expect(cruDashboardTabItems(user, 'matched', 'cru-management-area-id', 'standardRelease')).toEqual([
+        {
+          active: false,
+          text: 'Pending Request for Placement',
+          href: `/admin/cru-dashboard?cruManagementArea=cru-management-area-id&status=pendingPlacement`,
+        },
+        {
+          active: false,
+          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease',
+          text: 'Ready to match',
+        },
+        {
+          active: false,
+          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease&status=unableToMatch',
+          text: 'Unable to match',
+        },
+        {
+          active: true,
+          href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease&status=matched',
+          text: 'Matched',
         },
         {
           active: false,

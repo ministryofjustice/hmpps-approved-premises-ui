@@ -1,7 +1,6 @@
 import { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
 import { hasPermission } from '../users'
 import paths from '../../paths/admin'
-import pathsAdmin from '../../paths/admin'
 import { TabItem } from '../tasks/listTable'
 import { createQueryString } from '../utils'
 
@@ -24,6 +23,7 @@ export const cruDashboardActions = (user: UserDetails): Array<IdentityBarMenu> =
     : null
 
 export const cruDashboardTabItems = (
+  user: UserDetails,
   activeTab?: string,
   cruManagementArea?: string,
   requestType?: string,
@@ -32,7 +32,7 @@ export const cruDashboardTabItems = (
     {
       text: 'Pending Request for Placement',
       active: activeTab === 'pendingPlacement',
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
+      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
         {
           cruManagementArea,
           status: 'pendingPlacement',
@@ -43,7 +43,7 @@ export const cruDashboardTabItems = (
     {
       text: 'Ready to match',
       active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
+      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
         {
           cruManagementArea,
           requestType,
@@ -54,7 +54,7 @@ export const cruDashboardTabItems = (
     {
       text: 'Unable to match',
       active: activeTab === 'unableToMatch',
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
+      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
         {
           cruManagementArea,
           requestType,
@@ -66,7 +66,7 @@ export const cruDashboardTabItems = (
     {
       text: 'Matched',
       active: activeTab === 'matched',
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
+      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
         {
           cruManagementArea,
           requestType,
@@ -75,18 +75,20 @@ export const cruDashboardTabItems = (
         { addQueryPrefix: true },
       )}`,
     },
-    {
-      text: 'Change requests',
-      active: activeTab === 'changeRequests',
-      href: `${pathsAdmin.admin.cruDashboard.changeRequests({})}${createQueryString(
-        { cruManagementArea },
-        { addQueryPrefix: true },
-      )}`,
-    },
+    hasPermission(user, ['cas1_change_request_list'])
+      ? {
+          text: 'Change requests',
+          active: activeTab === 'changeRequests',
+          href: `${paths.admin.cruDashboard.changeRequests({})}${createQueryString(
+            { cruManagementArea },
+            { addQueryPrefix: true },
+          )}`,
+        }
+      : undefined,
     {
       text: 'Search',
       active: activeTab === 'search',
-      href: pathsAdmin.admin.cruDashboard.search({}),
+      href: paths.admin.cruDashboard.search({}),
     },
-  ]
+  ].filter(Boolean)
 }
