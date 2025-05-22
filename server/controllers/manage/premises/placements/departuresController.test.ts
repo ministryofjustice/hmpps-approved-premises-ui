@@ -21,6 +21,7 @@ import {
   MOVE_TO_AP_REASON_ID,
   PLANNED_MOVE_ON_REASON_ID,
 } from '../../../../utils/placements'
+import { timeAddLeadingZero } from '../../../../utils/dateUtils'
 
 describe('DeparturesController', () => {
   const token = 'SOME_TOKEN'
@@ -654,7 +655,7 @@ describe('DeparturesController', () => {
 
   describe('create', () => {
     it.each([
-      ['2024-10-08', '09:35'],
+      ['2024-10-08', '9:35'],
       ['2025-03-31', '11:15'],
     ])(
       'creates the departure on %s at %s, clears the session and redirects to the placement page',
@@ -680,7 +681,7 @@ describe('DeparturesController', () => {
 
         expect(placementService.createDeparture).toHaveBeenCalledWith(token, premisesId, placement.id, {
           departureDate: date,
-          departureTime: time,
+          departureTime: timeAddLeadingZero(time),
           reasonId: rootDepartureReason1.id,
           notes: 'Some notes',
         })
