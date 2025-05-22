@@ -1,5 +1,5 @@
 import { Response } from 'superagent'
-import { ApArea, Cas1CruManagementArea, NonArrivalReason } from '@approved-premises/api'
+import { ApArea, Cas1ChangeRequestType, Cas1CruManagementArea, NamedId, NonArrivalReason } from '@approved-premises/api'
 import { ReferenceData } from '@approved-premises/ui'
 import { stubFor } from './setup'
 import {
@@ -90,6 +90,7 @@ const stubDepartureReasonsReferenceData = (departureReasons?: Array<ReferenceDat
       jsonBody: departureReasons || departureReasonFactory.buildList(5),
     },
   })
+
 const stubMoveOnCategoriesReferenceData = (moveOnCategories?: Array<ReferenceData>) =>
   stubFor({
     request: {
@@ -105,10 +106,32 @@ const stubMoveOnCategoriesReferenceData = (moveOnCategories?: Array<ReferenceDat
     },
   })
 
+const stubChangeRequestReasonsReferenceData = ({
+  changeRequestType,
+  reasons,
+}: {
+  changeRequestType: Cas1ChangeRequestType
+  reasons: Array<NamedId>
+}) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: `/cas1/reference-data/change-request-reasons/${changeRequestType}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: reasons,
+    },
+  })
+
 export default {
   stubApAreaReferenceData,
   stubCruManagementAreaReferenceData,
   stubNonArrivalReasonsReferenceData,
   stubDepartureReasonsReferenceData,
   stubMoveOnCategoriesReferenceData,
+  stubChangeRequestReasonsReferenceData,
 }

@@ -1,5 +1,8 @@
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import {
+  type Cas1ChangeRequestType,
+  type Cas1NewChangeRequest,
+  type NamedId,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
@@ -8,12 +11,15 @@ import {
   PlacementRequestSortField,
   SortDirection,
 } from '@approved-premises/api'
-import { RestClientBuilder } from '../data'
+import { type Cas1ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 export default class PlacementRequestService {
-  constructor(private readonly placementRequestClientFactory: RestClientBuilder<PlacementRequestClient>) {}
+  constructor(
+    private readonly placementRequestClientFactory: RestClientBuilder<PlacementRequestClient>,
+    private readonly cas1ReferenceDataClientFactory: RestClientBuilder<Cas1ReferenceDataClient>,
+  ) {}
 
   async getDashboard(
     token: string,
@@ -65,5 +71,19 @@ export default class PlacementRequestService {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.withdraw(id, reason)
+  }
+
+  async getChangeRequestReasons(token: string, changeRequestType: Cas1ChangeRequestType) {
+    const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
+
+    return (await cas1ReferenceDataClient.getReferenceData(
+      `change-request-reasons/${changeRequestType}`,
+    )) as Array<NamedId>
+  }
+
+  async createPlacementAppeal(token: string, id: string, newChangeRequest: Cas1NewChangeRequest) {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.createPlacementAppeal(id, newChangeRequest)
   }
 }

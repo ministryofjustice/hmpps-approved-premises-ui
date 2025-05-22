@@ -488,7 +488,20 @@ export type MultiPageFormData = {
   departures?: Record<Cas1SpaceBooking['id'], DepartureFormData>
   spaceSearch?: Record<PlacementRequestDetail['id'], SpaceSearchFormData>
   transfers?: Record<Cas1SpaceBooking['id'], TransferFormData>
+  appeals?: Record<Cas1SpaceBooking[id], AppealFormData>
 }
+
+export type AppealJson<K extends string> = {
+  areaManagerName: string
+  areaManagerEmail: string
+  appealReason: AppealReason
+  notes: string
+  approvalDate: string
+} & {
+  [P in `${K}Detail`]?: string
+}
+
+export type AppealFormData = ObjectWithDateParts<'approvalDate'> & AppealJson
 
 export type DateRange = {
   from: string

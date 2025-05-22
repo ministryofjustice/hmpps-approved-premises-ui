@@ -1,4 +1,5 @@
 import type {
+  Cas1ChangeRequestType,
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
@@ -48,6 +49,12 @@ export const statusTextMap = {
   overdueDeparture: 'Overdue departure',
 } as const
 
+const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
+  placementAppeal: 'Appeal requested',
+  plannedTransfer: 'Transfer requested',
+  placementExtension: 'Extension requested',
+}
+
 type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
 type SpaceBookingStatus = keyof typeof statusTextMap
 
@@ -90,6 +97,15 @@ export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBoo
   return 'upcoming'
 }
 
+export const placementStatusHtml = (placement: Cas1SpaceBookingSummary): { html: string } => {
+  const statusElements: Array<string> = [
+    statusTextMap[detailedStatus(placement)],
+    ...placement.openChangeRequestTypes.map((requestType: Cas1ChangeRequestType) => changeRequestStatuses[requestType]),
+  ]
+
+  return { html: statusElements.join('<br/>') }
+}
+
 export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary) => ({
   arrivalDate: placement.actualArrivalDate || placement.expectedArrivalDate,
   departureDate: placement.actualDepartureDate || placement.expectedDepartureDate,
@@ -121,6 +137,15 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
         text: 'Record non-arrival',
         classes: 'govuk-button--secondary',
         href: paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
+
+    // TODO: Check that there are no existing appeals
+    if (hasPermission(user, ['cas1_placement_appeal_create'])) {
+      actionList.push({
+        text: 'Request an appeal',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.appeal.new({ premisesId: placement.premises.id, placementId: placement.id }),
       })
     }
   }
