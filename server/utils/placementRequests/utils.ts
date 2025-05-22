@@ -1,13 +1,11 @@
 import { PlacementRequest } from '@approved-premises/api'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { createQueryString, linkTo } from '../utils'
+import { linkTo } from '../utils'
 
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
-import pathsAdmin from '../../paths/admin'
 import { placementLength } from '../match'
 import { DateFormats } from '../dateUtils'
-import { TabItem } from '../tasks/listTable'
 
 export const formatReleaseType = (placementRequest: PlacementRequest) => allReleaseTypes[placementRequest.releaseType]
 
@@ -27,71 +25,3 @@ export const requestTypes = [
 
 export const withdrawalMessage = (duration: number, expectedArrivalDate: string) =>
   `Request for placement for ${placementLength(Number(duration))} starting on ${DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })} withdrawn successfully`
-
-export const placementRequestTabItems = (
-  activeTab?: string,
-  cruManagementArea?: string,
-  requestType?: string,
-): Array<TabItem> => {
-  return [
-    {
-      text: 'Pending Request for Placement',
-      active: activeTab === 'pendingPlacement',
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          status: 'pendingPlacement',
-        },
-        { addQueryPrefix: true },
-      )}`,
-    },
-    {
-      text: 'Ready to match',
-      active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          requestType,
-        },
-        { addQueryPrefix: true },
-      )}`,
-    },
-    {
-      text: 'Unable to match',
-      active: activeTab === 'unableToMatch',
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          requestType,
-          status: 'unableToMatch',
-        },
-        { addQueryPrefix: true },
-      )}`,
-    },
-    {
-      text: 'Matched',
-      active: activeTab === 'matched',
-      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          requestType,
-          status: 'matched',
-        },
-        { addQueryPrefix: true },
-      )}`,
-    },
-    {
-      text: 'Change requests',
-      active: activeTab === 'changeRequests',
-      href: `${pathsAdmin.admin.cruDashboard.changeRequests({})}${createQueryString(
-        { cruManagementArea },
-        { addQueryPrefix: true },
-      )}`,
-    },
-    {
-      text: 'Search',
-      active: activeTab === 'search',
-      href: pathsAdmin.admin.cruDashboard.search({}),
-    },
-  ]
-}
