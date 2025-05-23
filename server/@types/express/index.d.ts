@@ -1,4 +1,4 @@
-import type { ErrorMessages, MultiPageFormData } from '@approved-premises/ui'
+import type { ErrorMessages } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication, PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
 
 export default {}

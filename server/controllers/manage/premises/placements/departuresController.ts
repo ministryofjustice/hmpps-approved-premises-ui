@@ -10,6 +10,7 @@ import {
   isoDateAndTimeToDateObj,
   timeIsValid24hrFormat,
   dateIsPast,
+  timeAddLeadingZero,
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import paths from '../../../../paths/manage'
@@ -99,11 +100,7 @@ export default class DeparturesController {
   private newErrors(body: DepartureFormData, placement: Cas1SpaceBooking): DepartureFormErrors | null {
     const errors: DepartureFormErrors = {}
 
-    const { departureTime, reasonId } = body
-    const { departureDate } = DateFormats.dateAndTimeInputsToIsoString(
-      body as ObjectWithDateParts<'departureDate'>,
-      'departureDate',
-    )
+    const { departureTime, departureDate, reasonId } = body
 
     if (!departureDate) {
       errors.departureDate = 'You must enter a date of departure'
@@ -151,6 +148,10 @@ export default class DeparturesController {
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
 
       try {
+        body.departureDate = DateFormats.dateAndTimeInputsToIsoString(
+          body as ObjectWithDateParts<'departureDate'>,
+          'departureDate',
+        ).departureDate
         const errors = this.newErrors(body, placement)
 
         if (errors) {
@@ -355,7 +356,7 @@ export default class DeparturesController {
 
         const placementDeparture: Cas1NewDeparture = {
           departureDate: departureData.departureDate,
-          departureTime: departureData.departureTime,
+          departureTime: timeAddLeadingZero(departureData.departureTime),
           reasonId,
           moveOnCategoryId,
           notes,

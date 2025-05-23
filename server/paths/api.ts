@@ -15,7 +15,8 @@ const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placemen
 const cas1Capacity = cas1PremisesSingle.path('capacity')
 const cas1DaySummary = cas1PremisesSingle.path('day-summary/:date')
 
-const cas1SpaceBookings = cas1Namespace.path('placement-requests/:id/space-bookings')
+const cas1PlacementRequestSingle = cas1Namespace.path('placement-requests/:id')
+const cas1SpaceBookings = cas1PlacementRequestSingle.path('space-bookings')
 
 const cas1Reports = cas1Namespace.path('reports')
 
@@ -174,6 +175,7 @@ export default {
     spaceBookings: {
       create: cas1SpaceBookings,
     },
+    appeal: cas1PlacementRequestSingle.path('appeal'),
   },
   placementApplications: {
     update: placementApplicationsSingle,

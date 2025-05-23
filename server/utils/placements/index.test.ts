@@ -19,9 +19,11 @@ import {
   otherBookings,
   overallStatus,
   placementOverviewSummary,
+  placementStatusHtml,
   placementSummary,
   renderKeyworkersSelectOptions,
   requirementsInformation,
+  statusTextMap,
 } from '.'
 import { DateFormats } from '../dateUtils'
 
@@ -126,6 +128,19 @@ describe('placementUtils', () => {
         expect(overallStatus(placement)).toEqual(expected.overall)
         expect(detailedStatus(placement)).toEqual(expected.detailed)
       })
+    })
+  })
+
+  describe('placementStatusHtml', () => {
+    it('should return an appealRequested status', () => {
+      const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['placementAppeal'] })
+      const expectedStatusText = statusTextMap[detailedStatus(placement)]
+      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Appeal requested` })
+    })
+    it('should return an transfer requested status', () => {
+      const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['plannedTransfer'] })
+      const expectedStatusText = statusTextMap[detailedStatus(placement)]
+      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Transfer requested` })
     })
   })
 

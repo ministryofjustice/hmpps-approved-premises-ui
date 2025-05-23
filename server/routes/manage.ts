@@ -18,6 +18,7 @@ export default function routes(controllers: Controllers, router: Router, service
     premisesController,
     placementController,
     arrivalsController,
+    placementAppealController,
     nonArrivalsController,
     departuresController,
     bedsController,
@@ -285,6 +286,27 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.premises.placements.transfers.confirm.pattern, transfersController.create(), {
     auditEvent: 'TRANSFER_REQUEST_CREATE',
     allowedPermissions: ['cas1_transfer_create'],
+  })
+
+  // Change requests
+  get(paths.premises.placements.appeal.new.pattern, placementAppealController.new(), {
+    auditEvent: 'NEW_PLACEMENT_APPEAL',
+    allowedPermissions: ['cas1_placement_appeal_create'],
+  })
+
+  post(paths.premises.placements.appeal.new.pattern, placementAppealController.newSave(), {
+    auditEvent: 'SAVE_PLACEMENT_APPEAL',
+    allowedPermissions: ['cas1_placement_appeal_create'],
+  })
+
+  get(paths.premises.placements.appeal.confirm.pattern, placementAppealController.confirm(), {
+    auditEvent: 'CONFIRM_PLACEMENT_APPEAL',
+    allowedPermissions: ['cas1_placement_appeal_create'],
+  })
+
+  post(paths.premises.placements.appeal.confirm.pattern, placementAppealController.create(), {
+    auditEvent: 'CREATE_PLACEMENT_APPEAL',
+    allowedPermissions: ['cas1_placement_appeal_create'],
   })
 
   // Occupancy

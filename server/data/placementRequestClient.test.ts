@@ -1,21 +1,22 @@
-import { WithdrawPlacementRequestReason } from '@approved-premises/api'
+import { type Cas1NewChangeRequest, WithdrawPlacementRequestReason } from '@approved-premises/api'
 import PlacementRequestClient from './placementRequestClient'
 import paths from '../paths/api'
 
 import {
   bookingNotMadeFactory,
+  cas1NewChangeRequestFactory,
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
   placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
-import describeClient from '../testutils/describeClient'
+import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
 
 describeClient('placementRequestClient', provider => {
   let placementRequestClient: PlacementRequestClient
 
-  const token = 'token-1'
+  const token = 'test-token-1'
 
   beforeEach(() => {
     placementRequestClient = new PlacementRequestClient(token)
@@ -385,6 +386,40 @@ describeClient('placementRequestClient', provider => {
       })
 
       await placementRequestClient.withdraw(placementRequestId, reason)
+    })
+  })
+})
+
+describeCas1NamespaceClient('Cas1placementRequestClient', provider => {
+  let placementRequestClient: PlacementRequestClient
+
+  const token = 'test-token-1'
+
+  beforeEach(() => {
+    placementRequestClient = new PlacementRequestClient(token)
+  })
+
+  describe('createPlacementAppeal', () => {
+    it('creates a change request against a placementRequest', async () => {
+      const placementRequestId = 'placement-request-id'
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build()
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create a changeRequest against a placementRequest',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.appeal({ id: placementRequestId }),
+          body: newChangeRequest,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+      const result = await placementRequestClient.createPlacementAppeal(placementRequestId, newChangeRequest)
+      expect(result).toEqual({})
     })
   })
 })
