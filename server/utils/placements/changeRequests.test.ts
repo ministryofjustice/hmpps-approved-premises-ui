@@ -8,7 +8,7 @@ import {
   getConfirmationSummary,
   validateNewAppealResponse,
   getConditionalHtml,
-  mapAppealReasonsToRadios,
+  mapChangeRequestReasonsToRadios,
   getAppealReasonId,
 } from './changeRequests'
 import { summaryListItem } from '../formUtils'
@@ -20,7 +20,7 @@ const appealReasons: Array<NamedId> = [
   { name: 'exclusionZoneOrProximityToVictim', id: 'id2' },
 ]
 
-describe('changeRequestUtils', () => {
+describe('changeRequest utilities', () => {
   describe('getConditionalHtml', () => {
     it('renders html for a conditional text area', () => {
       const renderedHtml = '<p>Test</p>'
@@ -40,7 +40,9 @@ describe('changeRequestUtils', () => {
       const conditional = 'conditional'
       jest.spyOn(nunjucks, 'render').mockImplementation(() => conditional)
 
-      const result = mapAppealReasonsToRadios(appealReasons, { appealReason: 'staffConflictOfInterest' })
+      const result = mapChangeRequestReasonsToRadios(appealReasons, 'appealReason', {
+        appealReason: 'staffConflictOfInterest',
+      })
       expect(result).toEqual([
         {
           checked: true,

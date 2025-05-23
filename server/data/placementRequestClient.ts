@@ -99,4 +99,18 @@ export default class PlacementRequestClient {
       data: newChangeRequest,
     })
   }
+
+  async createPlannedTransfer(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.plannedTransfer({ id }),
+      data: newChangeRequest,
+    })
+  }
+
+  async createExtension(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.extension({ id }),
+      data: newChangeRequest,
+    })
+  }
 }

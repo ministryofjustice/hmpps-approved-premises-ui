@@ -176,6 +176,8 @@ export default {
       create: cas1SpaceBookings,
     },
     appeal: cas1PlacementRequestSingle.path('appeal'),
+    plannedTransfer: cas1PlacementRequestSingle.path('planned-transfer'),
+    extension: cas1PlacementRequestSingle.path('extension'),
   },
   placementApplications: {
     update: placementApplicationsSingle,
