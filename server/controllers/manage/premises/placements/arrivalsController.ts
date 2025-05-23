@@ -5,7 +5,12 @@ import { PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import PlacementService from '../../../../services/placementService'
 import paths from '../../../../paths/manage'
-import { DateFormats, dateAndTimeInputsAreValidDates, timeIsValid24hrFormat } from '../../../../utils/dateUtils'
+import {
+  DateFormats,
+  dateAndTimeInputsAreValidDates,
+  timeIsValid24hrFormat,
+  timeAddLeadingZero,
+} from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 
 export default class ArrivalsController {
@@ -72,7 +77,7 @@ export default class ArrivalsController {
         }
 
         const placementArrival: Cas1NewArrival = {
-          arrivalTime,
+          arrivalTime: timeAddLeadingZero(arrivalTime),
           arrivalDate: DateFormats.isoDateTimeToIsoDate(arrivalDateTime),
         }
 

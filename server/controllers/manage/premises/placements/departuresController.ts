@@ -10,6 +10,7 @@ import {
   isoDateAndTimeToDateObj,
   timeIsValid24hrFormat,
   dateIsPast,
+  timeAddLeadingZero,
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import paths from '../../../../paths/manage'
@@ -355,7 +356,7 @@ export default class DeparturesController {
 
         const placementDeparture: Cas1NewDeparture = {
           departureDate: departureData.departureDate,
-          departureTime: departureData.departureTime,
+          departureTime: timeAddLeadingZero(departureData.departureTime),
           reasonId,
           moveOnCategoryId,
           notes,

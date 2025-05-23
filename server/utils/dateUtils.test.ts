@@ -16,6 +16,7 @@ import {
   timeIsValid24hrFormat,
   uiDateOrDateEmptyMessage,
   yearOptions,
+  timeAddLeadingZero,
 } from './dateUtils'
 
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -559,6 +560,15 @@ describe('timeIsValid24hrFormat', () => {
       expect(timeIsValid24hrFormat(time)).toEqual(false)
     },
   )
+})
+
+describe('addLeadingZero', () => {
+  it.each(['9:35', '0:10', '5:00'])('adds a leading zero to %s', time => {
+    expect(timeAddLeadingZero(time)).toEqual(`0${time}`)
+  })
+  it.each(['19:35', '10:10', '23:00'])('does not add a leading zero to %s', time => {
+    expect(timeAddLeadingZero(time)).toEqual(time)
+  })
 })
 
 describe('dateObjTo24hrTime', () => {

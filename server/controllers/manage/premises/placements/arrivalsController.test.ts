@@ -10,6 +10,7 @@ import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
+import { timeAddLeadingZero } from '../../../../utils/dateUtils'
 
 describe('ArrivalsController', () => {
   const token = 'SOME_TOKEN'
@@ -85,7 +86,7 @@ describe('ArrivalsController', () => {
     }
 
     it.each([
-      ['2024-11-05', '09:45'],
+      ['2024-11-05', '9:45'],
       ['2025-03-31', '12:13'],
     ])('creates the arrival for %s at %s and redirects to the placement page', async (date, time) => {
       const [year, month, day] = date.split('-').map(part => part.replace(/^0+/g, ''))
@@ -102,7 +103,7 @@ describe('ArrivalsController', () => {
 
       expect(placementService.createArrival).toHaveBeenCalledWith(token, premisesId, placement.id, {
         arrivalDate: date,
-        arrivalTime: time,
+        arrivalTime: timeAddLeadingZero(time),
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as arrived')
       expect(response.redirect).toHaveBeenCalledWith(
