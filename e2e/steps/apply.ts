@@ -440,6 +440,7 @@ export const submitApplication = async (page: Page) => {
 export const shouldSeeConfirmationPage = async (page: Page) => {
   const confirmationPage = new ConfirmationPage(page)
   await confirmationPage.shouldShowSuccessMessage()
+  await confirmationPage.shouldShowLinkToSurvey()
 }
 
 export const createApplication = async (
