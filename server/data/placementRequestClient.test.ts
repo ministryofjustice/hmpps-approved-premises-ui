@@ -1,12 +1,15 @@
-import { type Cas1NewChangeRequest, WithdrawPlacementRequestReason } from '@approved-premises/api'
+import { Cas1NewChangeRequest, Cas1ChangeRequestSummary, WithdrawPlacementRequestReason } from '@approved-premises/api'
+import { PaginatedResponse } from '@approved-premises/ui'
 import PlacementRequestClient from './placementRequestClient'
 import paths from '../paths/api'
 
 import {
   bookingNotMadeFactory,
+  cas1ChangeRequestSummaryFactory,
   cas1NewChangeRequestFactory,
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
+  paginatedResponseFactory,
   placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
@@ -16,7 +19,7 @@ import { normaliseCrn } from '../utils/normaliseCrn'
 describeClient('placementRequestClient', provider => {
   let placementRequestClient: PlacementRequestClient
 
-  const token = 'test-token-1'
+  const token = 'test-token'
 
   beforeEach(() => {
     placementRequestClient = new PlacementRequestClient(token)
@@ -390,13 +393,95 @@ describeClient('placementRequestClient', provider => {
   })
 })
 
-describeCas1NamespaceClient('Cas1placementRequestClient', provider => {
+describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
   let placementRequestClient: PlacementRequestClient
 
-  const token = 'test-token-1'
+  const token = 'test-token'
 
   beforeEach(() => {
     placementRequestClient = new PlacementRequestClient(token)
+  })
+
+  describe('getChangeRequests', () => {
+    it('makes a get request to the placementRequests change requests endpoint with default parameters', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        pageNumber: '1',
+        data: cas1ChangeRequestSummaryFactory.buildList(5),
+      }) as PaginatedResponse<Cas1ChangeRequestSummary>
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get open change requests',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.changeRequests.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          query: {
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: paginatedResponse.data,
+          headers: {
+            'X-Pagination-TotalPages': paginatedResponse.totalPages,
+            'X-Pagination-TotalResults': paginatedResponse.totalResults,
+            'X-Pagination-PageSize': paginatedResponse.pageSize,
+          },
+        },
+      })
+
+      const result = await placementRequestClient.getChangeRequests()
+
+      expect(result).toEqual(paginatedResponse)
+    })
+
+    it('makes a get request to the placementRequests change requests endpoint with specified parameters', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        pageNumber: '3',
+        data: cas1ChangeRequestSummaryFactory.buildList(5),
+      }) as PaginatedResponse<Cas1ChangeRequestSummary>
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get open change requests',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.changeRequests.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          query: {
+            cruManagementAreaId: 'some-id',
+            page: '3',
+            sortBy: 'tier',
+            sortDirection: 'desc',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: paginatedResponse.data,
+          headers: {
+            'X-Pagination-TotalPages': paginatedResponse.totalPages,
+            'X-Pagination-TotalResults': paginatedResponse.totalResults,
+            'X-Pagination-PageSize': paginatedResponse.pageSize,
+          },
+        },
+      })
+
+      const result = await placementRequestClient.getChangeRequests(
+        { cruManagementAreaId: 'some-id' },
+        3,
+        'tier',
+        'desc',
+      )
+
+      expect(result).toEqual(paginatedResponse)
+    })
   })
 
   describe('createPlacementAppeal', () => {

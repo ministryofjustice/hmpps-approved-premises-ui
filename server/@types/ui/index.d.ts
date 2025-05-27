@@ -2,7 +2,6 @@ import type {
   ApArea,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
-  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   ApprovedPremisesUser as User,
@@ -11,6 +10,7 @@ import type {
   ApprovedPremisesUserRole as UserRole,
   ApType,
   AssessmentTask,
+  Cas1ApplicationSummary,
   Cas1CruManagementArea,
   Cas1PremisesBasicSummary,
   Cas1SpaceBooking,
@@ -319,9 +319,9 @@ export type GroupedAssessments = {
 }
 
 export interface GroupedApplications {
-  inProgress: Array<ApplicationSummary>
-  requestedFurtherInformation: Array<ApplicationSummary>
-  submitted: Array<ApplicationSummary>
+  inProgress: Array<Cas1ApplicationSummary>
+  requestedFurtherInformation: Array<Cas1ApplicationSummary>
+  submitted: Array<Cas1ApplicationSummary>
 }
 
 export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask

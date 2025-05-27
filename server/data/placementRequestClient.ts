@@ -1,5 +1,7 @@
 import {
   BookingNotMade,
+  Cas1ChangeRequestSortField,
+  Cas1ChangeRequestSummary,
   Cas1CruManagementArea,
   type Cas1NewChangeRequest,
   NewBookingNotMade,
@@ -20,6 +22,10 @@ import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@t
 import { normaliseCrn } from '../utils/normaliseCrn'
 
 type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
+
+export type GetChangeRequestsQueryParams = {
+  cruManagementAreaId?: string
+}
 
 export type DashboardFilters = {
   status?: PlacementRequestStatus
@@ -97,6 +103,19 @@ export default class PlacementRequestClient {
     return this.restClient.post({
       path: paths.placementRequests.appeal({ id }),
       data: newChangeRequest,
+    })
+  }
+
+  async getChangeRequests(
+    filterParams: GetChangeRequestsQueryParams = {},
+    page: number = 1,
+    sortBy: Cas1ChangeRequestSortField = 'name',
+    sortDirection: SortDirection = 'asc',
+  ) {
+    return this.restClient.getPaginatedResponse<Cas1ChangeRequestSummary>({
+      path: paths.placementRequests.changeRequests({}),
+      page: page.toString(),
+      query: { ...filterParams, sortBy, sortDirection },
     })
   }
 }
