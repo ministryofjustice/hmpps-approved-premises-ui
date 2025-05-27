@@ -13,5 +13,3 @@ const app = createApp(controllers(serviceList), serviceList)
 const metricsApp = createMetricsApp()
 
 export { app, metricsApp }
-export { characteristicsBulletList } from './utils/characteristicsUtils'
-export { cruDashboardTabItems } from './utils/admin/cruDashboardUtils'
