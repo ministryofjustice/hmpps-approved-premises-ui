@@ -1,4 +1,5 @@
 import { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
+import { ParsedQs } from 'qs'
 import { hasPermission } from '../users'
 import paths from '../../paths/admin'
 import { TabItem } from '../tasks/listTable'
@@ -22,6 +23,9 @@ export const cruDashboardActions = (user: UserDetails): Array<IdentityBarMenu> =
       ]
     : null
 
+const cruDashboardTabLink = (query: ParsedQs) =>
+  `${paths.admin.cruDashboard.index({})}${createQueryString(query, { addQueryPrefix: true })}`
+
 export const cruDashboardTabItems = (
   user: UserDetails,
   activeTab?: string,
@@ -32,48 +36,22 @@ export const cruDashboardTabItems = (
     {
       text: 'Pending Request for Placement',
       active: activeTab === 'pendingPlacement',
-      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          status: 'pendingPlacement',
-        },
-        { addQueryPrefix: true },
-      )}`,
+      href: cruDashboardTabLink({ cruManagementArea, status: 'pendingPlacement' }),
     },
     {
       text: 'Ready to match',
       active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
-      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          requestType,
-        },
-        { addQueryPrefix: true },
-      )}`,
+      href: cruDashboardTabLink({ cruManagementArea, requestType }),
     },
     {
       text: 'Unable to match',
       active: activeTab === 'unableToMatch',
-      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          requestType,
-          status: 'unableToMatch',
-        },
-        { addQueryPrefix: true },
-      )}`,
+      href: cruDashboardTabLink({ cruManagementArea, requestType, status: 'unableToMatch' }),
     },
     {
       text: 'Matched',
       active: activeTab === 'matched',
-      href: `${paths.admin.cruDashboard.index({})}${createQueryString(
-        {
-          cruManagementArea,
-          requestType,
-          status: 'matched',
-        },
-        { addQueryPrefix: true },
-      )}`,
+      href: cruDashboardTabLink({ cruManagementArea, requestType, status: 'matched' }),
     },
     hasPermission(user, ['cas1_change_request_list'])
       ? {
