@@ -29,7 +29,7 @@ test('download reports', async ({ page, reportViewer }) => {
   // When I download the out of service beds report
   const lostBedsDownload = await reportsPage.downloadOutOfServiceBedsReports({ month, year })
   // Then the file should be downloaded with the correct suggested name
-  expect(lostBedsDownload.suggestedFilename()).toMatch(/out-of-service-beds-2023-01-\d{8}_\d{4}.xlsx/)
+  expect(lostBedsDownload.suggestedFilename()).toMatch(/out-of-service-beds-2023-01-01-to-2023-01-31-\d{8}_\d{4}.xlsx/)
 
   // When I download the daily metrics report
   const applicationsDownload = await reportsPage.downloadDailyMetricsReports({ month, year })
