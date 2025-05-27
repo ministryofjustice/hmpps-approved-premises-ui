@@ -29,15 +29,6 @@ export const changeRequestsTableHeader = (
   { text: 'Change type' },
 ]
 
-export const changeRequestsTableRows = (changeRequests: Array<Cas1ChangeRequestSummary>): Array<TableRow> =>
-  changeRequests.map(changeRequest => [
-    nameCell(changeRequest),
-    { html: tierBadge(changeRequest.tier) },
-    arrivalDateCell(changeRequest),
-    { text: DateFormats.isoDateToUIDate(changeRequest.createdAt, { format: 'short' }) },
-    { text: changeRequestTypeMap[changeRequest.type] },
-  ])
-
 const nameCell = (changeRequest: Cas1ChangeRequestSummary): TableCell => {
   const name = displayName(changeRequest.person)
 
@@ -53,3 +44,12 @@ const arrivalDateCell = (changeRequest: Cas1ChangeRequestSummary): TableCell => 
     format: 'short',
   }),
 })
+
+export const changeRequestsTableRows = (changeRequests: Array<Cas1ChangeRequestSummary>): Array<TableRow> =>
+  changeRequests.map(changeRequest => [
+    nameCell(changeRequest),
+    { html: tierBadge(changeRequest.tier) },
+    arrivalDateCell(changeRequest),
+    { text: DateFormats.isoDateToUIDate(changeRequest.createdAt, { format: 'short' }) },
+    { text: changeRequestTypeMap[changeRequest.type] },
+  ])
