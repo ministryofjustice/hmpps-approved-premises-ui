@@ -94,6 +94,7 @@ const assessmentTable = (
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: requestedFurtherInformationTableRows(assessments),
+        attributes: { 'aria-describedby': 'sortable-table-description' },
       }
     case 'completed':
       return {

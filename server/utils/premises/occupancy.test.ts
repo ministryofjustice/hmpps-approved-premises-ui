@@ -31,6 +31,7 @@ import { getTierOrBlank } from '../applications/helpers'
 import { displayName } from '../personUtils'
 import config from '../../config'
 import { roomCharacteristicMap } from '../characteristicsUtils'
+import { sortHeader } from '../sortHeader'
 
 describe('apOccupancy utils', () => {
   describe('dayStatusFromDayCapacity', () => {
@@ -269,10 +270,7 @@ describe('apOccupancy utils', () => {
         { title: 'Col 2', fieldName: 'fn2', sortable: false },
       ]
       expect(tableHeader(tableDefinition, null, null, prefix)).toEqual([
-        {
-          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'fn1' },
-          html: '<a href="prefix?sortBy=fn1">Col 1</a>',
-        },
+        sortHeader('Col 1', 'fn1', null, null, prefix),
         { text: 'Col 2' },
       ])
     })
@@ -282,10 +280,7 @@ describe('apOccupancy utils', () => {
         { title: 'Col 2', fieldName: 'fn2', sortable: false },
       ]
       expect(tableHeader(tableDefinition, 'fn1', 'asc', prefix)).toEqual([
-        {
-          attributes: { 'aria-sort': 'ascending', 'data-cy-sort-field': 'fn1' },
-          html: '<a href="prefix?sortBy=fn1&sortDirection=desc">Col 1</a>',
-        },
+        sortHeader('Col 1', 'fn1', 'fn1', 'asc', prefix),
         { text: 'Col 2' },
       ])
     })

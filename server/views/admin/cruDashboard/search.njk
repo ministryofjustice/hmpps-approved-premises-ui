@@ -91,7 +91,8 @@
             {{ govukTable({
                 firstCellIsHeader: true,
                 head: tableHead,
-                rows: tableRows
+                rows: tableRows,
+                attributes: { 'aria-describedby': 'sortable-table-description' }
             }) }}
 
             {{ govukPagination(pagination) }}

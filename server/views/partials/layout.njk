@@ -2,7 +2,7 @@
 
 {% block head %}
     {% include "./applicationInsightsScript.njk" %}
-  <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/jquery.min.js"></script>
 
     <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet" />
 {% endblock %}
@@ -17,6 +17,7 @@
 {% block bodyStart %}{% endblock %}
 
 {% block bodyEnd %}
+    <span id="sortable-table-description" class="govuk-visually-hidden">Column headers with buttons are sortable.</span>
     <script type="module" src="{{ '/assets/js/app.js' | assetMap }}"></script>
     {% block extraScripts %}{% endblock %}
 {% endblock %}

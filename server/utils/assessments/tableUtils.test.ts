@@ -96,6 +96,9 @@ describe('tableUtils', () => {
     it('returns an awaiting_response table', () => {
       expect(assessmentTable('awaiting_response', assessments, sortBy, sortDirection, hrefPrefix)).toEqual({
         firstCellIsHeader: true,
+        attributes: {
+          'aria-describedby': 'sortable-table-description',
+        },
         head: [
           sortHeader<AssessmentSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),

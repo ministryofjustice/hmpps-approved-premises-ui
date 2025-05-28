@@ -62,7 +62,8 @@
                 captionClasses: "govuk-table__caption--m",
                 firstCellIsHeader: true,
                 head: ApplyUtils.dashboardTableHeader(sortBy, sortDirection, hrefPrefix),
-                rows: ApplyUtils.dashboardTableRows(applications, { linkInProgressApplications: false })
+                rows: ApplyUtils.dashboardTableRows(applications, { linkInProgressApplications: false }),
+                attributes: { 'aria-describedby': 'sortable-table-description' }
             }) }}
 
             {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}

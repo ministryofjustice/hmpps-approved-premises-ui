@@ -100,8 +100,9 @@
 
         {{ govukTable({
             firstCellIsHeader: true,
-            head: UserUtils.managementDashboardTableHeader(sortBy, sortDirection, hrefPrefix) ,
-            rows: UserUtils.managementDashboardTableRows(users)
+            head: UserUtils.managementDashboardTableHeader(sortBy, sortDirection, hrefPrefix),
+            rows: UserUtils.managementDashboardTableRows(users),
+            attributes: { 'aria-describedby': 'sortable-table-description' }
         }) }}
         {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix) ) }}
     </div>
