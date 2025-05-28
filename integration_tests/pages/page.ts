@@ -599,10 +599,10 @@ export default abstract class Page {
           cy.wrap($el).within(() => {
             cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[i].type])
             cy.get('time').should('have.attr', { time: sortedTimelineEvents[i].occurredAt })
-            if (timelineEvents[i].createdBy?.name) {
+            if (timelineEvents[i].createdBySummary?.name) {
               cy.get('.moj-timeline__header > .moj-timeline__byline').should(
                 'contain',
-                timelineEvents[i].triggerSource === 'system' ? 'System' : timelineEvents[i].createdBy.name,
+                timelineEvents[i].triggerSource === 'system' ? 'System' : timelineEvents[i].createdBySummary.name,
               )
             }
             if (timelineEvents[i].associatedUrls?.length) {
