@@ -1,5 +1,8 @@
 [aria-sort] a,
-[aria-sort] a:hover {
+[aria-sort] a:hover,
+[aria-sort] button,
+[aria-sort] button:hover {
+  display: inline-block;
   background-color: transparent;
   border-width: 0;
   -webkit-box-shadow: 0 0 0 0;
@@ -10,57 +13,67 @@
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
-  padding: 0 10px 0 0;
+  padding: 0 16px 0 0;
   position: relative;
   text-align: inherit;
-  font-size: 1em;
+  text-decoration: none;
   margin: 0;
 }
 
-[aria-sort] a:focus {
+[aria-sort] a:hover,
+[aria-sort] button:hover {
+  text-decoration: underline;
+  @include govuk-link-common;
+}
+
+[aria-sort] a:focus,
+[aria-sort] button:focus {
   background-color: $govuk-focus-colour;
   color: $govuk-focus-text-colour;
   box-shadow: 0 -2px $govuk-focus-colour, 0 4px $govuk-focus-text-colour;
   outline: none;
 }
 
-[aria-sort]:first-child a {
+[aria-sort]:first-child a,
+[aria-sort]:first-child button {
   right: auto;
 }
 
-[aria-sort] a:before {
-  content: " \25bc";
+[aria-sort] a:before,
+[aria-sort] button:before {
+  content: " \25bc" / "";
   position: absolute;
-  right: -1px;
-  top: 9px;
+  right: 0;
+  top: 11px;
   font-size: 0.5em;
 }
 
-[aria-sort] a:after {
-  content: " \25b2";
+[aria-sort] a:after,
+[aria-sort] button:after {
+  content: " \25b2" / "";
   position: absolute;
-  right: -1px;
-  top: 1px;
+  right: 0;
+  top: 2px;
   font-size: 0.5em;
 }
 
 [aria-sort="ascending"] a:before,
-[aria-sort="descending"] a:before {
+[aria-sort="descending"] a:before,
+[aria-sort="ascending"] button:before,
+[aria-sort="descending"] button:before {
   content: none;
 }
 
-[aria-sort="ascending"] a:after {
-  content: " \25b2";
+[aria-sort="ascending"] a:after,
+[aria-sort="ascending"] button:after {
+  content: " \25b2" / "";
   font-size: .8em;
-  position: absolute;
-  right: -5px;
   top: 2px;
 }
 
-[aria-sort="descending"] a:after {
-  content: " \25bc";
+[aria-sort="descending"] a:after,
+[aria-sort="descending"] button:after {
+  content: " \25bc" / "";
   font-size: .8em;
-  position: absolute;
-  right: -5px;
   top: 2px;
 }

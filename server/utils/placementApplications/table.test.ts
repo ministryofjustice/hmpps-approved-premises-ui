@@ -26,6 +26,9 @@ describe('table', () => {
 
       expect(placementApplicationsTable(tasks, sortBy, sortDirection, hrefPrefix)).toEqual({
         firstCellIsHeader: true,
+        attributes: {
+          'aria-describedby': 'sortable-table-description',
+        },
         head: [
           sortHeader<TaskSortField>('Name', 'person', sortBy, sortDirection, hrefPrefix),
           {

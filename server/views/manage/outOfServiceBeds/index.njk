@@ -89,7 +89,8 @@
             caption: "Out of service beds",
             captionClasses: "govuk-table__caption--m",
             head: OutOfServiceBedUtils.allOutOfServiceBedsTableHeaders(sortBy, sortDirection, hrefPrefix),
-            rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds)
+            rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds),
+            attributes: { 'aria-describedby': 'sortable-table-description' }
         }) }}
 
         {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}

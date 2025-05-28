@@ -72,11 +72,12 @@
     <section>
         <h2 class="govuk-heading-m">{{ placementTableCaption }}</h2>
         {% if placementTableRows and placementTableRows.length %}
-        {{ govukTable({
-            firstCellIsHeader: false,
-            head: placementTableHeader,
-            rows: placementTableRows
-        }) }}
+            {{ govukTable({
+                firstCellIsHeader: false,
+                head: placementTableHeader,
+                rows: placementTableRows,
+                attributes: { 'aria-describedby': 'sortable-table-description' }
+            }) }}
         {% endif %}
     </section>
 
@@ -86,7 +87,8 @@
             {{ govukTable({
                 firstCellIsHeader: false,
                 head: outOfServiceBedTableHeader,
-                rows: outOfServiceBedTableRows
+                rows: outOfServiceBedTableRows,
+                attributes: { 'aria-describedby': 'sortable-table-description' }
             }) }}
         </section>
     {% endif %}

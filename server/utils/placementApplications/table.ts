@@ -29,6 +29,7 @@ export const placementApplicationsTable = (
       },
     ],
     rows: tableRows(placementApplications),
+    attributes: { 'aria-describedby': 'sortable-table-description' },
   }
 }
 

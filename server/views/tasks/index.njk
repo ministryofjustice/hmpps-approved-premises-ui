@@ -7,30 +7,29 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "./_navigation.njk" import navigation %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body tasks--index" %}
 
 {% block content %}
 
-  <div class="govuk-width-container">
-    <div>
+    <div class="govuk-width-container">
+        <div>
 
-      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-      {% include "../_messages.njk" %}
-      {% include "./_filters.njk" %}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {% include "../_messages.njk" %}
+            {% include "./_filters.njk" %}
 
-      {{ navigation(activeTab, hrefPrefix) }}
+            {{ navigation(activeTab, hrefPrefix) }}
 
-      {{
-        govukTable({
-            firstCellIsHeader: true,
-            head: TaskUtils.tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
-            rows: TaskUtils.tasksTableRows(tasks, activeTab)
-          })
-      }}
+            {{ govukTable({
+                firstCellIsHeader: true,
+                head: TaskUtils.tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
+                rows: TaskUtils.tasksTableRows(tasks, activeTab),
+                attributes: { 'aria-describedby': 'sortable-table-description' }
+            }) }}
 
-      {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
 
+        </div>
     </div>
-  </div>
 {% endblock %}
