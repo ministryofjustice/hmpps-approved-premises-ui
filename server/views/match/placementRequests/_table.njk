@@ -1,69 +1,67 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
+{% from "components/sortableTable/macro.njk" import sortableTable %}
+
 {% macro placementRequestTable(title, rows) %}
     {% if rows %}
-        {{
-      govukTable({
-          attributes: {
-              'data-module': 'moj-sortable-table'
-          },
-          firstCellIsHeader: true,
-          head: [
-              {
-                  text: "Name"
-              },
-              {
-                  text: "CRN"
-              },
-              {
-                  text: "Tier"
-              },
-              {
-                  text: "Expected arrival date",
-                  attributes: {
-                  "aria-sort": "none"
-                  }
-              },
-              {
-                  text: "Days until due date",
-                  attributes: {
-                  "aria-sort": "none"
-                  }
-              },
-              {
-                  text: "Type of release"
-              }
-          ],
-          rows: rows
-      })
-    }}
+        {{ sortableTable({
+            attributes: {
+                'data-module': 'moj-sortable-table',
+            },
+            firstCellIsHeader: true,
+            head: [
+                {
+                    text: "Name"
+                },
+                {
+                    text: "CRN"
+                },
+                {
+                    text: "Tier"
+                },
+                {
+                    text: "Expected arrival date",
+                    attributes: {
+                    "aria-sort": "none"
+                }
+                },
+                {
+                    text: "Days until due date",
+                    attributes: {
+                    "aria-sort": "none"
+                }
+                },
+                {
+                    text: "Type of release"
+                }
+            ],
+            rows: rows
+        }) }}
     {% endif %}
 {% endmacro %}
 
 {% macro placementApplicationTable(title, rows) %}
     {% if rows %}
-        {{
-      govukTable({
-          firstCellIsHeader: true,
-          head: [
-              {
-                  text: "Name"
-              },
-              {
-                  text: "CRN"
-              },
-              {
-                  text: "Tier"
-              },
-              {
-                  text: "Type of request"
-              },
-              {
-                  text: "Status"
-              }
-          ],
-          rows: rows
-        })
-    }}
+        {{ govukTable({
+            firstCellIsHeader: true,
+            head: [
+                {
+                    text: "Name"
+                },
+                {
+                    text: "CRN"
+                },
+                {
+                    text: "Tier"
+                },
+                {
+                    text: "Type of request"
+                },
+                {
+                    text: "Status"
+                }
+            ],
+            rows: rows
+        }) }}
     {% endif %}
 {% endmacro %}
