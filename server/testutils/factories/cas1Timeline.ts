@@ -11,7 +11,7 @@ import {
 } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
-import userFactory from './user'
+import userFactory, { userSummaryFactory } from './user'
 import namedIdFactory from './namedId'
 import { fullPersonFactory } from './person'
 
@@ -46,7 +46,7 @@ export const cas1TimelineEventFactory = Factory.define<Cas1TimelineEvent>(() => 
   type: faker.helpers.arrayElement(cas1TimelineEventTypes),
   occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   content: faker.datatype.boolean() ? faker.lorem.sentences() : undefined,
-  createdBy: userFactory.build(),
+  createdBySummary: userSummaryFactory.build(),
   payload: cas1TimelineEventContentPayloadFactory.build(),
   associatedUrls: cas1TimelineEventAssociatedUrlFactory.buildList(1, { type: 'application' }),
   triggerSource: faker.helpers.arrayElement(cas1TriggerSourceTypes),

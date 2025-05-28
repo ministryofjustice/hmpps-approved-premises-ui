@@ -297,7 +297,7 @@ const mapApplicationTimelineEventsForUi = (
         event.associatedUrls = timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : []
       }
 
-      const createdBy = timelineEvent.triggerSource === 'system' ? 'System' : timelineEvent.createdBy?.name
+      const createdBy = timelineEvent.triggerSource === 'system' ? 'System' : timelineEvent.createdBySummary?.name
       if (createdBy) {
         return {
           ...event,
