@@ -25,6 +25,7 @@ import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../util
 import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
+import { isCardinal } from '../../utils/utils'
 
 export interface TaskListPageField {
   name: string
@@ -58,11 +59,17 @@ const apType = (
   return applyAssessMap[applyValue]
 }
 
-const lengthOfStay = (body: MatchingInformationBody): string | undefined => {
-  if (body.lengthOfStayAgreed === 'no' && body.lengthOfStayDays && body.lengthOfStayWeeks) {
-    const lengthOfStayWeeksInDays = weeksToDays(Number(body.lengthOfStayWeeks))
-    const totalLengthInDays = lengthOfStayWeeksInDays + Number(body.lengthOfStayDays)
+export const lengthOfStay = ({
+  lengthOfStayWeeks,
+  lengthOfStayDays,
+  lengthOfStayAgreed,
+}: MatchingInformationBody): string | undefined => {
+  if (lengthOfStayAgreed === 'no') {
+    if ((lengthOfStayWeeks && !isCardinal(lengthOfStayWeeks)) || (lengthOfStayDays && !isCardinal(lengthOfStayDays)))
+      return undefined
 
+    const lengthOfStayWeeksInDays = weeksToDays(Number(lengthOfStayWeeks || 0))
+    const totalLengthInDays = lengthOfStayWeeksInDays + Number(lengthOfStayDays || 0)
     return String(totalLengthInDays)
   }
 
@@ -219,7 +226,6 @@ const defaultMatchingInformationValues = (
       'essential',
       'notRelevant',
     ),
-    lengthOfStay: lengthOfStay(body),
   }
 }
 

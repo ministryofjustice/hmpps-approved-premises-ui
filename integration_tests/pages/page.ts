@@ -132,6 +132,10 @@ export default abstract class Page {
     cy.get('legend').should('contain', legendName)
   }
 
+  getHint(hint: string): void {
+    cy.get('.govuk-hint').should('contain', hint)
+  }
+
   getTextInputByIdAndEnterDetails(id: string, details: string): void {
     cy.get(`#${id}`).type(details)
   }
@@ -173,6 +177,11 @@ export default abstract class Page {
     cy.get(`textarea[name="${name}"]`).type(value)
   }
 
+  completeAutocompleteInput(id: string, optionLabel: string): void {
+    cy.get(`input[id="${id}"]`).type(optionLabel.slice(0, 3))
+    cy.get('.autocomplete__option').contains(optionLabel).click()
+  }
+
   completeDateInputs(prefix: string, date: string): void {
     const [year, month, day] = date.split('-')
 
@@ -191,6 +200,10 @@ export default abstract class Page {
     cy.get(`#${prefix}-day`).invoke('val').then(this.stripLeadingZeros).should('equal', day)
     cy.get(`#${prefix}-month`).invoke('val').then(this.stripLeadingZeros).should('equal', month)
     cy.get(`#${prefix}-year`).invoke('val').then(this.stripLeadingZeros).should('equal', year)
+  }
+
+  clickButton(text: string): void {
+    cy.get('button').contains(text).click()
   }
 
   clickSubmit(): void {
@@ -502,12 +515,20 @@ export default abstract class Page {
     cy.get(`th[data-cy-sort-field="${field}"] a`).click()
   }
 
+  clickSortByColumn(columnHeading: string): void {
+    cy.contains('th a', columnHeading).click()
+  }
+
   searchBy(id: string, item: string): void {
     this.getSelectInputByIdAndSelectAnEntry(id, item)
   }
 
   clickApplyFilter(): void {
     cy.get('button').contains('Apply filters').click()
+  }
+
+  shouldBeSortedByColumn(columnHeading: string, order: SortOrder): void {
+    cy.contains('th', columnHeading).should('have.attr', 'aria-sort', order)
   }
 
   shouldBeSortedByField(field: string, order: SortOrder): void {

@@ -20,7 +20,7 @@ import {
   cas1PremisesFactory,
   outOfServiceBedFactory,
   paginatedResponseFactory,
-  premisesSummaryFactory,
+  premisesFactory,
   userDetailsFactory,
 } from '../../../testutils/factories'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -319,7 +319,7 @@ describe('OutOfServiceBedsController', () => {
         sortDirection: 'desc',
       }
 
-      const premises = premisesSummaryFactory.buildList(3)
+      const premises = premisesFactory.buildList(3)
       const allPremises = premises
       const apAreas = apAreaFactory.buildList(3)
 

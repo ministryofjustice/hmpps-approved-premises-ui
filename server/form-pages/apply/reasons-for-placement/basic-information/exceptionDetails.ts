@@ -4,6 +4,7 @@ import { Page } from '../../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type ExceptionDetailsBody = ObjectWithDateParts<'agreementDate'> & {
   agreedCaseWithManager: YesOrNo
@@ -13,15 +14,8 @@ export type ExceptionDetailsBody = ObjectWithDateParts<'agreementDate'> & {
 
 @Page({
   name: 'exception-details',
-  bodyProperties: [
-    'agreedCaseWithManager',
-    'managerName',
-    'agreementDate',
-    'agreementDate-year',
-    'agreementDate-month',
-    'agreementDate-day',
-    'agreementSummary',
-  ],
+  bodyProperties: ['agreedCaseWithManager', 'managerName', ...dateBodyProperties('agreementDate'), 'agreementSummary'],
+  mergeBody: true,
 })
 export default class ExceptionDetails implements TasklistPage {
   title = 'Provide details for exemption application'

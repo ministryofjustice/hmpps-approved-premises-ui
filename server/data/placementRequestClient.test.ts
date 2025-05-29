@@ -1,21 +1,25 @@
-import { WithdrawPlacementRequestReason } from '@approved-premises/api'
+import { Cas1NewChangeRequest, Cas1ChangeRequestSummary, WithdrawPlacementRequestReason } from '@approved-premises/api'
+import { PaginatedResponse } from '@approved-premises/ui'
 import PlacementRequestClient from './placementRequestClient'
 import paths from '../paths/api'
 
 import {
   bookingNotMadeFactory,
+  cas1ChangeRequestSummaryFactory,
+  cas1NewChangeRequestFactory,
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
+  paginatedResponseFactory,
   placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
-import describeClient from '../testutils/describeClient'
+import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
 
 describeClient('placementRequestClient', provider => {
   let placementRequestClient: PlacementRequestClient
 
-  const token = 'token-1'
+  const token = 'test-token'
 
   beforeEach(() => {
     placementRequestClient = new PlacementRequestClient(token)
@@ -25,7 +29,7 @@ describeClient('placementRequestClient', provider => {
     const placementRequests = placementRequestFactory.buildList(2)
 
     it('makes a get request to the placementRequests dashboard endpoint for unmatched requests', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
@@ -63,7 +67,7 @@ describeClient('placementRequestClient', provider => {
       const requestType = 'standardRelease'
       const status = 'matched'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
@@ -97,7 +101,7 @@ describeClient('placementRequestClient', provider => {
     })
 
     it('makes a get request to the placementRequests dashboard endpoint for requests of another type', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
@@ -131,7 +135,7 @@ describeClient('placementRequestClient', provider => {
     })
 
     it('makes a get request to the placementRequests dashboard endpoint when searching by CRN', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
@@ -165,7 +169,7 @@ describeClient('placementRequestClient', provider => {
     })
 
     it('makes a get request to the placementRequests dashboard endpoint when searching by tier and start/end dates', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
@@ -210,7 +214,7 @@ describeClient('placementRequestClient', provider => {
     })
 
     it('makes a get request to the placementRequests dashboard endpoint with a page number', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
@@ -244,7 +248,7 @@ describeClient('placementRequestClient', provider => {
     })
 
     it('makes a get request to the placementRequests dashboard endpoint with a sortBy option', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
@@ -282,7 +286,7 @@ describeClient('placementRequestClient', provider => {
     it('makes a get request to the placementRequest endpoint', async () => {
       const placementRequestDetail = placementRequestDetailFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a placement request',
         withRequest: {
@@ -310,7 +314,7 @@ describeClient('placementRequestClient', provider => {
       const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
       const newPlacementRequestBooking = newPlacementRequestBookingFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create a booking from a placement request',
         withRequest: {
@@ -341,7 +345,7 @@ describeClient('placementRequestClient', provider => {
       }
       const bookingNotMade = bookingNotMadeFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to mark a placement request as not booked',
         withRequest: {
@@ -368,7 +372,7 @@ describeClient('placementRequestClient', provider => {
     it('makes a POST request to the withdrawal endpoint', async () => {
       const placementRequestId = 'placement-request-id'
       const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to mark a placement request as withdrawn',
         withRequest: {
@@ -385,6 +389,170 @@ describeClient('placementRequestClient', provider => {
       })
 
       await placementRequestClient.withdraw(placementRequestId, reason)
+    })
+  })
+})
+
+describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
+  let placementRequestClient: PlacementRequestClient
+
+  const token = 'test-token'
+
+  beforeEach(() => {
+    placementRequestClient = new PlacementRequestClient(token)
+  })
+
+  describe('getChangeRequests', () => {
+    it('makes a get request to the placementRequests change requests endpoint with default parameters', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        pageNumber: '1',
+        data: cas1ChangeRequestSummaryFactory.buildList(5),
+      }) as PaginatedResponse<Cas1ChangeRequestSummary>
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get open change requests',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.changeRequests.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          query: {
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: paginatedResponse.data,
+          headers: {
+            'X-Pagination-TotalPages': paginatedResponse.totalPages,
+            'X-Pagination-TotalResults': paginatedResponse.totalResults,
+            'X-Pagination-PageSize': paginatedResponse.pageSize,
+          },
+        },
+      })
+
+      const result = await placementRequestClient.getChangeRequests()
+
+      expect(result).toEqual(paginatedResponse)
+    })
+
+    it('makes a get request to the placementRequests change requests endpoint with specified parameters', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        pageNumber: '3',
+        data: cas1ChangeRequestSummaryFactory.buildList(5),
+      }) as PaginatedResponse<Cas1ChangeRequestSummary>
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get open change requests',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.changeRequests.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          query: {
+            cruManagementAreaId: 'some-id',
+            page: '3',
+            sortBy: 'tier',
+            sortDirection: 'desc',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: paginatedResponse.data,
+          headers: {
+            'X-Pagination-TotalPages': paginatedResponse.totalPages,
+            'X-Pagination-TotalResults': paginatedResponse.totalResults,
+            'X-Pagination-PageSize': paginatedResponse.pageSize,
+          },
+        },
+      })
+
+      const result = await placementRequestClient.getChangeRequests(
+        { cruManagementAreaId: 'some-id' },
+        3,
+        'tier',
+        'desc',
+      )
+
+      expect(result).toEqual(paginatedResponse)
+    })
+  })
+
+  describe('createPlacementAppeal', () => {
+    it('creates an appeal change request against a placementRequest', async () => {
+      const placementRequestId = 'placement-request-id'
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'placementAppeal' })
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create an appeal changeRequest against a placementRequest',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.appeal({ id: placementRequestId }),
+          body: newChangeRequest,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+      const result = await placementRequestClient.createPlacementAppeal(placementRequestId, newChangeRequest)
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('createPlannedTransfer', () => {
+    it('creates a planned transfer change request against a placementRequest', async () => {
+      const placementRequestId = 'placement-request-id'
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'plannedTransfer' })
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create a planned transfer changeRequest against a placementRequest',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.plannedTransfer({ id: placementRequestId }),
+          body: newChangeRequest,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+      const result = await placementRequestClient.createPlannedTransfer(placementRequestId, newChangeRequest)
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('createExtension', () => {
+    it('creates an extension change request against a placementRequest', async () => {
+      const placementRequestId = 'placement-request-id'
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'placementExtension' })
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create an extension changeRequest against a placementRequest',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.extension({ id: placementRequestId }),
+          body: newChangeRequest,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+      const result = await placementRequestClient.createExtension(placementRequestId, newChangeRequest)
+      expect(result).toEqual({})
     })
   })
 })

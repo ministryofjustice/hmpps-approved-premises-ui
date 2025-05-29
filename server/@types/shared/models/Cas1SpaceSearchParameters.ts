@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
-import type { Cas1SpaceSearchRequirements } from './Cas1SpaceSearchRequirements';
 export type Cas1SpaceSearchParameters = {
     /**
      * The id of the application the space search is for
@@ -21,10 +20,6 @@ export type Cas1SpaceSearchParameters = {
      * The 'target' location, in the form of a postcode district
      */
     targetPostcodeDistrict: string;
-    /**
-     * @deprecated
-     */
-    requirements: Cas1SpaceSearchRequirements;
     spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
 };
 

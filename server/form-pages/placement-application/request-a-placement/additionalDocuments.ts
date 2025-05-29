@@ -3,6 +3,7 @@ import { DataServices, TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
+import { objectFilter } from '../../../utils/utils'
 
 const maxDocumentsToUpload = 5
 
@@ -18,7 +19,8 @@ type AdditionalDocumentsResponse = {
   otherDocumentDetails?: string
 }
 
-@Page({ name: 'additional-documents', bodyProperties: ['selectedDocuments', 'otherDocumentDetails'] })
+const bodyProperties: Array<string> = ['selectedDocuments', 'otherDocumentDetails']
+@Page({ name: 'additional-documents', bodyProperties })
 export default class AdditionalDocuments implements TasklistPage {
   title = 'Select any additional documents that are required to support your application'
 
@@ -53,7 +55,10 @@ export default class AdditionalDocuments implements TasklistPage {
             }
           })
 
-    const page = new AdditionalDocuments({ ...body, selectedDocuments }, placementApplication)
+    const page = new AdditionalDocuments(
+      { ...objectFilter(body, bodyProperties), selectedDocuments },
+      placementApplication,
+    )
     page.documents = documents
     page.application = application
 

@@ -9,7 +9,6 @@ import rolesToPermissions from './data/rolesToPermissions.json'
 
 export const roles: ReadonlyArray<RoleInUse> = [
   'assessor',
-  'matcher',
   'workflow_manager',
   'cru_member',
   'cru_member_find_and_book_beta',
@@ -26,7 +25,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'janitor',
 ]
 
-export const unusedRoles = ['applicant', 'manager', 'legacy_manager', 'role_admin'] as const
+export const unusedRoles = ['applicant', 'manager', 'legacy_manager', 'role_admin', 'matcher'] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
 
@@ -57,7 +56,6 @@ export type RoleLabelDictionary = { [K in BaseRole]: RoleLabel }
 
 export const roleLabelDictionary: RoleLabelDictionary = {
   assessor: { label: 'Assessor', hint: 'Assess Approved Premises applications' },
-  matcher: { label: 'Matcher', hint: 'Match a person to a suitable AP for placement' },
   workflow_manager: {
     label: 'Workflow manager',
     hint: 'Manage the allocation of assessments and matches to staff',

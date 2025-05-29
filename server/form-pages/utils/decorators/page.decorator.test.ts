@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import Page from './page.decorator'
 import { applicationFactory } from '../../../testutils/factories'
@@ -55,5 +54,32 @@ describe('tasklistPageDecorator', () => {
     )
 
     expect(classWithApplication.application).toEqual(application)
+  })
+
+  it(`overwrites body with child constructor's body if mergeBody not set`, () => {
+    @Page({
+      bodyProperties: ['named'],
+      name: 'Some Name',
+    })
+    class TestClass {
+      constructor(readonly body: Record<string, unknown>) {}
+    }
+
+    const testClass = new TestClass({ named: 1, inherited: 2 })
+    expect(testClass.body).toEqual({ named: 1 })
+  })
+
+  it(`merges body with child constructor's body if mergeBody set`, () => {
+    @Page({
+      bodyProperties: ['named'],
+      name: 'Some Name',
+      mergeBody: true,
+    })
+    class TestClass {
+      constructor(readonly body: Record<string, unknown>) {}
+    }
+
+    const testClass = new TestClass({ named: 1, inherited: 2 })
+    expect(testClass.body).toEqual({ named: 1, inherited: 2 })
   })
 })

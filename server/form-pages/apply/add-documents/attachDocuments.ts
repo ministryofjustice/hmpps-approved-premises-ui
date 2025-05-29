@@ -3,6 +3,7 @@ import { DataServices, type PageResponse, TaskListErrors } from '@approved-premi
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
+import { objectFilter } from '../../../utils/utils'
 
 const maxDocumentsToUpload = 5
 
@@ -17,8 +18,8 @@ type AttachDocumentsResponse = {
   documentDescriptions?: Record<string, string>
   otherDocumentDetails?: string
 }
-
-@Page({ name: 'attach-documents', bodyProperties: ['selectedDocuments', 'otherDocumentDetails'] })
+const bodyProperties = ['selectedDocuments', 'otherDocumentDetails']
+@Page({ name: 'attach-documents', bodyProperties })
 export default class AttachDocuments implements TasklistPage {
   title = 'Select any relevant documents to support your application'
 
@@ -50,7 +51,7 @@ export default class AttachDocuments implements TasklistPage {
             }
           })
 
-    const page = new AttachDocuments({ ...body, selectedDocuments }, application)
+    const page = new AttachDocuments({ ...objectFilter(body, bodyProperties), selectedDocuments }, application)
     page.documents = documents
 
     return page

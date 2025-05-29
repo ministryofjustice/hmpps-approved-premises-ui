@@ -4,6 +4,7 @@ import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
 import { sentenceCase } from '../../../utils/utils'
+import { dateBodyProperties } from '../../utils/dateBodyProperties'
 
 export type Body = ObjectWithDateParts<'lastPlacementDate'> & {
   previousRotlPlacement: YesOrNo
@@ -13,15 +14,8 @@ export type Body = ObjectWithDateParts<'lastPlacementDate'> & {
 
 @Page({
   name: 'previous-rotl-placement',
-  bodyProperties: [
-    'previousRotlPlacement',
-    'lastPlacementDate',
-    'lastPlacementDate-year',
-    'lastPlacementDate-month',
-    'lastPlacementDate-day',
-    'lastAp',
-    'details',
-  ],
+  bodyProperties: ['previousRotlPlacement', ...dateBodyProperties('lastPlacementDate'), 'lastAp', 'details'],
+  mergeBody: true,
 })
 export default class PreviousRotlPlacement implements TasklistPage {
   title = 'Previous ROTL placements'
@@ -39,13 +33,10 @@ export default class PreviousRotlPlacement implements TasklistPage {
     this.body = {
       previousRotlPlacement: _body.previousRotlPlacement,
       lastAp: _body.lastAp,
-      'lastPlacementDate-year': _body['lastPlacementDate-year'],
-      'lastPlacementDate-month': _body['lastPlacementDate-month'],
-      'lastPlacementDate-day': _body['lastPlacementDate-day'],
-      lastPlacementDate: DateFormats.dateAndTimeInputsToIsoString(
+      ...DateFormats.dateAndTimeInputsToIsoString(
         _body as ObjectWithDateParts<'lastPlacementDate'>,
         'lastPlacementDate',
-      ).lastPlacementDate,
+      ),
       details: _body.details,
     }
   }

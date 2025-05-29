@@ -3,6 +3,7 @@ import * as MOJFrontend from '@ministryofjustice/frontend'
 import flattenPremisesOptions from './flattenPremisesOptions'
 import linkDebounce from './linkDebounce'
 import SubNavAsTabs from './tabPanelTableScript'
+import makeAutocomplete from './accessibleAutocomplete'
 
 GOVUKFrontend.initAll()
 
@@ -20,3 +21,4 @@ document.querySelectorAll('a[data-debounce-link]').forEach(link => linkDebounce(
 document.querySelectorAll('[data-sub-navigation-as-tabs]').forEach(element => {
   new SubNavAsTabs(element)
 })
+document.querySelectorAll('[data-autocomplete]').forEach(el => makeAutocomplete(el))

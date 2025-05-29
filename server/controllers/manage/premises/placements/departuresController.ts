@@ -1,15 +1,16 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewDeparture, Cas1SpaceBooking } from '@approved-premises/api'
-import { DepartureFormSessionData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
+import { DepartureFormData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
+import { isBefore, isPast, isToday } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import {
   DateFormats,
   dateAndTimeInputsAreValidDates,
-  dateIsToday,
-  datetimeIsInThePast,
   isoDateAndTimeToDateObj,
   timeIsValid24hrFormat,
+  dateIsPast,
+  timeAddLeadingZero,
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import paths from '../../../../paths/manage'
@@ -20,6 +21,7 @@ import {
   MOVE_TO_AP_REASON_ID,
   PLANNED_MOVE_ON_REASON_ID,
 } from '../../../../utils/placements'
+import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 
 const {
   premises: {
@@ -28,7 +30,7 @@ const {
 } = paths
 
 type DepartureFormErrors = {
-  [K in keyof DepartureFormSessionData]: string
+  [K in keyof DepartureFormData]?: string
 }
 
 type FormPageData = {
@@ -36,24 +38,28 @@ type FormPageData = {
   premisesId: string
   placementId: string
   placement: Cas1SpaceBooking
-  departureFormSessionData: DepartureFormSessionData
+  departureFormSessionData: DepartureFormData
   errorsAndUserInput: ErrorsAndUserInput
 }
 
 const isMoveOnReason = [PLANNED_MOVE_ON_REASON_ID, LICENCE_EXPIRED_REASON_ID, BED_WITHDRAWN_REASON_ID]
 
 export default class DeparturesController {
+  formData: MultiPageFormManager<'departures'>
+
   constructor(
     private readonly premisesService: PremisesService,
     private readonly placementService: PlacementService,
-  ) {}
+  ) {
+    this.formData = new MultiPageFormManager('departures')
+  }
 
   private async getFormPageData(req: Request): Promise<FormPageData> {
     const { token } = req.user
     const { premisesId, placementId } = req.params
     const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
     const errorsAndUserInput = fetchErrorsAndUserInput(req)
-    const departureFormSessionData = this.placementService.getDepartureSessionData(placementId, req.session)
+    const departureFormSessionData = this.formData.get(placementId, req.session)
 
     return {
       token,
@@ -91,25 +97,18 @@ export default class DeparturesController {
     }
   }
 
-  private newErrors(body: DepartureFormSessionData, placement: Cas1SpaceBooking): DepartureFormErrors | null {
+  private newErrors(body: DepartureFormData, placement: Cas1SpaceBooking): DepartureFormErrors | null {
     const errors: DepartureFormErrors = {}
 
-    const { departureTime, reasonId } = body
-    const { departureDate } = DateFormats.dateAndTimeInputsToIsoString(
-      body as ObjectWithDateParts<'departureDate'>,
-      'departureDate',
-    )
+    const { departureTime, departureDate, reasonId } = body
 
     if (!departureDate) {
       errors.departureDate = 'You must enter a date of departure'
     } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'departureDate'>, 'departureDate')) {
       errors.departureDate = 'You must enter a valid date of departure'
-    } else if (!datetimeIsInThePast(departureDate)) {
+    } else if (!dateIsPast(departureDate) && !isToday(departureDate)) {
       errors.departureDate = 'The date of departure must be today or in the past'
-    } else if (
-      !dateIsToday(departureDate, placement.actualArrivalDate) &&
-      datetimeIsInThePast(departureDate, placement.actualArrivalDate)
-    ) {
+    } else if (isBefore(departureDate, placement.actualArrivalDate)) {
       const actualArrivalDate = DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })
       errors.departureDate = `The date of departure must be the same as or after ${actualArrivalDate}, when the person arrived`
     }
@@ -118,20 +117,15 @@ export default class DeparturesController {
       errors.departureTime = 'You must enter a time of departure'
     } else if (!timeIsValid24hrFormat(departureTime)) {
       errors.departureTime = 'You must enter a valid time of departure in 24-hour format'
-    } else if (dateIsToday(departureDate)) {
+    } else if (isToday(departureDate)) {
       const departureDateObj = isoDateAndTimeToDateObj(departureDate, departureTime)
-      if (!datetimeIsInThePast(DateFormats.dateObjToIsoDateTime(departureDateObj))) {
+      if (!isPast(departureDateObj)) {
         errors.departureTime = 'The time of departure must be in the past'
       }
-    } else if (dateIsToday(departureDate, placement.actualArrivalDate)) {
+    } else if (departureDate === placement.actualArrivalDate) {
       const departureDateObj = isoDateAndTimeToDateObj(departureDate, departureTime)
       const arrivalDateObj = isoDateAndTimeToDateObj(placement.actualArrivalDate, placement.actualArrivalTime)
-      if (
-        datetimeIsInThePast(
-          DateFormats.dateObjToIsoDateTime(departureDateObj),
-          DateFormats.dateObjToIsoDateTime(arrivalDateObj),
-        )
-      ) {
+      if (isBefore(departureDateObj, arrivalDateObj)) {
         errors.departureTime = `The time of departure must be after the time of arrival, ${placement.actualArrivalTime} on ${DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })}`
       }
     }
@@ -154,13 +148,17 @@ export default class DeparturesController {
       const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
 
       try {
+        body.departureDate = DateFormats.dateAndTimeInputsToIsoString(
+          body as ObjectWithDateParts<'departureDate'>,
+          'departureDate',
+        ).departureDate
         const errors = this.newErrors(body, placement)
 
         if (errors) {
           throw new ValidationError(errors)
         }
 
-        this.placementService.setDepartureSessionData(placementId, session, body)
+        await this.formData.update(placementId, session, body)
 
         let redirect = departurePaths.notes({ premisesId, placementId })
 
@@ -172,9 +170,7 @@ export default class DeparturesController {
           redirect = departurePaths.moveOnCategory({ premisesId, placementId })
         }
 
-        return req.session.save(() => {
-          res.redirect(redirect)
-        })
+        return res.redirect(redirect)
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -198,6 +194,7 @@ export default class DeparturesController {
       } = await this.getFormPageData(req)
 
       if (
+        !departureFormSessionData ||
         this.newErrors(departureFormSessionData, placement) ||
         departureFormSessionData.reasonId !== BREACH_OR_RECALL_REASON_ID
       ) {
@@ -230,11 +227,9 @@ export default class DeparturesController {
           throw new ValidationError({ breachOrRecallReasonId: 'You must select a breach or recall reason' })
         }
 
-        this.placementService.setDepartureSessionData(placementId, req.session, req.body)
+        await this.formData.update(placementId, req.session, req.body)
 
-        return req.session.save(() => {
-          res.redirect(departurePaths.notes({ premisesId, placementId }))
-        })
+        return res.redirect(departurePaths.notes({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -257,6 +252,7 @@ export default class DeparturesController {
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
       if (
+        !departureFormSessionData ||
         this.newErrors(departureFormSessionData, placement) ||
         !isMoveOnReason.includes(departureFormSessionData.reasonId)
       ) {
@@ -293,11 +289,9 @@ export default class DeparturesController {
           throw new ValidationError({ apName: 'You must select the destination AP' })
         }
 
-        this.placementService.setDepartureSessionData(placementId, req.session, req.body)
+        await this.formData.update(placementId, req.session, req.body)
 
-        return req.session.save(() => {
-          res.redirect(departurePaths.notes({ premisesId, placementId }))
-        })
+        return res.redirect(departurePaths.notes({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -319,7 +313,7 @@ export default class DeparturesController {
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
 
-      if (this.newErrors(departureFormSessionData, placement)) {
+      if (!departureFormSessionData || this.newErrors(departureFormSessionData, placement)) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 
@@ -343,7 +337,7 @@ export default class DeparturesController {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
 
-      const departureData = this.placementService.getDepartureSessionData(placementId, req.session)
+      const departureData = this.formData.get(placementId, req.session)
       let { notes } = req.body
 
       try {
@@ -362,7 +356,7 @@ export default class DeparturesController {
 
         const placementDeparture: Cas1NewDeparture = {
           departureDate: departureData.departureDate,
-          departureTime: departureData.departureTime,
+          departureTime: timeAddLeadingZero(departureData.departureTime),
           reasonId,
           moveOnCategoryId,
           notes,
@@ -370,12 +364,10 @@ export default class DeparturesController {
 
         await this.placementService.createDeparture(req.user.token, premisesId, placementId, placementDeparture)
 
-        this.placementService.removeDepartureSessionData(placementId, req.session)
+        await this.formData.remove(placementId, req.session)
         req.flash('success', 'You have recorded this person as departed')
 
-        return req.session.save(() => {
-          res.redirect(placementPath({ premisesId, placementId }))
-        })
+        return res.redirect(placementPath({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

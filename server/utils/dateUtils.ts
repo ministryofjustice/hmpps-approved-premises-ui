@@ -8,7 +8,6 @@ import {
   formatDuration,
   formatISO,
   isBefore,
-  isPast,
   isValid,
   isWeekend,
   isWithinInterval,
@@ -124,23 +123,24 @@ export class DateFormats {
     dateInputObj: ObjectWithDateParts<K>,
     key: K,
   ): ObjectWithDateParts<K> {
-    const day = `0${dateInputObj[`${key}-day`]}`.slice(-2)
-    const month = `0${dateInputObj[`${key}-month`]}`.slice(-2)
+    const day = dateInputObj[`${key}-day`] && `0${dateInputObj[`${key}-day`]}`.slice(-2)
+    const month = dateInputObj[`${key}-month`] && `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
-    const time = dateInputObj[`${key}-time`] ? `0${dateInputObj[`${key}-time`]}`.slice(-5) : undefined
+    const time = dateInputObj[`${key}-time`] && `0${dateInputObj[`${key}-time`]}`.slice(-5)
 
-    const o: { [P in K]?: string } = dateInputObj
+    let isoDate: string
     if (day && month && year) {
       if (time) {
-        o[key] = `${year}-${month}-${day}T${time}`
+        isoDate = `${year}-${month}-${day}T${time}`
       } else {
-        o[key] = `${year}-${month}-${day}`
+        isoDate = `${year}-${month}-${day}`
       }
-    } else {
-      o[key] = undefined
     }
 
-    return dateInputObj
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      throw new Error(`Invalid property ${key}`)
+    }
+    return { ...dateInputObj, [key]: isoDate }
   }
 
   /**
@@ -299,23 +299,8 @@ export const dateIsBlank = <K extends string | number>(
   return !['year' as const, 'month' as const, 'day' as const].every(part => !!dateInputObj[`${key}-${part}`])
 }
 
-export const datetimeIsInThePast = (dateString: string, refDateString?: string): boolean => {
-  const date = DateFormats.isoToDateObj(dateString)
-
-  if (refDateString) {
-    const refDate = DateFormats.isoToDateObj(refDateString)
-    return isBefore(date, refDate)
-  }
-
-  return isPast(date)
-}
-
-export const dateIsToday = (date: string, refDate?: string): boolean => {
-  const dateIso = DateFormats.dateObjToIsoDate(DateFormats.isoToDateObj(date))
-  const refDateIso = DateFormats.dateObjToIsoDate(refDate ? DateFormats.isoToDateObj(refDate) : new Date())
-
-  return dateIso === refDateIso
-}
+export const dateIsPast = (date: string | number | Date): boolean =>
+  isBefore(date, DateFormats.dateObjToIsoDate(new Date()))
 
 export const monthOptions = [
   { name: 'January', value: '1' },
@@ -373,6 +358,8 @@ export const daysToWeeksAndDays = (days: string | number): { days: number; weeks
 export const timeIsValid24hrFormat = (time: string): Boolean => {
   return /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/.test(time)
 }
+
+export const timeAddLeadingZero = (time: string): string => time.padStart(5, '0')
 
 export const isoDateAndTimeToDateObj = (isoDate: string, time: string): Date => {
   const date = DateFormats.isoToDateObj(isoDate)

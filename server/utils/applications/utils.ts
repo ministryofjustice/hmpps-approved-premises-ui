@@ -22,6 +22,7 @@ import type {
   Cas1TimelineEventType,
   Cas1TimelineEventUrlType,
   SortDirection,
+  Cas1ApplicationSummary,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
@@ -92,7 +93,7 @@ const dashboardTableHeader = (
 }
 
 const dashboardTableRows = (
-  applications: Array<ApplicationSummary>,
+  applications: Array<Cas1ApplicationSummary>,
   { linkInProgressApplications = true } = {},
 ): Array<TableRow> => {
   return applications.map(
@@ -117,7 +118,7 @@ export const applicationSuitableStatuses: ReadonlyArray<ApplicationStatus> = [
   'placementAllocated',
 ]
 
-export const actionsLink = (application: ApplicationSummary) => {
+export const actionsLink = (application: Cas1ApplicationSummary) => {
   if (application.hasRequestsForPlacement) {
     return linkTo(paths.applications.show({ id: application.id }), {
       text: 'View placement request(s)',
@@ -267,6 +268,8 @@ export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
   request_for_placement_assessed: 'Request for placement assessed',
   application_timeline_note: 'Note added',
   match_request_withdrawn: 'Request for placement withdrawn',
+  placement_change_request_created: 'Placement change request created',
+  placement_change_request_rejected: 'Placement change request rejected',
 }
 
 const mapApplicationTimelineEventsForUi = (

@@ -1,18 +1,14 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { addDays } from 'date-fns'
+import { SpaceSearchApCriteria, SpaceSearchFormData, SpaceSearchRoomCriteria } from '@approved-premises/ui'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { ApTypeCriteria, apTypeCriteriaLabels } from '../../utils/placementCriteriaUtils'
-import {
-  SpaceSearchApCriteria,
-  SpaceSearchRoomCriteria,
-  SpaceSearchState,
-  spaceSearchCriteriaApLevelLabels,
-} from '../../utils/match/spaceSearch'
 import { DateFormats } from '../../utils/dateUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
+import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
 
-export default Factory.define<SpaceSearchState>(() => {
+export default Factory.define<SpaceSearchFormData>(() => {
   const arrivalDate = faker.date.soon()
   const durationDays = faker.number.int({ min: 1, max: 84 })
   const departureDate = addDays(arrivalDate, durationDays)

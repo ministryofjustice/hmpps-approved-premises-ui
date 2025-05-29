@@ -10,14 +10,13 @@ import {
   bankHolidays,
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
-  dateIsToday,
-  datetimeIsInThePast,
   daysToWeeksAndDays,
   isoDateAndTimeToDateObj,
   monthOptions,
   timeIsValid24hrFormat,
   uiDateOrDateEmptyMessage,
   yearOptions,
+  timeAddLeadingZero,
 } from './dateUtils'
 
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -144,7 +143,7 @@ describe('DateFormats', () => {
     })
   })
 
-  describe('convertDateAndTimeInputsToIsoString', () => {
+  describe('dateAndTimeInputsToIsoString', () => {
     it('converts date inputs to a local date object', () => {
       const obj: ObjectWithDateParts<'date'> = {
         'date-year': '2025',
@@ -198,7 +197,20 @@ describe('DateFormats', () => {
       expect(result.date).toEqual('2022-01-01T08:15')
     })
 
-    it('returns an empty string when given empty strings as input', () => {
+    it.each(['day', 'month', 'year'])('returns undefined for the date if the %s is undefined', part => {
+      const obj: ObjectWithDateParts<'date'> = {
+        'date-year': '2025',
+        'date-month': '3',
+        'date-day': '14',
+      }
+      delete obj[`date-${part}` as keyof ObjectWithDateParts<'date'>]
+
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
+
+      expect(result.date).toBeUndefined()
+    })
+
+    it('returns undefined for the date when given empty strings as input', () => {
       const obj: ObjectWithDateParts<'date'> = {
         'date-year': '',
         'date-month': '',
@@ -471,82 +483,6 @@ describe('dateIsBlank', () => {
   })
 })
 
-describe('datetimeIsInThePast', () => {
-  beforeEach(() => {
-    jest.useFakeTimers().setSystemTime(new Date('2022-01-01'))
-  })
-
-  afterEach(() => {
-    jest.useRealTimers()
-  })
-
-  it('returns true if the date is in the past', () => {
-    expect(datetimeIsInThePast('2020-01-01')).toEqual(true)
-  })
-
-  it('returns false if the date is not in the past', () => {
-    expect(datetimeIsInThePast('2024-01-01')).toEqual(false)
-  })
-
-  it('returns false if the date is today', () => {
-    expect(datetimeIsInThePast('2022-01-01')).toEqual(false)
-  })
-
-  it('returns true if the date is before the provided reference date', () => {
-    expect(datetimeIsInThePast('2024-01-01', '2024-03-14')).toEqual(true)
-  })
-
-  it('returns false if the date is after the provided reference date', () => {
-    expect(datetimeIsInThePast('2024-01-01', '2023-01-12')).toEqual(false)
-  })
-
-  it('returns false if the date is the same as the reference date', () => {
-    expect(datetimeIsInThePast('2023-01-12', '2023-01-12')).toEqual(false)
-  })
-
-  it('handles UTC to BST conversion', () => {
-    expect(datetimeIsInThePast('2023-04-01T12:00', '2023-04-01T11:01:00.000Z')).toEqual(true)
-  })
-})
-
-describe('dateIsToday', () => {
-  beforeEach(() => {
-    jest.useFakeTimers().setSystemTime(new Date('2022-04-01'))
-  })
-
-  afterEach(() => {
-    jest.useRealTimers()
-  })
-
-  it('returns true if the date is today', () => {
-    expect(dateIsToday('2022-04-01')).toEqual(true)
-  })
-
-  it('returns false if the date is not today', () => {
-    expect(dateIsToday('2022-04-02')).toEqual(false)
-  })
-
-  it('returns true if the date is the same as the reference date', () => {
-    expect(dateIsToday('2022-04-28', '2022-04-28')).toEqual(true)
-  })
-
-  it('returns true if the date is the same as the reference date with different time', () => {
-    expect(dateIsToday('2022-04-28T09:30', '2022-04-28T13:45')).toEqual(true)
-  })
-
-  it('returns false if the date is not the same as the reference date', () => {
-    expect(dateIsToday('2022-01-01', '2022-05-21')).toEqual(false)
-  })
-
-  it('returns true if the local date is the same as the UTC reference date', () => {
-    expect(dateIsToday('2022-04-02', '2022-04-01T23:30:00.000Z')).toEqual(true)
-  })
-
-  it('returns true if the dates compared are both UTC but different times', () => {
-    expect(dateIsToday('2022-04-01T12:00:00.000Z', '2022-04-01T22:00:00.000Z')).toEqual(true)
-  })
-})
-
 describe('yearOptions', () => {
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2022-01-01'))
@@ -624,6 +560,15 @@ describe('timeIsValid24hrFormat', () => {
       expect(timeIsValid24hrFormat(time)).toEqual(false)
     },
   )
+})
+
+describe('addLeadingZero', () => {
+  it.each(['9:35', '0:10', '5:00'])('adds a leading zero to %s', time => {
+    expect(timeAddLeadingZero(time)).toEqual(`0${time}`)
+  })
+  it.each(['19:35', '10:10', '23:00'])('does not add a leading zero to %s', time => {
+    expect(timeAddLeadingZero(time)).toEqual(time)
+  })
 })
 
 describe('dateObjTo24hrTime', () => {

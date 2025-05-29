@@ -6,6 +6,7 @@ import {
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
+  cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
@@ -220,6 +221,30 @@ describeCas1NamespaceClient('PlacementClient', provider => {
         },
       })
       const result = await placementClient.cancel(premisesId, placementId, cancellation)
+      expect(result).toEqual({})
+    })
+  })
+
+  describe('createEmergencyTransfer', () => {
+    it('creates an emergency transfer', async () => {
+      const newEmergencyTransfer = cas1NewEmergencyTransferFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create an emergency transfer',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.placements.emergencyTransfer({ premisesId, placementId }),
+          body: newEmergencyTransfer,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+      const result = await placementClient.createEmergencyTransfer(premisesId, placementId, newEmergencyTransfer)
       expect(result).toEqual({})
     })
   })

@@ -1,6 +1,9 @@
 import {
   BookingNotMade,
+  Cas1ChangeRequestSortField,
+  Cas1ChangeRequestSummary,
   Cas1CruManagementArea,
+  type Cas1NewChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
@@ -19,6 +22,10 @@ import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@t
 import { normaliseCrn } from '../utils/normaliseCrn'
 
 type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
+
+export type GetChangeRequestsQueryParams = {
+  cruManagementAreaId?: string
+}
 
 export type DashboardFilters = {
   status?: PlacementRequestStatus
@@ -90,5 +97,39 @@ export default class PlacementRequestClient {
       path: paths.placementRequests.withdrawal.create({ id }),
       data: { reason },
     })) as Promise<PlacementRequest>
+  }
+
+  async createPlacementAppeal(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.appeal({ id }),
+      data: newChangeRequest,
+    })
+  }
+
+  async getChangeRequests(
+    filterParams: GetChangeRequestsQueryParams = {},
+    page: number = 1,
+    sortBy: Cas1ChangeRequestSortField = 'name',
+    sortDirection: SortDirection = 'asc',
+  ) {
+    return this.restClient.getPaginatedResponse<Cas1ChangeRequestSummary>({
+      path: paths.placementRequests.changeRequests({}),
+      page: page.toString(),
+      query: { ...filterParams, sortBy, sortDirection },
+    })
+  }
+
+  async createPlannedTransfer(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.plannedTransfer({ id }),
+      data: newChangeRequest,
+    })
+  }
+
+  async createExtension(id: string, newChangeRequest: Cas1NewChangeRequest) {
+    return this.restClient.post({
+      path: paths.placementRequests.extension({ id }),
+      data: newChangeRequest,
+    })
   }
 }

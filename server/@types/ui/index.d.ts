@@ -1,16 +1,19 @@
-import {
+import type {
   ApArea,
-  ApType,
-  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
   ApprovedPremisesAssessment,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  ApprovedPremisesUser as User,
   ApprovedPremisesUserPermission,
   ApprovedPremisesUserRole,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  ApprovedPremisesUserRole as UserRole,
+  ApType,
   AssessmentTask,
+  Cas1ApplicationSummary,
   Cas1CruManagementArea,
   Cas1PremisesBasicSummary,
+  Cas1SpaceBooking,
   Document,
   FlagsEnvelope,
   Mappa,
@@ -18,26 +21,28 @@ import {
   PersonAcctAlert,
   PlacementApplication,
   PlacementApplicationTask,
+  PlacementRequestDetail,
   PlacementRequestStatus,
   ReleaseTypeOption,
   RiskTier,
   RiskTierLevel,
   RoshRisks,
-  ApprovedPremisesUser as User,
   UserQualification,
-  ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
+import { ApTypeCriteria } from '../../utils/placementCriteriaUtils'
+import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
+import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
 
 interface TasklistPage {
   body: Record<string, unknown>
 }
 
-interface PersonService {}
+type PersonService = object
 
 // A utility type that allows us to define an object with a date attribute split into
 // date, month, year (and optionally, time) attributes. Designed for use with the GOV.UK
 // date input
-export type ObjectWithDateParts<K extends string | number> = { [P in `${K}-${'year' | 'month' | 'day'}`]: string } & {
+export type ObjectWithDateParts<K extends string | number> = { [P in `${K}-${'year' | 'month' | 'day'}`]?: string } & {
   [P in `${K}-time`]?: string
 } & {
   [P in K]?: string
@@ -314,9 +319,9 @@ export type GroupedAssessments = {
 }
 
 export interface GroupedApplications {
-  inProgress: Array<ApplicationSummary>
-  requestedFurtherInformation: Array<ApplicationSummary>
-  submitted: Array<ApplicationSummary>
+  inProgress: Array<Cas1ApplicationSummary>
+  requestedFurtherInformation: Array<Cas1ApplicationSummary>
+  submitted: Array<Cas1ApplicationSummary>
 }
 
 export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask
@@ -447,16 +452,59 @@ export type BackwardsCompatibleApplyApType = ApType | 'standard'
 
 export type EntityType = 'booking' | 'lost-bed'
 
-export type DepartureFormSessionData = Partial<
-  ObjectWithDateParts<'departureDate'> & {
-    departureTime: string
-    reasonId: string
-    breachOrRecallReasonId: string
-    moveOnCategoryId: string
-    notes: string
-    apName: string
-  }
->
+export type SpaceSearchApCriteria = keyof typeof spaceSearchCriteriaApLevelLabels
+
+export type SpaceSearchRoomCriteria = keyof typeof roomCharacteristicMap
+
+export type SpaceSearchFormData = {
+  applicationId?: string
+  postcode?: string
+  apType?: ApTypeCriteria
+  apCriteria?: Array<SpaceSearchApCriteria>
+  roomCriteria?: Array<SpaceSearchRoomCriteria>
+  startDate?: string
+  durationDays?: number
+  arrivalDate?: string
+  departureDate?: string
+}
+
+export type DepartureFormData = ObjectWithDateParts<'departureDate'> & {
+  departureTime?: string
+  reasonId?: string
+  breachOrRecallReasonId?: string
+  moveOnCategoryId?: string
+  notes?: string
+  apName?: string
+}
+
+export type TransferFormData = Partial<
+  ObjectWithDateParts<'transferDate'> & ObjectWithDateParts<'placementEndDate'>
+> & {
+  destinationPremisesId?: string
+  destinationPremisesName?: string
+  isFlexible?: string
+  transferReason?: string
+  notes?: string
+}
+
+export type MultiPageFormData = {
+  departures?: Record<Cas1SpaceBooking['id'], DepartureFormData>
+  spaceSearch?: Record<PlacementRequestDetail['id'], SpaceSearchFormData>
+  transfers?: Record<Cas1SpaceBooking['id'], TransferFormData>
+  appeals?: Record<Cas1SpaceBooking[id], AppealFormData>
+}
+
+export type AppealJson<K extends string> = {
+  areaManagerName: string
+  areaManagerEmail: string
+  appealReason: AppealReason
+  notes: string
+  approvalDate: string
+} & {
+  [P in `${K}Detail`]?: string
+}
+
+export type AppealFormData = ObjectWithDateParts<'approvalDate'> & AppealJson
 
 export type DateRange = {
   from: string

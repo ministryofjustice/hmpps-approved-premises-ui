@@ -4,13 +4,17 @@ import TaskListPage from '../form-pages/tasklistPage'
 export class ValidationError<T extends TaskListPage> extends Error {
   data: TaskListErrors<T>
 
-  constructor(data: TaskListErrors<T>) {
+  redirect: string
+
+  constructor(data: TaskListErrors<T>, redirect?: string) {
     super('Validation error')
     this.data = data
+    this.redirect = redirect
   }
 }
 
 export class SessionDataError extends Error {}
+
 export class UnknownPageError extends Error {
   constructor(pageName: string) {
     super(`Cannot find the page ${pageName}`)

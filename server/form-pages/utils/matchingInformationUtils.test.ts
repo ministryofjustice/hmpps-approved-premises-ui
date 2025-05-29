@@ -100,14 +100,7 @@ describe('matchingInformationUtils', () => {
         .calledWith(application, SelectApType, 'type')
         .mockReturnValue('pipe')
 
-      const body: MatchingInformationBody = {
-        ...bodyWithUndefinedValues,
-        lengthOfStayAgreed: 'no',
-        lengthOfStayDays: '3',
-        lengthOfStayWeeks: '3',
-      }
-
-      expect(defaultMatchingInformationValues(body, application)).toEqual({
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual({
         acceptsChildSexOffenders: 'relevant',
         acceptsHateCrimeOffenders: 'relevant',
         acceptsNonSexualChildOffenders: 'relevant',
@@ -119,7 +112,6 @@ describe('matchingInformationUtils', () => {
         isSuitableForVulnerable: 'relevant',
         isSuitedForSexOffenders: 'essential',
         isWheelchairDesignated: 'essential',
-        lengthOfStay: '24',
       })
     })
 
@@ -462,47 +454,6 @@ describe('matchingInformationUtils', () => {
           },
         }
         expect(remapArsonAssessmentData(assessmentData)).toEqual(assessmentData)
-      })
-    })
-
-    describe('lengthOfStay', () => {
-      it('is set to `undefined` when `lengthOfStayAgreed` is undefined', () => {
-        expect(defaultMatchingInformationValues({ ...bodyWithUndefinedValues }, application)).toEqual(
-          expect.objectContaining({ lengthOfStay: undefined }),
-        )
-      })
-
-      it("is set to `undefined` when `lengthOfStayAgreed` === 'yes'", () => {
-        expect(
-          defaultMatchingInformationValues({ ...bodyWithUndefinedValues, lengthOfStayAgreed: 'yes' }, application),
-        ).toEqual(expect.objectContaining({ lengthOfStay: undefined }))
-      })
-
-      it("is set to `undefined` when `lengthOfStayAgreed` === 'no' but `lengthOfStayDays` is undefined", () => {
-        expect(
-          defaultMatchingInformationValues(
-            { ...bodyWithUndefinedValues, lengthOfStayAgreed: 'no', lengthOfStayDays: undefined },
-            application,
-          ),
-        ).toEqual(expect.objectContaining({ lengthOfStay: undefined }))
-      })
-
-      it("is set to `undefined` when `lengthOfStayAgreed` === 'no' and `lengthOfStayDays` is defined but `lengthOfStayWeeks` is not", () => {
-        expect(
-          defaultMatchingInformationValues(
-            { ...bodyWithUndefinedValues, lengthOfStayAgreed: 'no', lengthOfStayWeeks: undefined },
-            application,
-          ),
-        ).toEqual(expect.objectContaining({ lengthOfStay: undefined }))
-      })
-
-      it("is set to the total length of stay in days when `lengthOfStayAgreed` === 'no' and both `lengthOfStayDays` and `lengthOfStayWeeks` are defined", () => {
-        expect(
-          defaultMatchingInformationValues(
-            { ...bodyWithUndefinedValues, lengthOfStayAgreed: 'no', lengthOfStayDays: '3', lengthOfStayWeeks: '3' },
-            application,
-          ),
-        ).toEqual(expect.objectContaining({ lengthOfStay: '24' }))
       })
     })
   })

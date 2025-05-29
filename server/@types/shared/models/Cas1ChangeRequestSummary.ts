@@ -10,11 +10,8 @@ export type Cas1ChangeRequestSummary = {
     type: Cas1ChangeRequestType;
     createdAt: string;
     tier?: string;
-    expectedArrivalDate?: string;
+    expectedArrivalDate: string;
     actualArrivalDate?: string;
-    /**
-     * Current placement's length of stay, using canonical arrival date
-     */
-    lengthOfStayDays: number;
+    placementRequestId: string;
 };
 

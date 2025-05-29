@@ -1,5 +1,6 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewArrival } from '@approved-premises/api'
+import { isPast, isToday } from 'date-fns'
 import { PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import PlacementService from '../../../../services/placementService'
@@ -7,9 +8,8 @@ import paths from '../../../../paths/manage'
 import {
   DateFormats,
   dateAndTimeInputsAreValidDates,
-  dateIsToday,
-  datetimeIsInThePast,
   timeIsValid24hrFormat,
+  timeAddLeadingZero,
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 
@@ -65,8 +65,8 @@ export default class ArrivalsController {
         }
 
         if (!Object.keys(errors).length) {
-          if (!datetimeIsInThePast(arrivalDateTime)) {
-            if (dateIsToday(arrivalDateTime)) {
+          if (!isPast(arrivalDateTime)) {
+            if (isToday(arrivalDateTime)) {
               errors.arrivalTime = 'The time of arrival must be in the past'
             } else errors.arrivalDateTime = 'The date of arrival must be today or in the past'
           }
@@ -77,7 +77,7 @@ export default class ArrivalsController {
         }
 
         const placementArrival: Cas1NewArrival = {
-          arrivalTime,
+          arrivalTime: timeAddLeadingZero(arrivalTime),
           arrivalDate: DateFormats.isoDateTimeToIsoDate(arrivalDateTime),
         }
 

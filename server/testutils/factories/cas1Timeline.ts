@@ -55,7 +55,6 @@ export const cas1TimelineEventFactory = Factory.define<Cas1TimelineEvent>(() => 
 export const cas1TimelineEventContentPayloadFactory = Factory.define<Cas1TimelineEventContentPayload>(() => ({
   type: faker.helpers.arrayElement(cas1TimelineEventTypes),
   premises: namedIdFactory.build(),
-  schemaVersion: 2,
 }))
 
 const cas1TimelineEventUrlTypes: ReadonlyArray<Cas1TimelineEventUrlType> = [

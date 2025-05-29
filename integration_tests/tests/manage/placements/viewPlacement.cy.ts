@@ -2,11 +2,11 @@ import { Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
 import {
   applicationFactory,
   assessmentFactory,
+  cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
   cas1TimelineEventFactory,
   personFactory,
   placementRequestFactory,
-  premisesSummaryFactory,
   restrictedPersonFactory,
 } from '../../../../server/testutils/factories'
 
@@ -22,7 +22,7 @@ context('Placements', () => {
     })
 
     const setup = (placementParameters = {}, mode: Mode = 'normal') => {
-      const premises = premisesSummaryFactory.build()
+      const premises = cas1PremisesBasicSummaryFactory.build()
       const person = mode === 'lao' ? restrictedPersonFactory.build() : personFactory.build()
       const application = applicationFactory.build({ person, personStatusOnSubmission: (person as FullPerson).status })
       const assessment = assessmentFactory.build()
@@ -32,7 +32,7 @@ context('Placements', () => {
         applicationId: application.id,
         assessmentId: mode === 'offline' ? undefined : assessment.id,
         placementRequestId: mode === 'offline' ? undefined : placementRequest.id,
-        premises,
+        premises: { name: premises.name, id: premises.id },
         person,
       })
       const timeline = cas1TimelineEventFactory.buildList(10)

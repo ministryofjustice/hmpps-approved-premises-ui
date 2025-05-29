@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 /* istanbul ignore file */
 
 import * as pathModule from 'path'
@@ -271,4 +270,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   )
 
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
+
+  njkEnv.addGlobal('feedbackSurveyUrl', 'https://forms.office.com/e/jSiRQFF82r')
+  njkEnv.addGlobal('supportEmail', 'APServiceSupport@digital.justice.gov.uk')
 }

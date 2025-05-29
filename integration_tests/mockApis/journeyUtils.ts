@@ -4,8 +4,10 @@ import {
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
 
+import { UiTask } from '@approved-premises/ui'
 import { bulkStub, getMatchingRequests } from './setup'
 import isAssessment from '../../server/utils/assessments/isAssessment'
+import getSections from '../../server/utils/assessments/getSections'
 
 export const generateStubsForPage = (
   page: string,
@@ -218,7 +220,13 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
     },
   ] as Array<Record<string, unknown>>
 
-  const tasks = Object.keys(form.data)
+  const tasks = isAssessment(form)
+    ? getSections(form as Assessment)
+        .reduce((taskList, section) => {
+          return [...taskList, ...section.tasks]
+        }, [] as Array<UiTask>)
+        .map(({ id }): string => id)
+    : Object.keys(form.data)
 
   tasks.forEach((task, taskIndex) => {
     const previousTask = taskIndex > 0 ? tasks[taskIndex - 1] : undefined

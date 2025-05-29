@@ -19,9 +19,11 @@ import {
   otherBookings,
   overallStatus,
   placementOverviewSummary,
+  placementStatusHtml,
   placementSummary,
   renderKeyworkersSelectOptions,
   requirementsInformation,
+  statusTextMap,
 } from '.'
 import { DateFormats } from '../dateUtils'
 
@@ -39,6 +41,7 @@ describe('placementUtils', () => {
       const current = typeFactory.current()
       const departed = typeFactory.departed()
       const nonArrival = typeFactory.nonArrival()
+      const cancelled = typeFactory.cancelled()
 
       beforeEach(() => {
         jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
@@ -111,6 +114,12 @@ describe('placementUtils', () => {
           params: {},
           expected: { overall: 'notArrived', detailed: 'notArrived' },
         },
+        {
+          label: 'a cancelled placement',
+          factory: cancelled,
+          params: { expectedArrivalDate: '2025-05-01' },
+          expected: { overall: 'cancelled', detailed: 'cancelled' },
+        },
       ]
 
       it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
@@ -119,6 +128,19 @@ describe('placementUtils', () => {
         expect(overallStatus(placement)).toEqual(expected.overall)
         expect(detailedStatus(placement)).toEqual(expected.detailed)
       })
+    })
+  })
+
+  describe('placementStatusHtml', () => {
+    it('should return an appealRequested status', () => {
+      const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['placementAppeal'] })
+      const expectedStatusText = statusTextMap[detailedStatus(placement)]
+      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Appeal requested` })
+    })
+    it('should return an transfer requested status', () => {
+      const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['plannedTransfer'] })
+      const expectedStatusText = statusTextMap[detailedStatus(placement)]
+      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Transfer requested` })
     })
   })
 
@@ -154,6 +176,7 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_departure',
         'cas1_space_booking_record_keyworker',
         'cas1_space_booking_record_non_arrival',
+        'cas1_transfer_create',
       ],
     })
     const premises = cas1PremisesFactory.build()
@@ -181,13 +204,21 @@ describe('placementUtils', () => {
       href: paths.premises.placements.keyworker({ premisesId: premises.id, placementId }),
       text: 'Edit keyworker',
     }
+    const requestTransferOption = {
+      classes: 'govuk-button--secondary',
+      href: paths.premises.placements.transfers.new({ premisesId: premises.id, placementId }),
+      text: 'Request a transfer',
+    }
+
     describe('when the placement is in its initial state', () => {
       const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
+
       it('should allow arrivals, non-arrivals and assignment of keyworker', () => {
         expect(actions(placementInitial, userDetails)).toEqual(
           wrapOptions([keyworkerOption, arrivalOption, nonArrivalOption]),
         )
       })
+
       it('should require correct permissions for arrival, non-arrival and keyworker', () => {
         expect(
           actions(
@@ -225,18 +256,18 @@ describe('placementUtils', () => {
 
     describe('when the placement has an arrival recorded, but no departure', () => {
       const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises })
-      it('should allow departure and assigning keyworker after arrival', () => {
-        expect(actions(placementAfterArrival, userDetails)).toEqual([{ items: [keyworkerOption, departureOption] }])
+
+      it('should allow nothing if the user does not have the relevant permissions', () => {
+        expect(actions(placementAfterArrival, userDetailsFactory.build({ permissions: [] }))).toEqual(null)
       })
-      it('should require correct permissions for departure', () => {
-        expect(
-          actions(
-            placementAfterArrival,
-            userDetailsFactory.build({
-              permissions: [],
-            }),
-          ),
-        ).toEqual(null)
+
+      it('should allow recording a departure, assigning a keyworker and requesting a transfer', () => {
+        expect(actions(placementAfterArrival, userDetails)).toEqual([
+          { items: [keyworkerOption, departureOption, requestTransferOption] },
+        ])
+      })
+
+      it('should require correct permissions for recording a departure', () => {
         expect(
           actions(
             placementAfterArrival,
@@ -246,12 +277,32 @@ describe('placementUtils', () => {
           ),
         ).toEqual([{ items: [departureOption] }])
       })
+
+      it('should require the correct permission for requesting a transfer', () => {
+        expect(
+          actions(
+            placementAfterArrival,
+            userDetailsFactory.build({
+              permissions: ['cas1_transfer_create'],
+            }),
+          ),
+        ).toEqual([{ items: [requestTransferOption] }])
+      })
     })
 
     describe('when the placement has both an arrival and a departure recorded', () => {
       const placementAfterDeparture = cas1SpaceBookingFactory.departed().build({ id: placementId, premises })
+
       it('should allow nothing', () => {
         expect(actions(placementAfterDeparture, userDetails)).toEqual(null)
+      })
+    })
+
+    describe('when the placement has been cancelled', () => {
+      const placementCancelled = cas1SpaceBookingFactory.cancelled().build({ id: placementId, premises })
+
+      it('should allow nothing', () => {
+        expect(actions(placementCancelled, userDetails)).toEqual(null)
       })
     })
   })
@@ -630,7 +681,7 @@ describe('placementUtils', () => {
   })
 
   describe('injectRadioConditionalHtml', () => {
-    it('should inject the supplied html into the radio list as a condtional', () => {
+    it('should inject the supplied html into the radio list as a conditional', () => {
       const radioList: Array<RadioItem> = [
         { text: 'One', value: 'one' },
         { text: 'Two', value: 'two' },

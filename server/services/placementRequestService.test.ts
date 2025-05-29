@@ -1,28 +1,43 @@
-import { PlacementRequest, PlacementRequestDetail, WithdrawPlacementRequestReason } from '@approved-premises/api'
+import {
+  Cas1ChangeRequestSummary,
+  Cas1ChangeRequestType,
+  Cas1NewChangeRequest,
+  PlacementRequest,
+  PlacementRequestDetail,
+  WithdrawPlacementRequestReason,
+} from '@approved-premises/api'
 import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
+  cas1ChangeRequestSummaryFactory,
+  cas1NewChangeRequestFactory,
   newPlacementRequestBookingConfirmationFactory,
   paginatedResponseFactory,
   placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
-import { PaginatedResponse } from '../@types/ui'
+import { Cas1ReferenceData, PaginatedResponse } from '../@types/ui'
+import { Cas1ReferenceDataClient } from '../data'
 
 jest.mock('../data/placementRequestClient.ts')
+jest.mock('../data/cas1ReferenceDataClient.ts')
 
 describe('placementRequestService', () => {
+  const cas1ReferenceDataClient = new Cas1ReferenceDataClient(null) as jest.Mocked<Cas1ReferenceDataClient>
   const placementRequestClient = new PlacementRequestClient(null) as jest.Mocked<PlacementRequestClient>
   const placementRequestClientFactory = jest.fn()
+  const cas1ReferenceDataClientFactory = jest.fn()
 
-  const service = new PlacementRequestService(placementRequestClientFactory)
+  const service = new PlacementRequestService(placementRequestClientFactory, cas1ReferenceDataClientFactory)
 
   const token = 'SOME_TOKEN'
+  const id = 'some-uuid'
 
   beforeEach(() => {
     jest.resetAllMocks()
     placementRequestClientFactory.mockReturnValue(placementRequestClient)
+    cas1ReferenceDataClientFactory.mockReturnValue(cas1ReferenceDataClient)
   })
 
   describe('getDashboard', () => {
@@ -139,7 +154,6 @@ describe('placementRequestService', () => {
       const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
       placementRequestClient.createBooking.mockResolvedValue(bookingConfirmation)
 
-      const id = 'some-uuid'
       const newBooking = {
         bedId: 'some-other-uuid',
         arrivalDate: '2022-01-01',
@@ -160,7 +174,6 @@ describe('placementRequestService', () => {
       const bookingNotMade = bookingNotMadeFactory.build()
       placementRequestClient.bookingNotMade.mockResolvedValue(bookingNotMade)
 
-      const id = 'some-uuid'
       const body = {
         notes: 'some notes',
       }
@@ -180,12 +193,87 @@ describe('placementRequestService', () => {
       placementRequestClient.withdraw.mockResolvedValue(placementRequestDetail)
 
       const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
-      const id = 'some-uuid'
 
       await service.withdraw(token, id, reason)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.withdraw).toHaveBeenCalledWith(id, reason)
+    })
+  })
+
+  describe('getChangeRequestReasons', () => {
+    it('it should call the service to retrieve change request reasons', async () => {
+      const changeRequestType: Cas1ChangeRequestType = 'placementAppeal'
+      const expected: Array<Cas1ReferenceData> = [{ name: 'name', id: 'id', isActive: true }]
+      cas1ReferenceDataClient.getReferenceData.mockResolvedValue(expected)
+
+      const response = await service.getChangeRequestReasons(token, changeRequestType)
+
+      expect(response).toEqual(expected)
+      expect(cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenCalledWith(
+        `change-request-reasons/${changeRequestType}`,
+      )
+    })
+  })
+
+  describe('createPlacementAppeal', () => {
+    it('it should call the service to create a placement appeal', async () => {
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'placementAppeal' })
+
+      await service.createPlacementAppeal(token, id, newChangeRequest)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.createPlacementAppeal).toHaveBeenCalledWith(id, newChangeRequest)
+    })
+  })
+
+  describe('getChangeRequests', () => {
+    it('should call the service', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: cas1ChangeRequestSummaryFactory.buildList(5),
+      }) as PaginatedResponse<Cas1ChangeRequestSummary>
+
+      placementRequestClient.getChangeRequests.mockResolvedValue(paginatedResponse)
+
+      const cruManagementAreaId = 'some-id'
+      const page = 3
+      const sortBy = 'tier'
+      const sortDirection = 'desc'
+
+      await service.getChangeRequests(token, { cruManagementAreaId }, page, sortBy, sortDirection)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.getChangeRequests).toHaveBeenCalledWith(
+        { cruManagementAreaId },
+        page,
+        sortBy,
+        sortDirection,
+      )
+    })
+  })
+
+  describe('createPlannedTransfer', () => {
+    it('it should call the service to create a planned transfer', async () => {
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'plannedTransfer' })
+
+      await service.createPlannedTransfer(token, id, newChangeRequest)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.createPlannedTransfer).toHaveBeenCalledWith(id, newChangeRequest)
+    })
+  })
+
+  describe('createExtension', () => {
+    it('it should call the service to create a placement extension change request', async () => {
+      const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({
+        type: 'placementExtension',
+      })
+
+      await service.createExtension(token, id, newChangeRequest)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.createExtension).toHaveBeenCalledWith(id, newChangeRequest)
     })
   })
 })

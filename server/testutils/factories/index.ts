@@ -45,7 +45,6 @@ import placementDatesFactory from './placementDates'
 import placementRequestFactory from './placementRequest'
 import placementRequestDetailFactory from './placementRequestDetail'
 import premisesFactory from './premises'
-import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory, {
@@ -93,12 +92,17 @@ import spaceSearchStateFactory from './spaceSearchState'
 import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
 import cas1BedDetailFactory from './cas1BedDetail'
+import cas1NewEmergencyTransferFactory from './cas1NewEmergencyTransfer'
+import cas1ChangeRequestSummaryFactory from './cas1ChangeRequestSummary'
+import cas1NewChangeRequestFactory from './cas1NewChangeRequest'
+import appealSessionDataFactory from './appealSessionData'
 
 export {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
   appealFactory,
+  appealSessionDataFactory,
   apAreaFactory,
   applicationFactory,
   applicationSummaryFactory,
@@ -114,6 +118,7 @@ export {
   bookingNotMadeFactory,
   cancellationFactory,
   cas1BedDetailFactory,
+  cas1ChangeRequestSummaryFactory,
   cas1PremisesBedSummaryFactory,
   cas1OutOfServiceBedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
@@ -130,7 +135,9 @@ export {
   cas1TimelineEventFactory,
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
+  cas1NewChangeRequestFactory,
   cas1NewDepartureFactory,
+  cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1OverbookingRangeFactory,
@@ -167,7 +174,6 @@ export {
   placementRequestFactory,
   placementRequestDetailFactory,
   premisesFactory,
-  premisesSummaryFactory,
   prisonCaseNotesFactory,
   probationRegionFactory,
   reallocationFactory,

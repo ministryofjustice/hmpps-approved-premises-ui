@@ -22,6 +22,10 @@ export const reportInputLabels = {
     text: 'Out of service beds',
     hint: 'A report of all out of service beds within the month and how long they were unavailable for.',
   },
+  outOfServiceBedsWithPii: {
+    text: 'Out of service beds (PII)',
+    hint: 'Includes additional columns of PII data.',
+  },
   dailyMetrics: {
     text: 'Daily metrics',
     hint: 'Counts of key actions across the service grouped by day.',
@@ -71,6 +75,7 @@ export const unusedReports = [
 
 export const piiReports = [
   'applicationsV2WithPii',
+  'outOfServiceBedsWithPii',
   'requestsForPlacementWithPii',
   'placementMatchingOutcomesV2WithPii',
   'placementsWithPii',

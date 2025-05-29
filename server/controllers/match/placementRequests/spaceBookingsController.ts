@@ -5,6 +5,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { creationNotificationBody, spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
+import MultiPageFormManager from '../../../utils/multiPageFormManager'
 
 interface NewRequest extends Request {
   params: {
@@ -14,18 +15,22 @@ interface NewRequest extends Request {
 }
 
 export default class {
+  formData: MultiPageFormManager<'spaceSearch'>
+
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
     private readonly spaceSearchService: SpaceSearchService,
-  ) {}
+  ) {
+    this.formData = new MultiPageFormManager('spaceSearch')
+  }
 
   new(): TypedRequestHandler<Request, Response> {
     return async (req: NewRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId } = req.params
 
-      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
+      const searchState = this.formData.get(id, req.session)
 
       if (!searchState) {
         return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id }))
@@ -69,7 +74,7 @@ export default class {
         user: { token },
       } = req
 
-      const searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
+      const searchState = this.formData.get(id, req.session)
 
       const newSpaceBooking: Cas1NewSpaceBooking = {
         arrivalDate: searchState.arrivalDate,
@@ -88,7 +93,7 @@ export default class {
           heading: `Place booked for ${placement.person.crn}`,
           body: creationNotificationBody(placement, placementRequest),
         })
-        this.spaceSearchService.removeSpaceSearchState(id, req.session)
+        this.formData.remove(id, req.session)
 
         return req.session.save(() => {
           res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)

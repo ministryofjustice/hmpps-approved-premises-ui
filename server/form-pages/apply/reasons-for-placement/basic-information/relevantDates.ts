@@ -25,10 +25,9 @@ export type RelevantDateLabels = RelevantDatesT[RelevantDateKeys]
 export type RelevantDatesBody = {
   selectedDates: ReadonlyArray<RelevantDateKeys>
 } & ObjectWithDateParts<RelevantDateKeys>
-
 @Page({
   name: 'relevant-dates',
-  bodyProperties: [...relevantDateKeys.map(key => dateBodyProperties(key)).flat(), 'selectedDates'],
+  bodyProperties: [...relevantDateKeys.map(key => [...dateBodyProperties(key), key]).flat(), 'selectedDates'],
 })
 export default class RelevantDates implements TasklistPage {
   title = 'Which of the following dates are relevant?'
@@ -50,7 +49,7 @@ export default class RelevantDates implements TasklistPage {
     this._body = {} as RelevantDatesBody
     this._body.selectedDates = value.selectedDates || []
     this._body.selectedDates.forEach((selectedDate: RelevantDateKeys) => {
-      dateBodyProperties(selectedDate).forEach(element => {
+      ;[...dateBodyProperties(selectedDate), selectedDate].forEach(element => {
         this._body[element] = value[element]
       })
     })

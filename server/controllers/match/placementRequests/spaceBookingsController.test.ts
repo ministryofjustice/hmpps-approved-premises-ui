@@ -46,13 +46,14 @@ describe('SpaceBookingsController', () => {
       params,
       session: {
         save: mockSessionSave,
+        multiPageFormData: { spaceSearch: { [placementRequestDetail.id]: searchState } },
       },
       flash: jest.fn(),
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
-    spaceSearchService.getSpaceSearchState.mockReturnValue(searchState)
+    jest.spyOn(spaceBookingsController.formData, 'get')
   })
 
   describe('new', () => {
@@ -60,7 +61,7 @@ describe('SpaceBookingsController', () => {
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)
 
-      expect(spaceSearchService.getSpaceSearchState).toHaveBeenCalledWith(params.id, request.session)
+      expect(spaceBookingsController.formData.get).toHaveBeenCalledWith(params.id, request.session)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
         backLink: matchPaths.v2Match.placementRequests.search.occupancy(params),
@@ -82,7 +83,7 @@ describe('SpaceBookingsController', () => {
     })
 
     it('redirects to the suitability search if no search state is present', async () => {
-      spaceSearchService.getSpaceSearchState.mockReturnValue(undefined)
+      request.session.multiPageFormData = undefined
 
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)
@@ -97,7 +98,7 @@ describe('SpaceBookingsController', () => {
       ['no departure date', { departureDate: undefined }],
       ['no arrival or departure date', { arrivalDate: undefined, departureDate: undefined }],
     ])('redirects to the availability search if %s is present in the search state', async (_, stateOverride) => {
-      spaceSearchService.getSpaceSearchState.mockReturnValue({ ...searchState, ...stateOverride })
+      request.session.multiPageFormData.spaceSearch[placementRequestDetail.id] = { ...searchState, ...stateOverride }
 
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)

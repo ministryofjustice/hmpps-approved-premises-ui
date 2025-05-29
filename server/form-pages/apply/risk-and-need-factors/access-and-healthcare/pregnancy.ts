@@ -11,6 +11,7 @@ import { Page } from '../../../utils/decorators'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { sentenceCase } from '../../../../utils/utils'
 import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetailForYes } from '../../../utils'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type PregnancyBody = {
   childRemoved?: YesOrNo | 'decisionPending'
@@ -21,10 +22,7 @@ export type PregnancyBody = {
 @Page({
   name: 'pregnancy',
   bodyProperties: [
-    'expectedDeliveryDate',
-    'expectedDeliveryDate-year',
-    'expectedDeliveryDate-month',
-    'expectedDeliveryDate-day',
+    ...dateBodyProperties('expectedDeliveryDate'),
     'socialCareInvolvement',
     'socialCareInvolvementDetail',
     'childRemoved',
@@ -49,13 +47,10 @@ export default class Pregnancy implements TasklistPage {
   public set body(value: Partial<PregnancyBody>) {
     this._body = {
       ...value,
-      'expectedDeliveryDate-year': value['expectedDeliveryDate-year'] as string,
-      'expectedDeliveryDate-month': value['expectedDeliveryDate-month'] as string,
-      'expectedDeliveryDate-day': value['expectedDeliveryDate-day'] as string,
-      expectedDeliveryDate: DateFormats.dateAndTimeInputsToIsoString(
+      ...DateFormats.dateAndTimeInputsToIsoString(
         value as ObjectWithDateParts<'expectedDeliveryDate'>,
         'expectedDeliveryDate',
-      ).expectedDeliveryDate,
+      ),
     }
   }
 

@@ -1,4 +1,5 @@
 import type {
+  Cas1ChangeRequestType,
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
@@ -34,6 +35,7 @@ export const overallStatusTextMap = {
   arrived: 'Arrived',
   notArrived: 'Not arrived',
   departed: 'Departed',
+  cancelled: 'Cancelled',
 } as const
 
 export const statusTextMap = {
@@ -47,6 +49,12 @@ export const statusTextMap = {
   overdueDeparture: 'Overdue departure',
 } as const
 
+const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
+  placementAppeal: 'Appeal requested',
+  plannedTransfer: 'Transfer requested',
+  placementExtension: 'Extension requested',
+}
+
 type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
 type SpaceBookingStatus = keyof typeof statusTextMap
 
@@ -55,7 +63,9 @@ const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): 
 
 export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingOverallStatus => {
   const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
+  const isCancelled = isSpaceBooking(placement) ? placement.cancellation : placement.isCancelled
 
+  if (isCancelled) return 'cancelled'
   if (isNonArrival) return 'notArrived'
   if (placement.actualDepartureDate) return 'departed'
   if (placement.actualArrivalDate) return 'arrived'
@@ -65,7 +75,7 @@ export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBook
 export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
   const status = overallStatus(placement)
 
-  if (['notArrived', 'departed'].includes(status)) return status
+  if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
 
   if (status === 'arrived') {
     const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
@@ -85,6 +95,15 @@ export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBoo
   if (daysFromArrival <= 6 * 7) return 'arrivingWithin6Weeks'
 
   return 'upcoming'
+}
+
+export const placementStatusHtml = (placement: Cas1SpaceBookingSummary): { html: string } => {
+  const statusElements: Array<string> = [
+    statusTextMap[detailedStatus(placement)],
+    ...placement.openChangeRequestTypes.map((requestType: Cas1ChangeRequestType) => changeRequestStatuses[requestType]),
+  ]
+
+  return { html: statusElements.join('<br/>') }
 }
 
 export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary) => ({
@@ -120,14 +139,33 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
         href: paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
       })
     }
+
+    // TODO: Check that there are no existing appeals
+    if (hasPermission(user, ['cas1_placement_appeal_create'])) {
+      actionList.push({
+        text: 'Request an appeal',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.appeal.new({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
   }
 
-  if (status === 'arrived' && hasPermission(user, ['cas1_space_booking_record_departure'])) {
-    actionList.push({
-      text: 'Record departure',
-      classes: 'govuk-button--secondary',
-      href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
-    })
+  if (status === 'arrived') {
+    if (hasPermission(user, ['cas1_space_booking_record_departure'])) {
+      actionList.push({
+        text: 'Record departure',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
+
+    if (hasPermission(user, ['cas1_transfer_create'])) {
+      actionList.push({
+        text: 'Request a transfer',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.placements.transfers.new({ premisesId: placement.premises.id, placementId: placement.id }),
+      })
+    }
   }
 
   return actionList.length ? [{ items: actionList }] : null

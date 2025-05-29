@@ -1,5 +1,6 @@
 import { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
 import { TextItem } from '@approved-premises/ui'
+import { addDays } from 'date-fns'
 import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
@@ -16,7 +17,7 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { canonicalDates, detailedStatus, statusTextMap } from '../placements'
+import { canonicalDates, placementStatusHtml } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -272,6 +273,7 @@ describe('premisesUtils', () => {
       },
     )
   })
+
   describe('placementTableRows', () => {
     it.each(['upcoming', 'current', 'historic'])(
       'should return the rows of the placement summary table for the "%s" tab',
@@ -284,7 +286,7 @@ describe('premisesUtils', () => {
 
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
-          const statusColumn = { text: statusTextMap[detailedStatus(placement)] }
+          const statusColumn = placementStatusHtml(placement)
           const { arrivalDate, departureDate } = canonicalDates(placement)
           const baseColumns = [
             {
@@ -301,6 +303,23 @@ describe('premisesUtils', () => {
         expect(tableRows).toEqual(expectedRows)
       },
     )
+  })
+
+  describe('placementStatusHtml', () => {
+    it('should render the status of the placement as html', () => {
+      const placement = cas1SpaceBookingSummaryFactory
+        .upcoming()
+        .build({ expectedArrivalDate: DateFormats.dateObjToIsoDate(addDays(new Date(), 43)) })
+      expect(placementStatusHtml(placement)).toEqual({ html: 'Upcoming' })
+      expect(placementStatusHtml({ ...placement, openChangeRequestTypes: ['placementAppeal'] })).toEqual({
+        html: 'Upcoming<br/>Appeal requested',
+      })
+      expect(
+        placementStatusHtml({ ...placement, openChangeRequestTypes: ['placementAppeal', 'plannedTransfer'] }),
+      ).toEqual({
+        html: 'Upcoming<br/>Appeal requested<br/>Transfer requested',
+      })
+    })
   })
 
   describe('premisesOverbookingSummary', () => {

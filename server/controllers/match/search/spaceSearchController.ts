@@ -6,21 +6,22 @@ import { PlacementRequestService } from '../../../services'
 import SpaceSearchService from '../../../services/spaceSearchService'
 
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
-import {
-  apTypeRadioItems,
-  checkBoxesForCriteria,
-  initialiseSearchState,
-  spaceSearchCriteriaApLevelLabels,
-} from '../../../utils/match/spaceSearch'
+import { apTypeRadioItems, checkBoxesForCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import MultiPageFormManager from '../../../utils/multiPageFormManager'
+import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 
 export default class SpaceSearchController {
+  formData: MultiPageFormManager<'spaceSearch'>
+
   constructor(
     private readonly spaceSearchService: SpaceSearchService,
     private readonly placementRequestService: PlacementRequestService,
-  ) {}
+  ) {
+    this.formData = new MultiPageFormManager('spaceSearch')
+  }
 
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -31,18 +32,12 @@ export default class SpaceSearchController {
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
 
       if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ id }))) {
-        this.spaceSearchService.removeSpaceSearchState(id, req.session)
+        this.formData.remove(id, req.session)
       }
 
-      let searchState = this.spaceSearchService.getSpaceSearchState(id, req.session)
-
-      if (!searchState) {
-        searchState = this.spaceSearchService.setSpaceSearchState(
-          placementRequest.id,
-          req.session,
-          initialiseSearchState(placementRequest),
-        )
-      }
+      const searchState =
+        this.formData.get(id, req.session) ||
+        (await this.formData.update(placementRequest.id, req.session, initialiseSearchState(placementRequest)))
 
       const spaceSearchResults = await this.spaceSearchService.search(token, searchState)
 
@@ -85,16 +80,14 @@ export default class SpaceSearchController {
           })
         }
 
-        this.spaceSearchService.setSpaceSearchState(req.params.id, req.session, {
+        await this.formData.update(req.params.id, req.session, {
           postcode,
           apType,
           apCriteria,
           roomCriteria,
         })
 
-        return req.session.save(() => {
-          res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
-        })
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

@@ -15,7 +15,8 @@ const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placemen
 const cas1Capacity = cas1PremisesSingle.path('capacity')
 const cas1DaySummary = cas1PremisesSingle.path('day-summary/:date')
 
-const cas1SpaceBookings = cas1Namespace.path('placement-requests/:id/space-bookings')
+const cas1PlacementRequestSingle = cas1Namespace.path('placement-requests/:id')
+const cas1SpaceBookings = cas1PlacementRequestSingle.path('space-bookings')
 
 const cas1Reports = cas1Namespace.path('reports')
 
@@ -24,6 +25,8 @@ const cas1Person = cas1People.path(':crn')
 
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
+
+const cas1PlacementRequests = cas1Namespace.path('placement-requests')
 
 // Non-namespaced
 const premises = path('/premises')
@@ -107,6 +110,7 @@ export default {
       departure: cas1SpaceBookingSingle.path('departure'),
       cancel: cas1SpaceBookingSingle.path('cancellations'),
       timeline: cas1SpaceBookingSingle.path('timeline'),
+      emergencyTransfer: cas1SpaceBookingSingle.path('emergency-transfer'),
     },
     calendar: premisesSingle.path('calendar'),
     occupancyReport: cas1Premises.path('occupancy-report'),
@@ -165,6 +169,7 @@ export default {
   placementRequests: {
     show: placementRequestsSingle,
     dashboard: placementRequests.path('dashboard'),
+    changeRequests: cas1PlacementRequests.path('change-requests'),
     booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
@@ -173,6 +178,9 @@ export default {
     spaceBookings: {
       create: cas1SpaceBookings,
     },
+    appeal: cas1PlacementRequestSingle.path('appeal'),
+    plannedTransfer: cas1PlacementRequestSingle.path('planned-transfer'),
+    extension: cas1PlacementRequestSingle.path('extension'),
   },
   placementApplications: {
     update: placementApplicationsSingle,

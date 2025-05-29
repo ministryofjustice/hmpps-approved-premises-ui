@@ -1,13 +1,14 @@
-import bunyan from 'bunyan'
+import bunyan, { LogLevel } from 'bunyan'
 import bunyanFormat from 'bunyan-format'
 import config from './server/config'
 
 const formatOut = bunyanFormat({ outputMode: 'short', color: true })
 
-const logger =
-  process.env.NODE_ENV !== 'test'
-    ? bunyan.createLogger({ name: 'Approved Premises Ui', stream: formatOut, level: 'debug' })
-    : bunyan.createLogger({ name: 'Approved Premises Ui', stream: formatOut, level: 'error' })
+const logger = bunyan.createLogger({
+  name: 'Approved Premises Ui',
+  stream: formatOut,
+  level: (process.env.LOG_LEVEL || 'info') as LogLevel,
+})
 
 export default logger
 

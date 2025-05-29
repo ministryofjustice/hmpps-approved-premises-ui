@@ -92,7 +92,6 @@ export const mockOptionalQuestionResponse = ({
   isExceptionalCase,
   shouldPersonBePlacedInMaleAp,
   agreedCaseWithManager,
-  lengthOfStay,
   cruInformation,
   pssDate,
   situation,
@@ -100,6 +99,9 @@ export const mockOptionalQuestionResponse = ({
   applicantUserDetails,
   caseManagerUserDetails,
   caseManagerIsNotApplicant,
+  transgenderOrHasTransgenderHistory,
+  reviewRequired,
+  hasBoardTakenPlace,
 }: {
   releaseType?: string
   duration?: string
@@ -109,8 +111,10 @@ export const mockOptionalQuestionResponse = ({
   sentenceType?: string
   isExceptionalCase?: string
   shouldPersonBePlacedInMaleAp?: string
+  transgenderOrHasTransgenderHistory?: string
+  reviewRequired?: string
+  hasBoardTakenPlace?: string
   agreedCaseWithManager?: string
-  lengthOfStay?: string
   cruInformation?: string
   pssDate?: string
   situation?: string
@@ -150,16 +154,24 @@ export const mockOptionalQuestionResponse = ({
         return isExceptionalCase
       }
 
+      if (question === 'transgenderOrHasTransgenderHistory') {
+        return transgenderOrHasTransgenderHistory
+      }
+
+      if (question === 'reviewRequired') {
+        return reviewRequired
+      }
+
+      if (question === 'hasBoardTakenPlace') {
+        return hasBoardTakenPlace
+      }
+
       if (question === 'shouldPersonBePlacedInMaleAp') {
         return shouldPersonBePlacedInMaleAp
       }
 
       if (question === 'agreedCaseWithManager') {
         return agreedCaseWithManager
-      }
-
-      if (question === 'lengthOfStay') {
-        return lengthOfStay
       }
 
       if (question === 'cruInformation') {

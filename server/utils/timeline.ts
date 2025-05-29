@@ -1,4 +1,9 @@
-import { Cas1SpaceCharacteristic, Cas1TimelineEvent, Cas1TimelineEventContentPayload } from '@approved-premises/api'
+import {
+  Cas1BookingChangedContentPayload,
+  Cas1PlacementChangeRequestCreatedPayload,
+  Cas1SpaceCharacteristic,
+  Cas1TimelineEvent,
+} from '@approved-premises/api'
 import nunjucks from 'nunjucks'
 import path from 'path'
 import { escape } from './formUtils'
@@ -7,64 +12,65 @@ import { DateFormats } from './dateUtils'
 import { filterRoomLevelCriteria } from './match/spaceSearch'
 
 import { roomCharacteristicsInlineList } from './characteristicsUtils'
+import { AppealReason, getChangeRequestReasonText } from './placements/changeRequests'
 
-type PayloadBookingChangedV1 = Cas1TimelineEventContentPayload & {
-  schemaVersion: undefined
-  arrivalOn: string
-  departureOn: string
-}
-
-type PayloadBookingChangedV2 = Cas1TimelineEventContentPayload & {
-  schemaVersion: 2
-  expectedArrival: string
-  expectedDeparture: string
-  characteristics: Array<Cas1SpaceCharacteristic>
-  previousExpectedArrival: string | null
-  previousExpectedDeparture: string | null
-  previousCharacteristics: Array<Cas1SpaceCharacteristic> | null
-}
+const isoDateToUiDateOrUndefined = (isoDate: string) => (isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined)
+const templatePath = path.join(__dirname, '../views/partials/timelineEvents')
 
 export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => {
   if (event.payload) {
-    if (event.payload.type === 'booking_changed') {
-      if (event.payload.schemaVersion === 2) {
-        nunjucks.configure(path.join(__dirname, '../views/partials/timelineEvents'))
+    const eventType = event.payload.type
+    if (eventType === 'booking_changed') {
+      const {
+        premises,
+        expectedArrival,
+        expectedDeparture,
+        previousExpectedArrival,
+        previousExpectedDeparture,
+        characteristics,
+        previousCharacteristics,
+      } = event.payload as Cas1BookingChangedContentPayload
 
-        const {
-          premises,
-          expectedArrival,
-          expectedDeparture,
-          previousExpectedArrival,
-          previousExpectedDeparture,
-          characteristics,
-          previousCharacteristics,
-        } = event.payload as PayloadBookingChangedV2
+      const roomCriteriaOrNone = (criteria: Array<Cas1SpaceCharacteristic>) =>
+        roomCharacteristicsInlineList(filterRoomLevelCriteria(criteria || []), 'none')
 
-        const isoDateToUiDateOrUndefined = (isoDate: string) =>
-          isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined
-        const roomCriteriaOrNone = (criteria: Array<Cas1SpaceCharacteristic>) =>
-          roomCharacteristicsInlineList(filterRoomLevelCriteria(criteria || []), 'none')
-
-        const context = {
-          premises,
-          expectedArrival: isoDateToUiDateOrUndefined(expectedArrival),
-          expectedDeparture: isoDateToUiDateOrUndefined(expectedDeparture),
-          previousExpectedArrival: isoDateToUiDateOrUndefined(previousExpectedArrival),
-          previousExpectedDeparture: isoDateToUiDateOrUndefined(previousExpectedDeparture),
-          characteristics: roomCriteriaOrNone(characteristics),
-          previousCharacteristics: previousCharacteristics ? roomCriteriaOrNone(previousCharacteristics) : undefined,
-        }
-
-        return nunjucks.render('booking_changed.njk', context)
+      const context = {
+        premises,
+        expectedArrival: isoDateToUiDateOrUndefined(expectedArrival),
+        expectedDeparture: isoDateToUiDateOrUndefined(expectedDeparture),
+        previousExpectedArrival: isoDateToUiDateOrUndefined(previousExpectedArrival),
+        previousExpectedDeparture: isoDateToUiDateOrUndefined(previousExpectedDeparture),
+        characteristics: roomCriteriaOrNone(characteristics),
+        previousCharacteristics: previousCharacteristics ? roomCriteriaOrNone(previousCharacteristics) : undefined,
       }
 
-      const {
-        premises: { name: premisesName },
-        arrivalOn,
-        departureOn,
-      } = event.payload as PayloadBookingChangedV1
+      if (event.schemaVersion === 2) {
+        return nunjucks.render(`${templatePath}/booking_changed_v2.njk`, context)
+      }
+      return nunjucks.render(`${templatePath}/booking_changed.njk`, context)
+    }
 
-      return `The placement at ${premisesName} had its arrival and/or departure date changed to ${DateFormats.isoDateToUIDate(arrivalOn)} to ${DateFormats.isoDateToUIDate(departureOn)}.`
+    if (eventType === 'placement_change_request_created') {
+      const {
+        changeRequestId,
+        changeRequestType,
+        reason: { name: reasonName },
+        booking: {
+          premises: { name: premisesName },
+          arrivalDate,
+          departureDate,
+        },
+      } = event.payload as Cas1PlacementChangeRequestCreatedPayload
+
+      return nunjucks.render(`${templatePath}/change_request_created.njk`, {
+        changeRequestId,
+        changeRequestType,
+        premisesName,
+        eventType,
+        expectedArrival: isoDateToUiDateOrUndefined(arrivalDate),
+        expectedDeparture: isoDateToUiDateOrUndefined(departureDate),
+        reasonText: getChangeRequestReasonText(reasonName as AppealReason),
+      })
     }
   }
 

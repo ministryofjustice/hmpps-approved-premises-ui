@@ -253,12 +253,6 @@ context('Assess', () => {
         // And the sufficient information task should show a completed status
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
 
-        // And I should see the AssessApplication section
-        assessHelper.completeSuitabilityOfAssessmentQuestion({ isShortNoticeApplication: false })
-
-        // And I fill out the required actions
-        assessHelper.completeRequiredActionsQuestion()
-
         // When I make a decision
         assessHelper.completeMakeADecisionPage()
 

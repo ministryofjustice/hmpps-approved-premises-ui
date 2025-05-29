@@ -151,17 +151,13 @@ jobs:
       - name: Build source
         run: npm run build
 
-      - name: Resolve zero-based index for splitting tests
-        id: offset-index
-        run: echo "ZERO_BASED=$((${{ matrix.shard }}-1))" >> "$GITHUB_OUTPUT"
-
       - name: Determine tests splitting
         uses: chaosaffe/split-tests@v1
         id: split-tests
         with:
           glob: integration_tests/tests/**/*.cy.ts
-          split-index: ${{ steps.offset-index.outputs.ZERO_BASED }}
-          split-total: 4
+          split-index: ${{ strategy.job-index }}
+          split-total: ${{ strategy.job-total }}
 
       - name: Run Integration tests
         run: TEST_RUN_ARGS="--spec $(echo ${{ steps.split-tests.outputs.test-suite }} | sed -E 's/ /,/g')" npm run test:integration
@@ -170,7 +166,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: integration-test-artefacts-${{ matrix.shard }}-of-4
+          name: integration-test-artefacts-${{ matrix.shard }}-of-${{ strategy.job-total }}
           path: |
             integration_tests/videos
             integration_tests/screenshots

@@ -67,7 +67,7 @@ export {
   Cas1ReferenceDataClient,
   PremisesClient,
   HmppsAuthClient,
-  RestClientBuilder,
+  type RestClientBuilder,
   ReferenceDataClient,
   OutOfServiceBedClient,
   PersonClient,

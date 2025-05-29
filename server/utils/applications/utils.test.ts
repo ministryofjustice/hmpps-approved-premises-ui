@@ -572,29 +572,33 @@ describe('utils', () => {
   })
 
   describe('isWomensApplication', () => {
-    it(`should return false if the person from NDelius has a sex of 'Male'`, () => {
-      const application = applicationFactory.build()
-      const fp = application.person as FullPerson
-      fp.sex = 'Male'
-
-      expect(isWomensApplication(application)).toEqual(false)
-    })
-    it(`should return true if the person from NDelius has a sex of 'Female'`, () => {
-      const application = applicationFactory.build()
-      const fp = application.person as FullPerson
-      fp.sex = 'Female'
-
-      expect(isWomensApplication(application)).toEqual(true)
-    })
-
-    it('should return true if the person is Male but the applicant answered no to the shouldPersonBePlacedInMaleAp question', () => {
-      const application = applicationFactory.build()
-      const fp = application.person as FullPerson
-      fp.sex = 'Male'
-
-      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
-      expect(isWomensApplication(application)).toEqual(true)
-    })
+    it.each([
+      ['Male', 'yes', 'yes', 'yes', 'yes', false],
+      ['Female', 'yes', 'yes', 'yes', 'yes', false],
+      ['Male', 'yes', 'yes', 'yes', 'no', true],
+      ['Female', 'yes', 'yes', 'yes', 'no', true],
+      ['Male', 'no', undefined, undefined, undefined, false],
+      ['Female', 'no', undefined, undefined, undefined, true],
+      ['Male', 'yes', 'no', undefined, undefined, false],
+      ['Male', 'yes', 'yes', 'no', undefined, false],
+      ['Male', 'no', 'yes', 'yes', 'yes', false],
+      ['Male', 'yes', 'no', 'yes', 'yes', false],
+      ['Male', 'yes', 'yes', 'no', 'yes', false],
+    ])(
+      'Person is %s, is transgender:%s, caseboard:%s, has met:%s, result-male:%s should return %s',
+      (sex, isTrans, reviewRequired, hasBoardTakenPlace, caseBoardSaysMale, expected) => {
+        const application = applicationFactory.build()
+        const fp = application.person as FullPerson
+        fp.sex = sex
+        mockOptionalQuestionResponse({
+          transgenderOrHasTransgenderHistory: isTrans,
+          shouldPersonBePlacedInMaleAp: caseBoardSaysMale,
+          reviewRequired,
+          hasBoardTakenPlace,
+        })
+        expect(isWomensApplication(application)).toEqual(expected)
+      },
+    )
   })
 
   describe('getApplicationType', () => {

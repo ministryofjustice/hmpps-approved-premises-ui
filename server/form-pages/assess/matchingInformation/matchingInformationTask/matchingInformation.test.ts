@@ -2,14 +2,10 @@ import { applicationFactory, assessmentFactory } from '../../../../testutils/fac
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
-import {
-  defaultMatchingInformationValues,
-  suggestedStaySummaryListOptions,
-} from '../../../utils/matchingInformationUtils'
+import * as matchingInformtionUtils from '../../../utils/matchingInformationUtils'
 
 jest.mock('../../../../utils/assessments/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
-jest.mock('../../../utils/matchingInformationUtils')
 
 const assessment = assessmentFactory.build({
   application: applicationFactory.build({ isWomensApplication: false }),
@@ -62,7 +58,9 @@ describe('MatchingInformation', () => {
 
   describe('body', () => {
     it('should set the body', () => {
-      ;(defaultMatchingInformationValues as jest.Mock).mockReturnValue(defaultMatchingInformationValuesReturnValue)
+      jest
+        .spyOn(matchingInformtionUtils, 'defaultMatchingInformationValues')
+        .mockReturnValue(defaultMatchingInformationValuesReturnValue)
 
       const page = new MatchingInformation(defaultArguments, assessment)
 
@@ -75,8 +73,10 @@ describe('MatchingInformation', () => {
   itShouldHavePreviousValue(new MatchingInformation(defaultArguments, assessment), 'dashboard')
 
   describe('errors', () => {
-    it('should have an error if there is no answers', () => {
-      ;(defaultMatchingInformationValues as jest.Mock).mockReturnValue(defaultMatchingInformationValuesReturnValue)
+    it('should have an error if there are no answers', () => {
+      jest
+        .spyOn(matchingInformtionUtils, 'defaultMatchingInformationValues')
+        .mockReturnValue(defaultMatchingInformationValuesReturnValue)
 
       const page = new MatchingInformation({}, assessment)
 
@@ -87,16 +87,28 @@ describe('MatchingInformation', () => {
       })
     })
 
-    it('should add an error if lengthOfStayAgreed is no and the details are not provided', () => {
-      const page = new MatchingInformation(
-        { ...defaultArguments, lengthOfStayAgreed: 'no', lengthOfStayWeeks: null, lengthOfStayDays: null },
-        assessment,
-      )
+    it.each([
+      ['1', undefined, false],
+      ['1', '', false],
+      ['-1', '5', true],
+      ['7', '0', false],
+    ])(
+      'if lengthOfStayAgreed is "no", weeks is "%s" and days is "%s" it should error %s',
+      (weeks: string, days: string, shouldError: boolean) => {
+        const page = new MatchingInformation(
+          { ...defaultArguments, lengthOfStayAgreed: 'no', lengthOfStayWeeks: weeks, lengthOfStayDays: days },
+          assessment,
+        )
 
-      expect(page.errors()).toEqual({
-        lengthOfStay: 'You must provide a recommended length of stay',
-      })
-    })
+        expect(page.errors()).toEqual(
+          shouldError
+            ? {
+                lengthOfStay: 'You must provide a recommended length of stay',
+              }
+            : {},
+        )
+      },
+    )
 
     it("should return an error if the type is not available for a women's application", () => {
       const page = new MatchingInformation({ ...defaultArguments, apType: 'isMHAPElliottHouse' }, weAssessment)
@@ -135,8 +147,8 @@ describe('MatchingInformation', () => {
         {
           ...defaultArguments,
           lengthOfStayAgreed: 'no',
-          lengthOfStayDays: '5',
           lengthOfStayWeeks: '5',
+          lengthOfStayDays: '4',
         },
         assessment,
       )
@@ -144,7 +156,7 @@ describe('MatchingInformation', () => {
       const response = page.response()
 
       expect(response['Do you agree with the suggested length of stay?']).toEqual('No')
-      expect(response['Recommended length of stay']).toEqual('5 weeks, 5 days')
+      expect(response['Recommended length of stay']).toEqual('5 weeks, 4 days')
     })
   })
 
@@ -158,10 +170,11 @@ describe('MatchingInformation', () => {
           { key: { text: 'Dates of placement' }, value: { text: 'formatted dates of placement' } },
         ],
       }
-      ;(suggestedStaySummaryListOptions as jest.Mock).mockReturnValue(utilsReturnValue)
+      const mockSuggestedStaySummaryListOptions = jest.spyOn(matchingInformtionUtils, 'suggestedStaySummaryListOptions')
+      mockSuggestedStaySummaryListOptions.mockReturnValue(utilsReturnValue)
 
       expect(page.suggestedStaySummaryListOptions).toEqual(utilsReturnValue)
-      expect(suggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
+      expect(mockSuggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
     })
   })
 

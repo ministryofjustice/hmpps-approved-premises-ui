@@ -6,7 +6,7 @@ import ApplyPage from './applyPage'
 export default class MaleAp extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      'Has the Complex Case Board determined that the person should be placed in a male AP?',
+      'What type of AP has the complex case board agreed to?',
       application,
       'basic-information',
       'male-ap',
