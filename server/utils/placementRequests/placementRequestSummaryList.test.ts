@@ -1,6 +1,6 @@
 import { Application } from '@approved-premises/api'
 import { SummaryListItem } from '@approved-premises/ui'
-import { applicationFactory, placementRequestDetailFactory } from '../../testutils/factories'
+import { applicationFactory, cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import offlineApplicationFactory from '../../testutils/factories/offlineApplication'
 import { placementRequestSummaryList } from './placementRequestSummaryList'
 import { DateFormats } from '../dateUtils'
@@ -10,7 +10,7 @@ describe('placementRequestSummaryList', () => {
   const application = applicationFactory.build({
     licenceExpiryDate: '2030-11-23',
   })
-  const placementRequest = placementRequestDetailFactory.build({
+  const placementRequest = cas1PlacementRequestDetailFactory.build({
     releaseType: 'hdc',
     expectedArrival: '2025-10-02',
     duration: 52,
@@ -23,7 +23,7 @@ describe('placementRequestSummaryList', () => {
     expect(placementRequestSummaryList(placementRequest).rows).toEqual(
       expectedSummaryListItems({
         isWithdrawn: false,
-        expectedApplicationId: placementRequest.application.id,
+        expectedApplicationId: placementRequest.applicationId,
         expectedLicenceExpiryDate: application.licenceExpiryDate,
         expectedPostcode: placementRequest.location,
       }),
@@ -39,7 +39,7 @@ describe('placementRequestSummaryList', () => {
     expect(placementRequestSummaryList(withdrawnPlacementRequest).rows).toEqual(
       expectedSummaryListItems({
         isWithdrawn,
-        expectedApplicationId: placementRequest.application.id,
+        expectedApplicationId: placementRequest.applicationId,
         expectedLicenceExpiryDate: application.licenceExpiryDate,
         expectedPostcode: placementRequest.location,
       }),
@@ -63,9 +63,11 @@ describe('placementRequestSummaryList', () => {
   })
 
   it(`should generate the expected summary list when placement-request's application is not of type ApprovedPremisesApplication`, () => {
+    const offlineApplication = offlineApplicationFactory.build()
     const placementRequestWithOfflineApplication = {
       ...placementRequest,
-      application: offlineApplicationFactory.build(),
+      application: offlineApplication,
+      applicationId: offlineApplication.id,
     }
     expect(placementRequestSummaryList(placementRequestWithOfflineApplication).rows).toEqual(
       expectedSummaryListItems({
@@ -77,12 +79,14 @@ describe('placementRequestSummaryList', () => {
     )
   })
 
-  it(`should generate the expected summary list with blank licence expiry date when applications license-expiry date is not set`, () => {
+  it(`should generate the expected summary list with blank licence expiry date when application's license-expiry date is not set`, () => {
+    const noLicenceApplication = applicationFactory.build({
+      licenceExpiryDate: undefined,
+    })
     const placementRequestWithoutLicenceExpiry = {
       ...placementRequest,
-      application: applicationFactory.build({
-        licenceExpiryDate: undefined,
-      }),
+      application: noLicenceApplication,
+      applicationId: noLicenceApplication.id,
     }
     expect(placementRequestSummaryList(placementRequestWithoutLicenceExpiry).rows).toEqual(
       expectedSummaryListItems({

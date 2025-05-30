@@ -1,5 +1,5 @@
 import { apTypeLabels } from '../apTypeLabels'
-import { PlacementRequestDetail } from '../../@types/shared'
+import { Cas1PlacementRequestDetail } from '../../@types/shared'
 import { SummaryList, SummaryListItem } from '../../@types/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
@@ -7,7 +7,7 @@ import { DateFormats } from '../dateUtils'
 import { placementDates, placementLength } from '../match'
 import paths from '../../paths/apply'
 
-export const adminSummary = (placementRequest: PlacementRequestDetail): SummaryList => {
+export const adminSummary = (placementRequest: Cas1PlacementRequestDetail): SummaryList => {
   const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
 
   const rows: Array<SummaryListItem> = [
@@ -62,7 +62,7 @@ export const adminSummary = (placementRequest: PlacementRequestDetail): SummaryL
   return { rows }
 }
 
-export const apTypeCell = (placementRequest: PlacementRequestDetail) => {
+export const apTypeCell = (placementRequest: Cas1PlacementRequestDetail) => {
   return {
     key: {
       text: 'Type of AP',
@@ -81,7 +81,7 @@ export const apTypeCell = (placementRequest: PlacementRequestDetail) => {
   }
 }
 
-export const releaseTypeCell = (placementRequest: PlacementRequestDetail) => {
+export const releaseTypeCell = (placementRequest: Cas1PlacementRequestDetail) => {
   return {
     key: {
       text: 'Release Type',

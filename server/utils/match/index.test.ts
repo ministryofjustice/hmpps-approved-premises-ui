@@ -5,7 +5,7 @@ import {
   cas1PremisesSearchResultSummaryFactory,
   cas1SpaceBookingFactory,
   personFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
   restrictedPersonFactory,
   spaceSearchResultFactory,
 } from '../../testutils/factories'
@@ -104,7 +104,7 @@ describe('matchUtils', () => {
     it.each(Object.keys(apTypeLabels) as Array<ApType>)(
       'should return the correct type for AP Type %s',
       (apType: ApType) => {
-        const placementRequestWithApType = placementRequestDetailFactory.build({
+        const placementRequestWithApType = cas1PlacementRequestDetailFactory.build({
           type: apType,
         })
 
@@ -118,7 +118,7 @@ describe('matchUtils', () => {
           actions: {
             items: [
               {
-                href: `${applyPaths.applications.show({ id: placementRequestWithApType.application.id })}?tab=timeline`,
+                href: `${applyPaths.applications.show({ id: placementRequestWithApType.applicationId })}?tab=timeline`,
                 text: 'View timeline',
               },
             ],
@@ -129,7 +129,7 @@ describe('matchUtils', () => {
 
     it('should return the correct type for AP Type normal without actions when placement-request has no application', () => {
       const apType: ApType = 'normal'
-      const placementRequestWithApType = placementRequestDetailFactory.build({
+      const placementRequestWithApType = cas1PlacementRequestDetailFactory.build({
         type: apType,
         application: undefined,
       })
@@ -231,7 +231,7 @@ describe('matchUtils', () => {
   })
 
   describe('spaceBookingConfirmationSummaryListRows', () => {
-    const placementRequest = placementRequestDetailFactory.build()
+    const placementRequest = cas1PlacementRequestDetailFactory.build()
     const premises = cas1PremisesFactory.build()
     const expectedArrivalDate = '2025-09-23'
     const expectedDepartureDate = '2025-11-18'
@@ -317,7 +317,7 @@ describe('matchUtils', () => {
   describe('keyDetails', () => {
     it('should return the key details for a placement request', () => {
       const person = personFactory.build({ type: 'FullPerson' })
-      const placementRequest = placementRequestDetailFactory.build({ person })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ person })
 
       const details = keyDetails(placementRequest)
 
@@ -348,7 +348,7 @@ describe('matchUtils', () => {
 
     it('should throw an error if the person is not a full person', () => {
       const restrictedPerson = restrictedPersonFactory.build()
-      const placementRequest = placementRequestDetailFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
       placementRequest.person = restrictedPerson
 
       expect(() => keyDetails(placementRequest)).toThrow('Restricted person')
@@ -357,7 +357,7 @@ describe('matchUtils', () => {
 
   describe('creationNotificationBody', () => {
     it('Should build the notification body', () => {
-      const placementRequest = placementRequestDetailFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
       const placement = cas1SpaceBookingFactory.build()
       expect(creationNotificationBody(placement, placementRequest))
         .toEqual(`<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>

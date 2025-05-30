@@ -1,5 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { SummaryList } from '@approved-premises/ui'
+import { changeRequestBanners } from '../../../utils/placementRequests/changeRequestsUtils'
 import { PlacementRequestService } from '../../../services'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { bookingSummaryList } from '../../../utils/bookings'
@@ -26,6 +27,7 @@ export default class PlacementRequestsController {
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
         bookingSummaryList: bookingSummary,
+        changeRequestBanners: changeRequestBanners(req.params.id, placementRequest.openChangeRequests, res.locals.user),
       })
     }
   }

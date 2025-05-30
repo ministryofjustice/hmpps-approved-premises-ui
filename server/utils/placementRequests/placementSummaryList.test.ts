@@ -1,5 +1,5 @@
 import { TextItem } from '@approved-premises/ui'
-import { placementRequestDetailFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { placementSummaryList } from './placementSummaryList'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements'
@@ -8,7 +8,7 @@ import cas1SpaceBookingSummaryFactory from '../../testutils/factories/cas1SpaceB
 describe('placement summary list', () => {
   it('renders a summary list for a placement request with an upcoming space booking', () => {
     const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build()
-    const placementRequestDetail = placementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
 
     expect(placementSummaryList(placementRequestDetail)).toEqual({
       rows: [
@@ -35,7 +35,7 @@ describe('placement summary list', () => {
     const spaceBooking = cas1SpaceBookingSummaryFactory.current().build({
       deliusEventNumber: undefined,
     })
-    const placementRequestDetail = placementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
 
     expect(
       placementSummaryList(placementRequestDetail).rows.find(

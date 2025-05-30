@@ -117,6 +117,11 @@ describe('changeRequest utilities', () => {
         { approvalDate: 'The approval date must be today or in the past' },
       ],
       ['no appeal reason', { appealReason: undefined }, { appealReason: 'You must select a reason for the appeal' }],
+      [
+        'no appeal reason details',
+        { [`${sessionData.appealReason}Detail`]: undefined },
+        { [`${sessionData.appealReason}Detail`]: 'You must enter more details' },
+      ],
     ])('should throw if %s', (_, override, expected) => {
       let error
       try {

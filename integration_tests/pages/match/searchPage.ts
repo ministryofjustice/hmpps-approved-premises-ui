@@ -1,4 +1,4 @@
-import { Cas1SpaceSearchResult, Cas1SpaceSearchResults, PlacementRequestDetail } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail, Cas1SpaceSearchResult, Cas1SpaceSearchResults } from '@approved-premises/api'
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import Page from '../page'
 import { summaryCardRows } from '../../../server/utils/match'
@@ -10,17 +10,17 @@ export default class SearchPage extends Page {
     super('Find a space in an Approved Premises')
   }
 
-  static visit(placementRequest: PlacementRequestDetail) {
+  static visit(placementRequest: Cas1PlacementRequestDetail) {
     cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
     return new SearchPage()
   }
 
-  shouldShowCaseDetails(placementRequest: PlacementRequestDetail): void {
+  shouldShowCaseDetails(placementRequest: Cas1PlacementRequestDetail): void {
     this.shouldShowKeyPersonDetails(placementRequest)
     this.shouldShowMatchingDetails(placementRequest)
   }
 
-  shouldShowMatchingDetails(placementRequest: PlacementRequestDetail) {
+  shouldShowMatchingDetails(placementRequest: Cas1PlacementRequestDetail) {
     cy.get('.govuk-details').within(() => {
       cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
       this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)

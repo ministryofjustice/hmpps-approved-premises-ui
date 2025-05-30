@@ -26,8 +26,6 @@ const cas1Person = cas1People.path(':crn')
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
 
-const cas1PlacementRequests = cas1Namespace.path('placement-requests')
-
 // Non-namespaced
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
@@ -52,6 +50,7 @@ const taskSingle = tasks.path(':taskType/:id')
 
 const placementRequests = path('/placement-requests')
 const placementRequestsSingle = placementRequests.path(':id')
+const cas1PlacementRequests = cas1Namespace.path('placement-requests')
 
 const placementApplications = path('/placement-applications')
 const placementApplicationsSingle = placementApplications.path(':id')
@@ -111,6 +110,7 @@ export default {
       cancel: cas1SpaceBookingSingle.path('cancellations'),
       timeline: cas1SpaceBookingSingle.path('timeline'),
       emergencyTransfer: cas1SpaceBookingSingle.path('emergency-transfer'),
+      appeal: cas1SpaceBookingSingle.path('appeal'),
     },
     calendar: premisesSingle.path('calendar'),
     occupancyReport: cas1Premises.path('occupancy-report'),
@@ -167,9 +167,8 @@ export default {
     },
   },
   placementRequests: {
-    show: placementRequestsSingle,
+    show: cas1PlacementRequestSingle,
     dashboard: placementRequests.path('dashboard'),
-    changeRequests: cas1PlacementRequests.path('change-requests'),
     booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
@@ -181,6 +180,8 @@ export default {
     appeal: cas1PlacementRequestSingle.path('appeal'),
     plannedTransfer: cas1PlacementRequestSingle.path('planned-transfer'),
     extension: cas1PlacementRequestSingle.path('extension'),
+    changeRequests: cas1PlacementRequests.path('change-requests'),
+    changeRequest: cas1PlacementRequests.path(':placementRequestId/change-requests/:changeRequestId'),
   },
   placementApplications: {
     update: placementApplicationsSingle,

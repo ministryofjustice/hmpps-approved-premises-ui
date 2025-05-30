@@ -1,4 +1,4 @@
-import { PlacementRequestDetail } from '../../@types/shared'
+import { Cas1PlacementRequestDetail } from '../../@types/shared'
 import { SummaryList, SummaryListItem } from '../../@types/ui'
 import { withdrawnStatusTag } from '../applications/utils'
 import {
@@ -19,7 +19,7 @@ type PlacementRequestSummaryListOptions = {
 }
 
 export const placementRequestSummaryList = (
-  placementRequest: PlacementRequestDetail,
+  placementRequest: Cas1PlacementRequestDetail,
   options: PlacementRequestSummaryListOptions = { showActions: true },
 ): SummaryList => {
   const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))

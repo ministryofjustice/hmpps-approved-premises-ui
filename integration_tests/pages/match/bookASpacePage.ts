@@ -1,4 +1,4 @@
-import type { Cas1Premises, Cas1SpaceBookingCharacteristic, PlacementRequestDetail } from '@approved-premises/api'
+import type { Cas1PlacementRequestDetail, Cas1Premises, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
@@ -10,7 +10,7 @@ export default class BookASpacePage extends Page {
   }
 
   shouldShowBookingDetails(
-    placementRequest: PlacementRequestDetail,
+    placementRequest: Cas1PlacementRequestDetail,
     premises: Cas1Premises,
     arrivalDate: string,
     departureDate: string,

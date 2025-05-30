@@ -8,7 +8,7 @@ import {
   apAreaFactory,
   applicationFactory,
   placementApplicationFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 
@@ -51,7 +51,7 @@ describe('PlacementRequestsController', () => {
 
   describe('show', () => {
     it('should render the show template', async () => {
-      const placementRequestDetail = placementRequestDetailFactory.build()
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
 
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 

@@ -1,10 +1,10 @@
-import { PlacementRequestDetail } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryList } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements'
 
-export const placementSummaryList = (placementRequest: PlacementRequestDetail): SummaryList => {
+export const placementSummaryList = (placementRequest: Cas1PlacementRequestDetail): SummaryList => {
   if (placementRequest.spaceBookings.length) {
     const booking = placementRequest.spaceBookings[0]
 
