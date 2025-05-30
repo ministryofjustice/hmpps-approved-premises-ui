@@ -154,6 +154,7 @@ export type { Cas1UpdateSpaceBooking } from './models/Cas1UpdateSpaceBooking';
 export type { Cas1UpdateUser } from './models/Cas1UpdateUser';
 export type { Cas1WithdrawPlacementRequest } from './models/Cas1WithdrawPlacementRequest';
 export type { Cas2TimelineEvent } from './models/Cas2TimelineEvent';
+export type { Cas2User } from './models/Cas2User';
 export type { Cas2v2Application } from './models/Cas2v2Application';
 export type { Cas2v2Assessment } from './models/Cas2v2Assessment';
 export type { Cas2v2StatusUpdate } from './models/Cas2v2StatusUpdate';
