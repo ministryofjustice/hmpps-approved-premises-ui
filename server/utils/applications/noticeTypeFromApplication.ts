@@ -9,12 +9,14 @@ export const noticeTypeFromApplication = (application: Application): Cas1Applica
   if (!arrivalDateString) return 'standard'
 
   const arrivalDateObj = DateFormats.isoToDateObj(arrivalDateString)
-  const differenceInDaysToCurrentDate = differenceInDays(arrivalDateObj, new Date())
+
+  const referenceDate = (application.submittedAt && DateFormats.isoToDateObj(application.submittedAt)) || new Date()
+  const differenceInDaysToReferenceDate = differenceInDays(arrivalDateObj, referenceDate)
 
   switch (true) {
-    case differenceInDaysToCurrentDate <= 7:
+    case differenceInDaysToReferenceDate <= 7:
       return 'emergency'
-    case differenceInDaysToCurrentDate <= 28:
+    case differenceInDaysToReferenceDate <= 28:
       return 'shortNotice'
     default:
       return 'standard'
