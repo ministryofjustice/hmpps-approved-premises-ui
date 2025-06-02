@@ -8,7 +8,7 @@ const oasysQuestions = (section: Array<OASysQuestion>) =>
   section
     .map(
       question =>
-        `<h2 class="govuk-heading-m">${question.questionNumber}. ${question.label}</h2><p class="govuk-body">${question.answer}</p><hr class="govuk-!-margin-bottom-2"/>`,
+        `<h2 class="govuk-heading-m">${question.questionNumber}. ${question.label}</h2><p class="govuk-body govuk-body__text-block">${question.answer}</p><hr class="govuk-!-margin-bottom-2"/>`,
     )
     .join('')
 

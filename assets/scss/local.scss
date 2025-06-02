@@ -32,6 +32,10 @@
   }
 }
 
+.govuk-body__text-block {
+  white-space: pre-wrap;
+}
+
 a.link-disabled {
   cursor: default;
   background: govuk-colour("light-grey");
