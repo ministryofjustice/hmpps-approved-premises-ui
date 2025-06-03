@@ -699,7 +699,7 @@ describe('utils', () => {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
           content: renderTimelineEventContent(timelineEvents[0]),
-          createdBy: timelineEvents[0].createdBy.name,
+          createdBy: timelineEvents[0].createdBySummary.name,
           associatedUrls: expect.arrayContaining(
             mapTimelineUrlsForUi([
               {
@@ -725,7 +725,7 @@ describe('utils', () => {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
           content: renderTimelineEventContent(timelineEvents[0]),
-          createdBy: timelineEvents[0].createdBy.name,
+          createdBy: timelineEvents[0].createdBySummary.name,
           associatedUrls: [],
         },
       ])
