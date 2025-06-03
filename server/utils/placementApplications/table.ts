@@ -22,9 +22,7 @@ export const placementApplicationsTable = (
       {
         text: 'Tier',
       },
-      {
-        text: `Arrival date`,
-      },
+      sortHeader<TaskSortField>(`Arrival date`, 'expectedArrivalDate', sortBy, sortDirection, hrefPrefix),
       {
         text: 'Type of request',
       },

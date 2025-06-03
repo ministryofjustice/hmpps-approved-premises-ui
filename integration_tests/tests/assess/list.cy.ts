@@ -117,6 +117,24 @@ context('List assessments', () => {
 
     // Then I should see the third page of results
     listPage.shouldShowPlacementApplicationTasks(page3PlacementApplications)
+
+    // When I sort by name in ascending order
+    listPage.clickSortBy('person')
+
+    // Then the dashboard should be sorted by expected arrival
+    listPage.shouldBeSortedByField('person', 'ascending')
+
+    // When I sort by name in descending order
+    listPage.clickSortBy('person')
+
+    // Then the dashboard should be sorted by expected arrival
+    listPage.shouldBeSortedByField('person', 'descending')
+
+    // When I sort by name in ascending order
+    listPage.clickSortBy('expectedArrivalDate')
+
+    // Then the dashboard should be sorted by expected arrival
+    listPage.shouldBeSortedByField('expectedArrivalDate', 'ascending')
   })
 
   it('supports sorting', () => {
