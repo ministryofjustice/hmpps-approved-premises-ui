@@ -4,6 +4,7 @@ import paths from '../../paths/placementApplications'
 import { linkTo, sentenceCase } from '../utils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
+import { DateFormats } from '../dateUtils'
 
 export const placementApplicationsTable = (
   placementApplications: Array<PlacementApplicationTask>,
@@ -20,6 +21,9 @@ export const placementApplicationsTable = (
       },
       {
         text: 'Tier',
+      },
+      {
+        text: `Arrival date`,
       },
       {
         text: 'Type of request',
@@ -40,7 +44,14 @@ const placementTypes: Record<PlacementType, string> = {
 
 export const tableRows = (tasks: Array<PlacementApplicationTask>): Array<TableRow> => {
   return tasks.map((task: PlacementApplicationTask) => {
-    return [nameCell(task), crnCell(task), tierCell(task), placementTypeCell(task), statusCell(task)]
+    return [
+      nameCell(task),
+      crnCell(task),
+      tierCell(task),
+      arrivalDateCell(task),
+      placementTypeCell(task),
+      statusCell(task),
+    ]
   })
 }
 
@@ -59,8 +70,10 @@ export const placementTypeCell = (task: PlacementApplicationTask) => {
   }
 }
 
-export const statusCell = (task: PlacementApplicationTask) => {
-  return {
-    html: `<strong class="govuk-tag">${sentenceCase(task.status)}</strong>`,
-  }
-}
+export const statusCell = (task: PlacementApplicationTask) => ({
+  html: `<strong class="govuk-tag">${sentenceCase(task.status)}</strong>`,
+})
+
+export const arrivalDateCell = (task: PlacementApplicationTask): TableCell => ({
+  text: DateFormats.isoDateToUIDate(task.expectedArrivalDate, { format: 'short' }),
+})
