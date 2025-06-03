@@ -2,9 +2,10 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+{% from "components/sortableTable/macro.njk" import sortableTable %}
 
 {% extends "../../../match/layout-with-details.njk" %}
 
@@ -72,18 +73,18 @@
     <section>
         <h2 class="govuk-heading-m">{{ placementTableCaption }}</h2>
         {% if placementTableRows and placementTableRows.length %}
-        {{ govukTable({
-            firstCellIsHeader: false,
-            head: placementTableHeader,
-            rows: placementTableRows
-        }) }}
+            {{ sortableTable({
+                firstCellIsHeader: false,
+                head: placementTableHeader,
+                rows: placementTableRows
+            }) }}
         {% endif %}
     </section>
 
     {% if outOfServiceBedTableRows and outOfServiceBedTableRows.length %}
         <section>
             <h2 class="govuk-heading-m">{{ outOfServiceBedCaption }}</h2>
-            {{ govukTable({
+            {{ sortableTable({
                 firstCellIsHeader: false,
                 head: outOfServiceBedTableHeader,
                 rows: outOfServiceBedTableRows

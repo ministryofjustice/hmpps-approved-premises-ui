@@ -23,6 +23,7 @@ import paths from '../../paths/manage'
 import { linkTo } from '../utils'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
+import { sortHeader } from '../sortHeader'
 
 describe('premisesUtils', () => {
   describe('premisesActions', () => {
@@ -241,27 +242,12 @@ describe('premisesUtils', () => {
         const sortBy = 'personName'
         const tableHeadings = placementTableHeader(activeTab, sortBy, 'asc', 'Test_Href_Prefix')
         const baseTableHeadings = [
-          {
-            attributes: { 'aria-sort': 'ascending', 'data-cy-sort-field': 'personName' },
-            html: '<a href="Test_Href_Prefix?sortBy=personName&sortDirection=desc">Name and CRN</a>',
-          },
-          {
-            attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'tier' },
-            html: '<a href="Test_Href_Prefix?sortBy=tier">Tier</a>',
-          },
-          {
-            attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalArrivalDate' },
-            html: '<a href="Test_Href_Prefix?sortBy=canonicalArrivalDate">Arrival date</a>',
-          },
-          {
-            attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'canonicalDepartureDate' },
-            html: '<a href="Test_Href_Prefix?sortBy=canonicalDepartureDate">Departure date</a>',
-          },
+          sortHeader('Name and CRN', 'personName', 'personName', 'asc', 'Test_Href_Prefix'),
+          sortHeader('Tier', 'tier', 'personName', 'asc', 'Test_Href_Prefix'),
+          sortHeader('Arrival date', 'canonicalArrivalDate', 'personName', 'asc', 'Test_Href_Prefix'),
+          sortHeader('Departure date', 'canonicalDepartureDate', 'personName', 'asc', 'Test_Href_Prefix'),
         ]
-        const keyworkerColumn = {
-          attributes: { 'aria-sort': 'none', 'data-cy-sort-field': 'keyWorkerName' },
-          html: '<a href="Test_Href_Prefix?sortBy=keyWorkerName">Key worker</a>',
-        }
+        const keyworkerColumn = sortHeader('Key worker', 'keyWorkerName', 'personName', 'asc', 'Test_Href_Prefix')
         const statusColumn = {
           text: 'Status',
         }
