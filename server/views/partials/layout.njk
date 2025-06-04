@@ -20,3 +20,16 @@
     <script type="module" src="{{ '/assets/js/app.js' | assetMap }}"></script>
     {% block extraScripts %}{% endblock %}
 {% endblock %}
+
+{% block footer %}
+    {{ govukFooter({
+        meta: {
+            items: [
+                {
+                    href: paths.pages.accessibilityStatement({}),
+                    text: "Accessibility"
+                }
+            ]
+        }
+    }) }}
+{% endblock %}
