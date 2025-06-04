@@ -23,7 +23,7 @@ describe('OasysQuestions', () => {
     const sections = roshSummaryFactory.buildList(2)
 
     expect(oasysQuestions(sections)).toBe(
-      `<h2 class="govuk-heading-m">${sections[0].questionNumber}. ${sections[0].label}</h2><p class="govuk-body">${sections[0].answer}</p><hr class="govuk-!-margin-bottom-2"/><h2 class="govuk-heading-m">${sections[1].questionNumber}. ${sections[1].label}</h2><p class="govuk-body">${sections[1].answer}</p><hr class="govuk-!-margin-bottom-2"/>`,
+      `<h2 class="govuk-heading-m">${sections[0].questionNumber}. ${sections[0].label}</h2><p class="govuk-body govuk-body__text-block">${sections[0].answer}</p><hr class="govuk-!-margin-bottom-2"/><h2 class="govuk-heading-m">${sections[1].questionNumber}. ${sections[1].label}</h2><p class="govuk-body govuk-body__text-block">${sections[1].answer}</p><hr class="govuk-!-margin-bottom-2"/>`,
     )
   })
 })
