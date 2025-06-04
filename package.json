@@ -156,7 +156,7 @@
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@golevelup/ts-jest": "0.5.0",
+    "@golevelup/ts-jest": "0.7.0",
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.2",
     "@pact-foundation/pact": "^13.2.0",
@@ -211,6 +211,6 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "cross-spawn": "7.0.5"
+    "cross-spawn": "7.0.6"
   }
 }
