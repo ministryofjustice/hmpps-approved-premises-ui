@@ -183,7 +183,7 @@
     "concurrently": "^8.0.0",
     "cypress": "^13.6.5",
     "cypress-axe": "^1.6.0",
-    "cypress-multi-reporters": "^1.6.1",
+    "cypress-multi-reporters": "^2.0.0",
     "esbuild": "^0.25.5",
     "esbuild-plugin-clean": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
