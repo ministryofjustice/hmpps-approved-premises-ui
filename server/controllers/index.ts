@@ -16,6 +16,7 @@ import TimelineController from './people/timelineController'
 import ReviewController from './placementApplications/reviewController'
 import WithdrawalsController from './placementApplications/withdrawalsController'
 import RedirectController from './redirectController'
+import StaticController from './staticController'
 
 export const controllers = (services: Services) => {
   const redirectController = new RedirectController()
@@ -35,6 +36,7 @@ export const controllers = (services: Services) => {
   const placementApplicationWithdrawalsController = new WithdrawalsController(services.placementApplicationService)
   const peopleController = new PeopleController(services.personService)
   const timelineController = new TimelineController(services.personService)
+  const staticController = new StaticController()
 
   return {
     redirectController,
@@ -46,6 +48,7 @@ export const controllers = (services: Services) => {
     placementApplicationWithdrawalsController,
     peopleController,
     timelineController,
+    staticController,
     ...applyControllers(services),
     ...assessControllers(services),
     ...matchControllers(services),
