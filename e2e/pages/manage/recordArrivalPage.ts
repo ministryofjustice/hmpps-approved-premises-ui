@@ -15,10 +15,10 @@ export class RecordArrivalPage extends BasePage {
     const arrivalDateTime = addDays(new Date(), -1) // Yesterday same time
     const [year, month, day, hours, minutes] = DateFormats.dateObjToIsoDateTime(arrivalDateTime)
       .split(/\D/)
-      .map(part => part.replace(/^0+/, '')) // remove leading zeros for realistic input
+      .map(part => part.replace(/^0/, '')) // remove leading zeros for realistic input
 
     await this.fillDateField({ year, month, day })
-    await this.fillField('What is the time of arrival?', `${hours}:${minutes}`)
+    await this.fillField('What is the time of arrival?', `${hours}:${minutes.padStart(2, '0')}`)
 
     await this.clickSubmit()
 

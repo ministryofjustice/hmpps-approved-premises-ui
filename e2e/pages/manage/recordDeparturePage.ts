@@ -16,10 +16,10 @@ export class RecordDeparturePage extends BasePage {
     const departureDateTime = addHours(new Date(), -1) // One hour ago
     const [year, month, day, hours, minutes] = DateFormats.dateObjToIsoDateTime(departureDateTime)
       .split(/\D/)
-      .map(part => part.replace(/^0+/, '')) // remove leading zeros for realistic input
+      .map(part => part.replace(/^0/, '')) // remove leading zeros for realistic input
 
     await this.fillDateField({ year, month, day })
-    await this.fillField('What is the time of departure?', `${hours}:${minutes}`)
+    await this.fillField('What is the time of departure?', `${hours}:${minutes.padStart(2, '0')}`)
 
     const reason = await this.selectAnyRadioOption('reasonId')
     await this.clickContinue()
