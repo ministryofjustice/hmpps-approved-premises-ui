@@ -4,7 +4,7 @@
 
     {% for banner in changeRequestBanners %}
         {% set html %}
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Change requested:{{ banner.requestType }}</h2>
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Change requested: {{ banner.requestType }}</h2>
             <p>{{ banner.message }}</p>
             <a class="govuk-button govuk-!-margin-bottom-1" data-module="govuk-button" href="{{ banner.link }}">
                 {{ banner.linkHeading }}

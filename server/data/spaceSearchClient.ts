@@ -25,7 +25,7 @@ export default class SpaceSearchClient {
 
   async createSpaceBooking(placementRequestId: PlacementRequest['id'], data: NewSpaceBooking): Promise<SpaceBooking> {
     return (await this.restClient.post({
-      path: paths.placementRequests.spaceBookings.create({ id: placementRequestId }),
+      path: paths.placementRequests.spaceBookings.create({ placementRequestId }),
       data,
     })) as SpaceBooking
   }

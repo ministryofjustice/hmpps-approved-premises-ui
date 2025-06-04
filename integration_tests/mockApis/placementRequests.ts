@@ -204,7 +204,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.placementRequests.show({ id: placementRequestDetail.id }),
+        urlPattern: paths.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
       },
       response: {
         status: 200,
@@ -218,7 +218,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: paths.placementRequests.booking({ id: placementRequest.id }),
+        url: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
       },
       response: {
         status: 200,
@@ -232,14 +232,14 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: paths.placementRequests.booking({ id: placementRequest.id }),
+        url: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
       })
     ).body.requests,
   stubUnableToMatchPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
-        url: paths.placementRequests.bookingNotMade({ id: placementRequest.id }),
+        url: paths.placementRequests.bookingNotMade({ placementRequestId: placementRequest.id }),
       },
       response: {
         status: 200,
@@ -253,7 +253,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: paths.placementRequests.withdrawal.create({ id: placementRequest.id }),
+        url: paths.placementRequests.withdrawal.create({ placementRequestId: placementRequest.id }),
       },
       response: {
         status: 200,
@@ -268,7 +268,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: paths.placementRequests.bookingNotMade({ id: placementRequest.id }),
+        url: paths.placementRequests.bookingNotMade({ placementRequestId: placementRequest.id }),
       },
       response: {
         status: 200,
@@ -281,14 +281,14 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: paths.placementRequests.withdrawal.create({ id: placementRequest.id }),
+        url: paths.placementRequests.withdrawal.create({ placementRequestId: placementRequest.id }),
       })
     ).body.requests,
   verifyPlacementRequestedMarkedUnableToMatch: async (placementRequest: PlacementRequest) =>
     (
       await getMatchingRequests({
         method: 'POST',
-        url: paths.placementRequests.bookingNotMade({ id: placementRequest.id }),
+        url: paths.placementRequests.bookingNotMade({ placementRequestId: placementRequest.id }),
       })
     ).body.requests,
   stubOccupancyReportDownload: (args: { filename: string }) =>
@@ -313,7 +313,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        urlPattern: paths.placementRequests.appeal({ id: placementRequestId }),
+        urlPattern: paths.placementRequests.appeal({ placementRequestId }),
       },
       response: {
         status: 200,
@@ -324,7 +324,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        urlPattern: paths.placementRequests.plannedTransfer({ id: placementRequestId }),
+        urlPattern: paths.placementRequests.plannedTransfer({ placementRequestId }),
       },
       response: {
         status: 200,

@@ -60,19 +60,19 @@ export const changeRequestBanners = (
   changeRequests: Array<Cas1ChangeRequestSummary>,
   user: UserDetails,
 ) => {
-  const casAssessAppeal = hasPermission(user, ['cas1_placement_appeal_assess'])
+  const canAssessAppeal = hasPermission(user, ['cas1_placement_appeal_assess'])
   return changeRequests
     .map(({ id, type }) => {
       const link = adminPaths.admin.placementRequests.changeRequests.review({
         id: placementRequestId,
         changeRequestId: id,
       })
-      if (type === 'placementAppeal' && casAssessAppeal)
+      if (type === 'placementAppeal' && canAssessAppeal)
         return {
           requestType: 'appeal',
           message: 'This placement has been appealed',
           link,
-          linkHeading: 'Review',
+          linkHeading: 'Review appeal',
         }
       return undefined
     })

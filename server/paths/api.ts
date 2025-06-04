@@ -14,8 +14,8 @@ const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placementId')
 const cas1Capacity = cas1PremisesSingle.path('capacity')
 const cas1DaySummary = cas1PremisesSingle.path('day-summary/:date')
-
-const cas1PlacementRequestSingle = cas1Namespace.path('placement-requests/:id')
+const cas1PlacementRequests = cas1Namespace.path('placement-requests')
+const cas1PlacementRequestSingle = cas1PlacementRequests.path(':placementRequestId')
 const cas1SpaceBookings = cas1PlacementRequestSingle.path('space-bookings')
 
 const cas1Reports = cas1Namespace.path('reports')
@@ -49,8 +49,7 @@ const tasks = path('/tasks')
 const taskSingle = tasks.path(':taskType/:id')
 
 const placementRequests = path('/placement-requests')
-const placementRequestsSingle = placementRequests.path(':id')
-const cas1PlacementRequests = cas1Namespace.path('placement-requests')
+const placementRequestsSingle = placementRequests.path(':placementRequestId')
 
 const placementApplications = path('/placement-applications')
 const placementApplicationsSingle = placementApplications.path(':id')
@@ -169,6 +168,7 @@ export default {
   placementRequests: {
     show: cas1PlacementRequestSingle,
     dashboard: placementRequests.path('dashboard'),
+    changeRequests: cas1PlacementRequests.path('change-requests'),
     booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
@@ -180,8 +180,7 @@ export default {
     appeal: cas1PlacementRequestSingle.path('appeal'),
     plannedTransfer: cas1PlacementRequestSingle.path('planned-transfer'),
     extension: cas1PlacementRequestSingle.path('extension'),
-    changeRequests: cas1PlacementRequests.path('change-requests'),
-    changeRequest: cas1PlacementRequests.path(':placementRequestId/change-requests/:changeRequestId'),
+    changeRequest: cas1PlacementRequestSingle.path('change-requests/:changeRequestId'),
   },
   placementApplications: {
     update: placementApplicationsSingle,

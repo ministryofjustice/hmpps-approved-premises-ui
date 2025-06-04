@@ -1,14 +1,14 @@
 import { Cas1ChangeRequest, Cas1ChangeRequestType, Unit } from '@approved-premises/api'
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import { AppealJson } from '@approved-premises/ui'
+import { AppealJson, ChangeRequestReason } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
 import { appealReasonRadioDefinitions } from '../../utils/placements/changeRequests'
 
 class Cas1ChangeRequestFactory extends Factory<Cas1ChangeRequest> {
   placementAppeal() {
-    const appealReason: string = faker.helpers.arrayElement(Object.keys(appealReasonRadioDefinitions))
-    const requestJson: AppealJson<string> = {
+    const appealReason = faker.helpers.arrayElement(Object.keys(appealReasonRadioDefinitions)) as ChangeRequestReason
+    const requestJson: AppealJson = {
       areaManagerName: faker.person.fullName(),
       areaManagerEmail: faker.internet.email(),
       appealReason,

@@ -28,8 +28,8 @@
     {% include "../../../_messages.njk" %}
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thir">
-            <form action="{{ postUrl }}"
+        <div class="govuk-grid-column-full">
+            <form action="{{ currentUrl }}"
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ showErrorSummary(errorSummary, errorTitle) }}
@@ -45,7 +45,7 @@
 
                 {% if changeRequestSummary %}
                     <h2 class="govuk-heading-m">Appeal request summary</h2>
-                    {{ govukSummaryList(        changeRequestSummary) }}
+                    {{ govukSummaryList(changeRequestSummary) }}
                 {% endif %}
 
                 <h2 class="govuk-heading-m">Decision</h2>

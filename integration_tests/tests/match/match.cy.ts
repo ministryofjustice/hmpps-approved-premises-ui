@@ -365,16 +365,17 @@ context('Placement Requests', () => {
     cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequest)
 
     // And the booking details should have been sent to the API
-    cy.task('verifyApiPost', apiPaths.placementRequests.spaceBookings.create({ id: placementRequest.id })).then(
-      body => {
-        expect(body).to.deep.equal({
-          arrivalDate,
-          departureDate,
-          premisesId: premises.id,
-          characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        })
-      },
-    )
+    cy.task(
+      'verifyApiPost',
+      apiPaths.placementRequests.spaceBookings.create({ placementRequestId: placementRequest.id }),
+    ).then(body => {
+      expect(body).to.deep.equal({
+        arrivalDate,
+        departureDate,
+        premisesId: premises.id,
+        characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
+      })
+    })
   })
 
   it('allows me to mark a placement request as unable to match', () => {

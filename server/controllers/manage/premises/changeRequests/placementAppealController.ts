@@ -6,7 +6,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import { PlacementRequestService, PremisesService } from '../../../../services'
 import {
   mapChangeRequestReasonsToRadios,
-  getAppealReasonId,
+  getChangeRequestReasonId,
   validateNewAppealResponse,
   getConfirmationSummary,
 } from '../../../../utils/placements/changeRequests'
@@ -35,11 +35,15 @@ export default class PlacementAppealController {
         'placementAppeal',
       )
 
-      const appealReasonRadioItems = mapChangeRequestReasonsToRadios(appealReasons, 'appealReason', context)
+      const appealReasonRadioItems = mapChangeRequestReasonsToRadios(
+        appealReasons,
+        'appealReason',
+        context,
+        'Add more details',
+      )
 
       return res.render('manage/premises/placements/appeals/new', {
         pageHeading: 'Appeal against a placement',
-        postUrl: managePaths.premises.placements.appeal.new({ premisesId, placementId }),
         placement,
         appealReasonRadioItems,
         ...context,
@@ -106,15 +110,15 @@ export default class PlacementAppealController {
         const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
         const { areaManagerName, areaManagerEmail, appealReason, notes } = sessionData
-        const reasonId = getAppealReasonId(appealReason, appealReasons)
+        const reasonId = getChangeRequestReasonId(appealReason, appealReasons)
 
         const { approvalDate } = DateFormats.dateAndTimeInputsToIsoString(
           sessionData as ObjectWithDateParts<'approvalDate'>,
           'approvalDate',
         )
-        const reasonDetailKey: keyof AppealJson<string> = `${appealReason}Detail`
+        const reasonDetailKey: keyof AppealJson = `${appealReason}Detail`
 
-        const requestJson: AppealJson<string> = {
+        const requestJson: AppealJson = {
           areaManagerName,
           areaManagerEmail,
           appealReason,

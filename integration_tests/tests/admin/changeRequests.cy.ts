@@ -210,10 +210,14 @@ context('Change Requests', () => {
         const showPage = ShowPage.visit(placementRequest)
 
         // Then I should see a ticket panel
-        showPage.shouldShowTicketPanel('Changerequested:appealThisplacementhasbeenappealed', { exact: false })
+        showPage.shouldShowTicketPanel(
+          `Change requested:appeal
+        This placement has been appealed`,
+          { exact: false },
+        )
 
         // When I click to review the appeal
-        showPage.clickLink('Review')
+        showPage.clickLink('Review appeal')
 
         // Then I should be on the appeal review page
         const reviewPage = Page.verifyOnPage(ReviewChangeRequestPage, placementRequest, changeRequest)
@@ -254,10 +258,14 @@ context('Change Requests', () => {
         const showPage = ShowPage.visit(placementRequest)
 
         // Then I should see a ticket panel
-        showPage.shouldShowTicketPanel('Changerequested:appealThisplacementhasbeenappealed', { exact: false })
+        showPage.shouldShowTicketPanel(
+          `Change requested:appeal
+        This placement has been appealed`,
+          { exact: false },
+        )
 
         // When I click to review the appeal
-        showPage.clickLink('Review')
+        showPage.clickLink('Review appeal')
 
         // Then I should be on the appeal review page
         const reviewPage = Page.verifyOnPage(ReviewChangeRequestPage, placementRequest, changeRequest)

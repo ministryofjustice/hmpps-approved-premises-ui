@@ -81,6 +81,7 @@ describe('placementAppealController', () => {
         appealReasons,
         'appealReason',
         errorsAndUserInput,
+        'Add more details',
       )
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/placements/appeals/new',
@@ -88,7 +89,6 @@ describe('placementAppealController', () => {
           placement,
           appealReasonRadioItems,
           ...errorsAndUserInput,
-          postUrl: managePaths.premises.placements.appeal.new({ premisesId, placementId: placement.id }),
         }),
       )
     })
@@ -100,10 +100,15 @@ describe('placementAppealController', () => {
       const requestHandler = placementAppealController.new()
       await requestHandler(request, response, next)
 
-      expect(changeRequestUtils.mapChangeRequestReasonsToRadios).toHaveBeenCalledWith(appealReasons, 'appealReason', {
-        ...sessionData,
-        ...errorsAndUserInput,
-      })
+      expect(changeRequestUtils.mapChangeRequestReasonsToRadios).toHaveBeenCalledWith(
+        appealReasons,
+        'appealReason',
+        {
+          ...sessionData,
+          ...errorsAndUserInput,
+        },
+        'Add more details',
+      )
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/placements/appeals/new',
         expect.objectContaining({

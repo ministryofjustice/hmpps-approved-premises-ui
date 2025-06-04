@@ -1,8 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
-import { ChangeRequestReason } from 'server/utils/placements/changeRequests'
 import { faker } from '@faker-js/faker'
-import { ErrorsAndUserInput } from '@approved-premises/ui'
+import { ChangeRequestReason, ErrorsAndUserInput } from '@approved-premises/ui'
 import paths from '../../../paths/admin'
 import {
   cas1ChangeRequestFactory,
@@ -39,7 +38,7 @@ describe('plannedTransferController', () => {
     {
       checked: false,
       text: 'No suitable AP available',
-      value: 'noSuitableApAvailable',
+      value: changeRequestRejectionReasons[0].name,
     },
     {
       divider: 'or',
@@ -82,7 +81,6 @@ describe('plannedTransferController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/changeRequests/review', {
         pageHeading: 'Review appeal',
         backLink: `/admin/placement-requests/${placementRequest.id}`,
-        formAction: `/admin/placement-requests/${placementRequest.id}/change-requests/${changeRequest.id}/review`,
         bookingSummary: placementSummaryList(placementRequest),
         changeRequestSummary: changeRequestSummaryList(changeRequest),
         decisionOptions,
@@ -96,7 +94,7 @@ describe('plannedTransferController', () => {
       request.body = {}
       await controller.decide()(request, response, next)
 
-      const [, , error, redirect] = errorCatchSpy.mock.calls[0]
+      const [, , error] = errorCatchSpy.mock.calls[0]
       expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
         request,
         response,
@@ -107,27 +105,6 @@ describe('plannedTransferController', () => {
         }),
       )
       expect(error.data).toEqual({ decision: 'You must select a decision' })
-      expect(redirect).toEqual(
-        paths.admin.placementRequests.changeRequests.review({
-          id: placementRequest.id,
-          changeRequestId: changeRequest.id,
-        }),
-      )
-    })
-
-    it('should redirect invalid decision (not in retrieved rejection reasons)', async () => {
-      request.body = { decision: 'movingPersonCloserToResettlementArea' }
-      await controller.decide()(request, response, next)
-
-      const [, , error, redirect] = errorCatchSpy.mock.calls[0]
-
-      expect(error.data).toEqual({ decision: 'Decision not valid' })
-      expect(redirect).toEqual(
-        paths.admin.placementRequests.changeRequests.review({
-          id: placementRequest.id,
-          changeRequestId: changeRequest.id,
-        }),
-      )
     })
 
     it('should action the appeal if the decision is to progress', async () => {
@@ -149,11 +126,10 @@ describe('plannedTransferController', () => {
     })
 
     it('should reject the appeal if a rejection reason is given', async () => {
-      request.body = { decision: 'noSuitableApAvailable', notes: 'some rejection notes' }
+      request.body = { decision: changeRequestRejectionReasons[0].name, notes: 'some rejection notes' }
       await controller.decide()(request, response, next)
 
       expect(errorCatchSpy).not.toHaveBeenCalled()
-      expect(placementRequestService.getChangeRequestRejectionReasons).toHaveBeenCalledWith(token, 'placementAppeal')
       expect(placementRequestService.rejectChangeRequest).toHaveBeenCalledWith(token, {
         changeRequestId: changeRequest.id,
         placementRequestId: placementRequest.id,

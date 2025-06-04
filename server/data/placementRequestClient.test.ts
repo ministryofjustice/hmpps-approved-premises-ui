@@ -301,7 +301,7 @@ describeClient('placementRequestClient', provider => {
         uponReceiving: 'A request to create a booking from a placement request',
         withRequest: {
           method: 'POST',
-          path: paths.placementRequests.booking({ id: placementRequest.id }),
+          path: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
           body: newPlacementRequestBooking,
           headers: {
             authorization: `Bearer ${token}`,
@@ -332,7 +332,7 @@ describeClient('placementRequestClient', provider => {
         uponReceiving: 'A request to mark a placement request as not booked',
         withRequest: {
           method: 'POST',
-          path: paths.placementRequests.bookingNotMade({ id: placementRequestId }),
+          path: paths.placementRequests.bookingNotMade({ placementRequestId }),
           body,
           headers: {
             authorization: `Bearer ${token}`,
@@ -359,7 +359,7 @@ describeClient('placementRequestClient', provider => {
         uponReceiving: 'A request to mark a placement request as withdrawn',
         withRequest: {
           method: 'POST',
-          path: paths.placementRequests.withdrawal.create({ id: placementRequestId }),
+          path: paths.placementRequests.withdrawal.create({ placementRequestId }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -393,7 +393,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         uponReceiving: 'A request to get a placement request',
         withRequest: {
           method: 'GET',
-          path: paths.placementRequests.show({ id: placementRequestDetail.id }),
+          path: paths.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -528,7 +528,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         uponReceiving: 'A request to create an appeal changeRequest against a placementRequest',
         withRequest: {
           method: 'POST',
-          path: paths.placementRequests.appeal({ id: placementRequestId }),
+          path: paths.placementRequests.appeal({ placementRequestId }),
           body: newChangeRequest,
           headers: {
             authorization: `Bearer ${token}`,
@@ -552,7 +552,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         uponReceiving: 'A request to create a planned transfer changeRequest against a placementRequest',
         withRequest: {
           method: 'POST',
-          path: paths.placementRequests.plannedTransfer({ id: placementRequestId }),
+          path: paths.placementRequests.plannedTransfer({ placementRequestId }),
           body: newChangeRequest,
           headers: {
             authorization: `Bearer ${token}`,
@@ -576,7 +576,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         uponReceiving: 'A request to create an extension changeRequest against a placementRequest',
         withRequest: {
           method: 'POST',
-          path: paths.placementRequests.extension({ id: placementRequestId }),
+          path: paths.placementRequests.extension({ placementRequestId }),
           body: newChangeRequest,
           headers: {
             authorization: `Bearer ${token}`,

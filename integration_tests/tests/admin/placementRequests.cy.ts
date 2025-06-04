@@ -474,7 +474,9 @@ context('Placement Requests', () => {
       cy.task('verifyPlacementRequestWithdrawal', withdrawable).then(requests => {
         expect(requests).to.have.length(1)
 
-        expect(requests[0].url).to.equal(paths.placementRequests.withdrawal.create({ id: withdrawable.id }))
+        expect(requests[0].url).to.equal(
+          paths.placementRequests.withdrawal.create({ placementRequestId: withdrawable.id }),
+        )
 
         const body = JSON.parse(requests[0].body)
 

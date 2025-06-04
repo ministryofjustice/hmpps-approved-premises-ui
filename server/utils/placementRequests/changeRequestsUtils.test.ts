@@ -100,7 +100,7 @@ describe('changeRequestsUtils', () => {
       const expected = appeals.map((changeRequest: Cas1ChangeRequestSummary) => {
         return {
           link: `/admin/placement-requests/test-uuid/change-requests/${changeRequest.id}/review`,
-          linkHeading: 'Review',
+          linkHeading: 'Review appeal',
           message: 'This placement has been appealed',
           requestType: 'appeal',
         }

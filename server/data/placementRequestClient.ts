@@ -71,39 +71,39 @@ export default class PlacementRequestClient {
     })
   }
 
-  async find(id: string): Promise<Cas1PlacementRequestDetail> {
+  async find(placementRequestId: string): Promise<Cas1PlacementRequestDetail> {
     return (await this.restClient.get({
-      path: paths.placementRequests.show({ id }),
+      path: paths.placementRequests.show({ placementRequestId }),
     })) as Promise<Cas1PlacementRequestDetail>
   }
 
   async createBooking(
-    id: string,
+    placementRequestId: string,
     newPlacementRequestBooking: NewPlacementRequestBooking,
   ): Promise<NewPlacementRequestBookingConfirmation> {
     return (await this.restClient.post({
-      path: paths.placementRequests.booking({ id }),
+      path: paths.placementRequests.booking({ placementRequestId }),
       data: newPlacementRequestBooking,
     })) as Promise<NewPlacementRequestBookingConfirmation>
   }
 
-  async bookingNotMade(id: string, data: NewBookingNotMade): Promise<BookingNotMade> {
+  async bookingNotMade(placementRequestId: string, data: NewBookingNotMade): Promise<BookingNotMade> {
     return (await this.restClient.post({
-      path: paths.placementRequests.bookingNotMade({ id }),
+      path: paths.placementRequests.bookingNotMade({ placementRequestId }),
       data,
     })) as Promise<BookingNotMade>
   }
 
-  async withdraw(id: string, reason: WithdrawPlacementRequestReason): Promise<PlacementRequest> {
+  async withdraw(placementRequestId: string, reason: WithdrawPlacementRequestReason): Promise<PlacementRequest> {
     return (await this.restClient.post({
-      path: paths.placementRequests.withdrawal.create({ id }),
+      path: paths.placementRequests.withdrawal.create({ placementRequestId }),
       data: { reason },
     })) as Promise<PlacementRequest>
   }
 
-  async createPlacementAppeal(id: string, newChangeRequest: Cas1NewChangeRequest) {
+  async createPlacementAppeal(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
     return this.restClient.post({
-      path: paths.placementRequests.appeal({ id }),
+      path: paths.placementRequests.appeal({ placementRequestId }),
       data: newChangeRequest,
     })
   }
@@ -121,16 +121,16 @@ export default class PlacementRequestClient {
     })
   }
 
-  async createPlannedTransfer(id: string, newChangeRequest: Cas1NewChangeRequest) {
+  async createPlannedTransfer(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
     return this.restClient.post({
-      path: paths.placementRequests.plannedTransfer({ id }),
+      path: paths.placementRequests.plannedTransfer({ placementRequestId }),
       data: newChangeRequest,
     })
   }
 
-  async createExtension(id: string, newChangeRequest: Cas1NewChangeRequest) {
+  async createExtension(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
     return this.restClient.post({
-      path: paths.placementRequests.extension({ id }),
+      path: paths.placementRequests.extension({ placementRequestId }),
       data: newChangeRequest,
     })
   }

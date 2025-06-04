@@ -99,15 +99,16 @@ context('Change requests', () => {
     newPage.clickButton('Create appeal')
 
     // Then the appeal change request should be created
-    cy.task('verifyApiPost', apiPaths.placementRequests.appeal({ id: placement.placementRequestId })).then(
-      (body: Cas1NewChangeRequest) => {
-        const { spaceBookingId, reasonId, type, requestJson } = body
-        expect(spaceBookingId).equal(placement.id)
-        expect(reasonId).equal('offenceNotAccepted')
-        expect(type).equal('placementAppeal')
-        expect(requestJson).equal(newPage.getRequestJson())
-      },
-    )
+    cy.task(
+      'verifyApiPost',
+      apiPaths.placementRequests.appeal({ placementRequestId: placement.placementRequestId }),
+    ).then((body: Cas1NewChangeRequest) => {
+      const { spaceBookingId, reasonId, type, requestJson } = body
+      expect(spaceBookingId).equal(placement.id)
+      expect(reasonId).equal('offenceNotAccepted')
+      expect(type).equal('placementAppeal')
+      expect(requestJson).equal(newPage.getRequestJson())
+    })
 
     // Then I should be redirected back to the placement details page with a banner
     placementPage.checkOnPage()
@@ -223,7 +224,7 @@ context('Change requests', () => {
     cy.task('stubSinglePremises', destinationAp)
     cy.task('stubPlannedTransferCreate', placement.placementRequestId)
 
-    const pannedTransferReasons: Array<string> = [
+    const plannedTransferReasons: Array<string> = [
       'extendingThePlacementNoCapacityAtCurrentAp',
       'placementPrioritisation',
       'movingPersonCloserToResettlementArea',
@@ -231,7 +232,7 @@ context('Change requests', () => {
 
     cy.task('stubChangeRequestReasonsReferenceData', {
       changeRequestType: 'plannedTransfer',
-      reasons: pannedTransferReasons.map(name => ({ name, id: `${name}Id` })),
+      reasons: plannedTransferReasons.map(name => ({ name, id: `${name}Id` })),
     })
 
     // Given I am signed in as a future manager
@@ -281,27 +282,28 @@ context('Change requests', () => {
     placementPage.shouldShowBanner(`Transfer requested${plannedTransferSuccessMessage.body}`)
 
     // And the API was called to create the planned transfer change request
-    cy.task('verifyApiPost', apiPaths.placementRequests.plannedTransfer({ id: placement.placementRequestId })).then(
-      body => {
-        const { spaceBookingId, type, reasonId, requestJson } = body as Cas1NewChangeRequest
+    cy.task(
+      'verifyApiPost',
+      apiPaths.placementRequests.plannedTransfer({ placementRequestId: placement.placementRequestId }),
+    ).then(body => {
+      const { spaceBookingId, type, reasonId, requestJson } = body as Cas1NewChangeRequest
 
-        expect(spaceBookingId).equal(placement.id)
-        expect(type).equal('plannedTransfer')
-        expect(reasonId).equal('placementPrioritisationId')
-        const { isFlexible, transferReason, notes } = plannedDetailsPage.getFieldValueMap() as {
-          isFlexible: string
-          transferReason: string
-          notes: string
-        }
-        const {
-          isFlexible: actualIsFlexible,
-          transferReason: actualTransferReason,
-          notes: actualNotes,
-        } = JSON.parse(requestJson as unknown as string)
-        expect(actualIsFlexible).equal(isFlexible)
-        expect(actualTransferReason).equal(transferReason)
-        expect(actualNotes).equal(notes)
-      },
-    )
+      expect(spaceBookingId).equal(placement.id)
+      expect(type).equal('plannedTransfer')
+      expect(reasonId).equal('placementPrioritisationId')
+      const { isFlexible, transferReason, notes } = plannedDetailsPage.getFieldValueMap() as {
+        isFlexible: string
+        transferReason: string
+        notes: string
+      }
+      const {
+        isFlexible: actualIsFlexible,
+        transferReason: actualTransferReason,
+        notes: actualNotes,
+      } = JSON.parse(requestJson as unknown as string)
+      expect(actualIsFlexible).equal(isFlexible)
+      expect(actualTransferReason).equal(transferReason)
+      expect(actualNotes).equal(notes)
+    })
   })
 })

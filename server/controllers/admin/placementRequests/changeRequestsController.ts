@@ -3,6 +3,7 @@ import type { Request, Response, TypedRequestHandler } from 'express'
 import {
   Cas1ApprovedPlacementAppeal,
   Cas1ChangeRequest,
+  Cas1PlacementRequestDetail,
   Cas1RejectChangeRequest,
   Cas1SpaceBooking,
   NamedId,
@@ -16,7 +17,7 @@ import { placementSummaryList } from '../../../utils/placementRequests/placement
 import { bookingSummaryList } from '../../../utils/bookings'
 import { changeRequestSummaryList } from '../../../utils/placementRequests/changeRequestSummaryList'
 import { DateFormats } from '../../../utils/dateUtils'
-import { mapChangeRequestReasonsToRadios } from '../../../utils/placements/changeRequests'
+import { getChangeRequestReasonId, mapChangeRequestReasonsToRadios } from '../../../utils/placements/changeRequests'
 
 type AppealDecision = 'progress' | 'rejectNoLongerRequired' | 'rejectManagerDecision'
 export default class ChangeRequestsController {
@@ -29,20 +30,20 @@ export default class ChangeRequestsController {
     return async (req: Request, res: Response) => {
       const { id: placementRequestId, changeRequestId } = req.params
       const errorsAndUserInput = fetchErrorsAndUserInput(req)
-      const changeRequest: Cas1ChangeRequest = await this.placementRequestService.getChangeRequest(req.user.token, {
-        placementRequestId,
-        changeRequestId,
-      })
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(
-        req.user.token,
-        placementRequestId,
-      )
+      const [changeRequest, placementRequest, rejectionReasons]: [
+        Cas1ChangeRequest,
+        Cas1PlacementRequestDetail,
+        Array<NamedId>,
+      ] = await Promise.all([
+        this.placementRequestService.getChangeRequest(req.user.token, {
+          placementRequestId,
+          changeRequestId,
+        }),
+        this.placementRequestService.getPlacementRequest(req.user.token, placementRequestId),
+        this.placementRequestService.getChangeRequestRejectionReasons(req.user.token, 'placementAppeal'),
+      ])
 
-      const rejectionReasons: Array<NamedId> = await this.placementRequestService.getChangeRequestRejectionReasons(
-        req.user.token,
-        'placementAppeal',
-      )
       const bookingSummary =
         placementRequest.booking &&
         (placementRequest.booking.type === 'space'
@@ -50,6 +51,7 @@ export default class ChangeRequestsController {
           : bookingSummaryList(placementRequest.booking))
       const changeRequestSummary = changeRequestSummaryList(changeRequest)
       const rejectionOptions = mapChangeRequestReasonsToRadios(rejectionReasons, '', {})
+
       const decisionOptions: Array<{ value: string; text: string } | { divider: 'or' }> = [
         ...rejectionOptions,
         { divider: 'or' },
@@ -59,7 +61,6 @@ export default class ChangeRequestsController {
       res.render('admin/placementRequests/changeRequests/review', {
         placementRequest,
         pageHeading: 'Review appeal',
-        formAction: paths.admin.placementRequests.changeRequests.review({ id: placementRequestId, changeRequestId }),
         backLink: paths.admin.placementRequests.show({ id: placementRequestId }),
         bookingSummary,
         changeRequestSummary,
@@ -110,19 +111,13 @@ export default class ChangeRequestsController {
             body: `<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to match' list.</p>`,
           })
         } else {
-          const rejectionReasons: Array<NamedId> = await this.placementRequestService.getChangeRequestRejectionReasons(
+          const rejectionReasons = await this.placementRequestService.getChangeRequestRejectionReasons(
             req.user.token,
             'placementAppeal',
           )
-
-          const rejectionReasonId = rejectionReasons.find(({ name }) => name === decision)?.id
-          if (!rejectionReasonId) {
-            throw new ValidationError({ decision: 'Decision not valid' })
-          }
-
           const rejectChangeRequest: Cas1RejectChangeRequest = {
             decisionJson: { notes } as unknown as Record<string, Unit>, // TODO: Incorrect API type - see APS-2353
-            rejectionReasonId,
+            rejectionReasonId: getChangeRequestReasonId(decision, rejectionReasons),
           }
 
           await this.placementRequestService.rejectChangeRequest(req.user.token, {

@@ -6,7 +6,7 @@ import { getAppealReasonText } from '../placements/changeRequests'
 
 export const changeRequestSummaryList = (changeRequest: Cas1ChangeRequest): SummaryList => {
   const { createdAt, requestJson } = changeRequest
-  const requestData: AppealJson<string> = JSON.parse(requestJson as unknown as string)
+  const requestData: AppealJson = JSON.parse(requestJson as unknown as string)
   const { areaManagerName, areaManagerEmail, approvalDate, notes } = requestData
   const rows: Array<SummaryListItem> = [
     summaryListItem('Approving area manager', `${areaManagerName}\n${areaManagerEmail}`, 'textBlock'),

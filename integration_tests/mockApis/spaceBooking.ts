@@ -14,7 +14,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: paths.placementRequests.spaceBookings.create({ id: args.placementRequestId }),
+        url: paths.placementRequests.spaceBookings.create({ placementRequestId: args.placementRequestId }),
       },
       response: {
         status: 200,

@@ -43,7 +43,6 @@ import placementApplicationFactory from './placementApplication'
 import placementApplicationTaskFactory from './placementApplicationTask'
 import placementDatesFactory from './placementDates'
 import placementRequestFactory from './placementRequest'
-import placementRequestDetailFactory from './placementRequestDetail'
 import premisesFactory from './premises'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
@@ -179,7 +178,6 @@ export {
   placementApplicationDecisionEnvelopeFactory,
   placementDatesFactory,
   placementRequestFactory,
-  placementRequestDetailFactory,
   premisesFactory,
   prisonCaseNotesFactory,
   probationRegionFactory,

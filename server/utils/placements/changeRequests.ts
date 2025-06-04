@@ -46,7 +46,7 @@ export const appealReasonRadioDefinitions: Record<ChangeRequestReason, { text: s
     },
     residentMixOrNonAssociates: {
       text: 'Resident mix or non-associates',
-      conditionalQuestion: 'Say which applies and give details. ',
+      conditionalQuestion: 'Say which applies and give details.',
     },
 
     extendingThePlacementNoCapacityAtCurrentAp: { text: 'Extending the placement (no capacity at current AP)' },
@@ -77,13 +77,15 @@ export const mapChangeRequestReasonsToRadios = (
   changeRequestReasons: Array<NamedId>,
   fieldName: string,
   context: Record<string, unknown>,
+  defaultConditionalQuestion?: string,
 ): Array<RadioItem> => {
   const selectedValue = context[fieldName]
   return changeRequestReasons
     .map(({ name }) => {
-      if (!appealReasonRadioDefinitions[name as ChangeRequestReason])
-        return { value: name, text: sentenceCase(name), checked: selectedValue === name }
-      const { text, conditionalQuestion } = appealReasonRadioDefinitions[name as ChangeRequestReason]
+      const { text, conditionalQuestion } = appealReasonRadioDefinitions[name as ChangeRequestReason] || {
+        text: sentenceCase(name),
+        conditionalQuestion: defaultConditionalQuestion,
+      }
       const conditionalHtml = conditionalQuestion
         ? { conditional: { html: getConditionalHtml(`${name}Detail`, conditionalQuestion, context) } }
         : {}
@@ -92,7 +94,7 @@ export const mapChangeRequestReasonsToRadios = (
     .filter(Boolean)
 }
 
-export const getAppealReasonId = (reasonName: string, reasonList: Array<NamedId>): string => {
+export const getChangeRequestReasonId = (reasonName: string, reasonList: Array<NamedId>): string => {
   return reasonList.find(({ name }) => name === reasonName)?.id
 }
 

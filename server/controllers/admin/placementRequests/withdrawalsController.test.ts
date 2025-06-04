@@ -10,7 +10,7 @@ import paths from '../../../paths/admin'
 import applyPaths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
 import { ErrorWithData } from '../../../utils/errors'
-import { placementRequestDetailFactory } from '../../../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../../../testutils/factories'
 import { withdrawalMessage } from '../../../utils/placementRequests/utils'
 import { placementApplicationWithdrawalReasons } from '../../../utils/applications/utils'
 
@@ -99,7 +99,7 @@ describe('withdrawalsController', () => {
 
   describe('create', () => {
     const applicationId = 'some-id'
-    const placementRequestDetail = placementRequestDetailFactory.build({
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
       applicationId,
       withdrawalReason: 'AlternativeProvisionIdentified',
       duration: 22,
