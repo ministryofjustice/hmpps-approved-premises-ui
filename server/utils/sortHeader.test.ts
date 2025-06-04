@@ -8,7 +8,7 @@ describe('sortHeader', () => {
 
   it("should return a header when the current view is not sorted by the header's field`", () => {
     expect(sortHeader<SortHeaders>('Some text', 'myField', 'otherField', 'asc', hrefPrefix)).toEqual({
-      html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField' })}">Some text</a>`,
+      html: `<a role="button" href="${hrefPrefix}${createQueryString({ sortBy: 'myField' })}">Some text</a>`,
       attributes: {
         'aria-sort': 'none',
         'data-cy-sort-field': 'myField',
@@ -18,7 +18,10 @@ describe('sortHeader', () => {
 
   it("should return a header when the current view is sorted in ascending order by the header's field`", () => {
     expect(sortHeader<SortHeaders>('Some text', 'myField', 'myField', 'asc', hrefPrefix)).toEqual({
-      html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField', sortDirection: 'desc' })}">Some text</a>`,
+      html: `<a role="button" href="${hrefPrefix}${createQueryString({
+        sortBy: 'myField',
+        sortDirection: 'desc',
+      })}">Some text</a>`,
       attributes: {
         'aria-sort': 'ascending',
         'data-cy-sort-field': 'myField',
@@ -28,7 +31,10 @@ describe('sortHeader', () => {
 
   it("should return a header when the current view is sorted in descending order by the header's field`", () => {
     expect(sortHeader<SortHeaders>('Some text', 'myField', 'myField', 'desc', hrefPrefix)).toEqual({
-      html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField', sortDirection: 'asc' })}">Some text</a>`,
+      html: `<a role="button" href="${hrefPrefix}${createQueryString({
+        sortBy: 'myField',
+        sortDirection: 'asc',
+      })}">Some text</a>`,
       attributes: {
         'aria-sort': 'descending',
         'data-cy-sort-field': 'myField',
@@ -39,7 +45,10 @@ describe('sortHeader', () => {
   it('should override and replace the existing parameters in the hrefPrefix', () => {
     const prefixWithParams = `${hrefPrefix}?sortBy=myField&sortDirection=desc`
     expect(sortHeader<SortHeaders>('Some text', 'myField', 'myField', 'desc', prefixWithParams)).toEqual({
-      html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField', sortDirection: 'asc' })}">Some text</a>`,
+      html: `<a role="button" href="${hrefPrefix}${createQueryString({
+        sortBy: 'myField',
+        sortDirection: 'asc',
+      })}">Some text</a>`,
       attributes: {
         'aria-sort': 'descending',
         'data-cy-sort-field': 'myField',

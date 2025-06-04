@@ -1,35 +1,34 @@
 {% extends "../partials/layout.njk" %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% from "components/sortableTable/macro.njk" import sortableTable %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
 
 {% block content %}
-  {% include "../_messages.njk" %}
+    {% include "../_messages.njk" %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
 
-      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      {{
-        mojSubNavigation({
-          label: 'Sub navigation',
-          items: AssessmentUtils.assessmentsTabItems(user, activeTab)
-        })
-      }}
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                items: AssessmentUtils.assessmentsTabItems(user, activeTab)
+            }) }}
 
-      {% if activeTab === 'requests_for_placement' %}
-        {{ govukTable(PlacementApplicationUtils.tableUtils.placementApplicationsTable(placementApplications, sortBy, sortDirection, hrefPrefix))  }}
-      {% else %}
-        {{govukTable(AssessmentUtils.assessmentTable(activeTab, assessments, sortBy, sortDirection, hrefPrefix, pageNumber, totalPages))}}
-      {% endif %}
+            {% if activeTab === 'requests_for_placement' %}
+                {{ sortableTable(PlacementApplicationUtils.tableUtils.placementApplicationsTable(placementApplications, sortBy, sortDirection, hrefPrefix)) }}
+            {% else %}
+                {{ sortableTable(AssessmentUtils.assessmentTable(activeTab, assessments, sortBy, sortDirection, hrefPrefix, pageNumber, totalPages)) }}
+            {% endif %}
 
-      {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
 
+        </div>
     </div>
-  </div>
 {% endblock %}

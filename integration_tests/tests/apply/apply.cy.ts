@@ -245,6 +245,7 @@ context('Apply', () => {
     // Given I need to complete I need a placement
     const user = userFactory.build()
     this.application.createdByUserId = user.id
+    this.application.submittedAt = undefined
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences, user)
     const tomorrow = addDays(new Date(), 1)
