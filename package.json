@@ -170,7 +170,7 @@
     "@types/jest-when": "^3.5.5",
     "@types/jsonpath": "^0.2.0",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/method-override": "^0.0.35",
+    "@types/method-override": "^3.0.0",
     "@types/node": "^22.15.29",
     "@types/nunjucks": "^3.2.1",
     "@types/passport": "^1.0.17",
