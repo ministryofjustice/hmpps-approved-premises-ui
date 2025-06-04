@@ -109,7 +109,7 @@
     "@aws-sdk/client-sqs": "^3.823.0",
     "@faker-js/faker": "^8.0.0",
     "@microsoft/applicationinsights-web": "^3.3.8",
-    "@ministryofjustice/frontend": "^4.0.0",
+    "@ministryofjustice/frontend": "^5.0.0",
     "@playwright/test": "^1.52.0",
     "@sentry/node": "^7.14.1",
     "@sentry/tracing": "^7.120.3",
