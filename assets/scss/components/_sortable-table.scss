@@ -1,7 +1,7 @@
 [aria-sort] {
   a,
   button {
-    display: inline-block;
+    display: inline-flex;
     background-color: transparent;
     border-width: 0;
     -webkit-box-shadow: 0 0 0 0;
@@ -47,6 +47,10 @@
       content: " \25b2" / "";
       top: 2px;
     }
+  }
+
+  button svg {
+    display: none;
   }
 }
 
