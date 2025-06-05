@@ -44,13 +44,13 @@ describe('DeparturesController', () => {
   const premisesId = 'premises-id'
   const TEST_DATE = new Date('2024-11-14T14:00:00.000Z')
   const placement = cas1SpaceBookingFactory.current().build({
-    actualArrivalDate: '2024-10-05',
+    actualArrivalDate: '2024-11-09',
     actualArrivalTime: '11:30',
   })
   const departureFormData = {
-    departureDate: '2024-10-08',
-    'departureDate-day': '8',
-    'departureDate-month': '10',
+    departureDate: '2024-11-13',
+    'departureDate-day': '13',
+    'departureDate-month': '11',
     'departureDate-year': '2024',
     departureTime: '9:35',
     reasonId: BREACH_OR_RECALL_REASON_ID,
@@ -240,13 +240,43 @@ describe('DeparturesController', () => {
       })
     })
 
+    describe('Date too long ago', () => {
+      it('returns a date error if the date is more than 7 days ago', async () => {
+        const placementEarlyArrival = cas1SpaceBookingFactory.current().build({
+          actualArrivalDate: '2024-10-09',
+          actualArrivalTime: '11:30',
+        })
+        premisesService.getPlacement.mockResolvedValue(placementEarlyArrival)
+
+        const requestHandler = departuresController.saveNew()
+
+        request.body = {
+          'departureDate-day': '07',
+          'departureDate-month': '11',
+          'departureDate-year': '2024',
+          departureTime: '11:00',
+          reasonId: rootDepartureReason1.id,
+        }
+
+        await requestHandler(request, response, next)
+
+        const expectedErrorData = {
+          departureDate: 'The date of departure must not be more than 7 days ago',
+        }
+
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+        expect(errorData).toEqual(expectedErrorData)
+      })
+    })
+
     describe('date or time before arrival date', () => {
       it('returns a date error for a date before the arrival date', async () => {
         const requestHandler = departuresController.saveNew()
 
         request.body = {
           'departureDate-day': '01',
-          'departureDate-month': '10',
+          'departureDate-month': '11',
           'departureDate-year': '2024',
           departureTime: '10:00',
           reasonId: rootDepartureReason1.id,
@@ -255,7 +285,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureDate: 'The date of departure must be the same as or after 5 Oct 2024, when the person arrived',
+          departureDate: 'The date of departure must be the same as or after 9 Nov 2024, when the person arrived',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -267,8 +297,8 @@ describe('DeparturesController', () => {
         const requestHandler = departuresController.saveNew()
 
         request.body = {
-          'departureDate-day': '05',
-          'departureDate-month': '10',
+          'departureDate-day': '9',
+          'departureDate-month': '11',
           'departureDate-year': '2024',
           departureTime: '11:00',
           reasonId: rootDepartureReason1.id,
@@ -277,7 +307,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureTime: 'The time of departure must be after the time of arrival, 11:30 on 5 Oct 2024',
+          departureTime: 'The time of departure must be after the time of arrival, 11:30 on 9 Nov 2024',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data

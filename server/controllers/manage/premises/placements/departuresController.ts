@@ -1,7 +1,7 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewDeparture, Cas1SpaceBooking } from '@approved-premises/api'
 import { DepartureFormData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
-import { isBefore, isPast, isToday } from 'date-fns'
+import { addDays, isBefore, isPast, isToday } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import {
@@ -111,6 +111,8 @@ export default class DeparturesController {
     } else if (isBefore(departureDate, placement.actualArrivalDate)) {
       const actualArrivalDate = DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })
       errors.departureDate = `The date of departure must be the same as or after ${actualArrivalDate}, when the person arrived`
+    } else if (isPast(addDays(departureDate, 7))) {
+      errors.departureDate = 'The date of departure must not be more than 7 days ago'
     }
 
     if (!departureTime) {
