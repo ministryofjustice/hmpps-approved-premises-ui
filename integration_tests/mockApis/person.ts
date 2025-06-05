@@ -5,10 +5,10 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   ActiveOffence,
   Adjudication,
+  Cas1OASysGroup,
+  Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
   Document,
-  OASysSection,
-  OASysSections,
   Person,
   PersonAcctAlert,
   PersonRisks,
@@ -142,75 +142,59 @@ export default {
       },
     }),
 
-  stubOasysSelection404: (args: { person: Person }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/people/${args.person.crn}/oasys/selection`,
-      },
-      response: {
-        status: 404,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: { status: 404 },
-      },
-    }),
-
-  stubOasysSelection: (args: { person: Person; oasysSelection: Array<OASysSection> }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/people/${args.person.crn}/oasys/selection`,
-      },
-
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.oasysSelection,
-      },
-    }),
-
-  stubOasysSection404: (args: { person: Person }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        urlPath: `/people/${args.person.crn}/oasys/sections`,
-      },
-      response: {
-        status: 404,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: { status: 404 },
-      },
-    }),
-
-  stubOasysSections: (args: { person: Person; oasysSections: OASysSections }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/people/${args.person.crn}/oasys/sections`,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.oasysSections,
-      },
-    }),
-
-  stubOasysSectionsWithSelectedSections: (args: {
+  stubOasysMetadata: (args: {
     person: Person
-    oasysSections: OASysSections
-    selectedSections: Array<number>
+    oasysMetadata: { supportingInformation: Array<Cas1OASysSupportingInformationQuestionMetaData> }
   }) =>
     stubFor({
       request: {
         method: 'GET',
-        url: `/people/${args.person.crn}/oasys/sections?${createQueryString({
-          'selected-sections': args.selectedSections,
-        })}`,
+        url: paths.people.oasys.metadata({ crn: args.person.crn }),
+      },
+
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.oasysMetadata,
+      },
+    }),
+
+  stubOasysMetadata404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.oasys.metadata({ crn: args.person.crn }),
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
+
+  stubOasysGroup: (args: { person: Person; group: Cas1OASysGroup; includeOptionalSections: Array<number> }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `${paths.people.oasys.answers({ crn: args.person.crn })}?${createQueryString({ group: args.group.group, includeOptionalSections: args.includeOptionalSections })}`,
       },
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.oasysSections,
+        jsonBody: args.group,
+      },
+    }),
+
+  stubOasysGroup404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: `${paths.people.oasys.answers({ crn: args.person.crn })}`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
       },
     }),
 

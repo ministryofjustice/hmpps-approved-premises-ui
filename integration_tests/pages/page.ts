@@ -21,7 +21,6 @@ import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
 import { SubmittedDocumentRenderer } from '../../server/utils/forms/submittedDocumentRenderer'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
-import { oasysSectionsToExclude } from '../../server/utils/oasysImportUtils'
 import { displayName, isFullPerson } from '../../server/utils/personUtils'
 
 export type PageElement = Cypress.Chainable<JQuery>
@@ -292,17 +291,15 @@ export default abstract class Page {
 
   completeOasysImportQuestions(section, sectionName: string, oasysMissing: boolean): void {
     section.forEach(summary => {
-      if (!oasysSectionsToExclude.includes(summary.sectionNumber)) {
-        cy.get('.govuk-label').contains(summary.label)
-        if (oasysMissing) {
-          cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`).type(
-            `${summary.questionNumber} content goes here`,
-          )
-        } else {
-          cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
-            .should('contain', summary.answer)
-            .type(`. With an extra comment ${summary.questionNumber}`)
-        }
+      cy.get('.govuk-label').contains(summary.label)
+      if (oasysMissing) {
+        cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`).type(
+          `${summary.questionNumber} content goes here`,
+        )
+      } else {
+        cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
+          .should('contain', summary.answer)
+          .type(`. With an extra comment ${summary.questionNumber}`)
       }
     })
   }

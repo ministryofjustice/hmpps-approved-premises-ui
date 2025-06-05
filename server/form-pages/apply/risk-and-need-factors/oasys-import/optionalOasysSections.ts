@@ -3,19 +3,18 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../utils/formUtils'
-import { ApprovedPremisesApplication, OASysSection } from '../../../../@types/shared'
+import { ApprovedPremisesApplication, Cas1OASysSupportingInformationQuestionMetaData } from '../../../../@types/shared'
 import { DataServices, type PageResponse } from '../../../../@types/ui'
 import { sentenceCase } from '../../../../utils/utils'
-import { oasysSectionsToExclude } from '../../../../utils/oasysImportUtils'
 
 interface Response {
-  needsLinkedToReoffending: Array<string> | string | Array<OASysSection>
-  otherNeeds: Array<string> | string | Array<OASysSection>
+  needsLinkedToReoffending: Array<string> | string | Array<Cas1OASysSupportingInformationQuestionMetaData>
+  otherNeeds: Array<string> | string | Array<Cas1OASysSupportingInformationQuestionMetaData>
 }
 
 interface Body {
-  needsLinkedToReoffending: Array<OASysSection>
-  otherNeeds: Array<OASysSection>
+  needsLinkedToReoffending: Array<Cas1OASysSupportingInformationQuestionMetaData>
+  otherNeeds: Array<Cas1OASysSupportingInformationQuestionMetaData>
 }
 
 @Page({
@@ -27,11 +26,11 @@ export default class OptionalOasysSections implements TasklistPage {
 
   needsLinkedToReoffendingHeading = 'Needs linked to reoffending'
 
-  allNeedsLinkedToReoffending: Array<OASysSection> = []
+  allNeedsLinkedToReoffending: Array<Cas1OASysSupportingInformationQuestionMetaData> = []
 
   otherNeedsHeading = 'Needs not linked to risk of serious harm or reoffending'
 
-  allOtherNeeds: Array<OASysSection> = []
+  allOtherNeeds: Array<Cas1OASysSupportingInformationQuestionMetaData> = []
 
   oasysSuccess: boolean = false
 
@@ -46,17 +45,14 @@ export default class OptionalOasysSections implements TasklistPage {
     const page = new OptionalOasysSections(body as Body)
 
     try {
-      const oasysSelections = await dataServices.personService.getOasysSelections(token, application.person.crn)
+      const oasysMetadata: Array<Cas1OASysSupportingInformationQuestionMetaData> =
+        await dataServices.personService.getOasysMetadata(token, application.person.crn)
 
-      const allNeedsLinkedToReoffending = oasysSelections.filter(
-        section => section && !section.linkedToHarm && section.linkedToReOffending,
+      const allNeedsLinkedToReoffending = oasysMetadata.filter(
+        section => section && section.inclusionOptional && section.oasysAnswerLinkedToReOffending,
       )
-      const allOtherNeeds = oasysSelections.filter(
-        section =>
-          section &&
-          !section.linkedToHarm &&
-          !section.linkedToReOffending &&
-          !oasysSectionsToExclude.includes(section.section),
+      const allOtherNeeds = oasysMetadata.filter(
+        section => section && section.inclusionOptional && !section.oasysAnswerLinkedToReOffending,
       )
 
       if (body.needsLinkedToReoffending) {
@@ -91,9 +87,9 @@ export default class OptionalOasysSections implements TasklistPage {
   }
 
   private static getSelectedNeeds(
-    selectedSections: string | Array<string> | Array<OASysSection>,
-    allSections: Array<OASysSection>,
-  ): Array<OASysSection> {
+    selectedSections: string | Array<string> | Array<Cas1OASysSupportingInformationQuestionMetaData>,
+    allSections: Array<Cas1OASysSupportingInformationQuestionMetaData>,
+  ): Array<Cas1OASysSupportingInformationQuestionMetaData> {
     if (!selectedSections) {
       return []
     }
@@ -101,12 +97,12 @@ export default class OptionalOasysSections implements TasklistPage {
     if (isStringOrArrayOfStrings(selectedSections)) {
       const sectionIds = flattenCheckboxInput(selectedSections as string | Array<string>) || []
 
-      return sectionIds.map(
-        (need: string) => allSections.find((n: OASysSection) => need === n.section.toString()) as OASysSection,
+      return sectionIds.map((need: string) =>
+        allSections.find((n: Cas1OASysSupportingInformationQuestionMetaData) => need === n.section.toString()),
       )
     }
 
-    return selectedSections as Array<OASysSection>
+    return selectedSections as Array<Cas1OASysSupportingInformationQuestionMetaData>
   }
 
   previous() {
@@ -129,9 +125,9 @@ export default class OptionalOasysSections implements TasklistPage {
     return response
   }
 
-  getResponseForTypeOfNeed(typeOfNeed: Array<OASysSection>) {
+  getResponseForTypeOfNeed(typeOfNeed: Array<Cas1OASysSupportingInformationQuestionMetaData>) {
     if (Array.isArray(typeOfNeed) && typeOfNeed.length) {
-      return typeOfNeed.map(need => `${need.section}. ${sentenceCase(need.name)}`).join(', ')
+      return typeOfNeed.map(need => `${need.section}. ${sentenceCase(need.sectionLabel)}`).join(', ')
     }
     return ''
   }

@@ -2,9 +2,10 @@ import type { Response } from 'express'
 import type {
   ActiveOffence,
   Adjudication,
+  Cas1OASysGroup,
+  Cas1OASysGroupName,
+  Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
-  OASysSection,
-  OASysSections,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
@@ -20,8 +21,7 @@ export default class PersonService {
   async findByCrn(token: string, crn: string, checkCaseload = false): Promise<Person> {
     const personClient = this.personClientFactory(token)
 
-    const person = await personClient.search(crn, checkCaseload)
-    return person
+    return personClient.search(crn, checkCaseload)
   }
 
   async getOffences(token: string, crn: string): Promise<Array<ActiveOffence>> {
@@ -55,13 +55,13 @@ export default class PersonService {
     return acctAlerts
   }
 
-  async getOasysSelections(token: string, crn: string): Promise<Array<OASysSection>> {
+  async getOasysMetadata(token: string, crn: string): Promise<Array<Cas1OASysSupportingInformationQuestionMetaData>> {
     const personClient = this.personClientFactory(token)
 
     try {
-      const oasysSections = await personClient.oasysSelections(crn)
+      const oasysMetaData = await personClient.oasysMetadata(crn)
 
-      return oasysSections
+      return oasysMetaData
     } catch (error) {
       const knownError = error as HttpError
       if (knownError?.data?.status === 404) {
@@ -71,19 +71,20 @@ export default class PersonService {
     }
   }
 
-  async getOasysSections(token: string, crn: string, selectedSections: Array<number> = []): Promise<OASysSections> {
+  async getOasysAnswers(
+    token: string,
+    crn: string,
+    group: Cas1OASysGroupName,
+    selectedSections: Array<number> = [],
+  ): Promise<Cas1OASysGroup> {
     const personClient = this.personClientFactory(token)
-
     try {
-      const oasysSections = await personClient.oasysSections(crn, selectedSections)
-
-      return oasysSections
+      return await personClient.oasysAnswers(crn, group, selectedSections)
     } catch (error) {
-      const knownError = error as HttpError
-      if (knownError?.data?.status === 404) {
+      if ((error as HttpError)?.data?.status === 404) {
         throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`)
       }
-      throw knownError
+      throw error
     }
   }
 

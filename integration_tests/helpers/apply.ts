@@ -5,35 +5,28 @@ import {
   Document,
   FullPerson,
   OASysQuestion,
-  OASysSection,
-  OASysSupportingInformationQuestion,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
   ApprovedPremisesUser as User,
+  Cas1OASysSupportingInformationQuestionMetaData,
+  Cas1OASysGroup,
 } from '@approved-premises/api'
 import { ContingencyPlanQuestionsBody, PartnerAgencyDetails, PersonRisksUI } from '@approved-premises/ui'
 
 import * as ApplyPages from '../pages/apply'
-import {
-  offenceDetailSummariesFromApplication,
-  riskManagementPlanFromApplication,
-  riskToSelfSummariesFromApplication,
-  roshSummariesFromApplication,
-  supportInformationFromApplication,
-} from './index'
 
 import ApplyPage from '../pages/apply/applyPage'
 import Page from '../pages'
 import {
   acctAlertFactory,
   adjudicationFactory,
+  cas1OasysGroupFactory,
+  cas1OASysSupportingInformationMetaDataFactory,
   cas1PremisesBasicSummaryFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
   documentFactory,
-  oasysSectionsFactory,
-  oasysSelectionFactory,
   prisonCaseNotesFactory,
   userFactory,
 } from '../../server/testutils/factories'
@@ -55,15 +48,15 @@ export default class ApplyHelper {
 
   uiRisks?: PersonRisksUI
 
-  oasysSectionsLinkedToReoffending: Array<OASysSection> = []
+  oasysSectionsLinkedToReoffending: Array<Cas1OASysSupportingInformationQuestionMetaData> = []
 
-  otherOasysSections: Array<OASysSection> = []
+  otherOasysSections: Array<Cas1OASysSupportingInformationQuestionMetaData> = []
 
   roshSummaries: Array<OASysQuestion> = []
 
   offenceDetailSummaries: Array<OASysQuestion> = []
 
-  supportingInformationSummaries: Array<OASysSupportingInformationQuestion> = []
+  supportingInformationSummaries: Array<OASysQuestion> = []
 
   riskManagementPlanSummaries: Array<OASysQuestion> = []
 
@@ -231,8 +224,8 @@ export default class ApplyHelper {
   }
 
   private stubOasys404() {
-    cy.task('stubOasysSelection404', { person: this.person })
-    cy.task('stubOasysSection404', { person: this.person })
+    cy.task('stubOasysMetadata404', { person: this.person })
+    cy.task('stubOasysGroup404', { person: this.person })
 
     this.roshSummaries = oasysStubs.roshSummary
     this.offenceDetailSummaries = oasysStubs.offenceDetails
@@ -247,71 +240,41 @@ export default class ApplyHelper {
 
   stubOasysEndpoints(excludeSection = false) {
     // And there are OASys sections in the db
-    const oasysSelectionA = oasysSelectionFactory.needsLinkedToReoffending().build({
-      section: 1,
-      name: 'accommodation',
-    })
-    const oasysSelectionB = oasysSelectionFactory.needsLinkedToReoffending().build({
-      section: 2,
-      name: 'relationships',
-      linkedToHarm: false,
-      linkedToReOffending: true,
-    })
-    const oasysSelectionC = excludeSection
-      ? undefined
-      : oasysSelectionFactory.needsNotLinkedToReoffending().build({
-          section: 3,
-          name: 'emotional',
-          linkedToHarm: false,
-          linkedToReOffending: false,
-        })
-    const oasysSelectionD = oasysSelectionFactory.needsNotLinkedToReoffending().build({
-      section: 4,
-      name: 'excluded',
-      linkedToHarm: false,
-      linkedToReOffending: false,
-    })
-    const oasysSelectionE = oasysSelectionFactory.needsNotLinkedToReoffending().build({
-      section: 6,
-      name: 'included',
-      linkedToHarm: false,
-      linkedToReOffending: false,
-    })
 
-    this.oasysSectionsLinkedToReoffending = [oasysSelectionA, oasysSelectionB]
-    this.otherOasysSections = [oasysSelectionC, oasysSelectionD, oasysSelectionE]
+    this.otherOasysSections = [
+      { section: 3, name: 'emotional' },
+      { section: 4, name: 'excluded' },
+      { section: 6, name: 'included' },
+    ].map(params => cas1OASysSupportingInformationMetaDataFactory.needsNotLinkedToReoffending().build(params))
 
+    this.oasysSectionsLinkedToReoffending = [
+      { section: 1, sectionLabel: 'accommodation' },
+      { section: 2, name: 'relationships' },
+    ].map(params => cas1OASysSupportingInformationMetaDataFactory.needsLinkedToReoffending().build(params))
+    if (excludeSection) {
+      this.otherOasysSections[0] = undefined
+    }
     const oasysSelection = [...this.oasysSectionsLinkedToReoffending, ...this.otherOasysSections]
 
-    cy.task('stubOasysSelection', { person: this.person, oasysSelection })
+    cy.task('stubOasysMetadata', { person: this.person, oasysMetadata: { supportingInformation: oasysSelection } })
 
-    const oasysSections = oasysSectionsFactory.build()
+    const oasysSections = {
+      roshSummary: cas1OasysGroupFactory.roshSummary().build(),
+      offenceDetails: cas1OasysGroupFactory.offenceDetails().build(),
+      riskToSelf: cas1OasysGroupFactory.riskToSelf().build(),
+      supportingInformation: cas1OasysGroupFactory.supportingInformation().build(),
+      riskManagementPlan: cas1OasysGroupFactory.riskManagementPlan().build(),
+    }
 
-    this.roshSummaries = roshSummariesFromApplication(this.application)
-    this.offenceDetailSummaries = offenceDetailSummariesFromApplication(this.application)
-    this.supportingInformationSummaries = supportInformationFromApplication(this.application)
-    this.riskManagementPlanSummaries = riskManagementPlanFromApplication(this.application)
-    this.riskToSelfSummaries = riskToSelfSummariesFromApplication(this.application)
+    this.roshSummaries = oasysSections.roshSummary.answers
+    this.offenceDetailSummaries = oasysSections.offenceDetails.answers
+    this.supportingInformationSummaries = oasysSections.supportingInformation.answers
+    this.riskManagementPlanSummaries = oasysSections.riskManagementPlan.answers
+    this.riskToSelfSummaries = oasysSections.riskToSelf.answers
 
-    cy.task('stubOasysSections', {
-      person: this.person,
-      oasysSections: {
-        ...oasysSections,
-        roshSummary: this.roshSummaries,
-        offenceDetails: this.offenceDetailSummaries,
-        riskManagementPlan: this.riskManagementPlanSummaries,
-        riskToSelf: this.riskToSelfSummaries,
-      },
-    })
-    cy.task('stubOasysSectionsWithSelectedSections', {
-      person: this.person,
-      oasysSections: {
-        ...oasysSections,
-        roshSummary: this.roshSummaries,
-        offenceDetails: this.offenceDetailSummaries,
-        supportingInformation: this.supportingInformationSummaries,
-      },
-      selectedSections: [1, 2, 3, 4],
+    Object.values(oasysSections).forEach((group: Cas1OASysGroup) => {
+      const includeOptionalSections = group.group === 'supportingInformation' ? [1, 2, 3, 4] : undefined
+      cy.task('stubOasysGroup', { person: this.person, group, includeOptionalSections })
     })
   }
 

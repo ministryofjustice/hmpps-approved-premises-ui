@@ -12,12 +12,14 @@ import type {
   AssessmentTask,
   Cas1ApplicationSummary,
   Cas1CruManagementArea,
+  Cas1OASysGroup,
+  Cas1OASysGroupName,
   Cas1PremisesBasicSummary,
   Cas1SpaceBooking,
   Document,
   FlagsEnvelope,
   Mappa,
-  OASysSection,
+  OASysQuestion,
   PersonAcctAlert,
   PlacementApplication,
   PlacementApplicationTask,
@@ -286,8 +288,13 @@ export type DataServices = Partial<{
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
     getAcctAlerts: (token: string, crn: string) => Promise<Array<PersonAcctAlert>>
-    getOasysSelections: (token: string, crn: string) => Promise<Array<OASysSection>>
-    getOasysSections: (token: string, crn: string, selectedSections?: Array<number>) => Promise<OASysSections>
+    getOasysMetadata: (token: string, crn: string) => Promise<Array<Cas1OASysSupportingInformationMetaData>>
+    getOasysAnswers: (
+      token: string,
+      crn: string,
+      group: Cas1OASysGroupName,
+      selectedSections?: Array<number>,
+    ) => Promise<Cas1OASysGroup>
   }
   applicationService: {
     getDocuments: (token: string, application: ApprovedPremisesApplication) => Promise<Array<Document>>

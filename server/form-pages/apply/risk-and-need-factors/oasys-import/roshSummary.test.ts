@@ -1,7 +1,8 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
+import { Cas1OASysAssessmentMetadata } from '@approved-premises/api'
 import { PersonService } from '../../../../services'
-import { applicationFactory, oasysSectionsFactory, risksFactory } from '../../../../testutils/factories'
+import { applicationFactory, cas1OasysGroupFactory, risksFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import RoshSummary from './roshSummary'
@@ -10,20 +11,20 @@ import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 jest.mock('../../../../services/personService.ts')
 
 describe('RoshSummary', () => {
-  const oasysSections = oasysSectionsFactory.build()
+  const oasysGroup = cas1OasysGroupFactory.roshSummary().build()
   const personRisks = risksFactory.build()
   const application = applicationFactory.build({ risks: personRisks })
 
   describe('initialize', () => {
-    const getOasysSectionsMock = jest.fn()
+    const getOasysGroupMock = jest.fn()
 
     let personService: DeepMocked<PersonService>
 
     beforeEach(() => {
       personService = createMock<PersonService>({
-        getOasysSections: getOasysSectionsMock,
+        getOasysAnswers: getOasysGroupMock,
       })
-      getOasysSectionsMock.mockResolvedValue(oasysSections)
+      getOasysGroupMock.mockResolvedValue(oasysGroup)
     })
 
     afterEach(() => {
@@ -33,22 +34,26 @@ describe('RoshSummary', () => {
     it('calls the getOasysSections method on the client with a token and the persons CRN', async () => {
       await RoshSummary.initialize({}, application, 'some-token', fromPartial({ personService }))
 
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
+      expect(getOasysGroupMock).toHaveBeenCalledWith('some-token', application.person.crn, 'roshSummary', [])
     })
 
     it('adds the roshSummary and personRisks to the page object', async () => {
       const page = await RoshSummary.initialize({}, application, 'some-token', fromPartial({ personService }))
 
-      expect(page.roshSummaries).toEqual(oasysSections.roshSummary)
+      expect(page.roshSummaries).toEqual(oasysGroup.answers)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
-      expect(page.oasysCompleted).toEqual(oasysSections.dateCompleted)
+      expect(page.oasysCompleted).toEqual(oasysGroup.assessmentMetadata.dateCompleted)
     })
 
     it('sets dateCompleted to dateStarted if dateCompleted is null', async () => {
-      getOasysSectionsMock.mockResolvedValue({ ...oasysSections, dateCompleted: null })
+      const assessmentMetadata: Cas1OASysAssessmentMetadata = {
+        dateStarted: oasysGroup.assessmentMetadata.dateStarted,
+        dateCompleted: null,
+      }
+      getOasysGroupMock.mockResolvedValue({ ...oasysGroup, assessmentMetadata })
 
       const page = await RoshSummary.initialize({}, application, 'some-token', fromPartial({ personService }))
-      expect(page.oasysCompleted).toEqual(oasysSections.dateStarted)
+      expect(page.oasysCompleted).toEqual(assessmentMetadata.dateStarted)
     })
 
     itShouldHaveNextValue(new RoshSummary({}), 'offence-details')

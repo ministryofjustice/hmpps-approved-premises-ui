@@ -2,9 +2,11 @@ import { DataServices, OasysImportArrays, OasysPage } from '../@types/ui'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplication,
+  Cas1OASysGroup,
+  Cas1OASysGroupName,
+  Cas1OASysSupportingInformationQuestionMetaData,
   OASysQuestion,
   OASysSection,
-  OASysSections,
 } from '../@types/shared'
 
 import { SessionDataError } from './errors'
@@ -16,9 +18,6 @@ import { logToSentry } from '../../logger'
 
 export type Constructor<T> = new (body: unknown) => T
 
-// Questions excluded from UI as part of AP-1246
-export const oasysSectionsToExclude: Array<number> = [4, 5]
-
 export const getOasysSections = async <T extends OasysPage>(
   body: Record<string, unknown>,
   application: ApprovedPremisesApplication,
@@ -26,39 +25,46 @@ export const getOasysSections = async <T extends OasysPage>(
   dataServices: DataServices,
   constructor: Constructor<T>,
   {
-    sectionName,
+    groupName,
     summaryKey,
     answerKey,
     selectedSections = [],
   }: {
-    sectionName: keyof OASysSections
+    groupName: Cas1OASysGroupName
     summaryKey: string
     answerKey: string
     selectedSections?: Array<number>
   },
 ): Promise<T> => {
-  let oasysSections: OASysSections
+  let oasysGroup: Cas1OASysGroup
   let oasysSuccess: boolean
 
   try {
-    oasysSections = await dataServices.personService.getOasysSections(token, application.person.crn, selectedSections)
+    oasysGroup = await dataServices.personService.getOasysAnswers(
+      token,
+      application.person.crn,
+      groupName,
+      selectedSections,
+    )
     oasysSuccess = true
   } catch (error) {
     if (error instanceof OasysNotFoundError) {
-      oasysSections = oasysStubs
+      oasysGroup = {
+        group: groupName,
+        assessmentMetadata: {
+          dateStarted: undefined,
+          dateCompleted: undefined,
+        },
+        answers: oasysStubs[groupName],
+      }
+
       oasysSuccess = false
     } else {
       throw error
     }
   }
 
-  const rawSummaries = (
-    sectionName === 'supportingInformation'
-      ? oasysSections.supportingInformation.filter(question => !oasysSectionsToExclude.includes(question.sectionNumber))
-      : oasysSections[sectionName]
-  ) as Array<OASysQuestion>
-
-  const summaries = sortOasysImportSummaries(rawSummaries).map(question => {
+  const summaries = sortOasysImportSummaries(oasysGroup.answers).map(question => {
     const answer =
       (body as Record<string, Record<string, string>>)[answerKey]?.[question.questionNumber] || question.answer
     return {
@@ -71,7 +77,7 @@ export const getOasysSections = async <T extends OasysPage>(
 
   page.body[summaryKey] = summaries
   page[summaryKey as keyof OasysPage] = summaries as never
-  page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
+  page.oasysCompleted = oasysGroup?.assessmentMetadata?.dateCompleted || oasysGroup?.assessmentMetadata?.dateStarted
   page.oasysSuccess = oasysSuccess
   page.risks = mapApiPersonRisksForUi(application.risks)
 
@@ -137,12 +143,15 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
 }
 
 export const sortOasysImportSummaries = (summaries: Array<OASysQuestion>): Array<OASysQuestion> => {
-  return summaries.sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, 'en', { numeric: true }))
+  return (summaries || []).sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, 'en', { numeric: true }))
 }
 
-export const sectionCheckBoxes = (fullList: Array<OASysSection>, selectedList: Array<OASysSection>) => {
+export const sectionCheckBoxes = (
+  fullList: Array<Cas1OASysSupportingInformationQuestionMetaData>,
+  selectedList: Array<Cas1OASysSupportingInformationQuestionMetaData>,
+) => {
   return fullList.map(need => {
-    const sectionAndName = `${need.section}. ${sentenceCase(need.name)}`
+    const sectionAndName = `${need.section}. ${sentenceCase(need.sectionLabel)}`
     return {
       value: need.section.toString(),
       text: sectionAndName,

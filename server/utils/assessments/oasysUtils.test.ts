@@ -1,9 +1,9 @@
-import { assessmentFactory, oasysSectionsFactory, roshSummaryFactory } from '../../testutils/factories'
+import { assessmentFactory, cas1OasysGroupFactory, roshSummaryFactory } from '../../testutils/factories'
 import { oasysInformationFromAssessment, oasysQuestions, oasysTableTabs } from './oasysUtils'
 
 describe('oasysInformationFromAssessment', () => {
   it('returns the oasys information from the assessment', () => {
-    const oasysInformation = oasysSectionsFactory.build()
+    const oasysInformation = cas1OasysGroupFactory.build()
     const assessment = assessmentFactory.build()
     assessment.application.data['oasys-import'] = oasysInformation
 

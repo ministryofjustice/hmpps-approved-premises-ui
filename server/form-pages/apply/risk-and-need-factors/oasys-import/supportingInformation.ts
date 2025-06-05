@@ -38,7 +38,7 @@ export default class SupportingInformation implements OasysPage {
     dataServices: DataServices,
   ) {
     return getOasysSections(body, application, token, dataServices, SupportingInformation, {
-      sectionName: 'supportingInformation',
+      groupName: 'supportingInformation',
       summaryKey: 'supportingInformationSummaries',
       answerKey: 'supportingInformationAnswers',
       selectedSections: fetchOptionalOasysSections(application),

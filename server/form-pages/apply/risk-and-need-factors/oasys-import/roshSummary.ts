@@ -38,7 +38,7 @@ export default class RoshSummary implements OasysPage {
     dataServices: DataServices,
   ) {
     return getOasysSections(body, application, token, dataServices, RoshSummary, {
-      sectionName: 'roshSummary',
+      groupName: 'roshSummary',
       summaryKey: 'roshSummaries',
       answerKey: 'roshAnswers',
     })

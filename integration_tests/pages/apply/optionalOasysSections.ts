@@ -1,6 +1,5 @@
-import { ApprovedPremisesApplication, OASysSection } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Cas1OASysSupportingInformationQuestionMetaData } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
-import { oasysSectionsToExclude } from '../../../server/utils/oasysImportUtils'
 
 import ApplyPage from './applyPage'
 
@@ -16,14 +15,15 @@ export default class OptionalOasysSectionsPage extends ApplyPage {
     )
   }
 
-  completeForm(oasysSectionsLinkedToReoffending: Array<OASysSection>, otherOasysSections: Array<OASysSection>): void {
-    oasysSectionsLinkedToReoffending.forEach(oasysSection => {
-      this.checkCheckboxByNameAndValue('needsLinkedToReoffending', oasysSection.section.toString())
+  completeForm(
+    oasysSectionsLinkedToReoffending: Array<Cas1OASysSupportingInformationQuestionMetaData>,
+    otherOasysSections: Array<Cas1OASysSupportingInformationQuestionMetaData>,
+  ): void {
+    oasysSectionsLinkedToReoffending.forEach(({ section }) => {
+      this.checkCheckboxByNameAndValue('needsLinkedToReoffending', section.toString())
     })
-    otherOasysSections.forEach(oasysSection => {
-      if (!oasysSectionsToExclude.includes(oasysSection.section))
-        this.checkRadioByNameAndValue('otherNeeds', oasysSection.section.toString())
-      else this.radioByNameAndValueShouldNotExist('otherNeeds', oasysSection.section.toString())
+    otherOasysSections.forEach(({ section }) => {
+      this.checkRadioByNameAndValue('otherNeeds', section.toString())
     })
   }
 }

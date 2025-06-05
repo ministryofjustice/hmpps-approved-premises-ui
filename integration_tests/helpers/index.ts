@@ -9,10 +9,6 @@ import { TableCell, TableRow } from '@approved-premises/ui'
 
 import { DateFormats } from '../../server/utils/dateUtils'
 
-const roshSummariesFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
-  return application.data['oasys-import']['rosh-summary'].roshSummaries as Array<OASysQuestion>
-}
-
 const offenceDetailSummariesFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
   return application.data['oasys-import']['offence-details'].offenceDetailsSummaries as Array<OASysQuestion>
 }
@@ -80,7 +76,6 @@ const updateApplicationReleaseDate = (data: Unit) => {
 }
 
 export {
-  roshSummariesFromApplication,
   offenceDetailSummariesFromApplication,
   supportInformationFromApplication,
   riskManagementPlanFromApplication,

@@ -22,6 +22,7 @@ const cas1Reports = cas1Namespace.path('reports')
 
 const cas1People = cas1Namespace.path('people')
 const cas1Person = cas1People.path(':crn')
+const cas1Oasys = cas1Person.path('oasys')
 
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
@@ -40,7 +41,6 @@ const appeals = applicationsSingle.path('appeals')
 
 const people = path('/people')
 const person = people.path(':crn')
-const oasys = person.path('oasys')
 
 const users = path('/users')
 const cas1Users = cas1Namespace.path('users')
@@ -191,9 +191,6 @@ export default {
     withdraw: placementApplicationsSingle.path('withdraw'),
   },
   people: {
-    risks: {
-      show: person.path('risks'),
-    },
     search: people.path('search'),
     prisonCaseNotes: person.path('prison-case-notes'),
     adjudications: person.path('adjudications'),
@@ -201,8 +198,8 @@ export default {
     offences: person.path('offences'),
     documents: path('/documents/:crn/:documentId'),
     oasys: {
-      selection: oasys.path('selection'),
-      sections: oasys.path('sections'),
+      metadata: cas1Oasys.path('metadata'),
+      answers: cas1Oasys.path('answers'),
     },
     timeline: cas1Person.path('timeline'),
   },
