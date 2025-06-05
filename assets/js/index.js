@@ -16,7 +16,7 @@ document.querySelectorAll('.moj-button-menu').forEach(container => {
   extraElement.parentElement.remove()
 })
 document.querySelectorAll('[data-module="moj-sortable-table"]').forEach(table => {
-  new SortableTable({ table })
+  new SortableTable(table)
 })
 document.querySelectorAll('[data-premises-with-areas]').forEach((el, index) => flattenPremisesOptions(el, index))
 document.querySelectorAll('a[data-debounce-link]').forEach(link => linkDebounce(link))
