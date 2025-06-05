@@ -1,10 +1,18 @@
 import { placementApplicationTaskFactory } from '../../testutils/factories'
-import { nameCell, placementApplicationsTable, placementTypeCell, statusCell, tableRows } from './table'
+import {
+  arrivalDateCell,
+  nameCell,
+  placementApplicationsTable,
+  placementTypeCell,
+  statusCell,
+  tableRows,
+} from './table'
 import { crnCell, tierCell } from '../tableUtils'
 import { linkTo, sentenceCase } from '../utils'
 import paths from '../../paths/placementApplications'
 import { sortHeader } from '../sortHeader'
 import { TaskSortField } from '../../@types/shared'
+import { DateFormats } from '../dateUtils'
 
 jest.mock('../utils')
 
@@ -34,6 +42,7 @@ describe('table', () => {
           {
             text: 'Tier',
           },
+          sortHeader<TaskSortField>(`Arrival date`, 'expectedArrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Type of request',
           },
@@ -76,6 +85,16 @@ describe('table', () => {
     })
   })
 
+  describe('arrivalDateCell', () => {
+    it('returns the application arrival date', () => {
+      const task = placementApplicationTaskFactory.build()
+
+      expect(arrivalDateCell(task)).toEqual({
+        text: DateFormats.isoDateToUIDate(task.expectedArrivalDate, { format: 'short' }),
+      })
+    })
+  })
+
   describe('tableRows', () => {
     it('returns the correct table rows', () => {
       const tasks = placementApplicationTaskFactory.buildList(1)
@@ -87,6 +106,7 @@ describe('table', () => {
           },
           crnCell(tasks[0]),
           tierCell(tasks[0]),
+          arrivalDateCell(tasks[0]),
           placementTypeCell(tasks[0]),
           statusCell(tasks[0]),
         ],
