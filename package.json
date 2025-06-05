@@ -159,7 +159,7 @@
     "@golevelup/ts-jest": "0.5.0",
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.2",
-    "@pact-foundation/pact": "^13.2.0",
+    "@pact-foundation/pact": "^15.0.0",
     "@types/bunyan": "^1.8.8",
     "@types/bunyan-format": "^0.2.5",
     "@types/compression": "^1.8.0",
