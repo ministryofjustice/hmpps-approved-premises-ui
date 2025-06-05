@@ -1,6 +1,6 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewArrival } from '@approved-premises/api'
-import { isPast, isToday } from 'date-fns'
+import { addDays, isPast, isToday } from 'date-fns'
 import { PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import PlacementService from '../../../../services/placementService'
@@ -62,13 +62,13 @@ export default class ArrivalsController {
           errors.arrivalDateTime = 'You must enter an arrival date'
         } else if (!dateAndTimeInputsAreValidDates(req.body, 'arrivalDateTime')) {
           errors.arrivalDateTime = 'You must enter a valid arrival date'
-        }
-
-        if (!Object.keys(errors).length) {
+        } else if (!Object.keys(errors).length) {
           if (!isPast(arrivalDateTime)) {
             if (isToday(arrivalDateTime)) {
               errors.arrivalTime = 'The time of arrival must be in the past'
             } else errors.arrivalDateTime = 'The date of arrival must be today or in the past'
+          } else if (isPast(addDays(arrivalDateTime, 7))) {
+            errors.arrivalDateTime = 'The date of arrival cannot be more than 7 days ago'
           }
         }
 

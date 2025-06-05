@@ -14,10 +14,6 @@
   }
 }
 
-[aria-sort] a {
-  display: inline-block;
-}
-
 .govuk-checkboxes--inline {
   display: flex;
   flex-wrap: wrap;
@@ -30,6 +26,10 @@
       background: govuk-colour('white');
     }
   }
+}
+
+.govuk-body__text-block {
+  white-space: pre-wrap;
 }
 
 a.link-disabled {

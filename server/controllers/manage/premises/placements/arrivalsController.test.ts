@@ -2,7 +2,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
-import { add, format } from 'date-fns'
+import { add, addDays, format } from 'date-fns'
 import ArrivalsController from './arrivalsController'
 import { cas1SpaceBookingFactory } from '../../../../testutils/factories'
 import { PremisesService } from '../../../../services'
@@ -10,7 +10,7 @@ import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
-import { timeAddLeadingZero } from '../../../../utils/dateUtils'
+import { DateFormats, timeAddLeadingZero } from '../../../../utils/dateUtils'
 
 describe('ArrivalsController', () => {
   const token = 'SOME_TOKEN'
@@ -86,14 +86,11 @@ describe('ArrivalsController', () => {
     }
 
     it.each([
-      ['2024-11-05', '9:45'],
-      ['2025-03-31', '12:13'],
+      [DateFormats.dateObjToIsoDate(addDays(new Date(), -6)), '9:45'],
+      [DateFormats.dateObjToIsoDate(addDays(new Date(), -1)), '12:13'],
     ])('creates the arrival for %s at %s and redirects to the placement page', async (date, time) => {
-      const [year, month, day] = date.split('-').map(part => part.replace(/^0+/g, ''))
       request.body = {
-        'arrivalDateTime-year': year,
-        'arrivalDateTime-month': month,
-        'arrivalDateTime-day': day,
+        ...DateFormats.dateObjectToDateInputs(DateFormats.isoToDateObj(date), 'arrivalDateTime'),
         arrivalTime: time,
       }
 
@@ -189,14 +186,27 @@ describe('ArrivalsController', () => {
           arrivalDateTime: 'The date of arrival must be today or in the past',
         })
       })
+
+      it('returns error for date more than 7 days ago', async () => {
+        const date = add(new Date(), { days: -7 })
+
+        const body = {
+          'arrivalDateTime-year': format(date, 'yyyy'),
+          'arrivalDateTime-month': format(date, 'MM'),
+          'arrivalDateTime-day': format(date, 'dd'),
+          arrivalTime: format(date, 'HH:mm'),
+        }
+        await checkDateErrors(body, {
+          arrivalDateTime: 'The date of arrival cannot be more than 7 days ago',
+        })
+      })
     })
 
     describe('when errors are raised by the API', () => {
       it('should call catchValidationErrorOrPropogate with a standard error', async () => {
+        const arrivaldateTime = addDays(new Date(), -1)
         request.body = {
-          'arrivalDateTime-year': '2024',
-          'arrivalDateTime-month': '11',
-          'arrivalDateTime-day': '5',
+          ...DateFormats.dateObjectToDateInputs(arrivaldateTime, 'arrivalDateTime'),
           arrivalTime: '9:45',
         }
 

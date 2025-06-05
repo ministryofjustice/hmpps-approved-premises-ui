@@ -1,7 +1,6 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
@@ -11,6 +10,8 @@
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{% from "components/sortableTable/macro.njk" import sortableTable %}
 
 {%- from "./partials/_overbookingSummary.njk" import overbookingSummary -%}
 
@@ -110,7 +111,7 @@
 
 
             {% if activeTab !== 'search' or placements | length > 0 %}
-                {{ govukTable({
+                {{ sortableTable({
                     firstCellIsHeader: false,
                     head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
                     rows: PremisesUtils.placementTableRows(activeTab, premises.id, placements)
