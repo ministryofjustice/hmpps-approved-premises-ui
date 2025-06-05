@@ -57,7 +57,7 @@ describeCas1NamespaceClient('SpaceSearchClient', provider => {
         uponReceiving: 'A request to create a space booking from a placement request',
         withRequest: {
           method: 'POST',
-          path: paths.placementRequests.spaceBookings.create({ id: placementRequestId }),
+          path: paths.placementRequests.spaceBookings.create({ placementRequestId }),
           body: newSpaceBooking,
           headers: {
             authorization: `Bearer ${token}`,

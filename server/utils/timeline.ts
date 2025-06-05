@@ -6,13 +6,14 @@ import {
 } from '@approved-premises/api'
 import nunjucks from 'nunjucks'
 import path from 'path'
+import { ChangeRequestReason } from '@approved-premises/ui'
 import { escape } from './formUtils'
 import { linebreaksToParagraphs } from './utils'
 import { DateFormats } from './dateUtils'
 import { filterRoomLevelCriteria } from './match/spaceSearch'
 
 import { roomCharacteristicsInlineList } from './characteristicsUtils'
-import { AppealReason, getChangeRequestReasonText } from './placements/changeRequests'
+import { getChangeRequestReasonText } from './placements/changeRequests'
 
 const isoDateToUiDateOrUndefined = (isoDate: string) => (isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined)
 const templatePath = path.join(__dirname, '../views/partials/timelineEvents')
@@ -69,7 +70,7 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
         eventType,
         expectedArrival: isoDateToUiDateOrUndefined(arrivalDate),
         expectedDeparture: isoDateToUiDateOrUndefined(departureDate),
-        reasonText: getChangeRequestReasonText(reasonName as AppealReason),
+        reasonText: getChangeRequestReasonText(reasonName as ChangeRequestReason),
       })
     }
   }

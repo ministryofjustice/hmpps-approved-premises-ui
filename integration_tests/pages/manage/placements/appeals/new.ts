@@ -46,7 +46,7 @@ export class NewPlacementAppealPage extends FormPage {
   }
 
   constructor(private readonly placement: Cas1SpaceBooking) {
-    super('Request an appeal against a placement')
+    super('Appeal against a placement')
   }
 
   static visit(placement: Cas1SpaceBooking): NewPlacementAppealPage {

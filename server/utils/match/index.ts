@@ -1,6 +1,7 @@
 import {
   ApType,
   ApprovedPremisesApplication,
+  Cas1PlacementRequestDetail,
   Cas1Premises,
   Cas1PremisesSearchResultSummary,
   type Cas1SpaceBooking,
@@ -106,7 +107,7 @@ export const apTypeRow = (apType: ApType) => ({
   },
 })
 
-export const apTypeWithViewTimelineActionRow = (placementRequest: PlacementRequestDetail) => {
+export const apTypeWithViewTimelineActionRow = (placementRequest: Cas1PlacementRequestDetail) => {
   const apTypeItem = {
     key: {
       text: 'Type of AP',
@@ -121,7 +122,7 @@ export const apTypeWithViewTimelineActionRow = (placementRequest: PlacementReque
       actions: {
         items: [
           {
-            href: `${paths.applications.show({ id: placementRequest.application.id })}?tab=timeline`,
+            href: `${paths.applications.show({ id: placementRequest.applicationId })}?tab=timeline`,
             text: 'View timeline',
           },
         ],
@@ -169,7 +170,7 @@ export const releaseTypeRow = (placementRequest: PlacementRequest) => ({
   },
 })
 
-export const licenceExpiryDateRow = (placementRequest: PlacementRequestDetail) => {
+export const licenceExpiryDateRow = (placementRequest: Cas1PlacementRequestDetail) => {
   let licenceExpiryDate: string | undefined
   if (placementRequest.application && 'licenceExpiryDate' in placementRequest.application) {
     const application = placementRequest.application as ApprovedPremisesApplication
@@ -214,7 +215,7 @@ export const preferredPostcodeRow = (postcodeDistrict: PlacementRequestDetail['l
   },
 })
 
-export const keyDetails = (placementRequest: PlacementRequestDetail): KeyDetailsArgs => {
+export const keyDetails = (placementRequest: Cas1PlacementRequestDetail): KeyDetailsArgs => {
   const { person } = placementRequest
   if (!isFullPerson(person)) throw Error('Restricted person')
   return {

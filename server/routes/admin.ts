@@ -19,6 +19,7 @@ export default function routes(controllers: Controllers, router: Router, service
     reportsController,
     userManagementController,
     deliusUserController,
+    changeRequestsController,
   } = controllers
 
   get(paths.admin.cruDashboard.index.pattern, cruDashboardController.index(), {
@@ -36,6 +37,16 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.cruDashboard.downloadOccupancyReport.pattern, cruDashboardController.downloadReport(), {
     auditEvent: 'ADMIN_DOWNLOAD_OCCUPANCY_REPORT',
     allowedPermissions: ['cas1_premises_capacity_report_view'],
+  })
+
+  // Change requests
+  get(paths.admin.placementRequests.changeRequests.review.pattern, changeRequestsController.review(), {
+    auditEvent: 'ADMIN_CHANGE_REQUEST_REVIEW',
+    allowedPermissions: ['cas1_placement_appeal_assess'],
+  })
+  post(paths.admin.placementRequests.changeRequests.review.pattern, changeRequestsController.decide(), {
+    auditEvent: 'ADMIN_CHANGE_REQUEST_ACTION',
+    allowedPermissions: ['cas1_placement_appeal_assess'],
   })
 
   get(paths.admin.placementRequests.index.pattern, redirectController.redirect(paths.admin.cruDashboard.index), {

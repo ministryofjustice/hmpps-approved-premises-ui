@@ -1,11 +1,11 @@
-import { placementRequestDetailFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { placementRequirementsRow } from './placementRequirementsRow'
 
 import { characteristicsBulletList } from '../characteristicsUtils'
 
 describe('placementRequirementsRow', () => {
   it('returns a list of desirable placement requirements in sentence case', () => {
-    const placementRequest = placementRequestDetailFactory.build()
+    const placementRequest = cas1PlacementRequestDetailFactory.build()
 
     expect(placementRequirementsRow(placementRequest, 'desirable')).toEqual({
       key: {
@@ -19,7 +19,7 @@ describe('placementRequirementsRow', () => {
 })
 
 it('returns a list of essential placement requirements in sentence case', () => {
-  const placementRequest = placementRequestDetailFactory.build()
+  const placementRequest = cas1PlacementRequestDetailFactory.build()
 
   expect(placementRequirementsRow(placementRequest, 'essential')).toEqual({
     key: {

@@ -1,8 +1,8 @@
-import { PlacementRequestDetail } from '../../@types/shared'
+import { Cas1PlacementRequestDetail } from '../../@types/shared'
 import { SummaryListItem } from '../../@types/ui'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 
-export const preferredApsRow = (placementRequest: PlacementRequestDetail): SummaryListItem | undefined => {
+export const preferredApsRow = (placementRequest: Cas1PlacementRequestDetail): SummaryListItem | undefined => {
   const premises = getPreferredApsFromApplication(placementRequest)
 
   if (premises.length) {

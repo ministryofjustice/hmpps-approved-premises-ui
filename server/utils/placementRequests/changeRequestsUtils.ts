@@ -4,12 +4,13 @@ import {
   Cas1ChangeRequestType,
   SortDirection,
 } from '@approved-premises/api'
-import { TableCell, TableRow } from '@approved-premises/ui'
+import { TableCell, TableRow, UserDetails } from '@approved-premises/ui'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import adminPaths from '../../paths/admin'
 import { displayName, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
+import { hasPermission } from '../users'
 
 const changeRequestTypeMap: Record<Cas1ChangeRequestType, string> = {
   placementAppeal: 'Appeal',
@@ -53,3 +54,27 @@ export const changeRequestsTableRows = (changeRequests: Array<Cas1ChangeRequestS
     { text: DateFormats.isoDateToUIDate(changeRequest.createdAt, { format: 'short' }) },
     { text: changeRequestTypeMap[changeRequest.type] },
   ])
+
+export const changeRequestBanners = (
+  placementRequestId: string,
+  changeRequests: Array<Cas1ChangeRequestSummary>,
+  user: UserDetails,
+) => {
+  const canAssessAppeal = hasPermission(user, ['cas1_placement_appeal_assess'])
+  return changeRequests
+    .map(({ id, type }) => {
+      const link = adminPaths.admin.placementRequests.changeRequests.review({
+        id: placementRequestId,
+        changeRequestId: id,
+      })
+      if (type === 'placementAppeal' && canAssessAppeal)
+        return {
+          requestType: 'appeal',
+          message: 'This placement has been appealed',
+          link,
+          linkHeading: 'Review appeal',
+        }
+      return undefined
+    })
+    .filter(Boolean)
+}

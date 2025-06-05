@@ -5,9 +5,9 @@ import { TabItem } from 'server/utils/tasks/listTable'
 import {
   applicationFactory,
   assessmentFactory,
+  cas1PlacementRequestDetailFactory,
   cas1SpaceBookingFactory,
   cas1TimelineEventFactory,
-  placementRequestDetailFactory,
 } from '../../testutils/factories'
 import type {
   ApplicationService,
@@ -51,7 +51,7 @@ describe('placementController', () => {
 
     const application = applicationFactory.build()
     const assessment = assessmentFactory.build({ application })
-    const placementRequestDetail = placementRequestDetailFactory.build({
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
       applicationId: application.id,
       assessmentId: assessment.id,
     })

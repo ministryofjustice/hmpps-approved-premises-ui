@@ -14,7 +14,7 @@ import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   personFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
@@ -54,7 +54,7 @@ context('Placement Requests', () => {
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
-    const placementRequest = placementRequestDetailFactory.build({ person })
+    const placementRequest = cas1PlacementRequestDetailFactory.build({ person })
     const spaceSearchResults = spaceSearchResultsFactory.build()
 
     cy.task('stubSpaceSearch', spaceSearchResults)
@@ -170,7 +170,7 @@ context('Placement Requests', () => {
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
     const premises = cas1PremisesFactory.build({ bedCount: totalCapacity })
-    const placementRequest = placementRequestDetailFactory.build({
+    const placementRequest = cas1PlacementRequestDetailFactory.build({
       person,
       expectedArrival: startDate,
       duration: durationDays,
@@ -365,16 +365,17 @@ context('Placement Requests', () => {
     cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequest)
 
     // And the booking details should have been sent to the API
-    cy.task('verifyApiPost', apiPaths.placementRequests.spaceBookings.create({ id: placementRequest.id })).then(
-      body => {
-        expect(body).to.deep.equal({
-          arrivalDate,
-          departureDate,
-          premisesId: premises.id,
-          characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        })
-      },
-    )
+    cy.task(
+      'verifyApiPost',
+      apiPaths.placementRequests.spaceBookings.create({ placementRequestId: placementRequest.id }),
+    ).then(body => {
+      expect(body).to.deep.equal({
+        arrivalDate,
+        departureDate,
+        premisesId: premises.id,
+        characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
+      })
+    })
   })
 
   it('allows me to mark a placement request as unable to match', () => {
@@ -382,7 +383,7 @@ context('Placement Requests', () => {
     signIn('cru_member_find_and_book_beta')
 
     // Given there is a placement request waiting for me to match
-    const placementRequest = placementRequestDetailFactory.build({
+    const placementRequest = cas1PlacementRequestDetailFactory.build({
       status: 'notMatched',
       person: personFactory.build(),
     })

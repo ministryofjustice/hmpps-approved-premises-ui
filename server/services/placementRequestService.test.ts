@@ -1,11 +1,12 @@
 import {
   Cas1ChangeRequestSummary,
   Cas1ChangeRequestType,
-  Cas1NewChangeRequest,
+  type Cas1NewChangeRequest,
+  Cas1PlacementRequestDetail,
   PlacementRequest,
-  PlacementRequestDetail,
   WithdrawPlacementRequestReason,
 } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
@@ -13,8 +14,10 @@ import {
   cas1NewChangeRequestFactory,
   newPlacementRequestBookingConfirmationFactory,
   paginatedResponseFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
   placementRequestFactory,
+  cas1ChangeRequestFactory,
+  cas1RejectChangeRequestFactory,
 } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
 import { Cas1ReferenceData, PaginatedResponse } from '../@types/ui'
@@ -137,7 +140,7 @@ describe('placementRequestService', () => {
 
   describe('getPlacementRequest', () => {
     it('calls the find method on the placementRequest client', async () => {
-      const placementRequestDetail: PlacementRequestDetail = placementRequestDetailFactory.build()
+      const placementRequestDetail: Cas1PlacementRequestDetail = cas1PlacementRequestDetailFactory.build()
       placementRequestClient.find.mockResolvedValue(placementRequestDetail)
 
       const result = await service.getPlacementRequest(token, placementRequestDetail.id)
@@ -170,7 +173,7 @@ describe('placementRequestService', () => {
   })
 
   describe('bookingNotMade', () => {
-    it('it should call the service and return the booking not made object', async () => {
+    it('should call the service and return the booking not made object', async () => {
       const bookingNotMade = bookingNotMadeFactory.build()
       placementRequestClient.bookingNotMade.mockResolvedValue(bookingNotMade)
 
@@ -188,8 +191,8 @@ describe('placementRequestService', () => {
   })
 
   describe('withdraw', () => {
-    it('it should call the service', async () => {
-      const placementRequestDetail = placementRequestDetailFactory.build()
+    it('should call the service', async () => {
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
       placementRequestClient.withdraw.mockResolvedValue(placementRequestDetail)
 
       const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
@@ -201,8 +204,21 @@ describe('placementRequestService', () => {
     })
   })
 
+  describe('getChangeRequest', () => {
+    it('should call the service to retrieve a change request', async () => {
+      const changeRequest = cas1ChangeRequestFactory.build()
+      const params = { placementRequestId: faker.string.uuid(), changeRequestId: changeRequest.id }
+
+      placementRequestClient.getChangeRequest.mockResolvedValue(changeRequest)
+
+      const result = await service.getChangeRequest(token, params)
+      expect(placementRequestClient.getChangeRequest).toHaveBeenCalledWith(params)
+      expect(result).toEqual(changeRequest)
+    })
+  })
+
   describe('getChangeRequestReasons', () => {
-    it('it should call the service to retrieve change request reasons', async () => {
+    it('should call the service to retrieve change request reasons', async () => {
       const changeRequestType: Cas1ChangeRequestType = 'placementAppeal'
       const expected: Array<Cas1ReferenceData> = [{ name: 'name', id: 'id', isActive: true }]
       cas1ReferenceDataClient.getReferenceData.mockResolvedValue(expected)
@@ -217,8 +233,24 @@ describe('placementRequestService', () => {
     })
   })
 
+  describe('getChangeRequestRejectionReasons', () => {
+    it('should call the service to retrieve change request rejection reasons for a cr type', async () => {
+      const changeRequestType: Cas1ChangeRequestType = 'placementAppeal'
+      const expected: Array<Cas1ReferenceData> = [{ name: 'name', id: 'id', isActive: true }]
+      cas1ReferenceDataClient.getReferenceData.mockResolvedValue(expected)
+
+      const response = await service.getChangeRequestRejectionReasons(token, changeRequestType)
+
+      expect(response).toEqual(expected)
+      expect(cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenCalledWith(
+        `change-request-rejection-reasons/${changeRequestType}`,
+      )
+    })
+  })
+
   describe('createPlacementAppeal', () => {
-    it('it should call the service to create a placement appeal', async () => {
+    it('should call the service to create a placement appeal', async () => {
       const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'placementAppeal' })
 
       await service.createPlacementAppeal(token, id, newChangeRequest)
@@ -254,7 +286,7 @@ describe('placementRequestService', () => {
   })
 
   describe('createPlannedTransfer', () => {
-    it('it should call the service to create a planned transfer', async () => {
+    it('should call the service to create a planned transfer', async () => {
       const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'plannedTransfer' })
 
       await service.createPlannedTransfer(token, id, newChangeRequest)
@@ -265,7 +297,7 @@ describe('placementRequestService', () => {
   })
 
   describe('createExtension', () => {
-    it('it should call the service to create a placement extension change request', async () => {
+    it('should call the service to create a placement extension change request', async () => {
       const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({
         type: 'placementExtension',
       })
@@ -274,6 +306,21 @@ describe('placementRequestService', () => {
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.createExtension).toHaveBeenCalledWith(id, newChangeRequest)
+    })
+  })
+
+  describe('rejectChangeRequest', () => {
+    it('should call the service to reject a change request', async () => {
+      const params = {
+        placementRequestId: faker.string.uuid(),
+        changeRequestId: faker.string.uuid(),
+        rejectChangeRequest: cas1RejectChangeRequestFactory.build(),
+      }
+
+      await service.rejectChangeRequest(token, params)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.rejectChangeRequest).toHaveBeenCalledWith(params)
     })
   })
 })

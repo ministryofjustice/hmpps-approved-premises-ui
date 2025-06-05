@@ -1,12 +1,12 @@
 import { HtmlItem, SummaryListItem } from '../../@types/ui'
-import { placementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 import { preferredApsRow } from './preferredApsRow'
 
 jest.mock('./getPreferredApsFromApplication')
 
 describe('preferredApsRow', () => {
-  const placementRequest = placementRequestDetailFactory.build()
+  const placementRequest = cas1PlacementRequestDetailFactory.build()
 
   it('should return undefined if there are no preferred APs', () => {
     ;(getPreferredApsFromApplication as jest.Mock).mockReturnValue([])

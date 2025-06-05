@@ -1,4 +1,4 @@
-import type { Cas1Premises, PlacementRequestDetail } from '@approved-premises/api'
+import type { Cas1PlacementRequestDetail, Cas1Premises, PlacementRequestDetail } from '@approved-premises/api'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
@@ -17,7 +17,7 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
     return new OccupancyViewPage(premises.name)
   }
 
-  shouldShowMatchingDetails(startDate: string, durationDays: number, placementRequest: PlacementRequestDetail) {
+  shouldShowMatchingDetails(startDate: string, durationDays: number, placementRequest: Cas1PlacementRequestDetail) {
     cy.get('.govuk-details').within(() => {
       cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
       this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)

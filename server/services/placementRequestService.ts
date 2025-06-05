@@ -3,17 +3,20 @@ import {
   type Cas1ChangeRequestType,
   type Cas1NewChangeRequest,
   type NamedId,
+  Cas1ChangeRequest,
   Cas1ChangeRequestSortField,
   Cas1ChangeRequestSummary,
+  Cas1PlacementRequestDetail,
+  Cas1RejectChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
-  PlacementRequestDetail,
   PlacementRequestSortField,
   SortDirection,
   WithdrawPlacementRequestReason,
 } from '@approved-premises/api'
+
 import { type Cas1ReferenceDataClient, RestClientBuilder } from '../data'
 import PlacementRequestClient, { DashboardFilters, GetChangeRequestsQueryParams } from '../data/placementRequestClient'
 
@@ -47,10 +50,22 @@ export default class PlacementRequestService {
     return placementRequestClient.dashboard(searchParams, page, sortBy, sortDirection)
   }
 
-  async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {
+  async getPlacementRequest(token: string, id: string): Promise<Cas1PlacementRequestDetail> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.find(id)
+  }
+
+  async getChangeRequests(
+    token: string,
+    filter?: GetChangeRequestsQueryParams,
+    page?: number,
+    sortBy?: Cas1ChangeRequestSortField,
+    sortDirection?: SortDirection,
+  ): Promise<PaginatedResponse<Cas1ChangeRequestSummary>> {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.getChangeRequests(filter, page, sortBy, sortDirection)
   }
 
   async createBooking(
@@ -75,6 +90,15 @@ export default class PlacementRequestService {
     return placementRequestClient.withdraw(id, reason)
   }
 
+  async getChangeRequest(
+    token: string,
+    params: { placementRequestId: string; changeRequestId: string },
+  ): Promise<Cas1ChangeRequest> {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.getChangeRequest(params)
+  }
+
   async getChangeRequestReasons(token: string, changeRequestType: Cas1ChangeRequestType) {
     const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
 
@@ -83,22 +107,18 @@ export default class PlacementRequestService {
     )) as Array<NamedId>
   }
 
+  async getChangeRequestRejectionReasons(token: string, changeRequestType: Cas1ChangeRequestType) {
+    const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
+
+    return (await cas1ReferenceDataClient.getReferenceData(
+      `change-request-rejection-reasons/${changeRequestType}`,
+    )) as Array<NamedId>
+  }
+
   async createPlacementAppeal(token: string, id: string, newChangeRequest: Cas1NewChangeRequest) {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.createPlacementAppeal(id, newChangeRequest)
-  }
-
-  async getChangeRequests(
-    token: string,
-    filterParams?: GetChangeRequestsQueryParams,
-    page?: number,
-    sortBy?: Cas1ChangeRequestSortField,
-    sortDirection?: SortDirection,
-  ): Promise<PaginatedResponse<Cas1ChangeRequestSummary>> {
-    const placementRequestClient = this.placementRequestClientFactory(token)
-
-    return placementRequestClient.getChangeRequests(filterParams, page, sortBy, sortDirection)
   }
 
   async createPlannedTransfer(token: string, id: string, newChangeRequest: Cas1NewChangeRequest) {
@@ -111,5 +131,14 @@ export default class PlacementRequestService {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.createExtension(id, newChangeRequest)
+  }
+
+  async rejectChangeRequest(
+    token: string,
+    params: { placementRequestId: string; changeRequestId: string; rejectChangeRequest: Cas1RejectChangeRequest },
+  ) {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.rejectChangeRequest(params)
   }
 }

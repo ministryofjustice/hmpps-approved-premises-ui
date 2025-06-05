@@ -7,7 +7,7 @@ import { ValidationError } from '../errors'
 import { summaryListItem } from '../formUtils'
 import { sentenceCase } from '../utils'
 
-export type AppealReason =
+export type ChangeRequestReason =
   | 'staffConflictOfInterest'
   | 'exclusionZoneOrProximityToVictim'
   | 'offenceNotAccepted'
@@ -21,42 +21,45 @@ export type AppealReason =
   | 'riskToResident'
   | 'publicProtection'
   | 'apClosure'
+  | 'noSuitableApAvailable'
   | 'other'
 
-export const appealReasonRadioDefinitions: Record<AppealReason, { text: string; conditionalQuestion?: string }> = {
-  staffConflictOfInterest: {
-    text: 'Staff conflict of interest',
-    conditionalQuestion:
-      'Say whether a staff member knows or has had a previous experience with the person. Do not include personal information.',
-  },
-  exclusionZoneOrProximityToVictim: {
-    text: 'Exclusion zone or proximity to victim',
-    conditionalQuestion:
-      'State how an exclusion zone or proximity to the victim applies. Do not include personal information.',
-  },
-  offenceNotAccepted: {
-    text: 'Offence not accepted',
-    conditionalQuestion: 'Say which offence is not accepted by the AP.',
-  },
-  apCannotMeetSpecificNeeds: {
-    text: 'AP cannot meet specific needs (because the person’s needs have changed)',
-    conditionalQuestion: 'How have the placement needs changed?',
-  },
-  residentMixOrNonAssociates: {
-    text: 'Resident mix or non-associates',
-    conditionalQuestion: 'Say which applies and give details. ',
-  },
+export const appealReasonRadioDefinitions: Record<ChangeRequestReason, { text: string; conditionalQuestion?: string }> =
+  {
+    staffConflictOfInterest: {
+      text: 'Staff conflict of interest',
+      conditionalQuestion:
+        'Say whether a staff member knows or has had a previous experience with the person. Do not include personal information.',
+    },
+    exclusionZoneOrProximityToVictim: {
+      text: 'Exclusion zone or proximity to victim',
+      conditionalQuestion:
+        'State how an exclusion zone or proximity to the victim applies. Do not include personal information.',
+    },
+    offenceNotAccepted: {
+      text: 'Offence not accepted',
+      conditionalQuestion: 'Say which offence is not accepted by the AP.',
+    },
+    apCannotMeetSpecificNeeds: {
+      text: 'AP cannot meet specific needs (because the person’s needs have changed)',
+      conditionalQuestion: 'How have the placement needs changed?',
+    },
+    residentMixOrNonAssociates: {
+      text: 'Resident mix or non-associates',
+      conditionalQuestion: 'Say which applies and give details.',
+    },
 
-  extendingThePlacementNoCapacityAtCurrentAp: { text: 'Extending the placement (no capacity at current AP)' },
-  placementPrioritisation: { text: 'Placement prioritisation ' },
-  movingPersonCloserToResettlementArea: { text: 'Moving person closer to resettlement area' },
-  conflictWithStaff: { text: 'Conflict with staff ' },
-  localCommunityIssue: { text: 'Local community issue ' },
-  riskToResident: { text: 'Risk to resident ' },
-  publicProtection: { text: 'Public protection ' },
-  apClosure: { text: 'AP closure ' },
-  other: { text: 'Out of service bed or refurbishment' }, // TODO:Check that this is the right text for the code
-}
+    extendingThePlacementNoCapacityAtCurrentAp: { text: 'Extending the placement (no capacity at current AP)' },
+    placementPrioritisation: { text: 'Placement prioritisation ' },
+    movingPersonCloserToResettlementArea: { text: 'Moving person closer to resettlement area' },
+    conflictWithStaff: { text: 'Conflict with staff' },
+    localCommunityIssue: { text: 'Local community issue' },
+    riskToResident: { text: 'Risk to resident' },
+    publicProtection: { text: 'Public protection' },
+    apClosure: { text: 'AP closure' },
+    other: { text: 'Out of service bed or refurbishment' }, // TODO:Check that this is the right text for the code
+    noSuitableApAvailable: { text: 'No suitable AP available' },
+  }
 
 export const getConditionalHtml = (name: string, conditionalQuestion: string, context: Record<string, unknown>) => {
   const errors = context.errors as Record<string, string>
@@ -71,29 +74,31 @@ export const getConditionalHtml = (name: string, conditionalQuestion: string, co
 }
 
 export const mapChangeRequestReasonsToRadios = (
-  appealReasons: Array<NamedId>,
+  changeRequestReasons: Array<NamedId>,
   fieldName: string,
   context: Record<string, unknown>,
+  defaultConditionalQuestion?: string,
 ): Array<RadioItem> => {
   const selectedValue = context[fieldName]
-  return appealReasons
+  return changeRequestReasons
     .map(({ name }) => {
-      if (!appealReasonRadioDefinitions[name as AppealReason])
-        return { value: name, text: sentenceCase(name), checked: selectedValue === name }
-      const { text, conditionalQuestion } = appealReasonRadioDefinitions[name as AppealReason]
+      const { text, conditionalQuestion } = appealReasonRadioDefinitions[name as ChangeRequestReason] || {
+        text: sentenceCase(name),
+        conditionalQuestion: defaultConditionalQuestion,
+      }
       const conditionalHtml = conditionalQuestion
-        ? { html: getConditionalHtml(`${name}Detail`, conditionalQuestion, context) }
-        : undefined
-      return { value: name, text, conditional: conditionalHtml, checked: selectedValue === name }
+        ? { conditional: { html: getConditionalHtml(`${name}Detail`, conditionalQuestion, context) } }
+        : {}
+      return { value: name, text, ...conditionalHtml, checked: selectedValue === name }
     })
     .filter(Boolean)
 }
 
-export const getAppealReasonId = (reasonName: string, reasonList: Array<NamedId>): string => {
+export const getChangeRequestReasonId = (reasonName: string, reasonList: Array<NamedId>): string => {
   return reasonList.find(({ name }) => name === reasonName)?.id
 }
 
-export const getChangeRequestReasonText = (changeRequestReason: AppealReason) => {
+export const getChangeRequestReasonText = (changeRequestReason: ChangeRequestReason) => {
   return appealReasonRadioDefinitions[changeRequestReason]
     ? appealReasonRadioDefinitions[changeRequestReason].text
     : sentenceCase(changeRequestReason)
@@ -102,7 +107,7 @@ export const getChangeRequestReasonText = (changeRequestReason: AppealReason) =>
 export const getAppealReasonText = (body: AppealFormData): string => {
   const { appealReason } = body
   const detailKey = `${appealReason}Detail` as keyof AppealFormData
-  const definition = appealReasonRadioDefinitions[appealReason as AppealReason]
+  const definition = appealReasonRadioDefinitions[appealReason as ChangeRequestReason]
   return definition ? `${definition.text}\n\n${body[detailKey]}` : ''
 }
 

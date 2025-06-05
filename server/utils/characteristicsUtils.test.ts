@@ -1,11 +1,11 @@
 import { characteristicsBulletList, roomCharacteristicMap, roomCharacteristicsInlineList } from './characteristicsUtils'
 import { Cas1SpaceBookingCharacteristic } from '../@types/shared'
-import { placementRequestDetailFactory } from '../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../testutils/factories'
 import { placementCriteriaLabels } from './placementCriteriaUtils'
 
 describe('characteristicsUtils', () => {
   describe('characteristicsBulletList', () => {
-    const placementRequest = placementRequestDetailFactory.build({
+    const placementRequest = cas1PlacementRequestDetailFactory.build({
       essentialCriteria: ['hasBrailleSignage', 'hasHearingLoop', 'isStepFreeDesignated'],
       desirableCriteria: ['isArsonSuitable'],
     })

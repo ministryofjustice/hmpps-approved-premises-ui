@@ -1,4 +1,4 @@
-import { ApprovedPremises, PlacementRequestDetail } from '@approved-premises/api'
+import { ApprovedPremises, Cas1PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../../page'
 
 import { bookingSummaryList } from '../../../../server/utils/bookings'
@@ -7,11 +7,11 @@ import paths from '../../../../server/paths/admin'
 import { placementSummaryList } from '../../../../server/utils/placementRequests/placementSummaryList'
 
 export default class ShowPage extends Page {
-  constructor(private readonly placementRequest: PlacementRequestDetail) {
+  constructor(private readonly placementRequest: Cas1PlacementRequestDetail) {
     super('Placement request')
   }
 
-  static visit(placementRequestDetail: PlacementRequestDetail): ShowPage {
+  static visit(placementRequestDetail: Cas1PlacementRequestDetail): ShowPage {
     cy.visit(paths.admin.placementRequests.show({ id: placementRequestDetail.id }))
     return new ShowPage(placementRequestDetail)
   }

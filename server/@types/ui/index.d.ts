@@ -494,14 +494,35 @@ export type MultiPageFormData = {
   appeals?: Record<Cas1SpaceBooking[id], AppealFormData>
 }
 
-export type AppealJson<K extends string> = {
+export type ChangeRequestReason =
+  | 'staffConflictOfInterest'
+  | 'exclusionZoneOrProximityToVictim'
+  | 'offenceNotAccepted'
+  | 'apCannotMeetSpecificNeeds'
+  | 'residentMixOrNonAssociates'
+  | 'extendingThePlacementNoCapacityAtCurrentAp'
+  | 'placementPrioritisation'
+  | 'movingPersonCloserToResettlementArea'
+  | 'conflictWithStaff'
+  | 'localCommunityIssue'
+  | 'riskToResident'
+  | 'publicProtection'
+  | 'apClosure'
+  | 'noSuitableApAvailable'
+  | 'other'
+
+export type AppealJson<K = ChangeRequestReason> = {
   areaManagerName: string
   areaManagerEmail: string
-  appealReason: AppealReason
+  appealReason: K
   notes: string
   approvalDate: string
 } & {
   [P in `${K}Detail`]?: string
+}
+
+export type ChangeRequestDecisionJson = {
+  notes: string
 }
 
 export type AppealFormData = ObjectWithDateParts<'approvalDate'> & AppealJson

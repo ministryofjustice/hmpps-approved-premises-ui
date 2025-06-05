@@ -9,7 +9,7 @@ import {
   validateNewAppealResponse,
   getConditionalHtml,
   mapChangeRequestReasonsToRadios,
-  getAppealReasonId,
+  getChangeRequestReasonId,
 } from './changeRequests'
 import { summaryListItem } from '../formUtils'
 import { DateFormats } from '../dateUtils'
@@ -36,13 +36,18 @@ describe('changeRequest utilities', () => {
   })
 
   describe('mapAppealReasonsToRadios', () => {
-    it('returns a set of appeal reason radio buttons with conditional textareas', () => {
+    it('returns a set of known appeal reason radio buttons with conditional textareas', () => {
       const conditional = 'conditional'
-      jest.spyOn(nunjucks, 'render').mockImplementation(() => conditional)
-
-      const result = mapChangeRequestReasonsToRadios(appealReasons, 'appealReason', {
-        appealReason: 'staffConflictOfInterest',
-      })
+      const conditionalRenderSpy = jest.spyOn(nunjucks, 'render').mockImplementation(() => conditional)
+      const unknownAppealReasons = [{ name: 'unknownReason', id: 'unknown1' }]
+      const result = mapChangeRequestReasonsToRadios(
+        [...appealReasons, ...unknownAppealReasons],
+        'appealReason',
+        {
+          appealReason: 'staffConflictOfInterest',
+        },
+        'Default conditional question',
+      )
       expect(result).toEqual([
         {
           checked: true,
@@ -58,15 +63,28 @@ describe('changeRequest utilities', () => {
           text: 'Exclusion zone or proximity to victim',
           value: 'exclusionZoneOrProximityToVictim',
         },
+        {
+          checked: false,
+          conditional: {
+            html: conditional,
+          },
+          text: 'Unknown reason',
+          value: 'unknownReason',
+        },
       ])
+
+      expect(conditionalRenderSpy).toHaveBeenCalledWith(
+        'partials/detailsTextarea.njk',
+        expect.objectContaining({ conditionalQuestion: 'Default conditional question' }),
+      )
     })
   })
 
   describe('getAppealReasonId', () => {
     it('returns a reasonId for the API, given the reason code', () => {
-      expect(getAppealReasonId('staffConflictOfInterest', appealReasons)).toEqual('id1')
-      expect(getAppealReasonId('exclusionZoneOrProximityToVictim', appealReasons)).toEqual('id2')
-      expect(getAppealReasonId('doesNotExist', appealReasons)).toEqual(undefined)
+      expect(getChangeRequestReasonId('staffConflictOfInterest', appealReasons)).toEqual('id1')
+      expect(getChangeRequestReasonId('exclusionZoneOrProximityToVictim', appealReasons)).toEqual('id2')
+      expect(getChangeRequestReasonId('doesNotExist', appealReasons)).toEqual(undefined)
     })
   })
 
@@ -117,6 +135,11 @@ describe('changeRequest utilities', () => {
         { approvalDate: 'The approval date must be today or in the past' },
       ],
       ['no appeal reason', { appealReason: undefined }, { appealReason: 'You must select a reason for the appeal' }],
+      [
+        'no appeal reason details',
+        { [`${sessionData.appealReason}Detail`]: undefined },
+        { [`${sessionData.appealReason}Detail`]: 'You must enter more details' },
+      ],
     ])('should throw if %s', (_, override, expected) => {
       let error
       try {

@@ -43,7 +43,6 @@ import placementApplicationFactory from './placementApplication'
 import placementApplicationTaskFactory from './placementApplicationTask'
 import placementDatesFactory from './placementDates'
 import placementRequestFactory from './placementRequest'
-import placementRequestDetailFactory from './placementRequestDetail'
 import premisesFactory from './premises'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
@@ -70,6 +69,7 @@ import cas1PremisesSearchResultSummaryFactory from './cas1PremisesSearchResultSu
 import spaceSearchParametersFactory from './spaceSearchParameters'
 import spaceSearchResultFactory from './spaceSearchResult'
 import spaceSearchResultsFactory from './spaceSearchResults'
+import cas1ApprovedPlacementAppealfactory from './cas1ApprovedPlacementAppeal'
 import cas1PremisesBedSummaryFactory from './cas1PremisesBedSummary'
 import cas1PremisesFactory from './cas1Premises'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
@@ -96,6 +96,9 @@ import cas1NewEmergencyTransferFactory from './cas1NewEmergencyTransfer'
 import cas1ChangeRequestSummaryFactory from './cas1ChangeRequestSummary'
 import cas1NewChangeRequestFactory from './cas1NewChangeRequest'
 import appealSessionDataFactory from './appealSessionData'
+import cas1PlacementRequestDetailFactory from './cas1PlacementRequestDetail'
+import cas1ChangeRequestFactory from './cas1ChangeRequest'
+import cas1RejectChangeRequestFactory from './cas1RejectChangeRequest'
 
 export {
   acctAlertFactory,
@@ -117,6 +120,7 @@ export {
   bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
+  cas1ApprovedPlacementAppealfactory,
   cas1BedDetailFactory,
   cas1ChangeRequestSummaryFactory,
   cas1PremisesBedSummaryFactory,
@@ -134,6 +138,7 @@ export {
   cas1SpaceBookingDaySummaryFactory,
   cas1TimelineEventFactory,
   cas1AssignKeyWorkerFactory,
+  cas1ChangeRequestFactory,
   cas1NewArrivalFactory,
   cas1NewChangeRequestFactory,
   cas1NewDepartureFactory,
@@ -141,6 +146,7 @@ export {
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1OverbookingRangeFactory,
+  cas1PlacementRequestDetailFactory,
   cas1KeyworkerAllocationFactory,
   cas1UpdateSpaceBookingFactory,
   clarificationNoteFactory,
@@ -172,7 +178,6 @@ export {
   placementApplicationDecisionEnvelopeFactory,
   placementDatesFactory,
   placementRequestFactory,
-  placementRequestDetailFactory,
   premisesFactory,
   prisonCaseNotesFactory,
   probationRegionFactory,
@@ -198,4 +203,5 @@ export {
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
   spaceSearchStateFactory,
+  cas1RejectChangeRequestFactory,
 }

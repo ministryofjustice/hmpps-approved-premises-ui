@@ -1,7 +1,7 @@
-import { Cas1ChangeRequestSortField } from '@approved-premises/api'
-import { changeRequestsTableHeader, changeRequestsTableRows } from './changeRequestsUtils'
+import { Cas1ChangeRequestSortField, Cas1ChangeRequestSummary } from '@approved-premises/api'
+import { changeRequestBanners, changeRequestsTableHeader, changeRequestsTableRows } from './changeRequestsUtils'
 import { sortHeader } from '../sortHeader'
-import { cas1ChangeRequestSummaryFactory } from '../../testutils/factories'
+import { cas1ChangeRequestSummaryFactory, userDetailsFactory } from '../../testutils/factories'
 import {
   fullPersonSummaryFactory,
   restrictedPersonSummaryFactory,
@@ -87,6 +87,32 @@ describe('changeRequestsUtils', () => {
           { text: 'Transfer' },
         ],
       ])
+    })
+  })
+
+  describe('changeRequestBanners', () => {
+    it('should render a list of banners from open change request appeals', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_placement_appeal_assess'] })
+      const placementRequestId = 'test-uuid'
+      const appeals = cas1ChangeRequestSummaryFactory.buildList(2, { type: 'placementAppeal' })
+      const transfers = cas1ChangeRequestSummaryFactory.buildList(2, { type: 'plannedTransfer' })
+      const openChangeRequests = [...appeals, ...transfers]
+      const expected = appeals.map((changeRequest: Cas1ChangeRequestSummary) => {
+        return {
+          link: `/admin/placement-requests/test-uuid/change-requests/${changeRequest.id}/review`,
+          linkHeading: 'Review appeal',
+          message: 'This placement has been appealed',
+          requestType: 'appeal',
+        }
+      })
+      expect(changeRequestBanners(placementRequestId, openChangeRequests, user)).toEqual(expected)
+    })
+
+    it(`should not show banners that the user doesn't have assess permissions on`, () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_transfer_assess'] })
+      const placementRequestId = 'test-uuid'
+      const openChangeRequests = cas1ChangeRequestSummaryFactory.buildList(2, { type: 'placementAppeal' })
+      expect(changeRequestBanners(placementRequestId, openChangeRequests, user)).toEqual([])
     })
   })
 })

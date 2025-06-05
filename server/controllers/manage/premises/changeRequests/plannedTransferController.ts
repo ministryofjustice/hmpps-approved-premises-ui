@@ -5,7 +5,7 @@ import { Cas1NewChangeRequest, Unit } from '@approved-premises/api'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 import { PlacementRequestService, PlacementService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
-import { getAppealReasonId, mapChangeRequestReasonsToRadios } from '../../../../utils/placements/changeRequests'
+import { getChangeRequestReasonId, mapChangeRequestReasonsToRadios } from '../../../../utils/placements/changeRequests'
 import { convertObjectsToRadioItems } from '../../../../utils/formUtils'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
@@ -166,7 +166,7 @@ export default class PlannedTransfersController {
         const newPlannedTransfer: Cas1NewChangeRequest = {
           spaceBookingId: placementId,
           type: 'plannedTransfer',
-          reasonId: getAppealReasonId(formData.transferReason, transferReasons),
+          reasonId: getChangeRequestReasonId(formData.transferReason, transferReasons),
           requestJson: JSON.stringify(transferJson) as unknown as Unit,
         }
 

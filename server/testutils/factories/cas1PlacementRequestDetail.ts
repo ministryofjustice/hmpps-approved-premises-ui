@@ -2,17 +2,17 @@ import { Factory } from 'fishery'
 import {
   Cas1SpaceBookingSummary,
   PlacementRequestBookingSummary,
-  PlacementRequestDetail,
+  Cas1PlacementRequestDetail,
   type PlacementRequestStatus,
+  Cas1ChangeRequestSummary,
+  Cas1Application,
 } from '../../@types/shared'
 
-import cancellationFactory from './cancellation'
 import placementRequestFactory from './placementRequest'
-import applicationFactory from './application'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import bookingSummaryFactory from './placementRequestBookingSummary'
 
-class PlacementRequestDetailFactory extends Factory<PlacementRequestDetail> {
+class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDetail> {
   withLegacyBooking() {
     const legacyBooking = bookingSummaryFactory.build({ type: 'legacy' })
     return this.params({
@@ -22,18 +22,19 @@ class PlacementRequestDetailFactory extends Factory<PlacementRequestDetail> {
     })
   }
 
-  withSpaceBooking(booking?: Cas1SpaceBookingSummary) {
+  withSpaceBooking(booking?: Cas1SpaceBookingSummary, changeRequest?: Cas1ChangeRequestSummary) {
     const spaceBooking = booking || cas1SpaceBookingSummaryFactory.build()
     const bookingSummary = bookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
     return this.params({
       booking: bookingSummary,
       legacyBooking: undefined,
       spaceBookings: [spaceBooking],
+      openChangeRequests: changeRequest ? [changeRequest] : [],
     })
   }
 }
 
-export default PlacementRequestDetailFactory.define(({ params }) => {
+export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
   const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build()
   const bookingSummary = bookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
 
@@ -41,10 +42,10 @@ export default PlacementRequestDetailFactory.define(({ params }) => {
 
   return {
     ...placementRequestFactory.build(params),
-    cancellations: cancellationFactory.buildList(2),
     booking: skipBooking ? undefined : bookingSummary,
     legacyBooking: undefined as PlacementRequestBookingSummary,
     spaceBookings: skipBooking ? [] : [spaceBooking],
-    application: applicationFactory.build(),
+    application: {} as Cas1Application,
+    openChangeRequests: [] as Array<Cas1ChangeRequestSummary>,
   }
 })

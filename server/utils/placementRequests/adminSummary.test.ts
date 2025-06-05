@@ -1,6 +1,6 @@
 import { apTypeLabels } from '../apTypeLabels'
 import { ApType, ReleaseTypeOption } from '../../@types/shared'
-import { placementRequestDetailFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
@@ -9,7 +9,7 @@ import { adminSummary, apTypeCell, releaseTypeCell } from './adminSummary'
 import paths from '../../paths/apply'
 
 describe('adminSummary', () => {
-  const placementRequest = placementRequestDetailFactory.build({
+  const placementRequest = cas1PlacementRequestDetailFactory.build({
     expectedArrival: '2022-01-01',
     duration: 16,
     isParole: false,
@@ -68,7 +68,7 @@ describe('adminSummary', () => {
   })
 
   it('should return a summary of a parole placement request', () => {
-    expect(adminSummary(placementRequestDetailFactory.build({ ...placementRequest, isParole: true }))).toEqual({
+    expect(adminSummary(cas1PlacementRequestDetailFactory.build({ ...placementRequest, isParole: true }))).toEqual({
       rows: [
         ...adminSummaryRows.slice(0, 2),
         {
@@ -87,7 +87,7 @@ describe('adminSummary', () => {
   it('should return N/A if there is no tier', () => {
     expect(
       adminSummary(
-        placementRequestDetailFactory.build({
+        cas1PlacementRequestDetailFactory.build({
           ...placementRequest,
           risks: undefined,
         }),
@@ -109,7 +109,7 @@ describe('adminSummary', () => {
   })
 
   it('should return a status if the placement request has been withdrawn', () => {
-    expect(adminSummary(placementRequestDetailFactory.build({ ...placementRequest, isWithdrawn: true }))).toEqual({
+    expect(adminSummary(cas1PlacementRequestDetailFactory.build({ ...placementRequest, isWithdrawn: true }))).toEqual({
       rows: [...adminSummaryRows, withdrawnStatusTag],
     })
   })
@@ -118,7 +118,7 @@ describe('adminSummary', () => {
     it.each(Object.keys(apTypeLabels) as Array<ApType>)(
       'should return the correct type for AP Type %s',
       (apType: ApType) => {
-        const placementRequestWithApType = placementRequestDetailFactory.build({
+        const placementRequestWithApType = cas1PlacementRequestDetailFactory.build({
           type: apType,
         })
 
@@ -146,7 +146,7 @@ describe('adminSummary', () => {
     it.each(Object.keys(allReleaseTypes) as Array<ReleaseTypeOption>)(
       'should return the correct type for release type %s',
       (releaseType: ReleaseTypeOption) => {
-        const placementRequestWithReleaseType = placementRequestDetailFactory.build({
+        const placementRequestWithReleaseType = cas1PlacementRequestDetailFactory.build({
           releaseType,
         })
 

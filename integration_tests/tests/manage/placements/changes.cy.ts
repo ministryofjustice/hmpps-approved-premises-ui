@@ -7,7 +7,7 @@ import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
-  placementRequestDetailFactory,
+  cas1PlacementRequestDetailFactory,
 } from '../../../../server/testutils/factories'
 import ShowPage from '../../../pages/admin/placementApplications/showPage'
 import Page from '../../../pages/page'
@@ -25,7 +25,7 @@ context('Change Placement', () => {
   const premises = cas1PremisesFactory.build()
 
   const setupMocks = (placement: Cas1SpaceBooking, startDate?: string, endDate?: string) => {
-    const placementRequestDetail = placementRequestDetailFactory
+    const placementRequestDetail = cas1PlacementRequestDetailFactory
       .withSpaceBooking(cas1SpaceBookingSummaryFactory.build(placement))
       .build()
     placement.placementRequestId = placementRequestDetail.id

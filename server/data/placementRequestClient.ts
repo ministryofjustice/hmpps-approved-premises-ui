@@ -1,14 +1,16 @@
 import {
   BookingNotMade,
+  Cas1ChangeRequest,
   Cas1ChangeRequestSortField,
   Cas1ChangeRequestSummary,
   Cas1CruManagementArea,
   type Cas1NewChangeRequest,
+  Cas1PlacementRequestDetail,
+  Cas1RejectChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
-  PlacementRequestDetail,
   PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
@@ -21,11 +23,11 @@ import paths from '../paths/api'
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
 import { normaliseCrn } from '../utils/normaliseCrn'
 
-type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
-
 export type GetChangeRequestsQueryParams = {
   cruManagementAreaId?: string
 }
+
+type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
 
 export type DashboardFilters = {
   status?: PlacementRequestStatus
@@ -69,39 +71,39 @@ export default class PlacementRequestClient {
     })
   }
 
-  async find(id: string): Promise<PlacementRequestDetail> {
+  async find(placementRequestId: string): Promise<Cas1PlacementRequestDetail> {
     return (await this.restClient.get({
-      path: paths.placementRequests.show({ id }),
-    })) as Promise<PlacementRequestDetail>
+      path: paths.placementRequests.show({ placementRequestId }),
+    })) as Promise<Cas1PlacementRequestDetail>
   }
 
   async createBooking(
-    id: string,
+    placementRequestId: string,
     newPlacementRequestBooking: NewPlacementRequestBooking,
   ): Promise<NewPlacementRequestBookingConfirmation> {
     return (await this.restClient.post({
-      path: paths.placementRequests.booking({ id }),
+      path: paths.placementRequests.booking({ placementRequestId }),
       data: newPlacementRequestBooking,
     })) as Promise<NewPlacementRequestBookingConfirmation>
   }
 
-  async bookingNotMade(id: string, data: NewBookingNotMade): Promise<BookingNotMade> {
+  async bookingNotMade(placementRequestId: string, data: NewBookingNotMade): Promise<BookingNotMade> {
     return (await this.restClient.post({
-      path: paths.placementRequests.bookingNotMade({ id }),
+      path: paths.placementRequests.bookingNotMade({ placementRequestId }),
       data,
     })) as Promise<BookingNotMade>
   }
 
-  async withdraw(id: string, reason: WithdrawPlacementRequestReason): Promise<PlacementRequest> {
+  async withdraw(placementRequestId: string, reason: WithdrawPlacementRequestReason): Promise<PlacementRequest> {
     return (await this.restClient.post({
-      path: paths.placementRequests.withdrawal.create({ id }),
+      path: paths.placementRequests.withdrawal.create({ placementRequestId }),
       data: { reason },
     })) as Promise<PlacementRequest>
   }
 
-  async createPlacementAppeal(id: string, newChangeRequest: Cas1NewChangeRequest) {
+  async createPlacementAppeal(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
     return this.restClient.post({
-      path: paths.placementRequests.appeal({ id }),
+      path: paths.placementRequests.appeal({ placementRequestId }),
       data: newChangeRequest,
     })
   }
@@ -119,17 +121,35 @@ export default class PlacementRequestClient {
     })
   }
 
-  async createPlannedTransfer(id: string, newChangeRequest: Cas1NewChangeRequest) {
+  async createPlannedTransfer(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
     return this.restClient.post({
-      path: paths.placementRequests.plannedTransfer({ id }),
+      path: paths.placementRequests.plannedTransfer({ placementRequestId }),
       data: newChangeRequest,
     })
   }
 
-  async createExtension(id: string, newChangeRequest: Cas1NewChangeRequest) {
+  async createExtension(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
     return this.restClient.post({
-      path: paths.placementRequests.extension({ id }),
+      path: paths.placementRequests.extension({ placementRequestId }),
       data: newChangeRequest,
     })
+  }
+
+  async getChangeRequest(params: { placementRequestId: string; changeRequestId: string }) {
+    return this.restClient.get({
+      path: paths.placementRequests.changeRequest(params),
+    }) as Promise<Cas1ChangeRequest>
+  }
+
+  async rejectChangeRequest(params: {
+    placementRequestId: string
+    changeRequestId: string
+    rejectChangeRequest: Cas1RejectChangeRequest
+  }) {
+    const { rejectChangeRequest, ...pathParams } = params
+    return this.restClient.patch({
+      path: paths.placementRequests.changeRequest(pathParams),
+      data: rejectChangeRequest,
+    }) as Promise<Cas1ChangeRequest>
   }
 }
