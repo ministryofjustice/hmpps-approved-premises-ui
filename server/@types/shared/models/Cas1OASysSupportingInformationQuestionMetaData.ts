@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1OASysSupportingInformationMetaData = {
+export type Cas1OASysSupportingInformationQuestionMetaData = {
     /**
      * The OAsys section that this question relates to
      */
