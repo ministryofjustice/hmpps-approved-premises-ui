@@ -9,7 +9,7 @@ context('static pages', () => {
 
     const indexPage = Page.verifyOnPage(DashboardPage)
 
-    indexPage.clickLink('Accessibility')
+    indexPage.clickLink('Accessibility statement')
 
     Page.verifyOnPage(AccessibilityStatementPage)
   })
