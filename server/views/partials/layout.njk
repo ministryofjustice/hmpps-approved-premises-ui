@@ -2,7 +2,6 @@
 
 {% block head %}
     {% include "./applicationInsightsScript.njk" %}
-    <script src="/assets/js/jquery.min.js"></script>
 
     <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet" />
 {% endblock %}
@@ -19,4 +18,17 @@
 {% block bodyEnd %}
     <script type="module" src="{{ '/assets/js/app.js' | assetMap }}"></script>
     {% block extraScripts %}{% endblock %}
+{% endblock %}
+
+{% block footer %}
+    {{ govukFooter({
+        meta: {
+            items: [
+                {
+                    href: paths.pages.accessibilityStatement({}),
+                    text: "Accessibility statement"
+                }
+            ]
+        }
+    }) }}
 {% endblock %}
