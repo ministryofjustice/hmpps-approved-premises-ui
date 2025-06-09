@@ -1,5 +1,5 @@
 import * as GOVUKFrontend from 'govuk-frontend'
-import * as MOJFrontend from '@ministryofjustice/frontend'
+import { ButtonMenu, SortableTable } from '@ministryofjustice/frontend'
 import flattenPremisesOptions from './flattenPremisesOptions'
 import linkDebounce from './linkDebounce'
 import SubNavAsTabs from './tabPanelTableScript'
@@ -8,13 +8,15 @@ import makeAutocomplete from './accessibleAutocomplete'
 GOVUKFrontend.initAll()
 
 document.querySelectorAll('.moj-button-menu').forEach(container => {
-  new MOJFrontend.ButtonMenu(container, {
-    buttonText: 'Actions',
+  const extraElement = document.createElement('span')
+  container.appendChild(extraElement)
+  new ButtonMenu(container, {
     alignMenu: 'right',
-  }).initMenu()
+  })
+  extraElement.parentElement.remove()
 })
 document.querySelectorAll('[data-module="moj-sortable-table"]').forEach(table => {
-  new MOJFrontend.SortableTable({ table })
+  new SortableTable(table)
 })
 document.querySelectorAll('[data-premises-with-areas]').forEach((el, index) => flattenPremisesOptions(el, index))
 document.querySelectorAll('a[data-debounce-link]').forEach(link => linkDebounce(link))
