@@ -1,5 +1,5 @@
 import { ApplicationSortField, SortDirection } from '../../@types/shared'
-import { applicationSummaryFactory } from '../../testutils/factories'
+import { cas1ApplicationSummaryFactory } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import {
@@ -39,7 +39,10 @@ describe('pendingPlacementRequestTable', () => {
 
   describe('pendingPlacementRequestTableRows', () => {
     it('returns a list of rows for application summaries', () => {
-      const summaries = [applicationSummaryFactory.build(), applicationSummaryFactory.build({ releaseType: undefined })]
+      const summaries = [
+        cas1ApplicationSummaryFactory.build(),
+        cas1ApplicationSummaryFactory.build({ releaseType: undefined }),
+      ]
 
       expect(pendingPlacementRequestTableRows(summaries)).toEqual([
         [
