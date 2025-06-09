@@ -1,4 +1,4 @@
-import { applicationSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
+import { cas1ApplicationSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import paths from '../../paths/apply'
 import * as personUtils from '../personUtils'
@@ -15,7 +15,7 @@ describe('helpers', () => {
       const person = personFactory.build()
 
       it("returns a link to an application with the person's name", () => {
-        const applicationSummary = applicationSummaryFactory.build()
+        const applicationSummary = cas1ApplicationSummaryFactory.build()
 
         expect(createNameAnchorElement(person, applicationSummary)).toEqual(
           htmlValue(
@@ -27,7 +27,7 @@ describe('helpers', () => {
       })
 
       describe('when the application status is started', () => {
-        const applicationSummary = applicationSummaryFactory.build({ status: 'started' })
+        const applicationSummary = cas1ApplicationSummaryFactory.build({ status: 'started' })
 
         it('returns name copy only when an application is in progress and linkInProgressApplications is false', () => {
           expect(createNameAnchorElement(person, applicationSummary, { linkInProgressApplications: false })).toEqual(
@@ -49,7 +49,7 @@ describe('helpers', () => {
 
     describe('when the user views a Restricted Person', () => {
       const person = restrictedPersonFactory.build()
-      const applicationSummary = applicationSummaryFactory.build()
+      const applicationSummary = cas1ApplicationSummaryFactory.build()
 
       it('returns "Limited Access Offender" with no link', () => {
         expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Limited Access Offender`))
@@ -64,7 +64,7 @@ describe('helpers', () => {
 
     describe('when the user views an Unknown Person', () => {
       const person = unknownPersonFactory.build()
-      const applicationSummary = applicationSummaryFactory.build()
+      const applicationSummary = cas1ApplicationSummaryFactory.build()
 
       it('returns "Unknown person" with no link', () => {
         expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Unknown person`))

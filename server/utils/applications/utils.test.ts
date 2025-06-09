@@ -11,7 +11,7 @@ import { ApplicationType, TaskNames } from '@approved-premises/ui'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   applicationTimelineFactory,
   assessmentFactory,
   cas1TimelineEventFactory,
@@ -184,13 +184,13 @@ describe('utils', () => {
     const person = personFactory.build()
 
     it('returns an array of applications as table rows', async () => {
-      const applicationA = applicationSummaryFactory.build({
+      const applicationA = cas1ApplicationSummaryFactory.build({
         arrivalDate: undefined,
         person,
         submittedAt: null,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
       })
-      const applicationB = applicationSummaryFactory.build({
+      const applicationB = cas1ApplicationSummaryFactory.build({
         arrivalDate,
         person,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
@@ -250,7 +250,7 @@ describe('utils', () => {
 
     describe('when tier is undefined', () => {
       it('returns a blank tier badge', async () => {
-        const application = applicationSummaryFactory.build({
+        const application = cas1ApplicationSummaryFactory.build({
           arrivalDate,
           person,
           risks: { tier: undefined },
@@ -269,7 +269,7 @@ describe('utils', () => {
 
     describe('when risks is undefined', () => {
       it('returns a blank tier badge', async () => {
-        const application = applicationSummaryFactory.build({
+        const application = cas1ApplicationSummaryFactory.build({
           arrivalDate,
           person,
           risks: undefined,
@@ -317,14 +317,14 @@ describe('utils', () => {
     const person = personFactory.build({ name: 'A' })
 
     it('returns an array of applications as table rows', async () => {
-      const applicationA = applicationSummaryFactory.build({
+      const applicationA = cas1ApplicationSummaryFactory.build({
         arrivalDate: undefined,
         person,
         submittedAt: null,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
         hasRequestsForPlacement: false,
       })
-      const applicationB = applicationSummaryFactory.build({
+      const applicationB = cas1ApplicationSummaryFactory.build({
         arrivalDate,
         person,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
@@ -389,7 +389,7 @@ describe('utils', () => {
 
     describe('when tier is undefined', () => {
       it('returns a blank tier badge', async () => {
-        const application = applicationSummaryFactory.build({
+        const application = cas1ApplicationSummaryFactory.build({
           arrivalDate,
           person,
           risks: { tier: undefined },
@@ -408,7 +408,7 @@ describe('utils', () => {
 
     describe('when risks is undefined', () => {
       it('returns a blank tier badge', async () => {
-        const application = applicationSummaryFactory.build({
+        const application = cas1ApplicationSummaryFactory.build({
           arrivalDate,
           person,
           risks: undefined,
@@ -426,7 +426,7 @@ describe('utils', () => {
 
     describe('when linkInProgressApplications is false', () => {
       it('returns the rows with the name cell without linking to the application', () => {
-        const application = applicationSummaryFactory.build({ person })
+        const application = cas1ApplicationSummaryFactory.build({ person })
 
         const result = dashboardTableRows([application], { linkInProgressApplications: false })
 
@@ -644,7 +644,7 @@ describe('utils', () => {
     it.each(['started', 'requestedFurtherInformation'] as const)(
       'returns a link to withdraw the application when the status is %s',
       (status: ApplicationStatus) => {
-        const applicationSummary = applicationSummaryFactory.build({
+        const applicationSummary = cas1ApplicationSummaryFactory.build({
           id: 'an-application-id',
           status,
           hasRequestsForPlacement: false,
@@ -659,7 +659,7 @@ describe('utils', () => {
     it.each(['awaitingPlacement', 'pendingPlacementRequest'] as const)(
       'returns a link to request for placement of the application when the status is %s and hasRequestsForPlacement is false',
       status => {
-        const applicationSummary = applicationSummaryFactory.build({
+        const applicationSummary = cas1ApplicationSummaryFactory.build({
           id: 'an-application-id',
           status,
           hasRequestsForPlacement: false,
@@ -674,7 +674,7 @@ describe('utils', () => {
     it.each(['rejected', 'withdrawn', 'submitted'])(
       'does not return a link to withdraw the application if the status is %s',
       (status: ApplicationStatus) => {
-        const applicationSummary = applicationSummaryFactory.build({
+        const applicationSummary = cas1ApplicationSummaryFactory.build({
           id: 'an-application-id',
           status,
           hasRequestsForPlacement: false,

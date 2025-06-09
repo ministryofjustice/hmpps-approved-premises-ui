@@ -122,8 +122,8 @@ export default {
   },
   applications: {
     show: applicationsSingle,
-    index: applications,
-    all: applications.path('all'),
+    index: cas1Applications,
+    all: cas1Applications.path('all'),
     update: applicationsSingle,
     new: applications,
     submission: applicationsSingle.path('submission'),

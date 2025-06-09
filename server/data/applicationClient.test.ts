@@ -4,7 +4,7 @@ import config from '../config'
 import {
   activeOffenceFactory,
   applicationFactory,
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   cas1TimelineEventFactory,
   documentFactory,
   noteFactory,
@@ -162,154 +162,6 @@ describeClient('ApplicationClient', provider => {
       const result = await applicationClient.update(application.id, data)
 
       expect(result).toEqual(application)
-    })
-  })
-
-  describe('all', () => {
-    it('should get all previous applications', async () => {
-      const previousApplications = applicationSummaryFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for all applications for a user',
-        withRequest: {
-          method: 'GET',
-          path: paths.applications.index.pattern,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: previousApplications,
-        },
-      })
-
-      const result = await applicationClient.all()
-
-      expect(result).toEqual(previousApplications)
-    })
-  })
-
-  describe('dashboard', () => {
-    it('should get all previous applications', async () => {
-      const allApplications = applicationSummaryFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for all applications',
-        withRequest: {
-          method: 'GET',
-          path: paths.applications.all.pattern,
-          query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc' },
-          headers: {
-            authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: allApplications,
-          headers: {
-            'X-Pagination-TotalPages': '10',
-            'X-Pagination-TotalResults': '100',
-            'X-Pagination-PageSize': '10',
-          },
-        },
-      })
-
-      const result = await applicationClient.dashboard(1, 'arrivalDate', 'asc', {})
-
-      expect(result).toEqual({
-        data: allApplications,
-        pageNumber: '1',
-        totalPages: '10',
-        totalResults: '100',
-        pageSize: '10',
-      })
-    })
-
-    it('should pass a page number', async () => {
-      const allApplications = applicationSummaryFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for all applications',
-        withRequest: {
-          method: 'GET',
-          path: paths.applications.all.pattern,
-          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc' },
-          headers: {
-            authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: allApplications,
-          headers: {
-            'X-Pagination-TotalPages': '10',
-            'X-Pagination-TotalResults': '100',
-            'X-Pagination-PageSize': '10',
-          },
-        },
-      })
-
-      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', {})
-
-      expect(result).toEqual({
-        data: allApplications,
-        pageNumber: '2',
-        totalPages: '10',
-        totalResults: '100',
-        pageSize: '10',
-      })
-    })
-
-    it('should pass search options', async () => {
-      const allApplications = applicationSummaryFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for all applications',
-        withRequest: {
-          method: 'GET',
-          path: paths.applications.all.pattern,
-          query: {
-            page: '2',
-            sortBy: 'createdAt',
-            sortDirection: 'desc',
-            crnOrName: normaliseCrn('foo'),
-            status: 'rejected',
-          },
-          headers: {
-            authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: allApplications,
-          headers: {
-            'X-Pagination-TotalPages': '10',
-            'X-Pagination-TotalResults': '100',
-            'X-Pagination-PageSize': '10',
-          },
-        },
-      })
-
-      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', {
-        crnOrName: 'foo',
-        status: 'rejected',
-      })
-
-      expect(result).toEqual({
-        data: allApplications,
-        pageNumber: '2',
-        totalPages: '10',
-        totalResults: '100',
-        pageSize: '10',
-      })
     })
   })
 
@@ -488,6 +340,154 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
 
   beforeEach(() => {
     applicationClient = new ApplicationClient(token)
+  })
+
+  describe('all', () => {
+    it('should get all applications created by the current user', async () => {
+      const applications = cas1ApplicationSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all applications created by the current user',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.index.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: applications,
+        },
+      })
+
+      const result = await applicationClient.all()
+
+      expect(result).toEqual(applications)
+    })
+  })
+
+  describe('dashboard', () => {
+    it('should get all applications', async () => {
+      const allApplications = cas1ApplicationSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all applications',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.all.pattern,
+          query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc' },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: allApplications,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await applicationClient.dashboard(1, 'arrivalDate', 'asc', {})
+
+      expect(result).toEqual({
+        data: allApplications,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should pass a page number', async () => {
+      const allApplications = cas1ApplicationSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all applications',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.all.pattern,
+          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc' },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: allApplications,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', {})
+
+      expect(result).toEqual({
+        data: allApplications,
+        pageNumber: '2',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should pass search options', async () => {
+      const allApplications = cas1ApplicationSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all applications',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.all.pattern,
+          query: {
+            page: '2',
+            sortBy: 'createdAt',
+            sortDirection: 'desc',
+            crnOrName: normaliseCrn('foo'),
+            status: 'rejected',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: allApplications,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', {
+        crnOrName: 'foo',
+        status: 'rejected',
+      })
+
+      expect(result).toEqual({
+        data: allApplications,
+        pageNumber: '2',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
   })
 
   describe('timeline', () => {

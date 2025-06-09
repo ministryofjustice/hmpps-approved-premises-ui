@@ -2,8 +2,8 @@ import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, PaginatedResponse, TaskListErrors } from '@approved-premises/ui'
 import type {
+  Cas1ApplicationSummary,
   ApplicationStatus,
-  ApprovedPremisesApplicationSummary,
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
   WithdrawalReason,
@@ -21,7 +21,7 @@ import Apply from '../form-pages/apply'
 import {
   activeOffenceFactory,
   applicationFactory,
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   documentFactory,
   noteFactory,
   paginatedResponseFactory,
@@ -66,16 +66,18 @@ describe('ApplicationService', () => {
   })
 
   describe('getAllForLoggedInUser', () => {
-    const applications: Record<ApplicationStatus, Array<ApprovedPremisesApplicationSummary>> = {
-      inProgress: applicationSummaryFactory.buildList(1, { status: 'started' }),
-      requestedFurtherInformation: applicationSummaryFactory.buildList(1, { status: 'requestedFurtherInformation' }),
-      submitted: applicationSummaryFactory.buildList(1, { status: 'submitted' }),
-      pending: applicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
-      rejected: applicationSummaryFactory.buildList(1, { status: 'rejected' }),
-      awaitingPlacement: applicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' }),
-      placed: applicationSummaryFactory.buildList(1, { status: 'placementAllocated' }),
-      inapplicable: applicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
-      withdrawn: applicationSummaryFactory.buildList(1, { status: 'withdrawn' }),
+    const applications: Record<ApplicationStatus, Array<Cas1ApplicationSummary>> = {
+      inProgress: cas1ApplicationSummaryFactory.buildList(1, { status: 'started' }),
+      requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(1, {
+        status: 'requestedFurtherInformation',
+      }),
+      submitted: cas1ApplicationSummaryFactory.buildList(1, { status: 'submitted' }),
+      pending: cas1ApplicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
+      rejected: cas1ApplicationSummaryFactory.buildList(1, { status: 'rejected' }),
+      awaitingPlacement: cas1ApplicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' }),
+      placed: cas1ApplicationSummaryFactory.buildList(1, { status: 'placementAllocated' }),
+      inapplicable: cas1ApplicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
+      withdrawn: cas1ApplicationSummaryFactory.buildList(1, { status: 'withdrawn' }),
     }
 
     it('fetches all applications', async () => {
@@ -344,10 +346,10 @@ describe('ApplicationService', () => {
   })
 
   describe('dashboard', () => {
-    const applications = applicationSummaryFactory.buildList(5)
+    const applications = cas1ApplicationSummaryFactory.buildList(5)
     const paginatedResponse = paginatedResponseFactory.build({
       data: applications,
-    }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+    }) as PaginatedResponse<Cas1ApplicationSummary>
 
     beforeEach(() => {
       applicationClient.dashboard.mockResolvedValue(paginatedResponse)

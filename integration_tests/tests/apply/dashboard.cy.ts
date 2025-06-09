@@ -1,6 +1,6 @@
 import { ApprovedPremisesApplicationStatus as ApplicationStatus } from '../../../server/@types/shared'
 import {
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   placementApplicationFactory,
   requestForPlacementFactory,
   restrictedPersonFactory,
@@ -21,9 +21,9 @@ context('All applications', () => {
 
   it('lists all applications with pagination', () => {
     // Given there are multiple pages of applications
-    const page1Applications = applicationSummaryFactory.buildList(10)
-    const page2Applications = applicationSummaryFactory.buildList(10)
-    const page3Applications = applicationSummaryFactory.buildList(10)
+    const page1Applications = cas1ApplicationSummaryFactory.buildList(10)
+    const page2Applications = cas1ApplicationSummaryFactory.buildList(10)
+    const page3Applications = cas1ApplicationSummaryFactory.buildList(10)
 
     cy.task('stubAllApplications', { applications: page1Applications, page: '1' })
     cy.task('stubAllApplications', { applications: page2Applications, page: '2' })
@@ -62,7 +62,7 @@ context('All applications', () => {
 
   it('lists all applications for lao', () => {
     // Given there is a page of application
-    const page1Applications = applicationSummaryFactory.buildList(1)
+    const page1Applications = cas1ApplicationSummaryFactory.buildList(1)
 
     page1Applications[0].person = restrictedPersonFactory.build()
 
@@ -81,7 +81,7 @@ context('All applications', () => {
 
   it('supports sorting by createdAt', () => {
     // Given there is a page of applications
-    const applications = applicationSummaryFactory.buildList(10)
+    const applications = cas1ApplicationSummaryFactory.buildList(10)
 
     cy.task('stubAllApplications', { applications, page: '1' })
     cy.task('stubAllApplications', {
@@ -131,7 +131,7 @@ context('All applications', () => {
 
   it('supports filtering', () => {
     // Given there is a page of applications
-    const applications = applicationSummaryFactory.buildList(10)
+    const applications = cas1ApplicationSummaryFactory.buildList(10)
     const statusFilter: ApplicationStatus = 'rejected'
     cy.task('stubAllApplications', { applications })
     cy.task('stubAllApplications', { applications: [applications[1]], searchOptions: { crnOrName: 'foo' } })
@@ -189,7 +189,7 @@ context('All applications', () => {
   it('request for placement for application status awaiting placement', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
       // Given there is a page of applications
-      const applications = applicationSummaryFactory.buildList(1, {
+      const applications = cas1ApplicationSummaryFactory.buildList(1, {
         status: 'awaitingPlacement',
         hasRequestsForPlacement: false,
       })
@@ -222,7 +222,7 @@ context('All applications', () => {
 
   it('navigate to request for placement tab for application with at least one request for placement', () => {
     // Given there is a page of applications
-    const applications = applicationSummaryFactory.buildList(1, {
+    const applications = cas1ApplicationSummaryFactory.buildList(1, {
       status: 'awaitingPlacement',
       hasRequestsForPlacement: true,
     })
@@ -254,7 +254,7 @@ context('All applications', () => {
 
   const shouldSortByField = (field: string) => {
     // Given there is a page of applications
-    const applications = applicationSummaryFactory.buildList(10)
+    const applications = cas1ApplicationSummaryFactory.buildList(10)
 
     cy.task('stubAllApplications', { applications, page: '1' })
     cy.task('stubAllApplications', {

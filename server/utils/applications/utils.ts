@@ -15,7 +15,6 @@ import type {
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
-  ApprovedPremisesApplicationSummary as ApplicationSummary,
   Cas1PersonalTimeline,
   Cas1TimelineEvent,
   Cas1TimelineEventAssociatedUrl,
