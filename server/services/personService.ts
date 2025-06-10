@@ -1,5 +1,4 @@
 import type { Response } from 'express'
-import type { PersonRisksUI } from '@approved-premises/ui'
 import type {
   ActiveOffence,
   Adjudication,
@@ -12,8 +11,6 @@ import type {
 } from '@approved-premises/api'
 import { HttpError } from 'http-errors'
 import type { PersonClient, RestClientBuilder } from '../data'
-
-import { mapApiPersonRisksForUi } from '../utils/utils'
 
 export class OasysNotFoundError extends Error {}
 
@@ -32,14 +29,6 @@ export default class PersonService {
 
     const offences = await personClient.offences(crn)
     return offences
-  }
-
-  async getPersonRisks(token: string, crn: string): Promise<PersonRisksUI> {
-    const personClient = this.personClientFactory(token)
-
-    const risks = await personClient.risks(crn)
-
-    return mapApiPersonRisksForUi(risks)
   }
 
   async getPrisonCaseNotes(token: string, crn: string): Promise<Array<PrisonCaseNote>> {

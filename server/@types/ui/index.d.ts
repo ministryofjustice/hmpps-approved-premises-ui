@@ -288,7 +288,6 @@ export type DataServices = Partial<{
     getAcctAlerts: (token: string, crn: string) => Promise<Array<PersonAcctAlert>>
     getOasysSelections: (token: string, crn: string) => Promise<Array<OASysSection>>
     getOasysSections: (token: string, crn: string, selectedSections?: Array<number>) => Promise<OASysSections>
-    getPersonRisks: (token: string, crn: string) => Promise<PersonRisksUI>
   }
   applicationService: {
     getDocuments: (token: string, application: ApprovedPremisesApplication) => Promise<Array<Document>>

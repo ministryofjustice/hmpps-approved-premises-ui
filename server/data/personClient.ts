@@ -8,7 +8,6 @@ import type {
   OASysSections,
   Person,
   PersonAcctAlert,
-  PersonRisks,
   PrisonCaseNote,
 } from '@approved-premises/api'
 
@@ -40,14 +39,6 @@ export default class PersonClient {
     })
 
     return response as Person
-  }
-
-  async risks(crn: string): Promise<PersonRisks> {
-    const response = await this.restClient.get({
-      path: paths.people.risks.show({ crn }),
-    })
-
-    return response as PersonRisks
   }
 
   async prisonCaseNotes(crn: string): Promise<Array<PrisonCaseNote>> {
