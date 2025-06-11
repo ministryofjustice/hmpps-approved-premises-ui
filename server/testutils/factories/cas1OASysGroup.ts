@@ -110,14 +110,3 @@ export const roshSummaryFactory = Factory.define<OASysQuestion>(options => ({
   ]),
   answer: faker.lorem.paragraph(),
 }))
-
-// export const supportingInformationFactory = Factory.define<OASysSupportingInformationQuestion>(options => {
-//   const oasysSelection = oasysSelectionFactory.build()
-//
-//   return {
-//     ...oasysSelection,
-//     questionNumber: options.sequence.toString(),
-//     label: oasysSelection.name,
-//     answer: faker.lorem.paragraph(),
-//   }
-// })

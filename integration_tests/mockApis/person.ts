@@ -189,7 +189,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPath: `${paths.people.oasys.answers({ crn: args.person.crn })}`,
+        urlPath: paths.people.oasys.answers({ crn: args.person.crn }),
       },
       response: {
         status: 404,

@@ -1,7 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { OasysPage } from '@approved-premises/ui'
 import { fromPartial } from '@total-typescript/shoehorn'
-// import { offenceDetailsFactory } from '../testutils/factories/oasysSections'
 import PersonService, { OasysNotFoundError } from '../services/personService'
 import {
   applicationFactory,
@@ -23,24 +22,26 @@ import {
   textareas,
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
-import { PersonRisks } from '../@types/shared'
+import { Cas1OASysGroup, PersonRisks } from '../@types/shared'
 import { logToSentry } from '../../logger'
 
 jest.mock('../../logger.ts')
+
+type OasysOffencePage = OasysPage & { offenceDetailsSummary: Cas1OASysGroup }
 
 describe('OASysImportUtils', () => {
   describe('getOasysSections', () => {
     let getOasysGroupMock: jest.Mock
     let personService: DeepMocked<PersonService>
-    let constructor: DeepMocked<Constructor<OasysPage>>
+    let constructor: DeepMocked<Constructor<OasysOffencePage>>
 
     afterEach(() => {
       jest.resetAllMocks()
     })
 
     beforeEach(() => {
-      constructor = createMock<Constructor<OasysPage>>(
-        jest.fn().mockImplementation(() => ({ body: {} }) as unknown as OasysPage),
+      constructor = createMock<Constructor<OasysOffencePage>>(
+        jest.fn().mockImplementation(() => ({ body: {} }) as unknown as OasysOffencePage),
       )
       getOasysGroupMock = jest.fn()
       personService = createMock<PersonService>({
@@ -56,8 +57,7 @@ describe('OASysImportUtils', () => {
         throw new OasysNotFoundError()
       })
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await getOasysSections(
+      const result = await getOasysSections<OasysOffencePage>(
         {},
         application,
         'some-token',
@@ -84,8 +84,7 @@ describe('OASysImportUtils', () => {
 
       getOasysGroupMock.mockResolvedValue(oasysSections)
 
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      const result: any = await getOasysSections(
+      const result = await getOasysSections<OasysOffencePage>(
         {},
         application,
         'some-token',
@@ -119,7 +118,7 @@ describe('OASysImportUtils', () => {
 
       getOasysGroupMock.mockResolvedValue(oasysGroup)
 
-      const result: any = await getOasysSections(
+      const result = await getOasysSections<OasysOffencePage>(
         { offenceDetailsAnswers: { '1': 'My Response' } },
         application,
         'some-token',

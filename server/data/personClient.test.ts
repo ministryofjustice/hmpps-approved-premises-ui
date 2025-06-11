@@ -204,7 +204,7 @@ describeClient('PersonClient', provider => {
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get offences for a person',
+        uponReceiving: 'A request to get a document for a person',
         withRequest: {
           method: 'GET',
           path: paths.people.documents({ crn, documentId }),
@@ -259,7 +259,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
   })
 
   describe('oasysAnswers', () => {
-    it('should return the OASys answers for a single group', async () => {
+    it('should return the OASys questions and answers for a single group', async () => {
       const crn = 'crn'
       const optionalSections = [1, 2, 3]
       const group: Cas1OASysGroupName = faker.helpers.arrayElement(['riskToSelf', 'supportingInformation'])
@@ -267,7 +267,8 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get the optional selected sections of OASys for a person',
+        uponReceiving:
+          'A request to get the questions and answers for a single group from OASys including optionals for supporting information',
         withRequest: {
           method: 'GET',
           path: paths.people.oasys.answers({ crn }),
