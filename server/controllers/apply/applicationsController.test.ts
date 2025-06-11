@@ -24,7 +24,11 @@ import {
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { applicationShowPageTabs, firstPageOfApplicationJourney } from '../../utils/applications/utils'
+import {
+  applicationShowPageTabs,
+  applicationsTabs,
+  firstPageOfApplicationJourney,
+} from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
@@ -57,7 +61,12 @@ describe('applicationsController', () => {
 
   describe('index', () => {
     it('renders the index view', async () => {
-      const applications: GroupedApplications = { inProgress: [], requestedFurtherInformation: [], submitted: [] }
+      const applications: GroupedApplications = {
+        inProgress: [],
+        requestedFurtherInformation: [],
+        submitted: [],
+        inactive: [],
+      }
 
       applicationService.getAllForLoggedInUser.mockResolvedValue(applications)
 
@@ -67,7 +76,7 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/index', {
         pageHeading: 'Approved Premises applications',
-        applications,
+        applicationsTabs: applicationsTabs(applications),
       })
       expect(applicationService.getAllForLoggedInUser).toHaveBeenCalled()
     })

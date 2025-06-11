@@ -7,7 +7,7 @@ import {
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { faker } from '@faker-js/faker'
-import { ApplicationType, TaskNames } from '@approved-premises/ui'
+import { ApplicationType, GroupedApplications, TaskNames } from '@approved-premises/ui'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
@@ -31,6 +31,7 @@ import * as personUtils from '../personUtils'
 import {
   actionsLink,
   appealDecisionRadioItems,
+  applicationsTabs,
   applicationStatusSelectOptions,
   applicationSuitableStatuses,
   applicationTableRows,
@@ -53,6 +54,7 @@ import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
+import config from '../../config'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -282,6 +284,72 @@ describe('utils', () => {
         expect(result[0][2]).toEqual({
           html: '',
         })
+      })
+    })
+  })
+
+  describe('applicationTabs', () => {
+    const groupedApplications: GroupedApplications = {
+      inProgress: cas1ApplicationSummaryFactory.buildList(3, { status: 'started' }),
+      requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(2, {
+        status: 'requestedFurtherInformation',
+      }),
+      submitted: cas1ApplicationSummaryFactory.buildList(6, { status: 'submitted' }),
+      inactive: cas1ApplicationSummaryFactory.buildList(4, { status: 'expired' }),
+    }
+
+    beforeEach(() => {
+      config.flags.inactiveApplicationsTab = true
+    })
+
+    it('returns 4 tabs to be used by the template', () => {
+      expect(applicationsTabs(groupedApplications)).toEqual([
+        {
+          label: 'In progress',
+          id: 'applications',
+          rows: applicationTableRows(groupedApplications.inProgress),
+        },
+        {
+          label: 'Further information requested',
+          id: 'further-information-requested',
+          rows: applicationTableRows(groupedApplications.requestedFurtherInformation),
+        },
+        {
+          label: 'Submitted',
+          id: 'applications-submitted',
+          rows: applicationTableRows(groupedApplications.submitted),
+        },
+        {
+          label: 'Inactive',
+          id: 'inactive',
+          rows: applicationTableRows(groupedApplications.inactive),
+        },
+      ])
+    })
+
+    describe('with the inactiveApplicationTabs feature flag disabled', () => {
+      beforeEach(() => {
+        config.flags.inactiveApplicationsTab = false
+      })
+
+      it('returns In progress, More info requested and Submitted tabs only', () => {
+        expect(applicationsTabs(groupedApplications)).toEqual([
+          {
+            label: 'In progress',
+            id: 'applications',
+            rows: applicationTableRows(groupedApplications.inProgress),
+          },
+          {
+            label: 'Further information requested',
+            id: 'further-information-requested',
+            rows: applicationTableRows(groupedApplications.requestedFurtherInformation),
+          },
+          {
+            label: 'Submitted',
+            id: 'applications-submitted',
+            rows: applicationTableRows(groupedApplications.submitted),
+          },
+        ])
       })
     })
   })

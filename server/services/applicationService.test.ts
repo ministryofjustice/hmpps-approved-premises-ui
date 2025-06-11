@@ -2,8 +2,8 @@ import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, PaginatedResponse, TaskListErrors } from '@approved-premises/ui'
 import type {
+  Cas1ApplicationStatus,
   Cas1ApplicationSummary,
-  ApplicationStatus,
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
   WithdrawalReason,
@@ -30,6 +30,7 @@ import {
 } from '../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 import withdrawablesFactory from '../testutils/factories/withdrawablesFactory'
+import config from '../config'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -61,46 +62,80 @@ describe('ApplicationService', () => {
   const service = new ApplicationService(applicationClientFactory)
 
   beforeEach(() => {
+    config.flags.inactiveApplicationsTab = true
     jest.resetAllMocks()
     applicationClientFactory.mockReturnValue(applicationClient)
   })
 
   describe('getAllForLoggedInUser', () => {
-    const applications: Record<ApplicationStatus, Array<Cas1ApplicationSummary>> = {
-      inProgress: cas1ApplicationSummaryFactory.buildList(1, { status: 'started' }),
+    const applications: Record<Cas1ApplicationStatus, Array<Cas1ApplicationSummary>> = {
+      started: cas1ApplicationSummaryFactory.buildList(1, { status: 'started' }),
       requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(1, {
         status: 'requestedFurtherInformation',
       }),
       submitted: cas1ApplicationSummaryFactory.buildList(1, { status: 'submitted' }),
-      pending: cas1ApplicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
+      awaitingAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'awaitingAssesment' }),
+      unallocatedAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'unallocatedAssesment' }),
+      assesmentInProgress: cas1ApplicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
       rejected: cas1ApplicationSummaryFactory.buildList(1, { status: 'rejected' }),
+      pendingPlacementRequest: cas1ApplicationSummaryFactory.buildList(1, { status: 'pendingPlacementRequest' }),
       awaitingPlacement: cas1ApplicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' }),
-      placed: cas1ApplicationSummaryFactory.buildList(1, { status: 'placementAllocated' }),
+      placementAllocated: cas1ApplicationSummaryFactory.buildList(1, { status: 'placementAllocated' }),
       inapplicable: cas1ApplicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
       withdrawn: cas1ApplicationSummaryFactory.buildList(1, { status: 'withdrawn' }),
+      expired: cas1ApplicationSummaryFactory.buildList(1, { status: 'expired' }),
     }
 
-    it('fetches all applications', async () => {
-      applicationClient.all.mockResolvedValue(Object.values(applications).flat())
+    const submittedApplications = [
+      ...applications.submitted,
+      ...applications.awaitingAssesment,
+      ...applications.unallocatedAssesment,
+      ...applications.assesmentInProgress,
+      ...applications.rejected,
+      ...applications.pendingPlacementRequest,
+      ...applications.awaitingPlacement,
+      ...applications.placementAllocated,
+      ...applications.inapplicable,
+    ]
 
-      const result = await service.getAllForLoggedInUser(token)
+    describe('with the inactiveApplicationsTab feature flag enabled', () => {
+      it('sorts all applications into In progress, Further info requested, Submitted and Inactive', async () => {
+        applicationClient.all.mockResolvedValue(Object.values(applications).flat())
 
-      expect(result).toEqual({
-        inProgress: applications.inProgress,
-        requestedFurtherInformation: applications.requestedFurtherInformation,
-        submitted: [
-          ...applications.submitted,
-          ...applications.pending,
-          ...applications.rejected,
-          ...applications.awaitingPlacement,
-          ...applications.placed,
-          ...applications.inapplicable,
-          ...applications.withdrawn,
-        ],
+        const result = await service.getAllForLoggedInUser(token)
+
+        expect(result).toEqual({
+          inProgress: applications.started,
+          requestedFurtherInformation: applications.requestedFurtherInformation,
+          submitted: submittedApplications,
+          inactive: [...applications.withdrawn, ...applications.expired],
+        })
+
+        expect(applicationClientFactory).toHaveBeenCalledWith(token)
+        expect(applicationClient.all).toHaveBeenCalled()
+      })
+    })
+
+    describe('with the inactiveApplicationsTab feature flag disabled', () => {
+      beforeEach(() => {
+        config.flags.inactiveApplicationsTab = false
       })
 
-      expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.all).toHaveBeenCalled()
+      it('sorts all applications into In progress, Further info requested, and Submitted', async () => {
+        applicationClient.all.mockResolvedValue(Object.values(applications).flat())
+
+        const result = await service.getAllForLoggedInUser(token)
+
+        expect(result).toEqual({
+          inProgress: [...applications.started],
+          requestedFurtherInformation: applications.requestedFurtherInformation,
+          submitted: [...submittedApplications, ...applications.withdrawn, ...applications.expired],
+          inactive: [],
+        })
+
+        expect(applicationClientFactory).toHaveBeenCalledWith(token)
+        expect(applicationClient.all).toHaveBeenCalled()
+      })
     })
   })
 

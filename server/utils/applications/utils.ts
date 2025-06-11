@@ -3,6 +3,7 @@ import type {
   FormArtifact,
   FormPages,
   FormSections,
+  GroupedApplications,
   JourneyType,
   PageResponse,
   SelectOption,
@@ -44,6 +45,7 @@ import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
+import config from '../../config'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -55,7 +57,7 @@ export {
 } from './pendingPlacementRequestTable'
 export { isWomensApplication } from './isWomensApplication'
 
-const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
+const applicationTableRows = (applications: Array<Cas1ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
     createNameAnchorElement(application.person, application),
     textValue(application.person.crn),
@@ -65,6 +67,36 @@ const applicationTableRows = (applications: Array<ApplicationSummary>): Array<Ta
     htmlValue(new ApplicationStatusTag(application.status).html()),
     htmlValue(actionsLink(application)),
   ])
+}
+
+export const applicationsTabs = (applications: GroupedApplications) => {
+  const tabs = [
+    {
+      label: 'In progress',
+      id: 'applications',
+      rows: applicationTableRows(applications.inProgress),
+    },
+    {
+      label: 'Further information requested',
+      id: 'further-information-requested',
+      rows: applicationTableRows(applications.requestedFurtherInformation),
+    },
+    {
+      label: 'Submitted',
+      id: 'applications-submitted',
+      rows: applicationTableRows(applications.submitted),
+    },
+  ]
+
+  if (config.flags.inactiveApplicationsTab) {
+    tabs.push({
+      label: 'Inactive',
+      id: 'inactive',
+      rows: applicationTableRows(applications.inactive),
+    })
+  }
+
+  return tabs
 }
 
 const dashboardTableHeader = (
