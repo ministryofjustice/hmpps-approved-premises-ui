@@ -9,6 +9,7 @@ export default class ListPage extends Page {
     private readonly inProgressApplications: Array<Cas1ApplicationSummary>,
     private readonly submittedApplications: Array<Cas1ApplicationSummary>,
     private readonly requestedFurtherInformationApplications: Array<Cas1ApplicationSummary>,
+    private readonly inactiveApplications?: Array<Cas1ApplicationSummary>,
   ) {
     super('Approved Premises applications')
   }
@@ -17,10 +18,16 @@ export default class ListPage extends Page {
     inProgressApplications: Array<Cas1ApplicationSummary>,
     submittedApplications: Array<Cas1ApplicationSummary>,
     requestedFurtherInformationApplications: Array<Cas1ApplicationSummary>,
+    inactiveApplications?: Array<Cas1ApplicationSummary>,
   ): ListPage {
     cy.visit(paths.applications.index.pattern)
 
-    return new ListPage(inProgressApplications, submittedApplications, requestedFurtherInformationApplications)
+    return new ListPage(
+      inProgressApplications,
+      submittedApplications,
+      requestedFurtherInformationApplications,
+      inactiveApplications,
+    )
   }
 
   shouldShowInProgressApplications(): void {
@@ -33,6 +40,10 @@ export default class ListPage extends Page {
 
   shouldShowSubmittedApplications(): void {
     this.shouldShowApplications(this.submittedApplications, 'Application submitted')
+  }
+
+  shouldShowInactiveApplications(): void {
+    this.shouldShowApplications(this.inactiveApplications, /Expired application|Application withdrawn/)
   }
 
   clickRequestForPlacementLink() {
@@ -51,6 +62,10 @@ export default class ListPage extends Page {
     cy.get('a').contains('Submitted').click()
   }
 
+  clickInactiveTab() {
+    cy.get('a').contains('Inactive').click()
+  }
+
   clickApplication(application: Application) {
     cy.get(`a[data-cy-id="${application.id}"]`).click()
   }
@@ -63,7 +78,7 @@ export default class ListPage extends Page {
     this.shouldShowBanner('Application withdrawn')
   }
 
-  private shouldShowApplications(applications: Array<Cas1ApplicationSummary>, status: string): void {
+  private shouldShowApplications(applications: Array<Cas1ApplicationSummary>, status: string | RegExp): void {
     applications.forEach(application => {
       const name = displayName(application.person)
       cy.contains(name)

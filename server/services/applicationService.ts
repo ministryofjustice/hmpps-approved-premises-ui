@@ -24,6 +24,7 @@ import { ValidationError } from '../utils/errors'
 
 import { getBody } from '../form-pages/utils'
 import Review from '../form-pages/apply/check-your-answers/review'
+import config from '../config'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -59,11 +60,12 @@ export default class ApplicationService {
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {
     const applicationClient = this.applicationClientFactory(token)
     const allApplications = await applicationClient.all()
-    const result = {
+    const result: GroupedApplications = {
       inProgress: [],
       requestedFurtherInformation: [],
       submitted: [],
-    } as GroupedApplications
+      inactive: [],
+    }
 
     await Promise.all(
       allApplications.map(async application => {
@@ -73,6 +75,10 @@ export default class ApplicationService {
             break
           case 'requestedFurtherInformation':
             result.requestedFurtherInformation.push(application)
+            break
+          case 'expired':
+          case 'withdrawn':
+            ;(config.flags.inactiveApplicationsTab ? result.inactive : result.submitted).push(application)
             break
           default:
             result.submitted.push(application)
