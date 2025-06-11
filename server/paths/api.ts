@@ -51,7 +51,7 @@ const taskSingle = tasks.path(':taskType/:id')
 const placementRequests = path('/placement-requests')
 const placementRequestsSingle = placementRequests.path(':placementRequestId')
 
-const placementApplications = path('/placement-applications')
+const placementApplications = cas1Namespace.path('/placement-applications')
 const placementApplicationsSingle = placementApplications.path(':id')
 
 const assessments = path('/assessments')
