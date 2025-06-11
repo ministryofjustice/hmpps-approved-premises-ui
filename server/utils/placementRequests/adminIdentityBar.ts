@@ -73,10 +73,7 @@ export const adminActions = (
     },
   ]
 
-  if (
-    hasPermission(user, ['cas1_space_booking_create']) &&
-    (config.flags.v2MatchEnabled === 'true' || config.flags.v2MatchEnabled === true)
-  ) {
+  if (hasPermission(user, ['cas1_space_booking_create']) && config.flags.v2MatchEnabled === true) {
     actions.unshift({
       href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
       text: 'Search for a space',
