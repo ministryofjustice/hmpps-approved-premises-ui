@@ -13,6 +13,10 @@ function get<T>(name: string, fallback: T, options = { requireInProduction: fals
   throw new Error(`Missing env var ${name}`)
 }
 
+function getFlag(name: string): boolean {
+  return process.env[name] === 'true' || false
+}
+
 const requiredInProduction = { requireInProduction: true }
 
 export class AgentConfig {
@@ -46,8 +50,8 @@ export default {
   flags: {
     oasysDisabled: process.env.OASYS_DISABLED || false,
     v2MatchEnabled: process.env.ENABLE_V2_MATCH || false,
-    pocEnabled: process.env.ENABLE_POC === 'true' || false,
-    inactiveApplicationsTab: process.env.ENABLE_INACTIVE_APPLICATIONS_TAB || false,
+    pocEnabled: getFlag('ENABLE_POC'),
+    inactiveApplicationsTab: getFlag('ENABLE_INACTIVE_APPLICATIONS_TAB'),
   },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {
