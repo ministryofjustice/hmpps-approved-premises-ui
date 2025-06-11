@@ -201,6 +201,11 @@ export default abstract class Page {
     if (year) cy.get(`#${prefix}-year`).type(year)
   }
 
+  completeDatePicker(name: string, date: string): void {
+    const formattedDate = date.split('-').reverse().join('/')
+    this.completeTextInput(name, formattedDate)
+  }
+
   private stripLeadingZeros(value: string): string {
     return value.replace(/^0+/, '')
   }

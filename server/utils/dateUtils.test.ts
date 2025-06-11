@@ -17,6 +17,7 @@ import {
   uiDateOrDateEmptyMessage,
   yearOptions,
   timeAddLeadingZero,
+  dateIsValid,
 } from './dateUtils'
 
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -347,6 +348,19 @@ describe('DateFormats', () => {
       expect(DateFormats.isoDateToMonthAndYear(date)).toEqual(expected)
     })
   })
+
+  describe('dateSlashesToISODate', () => {
+    it.each([
+      ['1/1/2024', '2024-01-01'],
+      ['31/01/2025', '2025-01-31'],
+      ['3/11/1999', '1999-11-03'],
+      ['not a date', 'not a date'],
+      [undefined, undefined],
+      ['', undefined],
+    ])('returns an ISO date for the date %s', (date, expected) => {
+      expect(DateFormats.dateWithSlashesToISODate(date)).toEqual(expected)
+    })
+  })
 })
 
 describe('uiDateOrDateEmptyMessage', () => {
@@ -397,6 +411,19 @@ describe('addBusinessDays', () => {
   it('returns the correct date if the gap includes a weekend and a bank holiday', () => {
     expect(addBusinessDays(new Date(2023, 10, 13), 7, [new Date(2023, 10, 13)])).toEqual(new Date(2023, 10, 23))
   })
+})
+
+describe('dateIsValid', () => {
+  it.each(['2025-01-01', '1999-12-25'])('returns true for the valid date %s', date => {
+    expect(dateIsValid(date)).toEqual(true)
+  })
+
+  it.each(['2025-1-1', '1999-12-32', '2025-02-31', '20205-04-13', '2025-01-yeah', 'not even a date'])(
+    'returns false for the invalid date %s',
+    date => {
+      expect(dateIsValid(date)).toEqual(false)
+    },
+  )
 })
 
 describe('dateAndTimeInputsAreValidDates', () => {

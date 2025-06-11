@@ -7,78 +7,74 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      {{ showErrorSummary(errorSummary) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ showErrorSummary(errorSummary) }}
 
-      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      <form action="{{ paths.admin.reports.create() }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <form action="{{ paths.admin.reports.create() }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukRadios({
-              name: "reportType",
-              fieldset: {
-                  legend: {
-                      text: "Report type",
-                      classes: "govuk-fieldset__legend--m"
-                  }
-              },
-              items: ReportUtils.reportOptions(user),
-              errorMessage: errors.reportType
-          }) }}
+                {{ govukRadios({
+                    name: "reportType",
+                    fieldset: {
+                        legend: {
+                            text: "Report type",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: ReportUtils.reportOptions(user),
+                    errorMessage: errors.reportType
+                }) }}
 
-        <div class="govuk-form-group {% if errors.date %} govuk-form-group--error {% endif %}" id="date">
-          <div class="govuk-grid-row">
-            {% if errors.date %}
-              <div class="govuk-grid-column-full">
-                <p id="month-error" class="govuk-error-message" data-cy-error-date="true">
-                  <span class="govuk-visually-hidden">Error:</span>
-                  {{  errors.date.text }}
-                </p>
-              </div>
-            {% endif %}
-            <div class="govuk-grid-column-one-third">
-              {{
-            govukSelect({
-              id: 'month',
-              name: 'month',
-              label: {
-                text: 'Month',
-                classes: "govuk-label--s"
-              },
-              items: convertObjectsToSelectOptions(monthOptions, 'Choose Month', 'name', 'value', month)
-            })
-          }}
-            </div>
-            <div class="govuk-grid-column-one-third govuk-!-margin-left-5">
-              {{
-            govukSelect({
-              id: 'year',
-              name: 'year',
-              label: {
-                text: 'Year',
-                classes: "govuk-label--s"
-              },
-              items: convertObjectsToSelectOptions(yearOptions(2023), 'Choose Year', 'name', 'value', year)
-            })
-          }}
-            </div>
-          </div>
+                <div class="govuk-grid-row govuk-!-margin-bottom-8">
+                    <div class="govuk-grid-column-one-half">
+                        {{ mojDatePicker({
+                            id: "startDate",
+                            name: "startDate",
+                            label: {
+                                text: "Start date",
+                                classes: "govuk-label--m"
+                            },
+                            hint: {
+                                text: "For example, 1/2/2025."
+                            },
+                            value: startDate,
+                            errorMessage: errors.startDate
+                        }) }}
+                    </div>
+
+                    <div class="govuk-grid-column-one-half">
+                        {{ mojDatePicker({
+                            id: "endDate",
+                            name: "endDate",
+                            label: {
+                                text: "End date",
+                                classes: "govuk-label--m"
+                            },
+                            hint: {
+                                text: "For example, 31/3/2025."
+                            },
+                            value: endDate,
+                            errorMessage: errors.endDate
+                        }) }}
+                    </div>
+                </div>
+
+                {{ govukButton({
+                    name: 'submit',
+                    text: "Download data"
+                }) }}
+            </form>
+
         </div>
-
-        {{ govukButton({
-            name: 'submit',
-            text: "Download data"
-        }) }}
-      </form>
-
     </div>
-  </div>
 {% endblock %}

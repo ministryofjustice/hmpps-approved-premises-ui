@@ -7,23 +7,20 @@ import { createQueryString } from '../../server/utils/utils'
 import { ReportType } from '../../server/utils/reportUtils'
 
 export default {
-  stubReport: (args: { month: string; year: string; reportName: ReportType }) =>
+  stubReport: (args: { startDate: string; endDate: string; reportName: ReportType }) =>
     stubFor({
       request: {
         method: 'GET',
         url: `${paths.reports({ reportName: args.reportName })}?${createQueryString({
-          month: args.month,
-          year: args.year,
+          startDate: args.startDate,
+          endDate: args.endDate,
         })}`,
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/octet-stream',
-          'content-disposition': `attachment; filename=${`${args.reportName}-${args.year}-${args.month.padStart(
-            2,
-            '0',
-          )}.xlsx`}`,
+          'content-disposition': `attachment; filename=${`${args.reportName}-${args.startDate}-to-${args.endDate}-20250611_1602.xlsx`}`,
         },
         base64Body: readFileSync(path.resolve(__dirname, '..', 'fixtures', 'report.xlsx'), {
           encoding: 'base64',

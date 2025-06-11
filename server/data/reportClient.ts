@@ -14,11 +14,11 @@ export default class ReportClient {
     this.restClient = new RestClient('reportClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async getReport(reportName: ReportType, month: string, year: string, response: Response): Promise<void> {
+  async getReport(reportName: ReportType, startDate: string, endDate: string, response: Response): Promise<void> {
     await this.restClient.pipe(
       {
         path: paths.reports({ reportName }),
-        query: createQueryString({ month, year }),
+        query: createQueryString({ startDate, endDate }),
         passThroughHeaders: ['content-disposition'],
       },
       response,

@@ -1,5 +1,5 @@
 import * as GOVUKFrontend from 'govuk-frontend'
-import { ButtonMenu, SortableTable } from '@ministryofjustice/frontend'
+import { ButtonMenu, SortableTable, DatePicker } from '@ministryofjustice/frontend'
 import flattenPremisesOptions from './flattenPremisesOptions'
 import linkDebounce from './linkDebounce'
 import SubNavAsTabs from './tabPanelTableScript'
@@ -24,3 +24,6 @@ document.querySelectorAll('[data-sub-navigation-as-tabs]').forEach(element => {
   new SubNavAsTabs(element)
 })
 document.querySelectorAll('[data-autocomplete]').forEach(el => makeAutocomplete(el))
+document.querySelectorAll('[data-module="moj-date-picker"]').forEach(el => {
+  new DatePicker(el).init()
+})

@@ -12,26 +12,15 @@ export default class ReportPage extends Page {
     return new ReportPage()
   }
 
-  selectDates(month: string, year: string): void {
-    this.getSelectInputByIdAndSelectAnEntry('month', month)
-    this.getSelectInputByIdAndSelectAnEntry('year', year)
-  }
-
-  downloadReport(month: string, year: string, reportName: ReportType): void {
+  downloadReport(startDate: string, endDate: string, reportName: ReportType): void {
     this.checkRadioByNameAndValue('reportType', reportName)
-    this.selectDates(month, year)
-    cy.get('button').contains('Download data').click()
+    this.completeDatePicker('startDate', startDate)
+    this.completeDatePicker('endDate', endDate)
+    this.clickButton('Download data')
   }
 
-  shouldHaveDownloadedReport(month: string, year: string, reportName: ReportType): void {
-    const reportFilename = `${reportName}-${year}-${month.padStart(2, '0')}.xlsx`
+  shouldHaveDownloadedReport(startDate: string, endDate: string, reportName: ReportType): void {
+    const reportFilename = `${reportName}-${startDate}-to-${endDate}-20250611_1602.xlsx`
     return this.shouldHaveDownloadedFile(reportFilename)
-  }
-
-  shouldShowErrorMessages() {
-    cy.get('.govuk-error-summary').should('contain', 'You must choose a month and year')
-    cy.get(`[data-cy-error-date]`).should('contain', 'You must choose a month and year')
-    cy.get('.govuk-error-summary').should('contain', 'You must choose a report type')
-    cy.get(`[data-cy-error-reporttype]`).should('contain', 'You must choose a report type')
   }
 }

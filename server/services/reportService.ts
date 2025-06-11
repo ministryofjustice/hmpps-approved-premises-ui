@@ -10,13 +10,13 @@ export default class ReportService {
 
   async getReport(
     token: string,
-    month: string,
-    year: string,
+    startDate: string,
+    endDate: string,
     reportType: ReportType,
     response: Response,
   ): Promise<void> {
     const client = this.reportClientFactory(token)
 
-    return client.getReport(reportType, month, year, response)
+    return client.getReport(reportType, startDate, endDate, response)
   }
 }

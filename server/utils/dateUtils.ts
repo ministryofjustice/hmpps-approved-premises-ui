@@ -246,6 +246,16 @@ export class DateFormats {
   static isoDateToMonthAndYear(date: string) {
     return format(date, 'MMMM yyyy')
   }
+
+  static dateWithSlashesToISODate(dateSlashes?: string) {
+    return dateSlashes
+      ? dateSlashes
+          .split('/')
+          .reverse()
+          .map(part => part.padStart(2, '0'))
+          .join('-')
+      : undefined
+  }
 }
 
 export const addBusinessDays = (date: Date, days: number, holidays: Array<Date> = bankHolidays()): Date => {
@@ -271,6 +281,18 @@ export const uiDateOrDateEmptyMessage = (
   return 'No date supplied'
 }
 
+export const dateIsValid = (date: string) => {
+  try {
+    DateFormats.isoToDateObj(date)
+  } catch (error) {
+    if (error instanceof InvalidDateStringError) {
+      return false
+    }
+  }
+
+  return true
+}
+
 export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   dateInputObj: ObjectWithDateParts<K>,
   key: K,
@@ -281,15 +303,7 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
 
   const dateString = DateFormats.dateAndTimeInputsToIsoString(dateInputObj, key)
 
-  try {
-    DateFormats.isoToDateObj(dateString[key])
-  } catch (error) {
-    if (error instanceof InvalidDateStringError) {
-      return false
-    }
-  }
-
-  return true
+  return dateIsValid(dateString[key])
 }
 
 export const dateIsBlank = <K extends string | number>(
