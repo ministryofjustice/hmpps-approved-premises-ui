@@ -53,6 +53,6 @@ export const test = base.extend<TestOptions>({
     },
     { option: true },
   ],
-  oasysSections: [['3. Accommodation', '13. Health'], { option: true }],
+  oasysSections: [['3. Accommodation'], { option: true }],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
 })
