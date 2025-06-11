@@ -47,6 +47,7 @@ export default {
     oasysDisabled: process.env.OASYS_DISABLED || false,
     v2MatchEnabled: process.env.ENABLE_V2_MATCH || false,
     pocEnabled: process.env.ENABLE_POC === 'true' || false,
+    inactiveApplicationsTab: process.env.ENABLE_INACTIVE_APPLICATIONS_TAB || false,
   },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {

@@ -25,6 +25,10 @@ context('Applications dashboard', () => {
       status: 'requestedFurtherInformation',
     })
     const awaitingPlacementApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+    const inactiveApplications = [
+      ...cas1ApplicationSummaryFactory.buildList(3, { status: 'expired' }),
+      ...cas1ApplicationSummaryFactory.buildList(3, { status: 'withdrawn' }),
+    ]
 
     cy.task(
       'stubApplications',
@@ -33,11 +37,17 @@ context('Applications dashboard', () => {
         submittedApplications,
         requestedFurtherInformationApplications,
         awaitingPlacementApplications,
+        inactiveApplications,
       ].flat(),
     )
 
     // When I visit the Previous Applications page
-    const page = ListPage.visit(inProgressApplications, submittedApplications, requestedFurtherInformationApplications)
+    const page = ListPage.visit(
+      inProgressApplications,
+      submittedApplications,
+      requestedFurtherInformationApplications,
+      inactiveApplications,
+    )
 
     // Then I should see all of the in progress applications
     page.shouldShowInProgressApplications()
@@ -53,6 +63,12 @@ context('Applications dashboard', () => {
 
     // Then I should see the applications that have been submitted
     page.shouldShowSubmittedApplications()
+
+    // And I click on the inactive tab
+    page.clickInactiveTab()
+
+    // Then I should see the applications that are expired or withdrawn
+    page.shouldShowInactiveApplications()
 
     // And I the button should take me to the application start page
     page.clickSubmit()

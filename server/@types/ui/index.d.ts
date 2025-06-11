@@ -321,6 +321,7 @@ export interface GroupedApplications {
   inProgress: Array<Cas1ApplicationSummary>
   requestedFurtherInformation: Array<Cas1ApplicationSummary>
   submitted: Array<Cas1ApplicationSummary>
+  inactive: Array<Cas1ApplicationSummary>
 }
 
 export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask
