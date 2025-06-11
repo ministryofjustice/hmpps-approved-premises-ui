@@ -3,9 +3,10 @@ import type { Response } from 'express'
 import type {
   ActiveOffence,
   Adjudication,
+  Cas1OASysGroup,
+  Cas1OASysGroupName,
+  Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
-  OASysSection,
-  OASysSections,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
@@ -65,26 +66,36 @@ export default class PersonClient {
     return response as Array<ActiveOffence>
   }
 
-  async oasysSelections(crn: string): Promise<Array<OASysSection>> {
-    const response = await this.restClient.get({ path: paths.people.oasys.selection({ crn }) })
-
-    return response as Array<OASysSection>
-  }
-
-  async oasysSections(crn: string, selectedSections?: Array<number>): Promise<OASysSections> {
-    let response: OASysSections
-
-    if (config.flags.oasysDisabled) {
-      response = oasysStubs as OASysSections
-    } else {
-      const queryString: string = createQueryString({ 'selected-sections': selectedSections })
-
-      const path = `${paths.people.oasys.sections({ crn })}${queryString ? `?${queryString}` : ''}`
-
-      response = (await this.restClient.get({ path })) as OASysSections
+  async oasysMetadata(crn: string): Promise<Array<Cas1OASysSupportingInformationQuestionMetaData>> {
+    const response = (await this.restClient.get({ path: paths.people.oasys.metadata({ crn }) })) as {
+      supportingInformation: Array<Cas1OASysSupportingInformationQuestionMetaData>
     }
 
-    return response as OASysSections
+    return response.supportingInformation as Array<Cas1OASysSupportingInformationQuestionMetaData>
+  }
+
+  async oasysAnswers(
+    crn: string,
+    groupName: Cas1OASysGroupName,
+    optionalSections?: Array<number>,
+  ): Promise<Cas1OASysGroup> {
+    let response: Cas1OASysGroup
+
+    if (config.flags.oasysDisabled) {
+      response = {
+        group: groupName,
+        answers: oasysStubs[groupName],
+        assessmentMetadata: oasysStubs.assessmentMetadata,
+      }
+    } else {
+      const queryString: string = createQueryString({ group: groupName, includeOptionalSections: optionalSections })
+
+      const path = `${paths.people.oasys.answers({ crn })}${queryString ? `?${queryString}` : ''}`
+
+      response = (await this.restClient.get({ path })) as Cas1OASysGroup
+    }
+
+    return response
   }
 
   async document(crn: string, documentId: string, response: Response): Promise<void> {

@@ -1,7 +1,8 @@
 {
-  "assessmentId": null,
-  "assessmentState": null,
-  "dateStarted": null,
+  "assessmentMetadata": {
+    "dateCompleted": null,
+    "dateStarted": null
+  },
   "offenceDetails": [
     {
       "label": "Offence analysis",
@@ -206,6 +207,5 @@
       "questionNumber": "RM28.1",
       "answer": ""
     }
-  ],
-  "dateCompleted": null
+  ]
 }

@@ -8,7 +8,7 @@ import type {
   ApprovedPremisesApplication,
   AssessmentDecision,
   Cas1ApplicationUserDetails,
-  OASysSection,
+  Cas1OASysSupportingInformationQuestionMetaData,
   ReleaseTypeOption,
   SentenceTypeOption,
 } from '@approved-premises/api'
@@ -39,7 +39,10 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
     return this.withReleaseDate(DateFormats.dateObjToIsoDate(addDays(new Date(), 200)))
   }
 
-  withOptionalOasysSectionsSelected(needsLinkedToReoffending: Array<OASysSection>, otherNeeds: Array<OASysSection>) {
+  withOptionalOasysSectionsSelected(
+    needsLinkedToReoffending: Array<Cas1OASysSupportingInformationQuestionMetaData>,
+    otherNeeds: Array<Cas1OASysSupportingInformationQuestionMetaData>,
+  ) {
     return this.params({
       data: {
         'oasys-import': {

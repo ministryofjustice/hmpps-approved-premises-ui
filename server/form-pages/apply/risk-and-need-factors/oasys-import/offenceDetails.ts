@@ -38,7 +38,7 @@ export default class OffenceDetails implements OasysPage {
     dataServices: DataServices,
   ) {
     return getOasysSections(body, application, token, dataServices, OffenceDetails, {
-      sectionName: 'offenceDetails',
+      groupName: 'offenceDetails',
       summaryKey: 'offenceDetailsSummaries',
       answerKey: 'offenceDetailsAnswers',
     })

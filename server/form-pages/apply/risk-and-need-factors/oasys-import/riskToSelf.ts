@@ -38,7 +38,7 @@ export default class RiskToSelf implements OasysPage {
     dataServices: DataServices,
   ) {
     return getOasysSections(body, application, token, dataServices, RiskToSelf, {
-      sectionName: 'riskToSelf',
+      groupName: 'riskToSelf',
       summaryKey: 'riskToSelfSummaries',
       answerKey: 'riskToSelfAnswers',
     })

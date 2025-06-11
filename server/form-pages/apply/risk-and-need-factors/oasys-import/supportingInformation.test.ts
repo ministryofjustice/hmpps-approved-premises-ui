@@ -1,10 +1,11 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
+import { Cas1OASysAssessmentMetadata } from '@approved-premises/api'
 import { PersonService } from '../../../../services'
 import {
   applicationFactory,
-  oasysSectionsFactory,
-  oasysSelectionFactory,
+  cas1OasysGroupFactory,
+  cas1OASysSupportingInformationMetaDataFactory,
   risksFactory,
 } from '../../../../testutils/factories'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
@@ -16,20 +17,20 @@ import SupportingInformation from './supportingInformation'
 jest.mock('../../../../services/personService.ts')
 
 describe('SupportingInformation', () => {
-  const oasysSections = oasysSectionsFactory.build()
+  const oasysGroup = cas1OasysGroupFactory.supportingInformation().build()
   const personRisks = risksFactory.build()
   let application = applicationFactory.withOptionalOasysSectionsSelected([], []).build({ risks: personRisks })
 
   describe('initialize', () => {
-    const getOasysSectionsMock = jest.fn()
+    const getOasysGroupMock = jest.fn()
 
     let personService: DeepMocked<PersonService>
 
     beforeEach(() => {
       personService = createMock<PersonService>({
-        getOasysSections: getOasysSectionsMock,
+        getOasysAnswers: getOasysGroupMock,
       })
-      getOasysSectionsMock.mockResolvedValue(oasysSections)
+      getOasysGroupMock.mockResolvedValue(oasysGroup)
     })
 
     afterEach(() => {
@@ -37,30 +38,43 @@ describe('SupportingInformation', () => {
     })
 
     it('calls the getOasysSections and getPersonRisks method on the client with a token and the persons CRN', async () => {
-      const needsLinkedToReoffending = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 1 })
-      const otherNeeds = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 2 })
+      const needsLinkedToReoffending = cas1OASysSupportingInformationMetaDataFactory
+        .needsLinkedToReoffending()
+        .build({ section: 1 })
+      const otherNeeds = cas1OASysSupportingInformationMetaDataFactory
+        .needsNotLinkedToReoffending()
+        .build({ section: 2 })
       application = applicationFactory
         .withOptionalOasysSectionsSelected([needsLinkedToReoffending], [otherNeeds])
         .build({ risks: personRisks })
 
       await SupportingInformation.initialize({}, application, 'some-token', fromPartial({ personService }))
 
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [1, 2])
+      expect(getOasysGroupMock).toHaveBeenCalledWith(
+        'some-token',
+        application.person.crn,
+        'supportingInformation',
+        [1, 2],
+      )
     })
 
     it('adds the supportingInformationSummaries and personRisks to the page object', async () => {
       const page = await SupportingInformation.initialize({}, application, 'some-token', fromPartial({ personService }))
 
-      expect(page.supportingInformationSummaries).toEqual(oasysSections.supportingInformation)
+      expect(page.supportingInformationSummaries).toEqual(oasysGroup.answers)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
-      expect(page.oasysCompleted).toEqual(oasysSections.dateCompleted)
+      expect(page.oasysCompleted).toEqual(oasysGroup.assessmentMetadata.dateCompleted)
     })
 
     it('sets dateCompleted to dateStarted if dateCompleted is null', async () => {
-      getOasysSectionsMock.mockResolvedValue({ ...oasysSections, dateCompleted: null })
+      const assessmentMetadata: Cas1OASysAssessmentMetadata = {
+        dateStarted: oasysGroup.assessmentMetadata.dateStarted,
+        dateCompleted: null,
+      }
+      getOasysGroupMock.mockResolvedValue({ ...oasysGroup, assessmentMetadata })
 
       const page = await SupportingInformation.initialize({}, application, 'some-token', fromPartial({ personService }))
-      expect(page.oasysCompleted).toEqual(oasysSections.dateStarted)
+      expect(page.oasysCompleted).toEqual(assessmentMetadata.dateStarted)
     })
 
     itShouldHaveNextValue(new SupportingInformation({}), 'risk-management-plan')

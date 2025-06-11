@@ -29,8 +29,7 @@ import {
 } from './newPlacementRequestBooking'
 import newAppealFactory from './newAppealFactory'
 import noteFactory from './noteFactory'
-import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
-import oasysSelectionFactory from './oasysSelection'
+import cas1OASysSupportingInformationMetaDataFactory from './cas1OASysSupportingInformationQuestionMetaData'
 import {
   newOutOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
@@ -99,6 +98,8 @@ import appealSessionDataFactory from './appealSessionData'
 import cas1PlacementRequestDetailFactory from './cas1PlacementRequestDetail'
 import cas1ChangeRequestFactory from './cas1ChangeRequest'
 import cas1RejectChangeRequestFactory from './cas1RejectChangeRequest'
+import oasysQuestionFactory from './oasysQuestion'
+import cas1OasysGroupFactory, { roshSummaryFactory } from './cas1OASysGroup'
 
 export {
   acctAlertFactory,
@@ -163,8 +164,9 @@ export {
   newCancellationFactory,
   newAppealFactory,
   noteFactory,
-  oasysSectionsFactory,
-  oasysSelectionFactory,
+  cas1OASysSupportingInformationMetaDataFactory,
+  cas1OasysGroupFactory,
+  oasysQuestionFactory,
   outOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
   outOfServiceBedRevisionFactory,

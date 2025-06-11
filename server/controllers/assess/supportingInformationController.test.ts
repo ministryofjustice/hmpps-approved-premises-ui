@@ -8,7 +8,7 @@ import {
   acctAlertFactory,
   adjudicationFactory,
   assessmentFactory,
-  oasysSectionsFactory,
+  cas1OasysGroupFactory,
   prisonCaseNotesFactory,
 } from '../../testutils/factories'
 
@@ -54,15 +54,15 @@ describe('supportingInformationController', () => {
       it('renders the view', async () => {
         request.params.category = 'risk-information'
 
-        const oasysSections = oasysSectionsFactory.build()
         oasysImport = {
-          'offence-details': { offenceDetails: oasysSections.offenceDetails },
-          'risk-to-self': { riskToSelf: oasysSections.riskToSelf },
-          'rosh-summary': { roshSummary: oasysSections.roshSummary },
-          'supporting-information': { supportingInformation: oasysSections.supportingInformation },
-          'risk-management-plan': { riskManagementPlan: oasysSections.riskManagementPlan },
+          'offence-details': { offenceDetails: cas1OasysGroupFactory.offenceDetails().build().answers },
+          'risk-to-self': { riskToSelf: cas1OasysGroupFactory.riskToSelf().build().answers },
+          'rosh-summary': { roshSummary: cas1OasysGroupFactory.roshSummary().build().answers },
+          'supporting-information': {
+            supportingInformation: cas1OasysGroupFactory.supportingInformation().build().answers,
+          },
+          'risk-management-plan': { riskManagementPlan: cas1OasysGroupFactory.riskManagementPlan().build().answers },
         }
-
         assessment.application.data = {
           'oasys-import': { ...oasysImport },
         }

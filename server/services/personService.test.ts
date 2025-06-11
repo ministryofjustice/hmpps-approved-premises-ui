@@ -10,11 +10,11 @@ import {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
-  oasysSectionsFactory,
-  oasysSelectionFactory,
   personFactory,
   personalTimelineFactory,
   prisonCaseNotesFactory,
+  cas1OASysSupportingInformationMetaDataFactory,
+  cas1OasysGroupFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -117,27 +117,27 @@ describe('PersonService', () => {
     })
   })
 
-  describe('getOasysSelections', () => {
-    it("on success returns the person's OASys selections given their CRN", async () => {
-      const oasysSelections = oasysSelectionFactory.buildList(3)
+  describe('getOasysMetadata', () => {
+    it("on success returns the person's OASys metadata given their CRN", async () => {
+      const refOasysMetadata = cas1OASysSupportingInformationMetaDataFactory.buildList(3)
 
-      personClient.oasysSelections.mockResolvedValue(oasysSelections)
+      personClient.oasysMetadata.mockResolvedValue(refOasysMetadata)
 
-      const serviceOasysSelections = await service.getOasysSelections(token, 'crn')
+      const metadata = await service.getOasysMetadata(token, 'crn')
 
-      expect(serviceOasysSelections).toEqual(oasysSelections)
+      expect(metadata).toEqual(refOasysMetadata)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.oasysSelections).toHaveBeenCalledWith('crn')
+      expect(personClient.oasysMetadata).toHaveBeenCalledWith('crn')
     })
 
     it('on 404 it throws an OasysNotFoundError', async () => {
       const err = createMock<SanitisedError>({ data: { status: 404 } })
-      personClient.oasysSelections.mockImplementation(() => {
+      personClient.oasysMetadata.mockImplementation(() => {
         throw err
       })
 
-      const t = () => service.getOasysSelections(token, 'crn')
+      const t = () => service.getOasysMetadata(token, 'crn')
 
       await expect(t).rejects.toThrowError(OasysNotFoundError)
       await expect(t).rejects.toThrowError(`Oasys record not found for CRN: crn`)
@@ -145,12 +145,12 @@ describe('PersonService', () => {
 
     it('on 500 it throws the error upstream', async () => {
       const err = createMock<SanitisedError>({ data: { status: 500 } })
-      personClient.oasysSelections.mockImplementation(() => {
+      personClient.oasysMetadata.mockImplementation(() => {
         throw err
       })
 
       try {
-        await service.getOasysSelections(token, 'crn')
+        await service.getOasysMetadata(token, 'crn')
       } catch (error) {
         expect(error).toEqual(err)
       }
@@ -158,35 +158,35 @@ describe('PersonService', () => {
 
     it('on generic error it throws the error upstream', async () => {
       const genericError = new Error()
-      personClient.oasysSelections.mockImplementation(() => {
+      personClient.oasysMetadata.mockImplementation(() => {
         throw genericError
       })
 
-      await expect(() => service.getOasysSelections(token, 'crn')).rejects.toThrowError(Error)
+      await expect(() => service.getOasysMetadata(token, 'crn')).rejects.toThrowError(Error)
     })
   })
 
-  describe('getOasysSections', () => {
-    it("on success returns the person's OASys selections given their CRN", async () => {
-      const oasysSections = oasysSectionsFactory.build()
+  describe('getOasysAnswers', () => {
+    const oasysGroup = cas1OasysGroupFactory.build()
 
-      personClient.oasysSections.mockResolvedValue(oasysSections)
+    it("on success returns the person's OASys answers given their CRN and groupName", async () => {
+      personClient.oasysAnswers.mockResolvedValue(oasysGroup)
 
-      const serviceOasysSections = await service.getOasysSections(token, 'crn')
+      const serviceOasysSections = await service.getOasysAnswers(token, 'crn', oasysGroup.group)
 
-      expect(serviceOasysSections).toEqual(oasysSections)
+      expect(serviceOasysSections).toEqual(oasysGroup)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.oasysSections).toHaveBeenCalledWith('crn', [])
+      expect(personClient.oasysAnswers).toHaveBeenCalledWith('crn', oasysGroup.group, [])
     })
 
     it('on 404 it throws an OasysNotFoundError', async () => {
       const err = createMock<SanitisedError>({ data: { status: 404 } })
-      personClient.oasysSections.mockImplementation(() => {
+      personClient.oasysAnswers.mockImplementation(() => {
         throw err
       })
 
-      const t = () => service.getOasysSections(token, 'crn')
+      const t = () => service.getOasysAnswers(token, 'crn', oasysGroup.group)
 
       await expect(t).rejects.toThrowError(OasysNotFoundError)
       await expect(t).rejects.toThrowError(`Oasys record not found for CRN: crn`)
@@ -194,12 +194,12 @@ describe('PersonService', () => {
 
     it('on 500 it throws the error upstream', async () => {
       const err = createMock<SanitisedError>({ data: { status: 500 } })
-      personClient.oasysSections.mockImplementation(() => {
+      personClient.oasysAnswers.mockImplementation(() => {
         throw err
       })
 
       try {
-        await service.getOasysSections(token, 'crn')
+        await service.getOasysAnswers(token, 'crn', oasysGroup.group)
       } catch (error) {
         expect(error).toEqual(err)
       }
@@ -207,11 +207,11 @@ describe('PersonService', () => {
 
     it('on generic error it throws the error upstream', async () => {
       const genericError = new Error()
-      personClient.oasysSections.mockImplementation(() => {
+      personClient.oasysAnswers.mockImplementation(() => {
         throw genericError
       })
 
-      await expect(() => service.getOasysSections(token, 'crn')).rejects.toThrowError(Error)
+      await expect(() => service.getOasysAnswers(token, 'crn', oasysGroup.group)).rejects.toThrowError(Error)
     })
   })
 

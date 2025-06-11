@@ -1,12 +1,12 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { OasysPage } from '@approved-premises/ui'
 import { fromPartial } from '@total-typescript/shoehorn'
-import { offenceDetailsFactory } from '../testutils/factories/oasysSections'
 import PersonService, { OasysNotFoundError } from '../services/personService'
 import {
   applicationFactory,
-  oasysSectionsFactory,
-  oasysSelectionFactory,
+  cas1OasysGroupFactory,
+  cas1OASysSupportingInformationMetaDataFactory,
+  oasysQuestionFactory,
   risksFactory,
   roshSummaryFactory,
 } from '../testutils/factories'
@@ -22,28 +22,30 @@ import {
   textareas,
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
-import { PersonRisks } from '../@types/shared'
+import { Cas1OASysGroup, PersonRisks } from '../@types/shared'
 import { logToSentry } from '../../logger'
 
 jest.mock('../../logger.ts')
 
+type OasysOffencePage = OasysPage & { offenceDetailsSummary: Cas1OASysGroup }
+
 describe('OASysImportUtils', () => {
   describe('getOasysSections', () => {
-    let getOasysSectionsMock: jest.Mock
+    let getOasysGroupMock: jest.Mock
     let personService: DeepMocked<PersonService>
-    let constructor: DeepMocked<Constructor<OasysPage>>
+    let constructor: DeepMocked<Constructor<OasysOffencePage>>
 
     afterEach(() => {
       jest.resetAllMocks()
     })
 
     beforeEach(() => {
-      constructor = createMock<Constructor<OasysPage>>(
-        jest.fn().mockImplementation(() => ({ body: {} }) as unknown as OasysPage),
+      constructor = createMock<Constructor<OasysOffencePage>>(
+        jest.fn().mockImplementation(() => ({ body: {} }) as unknown as OasysOffencePage),
       )
-      getOasysSectionsMock = jest.fn()
+      getOasysGroupMock = jest.fn()
       personService = createMock<PersonService>({
-        getOasysSections: getOasysSectionsMock,
+        getOasysAnswers: getOasysGroupMock,
       })
     })
 
@@ -51,19 +53,18 @@ describe('OASysImportUtils', () => {
       const personRisks = risksFactory.build()
       const application = applicationFactory.build({ risks: personRisks })
 
-      getOasysSectionsMock.mockImplementation(() => {
+      getOasysGroupMock.mockImplementation(() => {
         throw new OasysNotFoundError()
       })
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await getOasysSections(
+      const result = await getOasysSections<OasysOffencePage>(
         {},
         application,
         'some-token',
         fromPartial({ personService }),
         constructor,
         {
-          sectionName: 'offenceDetails',
+          groupName: 'offenceDetails',
           summaryKey: 'offenceDetailsSummary',
           answerKey: 'offenceDetailsAnswers',
         },
@@ -79,27 +80,26 @@ describe('OASysImportUtils', () => {
       const personRisks = risksFactory.build()
       const application = applicationFactory.build({ risks: personRisks })
 
-      const oasysSections = oasysSectionsFactory.build()
+      const oasysSections = cas1OasysGroupFactory.build()
 
-      getOasysSectionsMock.mockResolvedValue(oasysSections)
+      getOasysGroupMock.mockResolvedValue(oasysSections)
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await getOasysSections(
+      const result = await getOasysSections<OasysOffencePage>(
         {},
         application,
         'some-token',
         fromPartial({ personService }),
         constructor,
         {
-          sectionName: 'offenceDetails',
+          groupName: 'offenceDetails',
           summaryKey: 'offenceDetailsSummary',
           answerKey: 'offenceDetailsAnswers',
         },
       )
 
       expect(result.oasysSuccess).toEqual(true)
-      expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysSections.offenceDetails))
-      expect(result.offenceDetailsSummary).toEqual(oasysSections.offenceDetails)
+      expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysSections.answers))
+      expect(result.offenceDetailsSummary).toEqual(oasysSections.answers)
       expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
     })
 
@@ -107,37 +107,36 @@ describe('OASysImportUtils', () => {
       const personRisks = risksFactory.build()
       const application = applicationFactory.build({ risks: personRisks })
 
-      const offenceDetails = [
-        offenceDetailsFactory.build({ questionNumber: '1' }),
-        offenceDetailsFactory.build({ questionNumber: '2' }),
+      const questions = [
+        oasysQuestionFactory.build({ questionNumber: '1' }),
+        oasysQuestionFactory.build({ questionNumber: '2' }),
       ]
 
-      const oasysSections = oasysSectionsFactory.build({
-        offenceDetails,
+      const oasysGroup = cas1OasysGroupFactory.build({
+        answers: questions,
       })
 
-      getOasysSectionsMock.mockResolvedValue(oasysSections)
+      getOasysGroupMock.mockResolvedValue(oasysGroup)
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await getOasysSections(
+      const result = await getOasysSections<OasysOffencePage>(
         { offenceDetailsAnswers: { '1': 'My Response' } },
         application,
         'some-token',
         fromPartial({ personService }),
         constructor,
         {
-          sectionName: 'offenceDetails',
+          groupName: 'offenceDetails',
           summaryKey: 'offenceDetailsSummary',
           answerKey: 'offenceDetailsAnswers',
         },
       )
 
       expect(result.body.offenceDetailsSummary).toEqual([
-        { answer: 'My Response', label: offenceDetails[0].label, questionNumber: offenceDetails[0].questionNumber },
+        { answer: 'My Response', label: questions[0].label, questionNumber: questions[0].questionNumber },
         {
-          answer: offenceDetails[1].answer,
-          label: offenceDetails[1].label,
-          questionNumber: offenceDetails[1].questionNumber,
+          answer: questions[1].answer,
+          label: questions[1].label,
+          questionNumber: questions[1].questionNumber,
         },
       ])
     })
@@ -244,8 +243,8 @@ describe('OASysImportUtils', () => {
     it('returns the optional OASys sections to import if they exist', () => {
       const application = applicationFactory
         .withOptionalOasysSectionsSelected(
-          oasysSelectionFactory.needsLinkedToReoffending().buildList(1, { section: 1 }),
-          oasysSelectionFactory.needsNotLinkedToReoffending().buildList(1, { section: 2 }),
+          cas1OASysSupportingInformationMetaDataFactory.needsLinkedToReoffending().buildList(1, { section: 1 }),
+          cas1OASysSupportingInformationMetaDataFactory.needsNotLinkedToReoffending().buildList(1, { section: 2 }),
         )
         .build()
 
@@ -287,11 +286,15 @@ describe('OASysImportUtils', () => {
   })
 
   describe('sectionCheckBoxes', () => {
-    const needLinkedToReoffendingA = oasysSelectionFactory
+    const needLinkedToReoffendingA = cas1OASysSupportingInformationMetaDataFactory
       .needsLinkedToReoffending()
-      .build({ section: 1, name: 'emotional' })
-    const needLinkedToReoffendingB = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 2 })
-    const needLinkedToReoffendingC = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 3 })
+      .build({ section: 1, sectionLabel: 'emotional' })
+    const needLinkedToReoffendingB = cas1OASysSupportingInformationMetaDataFactory
+      .needsLinkedToReoffending()
+      .build({ section: 2 })
+    const needLinkedToReoffendingC = cas1OASysSupportingInformationMetaDataFactory
+      .needsLinkedToReoffending()
+      .build({ section: 3 })
 
     it('it returns needs as checkbox items', () => {
       const items = sectionCheckBoxes(
@@ -302,17 +305,17 @@ describe('OASysImportUtils', () => {
       expect(items).toEqual([
         {
           checked: true,
-          text: `1. ${sentenceCase(needLinkedToReoffendingA.name)}`,
+          text: `1. ${sentenceCase(needLinkedToReoffendingA.sectionLabel)}`,
           value: '1',
         },
         {
           checked: false,
-          text: `2. ${sentenceCase(needLinkedToReoffendingB.name)}`,
+          text: `2. ${sentenceCase(needLinkedToReoffendingB.sectionLabel)}`,
           value: '2',
         },
         {
           checked: false,
-          text: `3. ${sentenceCase(needLinkedToReoffendingC.name)}`,
+          text: `3. ${sentenceCase(needLinkedToReoffendingC.sectionLabel)}`,
           value: '3',
         },
       ])
@@ -324,7 +327,7 @@ describe('OASysImportUtils', () => {
       expect(items).toEqual([
         {
           checked: false,
-          text: `1. ${sentenceCase(needLinkedToReoffendingA.name)}`,
+          text: `1. ${sentenceCase(needLinkedToReoffendingA.sectionLabel)}`,
           value: '1',
         },
       ])

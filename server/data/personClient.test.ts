@@ -1,14 +1,16 @@
 import { Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
 
+import { Cas1OASysGroupName } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import PersonClient from './personClient'
 import config from '../config'
 import {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
-  oasysSectionsFactory,
-  oasysSelectionFactory,
+  cas1OasysGroupFactory,
+  cas1OASysSupportingInformationMetaDataFactory,
   personFactory,
   prisonCaseNotesFactory,
 } from '../testutils/factories'
@@ -167,89 +169,6 @@ describeClient('PersonClient', provider => {
     })
   })
 
-  describe('oasysSelection', () => {
-    it('should return the importable sections of OASys', async () => {
-      const crn = 'crn'
-      const oasysSections = oasysSelectionFactory.buildList(5)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get the importable sections of OASys for a person',
-        withRequest: {
-          method: 'GET',
-          path: paths.people.oasys.selection({ crn }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: oasysSections,
-        },
-      })
-
-      const result = await personClient.oasysSelections(crn)
-
-      expect(result).toEqual(oasysSections)
-    })
-  })
-
-  describe('oasysSection', () => {
-    it('should return the sections of OASys when there is optional selected sections', async () => {
-      const crn = 'crn'
-      const optionalSections = [1, 2, 3]
-      const oasysSections = oasysSectionsFactory.build()
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get the optional selected sections of OASys for a person',
-        withRequest: {
-          method: 'GET',
-          path: paths.people.oasys.sections({ crn }),
-          query: {
-            'selected-sections': ['1', '2', '3'],
-          },
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: oasysSections,
-        },
-      })
-
-      const result = await personClient.oasysSections(crn, optionalSections)
-
-      expect(result).toEqual(oasysSections)
-    })
-
-    it('should return the sections of OASys with no optional selected sections', async () => {
-      const crn = 'crn'
-      const oasysSections = oasysSectionsFactory.build()
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get sections of OASys for a person',
-        withRequest: {
-          method: 'GET',
-          path: paths.people.oasys.sections({ crn }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: oasysSections,
-        },
-      })
-
-      const result = await personClient.oasysSections(crn)
-
-      expect(result).toEqual(oasysSections)
-    })
-  })
-
   describe('offences', () => {
     it('should return the offences for a person', async () => {
       const crn = 'crn'
@@ -285,7 +204,7 @@ describeClient('PersonClient', provider => {
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get offences for a person',
+        uponReceiving: 'A request to get a document for a person',
         withRequest: {
           method: 'GET',
           path: paths.people.documents({ crn, documentId }),
@@ -310,6 +229,67 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   beforeEach(() => {
     personClient = new PersonClient(token)
+  })
+
+  describe('oasysMetadata', () => {
+    it('should return the importable sections of OASys', async () => {
+      const crn = 'crn'
+      const oasysMetadata = { supportingInformation: cas1OASysSupportingInformationMetaDataFactory.buildList(5) }
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the importable sections of OASys for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.oasys.metadata({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: oasysMetadata,
+        },
+      })
+
+      const result = await personClient.oasysMetadata(crn)
+
+      expect(result).toEqual(oasysMetadata.supportingInformation)
+    })
+  })
+
+  describe('oasysAnswers', () => {
+    it('should return the OASys questions and answers for a single group', async () => {
+      const crn = 'crn'
+      const optionalSections = [1, 2, 3]
+      const group: Cas1OASysGroupName = faker.helpers.arrayElement(['riskToSelf', 'supportingInformation'])
+      const oasysGroup = cas1OasysGroupFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving:
+          'A request to get the questions and answers for a single group from OASys including optionals for supporting information',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.oasys.answers({ crn }),
+          query: {
+            group,
+            includeOptionalSections: optionalSections.map(num => num.toString()),
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: oasysGroup,
+        },
+      })
+
+      const result = await personClient.oasysAnswers(crn, group, optionalSections)
+
+      expect(result).toEqual(oasysGroup)
+    })
   })
 
   describe('timeline', () => {

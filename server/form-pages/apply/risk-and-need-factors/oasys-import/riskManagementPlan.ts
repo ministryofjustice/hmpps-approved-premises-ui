@@ -40,7 +40,7 @@ export default class RiskManagementPlan implements OasysPage {
     dataServices: DataServices,
   ) {
     return getOasysSections(body, application, token, dataServices, RiskManagementPlan, {
-      sectionName: 'riskManagementPlan',
+      groupName: 'riskManagementPlan',
       summaryKey: 'riskManagementSummaries',
       answerKey: 'riskManagementAnswers',
     })
