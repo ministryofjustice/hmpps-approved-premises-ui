@@ -22,7 +22,7 @@
 
             {% set tabItems = [] %}
             {% for tab in applicationTabs %}
-                {% set tabItems = (tabItems.push({ label: tab.label, id: tab.id, panel: { html: applicationsTable("Applications", tab.rows) } }), tabItems) %}
+                {% set tabItems = (tabItems.push({ label: tab.label, id: tab.id, panel: { html: applicationsTable("Applications", tab.rows, tab.id) } }), tabItems) %}
             {% endfor %}
 
             {{ govukTabs({
