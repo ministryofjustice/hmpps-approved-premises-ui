@@ -29,7 +29,7 @@ import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
-import { isApplicableTier, isFullPerson } from '../personUtils'
+import { displayName, isApplicableTier, isFullPerson } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
@@ -59,11 +59,20 @@ export { isWomensApplication } from './isWomensApplication'
 
 const applicationTableRows = (applications: Array<Cas1ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
-    createNameAnchorElement(application.person, application),
+    {
+      ...createNameAnchorElement(application.person, application),
+      attributes: { 'data-sort-value': displayName(application.person) },
+    },
     textValue(application.person.crn),
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
-    textValue(getArrivalDateorNA(application.arrivalDate)),
-    textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+    {
+      ...textValue(getArrivalDateorNA(application.arrivalDate)),
+      attributes: { 'data-sort-value': application.arrivalDate || '' },
+    },
+    {
+      ...textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+      attributes: { 'data-sort-value': application.createdAt },
+    },
     htmlValue(new ApplicationStatusTag(application.status).html()),
     htmlValue(actionsLink(application)),
   ])

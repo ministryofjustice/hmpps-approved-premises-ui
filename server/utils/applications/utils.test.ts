@@ -206,6 +206,7 @@ describe('utils', () => {
             html: `<a href=${paths.applications.show({ id: applicationA.id })} data-cy-id="${applicationA.id}">${
               person.name
             }</a>`,
+            attributes: { 'data-sort-value': person.name },
           },
           {
             text: applicationA.person.crn,
@@ -215,9 +216,11 @@ describe('utils', () => {
           },
           {
             text: 'N/A',
+            attributes: { 'data-sort-value': '' },
           },
           {
             text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
+            attributes: { 'data-sort-value': applicationA.createdAt },
           },
           {
             html: new ApplicationStatusTag(applicationA.status).html(),
@@ -229,6 +232,7 @@ describe('utils', () => {
             html: `<a href=${paths.applications.show({ id: applicationB.id })} data-cy-id="${applicationB.id}">${
               person.name
             }</a>`,
+            attributes: { 'data-sort-value': person.name },
           },
           {
             text: applicationB.person.crn,
@@ -238,9 +242,11 @@ describe('utils', () => {
           },
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+            attributes: { 'data-sort-value': applicationB.arrivalDate },
           },
           {
             text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
+            attributes: { 'data-sort-value': applicationB.createdAt },
           },
           {
             html: new ApplicationStatusTag(applicationB.status).html(),
