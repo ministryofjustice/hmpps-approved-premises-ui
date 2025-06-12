@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .space-search-inputs {
   display: flex;
   flex-direction: column;
@@ -6,6 +8,7 @@
   .govuk-form-group {
     margin-top: auto;
   }
+
   .button {
     margin-top: auto;
   }

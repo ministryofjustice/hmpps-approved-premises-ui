@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .govuk-summary-list--embedded {
   font-size: 0.9em;
   padding-bottom: govuk-spacing(6);
@@ -34,6 +36,7 @@
     font-weight: 700;
   }
 }
+
 .govuk-summary-list__textblock {
   white-space: pre-line;
 }
@@ -41,6 +44,7 @@
 .govuk-summary-list__row {
   min-height: 1.5rem;
 }
+
 .govuk-tag--float-right {
   float: right;
 }
