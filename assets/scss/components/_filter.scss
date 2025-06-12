@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .moj-filter {
   margin-bottom: govuk-spacing(6);
   border: 1px solid $govuk-border-colour;
@@ -12,7 +14,7 @@
 
         &:hover {
           background-color: govuk-colour('white');
-          color:govuk-colour('black');
+          color: govuk-colour('black');
         }
       }
     }

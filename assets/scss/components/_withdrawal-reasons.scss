@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .govuk-radios {
   &--withdrawal-reasons {
     .govuk-radios__divider {
