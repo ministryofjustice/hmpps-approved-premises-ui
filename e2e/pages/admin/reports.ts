@@ -1,6 +1,8 @@
 import { Page, expect } from '@playwright/test'
 import { BasePage } from '../basePage'
 
+type DateRangeArgs = { startDate: string; endDate: string }
+
 export class ReportsPage extends BasePage {
   static async initialize(page: Page, title: string) {
     await expect(page.locator('h1')).toContainText(title)
@@ -8,19 +10,19 @@ export class ReportsPage extends BasePage {
     return new ReportsPage(page)
   }
 
-  async downloadOutOfServiceBedsReports({ month, year }: { month: string; year: string }) {
+  async downloadOutOfServiceBedsReports({ startDate, endDate }: DateRangeArgs) {
     await this.checkRadio('Out of service beds')
-    return this.downloadReports({ month, year })
+    return this.downloadReports({ startDate, endDate })
   }
 
-  async downloadDailyMetricsReports({ month, year }: { month: string; year: string }) {
+  async downloadDailyMetricsReports({ startDate, endDate }: DateRangeArgs) {
     await this.checkRadio('Daily metrics')
-    return this.downloadReports({ month, year })
+    return this.downloadReports({ startDate, endDate })
   }
 
-  async downloadReports({ month, year }: { month: string; year: string }) {
-    await this.page.getByRole('combobox', { name: 'Month' }).selectOption({ index: Number(month) })
-    await this.page.getByRole('combobox', { name: 'Year' }).selectOption({ label: year })
+  async downloadReports({ startDate, endDate }: DateRangeArgs) {
+    await this.page.getByRole('textbox', { name: 'Start date' }).fill(startDate)
+    await this.page.getByRole('textbox', { name: 'End date' }).fill(endDate)
 
     const downloadPromise = this.page.waitForEvent('download')
     await this.page.getByRole('button', { name: 'Download data' }).click()

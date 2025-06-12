@@ -20,8 +20,8 @@ describeCas1NamespaceClient('ReportClient', provider => {
     it.each(Object.keys(reportInputLabels))(
       'should pipe the report from the API when the report name is %s',
       async (reportName: ReportType) => {
-        const month = '12'
-        const year = '2023'
+        const startDate = '2025-02-01'
+        const endDate = '2025-04-30'
         const response = createMock<Response>({})
 
         provider.addInteraction({
@@ -30,7 +30,7 @@ describeCas1NamespaceClient('ReportClient', provider => {
           withRequest: {
             method: 'GET',
             path: paths.reports({ reportName }),
-            query: { month, year },
+            query: { startDate, endDate },
             headers: {
               authorization: `Bearer ${token}`,
               'X-Service-Name': 'approved-premises',
@@ -41,7 +41,7 @@ describeCas1NamespaceClient('ReportClient', provider => {
           },
         })
 
-        await client.getReport(reportName, month, year, response)
+        await client.getReport(reportName, startDate, endDate, response)
       },
     )
   })

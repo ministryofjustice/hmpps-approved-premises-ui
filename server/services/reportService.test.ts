@@ -22,12 +22,12 @@ describe('ReportService', () => {
     // We have to set up `it.each` in a slightly odd way, because Jest doesn't support `it.each` out
     // of the box with asynchronous functions. See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/34617
     it.each<ReportType | jest.DoneCallback>(Object.keys(reportInputLabels))(
-      'calls the getApplicationsReport client method when the reportType is "applications" pipes the report to the response',
+      'calls the getApplicationsReport client method when the reportType is "%s" pipes the report to the response',
       (reportName: ReportType, done: jest.DoneCallback) => {
         const response = createMock<Response>({})
-        service.getReport(token, '12', '2023', reportName, response).then(() => {
+        service.getReport(token, '2024-10-01', '2025-01-31', reportName, response).then(() => {
           expect(reportClientFactory).toHaveBeenCalledWith(token)
-          expect(reportClient.getReport).toHaveBeenCalledWith(reportName, '12', '2023', response)
+          expect(reportClient.getReport).toHaveBeenCalledWith(reportName, '2024-10-01', '2025-01-31', response)
         })
         done()
       },

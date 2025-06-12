@@ -32,7 +32,7 @@ describe('withdrawalsController', () => {
   describe('new', () => {
     it('renders the template', async () => {
       const applicationId = 'some-id'
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>({ userInput: { startDate: '2025-01-01' } })
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
       request.params.id = applicationId
 
@@ -44,38 +44,67 @@ describe('withdrawalsController', () => {
         pageHeading: 'Reports',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        userInput: errorsAndUserInput.userInput,
+        ...errorsAndUserInput.userInput,
       })
     })
   })
 
   describe('create', () => {
     const applicationId = 'some-id'
+    const validBody = {
+      startDate: '1/3/2025',
+      endDate: '31/5/2025',
+      reportType: 'lostBeds',
+    }
 
     beforeEach(() => {
       request.params.id = applicationId
     })
 
     it('calls the service method', async () => {
-      request.body.month = '12'
-      request.body.year = '2023'
-      request.body.reportType = 'lostBeds'
+      request.body = validBody
 
       const requestHandler = reportsController.create()
 
       await requestHandler(request, response, next)
 
-      expect(reportService.getReport).toHaveBeenCalledWith(
-        token,
-        request.body.month,
-        request.body.year,
-        'lostBeds',
-        response,
-      )
+      expect(reportService.getReport).toHaveBeenCalledWith(token, '2025-03-01', '2025-05-31', 'lostBeds', response)
     })
 
-    it('redirects with a date error if year and month is blank', async () => {
-      request.body.reportType = 'lostBeds'
+    it.each([
+      ['report type is empty', { reportType: undefined }, { reportType: 'You must choose a report type' }],
+      [
+        'start and end dates are empty',
+        { startDate: undefined, endDate: undefined },
+        {
+          startDate: 'Enter or select a start date',
+          endDate: 'Enter or select an end date',
+        },
+      ],
+      [
+        'start and end dates are not valid dates',
+        { startDate: '31/2/2025', endDate: 'not even a date' },
+        {
+          startDate: 'Enter a valid start date',
+          endDate: 'Enter a valid end date',
+        },
+      ],
+      [
+        'the end date is before the start date',
+        { endDate: '31/01/1999' },
+        { endDate: 'The end date must be after the start date' },
+      ],
+      [
+        'the end date is more than a year after the start date',
+        { endDate: '02/03/2026' },
+        { endDate: 'The end date must be less than a year after the start date' },
+      ],
+    ])('redirects with errors if %s', async (_, body, errors) => {
+      request.body = {
+        ...validBody,
+        ...body,
+      }
+
       const requestHandler = reportsController.create()
 
       await requestHandler(request, response, next)
@@ -89,51 +118,7 @@ describe('withdrawalsController', () => {
 
       const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
-      expect(errorData).toEqual({
-        date: 'You must choose a month and year',
-      })
-    })
-
-    it('redirects with a reportType error if reportType is blank', async () => {
-      request.body.month = '12'
-      request.body.year = '2023'
-
-      const requestHandler = reportsController.create()
-
-      await requestHandler(request, response, next)
-
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        new ValidationError({}),
-        paths.admin.reports.new({}),
-      )
-
-      const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
-
-      expect(errorData).toEqual({
-        reportType: 'You must choose a report type',
-      })
-    })
-
-    it('redirects with reportType and date errors if both are blank', async () => {
-      const requestHandler = reportsController.create()
-
-      await requestHandler(request, response, next)
-
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        new ValidationError({}),
-        paths.admin.reports.new({}),
-      )
-
-      const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
-
-      expect(errorData).toEqual({
-        reportType: 'You must choose a report type',
-        date: 'You must choose a month and year',
-      })
+      expect(errorData).toEqual(errors)
     })
   })
 })

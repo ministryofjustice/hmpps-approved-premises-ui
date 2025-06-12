@@ -23,16 +23,16 @@ test('download reports', async ({ page, reportViewer }) => {
   // Then I should see the download reports page
   const reportsPage = await ReportsPage.initialize(page, 'Reports')
 
-  const month = '01'
-  const year = '2023'
+  const startDate = '1/1/2023'
+  const endDate = '31/1/2023'
 
   // When I download the out of service beds report
-  const lostBedsDownload = await reportsPage.downloadOutOfServiceBedsReports({ month, year })
+  const lostBedsDownload = await reportsPage.downloadOutOfServiceBedsReports({ startDate, endDate })
   // Then the file should be downloaded with the correct suggested name
   expect(lostBedsDownload.suggestedFilename()).toMatch(/out-of-service-beds-2023-01-01-to-2023-01-31-\d{8}_\d{4}.xlsx/)
 
   // When I download the daily metrics report
-  const applicationsDownload = await reportsPage.downloadDailyMetricsReports({ month, year })
+  const applicationsDownload = await reportsPage.downloadDailyMetricsReports({ startDate, endDate })
   // Then the file should be downloaded with the correct suggested name
   expect(applicationsDownload.suggestedFilename()).toMatch(/daily-metrics-2023-01-01-to-2023-01-31-\d{8}_\d{4}.csv/)
 })
