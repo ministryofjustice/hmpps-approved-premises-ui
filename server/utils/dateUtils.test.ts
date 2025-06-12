@@ -17,7 +17,7 @@ import {
   uiDateOrDateEmptyMessage,
   yearOptions,
   timeAddLeadingZero,
-  dateIsValid,
+  isoDateIsValid,
 } from './dateUtils'
 
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -141,6 +141,20 @@ describe('DateFormats', () => {
       expect(() => DateFormats.isoDateTimeToUIDateTime(date)).toThrow(
         new InvalidDateStringError(`Invalid Date: ${date}`),
       )
+    })
+  })
+
+  describe('datepickerInputToIsoString', () => {
+    it.each([
+      ['1/1/2024', '2024-01-01'],
+      ['31/01/2025', '2025-01-31'],
+      ['3/11/1999', '1999-11-03'],
+      ['2025-02-31', '2025-02-31'],
+      ['43/32/2025', '2025-32-43'],
+      ['not a date', 'not a date'],
+      ['', ''],
+    ])('returns an ISO-like date for the date %s', (date, expected) => {
+      expect(DateFormats.datepickerInputToIsoString(date)).toEqual(expected)
     })
   })
 
@@ -348,19 +362,6 @@ describe('DateFormats', () => {
       expect(DateFormats.isoDateToMonthAndYear(date)).toEqual(expected)
     })
   })
-
-  describe('dateSlashesToISODate', () => {
-    it.each([
-      ['1/1/2024', '2024-01-01'],
-      ['31/01/2025', '2025-01-31'],
-      ['3/11/1999', '1999-11-03'],
-      ['not a date', 'not a date'],
-      [undefined, undefined],
-      ['', undefined],
-    ])('returns an ISO date for the date %s', (date, expected) => {
-      expect(DateFormats.dateWithSlashesToISODate(date)).toEqual(expected)
-    })
-  })
 })
 
 describe('uiDateOrDateEmptyMessage', () => {
@@ -413,15 +414,15 @@ describe('addBusinessDays', () => {
   })
 })
 
-describe('dateIsValid', () => {
+describe('isoDateExists', () => {
   it.each(['2025-01-01', '1999-12-25'])('returns true for the valid date %s', date => {
-    expect(dateIsValid(date)).toEqual(true)
+    expect(isoDateIsValid(date)).toEqual(true)
   })
 
   it.each(['2025-1-1', '1999-12-32', '2025-02-31', '20205-04-13', '2025-01-yeah', 'not even a date'])(
     'returns false for the invalid date %s',
     date => {
-      expect(dateIsValid(date)).toEqual(false)
+      expect(isoDateIsValid(date)).toEqual(false)
     },
   )
 })

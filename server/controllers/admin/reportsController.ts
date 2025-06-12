@@ -5,7 +5,7 @@ import { ReportService } from '../../services'
 import { ValidationError } from '../../utils/errors'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/admin'
-import { DateFormats, dateIsValid } from '../../utils/dateUtils'
+import { DateFormats, isoDateIsValid } from '../../utils/dateUtils'
 
 export default class ReportsController {
   constructor(private readonly reportsService: ReportService) {}
@@ -28,8 +28,8 @@ export default class ReportsController {
       try {
         const { startDate: startDateSlashes, endDate: endDateSlashes, reportType } = req.body
 
-        const startDate = DateFormats.dateWithSlashesToISODate(startDateSlashes)
-        const endDate = DateFormats.dateWithSlashesToISODate(endDateSlashes)
+        const startDate = DateFormats.datepickerInputToIsoString(startDateSlashes)
+        const endDate = DateFormats.datepickerInputToIsoString(endDateSlashes)
 
         const errors: Record<keyof Request['body'], string> = {}
 
@@ -37,14 +37,14 @@ export default class ReportsController {
 
         if (!startDate) {
           errors.startDate = 'Enter or select a start date'
-        } else if (!dateIsValid(startDate)) {
-          errors.startDate = 'Enter a real start date'
+        } else if (!isoDateIsValid(startDate)) {
+          errors.startDate = 'Enter a valid start date'
         }
 
         if (!endDate) {
           errors.endDate = 'Enter or select an end date'
-        } else if (!dateIsValid(endDate)) {
-          errors.endDate = 'Enter a real end date'
+        } else if (!isoDateIsValid(endDate)) {
+          errors.endDate = 'Enter a valid end date'
         } else if (!errors.startDate) {
           if (startDate > endDate) {
             errors.endDate = 'The end date must be after the start date'

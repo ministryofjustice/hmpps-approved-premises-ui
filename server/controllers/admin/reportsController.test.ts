@@ -82,11 +82,11 @@ describe('withdrawalsController', () => {
         },
       ],
       [
-        'start and end dates are not invalid',
+        'start and end dates are not valid dates',
         { startDate: '31/2/2025', endDate: 'not even a date' },
         {
-          startDate: 'Enter a real start date',
-          endDate: 'Enter a real end date',
+          startDate: 'Enter a valid start date',
+          endDate: 'Enter a valid end date',
         },
       ],
       [

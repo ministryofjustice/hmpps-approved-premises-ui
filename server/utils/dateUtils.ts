@@ -113,11 +113,29 @@ export class DateFormats {
   }
 
   /**
+   * Converts input for a MoJ DatePicker (https://design-patterns.service.justice.gov.uk/components/date-picker/)
+   * into a string
+   * @param dateWithSlashes the input entered into the datepicker field, which may be in the format d/m/yyyy
+   * @returns a potential ISO date string resulting from extracting then combining each date part from the user input
+   */
+  static datepickerInputToIsoString(dateWithSlashes: string) {
+    return dateWithSlashes
+      ? dateWithSlashes
+          .split('/')
+          .map(part => part.padStart(2, '0'))
+          .reverse()
+          .join('-')
+      : dateWithSlashes
+  }
+
+  /**
    * Converts input for a GDS date input https://design-system.service.gov.uk/components/date-input/
-   * into an ISO8601 date string
+   * into a string
    * @param dateInputObj an object with date parts (i.e. `-month` `-day` `-year`), which come from a `govukDateInput`.
-   * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object will be returned in the return value.
-   * @returns an ISO8601 date string as part of an ObjectWithDateParts.
+   * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object
+   *  will be returned in the return value.
+   * @returns an object with date parts and a potential ISO date string resulting from extracting then combining each
+   *  date part from the user input
    */
   static dateAndTimeInputsToIsoString<K extends string | number>(
     dateInputObj: ObjectWithDateParts<K>,
@@ -246,16 +264,6 @@ export class DateFormats {
   static isoDateToMonthAndYear(date: string) {
     return format(date, 'MMMM yyyy')
   }
-
-  static dateWithSlashesToISODate(dateSlashes?: string) {
-    return dateSlashes
-      ? dateSlashes
-          .split('/')
-          .reverse()
-          .map(part => part.padStart(2, '0'))
-          .join('-')
-      : undefined
-  }
 }
 
 export const addBusinessDays = (date: Date, days: number, holidays: Array<Date> = bankHolidays()): Date => {
@@ -281,7 +289,7 @@ export const uiDateOrDateEmptyMessage = (
   return 'No date supplied'
 }
 
-export const dateIsValid = (date: string) => {
+export const isoDateIsValid = (date: string) => {
   try {
     DateFormats.isoToDateObj(date)
   } catch (error) {
@@ -303,7 +311,7 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
 
   const dateString = DateFormats.dateAndTimeInputsToIsoString(dateInputObj, key)
 
-  return dateIsValid(dateString[key])
+  return isoDateIsValid(dateString[key])
 }
 
 export const dateIsBlank = <K extends string | number>(
