@@ -20,7 +20,7 @@
 
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-            <form action="{{ paths.admin.reports.create() }}" method="post">
+            <form action="{{ paths.admin.reports.create() }}" method="post" data-clear-errors-on-submit>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ govukRadios({

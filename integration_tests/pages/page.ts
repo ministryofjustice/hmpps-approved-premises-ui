@@ -103,6 +103,22 @@ export default abstract class Page {
     })
   }
 
+  shouldNotShowErrors(): void {
+    const govukErrorClasses = [
+      'govuk-error-summary',
+      'govuk-error-message',
+      'govuk-form-group--error',
+      'govuk-select--error',
+      'govuk-input--error',
+      'govuk-textarea--error',
+    ]
+    govukErrorClasses.forEach(className => {
+      // We use a short timeout to catch any errors before a page reload,
+      // for instance when use on a download page.
+      cy.get(`.${className}`, { timeout: 100 }).should('not.exist')
+    })
+  }
+
   private elementShouldContainText(selector: string, text: string, options: { exact: boolean }) {
     cy.get(selector).then(bannerElement => {
       const { actual, expected } = parseHtml(bannerElement, text)
