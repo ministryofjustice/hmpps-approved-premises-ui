@@ -1,8 +1,10 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .search-and-filter {
+  background-color: govuk-colour('light-grey');
+
   @include govuk-responsive-padding(6);
   @include govuk-responsive-margin(6, 'bottom');
-
-  background-color: govuk-colour('light-grey');
 
   &__crn-label {
     &--small {

@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .search-identity-table {
   display: flex;
 
@@ -7,6 +9,7 @@
     display: inline-block;
     width: 40%;
   }
+
   dd {
     @include govuk-responsive-padding(2, 'bottom');
     display: inline-block;

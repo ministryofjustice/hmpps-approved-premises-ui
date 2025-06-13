@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .key-details-bar {
   background-color: govuk-colour('blue');
 
@@ -31,6 +33,7 @@
   margin-top: 6px;
   padding-top: 10px;
 }
+
 @media (min-width: 40.0625em) {
   .key-details-bar .key-details-bar__key-details .key-details-bar__name {
     font-size: 1.675rem;
