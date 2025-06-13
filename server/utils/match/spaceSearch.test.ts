@@ -6,10 +6,17 @@ import {
   filterRoomLevelCriteria,
   initialiseSearchState,
   spaceSearchStateToApiPayload,
+  summaryCardRows,
 } from './spaceSearch'
-import { cas1PlacementRequestDetailFactory, spaceSearchStateFactory } from '../../testutils/factories'
+import {
+  cas1PlacementRequestDetailFactory,
+  spaceSearchResultFactory,
+  spaceSearchStateFactory,
+} from '../../testutils/factories'
 import * as formUtils from '../formUtils'
 import { ApTypeCriteria, apTypeCriteriaLabels } from '../placementCriteriaUtils'
+import { addressRow, apTypeRow, distanceRow } from './index'
+import { summaryListItem } from '../formUtils'
 
 describe('Space search utils', () => {
   describe('initialiseSearchState', () => {
@@ -189,6 +196,28 @@ describe('Space search utils', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('summaryCardsRow', () => {
+    const postcodeArea = 'HR1 2AF'
+    const spaceSearchResult = spaceSearchResultFactory.build()
+
+    it('calls the correct row functions', () => {
+      expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
+        apTypeRow(spaceSearchResult.premises.apType),
+        summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
+        addressRow(spaceSearchResult),
+        distanceRow(spaceSearchResult, postcodeArea),
+      ])
+    })
+
+    it('does not return the ap area row if the placement request is for a womens AP', () => {
+      expect(summaryCardRows(spaceSearchResult, postcodeArea, true)).toEqual([
+        apTypeRow(spaceSearchResult.premises.apType),
+        addressRow(spaceSearchResult),
+        distanceRow(spaceSearchResult, postcodeArea),
+      ])
     })
   })
 })

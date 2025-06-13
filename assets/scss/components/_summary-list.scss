@@ -1,4 +1,4 @@
-@use "govuk-frontend/dist/govuk" as *;
+@use 'govuk-frontend/dist/govuk' as *;
 
 .govuk-summary-list--embedded {
   font-size: 0.9em;
@@ -7,7 +7,7 @@
   border-collapse: separate;
 
   &:last-child {
-    border: none
+    border: none;
   }
 }
 
@@ -24,7 +24,7 @@
 }
 
 .govuk-summary-list__row .text-grey {
-  color: govuk-colour("dark-grey");
+  color: govuk-colour('dark-grey');
 }
 
 .govuk-summary-list--swap-bolding {
@@ -47,4 +47,8 @@
 
 .govuk-tag--float-right {
   float: right;
+}
+
+.govuk-summary-list--force-bottom-border .govuk-summary-list__row:last-of-type {
+  border-bottom: 1px solid $govuk-border-colour;
 }

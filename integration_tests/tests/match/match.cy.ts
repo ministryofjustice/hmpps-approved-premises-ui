@@ -84,7 +84,7 @@ context('Placement Requests', () => {
     // And the new search criteria should be selected
     searchPage.shouldShowSearchParametersInInputs(newSearchState)
 
-    // // And the parameters should be submitted to the API
+    // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
       const initialSearchRequestBody = JSON.parse(requests[0].body)

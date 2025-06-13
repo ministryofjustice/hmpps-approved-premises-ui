@@ -2,6 +2,8 @@ import {
   Cas1PlacementRequestDetail,
   Cas1SpaceCharacteristic,
   Cas1SpaceSearchParameters,
+  Cas1SpaceSearchResult as SpaceSearchResult,
+  Cas1SpaceSearchResult,
   PlacementCriteria,
 } from '@approved-premises/api'
 import {
@@ -10,6 +12,7 @@ import {
   SpaceSearchApCriteria,
   SpaceSearchFormData,
   SpaceSearchRoomCriteria,
+  SummaryListItem,
 } from '@approved-premises/ui'
 import { filterByType } from '../utils'
 import {
@@ -18,9 +21,10 @@ import {
   apTypeCriteriaLabels,
   type ApTypeSpecialist,
 } from '../placementCriteriaUtils'
-import { convertKeyValuePairToRadioItems } from '../formUtils'
+import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from './spaceSearchLabels'
+import { addressRow, apTypeRow, characteristicsDetails, distanceRow } from '.'
 
 export const initialiseSearchState = (placementRequest: Cas1PlacementRequestDetail): SpaceSearchFormData => {
   const allCriteria = [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria]
@@ -87,4 +91,30 @@ export const checkBoxesForCriteria = (
       checked: selectedValues.includes(value),
     })),
   }
+}
+
+export const summaryCardRows = (
+  spaceSearchResult: SpaceSearchResult,
+  postcodeArea: string,
+  isWomensApplication = false,
+): Array<SummaryListItem> =>
+  [
+    apTypeRow(spaceSearchResult.premises.apType),
+    !isWomensApplication && summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
+    addressRow(spaceSearchResult),
+    distanceRow(spaceSearchResult, postcodeArea),
+  ].filter(Boolean)
+
+export const summaryCards = (
+  spaceSearchResult: Array<Cas1SpaceSearchResult>,
+  postcode: string,
+  isWomensApplication: boolean,
+) => {
+  return spaceSearchResult.map((result: Cas1SpaceSearchResult) => {
+    return {
+      spaceSearchResult: result,
+      summaryCardRows: summaryCardRows(result, postcode, isWomensApplication),
+      characteristicsHtml: characteristicsDetails(result),
+    }
+  })
 }

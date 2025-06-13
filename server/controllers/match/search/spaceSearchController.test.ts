@@ -12,13 +12,17 @@ import {
 import { PlacementRequestService, SpaceSearchService } from '../../../services'
 import matchPaths from '../../../paths/match'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
-import { apTypeRadioItems, checkBoxesForCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
+import {
+  apTypeRadioItems,
+  checkBoxesForCriteria,
+  initialiseSearchState,
+  summaryCards,
+} from '../../../utils/match/spaceSearch'
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import paths from '../../../paths/admin'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
-import { spaceSearchResultsCards } from '../../../utils/match'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -69,10 +73,10 @@ describe('spaceSearchController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
-        spaceSearchResults: spaceSearchResultsCards(
-          placementRequestDetail,
-          searchState.postcode,
+        summaryCards: summaryCards(
           spaceSearchResults.results,
+          searchState.postcode,
+          placementRequestDetail.application.isWomensApplication,
         ),
         placementRequest: placementRequestDetail,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
