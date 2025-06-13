@@ -6,7 +6,7 @@ import CruDashboardController from './cruDashboardController'
 
 import { ApplicationService, CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import {
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   cas1ChangeRequestSummaryFactory,
   cruManagementAreaFactory,
   paginatedResponseFactory,
@@ -188,7 +188,7 @@ describe('CruDashboardController', () => {
         cruManagementArea,
       })}&`
 
-      const applications = applicationSummaryFactory.buildList(2)
+      const applications = cas1ApplicationSummaryFactory.buildList(2)
       const paginatedApplications = paginatedResponseFactory.build({
         data: applications,
       }) as PaginatedResponse<Cas1ApplicationSummary>

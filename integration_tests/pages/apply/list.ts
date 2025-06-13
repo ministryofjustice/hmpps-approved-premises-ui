@@ -1,29 +1,33 @@
 import Page from '../page'
 import paths from '../../../server/paths/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesApplicationSummary,
-} from '../../../server/@types/shared'
+import { ApprovedPremisesApplication as Application, Cas1ApplicationSummary } from '../../../server/@types/shared'
 import { displayName } from '../../../server/utils/personUtils'
 
 export default class ListPage extends Page {
   constructor(
-    private readonly inProgressApplications: Array<ApprovedPremisesApplicationSummary>,
-    private readonly submittedApplications: Array<ApprovedPremisesApplicationSummary>,
-    private readonly requestedFurtherInformationApplications: Array<ApprovedPremisesApplicationSummary>,
+    private readonly inProgressApplications: Array<Cas1ApplicationSummary>,
+    private readonly submittedApplications: Array<Cas1ApplicationSummary>,
+    private readonly requestedFurtherInformationApplications: Array<Cas1ApplicationSummary>,
+    private readonly inactiveApplications?: Array<Cas1ApplicationSummary>,
   ) {
     super('Approved Premises applications')
   }
 
   static visit(
-    inProgressApplications: Array<ApprovedPremisesApplicationSummary>,
-    submittedApplications: Array<ApprovedPremisesApplicationSummary>,
-    requestedFurtherInformationApplications: Array<ApprovedPremisesApplicationSummary>,
+    inProgressApplications: Array<Cas1ApplicationSummary>,
+    submittedApplications: Array<Cas1ApplicationSummary>,
+    requestedFurtherInformationApplications: Array<Cas1ApplicationSummary>,
+    inactiveApplications?: Array<Cas1ApplicationSummary>,
   ): ListPage {
     cy.visit(paths.applications.index.pattern)
 
-    return new ListPage(inProgressApplications, submittedApplications, requestedFurtherInformationApplications)
+    return new ListPage(
+      inProgressApplications,
+      submittedApplications,
+      requestedFurtherInformationApplications,
+      inactiveApplications,
+    )
   }
 
   shouldShowInProgressApplications(): void {
@@ -36,6 +40,10 @@ export default class ListPage extends Page {
 
   shouldShowSubmittedApplications(): void {
     this.shouldShowApplications(this.submittedApplications, 'Application submitted')
+  }
+
+  shouldShowInactiveApplications(): void {
+    this.shouldShowApplications(this.inactiveApplications, /Expired application|Application withdrawn/)
   }
 
   clickRequestForPlacementLink() {
@@ -54,6 +62,10 @@ export default class ListPage extends Page {
     cy.get('a').contains('Submitted').click()
   }
 
+  clickInactiveTab() {
+    cy.get('a').contains('Inactive').click()
+  }
+
   clickApplication(application: Application) {
     cy.get(`a[data-cy-id="${application.id}"]`).click()
   }
@@ -66,7 +78,7 @@ export default class ListPage extends Page {
     this.shouldShowBanner('Application withdrawn')
   }
 
-  private shouldShowApplications(applications: Array<ApprovedPremisesApplicationSummary>, status: string): void {
+  private shouldShowApplications(applications: Array<Cas1ApplicationSummary>, status: string | RegExp): void {
     applications.forEach(application => {
       const name = displayName(application.person)
       cy.contains(name)
