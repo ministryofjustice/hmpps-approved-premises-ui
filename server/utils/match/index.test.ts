@@ -1,4 +1,5 @@
 import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
+import nunjucks from 'nunjucks'
 import applyPaths from '../../paths/apply'
 import {
   cas1PremisesFactory,
@@ -73,12 +74,30 @@ describe('matchUtils', () => {
       const postcodeArea = 'HR1 2AF'
       const spaceSearchResult = spaceSearchResultFactory.build()
 
+      jest.spyOn(nunjucks, 'render').mockImplementation(() => '<p>Test</p>')
+
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
         characteristicsRow(spaceSearchResult),
       ])
+    })
+  })
+
+  describe('characteristicsRow', () => {
+    it('renders a full-width expanding row of the AP characteristics', () => {
+      const spaceSearchResult = spaceSearchResultFactory.build({ premises: { characteristics: ['hasEnSuite'] } })
+
+      const renderedHtml = '<p>Test</p>'
+      const njRenderSpy = jest.spyOn(nunjucks, 'render').mockImplementation(() => renderedHtml)
+      const result = characteristicsRow(spaceSearchResult)
+      const expectedRenderContext = {
+        html: '<ul class="govuk-list govuk-list--bullet"><li>En-suite</li></ul>',
+        summaryText: 'View AP criteria',
+      }
+      expect(njRenderSpy).toHaveBeenCalledWith('partials/detailsWrapper.njk', expectedRenderContext)
+      expect(result).toEqual({ classes: 'full-width-row', value: { html: '<p>Test</p>' } })
     })
   })
 
