@@ -60,7 +60,6 @@ export default class PersonService {
 
     try {
       const oasysMetaData = await personClient.oasysMetadata(crn)
-
       return oasysMetaData
     } catch (error) {
       const knownError = error as HttpError

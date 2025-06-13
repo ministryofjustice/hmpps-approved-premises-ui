@@ -18,7 +18,7 @@ import { logToSentry } from '../../logger'
 
 export type Constructor<T> = new (body: unknown) => T
 
-export const getOasysSections = async <T extends OasysPage>(
+export const getOasysSection = async <T extends OasysPage>(
   body: Record<string, unknown>,
   application: ApprovedPremisesApplication,
   token: string,
@@ -46,7 +46,8 @@ export const getOasysSections = async <T extends OasysPage>(
       groupName,
       selectedSections,
     )
-    oasysSuccess = true
+    const { hasApplicableAssessment } = oasysGroup.assessmentMetadata
+    oasysSuccess = hasApplicableAssessment === undefined ? true : hasApplicableAssessment
   } catch (error) {
     if (error instanceof OasysNotFoundError) {
       oasysGroup = {
