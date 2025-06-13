@@ -4,7 +4,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../utils/formUtils'
 import { ApprovedPremisesApplication, Cas1OASysSupportingInformationQuestionMetaData } from '../../../../@types/shared'
-import { DataServices, type PageResponse } from '../../../../@types/ui'
+import { Cas1OASysMetadataUI, DataServices, type PageResponse } from '../../../../@types/ui'
 import { sentenceCase } from '../../../../utils/utils'
 
 interface Response {
@@ -45,13 +45,15 @@ export default class OptionalOasysSections implements TasklistPage {
     const page = new OptionalOasysSections(body as Body)
 
     try {
-      const oasysMetadata: Array<Cas1OASysSupportingInformationQuestionMetaData> =
-        await dataServices.personService.getOasysMetadata(token, application.person.crn)
+      const {
+        supportingInformation,
+        assessmentMetadata: { hasApplicableAssessment },
+      }: Cas1OASysMetadataUI = await dataServices.personService.getOasysMetadata(token, application.person.crn)
 
-      const allNeedsLinkedToReoffending = oasysMetadata.filter(
+      const allNeedsLinkedToReoffending = supportingInformation.filter(
         section => section && section.inclusionOptional && section.oasysAnswerLinkedToReOffending,
       )
-      const allOtherNeeds = oasysMetadata.filter(
+      const allOtherNeeds = supportingInformation.filter(
         section => section && section.inclusionOptional && !section.oasysAnswerLinkedToReOffending,
       )
 
@@ -72,7 +74,7 @@ export default class OptionalOasysSections implements TasklistPage {
 
       page.allNeedsLinkedToReoffending = allNeedsLinkedToReoffending
       page.allOtherNeeds = allOtherNeeds
-      page.oasysSuccess = true
+      page.oasysSuccess = hasApplicableAssessment === undefined ? true : hasApplicableAssessment
     } catch (error) {
       if (error instanceof OasysNotFoundError) {
         page.oasysSuccess = false

@@ -1,8 +1,13 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
+import { Cas1OASysMetadataUI } from '@approved-premises/ui'
 import { OasysNotFoundError } from '../../../../services/personService'
 import { ApplicationService, PersonService } from '../../../../services'
-import { applicationFactory, cas1OASysSupportingInformationMetaDataFactory } from '../../../../testutils/factories'
+import {
+  applicationFactory,
+  cas1OASysMetadataFactory,
+  cas1OASysSupportingInformationMetaDataFactory,
+} from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import OptionalOasysSections from './optionalOasysSections'
@@ -16,7 +21,7 @@ describe('OptionalOasysSections', () => {
   const application = applicationFactory.build()
 
   describe('initialize', () => {
-    const getOasysSelectionsMock = jest.fn().mockResolvedValue(oasysSelection)
+    const getOasysMetadataMock = jest.fn().mockResolvedValue(oasysSelection)
     let personService: DeepMocked<PersonService>
     const applicationService = createMock<ApplicationService>({})
 
@@ -32,28 +37,13 @@ describe('OptionalOasysSections', () => {
       cas1OASysSupportingInformationMetaDataFactory.needsNotLinkedToReoffending().build({ section: 9 }),
     ]
 
-    beforeEach(() => {
-      personService = createMock<PersonService>({
-        getOasysMetadata: getOasysSelectionsMock,
-      })
-
-      getOasysSelectionsMock.mockResolvedValue([...needsLinkedToHarm, ...needsLinkedToReoffending, ...otherNeeds])
+    const cas1OasysMetadata: Cas1OASysMetadataUI = cas1OASysMetadataFactory.build({
+      supportingInformation: [...needsLinkedToHarm, ...needsLinkedToReoffending, ...otherNeeds],
     })
 
-    it('calls the getOasysSelections method on the client with a token and the persons CRN', async () => {
-      await OptionalOasysSections.initialize(
-        {},
-        application,
-        'some-token',
-        fromPartial({ personService, applicationService }),
-      )
-
-      expect(getOasysSelectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
-    })
-
-    it('filters the OASys sections into needs linked to reoffending and other needs not linked to reoffending or harm', async () => {
-      const page = await OptionalOasysSections.initialize(
-        {},
+    const callInitialize = async (body = {}) => {
+      return OptionalOasysSections.initialize(
+        body,
         application,
         'some-token',
         fromPartial({
@@ -61,93 +51,90 @@ describe('OptionalOasysSections', () => {
           applicationService,
         }),
       )
+    }
+
+    beforeEach(() => {
+      personService = createMock<PersonService>({
+        getOasysMetadata: getOasysMetadataMock,
+      })
+
+      getOasysMetadataMock.mockResolvedValue(cas1OasysMetadata)
+    })
+
+    it('calls the getOasysSelections method on the client with a token and the persons CRN', async () => {
+      callInitialize()
+
+      expect(getOasysMetadataMock).toHaveBeenCalledWith('some-token', application.person.crn)
+    })
+
+    it('filters the OASys sections into needs linked to reoffending and other needs not linked to reoffending or harm', async () => {
+      const page = await callInitialize()
 
       expect(page.allNeedsLinkedToReoffending).toEqual(needsLinkedToReoffending)
       expect(page.allOtherNeeds).toEqual(otherNeeds)
     })
 
     it('returns an empty array for the selected needs if the body is empty', async () => {
-      const page = await OptionalOasysSections.initialize(
-        {},
-        application,
-        'some-token',
-        fromPartial({
-          personService,
-          applicationService,
-        }),
-      )
+      const page = await callInitialize()
 
       expect(page.body.needsLinkedToReoffending).toEqual([])
       expect(page.body.otherNeeds).toEqual([])
     })
 
     it('initializes the OptionalOasysSections class with the selected sections when sections are a string', async () => {
-      const page = await OptionalOasysSections.initialize(
-        {
-          needsLinkedToReoffending: needsLinkedToReoffending[0].section.toString(),
-          otherNeeds: [otherNeeds[0].section.toString(), otherNeeds[1].section.toString()],
-        },
-        application,
-        'some-token',
-        fromPartial({
-          personService,
-          applicationService,
-        }),
-      )
+      const page = await callInitialize({
+        needsLinkedToReoffending: needsLinkedToReoffending[0].section.toString(),
+        otherNeeds: [otherNeeds[0].section.toString(), otherNeeds[1].section.toString()],
+      })
 
       expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
       expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
     })
 
     it('initializes the OptionalOasysSections class with the selected sections when sections are section objects', async () => {
-      const page = await OptionalOasysSections.initialize(
-        { needsLinkedToReoffending: [needsLinkedToReoffending[0]], otherNeeds: [otherNeeds[0], otherNeeds[1]] },
-        application,
-        'some-token',
-        fromPartial({
-          personService,
-          applicationService,
-        }),
-      )
+      const page = await callInitialize({
+        needsLinkedToReoffending: [needsLinkedToReoffending[0]],
+        otherNeeds: [otherNeeds[0], otherNeeds[1]],
+      })
 
       expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
       expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
     })
 
     it(`Don't error if an oasys section is null (APS-1772)`, async () => {
-      getOasysSelectionsMock.mockResolvedValue([...needsLinkedToHarm, null, ...needsLinkedToReoffending, ...otherNeeds])
-
-      const page = await OptionalOasysSections.initialize(
-        { needsLinkedToReoffending: [needsLinkedToReoffending[0]], otherNeeds: [otherNeeds[0], otherNeeds[1]] },
-        application,
-        'some-token',
-        fromPartial({
-          personService,
-          applicationService,
+      getOasysMetadataMock.mockResolvedValue(
+        cas1OASysMetadataFactory.build({
+          supportingInformation: [...needsLinkedToHarm, null, ...needsLinkedToReoffending, ...otherNeeds],
         }),
       )
+
+      const page = await callInitialize({
+        needsLinkedToReoffending: [needsLinkedToReoffending[0]],
+        otherNeeds: [otherNeeds[0], otherNeeds[1]],
+      })
+
       expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
       expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
     })
 
     it('sets oasysSuccess to false if an OasysNotFoundError is thrown', async () => {
-      getOasysSelectionsMock.mockImplementation(() => {
+      getOasysMetadataMock.mockImplementation(() => {
         throw new OasysNotFoundError('')
       })
 
-      const page = await OptionalOasysSections.initialize(
-        {},
-        application,
-        'some-token',
-        fromPartial({
-          personService,
-          applicationService,
-        }),
-      )
+      const page = await callInitialize()
 
       expect(page.oasysSuccess).toEqual(false)
       expect(page.body.needsLinkedToReoffending).toEqual([])
       expect(page.body.otherNeeds).toEqual([])
+    })
+
+    it('sets oasysSuccess to false if the API returns hasApplicableAssessment=false', async () => {
+      getOasysMetadataMock.mockResolvedValue(cas1OASysMetadataFactory.oasysNotPresent().build())
+
+      const page = await callInitialize()
+
+      expect(page.oasysSuccess).toEqual(false)
     })
   })
 
