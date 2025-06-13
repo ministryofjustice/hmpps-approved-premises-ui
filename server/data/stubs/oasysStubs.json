@@ -1,7 +1,8 @@
 {
   "assessmentMetadata": {
     "dateCompleted": null,
-    "dateStarted": null
+    "dateStarted": null,
+    "hasApplicableAssessment": false
   },
   "offenceDetails": [
     {

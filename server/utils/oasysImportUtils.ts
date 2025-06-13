@@ -54,6 +54,7 @@ export const getOasysSections = async <T extends OasysPage>(
         assessmentMetadata: {
           dateStarted: undefined,
           dateCompleted: undefined,
+          hasApplicableAssessment: false,
         },
         answers: oasysStubs[groupName],
       }
