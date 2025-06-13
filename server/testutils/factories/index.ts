@@ -30,6 +30,7 @@ import {
 import newAppealFactory from './newAppealFactory'
 import noteFactory from './noteFactory'
 import cas1OASysSupportingInformationMetaDataFactory from './cas1OASysSupportingInformationQuestionMetaData'
+import cas1OASysMetadataFactory from './cas1OASysMetadata'
 import {
   newOutOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
@@ -166,6 +167,7 @@ export {
   noteFactory,
   cas1OASysSupportingInformationMetaDataFactory,
   cas1OasysGroupFactory,
+  cas1OASysMetadataFactory,
   oasysQuestionFactory,
   outOfServiceBedFactory,
   outOfServiceBedCancellationFactory,

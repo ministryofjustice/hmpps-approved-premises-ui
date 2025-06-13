@@ -5,13 +5,13 @@ import type {
   Adjudication,
   Cas1OASysGroup,
   Cas1OASysGroupName,
-  Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
 
+import { Cas1OASysMetadataUI } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -66,12 +66,8 @@ export default class PersonClient {
     return response as Array<ActiveOffence>
   }
 
-  async oasysMetadata(crn: string): Promise<Array<Cas1OASysSupportingInformationQuestionMetaData>> {
-    const response = (await this.restClient.get({ path: paths.people.oasys.metadata({ crn }) })) as {
-      supportingInformation: Array<Cas1OASysSupportingInformationQuestionMetaData>
-    }
-
-    return response.supportingInformation as Array<Cas1OASysSupportingInformationQuestionMetaData>
+  async oasysMetadata(crn: string): Promise<Cas1OASysMetadataUI> {
+    return (await this.restClient.get({ path: paths.people.oasys.metadata({ crn }) })) as Cas1OASysMetadataUI
   }
 
   async oasysAnswers(

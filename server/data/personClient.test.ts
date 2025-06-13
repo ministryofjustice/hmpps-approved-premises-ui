@@ -10,7 +10,7 @@ import {
   activeOffenceFactory,
   adjudicationFactory,
   cas1OasysGroupFactory,
-  cas1OASysSupportingInformationMetaDataFactory,
+  cas1OASysMetadataFactory,
   personFactory,
   prisonCaseNotesFactory,
 } from '../testutils/factories'
@@ -234,7 +234,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
   describe('oasysMetadata', () => {
     it('should return the importable sections of OASys', async () => {
       const crn = 'crn'
-      const oasysMetadata = { supportingInformation: cas1OASysSupportingInformationMetaDataFactory.buildList(5) }
+      const oasysMetadata = cas1OASysMetadataFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -254,7 +254,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
       const result = await personClient.oasysMetadata(crn)
 
-      expect(result).toEqual(oasysMetadata.supportingInformation)
+      expect(result).toEqual(oasysMetadata)
     })
   })
 
