@@ -7,6 +7,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import UserFactory from './user'
 import { apAreaFactory } from './referenceData'
 import { getCrn, personSummaryFactory, restrictedPersonSummaryFactory } from './person'
+import { apTypes } from '../../utils/placementCriteriaUtils'
 
 export const taskTypes: ReadonlyArray<TaskType> = ['Assessment', 'PlacementApplication']
 
@@ -24,6 +25,7 @@ export default Factory.define<Task>(() => ({
   apArea: apAreaFactory.build(),
   outcomeRecordedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   personSummary: personSummaryFactory.build(),
+  apType: faker.helpers.arrayElement(apTypes),
 }))
 
 export const restrictedPersonSummaryTaskFactory = Factory.define<Task>(() => ({
@@ -40,4 +42,5 @@ export const restrictedPersonSummaryTaskFactory = Factory.define<Task>(() => ({
   apArea: apAreaFactory.build(),
   outcomeRecordedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   personSummary: restrictedPersonSummaryFactory.build(),
+  apType: faker.helpers.arrayElement(apTypes),
 }))

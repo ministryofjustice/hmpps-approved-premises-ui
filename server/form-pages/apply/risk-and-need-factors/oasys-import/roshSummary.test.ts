@@ -49,6 +49,7 @@ describe('RoshSummary', () => {
       const assessmentMetadata: Cas1OASysAssessmentMetadata = {
         dateStarted: oasysGroup.assessmentMetadata.dateStarted,
         dateCompleted: null,
+        hasApplicableAssessment: true,
       }
       getOasysGroupMock.mockResolvedValue({ ...oasysGroup, assessmentMetadata })
 

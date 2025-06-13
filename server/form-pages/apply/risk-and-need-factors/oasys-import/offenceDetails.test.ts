@@ -50,6 +50,7 @@ describe('OffenceDetails', () => {
       const assessmentMetadata: Cas1OASysAssessmentMetadata = {
         dateStarted: oasysGroup.assessmentMetadata.dateStarted,
         dateCompleted: null,
+        hasApplicableAssessment: true,
       }
       getOasysAnswersMock.mockResolvedValue({ ...oasysGroup, assessmentMetadata })
 
