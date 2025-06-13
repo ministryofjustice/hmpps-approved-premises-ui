@@ -15,7 +15,7 @@ import {
   Constructor,
   fetchOptionalOasysSections,
   findSummaryLabel,
-  getOasysSections,
+  getOasysSection,
   oasysImportReponse,
   sectionCheckBoxes,
   sortOasysImportSummaries,
@@ -57,7 +57,7 @@ describe('OASysImportUtils', () => {
         throw new OasysNotFoundError()
       })
 
-      const result = await getOasysSections<OasysOffencePage>(
+      const result = await getOasysSection<OasysOffencePage>(
         {},
         application,
         'some-token',
@@ -84,7 +84,7 @@ describe('OASysImportUtils', () => {
 
       getOasysGroupMock.mockResolvedValue(oasysSections)
 
-      const result = await getOasysSections<OasysOffencePage>(
+      const result = await getOasysSection<OasysOffencePage>(
         {},
         application,
         'some-token',
@@ -98,6 +98,33 @@ describe('OASysImportUtils', () => {
       )
 
       expect(result.oasysSuccess).toEqual(true)
+      expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysSections.answers))
+      expect(result.offenceDetailsSummary).toEqual(oasysSections.answers)
+      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
+    })
+
+    it('sets oasysSuccess to false along with the marshalled oasys data if the API returns hasApplicableAssessment false ', async () => {
+      const personRisks = risksFactory.build()
+      const application = applicationFactory.build({ risks: personRisks })
+
+      const oasysSections = cas1OasysGroupFactory.build({ assessmentMetadata: { hasApplicableAssessment: false } })
+
+      getOasysGroupMock.mockResolvedValue(oasysSections)
+
+      const result = await getOasysSection<OasysOffencePage>(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService }),
+        constructor,
+        {
+          groupName: 'offenceDetails',
+          summaryKey: 'offenceDetailsSummary',
+          answerKey: 'offenceDetailsAnswers',
+        },
+      )
+
+      expect(result.oasysSuccess).toEqual(false)
       expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysSections.answers))
       expect(result.offenceDetailsSummary).toEqual(oasysSections.answers)
       expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
@@ -118,7 +145,7 @@ describe('OASysImportUtils', () => {
 
       getOasysGroupMock.mockResolvedValue(oasysGroup)
 
-      const result = await getOasysSections<OasysOffencePage>(
+      const result = await getOasysSection<OasysOffencePage>(
         { offenceDetailsAnswers: { '1': 'My Response' } },
         application,
         'some-token',

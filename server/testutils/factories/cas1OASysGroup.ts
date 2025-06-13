@@ -55,6 +55,7 @@ export default Cas1OASysGroupFactory.define(() => {
     assessmentMetadata: {
       dateCompleted,
       dateStarted,
+      hasApplicableAssessment: true,
     },
   } as Cas1OASysGroup
 })
