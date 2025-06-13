@@ -3,7 +3,7 @@ import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/
 import type { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { getOasysSection, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Record<string, string>
@@ -37,7 +37,7 @@ export default class RoshSummary implements OasysPage {
     token: string,
     dataServices: DataServices,
   ) {
-    return getOasysSections(body, application, token, dataServices, RoshSummary, {
+    return getOasysSection(body, application, token, dataServices, RoshSummary, {
       groupName: 'roshSummary',
       summaryKey: 'roshSummaries',
       answerKey: 'roshAnswers',
