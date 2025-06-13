@@ -14,6 +14,7 @@ import {
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '@approved-premises/api'
 import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
+import nunjucks from 'nunjucks'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { apTypeLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
@@ -138,13 +139,17 @@ export const premisesAddress = (premises: Cas1Premises | Cas1PremisesSearchResul
 export const addressRow = (spaceSearchResult: SpaceSearchResult) =>
   summaryListItem('Address', premisesAddress(spaceSearchResult.premises))
 
-export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
+export const characteristicsRow = (spaceSearchResult: SpaceSearchResult): SummaryListItem => {
+  const details = nunjucks.render('partials/detailsWrapper.njk', {
+    html: characteristicsBulletList(spaceSearchResult.premises.characteristics, {
+      labels: spaceSearchResultsCharacteristicsLabels,
+    }),
+    summaryText: 'View AP criteria',
+  })
   return {
-    key: { text: 'Criteria' },
+    classes: 'full-width-row',
     value: {
-      html: characteristicsBulletList(spaceSearchResult.premises.characteristics, {
-        labels: spaceSearchResultsCharacteristicsLabels,
-      }),
+      html: details,
     },
   }
 }

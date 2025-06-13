@@ -44,3 +44,13 @@
 .govuk-tag--float-right {
   float: right;
 }
+
+.govuk-summary-list__row.full-width-row {
+  display:block;
+  .govuk-summary-list__key {
+    display:none;
+  }
+  .govuk-summary-list__value {
+    min-width: 19em;
+  }
+}
