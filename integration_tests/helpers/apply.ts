@@ -239,7 +239,7 @@ export default class ApplyHelper {
     cy.task('stubPrisonCaseNotes404', { person: this.person })
   }
 
-  stubOasysEndpoints(excludeSection = false) {
+  stubOasysEndpoints(excludeSection = false, hasApplicableAssessment = true) {
     // And there are OASys sections in the db
 
     this.otherOasysSections = [
@@ -255,18 +255,22 @@ export default class ApplyHelper {
     if (excludeSection) {
       this.otherOasysSections[0] = undefined
     }
-    const oasysMetadata = cas1OASysMetadataFactory.build({
-      supportingInformation: [...this.oasysSectionsLinkedToReoffending, ...this.otherOasysSections],
-    })
+
+    const supportingInformation = [...this.oasysSectionsLinkedToReoffending, ...this.otherOasysSections]
+    const oasysMetadata = hasApplicableAssessment
+      ? cas1OASysMetadataFactory.build({ supportingInformation })
+      : cas1OASysMetadataFactory.oasysNotPresent().build({ supportingInformation })
 
     cy.task('stubOasysMetadata', { person: this.person, oasysMetadata })
 
+    const metadata = { assessmentMetadata: { hasApplicableAssessment } }
+
     const oasysSections = {
-      roshSummary: cas1OasysGroupFactory.roshSummary().build(),
-      offenceDetails: cas1OasysGroupFactory.offenceDetails().build(),
-      riskToSelf: cas1OasysGroupFactory.riskToSelf().build(),
-      supportingInformation: cas1OasysGroupFactory.supportingInformation().build(),
-      riskManagementPlan: cas1OasysGroupFactory.riskManagementPlan().build(),
+      roshSummary: cas1OasysGroupFactory.roshSummary().build(metadata),
+      offenceDetails: cas1OasysGroupFactory.offenceDetails().build(metadata),
+      riskToSelf: cas1OasysGroupFactory.riskToSelf().build(metadata),
+      supportingInformation: cas1OasysGroupFactory.supportingInformation().build(metadata),
+      riskManagementPlan: cas1OasysGroupFactory.riskManagementPlan().build(metadata),
     }
 
     this.roshSummaries = oasysSections.roshSummary.answers
