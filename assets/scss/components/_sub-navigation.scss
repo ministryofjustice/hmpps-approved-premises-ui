@@ -1,3 +1,5 @@
+@use "govuk-frontend/dist/govuk" as *;
+
 .moj-sub-navigation__link[aria-selected] {
   color: $govuk-link-active-colour;
   position: relative;
@@ -8,7 +10,9 @@
     content: "";
     display: block;
     height: 100%;
-    position: absolute; bottom: 0; left: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 5px;
 
     @include govuk-media-query($from: tablet) {
@@ -25,7 +29,8 @@
 
   }
 }
+
 .moj-sub-navigation__item.disabled .moj-sub-navigation__link {
-  color:  $govuk-secondary-text-colour;
+  color: $govuk-secondary-text-colour;
   cursor: default;
 }
