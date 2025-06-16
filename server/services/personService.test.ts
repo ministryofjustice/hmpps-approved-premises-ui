@@ -13,8 +13,8 @@ import {
   personFactory,
   personalTimelineFactory,
   prisonCaseNotesFactory,
-  cas1OASysSupportingInformationMetaDataFactory,
   cas1OasysGroupFactory,
+  cas1OASysMetadataFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -119,7 +119,7 @@ describe('PersonService', () => {
 
   describe('getOasysMetadata', () => {
     it("on success returns the person's OASys metadata given their CRN", async () => {
-      const refOasysMetadata = cas1OASysSupportingInformationMetaDataFactory.buildList(3)
+      const refOasysMetadata = cas1OASysMetadataFactory.build()
 
       personClient.oasysMetadata.mockResolvedValue(refOasysMetadata)
 

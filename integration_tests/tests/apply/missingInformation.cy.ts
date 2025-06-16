@@ -6,12 +6,26 @@ import { setup } from './setup'
 context('Apply - Missing information', () => {
   beforeEach(setup)
 
-  it('handles missing Oasys information', function test() {
+  it('handles missing Oasys information - legacy mechanism - API returns 404', function test() {
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
     const oasysMissing = true
 
     apply.setupApplicationStubs(uiRisks, oasysMissing)
+    apply.startApplication()
+    apply.completeBasicInformation({ isEmergencyApplication: false })
+    apply.completeTypeOfApSection()
+    apply.completeOasysSection(oasysMissing)
+  })
+
+  it('handles missing Oasys information - API returns flag', function test() {
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const hasApplicableAssessment = false
+    const oasysMissing = true
+
+    apply.setupApplicationStubs(uiRisks)
+    apply.stubOasysEndpoints(false, hasApplicableAssessment)
     apply.startApplication()
     apply.completeBasicInformation({ isEmergencyApplication: false })
     apply.completeTypeOfApSection()
