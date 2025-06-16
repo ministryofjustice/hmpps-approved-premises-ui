@@ -22,6 +22,7 @@ import {
   acctAlertFactory,
   adjudicationFactory,
   cas1OasysGroupFactory,
+  cas1OASysMetadataFactory,
   cas1OASysSupportingInformationMetaDataFactory,
   cas1PremisesBasicSummaryFactory,
   contingencyPlanPartnerFactory,
@@ -254,9 +255,11 @@ export default class ApplyHelper {
     if (excludeSection) {
       this.otherOasysSections[0] = undefined
     }
-    const oasysSelection = [...this.oasysSectionsLinkedToReoffending, ...this.otherOasysSections]
+    const oasysMetadata = cas1OASysMetadataFactory.build({
+      supportingInformation: [...this.oasysSectionsLinkedToReoffending, ...this.otherOasysSections],
+    })
 
-    cy.task('stubOasysMetadata', { person: this.person, oasysMetadata: { supportingInformation: oasysSelection } })
+    cy.task('stubOasysMetadata', { person: this.person, oasysMetadata })
 
     const oasysSections = {
       roshSummary: cas1OasysGroupFactory.roshSummary().build(),
