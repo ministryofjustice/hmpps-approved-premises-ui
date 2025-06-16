@@ -19,6 +19,7 @@ import { ErrorsAndUserInput, PaginatedResponse } from '../@types/ui'
 import paths from '../paths/api'
 
 import { getPaginationDetails } from '../utils/getPaginationDetails'
+import { tasksTableHeader, tasksTableRows, userQualificationsSelectOptions } from '../utils/tasks'
 
 jest.mock('../utils/validation')
 jest.mock('../utils/getPaginationDetails')
@@ -74,17 +75,16 @@ describe('TasksController', () => {
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
-        tasks,
+        taskHeader: tasksTableHeader('allocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
+        taskRows: tasksTableRows(tasks, 'allocated'),
         allocatedFilter: 'allocated',
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: 'createdAt',
-        sortDirection: 'asc',
         cruManagementArea: cruManagementArea.id,
+        userQualificationSelectOptions: userQualificationsSelectOptions(null),
         users,
-        requiredQualification: null,
         activeTab: 'allocated',
       })
 
@@ -143,18 +143,17 @@ describe('TasksController', () => {
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
-        tasks,
+        taskHeader: tasksTableHeader('unallocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
+        taskRows: tasksTableRows(tasks, 'unallocated'),
         allocatedFilter,
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paramPaginationDetails.sortBy,
-        sortDirection: paramPaginationDetails.sortDirection,
         cruManagementArea: cruManagementAreaId,
         users,
         allocatedToUserId,
-        requiredQualification,
+        userQualificationSelectOptions: userQualificationsSelectOptions(requiredQualification),
         crnOrName,
         activeTab,
       })
@@ -208,17 +207,16 @@ describe('TasksController', () => {
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
-        tasks,
+        taskHeader: tasksTableHeader('allocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
+        taskRows: tasksTableRows(tasks, 'allocated'),
         allocatedFilter: paramPaginationDetails.allocatedFilter,
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paramPaginationDetails.sortBy,
-        sortDirection: paramPaginationDetails.sortDirection,
         cruManagementArea: 'all',
         users,
-        requiredQualification: null,
+        userQualificationSelectOptions: userQualificationsSelectOptions(null),
         activeTab: 'allocated',
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.tasks.index({}), {
@@ -284,18 +282,17 @@ describe('TasksController', () => {
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
-        tasks,
+        taskHeader: tasksTableHeader(activeTab, 'createdAt', 'asc', paginationDetails.hrefPrefix),
+        taskRows: tasksTableRows(tasks, activeTab),
         allocatedFilter,
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paramPaginationDetails.sortBy,
-        sortDirection: paramPaginationDetails.sortDirection,
         cruManagementArea: cruManagementAreaId,
         users,
         allocatedToUserId,
-        requiredQualification,
+        userQualificationSelectOptions: userQualificationsSelectOptions(requiredQualification),
         crnOrName,
         activeTab,
       })
