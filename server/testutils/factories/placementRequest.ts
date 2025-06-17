@@ -18,7 +18,7 @@ import bookingSummary from './placementRequestBookingSummary'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { placementCriteriaLabels } from '../../utils/placementCriteriaUtils'
 import { allReleaseTypes } from '../../utils/applications/releaseTypeUtils'
-import { apTypeLabels } from '../../utils/apTypeLabels'
+import { apTypeLongLabels } from '../../utils/apTypeLabels'
 
 class PlacementRequestFactory extends Factory<PlacementRequest> {
   withFullPerson() {
@@ -47,7 +47,7 @@ export default PlacementRequestFactory.define(() => {
   return {
     id: faker.string.uuid(),
     gender: faker.helpers.arrayElement(['male', 'female']) as Gender,
-    type: faker.helpers.arrayElement(Object.keys(apTypeLabels)) as ApType,
+    type: faker.helpers.arrayElement(Object.keys(apTypeLongLabels)) as ApType,
     expectedArrival: DateFormats.dateObjToIsoDate(faker.date.soon()),
     duration: faker.number.int({ min: 1, max: 12 }),
     location: faker.helpers.arrayElement(postcodeAreas),

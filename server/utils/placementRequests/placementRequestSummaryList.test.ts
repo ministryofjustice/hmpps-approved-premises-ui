@@ -4,7 +4,7 @@ import { applicationFactory, cas1PlacementRequestDetailFactory } from '../../tes
 import offlineApplicationFactory from '../../testutils/factories/offlineApplication'
 import { placementRequestSummaryList } from './placementRequestSummaryList'
 import { DateFormats } from '../dateUtils'
-import { apTypeLabels } from '../apTypeLabels'
+import { apTypeLongLabels } from '../apTypeLabels'
 
 describe('placementRequestSummaryList', () => {
   const application = applicationFactory.build({
@@ -213,7 +213,7 @@ describe('placementRequestSummaryList', () => {
         text: 'Type of AP',
       },
       value: {
-        text: apTypeLabels[placementRequest.type],
+        text: apTypeLongLabels[placementRequest.type],
       },
     }
     if (expectedApplicationId) {

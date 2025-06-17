@@ -25,7 +25,7 @@ import { daysUntilDueCell } from '../tableUtils'
 import { TaskStatusTag } from './statusTag'
 import { fullPersonSummaryFactory } from '../../testutils/factories/person'
 import { DateFormats } from '../dateUtils'
-import { apTypeLabels } from '../apTypeLabels'
+import { apTypeShortLabels } from '../apTypeLabels'
 
 describe('table', () => {
   beforeEach(() => {
@@ -56,7 +56,7 @@ describe('table', () => {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
-              text: apTypeLabels[task.apType],
+              text: apTypeShortLabels[task.apType],
             },
             {
               text: task.apArea?.name || 'No area supplied',
@@ -87,7 +87,7 @@ describe('table', () => {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
-              text: apTypeLabels[task.apType],
+              text: apTypeShortLabels[task.apType],
             },
             {
               text: task.apArea?.name || 'No area supplied',
@@ -119,7 +119,7 @@ describe('table', () => {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
-              text: apTypeLabels[task.apType],
+              text: apTypeShortLabels[task.apType],
             },
             { text: task.apArea?.name || 'No area supplied' },
           ],
@@ -145,7 +145,7 @@ describe('table', () => {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
-              text: apTypeLabels[task.apType],
+              text: apTypeShortLabels[task.apType],
             },
             {
               text: task.apArea?.name,

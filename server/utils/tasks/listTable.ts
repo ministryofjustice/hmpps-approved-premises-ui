@@ -15,7 +15,7 @@ import { DateFormats } from '../dateUtils'
 
 import { TaskStatusTag } from './statusTag'
 import { displayName } from '../personUtils'
-import { apTypeLabels } from '../apTypeLabels'
+import { apTypeShortLabels } from '../apTypeLabels'
 
 export type TaskTab = 'allocated' | 'unallocated' | 'completed'
 
@@ -89,7 +89,7 @@ const nameAnchorCell = (task: Task): TableCell => ({
 })
 
 const apTypeCell = (task: Task): TableCell => ({
-  text: apTypeLabels[task.apType] || '',
+  text: apTypeShortLabels[task.apType] || '',
 })
 
 const apAreaCell = (task: Task): TableCell => ({

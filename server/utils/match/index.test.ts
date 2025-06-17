@@ -27,7 +27,7 @@ import {
   startDateObjFromParams,
   summaryCardRows,
 } from '.'
-import { apTypeLabels } from '../apTypeLabels'
+import { apTypeLongLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { displayName } from '../personUtils'
@@ -101,7 +101,7 @@ describe('matchUtils', () => {
   })
 
   describe('apTypeRow', () => {
-    it.each(Object.keys(apTypeLabels) as Array<ApType>)(
+    it.each(Object.keys(apTypeLongLabels) as Array<ApType>)(
       'should return the correct type for AP Type %s',
       (apType: ApType) => {
         const placementRequestWithApType = cas1PlacementRequestDetailFactory.build({
@@ -113,7 +113,7 @@ describe('matchUtils', () => {
             text: 'Type of AP',
           },
           value: {
-            text: apTypeLabels[apType],
+            text: apTypeLongLabels[apType],
           },
           actions: {
             items: [
@@ -138,7 +138,7 @@ describe('matchUtils', () => {
           text: 'Type of AP',
         },
         value: {
-          text: apTypeLabels[apType],
+          text: apTypeLongLabels[apType],
         },
       })
     })

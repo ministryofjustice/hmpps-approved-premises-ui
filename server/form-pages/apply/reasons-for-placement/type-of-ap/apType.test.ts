@@ -3,7 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import * as formUtils from '../../../../utils/formUtils'
 
 import SelectApType, { apTypeHintText } from './apType'
-import { apTypeLabels } from '../../../../utils/apTypeLabels'
+import { apTypeLongLabels } from '../../../../utils/apTypeLabels'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { apTypes } from '../../../../utils/placementCriteriaUtils'
 
@@ -55,7 +55,12 @@ describe('SelectApType', () => {
       const page = new SelectApType({}, applicationMensEstate)
       const items = page.items()
 
-      expect(formUtils.convertArrayToRadioItems).toHaveBeenCalledWith(apTypes, undefined, apTypeLabels, apTypeHintText)
+      expect(formUtils.convertArrayToRadioItems).toHaveBeenCalledWith(
+        apTypes,
+        undefined,
+        apTypeLongLabels,
+        apTypeHintText,
+      )
       expect(items).toHaveLength(6)
     })
 

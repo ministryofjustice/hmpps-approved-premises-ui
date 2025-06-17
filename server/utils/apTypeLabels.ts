@@ -1,6 +1,6 @@
 import { ApType } from '../@types/shared'
 
-export const apTypeLabels: Record<ApType, string> = {
+export const apTypeLongLabels: Record<ApType, string> = {
   normal: 'Standard (all AP types)',
   pipe: 'Psychologically Informed Planned Environment (PIPE)',
   esap: 'Enhanced Security AP (ESAP)',
@@ -9,4 +9,13 @@ export const apTypeLabels: Record<ApType, string> = {
   mhapStJosephs: 'Specialist Mental Health AP (St Josephs, Greater Manchester)',
 } as const
 
-export type ApTypeLabel = (typeof apTypeLabels)[ApType]
+export const apTypeShortLabels: Record<ApType, string> = {
+  normal: 'Standard',
+  pipe: 'PIPE',
+  esap: 'ESAP',
+  rfap: 'RFAP',
+  mhapElliottHouse: 'Specialist Mental Health - Elliott House',
+  mhapStJosephs: 'Specialist Mental Health - St Josephs',
+} as const
+
+export type ApTypeLabel = (typeof apTypeLongLabels)[ApType]

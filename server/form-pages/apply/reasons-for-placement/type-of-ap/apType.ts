@@ -4,7 +4,7 @@ import { ApType, ApprovedPremisesApplication } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
 import { convertArrayToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
-import { apTypeLabels } from '../../../../utils/apTypeLabels'
+import { apTypeLongLabels } from '../../../../utils/apTypeLabels'
 
 import { isWomensApplication } from '../../../../utils/applications/isWomensApplication'
 import { apTypes } from '../../../../utils/placementCriteriaUtils'
@@ -44,7 +44,7 @@ export default class SelectApType implements TasklistPage {
   response() {
     const type = this.body.type === 'standard' ? 'normal' : this.body.type
 
-    return { [`${this.title}`]: apTypeLabels[type] }
+    return { [`${this.title}`]: apTypeLongLabels[type] }
   }
 
   errors() {
@@ -58,7 +58,7 @@ export default class SelectApType implements TasklistPage {
   }
 
   items() {
-    return convertArrayToRadioItems(this.availableTypes, this.body.type, apTypeLabels, apTypeHintText)
+    return convertArrayToRadioItems(this.availableTypes, this.body.type, apTypeLongLabels, apTypeHintText)
   }
 }
 
