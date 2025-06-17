@@ -117,8 +117,12 @@ export const findSummaryLabel = (questionNumber: string, summaries: Array<OASysQ
   let summary: OASysQuestion | undefined = summaries.find(i => i.questionNumber === questionNumber)
 
   if (!summary) {
+    const redactedSummaries = summaries.map(question => ({
+      ...question,
+      answer: question.answer ? '***redacted***' : undefined,
+    }))
     logToSentry(
-      `OASys summary not found for question number: ${questionNumber}. Summaries ${JSON.stringify(summaries)}`,
+      `OASys summary not found for question number: ${questionNumber}. Summaries ${JSON.stringify(redactedSummaries)}`,
     )
     summary = { label: '', questionNumber }
   }
