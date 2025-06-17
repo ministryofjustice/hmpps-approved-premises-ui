@@ -33,6 +33,7 @@ import { apTypeLongLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { displayName } from '../personUtils'
+import { summaryListItem } from '../formUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -77,6 +78,7 @@ describe('matchUtils', () => {
 
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
+        summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
         characteristicsRow(spaceSearchResult),

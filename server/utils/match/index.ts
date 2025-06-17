@@ -94,6 +94,7 @@ export const departureDateRow = (departureDate: string) => ({
 export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeArea: string): Array<SummaryListItem> => {
   return [
     apTypeRow(spaceSearchResult.premises.apType),
+    summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
     addressRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
     characteristicsRow(spaceSearchResult),
