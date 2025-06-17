@@ -18,6 +18,7 @@ import { ValidationError } from '../../../utils/errors'
 import paths from '../../../paths/admin'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
+import { spaceSearchResultsCards } from '../../../utils/match'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -68,7 +69,11 @@ describe('spaceSearchController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
-        spaceSearchResults,
+        spaceSearchResults: spaceSearchResultsCards(
+          placementRequestDetail.id,
+          searchState.postcode,
+          spaceSearchResults.results,
+        ),
         placementRequest: placementRequestDetail,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
         formPath: searchPath,

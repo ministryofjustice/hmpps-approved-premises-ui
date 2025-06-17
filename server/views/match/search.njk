@@ -41,7 +41,7 @@
         {{ govukSummaryList(placementRequestInfoSummaryList) }}
     {% endcall %}
 
-    <h2 class="govuk-heading-m">{{ spaceSearchResults.resultsCount }} Approved Premises found</h2>
+    <h2 class="govuk-heading-m">{{ spaceSearchResults | length }} Approved Premises found</h2>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
@@ -55,25 +55,25 @@
                     <div class="space-search-inputs">
 
                         {% call govukFieldset( {
-                                legend: {
-                                    html: locationTitle
-                                    },
-                                hint: {
-                            text: "For example, M5"
+                            legend: {
+                                html: locationTitle
+                            },
+                            hint: {
+                                text: "For example, M5"
                             }
                         }) %}
 
-                        {{ govukInput({
-                            id: "postcode",
-                            name: "postcode",
-                            value: postcode,
-                            label: {
-                                text: "Postcode"
+                            {{ govukInput({
+                                id: "postcode",
+                                name: "postcode",
+                                value: postcode,
+                                label: {
+                                    text: "Postcode"
 
-                            },
-                            classes: "govuk-input--width-3",
-                            errorMessage: errors.postcode
-                        }) }}
+                                },
+                                classes: "govuk-input--width-3",
+                                errorMessage: errors.postcode
+                            }) }}
 
                         {% endcall %}
 
@@ -119,23 +119,8 @@
         </div>
 
         <div class="govuk-grid-column-two-thirds">
-            {% for spaceSearchResult in spaceSearchResults.results %}
-                {{ govukSummaryList({
-                    card: {
-                        title: {
-                            text: spaceSearchResult.premises.name,
-                            headingLevel: 3
-                        },
-                        actions: {
-                            items: [{
-                                href: paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: spaceSearchResult.premises.id }),
-                                text: "View spaces",
-                                visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
-                            }]
-                        }
-                    },
-                    rows: MatchUtils.summaryCardRows(spaceSearchResult, postcode)
-                }) }}
+            {% for spaceSearchResultCard in spaceSearchResults %}
+                {{ govukSummaryList(spaceSearchResultCard) }}
             {% endfor %}
 
             <h3 class="govuk-heading-m">Mark this case as unable to match</h3>

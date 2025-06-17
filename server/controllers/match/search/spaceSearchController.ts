@@ -12,6 +12,7 @@ import { ValidationError } from '../../../utils/errors'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
+import { spaceSearchResultsCards } from '../../../utils/match'
 
 export default class SpaceSearchController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -32,7 +33,7 @@ export default class SpaceSearchController {
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
 
       if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ id }))) {
-        this.formData.remove(id, req.session)
+        await this.formData.remove(id, req.session)
       }
 
       const searchState =
@@ -48,7 +49,11 @@ export default class SpaceSearchController {
 
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
-        spaceSearchResults,
+        spaceSearchResults: spaceSearchResultsCards(
+          placementRequest.id,
+          searchState.postcode,
+          spaceSearchResults.results || [],
+        ),
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),

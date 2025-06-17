@@ -12,8 +12,9 @@ import {
   ReleaseTypeOption,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchResult as SpaceSearchResult,
+  Cas1SpaceSearchResult,
 } from '@approved-premises/api'
-import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
+import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { apTypeLongLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
@@ -21,6 +22,7 @@ import { textValue } from '../applications/helpers'
 import { displayName, isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import paths from '../../paths/apply'
+import matchPaths from '../../paths/match'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
 
@@ -97,6 +99,33 @@ export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeAr
     characteristicsRow(spaceSearchResult),
   ]
 }
+
+export const spaceSearchResultsCards = (
+  placementRequestId: string,
+  postcode: string,
+  spaceSearchResults: Array<Cas1SpaceSearchResult>,
+): Array<SummaryListWithCard> =>
+  spaceSearchResults.map(result => ({
+    card: {
+      title: {
+        text: result.premises.name,
+        headingLevel: '3',
+      },
+      actions: {
+        items: [
+          {
+            href: matchPaths.v2Match.placementRequests.search.occupancy({
+              id: placementRequestId,
+              premisesId: result.premises.id,
+            }),
+            text: 'View spaces',
+            visuallyHiddenText: `View spaces at ${result.premises.name}`,
+          },
+        ],
+      },
+    },
+    rows: summaryCardRows(result, postcode),
+  }))
 
 export const apTypeRow = (apType: ApType) => ({
   key: {

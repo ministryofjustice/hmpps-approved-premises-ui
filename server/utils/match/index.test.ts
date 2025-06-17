@@ -1,5 +1,6 @@
 import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
 import applyPaths from '../../paths/apply'
+import matchPaths from '../../paths/match'
 import {
   cas1PremisesFactory,
   cas1PremisesSearchResultSummaryFactory,
@@ -24,6 +25,7 @@ import {
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
   spaceBookingConfirmationSummaryListRows,
+  spaceSearchResultsCards,
   startDateObjFromParams,
   summaryCardRows,
 } from '.'
@@ -78,6 +80,37 @@ describe('matchUtils', () => {
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
         characteristicsRow(spaceSearchResult),
+      ])
+    })
+  })
+
+  describe('spaceSearchResultsCards', () => {
+    it('renders a list of space search results as summary lists with cards', () => {
+      const placementRequestId = 'placement-request-id'
+      const postcodeArea = 'HR1 2AF'
+      const spaceSearchResults = spaceSearchResultFactory.buildList(1)
+
+      const resultCards = spaceSearchResultsCards(placementRequestId, postcodeArea, spaceSearchResults)
+
+      expect(resultCards).toEqual([
+        {
+          card: {
+            actions: {
+              items: [
+                {
+                  href: matchPaths.v2Match.placementRequests.search.occupancy({
+                    id: placementRequestId,
+                    premisesId: spaceSearchResults[0].premises.id,
+                  }),
+                  text: 'View spaces',
+                  visuallyHiddenText: `View spaces at ${spaceSearchResults[0].premises.name}`,
+                },
+              ],
+            },
+            title: { headingLevel: '3', text: spaceSearchResults[0].premises.name },
+          },
+          rows: summaryCardRows(spaceSearchResults[0], postcodeArea),
+        },
       ])
     })
   })
