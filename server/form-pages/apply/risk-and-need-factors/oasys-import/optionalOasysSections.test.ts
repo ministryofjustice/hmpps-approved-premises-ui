@@ -234,6 +234,18 @@ describe('OptionalOasysSections', () => {
           [pageWithOnlyOtherNeeds.otherNeedsHeading]: '2. Some other section',
         })
       })
+
+      it('ignores sections that are set as `null`', () => {
+        const page = new OptionalOasysSections({
+          needsLinkedToReoffending: [needLinkedToReoffendingA, null, needLinkedToReoffendingB],
+          otherNeeds: [otherNeedA, otherNeedB, null, null],
+        })
+
+        expect(page.response()).toEqual({
+          [page.needsLinkedToReoffendingHeading]: '1. Some section, 2. Some other section',
+          [page.otherNeedsHeading]: '3. Foo section, 4. Bar section',
+        })
+      })
     })
   })
 })
