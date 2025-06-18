@@ -26,7 +26,7 @@ export default class DayAvailabilityPage extends Page {
     cy.get('strong').should('contain.text', title)
     cy.get('p').should('contain.text', detail)
 
-    const summaryList = daySummaryRows(this.daySummary, this.criteria, 'doubleRow')
+    const summaryList = daySummaryRows(this.daySummary, this.criteria, 'singleRow')
     const summaryRows = summaryList.rows.filter(({ value }) => value)
     this.shouldContainSummaryListItems(summaryRows)
     cy.get('table')
@@ -39,6 +39,7 @@ export default class DayAvailabilityPage extends Page {
           cy.contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
         })
       })
+
     cy.get('table')
       .eq(1)
       .within(() => {

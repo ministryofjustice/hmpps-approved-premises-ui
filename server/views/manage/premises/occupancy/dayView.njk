@@ -66,6 +66,9 @@
                         preventDoubleClick: true
                     }) }}
                 </div>
+                {% for criterion in parentCriteria %}
+                    <input type="hidden" name="criteria" value="{{ criterion }}"/>
+                {% endfor %}
             </form>
         </div>
     {% endif %}
