@@ -46,6 +46,10 @@ export const reportInputLabels = {
     text: 'Raw Placement Report (PII)',
     hint: 'Includes additional columns of PII data.',
   },
+  overduePlacements: {
+    text: 'Overdue Placements',
+    hint: 'Placements where the expected arrival or departure date falls within the requested date range, and there is an overdue arrival or departure. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+  },
 } as const
 
 export type ReportType = (keyof typeof reportInputLabels)[number]

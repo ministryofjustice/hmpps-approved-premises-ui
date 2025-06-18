@@ -48,6 +48,13 @@ describe('reportUtils', () => {
             text: 'Placements where the following fall within the requested date range - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
           },
         },
+        {
+          value: 'overduePlacements',
+          text: 'Overdue Placements',
+          hint: {
+            text: 'Placements where the expected arrival or departure date falls within the requested date range, and there is an overdue arrival or departure. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+          },
+        },
       ])
     })
 
@@ -131,6 +138,13 @@ describe('reportUtils', () => {
           text: 'Raw Placement Report (PII)',
           hint: {
             text: 'Includes additional columns of PII data.',
+          },
+        },
+        {
+          value: 'overduePlacements',
+          text: 'Overdue Placements',
+          hint: {
+            text: 'Placements where the expected arrival or departure date falls within the requested date range, and there is an overdue arrival or departure. This only includes placements for regions taking part in the Find and Booking Private Beta.',
           },
         },
       ])
