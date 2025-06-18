@@ -2,25 +2,9 @@ import { UserDetails } from '@approved-premises/ui'
 import { hasPermission } from './users'
 
 export const reportInputLabels = {
-  applications: {
-    text: 'Raw Applications',
-    hint: 'A raw data extract for applications submitted within the month. Includes data up to the point of assessment completion.',
-  },
-  placementApplications: {
-    text: 'Raw requests for placement',
-    hint: 'A raw data extract for request for placements created within the month. Includes application data, but does not include matching or booking data.',
-  },
-  placementMatchingOutcomes: {
-    text: 'Raw data for Placement matching outcomes',
-    hint: 'A raw data extract to help identify placement matching outcomes. This downloads Match requests based on the Expected Arrival Date.',
-  },
-  lostBeds: {
-    text: 'Lost beds (no longer in use)',
-    hint: 'This report provides information on lost beds recorded before out of service beds functionality was enabled. This will be removed in the near future.',
-  },
   outOfServiceBeds: {
     text: 'Out of service beds',
-    hint: 'A report of all out of service beds within the month and how long they were unavailable for.',
+    hint: 'A report of all out of service beds within the requested date range and how long they were unavailable for.',
   },
   outOfServiceBedsWithPii: {
     text: 'Out of service beds (PII)',
@@ -32,7 +16,7 @@ export const reportInputLabels = {
   },
   applicationsV2: {
     text: 'Raw Applications for Performance Hub',
-    hint: 'Applications submitted or withdrawn within the requested month.',
+    hint: 'Applications submitted or withdrawn within the requested date range.',
   },
   applicationsV2WithPii: {
     text: 'Raw Applications for Performance Hub (PII)',
@@ -40,7 +24,7 @@ export const reportInputLabels = {
   },
   requestsForPlacement: {
     text: 'Raw Requests for Placement for Performance Hub',
-    hint: 'Requests for placements submitted or withdrawn within the requested month.',
+    hint: 'Requests for placements submitted or withdrawn within the requested date range.',
   },
   requestsForPlacementWithPii: {
     text: 'Raw Requests for Placement for Performance Hub (PII)',
@@ -48,7 +32,7 @@ export const reportInputLabels = {
   },
   placementMatchingOutcomesV2: {
     text: 'Raw Placement Matching Outcomes Report V2',
-    hint: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
+    hint: 'Placement matching outcomes for placement requests with a requested arrival date within the requested date range. This includes withdrawn requests.',
   },
   placementMatchingOutcomesV2WithPii: {
     text: 'Raw Placement Matching Outcomes Report V2 (PII)',
@@ -56,22 +40,21 @@ export const reportInputLabels = {
   },
   placements: {
     text: 'Raw Placement Report',
-    hint: 'Placements where the following fall within the requested month - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+    hint: 'Placements where the following fall within the requested date range - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
   },
   placementsWithPii: {
     text: 'Raw Placement Report (PII)',
     hint: 'Includes additional columns of PII data.',
   },
+  overduePlacements: {
+    text: 'Overdue Placements',
+    hint: 'Placements where the expected arrival or departure date falls within the requested date range, and there is an overdue arrival or departure. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+  },
 } as const
 
 export type ReportType = (keyof typeof reportInputLabels)[number]
 
-export const unusedReports = [
-  'applications',
-  'placementApplications',
-  'placementMatchingOutcomes',
-  'lostBeds',
-] as Array<string>
+export const unusedReports = [] as Array<string>
 
 export const piiReports = [
   'applicationsV2WithPii',
