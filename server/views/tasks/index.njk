@@ -1,10 +1,9 @@
 {% extends "../partials/layout.njk" %}
-{% from "components/sortableTable/macro.njk" import sortableTable %}
-{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "components/sortableTable/macro.njk" import sortableTable %}
 {% from "./_navigation.njk" import navigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
@@ -20,8 +19,8 @@
 
     {{ sortableTable({
         firstCellIsHeader: true,
-        head: TaskUtils.tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
-        rows: TaskUtils.tasksTableRows(tasks, activeTab)
+        head: taskHeader,
+        rows: taskRows
     }) }}
 
     {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}

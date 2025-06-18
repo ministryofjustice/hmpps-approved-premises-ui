@@ -1,4 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
+import { TaskTab, tasksTableHeader, tasksTableRows } from '../utils/tasks/listTable'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
 import { ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
@@ -6,6 +7,7 @@ import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
 import { AllocatedFilter, TaskSortField, UserQualification } from '../@types/shared'
 import { TaskSearchQualification } from '../@types/ui'
+import { userQualificationsSelectOptions } from '../utils/tasks'
 
 export default class TasksController {
   constructor(
@@ -20,7 +22,7 @@ export default class TasksController {
       const users = await this.userService.getUserList(req.user.token, ['assessor', 'appeals_manager'])
 
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
-      const activeTab = req.query.activeTab || 'allocated'
+      const activeTab = (req.query.activeTab || 'allocated') as TaskTab
       const isCompleted = activeTab === 'completed'
 
       const cruManagementAreaId = req.query.area || res.locals.user.cruManagementArea?.id
@@ -62,20 +64,19 @@ export default class TasksController {
 
       res.render('tasks/index', {
         pageHeading: 'Task Allocation',
-        tasks: tasks.data,
+        taskRows: tasksTableRows(tasks.data, activeTab),
+        taskHeader: tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
         allocatedFilter,
         pageNumber: Number(tasks.pageNumber),
         totalPages: Number(tasks.totalPages),
         hrefPrefix,
-        sortBy,
-        sortDirection,
         cruManagementAreas,
         cruManagementArea: cruManagementAreaId,
         users,
         allocatedToUserId,
-        requiredQualification,
         crnOrName,
         activeTab,
+        userQualificationSelectOptions: userQualificationsSelectOptions(requiredQualification),
       })
     }
   }

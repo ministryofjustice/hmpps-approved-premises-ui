@@ -199,7 +199,7 @@ context('Task Allocation', () => {
     // Given I am signed in as a CRU member with the correct AP area and CRU management area
     signIn('cru_member', user)
 
-    const sortFields = ['dueAt', 'person', 'allocatedTo', 'expectedArrivalDate']
+    const sortFields = ['dueAt', 'person', 'allocatedTo', 'expectedArrivalDate', 'apType']
     const tasks = restrictedPersonSummaryTaskFactory.buildList(10)
 
     cy.task('stubGetAllTasks', {

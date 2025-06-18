@@ -1,4 +1,4 @@
-import { apTypeLabels } from '../apTypeLabels'
+import { apTypeLongLabels } from '../apTypeLabels'
 import { ApType, ReleaseTypeOption } from '../../@types/shared'
 import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
@@ -115,7 +115,7 @@ describe('adminSummary', () => {
   })
 
   describe('apTypeCell', () => {
-    it.each(Object.keys(apTypeLabels) as Array<ApType>)(
+    it.each(Object.keys(apTypeLongLabels) as Array<ApType>)(
       'should return the correct type for AP Type %s',
       (apType: ApType) => {
         const placementRequestWithApType = cas1PlacementRequestDetailFactory.build({
@@ -127,7 +127,7 @@ describe('adminSummary', () => {
             text: 'Type of AP',
           },
           value: {
-            text: apTypeLabels[apType],
+            text: apTypeLongLabels[apType],
           },
           actions: {
             items: [

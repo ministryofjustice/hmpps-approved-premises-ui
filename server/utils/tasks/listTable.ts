@@ -15,6 +15,9 @@ import { DateFormats } from '../dateUtils'
 
 import { TaskStatusTag } from './statusTag'
 import { displayName } from '../personUtils'
+import { apTypeShortLabels } from '../apTypeLabels'
+
+export type TaskTab = 'allocated' | 'unallocated' | 'completed'
 
 const statusCell = (task: Task): TableCell => ({
   html: new TaskStatusTag(task.status).html(),
@@ -85,6 +88,10 @@ const nameAnchorCell = (task: Task): TableCell => ({
   }),
 })
 
+const apTypeCell = (task: Task): TableCell => ({
+  text: apTypeShortLabels[task.apType] || '',
+})
+
 const apAreaCell = (task: Task): TableCell => ({
   text: task.apArea?.name || 'No area supplied',
 })
@@ -99,6 +106,7 @@ const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
       allocationCell(task),
       statusCell(task),
       taskTypeCell(task),
+      apTypeCell(task),
       apAreaCell(task),
     ])
   })
@@ -116,6 +124,7 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
       arrivalDateCell(task),
       statusCell(task),
       taskTypeCell(task),
+      apTypeCell(task),
       apAreaCell(task),
     ])
   })
@@ -151,7 +160,7 @@ const completedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   return rows
 }
 
-const tasksTableRows = (tasks: Array<Task>, allocatedFilter: string): Array<TableRow> => {
+const tasksTableRows = (tasks: Array<Task>, allocatedFilter: TaskTab): Array<TableRow> => {
   if (allocatedFilter === 'allocated') {
     return allocatedTableRows(tasks)
   }
@@ -173,6 +182,7 @@ const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
     {
       text: 'Task type',
     },
+    sortHeader<TaskSortField>('AP type', 'apType', sortBy, sortDirection, hrefPrefix),
     {
       text: 'AP area',
     },
@@ -190,6 +200,7 @@ const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirect
     {
       text: 'Task type',
     },
+    sortHeader<TaskSortField>('AP type', 'apType', sortBy, sortDirection, hrefPrefix),
     {
       text: 'AP area',
     },
@@ -209,7 +220,7 @@ const completedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
 }
 
 const tasksTableHeader = (
-  activeTab: 'allocated' | 'unallocated' | 'completed',
+  activeTab: TaskTab,
   sortBy: TaskSortField,
   sortDirection: SortDirection,
   hrefPrefix: string,

@@ -1,4 +1,4 @@
-import { apTypeLabels } from '../apTypeLabels'
+import { apTypeLongLabels } from '../apTypeLabels'
 import { Cas1PlacementRequestDetail } from '../../@types/shared'
 import { SummaryList, SummaryListItem } from '../../@types/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
@@ -68,7 +68,7 @@ export const apTypeCell = (placementRequest: Cas1PlacementRequestDetail) => {
       text: 'Type of AP',
     },
     value: {
-      text: apTypeLabels[placementRequest.type],
+      text: apTypeLongLabels[placementRequest.type],
     },
     actions: {
       items: [

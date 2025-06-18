@@ -20,6 +20,7 @@ import { userTableHeader, userTableRows } from './usersTable'
 import paths from '../../paths/apply'
 import { isPlacementApplicationTask } from './assertions'
 import { qualificationDictionary } from '../users'
+import { summaryListItem } from '../formUtils'
 
 type GroupedTasks = {
   allocated: Array<Task>
@@ -61,30 +62,9 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
   const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } = application
 
   const summary = [
-    {
-      key: {
-        text: 'Name',
-      },
-      value: {
-        text: displayName(application.person, { laoSuffix: true }),
-      },
-    },
-    {
-      key: {
-        text: 'CRN',
-      },
-      value: {
-        text: application.person.crn,
-      },
-    },
-    {
-      key: {
-        text: 'Arrival date',
-      },
-      value: {
-        text: arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate) : 'Not provided',
-      },
-    },
+    summaryListItem('Name', displayName(application.person, { laoSuffix: true })),
+    summaryListItem('CRN', application.person.crn),
+    summaryListItem('Arrival date', arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate) : 'Not provided'),
     {
       key: {
         text: 'Application type',
@@ -101,44 +81,32 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
         ],
       },
     },
-    {
-      key: {
-        text: 'AP area',
-      },
-      value: {
-        text: application.apArea?.name,
-      },
-    },
-    {
-      key: { text: 'Currently allocated to' },
-      value: { text: task?.allocatedToStaffMember ? task.allocatedToStaffMember.name : 'Unallocated' },
-    },
+    summaryListItem('AP area', application.apArea?.name),
+    summaryListItem(
+      'Currently allocated to',
+      task?.allocatedToStaffMember ? task.allocatedToStaffMember.name : 'Unallocated',
+    ),
   ]
 
   if (applicantUserDetails) {
-    summary.push({
-      key: { text: 'Applicant' },
-      value: { text: getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email) },
-    })
+    summary.push(
+      summaryListItem('Applicant', getFormattedNameAndEmail(applicantUserDetails.name, applicantUserDetails.email)),
+    )
   }
 
   if (caseManagerIsNotApplicant && caseManagerUserDetails) {
-    summary.push({
-      key: { text: 'Case manager' },
-      value: { text: getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email) },
-    })
+    summary.push(
+      summaryListItem(
+        'Case manager',
+        getFormattedNameAndEmail(caseManagerUserDetails.name, caseManagerUserDetails.email),
+      ),
+    )
   }
 
-  summary.push({
-    key: { text: 'AP gender' },
-    value: { text: application.isWomensApplication ? 'Women' : 'Men' },
-  })
+  summary.push(summaryListItem('AP gender', application.isWomensApplication ? 'Women' : 'Men'))
 
   if (task.probationDeliveryUnit) {
-    summary.push({
-      key: { text: 'Applicant PDU' },
-      value: { text: task.probationDeliveryUnit.name },
-    })
+    summary.push(summaryListItem('Applicant PDU', task.probationDeliveryUnit.name))
   }
 
   return summary

@@ -15,7 +15,7 @@ import {
 } from '@approved-premises/api'
 import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { apTypeLabels } from '../apTypeLabels'
+import { apTypeLongLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
 import { displayName, isFullPerson } from '../personUtils'
@@ -103,7 +103,7 @@ export const apTypeRow = (apType: ApType) => ({
     text: 'Type of AP',
   },
   value: {
-    text: apTypeLabels[apType],
+    text: apTypeLongLabels[apType],
   },
 })
 
@@ -113,7 +113,7 @@ export const apTypeWithViewTimelineActionRow = (placementRequest: Cas1PlacementR
       text: 'Type of AP',
     },
     value: {
-      text: apTypeLabels[placementRequest.type],
+      text: apTypeLongLabels[placementRequest.type],
     },
   }
   if (placementRequest.application) {

@@ -25,6 +25,7 @@ import { daysUntilDueCell } from '../tableUtils'
 import { TaskStatusTag } from './statusTag'
 import { fullPersonSummaryFactory } from '../../testutils/factories/person'
 import { DateFormats } from '../dateUtils'
+import { apTypeShortLabels } from '../apTypeLabels'
 
 describe('table', () => {
   beforeEach(() => {
@@ -55,6 +56,9 @@ describe('table', () => {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
+              text: apTypeShortLabels[task.apType],
+            },
+            {
               text: task.apArea?.name || 'No area supplied',
             },
           ],
@@ -81,6 +85,9 @@ describe('table', () => {
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
+            },
+            {
+              text: apTypeShortLabels[task.apType],
             },
             {
               text: task.apArea?.name || 'No area supplied',
@@ -111,6 +118,9 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
+            {
+              text: apTypeShortLabels[task.apType],
+            },
             { text: task.apArea?.name || 'No area supplied' },
           ],
         ])
@@ -133,6 +143,9 @@ describe('table', () => {
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
+            },
+            {
+              text: apTypeShortLabels[task.apType],
             },
             {
               text: task.apArea?.name,
@@ -159,6 +172,7 @@ describe('table', () => {
         {
           text: 'Task type',
         },
+        sortHeader<TaskSortField>('AP type', 'apType', sortBy, sortDirection, hrefPrefix),
         {
           text: 'AP area',
         },
@@ -183,6 +197,7 @@ describe('table', () => {
         {
           text: 'Task type',
         },
+        sortHeader<TaskSortField>('AP type', 'apType', sortBy, sortDirection, hrefPrefix),
         {
           text: 'AP area',
         },
