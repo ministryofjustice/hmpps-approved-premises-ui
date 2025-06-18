@@ -4,7 +4,7 @@ import { hasPermission } from './users'
 export const reportInputLabels = {
   outOfServiceBeds: {
     text: 'Out of service beds',
-    hint: 'A report of all out of service beds within the month and how long they were unavailable for.',
+    hint: 'A report of all out of service beds within the requested date range and how long they were unavailable for.',
   },
   outOfServiceBedsWithPii: {
     text: 'Out of service beds (PII)',
@@ -16,7 +16,7 @@ export const reportInputLabels = {
   },
   applicationsV2: {
     text: 'Raw Applications for Performance Hub',
-    hint: 'Applications submitted or withdrawn within the requested month.',
+    hint: 'Applications submitted or withdrawn within the requested date range.',
   },
   applicationsV2WithPii: {
     text: 'Raw Applications for Performance Hub (PII)',
@@ -24,7 +24,7 @@ export const reportInputLabels = {
   },
   requestsForPlacement: {
     text: 'Raw Requests for Placement for Performance Hub',
-    hint: 'Requests for placements submitted or withdrawn within the requested month.',
+    hint: 'Requests for placements submitted or withdrawn within the requested date range.',
   },
   requestsForPlacementWithPii: {
     text: 'Raw Requests for Placement for Performance Hub (PII)',
@@ -32,7 +32,7 @@ export const reportInputLabels = {
   },
   placementMatchingOutcomesV2: {
     text: 'Raw Placement Matching Outcomes Report V2',
-    hint: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
+    hint: 'Placement matching outcomes for placement requests with a requested arrival date within the requested date range. This includes withdrawn requests.',
   },
   placementMatchingOutcomesV2WithPii: {
     text: 'Raw Placement Matching Outcomes Report V2 (PII)',
@@ -40,7 +40,7 @@ export const reportInputLabels = {
   },
   placements: {
     text: 'Raw Placement Report',
-    hint: 'Placements where the following fall within the requested month - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+    hint: 'Placements where the following fall within the requested date range - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
   },
   placementsWithPii: {
     text: 'Raw Placement Report (PII)',

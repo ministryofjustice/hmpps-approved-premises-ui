@@ -10,7 +10,7 @@ describe('reportUtils', () => {
           value: 'outOfServiceBeds',
           text: 'Out of service beds',
           hint: {
-            text: 'A report of all out of service beds within the month and how long they were unavailable for.',
+            text: 'A report of all out of service beds within the requested date range and how long they were unavailable for.',
           },
         },
         {
@@ -24,28 +24,28 @@ describe('reportUtils', () => {
           value: 'applicationsV2',
           text: 'Raw Applications for Performance Hub',
           hint: {
-            text: 'Applications submitted or withdrawn within the requested month.',
+            text: 'Applications submitted or withdrawn within the requested date range.',
           },
         },
         {
           value: 'requestsForPlacement',
           text: 'Raw Requests for Placement for Performance Hub',
           hint: {
-            text: 'Requests for placements submitted or withdrawn within the requested month.',
+            text: 'Requests for placements submitted or withdrawn within the requested date range.',
           },
         },
         {
           value: 'placementMatchingOutcomesV2',
           text: 'Raw Placement Matching Outcomes Report V2',
           hint: {
-            text: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
+            text: 'Placement matching outcomes for placement requests with a requested arrival date within the requested date range. This includes withdrawn requests.',
           },
         },
         {
           value: 'placements',
           text: 'Raw Placement Report',
           hint: {
-            text: 'Placements where the following fall within the requested month - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+            text: 'Placements where the following fall within the requested date range - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
           },
         },
       ])
@@ -60,7 +60,7 @@ describe('reportUtils', () => {
           value: 'outOfServiceBeds',
           text: 'Out of service beds',
           hint: {
-            text: 'A report of all out of service beds within the month and how long they were unavailable for.',
+            text: 'A report of all out of service beds within the requested date range and how long they were unavailable for.',
           },
         },
         {
@@ -81,7 +81,7 @@ describe('reportUtils', () => {
           value: 'applicationsV2',
           text: 'Raw Applications for Performance Hub',
           hint: {
-            text: 'Applications submitted or withdrawn within the requested month.',
+            text: 'Applications submitted or withdrawn within the requested date range.',
           },
         },
         {
@@ -95,7 +95,7 @@ describe('reportUtils', () => {
           value: 'requestsForPlacement',
           text: 'Raw Requests for Placement for Performance Hub',
           hint: {
-            text: 'Requests for placements submitted or withdrawn within the requested month.',
+            text: 'Requests for placements submitted or withdrawn within the requested date range.',
           },
         },
         {
@@ -109,7 +109,7 @@ describe('reportUtils', () => {
           value: 'placementMatchingOutcomesV2',
           text: 'Raw Placement Matching Outcomes Report V2',
           hint: {
-            text: 'Placement matching outcomes for placement requests with a requested arrival within the month. This includes withdrawn requests.',
+            text: 'Placement matching outcomes for placement requests with a requested arrival date within the requested date range. This includes withdrawn requests.',
           },
         },
         {
@@ -123,7 +123,7 @@ describe('reportUtils', () => {
           value: 'placements',
           text: 'Raw Placement Report',
           hint: {
-            text: 'Placements where the following fall within the requested month - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
+            text: 'Placements where the following fall within the requested date range - expected arrival/departure, actual arrival/departure, non arrival, withdrawal. This only includes placements for regions taking part in the Find and Booking Private Beta.',
           },
         },
         {
