@@ -70,7 +70,7 @@ describe('spaceSearchController', () => {
       expect(response.render).toHaveBeenCalledWith('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
         spaceSearchResults: spaceSearchResultsCards(
-          placementRequestDetail.id,
+          placementRequestDetail,
           searchState.postcode,
           spaceSearchResults.results,
         ),

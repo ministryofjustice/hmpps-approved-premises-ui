@@ -72,10 +72,10 @@ describe('matchUtils', () => {
   })
 
   describe('summaryCardsRow', () => {
-    it('calls the correct row functions', () => {
-      const postcodeArea = 'HR1 2AF'
-      const spaceSearchResult = spaceSearchResultFactory.build()
+    const postcodeArea = 'HR1 2AF'
+    const spaceSearchResult = spaceSearchResultFactory.build()
 
+    it('calls the correct row functions', () => {
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
         summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
@@ -84,15 +84,24 @@ describe('matchUtils', () => {
         characteristicsRow(spaceSearchResult),
       ])
     })
+
+    it('does not return the ap area row if the placement request is for a womens AP', () => {
+      expect(summaryCardRows(spaceSearchResult, postcodeArea, true)).toEqual([
+        apTypeRow(spaceSearchResult.premises.apType),
+        addressRow(spaceSearchResult),
+        distanceRow(spaceSearchResult, postcodeArea),
+        characteristicsRow(spaceSearchResult),
+      ])
+    })
   })
 
   describe('spaceSearchResultsCards', () => {
-    it('renders a list of space search results as summary lists with cards', () => {
-      const placementRequestId = 'placement-request-id'
-      const postcodeArea = 'HR1 2AF'
-      const spaceSearchResults = spaceSearchResultFactory.buildList(1)
+    const placementRequest = cas1PlacementRequestDetailFactory.build()
+    const postcodeArea = 'HR1 2AF'
+    const spaceSearchResults = spaceSearchResultFactory.buildList(1)
 
-      const resultCards = spaceSearchResultsCards(placementRequestId, postcodeArea, spaceSearchResults)
+    it('renders a list of space search results as summary lists with cards', () => {
+      const resultCards = spaceSearchResultsCards(placementRequest, postcodeArea, spaceSearchResults)
 
       expect(resultCards).toEqual([
         {
@@ -101,7 +110,7 @@ describe('matchUtils', () => {
               items: [
                 {
                   href: matchPaths.v2Match.placementRequests.search.occupancy({
-                    id: placementRequestId,
+                    id: placementRequest.id,
                     premisesId: spaceSearchResults[0].premises.id,
                   }),
                   text: 'View spaces',
@@ -114,6 +123,13 @@ describe('matchUtils', () => {
           rows: summaryCardRows(spaceSearchResults[0], postcodeArea),
         },
       ])
+    })
+
+    it('does not contain the AP area row if the placement request is for a womens AP', () => {
+      placementRequest.application.isWomensApplication = true
+      const resultCards = spaceSearchResultsCards(placementRequest, postcodeArea, spaceSearchResults)
+
+      expect(resultCards[0].rows).toEqual(summaryCardRows(spaceSearchResults[0], postcodeArea, true))
     })
   })
 

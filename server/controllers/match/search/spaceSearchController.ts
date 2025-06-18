@@ -50,7 +50,7 @@ export default class SpaceSearchController {
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
         spaceSearchResults: spaceSearchResultsCards(
-          placementRequest.id,
+          placementRequest,
           searchState.postcode,
           spaceSearchResults.results || [],
         ),

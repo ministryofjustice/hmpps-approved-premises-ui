@@ -91,18 +91,21 @@ export const departureDateRow = (departureDate: string) => ({
   },
 })
 
-export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeArea: string): Array<SummaryListItem> => {
-  return [
+export const summaryCardRows = (
+  spaceSearchResult: SpaceSearchResult,
+  postcodeArea: string,
+  isWomensApplication = false,
+): Array<SummaryListItem> =>
+  [
     apTypeRow(spaceSearchResult.premises.apType),
-    summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
+    !isWomensApplication && summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
     addressRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
     characteristicsRow(spaceSearchResult),
-  ]
-}
+  ].filter(Boolean)
 
 export const spaceSearchResultsCards = (
-  placementRequestId: string,
+  placementRequest: Cas1PlacementRequestDetail,
   postcode: string,
   spaceSearchResults: Array<Cas1SpaceSearchResult>,
 ): Array<SummaryListWithCard> =>
@@ -116,7 +119,7 @@ export const spaceSearchResultsCards = (
         items: [
           {
             href: matchPaths.v2Match.placementRequests.search.occupancy({
-              id: placementRequestId,
+              id: placementRequest.id,
               premisesId: result.premises.id,
             }),
             text: 'View spaces',
@@ -125,7 +128,7 @@ export const spaceSearchResultsCards = (
         ],
       },
     },
-    rows: summaryCardRows(result, postcode),
+    rows: summaryCardRows(result, postcode, placementRequest.application.isWomensApplication),
   }))
 
 export const apTypeRow = (apType: ApType) => ({
