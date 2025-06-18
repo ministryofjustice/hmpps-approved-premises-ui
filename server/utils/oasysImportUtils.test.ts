@@ -239,9 +239,21 @@ describe('OASysImportUtils', () => {
     })
 
     it('calls logToSentry and returns an empty string if a summary is not find', () => {
-      expect(findSummaryLabel('1', [{ questionNumber: '20', label: 'some label' }])).toBe('')
+      expect(
+        findSummaryLabel('1', [
+          {
+            questionNumber: '20',
+            label: 'some label',
+            answer: 'Some answer here',
+          },
+          {
+            questionNumber: '12.4',
+            label: 'foo',
+          },
+        ]),
+      ).toBe('')
       expect(logToSentry).toHaveBeenCalledWith(
-        'OASys summary not found for question number: 1. Summaries [{"questionNumber":"20","label":"some label"}]',
+        'OASys summary not found for question number: 1. Summaries [{"questionNumber":"20","label":"some label","answer":"***redacted***"},{"questionNumber":"12.4","label":"foo"}]',
       )
     })
   })
