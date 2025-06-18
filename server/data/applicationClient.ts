@@ -48,13 +48,13 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async all(): Promise<Array<Cas1ApplicationSummary>> {
+  async allForLoggedInUser(): Promise<Array<Cas1ApplicationSummary>> {
     return (await this.restClient.get({
-      path: paths.applications.index.pattern,
+      path: paths.applications.me.pattern,
     })) as Array<Cas1ApplicationSummary>
   }
 
-  async dashboard(
+  async all(
     page: number,
     sortBy: ApplicationSortField,
     sortDirection: SortDirection,

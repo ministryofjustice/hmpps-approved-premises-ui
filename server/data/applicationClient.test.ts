@@ -342,7 +342,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
     applicationClient = new ApplicationClient(token)
   })
 
-  describe('all', () => {
+  describe('allForLoggedInUser', () => {
     it('should get all applications created by the current user', async () => {
       const applications = cas1ApplicationSummaryFactory.buildList(5)
 
@@ -351,7 +351,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         uponReceiving: 'A request for all applications created by the current user',
         withRequest: {
           method: 'GET',
-          path: paths.applications.index.pattern,
+          path: paths.applications.me.pattern,
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -362,13 +362,13 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.all()
+      const result = await applicationClient.allForLoggedInUser()
 
       expect(result).toEqual(applications)
     })
   })
 
-  describe('dashboard', () => {
+  describe('all', () => {
     it('should get all applications', async () => {
       const allApplications = cas1ApplicationSummaryFactory.buildList(5)
 
@@ -395,7 +395,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.dashboard(1, 'arrivalDate', 'asc', {})
+      const result = await applicationClient.all(1, 'arrivalDate', 'asc', {})
 
       expect(result).toEqual({
         data: allApplications,
@@ -432,7 +432,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', {})
+      const result = await applicationClient.all(2, 'createdAt', 'desc', {})
 
       expect(result).toEqual({
         data: allApplications,
@@ -475,7 +475,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', {
+      const result = await applicationClient.all(2, 'createdAt', 'desc', {
         crnOrName: 'foo',
         status: 'rejected',
       })

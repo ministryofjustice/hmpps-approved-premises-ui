@@ -193,7 +193,7 @@ describe('CruDashboardController', () => {
         data: applications,
       }) as PaginatedResponse<Cas1ApplicationSummary>
 
-      when(applicationService.dashboard)
+      when(applicationService.getAll)
         .calledWith(token, undefined, undefined, undefined, {
           status: 'pendingPlacementRequest',
           cruManagementAreaId: cruManagementArea,

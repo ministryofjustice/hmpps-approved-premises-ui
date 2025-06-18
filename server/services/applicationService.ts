@@ -45,7 +45,7 @@ export default class ApplicationService {
     return application
   }
 
-  async dashboard(
+  async getAll(
     token: string,
     page: number = 1,
     sortBy: ApplicationSortField = 'createdAt',
@@ -54,12 +54,12 @@ export default class ApplicationService {
   ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     const applicationClient = this.applicationClientFactory(token)
 
-    return applicationClient.dashboard(page, sortBy, sortDirection, searchOptions)
+    return applicationClient.all(page, sortBy, sortDirection, searchOptions)
   }
 
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {
     const applicationClient = this.applicationClientFactory(token)
-    const allApplications = await applicationClient.all()
+    const allApplications = await applicationClient.allForLoggedInUser()
     const result: GroupedApplications = {
       inProgress: [],
       requestedFurtherInformation: [],

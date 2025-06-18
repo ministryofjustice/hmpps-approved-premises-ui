@@ -100,7 +100,7 @@ describe('ApplicationService', () => {
 
     describe('with the inactiveApplicationsTab feature flag enabled', () => {
       it('sorts all applications into In progress, Further info requested, Submitted and Inactive', async () => {
-        applicationClient.all.mockResolvedValue(Object.values(applications).flat())
+        applicationClient.allForLoggedInUser.mockResolvedValue(Object.values(applications).flat())
 
         const result = await service.getAllForLoggedInUser(token)
 
@@ -112,7 +112,7 @@ describe('ApplicationService', () => {
         })
 
         expect(applicationClientFactory).toHaveBeenCalledWith(token)
-        expect(applicationClient.all).toHaveBeenCalled()
+        expect(applicationClient.allForLoggedInUser).toHaveBeenCalled()
       })
     })
 
@@ -122,7 +122,7 @@ describe('ApplicationService', () => {
       })
 
       it('sorts all applications into In progress, Further info requested, and Submitted', async () => {
-        applicationClient.all.mockResolvedValue(Object.values(applications).flat())
+        applicationClient.allForLoggedInUser.mockResolvedValue(Object.values(applications).flat())
 
         const result = await service.getAllForLoggedInUser(token)
 
@@ -134,7 +134,7 @@ describe('ApplicationService', () => {
         })
 
         expect(applicationClientFactory).toHaveBeenCalledWith(token)
-        expect(applicationClient.all).toHaveBeenCalled()
+        expect(applicationClient.allForLoggedInUser).toHaveBeenCalled()
       })
     })
   })
@@ -387,20 +387,20 @@ describe('ApplicationService', () => {
     }) as PaginatedResponse<Cas1ApplicationSummary>
 
     beforeEach(() => {
-      applicationClient.dashboard.mockResolvedValue(paginatedResponse)
+      applicationClient.all.mockResolvedValue(paginatedResponse)
     })
 
     it('calls the dashboard client method', async () => {
-      const result = await service.dashboard(token)
+      const result = await service.getAll(token)
 
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.dashboard).toHaveBeenCalledWith(1, 'createdAt', 'asc', {})
+      expect(applicationClient.all).toHaveBeenCalledWith(1, 'createdAt', 'asc', {})
     })
 
     it('passes a page number and sort options', async () => {
-      const result = await service.dashboard(token, 2, 'arrivalDate', 'desc', {
+      const result = await service.getAll(token, 2, 'arrivalDate', 'desc', {
         crnOrName: 'foo',
         status: 'assesmentInProgress',
       })
@@ -408,7 +408,7 @@ describe('ApplicationService', () => {
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.dashboard).toHaveBeenCalledWith(2, 'arrivalDate', 'desc', {
+      expect(applicationClient.all).toHaveBeenCalledWith(2, 'arrivalDate', 'desc', {
         crnOrName: 'foo',
         status: 'assesmentInProgress',
       })

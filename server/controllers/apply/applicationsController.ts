@@ -55,7 +55,7 @@ export default class ApplicationsController {
         sortDirection = 'desc'
       }
 
-      const result = await this.applicationService.dashboard(
+      const result = await this.applicationService.getAll(
         req.user.token,
         pageNumber,
         sortBy,
