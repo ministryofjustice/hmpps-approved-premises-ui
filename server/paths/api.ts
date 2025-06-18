@@ -122,7 +122,7 @@ export default {
   },
   applications: {
     show: applicationsSingle,
-    index: cas1Applications,
+    me: cas1Applications.path('me'),
     all: cas1Applications.path('all'),
     update: applicationsSingle,
     new: applications,

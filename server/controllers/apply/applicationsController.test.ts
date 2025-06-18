@@ -108,7 +108,7 @@ describe('applicationsController', () => {
         sortDirection: 'desc',
       }
 
-      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      applicationService.getAll.mockResolvedValue(paginatedResponse)
       ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
@@ -127,7 +127,7 @@ describe('applicationsController', () => {
         ...searchOptions,
       })
 
-      expect(applicationService.dashboard).toHaveBeenCalledWith(
+      expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
@@ -148,7 +148,7 @@ describe('applicationsController', () => {
         pageNumber: 1,
       }
 
-      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      applicationService.getAll.mockResolvedValue(paginatedResponse)
       ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
@@ -167,7 +167,7 @@ describe('applicationsController', () => {
         ...searchOptions,
       })
 
-      expect(applicationService.dashboard).toHaveBeenCalledWith(
+      expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
         paginationDetails.pageNumber,
         undefined,
@@ -189,7 +189,7 @@ describe('applicationsController', () => {
         sortBy: 'createdAt',
       }
 
-      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      applicationService.getAll.mockResolvedValue(paginatedResponse)
       ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
@@ -208,7 +208,7 @@ describe('applicationsController', () => {
         ...searchOptions,
       })
 
-      expect(applicationService.dashboard).toHaveBeenCalledWith(
+      expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
