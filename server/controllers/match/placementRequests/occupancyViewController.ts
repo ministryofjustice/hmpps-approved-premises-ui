@@ -20,7 +20,6 @@ import {
   type PlacementColumnField,
   SortablePlacementColumnField,
   daySummaryRows,
-  filterOutOfServiceBeds,
   outOfServiceBedColumnMap,
   outOfServiceBedTableRows,
   placementColumnMap,
@@ -29,7 +28,6 @@ import {
   tableHeader,
 } from '../../../utils/premises/occupancy'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
-import config from '../../../config'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 
@@ -162,15 +160,13 @@ export default class {
           'startDate',
         )
 
-        this.formData.update(id, req.session, {
+        await this.formData.update(id, req.session, {
           roomCriteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria) || [],
           startDate,
           durationDays: Number(durationDays),
         })
 
-        return req.session.save(() => {
-          res.redirect(occupancyUrl)
-        })
+        return res.redirect(occupancyUrl)
       } catch (error) {
         return catchValidationErrorOrPropogate(req, res, error, occupancyUrl)
       }
@@ -198,14 +194,12 @@ export default class {
           'departureDate',
         )
 
-        this.formData.update(id, req.session, {
+        await this.formData.update(id, req.session, {
           arrivalDate,
           departureDate,
         })
 
-        return req.session.save(() => {
-          res.redirect(paths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }))
-        })
+        return res.redirect(paths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
@@ -235,7 +229,7 @@ export default class {
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
 
       const {
-        sortBy = 'personName',
+        sortBy = 'canonicalArrivalDate',
         sortDirection = 'asc',
         hrefPrefix,
       } = getPaginationDetails<SortablePlacementColumnField>(
@@ -251,21 +245,19 @@ export default class {
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
       const premises = await this.premisesService.find(token, premisesId)
-      const daySummary = filterOutOfServiceBeds(
-        await this.premisesService.getDaySummary({
-          token,
-          premisesId,
-          date,
-          bookingsSortBy: sortBy,
-          bookingsSortDirection: sortDirection,
-        }),
-        config.flags.pocEnabled ? filteredCriteria : undefined,
-      )
+
+      const daySummary = await this.premisesService.getDaySummary({
+        token,
+        premisesId,
+        date,
+        bookingsSortBy: sortBy,
+        bookingsSortDirection: sortDirection,
+      })
+
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
         startDate: date,
         excludeSpaceBookingId,
       })
-
       const dayCapacity = premisesCapacity.capacity[0]
       const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
 
@@ -273,16 +265,12 @@ export default class {
         backLink,
         pageHeading: DateFormats.isoDateToUIDate(date),
         dayAvailabilityStatus: dayAvailabilityStatusMap[status],
-        daySummaryRows: daySummaryRows(
-          daySummary,
-          filteredCriteria,
-          config.flags.pocEnabled ? 'singleRow' : 'doubleRow',
-        ),
+        daySummaryRows: daySummaryRows(daySummary, filteredCriteria, 'singleRow'),
         placementRequest,
         premises,
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
-        ...tableCaptions(daySummary, filteredCriteria),
+        ...tableCaptions(daySummary, [], true),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
         placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
