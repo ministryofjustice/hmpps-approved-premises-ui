@@ -128,9 +128,13 @@ export default class OptionalOasysSections implements TasklistPage {
   }
 
   getResponseForTypeOfNeed(typeOfNeed: Array<Cas1OASysSupportingInformationQuestionMetaData>) {
-    if (Array.isArray(typeOfNeed) && typeOfNeed.length) {
-      return typeOfNeed.map(need => `${need.section}. ${sentenceCase(need.sectionLabel)}`).join(', ')
+    if (Array.isArray(typeOfNeed)) {
+      return typeOfNeed
+        .filter(Boolean)
+        .map(need => `${need.section}. ${sentenceCase(need.sectionLabel)}`)
+        .join(', ')
     }
+
     return ''
   }
 
