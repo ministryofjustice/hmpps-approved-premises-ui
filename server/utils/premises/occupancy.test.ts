@@ -237,21 +237,45 @@ describe('apOccupancy utils', () => {
     it('should generate a list of day summary rows in single-row/criterion mode', () => {
       const expected = [
         {
-          key: { text: 'All rooms' },
+          key: { text: 'Capacity' },
           value: {
-            html: `18 beds<a class="govuk-!-margin-left-2" href="?">21 bookings</a><strong class="govuk-tag govuk-tag--red govuk-tag--float-right">Overbooked</strong>`,
+            text: '20',
+          },
+        },
+        {
+          key: {
+            text: 'Booked spaces',
+          },
+          value: {
+            text: '21',
+          },
+        },
+        {
+          key: {
+            text: 'Out of service beds',
+          },
+          value: {
+            text: '2',
+          },
+        },
+        {
+          key: {
+            text: 'Available spaces',
+          },
+          value: {
+            text: '-3',
           },
         },
         {
           key: { text: 'En-suite bathroom' },
           value: {
-            html: `1 bed<a class="govuk-!-margin-left-2" href="?characteristics=hasEnSuite">2 bookings</a><strong class="govuk-tag govuk-tag--red govuk-tag--float-right">Overbooked</strong>`,
+            html: '<span class="govuk-grid-column-one-third">3 total</span><span class="govuk-grid-column-one-third">2 booked</span><span class="govuk-grid-column-one-third">1 available</span>',
           },
         },
         {
           key: { text: 'Step-free access' },
           value: {
-            html: `1 bed<a class="govuk-!-margin-left-2" href="?characteristics=isStepFreeDesignated">1 booking</a><strong class="govuk-tag govuk-tag--yellow govuk-tag--float-right">Full</strong>`,
+            html: '<span class="govuk-grid-column-one-third">2 total</span><span class="govuk-grid-column-one-third">1 booked</span><span class="govuk-grid-column-one-third">1 available</span>',
           },
         },
       ]

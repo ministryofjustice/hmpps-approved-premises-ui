@@ -34,6 +34,7 @@ import {
   placementColumnMap,
   placementTableRows,
   tableHeader,
+  filterOutOfServiceBeds,
 } from '../../../utils/premises/occupancy'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 
@@ -455,6 +456,7 @@ describe('OccupancyViewController', () => {
   describe('viewDay', () => {
     const date = '2025-03-23'
     const premisesDaySummary = cas1PremisesDaySummaryFactory.build({ forDate: date })
+    // premisesDaySummary.outOfServiceBeds = []
     beforeEach(() => {
       premisesService.getDaySummary.mockResolvedValue(premisesDaySummary)
     })
@@ -496,14 +498,17 @@ describe('OccupancyViewController', () => {
         pageHeading: 'Sun 23 Mar 2025',
         backLink: '/backlink',
         dayAvailabilityStatus: dayAvailabilityStatusMap[expectedStatus],
-        daySummaryRows: daySummaryRows(premisesDaySummary, criteria, 'doubleRow'),
+        daySummaryRows: daySummaryRows(premisesDaySummary, criteria, 'singleRow'),
         placementRequest: placementRequestDetail,
         premises,
         nextDayLink: `${pathPrefix}/date/2025-03-24?criteria=isWheelchairDesignated&criteria=isArsonSuitable`,
         previousDayLink: `${pathPrefix}/date/2025-03-22?criteria=isWheelchairDesignated&criteria=isArsonSuitable`,
         outOfServiceBedCaption: 'Out of service beds on Sun 23 Mar 2025',
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
-        outOfServiceBedTableRows: outOfServiceBedTableRows(premises.id, premisesDaySummary.outOfServiceBeds),
+        outOfServiceBedTableRows: outOfServiceBedTableRows(
+          premises.id,
+          filterOutOfServiceBeds(premisesDaySummary, criteria).outOfServiceBeds,
+        ),
         placementTableCaption: 'People booked in on Sun 23 Mar 2025',
         placementTableHeader: tableHeader<PlacementColumnField>(
           placementColumnMap,

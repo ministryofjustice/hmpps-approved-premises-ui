@@ -29,7 +29,6 @@ import {
   tableHeader,
 } from '../../../utils/premises/occupancy'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
-import config from '../../../config'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 
@@ -259,7 +258,7 @@ export default class {
           bookingsSortBy: sortBy,
           bookingsSortDirection: sortDirection,
         }),
-        config.flags.pocEnabled ? filteredCriteria : undefined,
+        filteredCriteria,
       )
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
         startDate: date,
@@ -273,11 +272,7 @@ export default class {
         backLink,
         pageHeading: DateFormats.isoDateToUIDate(date),
         dayAvailabilityStatus: dayAvailabilityStatusMap[status],
-        daySummaryRows: daySummaryRows(
-          daySummary,
-          filteredCriteria,
-          config.flags.pocEnabled ? 'singleRow' : 'doubleRow',
-        ),
+        daySummaryRows: daySummaryRows(daySummary, filteredCriteria, 'singleRow'),
         placementRequest,
         premises,
         previousDayLink: getDayLink(daySummary.previousDate),

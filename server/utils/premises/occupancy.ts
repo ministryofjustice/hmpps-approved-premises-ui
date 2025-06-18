@@ -120,7 +120,7 @@ const availabilityRow = (
     ? {
         key: { text: name },
         value: {
-          html: `${pluralize('bed', available)}${booked ? `<a class="govuk-!-margin-left-2" href="${characteristic ? `?characteristics=${characteristic}` : '?'}">${pluralize('booking', booked)}</a>` : ''}${(booked || available) && booked >= available ? `<strong class="govuk-tag govuk-tag--${booked > available ? 'red' : 'yellow'} govuk-tag--float-right">${booked > available ? 'Overbooked' : 'Full'}</strong>` : ''}`,
+          html: `<span class="govuk-grid-column-one-third">${available + booked} total</span><span class="govuk-grid-column-one-third">${booked} booked</span><span class="govuk-grid-column-one-third">${available} available</span>`,
         },
       }
     : null
@@ -131,19 +131,17 @@ export const daySummaryRows = (
   roomCharacteristics: Array<Cas1SpaceBookingCharacteristic> = null,
   characteristicsMode: 'singleRow' | 'doubleRow' | 'none' = 'none',
 ) => {
+  // console.log('***********',JSON.stringify(daySummary,null,4))
   const {
     capacity: { totalBedCount, bookingCount, availableBedCount, characteristicAvailability },
   } = daySummary
 
-  const rows: Array<SummaryListItem> =
-    characteristicsMode === 'singleRow'
-      ? [availabilityRow('All rooms', null, availableBedCount, bookingCount)]
-      : [
-          summaryListItem('Capacity', String(totalBedCount)),
-          summaryListItem('Booked spaces', String(bookingCount)),
-          summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
-          summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
-        ]
+  const rows: Array<SummaryListItem> = [
+    summaryListItem('Capacity', String(totalBedCount)),
+    summaryListItem('Booked spaces', String(bookingCount)),
+    summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
+    summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
+  ]
 
   if (characteristicsMode === 'doubleRow')
     rows.push({ key: { html: '<div class="govuk-!-static-padding-top-5"></div>' }, value: null })
