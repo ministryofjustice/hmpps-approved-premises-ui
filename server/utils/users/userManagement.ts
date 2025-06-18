@@ -52,7 +52,6 @@ export const userSummaryListItems = (user: User) => [
 
 const userRoles: Record<RoleInUse, string> = {
   assessor: 'Assessor',
-  workflow_manager: 'Workflow manager',
   cru_member: 'CRU member',
   report_viewer: 'Report viewer',
   report_viewer_with_pii: 'Report viewer with PII',

@@ -4,7 +4,6 @@ import { Cas1CruManagementArea, Cas1SpaceBookingSummarySortField, SortDirection 
 import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
-import { hasPermission } from '../../../utils/users'
 import {
   PremisesTab,
   premisesOverbookingSummary,
@@ -56,8 +55,7 @@ export default class PremisesController {
       )
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
-      const showPlacements =
-        premises.supportsSpaceBookings && hasPermission(res.locals.user, ['cas1_space_booking_list'])
+      const showPlacements = premises.supportsSpaceBookings
       const keyworkersList =
         showPlacements && (activeTab === 'upcoming' || activeTab === 'current')
           ? await this.premisesService.getKeyworkers(req.user.token, req.params.premisesId)
