@@ -10,6 +10,7 @@ describe('roles utilities', () => {
         'cas1_assess_appealed_application',
         'cas1_assess_application',
         'cas1_assess_placement_application',
+        'cas1_offline_application_view',
         'cas1_view_assigned_assessments',
       ])
     })
