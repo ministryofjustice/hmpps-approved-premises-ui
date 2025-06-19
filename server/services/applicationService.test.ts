@@ -22,7 +22,6 @@ import {
   activeOffenceFactory,
   applicationFactory,
   applicationSummaryFactory,
-  assessmentFactory,
   documentFactory,
   noteFactory,
   paginatedResponseFactory,
@@ -341,22 +340,6 @@ describe('ApplicationService', () => {
       expect(applicationClient.submit).toHaveBeenCalledWith(application.id, applicationData)
 
       expect(getApplicationSubmissionData).toHaveBeenCalledWith(application)
-    })
-  })
-
-  describe('getAssessment', () => {
-    const id = 'some-uuid'
-    const assessment = assessmentFactory.build()
-
-    it('calls the assessment client method', async () => {
-      applicationClient.assessment.mockResolvedValue(assessment)
-
-      const result = await service.getAssessment(token, id)
-
-      expect(result).toEqual(assessment)
-
-      expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.assessment).toHaveBeenCalledWith(id)
     })
   })
 

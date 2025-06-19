@@ -10,7 +10,6 @@ import type {
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
   ApplicationTimelineNote,
-  ApprovedPremisesAssessment as Assessment,
   Document,
   NewWithdrawal,
   SortDirection,
@@ -137,13 +136,6 @@ export default class ApplicationService {
       return application
     }
     return this.findApplication(request.user.token, request.params.id)
-  }
-
-  async getAssessment(token: string, assessmentId: string): Promise<Assessment> {
-    const client = this.applicationClientFactory(token)
-    const assessment = await client.assessment(assessmentId)
-
-    return assessment
   }
 
   async withdraw(token: string, applicationId: string, body: NewWithdrawal) {
