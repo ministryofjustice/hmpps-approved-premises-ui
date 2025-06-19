@@ -6,7 +6,11 @@ import { PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { applicationShowPageTabs, firstPageOfApplicationJourney } from '../../utils/applications/utils'
+import {
+  applicationShowPageTabs,
+  applicationsTabs,
+  firstPageOfApplicationJourney,
+} from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
@@ -27,7 +31,10 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const applications = await this.applicationService.getAllForLoggedInUser(req.user.token)
 
-      res.render('applications/index', { pageHeading: 'Approved Premises applications', applications })
+      res.render('applications/index', {
+        pageHeading: 'Approved Premises applications',
+        applicationTabs: applicationsTabs(applications),
+      })
     }
   }
 
@@ -48,7 +55,7 @@ export default class ApplicationsController {
         sortDirection = 'desc'
       }
 
-      const result = await this.applicationService.dashboard(
+      const result = await this.applicationService.getAll(
         req.user.token,
         pageNumber,
         sortBy,

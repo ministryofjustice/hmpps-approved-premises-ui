@@ -1,6 +1,6 @@
 import {
   ApplicationSortField,
-  ApprovedPremisesApplicationSummary,
+  Cas1ApplicationSummary,
   Cas1PlacementRequestDetail,
   Cas1SpaceBooking,
   PlacementRequest,
@@ -48,7 +48,7 @@ export default class ListPage extends Page {
     })
   }
 
-  shouldShowApplications(applications: Array<ApprovedPremisesApplicationSummary>): void {
+  shouldShowApplications(applications: Array<Cas1ApplicationSummary>): void {
     shouldShowTableRows(pendingPlacementRequestTableRows(applications))
   }
 

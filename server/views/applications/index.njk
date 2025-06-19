@@ -7,7 +7,7 @@
 {% extends "../partials/layout.njk" %}
 {% from "./_navigation.njk" import navigation %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
@@ -20,30 +20,13 @@
 
             {{ navigation('myApplications') }}
 
+            {% set tabItems = [] %}
+            {% for tab in applicationTabs %}
+                {% set tabItems = (tabItems.push({ label: tab.label, id: tab.id, panel: { html: applicationsTable("Applications", tab.rows, tab.id) } }), tabItems) %}
+            {% endfor %}
+
             {{ govukTabs({
-                items: [
-                    {
-                        label: "In progress",
-                        id: "applications",
-                        panel: {
-                            html: applicationsTable("Applications", ApplyUtils.applicationTableRows(applications.inProgress))
-                        }
-                    },
-                    {
-                        label: "Further information requested",
-                        id: "further-information-requested",
-                        panel: {
-                            html: applicationsTable("Applications", ApplyUtils.applicationTableRows(applications.requestedFurtherInformation))
-                        }
-                    },
-                    {
-                        label: "Submitted",
-                        id: "applications-submitted",
-                        panel: {
-                            html: applicationsTable("Applications", ApplyUtils.applicationTableRows(applications.submitted))
-                        }
-                    }
-                ]
+                items: tabItems
             }) }}
 
         </div>
@@ -59,5 +42,4 @@
             }) }}
         </div>
     </div>
-</div>
 {% endblock %}
