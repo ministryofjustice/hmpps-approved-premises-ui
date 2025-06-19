@@ -1,5 +1,6 @@
 import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
 import applyPaths from '../../paths/apply'
+import matchPaths from '../../paths/match'
 import {
   cas1PremisesFactory,
   cas1PremisesSearchResultSummaryFactory,
@@ -24,6 +25,7 @@ import {
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
   spaceBookingConfirmationSummaryListRows,
+  spaceSearchResultsCards,
   startDateObjFromParams,
   summaryCardRows,
 } from '.'
@@ -31,6 +33,7 @@ import { apTypeLongLabels } from '../apTypeLabels'
 import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { displayName } from '../personUtils'
+import { summaryListItem } from '../formUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -69,16 +72,64 @@ describe('matchUtils', () => {
   })
 
   describe('summaryCardsRow', () => {
-    it('calls the correct row functions', () => {
-      const postcodeArea = 'HR1 2AF'
-      const spaceSearchResult = spaceSearchResultFactory.build()
+    const postcodeArea = 'HR1 2AF'
+    const spaceSearchResult = spaceSearchResultFactory.build()
 
+    it('calls the correct row functions', () => {
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
+        apTypeRow(spaceSearchResult.premises.apType),
+        summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
+        addressRow(spaceSearchResult),
+        distanceRow(spaceSearchResult, postcodeArea),
+        characteristicsRow(spaceSearchResult),
+      ])
+    })
+
+    it('does not return the ap area row if the placement request is for a womens AP', () => {
+      expect(summaryCardRows(spaceSearchResult, postcodeArea, true)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
         characteristicsRow(spaceSearchResult),
       ])
+    })
+  })
+
+  describe('spaceSearchResultsCards', () => {
+    const placementRequest = cas1PlacementRequestDetailFactory.build()
+    const postcodeArea = 'HR1 2AF'
+    const spaceSearchResults = spaceSearchResultFactory.buildList(1)
+
+    it('renders a list of space search results as summary lists with cards', () => {
+      const resultCards = spaceSearchResultsCards(placementRequest, postcodeArea, spaceSearchResults)
+
+      expect(resultCards).toEqual([
+        {
+          card: {
+            actions: {
+              items: [
+                {
+                  href: matchPaths.v2Match.placementRequests.search.occupancy({
+                    id: placementRequest.id,
+                    premisesId: spaceSearchResults[0].premises.id,
+                  }),
+                  text: 'View spaces',
+                  visuallyHiddenText: `View spaces at ${spaceSearchResults[0].premises.name}`,
+                },
+              ],
+            },
+            title: { headingLevel: '3', text: spaceSearchResults[0].premises.name },
+          },
+          rows: summaryCardRows(spaceSearchResults[0], postcodeArea),
+        },
+      ])
+    })
+
+    it('does not contain the AP area row if the placement request is for a womens AP', () => {
+      placementRequest.application.isWomensApplication = true
+      const resultCards = spaceSearchResultsCards(placementRequest, postcodeArea, spaceSearchResults)
+
+      expect(resultCards[0].rows).toEqual(summaryCardRows(spaceSearchResults[0], postcodeArea, true))
     })
   })
 

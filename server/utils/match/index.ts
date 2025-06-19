@@ -12,8 +12,9 @@ import {
   ReleaseTypeOption,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchResult as SpaceSearchResult,
+  Cas1SpaceSearchResult,
 } from '@approved-premises/api'
-import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
+import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { apTypeLongLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
@@ -21,6 +22,7 @@ import { textValue } from '../applications/helpers'
 import { displayName, isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import paths from '../../paths/apply'
+import matchPaths from '../../paths/match'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
 
@@ -89,14 +91,45 @@ export const departureDateRow = (departureDate: string) => ({
   },
 })
 
-export const summaryCardRows = (spaceSearchResult: SpaceSearchResult, postcodeArea: string): Array<SummaryListItem> => {
-  return [
+export const summaryCardRows = (
+  spaceSearchResult: SpaceSearchResult,
+  postcodeArea: string,
+  isWomensApplication = false,
+): Array<SummaryListItem> =>
+  [
     apTypeRow(spaceSearchResult.premises.apType),
+    !isWomensApplication && summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
     addressRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
     characteristicsRow(spaceSearchResult),
-  ]
-}
+  ].filter(Boolean)
+
+export const spaceSearchResultsCards = (
+  placementRequest: Cas1PlacementRequestDetail,
+  postcode: string,
+  spaceSearchResults: Array<Cas1SpaceSearchResult>,
+): Array<SummaryListWithCard> =>
+  spaceSearchResults.map(result => ({
+    card: {
+      title: {
+        text: result.premises.name,
+        headingLevel: '3',
+      },
+      actions: {
+        items: [
+          {
+            href: matchPaths.v2Match.placementRequests.search.occupancy({
+              id: placementRequest.id,
+              premisesId: result.premises.id,
+            }),
+            text: 'View spaces',
+            visuallyHiddenText: `View spaces at ${result.premises.name}`,
+          },
+        ],
+      },
+    },
+    rows: summaryCardRows(result, postcode, placementRequest.application.isWomensApplication),
+  }))
 
 export const apTypeRow = (apType: ApType) => ({
   key: {
