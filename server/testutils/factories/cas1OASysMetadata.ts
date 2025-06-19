@@ -1,10 +1,10 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import { Cas1OASysMetadataUI } from '@approved-premises/ui'
+import { Cas1OASysMetadata } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 import cas1OASysSupportingInformationMetaDataFactory from './cas1OASysSupportingInformationQuestionMetaData'
 
-class Cas1OASysMetadataFactory extends Factory<Cas1OASysMetadataUI> {
+class Cas1OASysMetadataFactory extends Factory<Cas1OASysMetadata> {
   oasysNotPresent() {
     return this.params({
       assessmentMetadata: {
@@ -26,5 +26,5 @@ export default Cas1OASysMetadataFactory.define(() => {
       dateStarted,
       hasApplicableAssessment: true,
     },
-  } as Cas1OASysMetadataUI
+  } as Cas1OASysMetadata
 })

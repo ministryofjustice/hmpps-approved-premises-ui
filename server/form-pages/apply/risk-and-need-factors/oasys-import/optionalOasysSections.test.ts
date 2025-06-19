@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
-import { Cas1OASysMetadataUI } from '@approved-premises/ui'
+import { Cas1OASysMetadata } from '@approved-premises/api'
 import { OasysNotFoundError } from '../../../../services/personService'
 import { ApplicationService, PersonService } from '../../../../services'
 import {
@@ -37,7 +37,7 @@ describe('OptionalOasysSections', () => {
       cas1OASysSupportingInformationMetaDataFactory.needsNotLinkedToReoffending().build({ section: 9 }),
     ]
 
-    const cas1OasysMetadata: Cas1OASysMetadataUI = cas1OASysMetadataFactory.build({
+    const cas1OasysMetadata: Cas1OASysMetadata = cas1OASysMetadataFactory.build({
       supportingInformation: [...needsLinkedToHarm, ...needsLinkedToReoffending, ...otherNeeds],
     })
 
