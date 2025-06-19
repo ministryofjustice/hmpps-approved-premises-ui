@@ -12,10 +12,9 @@ import type {
   AssessmentTask,
   Cas1ApplicationSummary,
   Cas1CruManagementArea,
-  Cas1OASysAssessmentMetadata,
   Cas1OASysGroup,
   Cas1OASysGroupName,
-  Cas1OASysSupportingInformationQuestionMetaData,
+  Cas1OASysMetadata,
   Cas1PremisesBasicSummary,
   Cas1SpaceBooking,
   Document,
@@ -290,7 +289,7 @@ export type DataServices = Partial<{
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
     getAcctAlerts: (token: string, crn: string) => Promise<Array<PersonAcctAlert>>
-    getOasysMetadata: (token: string, crn: string) => Promise<Cas1OASysMetadataUI>
+    getOasysMetadata: (token: string, crn: string) => Promise<Cas1OASysMetadata>
     getOasysAnswers: (
       token: string,
       crn: string,
@@ -539,11 +538,4 @@ export type DateRange = {
   from: string
   to?: string
   duration: number
-}
-
-// This is temporary type to cope with the fact that the Cas1OASysMetadata type doesn't export correctly
-// TODO: Replace with imported type Cas1OASysMetadata
-export type Cas1OASysMetadataUI = {
-  assessmentMetadata: Cas1OASysAssessmentMetadata
-  supportingInformation: Array<Cas1OASysSupportingInformationQuestionMetaData>
 }

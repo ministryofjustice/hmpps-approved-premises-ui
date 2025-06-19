@@ -1,10 +1,14 @@
+import {
+  ApprovedPremisesApplication,
+  Cas1OASysMetadata,
+  Cas1OASysSupportingInformationQuestionMetaData,
+} from '@approved-premises/api'
 import { OasysNotFoundError } from '../../../../services/personService'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../utils/formUtils'
-import { ApprovedPremisesApplication, Cas1OASysSupportingInformationQuestionMetaData } from '../../../../@types/shared'
-import { Cas1OASysMetadataUI, DataServices, type PageResponse } from '../../../../@types/ui'
+import { DataServices, type PageResponse } from '../../../../@types/ui'
 import { sentenceCase } from '../../../../utils/utils'
 
 interface Response {
@@ -48,7 +52,7 @@ export default class OptionalOasysSections implements TasklistPage {
       const {
         supportingInformation,
         assessmentMetadata: { hasApplicableAssessment },
-      }: Cas1OASysMetadataUI = await dataServices.personService.getOasysMetadata(token, application.person.crn)
+      }: Cas1OASysMetadata = await dataServices.personService.getOasysMetadata(token, application.person.crn)
 
       const allNeedsLinkedToReoffending = supportingInformation.filter(
         section => section && section.inclusionOptional && section.oasysAnswerLinkedToReOffending,

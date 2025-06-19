@@ -4,7 +4,6 @@ import type {
   ApplicationSortField,
   ApplicationTimelineNote,
   Cas1ApplicationSummary,
-  ApprovedPremisesAssessment as Assessment,
   Cas1TimelineEvent,
   Document,
   NewWithdrawal,
@@ -80,12 +79,6 @@ export default class ApplicationClient {
     return (await this.restClient.get({
       path: paths.applications.documents({ id: application.id }),
     })) as Array<Document>
-  }
-
-  async assessment(applicationId: string): Promise<Assessment> {
-    return (await this.restClient.get({
-      path: paths.applications.assessment({ id: applicationId }),
-    })) as Assessment
   }
 
   async withdrawal(applicationId: string, body: NewWithdrawal): Promise<void> {

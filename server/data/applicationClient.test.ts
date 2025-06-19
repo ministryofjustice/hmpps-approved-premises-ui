@@ -5,7 +5,6 @@ import {
   activeOffenceFactory,
   applicationFactory,
   applicationSummaryFactory,
-  assessmentFactory,
   cas1TimelineEventFactory,
   documentFactory,
   noteFactory,
@@ -373,33 +372,6 @@ describeClient('ApplicationClient', provider => {
       const result = await applicationClient.documents(application)
 
       expect(result).toEqual(documents)
-    })
-  })
-
-  describe('assessment', () => {
-    it('should return an assessment for an application', async () => {
-      const applicationId = 'some-uuid'
-      const assessment = assessmentFactory.build()
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for all an assessment for an application',
-        withRequest: {
-          method: 'GET',
-          path: paths.applications.assessment({ id: applicationId }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: assessment,
-        },
-      })
-
-      const result = await applicationClient.assessment(applicationId)
-
-      expect(result).toEqual(assessment)
     })
   })
 

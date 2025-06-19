@@ -1,4 +1,4 @@
-import { Application } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import { SummaryListItem } from '@approved-premises/ui'
 import { applicationFactory, cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import offlineApplicationFactory from '../../testutils/factories/offlineApplication'
@@ -47,7 +47,7 @@ describe('placementRequestSummaryList', () => {
   })
 
   it(`should generate the expected summary list when placement-request's application is undefined`, () => {
-    const undefinedApplication: Application = undefined
+    const undefinedApplication: Cas1Application = undefined
     const placementRequestWithoutLicenceExpiry = {
       ...placementRequest,
       application: undefinedApplication,
@@ -66,7 +66,7 @@ describe('placementRequestSummaryList', () => {
     const offlineApplication = offlineApplicationFactory.build()
     const placementRequestWithOfflineApplication = {
       ...placementRequest,
-      application: offlineApplication,
+      application: offlineApplication as unknown as Cas1Application,
       applicationId: offlineApplication.id,
     }
     expect(placementRequestSummaryList(placementRequestWithOfflineApplication).rows).toEqual(

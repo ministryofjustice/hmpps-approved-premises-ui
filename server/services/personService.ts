@@ -4,13 +4,13 @@ import type {
   Adjudication,
   Cas1OASysGroup,
   Cas1OASysGroupName,
+  Cas1OASysMetadata,
   Cas1PersonalTimeline,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
 import { HttpError } from 'http-errors'
-import { Cas1OASysMetadataUI } from '@approved-premises/ui'
 import type { PersonClient, RestClientBuilder } from '../data'
 
 export class OasysNotFoundError extends Error {}
@@ -55,7 +55,7 @@ export default class PersonService {
     return acctAlerts
   }
 
-  async getOasysMetadata(token: string, crn: string): Promise<Cas1OASysMetadataUI> {
+  async getOasysMetadata(token: string, crn: string): Promise<Cas1OASysMetadata> {
     const personClient = this.personClientFactory(token)
 
     try {
