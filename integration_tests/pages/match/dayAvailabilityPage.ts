@@ -6,7 +6,7 @@ import {
   dayAvailabilityStatusMap,
 } from '../../../server/utils/match/occupancy'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { daySummaryRows } from '../../../server/utils/premises/occupancy'
+import { daySummaryRows, filterOutOfServiceBeds } from '../../../server/utils/premises/occupancy'
 
 export default class DayAvailabilityPage extends Page {
   availability: DayAvailabilityStatus
@@ -26,7 +26,7 @@ export default class DayAvailabilityPage extends Page {
     cy.get('strong').should('contain.text', title)
     cy.get('p').should('contain.text', detail)
 
-    const summaryList = daySummaryRows(this.daySummary, this.criteria, 'doubleRow')
+    const summaryList = daySummaryRows(this.daySummary, this.criteria, 'singleRow')
     const summaryRows = summaryList.rows.filter(({ value }) => value)
     this.shouldContainSummaryListItems(summaryRows)
     cy.get('table')
@@ -39,11 +39,13 @@ export default class DayAvailabilityPage extends Page {
           cy.contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
         })
       })
+
+    const filteredDaySummary = filterOutOfServiceBeds(this.daySummary, this.criteria)
     cy.get('table')
       .eq(1)
       .within(() => {
-        cy.get('tbody tr').should('have.length', this.daySummary.outOfServiceBeds.length)
-        this.daySummary.outOfServiceBeds.forEach(({ roomName, startDate, endDate }) => {
+        cy.get('tbody tr').should('have.length', filteredDaySummary.outOfServiceBeds.length)
+        filteredDaySummary.outOfServiceBeds.forEach(({ roomName, startDate, endDate }) => {
           cy.contains(roomName)
           cy.contains(DateFormats.isoDateToUIDate(startDate, { format: 'short' }))
           cy.contains(DateFormats.isoDateToUIDate(endDate, { format: 'short' }))

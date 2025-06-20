@@ -269,9 +269,6 @@ export default class {
         excludeSpaceBookingId,
       })
 
-      console.log('**** premisesCapacity',premisesCapacity.capacity[0].characteristicAvailability)
-      console.log('**** filtered criteria',filteredCriteria)
-
       const dayCapacity = premisesCapacity.capacity[0]
       const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
 

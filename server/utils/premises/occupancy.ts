@@ -185,9 +185,10 @@ export const filterOutOfServiceBeds = (
 export const tableCaptions = (
   daySummary: Cas1PremisesDaySummary,
   characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
+  detailedFormat = true
 ): { placementTableCaption: string; outOfServiceBedCaption: string } => {
   const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
-  return config.flags.pocEnabled
+  return detailedFormat
     ? {
         placementTableCaption: `${pluralize('resident', daySummary.spaceBookings?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
         outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, 'with')}`,
