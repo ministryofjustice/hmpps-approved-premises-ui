@@ -15,7 +15,7 @@ import {
   addressRow,
   apTypeRow,
   apTypeWithViewTimelineActionRow,
-  characteristicsRow,
+  characteristicsDetails,
   creationNotificationBody,
   distanceRow,
   filterOutAPTypes,
@@ -34,6 +34,8 @@ import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { displayName } from '../personUtils'
 import { summaryListItem } from '../formUtils'
+import { characteristicsBulletList } from '../characteristicsUtils'
+import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -81,7 +83,6 @@ describe('matchUtils', () => {
         summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
-        characteristicsRow(spaceSearchResult),
       ])
     })
 
@@ -90,7 +91,6 @@ describe('matchUtils', () => {
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
-        characteristicsRow(spaceSearchResult),
       ])
     })
   })
@@ -130,6 +130,19 @@ describe('matchUtils', () => {
       const resultCards = spaceSearchResultsCards(placementRequest, postcodeArea, spaceSearchResults)
 
       expect(resultCards[0].rows).toEqual(summaryCardRows(spaceSearchResults[0], postcodeArea, true))
+    })
+  })
+
+  describe('characteristicsDetails', () => {
+    it('renders an expanding details component of the AP characteristics', () => {
+      const spaceSearchResult = spaceSearchResultFactory.build({ premises: { characteristics: ['hasEnSuite'] } })
+
+      const result = characteristicsDetails(spaceSearchResult)
+      expect(result).toEqual(
+        characteristicsBulletList(spaceSearchResult.premises.characteristics, {
+          labels: spaceSearchResultsCharacteristicsLabels,
+        }),
+      )
     })
   })
 

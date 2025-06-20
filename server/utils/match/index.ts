@@ -101,7 +101,6 @@ export const summaryCardRows = (
     !isWomensApplication && summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
     addressRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
-    characteristicsRow(spaceSearchResult),
   ].filter(Boolean)
 
 export const spaceSearchResultsCards = (
@@ -171,15 +170,10 @@ export const premisesAddress = (premises: Cas1Premises | Cas1PremisesSearchResul
 export const addressRow = (spaceSearchResult: SpaceSearchResult) =>
   summaryListItem('Address', premisesAddress(spaceSearchResult.premises))
 
-export const characteristicsRow = (spaceSearchResult: SpaceSearchResult) => {
-  return {
-    key: { text: 'Criteria' },
-    value: {
-      html: characteristicsBulletList(spaceSearchResult.premises.characteristics, {
-        labels: spaceSearchResultsCharacteristicsLabels,
-      }),
-    },
-  }
+export const characteristicsDetails = (spaceSearchResult: SpaceSearchResult): string => {
+  return characteristicsBulletList(spaceSearchResult.premises.characteristics, {
+    labels: spaceSearchResultsCharacteristicsLabels,
+  })
 }
 
 export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => {

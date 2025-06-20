@@ -1,0 +1,33 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "../../partials/summaryCard.njk" import summaryCard %}
+
+{% macro apSummaryCard(spaceSearchResult, placementRequest, postcode) %}
+    {% set content %}
+        {{ govukSummaryList({
+            classes:'govuk-summary-list--force-bottom-border',
+            rows: MatchUtils.summaryCardRows(spaceSearchResult, postcode)
+        }) }}
+        {{ govukDetails({
+            classes: 'govuk-!-static-margin-bottom-0 govuk-!-static-margin-top-3',
+            summaryText: "View AP criteria",
+            html: MatchUtils.characteristicsDetails(spaceSearchResult)
+        }) }}
+    {% endset %}
+
+    {{ summaryCard({
+        title: {
+            text:spaceSearchResult.premises.name,
+            headingLevel:3
+        },
+        actions:{
+            items:[{
+                href: paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: spaceSearchResult.premises.id }),
+                text: "View spaces",
+                visuallyHiddenText: "View spaces at " + spaceSearchResult.premises.name
+            }]
+        },
+        classes: 'govuk-summary-card--force-bottom-padding',
+        html:content
+    }) }}
+{% endmacro %}
