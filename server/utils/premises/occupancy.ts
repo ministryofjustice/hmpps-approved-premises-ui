@@ -116,11 +116,11 @@ const availabilityRow = (
   available: number,
   booked: number,
 ): SummaryListItem => {
-  return booked || available
+  return booked || available || true
     ? {
         key: { text: name },
         value: {
-          html: `${pluralize('bed', available)}${booked ? `<a class="govuk-!-margin-left-2" href="${characteristic ? `?characteristics=${characteristic}` : '?'}">${pluralize('booking', booked)}</a>` : ''}${(booked || available) && booked >= available ? `<strong class="govuk-tag govuk-tag--${booked > available ? 'red' : 'yellow'} govuk-tag--float-right">${booked > available ? 'Overbooked' : 'Full'}</strong>` : ''}`,
+          html: `<span class="govuk-grid-column-one-third">${available + booked} total</span><span class="govuk-grid-column-one-third">${booked} booked</span><span class="govuk-grid-column-one-third">${available} available</span>`,
         },
       }
     : null
@@ -135,15 +135,12 @@ export const daySummaryRows = (
     capacity: { totalBedCount, bookingCount, availableBedCount, characteristicAvailability },
   } = daySummary
 
-  const rows: Array<SummaryListItem> =
-    characteristicsMode === 'singleRow'
-      ? [availabilityRow('All rooms', null, availableBedCount, bookingCount)]
-      : [
-          summaryListItem('Capacity', String(totalBedCount)),
-          summaryListItem('Booked spaces', String(bookingCount)),
-          summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
-          summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
-        ]
+  const rows: Array<SummaryListItem> = [
+    summaryListItem('Capacity', String(totalBedCount)),
+    summaryListItem('Booked spaces', String(bookingCount)),
+    summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
+    summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
+  ]
 
   if (characteristicsMode === 'doubleRow')
     rows.push({ key: { html: '<div class="govuk-!-static-padding-top-5"></div>' }, value: null })
@@ -188,9 +185,10 @@ export const filterOutOfServiceBeds = (
 export const tableCaptions = (
   daySummary: Cas1PremisesDaySummary,
   characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
+  detailedFormat = true
 ): { placementTableCaption: string; outOfServiceBedCaption: string } => {
   const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
-  return config.flags.pocEnabled
+  return detailedFormat
     ? {
         placementTableCaption: `${pluralize('resident', daySummary.spaceBookings?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
         outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, 'with')}`,

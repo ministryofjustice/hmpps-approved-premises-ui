@@ -29,9 +29,9 @@ import {
   tableHeader,
 } from '../../../utils/premises/occupancy'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
-import config from '../../../config'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
+import config from '../../../config'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -51,6 +51,7 @@ interface ViewDayRequest extends Request {
   query: {
     criteria?: CriteriaQuery
     excludeSpaceBookingId?: string
+    characteristics?: CriteriaQuery
   }
 }
 
@@ -224,8 +225,9 @@ export default class {
     return async (req: ViewDayRequest, res: Response) => {
       const { token } = req.user
       const { id, premisesId, date } = req.params
-      const { criteria = [], excludeSpaceBookingId } = req.query
+      const { characteristics = [], criteria = [], excludeSpaceBookingId } = req.query
 
+      const characteristicsArray = makeArrayOfType<Cas1SpaceBookingCharacteristic>(characteristics)
       const backLink = this.sessionService.getPageBackLink(
         paths.v2Match.placementRequests.search.dayOccupancy.pattern,
         req,
@@ -235,7 +237,7 @@ export default class {
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
 
       const {
-        sortBy = 'personName',
+        sortBy = 'canonicalArrivalDate',
         sortDirection = 'asc',
         hrefPrefix,
       } = getPaginationDetails<SortablePlacementColumnField>(
@@ -258,8 +260,9 @@ export default class {
           date,
           bookingsSortBy: sortBy,
           bookingsSortDirection: sortDirection,
+          bookingsCriteriaFilter: characteristicsArray
         }),
-        config.flags.pocEnabled ? filteredCriteria : undefined,
+        filteredCriteria,
       )
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
         startDate: date,
@@ -273,20 +276,17 @@ export default class {
         backLink,
         pageHeading: DateFormats.isoDateToUIDate(date),
         dayAvailabilityStatus: dayAvailabilityStatusMap[status],
-        daySummaryRows: daySummaryRows(
-          daySummary,
-          filteredCriteria,
-          config.flags.pocEnabled ? 'singleRow' : 'doubleRow',
-        ),
+        daySummaryRows: daySummaryRows(daySummary, filteredCriteria, 'singleRow'),
         placementRequest,
         premises,
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
-        ...tableCaptions(daySummary, filteredCriteria),
+        ...tableCaptions(daySummary, characteristicsArray),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
         placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, characteristicsArray),
       })
     }
   }
