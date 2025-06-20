@@ -116,7 +116,7 @@ const availabilityRow = (
   available: number,
   booked: number,
 ): SummaryListItem => {
-  return booked || available
+  return booked || available || true
     ? {
         key: { text: name },
         value: {
@@ -131,7 +131,6 @@ export const daySummaryRows = (
   roomCharacteristics: Array<Cas1SpaceBookingCharacteristic> = null,
   characteristicsMode: 'singleRow' | 'doubleRow' | 'none' = 'none',
 ) => {
-  // console.log('***********',JSON.stringify(daySummary,null,4))
   const {
     capacity: { totalBedCount, bookingCount, availableBedCount, characteristicAvailability },
   } = daySummary
