@@ -107,7 +107,6 @@ describe('userRolesSelectOptions', () => {
     expect(userRolesSelectOptions(null)).toEqual([
       { selected: true, text: 'All roles', value: '' },
       { selected: false, text: 'Assessor', value: 'assessor' },
-      { selected: false, text: 'Workflow manager', value: 'workflow_manager' },
       { selected: false, text: 'CRU member', value: 'cru_member' },
       { selected: false, text: 'Report viewer', value: 'report_viewer' },
       { selected: false, text: 'Report viewer with PII', value: 'report_viewer_with_pii' },
@@ -148,7 +147,6 @@ describe('userRolesSelectOptions', () => {
     expect(userRolesSelectOptions('assessor')).toEqual([
       { selected: false, text: 'All roles', value: '' },
       { selected: true, text: 'Assessor', value: 'assessor' },
-      { selected: false, text: 'Workflow manager', value: 'workflow_manager' },
       { selected: false, text: 'CRU member', value: 'cru_member' },
       { selected: false, text: 'Report viewer', value: 'report_viewer' },
       { selected: false, text: 'Report viewer with PII', value: 'report_viewer_with_pii' },

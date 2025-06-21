@@ -31,7 +31,7 @@ describe('V2PremisesController', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId } })
-    response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
+    response = createMock<Response>({ locals: { user: { permissions: ['cas1_premises_view'] } } })
     jest.useFakeTimers()
   })
 
