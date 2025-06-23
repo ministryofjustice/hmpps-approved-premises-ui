@@ -134,7 +134,7 @@ export default class CruDashboardController {
       adminPaths.admin.cruDashboard.index({}),
       { status, cruManagementArea },
     )
-    const applications = await this.applicationService.dashboard(req.user.token, pageNumber, sortBy, sortDirection, {
+    const applications = await this.applicationService.getAll(req.user.token, pageNumber, sortBy, sortDirection, {
       status: 'pendingPlacementRequest',
       cruManagementAreaId: cruManagementArea === 'all' ? undefined : cruManagementArea,
       releaseType,

@@ -1,7 +1,7 @@
 import { ListPage, StartPage } from '../../pages/apply'
 
 import {
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   personFactory,
   placementApplicationFactory,
 } from '../../../server/testutils/factories'
@@ -19,12 +19,16 @@ context('Applications dashboard', () => {
 
   it('shows the dashboard ', () => {
     // Given there are applications in the database
-    const inProgressApplications = applicationSummaryFactory.buildList(5, { status: 'started' })
-    const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
-    const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
+    const inProgressApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'started' })
+    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'submitted' })
+    const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
       status: 'requestedFurtherInformation',
     })
-    const awaitingPlacementApplications = applicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+    const awaitingPlacementApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+    const inactiveApplications = [
+      ...cas1ApplicationSummaryFactory.buildList(3, { status: 'expired' }),
+      ...cas1ApplicationSummaryFactory.buildList(3, { status: 'withdrawn' }),
+    ]
 
     cy.task(
       'stubApplications',
@@ -33,11 +37,17 @@ context('Applications dashboard', () => {
         submittedApplications,
         requestedFurtherInformationApplications,
         awaitingPlacementApplications,
+        inactiveApplications,
       ].flat(),
     )
 
     // When I visit the Previous Applications page
-    const page = ListPage.visit(inProgressApplications, submittedApplications, requestedFurtherInformationApplications)
+    const page = ListPage.visit(
+      inProgressApplications,
+      submittedApplications,
+      requestedFurtherInformationApplications,
+      inactiveApplications,
+    )
 
     // Then I should see all of the in progress applications
     page.shouldShowInProgressApplications()
@@ -54,6 +64,12 @@ context('Applications dashboard', () => {
     // Then I should see the applications that have been submitted
     page.shouldShowSubmittedApplications()
 
+    // And I click on the inactive tab
+    page.clickInactiveTab()
+
+    // Then I should see the applications that are expired or withdrawn
+    page.shouldShowInactiveApplications()
+
     // And I the button should take me to the application start page
     page.clickSubmit()
 
@@ -62,15 +78,15 @@ context('Applications dashboard', () => {
 
   it('shows the dashboard lao', () => {
     // Given there are applications in the database
-    const inProgressApplications = applicationSummaryFactory.buildList(1, {
+    const inProgressApplications = cas1ApplicationSummaryFactory.buildList(1, {
       status: 'started',
       person: personFactory.build({ isRestricted: true }),
     })
-    const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
-    const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
+    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'submitted' })
+    const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
       status: 'requestedFurtherInformation',
     })
-    const awaitingPlacementApplications = applicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+    const awaitingPlacementApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
 
     cy.task(
       'stubApplications',
@@ -109,15 +125,15 @@ context('Applications dashboard', () => {
   it('request for placement for my application status awaiting placement ', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
       // Given there are applications in the database
-      const inProgressApplications = applicationSummaryFactory.buildList(5, {
+      const inProgressApplications = cas1ApplicationSummaryFactory.buildList(5, {
         status: 'started',
         hasRequestsForPlacement: false,
       })
-      const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
+      const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
         status: 'requestedFurtherInformation',
         hasRequestsForPlacement: false,
       })
-      const awaitingPlacementApplications = applicationSummaryFactory.buildList(5, {
+      const awaitingPlacementApplications = cas1ApplicationSummaryFactory.buildList(5, {
         status: 'awaitingPlacement',
         hasRequestsForPlacement: false,
       })

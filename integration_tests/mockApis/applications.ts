@@ -5,7 +5,7 @@ import type {
   ApplicationSortField,
   ApplicationTimelineNote,
   ApprovedPremisesApplication,
-  ApprovedPremisesApplicationSummary,
+  Cas1ApplicationSummary,
   Cas1TimelineEvent,
   RequestForPlacement,
   SortDirection,
@@ -17,11 +17,11 @@ import paths from '../../server/paths/api'
 import { errorStub } from './utils'
 
 export default {
-  stubApplications: (applications: Array<ApprovedPremisesApplicationSummary>): SuperAgentRequest =>
+  stubApplications: (applications: Array<Cas1ApplicationSummary>): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.applications.index({}),
+        url: paths.applications.me({}),
       },
       response: {
         status: 200,
@@ -36,7 +36,7 @@ export default {
     sortDirection = 'desc',
     searchOptions = {},
   }: {
-    applications: Array<ApprovedPremisesApplicationSummary>
+    applications: Array<Cas1ApplicationSummary>
     page: string
     sortBy: ApplicationSortField
     sortDirection: SortDirection
@@ -271,7 +271,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: `${paths.applications.index({})}?createWithRisks=true`,
+        url: `${paths.applications.new({})}?createWithRisks=true`,
       })
     ).body.requests,
   verifyApplicationUpdate: async (applicationId: string) =>

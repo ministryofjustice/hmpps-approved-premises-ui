@@ -5,7 +5,7 @@ import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 
 import {
   applicationFactory,
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   bookingFactory,
   bookingSummaryFactory,
   cas1PremisesBasicSummaryFactory,
@@ -693,7 +693,7 @@ context('Placement Requests', () => {
     it('should list applications that have no placement request', () => {
       const { cruManagementAreas } = stubArtifacts()
 
-      const applications = applicationSummaryFactory.buildList(2)
+      const applications = cas1ApplicationSummaryFactory.buildList(2)
 
       cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
 
@@ -711,7 +711,7 @@ context('Placement Requests', () => {
       listPage.shouldNotShowRequestTypeFilter()
 
       // When I filter by AP area
-      const areaApplications = applicationSummaryFactory.buildList(2)
+      const areaApplications = cas1ApplicationSummaryFactory.buildList(2)
       cy.task('stubAllApplications', {
         applications: areaApplications,
         page: '1',
@@ -736,7 +736,7 @@ context('Placement Requests', () => {
     ;(['tier', 'releaseType'] as const).forEach(field => {
       it(`supports pending placement requests sorting by ${field}`, () => {
         stubArtifacts()
-        const applications = applicationSummaryFactory.buildList(2)
+        const applications = cas1ApplicationSummaryFactory.buildList(2)
         cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
         cy.task('stubAllApplications', {
           applications,

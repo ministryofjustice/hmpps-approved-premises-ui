@@ -175,7 +175,7 @@ describe('adminIdentityBar', () => {
       describe('if ENABLE_V2_MATCH is true', () => {
         const originalFlagValue = config.flags.v2MatchEnabled
         beforeEach(() => {
-          config.flags.v2MatchEnabled = 'true'
+          config.flags.v2MatchEnabled = true
         })
         afterEach(() => {
           config.flags.v2MatchEnabled = originalFlagValue

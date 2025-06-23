@@ -1,7 +1,7 @@
 import { ApprovedPremisesUserPermission } from '@approved-premises/api'
 import {
   applicationFactory,
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   bookingFactory,
   placementApplicationFactory,
   placementRequestFactory,
@@ -83,7 +83,7 @@ context('Withdrawals', () => {
     })
 
     it('withdraws an application', () => {
-      const application = applicationSummaryFactory.build({
+      const application = cas1ApplicationSummaryFactory.build({
         hasRequestsForPlacement: false,
         status: 'started',
       })
@@ -118,7 +118,7 @@ context('Withdrawals', () => {
     })
 
     it('withdraws a placement', () => {
-      const application = applicationSummaryFactory.build()
+      const application = cas1ApplicationSummaryFactory.build()
       const placement = bookingFactory.build({ applicationId: application.id })
       const placementWithdrawable = withdrawableFactory.build({
         type: 'booking',
@@ -182,7 +182,7 @@ context('Withdrawals', () => {
       withdrawsAPlacementRequest(roleToPermissions('applicant')))
 
     it('shows a warning message if there are no withdrawables', () => {
-      const application = applicationSummaryFactory.build({
+      const application = cas1ApplicationSummaryFactory.build({
         status: 'started',
         hasRequestsForPlacement: false,
       })
@@ -214,7 +214,7 @@ context('Withdrawals', () => {
 })
 
 const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermission>) => {
-  const application = applicationSummaryFactory.build()
+  const application = cas1ApplicationSummaryFactory.build()
   const placementRequest = placementRequestFactory.build({ applicationId: application.id })
   const placementRequestWithdrawable = withdrawableFactory.build({
     type: 'placement_request',

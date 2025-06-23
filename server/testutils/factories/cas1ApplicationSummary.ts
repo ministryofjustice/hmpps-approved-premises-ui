@@ -1,12 +1,12 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import { ApprovedPremisesApplicationSummary as ApplicationSummary } from '@approved-premises/api'
+import { Cas1ApplicationSummary } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import risksFactory from './risks'
 import { fullPersonFactory as personFactory } from './person'
 
-export default Factory.define<ApplicationSummary>(() => ({
+export default Factory.define<Cas1ApplicationSummary>(() => ({
   id: faker.string.uuid(),
   type: 'CAS1',
   person: personFactory.build(),

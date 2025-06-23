@@ -7,6 +7,7 @@ import type {
   GroupedApplications,
   PaginatedResponse,
 } from '@approved-premises/ui'
+import { Cas1ApplicationSummary } from '@approved-premises/api'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
@@ -23,9 +24,12 @@ import {
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { applicationShowPageTabs, firstPageOfApplicationJourney } from '../../utils/applications/utils'
+import {
+  applicationShowPageTabs,
+  applicationsTabs,
+  firstPageOfApplicationJourney,
+} from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
-import { ApprovedPremisesApplicationSummary } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 
@@ -57,7 +61,12 @@ describe('applicationsController', () => {
 
   describe('index', () => {
     it('renders the index view', async () => {
-      const applications: GroupedApplications = { inProgress: [], requestedFurtherInformation: [], submitted: [] }
+      const applications: GroupedApplications = {
+        inProgress: [],
+        requestedFurtherInformation: [],
+        submitted: [],
+        inactive: [],
+      }
 
       applicationService.getAllForLoggedInUser.mockResolvedValue(applications)
 
@@ -67,7 +76,7 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/index', {
         pageHeading: 'Approved Premises applications',
-        applications,
+        applicationsTabs: applicationsTabs(applications),
       })
       expect(applicationService.getAllForLoggedInUser).toHaveBeenCalled()
     })
@@ -90,7 +99,7 @@ describe('applicationsController', () => {
       const searchOptions = createMock<ApplicationDashboardSearchOptions>()
       const paginatedResponse = paginatedResponseFactory.build({
         data: applicationFactory.buildList(2),
-      }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+      }) as PaginatedResponse<Cas1ApplicationSummary>
 
       const paginationDetails = {
         hrefPrefix: paths.applications.dashboard({}),
@@ -99,7 +108,7 @@ describe('applicationsController', () => {
         sortDirection: 'desc',
       }
 
-      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      applicationService.getAll.mockResolvedValue(paginatedResponse)
       ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
@@ -118,7 +127,7 @@ describe('applicationsController', () => {
         ...searchOptions,
       })
 
-      expect(applicationService.dashboard).toHaveBeenCalledWith(
+      expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
@@ -132,14 +141,14 @@ describe('applicationsController', () => {
       const searchOptions = createMock<ApplicationDashboardSearchOptions>()
       const paginatedResponse = paginatedResponseFactory.build({
         data: applicationFactory.buildList(2),
-      }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+      }) as PaginatedResponse<Cas1ApplicationSummary>
 
       const paginationDetails = {
         hrefPrefix: paths.applications.dashboard({}),
         pageNumber: 1,
       }
 
-      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      applicationService.getAll.mockResolvedValue(paginatedResponse)
       ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
@@ -158,7 +167,7 @@ describe('applicationsController', () => {
         ...searchOptions,
       })
 
-      expect(applicationService.dashboard).toHaveBeenCalledWith(
+      expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
         paginationDetails.pageNumber,
         undefined,
@@ -172,7 +181,7 @@ describe('applicationsController', () => {
       const searchOptions = createMock<ApplicationDashboardSearchOptions>()
       const paginatedResponse = paginatedResponseFactory.build({
         data: applicationFactory.buildList(2),
-      }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+      }) as PaginatedResponse<Cas1ApplicationSummary>
 
       const paginationDetails = {
         hrefPrefix: paths.applications.dashboard({}),
@@ -180,7 +189,7 @@ describe('applicationsController', () => {
         sortBy: 'createdAt',
       }
 
-      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      applicationService.getAll.mockResolvedValue(paginatedResponse)
       ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
@@ -199,7 +208,7 @@ describe('applicationsController', () => {
         ...searchOptions,
       })
 
-      expect(applicationService.dashboard).toHaveBeenCalledWith(
+      expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
         paginationDetails.pageNumber,
         paginationDetails.sortBy,

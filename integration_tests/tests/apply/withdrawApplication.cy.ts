@@ -4,7 +4,7 @@ import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 import Page from '../../pages/page'
 import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
 import { setup } from './setup'
-import { applicationSummaryFactory, withdrawableFactory } from '../../../server/testutils/factories'
+import { cas1ApplicationSummaryFactory, withdrawableFactory } from '../../../server/testutils/factories'
 import { WithdrawalReason } from '../../../server/@types/shared'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
@@ -13,7 +13,7 @@ context('Withdraw Application', () => {
 
   it('allows me to withdraw an in progress application', function test() {
     // Given I have completed an application
-    const inProgressApplication = applicationSummaryFactory.build({
+    const inProgressApplication = cas1ApplicationSummaryFactory.build({
       id: this.application.id,
       status: 'started',
       createdByUserId: '123',

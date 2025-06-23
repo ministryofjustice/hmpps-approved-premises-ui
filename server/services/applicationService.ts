@@ -24,6 +24,7 @@ import { ValidationError } from '../utils/errors'
 
 import { getBody } from '../form-pages/utils'
 import Review from '../form-pages/apply/check-your-answers/review'
+import config from '../config'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -44,7 +45,7 @@ export default class ApplicationService {
     return application
   }
 
-  async dashboard(
+  async getAll(
     token: string,
     page: number = 1,
     sortBy: ApplicationSortField = 'createdAt',
@@ -53,17 +54,18 @@ export default class ApplicationService {
   ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     const applicationClient = this.applicationClientFactory(token)
 
-    return applicationClient.dashboard(page, sortBy, sortDirection, searchOptions)
+    return applicationClient.all(page, sortBy, sortDirection, searchOptions)
   }
 
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {
     const applicationClient = this.applicationClientFactory(token)
-    const allApplications = await applicationClient.all()
-    const result = {
+    const allApplications = await applicationClient.allForLoggedInUser()
+    const result: GroupedApplications = {
       inProgress: [],
       requestedFurtherInformation: [],
       submitted: [],
-    } as GroupedApplications
+      inactive: [],
+    }
 
     await Promise.all(
       allApplications.map(async application => {
@@ -73,6 +75,12 @@ export default class ApplicationService {
             break
           case 'requestedFurtherInformation':
             result.requestedFurtherInformation.push(application)
+            break
+          case 'expired':
+          case 'withdrawn':
+          case 'rejected':
+          case 'inapplicable':
+            ;(config.flags.inactiveApplicationsTab ? result.inactive : result.submitted).push(application)
             break
           default:
             result.submitted.push(application)

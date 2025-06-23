@@ -5,7 +5,7 @@ import activeOffenceFactory from './activeOffence'
 import adjudicationFactory from './adjudication'
 import appealFactory from './appealFactory'
 import applicationFactory from './application'
-import applicationSummaryFactory from './applicationSummary'
+import cas1ApplicationSummaryFactory from './cas1ApplicationSummary'
 import arrivalFactory from './arrival'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
@@ -110,7 +110,7 @@ export {
   appealSessionDataFactory,
   apAreaFactory,
   applicationFactory,
-  applicationSummaryFactory,
+  cas1ApplicationSummaryFactory,
   applicationTimelineFactory,
   arrivalFactory,
   assessmentTaskFactory,
