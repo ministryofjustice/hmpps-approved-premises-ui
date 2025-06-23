@@ -24,17 +24,12 @@ import {
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import {
-  applicationShowPageTabs,
-  applicationsTabs,
-  firstPageOfApplicationJourney,
-} from '../../utils/applications/utils'
+import * as applicationUtils from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 
 jest.mock('../../utils/validation')
-jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
 jest.mock('../../services/tasklistService')
 jest.mock('../../utils/getPaginationDetails')
@@ -76,7 +71,7 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/index', {
         pageHeading: 'Approved Premises applications',
-        applicationsTabs: applicationsTabs(applications),
+        applicationTabs: applicationUtils.applicationsTabs(applications),
       })
       expect(applicationService.getAllForLoggedInUser).toHaveBeenCalled()
     })
@@ -118,13 +113,14 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/dashboard', {
         pageHeading: 'Approved Premises applications',
+        crnOrName: searchOptions.crnOrName,
+        statuses: applicationUtils.applicationStatusSelectOptions(searchOptions.status),
         applications: paginatedResponse.data,
         pageNumber: Number(paginationDetails.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
-        ...searchOptions,
       })
 
       expect(applicationService.getAll).toHaveBeenCalledWith(
@@ -137,6 +133,7 @@ describe('applicationsController', () => {
       expect(getSearchOptions).toHaveBeenCalledWith(request, ['crnOrName', 'status'])
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}), searchOptions)
     })
+
     it('if sort by and sort direction not provided, calls the dashboard service with the sort direction desc', async () => {
       const searchOptions = createMock<ApplicationDashboardSearchOptions>()
       const paginatedResponse = paginatedResponseFactory.build({
@@ -156,16 +153,13 @@ describe('applicationsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/dashboard', {
-        pageHeading: 'Approved Premises applications',
-        applications: paginatedResponse.data,
-        pageNumber: Number(paginationDetails.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: undefined,
-        sortDirection: 'desc',
-        ...searchOptions,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'applications/dashboard',
+        expect.objectContaining({
+          sortBy: undefined,
+          sortDirection: 'desc',
+        }),
+      )
 
       expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
@@ -174,9 +168,8 @@ describe('applicationsController', () => {
         'desc',
         searchOptions,
       )
-      expect(getSearchOptions).toHaveBeenCalledWith(request, ['crnOrName', 'status'])
-      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}), searchOptions)
     })
+
     it('if sort by created at and sort direction not provided, calls the dashboard service with the sort direction desc', async () => {
       const searchOptions = createMock<ApplicationDashboardSearchOptions>()
       const paginatedResponse = paginatedResponseFactory.build({
@@ -197,16 +190,13 @@ describe('applicationsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/dashboard', {
-        pageHeading: 'Approved Premises applications',
-        applications: paginatedResponse.data,
-        pageNumber: Number(paginationDetails.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paginationDetails.sortBy,
-        sortDirection: 'desc',
-        ...searchOptions,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'applications/dashboard',
+        expect.objectContaining({
+          sortBy: paginationDetails.sortBy,
+          sortDirection: 'desc',
+        }),
+      )
 
       expect(applicationService.getAll).toHaveBeenCalledWith(
         token,
@@ -215,8 +205,6 @@ describe('applicationsController', () => {
         'desc',
         searchOptions,
       )
-      expect(getSearchOptions).toHaveBeenCalledWith(request, ['crnOrName', 'status'])
-      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}), searchOptions)
     })
   })
 
@@ -289,12 +277,19 @@ describe('applicationsController', () => {
         applicationService.findApplication.mockResolvedValue(application)
         applicationService.timeline.mockResolvedValue(timelineEvents)
 
-        await requestHandler({ ...request, query: { tab: applicationShowPageTabs.timeline } }, response, next)
+        await requestHandler(
+          {
+            ...request,
+            query: { tab: applicationUtils.applicationShowPageTabs.timeline },
+          },
+          response,
+          next,
+        )
 
         expect(response.render).toHaveBeenCalledWith('applications/show', {
           application,
           referrer,
-          tab: applicationShowPageTabs.timeline,
+          tab: applicationUtils.applicationShowPageTabs.timeline,
           timelineEvents,
           pageHeading: 'Approved Premises application',
         })
@@ -314,12 +309,19 @@ describe('applicationsController', () => {
         applicationService.findApplication.mockResolvedValue(application)
         applicationService.getRequestsForPlacement.mockResolvedValue(requestsForPlacement)
 
-        await requestHandler({ ...request, query: { tab: applicationShowPageTabs.placementRequests } }, response, next)
+        await requestHandler(
+          {
+            ...request,
+            query: { tab: applicationUtils.applicationShowPageTabs.placementRequests },
+          },
+          response,
+          next,
+        )
 
         expect(response.render).toHaveBeenCalledWith('applications/show', {
           application,
           referrer,
-          tab: applicationShowPageTabs.placementRequests,
+          tab: applicationUtils.applicationShowPageTabs.placementRequests,
           requestsForPlacement,
           pageHeading: 'Approved Premises application',
         })
@@ -523,6 +525,7 @@ describe('applicationsController', () => {
 
   describe('create', () => {
     const application = applicationFactory.build()
+    const firstPage = '/foo/bar'
     const offences = activeOffenceFactory.buildList(2)
 
     beforeEach(() => {
@@ -534,18 +537,17 @@ describe('applicationsController', () => {
 
       personService.getOffences.mockResolvedValue(offences)
       applicationService.createApplication.mockResolvedValue(application)
+
+      jest.spyOn(applicationUtils, 'firstPageOfApplicationJourney').mockReturnValue(firstPage)
     })
 
     it('creates an application and redirects to the first page of the first step', async () => {
-      const firstPage = '/foo/bar'
-      ;(firstPageOfApplicationJourney as jest.Mock).mockReturnValue(firstPage)
-
       const requestHandler = applicationsController.create()
 
       await requestHandler(request, response, next)
 
       expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
-      expect(firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
+      expect(applicationUtils.firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
       expect(response.redirect).toHaveBeenCalledWith(firstPage)
     })
 
@@ -558,15 +560,12 @@ describe('applicationsController', () => {
     })
 
     it('sets errors and redirects if the offence not selected', async () => {
-      const firstPage = '/foo/bar'
-      ;(firstPageOfApplicationJourney as jest.Mock).mockReturnValue(firstPage)
-
       const requestHandler = applicationsController.create()
 
       await requestHandler(request, response, next)
 
       expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
-      expect(firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
+      expect(applicationUtils.firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
       expect(response.redirect).toHaveBeenCalledWith(firstPage)
     })
 

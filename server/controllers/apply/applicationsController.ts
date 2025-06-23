@@ -9,6 +9,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import {
   applicationShowPageTabs,
   applicationsTabs,
+  applicationStatusSelectOptions,
   firstPageOfApplicationJourney,
 } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
@@ -65,13 +66,14 @@ export default class ApplicationsController {
 
       res.render('applications/dashboard', {
         pageHeading: 'Approved Premises applications',
+        statuses: applicationStatusSelectOptions(searchOptions.status),
+        crnOrName: searchOptions.crnOrName,
         applications: result.data,
         pageNumber: Number(result.pageNumber),
         totalPages: Number(result.totalPages),
         hrefPrefix,
         sortBy,
         sortDirection,
-        ...searchOptions,
       })
     }
   }
