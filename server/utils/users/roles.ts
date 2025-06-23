@@ -9,7 +9,6 @@ import rolesToPermissions from './data/rolesToPermissions.json'
 
 export const roles: ReadonlyArray<RoleInUse> = [
   'assessor',
-  'workflow_manager',
   'cru_member',
   'cru_member_find_and_book_beta',
   'cru_member_enable_out_of_service_beds',
@@ -25,7 +24,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'janitor',
 ]
 
-export const unusedRoles = ['applicant', 'manager', 'legacy_manager', 'role_admin', 'matcher'] as const
+export const unusedRoles = ['applicant', 'workflow_manager'] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
 
@@ -56,17 +55,13 @@ export type RoleLabelDictionary = { [K in BaseRole]: RoleLabel }
 
 export const roleLabelDictionary: RoleLabelDictionary = {
   assessor: { label: 'Assessor', hint: 'Assess Approved Premises applications' },
-  workflow_manager: {
-    label: 'Workflow manager',
-    hint: 'Manage the allocation of assessments and matches to staff',
-  },
   appeals_manager: {
     label: 'Appeals manager',
     hint: 'Log appeals against rejected applications',
   },
   cru_member: {
     label: 'CRU member',
-    hint: 'Assign to CRU Members who are not in the Find and Book Beta. In addition to this role, Workflow manager must also be assigned to CRU members.',
+    hint: 'Assign to CRU Members who are not in the Find and Book Beta.',
   },
   cru_member_enable_out_of_service_beds: {
     label: 'CRU member - Enable out of service beds',
@@ -74,7 +69,7 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   },
   cru_member_find_and_book_beta: {
     label: 'CRU member - Find and book beta',
-    hint: 'Assign to CRU Members who are in the Find and Book Beta. In addition to this role, Workflow manager must also be assigned to CRU members.',
+    hint: 'Assign to CRU Members who are in the Find and Book Beta.',
   },
   report_viewer: {
     label: 'Report viewer without PII',
