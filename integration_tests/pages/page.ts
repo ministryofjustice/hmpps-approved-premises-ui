@@ -515,8 +515,16 @@ export default abstract class Page {
     })
   }
 
-  checkPhaseBanner(copy: string): void {
-    cy.get('[data-cy-phase-banner="phase-banner"]').contains(copy)
+  checkPhaseBanner(): void {
+    cy.get('[data-cy-phase-banner="phase-banner"]').contains('Give us your feedback')
+  }
+
+  textOrHtmlFromTableCell(tableCell: TableCell): string {
+    if ('text' in tableCell) {
+      return tableCell.text
+    }
+
+    return tableCell.html
   }
 
   checkForBackButton(path: string) {

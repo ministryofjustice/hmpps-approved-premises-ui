@@ -17,7 +17,7 @@ export default class FormPage extends Page {
     }
 
     if (checkPhaseBanner) {
-      this.checkPhaseBanner('Give us your feedback')
+      this.checkPhaseBanner()
     }
   }
 
