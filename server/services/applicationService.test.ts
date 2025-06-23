@@ -77,13 +77,13 @@ describe('ApplicationService', () => {
       awaitingAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'awaitingAssesment' }),
       unallocatedAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'unallocatedAssesment' }),
       assesmentInProgress: cas1ApplicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
-      rejected: cas1ApplicationSummaryFactory.buildList(1, { status: 'rejected' }),
       pendingPlacementRequest: cas1ApplicationSummaryFactory.buildList(1, { status: 'pendingPlacementRequest' }),
       awaitingPlacement: cas1ApplicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' }),
       placementAllocated: cas1ApplicationSummaryFactory.buildList(1, { status: 'placementAllocated' }),
-      inapplicable: cas1ApplicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
       withdrawn: cas1ApplicationSummaryFactory.buildList(1, { status: 'withdrawn' }),
       expired: cas1ApplicationSummaryFactory.buildList(1, { status: 'expired' }),
+      rejected: cas1ApplicationSummaryFactory.buildList(1, { status: 'rejected' }),
+      inapplicable: cas1ApplicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
     }
 
     const submittedApplications = [
@@ -91,11 +91,9 @@ describe('ApplicationService', () => {
       ...applications.awaitingAssesment,
       ...applications.unallocatedAssesment,
       ...applications.assesmentInProgress,
-      ...applications.rejected,
       ...applications.pendingPlacementRequest,
       ...applications.awaitingPlacement,
       ...applications.placementAllocated,
-      ...applications.inapplicable,
     ]
 
     describe('with the inactiveApplicationsTab feature flag enabled', () => {
@@ -108,7 +106,12 @@ describe('ApplicationService', () => {
           inProgress: applications.started,
           requestedFurtherInformation: applications.requestedFurtherInformation,
           submitted: submittedApplications,
-          inactive: [...applications.withdrawn, ...applications.expired],
+          inactive: [
+            ...applications.withdrawn,
+            ...applications.expired,
+            ...applications.rejected,
+            ...applications.inapplicable,
+          ],
         })
 
         expect(applicationClientFactory).toHaveBeenCalledWith(token)
@@ -129,7 +132,13 @@ describe('ApplicationService', () => {
         expect(result).toEqual({
           inProgress: [...applications.started],
           requestedFurtherInformation: applications.requestedFurtherInformation,
-          submitted: [...submittedApplications, ...applications.withdrawn, ...applications.expired],
+          submitted: [
+            ...submittedApplications,
+            ...applications.withdrawn,
+            ...applications.expired,
+            ...applications.rejected,
+            ...applications.inapplicable,
+          ],
           inactive: [],
         })
 

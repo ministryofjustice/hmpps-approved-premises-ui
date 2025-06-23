@@ -78,6 +78,8 @@ export default class ApplicationService {
             break
           case 'expired':
           case 'withdrawn':
+          case 'rejected':
+          case 'inapplicable':
             ;(config.flags.inactiveApplicationsTab ? result.inactive : result.submitted).push(application)
             break
           default:
