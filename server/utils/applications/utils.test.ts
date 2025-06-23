@@ -954,6 +954,7 @@ describe('utils', () => {
           value: applicationSuitableStatuses,
         },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
+        { selected: false, text: 'Expired application', value: 'expired' },
       ])
     })
 
@@ -973,6 +974,7 @@ describe('utils', () => {
           value: applicationSuitableStatuses,
         },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
+        { selected: false, text: 'Expired application', value: 'expired' },
       ])
     })
   })

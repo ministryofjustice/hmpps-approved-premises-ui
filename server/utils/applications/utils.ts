@@ -412,6 +412,7 @@ const applicationStatusSelectOptions = (selectedOption?: ApplicationStatusForFil
     'requestedFurtherInformation',
     'rejected',
     'withdrawn',
+    'expired',
   ]
 
   const options: Array<SelectOption> = statusFilters.map(status => ({
