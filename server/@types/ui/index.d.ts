@@ -282,7 +282,7 @@ type ManWoman = 'man' | 'woman'
 
 export interface PremisesFilters {
   gender?: ManWoman
-  apAreaId?: string
+  cruManagementAreaId?: string
 }
 
 export type DataServices = Partial<{

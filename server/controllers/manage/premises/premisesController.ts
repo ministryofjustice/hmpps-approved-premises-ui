@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { ApArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
-import { ApAreaService, PremisesService } from '../../../services'
+import { CruManagementAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { hasPermission } from '../../../utils/users'
@@ -24,7 +24,7 @@ interface ShowRequest extends Request {
 export default class PremisesController {
   constructor(
     private readonly premisesService: PremisesService,
-    private readonly apAreaService: ApAreaService,
+    private readonly cruManagementAreaService: CruManagementAreaService,
   ) {}
 
   show(): RequestHandler {
@@ -90,9 +90,9 @@ export default class PremisesController {
       const selectedArea = req.body.selectedArea as ApArea['id']
       const premisesSummaries = await this.premisesService.getCas1All(
         req.user.token,
-        selectedArea && { apAreaId: selectedArea },
+        selectedArea && { cruManagementAreaId: selectedArea },
       )
-      const areas = await this.apAreaService.getApAreas(req.user.token)
+      const areas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       return res.render('manage/premises/index', {
         premisesSummaries,

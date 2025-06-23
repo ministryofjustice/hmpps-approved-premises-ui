@@ -23,7 +23,7 @@ import PlannedTransferController from './premises/changeRequests/plannedTransfer
 import PlacementAppealController from './premises/changeRequests/placementAppealController'
 
 export const controllers = (services: Services) => {
-  const premisesController = new PremisesController(services.premisesService, services.apAreaService)
+  const premisesController = new PremisesController(services.premisesService, services.cruManagementAreaService)
   const bedsController = new BedsController(services.premisesService)
   const outOfServiceBedsController = new OutOfServiceBedsController(
     services.outOfServiceBedService,

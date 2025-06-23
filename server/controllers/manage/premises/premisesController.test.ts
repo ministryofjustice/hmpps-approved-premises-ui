@@ -3,14 +3,14 @@ import type { Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/a
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApAreaService, PremisesService } from '../../../services'
+import { CruManagementAreaService, PremisesService } from '../../../services'
 import PremisesController from './premisesController'
 
 import {
-  apAreaFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
+  cruManagementAreaFactory,
   paginatedResponseFactory,
   staffMemberFactory,
 } from '../../../testutils/factories'
@@ -25,8 +25,8 @@ describe('V2PremisesController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
-  const apAreaService = createMock<ApAreaService>({})
-  const premisesController = new PremisesController(premisesService, apAreaService)
+  const cruManagementAreaService = createMock<CruManagementAreaService>({})
+  const premisesController = new PremisesController(premisesService, cruManagementAreaService)
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -293,12 +293,11 @@ describe('V2PremisesController', () => {
   })
 
   describe('index', () => {
-    it('should render the template with the premises and areas', async () => {
+    it('should render the template with the premises and CRU management areas', async () => {
       const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
+      const cruManagementAreas = cruManagementAreaFactory.buildList(1)
 
-      const apAreas = apAreaFactory.buildList(1)
-
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
       premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
@@ -306,20 +305,20 @@ describe('V2PremisesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
         premisesSummaries,
-        areas: apAreas,
+        areas: cruManagementAreas,
         selectedArea: '',
       })
 
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, undefined)
-      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
     })
 
-    it('should call the premises service with the AP area ID if supplied', async () => {
-      const areaId = 'ap-area-id'
+    it('should call the premises service with the CRU management area ID if supplied', async () => {
+      const areaId = 'cru-management-area-id'
       const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
-      const areas = apAreaFactory.buildList(1)
+      const cruManagementAreas = cruManagementAreaFactory.buildList(1)
 
-      apAreaService.getApAreas.mockResolvedValue(areas)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
       premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
@@ -327,12 +326,12 @@ describe('V2PremisesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
         premisesSummaries,
-        areas,
+        areas: cruManagementAreas,
         selectedArea: areaId,
       })
 
-      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { apAreaId: areaId })
-      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { cruManagementAreaId: areaId })
+      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
     })
   })
 })

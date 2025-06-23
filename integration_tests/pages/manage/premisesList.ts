@@ -1,4 +1,4 @@
-import type { Cas1PremisesBasicSummary, ProbationRegion } from '@approved-premises/api'
+import type { Cas1PremisesBasicSummary } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
