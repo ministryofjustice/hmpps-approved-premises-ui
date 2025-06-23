@@ -138,13 +138,13 @@ describe('attachDocumentsUtils', () => {
 
       expect(descriptionTextArea(document, {})).toMatchStringIgnoringWhitespace(
         `<label class="govuk-visually-hidden" for="document_123_description">Description of file.pdf</label>
-        <textarea class="govuk-textarea" id="document_123_description" name="documentDescriptions[123]" rows="3" aria-describedby="selectedDocuments_123_error">
+        <textarea class="govuk-textarea" id="document_123_description" name="documentDescriptions[123]" rows="3">
           Description goes here
         </textarea>`,
       )
     })
 
-    it('appends errors if they are present', () => {
+    it('appends errors and aria-describedby attribute if there are errors', () => {
       const document = documentFactory.build({ id: '123', fileName: 'file.pdf', description: 'Description goes here' })
       const errors = {
         selectedDocuments_123: {
