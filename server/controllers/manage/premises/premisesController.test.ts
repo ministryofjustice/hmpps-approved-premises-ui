@@ -15,7 +15,12 @@ import {
   staffMemberFactory,
   userDetailsFactory,
 } from '../../../testutils/factories'
-import { premisesOverbookingSummary, summaryListForPremises } from '../../../utils/premises'
+import {
+  premisesOverbookingSummary,
+  premisesTableHead,
+  premisesTableRows,
+  summaryListForPremises,
+} from '../../../utils/premises'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -310,12 +315,13 @@ describe('V2PremisesController', () => {
       cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
     })
 
-    it("should render the template with the premises and CRU management areas set to the current user's", async () => {
+    it("should render the template with the premises and CRU management area set to the current user's", async () => {
       const requestHandler = premisesController.index()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
-        premisesSummaries,
+        tableHead: premisesTableHead,
+        tableRows: premisesTableRows(premisesSummaries),
         areas: cruManagementAreas,
         selectedArea: user.cruManagementArea.id,
       })
@@ -331,11 +337,13 @@ describe('V2PremisesController', () => {
       const requestHandler = premisesController.index()
       await requestHandler({ ...request, query: { selectedArea: areaId } }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
-        premisesSummaries,
-        areas: cruManagementAreas,
-        selectedArea: areaId,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/index',
+        expect.objectContaining({
+          areas: cruManagementAreas,
+          selectedArea: areaId,
+        }),
+      )
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { cruManagementAreaId: areaId })
     })
 
@@ -345,11 +353,13 @@ describe('V2PremisesController', () => {
       const requestHandler = premisesController.index()
       await requestHandler({ ...request, query: { selectedArea: areaId } }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
-        premisesSummaries,
-        areas: cruManagementAreas,
-        selectedArea: 'all',
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/index',
+        expect.objectContaining({
+          areas: cruManagementAreas,
+          selectedArea: 'all',
+        }),
+      )
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {})
     })
   })

@@ -19,6 +19,7 @@ import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusHtml } from '../placements'
 
 export { premisesActions } from './premisesActions'
+
 export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
   return {
     rows: [
@@ -85,8 +86,23 @@ export const cas1PremisesSummaryRadioOptions = (
     }
   })
 
-export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSummary>) => {
-  return premisesSummaries
+export const premisesTableHead: TableRow = [
+  {
+    text: 'Name',
+  },
+  {
+    text: 'Code',
+  },
+  {
+    text: 'Number of beds',
+  },
+  {
+    html: '<span class="govuk-visually-hidden">Actions</span>',
+  },
+]
+
+export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSummary>): Array<TableRow> =>
+  premisesSummaries
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((p: Cas1PremisesBasicSummary) => {
       return [
@@ -98,7 +114,6 @@ export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSumm
         ),
       ]
     })
-}
 
 export type PremisesTab = Cas1SpaceBookingResidency | 'search'
 

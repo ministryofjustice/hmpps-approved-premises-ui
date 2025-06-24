@@ -5,7 +5,13 @@ import { CruManagementAreaService, PremisesService, SessionService } from '../..
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { hasPermission } from '../../../utils/users'
-import { PremisesTab, premisesOverbookingSummary, summaryListForPremises } from '../../../utils/premises'
+import {
+  PremisesTab,
+  premisesOverbookingSummary,
+  summaryListForPremises,
+  premisesTableRows,
+  premisesTableHead,
+} from '../../../utils/premises'
 
 type TabSettings = {
   pageSize: number
@@ -105,7 +111,8 @@ export default class PremisesController {
       const areas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       return res.render('manage/premises/index', {
-        premisesSummaries,
+        tableHead: premisesTableHead,
+        tableRows: premisesTableRows(premisesSummaries),
         areas,
         selectedArea,
       })

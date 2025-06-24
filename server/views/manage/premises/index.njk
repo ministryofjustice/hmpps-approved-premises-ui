@@ -38,20 +38,7 @@
     {{ govukTable({
         captionClasses: "govuk-table__caption--m",
         firstCellIsHeader: true,
-        head: [
-            {
-                text: "Name"
-            },
-            {
-                text: "Code"
-            },
-            {
-                text: "Number of beds"
-            },
-            {
-                html: '<span class="govuk-visually-hidden">Actions</span>'
-            }
-        ],
-        rows: PremisesUtils.premisesTableRows(premisesSummaries)
+        head: tableHead,
+        rows: tableRows
     }) }}
 {% endblock %}

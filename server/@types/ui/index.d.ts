@@ -112,9 +112,13 @@ export interface HtmlItem {
   html: string
 }
 
-export type TableCell =
-  | { text: string; attributes?: HtmlAttributes; classes?: string }
-  | { html: string; attributes?: HtmlAttributes }
+export type TableCell = (TextItem | HtmlItem) & {
+  attributes?: HtmlAttributes
+  classes?: string
+  format?: 'numeric'
+  colspan?: number
+  rowspan?: number
+}
 
 export type TableRow = Array<TableCell>
 
@@ -125,7 +129,7 @@ export type RadioItem = {
   conditional?: {
     html?: string
   }
-  hint?: { text: string } | { html: string }
+  hint?: TextItem | HtmlItem
 }
 
 export type CheckBoxItem =
@@ -133,9 +137,7 @@ export type CheckBoxItem =
       text: string
       value: string
       checked?: boolean
-      hint?: {
-        text: string
-      }
+      hint?: TextItem | HtmlItem
       behaviour?: 'exclusive'
     }
   | Divider
@@ -185,9 +187,7 @@ export interface SummaryListItem {
 }
 
 export interface IdentityBar {
-  title: {
-    html: string
-  }
+  title: HtmlItem
   classes?: string
   menus?: Array<IdentityBarMenu>
 }
