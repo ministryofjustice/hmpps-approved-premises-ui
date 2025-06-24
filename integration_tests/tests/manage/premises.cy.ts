@@ -1,9 +1,11 @@
 import { PersonSummary } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import {
   cas1KeyworkerAllocationFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
+  cruManagementAreaFactory,
   staffMemberFactory,
 } from '../../../server/testutils/factories'
 
@@ -13,21 +15,33 @@ import { signIn } from '../signIn'
 
 context('Premises', () => {
   describe('list', () => {
-    it('should list all premises', () => {
+    it('should list all premises and allow filtering by area', () => {
       cy.task('reset')
 
       // Given I am signed in as a future manager
       signIn('future_manager')
 
       const premises = cas1PremisesBasicSummaryFactory.buildList(5)
-      cy.task('stubCas1AllPremises', premises)
-      cy.task('stubApAreaReferenceData')
+      const cruManagementAreas = cruManagementAreaFactory.buildList(5)
+      cy.task('stubCas1AllPremises', { premises })
+
+      const filteredPremises = cas1PremisesBasicSummaryFactory.buildList(2)
+      const filteredArea = faker.helpers.arrayElement(cruManagementAreas)
+      cy.task('stubCas1AllPremises', { premises: filteredPremises, cruManagementAreaId: filteredArea.id })
+
+      cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
 
       // When I visit the premises page
-      const v2PremisesListPage = PremisesListPage.visit()
+      const premisesListPage = PremisesListPage.visit()
 
       // Then I should see all of the premises listed
-      v2PremisesListPage.shouldShowPremises(premises)
+      premisesListPage.shouldShowPremises(premises)
+
+      // When I select a specific area
+      premisesListPage.filterPremisesByArea(filteredArea.name)
+
+      // Then I should see the premises for the given area
+      premisesListPage.shouldShowPremises(filteredPremises)
     })
   })
 

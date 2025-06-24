@@ -109,10 +109,6 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'LIST_PREMISES',
     allowedPermissions: ['cas1_premises_view'],
   })
-  post(paths.premises.index.pattern, premisesController.index(), {
-    auditEvent: 'FILTER_PREMISES',
-    allowedPermissions: ['cas1_premises_view'],
-  })
   get(paths.premises.show.pattern, premisesController.show(), {
     auditEvent: 'SHOW_PREMISES',
     allowedPermissions: ['cas1_premises_view'],

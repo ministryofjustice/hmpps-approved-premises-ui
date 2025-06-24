@@ -1,4 +1,4 @@
-import type { Cas1PremisesBasicSummary } from '@approved-premises/api'
+import type { Cas1CruManagementArea, Cas1PremisesBasicSummary } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
@@ -29,22 +29,8 @@ export default class PremisesListPage extends Page {
     })
   }
 
-  shouldNotShowPremises(premises: Array<Cas1PremisesBasicSummary>): void {
-    premises.forEach((item: Cas1PremisesBasicSummary) => {
-      cy.get('td').should('not.contain', item.name)
-    })
-  }
-
-  filterPremisesByRegion(region: ProbationRegion['name']): void {
-    cy.get('#region').select(region)
-    this.clickSubmit()
-  }
-
-  followLinkToPremisesNamed(premisesName: string): void {
-    cy.contains(premisesName)
-      .parent()
-      .within(() => {
-        cy.get('a').contains('View').click()
-      })
+  filterPremisesByArea(area: Cas1CruManagementArea['name']): void {
+    cy.get('#selectedArea').select(area)
+    this.clickButton('Apply filter')
   }
 }

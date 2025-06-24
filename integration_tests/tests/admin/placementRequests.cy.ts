@@ -94,7 +94,7 @@ context('Placement Requests', () => {
 
     const cas1premises = cas1PremisesBasicSummaryFactory.buildList(3, { supportsSpaceBookings: false })
     const cas1SpaceBookingPremises = cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: true })
-    cy.task('stubCas1AllPremises', [...cas1premises, ...cas1SpaceBookingPremises])
+    cy.task('stubCas1AllPremises', { premises: [...cas1premises, ...cas1SpaceBookingPremises] })
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
 
     return {

@@ -309,7 +309,7 @@ describe('V2PremisesController', () => {
         selectedArea: '',
       })
 
-      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, undefined)
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {})
       expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
     })
 
@@ -322,7 +322,7 @@ describe('V2PremisesController', () => {
       premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
-      await requestHandler({ ...request, body: { selectedArea: areaId } }, response, next)
+      await requestHandler({ ...request, query: { selectedArea: areaId } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
         premisesSummaries,

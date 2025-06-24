@@ -131,7 +131,7 @@ context('Change requests', () => {
 
     cy.task('stubSpaceBookingShow', placement)
     cy.task('stubSpaceBookingGetWithoutPremises', placement)
-    cy.task('stubCas1AllPremises', allApprovedPremises)
+    cy.task('stubCas1AllPremises', { premises: allApprovedPremises })
     cy.task('stubSinglePremises', destinationAp)
     cy.task('stubSpaceBookingEmergencyTransferCreate', placement)
 
