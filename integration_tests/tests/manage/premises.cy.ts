@@ -1,5 +1,4 @@
 import { PersonSummary } from '@approved-premises/api'
-import { faker } from '@faker-js/faker'
 import {
   cas1KeyworkerAllocationFactory,
   cas1PremisesBasicSummaryFactory,
@@ -18,30 +17,44 @@ context('Premises', () => {
     it('should list all premises and allow filtering by area', () => {
       cy.task('reset')
 
-      // Given I am signed in as a future manager
-      signIn('future_manager')
-
-      const premises = cas1PremisesBasicSummaryFactory.buildList(5)
       const cruManagementAreas = cruManagementAreaFactory.buildList(5)
-      cy.task('stubCas1AllPremises', { premises })
+      const userCruArea = cruManagementAreas[1]
+      const filterCruArea = cruManagementAreas[3]
 
-      const filteredPremises = cas1PremisesBasicSummaryFactory.buildList(2)
-      const filteredArea = faker.helpers.arrayElement(cruManagementAreas)
-      cy.task('stubCas1AllPremises', { premises: filteredPremises, cruManagementAreaId: filteredArea.id })
+      const allPremises = cas1PremisesBasicSummaryFactory.buildList(5)
+      cy.task('stubCas1AllPremises', { premises: allPremises })
+
+      const userPremises = cas1PremisesBasicSummaryFactory.buildList(3)
+      cy.task('stubCas1AllPremises', { premises: userPremises, cruManagementAreaId: userCruArea.id })
+
+      const filteredPremises = cas1PremisesBasicSummaryFactory.buildList(1)
+      cy.task('stubCas1AllPremises', { premises: filteredPremises, cruManagementAreaId: filterCruArea.id })
 
       cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
+
+      // Given I am signed in as a future manager
+      signIn('future_manager', { cruManagementArea: userCruArea })
 
       // When I visit the premises page
       const premisesListPage = PremisesListPage.visit()
 
-      // Then I should see all of the premises listed
-      premisesListPage.shouldShowPremises(premises)
+      // Then I should see premises in the user's CRU management area listed
+      premisesListPage.shouldHaveSelectText('selectedArea', userCruArea.name)
+      premisesListPage.shouldShowPremises(userPremises)
 
       // When I select a specific area
-      premisesListPage.filterPremisesByArea(filteredArea.name)
+      premisesListPage.filterPremisesByArea(filterCruArea.name)
 
-      // Then I should see the premises for the given area
+      // Then I should see the premises for the selected area
+      premisesListPage.shouldHaveSelectText('selectedArea', filterCruArea.name)
       premisesListPage.shouldShowPremises(filteredPremises)
+
+      // When I select 'All areas'
+      premisesListPage.filterPremisesByArea('All areas')
+
+      // Then I should see all premises
+      premisesListPage.shouldHaveSelectText('selectedArea', 'All areas')
+      premisesListPage.shouldShowPremises(allPremises)
     })
   })
 

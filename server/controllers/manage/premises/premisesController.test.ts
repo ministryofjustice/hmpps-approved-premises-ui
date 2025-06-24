@@ -41,7 +41,6 @@ describe('V2PremisesController', () => {
     request = createMock<Request>({ user: { token }, params: { premisesId } })
     response = createMock<Response>({ locals: { user } })
     jest.useFakeTimers()
-    cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
     sessionService.getPageBackLink.mockReturnValue(referrer)
   })
 
@@ -304,11 +303,14 @@ describe('V2PremisesController', () => {
   })
 
   describe('index', () => {
-    it("should render the template with the premises and CRU management areas set to the current user's", async () => {
-      const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
+    const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
 
+    beforeEach(() => {
       premisesService.getCas1All.mockResolvedValue(premisesSummaries)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
+    })
 
+    it("should render the template with the premises and CRU management areas set to the current user's", async () => {
       const requestHandler = premisesController.index()
       await requestHandler(request, response, next)
 
@@ -317,7 +319,6 @@ describe('V2PremisesController', () => {
         areas: cruManagementAreas,
         selectedArea: user.cruManagementArea.id,
       })
-
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {
         cruManagementAreaId: user.cruManagementArea.id,
       })
@@ -326,9 +327,6 @@ describe('V2PremisesController', () => {
 
     it('should call the premises service with the requested CRU management area ID', async () => {
       const areaId = 'cru-management-area-id'
-      const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
-
-      premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
       await requestHandler({ ...request, query: { selectedArea: areaId } }, response, next)
@@ -338,9 +336,21 @@ describe('V2PremisesController', () => {
         areas: cruManagementAreas,
         selectedArea: areaId,
       })
-
       expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { cruManagementAreaId: areaId })
-      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
+    })
+
+    it('should let the user see premises from all areas', async () => {
+      const areaId = 'all'
+
+      const requestHandler = premisesController.index()
+      await requestHandler({ ...request, query: { selectedArea: areaId } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
+        premisesSummaries,
+        areas: cruManagementAreas,
+        selectedArea: 'all',
+      })
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {})
     })
   })
 })

@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { ApArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
+import { Cas1CruManagementArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
 import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -18,6 +18,12 @@ interface ShowRequest extends Request {
     crnOrName: string
     keyworker: string
     activeTab: PremisesTab
+  }
+}
+
+interface IndexRequest extends Request {
+  query: {
+    selectedArea: Cas1CruManagementArea['id'] | 'all'
   }
 }
 
@@ -90,18 +96,18 @@ export default class PremisesController {
   }
 
   index(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: IndexRequest, res: Response) => {
       const { user } = res.locals
       const selectedArea = req.query.selectedArea || user.cruManagementArea?.id
       const premisesSummaries = await this.premisesService.getCas1All(req.user.token, {
-        cruManagementAreaId: selectedArea,
+        cruManagementAreaId: selectedArea === 'all' ? undefined : selectedArea,
       })
       const areas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       return res.render('manage/premises/index', {
         premisesSummaries,
         areas,
-        selectedArea: selectedArea || '',
+        selectedArea,
       })
     }
   }
