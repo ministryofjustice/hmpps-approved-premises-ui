@@ -91,7 +91,8 @@ export default class PremisesController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const selectedArea = req.query.selectedArea as ApArea['id']
+      const { user } = res.locals
+      const selectedArea = req.query.selectedArea || user.cruManagementArea?.id
       const premisesSummaries = await this.premisesService.getCas1All(req.user.token, {
         cruManagementAreaId: selectedArea,
       })

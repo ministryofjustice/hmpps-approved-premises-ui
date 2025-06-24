@@ -13,11 +13,17 @@ import {
   cruManagementAreaFactory,
   paginatedResponseFactory,
   staffMemberFactory,
+  userDetailsFactory,
 } from '../../../testutils/factories'
 import { premisesOverbookingSummary, summaryListForPremises } from '../../../utils/premises'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
+  const cruManagementAreas = cruManagementAreaFactory.buildList(4)
+  const user = userDetailsFactory.build({
+    permissions: ['cas1_space_booking_list', 'cas1_space_booking_view'],
+    cruManagementArea: cruManagementAreas[2],
+  })
   const premisesId = 'some-uuid'
   const referrer = 'referrer/path'
 
@@ -33,8 +39,9 @@ describe('V2PremisesController', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId } })
-    response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
+    response = createMock<Response>({ locals: { user } })
     jest.useFakeTimers()
+    cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
     sessionService.getPageBackLink.mockReturnValue(referrer)
   })
 
@@ -297,11 +304,9 @@ describe('V2PremisesController', () => {
   })
 
   describe('index', () => {
-    it('should render the template with the premises and CRU management areas', async () => {
+    it("should render the template with the premises and CRU management areas set to the current user's", async () => {
       const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
-      const cruManagementAreas = cruManagementAreaFactory.buildList(1)
 
-      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
       premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
@@ -310,19 +315,19 @@ describe('V2PremisesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
         premisesSummaries,
         areas: cruManagementAreas,
-        selectedArea: '',
+        selectedArea: user.cruManagementArea.id,
       })
 
-      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {})
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {
+        cruManagementAreaId: user.cruManagementArea.id,
+      })
       expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
     })
 
-    it('should call the premises service with the CRU management area ID if supplied', async () => {
+    it('should call the premises service with the requested CRU management area ID', async () => {
       const areaId = 'cru-management-area-id'
       const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
-      const cruManagementAreas = cruManagementAreaFactory.buildList(1)
 
-      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
       premisesService.getCas1All.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
