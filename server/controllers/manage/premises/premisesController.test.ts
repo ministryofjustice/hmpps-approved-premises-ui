@@ -3,7 +3,7 @@ import type { Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/a
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { CruManagementAreaService, PremisesService } from '../../../services'
+import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
 import PremisesController from './premisesController'
 
 import {
@@ -19,6 +19,7 @@ import { premisesOverbookingSummary, summaryListForPremises } from '../../../uti
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
   const premisesId = 'some-uuid'
+  const referrer = 'referrer/path'
 
   let request: DeepMocked<Request>
   let response: DeepMocked<Response> = createMock<Response>({})
@@ -26,13 +27,15 @@ describe('V2PremisesController', () => {
 
   const premisesService = createMock<PremisesService>({})
   const cruManagementAreaService = createMock<CruManagementAreaService>({})
-  const premisesController = new PremisesController(premisesService, cruManagementAreaService)
+  const sessionService = createMock<SessionService>({})
+  const premisesController = new PremisesController(premisesService, cruManagementAreaService, sessionService)
 
   beforeEach(() => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId } })
     response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
     jest.useFakeTimers()
+    sessionService.getPageBackLink.mockReturnValue(referrer)
   })
 
   describe('show', () => {
@@ -71,6 +74,7 @@ describe('V2PremisesController', () => {
       })
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
+        backlink: referrer,
         premises: premisesSummary,
         summaryList: summaryListForPremises(premisesSummary),
         showPlacements: true,
