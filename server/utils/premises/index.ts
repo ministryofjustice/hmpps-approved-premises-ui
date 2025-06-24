@@ -95,9 +95,7 @@ export const premisesTableHead: TableRow = [
   },
   {
     text: 'Number of beds',
-  },
-  {
-    html: '<span class="govuk-visually-hidden">Actions</span>',
+    format: 'numeric',
   },
 ]
 
@@ -106,12 +104,9 @@ export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSumm
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((p: Cas1PremisesBasicSummary) => {
       return [
-        textValue(p.name),
+        htmlValue(linkTo(managePaths.premises.show({ premisesId: p.id }), { text: p.name })),
         textValue(p.apCode),
-        textValue(p.bedCount.toString()),
-        htmlValue(
-          linkTo(managePaths.premises.show({ premisesId: p.id }), { text: 'View', hiddenText: `about ${p.name}` }),
-        ),
+        { ...textValue(p.bedCount.toString()), format: 'numeric' },
       ]
     })
 

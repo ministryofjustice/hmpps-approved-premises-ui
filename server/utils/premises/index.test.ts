@@ -152,53 +152,44 @@ describe('premisesUtils', () => {
       expect(premisesTableRows(premises)).toEqual([
         [
           {
-            text: premises2.name,
+            html: linkTo(paths.premises.show({ premisesId: premises2.id }), {
+              text: premises2.name,
+            }),
           },
           {
             text: premises2.apCode,
           },
           {
             text: premises2.bedCount.toString(),
-          },
-          {
-            html: linkTo(paths.premises.show({ premisesId: premises2.id }), {
-              text: 'View',
-              hiddenText: `about ${premises2.name}`,
-            }),
+            format: 'numeric',
           },
         ],
         [
           {
-            text: premises3.name,
+            html: linkTo(paths.premises.show({ premisesId: premises3.id }), {
+              text: premises3.name,
+            }),
           },
           {
             text: premises3.apCode,
           },
           {
             text: premises3.bedCount.toString(),
-          },
-          {
-            html: linkTo(paths.premises.show({ premisesId: premises3.id }), {
-              text: 'View',
-              hiddenText: `about ${premises3.name}`,
-            }),
+            format: 'numeric',
           },
         ],
         [
           {
-            text: premises1.name,
+            html: linkTo(paths.premises.show({ premisesId: premises1.id }), {
+              text: premises1.name,
+            }),
           },
           {
             text: premises1.apCode,
           },
           {
             text: premises1.bedCount.toString(),
-          },
-          {
-            html: linkTo(paths.premises.show({ premisesId: premises1.id }), {
-              text: 'View',
-              hiddenText: `about ${premises1.name}`,
-            }),
+            format: 'numeric',
           },
         ],
       ])

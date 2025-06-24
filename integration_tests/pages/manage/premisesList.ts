@@ -17,14 +17,13 @@ export default class PremisesListPage extends Page {
   shouldShowPremises(premises: Array<Cas1PremisesBasicSummary>): void {
     premises.forEach((item: Cas1PremisesBasicSummary) => {
       cy.contains(item.name)
-        .parent()
+        .closest('tr')
         .within(() => {
+          cy.get('th')
+            .contains(item.name)
+            .should('have.attr', 'href', paths.premises.show({ premisesId: item.id }))
           cy.get('td').eq(0).contains(item.apCode)
           cy.get('td').eq(1).contains(item.bedCount)
-          cy.get('td')
-            .eq(2)
-            .contains('View')
-            .should('have.attr', 'href', paths.premises.show({ premisesId: item.id }))
         })
     })
   }
