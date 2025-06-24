@@ -9,27 +9,28 @@
 
     <h1 class="govuk-heading-l">List of Approved Premises</h1>
 
-    <form action="{{ paths.premises.index({}) }}" method="get">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-quarter">
-                {{ govukSelect({
-                    label: {
-                        text: "Areas",
-                        classes: "govuk-label--s"
-                    },
-                    classes: "govuk-input--width-20",
-                    id: "selectedArea",
-                    name: "selectedArea",
-                    items: convertObjectsToSelectOptions(areas, 'All areas', 'name', 'id', 'selectedArea', 'all', context)
-                }) }}
-            </div>
+    <form action="{{ currentUrl }}" method="get" class="search-and-filter">
 
-            <div class="govuk-grid-column-one-quarter">
-                {{ govukButton({
-                    text: "Apply filter",
-                    type: "submit",
-                    preventDoubleClick: true
-            }) }}</div>
+        <h2 class="govuk-heading-m">Filter</h2>
+
+        <div class="search-and-filter__row">
+            {{ govukSelect({
+                label: {
+                    text: "AP area",
+                    classes: "govuk-label--s"
+                },
+                classes: "govuk-input--width-20",
+                id: "selectedArea",
+                name: "selectedArea",
+                items: convertObjectsToSelectOptions(areas, 'All areas', 'name', 'id', 'selectedArea', 'all', context)
+            }) }}
+
+            {{ govukButton({
+                text: "Apply filter",
+                type: "submit",
+
+                preventDoubleClick: true
+            }) }}
         </div>
     </form>
 
