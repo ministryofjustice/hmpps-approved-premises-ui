@@ -24,10 +24,10 @@ describe('changeRequest utilities', () => {
   describe('getConditionalHtml', () => {
     it('renders html for a conditional text area', () => {
       const renderedHtml = '<p>Test</p>'
-      const njRenderSpy = jest.spyOn(nunjucks, 'render').mockImplementation(() => renderedHtml)
+      jest.spyOn(nunjucks, 'render').mockImplementation(() => renderedHtml)
       const result = getConditionalHtml('controlName', 'This is the label', { controlName: 'This is the content' })
       expect(result).toEqual(renderedHtml)
-      expect(njRenderSpy).toHaveBeenCalledWith('partials/detailsTextarea.njk', {
+      expect(nunjucks.render).toHaveBeenCalledWith('partials/detailsTextarea.njk', {
         conditionalQuestion: 'This is the label',
         name: 'controlName',
         value: 'This is the content',

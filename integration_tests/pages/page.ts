@@ -727,8 +727,8 @@ export default abstract class Page {
     cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
   }
 
-  shouldExpandDetails(): void {
-    cy.get('.govuk-details').as('details')
+  shouldExpandDetails(summary: string): void {
+    cy.get('.govuk-details__summary').contains(summary).closest('.govuk-details').as('details')
     cy.get('@details').invoke('attr', 'open').should('eq', undefined)
     cy.get('@details').get('.govuk-details__summary').click()
     cy.get('@details').invoke('attr', 'open').should('eq', 'open')

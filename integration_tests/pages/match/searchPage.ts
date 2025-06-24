@@ -39,7 +39,7 @@ export default class SearchPage extends Page {
         .parent()
         .parent()
         .within(() => {
-          this.shouldExpandDetails()
+          this.shouldExpandDetails('View AP criteria')
           const tableRows = [
             apTypeRow(result.premises.apType),
             addressRow(result),

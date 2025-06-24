@@ -2,7 +2,7 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "../../partials/summaryCard.njk" import summaryCard %}
 
-{% macro apSummaryCard(cardContent, placementRequest, postcode) %}
+{% macro apSummaryCard(cardContent, placementRequest) %}
     {% set content %}
         {{ govukSummaryList({
             classes:'govuk-summary-list--force-bottom-border',
