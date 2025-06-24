@@ -402,9 +402,7 @@ export const applicationShowPageTab = (id: Application['id'], tab: ApplicationSh
 
 export type ApplicationStatusForFilter = ApplicationStatus | typeof applicationSuitableStatuses
 
-const applicationStatusSelectOptions = (
-  selectedOption: ApplicationStatusForFilter | undefined | null,
-): Array<SelectOption> => {
+const applicationStatusSelectOptions = (selectedOption?: ApplicationStatusForFilter): Array<SelectOption> => {
   const statusFilters: ReadonlyArray<ApplicationStatus> = [
     'inapplicable',
     'started',
@@ -414,6 +412,7 @@ const applicationStatusSelectOptions = (
     'requestedFurtherInformation',
     'rejected',
     'withdrawn',
+    'expired',
   ]
 
   const options: Array<SelectOption> = statusFilters.map(status => ({
