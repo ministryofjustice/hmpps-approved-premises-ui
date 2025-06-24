@@ -27,7 +27,7 @@ describe('changeRequest utilities', () => {
       jest.spyOn(nunjucks, 'render').mockImplementation(() => renderedHtml)
       const result = getConditionalHtml('controlName', 'This is the label', { controlName: 'This is the content' })
       expect(result).toEqual(renderedHtml)
-      expect(jest.spyOn(nunjucks, 'render')).toHaveBeenCalledWith('partials/detailsTextarea.njk', {
+      expect(nunjucks.render).toHaveBeenCalledWith('partials/detailsTextarea.njk', {
         conditionalQuestion: 'This is the label',
         name: 'controlName',
         value: 'This is the content',

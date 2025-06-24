@@ -6,13 +6,17 @@ import { PlacementRequestService } from '../../../services'
 import SpaceSearchService from '../../../services/spaceSearchService'
 
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
-import { apTypeRadioItems, checkBoxesForCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
+import {
+  apTypeRadioItems,
+  checkBoxesForCriteria,
+  initialiseSearchState,
+  summaryCards,
+} from '../../../utils/match/spaceSearch'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
-import { spaceSearchResultsCards } from '../../../utils/match'
 
 export default class SpaceSearchController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -40,7 +44,7 @@ export default class SpaceSearchController {
         this.formData.get(id, req.session) ||
         (await this.formData.update(placementRequest.id, req.session, initialiseSearchState(placementRequest)))
 
-      const spaceSearchResults = await this.spaceSearchService.search(token, searchState)
+      const spaceSearchResults = (await this.spaceSearchService.search(token, searchState)).results
 
       const formValues = {
         ...searchState,
@@ -49,10 +53,10 @@ export default class SpaceSearchController {
 
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
-        spaceSearchResults: spaceSearchResultsCards(
-          placementRequest,
-          searchState.postcode,
-          spaceSearchResults.results || [],
+        summaryCards: summaryCards(
+          spaceSearchResults,
+          formValues.postcode,
+          placementRequest.application.isWomensApplication,
         ),
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),

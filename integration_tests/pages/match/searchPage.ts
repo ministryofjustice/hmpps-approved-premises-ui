@@ -1,9 +1,11 @@
 import { Cas1PlacementRequestDetail, Cas1SpaceSearchResult, Cas1SpaceSearchResults } from '@approved-premises/api'
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import Page from '../page'
-import { summaryCardRows } from '../../../server/utils/match'
+import { addressRow, apTypeRow, distanceRow } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
+import { characteristicsBulletList } from '../../../server/utils/characteristicsUtils'
+import { spaceSearchResultsCharacteristicsLabels } from '../../../server/utils/match/spaceSearchLabels'
 
 export default class SearchPage extends Page {
   constructor() {
@@ -21,10 +23,12 @@ export default class SearchPage extends Page {
   }
 
   shouldShowMatchingDetails(placementRequest: Cas1PlacementRequestDetail) {
-    cy.get('.govuk-details').within(() => {
-      cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
-      this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)
-    })
+    cy.get('.govuk-details')
+      .first()
+      .within(() => {
+        cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
+        this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)
+      })
   }
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {
@@ -35,8 +39,17 @@ export default class SearchPage extends Page {
         .parent()
         .parent()
         .within(() => {
-          const tableRows = summaryCardRows(result, targetPostcodeDistrict)
+          this.shouldExpandDetails('View AP criteria')
+          const tableRows = [
+            apTypeRow(result.premises.apType),
+            addressRow(result),
+            distanceRow(result, targetPostcodeDistrict),
+          ]
           this.shouldContainSummaryListItems(tableRows)
+          const characteristicsHtml = characteristicsBulletList(result.premises.characteristics, {
+            labels: spaceSearchResultsCharacteristicsLabels,
+          })
+          cy.get('.govuk-details__text').should('contain.html', characteristicsHtml)
         })
     })
   }
