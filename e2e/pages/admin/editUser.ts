@@ -7,7 +7,6 @@ export type Qualification = (typeof qualifications)[number]
 
 export const roles = [
   'Assessor',
-  'Workflow manager',
   'Appeals manager',
   'Report viewer without PII',
   'Report viewer with PII',
