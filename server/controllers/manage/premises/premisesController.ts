@@ -1,11 +1,17 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { ApArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
-import { ApAreaService, PremisesService } from '../../../services'
+import { Cas1CruManagementArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
+import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { hasPermission } from '../../../utils/users'
-import { PremisesTab, premisesOverbookingSummary, summaryListForPremises } from '../../../utils/premises'
+import {
+  PremisesTab,
+  premisesOverbookingSummary,
+  summaryListForPremises,
+  premisesTableRows,
+  premisesTableHead,
+} from '../../../utils/premises'
 
 type TabSettings = {
   pageSize: number
@@ -21,10 +27,17 @@ interface ShowRequest extends Request {
   }
 }
 
+interface IndexRequest extends Request {
+  query: {
+    selectedArea: Cas1CruManagementArea['id'] | 'all'
+  }
+}
+
 export default class PremisesController {
   constructor(
     private readonly premisesService: PremisesService,
-    private readonly apAreaService: ApAreaService,
+    private readonly cruManagementAreaService: CruManagementAreaService,
+    private readonly sessionService: SessionService,
   ) {}
 
   show(): RequestHandler {
@@ -66,6 +79,9 @@ export default class PremisesController {
         }))
 
       return res.render('manage/premises/show', {
+        backlink: this.sessionService.getPageBackLink(managePaths.premises.show.pattern, req, [
+          managePaths.premises.index.pattern,
+        ]),
         premises,
         summaryList: summaryListForPremises(premises),
         showPlacements,
@@ -86,18 +102,19 @@ export default class PremisesController {
   }
 
   index(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      const selectedArea = req.body.selectedArea as ApArea['id']
-      const premisesSummaries = await this.premisesService.getCas1All(
-        req.user.token,
-        selectedArea && { apAreaId: selectedArea },
-      )
-      const areas = await this.apAreaService.getApAreas(req.user.token)
+    return async (req: IndexRequest, res: Response) => {
+      const { user } = res.locals
+      const selectedArea = req.query.selectedArea || user.cruManagementArea?.id
+      const premisesSummaries = await this.premisesService.getCas1All(req.user.token, {
+        cruManagementAreaId: selectedArea === 'all' ? undefined : selectedArea,
+      })
+      const areas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       return res.render('manage/premises/index', {
-        premisesSummaries,
+        tableHead: premisesTableHead,
+        tableRows: premisesTableRows(premisesSummaries),
         areas,
-        selectedArea: selectedArea || '',
+        selectedArea,
       })
     }
   }

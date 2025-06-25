@@ -9,18 +9,21 @@ import type {
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
-const stubCas1AllPremises = (premises: Array<Cas1PremisesBasicSummary>) => {
+const stubCas1AllPremises = (args: { premises: Array<Cas1PremisesBasicSummary>; cruManagementAreaId?: string }) => {
   return stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/cas1/premises/summary.*',
+      urlPath: paths.premises.index({}),
+      queryParameters: {
+        cruManagementAreaId: args.cruManagementAreaId ? { equalTo: args.cruManagementAreaId } : { absent: true },
+      },
     },
     response: {
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: premises,
+      jsonBody: args.premises,
     },
   })
 }

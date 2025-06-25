@@ -35,7 +35,7 @@ context('Departures', () => {
     cy.task('stubDepartureReasonsReferenceData', departureReasonsJson)
     cy.task('stubMoveOnCategoriesReferenceData', moveOnCategoriesJson)
     cy.task('stubSpaceBookingDepartureCreate', placement)
-    cy.task('stubCas1AllPremises', premisesList)
+    cy.task('stubCas1AllPremises', { premises: premisesList })
   })
 
   it('lets a user with the correct permissions mark a person as departed', () => {

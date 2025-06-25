@@ -19,6 +19,7 @@ import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusHtml } from '../placements'
 
 export { premisesActions } from './premisesActions'
+
 export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
   return {
     rows: [
@@ -85,20 +86,29 @@ export const cas1PremisesSummaryRadioOptions = (
     }
   })
 
-export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSummary>) => {
-  return premisesSummaries
+export const premisesTableHead: TableRow = [
+  {
+    text: 'Name',
+  },
+  {
+    text: 'Code',
+  },
+  {
+    text: 'Number of beds',
+    format: 'numeric',
+  },
+]
+
+export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSummary>): Array<TableRow> =>
+  premisesSummaries
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((p: Cas1PremisesBasicSummary) => {
       return [
-        textValue(p.name),
+        htmlValue(linkTo(managePaths.premises.show({ premisesId: p.id }), { text: p.name })),
         textValue(p.apCode),
-        textValue(p.bedCount.toString()),
-        htmlValue(
-          linkTo(managePaths.premises.show({ premisesId: p.id }), { text: 'View', hiddenText: `about ${p.name}` }),
-        ),
+        { ...textValue(p.bedCount.toString()), format: 'numeric' },
       ]
     })
-}
 
 export type PremisesTab = Cas1SpaceBookingResidency | 'search'
 

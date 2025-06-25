@@ -3,36 +3,50 @@ import type { Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/a
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApAreaService, PremisesService } from '../../../services'
+import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
 import PremisesController from './premisesController'
 
 import {
-  apAreaFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
+  cruManagementAreaFactory,
   paginatedResponseFactory,
   staffMemberFactory,
+  userDetailsFactory,
 } from '../../../testutils/factories'
-import { premisesOverbookingSummary, summaryListForPremises } from '../../../utils/premises'
+import {
+  premisesOverbookingSummary,
+  premisesTableHead,
+  premisesTableRows,
+  summaryListForPremises,
+} from '../../../utils/premises'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
+  const cruManagementAreas = cruManagementAreaFactory.buildList(4)
+  const user = userDetailsFactory.build({
+    permissions: ['cas1_space_booking_list', 'cas1_space_booking_view'],
+    cruManagementArea: cruManagementAreas[2],
+  })
   const premisesId = 'some-uuid'
+  const referrer = 'referrer/path'
 
   let request: DeepMocked<Request>
   let response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
-  const apAreaService = createMock<ApAreaService>({})
-  const premisesController = new PremisesController(premisesService, apAreaService)
+  const cruManagementAreaService = createMock<CruManagementAreaService>({})
+  const sessionService = createMock<SessionService>({})
+  const premisesController = new PremisesController(premisesService, cruManagementAreaService, sessionService)
 
   beforeEach(() => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId } })
-    response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
+    response = createMock<Response>({ locals: { user } })
     jest.useFakeTimers()
+    sessionService.getPageBackLink.mockReturnValue(referrer)
   })
 
   describe('show', () => {
@@ -71,6 +85,7 @@ describe('V2PremisesController', () => {
       })
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
+        backlink: referrer,
         premises: premisesSummary,
         summaryList: summaryListForPremises(premisesSummary),
         showPlacements: true,
@@ -293,46 +308,59 @@ describe('V2PremisesController', () => {
   })
 
   describe('index', () => {
-    it('should render the template with the premises and areas', async () => {
-      const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
+    const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
 
-      const apAreas = apAreaFactory.buildList(1)
-
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
+    beforeEach(() => {
       premisesService.getCas1All.mockResolvedValue(premisesSummaries)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
+    })
 
+    it("should render the template with the premises and CRU management area set to the current user's", async () => {
       const requestHandler = premisesController.index()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
-        premisesSummaries,
-        areas: apAreas,
-        selectedArea: '',
+        tableHead: premisesTableHead,
+        tableRows: premisesTableRows(premisesSummaries),
+        areas: cruManagementAreas,
+        selectedArea: user.cruManagementArea.id,
       })
-
-      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, undefined)
-      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {
+        cruManagementAreaId: user.cruManagementArea.id,
+      })
+      expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
     })
 
-    it('should call the premises service with the AP area ID if supplied', async () => {
-      const areaId = 'ap-area-id'
-      const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(1)
-      const areas = apAreaFactory.buildList(1)
-
-      apAreaService.getApAreas.mockResolvedValue(areas)
-      premisesService.getCas1All.mockResolvedValue(premisesSummaries)
+    it('should call the premises service with the requested CRU management area ID', async () => {
+      const areaId = 'cru-management-area-id'
 
       const requestHandler = premisesController.index()
-      await requestHandler({ ...request, body: { selectedArea: areaId } }, response, next)
+      await requestHandler({ ...request, query: { selectedArea: areaId } }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('manage/premises/index', {
-        premisesSummaries,
-        areas,
-        selectedArea: areaId,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/index',
+        expect.objectContaining({
+          areas: cruManagementAreas,
+          selectedArea: areaId,
+        }),
+      )
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { cruManagementAreaId: areaId })
+    })
 
-      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, { apAreaId: areaId })
-      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+    it('should let the user see premises from all areas', async () => {
+      const areaId = 'all'
+
+      const requestHandler = premisesController.index()
+      await requestHandler({ ...request, query: { selectedArea: areaId } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/index',
+        expect.objectContaining({
+          areas: cruManagementAreas,
+          selectedArea: 'all',
+        }),
+      )
+      expect(premisesService.getCas1All).toHaveBeenCalledWith(token, {})
     })
   })
 })
