@@ -10,10 +10,11 @@ export class PremisesListPage extends BasePage {
   }
 
   async choosePremises(premisesName: string) {
-    await this.page.getByRole('link', { name: `View about ${premisesName}`, exact: true }).click()
-  }
+    if (!(await this.page.getByRole('link', { name: premisesName }).isVisible())) {
+      await this.page.getByRole('combobox', { name: 'AP area' }).selectOption('All areas')
+      await this.page.getByRole('button', { name: 'Apply filter' }).click()
+    }
 
-  async filterPremises(apArea: string) {
-    await this.page.getByLabel('Areas').selectOption({ label: apArea })
+    await this.page.getByRole('link', { name: premisesName, exact: true }).click()
   }
 }
