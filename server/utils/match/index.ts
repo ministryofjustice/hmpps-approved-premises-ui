@@ -39,21 +39,31 @@ type SpaceBookingConfirmationData = {
   expectedDepartureDate: string
   criteria: Array<Cas1SpaceBookingCharacteristic>
   releaseType?: ReleaseTypeOption
+  isWomensApplication?: boolean
 }
 
 export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfirmationData): Array<SummaryListItem> => {
-  const { premises, expectedArrivalDate, actualArrivalDate, expectedDepartureDate, criteria, releaseType } = data
+  const {
+    premises,
+    expectedArrivalDate,
+    actualArrivalDate,
+    expectedDepartureDate,
+    criteria,
+    releaseType,
+    isWomensApplication,
+  } = data
 
   return [
     summaryListItem('Approved Premises', premises.name),
     summaryListItem('Address', premisesAddress(premises)),
+    !isWomensApplication && summaryListItem('AP area', premises.apArea.name),
     summaryListItem('Room criteria', characteristicsBulletList(criteria, { noneText: 'No room criteria' }), 'html'),
     actualArrivalDate
       ? summaryListItem('Actual arrival date', DateFormats.isoDateToUIDate(actualArrivalDate))
       : summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(expectedArrivalDate)),
     summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(expectedDepartureDate)),
     summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
-    releaseType ? summaryListItem('Release type', allReleaseTypes[releaseType]) : undefined,
+    releaseType && summaryListItem('Release type', allReleaseTypes[releaseType]),
   ].filter(Boolean)
 }
 

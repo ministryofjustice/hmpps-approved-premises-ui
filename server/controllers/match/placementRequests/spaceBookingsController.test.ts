@@ -74,12 +74,37 @@ describe('SpaceBookingsController', () => {
           expectedDepartureDate: searchState.departureDate,
           criteria: searchState.roomCriteria,
           releaseType: placementRequestDetail.releaseType,
+          isWomensApplication: placementRequestDetail.application.isWomensApplication,
         }),
         errorSummary: [],
         errors: {},
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
+    })
+
+    it("should render the summary list without AP area for a women's AP application", async () => {
+      const womensPlacementRequestDetail = { ...placementRequestDetail }
+      womensPlacementRequestDetail.application.isWomensApplication = true
+
+      placementRequestService.getPlacementRequest.mockResolvedValue(womensPlacementRequestDetail)
+
+      const requestHandler = spaceBookingsController.new()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/spaceBookings/new',
+        expect.objectContaining({
+          summaryListRows: spaceBookingConfirmationSummaryListRows({
+            premises,
+            expectedArrivalDate: searchState.arrivalDate,
+            expectedDepartureDate: searchState.departureDate,
+            criteria: searchState.roomCriteria,
+            releaseType: placementRequestDetail.releaseType,
+            isWomensApplication: true,
+          }),
+        }),
+      )
     })
 
     it('redirects to the suitability search if no search state is present', async () => {
