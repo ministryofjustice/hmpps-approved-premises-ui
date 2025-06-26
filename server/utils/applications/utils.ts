@@ -45,7 +45,6 @@ import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
-import config from '../../config'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -95,15 +94,12 @@ export const applicationsTabs = (applications: GroupedApplications) => {
       id: 'applications-submitted',
       rows: applicationTableRows(applications.submitted),
     },
-  ]
-
-  if (config.flags.inactiveApplicationsTab) {
-    tabs.push({
+    {
       label: 'Inactive',
       id: 'inactive',
       rows: applicationTableRows(applications.inactive),
-    })
-  }
+    },
+  ]
 
   return tabs
 }

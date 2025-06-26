@@ -30,7 +30,6 @@ import {
 } from '../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 import withdrawablesFactory from '../testutils/factories/withdrawablesFactory'
-import config from '../config'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -62,7 +61,6 @@ describe('ApplicationService', () => {
   const service = new ApplicationService(applicationClientFactory)
 
   beforeEach(() => {
-    config.flags.inactiveApplicationsTab = true
     jest.resetAllMocks()
     applicationClientFactory.mockReturnValue(applicationClient)
   })
@@ -96,55 +94,25 @@ describe('ApplicationService', () => {
       ...applications.placementAllocated,
     ]
 
-    describe('with the inactiveApplicationsTab feature flag enabled', () => {
-      it('sorts all applications into In progress, Further info requested, Submitted and Inactive', async () => {
-        applicationClient.allForLoggedInUser.mockResolvedValue(Object.values(applications).flat())
+    it('sorts all applications into In progress, Further info requested, Submitted and Inactive', async () => {
+      applicationClient.allForLoggedInUser.mockResolvedValue(Object.values(applications).flat())
 
-        const result = await service.getAllForLoggedInUser(token)
+      const result = await service.getAllForLoggedInUser(token)
 
-        expect(result).toEqual({
-          inProgress: applications.started,
-          requestedFurtherInformation: applications.requestedFurtherInformation,
-          submitted: submittedApplications,
-          inactive: [
-            ...applications.withdrawn,
-            ...applications.expired,
-            ...applications.rejected,
-            ...applications.inapplicable,
-          ],
-        })
-
-        expect(applicationClientFactory).toHaveBeenCalledWith(token)
-        expect(applicationClient.allForLoggedInUser).toHaveBeenCalled()
-      })
-    })
-
-    describe('with the inactiveApplicationsTab feature flag disabled', () => {
-      beforeEach(() => {
-        config.flags.inactiveApplicationsTab = false
+      expect(result).toEqual({
+        inProgress: applications.started,
+        requestedFurtherInformation: applications.requestedFurtherInformation,
+        submitted: submittedApplications,
+        inactive: [
+          ...applications.withdrawn,
+          ...applications.expired,
+          ...applications.rejected,
+          ...applications.inapplicable,
+        ],
       })
 
-      it('sorts all applications into In progress, Further info requested, and Submitted', async () => {
-        applicationClient.allForLoggedInUser.mockResolvedValue(Object.values(applications).flat())
-
-        const result = await service.getAllForLoggedInUser(token)
-
-        expect(result).toEqual({
-          inProgress: [...applications.started],
-          requestedFurtherInformation: applications.requestedFurtherInformation,
-          submitted: [
-            ...submittedApplications,
-            ...applications.withdrawn,
-            ...applications.expired,
-            ...applications.rejected,
-            ...applications.inapplicable,
-          ],
-          inactive: [],
-        })
-
-        expect(applicationClientFactory).toHaveBeenCalledWith(token)
-        expect(applicationClient.allForLoggedInUser).toHaveBeenCalled()
-      })
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.allForLoggedInUser).toHaveBeenCalled()
     })
   })
 

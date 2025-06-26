@@ -24,7 +24,6 @@ import { ValidationError } from '../utils/errors'
 
 import { getBody } from '../form-pages/utils'
 import Review from '../form-pages/apply/check-your-answers/review'
-import config from '../config'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -80,7 +79,7 @@ export default class ApplicationService {
           case 'withdrawn':
           case 'rejected':
           case 'inapplicable':
-            ;(config.flags.inactiveApplicationsTab ? result.inactive : result.submitted).push(application)
+            result.inactive.push(application)
             break
           default:
             result.submitted.push(application)
