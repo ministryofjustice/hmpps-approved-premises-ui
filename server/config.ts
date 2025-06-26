@@ -49,7 +49,6 @@ export default {
   staticResourceCacheDuration: 20,
   flags: {
     oasysDisabled: getFlag('OASYS_DISABLED'),
-    v2MatchEnabled: getFlag('ENABLE_V2_MATCH'),
     pocEnabled: getFlag('ENABLE_POC'),
   },
   environment: process.env.ENVIRONMENT || 'local',

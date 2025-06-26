@@ -5,7 +5,6 @@ import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
-import config from '../../config'
 import { hasPermission } from '../users'
 import { overallStatus } from '../placements'
 
@@ -73,7 +72,7 @@ export const adminActions = (
     },
   ]
 
-  if (hasPermission(user, ['cas1_space_booking_create']) && config.flags.v2MatchEnabled === true) {
+  if (hasPermission(user, ['cas1_space_booking_create'])) {
     actions.unshift({
       href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
       text: 'Search for a space',
