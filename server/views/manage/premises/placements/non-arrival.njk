@@ -23,57 +23,63 @@
 {% endblock %}
 
 {% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
 
-    <form action="{{ paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }) }}"
-          method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <h1 class="govuk-heading-l">Record someone as not arrived</h1>
+        </div>
+    </div>
 
-        {{ showErrorSummary(errorSummary, errorTitle) }}
-
-        <h1 class="govuk-heading-l">Record someone as not arrived</h1>
-
-
-        {{ govukSummaryList({
-            rows: [{
-                key: {
-                    text: "Expected arrival date"
-                },
-                value: {
-                    text: formatDate(placement.expectedArrivalDate)
-                }
-            }]
-        }) }}
-
-        {{ govukRadios({
-            idPrefix: "reason",
-            fieldset: {
-                legend: {
-                    text: "Reason",
-                    classes: "govuk-fieldset__legend--m"
-                }
+    {{ govukSummaryList({
+        rows: [{
+            key: {
+                text: "Expected arrival date"
             },
-            errorMessage: errors.reason,
-            name: "reason",
-            items: convertObjectsToRadioItems(nonArrivalReasons, 'name', 'id', 'reason',{reason:reason})
-        }) }}
+            value: {
+                text: formatDate(placement.expectedArrivalDate)
+            }
+        }]
+    }) }}
 
-        {{ govukCharacterCount({
-            id: "notes",
-            name: "notes",
-            maxlength: 200,
-            value: notes,
-            label: {
-                text: "Any other information",
-                classes: "govuk-label--m"
-            },
-            errorMessage: errors.notes
-        }) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form action="{{ paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukButton({
-            text: "Submit",
-            preventDoubleClick: true
-        }) }}
-    </form>
 
+                {{ govukRadios({
+                    idPrefix: "reason",
+                    fieldset: {
+                        legend: {
+                            text: "Reason",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: errors.reason,
+                    name: "reason",
+                    items: convertObjectsToRadioItems(nonArrivalReasons, 'name', 'id', 'reason',{reason:reason})
+                }) }}
+
+                {{ govukCharacterCount({
+                    id: "notes",
+                    name: "notes",
+                    maxlength: 200,
+                    value: notes,
+                    label: {
+                        text: "Any other information",
+                        classes: "govuk-label--m"
+                    },
+                    errorMessage: errors.notes
+                }) }}
+
+                {{ govukButton({
+                    text: "Submit",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
 {% endblock %}
 

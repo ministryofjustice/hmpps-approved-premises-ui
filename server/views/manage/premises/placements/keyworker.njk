@@ -23,44 +23,50 @@
 {% endblock %}
 
 {% block content %}
+    {% include "../../../_messages.njk" %}
 
-    <form action="{{ paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }) }}"
-          method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
 
-        {{ showErrorSummary(errorSummary, errorTitle) }}
+            <h1 class="govuk-heading-l">Edit keyworker details</h1>
+        </div>
+    </div>
 
-        {% include "../../../_messages.njk" %}
-
-        <h1 class="govuk-heading-l">Edit keyworker details</h1>
-
-
-        {{ govukSummaryList({
-            rows: [{
-                key: {
-                    text: "Keyworker"
-                },
-                value: {
-                    text: currentKeyworkerName
-                }
-            }]
-        }) }}
-
-        {{ govukSelect({
-            label: {
-                text: "Select keyworker",
-                classes: "govuk-label--s"
+    {{ govukSummaryList({
+        rows: [{
+            key: {
+                text: "Keyworker"
             },
-            id: "staffCode",
-            name: "staffCode",
-            items: keyworkersOptions
-        }) }}
+            value: {
+                text: currentKeyworkerName
+            }
+        }]
+    }) }}
 
-        {{ govukButton({
-            text: "Submit",
-            preventDoubleClick: true
-        }) }}
-    </form>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form action="{{ paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukSelect({
+                    label: {
+                        text: "Select keyworker",
+                        classes: "govuk-label--m"
+                    },
+                    id: "staffCode",
+                    name: "staffCode",
+                    items: keyworkersOptions
+                }) }}
+
+                {{ govukButton({
+                    text: "Submit",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
 
