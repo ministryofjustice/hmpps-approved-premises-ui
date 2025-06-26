@@ -22,34 +22,37 @@
 {% endblock %}
 
 {% block content %}
-    {{ showErrorSummary(errorSummary) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary) }}
 
-    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    <form action="{{ currentUrl }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <form action="{{ currentUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukDateInput({
-            id: "transferDate",
-            namePrefix: "transferDate",
-            fieldset: {
-                legend: {
-                    text: "When does the person need to be transferred?",
-                    classes: "govuk-fieldset__legend--m"
-                }
-            },
-            hint: {
-                text: "Enter the date that the transfer happened or will happen."
-            },
-            items: dateFieldValues('transferDate', errors),
-            errorMessage: errors.transferDate
-        }) }}
+                {{ govukDateInput({
+                    id: "transferDate",
+                    namePrefix: "transferDate",
+                    fieldset: {
+                        legend: {
+                            text: "When does the person need to be transferred?",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "Enter the date that the transfer happened or will happen."
+                    },
+                    items: dateFieldValues('transferDate', errors),
+                    errorMessage: errors.transferDate
+                }) }}
 
-        {{ govukButton({
-            text: "Continue",
-            preventDoubleClick: true
-        }) }}
-    </form>
-
+                {{ govukButton({
+                    text: "Continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
