@@ -18,8 +18,8 @@
 {% endblock %}
 
 {% block header %}
-  {{ super() }}
-  {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block content %}
@@ -46,11 +46,16 @@
 
         {{ govukRadios({
             idPrefix: "reason",
+            fieldset: {
+                legend: {
+                    text: "Reason",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
             errorMessage: errors.reason,
             name: "reason",
-                items: convertObjectsToRadioItems(nonArrivalReasons, 'name', 'id', 'reason',{reason:reason})
-            }) 
-        }}
+            items: convertObjectsToRadioItems(nonArrivalReasons, 'name', 'id', 'reason',{reason:reason})
+        }) }}
 
         {{ govukCharacterCount({
             id: "notes",
@@ -59,7 +64,7 @@
             value: notes,
             label: {
                 text: "Any other information",
-                classes: "govuk-fieldset__legend--s"
+                classes: "govuk-label--m"
             },
             errorMessage: errors.notes
         }) }}
