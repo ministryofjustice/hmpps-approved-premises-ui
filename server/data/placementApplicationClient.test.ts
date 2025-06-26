@@ -2,11 +2,11 @@ import PlacementApplicationClient from './placementApplicationClient'
 import paths from '../paths/api'
 
 import { placementApplicationDecisionEnvelopeFactory, placementApplicationFactory } from '../testutils/factories'
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { SubmitPlacementApplication } from '../@types/shared'
 import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
-describeClient('placementApplicationClient', provider => {
+describeCas1NamespaceClient('placementApplicationClient', provider => {
   let placementApplicationClient: PlacementApplicationClient
 
   const token = 'token-1'

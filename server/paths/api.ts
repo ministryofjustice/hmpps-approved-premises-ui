@@ -14,6 +14,8 @@ const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placementId')
 const cas1Capacity = cas1PremisesSingle.path('capacity')
 const cas1DaySummary = cas1PremisesSingle.path('day-summary/:date')
+const cas1PlacementApplications = cas1Namespace.path('placement-applications')
+const cas1PlacementApplicationsSingle = cas1PlacementApplications.path(':id')
 const cas1PlacementRequests = cas1Namespace.path('placement-requests')
 const cas1PlacementRequestSingle = cas1PlacementRequests.path(':placementRequestId')
 const cas1SpaceBookings = cas1PlacementRequestSingle.path('space-bookings')
@@ -50,9 +52,6 @@ const taskSingle = tasks.path(':taskType/:id')
 
 const placementRequests = path('/placement-requests')
 const placementRequestsSingle = placementRequests.path(':placementRequestId')
-
-const placementApplications = path('/placement-applications')
-const placementApplicationsSingle = placementApplications.path(':id')
 
 const assessments = path('/assessments')
 const assessmentsSingle = assessments.path(':id')
@@ -183,12 +182,12 @@ export default {
     changeRequest: cas1PlacementRequestSingle.path('change-requests/:changeRequestId'),
   },
   placementApplications: {
-    update: placementApplicationsSingle,
-    create: placementApplications,
-    show: placementApplicationsSingle,
-    submit: placementApplicationsSingle.path('submission'),
-    submitDecision: placementApplicationsSingle.path('decision'),
-    withdraw: placementApplicationsSingle.path('withdraw'),
+    update: cas1PlacementApplicationsSingle,
+    create: cas1PlacementApplications,
+    show: cas1PlacementApplicationsSingle,
+    submit: cas1PlacementApplicationsSingle.path('submission'),
+    submitDecision: cas1PlacementApplicationsSingle.path('decision'),
+    withdraw: cas1PlacementApplicationsSingle.path('withdraw'),
   },
   people: {
     search: people.path('search'),
