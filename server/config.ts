@@ -51,7 +51,6 @@ export default {
     oasysDisabled: getFlag('OASYS_DISABLED'),
     v2MatchEnabled: getFlag('ENABLE_V2_MATCH'),
     pocEnabled: getFlag('ENABLE_POC'),
-    inactiveApplicationsTab: getFlag('ENABLE_INACTIVE_APPLICATIONS_TAB'),
   },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {
