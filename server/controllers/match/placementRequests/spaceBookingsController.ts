@@ -53,6 +53,7 @@ export default class {
         expectedDepartureDate: searchState.departureDate,
         criteria: searchState.roomCriteria,
         releaseType: placementRequest.releaseType,
+        isWomensApplication: placementRequest.application.isWomensApplication,
       })
 
       return res.render('match/placementRequests/spaceBookings/new', {
