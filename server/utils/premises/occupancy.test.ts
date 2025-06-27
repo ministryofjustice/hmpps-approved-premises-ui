@@ -242,19 +242,19 @@ describe('apOccupancy utils', () => {
         {
           key: { text: 'En-suite bathroom' },
           value: {
-            html: '<span class="govuk-grid-column-one-third">1 capacity</span><span class="govuk-grid-column-one-third">2 booked</span>-1 available',
+            html: '<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">1 capacity</div><div class="govuk-grid-column-one-third">2 booked</div><div class="govuk-grid-column-one-third">-1 available</div></div>',
           },
         },
         {
           key: { text: 'Step-free access' },
           value: {
-            html: '<span class="govuk-grid-column-one-third">1 capacity</span><span class="govuk-grid-column-one-third">1 booked</span>0 available',
+            html: '<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">1 capacity</div><div class="govuk-grid-column-one-third">1 booked</div><div class="govuk-grid-column-one-third">0 available</div></div>',
           },
         },
         {
           key: { text: 'Single room' },
           value: {
-            html: '<span class="govuk-grid-column-one-third">0 capacity</span><span class="govuk-grid-column-one-third">0 booked</span>0 available',
+            html: '<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">0 capacity</div><div class="govuk-grid-column-one-third">0 booked</div><div class="govuk-grid-column-one-third">0 available</div></div>',
           },
         },
       ]
@@ -298,7 +298,7 @@ describe('apOccupancy utils', () => {
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }))
       expect(row[4].html).toMatchStringIgnoringWhitespace(
-        `<ul class="govuk-list govuk-list__compact"><li>Suitable for active arson risk</li></ul>`,
+        `<ul class="govuk-list govuk-list--compact"><li>Suitable for active arson risk</li></ul>`,
       )
     }
     it('should generate a list of placement table rows', () => {
@@ -318,7 +318,7 @@ describe('apOccupancy utils', () => {
       expect(row[1].text).toEqual(summary.reason.name)
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(summary.startDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(summary.endDate, { format: 'short' }))
-      expect(row[4].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list__compact">
+      expect(row[4].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list--compact">
         ${summary.characteristics.map((characteristic: Cas1SpaceBookingCharacteristic) => `<li>${roomCharacteristicMap[characteristic]}</li>`).join('')}
       </ul>`)
     }

@@ -23,17 +23,12 @@
   }
 }
 
-.govuk-summary-list__row {
-  min-height: 1.5rem;
-  .text-grey {
-    color: govuk-colour('dark-grey');
-  }
+.govuk-summary-list__row .text-grey {
+  color: govuk-colour('dark-grey');
 }
 
-.govuk-summary-list__value {
-  .govuk-grid-column-one-third:first-child {
-    padding: 0;
-  }
+.govuk-grid-row--flex {
+  display: flex;
 }
 
 .govuk-summary-list--swap-bolding {

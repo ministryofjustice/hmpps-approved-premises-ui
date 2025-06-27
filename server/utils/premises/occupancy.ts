@@ -114,7 +114,7 @@ const availabilityRow = (name: string, available: number, booked: number, hideEm
     ? {
         key: { text: name },
         value: {
-          html: `<span class="govuk-grid-column-one-third">${available} capacity</span><span class="govuk-grid-column-one-third">${booked} booked</span>${available - booked} available`,
+          html: `<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">${available} capacity</div><div class="govuk-grid-column-one-third">${booked} booked</div><div class="govuk-grid-column-one-third">${available - booked} available</div></div>`,
         },
       }
     : null
@@ -142,7 +142,7 @@ export const daySummaryRows = (
   if (characteristicsMode !== 'none')
     characteristicAvailability.forEach(({ characteristic, availableBedsCount, bookingsCount }) => {
       if (!roomCharacteristics || roomCharacteristics.includes(characteristic)) {
-        if (['singleRow'].includes(characteristicsMode)) {
+        if (characteristicsMode === 'singleRow') {
           rows.push(
             availabilityRow(
               placementCriteriaLabels[characteristic],
@@ -199,7 +199,7 @@ export const tableCaptions = (
 }
 
 const itemListHtml = (items: Array<string>): { html: string } =>
-  htmlValue(`<ul class="govuk-list govuk-list__compact">
+  htmlValue(`<ul class="govuk-list govuk-list--compact">
     ${items.map((item: string) => `<li>${item}</li>`).join('')}
   </ul>
 `)
