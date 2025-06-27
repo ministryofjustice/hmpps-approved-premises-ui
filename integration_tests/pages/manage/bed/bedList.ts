@@ -20,6 +20,11 @@ export default class BedsListPage extends Page {
     this.shouldContainTableRows(rows)
   }
 
+  filterBeds(): void {
+    cy.contains('Step-free').click()
+    this.clickButton('Apply filters')
+  }
+
   clickBed(bed: Cas1BedDetail): void {
     cy.get(`a[data-cy-bedid="${bed.id}"]`).click()
   }

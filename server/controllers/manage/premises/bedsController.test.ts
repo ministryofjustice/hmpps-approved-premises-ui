@@ -10,7 +10,8 @@ import {
   userDetailsFactory,
 } from '../../../testutils/factories'
 import paths from '../../../paths/manage'
-import { bedActions, bedDetails, bedsActions, bedsTableRows } from '../../../utils/bedUtils'
+import * as bedUtils from '../../../utils/bedUtils'
+import { bedsTableHeader } from '../../../utils/bedUtils'
 
 describe('V2BedsController', () => {
   const token = 'SOME_TOKEN'
@@ -49,8 +50,8 @@ describe('V2BedsController', () => {
         bed,
         premises,
         pageHeading: `Bed ${bed.name}`,
-        actions: bedActions(bed, premises.id, request.session.user),
-        characteristicsSummaryList: bedDetails(bed),
+        actions: bedUtils.bedActions(bed, premises.id, request.session.user),
+        characteristicsSummaryList: bedUtils.characteristicsSummary(bed.characteristics),
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premises.id, bedId)
@@ -59,13 +60,20 @@ describe('V2BedsController', () => {
   })
 
   describe('index', () => {
-    it('should return the beds to the template', async () => {
-      const beds = cas1PremisesBedSummaryFactory.buildList(1)
-      const premises = cas1PremisesFactory.build()
-      request.params.premisesId = premises.id
+    const premises = cas1PremisesFactory.build()
+    const beds = [
+      ...cas1PremisesBedSummaryFactory.buildList(9),
+      cas1PremisesBedSummaryFactory.build({ characteristics: [] }),
+    ]
 
+    beforeEach(() => {
       premisesService.getBeds.mockResolvedValue(beds)
       premisesService.find.mockResolvedValue(premises)
+    })
+    it('should return the beds to the template', async () => {
+      jest.spyOn(bedUtils, 'calculateBedCounts').mockReturnValue({ hasEnSuite: 2 })
+
+      request.params.premisesId = premises.id
 
       const requestHandler = bedsController.index()
       await requestHandler(request, response, next)
@@ -73,13 +81,32 @@ describe('V2BedsController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/beds/index', {
         backLink: paths.premises.show({ premisesId: premises.id }),
         premises,
+        characteristicOptions: [{ checked: false, text: 'En-suite (2)', value: 'hasEnSuite' }],
         pageHeading: 'Manage beds',
-        actions: bedsActions(premises.id, request.session.user),
-        tableRows: bedsTableRows(beds, premises.id),
+        actions: bedUtils.bedsActions(premises.id, request.session.user),
+        tableRows: bedUtils.bedsTableRows(beds, premises.id),
+        tableHeader: bedsTableHeader(),
       })
 
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
       expect(premisesService.getBeds).toHaveBeenCalledWith(token, premises.id)
+    })
+
+    it('should filter the beds by characteristics', async () => {
+      request.params.premisesId = premises.id
+      request.query.characteristics = ['hasEnSuite']
+
+      await bedsController.index()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/beds/index',
+        expect.objectContaining({
+          tableRows: bedUtils.bedsTableRows(
+            beds.filter(({ characteristics }) => characteristics.includes('hasEnSuite')),
+            premises.id,
+          ),
+        }),
+      )
     })
   })
 })

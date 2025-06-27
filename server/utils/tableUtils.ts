@@ -6,6 +6,10 @@ import { pluralize } from './utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
+export const textCell = (text: string): TableCell => ({ text })
+
+export const htmlCell = (html: string): TableCell => ({ html })
+
 export const nameCell = (item: { personName?: string }): TableCell => ({ text: item.personName })
 
 export const crnCell = (item: { crn?: string }): TableCell => ({ text: item.crn })
