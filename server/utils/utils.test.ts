@@ -239,7 +239,13 @@ describe('linkTo', () => {
   it('allows hidden text to be specified', () => {
     expect(
       linkTo(path('/foo/:id')({ id: '123' }), { text: 'Hello', hiddenText: 'Hidden' }),
-    ).toMatchStringIgnoringWhitespace('<a href="/foo/123">Hello <span class="govuk-visually-hidden">Hidden</span></a>')
+    ).toMatchStringIgnoringWhitespace('<a href="/foo/123">Hello<span class="govuk-visually-hidden">Hidden</span></a>')
+  })
+
+  it('allows hidden prefix text to be specified', () => {
+    expect(
+      linkTo(path('/foo/:id')({ id: '123' }), { text: 'Hello', hiddenPrefix: 'Hidden' }),
+    ).toMatchStringIgnoringWhitespace('<a href="/foo/123"><span class="govuk-visually-hidden">Hidden</span>Hello</a>')
   })
 
   it('allows attributes to be specified', () => {

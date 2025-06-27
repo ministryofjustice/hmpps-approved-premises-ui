@@ -18,6 +18,12 @@ export default class BedsListPage extends Page {
   shouldShowBeds(beds: Array<Cas1PremisesBedSummary>, premisesId: Premises['id']): void {
     const rows = bedsTableRows(beds, premisesId)
     this.shouldContainTableRows(rows)
+    cy.contains(`Showing ${beds.length} beds`)
+  }
+
+  filterBeds(): void {
+    cy.contains('Step-free').click()
+    this.clickButton('Apply filters')
   }
 
   clickBed(bed: Cas1BedDetail): void {

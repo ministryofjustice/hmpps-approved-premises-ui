@@ -1,0 +1,44 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% macro filterWrapper(title) %}
+    <div class="search-and-filter">
+        <form method="get">
+            <h2 class="govuk-heading-m">{{ title }}</h2>
+            <div class="search-and-filter__row">
+                {{ caller() }}
+                {{ govukButton({
+                    text: 'Apply filters',
+                    preventDoubleClick: true
+                }) }}
+            </div>
+        </form>
+    </div>
+{% endmacro %}
+
+{% macro filterCheckboxes(name, legend, filterOptions) %}
+    {{ govukCheckboxes({
+        name: name,
+        classes: 'govuk-checkboxes--small govuk-checkboxes--inline',
+        fieldset: {
+            legend: {
+                text: legend,
+                classes: 'govuk-fieldset__legend govuk-fieldset__legend--s'
+            }
+        },
+        items: filterOptions
+    }) }}
+{% endmacro %}
+
+{% macro filterSelect(name,label, options) %}
+    {{ govukSelect({
+        id: name,
+        name: name,
+        label: {
+            text: label,
+            classes: 'govuk-label--s'
+        },
+        items: options
+    }) }}
+{% endmacro %}
