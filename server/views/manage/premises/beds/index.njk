@@ -1,7 +1,9 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "components/sortableTable/macro.njk" import sortableTable %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{% from "../../../partials/filters.njk" import filterWrapper, filterCheckboxes %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -17,7 +19,7 @@
 {% block content %}
     {% set headingHtml %}
         <span class="govuk-caption-l">
-            <a href="{{ backLink }}">{{ premises.name }}</a>
+            {{ premises.name }}
         </span>
         <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
     {% endset %}
@@ -29,14 +31,15 @@
         menus: actions
     }) }}
 
-    {{ govukTable({
+    {% call filterWrapper('Filter') %}
+        {{ filterCheckboxes('characteristics','Room characteristics',characteristicOptions) }}
+    {%- endcall %}
+
+    {{ sortableTable({
+        attributes: { 'data-module': 'moj-sortable-table' },
         captionClasses: "govuk-table__caption--m",
         firstCellIsHeader: true,
-        head: [
-            { text: "Room Name" },
-            { text: "Bed Name" },
-            { text: "Action" }
-        ],
+        head: tableHeader,
         rows: tableRows
     }) }}
 {% endblock %}

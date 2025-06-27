@@ -50,6 +50,19 @@ describe('characteristicsUtils', () => {
         '<span class="text-grey">Nothing here</span>',
       )
     })
+
+    it('should add a class if provided', () => {
+      const result = characteristicsBulletList(placementRequest.essentialCriteria, {
+        labels: roomCharacteristicMap,
+        classes: 'test-class',
+      })
+
+      expect(result).toMatchStringIgnoringWhitespace(`
+        <ul class="govuk-list govuk-list--bullet test-class">
+          <li>${roomCharacteristicMap.isStepFreeDesignated}</li>
+        </ul>
+      `)
+    })
   })
 
   describe('roomCharacteristicsInlineList', () => {

@@ -17,14 +17,14 @@ export const getRoomCharacteristicLabel = (characteristic: Cas1SpaceCharacterist
 
 export const characteristicsBulletList = (
   requirements: Array<Cas1SpaceCharacteristic | PlacementCriteria>,
-  options: { labels?: Record<string, string>; noneText?: string } = {},
+  options: { labels?: Record<string, string>; noneText?: string; classes?: string } = {},
 ): string => {
   const { labels = placementCriteriaLabels, noneText = 'None' } = options
 
   const listItems = Object.keys(labels).filter(key => ((requirements || []) as Array<string>).includes(key))
 
   return listItems.length
-    ? `<ul class="govuk-list govuk-list--bullet">${listItems.map((key: UiPlacementCriteria) => `<li>${labels[key]}</li>`).join('')}</ul>`
+    ? `<ul class="govuk-list govuk-list--bullet${options.classes ? ` ${options.classes}` : ''}">${listItems.map((key: UiPlacementCriteria) => `<li>${labels[key]}</li>`).join('')}</ul>`
     : `<span class="text-grey">${noneText}</span>`
 }
 

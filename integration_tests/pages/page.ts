@@ -473,7 +473,7 @@ export default abstract class Page {
     cy.get('tbody tr').should('have.length', rows.length)
 
     rows.forEach(row => {
-      cy.contains(this.textOrHtmlFromTableCell(row[0]))
+      cy.contains(this.textOrHtmlFromTableCell(row[1]))
         .parent()
         .within(() => {
           const cols = row.slice(1)

@@ -3,7 +3,7 @@ import { Cas1BedDetail, Cas1Premises, Premises } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { bedDetails } from '../../../../server/utils/bedUtils'
+import { characteristicsSummary } from '../../../../server/utils/bedUtils'
 
 export default class BedShowPage extends Page {
   constructor(readonly bedName: string) {
@@ -19,7 +19,7 @@ export default class BedShowPage extends Page {
     cy.get('.govuk-caption-l').contains(bed.roomName)
     cy.get('h1').contains(bed.name)
 
-    this.shouldContainSummaryListItems(bedDetails(bed).rows)
+    this.shouldContainSummaryListItems(characteristicsSummary(bed.characteristics).rows)
   }
 
   shouldLinkToPremises(premises: Cas1Premises): void {

@@ -1,8 +1,20 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import PremisesService from '../../../services/premisesService'
 import paths from '../../../paths/manage'
-import { bedActions, bedDetails, bedsActions, bedsTableRows } from '../../../utils/bedUtils'
+import {
+  bedActions,
+  characteristicsSummary,
+  bedsActions,
+  bedsTableHeader,
+  bedsTableRows,
+  calculateBedCounts,
+  filterBedsByCharacteristics,
+  generateCharacteristicsLabels,
+} from '../../../utils/bedUtils'
+import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
+import { makeArrayOfType } from '../../../utils/utils'
 
 export default class BedsController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -12,19 +24,29 @@ export default class BedsController {
       const {
         user: { token },
         params: { premisesId },
+        query,
       } = req
+
+      const filterCharacteristics = makeArrayOfType<Cas1SpaceBookingCharacteristic>(query.characteristics)
 
       const [premises, beds] = await Promise.all([
         this.premisesService.find(token, premisesId),
         this.premisesService.getBeds(token, premisesId),
       ])
 
+      const filteredBeds = filterBedsByCharacteristics(beds, filterCharacteristics as Array<Cas1SpaceCharacteristic>)
+
       return res.render('manage/premises/beds/index', {
         backLink: paths.premises.show({ premisesId }),
         premises,
         pageHeading: 'Manage beds',
         actions: bedsActions(premisesId, req.session.user),
-        tableRows: bedsTableRows(beds, premisesId),
+        tableRows: bedsTableRows(filteredBeds, premisesId),
+        tableHeader: bedsTableHeader(),
+        characteristicOptions: convertKeyValuePairToCheckBoxItems(
+          generateCharacteristicsLabels(calculateBedCounts(beds)),
+          filterCharacteristics as Array<string>,
+        ),
       })
     }
   }
@@ -45,7 +67,7 @@ export default class BedsController {
         premises,
         pageHeading: `Bed ${bed.name}`,
         actions: bedActions(bed, premisesId, req.session.user),
-        characteristicsSummaryList: bedDetails(bed),
+        characteristicsSummaryList: characteristicsSummary(bed.characteristics),
       })
     }
   }
