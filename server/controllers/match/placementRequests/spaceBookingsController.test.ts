@@ -14,7 +14,7 @@ import {
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import * as validationUtils from '../../../utils/validation'
-import { spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
+import * as matchUtils from '../../../utils/match'
 import { DateFormats } from '../../../utils/dateUtils'
 
 describe('SpaceBookingsController', () => {
@@ -68,7 +68,7 @@ describe('SpaceBookingsController', () => {
         submitLink: matchPaths.v2Match.placementRequests.spaceBookings.create(params),
         placementRequest: placementRequestDetail,
         premises,
-        summaryListRows: spaceBookingConfirmationSummaryListRows({
+        summaryListRows: matchUtils.spaceBookingConfirmationSummaryListRows({
           premises,
           expectedArrivalDate: searchState.arrivalDate,
           expectedDepartureDate: searchState.departureDate,
@@ -80,6 +80,25 @@ describe('SpaceBookingsController', () => {
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
       expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
+    })
+
+    it("should render the summary list without AP area for a women's AP application", async () => {
+      jest.spyOn(matchUtils, 'spaceBookingConfirmationSummaryListRows')
+
+      const womensPlacementRequestDetail = cas1PlacementRequestDetailFactory.build({
+        application: { isWomensApplication: true },
+      })
+
+      placementRequestService.getPlacementRequest.mockResolvedValue(womensPlacementRequestDetail)
+
+      const requestHandler = spaceBookingsController.new()
+      await requestHandler(request, response, next)
+
+      expect(matchUtils.spaceBookingConfirmationSummaryListRows).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isWomensApplication: true,
+        }),
+      )
     })
 
     it('redirects to the suitability search if no search state is present', async () => {
