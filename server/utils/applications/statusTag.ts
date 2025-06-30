@@ -6,7 +6,6 @@ export const APPLICATION_SUITABLE = 'Application suitable' as const
 export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
   static readonly statuses: Record<ApplicationStatus, string> = {
     started: 'Not submitted',
-    submitted: 'Application submitted',
     rejected: 'Application rejected',
     awaitingAssesment: 'Awaiting assessment',
     unallocatedAssesment: 'Unallocated assessment',
@@ -22,7 +21,6 @@ export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
 
   static readonly colours: Record<ApplicationStatus, string> = {
     started: 'blue',
-    submitted: '',
     rejected: 'red',
     awaitingAssesment: 'blue',
     unallocatedAssesment: 'blue',

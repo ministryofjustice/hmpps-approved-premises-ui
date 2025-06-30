@@ -39,7 +39,7 @@ export default class ListPage extends Page {
   }
 
   shouldShowSubmittedApplications(): void {
-    this.shouldShowApplications(this.submittedApplications, 'Application submitted')
+    this.shouldShowApplications(this.submittedApplications, 'Awaiting assessment')
   }
 
   shouldShowInactiveApplications(): void {

@@ -66,8 +66,7 @@ describe('ApplicationService', () => {
   })
 
   describe('getAllForLoggedInUser', () => {
-    // TODO: Remove type exclusion when 'submitted' status has been removed from API
-    const applications: Record<Exclude<Cas1ApplicationStatus, 'submitted'>, Array<Cas1ApplicationSummary>> = {
+    const applications: Record<Cas1ApplicationStatus, Array<Cas1ApplicationSummary>> = {
       started: cas1ApplicationSummaryFactory.buildList(1, { status: 'started' }),
       requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(1, {
         status: 'requestedFurtherInformation',
