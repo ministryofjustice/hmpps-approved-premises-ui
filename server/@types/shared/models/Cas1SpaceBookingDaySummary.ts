@@ -4,6 +4,9 @@
 /* eslint-disable */
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { PersonSummary } from './PersonSummary';
+/**
+ * @deprecated
+ */
 export type Cas1SpaceBookingDaySummary = {
     id: string;
     person: PersonSummary;
