@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1SpaceBookingDates = {
-    id: string;
     /**
      * actual arrival date or, if not known, the expected arrival date
      */
@@ -12,5 +11,6 @@ export type Cas1SpaceBookingDates = {
      * actual departure date or, if not known, the expected departure date
      */
     canonicalDepartureDate: string;
+    id: string;
 };
 

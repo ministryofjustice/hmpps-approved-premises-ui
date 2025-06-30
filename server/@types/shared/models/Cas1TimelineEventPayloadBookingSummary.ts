@@ -4,9 +4,9 @@
 /* eslint-disable */
 import type { NamedId } from './NamedId';
 export type Cas1TimelineEventPayloadBookingSummary = {
-    bookingId: string;
-    premises: NamedId;
     arrivalDate: string;
+    bookingId: string;
     departureDate: string;
+    premises: NamedId;
 };
 

@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApprovedPremisesAssessmentSummary as AssessmentSummary, Task, Unit } from '@approved-premises/api'
+import { ApprovedPremisesAssessmentSummary as AssessmentSummary, Task } from '@approved-premises/api'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
@@ -321,8 +321,8 @@ describe('assessmentsController', () => {
       })
 
       it('copies legacy isArsonDesignated to isArsonSuitable (APS-1876)', async () => {
-        const data: Unit = { 'matching-information': { 'matching-information': { isArsonDesignated: 'essential' } } }
-        const expectedData: Unit = {
+        const data = { 'matching-information': { 'matching-information': { isArsonDesignated: 'essential' } } }
+        const expectedData = {
           'matching-information': {
             'matching-information': { isArsonDesignated: 'essential', isArsonSuitable: 'essential' },
           },

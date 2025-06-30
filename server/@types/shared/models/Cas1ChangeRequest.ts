@@ -5,17 +5,22 @@
 import type { Cas1ChangeRequestDecision } from './Cas1ChangeRequestDecision';
 import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
 import type { NamedId } from './NamedId';
-import type { Unit } from './Unit';
 export type Cas1ChangeRequest = {
-    id: string;
-    type: Cas1ChangeRequestType;
     createdAt: string;
-    requestReason: NamedId;
     decision?: Cas1ChangeRequestDecision;
-    decisionJson?: Unit;
-    requestJson: Unit;
+    /**
+     * Any object
+     */
+    decisionJson?: any;
+    id: string;
     rejectionReason?: NamedId;
+    /**
+     * Any object
+     */
+    requestJson: any;
+    requestReason: NamedId;
     spaceBookingId: string;
+    type: Cas1ChangeRequestType;
     updatedAt: string;
 };
 

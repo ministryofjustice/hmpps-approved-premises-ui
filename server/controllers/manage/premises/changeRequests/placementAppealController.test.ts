@@ -1,4 +1,4 @@
-import type { Cas1NewChangeRequest, Cas1SpaceBooking, NamedId, Unit } from '@approved-premises/api'
+import type { Cas1NewChangeRequest, Cas1SpaceBooking, NamedId } from '@approved-premises/api'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
@@ -203,7 +203,7 @@ describe('placementAppealController', () => {
         reasonId: 'staffConflictOfInterestId',
         type: 'placementAppeal',
         spaceBookingId: placement.id,
-        requestJson: JSON.stringify(requestJson) as unknown as Unit,
+        requestJson: JSON.stringify(requestJson),
       }
 
       expect(placementRequestService.createPlacementAppeal).toHaveBeenCalledWith(

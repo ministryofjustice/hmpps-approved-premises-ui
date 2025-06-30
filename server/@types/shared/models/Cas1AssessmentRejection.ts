@@ -2,12 +2,17 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Unit } from './Unit';
+/**
+ * Rejection info
+ */
 export type Cas1AssessmentRejection = {
-    document: Unit;
-    rejectionRationale: string;
     agreeWithShortNoticeReason?: boolean;
     agreeWithShortNoticeReasonComments?: string;
+    /**
+     * Any object
+     */
+    document: any;
     reasonForLateApplication?: string;
+    rejectionRationale: string;
 };
 

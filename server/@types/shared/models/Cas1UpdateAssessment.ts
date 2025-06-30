@@ -2,8 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Unit } from './Unit';
+/**
+ * Updated assessment
+ */
 export type Cas1UpdateAssessment = {
-    data: Record<string, Unit>;
+    data: Record<string, any>;
 };
 

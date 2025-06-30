@@ -1,6 +1,5 @@
 import { when } from 'jest-when'
 import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
-import { Unit } from '@approved-premises/api'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -428,7 +427,7 @@ describe('matchingInformationUtils', () => {
           isArsonDesignated: 'essential',
           isWheelchairDesignated: 'desirable',
         }
-        const assessmentData: Unit = {
+        const assessmentData = {
           'matching-information': {
             'matching-information': matchingInformationBody,
           },
@@ -448,7 +447,7 @@ describe('matchingInformationUtils', () => {
           isWheelchairDesignated: 'desirable',
           isArsonSuitable: 'notRelevant',
         }
-        const assessmentData: Unit = {
+        const assessmentData = {
           'matching-information': {
             'matching-information': matchingInformationBody,
           },

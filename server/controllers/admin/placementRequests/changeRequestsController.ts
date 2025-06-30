@@ -7,7 +7,6 @@ import {
   Cas1RejectChangeRequest,
   Cas1SpaceBooking,
   NamedId,
-  Unit,
 } from '@approved-premises/api'
 import { ValidationError } from '../../../utils/errors'
 import { PlacementRequestService, PlacementService } from '../../../services'
@@ -116,7 +115,7 @@ export default class ChangeRequestsController {
             'placementAppeal',
           )
           const rejectChangeRequest: Cas1RejectChangeRequest = {
-            decisionJson: { notes } as unknown as Record<string, Unit>, // TODO: Incorrect API type - see APS-2353
+            decisionJson: { notes },
             rejectionReasonId: getChangeRequestReasonId(decision, rejectionReasons),
           }
 

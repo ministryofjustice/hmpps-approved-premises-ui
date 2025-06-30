@@ -3,9 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1ApplicationTimeline } from './Cas1ApplicationTimeline';
-import type { Person } from './Person';
+import type { FullPerson } from './FullPerson';
+import type { RestrictedPerson } from './RestrictedPerson';
+import type { UnknownPerson } from './UnknownPerson';
 export type Cas1PersonalTimeline = {
-    person: Person;
     applications: Array<Cas1ApplicationTimeline>;
+    person: (FullPerson | RestrictedPerson | UnknownPerson);
 };
 

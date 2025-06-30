@@ -18,7 +18,6 @@ import cancellationFactory from './cancellation'
 import clarificationNoteFactory from './clarificationNote'
 import contingencyPlanPartnerFactory from './contingencyPlanPartner'
 import contingencyPlanQuestionsBodyFactory from './contingencyPlanQuestionsBody'
-import dateCapacityFactory from './dateCapacity'
 import dateChangeFactory from './dateChange'
 import departureFactory from './departure'
 import documentFactory from './document'
@@ -156,7 +155,6 @@ export {
   contingencyPlanQuestionsBodyFactory,
   cruManagementAreaFactory,
   dateChangeFactory,
-  dateCapacityFactory,
   departureFactory,
   departureReasonFactory,
   documentFactory,

@@ -2,15 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
 import type { Cas1ApplicationStatus } from './Cas1ApplicationStatus';
 import type { Cas1TimelineEvent } from './Cas1TimelineEvent';
-import type { User } from './User';
+import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
 export type Cas1ApplicationTimeline = {
-    id: string;
     createdAt: string;
+    createdBy?: (ApprovedPremisesUser | TemporaryAccommodationUser);
+    id: string;
     isOfflineApplication: boolean;
     status?: Cas1ApplicationStatus;
-    createdBy?: User;
     timelineEvents: Array<Cas1TimelineEvent>;
 };
 

@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1OverbookingRange = {
-    startInclusive: string;
     /**
      * This can be the same as the start date if overbooked for one night
      */
     endInclusive: string;
+    startInclusive: string;
 };
 

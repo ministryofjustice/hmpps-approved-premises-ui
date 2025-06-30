@@ -2,18 +2,21 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Person } from './Person';
+import type { FullPerson } from './FullPerson';
+import type { PlacementRequestStatus } from './PlacementRequestStatus';
+import type { RestrictedPerson } from './RestrictedPerson';
+import type { UnknownPerson } from './UnknownPerson';
 export type Cas1PlacementRequestSummary = {
-    requestedPlacementDuration?: number;
-    requestedPlacementArrivalDate?: string;
-    id: string;
-    person: Person;
-    personTier?: string;
     applicationId?: string;
-    placementRequestStatus: 'matched' | 'unableToMatch' | 'notMatched';
     applicationSubmittedDate?: string;
-    isParole: boolean;
-    firstBookingPremisesName?: string;
     firstBookingArrivalDate?: string;
+    firstBookingPremisesName?: string;
+    id: string;
+    isParole: boolean;
+    person: (FullPerson | RestrictedPerson | UnknownPerson);
+    personTier?: string;
+    placementRequestStatus: PlacementRequestStatus;
+    requestedPlacementArrivalDate?: string;
+    requestedPlacementDuration?: number;
 };
 

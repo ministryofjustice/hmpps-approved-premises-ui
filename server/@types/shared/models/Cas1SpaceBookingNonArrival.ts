@@ -5,7 +5,7 @@
 import type { NamedId } from './NamedId';
 export type Cas1SpaceBookingNonArrival = {
     confirmedAt?: string;
-    reason?: NamedId;
     notes?: string;
+    reason?: NamedId;
 };
 

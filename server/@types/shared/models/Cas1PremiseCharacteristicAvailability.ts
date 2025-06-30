@@ -4,7 +4,6 @@
 /* eslint-disable */
 import type { Cas1SpaceBookingCharacteristic } from './Cas1SpaceBookingCharacteristic';
 export type Cas1PremiseCharacteristicAvailability = {
-    characteristic: Cas1SpaceBookingCharacteristic;
     /**
      * the number of available beds with this characteristic
      */
@@ -13,5 +12,6 @@ export type Cas1PremiseCharacteristicAvailability = {
      * the number of bookings requiring this characteristic
      */
     bookingsCount: number;
+    characteristic: Cas1SpaceBookingCharacteristic;
 };
 

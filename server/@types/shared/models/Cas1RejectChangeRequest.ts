@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Unit } from './Unit';
 export type Cas1RejectChangeRequest = {
+    decisionJson: Record<string, any>;
     rejectionReasonId: string;
-    decisionJson: Record<string, Unit>;
 };
 

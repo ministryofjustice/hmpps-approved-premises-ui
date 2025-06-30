@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { AppealJson, AppealFormData, ObjectWithDateParts } from '@approved-premises/ui'
-import { Cas1NewChangeRequest, Unit } from '@approved-premises/api'
+import { Cas1NewChangeRequest } from '@approved-premises/api'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import { PlacementRequestService, PremisesService } from '../../../../services'
 import {
@@ -131,7 +131,7 @@ export default class PlacementAppealController {
           spaceBookingId: placementId,
           type: 'placementAppeal',
           reasonId,
-          requestJson: JSON.stringify(requestJson) as unknown as Unit,
+          requestJson: JSON.stringify(requestJson),
         }
 
         await this.placementRequestService.createPlacementAppeal(

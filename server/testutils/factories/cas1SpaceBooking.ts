@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker'
 import type {
   Cas1KeyWorkerAllocation,
   Cas1SpaceBooking,
+  Cas1SpaceBookingAction,
   Cas1SpaceBookingCancellation,
   Cas1SpaceBookingNonArrival,
   Person,
@@ -132,7 +133,7 @@ export default Cas1SpaceBookingFactory.define(() => {
     deliusEventNumber: String(faker.number.int()),
     nonArrival: undefined as Cas1SpaceBookingNonArrival,
     cancellation: undefined as Cas1SpaceBookingCancellation,
-    allowedActions: {},
+    allowedActions: [] as Array<Cas1SpaceBookingAction>,
     openChangeRequests: cas1ChangeRequestSummary.buildList(3),
   }
 })

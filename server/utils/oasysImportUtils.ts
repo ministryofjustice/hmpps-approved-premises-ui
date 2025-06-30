@@ -1,4 +1,3 @@
-import { DataServices, OasysImportArrays, OasysPage } from '../@types/ui'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplication,
@@ -6,8 +5,8 @@ import {
   Cas1OASysGroupName,
   Cas1OASysSupportingInformationQuestionMetaData,
   OASysQuestion,
-  OASysSection,
-} from '../@types/shared'
+} from '@approved-premises/api'
+import { DataServices, OasysImportArrays, OasysPage } from '@approved-premises/ui'
 
 import { SessionDataError } from './errors'
 import { escape } from './formUtils'
@@ -141,7 +140,7 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
     if (!optionalOasysSections) throw new SessionDataError('No optional OASys imports')
 
     return [...optionalOasysSections.needsLinkedToReoffending, ...optionalOasysSections.otherNeeds]
-      .map((oasysSection: OASysSection) => oasysSection?.section)
+      .map(oasysSection => oasysSection?.section)
       .filter(section => !!section)
   } catch (error) {
     throw new SessionDataError(`Oasys supporting information error: ${error}`)
