@@ -1,7 +1,7 @@
-import { ApprovedPremisesApplication, Unit } from '@approved-premises/api'
+import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
 import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
-import { placementDates } from '../../utils/match/placementDates'
+import { placementDates } from '../../utils/match'
 import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
 import {
@@ -230,7 +230,9 @@ const defaultMatchingInformationValues = (
 }
 
 // TODO: remove once arson remapping (APS-1876) is completed
-export const remapArsonAssessmentData = (assessmentData: Unit): Unit => {
+export const remapArsonAssessmentData = (
+  assessmentData: ApprovedPremisesAssessment['data'],
+): ApprovedPremisesAssessment['data'] => {
   if (assessmentData?.['matching-information']?.['matching-information']) {
     const matchingInformationBody: MatchingInformationBody = {
       ...assessmentData['matching-information']['matching-information'],

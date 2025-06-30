@@ -530,10 +530,6 @@ export type AppealJson<K = ChangeRequestReason> = {
   [P in `${K}Detail`]?: string
 }
 
-export type ChangeRequestDecisionJson = {
-  notes: string
-}
-
 export type AppealFormData = ObjectWithDateParts<'approvalDate'> & AppealJson
 
 export type DateRange = {
