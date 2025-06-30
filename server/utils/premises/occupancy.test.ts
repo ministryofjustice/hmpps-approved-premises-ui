@@ -3,14 +3,14 @@ import {
   Cas1OutOfServiceBedSummary,
   Cas1PremiseCapacityForDay,
   type Cas1SpaceBookingCharacteristic,
-  Cas1SpaceBookingDaySummary,
+  Cas1SpaceBookingSummary,
 } from '@approved-premises/api'
 import {
   cas1OutOfServiceBedSummaryFactory,
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
   cas1PremisesDaySummaryFactory,
-  cas1SpaceBookingDaySummaryFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../testutils/factories'
 import {
   ColumnDefinition,
@@ -32,6 +32,7 @@ import { displayName } from '../personUtils'
 import config from '../../config'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { sortHeader } from '../sortHeader'
+import { canonicalDates } from '../placements'
 
 describe('apOccupancy utils', () => {
   describe('dayStatusFromDayCapacity', () => {
@@ -290,20 +291,22 @@ describe('apOccupancy utils', () => {
   })
 
   describe('placementTableRows', () => {
-    const checkRow = (placement: Cas1SpaceBookingDaySummary, row: Array<{ text?: string; html?: string }>) => {
+    const checkRow = (placement: Cas1SpaceBookingSummary, row: Array<{ text?: string; html?: string }>) => {
+      const { arrivalDate, departureDate } = canonicalDates(placement)
+
       expect(row[0].html).toMatchStringIgnoringWhitespace(
         `<a href="/manage/premises/premises-Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
       )
       expect(row[1].html).toEqual(getTierOrBlank(placement.tier))
-      expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }))
-      expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }))
+      expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
+      expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
       expect(row[4].html).toMatchStringIgnoringWhitespace(
         `<ul class="govuk-list govuk-list--compact"><li>Suitable for active arson risk</li></ul>`,
       )
     }
     it('should generate a list of placement table rows', () => {
-      const placements = cas1SpaceBookingDaySummaryFactory.buildList(5, {
-        essentialCharacteristics: ['isArsonSuitable'],
+      const placements = cas1SpaceBookingSummaryFactory.buildList(5, {
+        characteristics: ['isArsonSuitable'],
       })
       const rows = placementTableRows('premises-Id', placements)
       placements.forEach((placement, index) => checkRow(placement, rows[index]))
@@ -348,7 +351,7 @@ describe('apOccupancy utils', () => {
     it('should generate detailed table captions with no characteristics', () => {
       const captions = tableCaptions(daySummary, [], true)
       expect(captions).toEqual({
-        outOfServiceBedCaption: '5 out of service beds on Wed 12 Feb 2025',
+        outOfServiceBedCaption: '4 out of service beds on Wed 12 Feb 2025',
         placementTableCaption: '5 people booked in on Wed 12 Feb 2025',
       })
     })
@@ -357,7 +360,7 @@ describe('apOccupancy utils', () => {
       const captions = tableCaptions(daySummary, ['isArsonSuitable', 'isStepFreeDesignated'], true)
       expect(captions).toEqual({
         outOfServiceBedCaption:
-          '5 out of service beds on Wed 12 Feb 2025 with: suitable for active arson risk and step-free',
+          '4 out of service beds on Wed 12 Feb 2025 with: suitable for active arson risk and step-free',
         placementTableCaption:
           '5 people booked in on Wed 12 Feb 2025 requiring: suitable for active arson risk and step-free',
       })

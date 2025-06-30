@@ -171,7 +171,7 @@ describe('AP occupancyViewController', () => {
           'asc',
           '/manage/premises/some-uuid/occupancy/day/2025-01-01',
         ),
-        placementTableRows: placementTableRows(premisesId, premisesDaySummary.spaceBookings),
+        placementTableRows: placementTableRows(premisesId, premisesDaySummary.spaceBookingSummaries),
         outOfServiceBedCaption: 'Out of service beds on Wed 1 Jan 2025',
         outOfServiceBedTableHeader: tableHeader(outOfServiceBedColumnMap, 'personName', 'asc', ''),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, premisesDaySummary.outOfServiceBeds),

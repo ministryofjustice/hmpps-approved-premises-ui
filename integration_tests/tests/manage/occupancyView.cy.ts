@@ -44,7 +44,7 @@ context('Premises occupancy', () => {
       sortBy: 'personName',
       perPage: 2000,
     })
-    cy.task('stubPremiseCapacity', {
+    cy.task('stubPremisesCapacity', {
       premisesId: premises.id,
       startDate,
       endDate: DateFormats.dateObjToIsoDate(addDays(endDate, -1)),
@@ -72,7 +72,7 @@ context('Premises occupancy', () => {
 
     it('should allow the user to change the calendar duration', () => {
       const endDate26 = DateFormats.dateObjToIsoDate(addDays(startDate, 7 * 26))
-      cy.task('stubPremiseCapacity', {
+      cy.task('stubPremisesCapacity', {
         premisesId: premises.id,
         startDate,
         endDate: DateFormats.dateObjToIsoDate(addDays(endDate26, -1)),
@@ -96,7 +96,7 @@ context('Premises occupancy', () => {
       const newStartDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5))
       const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5 + 12 * 7))
 
-      cy.task('stubPremiseCapacity', {
+      cy.task('stubPremisesCapacity', {
         premisesId: premises.id,
         startDate: newStartDate,
         endDate: DateFormats.dateObjToIsoDate(addDays(newEndDate, -1)),
@@ -123,7 +123,7 @@ context('Premises occupancy', () => {
       const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5 + 12 * 7))
       const badStartDate = '2023-02-29'
 
-      cy.task('stubPremiseCapacity', {
+      cy.task('stubPremisesCapacity', {
         premisesId: premises.id,
         startDate: newStartDate,
         endDate: DateFormats.dateObjToIsoDate(addDays(newEndDate, -1)),
@@ -219,7 +219,7 @@ context('Premises day occupancy', () => {
       // And I should not see a warning banner
       summaryPage.shouldNotShowBanner()
       // And I should see a list of placements
-      summaryPage.shouldShowListOfPlacements(premisesDaySummary.spaceBookings)
+      summaryPage.shouldShowListOfPlacements(premisesDaySummary.spaceBookingSummaries)
       // And I should see a list of out-of-service bed records
       summaryPage.shouldShowListOfOutOfServiceBeds(premisesDaySummary.outOfServiceBeds)
     })

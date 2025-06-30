@@ -512,7 +512,7 @@ describe('OccupancyViewController', () => {
           undefined,
           `${pathPrefix}/date/2025-03-23`,
         ),
-        placementTableRows: placementTableRows(premises.id, premisesDaySummary.spaceBookings),
+        placementTableRows: placementTableRows(premises.id, premisesDaySummary.spaceBookingSummaries),
       })
     })
 
