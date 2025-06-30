@@ -2,8 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CharacteristicPair = {
-    propertyName?: string;
-    name: string;
+export type RetryDlqResult = {
+    messagesFoundCount: number;
 };
 

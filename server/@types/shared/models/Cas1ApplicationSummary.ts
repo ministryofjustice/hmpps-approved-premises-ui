@@ -3,25 +3,27 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApprovedPremisesApplicationStatus } from './ApprovedPremisesApplicationStatus';
-import type { Person } from './Person';
+import type { FullPerson } from './FullPerson';
 import type { PersonRisks } from './PersonRisks';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
+import type { RestrictedPerson } from './RestrictedPerson';
+import type { UnknownPerson } from './UnknownPerson';
 export type Cas1ApplicationSummary = {
-    id: string;
-    person: Person;
+    arrivalDate?: string;
     createdAt: string;
-    submittedAt?: string;
-    isWomensApplication?: boolean;
-    isPipeApplication?: boolean;
+    createdByUserId: string;
+    hasRequestsForPlacement: boolean;
+    id: string;
     isEmergencyApplication?: boolean;
     isEsapApplication?: boolean;
-    arrivalDate?: string;
-    risks?: PersonRisks;
-    createdByUserId: string;
-    status: ApprovedPremisesApplicationStatus;
-    tier?: string;
+    isPipeApplication?: boolean;
     isWithdrawn: boolean;
+    isWomensApplication?: boolean;
+    person: (FullPerson | RestrictedPerson | UnknownPerson);
     releaseType?: ReleaseTypeOption;
-    hasRequestsForPlacement: boolean;
+    risks?: PersonRisks;
+    status: ApprovedPremisesApplicationStatus;
+    submittedAt?: string;
+    tier?: string;
 };
 

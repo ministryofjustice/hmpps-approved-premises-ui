@@ -3,15 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1NewDeparture = {
+    departureDate?: string;
     /**
      * use seperate date/time fields
      * @deprecated
      */
     departureDateTime?: string;
-    departureDate?: string;
     departureTime?: string;
-    reasonId: string;
     moveOnCategoryId?: string;
     notes?: string;
+    reasonId: string;
 };
 

@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1OutOfServiceBedCancellation = {
-    id: string;
     createdAt: string;
+    id: string;
     notes?: string;
 };
 

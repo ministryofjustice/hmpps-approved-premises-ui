@@ -9,17 +9,17 @@ export type Cas1SpaceSearchParameters = {
      */
     applicationId: string;
     /**
+     * The number of days the space is needed, from the start date
+     */
+    durationInDays: number;
+    spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
+    /**
      * The date the space is required from
      */
     startDate: string;
     /**
-     * The number of days the space is needed, from the start date
-     */
-    durationInDays: number;
-    /**
      * The 'target' location, in the form of a postcode district
      */
     targetPostcodeDistrict: string;
-    spaceCharacteristics?: Array<Cas1SpaceCharacteristic>;
 };
 

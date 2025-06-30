@@ -6,18 +6,18 @@ import type { ApType } from './ApType';
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { NamedId } from './NamedId';
 export type Cas1PremisesSearchResultSummary = {
-    id: string;
-    apType: ApType;
-    name: string;
-    /**
-     * Full address, excluding postcode
-     */
-    fullAddress: string;
-    postcode?: string;
     apArea: NamedId;
+    apType: ApType;
     /**
      * Room and premise characteristics
      */
     characteristics: Array<Cas1SpaceCharacteristic>;
+    /**
+     * Full address, excluding postcode
+     */
+    fullAddress: string;
+    id: string;
+    name: string;
+    postcode?: string;
 };
 

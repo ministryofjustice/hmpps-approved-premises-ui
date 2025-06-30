@@ -4,11 +4,6 @@
 /* eslint-disable */
 import type { Cas1PremiseCharacteristicAvailability } from './Cas1PremiseCharacteristicAvailability';
 export type Cas1PremiseCapacityForDay = {
-    date: string;
-    /**
-     * total bed count including temporarily unavailable beds (e.g. out of service beds). this does not consider bookings.
-     */
-    totalBedCount: number;
     /**
      * total bed count excluding temporarily unavailable beds (e.g. out of service beds). this does not consider bookings.
      */
@@ -18,5 +13,10 @@ export type Cas1PremiseCapacityForDay = {
      */
     bookingCount: number;
     characteristicAvailability: Array<Cas1PremiseCharacteristicAvailability>;
+    date: string;
+    /**
+     * total bed count including temporarily unavailable beds (e.g. out of service beds). this does not consider bookings.
+     */
+    totalBedCount: number;
 };
 

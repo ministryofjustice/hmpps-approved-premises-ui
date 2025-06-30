@@ -4,16 +4,16 @@
 /* eslint-disable */
 import type { NamedId } from './NamedId';
 export type Cas1PremisesBasicSummary = {
-    id: string;
-    name: string;
-    apCode?: string;
     apArea: NamedId;
+    apCode?: string;
     bedCount: number;
-    supportsSpaceBookings: boolean;
     /**
      * Full address, excluding postcode
      */
     fullAddress: string;
+    id: string;
+    name: string;
     postcode: string;
+    supportsSpaceBookings: boolean;
 };
 

@@ -5,8 +5,11 @@
 import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContentPayload';
 import type { Cas1TimelineEventPayloadBookingSummary } from './Cas1TimelineEventPayloadBookingSummary';
 export type Cas1BookingCancelledContentPayload = (Cas1TimelineEventContentPayload & {
+    appealChangeRequestId?: string;
+    booking?: Cas1TimelineEventPayloadBookingSummary;
+    cancellationReason?: string;
+} & {
     booking: Cas1TimelineEventPayloadBookingSummary;
     cancellationReason: string;
-    appealChangeRequestId?: string;
 });
 

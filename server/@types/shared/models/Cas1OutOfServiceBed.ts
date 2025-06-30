@@ -9,24 +9,24 @@ import type { Cas1OutOfServiceBedStatus } from './Cas1OutOfServiceBedStatus';
 import type { NamedId } from './NamedId';
 import type { Temporality } from './Temporality';
 export type Cas1OutOfServiceBed = {
-    id: string;
+    apArea: NamedId;
+    bed: NamedId;
+    cancellation?: Cas1OutOfServiceBedCancellation;
     createdAt: string;
-    startDate: string;
+    daysLostCount: number;
     /**
      * This date is inclusive. The bed will be unavailable for the whole of the day
      */
     endDate: string;
-    bed: NamedId;
-    room: NamedId;
+    id: string;
+    notes?: string;
     premises: NamedId;
-    apArea: NamedId;
     reason: Cas1OutOfServiceBedReason;
     referenceNumber?: string;
-    notes?: string;
-    daysLostCount: number;
-    temporality: Temporality;
-    status: Cas1OutOfServiceBedStatus;
-    cancellation?: Cas1OutOfServiceBedCancellation | null;
     revisionHistory: Array<Cas1OutOfServiceBedRevision>;
+    room: NamedId;
+    startDate: string;
+    status: Cas1OutOfServiceBedStatus;
+    temporality: Temporality;
 };
 

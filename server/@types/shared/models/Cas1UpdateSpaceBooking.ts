@@ -9,12 +9,12 @@ export type Cas1UpdateSpaceBooking = {
      */
     arrivalDate?: string;
     /**
-     * Only provided if the departure date has changed
-     */
-    departureDate?: string;
-    /**
      * Only provided if characteristics have changed
      */
     characteristics?: Array<Cas1SpaceBookingCharacteristic>;
+    /**
+     * Only provided if the departure date has changed
+     */
+    departureDate?: string;
 };
 
