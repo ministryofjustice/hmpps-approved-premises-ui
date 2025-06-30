@@ -299,7 +299,7 @@ describe('utils', () => {
       requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(2, {
         status: 'requestedFurtherInformation',
       }),
-      submitted: cas1ApplicationSummaryFactory.buildList(6, { status: 'submitted' }),
+      submitted: cas1ApplicationSummaryFactory.buildList(6, { status: 'awaitingAssesment' }),
       inactive: cas1ApplicationSummaryFactory.buildList(4, { status: 'expired' }),
     }
 
@@ -663,9 +663,9 @@ describe('utils', () => {
   })
 
   describe('actionsCell', () => {
-    it.each(['started', 'requestedFurtherInformation'] as const)(
+    it.each(['started', 'requestedFurtherInformation'] as Array<ApplicationStatus>)(
       'returns a link to withdraw the application when the status is %s',
-      (status: ApplicationStatus) => {
+      status => {
         const applicationSummary = cas1ApplicationSummaryFactory.build({
           id: 'an-application-id',
           status,
@@ -678,7 +678,7 @@ describe('utils', () => {
       },
     )
 
-    it.each(['awaitingPlacement', 'pendingPlacementRequest'] as const)(
+    it.each(['awaitingPlacement', 'pendingPlacementRequest'] as Array<ApplicationStatus>)(
       'returns a link to request for placement of the application when the status is %s and hasRequestsForPlacement is false',
       status => {
         const applicationSummary = cas1ApplicationSummaryFactory.build({
@@ -693,9 +693,9 @@ describe('utils', () => {
       },
     )
 
-    it.each(['rejected', 'withdrawn', 'submitted'])(
+    it.each(['rejected', 'withdrawn', 'awaitingAssesment'] as Array<ApplicationStatus>)(
       'does not return a link to withdraw the application if the status is %s',
-      (status: ApplicationStatus) => {
+      status => {
         const applicationSummary = cas1ApplicationSummaryFactory.build({
           id: 'an-application-id',
           status,

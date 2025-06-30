@@ -20,7 +20,7 @@ context('Applications dashboard', () => {
   it('shows the dashboard ', () => {
     // Given there are applications in the database
     const inProgressApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'started' })
-    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'submitted' })
+    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingAssesment' })
     const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
       status: 'requestedFurtherInformation',
     })
@@ -82,7 +82,7 @@ context('Applications dashboard', () => {
       status: 'started',
       person: personFactory.build({ isRestricted: true }),
     })
-    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'submitted' })
+    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingAssesment' })
     const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
       status: 'requestedFurtherInformation',
     })

@@ -25,7 +25,7 @@ context('show applications', () => {
     // Given I have completed an application
     const timeline = cas1TimelineEventFactory.buildList(10)
 
-    const updatedApplication = { ...this.application, status: 'submitted', document: applicationDocument }
+    const updatedApplication = { ...this.application, status: 'awaitingAssesment', document: applicationDocument }
     cy.task('stubApplicationGet', { application: updatedApplication })
     cy.task('stubApplicationTimeline', { applicationId: updatedApplication.id, timeline })
     cy.task('stubApplications', [updatedApplication])
@@ -134,7 +134,7 @@ context('show applications', () => {
     // Given I have completed an application
     const application = {
       ...this.application,
-      status: 'submitted',
+      status: 'awaitingAssesment',
       assessmentDecision: 'accepted',
       assessmentDecisionDate: '2023-01-01',
       assessmentId: faker.string.uuid(),
@@ -187,7 +187,7 @@ context('show applications', () => {
   it('should show requests for placement and allow their withdrawal', function test() {
     const application = applicationFactory.build({
       ...this.application,
-      status: 'submitted',
+      status: 'awaitingAssesment',
       createdByUserId: defaultUserId,
     })
     const requestsForPlacement = requestForPlacementFactory.buildList(4)
@@ -253,7 +253,7 @@ context('show applications', () => {
   it('should allow me to add a note to an application', function test() {
     const application = {
       ...this.application,
-      status: 'submitted',
+      status: 'awaitingAssesment',
     }
 
     const timeline = cas1TimelineEventFactory.buildList(10)

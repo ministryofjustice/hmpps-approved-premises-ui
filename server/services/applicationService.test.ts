@@ -66,12 +66,12 @@ describe('ApplicationService', () => {
   })
 
   describe('getAllForLoggedInUser', () => {
-    const applications: Record<Cas1ApplicationStatus, Array<Cas1ApplicationSummary>> = {
+    // TODO: Remove type exclusion when 'submitted' status has been removed from API
+    const applications: Record<Exclude<Cas1ApplicationStatus, 'submitted'>, Array<Cas1ApplicationSummary>> = {
       started: cas1ApplicationSummaryFactory.buildList(1, { status: 'started' }),
       requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(1, {
         status: 'requestedFurtherInformation',
       }),
-      submitted: cas1ApplicationSummaryFactory.buildList(1, { status: 'submitted' }),
       awaitingAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'awaitingAssesment' }),
       unallocatedAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'unallocatedAssesment' }),
       assesmentInProgress: cas1ApplicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
@@ -85,7 +85,6 @@ describe('ApplicationService', () => {
     }
 
     const submittedApplications = [
-      ...applications.submitted,
       ...applications.awaitingAssesment,
       ...applications.unallocatedAssesment,
       ...applications.assesmentInProgress,

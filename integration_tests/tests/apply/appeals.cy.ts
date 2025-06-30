@@ -61,7 +61,7 @@ context('Appeals', () => {
   it('should show error messages for missed fields', () => {
     // Given there is an application
     const person = personFactory.build()
-    const application = applicationFactory.build({ person, status: 'submitted' })
+    const application = applicationFactory.build({ person, status: 'rejected' })
 
     cy.task('stubApplicationGet', { application })
     cy.task('stubAppealErrors', {

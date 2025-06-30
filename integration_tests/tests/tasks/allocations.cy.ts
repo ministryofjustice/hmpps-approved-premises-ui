@@ -207,7 +207,7 @@ context('Task Allocation', () => {
       task: { ...this.task, applicationId: this.application.id, allocatedToStaffMember: this.selectedUser },
       reallocation: reallocationFactory.build({ taskType: this.task.taskType, user: this.selectedUser }),
     })
-    const updatedApplication = { ...this.application, status: 'submitted' }
+    const updatedApplication = { ...this.application, status: 'awaitingAssesment' }
     cy.task('stubApplicationGet', { application: updatedApplication })
     cy.task('stubApplicationTimeline', { applicationId: updatedApplication.id, timeline })
 
