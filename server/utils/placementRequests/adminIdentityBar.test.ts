@@ -13,7 +13,6 @@ import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
 import applyPaths from '../../paths/apply'
 import { fullPersonFactory } from '../../testutils/factories/person'
-import config from '../../config'
 
 const setup = ({
   placementRequestDetail,
@@ -154,50 +153,22 @@ describe('adminIdentityBar', () => {
         expect(adminActionsResult).toContainAction(actionWithdrawPlacementRequest)
       })
 
-      describe('if ENABLE_V2_MATCH is false', () => {
-        it('returns the "Create placement" action', () => {
-          const { adminActionsResult, actionCreatePlacement } = setup({
-            placementRequestDetail,
-            permissions: ['cas1_booking_create', 'cas1_space_booking_create'],
-          })
-          expect(adminActionsResult).toContainAction(actionCreatePlacement)
+      it('returns the "Search for a space" action', () => {
+        const { adminActionsResult, actionSearchForASpace } = setup({
+          placementRequestDetail,
+          permissions: ['cas1_space_booking_create'],
         })
 
-        it('does not return the "Create placement" action when user does not have cas1 booking create permission', () => {
-          const { adminActionsResult, actionCreatePlacement } = setup({
-            placementRequestDetail,
-            permissions: ['cas1_space_booking_create'],
-          })
-          expect(adminActionsResult).not.toContainAction(actionCreatePlacement)
-        })
+        expect(adminActionsResult).toContainAction(actionSearchForASpace)
       })
 
-      describe('if ENABLE_V2_MATCH is true', () => {
-        const originalFlagValue = config.flags.v2MatchEnabled
-        beforeEach(() => {
-          config.flags.v2MatchEnabled = true
-        })
-        afterEach(() => {
-          config.flags.v2MatchEnabled = originalFlagValue
+      it('does not return the "Search for a space" action when user does not have cas1 space booking create permission', () => {
+        const { adminActionsResult, actionSearchForASpace } = setup({
+          placementRequestDetail,
+          permissions: ['cas1_booking_create'],
         })
 
-        it('returns the "Search for a space" action', () => {
-          const { adminActionsResult, actionSearchForASpace } = setup({
-            placementRequestDetail,
-            permissions: ['cas1_space_booking_create'],
-          })
-
-          expect(adminActionsResult).toContainAction(actionSearchForASpace)
-        })
-
-        it('does not return the "Search for a space" action when user does not have cas1 space booking create permission', () => {
-          const { adminActionsResult, actionSearchForASpace } = setup({
-            placementRequestDetail,
-            permissions: ['cas1_booking_create'],
-          })
-
-          expect(adminActionsResult).not.toContainAction(actionSearchForASpace)
-        })
+        expect(adminActionsResult).not.toContainAction(actionSearchForASpace)
       })
     })
   })

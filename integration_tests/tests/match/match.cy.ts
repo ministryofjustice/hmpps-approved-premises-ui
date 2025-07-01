@@ -41,8 +41,6 @@ import { roomCharacteristicMap } from '../../../server/utils/characteristicsUtil
 
 context('Placement Requests', () => {
   beforeEach(() => {
-    process.env.ENABLE_V2_MATCH = 'true'
-
     cy.task('reset')
     cy.task('stubCruManagementAreaReferenceData')
   })
