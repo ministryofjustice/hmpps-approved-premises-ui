@@ -37,7 +37,7 @@ context('Withdrawals', () => {
       withdrawsAPlacementRequest(roleToPermissions('cru_member')))
 
     it('withdraws a placement application', () => {
-      const application = applicationFactory.build({ status: 'submitted' })
+      const application = applicationFactory.build({ status: 'awaitingAssesment' })
       const placementApplication = placementApplicationFactory.build({ applicationId: application.id })
       const placementApplicationWithdrawable = withdrawableFactory.build({
         type: 'placement_application',

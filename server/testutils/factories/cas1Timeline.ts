@@ -75,7 +75,6 @@ export const applicationTimelineFactory = Factory.define<Cas1ApplicationTimeline
   id: faker.string.uuid(),
   status: faker.helpers.arrayElement([
     'started',
-    'submitted',
     'rejected',
     'awaitingAssesment',
     'unallocatedAssesment',

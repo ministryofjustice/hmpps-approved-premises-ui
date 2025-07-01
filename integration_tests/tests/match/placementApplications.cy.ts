@@ -444,7 +444,7 @@ context('Placement Applications', () => {
   it('does not allow me to create a placement application if the assessment is not yet assessed', () => {
     // Given there is an unassesed application that I created
     const application = applicationFactory.build({
-      status: 'submitted',
+      status: 'awaitingAssesment',
       id: '123',
       createdByUserId: defaultUserId,
       assessmentDecision: undefined,

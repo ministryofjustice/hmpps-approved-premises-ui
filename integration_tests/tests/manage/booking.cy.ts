@@ -16,7 +16,7 @@ context('Booking', () => {
   const person = personFactory.build()
   const premises = bookingPremisesSummaryFactory.build()
   const application = applicationFactory.build({
-    status: 'submitted',
+    status: 'awaitingPlacement',
   })
   const assessment = assessmentFactory.build({
     status: 'completed',
