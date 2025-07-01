@@ -1,4 +1,3 @@
-import { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { occupancyCalendar } from './occupancyCalendar'
 import { cas1PremiseCapacityFactory, cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
@@ -12,7 +11,7 @@ describe('occupancyCalendar', () => {
         cas1PremiseCapacityForDayFactory.build({ date: '2024-12-30', availableBedCount: 10, bookingCount: 5 }),
         cas1PremiseCapacityForDayFactory.build({ date: '2024-12-31', availableBedCount: 10, bookingCount: 5 }),
         cas1PremiseCapacityForDayFactory.build({ date: '2025-01-01', availableBedCount: 10, bookingCount: 12 }),
-        cas1PremiseCapacityForDayFactory.build({ date: '2025-01-02', availableBedCount: 10, bookingCount: 5 }),
+        cas1PremiseCapacityForDayFactory.build({ date: '2025-01-02', availableBedCount: 10, bookingCount: 10 }),
       ],
     })
 
@@ -49,38 +48,9 @@ describe('occupancyCalendar', () => {
           {
             date: '2025-01-02',
             name: 'Thu 2 Jan',
-            bookableCount: 5,
-            status: 'available',
+            bookableCount: 0,
+            status: 'full',
             link: 'path/2025-01-02',
-          },
-        ],
-      },
-    ])
-  })
-
-  it('returns the calendar without criteria count if an empty list of criteria is provided', () => {
-    const premisesCapacity = cas1PremiseCapacityFactory.build({
-      startDate: '2024-12-30',
-      endDate: '2024-12-30',
-      capacity: [
-        cas1PremiseCapacityForDayFactory.build({
-          date: '2024-12-30',
-          availableBedCount: 10,
-          bookingCount: 6,
-        }),
-      ],
-    })
-
-    expect(occupancyCalendar(premisesCapacity.capacity, 'foo/:date', [])).toEqual([
-      {
-        name: 'December 2024',
-        days: [
-          {
-            date: '2024-12-30',
-            name: 'Mon 30 Dec',
-            bookableCount: 4,
-            status: 'available',
-            link: 'foo/2024-12-30',
           },
         ],
       },
@@ -98,21 +68,18 @@ describe('occupancyCalendar', () => {
       endDate: '2025-02-12',
     })
 
-    expect(occupancyCalendar(premisesCapacity.capacity, placeholder)).toEqual([
-      {
-        name: 'February 2025',
-        days: [expect.objectContaining({ link: expected })],
-      },
-    ])
+    expect(occupancyCalendar(premisesCapacity.capacity, placeholder)[0].days[0]).toEqual(
+      expect.objectContaining({ link: expected }),
+    )
   })
 
-  describe('when a filter criteria is provided', () => {
-    const capacity: Array<Cas1PremiseCapacityForDay> = [
+  describe('status and count for a given day', () => {
+    const capacity = [
       cas1PremiseCapacityForDayFactory.build({
         date: '2025-02-02',
         totalBedCount: 20,
         availableBedCount: 18,
-        bookingCount: 20,
+        bookingCount: 10,
         characteristicAvailability: [
           premiseCharacteristicAvailability.build({
             characteristic: 'hasEnSuite',
@@ -138,126 +105,112 @@ describe('occupancyCalendar', () => {
       }),
     ]
 
-    it('returns the calendar with bookable count for the selected criteria', () => {
-      expect(occupancyCalendar(capacity, 'foo/:date', ['hasEnSuite'])).toEqual([
-        {
-          name: 'February 2025',
-          days: [
-            {
-              date: '2025-02-02',
-              name: 'Sun 2 Feb',
-              bookableCount: -2,
-              criteriaBookableCount: -1,
-              status: 'overbooked',
-              link: 'foo/2025-02-02',
-            },
-          ],
-        },
-      ])
+    describe('when no filter criteria is provided', () => {
+      it('returns without criteria count if an empty list of criteria is provided', () => {
+        expect(occupancyCalendar(capacity, 'foo/:date', [])[0].days[0]).toEqual({
+          date: '2025-02-02',
+          name: 'Sun 2 Feb',
+          bookableCount: 8,
+          status: 'available',
+          link: 'foo/2025-02-02',
+        })
+      })
 
-      expect(occupancyCalendar(capacity, 'foo/:date', ['isSuitedForSexOffenders'])).toEqual([
-        {
-          name: 'February 2025',
-          days: [
-            {
-              date: '2025-02-02',
-              name: 'Sun 2 Feb',
-              bookableCount: -2,
-              criteriaBookableCount: 3,
-              status: 'availableForCriteria',
-              link: 'foo/2025-02-02',
-            },
-          ],
-        },
-      ])
+      it.each([
+        ['available', 10],
+        ['full', 18],
+        ['overbooked', 23],
+      ])('returns the overall status as %s if there are %s bookings', (status, bookingCount) => {
+        const overallCapacity = [
+          cas1PremiseCapacityForDayFactory.build({
+            ...capacity[0],
+            bookingCount,
+          }),
+        ]
 
-      expect(occupancyCalendar(capacity, 'foo/:date', ['isWheelchairDesignated'])).toEqual([
-        {
-          name: 'February 2025',
-          days: [
-            {
-              date: '2025-02-02',
-              name: 'Sun 2 Feb',
-              bookableCount: -2,
-              criteriaBookableCount: 1,
-              status: 'availableForCriteria',
-              link: 'foo/2025-02-02',
-            },
-          ],
-        },
-      ])
-
-      expect(occupancyCalendar(capacity, 'foo/:date', ['isStepFreeDesignated'])).toEqual([
-        {
-          name: 'February 2025',
-          days: [
-            {
-              date: '2025-02-02',
-              name: 'Sun 2 Feb',
-              bookableCount: -2,
-              criteriaBookableCount: 0,
-              status: 'overbooked',
-              link: 'foo/2025-02-02',
-            },
-          ],
-        },
-      ])
+        expect(occupancyCalendar(overallCapacity, ':date', [])[0].days[0]).toEqual(
+          expect.objectContaining({
+            bookableCount: 18 - bookingCount,
+            status,
+          }),
+        )
+      })
     })
 
-    it('returns the calendar with the lowest bookable count for all criteria', () => {
-      expect(
-        occupancyCalendar(capacity, 'foo/:date', ['hasEnSuite', 'isSuitedForSexOffenders', 'isWheelchairDesignated']),
-      ).toEqual([
-        {
-          name: 'February 2025',
-          days: [
-            {
-              date: '2025-02-02',
-              name: 'Sun 2 Feb',
-              bookableCount: -2,
+    describe('when a filter criteria is provided', () => {
+      describe('if there is overall capacity', () => {
+        it('returns with bookable count and status based on the selected criteria', () => {
+          expect(occupancyCalendar(capacity, 'foo/:date', ['hasEnSuite'])[0].days[0]).toEqual(
+            expect.objectContaining({
+              bookableCount: 8,
               criteriaBookableCount: -1,
               status: 'overbooked',
-              link: 'foo/2025-02-02',
-            },
-          ],
-        },
-      ])
-    })
+            }),
+          )
 
-    it('returns the correct availability status if the day is available with and without criteria applied', () => {
-      const capacityAvailable = [cas1PremiseCapacityForDayFactory.build({ ...capacity[0], bookingCount: 0 })]
-
-      expect(occupancyCalendar(capacityAvailable, 'foo/:date', ['isSuitedForSexOffenders'])).toEqual([
-        {
-          name: 'February 2025',
-          days: [
-            {
-              date: '2025-02-02',
-              name: 'Sun 2 Feb',
-              bookableCount: 18,
+          expect(occupancyCalendar(capacity, 'foo/:date', ['isSuitedForSexOffenders'])[0].days[0]).toEqual(
+            expect.objectContaining({
+              bookableCount: 8,
               criteriaBookableCount: 3,
               status: 'available',
-              link: 'foo/2025-02-02',
-            },
-          ],
-        },
-      ])
+            }),
+          )
 
-      expect(occupancyCalendar(capacityAvailable, 'foo/:date', ['isStepFreeDesignated'])).toEqual([
-        {
-          name: 'February 2025',
-          days: [
-            {
-              date: '2025-02-02',
-              name: 'Sun 2 Feb',
-              bookableCount: 18,
+          expect(occupancyCalendar(capacity, 'foo/:date', ['isWheelchairDesignated'])[0].days[0]).toEqual(
+            expect.objectContaining({
+              bookableCount: 8,
+              criteriaBookableCount: 1,
+              status: 'available',
+            }),
+          )
+
+          expect(occupancyCalendar(capacity, 'foo/:date', ['isStepFreeDesignated'])[0].days[0]).toEqual(
+            expect.objectContaining({
+              bookableCount: 8,
               criteriaBookableCount: 0,
+              status: 'full',
+            }),
+          )
+        })
+
+        it('returns with criteria bookable count and status based on the lowest for all criteria', () => {
+          expect(
+            occupancyCalendar(capacity, 'foo/:date', [
+              'hasEnSuite',
+              'isSuitedForSexOffenders',
+              'isWheelchairDesignated',
+            ])[0].days[0],
+          ).toEqual(
+            expect.objectContaining({
+              bookableCount: 8,
+              criteriaBookableCount: -1,
               status: 'overbooked',
-              link: 'foo/2025-02-02',
-            },
-          ],
-        },
-      ])
+            }),
+          )
+        })
+      })
+
+      describe('if there is no overall capacity but availability for the criteria', () => {
+        it.each([
+          ['full', 18],
+          ['overbooked', 23],
+        ])('returns with status %s based on overall capacity', (status, bookingCount) => {
+          const overallCapacity = [
+            cas1PremiseCapacityForDayFactory.build({
+              ...capacity[0],
+              bookingCount,
+            }),
+          ]
+
+          expect(occupancyCalendar(overallCapacity, 'foo/:date', ['isSuitedForSexOffenders'])[0].days[0]).toEqual(
+            expect.objectContaining({
+              bookableCount: 18 - bookingCount,
+              criteriaBookableCount: 3,
+              status,
+            }),
+          )
+        })
+      })
     })
   })
 })

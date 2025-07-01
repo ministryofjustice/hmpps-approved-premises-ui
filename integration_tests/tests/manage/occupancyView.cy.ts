@@ -182,8 +182,8 @@ context('Premises day occupancy', () => {
   const stubDaySummary = (forDate: string, overBook = false): Cas1PremisesDaySummary => {
     const characteristicAvailability = overBook
       ? [
-          premiseCharacteristicAvailability.strictlyOverbooked().build({ characteristic: 'isSingle' }),
-          premiseCharacteristicAvailability.strictlyOverbooked().build({ characteristic: 'hasEnSuite' }),
+          premiseCharacteristicAvailability.overbooked().build({ characteristic: 'isSingle' }),
+          premiseCharacteristicAvailability.overbooked().build({ characteristic: 'hasEnSuite' }),
         ]
       : [
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),

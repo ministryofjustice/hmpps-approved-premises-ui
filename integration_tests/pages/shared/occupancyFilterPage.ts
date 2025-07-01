@@ -105,7 +105,7 @@ export default class OccupancyFilterPage extends Page {
       },
       {
         available: undefined,
-        availableForCriteria: undefined,
+        full: undefined,
         overbooked: undefined,
       },
     )

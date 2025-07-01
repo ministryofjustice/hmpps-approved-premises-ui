@@ -34,7 +34,7 @@ const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDa
 })
 
 describe('dayAvailabilityCount', () => {
-  it('returns the count of available spaces', () => {
+  it('returns the count of available spaces with no or empty criteria', () => {
     const availableBedCount = faker.number.int({ min: 1, max: 20 })
     const bookingCount = faker.number.int({ min: 1, max: 30 })
     const dayCapacity = cas1PremiseCapacityForDayFactory.build({
@@ -70,47 +70,65 @@ describe('dayAvailabilityStatus', () => {
       expect(dayAvailabilityStatus(capacityForDay)).toEqual('available')
     })
 
-    it('returns overbooked if there is no availability', () => {
-      const capacityForDay = cas1PremiseCapacityForDayFactory.overbookedOrFull().build()
+    it('returns overbooked if the day is overbooked', () => {
+      const capacityForDay = cas1PremiseCapacityForDayFactory.overbooked().build()
 
       expect(dayAvailabilityStatus(capacityForDay)).toEqual('overbooked')
+    })
+
+    it('returns full if the day is at capacity', () => {
+      const capacityForDay = cas1PremiseCapacityForDayFactory.full().build()
+
+      expect(dayAvailabilityStatus(capacityForDay)).toEqual('full')
     })
   })
 
   describe('when criteria are provided', () => {
     describe('if there is general availability', () => {
-      const availableCapacity = cas1PremiseCapacityForDayFactory.available().build({
+      const capacityForDay = cas1PremiseCapacityForDayFactory.available().build({
         characteristicAvailability: [
           premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
-          premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
-          premiseCharacteristicAvailability.overbookedOrFull().build({ characteristic: 'hasEnSuite' }),
+          premiseCharacteristicAvailability.available().build({ characteristic: 'isArsonSuitable' }),
+          premiseCharacteristicAvailability.full().build({ characteristic: 'isSingle' }),
+          premiseCharacteristicAvailability.overbooked().build({ characteristic: 'hasEnSuite' }),
         ],
       })
 
-      it('returns available if there is general availability and availability for the criteria', () => {
-        expect(dayAvailabilityStatus(availableCapacity, ['isSuitedForSexOffenders', 'isSingle'])).toEqual('available')
+      it('returns available if there is availability for all the criteria', () => {
+        expect(dayAvailabilityStatus(capacityForDay, ['isSuitedForSexOffenders', 'isArsonSuitable'])).toEqual(
+          'available',
+        )
       })
 
-      it('returns overbooked if there is no availability for the given criteria', () => {
-        expect(dayAvailabilityStatus(availableCapacity, ['isSingle', 'hasEnSuite'])).toEqual('overbooked')
+      it('returns full if one of the required criteria is full', () => {
+        expect(dayAvailabilityStatus(capacityForDay, ['isSingle', 'isArsonSuitable'])).toEqual('full')
+      })
+
+      it('returns overbooked if one of the required criteria is overbooked', () => {
+        expect(dayAvailabilityStatus(capacityForDay, ['isSingle', 'hasEnSuite'])).toEqual('overbooked')
       })
     })
 
     describe('if there is no general availability but availability for criteria', () => {
-      const overbookedCapacity = cas1PremiseCapacityForDayFactory.overbookedOrFull().build({
-        characteristicAvailability: [
-          premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
-          premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
-          premiseCharacteristicAvailability.overbookedOrFull().build({ characteristic: 'hasEnSuite' }),
-        ],
+      const characteristicAvailability = [
+        premiseCharacteristicAvailability.available().build({ characteristic: 'isSuitedForSexOffenders' }),
+        premiseCharacteristicAvailability.available().build({ characteristic: 'isSingle' }),
+      ]
+
+      it('returns full if general availability is at capacity', () => {
+        const capacity = cas1PremiseCapacityForDayFactory.full().build({
+          characteristicAvailability,
+        })
+
+        expect(dayAvailabilityStatus(capacity, ['isSingle'])).toEqual('full')
       })
 
-      it('returns available for criteria if there is availability for the given criteria', () => {
-        expect(dayAvailabilityStatus(overbookedCapacity, ['isSingle'])).toEqual('availableForCriteria')
-      })
+      it('returns overbooked if general availability is overbooked', () => {
+        const capacity = cas1PremiseCapacityForDayFactory.overbooked().build({
+          characteristicAvailability,
+        })
 
-      it('returns overbooked if there is no availability for the given criteria', () => {
-        expect(dayAvailabilityStatus(overbookedCapacity, ['hasEnSuite'])).toEqual('overbooked')
+        expect(dayAvailabilityStatus(capacity, ['hasEnSuite'])).toEqual('overbooked')
       })
     })
   })
