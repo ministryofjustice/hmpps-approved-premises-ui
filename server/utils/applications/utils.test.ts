@@ -645,41 +645,20 @@ describe('utils', () => {
   })
 
   describe('getApplicationType', () => {
-    describe('when `isEsapApplication` is `true`', () => {
-      it('returns "ESAP"', () => {
-        const application = applicationFactory.build({
-          isEsapApplication: true,
-        })
-        expect(getApplicationType(application)).toEqual('ESAP')
+    it.each<[ApplicationType, ApType]>([
+      ['Standard', 'normal'],
+      ['ESAP', 'esap'],
+      ['MHAP (Elliott House)', 'mhapElliottHouse'],
+      ['MHAP (St Josephs)', 'mhapStJosephs'],
+      ['PIPE', 'pipe'],
+      ['RFAP', 'rfap'],
+    ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
+      const application = applicationFactory.build({
+        apType: applicationApType,
+        isEsapApplication: undefined,
+        isPipeApplication: undefined,
       })
-    })
-
-    describe('when `isEsapApplication` is undefined` and `isPipeApplication` is `true`', () => {
-      it('returns "PIPE"', () => {
-        const application = applicationFactory.build({
-          isEsapApplication: undefined,
-          isPipeApplication: true,
-        })
-        expect(getApplicationType(application)).toEqual('PIPE')
-      })
-    })
-
-    describe('when `isEsapApplication` and `isPipeApplication` are undefined', () => {
-      it.each<[ApplicationType, ApType]>([
-        ['Standard', 'normal'],
-        ['ESAP', 'esap'],
-        ['MHAP (Elliott House)', 'mhapElliottHouse'],
-        ['MHAP (St Josephs)', 'mhapStJosephs'],
-        ['PIPE', 'pipe'],
-        ['RFAP', 'rfap'],
-      ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
-        const application = applicationFactory.build({
-          apType: applicationApType,
-          isEsapApplication: undefined,
-          isPipeApplication: undefined,
-        })
-        expect(getApplicationType(application)).toEqual(expectedOutput)
-      })
+      expect(getApplicationType(application)).toEqual(expectedOutput)
     })
   })
 
