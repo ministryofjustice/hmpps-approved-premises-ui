@@ -190,7 +190,7 @@ export const tableCaptions = (
   const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
   return detailedFormat
     ? {
-        placementTableCaption: `${pluralize('person', daySummary.spaceBookings?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
+        placementTableCaption: `${pluralize('person', daySummary.spaceBookingSummaries?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
         outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, 'with')}`,
       }
     : {

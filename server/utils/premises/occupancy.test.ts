@@ -370,7 +370,7 @@ describe('apOccupancy utils', () => {
       const captions = tableCaptions(
         {
           ...daySummary,
-          spaceBookings: cas1SpaceBookingDaySummaryFactory.buildList(1),
+          spaceBookingSummaries: cas1SpaceBookingSummaryFactory.buildList(1),
           outOfServiceBeds: cas1OutOfServiceBedSummaryFactory.buildList(1),
         },
         [],
