@@ -274,5 +274,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
 
   njkEnv.addGlobal('feedbackSurveyUrl', 'https://forms.office.com/e/jSiRQFF82r')
-  njkEnv.addGlobal('supportEmail', 'APServiceSupport@digital.justice.gov.uk')
+  njkEnv.addGlobal(
+    'serviceNowUrl',
+    'https://mojprod.service-now.com/moj_sp?id=sc_cat_item&table=sc_cat_item&sys_id=1ba4a5691b9f9a10a1e2ddf0b24bcbb1&recordUrl=com.glideapp.servicecatalog_cat_item_view.do%3Fv%3D1&sysparm_id=1ba4a5691b9f9a10a1e2ddf0b24bcbb1',
+  )
 }
