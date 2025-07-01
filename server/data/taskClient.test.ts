@@ -7,10 +7,10 @@ import {
   taskFactory,
   taskWrapperFactory,
 } from '../testutils/factories'
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { TaskType } from '../@types/shared'
 
-describeClient('taskClient', provider => {
+describeCas1NamespaceClient('taskClient', provider => {
   let taskClient: TaskClient
 
   const token = 'token-1'
