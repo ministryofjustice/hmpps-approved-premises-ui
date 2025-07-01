@@ -201,28 +201,30 @@ describe('apOccupancy utils', () => {
             availableBedsCount: 1,
             bookingsCount: 1,
           }),
+          premiseCharacteristicAvailability.build({
+            characteristic: 'isSingle',
+            availableBedsCount: 0,
+            bookingsCount: 0,
+          }),
         ],
       }),
     })
-    it('should generate a list of day summary rows when no criteria are provided', () => {
-      const expected = [
-        { key: { text: 'Capacity' }, value: { text: '20' } },
-        { key: { text: 'Booked spaces' }, value: { text: '21' } },
-        { key: { text: 'Out of service beds' }, value: { text: '2' } },
-        { key: { text: 'Available spaces' }, value: { text: '-3' } },
-      ]
+    const totalsBlock = [
+      { key: { text: 'Capacity' }, value: { text: '20' } },
+      { key: { text: 'Booked spaces' }, value: { text: '21' } },
+      { key: { text: 'Out of service beds' }, value: { text: '2' } },
+      { key: { text: 'Available spaces' }, value: { text: '-3' } },
+    ]
 
+    it('should generate a list of day summary rows when no criteria are provided', () => {
       expect(daySummaryRows(daySummary)).toEqual({
-        rows: expected,
+        rows: totalsBlock,
       })
     })
 
     it('should generate a list of day summary rows including criteria', () => {
       const expected = [
-        { key: { text: 'Capacity' }, value: { text: '20' } },
-        { key: { text: 'Booked spaces' }, value: { text: '21' } },
-        { key: { text: 'Out of service beds' }, value: { text: '2' } },
-        { key: { text: 'Available spaces' }, value: { text: '-3' } },
+        ...totalsBlock,
         emptyRow,
         { key: { text: 'En-suite bathroom capacity' }, value: { text: '1' } },
         { key: { text: 'En-suite bathroom available' }, value: { text: '-1' } },
@@ -236,26 +238,27 @@ describe('apOccupancy utils', () => {
 
     it('should generate a list of day summary rows in single-row/criterion mode', () => {
       const expected = [
-        {
-          key: { text: 'All rooms' },
-          value: {
-            html: `18 beds<a class="govuk-!-margin-left-2" href="?">21 bookings</a><strong class="govuk-tag govuk-tag--red govuk-tag--float-right">Overbooked</strong>`,
-          },
-        },
+        ...totalsBlock,
         {
           key: { text: 'En-suite bathroom' },
           value: {
-            html: `1 bed<a class="govuk-!-margin-left-2" href="?characteristics=hasEnSuite">2 bookings</a><strong class="govuk-tag govuk-tag--red govuk-tag--float-right">Overbooked</strong>`,
+            html: '<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">1 capacity</div><div class="govuk-grid-column-one-third">2 booked</div><div class="govuk-grid-column-one-third">-1 available</div></div>',
           },
         },
         {
           key: { text: 'Step-free access' },
           value: {
-            html: `1 bed<a class="govuk-!-margin-left-2" href="?characteristics=isStepFreeDesignated">1 booking</a><strong class="govuk-tag govuk-tag--yellow govuk-tag--float-right">Full</strong>`,
+            html: '<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">1 capacity</div><div class="govuk-grid-column-one-third">1 booked</div><div class="govuk-grid-column-one-third">0 available</div></div>',
+          },
+        },
+        {
+          key: { text: 'Single room' },
+          value: {
+            html: '<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">0 capacity</div><div class="govuk-grid-column-one-third">0 booked</div><div class="govuk-grid-column-one-third">0 available</div></div>',
           },
         },
       ]
-      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated'], 'singleRow')).toEqual({
+      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated', 'isSingle'], 'singleRow')).toEqual({
         rows: expected,
       })
     })
@@ -295,7 +298,7 @@ describe('apOccupancy utils', () => {
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalArrivalDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(placement.canonicalDepartureDate, { format: 'short' }))
       expect(row[4].html).toMatchStringIgnoringWhitespace(
-        `<ul class="govuk-list govuk-list"><li>Suitable for active arson risk</li></ul>`,
+        `<ul class="govuk-list govuk-list--compact"><li>Suitable for active arson risk</li></ul>`,
       )
     }
     it('should generate a list of placement table rows', () => {
@@ -315,7 +318,7 @@ describe('apOccupancy utils', () => {
       expect(row[1].text).toEqual(summary.reason.name)
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(summary.startDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(summary.endDate, { format: 'short' }))
-      expect(row[4].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list">
+      expect(row[4].html).toMatchStringIgnoringWhitespace(`<ul class="govuk-list govuk-list--compact">
         ${summary.characteristics.map((characteristic: Cas1SpaceBookingCharacteristic) => `<li>${roomCharacteristicMap[characteristic]}</li>`).join('')}
       </ul>`)
     }
@@ -342,22 +345,37 @@ describe('apOccupancy utils', () => {
       })
     })
 
-    it('should generate POC table captions with no characteristics', () => {
-      config.flags.pocEnabled = true
-      const captions = tableCaptions(daySummary, [])
+    it('should generate detailed table captions with no characteristics', () => {
+      const captions = tableCaptions(daySummary, [], true)
       expect(captions).toEqual({
         outOfServiceBedCaption: '5 out of service beds on Wed 12 Feb 2025',
-        placementTableCaption: '5 residents on Wed 12 Feb 2025',
+        placementTableCaption: '5 people booked in on Wed 12 Feb 2025',
       })
     })
 
     it('should generate POC table captions with characteristics', () => {
-      config.flags.pocEnabled = true
-      const captions = tableCaptions(daySummary, ['isArsonSuitable', 'isStepFreeDesignated'])
+      const captions = tableCaptions(daySummary, ['isArsonSuitable', 'isStepFreeDesignated'], true)
       expect(captions).toEqual({
         outOfServiceBedCaption:
           '5 out of service beds on Wed 12 Feb 2025 with: suitable for active arson risk and step-free',
-        placementTableCaption: '5 residents on Wed 12 Feb 2025 requiring: suitable for active arson risk and step-free',
+        placementTableCaption:
+          '5 people booked in on Wed 12 Feb 2025 requiring: suitable for active arson risk and step-free',
+      })
+    })
+
+    it('should generate singular table captions', () => {
+      const captions = tableCaptions(
+        {
+          ...daySummary,
+          spaceBookings: cas1SpaceBookingDaySummaryFactory.buildList(1),
+          outOfServiceBeds: cas1OutOfServiceBedSummaryFactory.buildList(1),
+        },
+        [],
+        true,
+      )
+      expect(captions).toEqual({
+        outOfServiceBedCaption: '1 out of service bed on Wed 12 Feb 2025',
+        placementTableCaption: '1 person booked in on Wed 12 Feb 2025',
       })
     })
   })

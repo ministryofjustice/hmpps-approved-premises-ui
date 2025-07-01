@@ -34,6 +34,7 @@ import {
   placementColumnMap,
   placementTableRows,
   tableHeader,
+  tableCaptions,
 } from '../../../utils/premises/occupancy'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 
@@ -458,6 +459,7 @@ describe('OccupancyViewController', () => {
     beforeEach(() => {
       premisesService.getDaySummary.mockResolvedValue(premisesDaySummary)
     })
+
     it('should render the day occupancy view template with given approved premises, date and room requirement criteria', async () => {
       const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
 
@@ -485,7 +487,7 @@ describe('OccupancyViewController', () => {
       expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, { startDate: date })
 
       expect(premisesService.getDaySummary).toHaveBeenCalledWith({
-        bookingsSortBy: 'personName',
+        bookingsSortBy: 'canonicalArrivalDate',
         bookingsSortDirection: 'asc',
         date,
         premisesId: premises.id,
@@ -496,18 +498,17 @@ describe('OccupancyViewController', () => {
         pageHeading: 'Sun 23 Mar 2025',
         backLink: '/backlink',
         dayAvailabilityStatus: dayAvailabilityStatusMap[expectedStatus],
-        daySummaryRows: daySummaryRows(premisesDaySummary, criteria, 'doubleRow'),
+        daySummaryRows: daySummaryRows(premisesDaySummary, criteria, 'singleRow'),
         placementRequest: placementRequestDetail,
         premises,
         nextDayLink: `${pathPrefix}/date/2025-03-24?criteria=isWheelchairDesignated&criteria=isArsonSuitable`,
         previousDayLink: `${pathPrefix}/date/2025-03-22?criteria=isWheelchairDesignated&criteria=isArsonSuitable`,
-        outOfServiceBedCaption: 'Out of service beds on Sun 23 Mar 2025',
+        ...tableCaptions(premisesDaySummary, [], true),
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premises.id, premisesDaySummary.outOfServiceBeds),
-        placementTableCaption: 'People booked in on Sun 23 Mar 2025',
         placementTableHeader: tableHeader<PlacementColumnField>(
           placementColumnMap,
-          'personName',
+          'canonicalArrivalDate',
           undefined,
           `${pathPrefix}/date/2025-03-23`,
         ),

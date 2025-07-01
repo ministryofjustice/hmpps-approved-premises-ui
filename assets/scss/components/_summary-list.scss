@@ -27,6 +27,10 @@
   color: govuk-colour('dark-grey');
 }
 
+.govuk-grid-row--flex {
+  display: flex;
+}
+
 .govuk-summary-list--swap-bolding {
   .govuk-summary-list__key {
     font-weight: normal;
