@@ -6,6 +6,7 @@ type CalendarDay = {
   date: string
   name: string
   status: DayAvailabilityStatus
+  capacity: number
   bookableCount: number
   criteriaBookableCount?: number
   link: string
@@ -39,6 +40,7 @@ export const occupancyCalendar = (
       date: day.date,
       name: DateFormats.isoDateToUIDate(day.date, { format: 'longNoYear' }),
       status: dayAvailabilityStatus(day, criteria),
+      capacity: day.availableBedCount,
       bookableCount,
       link: placeholderLink.replace(':date', day.date),
     }

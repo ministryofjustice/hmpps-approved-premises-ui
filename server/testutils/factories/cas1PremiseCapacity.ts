@@ -75,12 +75,12 @@ class CapacityForDayFactory extends Factory<Cas1PremiseCapacityForDay> {
 }
 
 export const cas1PremiseCapacityForDayFactory = CapacityForDayFactory.define(() => {
-  const totalBedCount = faker.number.int({ min: 0, max: 40 })
+  const totalBedCount = faker.number.int({ min: 10, max: 40 })
 
   return {
     date: DateFormats.dateObjToIsoDate(faker.date.future()),
     totalBedCount,
-    availableBedCount: faker.number.int({ min: 0, max: totalBedCount }),
+    availableBedCount: faker.number.int({ min: totalBedCount - 9, max: totalBedCount }),
     bookingCount: faker.number.int({ min: 0, max: totalBedCount + 10 }),
     characteristicAvailability: Object.keys(roomCharacteristicMap).map(characteristic =>
       premiseCharacteristicAvailability.build({ characteristic: characteristic as Cas1SpaceBookingCharacteristic }),

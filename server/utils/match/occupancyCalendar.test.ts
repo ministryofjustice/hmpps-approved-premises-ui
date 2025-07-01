@@ -8,7 +8,7 @@ describe('occupancyCalendar', () => {
       startDate: '2024-12-30',
       endDate: '2025-01-02',
       capacity: [
-        cas1PremiseCapacityForDayFactory.build({ date: '2024-12-30', availableBedCount: 10, bookingCount: 5 }),
+        cas1PremiseCapacityForDayFactory.build({ date: '2024-12-30', availableBedCount: 9, bookingCount: 5 }),
         cas1PremiseCapacityForDayFactory.build({ date: '2024-12-31', availableBedCount: 10, bookingCount: 5 }),
         cas1PremiseCapacityForDayFactory.build({ date: '2025-01-01', availableBedCount: 10, bookingCount: 12 }),
         cas1PremiseCapacityForDayFactory.build({ date: '2025-01-02', availableBedCount: 10, bookingCount: 10 }),
@@ -22,13 +22,15 @@ describe('occupancyCalendar', () => {
           {
             date: '2024-12-30',
             name: 'Mon 30 Dec',
-            bookableCount: 5,
+            capacity: 9,
+            bookableCount: 4,
             status: 'available',
             link: 'path/2024-12-30',
           },
           {
             date: '2024-12-31',
             name: 'Tue 31 Dec',
+            capacity: 10,
             bookableCount: 5,
             status: 'available',
             link: 'path/2024-12-31',
@@ -41,6 +43,7 @@ describe('occupancyCalendar', () => {
           {
             date: '2025-01-01',
             name: 'Wed 1 Jan',
+            capacity: 10,
             bookableCount: -2,
             status: 'overbooked',
             link: 'path/2025-01-01',
@@ -48,6 +51,7 @@ describe('occupancyCalendar', () => {
           {
             date: '2025-01-02',
             name: 'Thu 2 Jan',
+            capacity: 10,
             bookableCount: 0,
             status: 'full',
             link: 'path/2025-01-02',
@@ -110,6 +114,7 @@ describe('occupancyCalendar', () => {
         expect(occupancyCalendar(capacity, 'foo/:date', [])[0].days[0]).toEqual({
           date: '2025-02-02',
           name: 'Sun 2 Feb',
+          capacity: 18,
           bookableCount: 8,
           status: 'available',
           link: 'foo/2025-02-02',
@@ -138,7 +143,7 @@ describe('occupancyCalendar', () => {
     })
 
     describe('when a filter criteria is provided', () => {
-      describe('if there is overall capacity', () => {
+      describe('if there is overall availability', () => {
         it('returns with bookable count and status based on the selected criteria', () => {
           expect(occupancyCalendar(capacity, 'foo/:date', ['hasEnSuite'])[0].days[0]).toEqual(
             expect.objectContaining({
@@ -190,11 +195,11 @@ describe('occupancyCalendar', () => {
         })
       })
 
-      describe('if there is no overall capacity but availability for the criteria', () => {
+      describe('if there is no overall availability but availability for the criteria', () => {
         it.each([
           ['full', 18],
           ['overbooked', 23],
-        ])('returns with status %s based on overall capacity', (status, bookingCount) => {
+        ])('returns with status %s based on overall availability', (status, bookingCount) => {
           const overallCapacity = [
             cas1PremiseCapacityForDayFactory.build({
               ...capacity[0],
