@@ -7,6 +7,7 @@ import {
 } from '../../../server/utils/match/occupancy'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { daySummaryRows } from '../../../server/utils/premises/occupancy'
+import { canonicalDates } from '../../../server/utils/placements'
 
 export default class DayAvailabilityPage extends Page {
   availability: DayAvailabilityStatus
@@ -32,11 +33,16 @@ export default class DayAvailabilityPage extends Page {
     cy.get('table')
       .first()
       .within(() => {
-        cy.get('tbody tr').should('have.length', this.daySummary.spaceBookings.length)
-        this.daySummary.spaceBookings.forEach(({ canonicalArrivalDate, canonicalDepartureDate, person: { crn } }) => {
+        cy.get('tbody tr').should('have.length', this.daySummary.spaceBookingSummaries.length)
+        this.daySummary.spaceBookingSummaries.forEach(placement => {
+          const {
+            person: { crn },
+          } = placement
+          const { arrivalDate, departureDate } = canonicalDates(placement)
+
           cy.contains(crn)
-          cy.contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
-          cy.contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
+          cy.contains(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
+          cy.contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
         })
       })
 

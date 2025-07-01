@@ -2,7 +2,7 @@ import {
   Cas1OutOfServiceBedSummary,
   Cas1PremisesBasicSummary,
   Cas1PremisesDaySummary,
-  Cas1SpaceBookingDaySummary,
+  Cas1SpaceBookingSummary,
 } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -11,6 +11,7 @@ import { daySummaryRows } from '../../../server/utils/premises/occupancy'
 import { displayName } from '../../../server/utils/personUtils'
 
 import { spaceSearchCriteriaApLevelLabels } from '../../../server/utils/match/spaceSearchLabels'
+import { canonicalDates } from '../../../server/utils/placements'
 
 export default class OccupancyDayViewPage extends Page {
   constructor(private pageTitle: string) {
@@ -38,19 +39,19 @@ export default class OccupancyDayViewPage extends Page {
     cy.get('h1').contains(DateFormats.isoDateToUIDate(date))
   }
 
-  shouldShowListOfPlacements(placementSummaryList: Array<Cas1SpaceBookingDaySummary>) {
-    placementSummaryList.forEach(
-      ({ person, canonicalArrivalDate, canonicalDepartureDate, essentialCharacteristics }) => {
-        cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
-        cy.get('@row').contains(displayName(person))
-        cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
-        cy.get('@row').contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
-        essentialCharacteristics.forEach(characteristic => {
-          if (spaceSearchCriteriaApLevelLabels[characteristic])
-            cy.get('@row').contains(spaceSearchCriteriaApLevelLabels[characteristic])
-        })
-      },
-    )
+  shouldShowListOfPlacements(placementSummaryList: Array<Cas1SpaceBookingSummary>) {
+    placementSummaryList.forEach(spaceBookingSummary => {
+      const { person, characteristics } = spaceBookingSummary
+      const { arrivalDate, departureDate } = canonicalDates(spaceBookingSummary)
+      cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
+      cy.get('@row').contains(displayName(person))
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
+      cy.get('@row').contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
+      characteristics.forEach(characteristic => {
+        if (spaceSearchCriteriaApLevelLabels[characteristic])
+          cy.get('@row').contains(spaceSearchCriteriaApLevelLabels[characteristic])
+      })
+    })
   }
 
   shouldShowListOfOutOfServiceBeds(outOfServiceBedList: Array<Cas1OutOfServiceBedSummary>) {

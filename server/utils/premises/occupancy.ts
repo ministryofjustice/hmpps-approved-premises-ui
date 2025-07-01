@@ -3,8 +3,8 @@ import {
   Cas1PremiseCapacityForDay,
   Cas1PremisesDaySummary,
   Cas1SpaceBookingCharacteristic,
-  Cas1SpaceBookingDaySummary,
   Cas1SpaceBookingDaySummarySortField,
+  Cas1SpaceBookingSummary,
   SortDirection,
 } from '@approved-premises/api'
 import { SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
@@ -17,6 +17,7 @@ import { displayName } from '../personUtils'
 import { joinWithCommas, pluralize } from '../utils'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { getRoomCharacteristicLabel, roomCharacteristicMap } from '../characteristicsUtils'
+import { canonicalDates } from '../placements'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -189,7 +190,7 @@ export const tableCaptions = (
   const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
   return detailedFormat
     ? {
-        placementTableCaption: `${pluralize('person', daySummary.spaceBookings?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
+        placementTableCaption: `${pluralize('person', daySummary.spaceBookingSummaries?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
         outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, 'with')}`,
       }
     : {
@@ -241,11 +242,10 @@ export const tableHeader = <T extends string>(
   )
 }
 
-export const placementTableRows = (
-  premisesId: string,
-  placements: Array<Cas1SpaceBookingDaySummary>,
-): Array<TableRow> =>
-  placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, essentialCharacteristics }) => {
+export const placementTableRows = (premisesId: string, placements: Array<Cas1SpaceBookingSummary>): Array<TableRow> =>
+  placements.map(placement => {
+    const { id, person, tier, characteristics } = placement
+    const { arrivalDate, departureDate } = canonicalDates(placement)
     const fieldValues: Record<PlacementColumnField, TableCell> = {
       personName: htmlValue(
         `<a href="${managePaths.premises.placements.show({
@@ -254,10 +254,10 @@ export const placementTableRows = (
         })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
       ),
       tier: htmlValue(getTierOrBlank(tier)),
-      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
-      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
+      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
+      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
       spaceType: itemListHtml(
-        essentialCharacteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
+        characteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
       ),
     }
     return placementColumnMap.map(({ fieldName }: ColumnDefinition<PlacementColumnField>) => fieldValues[fieldName])

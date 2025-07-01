@@ -31,7 +31,7 @@ context('Change Placement', () => {
     placement.placementRequestId = placementRequestDetail.id
     const capacity = cas1PremiseCapacityFactory.build()
     cy.task('stubSinglePremises', premises)
-    cy.task('stubPremiseCapacity', {
+    cy.task('stubPremisesCapacity', {
       premisesId: premises.id,
       premiseCapacity: capacity,
       startDate: startDate || placement.expectedArrivalDate,

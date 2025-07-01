@@ -131,7 +131,7 @@ export default class ApOccupancyViewController {
         daySummaryText: generateDaySummaryText(daySummary),
         ...tableCaptions(daySummary, characteristicsArray, config.flags.pocEnabled),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
-        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookings),
+        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookingSummaries),
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
         criteriaOptions: config.flags.pocEnabled

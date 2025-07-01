@@ -74,7 +74,6 @@ import cas1PremisesFactory from './cas1Premises'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 import cas1PremiseCapacityFactory, { cas1PremiseCapacityForDayFactory } from './cas1PremiseCapacity'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
-import cas1SpaceBookingDaySummaryFactory from './cas1SpaceBookingDaySummary'
 import cas1SpaceBookingFactory from './cas1SpaceBooking'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import cas1AssignKeyWorkerFactory from './cas1AssignKeyWorker'
@@ -136,7 +135,6 @@ export {
   cas1SpaceBookingDepartureFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
-  cas1SpaceBookingDaySummaryFactory,
   cas1TimelineEventFactory,
   cas1AssignKeyWorkerFactory,
   cas1ChangeRequestFactory,
