@@ -10,10 +10,6 @@ export class BedsPage extends BasePage {
   }
 
   async viewBed() {
-    const rowLocator = this.page.locator('tr')
-
-    const bedRows = rowLocator.filter({ hasText: 'Manage' })
-
-    await bedRows.first().getByRole('link', { name: 'Manage' }).click()
+    await this.page.locator('table').getByRole('link').first().click()
   }
 }
