@@ -112,26 +112,25 @@ export const linkTo = (
     query = {},
     attributes = {},
     hiddenText = '',
+    hiddenPrefix = '',
     openInNewTab = false,
   }: {
     text: string
     query?: Record<string, string>
     attributes?: Record<string, string>
     hiddenText?: string
+    hiddenPrefix?: string
     openInNewTab?: boolean
   },
 ): string => {
-  let linkBody = text
-
-  if (hiddenText) {
-    linkBody = `${linkBody} <span class="govuk-visually-hidden">${hiddenText}</span>`
-  }
+  const hiddenSpan = (hidden: string) => (hidden ? `<span class="govuk-visually-hidden">${hidden}</span>` : '')
+  const linkBody = `${hiddenSpan(hiddenPrefix)}${text}${hiddenSpan(hiddenText)}`
 
   const attrBody = Object.keys(attributes)
-    .map(a => `${a}="${attributes[a]}"`)
-    .join(' ')
+    .map(a => ` ${a}="${attributes[a]}"`)
+    .join('')
 
-  return `<a href="${path}${createQueryString(query, { addQueryPrefix: true })}" ${attrBody} ${openInNewTab ? 'target="_blank"' : ''}>${linkBody}</a>`
+  return `<a href="${path}${createQueryString(query, { addQueryPrefix: true })}"${attrBody}${openInNewTab ? ' target="_blank"' : ''}>${linkBody}</a>`
 }
 
 /**

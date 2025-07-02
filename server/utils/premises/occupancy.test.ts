@@ -18,6 +18,7 @@ import {
   daySummaryRows,
   durationSelectOptions,
   filterOutOfServiceBeds,
+  generateCharacteristicsSummary,
   generateDaySummaryText,
   occupancyCalendar,
   outOfServiceBedTableRows,
@@ -381,6 +382,14 @@ describe('apOccupancy utils', () => {
         placementTableCaption: '1 person booked in on Wed 12 Feb 2025',
       })
     })
+  })
+})
+
+describe('generateCharacteristicsSummary', () => {
+  it('should render a prefixed list of characteristics', () => {
+    expect(generateCharacteristicsSummary(['isSingle', 'isArsonSuitable'], ' prefix ')).toEqual(
+      ' prefix single room and suitable for active arson risk',
+    )
   })
 })
 

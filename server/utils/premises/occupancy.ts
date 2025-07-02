@@ -190,8 +190,8 @@ export const tableCaptions = (
   const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
   return detailedFormat
     ? {
-        placementTableCaption: `${pluralize('person', daySummary.spaceBookingSummaries?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
-        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, 'with')}`,
+        placementTableCaption: `${pluralize('person', daySummary.spaceBookingSummaries?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, ' requiring: ')}`,
+        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, ' with: ')}`,
       }
     : {
         placementTableCaption: `People booked in on ${formattedDate}`,
@@ -292,10 +292,10 @@ export const outOfServiceBedTableRows = (
 
 export const generateCharacteristicsSummary = (
   characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
-  verb = 'requiring',
+  prefix = ' requiring: ',
 ) => {
   return characteristicsArray?.length
-    ? ` ${verb}: ${joinWithCommas(
+    ? `${prefix}${joinWithCommas(
         characteristicsArray.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase()),
       )}`
     : ''

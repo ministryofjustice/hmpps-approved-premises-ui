@@ -1,6 +1,8 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../partials/filters.njk" import filterWrapper, filterSelect %}
+
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - Home" %}
@@ -9,30 +11,10 @@
 
     <h1 class="govuk-heading-l">List of Approved Premises</h1>
 
-    <form action="{{ currentUrl }}" method="get" class="search-and-filter">
-
-        <h2 class="govuk-heading-m">Filter</h2>
-
-        <div class="search-and-filter__row">
-            {{ govukSelect({
-                label: {
-                    text: "AP area",
-                    classes: "govuk-label--s"
-                },
-                classes: "govuk-input--width-20",
-                id: "selectedArea",
-                name: "selectedArea",
-                items: convertObjectsToSelectOptions(areas, 'All areas', 'name', 'id', 'selectedArea', 'all', context)
-            }) }}
-
-            {{ govukButton({
-                text: "Apply filter",
-                type: "submit",
-
-                preventDoubleClick: true
-            }) }}
-        </div>
-    </form>
+    {% call filterWrapper('Filter') %}
+        <input type="hidden" name="activeTab" value="{{ activeTab }}" />
+        {{ filterSelect('selectedArea','AP area',convertObjectsToSelectOptions(areas, 'All areas', 'name', 'id', 'selectedArea', 'all', context)) }}
+    {%- endcall %}
 
     {{ govukTable({
         captionClasses: "govuk-table__caption--m",

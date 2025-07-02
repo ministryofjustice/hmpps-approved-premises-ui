@@ -472,16 +472,23 @@ export default abstract class Page {
   shouldContainTableRows(rows: Array<Array<TableCell>>): void {
     cy.get('tbody tr').should('have.length', rows.length)
 
+    const textFromTableCell = (tableCell: TableCell): string => {
+      if ('text' in tableCell) {
+        return tableCell.text
+      }
+      return ''
+    }
+
     rows.forEach(row => {
-      cy.contains(this.textOrHtmlFromTableCell(row[0]))
+      const firstTextContent = textFromTableCell(row.find(column => 'text' in column))
+      cy.contains(firstTextContent)
         .parent()
         .within(() => {
-          const cols = row.slice(1)
-          cols.forEach((column, i) => {
+          row.forEach((column, i) => {
             if ('text' in column) {
-              cy.get('td').eq(i).contains(column.text)
+              cy.get('td,th').eq(i).contains(column.text)
             } else if ('html' in column) {
-              cy.get('td')
+              cy.get('td,th')
                 .eq(i)
                 .then($td => {
                   const { actual, expected } = parseHtml($td, column.html)
@@ -491,14 +498,6 @@ export default abstract class Page {
           })
         })
     })
-  }
-
-  textOrHtmlFromTableCell(tableCell: TableCell): string {
-    if ('text' in tableCell) {
-      return tableCell.text
-    }
-
-    return tableCell.html
   }
 
   checkPhaseBanner(copy: string): void {

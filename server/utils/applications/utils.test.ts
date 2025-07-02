@@ -673,7 +673,7 @@ describe('utils', () => {
         })
 
         expect(actionsLink(applicationSummary)).toBe(
-          '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
+          '<a href="/applications/an-application-id/withdrawals/new">Withdraw</a>',
         )
       },
     )
@@ -688,7 +688,7 @@ describe('utils', () => {
         })
 
         expect(actionsLink(applicationSummary)).toEqual(
-          '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
+          '<a href="/placement-applications?id=an-application-id">Create request for placement</a>',
         )
       },
     )
