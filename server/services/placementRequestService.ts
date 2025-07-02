@@ -11,10 +11,10 @@ import {
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
-  PlacementRequest,
   PlacementRequestSortField,
   SortDirection,
   WithdrawPlacementRequestReason,
+  Cas1PlacementRequestSummary,
 } from '@approved-premises/api'
 
 import { type Cas1ReferenceDataClient, RestClientBuilder } from '../data'
@@ -32,7 +32,7 @@ export default class PlacementRequestService {
     page: number = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<PlacementRequest>> {
+  ): Promise<PaginatedResponse<Cas1PlacementRequestSummary>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.dashboard(filters, page, sortBy, sortDirection)
@@ -44,7 +44,7 @@ export default class PlacementRequestService {
     page: number = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<PlacementRequest>> {
+  ): Promise<PaginatedResponse<Cas1PlacementRequestSummary>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.dashboard(searchParams, page, sortBy, sortDirection)

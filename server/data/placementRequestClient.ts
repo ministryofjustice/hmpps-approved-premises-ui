@@ -6,6 +6,7 @@ import {
   Cas1CruManagementArea,
   type Cas1NewChangeRequest,
   Cas1PlacementRequestDetail,
+  Cas1PlacementRequestSummary,
   Cas1RejectChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
@@ -51,7 +52,7 @@ export default class PlacementRequestClient {
     page = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<PlacementRequest>> {
+  ): Promise<PaginatedResponse<Cas1PlacementRequestSummary>> {
     const params: DashboardQueryParams = { ...allParams }
 
     Object.keys(params).forEach((key: keyof DashboardQueryParams) => {
@@ -64,7 +65,7 @@ export default class PlacementRequestClient {
       params.crnOrName = normaliseCrn(allParams.crnOrName)
     }
 
-    return this.restClient.getPaginatedResponse<PlacementRequest>({
+    return this.restClient.getPaginatedResponse<Cas1PlacementRequestSummary>({
       path: paths.placementRequests.dashboard.pattern,
       page: page.toString(),
       query: { ...params, sortBy, sortDirection },

@@ -3,8 +3,9 @@ import {
   applicationFactory,
   cas1ApplicationSummaryFactory,
   placementApplicationFactory,
-  placementRequestFactory,
   withdrawableFactory,
+  cas1PlacementRequestSummaryFactory,
+  cas1PlacementRequestDetailFactory,
   cas1SpaceBookingFactory,
 } from '../../../server/testutils/factories'
 
@@ -215,7 +216,8 @@ context('Withdrawals', () => {
 
 const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermission>) => {
   const application = cas1ApplicationSummaryFactory.build()
-  const placementRequest = placementRequestFactory.build({ applicationId: application.id })
+  const placementRequest = cas1PlacementRequestDetailFactory.build({ applicationId: application.id })
+  const placementRequests = [cas1PlacementRequestSummaryFactory.notMatched().build({ id: placementRequest.id })]
   const placementRequestWithdrawable = withdrawableFactory.build({
     type: 'placement_request',
     id: placementRequest.id,
@@ -238,7 +240,7 @@ const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermi
   cy.task('stubPlacementRequest', placementRequest)
   cy.task('stubPlacementRequestWithdrawal', placementRequest)
   cy.task('stubApAreaReferenceData')
-  cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
+  cy.task('stubPlacementRequestsDashboard', { placementRequests, status: 'notMatched' })
 
   cy.log('When I visit the Withdraw page')
   cy.visit(paths.applications.withdraw.new({ id: application.id }))

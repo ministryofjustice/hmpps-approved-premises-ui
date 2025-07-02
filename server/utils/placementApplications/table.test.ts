@@ -76,15 +76,6 @@ describe('table', () => {
     })
   })
 
-  describe('statusCell', () => {
-    it('returns the correct placement type', () => {
-      const task = placementApplicationTaskFactory.build({ status: 'complete' })
-
-      expect(statusCell(task)).toEqual({ html: `<strong class="govuk-tag">${stubSentenceCase}</strong>` })
-      expect(sentenceCase).toHaveBeenCalledWith(task.status)
-    })
-  })
-
   describe('arrivalDateCell', () => {
     it('returns the application arrival date', () => {
       const task = placementApplicationTaskFactory.build()

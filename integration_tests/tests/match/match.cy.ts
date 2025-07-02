@@ -17,6 +17,7 @@ import {
   cas1PlacementRequestDetailFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
+  cas1PlacementRequestSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
@@ -175,6 +176,9 @@ context('Placement Requests', () => {
         licenceExpiryDate,
       }),
     })
+    const placementRequestSummary = cas1PlacementRequestSummaryFactory
+      .fromPlacementRequestDetail(placementRequest)
+      .build()
     const { startDate: requestedArrivalDate, endDate: requestedDepartureDate } = placementDates(
       placementRequest.expectedArrival,
       placementRequest.duration,
@@ -211,6 +215,7 @@ context('Placement Requests', () => {
     return {
       occupancyViewPage,
       placementRequest,
+      placementRequestSummary,
       premiseCapacity,
       premises,
       startDate,
@@ -316,8 +321,15 @@ context('Placement Requests', () => {
   })
 
   it('allows me to book a space', () => {
-    const { occupancyViewPage, premises, placementRequest, searchState, requestedArrivalDate, requestedDepartureDate } =
-      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
+    const {
+      occupancyViewPage,
+      premises,
+      placementRequest,
+      placementRequestSummary,
+      searchState,
+      requestedArrivalDate,
+      requestedDepartureDate,
+    } = shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     const arrivalDate = '2024-07-23'
     const departureDate = '2024-08-08'
@@ -352,7 +364,7 @@ context('Placement Requests', () => {
     // And when I complete the form
     const spaceBooking = cas1SpaceBookingFactory.upcoming().build({ placementRequestId: placementRequest.id })
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequestSummary], status: 'matched' })
     cy.task('stubPlacementRequest', placementRequest)
     page.clickSubmit()
 
@@ -382,13 +394,16 @@ context('Placement Requests', () => {
       status: 'notMatched',
       person: personFactory.build(),
     })
+    const placementRequestSummary = cas1PlacementRequestSummaryFactory
+      .fromPlacementRequestDetail(placementRequest)
+      .build()
 
     const spaceSearchResults = spaceSearchResultsFactory.build()
 
     cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubUnableToMatchPlacementRequest', placementRequest)
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequestSummary], status: 'notMatched' })
 
     // When I visit the search
     const searchPage = SearchPage.visit(placementRequest)

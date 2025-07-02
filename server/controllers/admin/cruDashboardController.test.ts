@@ -2,25 +2,25 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { when } from 'jest-when'
+import {
+  ApplicationSortField,
+  Cas1ApplicationSummary,
+  Cas1ChangeRequestSummary,
+  Cas1PlacementRequestSummary,
+  PlacementRequestSortField,
+} from '@approved-premises/api'
+import { PaginatedResponse } from '@approved-premises/ui'
 import CruDashboardController from './cruDashboardController'
 
 import { ApplicationService, CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import {
   cas1ApplicationSummaryFactory,
   cas1ChangeRequestSummaryFactory,
+  cas1PlacementRequestSummaryFactory,
   cruManagementAreaFactory,
   paginatedResponseFactory,
-  placementRequestFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
-import { PaginatedResponse } from '../../@types/ui'
-import {
-  ApplicationSortField,
-  Cas1ApplicationSummary,
-  Cas1ChangeRequestSummary,
-  PlacementRequest,
-  PlacementRequestSortField,
-} from '../../@types/shared'
 import paths from '../../paths/admin'
 import * as getPaginationDetails from '../../utils/getPaginationDetails'
 import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
@@ -68,8 +68,8 @@ describe('CruDashboardController', () => {
   describe('index', () => {
     const indexPath = paths.admin.cruDashboard.index({})
     const paginatedResponse = paginatedResponseFactory.build({
-      data: placementRequestFactory.buildList(2),
-    }) as PaginatedResponse<PlacementRequest>
+      data: cas1PlacementRequestSummaryFactory.buildList(2),
+    }) as PaginatedResponse<Cas1PlacementRequestSummary>
 
     beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
@@ -295,8 +295,8 @@ describe('CruDashboardController', () => {
 
   describe('search', () => {
     const paginatedResponse = paginatedResponseFactory.build({
-      data: placementRequestFactory.buildList(2),
-    }) as PaginatedResponse<PlacementRequest>
+      data: cas1PlacementRequestSummaryFactory.buildList(2),
+    }) as PaginatedResponse<Cas1PlacementRequestSummary>
 
     const searchPath = paths.admin.cruDashboard.search({})
 

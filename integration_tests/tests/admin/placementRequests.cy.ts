@@ -11,9 +11,9 @@ import {
   cruManagementAreaFactory,
   newCancellationFactory,
   cas1PlacementRequestDetailFactory,
-  placementRequestFactory,
   premisesFactory,
   withdrawableFactory,
+  cas1PlacementRequestSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { CancellationCreatePage, UnableToMatchPage } from '../../pages/manage'
@@ -29,12 +29,13 @@ import withdrawablesFactory from '../../../server/testutils/factories/withdrawab
 context('Placement Requests', () => {
   const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
     let application = applicationFactory.build(applicationData)
+
     const unmatchedPlacementRequests = [
-      placementRequestFactory.notMatched().build({ applicationId: application.id }),
-      placementRequestFactory.notMatched().build({ isParole: true }),
+      cas1PlacementRequestSummaryFactory.notMatched().build({ applicationId: application.id }),
+      cas1PlacementRequestSummaryFactory.notMatched().build({ isParole: true }),
     ]
-    const matchedPlacementRequests = placementRequestFactory.buildList(3)
-    const unableToMatchPlacementRequests = placementRequestFactory.unableToMatch().buildList(2)
+    const matchedPlacementRequests = cas1PlacementRequestSummaryFactory.matched().buildList(3)
+    const unableToMatchPlacementRequests = cas1PlacementRequestSummaryFactory.unableToMatch().buildList(2)
 
     const unmatchedPlacementRequest = cas1PlacementRequestDetailFactory.build(unmatchedPlacementRequests[0])
 
@@ -43,7 +44,10 @@ context('Placement Requests', () => {
       .withSpaceBooking()
       .build()
 
-    const matchedPlacementRequest = cas1PlacementRequestDetailFactory.build(matchedPlacementRequests[1])
+    const matchedPlacementRequest = cas1PlacementRequestDetailFactory.build({
+      id: matchedPlacementRequests[1].id,
+      status: 'matched',
+    })
     const spaceBooking = cas1SpaceBookingFactory.build({
       applicationId: application.id,
       premises: { id: matchedPlacementRequest.booking.premisesId },
@@ -255,15 +259,13 @@ context('Placement Requests', () => {
     })
 
     it('allows me to withdraw a placement request', () => {
-      const { matchedPlacementRequest, unmatchedPlacementRequest, application } = stubArtifacts()
+      const { unmatchedPlacementRequest, application } = stubArtifacts()
+
       cy.task('stubPlacementRequestWithdrawal', unmatchedPlacementRequest)
+
       const withdrawable = withdrawableFactory.build({ id: unmatchedPlacementRequest.id, type: 'placement_request' })
       const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
-      cy.task('stubWithdrawablesWithNotes', {
-        applicationId: matchedPlacementRequest.applicationId,
-        withdrawables,
-      })
       cy.task('stubWithdrawablesWithNotes', {
         applicationId: application.id,
         withdrawables,
