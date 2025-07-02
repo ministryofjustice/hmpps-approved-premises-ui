@@ -1,15 +1,15 @@
 #!/bin/sh
 
-# script/generate-types: Generates typescript types from the OpenApi spec in the API repo
+# script/generate-types: Generates typescript types from the API OpenApi spec
 
 set -e
 
 cd "$(dirname "$0")/.."
 
-#NOTE: if you want to generate types from a specific branch, you can do this by checking out the API branch, and starting it in ap-tools,
+# NOTE: if you want to generate types from a specific branch, you can do this by checking out the API branch, and starting it in ap-tools,
 # and then call this script using:  ./script/generate-types http://localhost:8080/v3/api-docs/CAS1Shared
 if [ -z "$1" ]; then
-  url="https://raw.githubusercontent.com/ministryofjustice/hmpps-approved-premises-api/main/src/main/resources/static/codegen/built-cas1-api-spec.yml"
+  url="https://approved-premises-api-dev.hmpps.service.justice.gov.uk/v3/api-docs/CAS1Shared"
 else
   url=$1
 fi
@@ -24,7 +24,6 @@ mv ./server/@types/shared/index.ts ./server/@types/shared/index.d.ts
 
 echo "==> Copying roles to permissions mapping..."
 
-
-#NOTE: if you want to run this against a specific branch, change 'main' here to the branch name.
+# NOTE: if you want to run this against a specific branch, change 'main' here to the branch name.
 branch="main"
 curl -o ./server/utils/users/data/rolesToPermissions.json -s "https://raw.githubusercontent.com/ministryofjustice/hmpps-approved-premises-api/$branch/src/main/resources/static/codegen/built-cas1-roles.json"
