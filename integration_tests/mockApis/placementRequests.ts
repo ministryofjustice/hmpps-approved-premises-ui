@@ -1,6 +1,8 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
+  Cas1PlacementRequestDetail,
+  Cas1PlacementRequestSummary,
   PlacementRequest,
   PlacementRequestDetail,
   PlacementRequestStatus,
@@ -20,7 +22,7 @@ export default {
     sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
-    placementRequests: Array<PlacementRequest>
+    placementRequests: Array<Cas1PlacementRequestSummary>
     status: PlacementRequestStatus
     page: string
     sortBy: string
@@ -70,7 +72,7 @@ export default {
     sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
-    placementRequests: Array<PlacementRequest>
+    placementRequests: Array<Cas1PlacementRequestSummary>
     crnOrName: string
     status: string
     page: string
@@ -249,7 +251,7 @@ export default {
         jsonBody: bookingNotMadeFactory.build(),
       },
     }),
-  stubPlacementRequestWithdrawal: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubPlacementRequestWithdrawal: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',

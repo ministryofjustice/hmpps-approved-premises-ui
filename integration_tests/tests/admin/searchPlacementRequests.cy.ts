@@ -1,13 +1,13 @@
 import { PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import SearchPage from '../../pages/admin/placementApplications/searchPage'
 
-import { placementRequestFactory } from '../../../server/testutils/factories'
+import { cas1PlacementRequestSummaryFactory } from '../../../server/testutils/factories'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import { signIn } from '../signIn'
 
 context('Search placement Requests', () => {
-  const placementRequests = placementRequestFactory.buildList(3)
-  const searchResults = placementRequestFactory.buildList(2)
+  const placementRequests = cas1PlacementRequestSummaryFactory.buildList(3)
+  const searchResults = cas1PlacementRequestSummaryFactory.buildList(2)
 
   const searchQuery = {
     crnOrName: 'CRN123',

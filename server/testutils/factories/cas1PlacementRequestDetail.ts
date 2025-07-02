@@ -3,10 +3,10 @@ import {
   Cas1SpaceBookingSummary,
   PlacementRequestBookingSummary,
   Cas1PlacementRequestDetail,
-  type PlacementRequestStatus,
+  PlacementRequestStatus,
   Cas1ChangeRequestSummary,
   Cas1Application,
-} from '../../@types/shared'
+} from '@approved-premises/api'
 
 import placementRequestFactory from './placementRequest'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
