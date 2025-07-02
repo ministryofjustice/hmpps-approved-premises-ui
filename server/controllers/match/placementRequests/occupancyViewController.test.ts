@@ -463,7 +463,7 @@ describe('OccupancyViewController', () => {
     it('should render the day occupancy view template with given approved premises, date and room requirement criteria', async () => {
       const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
 
-      const dayCapacity = cas1PremiseCapacityForDayFactory.build({})
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build()
       const premisesCapacityForDay = cas1PremiseCapacityFactory.build({
         startDate: date,
         endDate: date,
@@ -498,7 +498,7 @@ describe('OccupancyViewController', () => {
         pageHeading: 'Sun 23 Mar 2025',
         backLink: '/backlink',
         dayAvailabilityStatus: dayAvailabilityStatusMap[expectedStatus],
-        daySummaryRows: daySummaryRows(premisesDaySummary, criteria, 'singleRow'),
+        daySummaryRows: daySummaryRows(dayCapacity, criteria, 'singleRow'),
         placementRequest: placementRequestDetail,
         premises,
         nextDayLink: `${pathPrefix}/date/2025-03-24?criteria=isWheelchairDesignated&criteria=isArsonSuitable`,

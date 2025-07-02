@@ -8,6 +8,7 @@ import ApOccupancyViewController from './apOccupancyViewController'
 
 import {
   cas1PremiseCapacityFactory,
+  cas1PremiseCapacityForDayFactory,
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
 } from '../../../testutils/factories'
@@ -140,8 +141,11 @@ describe('AP occupancyViewController', () => {
     ) => {
       const premisesSummary: Cas1Premises = cas1PremisesFactory.build({ id: premisesId })
       const premisesDaySummary: Cas1PremisesDaySummary = cas1PremisesDaySummaryFactory.build({ forDate: date })
+      const dayCapacity = cas1PremiseCapacityForDayFactory.build()
+      const capacityForDay = cas1PremiseCapacityFactory.build({ capacity: [dayCapacity] })
       premisesService.getDaySummary.mockResolvedValue(premisesDaySummary)
       premisesService.find.mockResolvedValue(premisesSummary)
+      premisesService.getCapacity.mockResolvedValue(capacityForDay)
       request.params.date = date
       request.query = queryParameters
       const requestHandler = occupancyViewController.dayView()
@@ -149,12 +153,13 @@ describe('AP occupancyViewController', () => {
       return {
         premisesSummary,
         premisesDaySummary,
+        dayCapacity,
       }
     }
 
     it('should render the premises day summary with default sort and filter', async () => {
       const date = '2025-01-01'
-      const { premisesSummary, premisesDaySummary } = await mockPremises(date)
+      const { premisesSummary, premisesDaySummary, dayCapacity } = await mockPremises(date)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', {
         premises: premisesSummary,
@@ -162,8 +167,8 @@ describe('AP occupancyViewController', () => {
         backLink: 'back-link',
         previousDayLink: `${paths.premises.occupancy.day({ premisesId, date: '2024-12-31' })}`,
         nextDayLink: `${paths.premises.occupancy.day({ premisesId, date: '2025-01-02' })}`,
-        daySummaryRows: daySummaryRows(premisesDaySummary),
-        daySummaryText: generateDaySummaryText(premisesDaySummary),
+        daySummaryRows: daySummaryRows(dayCapacity),
+        daySummaryText: generateDaySummaryText(dayCapacity),
         placementTableCaption: 'People booked in on Wed 1 Jan 2025',
         placementTableHeader: tableHeader(
           placementColumnMap,

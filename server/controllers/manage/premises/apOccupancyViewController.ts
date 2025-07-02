@@ -119,6 +119,11 @@ export default class ApOccupancyViewController {
         config.flags.pocEnabled ? characteristicsArray : undefined,
       )
 
+      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
+        startDate: date,
+      })
+      const dayCapacity = premisesCapacity.capacity[0]
+
       return res.render('manage/premises/occupancy/dayView', {
         premises,
         pageHeading: DateFormats.isoDateToUIDate(daySummary.forDate),
@@ -127,8 +132,8 @@ export default class ApOccupancyViewController {
         ]),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
-        daySummaryRows: daySummaryRows(daySummary, null, config.flags.pocEnabled ? 'singleRow' : 'none'),
-        daySummaryText: generateDaySummaryText(daySummary),
+        daySummaryRows: daySummaryRows(dayCapacity, null, config.flags.pocEnabled ? 'singleRow' : 'none'),
+        daySummaryText: generateDaySummaryText(dayCapacity),
         ...tableCaptions(daySummary, characteristicsArray, config.flags.pocEnabled),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
         placementTableRows: placementTableRows(premisesId, daySummary.spaceBookingSummaries),
