@@ -1,12 +1,12 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
+import { AllocatedFilter, TaskSortField, UserQualification } from '@approved-premises/api'
+import { TaskSearchQualification } from '@approved-premises/ui'
 import { TaskTab, tasksTableHeader, tasksTableRows } from '../utils/tasks/listTable'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
 import { ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
-import paths from '../paths/api'
-import { AllocatedFilter, TaskSortField, UserQualification } from '../@types/shared'
-import { TaskSearchQualification } from '../@types/ui'
+import paths from '../paths/tasks'
 import { userQualificationsSelectOptions } from '../utils/tasks'
 
 export default class TasksController {
