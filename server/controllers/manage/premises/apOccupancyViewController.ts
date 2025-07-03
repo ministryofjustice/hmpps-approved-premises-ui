@@ -1,7 +1,12 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { ObjectWithDateParts } from '@approved-premises/ui'
-import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import {
+  Cas1PremiseCapacity,
+  Cas1Premises,
+  Cas1PremisesDaySummary,
+  Cas1SpaceBookingCharacteristic,
+} from '@approved-premises/api'
 import { PremisesService, SessionService } from '../../../services'
 
 import paths from '../../../paths/manage'
@@ -92,7 +97,7 @@ export default class ApOccupancyViewController {
       const { characteristics } = req.query
 
       const characteristicsArray = makeArrayOfType<Cas1SpaceBookingCharacteristic>(characteristics)
-      const premises = await this.premisesService.find(token, premisesId)
+
       const {
         sortBy = 'personName',
         sortDirection = 'asc',
@@ -107,8 +112,9 @@ export default class ApOccupancyViewController {
           date: targetDate,
         })}${createQueryString(req.query, { indices: false, addQueryPrefix: true })}`
 
-      const daySummary = filterOutOfServiceBeds(
-        await this.premisesService.getDaySummary({
+      const promises = [
+        this.premisesService.find(token, premisesId),
+        this.premisesService.getDaySummary({
           token,
           premisesId,
           date,
@@ -116,12 +122,22 @@ export default class ApOccupancyViewController {
           bookingsSortDirection: sortDirection,
           bookingsCriteriaFilter: characteristicsArray,
         }),
+        this.premisesService.getCapacity(token, premisesId, {
+          startDate: date,
+        }),
+      ]
+
+      const [premises, rawDaySummary, premisesCapacity] = (await Promise.all(promises)) as [
+        Cas1Premises,
+        Cas1PremisesDaySummary,
+        Cas1PremiseCapacity,
+      ]
+
+      const daySummary = filterOutOfServiceBeds(
+        rawDaySummary,
         config.flags.pocEnabled ? characteristicsArray : undefined,
       )
 
-      const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
-        startDate: date,
-      })
       const dayCapacity = premisesCapacity.capacity[0]
 
       return res.render('manage/premises/occupancy/dayView', {
