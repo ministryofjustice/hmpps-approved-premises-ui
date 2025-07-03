@@ -37,7 +37,7 @@ describeClient('ReferenceDataClient', provider => {
 
     Object.keys(data).forEach((key: keyof typeof data) => {
       it(`should return an array of ${key}`, async () => {
-        provider.addInteraction({
+        await provider.addInteraction({
           state: 'Server is healthy',
           uponReceiving: `A request to get ${key}`,
           withRequest: {
@@ -63,7 +63,7 @@ describeClient('ReferenceDataClient', provider => {
     it('should return an array of probation regions', async () => {
       const probationRegions = probationRegionFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: `A request to get probation regions`,
         withRequest: {
@@ -88,7 +88,7 @@ describeClient('ReferenceDataClient', provider => {
     it('should return an array of AP areas', async () => {
       const apAreas = apAreaFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: `A request to get AP areas`,
         withRequest: {
@@ -113,7 +113,7 @@ describeClient('ReferenceDataClient', provider => {
     it('should return an array of non-arrival reasons', async () => {
       const nonArrivalReasons = nonArrivalReasonsFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: `A request to get Non-arrival reasons`,
         withRequest: {

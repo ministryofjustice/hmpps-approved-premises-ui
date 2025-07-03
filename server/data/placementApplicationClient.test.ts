@@ -1,10 +1,10 @@
+import { faker } from '@faker-js/faker'
 import PlacementApplicationClient from './placementApplicationClient'
 import paths from '../paths/api'
 
 import { placementApplicationDecisionEnvelopeFactory, placementApplicationFactory } from '../testutils/factories'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { SubmitPlacementApplication } from '../@types/shared'
-import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 describeCas1NamespaceClient('placementApplicationClient', provider => {
   let placementApplicationClient: PlacementApplicationClient
@@ -19,7 +19,7 @@ describeCas1NamespaceClient('placementApplicationClient', provider => {
     it('makes a get request to the placementApplication endpoint', async () => {
       const placementApplication = placementApplicationFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a placement application',
         withRequest: {
@@ -42,10 +42,10 @@ describeCas1NamespaceClient('placementApplicationClient', provider => {
   })
   describe('create', () => {
     it('should return a placement application when a application ID is posted', async () => {
-      const applicationId = '123'
+      const applicationId = faker.string.uuid()
       const placementApplication = placementApplicationFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create a placement application',
         withRequest: {
@@ -73,7 +73,7 @@ describeCas1NamespaceClient('placementApplicationClient', provider => {
     it('updates and returns a placement application', async () => {
       const placementApplication = placementApplicationFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to update a placement application',
         withRequest: {
@@ -107,7 +107,7 @@ describeCas1NamespaceClient('placementApplicationClient', provider => {
         translatedDocument: {},
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to submit a placement application',
         withRequest: {
@@ -135,7 +135,7 @@ describeCas1NamespaceClient('placementApplicationClient', provider => {
       const decisionEnvelope = placementApplicationDecisionEnvelopeFactory.build()
       const placementApplication = placementApplicationFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to submit a placement application decision',
         withRequest: {
@@ -161,9 +161,9 @@ describeCas1NamespaceClient('placementApplicationClient', provider => {
   describe('withdraw', () => {
     it('withdraws a placement application and returns the result', async () => {
       const placementApplication = placementApplicationFactory.build()
-      const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
+      const reason = 'DuplicatePlacementRequest'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to withdraw a placement application',
         withRequest: {

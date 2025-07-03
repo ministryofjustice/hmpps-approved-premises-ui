@@ -1,4 +1,11 @@
-import { bookingFactory, cancellationFactory, dateChangeFactory, newCancellationFactory } from '../testutils/factories'
+import { faker } from '@faker-js/faker'
+import {
+  bookingExtensionFactory,
+  bookingFactory,
+  cancellationFactory,
+  dateChangeFactory,
+  newCancellationFactory,
+} from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import BookingClient from './bookingClient'
 
@@ -10,6 +17,9 @@ describeClient('BookingClient', provider => {
 
   const token = 'token-1'
 
+  const premisesId = faker.string.uuid()
+  const bookingId = faker.string.uuid()
+
   beforeEach(() => {
     bookingClient = new BookingClient(token)
   })
@@ -18,12 +28,12 @@ describeClient('BookingClient', provider => {
     it('should return the booking that has been requested', async () => {
       const booking = bookingFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to find a booking',
         withRequest: {
           method: 'GET',
-          path: `/premises/premisesId/bookings/bookingId`,
+          path: paths.premises.bookings.show({ premisesId, bookingId }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -34,7 +44,7 @@ describeClient('BookingClient', provider => {
         },
       })
 
-      const result = await bookingClient.find('premisesId', 'bookingId')
+      const result = await bookingClient.find(premisesId, bookingId)
 
       expect(result).toEqual(booking)
     })
@@ -44,12 +54,12 @@ describeClient('BookingClient', provider => {
     it('should return the booking that has been requested', async () => {
       const booking = bookingFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to find a booking',
         withRequest: {
           method: 'GET',
-          path: paths.bookings.bookingWithoutPremisesPath({ bookingId: 'bookingId' }),
+          path: paths.bookings.bookingWithoutPremisesPath({ bookingId }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -60,7 +70,7 @@ describeClient('BookingClient', provider => {
         },
       })
 
-      const result = await bookingClient.findWithoutPremises('bookingId')
+      const result = await bookingClient.findWithoutPremises(bookingId)
 
       expect(result).toEqual(booking)
     })
@@ -70,12 +80,12 @@ describeClient('BookingClient', provider => {
     it('should return all bookings for a given premises ID', async () => {
       const bookings = bookingFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get all bookings for a premises',
         withRequest: {
           method: 'GET',
-          path: `/premises/some-uuid/bookings`,
+          path: paths.premises.bookings.index({ premisesId }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -86,7 +96,7 @@ describeClient('BookingClient', provider => {
         },
       })
 
-      const result = await bookingClient.allBookingsForPremisesId('some-uuid')
+      const result = await bookingClient.allBookingsForPremisesId(premisesId)
 
       expect(result).toEqual(bookings)
     })
@@ -94,7 +104,7 @@ describeClient('BookingClient', provider => {
 
   describe('extendBooking', () => {
     it('should return the booking that has been extended', async () => {
-      const booking = bookingFactory.build()
+      const extension = bookingExtensionFactory.build()
       const payload = {
         newDepartureDate: DateFormats.dateObjToIsoDate(new Date(2042, 13, 11)),
         'newDepartureDate-year': '2042',
@@ -103,26 +113,26 @@ describeClient('BookingClient', provider => {
         notes: 'Some notes',
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to extend a booking',
         withRequest: {
           method: 'POST',
           body: payload,
-          path: `/premises/premisesId/bookings/${booking.id}/extensions`,
+          path: paths.premises.bookings.extensions({ premisesId, bookingId }),
           headers: {
             authorization: `Bearer ${token}`,
           },
         },
         willRespondWith: {
           status: 200,
-          body: booking,
+          body: extension,
         },
       })
 
-      const result = await bookingClient.extendBooking('premisesId', booking.id, payload)
+      const result = await bookingClient.extendBooking(premisesId, bookingId, payload)
 
-      expect(result).toEqual(booking)
+      expect(result).toEqual(extension)
     })
   })
 
@@ -131,12 +141,12 @@ describeClient('BookingClient', provider => {
       const newCancellation = newCancellationFactory.build()
       const cancellation = cancellationFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to cancel a booking',
         withRequest: {
           method: 'POST',
-          path: `/premises/premisesId/bookings/bookingId/cancellations`,
+          path: paths.premises.bookings.cancellations({ premisesId, bookingId }),
           body: newCancellation,
           headers: {
             authorization: `Bearer ${token}`,
@@ -148,7 +158,7 @@ describeClient('BookingClient', provider => {
         },
       })
 
-      const result = await bookingClient.cancel('premisesId', 'bookingId', newCancellation)
+      const result = await bookingClient.cancel(premisesId, bookingId, newCancellation)
 
       expect(result).toEqual(cancellation)
     })
@@ -158,12 +168,12 @@ describeClient('BookingClient', provider => {
     it('should change dates for a booking', async () => {
       const dateChange = dateChangeFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to move a booking',
         withRequest: {
           method: 'POST',
-          path: paths.premises.bookings.dateChange({ premisesId: 'premisesId', bookingId: 'bookingId' }),
+          path: paths.premises.bookings.dateChange({ premisesId, bookingId }),
           body: dateChange,
           headers: {
             authorization: `Bearer ${token}`,
@@ -174,7 +184,7 @@ describeClient('BookingClient', provider => {
         },
       })
 
-      await bookingClient.changeDates('premisesId', 'bookingId', dateChange)
+      await bookingClient.changeDates(premisesId, bookingId, dateChange)
     })
   })
 })

@@ -17,7 +17,7 @@ describeClient('AppealClient', provider => {
       const newAppeal = newAppealFactory.build()
       const appeal = appealFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for an appeal',
         withRequest: {
@@ -45,7 +45,7 @@ describeClient('AppealClient', provider => {
       const application = applicationFactory.build()
       const appeal = appealFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for an appeal',
         withRequest: {

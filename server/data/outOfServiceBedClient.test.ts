@@ -2,6 +2,7 @@ import type {
   Cas1NewOutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import OutOfServiceBedClient from './outOfServiceBedClient'
 import {
   newOutOfServiceBedFactory,
@@ -16,7 +17,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
 
   const token = 'token-1'
 
-  const premisesId = 'premisesId'
+  const premisesId = faker.string.uuid()
 
   beforeEach(() => {
     outOfServiceBedClient = new OutOfServiceBedClient(token)
@@ -27,7 +28,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
       const outOfServiceBed = outOfServiceBedFactory.build({})
       const newOutOfServiceBed = newOutOfServiceBedFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create a lost bed',
         withRequest: {
@@ -56,7 +57,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         cancellation: {},
       })
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to find a lost bed',
         withRequest: {
@@ -72,7 +73,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         },
       })
 
-      const result = await outOfServiceBedClient.find('premisesId', outOfServiceBed.id)
+      const result = await outOfServiceBedClient.find(premisesId, outOfServiceBed.id)
 
       expect(result).toEqual(outOfServiceBed)
     })
@@ -82,7 +83,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
     it('should get all outOfServiceBeds for a premises', async () => {
       const outOfServiceBeds = outOfServiceBedFactory.buildList(2)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get lost beds',
         withRequest: {
@@ -98,7 +99,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         },
       })
 
-      const result = await outOfServiceBedClient.getAllByPremises('premisesId')
+      const result = await outOfServiceBedClient.getAllByPremises(premisesId)
 
       expect(result).toEqual(outOfServiceBeds)
     })
@@ -115,7 +116,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
       const temporality = 'future'
       const apAreaId = '123'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get out of service beds',
         withRequest: {
@@ -177,7 +178,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         notes,
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to update a lost bed',
         withRequest: {
@@ -194,7 +195,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         },
       })
 
-      const result = await outOfServiceBedClient.update(outOfServiceBed.id, outOfServiceBedUpdateData, 'premisesId')
+      const result = await outOfServiceBedClient.update(outOfServiceBed.id, outOfServiceBedUpdateData, premisesId)
 
       expect(result).toEqual(outOfServiceBed)
     })
@@ -209,7 +210,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         notes,
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to cancel a lost bed',
         withRequest: {
@@ -228,7 +229,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
 
       const result = await outOfServiceBedClient.cancel(
         outOfServiceBedCancellation.id,
-        'premisesId',
+        premisesId,
         outOfServiceBedCancellationData,
       )
 

@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import AssessmentClient from './assessmentClient'
 import {
   assessmentFactory,
@@ -13,6 +14,8 @@ describeClient('AssessmentClient', provider => {
 
   const token = 'token-1'
 
+  const assessmentId = faker.string.uuid()
+
   beforeEach(() => {
     assessmentClient = new AssessmentClient(token)
   })
@@ -21,7 +24,7 @@ describeClient('AssessmentClient', provider => {
     it('should get all assessments', async () => {
       const assessments = assessmentSummaryFactory.buildList(3)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get all assessments',
         withRequest: {
@@ -65,7 +68,7 @@ describeClient('AssessmentClient', provider => {
     it('should get an assessment', async () => {
       const assessment = assessmentFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get an assessment',
         withRequest: {
@@ -91,7 +94,7 @@ describeClient('AssessmentClient', provider => {
     it('should return an assessment when a PUT request is made', async () => {
       const assessment = assessmentFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to update an assessment',
         withRequest: {
@@ -116,13 +119,12 @@ describeClient('AssessmentClient', provider => {
 
   describe('acceptance', () => {
     it('should call the acceptance endpoint with the assessment', async () => {
-      const assessmentId = 'some-id'
       const data = {
         document: {},
         requirements: placementRequestFactory.build(),
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to accept an assessment',
         withRequest: {
@@ -147,7 +149,7 @@ describeClient('AssessmentClient', provider => {
       const assessment = assessmentFactory.build()
       const response = { section: [{ task: 'response' }] }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to reject an assessment',
         withRequest: {
@@ -172,13 +174,12 @@ describeClient('AssessmentClient', provider => {
 
   describe('createClarificationNote', () => {
     it('should return a note when a POST request is made', async () => {
-      const assessmentId = 'some-id'
       const note = clarificationNoteFactory.build()
       const newNote = {
         query: note.query,
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create a clarification note',
         withRequest: {
@@ -203,14 +204,13 @@ describeClient('AssessmentClient', provider => {
 
   describe('updateClarificationNote', () => {
     it('should return a note when a PUT request is made', async () => {
-      const assessmentId = 'some-id'
       const note = clarificationNoteFactory.build()
       const updatedNote = {
         response: note.response,
         responseReceivedOn: note.responseReceivedOn,
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to update a clarification note',
         withRequest: {

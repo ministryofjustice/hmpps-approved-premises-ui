@@ -11,8 +11,6 @@ export default Factory.define<PlacementApplication>(() => ({
   applicationCompletedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   assessmentCompletedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   createdByUserId: faker.string.uuid(),
-  schemaVersion: faker.string.uuid(),
-  outdatedSchema: false,
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   data: {},
