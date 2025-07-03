@@ -141,6 +141,7 @@ describe('apOccupancy utils', () => {
         : cas1PremiseCapacityForDayFactory.available().build({
             characteristicAvailability,
           })
+      return capacityForDay
     }
 
     it('should generate the text for an premises day with an overbooking on a single characteristic', () => {
