@@ -35,7 +35,8 @@ const cas1ApplicationsSingle = cas1Applications.path(':id')
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
 const rooms = premisesSingle.path('rooms')
-const booking = premisesSingle.path('bookings/:bookingId')
+const bookings = premisesSingle.path('bookings')
+const booking = bookings.path(':bookingId')
 
 const profile = path('/profile')
 
@@ -94,8 +95,12 @@ export default {
     rooms,
     room: rooms.path(':roomId'),
     bookings: {
+      index: bookings,
+      show: booking,
       move: booking.path('moves'),
       dateChange: booking.path('date-changes'),
+      cancellations: booking.path('cancellations'),
+      extensions: booking.path('extensions'),
     },
     placements: {
       show: cas1SpaceBookingSingle,

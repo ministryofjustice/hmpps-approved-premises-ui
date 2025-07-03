@@ -31,7 +31,7 @@ describeClient('ApplicationClient', provider => {
       const application = applicationFactory.build()
       const offence = activeOffenceFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create an Application with risks',
         withRequest: {
@@ -71,7 +71,7 @@ describeClient('ApplicationClient', provider => {
         const application = applicationFactory.build()
         const offence = activeOffenceFactory.build()
 
-        provider.addInteraction({
+        await provider.addInteraction({
           state: 'Server is healthy',
           uponReceiving: 'A request to create an Application without risks',
           withRequest: {
@@ -108,7 +108,7 @@ describeClient('ApplicationClient', provider => {
     it('should return an application', async () => {
       const application = applicationFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for an application',
         withRequest: {
@@ -142,7 +142,7 @@ describeClient('ApplicationClient', provider => {
         type: 'CAS1' as const,
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'Request to update an application',
         withRequest: {
@@ -180,7 +180,7 @@ describeClient('ApplicationClient', provider => {
         type: 'CAS1',
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to submit an application',
         withRequest: {
@@ -205,7 +205,7 @@ describeClient('ApplicationClient', provider => {
       const application = applicationFactory.build()
       const documents = documentFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for all documents for an application',
         withRequest: {
@@ -232,7 +232,7 @@ describeClient('ApplicationClient', provider => {
       const applicationId = 'applicationId'
       const newWithdrawal = { reason: 'duplicate_application' as WithdrawalReason, otherReason: 'other reason' }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to withdraw an application',
         withRequest: {
@@ -257,7 +257,7 @@ describeClient('ApplicationClient', provider => {
       const applicationId = 'applicationId'
       const requestsForPlacement = requestForPlacementFactory.buildList(1)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for the requests for placements of an application',
         withRequest: {
@@ -283,7 +283,7 @@ describeClient('ApplicationClient', provider => {
       const applicationId = 'applicationId'
       const note = noteFactory.build({ id: undefined })
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for to add a note to an application',
         withRequest: {
@@ -311,7 +311,7 @@ describeClient('ApplicationClient', provider => {
       const withdrawable = withdrawableFactory.buildList(1)
       const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for to add a note to an application',
         withRequest: {
@@ -346,7 +346,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
     it('should get all applications created by the current user', async () => {
       const applications = cas1ApplicationSummaryFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for all applications created by the current user',
         withRequest: {
@@ -372,7 +372,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
     it('should get all applications', async () => {
       const allApplications = cas1ApplicationSummaryFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for all applications',
         withRequest: {
@@ -381,7 +381,6 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
           query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -409,7 +408,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
     it('should pass a page number', async () => {
       const allApplications = cas1ApplicationSummaryFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for all applications',
         withRequest: {
@@ -418,7 +417,6 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
           query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc' },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -446,7 +444,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
     it('should pass search options', async () => {
       const allApplications = cas1ApplicationSummaryFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for all applications',
         withRequest: {
@@ -461,7 +459,6 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -495,7 +492,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
       const applicationId = 'applicationId'
       const timelineEvents = cas1TimelineEventFactory.buildList(1)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for the timeline of an application',
         withRequest: {

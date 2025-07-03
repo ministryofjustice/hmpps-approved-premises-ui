@@ -12,7 +12,6 @@ class StaffMemberFactory extends Factory<StaffMember> {
 }
 
 export default StaffMemberFactory.define(() => ({
-  id: faker.number.int(),
   name: faker.person.fullName(),
   code: faker.string.uuid(),
   keyWorker: faker.datatype.boolean(),

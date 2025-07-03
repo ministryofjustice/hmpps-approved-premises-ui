@@ -36,7 +36,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
 
   describe('find', () => {
     it('should get a single premises', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a single premises',
         withRequest: {
@@ -62,7 +62,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       const gender = 'man'
       const premisesSummaries = cas1PremisesBasicSummaryFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get all CAS1 premises summaries',
         withRequest: {
@@ -98,7 +98,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
         const sortBy = 'personName'
         const sortDirection = 'asc'
 
-        provider.addInteraction({
+        await provider.addInteraction({
           state: 'Server is healthy',
           uponReceiving: `A request to get ${status} placements for a premises`,
           withRequest: {
@@ -151,7 +151,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       const sortBy = 'canonicalArrivalDate'
       const sortDirection = 'desc'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: `A request to get placements matching "${crnOrName}" for a premises`,
         withRequest: {
@@ -197,7 +197,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
     it('should return details of a single placement', async () => {
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a single placement',
         withRequest: {
@@ -226,7 +226,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
     it('should return a list of beds for a given premises', async () => {
       const beds = cas1PremisesBedSummaryFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of beds for a premises',
         withRequest: {
@@ -251,7 +251,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
     it('should return a bed for a given premises', async () => {
       const bed = cas1BedDetailFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a bed for a premises',
         withRequest: {
@@ -279,7 +279,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       const excludeSpaceBookingId = 'id-to-exclude'
       const premiseCapacity = cas1PremiseCapacityFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the capacity of a premise',
         withRequest: {
@@ -348,7 +348,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
     it('should return a list of staff for a given premises', async () => {
       const staffList = staffMemberFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of staff for a premises',
         withRequest: {
@@ -373,7 +373,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
     it('should pipe the occupancy report', async () => {
       const response = createMock<Response>({})
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to download the occupancy report',
         withRequest: {
@@ -381,7 +381,6 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
           path: paths.premises.occupancyReport({}),
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
