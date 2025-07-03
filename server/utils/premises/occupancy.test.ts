@@ -41,7 +41,7 @@ describe('apOccupancy utils', () => {
       const availableCharacteristics = premiseCharacteristicAvailability.available().buildList(3)
       const overbookedCharacteristics = [
         ...availableCharacteristics,
-        premiseCharacteristicAvailability.strictlyOverbooked().build(),
+        premiseCharacteristicAvailability.overbooked().build(),
       ]
       const testData: Record<string, Cas1PremiseCapacityForDay> = {
         available: cas1PremiseCapacityForDayFactory.build({
@@ -128,14 +128,14 @@ describe('apOccupancy utils', () => {
       const characteristicAvailability = Object.keys(roomCharacteristicMap).map(characteristic =>
         overbookedCharacteristics.includes(characteristic as Cas1SpaceBookingCharacteristic)
           ? premiseCharacteristicAvailability
-              .strictlyOverbooked()
+              .overbooked()
               .build({ characteristic: characteristic as Cas1SpaceBookingCharacteristic })
           : premiseCharacteristicAvailability
               .available()
               .build({ characteristic: characteristic as Cas1SpaceBookingCharacteristic }),
       )
       const capacityForDay = overbook
-        ? cas1PremiseCapacityForDayFactory.strictlyOverbooked().build({
+        ? cas1PremiseCapacityForDayFactory.overbooked().build({
             characteristicAvailability,
           })
         : cas1PremiseCapacityForDayFactory.available().build({

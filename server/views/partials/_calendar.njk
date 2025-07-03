@@ -1,4 +1,4 @@
-{% macro occupancyCalendar(calendar) %}
+{% macro occupancyCalendar(calendar, highlightFull = false) %}
     <div class="calendar">
         {% for month in calendar %}
             <section>
@@ -9,7 +9,7 @@
 
                         {% set tagColour = 'govuk-tag--green' %}
                         {% if day.status !== 'available' %}
-                            {% set tagColour = 'govuk-tag--yellow' if day.status in ['availableForCriteria','full'] else 'govuk-tag--red' %}
+                            {% set tagColour = 'govuk-tag--yellow' if (highlightFull and day.status === 'full') else 'govuk-tag--red' %}
                         {% endif %}
 
                         <li class="calendar__day calendar__day--{{ day.name.slice(0,3) | lower }} {{ tagColour }}">

@@ -14,35 +14,34 @@ export const dayAvailabilityCount = (
     : dayCapacity.availableBedCount - dayCapacity.bookingCount
 }
 
-export type DayAvailabilityStatus = 'available' | 'availableForCriteria' | 'overbooked'
+export type DayAvailabilityStatus = 'available' | 'full' | 'overbooked'
 
 export const dayAvailabilityStatus = (
   dayCapacity: Cas1PremiseCapacityForDay,
   criteria: Array<Cas1SpaceBookingCharacteristic> = [],
 ): DayAvailabilityStatus => {
-  let status: DayAvailabilityStatus =
-    dayCapacity.availableBedCount > dayCapacity.bookingCount ? 'available' : 'overbooked'
+  let status: DayAvailabilityStatus = 'available'
+
+  if (dayCapacity.availableBedCount === dayCapacity.bookingCount) status = 'full'
+  if (dayCapacity.availableBedCount < dayCapacity.bookingCount) status = 'overbooked'
 
   if (criteria.length) {
     const criteriaBookableCount = dayAvailabilityCount(dayCapacity, criteria)
 
-    if (criteriaBookableCount > 0 && status === 'overbooked') {
-      status = 'availableForCriteria'
-    } else if (criteriaBookableCount <= 0) {
+    if (criteriaBookableCount < 0) {
       status = 'overbooked'
+    } else if (criteriaBookableCount === 0 && status !== 'overbooked') {
+      status = 'full'
     }
   }
+
   return status
 }
 
 export const dayAvailabilityStatusMap: Record<DayAvailabilityStatus, { title: string; detail: string }> = {
   available: { title: 'Available', detail: 'The space you require is available.' },
-  availableForCriteria: {
-    title: 'Available for your criteria',
-    detail:
-      'This AP is full or overbooked, but the space you require is available as it is occupied by someone who does not need it.',
-  },
-  overbooked: { title: 'Overbooked', detail: 'This AP is full or overbooked. The space you require is not available.' },
+  full: { title: 'Full', detail: 'This AP is full. The space your require is not available.' },
+  overbooked: { title: 'Overbooked', detail: 'This AP is overbooked. The space you require is not available.' },
 }
 
 const durationOptionsMap: Record<number, string> = {

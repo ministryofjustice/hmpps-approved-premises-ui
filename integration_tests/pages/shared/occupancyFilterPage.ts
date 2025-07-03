@@ -57,10 +57,6 @@ export default class OccupancyFilterPage extends Page {
     }
   }
 
-  shouldShowCalendarCell(copy: string | RegExp) {
-    cy.get('.calendar__availability').contains(copy).should('exist')
-  }
-
   shouldShowOccupancyCalendar(
     premiseCapacity: Cas1PremiseCapacity,
     criteria: Array<Cas1SpaceBookingCharacteristic> = [],
@@ -68,16 +64,20 @@ export default class OccupancyFilterPage extends Page {
     const firstMonth = DateFormats.isoDateToMonthAndYear(premiseCapacity.startDate)
     cy.get('.govuk-heading-m').contains(firstMonth).should('exist')
 
-    const summary = occupancySummary(premiseCapacity.capacity, criteria)
-    if (summary.available) {
-      // This matches cells that have the following text:
-      // - 'Available'; or
-      // - a positive number followed by ' for your criteria'
-      this.shouldShowCalendarCell(/Available|(?<!-)[1-9]\d? for your criteria/)
-    }
-    if (summary.overbooked) {
-      this.shouldShowCalendarCell(/-?\d+ in total/)
-    }
+    premiseCapacity.capacity.forEach(capacity => {
+      const status = dayAvailabilityStatus(capacity, criteria)
+      let tagColour = 'green'
+      if (status !== 'available') tagColour = 'red'
+
+      const capacityText = `${capacity.availableBedCount - capacity.bookingCount}/${capacity.availableBedCount}`
+
+      cy.get('.calendar__day')
+        .contains(DateFormats.isoDateToUIDate(capacity.date, { format: 'longNoYear' }))
+        .closest('.calendar__day')
+        .should('have.class', `govuk-tag--${tagColour}`)
+        .should('contain.text', capacityText)
+        .should(criteria.length ? 'contain.text' : 'not.contain.text', 'your criteria')
+    })
   }
 
   getOccupancyForDate(date: Date, capacity: Cas1PremiseCapacity): Cas1PremiseCapacityForDay {
@@ -105,7 +105,7 @@ export default class OccupancyFilterPage extends Page {
       },
       {
         available: undefined,
-        availableForCriteria: undefined,
+        full: undefined,
         overbooked: undefined,
       },
     )
