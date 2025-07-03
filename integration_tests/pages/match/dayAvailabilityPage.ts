@@ -1,4 +1,8 @@
-import { Cas1PremisesDaySummary, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import {
+  Cas1PremiseCapacityForDay,
+  Cas1PremisesDaySummary,
+  Cas1SpaceBookingCharacteristic,
+} from '@approved-premises/api'
 import Page from '../page'
 import {
   DayAvailabilityStatus,
@@ -13,13 +17,13 @@ export default class DayAvailabilityPage extends Page {
   availability: DayAvailabilityStatus
 
   constructor(
-    private readonly premisesId: string,
     private readonly daySummary: Cas1PremisesDaySummary,
+    private readonly dayCapacity: Cas1PremiseCapacityForDay,
     private readonly criteria: Array<Cas1SpaceBookingCharacteristic> = [],
   ) {
     super(DateFormats.isoDateToUIDate(daySummary.forDate, { format: 'long' }))
 
-    this.availability = dayAvailabilityStatus(daySummary.capacity, criteria)
+    this.availability = dayAvailabilityStatus(dayCapacity, criteria)
   }
 
   shouldShowDayAvailability() {
@@ -27,7 +31,7 @@ export default class DayAvailabilityPage extends Page {
     cy.get('strong').should('contain.text', title)
     cy.get('p').should('contain.text', detail)
 
-    const summaryList = daySummaryRows(this.daySummary, this.criteria, 'singleRow')
+    const summaryList = daySummaryRows(this.dayCapacity, this.criteria, 'singleRow')
     const summaryRows = summaryList.rows.filter(({ value }) => value)
     this.shouldContainSummaryListItems(summaryRows)
     cy.get('table')

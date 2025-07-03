@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns'
 import { faker } from '@faker-js/faker'
-import { Cas1PremisesDaySummary } from '@approved-premises/api'
+import { Cas1PremiseCapacityForDay, Cas1PremisesDaySummary } from '@approved-premises/api'
 import {
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
@@ -179,7 +179,10 @@ context('Premises day occupancy', () => {
   const nextDate = DateFormats.dateObjToIsoDate(addDays(dateObj, 1))
   const premises = cas1PremisesBasicSummaryFactory.build()
 
-  const stubDaySummary = (forDate: string, overBook = false): Cas1PremisesDaySummary => {
+  const stubDaySummary = (
+    forDate: string,
+    overBook = false,
+  ): { premisesDaySummary: Cas1PremisesDaySummary; capacity: Cas1PremiseCapacityForDay } => {
     const characteristicAvailability = overBook
       ? [
           premiseCharacteristicAvailability.overbooked().build({ characteristic: 'isSingle' }),
@@ -193,9 +196,15 @@ context('Premises day occupancy', () => {
     const capacity = cas1PremiseCapacityForDayFactory.available().build({
       characteristicAvailability,
     })
-    const premisesDaySummary = cas1PremisesDaySummaryFactory.build({ forDate, capacity })
+    const premiseCapacity = cas1PremiseCapacityFactory.build({
+      capacity: [capacity],
+      startDate: forDate,
+      endDate: forDate,
+    })
+    const premisesDaySummary = cas1PremisesDaySummaryFactory.build({ forDate })
     cy.task('stubPremisesDaySummary', { premisesId: premises.id, date: forDate, premisesDaySummary })
-    return premisesDaySummary
+    cy.task('stubPremisesCapacity', { premisesId: premises.id, startDate: forDate, endDate: forDate, premiseCapacity })
+    return { premisesDaySummary, capacity }
   }
 
   beforeEach(() => {
@@ -211,11 +220,11 @@ context('Premises day occupancy', () => {
     })
 
     it('should show the day summary if spaces available', () => {
-      const premisesDaySummary = stubDaySummary(date)
+      const { premisesDaySummary, capacity } = stubDaySummary(date)
       // When I visit premises day summary page for a day with no characteristic overbooking
       const summaryPage = OccupancyDayViewPage.visit(premises, date)
       // I should see the occupancy summary for the day
-      summaryPage.shouldShowDaySummaryDetails(premisesDaySummary)
+      summaryPage.shouldShowDaySummaryDetails(capacity)
       // And I should not see a warning banner
       summaryPage.shouldNotShowBanner()
       // And I should see a list of placements
@@ -225,11 +234,11 @@ context('Premises day occupancy', () => {
     })
 
     it('should show the day summary and warning if overbooked', () => {
-      const premisesDaySummary = stubDaySummary(date, true)
+      const { capacity } = stubDaySummary(date, true)
       // When I visit premises day summary page for a day with a characteristic overbooking
       const summaryPage = OccupancyDayViewPage.visit(premises, date)
       // I should see the occupancy summary for the day
-      summaryPage.shouldShowDaySummaryDetails(premisesDaySummary)
+      summaryPage.shouldShowDaySummaryDetails(capacity)
       // And I should see a warning banner
       summaryPage.shouldShowBanner('This AP is overbooked on: single room and en-suite.')
     })

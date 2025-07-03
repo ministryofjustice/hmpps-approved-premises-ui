@@ -265,7 +265,7 @@ export default class {
         backLink,
         pageHeading: DateFormats.isoDateToUIDate(date),
         dayAvailabilityStatus: dayAvailabilityStatusMap[status],
-        daySummaryRows: daySummaryRows(daySummary, filteredCriteria, 'singleRow'),
+        daySummaryRows: daySummaryRows(dayCapacity, filteredCriteria, 'singleRow'),
         placementRequest,
         premises,
         previousDayLink: getDayLink(daySummary.previousDate),
