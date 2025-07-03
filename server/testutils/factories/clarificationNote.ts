@@ -19,7 +19,6 @@ export default ClarificationNoteFactory.define(() => ({
   id: faker.string.uuid(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   createdByStaffMemberId: faker.string.uuid(),
-  text: faker.lorem.paragraph(),
   query: faker.lorem.sentence(),
   response: faker.lorem.sentence(),
   responseReceivedOn: DateFormats.dateObjToIsoDate(faker.date.past()),

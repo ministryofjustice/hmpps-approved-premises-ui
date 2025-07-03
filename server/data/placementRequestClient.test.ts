@@ -521,8 +521,9 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
 
   describe('createPlacementAppeal', () => {
     it('creates an appeal change request against a placementRequest', async () => {
-      const placementRequestId = 'placement-request-id'
+      const placementRequestId = faker.string.uuid()
       const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'placementAppeal' })
+
       await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create an appeal changeRequest against a placementRequest',
@@ -545,8 +546,9 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
 
   describe('createPlannedTransfer', () => {
     it('creates a planned transfer change request against a placementRequest', async () => {
-      const placementRequestId = 'placement-request-id'
+      const placementRequestId = faker.string.uuid()
       const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'plannedTransfer' })
+
       await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create a planned transfer changeRequest against a placementRequest',
@@ -569,7 +571,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
 
   describe('createExtension', () => {
     it('creates an extension change request against a placementRequest', async () => {
-      const placementRequestId = 'placement-request-id'
+      const placementRequestId = faker.string.uuid()
       const newChangeRequest: Cas1NewChangeRequest = cas1NewChangeRequestFactory.build({ type: 'placementExtension' })
       await provider.addInteraction({
         state: 'Server is healthy',
@@ -593,8 +595,9 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
 
   describe('rejectChangeRequest', () => {
     it('rejects a changeRequest against a placementRequest', async () => {
-      const placementRequestId = 'placement-request-id'
-      const changeRequestId = 'change-request-id'
+      const placementRequestId = faker.string.uuid()
+      const changeRequestId = faker.string.uuid()
+
       // TODO: remove override once API type corrected - APS-2353
       const rejectChangeRequest: Cas1RejectChangeRequest = cas1RejectChangeRequestFactory.build({
         decisionJson: { notes: { innerKey: 'inner' } },

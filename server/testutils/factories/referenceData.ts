@@ -55,7 +55,6 @@ class ReferenceDataFactory extends Factory<ReferenceData> {
 export default ReferenceDataFactory.define(() => ({
   id: faker.string.uuid(),
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
-  serviceScope: 'approved-premises',
   isActive: true,
 }))
 

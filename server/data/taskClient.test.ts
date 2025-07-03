@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import TaskClient from './taskClient'
 import paths from '../paths/api'
 
@@ -29,7 +30,7 @@ describeCas1NamespaceClient('taskClient', provider => {
       const requiredQualification = 'emergency'
       const crnOrName = 'CRN123'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: `A request to get a list of tasks`,
         withRequest: {
@@ -89,7 +90,7 @@ describeCas1NamespaceClient('taskClient', provider => {
     it('makes a get request to the tasks endpoint', async () => {
       const tasks = [placementApplicationTaskFactory.buildList(1), assessmentTaskFactory.buildList(1)].flat()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: `A request to get a list of tasks`,
         withRequest: {
@@ -116,10 +117,10 @@ describeCas1NamespaceClient('taskClient', provider => {
     it('should get a task', async () => {
       const taskWrapper = taskWrapperFactory.build()
 
-      const applicationId = 'some-application-id'
+      const applicationId = faker.string.uuid()
       const taskType = 'placement-request'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a task',
         withRequest: {
@@ -146,10 +147,10 @@ describeCas1NamespaceClient('taskClient', provider => {
     it('should allocate a task', async () => {
       const task = taskFactory.build()
 
-      const applicationId = 'some-application-id'
-      const userId = 'some-user-id'
+      const applicationId = faker.string.uuid()
+      const userId = faker.string.uuid()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to allocate a task',
         withRequest: {
