@@ -170,7 +170,7 @@ export default {
     booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
-      create: placementRequestsSingle.path('withdrawal'),
+      create: cas1PlacementRequestSingle.path('withdrawal'),
     },
     spaceBookings: {
       create: cas1SpaceBookings,
