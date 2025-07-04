@@ -349,30 +349,6 @@ describeClient('placementRequestClient', provider => {
       expect(result).toEqual(bookingNotMade)
     })
   })
-
-  describe('withdraw', () => {
-    it('makes a POST request to the withdrawal endpoint', async () => {
-      const placementRequestId = 'placement-request-id'
-      const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
-      await provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a placement request as withdrawn',
-        withRequest: {
-          method: 'POST',
-          path: paths.placementRequests.withdrawal.create({ placementRequestId }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          body: { reason },
-        },
-        willRespondWith: {
-          status: 200,
-        },
-      })
-
-      await placementRequestClient.withdraw(placementRequestId, reason)
-    })
-  })
 })
 
 describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
@@ -623,6 +599,30 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
       })
 
       expect(result).toEqual({})
+    })
+  })
+
+  describe('withdraw', () => {
+    it('makes a POST request to the withdrawal endpoint', async () => {
+      const placementRequestId = 'placement-request-id'
+      const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to mark a placement request as withdrawn',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.withdrawal.create({ placementRequestId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          body: { reason },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await placementRequestClient.withdraw(placementRequestId, reason)
     })
   })
 })
