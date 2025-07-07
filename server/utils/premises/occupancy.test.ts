@@ -141,9 +141,7 @@ describe('apOccupancy utils', () => {
         : cas1PremiseCapacityForDayFactory.available().build({
             characteristicAvailability,
           })
-      return cas1PremisesDaySummaryFactory.build({
-        capacity: capacityForDay,
-      })
+      return capacityForDay
     }
 
     it('should generate the text for an premises day with an overbooking on a single characteristic', () => {
@@ -181,35 +179,33 @@ describe('apOccupancy utils', () => {
       key: { html: `<div class="govuk-!-static-padding-top-5"></div>` },
       value: null as { text: string },
     }
-    const daySummary = cas1PremisesDaySummaryFactory.build({
-      capacity: cas1PremiseCapacityForDayFactory.build({
-        date: '2025-02-02',
-        totalBedCount: 20,
-        availableBedCount: 18,
-        bookingCount: 21,
-        characteristicAvailability: [
-          premiseCharacteristicAvailability.build({
-            characteristic: 'hasEnSuite',
-            availableBedsCount: 1,
-            bookingsCount: 2,
-          }),
-          premiseCharacteristicAvailability.build({
-            characteristic: 'isWheelchairDesignated',
-            availableBedsCount: 2,
-            bookingsCount: 1,
-          }),
-          premiseCharacteristicAvailability.build({
-            characteristic: 'isStepFreeDesignated',
-            availableBedsCount: 1,
-            bookingsCount: 1,
-          }),
-          premiseCharacteristicAvailability.build({
-            characteristic: 'isSingle',
-            availableBedsCount: 0,
-            bookingsCount: 0,
-          }),
-        ],
-      }),
+    const dayCapacity = cas1PremiseCapacityForDayFactory.build({
+      date: '2025-02-02',
+      totalBedCount: 20,
+      availableBedCount: 18,
+      bookingCount: 21,
+      characteristicAvailability: [
+        premiseCharacteristicAvailability.build({
+          characteristic: 'hasEnSuite',
+          availableBedsCount: 1,
+          bookingsCount: 2,
+        }),
+        premiseCharacteristicAvailability.build({
+          characteristic: 'isWheelchairDesignated',
+          availableBedsCount: 2,
+          bookingsCount: 1,
+        }),
+        premiseCharacteristicAvailability.build({
+          characteristic: 'isStepFreeDesignated',
+          availableBedsCount: 1,
+          bookingsCount: 1,
+        }),
+        premiseCharacteristicAvailability.build({
+          characteristic: 'isSingle',
+          availableBedsCount: 0,
+          bookingsCount: 0,
+        }),
+      ],
     })
     const totalsBlock = [
       { key: { text: 'Capacity' }, value: { text: '20' } },
@@ -219,7 +215,7 @@ describe('apOccupancy utils', () => {
     ]
 
     it('should generate a list of day summary rows when no criteria are provided', () => {
-      expect(daySummaryRows(daySummary)).toEqual({
+      expect(daySummaryRows(dayCapacity)).toEqual({
         rows: totalsBlock,
       })
     })
@@ -233,7 +229,7 @@ describe('apOccupancy utils', () => {
         { key: { text: 'Step-free access capacity' }, value: { text: '1' } },
         { key: { text: 'Step-free access available' }, value: { text: '0' } },
       ]
-      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated'], 'doubleRow')).toEqual({
+      expect(daySummaryRows(dayCapacity, ['hasEnSuite', 'isStepFreeDesignated'], 'doubleRow')).toEqual({
         rows: expected,
       })
     })
@@ -260,7 +256,7 @@ describe('apOccupancy utils', () => {
           },
         },
       ]
-      expect(daySummaryRows(daySummary, ['hasEnSuite', 'isStepFreeDesignated', 'isSingle'], 'singleRow')).toEqual({
+      expect(daySummaryRows(dayCapacity, ['hasEnSuite', 'isStepFreeDesignated', 'isSingle'], 'singleRow')).toEqual({
         rows: expected,
       })
     })

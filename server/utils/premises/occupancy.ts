@@ -92,10 +92,9 @@ export const durationSelectOptions = (durationDays?: string): Array<SelectOption
     selected: value === durationDays || undefined,
   }))
 
-export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): string => {
-  const {
-    capacity: { characteristicAvailability, availableBedCount, bookingCount },
-  } = daySummary
+export const generateDaySummaryText = (capacity: Cas1PremiseCapacityForDay): string => {
+  const { characteristicAvailability, availableBedCount, bookingCount } = capacity
+
   const overbookedCriteria = characteristicAvailability
     .map(({ characteristic, availableBedsCount, bookingsCount }) =>
       bookingsCount > availableBedsCount ? characteristic : undefined,
@@ -122,13 +121,11 @@ const availabilityRow = (name: string, available: number, booked: number, hideEm
 }
 
 export const daySummaryRows = (
-  daySummary: Cas1PremisesDaySummary,
+  capacity: Cas1PremiseCapacityForDay,
   roomCharacteristics: Array<Cas1SpaceBookingCharacteristic> = null,
   characteristicsMode: 'singleRow' | 'doubleRow' | 'none' = 'none',
 ) => {
-  const {
-    capacity: { totalBedCount, bookingCount, availableBedCount, characteristicAvailability },
-  } = daySummary
+  const { totalBedCount, bookingCount, availableBedCount, characteristicAvailability } = capacity
 
   const rows: Array<SummaryListItem> = [
     summaryListItem('Capacity', String(totalBedCount)),

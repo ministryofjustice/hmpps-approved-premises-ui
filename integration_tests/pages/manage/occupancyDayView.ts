@@ -1,7 +1,7 @@
 import {
   Cas1OutOfServiceBedSummary,
+  Cas1PremiseCapacityForDay,
   Cas1PremisesBasicSummary,
-  Cas1PremisesDaySummary,
   Cas1SpaceBookingSummary,
 } from '@approved-premises/api'
 import Page from '../page'
@@ -30,8 +30,8 @@ export default class OccupancyDayViewPage extends Page {
     return new OccupancyDayViewPage(`Authorisation Error`)
   }
 
-  shouldShowDaySummaryDetails(premisesDaySummary: Cas1PremisesDaySummary) {
-    this.shouldContainSummaryListItems(daySummaryRows(premisesDaySummary).rows)
+  shouldShowDaySummaryDetails(premisesDayCapacity: Cas1PremiseCapacityForDay) {
+    this.shouldContainSummaryListItems(daySummaryRows(premisesDayCapacity).rows)
   }
 
   shouldNavigateToDay(linkLabel: string, date: string) {
