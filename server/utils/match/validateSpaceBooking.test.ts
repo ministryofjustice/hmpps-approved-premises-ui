@@ -23,7 +23,7 @@ describe('validateSpaceBooking', () => {
           'arrivalDate-day': '',
         },
         {
-          arrivalDate: 'You must enter an arrival date',
+          'arrivalDate-day': 'You must enter an arrival date',
         },
       ],
       [
@@ -33,7 +33,7 @@ describe('validateSpaceBooking', () => {
           'arrivalDate-month': '',
         },
         {
-          arrivalDate: 'You must enter an arrival date',
+          'arrivalDate-day': 'You must enter an arrival date',
         },
       ],
       [
@@ -43,7 +43,7 @@ describe('validateSpaceBooking', () => {
           'arrivalDate-year': '',
         },
         {
-          arrivalDate: 'You must enter an arrival date',
+          'arrivalDate-day': 'You must enter an arrival date',
         },
       ],
       [
@@ -55,7 +55,7 @@ describe('validateSpaceBooking', () => {
           'arrivalDate-year': '',
         },
         {
-          arrivalDate: 'You must enter an arrival date',
+          'arrivalDate-day': 'You must enter an arrival date',
         },
       ],
       [
@@ -65,7 +65,7 @@ describe('validateSpaceBooking', () => {
           'departureDate-day': '',
         },
         {
-          departureDate: 'You must enter a departure date',
+          'departureDate-day': 'You must enter a departure date',
         },
       ],
       [
@@ -75,7 +75,7 @@ describe('validateSpaceBooking', () => {
           'departureDate-month': '',
         },
         {
-          departureDate: 'You must enter a departure date',
+          'departureDate-day': 'You must enter a departure date',
         },
       ],
       [
@@ -85,7 +85,7 @@ describe('validateSpaceBooking', () => {
           'departureDate-year': '',
         },
         {
-          departureDate: 'You must enter a departure date',
+          'departureDate-day': 'You must enter a departure date',
         },
       ],
       [
@@ -97,7 +97,7 @@ describe('validateSpaceBooking', () => {
           'departureDate-year': '',
         },
         {
-          departureDate: 'You must enter a departure date',
+          'departureDate-day': 'You must enter a departure date',
         },
       ],
       [
@@ -109,7 +109,7 @@ describe('validateSpaceBooking', () => {
           'arrivalDate-year': '2026',
         },
         {
-          arrivalDate: 'The arrival date is an invalid date',
+          'arrivalDate-day': 'The arrival date is an invalid date',
         },
       ],
       [
@@ -121,7 +121,7 @@ describe('validateSpaceBooking', () => {
           'departureDate-year': '2026',
         },
         {
-          departureDate: 'The departure date is an invalid date',
+          'departureDate-day': 'The departure date is an invalid date',
         },
       ],
       [
@@ -135,7 +135,7 @@ describe('validateSpaceBooking', () => {
           'departureDate-year': '2025',
         },
         {
-          departureDate: 'The departure date must be after the arrival date',
+          'departureDate-day': 'The departure date must be after the arrival date',
         },
       ],
       [
@@ -149,7 +149,7 @@ describe('validateSpaceBooking', () => {
           'departureDate-year': '2025',
         },
         {
-          departureDate: 'The departure date must be after the arrival date',
+          'departureDate-day': 'The departure date must be after the arrival date',
         },
       ],
     ])('with %s', (_, body, expected) => {

@@ -103,8 +103,8 @@ describe('DateOfPlacement', () => {
     it('should return errors if the first date and duration is blank', () => {
       const page = new DateOfPlacementPage(fromPartial({}), placementApplication)
       expect(page.errors()).toEqual({
-        datesOfPlacement_0_arrivalDate: 'You must enter a date for the placement',
-        datesOfPlacement_0_duration: 'You must enter a duration for the placement',
+        'datesOfPlacement_0_arrivalDate[day]': 'You must enter a date for the placement',
+        datesOfPlacement_0_duration_weeks: 'You must enter a duration for the placement',
       })
     })
 
@@ -118,7 +118,7 @@ describe('DateOfPlacement', () => {
         placementApplication,
       )
       expect(page.errors()).toEqual({
-        datesOfPlacement_0_arrivalDate: 'You must state a valid arrival date',
+        'datesOfPlacement_0_arrivalDate[day]': 'You must state a valid arrival date for placement 1',
       })
     })
 
@@ -128,7 +128,7 @@ describe('DateOfPlacement', () => {
         placementApplication,
       )
       expect(page.errors()).toEqual({
-        datesOfPlacement_0_duration: 'You must state the duration of the placement',
+        datesOfPlacement_0_duration_weeks: 'You must state the duration of placement 1',
       })
     })
 
@@ -146,7 +146,9 @@ describe('DateOfPlacement', () => {
         },
         placementApplication,
       )
-      expect(page.errors()).toEqual({ datesOfPlacement_0_arrivalDate: 'You must state a valid arrival date' })
+      expect(page.errors()).toEqual({
+        'datesOfPlacement_0_arrivalDate[day]': 'You must state a valid arrival date for placement 1',
+      })
     })
 
     it('should return errors if the duration is empty', () => {
@@ -163,7 +165,7 @@ describe('DateOfPlacement', () => {
         placementApplication,
       )
 
-      expect(page.errors()).toEqual({ datesOfPlacement_0_duration: 'You must state the duration of the placement' })
+      expect(page.errors()).toEqual({ datesOfPlacement_0_duration_weeks: 'You must state the duration of placement 1' })
     })
   })
 

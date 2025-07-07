@@ -1,0 +1,19 @@
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+{% macro dateGds(params) %}
+{#  params: {name, label, context }#}
+
+    {{ govukDateInput({
+        id: params.name,
+        namePrefix: params.name,
+        items: dateFieldValuesWithContext(params.name, params, params.errors, params.defaultToToday),
+        errorMessage: params.errors[params.name + '-day'],
+        fieldset: {
+            legend: {
+                text: params.label,
+                classes: params.classes or "govuk-fieldset__legend--m"
+            }
+        },
+        hint: params.hint and {text:params.hint}
+    }) }}
+{%  endmacro %}

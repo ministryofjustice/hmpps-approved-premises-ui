@@ -61,8 +61,8 @@ context('Departures', () => {
     departureNewPage.clickContinue()
 
     // Then I should see errors
-    departureNewPage.shouldShowErrorMessagesForFields(['departureDate', 'departureTime', 'reasonId'], {
-      departureDate: 'You must enter a date of departure',
+    departureNewPage.shouldShowErrorMessagesForFields(['departureDate-day', 'departureTime', 'reasonId'], {
+      'departureDate-day': 'You must enter a date of departure',
       departureTime: 'You must enter a time of departure',
       reasonId: 'You must select a reason',
     })

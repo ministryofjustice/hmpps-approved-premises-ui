@@ -55,10 +55,11 @@ export default class FormPage extends Page {
   }
 
   shouldShowErrorMessages(fieldDetails?: FieldDetails) {
-    Object.entries(fieldDetails || this.fieldDetails).forEach(([field, { error }]) => {
+    Object.entries(fieldDetails || this.fieldDetails).forEach(([field, { error, type }]) => {
       if (error) {
+        const fieldName = type === 'date' ? `${field}-day` : field
         cy.get('.govuk-error-summary').should('contain', error)
-        cy.get(`[data-cy-error-${field.toLowerCase()}]`).should('contain', error)
+        cy.get(`[data-cy-error-${fieldName.toLowerCase()}]`).should('contain', error)
       }
     })
   }

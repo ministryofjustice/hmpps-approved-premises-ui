@@ -122,17 +122,17 @@ describe('changeRequest utilities', () => {
       [
         'no approval date supplied',
         { 'approvalDate-day': undefined },
-        { approvalDate: 'You must enter the date of the approval' },
+        { 'approvalDate-day': 'You must enter the date of the approval' },
       ],
       [
         'invalid approval date',
         { 'approvalDate-day': '30', 'approvalDate-month': '02', 'approvalDate-year': '2025' },
-        { approvalDate: 'You must enter a valid approval date' },
+        { 'approvalDate-day': 'You must enter a valid approval date' },
       ],
       [
         'approval date in the future',
         { ...DateFormats.isoDateToDateInputs(tomorrow, 'approvalDate') },
-        { approvalDate: 'The approval date must be today or in the past' },
+        { 'approvalDate-day': 'The approval date must be today or in the past' },
       ],
       ['no appeal reason', { appealReason: undefined }, { appealReason: 'You must select a reason for the appeal' }],
       [

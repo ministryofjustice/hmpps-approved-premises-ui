@@ -1,5 +1,3 @@
-import { DeepMocked, createMock } from '@golevelup/ts-jest'
-
 import type { ErrorMessages } from '@approved-premises/ui'
 import {
   convertArrayToCheckboxItems,
@@ -28,23 +26,23 @@ describe('formUtils', () => {
     }
     const fieldName = 'myField'
 
-    let errors: DeepMocked<ErrorMessages>
+    let errors: ErrorMessages
 
     beforeEach(() => {
-      errors = createMock<ErrorMessages>({
+      errors = {
         someOtherField: {
           text: 'Some error message',
         },
         myField: undefined,
-      })
+      }
     })
 
     it('returns items with an error class when errors are present for the field', () => {
-      errors = createMock<ErrorMessages>({
+      errors = {
         myField: {
           text: 'Some error message',
         },
-      })
+      }
 
       expect(dateFieldValues(fieldName, context, errors)).toEqual([
         {
@@ -66,19 +64,19 @@ describe('formUtils', () => {
     })
 
     it('returns items without an error class when no errors are present for the field', () => {
-      expect(dateFieldValues(fieldName, context, errors)).toEqual([
+      expect(dateFieldValues(fieldName, context, {})).toEqual([
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'day',
           value: context['myField-day'],
         },
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'month',
           value: context['myField-month'],
         },
         {
-          classes: 'govuk-input--width-4 ',
+          classes: 'govuk-input--width-4',
           name: 'year',
           value: context['myField-year'],
         },
@@ -88,17 +86,17 @@ describe('formUtils', () => {
     it('returns items without an error class when no errors are present for the field', () => {
       expect(dateFieldValues(fieldName, context, errors)).toEqual([
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'day',
           value: context['myField-day'],
         },
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'month',
           value: context['myField-month'],
         },
         {
-          classes: 'govuk-input--width-4 ',
+          classes: 'govuk-input--width-4',
           name: 'year',
           value: context['myField-year'],
         },
@@ -110,17 +108,17 @@ describe('formUtils', () => {
 
       expect(dateFieldValues(fieldName, {}, errors, true)).toEqual([
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'day',
           value: today.getDate(),
         },
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'month',
           value: today.getMonth() + 1,
         },
         {
-          classes: 'govuk-input--width-4 ',
+          classes: 'govuk-input--width-4',
           name: 'year',
           value: today.getFullYear(),
         },
@@ -130,17 +128,17 @@ describe('formUtils', () => {
     it('returns the data from the context when defaultToToday is true and the context is present', () => {
       expect(dateFieldValues(fieldName, context, errors, true)).toEqual([
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'day',
           value: context['myField-day'],
         },
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'month',
           value: context['myField-month'],
         },
         {
-          classes: 'govuk-input--width-4 ',
+          classes: 'govuk-input--width-4',
           name: 'year',
           value: context['myField-year'],
         },
@@ -159,17 +157,17 @@ describe('formUtils', () => {
         ),
       ).toEqual([
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'day',
           value: context['myField-day'],
         },
         {
-          classes: 'govuk-input--width-2 ',
+          classes: 'govuk-input--width-2',
           name: 'month',
           value: undefined,
         },
         {
-          classes: 'govuk-input--width-4 ',
+          classes: 'govuk-input--width-4',
           name: 'year',
           value: undefined,
         },

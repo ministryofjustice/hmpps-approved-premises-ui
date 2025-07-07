@@ -222,7 +222,7 @@ export type ApplicationType = 'Standard' | 'PIPE' | 'ESAP' | 'RFAP' | 'MHAP (Ell
 
 export interface ErrorMessage {
   text: string
-  attributes: {
+  attributes?: {
     [K: string]: boolean
   }
 }

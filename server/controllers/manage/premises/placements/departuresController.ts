@@ -103,16 +103,17 @@ export default class DeparturesController {
     const { departureTime, departureDate, reasonId } = body
 
     if (!departureDate) {
-      errors.departureDate = 'You must enter a date of departure'
+      errors['departureDate-day'] = 'You must enter a date of departure'
     } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'departureDate'>, 'departureDate')) {
-      errors.departureDate = 'You must enter a valid date of departure'
+      errors['departureDate-day'] = 'You must enter a valid date of departure'
     } else if (!dateIsPast(departureDate) && !isToday(departureDate)) {
-      errors.departureDate = 'The date of departure must be today or in the past'
+      errors['departureDate-day'] = 'The date of departure must be today or in the past'
     } else if (isBefore(departureDate, placement.actualArrivalDate)) {
       const actualArrivalDate = DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })
-      errors.departureDate = `The date of departure must be the same as or after ${actualArrivalDate}, when the person arrived`
+      errors['departureDate-day'] =
+        `The date of departure must be the same as or after ${actualArrivalDate}, when the person arrived`
     } else if (isPast(addDays(departureDate, 7))) {
-      errors.departureDate = 'The date of departure must not be more than 7 days ago'
+      errors['departureDate-day'] = 'The date of departure must not be more than 7 days ago'
     }
 
     if (!departureTime) {

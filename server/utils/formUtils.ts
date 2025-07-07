@@ -31,21 +31,21 @@ export const dateFieldValues = (
     year = year || today.getFullYear()
   }
 
-  const errorClass = errors[fieldName] ? 'govuk-input--error' : ''
+  const errorClass = errors[fieldName] || errors[`${fieldName}-day`] ? ' govuk-input--error' : ''
 
   return [
     {
-      classes: `govuk-input--width-2 ${errorClass}`,
+      classes: `govuk-input--width-2${errorClass}`,
       name: 'day',
       value: day,
     },
     {
-      classes: `govuk-input--width-2 ${errorClass}`,
+      classes: `govuk-input--width-2${errorClass}`,
       name: 'month',
       value: month,
     },
     {
-      classes: `govuk-input--width-4 ${errorClass}`,
+      classes: `govuk-input--width-4${errorClass}`,
       name: 'year',
       value: year,
     },

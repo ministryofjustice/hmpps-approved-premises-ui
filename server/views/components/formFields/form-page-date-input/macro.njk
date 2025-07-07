@@ -5,7 +5,7 @@
       govukDateInput(
         mergeObjects(
           params,
-          { id: params.fieldName, namePrefix: params.fieldName, errorMessage: context.errors[params.fieldName], value: context[params.fieldName] }
+          { id: params.fieldName, namePrefix: params.fieldName, errorMessage: context.errors[params.fieldName] or context.errors[params.fieldName+'-day'], value: context[params.fieldName] }
         )
       )
   }}

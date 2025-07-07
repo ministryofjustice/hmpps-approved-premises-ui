@@ -376,8 +376,8 @@ describe('OccupancyViewController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         const expectedErrorData = {
-          arrivalDate: 'You must enter an arrival date',
-          departureDate: 'You must enter a departure date',
+          'arrivalDate-day': 'You must enter an arrival date',
+          'departureDate-day': 'You must enter a departure date',
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
@@ -406,8 +406,8 @@ describe('OccupancyViewController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         const expectedErrorData = {
-          arrivalDate: 'The arrival date is an invalid date',
-          departureDate: 'The departure date is an invalid date',
+          'arrivalDate-day': 'The arrival date is an invalid date',
+          'departureDate-day': 'The departure date is an invalid date',
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
@@ -436,7 +436,7 @@ describe('OccupancyViewController', () => {
         await requestHandler({ ...request, body }, response, next)
 
         const expectedErrorData = {
-          departureDate: 'The departure date must be after the arrival date',
+          'departureDate-day': 'The departure date must be after the arrival date',
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(

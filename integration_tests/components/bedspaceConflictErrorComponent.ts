@@ -17,7 +17,8 @@ export default class BedspaceConflictErrorComponent {
     conflictingEntityType: EntityType,
   ): void {
     fields.forEach(field => {
-      cy.get(`[data-cy-error-${field}]`).should('contain', errorLookups[field].conflict)
+      const { conflict, fieldNameSuffix } = errorLookups[field]
+      cy.get(`[data-cy-error-${field}${fieldNameSuffix || ''}]`).should('contain', conflict)
     })
 
     const title = this.getTitle(fields, conflictingEntityType)

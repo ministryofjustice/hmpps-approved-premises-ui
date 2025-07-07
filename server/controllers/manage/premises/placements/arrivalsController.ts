@@ -59,16 +59,16 @@ export default class ArrivalsController {
         )
 
         if (!arrivalDateTime) {
-          errors.arrivalDateTime = 'You must enter an arrival date'
+          errors['arrivalDateTime-day'] = 'You must enter an arrival date'
         } else if (!dateAndTimeInputsAreValidDates(req.body, 'arrivalDateTime')) {
-          errors.arrivalDateTime = 'You must enter a valid arrival date'
+          errors['arrivalDateTime-day'] = 'You must enter a valid arrival date'
         } else if (!Object.keys(errors).length) {
           if (!isPast(arrivalDateTime)) {
             if (isToday(arrivalDateTime)) {
-              errors.arrivalTime = 'The time of arrival must be in the past'
-            } else errors.arrivalDateTime = 'The date of arrival must be today or in the past'
+              errors['arrivalDateTime-day'] = 'The time of arrival must be in the past'
+            } else errors['arrivalDateTime-day'] = 'The date of arrival must be today or in the past'
           } else if (isPast(addDays(arrivalDateTime, 7))) {
-            errors.arrivalDateTime = 'The date of arrival cannot be more than 7 days ago'
+            errors['arrivalDateTime-day'] = 'The date of arrival cannot be more than 7 days ago'
           }
         }
 

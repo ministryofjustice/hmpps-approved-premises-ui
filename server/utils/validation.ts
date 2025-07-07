@@ -12,7 +12,7 @@ interface InvalidParams {
   errorType: string
 }
 
-type ErrorLookup = Record<string, { conflict?: string }>
+type ErrorLookup = Record<string, { conflict?: string; fieldNameSuffix?: string }>
 
 export const generateConflictErrorAndRedirect = (
   request: Request,
@@ -27,7 +27,9 @@ export const generateConflictErrorAndRedirect = (
   const errors = {} as ErrorMessages
 
   fields.forEach(f => {
-    errors[f] = errorMessage(f, (errorLookup as ErrorLookup)[f].conflict)
+    const { conflict, fieldNameSuffix } = (errorLookup as ErrorLookup)[f]
+    const fieldName = `${f}${fieldNameSuffix || ''}`
+    errors[fieldName] = errorMessage(fieldName, conflict)
   })
 
   request.flash('errorTitle', errorDetails.errorTitle)
@@ -123,10 +125,9 @@ const extractValidationErrors = (error: SanitisedError | Error): Record<string, 
 
 const generateErrors = (params: Array<InvalidParams>): Record<string, string> => {
   return params.reduce((obj, error) => {
-    const key = error.propertyName.split('.').slice(1).join('_')
     return {
       ...obj,
-      [key]: errorText(error),
+      ...errorText(error),
     }
   }, {})
 }
@@ -150,6 +151,7 @@ export const generateErrorMessages = (errors: Record<string, string>): ErrorMess
 }
 
 const errorText = (error: InvalidParams): ErrorSummary => {
+  const key = error.propertyName.split('.').slice(1).join('_')
   const errors =
     jsonpath.value(errorLookup, error.propertyName) ||
     throwUndefinedError(`Cannot find a translation for an error at the path ${error.propertyName}`)
@@ -160,7 +162,7 @@ const errorText = (error: InvalidParams): ErrorSummary => {
       `Cannot find a translation for an error at the path ${error.propertyName} with the type ${error.errorType}`,
     )
 
-  return text
+  return { [`${key}${errors.fieldNameSuffix || ''}`]: text }
 }
 
 const throwUndefinedError = (message: string) => {

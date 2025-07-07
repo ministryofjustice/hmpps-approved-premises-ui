@@ -1,11 +1,11 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "../../../components/keyDetails/macro.njk" import keyDetails %}
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../../partials/dateGds.njk" import dateGds %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -47,18 +47,7 @@
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukDateInput({
-                    id: "arrivalDateTime",
-                    namePrefix: "arrivalDateTime",
-                    items: dateFieldValues('arrivalDateTime', errors),
-                    errorMessage: errors.arrivalDateTime,
-                    fieldset: {
-                        legend: {
-                            text: "What is the arrival date?",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    }
-                }) }}
+                {{ callMacro(dateGds,{name:"arrivalDateTime",label:"What is the arrival date?"}) }}
 
                 {{ govukInput({
                     label: {

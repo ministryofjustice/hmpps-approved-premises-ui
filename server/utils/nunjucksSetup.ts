@@ -116,10 +116,15 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       dev: true, // This is set to true to allow us to see the full stacktrace from errors in global functions, otherwise it gets swallowed and tricky to see in logs
     },
   )
-
+  njkEnv.addGlobal(
+    'callMacro',
+    function callMacro(macro: (context: Record<string, never>) => void, parameters: Record<string, never>) {
+      return macro({ ...this.ctx, ...parameters })
+    },
+  )
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addGlobal('displayName', displayName)
-  njkEnv.addGlobal('dateFieldValues', dateFieldValues)
+  njkEnv.addGlobal('dateFieldValuesWithContext', dateFieldValues)
   njkEnv.addGlobal('formatDate', (date: string, options: { format: 'short' | 'long' } = { format: 'long' }) =>
     DateFormats.isoDateToUIDate(date, options),
   )
