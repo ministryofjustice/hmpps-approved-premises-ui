@@ -133,6 +133,13 @@ notify:
 
 We currently use environment variables for feature flags.
 
+### Maintenance mode
+
+Set the environment variable `IN_MAINTENANCE_MODE` to true in the helm values of
+the intended environment and all traffic will be redirected to a static page.
+
+Users with the `CAS1_JANITOR` role are an exception to this for testing purposes.
+
 ## Updating API Schema Types
 
 The following script can be used to update the local type models (defined in server/@types). These are pulled from the

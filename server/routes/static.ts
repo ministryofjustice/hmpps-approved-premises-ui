@@ -15,5 +15,9 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'VIEW_ACCESSIBILITY_STATEMENT',
   })
 
+  get(staticPaths.pages.maintenance.pattern, staticController.render('maintenance'), {
+    auditEvent: 'VIEW_MAINTENANCE',
+  })
+
   return router
 }
