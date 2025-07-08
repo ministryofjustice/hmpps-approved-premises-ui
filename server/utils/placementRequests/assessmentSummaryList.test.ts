@@ -1,11 +1,11 @@
-import { placementRequestFactory, userFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory, userFactory } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { assessmentDateRow, assessmentOutcomeRow, assessmentSummary, assessorDetailsRow } from './assessmentSummaryList'
 
 describe('assessmentSummaryList', () => {
   describe('assessmentSummary', () => {
     it('returns a summary of the assessment', () => {
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
 
       expect(assessmentSummary(placementRequest)).toEqual({
         card: {
@@ -24,7 +24,7 @@ describe('assessmentSummaryList', () => {
 
   describe('assessmentOutcomeRow', () => {
     it('returns the outcome in sentence case', () => {
-      const placementRequest = placementRequestFactory.build({ assessmentDecision: 'accepted' })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ assessmentDecision: 'accepted' })
 
       expect(assessmentOutcomeRow(placementRequest)).toEqual({
         key: {
@@ -39,7 +39,7 @@ describe('assessmentSummaryList', () => {
 
   describe('assessmentDateRow', () => {
     it('returns the outcome in sentence case', () => {
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
 
       expect(assessmentDateRow(placementRequest)).toEqual({
         key: {
@@ -59,7 +59,7 @@ describe('assessmentSummaryList', () => {
         telephoneNumber: '12345',
         email: 'bruce@example.com',
       })
-      const placementRequest = placementRequestFactory.build({ assessor })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ assessor })
 
       expect(assessorDetailsRow(placementRequest)).toEqual({
         key: {
@@ -77,7 +77,7 @@ describe('assessmentSummaryList', () => {
         telephoneNumber: undefined,
         email: 'bruce@example.com',
       })
-      const placementRequest = placementRequestFactory.build({ assessor })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ assessor })
 
       expect(assessorDetailsRow(placementRequest)).toEqual({
         key: {

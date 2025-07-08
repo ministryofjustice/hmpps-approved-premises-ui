@@ -1,11 +1,7 @@
+import { PlacementRequirements } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import AssessmentClient from './assessmentClient'
-import {
-  assessmentFactory,
-  assessmentSummaryFactory,
-  clarificationNoteFactory,
-  placementRequestFactory,
-} from '../testutils/factories'
+import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
 import paths from '../paths/api'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
@@ -120,7 +116,13 @@ describeCas1NamespaceClient('AssessmentClient', provider => {
     it('should call the acceptance endpoint with the assessment', async () => {
       const data = {
         document: {},
-        requirements: placementRequestFactory.build(),
+        requirements: {
+          desirableCriteria: [],
+          essentialCriteria: [],
+          location: 'W21',
+          radius: 20,
+          type: 'normal',
+        } as PlacementRequirements,
       }
 
       await provider.addInteraction({

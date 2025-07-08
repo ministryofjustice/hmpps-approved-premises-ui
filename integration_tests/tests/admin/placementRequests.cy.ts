@@ -50,9 +50,9 @@ context('Placement Requests', () => {
 
     const matchedPlacementRequest = cas1PlacementRequestDetailFactory
       .params({
-      id: matchedPlacementRequests[1].id,
-      status: 'matched',
-    })
+        id: matchedPlacementRequests[1].id,
+        status: 'matched',
+      })
       .matched()
       .build()
     const spaceBooking = cas1SpaceBookingFactory.build({

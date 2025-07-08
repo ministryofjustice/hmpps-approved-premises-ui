@@ -1,13 +1,13 @@
-import { placementRequestFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { applicationLink } from './applicationLink'
 import { documentSummary, documentSummaryRow } from './documentSummaryList'
 import { assessmentLink } from './utils'
 
 describe('documentSummaryList', () => {
+  const placementRequest = cas1PlacementRequestDetailFactory.build()
+
   describe('documentSummary', () => {
     it('returns a summary of the documents', () => {
-      const placementRequest = placementRequestFactory.build()
-
       expect(documentSummary(placementRequest)).toEqual({
         card: {
           title: {
@@ -21,8 +21,6 @@ describe('documentSummaryList', () => {
 
   describe('documentSummaryRow', () => {
     it('returns an assessment row', () => {
-      const placementRequest = placementRequestFactory.build()
-
       expect(documentSummaryRow(placementRequest, 'assessment')).toEqual({
         key: {
           text: 'Assessment',
@@ -34,8 +32,6 @@ describe('documentSummaryList', () => {
     })
 
     it('returns an application row', () => {
-      const placementRequest = placementRequestFactory.build()
-
       expect(documentSummaryRow(placementRequest, 'application')).toEqual({
         key: {
           text: 'Application',

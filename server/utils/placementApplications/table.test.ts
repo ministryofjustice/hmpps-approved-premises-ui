@@ -8,21 +8,19 @@ import {
   tableRows,
 } from './table'
 import { crnCell, tierCell } from '../tableUtils'
-import { linkTo, sentenceCase } from '../utils'
+import * as utils from '../utils'
 import paths from '../../paths/placementApplications'
 import { sortHeader } from '../sortHeader'
 import { TaskSortField } from '../../@types/shared'
 import { DateFormats } from '../dateUtils'
-
-jest.mock('../utils')
 
 describe('table', () => {
   const stubLink = 'LINK'
   const stubSentenceCase = 'SENTENCE_CASE'
 
   beforeEach(() => {
-    jest.mocked(linkTo).mockReturnValue(stubLink)
-    jest.mocked(sentenceCase).mockReturnValue(stubSentenceCase)
+    jest.spyOn(utils, 'linkTo').mockReturnValue(stubLink)
+    jest.spyOn(utils, 'sentenceCase').mockReturnValue(stubSentenceCase)
   })
 
   describe('placementApplicationsTable', () => {
@@ -61,7 +59,7 @@ describe('table', () => {
 
       nameCell(task)
 
-      expect(linkTo).toHaveBeenCalledWith(paths.placementApplications.review.show({ id: task.id }), {
+      expect(utils.linkTo).toHaveBeenCalledWith(paths.placementApplications.review.show({ id: task.id }), {
         text: task.personName,
         attributes: { 'data-cy-placementApplicationId': task.id, 'data-cy-applicationId': task.applicationId },
       })
@@ -102,7 +100,7 @@ describe('table', () => {
           statusCell(tasks[0]),
         ],
       ])
-      expect(linkTo).toHaveBeenCalledWith(paths.placementApplications.review.show({ id: tasks[0].id }), {
+      expect(utils.linkTo).toHaveBeenCalledWith(paths.placementApplications.review.show({ id: tasks[0].id }), {
         text: tasks[0].personName,
         attributes: {
           'data-cy-placementApplicationId': tasks[0].id,

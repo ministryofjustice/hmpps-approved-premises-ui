@@ -1,9 +1,9 @@
-import { PlacementRequest } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { sentenceCase } from '../utils'
 
-export const assessmentSummary = (placementRequest: PlacementRequest): SummaryListWithCard => {
+export const assessmentSummary = (placementRequest: Cas1PlacementRequestDetail): SummaryListWithCard => {
   return {
     card: {
       title: {
@@ -18,7 +18,7 @@ export const assessmentSummary = (placementRequest: PlacementRequest): SummaryLi
   }
 }
 
-export const assessmentOutcomeRow = (placementRequest: PlacementRequest): SummaryListItem => {
+export const assessmentOutcomeRow = (placementRequest: Cas1PlacementRequestDetail): SummaryListItem => {
   return {
     key: {
       text: 'Assessment Outcome',
@@ -29,7 +29,7 @@ export const assessmentOutcomeRow = (placementRequest: PlacementRequest): Summar
   }
 }
 
-export const assessmentDateRow = (placementRequest: PlacementRequest): SummaryListItem => {
+export const assessmentDateRow = (placementRequest: Cas1PlacementRequestDetail): SummaryListItem => {
   return {
     key: {
       text: 'Date of assessment',
@@ -40,7 +40,7 @@ export const assessmentDateRow = (placementRequest: PlacementRequest): SummaryLi
   }
 }
 
-export const assessorDetailsRow = (placementRequest: PlacementRequest): SummaryListItem => {
+export const assessorDetailsRow = (placementRequest: Cas1PlacementRequestDetail): SummaryListItem => {
   const html = [
     placementRequest.assessor.name,
     placementRequest.assessor.email,
