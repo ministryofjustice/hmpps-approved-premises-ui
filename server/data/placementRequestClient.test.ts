@@ -19,7 +19,6 @@ import {
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
   paginatedResponseFactory,
-  placementRequestFactory,
 } from '../testutils/factories'
 import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
@@ -35,7 +34,7 @@ describeClient('placementRequestClient', provider => {
 
   describe('createBooking', () => {
     it('creates and returns a booking', async () => {
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
       const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
       const newPlacementRequestBooking = newPlacementRequestBookingFactory.build()
 

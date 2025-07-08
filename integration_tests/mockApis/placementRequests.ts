@@ -4,7 +4,6 @@ import type {
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
   PlacementRequest,
-  PlacementRequestDetail,
   PlacementRequestStatus,
   RiskTierLevel,
 } from '@approved-premises/api'
@@ -202,7 +201,7 @@ export default {
         },
       })
     ).body.requests,
-  stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>
+  stubPlacementRequest: (placementRequestDetail: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',

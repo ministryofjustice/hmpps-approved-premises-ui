@@ -2,11 +2,11 @@ import { Cas1SpaceBookingDates, FullPerson } from '@approved-premises/api'
 import {
   applicationFactory,
   assessmentFactory,
+  cas1PlacementRequestDetailFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
   cas1TimelineEventFactory,
   personFactory,
-  placementRequestFactory,
   restrictedPersonFactory,
 } from '../../../../server/testutils/factories'
 
@@ -26,7 +26,7 @@ context('Placements', () => {
       const person = mode === 'lao' ? restrictedPersonFactory.build() : personFactory.build()
       const application = applicationFactory.build({ person, personStatusOnSubmission: (person as FullPerson).status })
       const assessment = assessmentFactory.build()
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
       const placement = cas1SpaceBookingFactory.upcoming().build({
         ...placementParameters,
         applicationId: application.id,

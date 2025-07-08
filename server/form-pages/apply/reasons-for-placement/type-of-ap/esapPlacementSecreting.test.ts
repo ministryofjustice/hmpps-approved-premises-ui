@@ -1,16 +1,10 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
+import * as formUtils from '../../../../utils/formUtils'
 
 import EsapPlacementSecreting, { secretingHistory } from './esapPlacementSecreting'
 import { applicationFactory } from '../../../../testutils/factories'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
-jest.mock('../../../../utils/formUtils', () => {
-  return {
-    flattenCheckboxInput: jest.fn(arg => arg),
-    convertKeyValuePairToCheckBoxItems: jest.fn(),
-  }
-})
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
   return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => [] as Array<never>) }
 })
@@ -20,6 +14,7 @@ describe('EsapPlacementSecreting', () => {
 
   describe('body', () => {
     it('set the body correctly', () => {
+      jest.spyOn(formUtils, 'flattenCheckboxInput')
       const page = new EsapPlacementSecreting(
         {
           secretingHistory: ['radicalisationLiterature'],
@@ -29,7 +24,7 @@ describe('EsapPlacementSecreting', () => {
         application,
       )
 
-      expect(flattenCheckboxInput).toHaveBeenCalledWith(['radicalisationLiterature'])
+      expect(formUtils.flattenCheckboxInput).toHaveBeenCalledWith(['radicalisationLiterature'])
       expect(page.body).toEqual({
         secretingHistory: ['radicalisationLiterature'],
         secretingIntelligence: 'yes',
@@ -129,10 +124,15 @@ describe('EsapPlacementSecreting', () => {
 
   describe('secretingHistoryItems', () => {
     it('it calls convertKeyValuePairToCheckBoxItems with the correct values', () => {
+      jest.spyOn(formUtils, 'convertKeyValuePairToCheckBoxItems')
+
       const page = new EsapPlacementSecreting({ secretingHistory: ['radicalisationLiterature'] }, application)
       page.secretingHistoryItems()
 
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(secretingHistory, page.body.secretingHistory)
+      expect(formUtils.convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(
+        secretingHistory,
+        page.body.secretingHistory,
+      )
     })
   })
 })

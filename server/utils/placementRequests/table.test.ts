@@ -1,31 +1,14 @@
-import { add } from 'date-fns'
 import { PlacementRequestSortField } from '@approved-premises/api'
-import {
-  cas1PlacementRequestSummaryFactory,
-  personFactory,
-  placementRequestFactory,
-  restrictedPersonFactory,
-} from '../../testutils/factories'
-import {
-  dashboardTableHeader,
-  dashboardTableRows,
-  dueDateCell,
-  durationCell,
-  expectedArrivalDateCell,
-  nameCell,
-  releaseTypeCell,
-  tableRows,
-} from './table'
+import { cas1PlacementRequestSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
+import { dashboardTableHeader, dashboardTableRows, durationCell, nameCell } from './table'
 import { DateFormats } from '../dateUtils'
-import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { crnCell, htmlCell, textCell, tierCell } from '../tableUtils'
+import { htmlCell, textCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
 import { displayName, tierBadge } from '../personUtils'
-import { linkTo } from '../utils'
+import * as utils from '../utils'
 import adminPaths from '../../paths/admin'
 import { placementRequestStatus } from '../formUtils'
-
-jest.mock('../utils.ts')
+import { fullPersonFactory } from '../../testutils/factories/person'
 
 describe('tableUtils', () => {
   beforeEach(() => {
@@ -33,12 +16,18 @@ describe('tableUtils', () => {
   })
 
   describe('nameCell', () => {
+    beforeEach(() => {
+      jest.spyOn(utils, 'linkTo')
+    })
+
     it('returns the name of the service user and a link with a placement request', () => {
-      const placementRequest = placementRequestFactory.withFullPerson().build()
+      const placementRequest = cas1PlacementRequestSummaryFactory.build({
+        person: fullPersonFactory.build(),
+      })
 
       nameCell(placementRequest)
 
-      expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
+      expect(utils.linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
         text: displayName(placementRequest.person),
         attributes: {
           'data-cy-placementRequestId': placementRequest.id,
@@ -48,55 +37,41 @@ describe('tableUtils', () => {
     })
 
     it('returns the crn cell with no link if the person is a restrictedPerson', () => {
-      const restrictedPersonTask = placementRequestFactory.build({
+      const restrictedPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
         person: restrictedPersonFactory.build(),
       })
 
-      expect(nameCell(restrictedPersonTask)).toEqual({
-        text: `LAO: ${restrictedPersonTask.person.crn}`,
+      expect(nameCell(restrictedPersonPlacementRequest)).toEqual({
+        text: `LAO: ${restrictedPersonPlacementRequest.person.crn}`,
       })
     })
 
     it('returns the persons name prefixed with "LAO: " if the person is a FullPerson and has the isRestricted flag', () => {
-      const restrictedPersonTask = placementRequestFactory.build({
+      const restrictedPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
         person: personFactory.build({ isRestricted: true }),
       })
 
-      nameCell(restrictedPersonTask)
+      nameCell(restrictedPersonPlacementRequest)
 
-      expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: restrictedPersonTask.id }), {
-        text: displayName(restrictedPersonTask.person),
-        attributes: {
-          'data-cy-placementRequestId': restrictedPersonTask.id,
-          'data-cy-applicationId': restrictedPersonTask.applicationId,
+      expect(utils.linkTo).toHaveBeenCalledWith(
+        adminPaths.admin.placementRequests.show({ id: restrictedPersonPlacementRequest.id }),
+        {
+          text: displayName(restrictedPersonPlacementRequest.person),
+          attributes: {
+            'data-cy-placementRequestId': restrictedPersonPlacementRequest.id,
+            'data-cy-applicationId': restrictedPersonPlacementRequest.applicationId,
+          },
         },
-      })
+      )
     })
 
     it('returns the crn cell if the person is a unknown person', () => {
-      const unknownPersonTask = placementRequestFactory.build()
-      unknownPersonTask.person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
-
-      expect(nameCell(unknownPersonTask)).toEqual({
-        text: `Unknown: ${unknownPersonTask.person.crn}`,
+      const unknownPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
+        person: restrictedPersonFactory.build({ type: 'UnknownPerson' }),
       })
-    })
-  })
 
-  describe('expectedArrivalDateCell', () => {
-    it('returns a formatted arrival date with a placement request', () => {
-      const task = placementRequestFactory.build({ expectedArrival: '2022-01-01' })
-
-      expect(expectedArrivalDateCell(task)).toEqual({
-        text: DateFormats.isoDateToUIDate('2022-01-01'),
-      })
-    })
-
-    it('returns a formatted arrival date in short format', () => {
-      const task = placementRequestFactory.build({ expectedArrival: '2022-01-01' })
-
-      expect(expectedArrivalDateCell(task, 'short')).toEqual({
-        text: DateFormats.isoDateToUIDate('2022-01-01', { format: 'short' }),
+      expect(nameCell(unknownPersonPlacementRequest)).toEqual({
+        text: `Unknown: ${unknownPersonPlacementRequest.person.crn}`,
       })
     })
   })
@@ -106,46 +81,6 @@ describe('tableUtils', () => {
       expect(durationCell(16)).toEqual({
         text: '2 weeks, 2 days',
       })
-    })
-  })
-
-  describe('dueDateCell', () => {
-    it('returns the difference in days between the arrival date and the due date', () => {
-      DateFormats.differenceInBusinessDays = jest.fn().mockReturnValue(7)
-
-      const arrivalDate = add(new Date(), { days: 14 })
-      const task = placementRequestFactory.build({
-        expectedArrival: DateFormats.dateObjToIsoDate(arrivalDate),
-      })
-
-      expect(dueDateCell(task, 7)).toEqual({
-        text: '7 days',
-      })
-    })
-  })
-
-  describe('releaseTypeCell', () => {
-    it('returns the release type', () => {
-      const task = placementRequestFactory.build({ releaseType: 'rotl' })
-
-      expect(releaseTypeCell(task)).toEqual({ text: allReleaseTypes.rotl })
-    })
-  })
-
-  describe('tableRows', () => {
-    it('returns table rows for placement requests', () => {
-      const placementRequest = placementRequestFactory.build()
-
-      expect(tableRows([placementRequest])).toEqual([
-        [
-          nameCell(placementRequest),
-          crnCell(placementRequest.person),
-          tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest),
-          dueDateCell(placementRequest, 7),
-          releaseTypeCell(placementRequest),
-        ],
-      ])
     })
   })
 

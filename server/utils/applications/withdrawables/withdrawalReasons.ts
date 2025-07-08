@@ -12,7 +12,7 @@ type UserFacingWithdrawalReasons = Exclude<
   | 'WithdrawnByPP'
 >
 
-const withdrawalReasons: Record<UserFacingWithdrawalReasons, string> = {
+export const withdrawalReasons: Record<UserFacingWithdrawalReasons, string> = {
   AlternativeProvisionIdentified: 'Another provision has been identified',
   ChangeInCircumstances: 'Their circumstances changed',
   ChangeInReleaseDecision: 'The release decision changed',

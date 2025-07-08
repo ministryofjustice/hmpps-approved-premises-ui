@@ -51,8 +51,7 @@ class Cas1PlacementRequestSummaryFactory extends Factory<Cas1PlacementRequestSum
 }
 
 export default Cas1PlacementRequestSummaryFactory.define(() => {
-  const assessmentDate = faker.date.past()
-  const applicationDate = faker.date.recent({ refDate: assessmentDate })
+  const applicationDate = faker.date.past()
   const requestedPlacementArrivalDate = faker.date.future()
 
   return {

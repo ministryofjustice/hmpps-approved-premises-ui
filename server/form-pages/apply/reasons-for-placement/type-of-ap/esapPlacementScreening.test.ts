@@ -1,18 +1,19 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
+import * as formUtils from '../../../../utils/formUtils'
 
 import EsapPlacementScreening, { esapFactors, esapReasons } from './esapPlacementScreening'
 import { applicationFactory } from '../../../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../../utils'
 
-jest.mock('../../../../utils/formUtils')
 jest.mock('../../../utils')
-;(flattenCheckboxInput as jest.MockedFunction<typeof flattenCheckboxInput>).mockImplementation(
-  input => input as Array<string>,
-)
 
 describe('EsapPlacementScreening', () => {
   const application = applicationFactory.build()
+
+  beforeEach(async () => {
+    jest.spyOn(formUtils, 'flattenCheckboxInput').mockImplementation(input => input as Array<string>)
+    jest.spyOn(formUtils, 'convertKeyValuePairToCheckBoxItems')
+  })
 
   describe('when the user has answered the exceptional case question', () => {
     beforeEach(() => {
@@ -104,7 +105,7 @@ describe('EsapPlacementScreening', () => {
       )
       page.reasons()
 
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(esapReasons, page.body.esapReasons)
+      expect(formUtils.convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(esapReasons, page.body.esapReasons)
     })
   })
 
@@ -116,7 +117,7 @@ describe('EsapPlacementScreening', () => {
       )
       page.factors()
 
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(esapFactors, page.body.esapFactors)
+      expect(formUtils.convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(esapFactors, page.body.esapFactors)
     })
   })
 })
