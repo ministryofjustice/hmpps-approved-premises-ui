@@ -6,19 +6,12 @@ import {
   tierEnvelopeFactory,
 } from '../testutils/factories'
 import { tierBadge } from './personUtils'
-import { crnCell, daysUntilDueCell, emailCell, nameCell, tierCell } from './tableUtils'
+import { crnCell, daysUntilDueCell, emailCell, tierCell } from './tableUtils'
 import { DateFormats } from './dateUtils'
 
 jest.mock('./dateUtils')
 
 describe('tableUtils', () => {
-  describe('nameCell', () => {
-    it('returns the name of the person the task is assigned to as a TableCell object', () => {
-      const task = taskFactory.build()
-      expect(nameCell(task)).toEqual({ text: task.personName })
-    })
-  })
-
   describe('crnCell', () => {
     it('returns the crn of the person the task is assigned to as a TableCell object', () => {
       const task = taskFactory.build()

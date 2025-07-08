@@ -11,6 +11,7 @@ describe('placementRequestSummaryList', () => {
     licenceExpiryDate: '2030-11-23',
   })
   const placementRequest = cas1PlacementRequestDetailFactory.build({
+    isParole: false,
     releaseType: 'hdc',
     expectedArrival: '2025-10-02',
     duration: 52,

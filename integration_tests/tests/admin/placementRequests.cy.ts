@@ -13,9 +13,9 @@ import {
   cruManagementAreaFactory,
   newCancellationFactory,
   cas1PlacementRequestDetailFactory,
-  placementRequestFactory,
   premisesFactory,
   withdrawableFactory,
+  cas1PlacementRequestSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import CreatePlacementPage from '../../pages/admin/placementApplications/createPlacementPage'
@@ -32,24 +32,32 @@ import withdrawablesFactory from '../../../server/testutils/factories/withdrawab
 context('Placement Requests', () => {
   const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
     let application = applicationFactory.build(applicationData)
+
     const unmatchedPlacementRequests = [
-      placementRequestFactory.notMatched().build({ applicationId: application.id }),
-      placementRequestFactory.notMatched().build({ isParole: true }),
+      cas1PlacementRequestSummaryFactory.notMatched().build({ applicationId: application.id }),
+      cas1PlacementRequestSummaryFactory.notMatched().build({ isParole: true }),
     ]
-    const matchedPlacementRequests = placementRequestFactory.buildList(3)
-    const unableToMatchPlacementRequests = placementRequestFactory.unableToMatch().buildList(2)
+    const matchedPlacementRequests = cas1PlacementRequestSummaryFactory.matched().buildList(3)
+    const unableToMatchPlacementRequests = cas1PlacementRequestSummaryFactory.unableToMatch().buildList(2)
 
     const unmatchedPlacementRequest = cas1PlacementRequestDetailFactory.build({
-      ...unmatchedPlacementRequests[0],
+      id: unmatchedPlacementRequests[0].id,
+      applicationId: application.id,
+      status: 'notMatched',
       spaceBookings: [],
     })
 
     const parolePlacementRequest = cas1PlacementRequestDetailFactory.build({
-      ...unmatchedPlacementRequests[1],
+      id: unmatchedPlacementRequests[1].id,
+      isParole: true,
+      status: 'notMatched',
       spaceBookings: [],
     })
 
-    const matchedPlacementRequest = cas1PlacementRequestDetailFactory.build(matchedPlacementRequests[1])
+    const matchedPlacementRequest = cas1PlacementRequestDetailFactory.build({
+      id: matchedPlacementRequests[1].id,
+      status: 'matched',
+    })
     const spaceBooking = cas1SpaceBookingFactory.build({
       applicationId: application.id,
       premises: { id: matchedPlacementRequest.booking.premisesId },
@@ -59,12 +67,16 @@ context('Placement Requests', () => {
       type: 'legacy',
     })
     const matchedPlacementRequestWithLegacyBooking = cas1PlacementRequestDetailFactory.build({
-      ...matchedPlacementRequests[2],
+      id: matchedPlacementRequests[2].id,
+      status: 'matched',
       booking: legacyBooking,
       legacyBooking,
       spaceBookings: [],
     })
-    const unableToMatchPlacementRequest = cas1PlacementRequestDetailFactory.build(unableToMatchPlacementRequests[0])
+    const unableToMatchPlacementRequest = cas1PlacementRequestDetailFactory.build({
+      id: unableToMatchPlacementRequests[0].id,
+      status: 'unableToMatch',
+    })
 
     const preferredAps = premisesFactory.buildList(3)
 
@@ -142,7 +154,7 @@ context('Placement Requests', () => {
       // When I click the unable to match link
       listPage.clickUnableToMatch()
 
-      // Then I should see a list of unable to match palcement requests
+      // Then I should see a list of unable to match placement requests
       listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests, 'unableToMatch')
 
       // When I click the matched link
@@ -442,15 +454,13 @@ context('Placement Requests', () => {
     })
 
     it('allows me to withdraw a placement request', () => {
-      const { matchedPlacementRequest, unmatchedPlacementRequest, application } = stubArtifacts()
+      const { unmatchedPlacementRequest, application } = stubArtifacts()
+
       cy.task('stubPlacementRequestWithdrawal', unmatchedPlacementRequest)
+
       const withdrawable = withdrawableFactory.build({ id: unmatchedPlacementRequest.id, type: 'placement_request' })
       const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
-      cy.task('stubWithdrawablesWithNotes', {
-        applicationId: matchedPlacementRequest.applicationId,
-        withdrawables,
-      })
       cy.task('stubWithdrawablesWithNotes', {
         applicationId: application.id,
         withdrawables,

@@ -1,10 +1,10 @@
-import { PlacementRequest } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { sentenceCase } from '../utils'
 import { assessmentLink } from './utils'
 import { applicationLink } from './applicationLink'
 
-export const documentSummary = (placementRequest: PlacementRequest): SummaryListWithCard => {
+export const documentSummary = (placementRequest: Cas1PlacementRequestDetail): SummaryListWithCard => {
   return {
     card: {
       title: {
@@ -16,7 +16,7 @@ export const documentSummary = (placementRequest: PlacementRequest): SummaryList
 }
 
 export const documentSummaryRow = (
-  placementRequest: PlacementRequest,
+  placementRequest: Cas1PlacementRequestDetail,
   type: 'assessment' | 'application',
 ): SummaryListItem => {
   const linkText = `View document`

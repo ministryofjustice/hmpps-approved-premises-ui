@@ -3,11 +3,9 @@ import { fromPartial } from '@total-typescript/shoehorn'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
-import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import * as formUtils from '../../../../utils/formUtils'
 import RehabilitativeInterventions, { interventionsTranslations } from './rehabilitativeInterventions'
 import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
-
-jest.mock('../../../../utils/formUtils')
 
 describe('RehabilitativeInterventions', () => {
   const person = personFactory.build({ name: 'John Wayne' })
@@ -153,9 +151,12 @@ describe('RehabilitativeInterventions', () => {
   })
   describe('items', () => {
     it('calls convertKeyValuePairToCheckBoxItems with the correct arguments', () => {
+      jest.spyOn(formUtils, 'convertKeyValuePairToCheckBoxItems')
+
       const { other, ...interventionsForCheckboxes } = interventionsTranslations
       new RehabilitativeInterventions({ ...body, rehabilitativeInterventions: 'health' }, application).items()
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(interventionsForCheckboxes, ['health'])
+
+      expect(formUtils.convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(interventionsForCheckboxes, ['health'])
     })
   })
 })

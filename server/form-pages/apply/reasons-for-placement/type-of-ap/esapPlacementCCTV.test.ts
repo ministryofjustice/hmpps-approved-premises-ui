@@ -1,16 +1,10 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
+import * as formUtils from '../../../../utils/formUtils'
 
 import EsapPlacementCCTV, { cctvHistory } from './esapPlacementCCTV'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
-jest.mock('../../../../utils/formUtils', () => {
-  return {
-    flattenCheckboxInput: jest.fn(arg => arg),
-    convertKeyValuePairToCheckBoxItems: jest.fn(),
-  }
-})
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
   return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => [] as Array<never>) }
 })
@@ -117,12 +111,13 @@ describe('EsapPlacementCCTV', () => {
 
   describe('cctvHistoryItems', () => {
     it('it calls convertKeyValuePairToCheckBoxItems with the correct values', () => {
-      ;(flattenCheckboxInput as jest.MockedFunction<typeof flattenCheckboxInput>).mockReturnValue(['prisonerAssualt'])
+      jest.spyOn(formUtils, 'flattenCheckboxInput').mockReturnValue(['prisonerAssualt'])
+      jest.spyOn(formUtils, 'convertKeyValuePairToCheckBoxItems')
 
       const page = new EsapPlacementCCTV({ cctvHistory: ['prisonerAssualt'] }, application)
       page.cctvHistoryItems()
 
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(cctvHistory, page.body.cctvHistory)
+      expect(formUtils.convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(cctvHistory, page.body.cctvHistory)
     })
   })
 })

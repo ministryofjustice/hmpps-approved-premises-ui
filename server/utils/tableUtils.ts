@@ -10,8 +10,6 @@ export const textCell = (text: string): TableCell => ({ text })
 
 export const htmlCell = (html: string): TableCell => ({ html })
 
-export const nameCell = (item: { personName?: string }): TableCell => ({ text: item.personName })
-
 export const crnCell = (item: { crn?: string }): TableCell => ({ text: item.crn })
 
 export const tierCell = (item: { tier?: RiskTierEnvelope }) => {

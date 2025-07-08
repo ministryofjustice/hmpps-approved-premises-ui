@@ -1,4 +1,4 @@
-import { PlacementRequest } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { linkTo } from '../utils'
 
@@ -7,15 +7,16 @@ import assessPaths from '../../paths/assess'
 import { placementLength } from '../match'
 import { DateFormats } from '../dateUtils'
 
-export const formatReleaseType = (placementRequest: PlacementRequest) => allReleaseTypes[placementRequest.releaseType]
+export const formatReleaseType = (placementRequest: Cas1PlacementRequestDetail) =>
+  allReleaseTypes[placementRequest.releaseType]
 
-export const searchButton = (placementRequest: PlacementRequest) =>
+export const searchButton = (placementRequest: Cas1PlacementRequestDetail) =>
   linkTo(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }), {
     text: 'Search',
     attributes: { class: 'govuk-button' },
   })
 
-export const assessmentLink = (placementRequest: PlacementRequest, text: string, hiddenText: string) =>
+export const assessmentLink = (placementRequest: Cas1PlacementRequestDetail, text: string, hiddenText: string) =>
   linkTo(assessPaths.assessments.show({ id: placementRequest.assessmentId }), { text, hiddenText })
 
 export const requestTypes = [

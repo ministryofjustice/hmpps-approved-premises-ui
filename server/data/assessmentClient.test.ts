@@ -1,10 +1,6 @@
+import { PlacementRequirements } from '@approved-premises/api'
 import AssessmentClient from './assessmentClient'
-import {
-  assessmentFactory,
-  assessmentSummaryFactory,
-  clarificationNoteFactory,
-  placementRequestFactory,
-} from '../testutils/factories'
+import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
@@ -119,7 +115,13 @@ describeClient('AssessmentClient', provider => {
       const assessmentId = 'some-id'
       const data = {
         document: {},
-        requirements: placementRequestFactory.build(),
+        requirements: {
+          desirableCriteria: [],
+          essentialCriteria: [],
+          location: 'W21',
+          radius: 20,
+          type: 'normal',
+        } as PlacementRequirements,
       }
 
       provider.addInteraction({

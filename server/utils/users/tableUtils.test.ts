@@ -4,7 +4,6 @@ import {
   apAreaCell,
   managementDashboardTableHeader,
   managementDashboardTableRows,
-  nameCell,
   roleCell,
 } from './tableUtils'
 import paths from '../../paths/admin'
@@ -62,15 +61,6 @@ describe('tableUtils', () => {
           { text: user.apArea.name },
         ],
       ])
-    })
-  })
-
-  describe('nameCell', () => {
-    it('returns a cell with the persons name as a link to the edit page', () => {
-      const user = userFactory.build()
-      expect(nameCell(user)).toEqual({
-        html: linkTo(paths.admin.userManagement.edit({ id: user.id }), { text: user.name }),
-      })
     })
   })
 

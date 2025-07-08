@@ -41,7 +41,6 @@ import { fullPersonFactory as personFactory, restrictedPersonFactory } from './p
 import placementApplicationFactory from './placementApplication'
 import placementApplicationTaskFactory from './placementApplicationTask'
 import placementDatesFactory from './placementDates'
-import placementRequestFactory from './placementRequest'
 import premisesFactory from './premises'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
@@ -95,6 +94,7 @@ import cas1ChangeRequestSummaryFactory from './cas1ChangeRequestSummary'
 import cas1NewChangeRequestFactory from './cas1NewChangeRequest'
 import appealSessionDataFactory from './appealSessionData'
 import cas1PlacementRequestDetailFactory from './cas1PlacementRequestDetail'
+import cas1PlacementRequestSummaryFactory from './cas1PlacementRequestSummary'
 import cas1ChangeRequestFactory from './cas1ChangeRequest'
 import cas1RejectChangeRequestFactory from './cas1RejectChangeRequest'
 import oasysQuestionFactory from './oasysQuestion'
@@ -146,6 +146,7 @@ export {
   cas1NonArrivalFactory,
   cas1OverbookingRangeFactory,
   cas1PlacementRequestDetailFactory,
+  cas1PlacementRequestSummaryFactory,
   cas1KeyworkerAllocationFactory,
   cas1UpdateSpaceBookingFactory,
   clarificationNoteFactory,
@@ -177,7 +178,6 @@ export {
   placementApplicationTaskFactory,
   placementApplicationDecisionEnvelopeFactory,
   placementDatesFactory,
-  placementRequestFactory,
   premisesFactory,
   prisonCaseNotesFactory,
   probationRegionFactory,

@@ -1,4 +1,4 @@
-import { placementRequestFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { assessmentLink, formatReleaseType, searchButton, withdrawalMessage } from './utils'
 import * as utils from '../utils'
 import paths from '../../paths/match'
@@ -8,7 +8,7 @@ import { DateFormats } from '../dateUtils'
 describe('utils', () => {
   describe('formatReleaseType', () => {
     it('formats a release type in a human-readable format', () => {
-      const placementRequest = placementRequestFactory.build({ releaseType: 'rotl' })
+      const placementRequest = cas1PlacementRequestDetailFactory.build({ releaseType: 'rotl' })
       expect(formatReleaseType(placementRequest)).toEqual('Release on Temporary Licence (ROTL)')
     })
   })
@@ -16,7 +16,7 @@ describe('utils', () => {
   describe('searchButton', () => {
     it('returns a link to the search query', () => {
       jest.spyOn(utils, 'linkTo')
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
 
       searchButton(placementRequest)
 
@@ -30,7 +30,7 @@ describe('utils', () => {
   describe('assessmentLink', () => {
     it('returns a link to the assessment', () => {
       jest.spyOn(utils, 'linkTo')
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
 
       assessmentLink(placementRequest, 'link text', 'hidden text')
 

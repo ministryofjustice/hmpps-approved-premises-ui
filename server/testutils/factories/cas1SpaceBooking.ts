@@ -20,8 +20,8 @@ import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancell
 import { departureReasonFactory } from './referenceData'
 import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../utils/placements'
 import { filterOutAPTypes } from '../../utils/match'
-import { placementCriteria } from './placementRequest'
 import cas1ChangeRequestSummary from './cas1ChangeRequestSummary'
+import { placementCriteria } from './cas1PlacementRequestDetail'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {

@@ -3,7 +3,7 @@ import {
   Cas1ChangeRequestType,
   type Cas1NewChangeRequest,
   Cas1PlacementRequestDetail,
-  PlacementRequest,
+  Cas1PlacementRequestSummary,
   WithdrawPlacementRequestReason,
 } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
@@ -15,9 +15,9 @@ import {
   newPlacementRequestBookingConfirmationFactory,
   paginatedResponseFactory,
   cas1PlacementRequestDetailFactory,
-  placementRequestFactory,
   cas1ChangeRequestFactory,
   cas1RejectChangeRequestFactory,
+  cas1PlacementRequestSummaryFactory,
 } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
 import { Cas1ReferenceData, PaginatedResponse } from '../@types/ui'
@@ -52,8 +52,8 @@ describe('placementRequestService', () => {
 
     it('calls the find method on the placementRequest client', async () => {
       const response = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(4, { status: 'notMatched' }),
-      }) as PaginatedResponse<PlacementRequest>
+        data: cas1PlacementRequestSummaryFactory.buildList(4, { placementRequestStatus: 'notMatched' }),
+      }) as PaginatedResponse<Cas1PlacementRequestSummary>
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
@@ -67,8 +67,8 @@ describe('placementRequestService', () => {
 
     it('calls the find method on the placementRequest client with page and sort options', async () => {
       const response = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(4, { status: 'notMatched' }),
-      }) as PaginatedResponse<PlacementRequest>
+        data: cas1PlacementRequestSummaryFactory.buildList(4, { placementRequestStatus: 'notMatched' }),
+      }) as PaginatedResponse<Cas1PlacementRequestSummary>
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
@@ -84,8 +84,8 @@ describe('placementRequestService', () => {
   describe('search', () => {
     it('calls the dashboard method on the placementRequest client', async () => {
       const response = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(4),
-      }) as PaginatedResponse<PlacementRequest>
+        data: cas1PlacementRequestSummaryFactory.buildList(4),
+      }) as PaginatedResponse<Cas1PlacementRequestSummary>
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
@@ -99,8 +99,8 @@ describe('placementRequestService', () => {
 
     it('calls the dashboard method on the placementRequest client with optional search params', async () => {
       const response = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(4),
-      }) as PaginatedResponse<PlacementRequest>
+        data: cas1PlacementRequestSummaryFactory.buildList(4),
+      }) as PaginatedResponse<Cas1PlacementRequestSummary>
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
@@ -124,8 +124,8 @@ describe('placementRequestService', () => {
 
     it('calls the dashboard method on the placementRequest client with page and sort options', async () => {
       const response = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(4),
-      }) as PaginatedResponse<PlacementRequest>
+        data: cas1PlacementRequestSummaryFactory.buildList(4),
+      }) as PaginatedResponse<Cas1PlacementRequestSummary>
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
