@@ -6,9 +6,9 @@ import {
   cas1ChangeRequestFactory,
   cas1ChangeRequestSummaryFactory,
   cas1PlacementRequestDetailFactory,
+  cas1PlacementRequestSummaryFactory,
   cas1SpaceBookingSummaryFactory,
   cruManagementAreaFactory,
-  placementRequestFactory,
 } from '../../../server/testutils/factories'
 import ChangeRequestsListPage from '../../pages/admin/placementApplications/changeRequestsListPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
@@ -19,7 +19,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 
 context('Change Requests', () => {
   describe('CRU Dashboard', () => {
-    const placementRequests = placementRequestFactory.notMatched().buildList(3)
+    const placementRequests = cas1PlacementRequestSummaryFactory.notMatched().buildList(3)
     const cruManagementAreas = cruManagementAreaFactory.buildList(5)
     const userCruManagementArea = cruManagementAreas[0]
 
