@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type Cas1OutOfServiceBedReason = {
     id: string;
-    name: string;
     isActive: boolean;
+    name: string;
 };
 

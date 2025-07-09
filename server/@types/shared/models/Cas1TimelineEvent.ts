@@ -2,29 +2,30 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
+import type { Cas1BookingCancelledContentPayload } from './Cas1BookingCancelledContentPayload';
+import type { Cas1BookingChangedContentPayload } from './Cas1BookingChangedContentPayload';
+import type { Cas1BookingMadeContentPayload } from './Cas1BookingMadeContentPayload';
+import type { Cas1PlacementChangeRequestCreatedPayload } from './Cas1PlacementChangeRequestCreatedPayload';
+import type { Cas1PlacementChangeRequestRejectedPayload } from './Cas1PlacementChangeRequestRejectedPayload';
 import type { Cas1TimelineEventAssociatedUrl } from './Cas1TimelineEventAssociatedUrl';
-import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContentPayload';
 import type { Cas1TimelineEventType } from './Cas1TimelineEventType';
 import type { Cas1TriggerSourceType } from './Cas1TriggerSourceType';
-import type { User } from './User';
+import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
 import type { UserSummary } from './UserSummary';
 export type Cas1TimelineEvent = {
-    type: Cas1TimelineEventType;
-    id: string;
-    occurredAt: string;
+    associatedUrls?: Array<Cas1TimelineEventAssociatedUrl>;
     /**
      * Timeline description. If a value is provided for 'payload', that should be instead be used to build a description
      */
     content?: string;
-    /**
-     * Use createdBySummary
-     * @deprecated
-     */
-    createdBy?: User;
+    createdBy?: (ApprovedPremisesUser | TemporaryAccommodationUser);
     createdBySummary?: UserSummary;
-    payload?: Cas1TimelineEventContentPayload;
-    associatedUrls?: Array<Cas1TimelineEventAssociatedUrl>;
-    triggerSource?: Cas1TriggerSourceType;
+    id: string;
+    occurredAt: string;
+    payload?: (Cas1BookingCancelledContentPayload | Cas1BookingChangedContentPayload | Cas1BookingMadeContentPayload | Cas1PlacementChangeRequestCreatedPayload | Cas1PlacementChangeRequestRejectedPayload);
     schemaVersion?: number;
+    triggerSource?: Cas1TriggerSourceType;
+    type: Cas1TimelineEventType;
 };
 

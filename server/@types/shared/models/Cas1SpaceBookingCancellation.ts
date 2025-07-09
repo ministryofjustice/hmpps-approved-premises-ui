@@ -5,8 +5,8 @@
 import type { CancellationReason } from './CancellationReason';
 export type Cas1SpaceBookingCancellation = {
     occurredAt: string;
-    recordedAt: string;
     reason: CancellationReason;
     reason_notes?: string;
+    recordedAt: string;
 };
 

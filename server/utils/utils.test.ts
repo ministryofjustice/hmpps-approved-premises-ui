@@ -239,7 +239,13 @@ describe('linkTo', () => {
   it('allows hidden text to be specified', () => {
     expect(
       linkTo(path('/foo/:id')({ id: '123' }), { text: 'Hello', hiddenText: 'Hidden' }),
-    ).toMatchStringIgnoringWhitespace('<a href="/foo/123">Hello <span class="govuk-visually-hidden">Hidden</span></a>')
+    ).toMatchStringIgnoringWhitespace('<a href="/foo/123">Hello<span class="govuk-visually-hidden">Hidden</span></a>')
+  })
+
+  it('allows hidden prefix text to be specified', () => {
+    expect(
+      linkTo(path('/foo/:id')({ id: '123' }), { text: 'Hello', hiddenPrefix: 'Hidden' }),
+    ).toMatchStringIgnoringWhitespace('<a href="/foo/123"><span class="govuk-visually-hidden">Hidden</span>Hello</a>')
   })
 
   it('allows attributes to be specified', () => {
@@ -333,13 +339,15 @@ describe('linebreaksToParagraphs', () => {
 
 describe('pluralize', () => {
   it.each([
-    ['dog', 'dogs', 2],
-    ['dog', 'dog', 1],
-    ['dog', 'dogs', -2],
-    ['dog', 'dog', -1],
-    ['dog', 'dogs', 0],
-  ])('pluralises %s to %s when count is %s', (noun: string, expected: string, count: number) => {
-    expect(pluralize(noun, count)).toEqual(`${count} ${expected}`)
+    ['dog', 2, undefined, '2 dogs'],
+    ['dog', 1, undefined, '1 dog'],
+    ['dog', -2, undefined, '-2 dogs'],
+    ['dog', -1, undefined, '-1 dog'],
+    ['dog', 0, undefined, '0 dogs'],
+    ['person', 0, 'people', '0 people'],
+    ['person', 1, 'people', '1 person'],
+  ])('pluralises %s to %s when count is %s', (noun: string, count: number, plural: string, expected: string) => {
+    expect(pluralize(noun, count, plural)).toEqual(expected)
   })
 })
 

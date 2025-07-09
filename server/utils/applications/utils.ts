@@ -259,13 +259,6 @@ const firstPageOfApplicationJourney = (application: Application) => {
 }
 
 const getApplicationType = (application: Application): ApplicationType => {
-  if (application.isEsapApplication) {
-    return 'ESAP'
-  }
-  if (application.isPipeApplication) {
-    return 'PIPE'
-  }
-
   switch (application.apType) {
     case 'esap':
       return 'ESAP'

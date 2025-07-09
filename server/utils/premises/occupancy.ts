@@ -3,8 +3,8 @@ import {
   Cas1PremiseCapacityForDay,
   Cas1PremisesDaySummary,
   Cas1SpaceBookingCharacteristic,
-  Cas1SpaceBookingDaySummary,
   Cas1SpaceBookingDaySummarySortField,
+  Cas1SpaceBookingSummary,
   SortDirection,
 } from '@approved-premises/api'
 import { SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
@@ -16,8 +16,8 @@ import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
 import { joinWithCommas, pluralize } from '../utils'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
-import config from '../../config'
 import { getRoomCharacteristicLabel, roomCharacteristicMap } from '../characteristicsUtils'
+import { canonicalDates } from '../placements'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -92,10 +92,9 @@ export const durationSelectOptions = (durationDays?: string): Array<SelectOption
     selected: value === durationDays || undefined,
   }))
 
-export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): string => {
-  const {
-    capacity: { characteristicAvailability, availableBedCount, bookingCount },
-  } = daySummary
+export const generateDaySummaryText = (capacity: Cas1PremiseCapacityForDay): string => {
+  const { characteristicAvailability, availableBedCount, bookingCount } = capacity
+
   const overbookedCriteria = characteristicAvailability
     .map(({ characteristic, availableBedsCount, bookingsCount }) =>
       bookingsCount > availableBedsCount ? characteristic : undefined,
@@ -110,40 +109,30 @@ export const generateDaySummaryText = (daySummary: Cas1PremisesDaySummary): stri
   return messages.length ? `This AP ${messages.join(' and ')}.` : ''
 }
 
-const availabilityRow = (
-  name: string,
-  characteristic: Cas1SpaceBookingCharacteristic,
-  available: number,
-  booked: number,
-): SummaryListItem => {
-  return booked || available
+const availabilityRow = (name: string, available: number, booked: number, hideEmpty: boolean): SummaryListItem => {
+  return booked || available || !hideEmpty
     ? {
         key: { text: name },
         value: {
-          html: `${pluralize('bed', available)}${booked ? `<a class="govuk-!-margin-left-2" href="${characteristic ? `?characteristics=${characteristic}` : '?'}">${pluralize('booking', booked)}</a>` : ''}${(booked || available) && booked >= available ? `<strong class="govuk-tag govuk-tag--${booked > available ? 'red' : 'yellow'} govuk-tag--float-right">${booked > available ? 'Overbooked' : 'Full'}</strong>` : ''}`,
+          html: `<div class="govuk-grid-row govuk-grid-row--flex"><div class="govuk-grid-column-one-third">${available} capacity</div><div class="govuk-grid-column-one-third">${booked} booked</div><div class="govuk-grid-column-one-third">${available - booked} available</div></div>`,
         },
       }
     : null
 }
 
 export const daySummaryRows = (
-  daySummary: Cas1PremisesDaySummary,
+  capacity: Cas1PremiseCapacityForDay,
   roomCharacteristics: Array<Cas1SpaceBookingCharacteristic> = null,
   characteristicsMode: 'singleRow' | 'doubleRow' | 'none' = 'none',
 ) => {
-  const {
-    capacity: { totalBedCount, bookingCount, availableBedCount, characteristicAvailability },
-  } = daySummary
+  const { totalBedCount, bookingCount, availableBedCount, characteristicAvailability } = capacity
 
-  const rows: Array<SummaryListItem> =
-    characteristicsMode === 'singleRow'
-      ? [availabilityRow('All rooms', null, availableBedCount, bookingCount)]
-      : [
-          summaryListItem('Capacity', String(totalBedCount)),
-          summaryListItem('Booked spaces', String(bookingCount)),
-          summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
-          summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
-        ]
+  const rows: Array<SummaryListItem> = [
+    summaryListItem('Capacity', String(totalBedCount)),
+    summaryListItem('Booked spaces', String(bookingCount)),
+    summaryListItem('Out of service beds', String(totalBedCount - availableBedCount)),
+    summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
+  ]
 
   if (characteristicsMode === 'doubleRow')
     rows.push({ key: { html: '<div class="govuk-!-static-padding-top-5"></div>' }, value: null })
@@ -153,7 +142,12 @@ export const daySummaryRows = (
       if (!roomCharacteristics || roomCharacteristics.includes(characteristic)) {
         if (characteristicsMode === 'singleRow') {
           rows.push(
-            availabilityRow(placementCriteriaLabels[characteristic], characteristic, availableBedsCount, bookingsCount),
+            availabilityRow(
+              placementCriteriaLabels[characteristic],
+              availableBedsCount,
+              bookingsCount,
+              !roomCharacteristics,
+            ),
           )
         }
 
@@ -188,12 +182,13 @@ export const filterOutOfServiceBeds = (
 export const tableCaptions = (
   daySummary: Cas1PremisesDaySummary,
   characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
+  detailedFormat = false,
 ): { placementTableCaption: string; outOfServiceBedCaption: string } => {
   const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
-  return config.flags.pocEnabled
+  return detailedFormat
     ? {
-        placementTableCaption: `${pluralize('resident', daySummary.spaceBookings?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray)}`,
-        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, 'with')}`,
+        placementTableCaption: `${pluralize('person', daySummary.spaceBookingSummaries?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, ' requiring: ')}`,
+        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, ' with: ')}`,
       }
     : {
         placementTableCaption: `People booked in on ${formattedDate}`,
@@ -202,7 +197,7 @@ export const tableCaptions = (
 }
 
 const itemListHtml = (items: Array<string>): { html: string } =>
-  htmlValue(`<ul class="govuk-list govuk-list">
+  htmlValue(`<ul class="govuk-list govuk-list--compact">
     ${items.map((item: string) => `<li>${item}</li>`).join('')}
   </ul>
 `)
@@ -244,11 +239,10 @@ export const tableHeader = <T extends string>(
   )
 }
 
-export const placementTableRows = (
-  premisesId: string,
-  placements: Array<Cas1SpaceBookingDaySummary>,
-): Array<TableRow> =>
-  placements.map(({ id, person, tier, canonicalArrivalDate, canonicalDepartureDate, essentialCharacteristics }) => {
+export const placementTableRows = (premisesId: string, placements: Array<Cas1SpaceBookingSummary>): Array<TableRow> =>
+  placements.map(placement => {
+    const { id, person, tier, characteristics } = placement
+    const { arrivalDate, departureDate } = canonicalDates(placement)
     const fieldValues: Record<PlacementColumnField, TableCell> = {
       personName: htmlValue(
         `<a href="${managePaths.premises.placements.show({
@@ -257,10 +251,10 @@ export const placementTableRows = (
         })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
       ),
       tier: htmlValue(getTierOrBlank(tier)),
-      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' })),
-      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' })),
+      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
+      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
       spaceType: itemListHtml(
-        essentialCharacteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
+        characteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
       ),
     }
     return placementColumnMap.map(({ fieldName }: ColumnDefinition<PlacementColumnField>) => fieldValues[fieldName])
@@ -295,10 +289,10 @@ export const outOfServiceBedTableRows = (
 
 export const generateCharacteristicsSummary = (
   characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
-  verb = 'requiring',
+  prefix = ' requiring: ',
 ) => {
   return characteristicsArray?.length
-    ? ` ${verb}: ${joinWithCommas(
+    ? `${prefix}${joinWithCommas(
         characteristicsArray.map(characteristic => roomCharacteristicMap[characteristic].toLowerCase()),
       )}`
     : ''

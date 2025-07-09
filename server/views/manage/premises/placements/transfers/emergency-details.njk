@@ -23,12 +23,12 @@
 {% endblock %}
 
 {% block content %}
-    {{ showErrorSummary(errorSummary) }}
-
-    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary) }}
+
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
             <form action="{{ currentUrl }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -37,7 +37,7 @@
                     name: "destinationPremisesId",
                     label: {
                         text: "Where is the person being transferred to?",
-                        classes: "govuk-fieldset__legend--m"
+                        classes: "govuk-label--m"
                     },
                     attributes: {
                         'data-autocomplete': { value: true, optional: true },

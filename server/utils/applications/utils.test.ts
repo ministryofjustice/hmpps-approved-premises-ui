@@ -299,7 +299,7 @@ describe('utils', () => {
       requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(2, {
         status: 'requestedFurtherInformation',
       }),
-      submitted: cas1ApplicationSummaryFactory.buildList(6, { status: 'submitted' }),
+      submitted: cas1ApplicationSummaryFactory.buildList(6, { status: 'awaitingAssesment' }),
       inactive: cas1ApplicationSummaryFactory.buildList(4, { status: 'expired' }),
     }
 
@@ -645,48 +645,27 @@ describe('utils', () => {
   })
 
   describe('getApplicationType', () => {
-    describe('when `isEsapApplication` is `true`', () => {
-      it('returns "ESAP"', () => {
-        const application = applicationFactory.build({
-          isEsapApplication: true,
-        })
-        expect(getApplicationType(application)).toEqual('ESAP')
+    it.each<[ApplicationType, ApType]>([
+      ['Standard', 'normal'],
+      ['ESAP', 'esap'],
+      ['MHAP (Elliott House)', 'mhapElliottHouse'],
+      ['MHAP (St Josephs)', 'mhapStJosephs'],
+      ['PIPE', 'pipe'],
+      ['RFAP', 'rfap'],
+    ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
+      const application = applicationFactory.build({
+        apType: applicationApType,
+        isEsapApplication: undefined,
+        isPipeApplication: undefined,
       })
-    })
-
-    describe('when `isEsapApplication` is undefined` and `isPipeApplication` is `true`', () => {
-      it('returns "PIPE"', () => {
-        const application = applicationFactory.build({
-          isEsapApplication: undefined,
-          isPipeApplication: true,
-        })
-        expect(getApplicationType(application)).toEqual('PIPE')
-      })
-    })
-
-    describe('when `isEsapApplication` and `isPipeApplication` are undefined', () => {
-      it.each<[ApplicationType, ApType]>([
-        ['Standard', 'normal'],
-        ['ESAP', 'esap'],
-        ['MHAP (Elliott House)', 'mhapElliottHouse'],
-        ['MHAP (St Josephs)', 'mhapStJosephs'],
-        ['PIPE', 'pipe'],
-        ['RFAP', 'rfap'],
-      ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
-        const application = applicationFactory.build({
-          apType: applicationApType,
-          isEsapApplication: undefined,
-          isPipeApplication: undefined,
-        })
-        expect(getApplicationType(application)).toEqual(expectedOutput)
-      })
+      expect(getApplicationType(application)).toEqual(expectedOutput)
     })
   })
 
   describe('actionsCell', () => {
-    it.each(['started', 'requestedFurtherInformation'] as const)(
+    it.each(['started', 'requestedFurtherInformation'] as Array<ApplicationStatus>)(
       'returns a link to withdraw the application when the status is %s',
-      (status: ApplicationStatus) => {
+      status => {
         const applicationSummary = cas1ApplicationSummaryFactory.build({
           id: 'an-application-id',
           status,
@@ -694,12 +673,12 @@ describe('utils', () => {
         })
 
         expect(actionsLink(applicationSummary)).toBe(
-          '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
+          '<a href="/applications/an-application-id/withdrawals/new">Withdraw</a>',
         )
       },
     )
 
-    it.each(['awaitingPlacement', 'pendingPlacementRequest'] as const)(
+    it.each(['awaitingPlacement', 'pendingPlacementRequest'] as Array<ApplicationStatus>)(
       'returns a link to request for placement of the application when the status is %s and hasRequestsForPlacement is false',
       status => {
         const applicationSummary = cas1ApplicationSummaryFactory.build({
@@ -709,14 +688,14 @@ describe('utils', () => {
         })
 
         expect(actionsLink(applicationSummary)).toEqual(
-          '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
+          '<a href="/placement-applications?id=an-application-id">Create request for placement</a>',
         )
       },
     )
 
-    it.each(['rejected', 'withdrawn', 'submitted'])(
+    it.each(['rejected', 'withdrawn', 'awaitingAssesment'] as Array<ApplicationStatus>)(
       'does not return a link to withdraw the application if the status is %s',
-      (status: ApplicationStatus) => {
+      status => {
         const applicationSummary = cas1ApplicationSummaryFactory.build({
           id: 'an-application-id',
           status,

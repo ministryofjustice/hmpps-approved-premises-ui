@@ -22,56 +22,64 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{{ paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }) }}"
-          method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
 
-        {{ showErrorSummary(errorSummary, errorTitle) }}
+            <h1 class="govuk-heading-l">Record someone as arrived</h1>
+        </div>
+    </div>
 
-        <h1 class="govuk-heading-l">Record someone as arrived</h1>
-
-        {{ govukSummaryList({
-            rows: [{
-                key: {
-                    text: "Expected arrival date"
-                },
-                value: {
-                    text: formatDate(placement.expectedArrivalDate)
-                }
-            }]
-        }) }}
-
-        {{ govukDateInput({
-            id: "arrivalDateTime",
-            namePrefix: "arrivalDateTime",
-            items: dateFieldValues('arrivalDateTime', errors),
-            errorMessage: errors.arrivalDateTime,
-            fieldset: {
-                legend: {
-                    text: "What is the arrival date?",
-                    classes: "govuk-fieldset__legend--m"
-                }
+    {{ govukSummaryList({
+        rows: [{
+            key: {
+                text: "Expected arrival date"
+            },
+            value: {
+                text: formatDate(placement.expectedArrivalDate)
             }
-        }) }}
+        }]
+    }) }}
 
-        {{ govukInput({
-            label: {
-                text: 'What is the time of arrival?',
-                classes: 'govuk-fieldset__legend--m'
-            },
-            hint: {
-                text: 'For example, 09:30 or 14:55.'
-            },
-            classes: 'govuk-input--width-5',
-            id: 'arrivalTime',
-            name: 'arrivalTime',
-            value: arrivalTime,
-            errorMessage: errors.arrivalTime
-        }) }}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form action="{{ paths.premises.placements.arrival({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ govukButton({
-            text: "Submit",
-            preventDoubleClick: true
-        }) }}
-    </form>
+                {{ govukDateInput({
+                    id: "arrivalDateTime",
+                    namePrefix: "arrivalDateTime",
+                    items: dateFieldValues('arrivalDateTime', errors),
+                    errorMessage: errors.arrivalDateTime,
+                    fieldset: {
+                        legend: {
+                            text: "What is the arrival date?",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    }
+                }) }}
+
+                {{ govukInput({
+                    label: {
+                        text: 'What is the time of arrival?',
+                        classes: 'govuk-label--m'
+                    },
+                    hint: {
+                        text: 'For example, 09:30 or 14:55.'
+                    },
+                    classes: 'govuk-input--width-5',
+                    id: 'arrivalTime',
+                    name: 'arrivalTime',
+                    value: arrivalTime,
+                    errorMessage: errors.arrivalTime
+                }) }}
+
+                {{ govukButton({
+                    text: "Submit",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
 {% endblock %}

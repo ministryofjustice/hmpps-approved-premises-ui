@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1NonArrival = {
-    reason: string;
     notes?: string;
+    reason: string;
 };
 

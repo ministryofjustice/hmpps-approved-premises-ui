@@ -2,18 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
 import type { Cas1OutOfServiceBedReason } from './Cas1OutOfServiceBedReason';
 import type { Cas1OutOfServiceBedRevisionType } from './Cas1OutOfServiceBedRevisionType';
-import type { User } from './User';
+import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
 export type Cas1OutOfServiceBedRevision = {
-    id: string;
-    updatedAt: string;
-    updatedBy?: User;
-    revisionType: Array<Cas1OutOfServiceBedRevisionType>;
-    startDate?: string;
     endDate?: string;
+    id: string;
+    notes?: string;
     reason?: Cas1OutOfServiceBedReason;
     referenceNumber?: string;
-    notes?: string;
+    revisionType: Array<Cas1OutOfServiceBedRevisionType>;
+    startDate?: string;
+    updatedAt: string;
+    updatedBy?: (ApprovedPremisesUser | TemporaryAccommodationUser);
 };
 

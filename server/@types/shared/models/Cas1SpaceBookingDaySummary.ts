@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
-import type { PersonSummary } from './PersonSummary';
+import type { FullPersonSummary } from './FullPersonSummary';
+import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
+import type { UnknownPersonSummary } from './UnknownPersonSummary';
 export type Cas1SpaceBookingDaySummary = {
-    id: string;
-    person: PersonSummary;
     /**
      * actual arrival date or, if not known, the expected arrival date
      */
@@ -15,11 +15,13 @@ export type Cas1SpaceBookingDaySummary = {
      * actual departure date or, if not known, the expected departure date
      */
     canonicalDepartureDate: string;
+    essentialCharacteristics: Array<Cas1SpaceCharacteristic>;
+    id: string;
+    person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
+    releaseType?: string;
     /**
      * Risk rating tier level of corresponding application
      */
     tier?: string;
-    releaseType?: string;
-    essentialCharacteristics: Array<Cas1SpaceCharacteristic>;
 };
 

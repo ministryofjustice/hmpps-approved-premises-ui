@@ -118,7 +118,7 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
 
   completed(assessmentDecision: AssessmentDecision) {
     return this.params({
-      status: 'submitted',
+      status: 'awaitingPlacement',
       assessmentDecision,
       assessmentDecisionDate: DateFormats.dateObjToIsoDateTime(faker.date.past()),
       assessmentId: faker.string.uuid(),

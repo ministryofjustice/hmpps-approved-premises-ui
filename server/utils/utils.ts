@@ -112,26 +112,25 @@ export const linkTo = (
     query = {},
     attributes = {},
     hiddenText = '',
+    hiddenPrefix = '',
     openInNewTab = false,
   }: {
     text: string
     query?: Record<string, string>
     attributes?: Record<string, string>
     hiddenText?: string
+    hiddenPrefix?: string
     openInNewTab?: boolean
   },
 ): string => {
-  let linkBody = text
-
-  if (hiddenText) {
-    linkBody = `${linkBody} <span class="govuk-visually-hidden">${hiddenText}</span>`
-  }
+  const hiddenSpan = (hidden: string) => (hidden ? `<span class="govuk-visually-hidden">${hidden}</span>` : '')
+  const linkBody = `${hiddenSpan(hiddenPrefix)}${text}${hiddenSpan(hiddenText)}`
 
   const attrBody = Object.keys(attributes)
-    .map(a => `${a}="${attributes[a]}"`)
-    .join(' ')
+    .map(a => ` ${a}="${attributes[a]}"`)
+    .join('')
 
-  return `<a href="${path}${createQueryString(query, { addQueryPrefix: true })}" ${attrBody} ${openInNewTab ? 'target="_blank"' : ''}>${linkBody}</a>`
+  return `<a href="${path}${createQueryString(query, { addQueryPrefix: true })}"${attrBody}${openInNewTab ? ' target="_blank"' : ''}>${linkBody}</a>`
 }
 
 /**
@@ -200,9 +199,11 @@ export const filterByType = <T extends string>(
  * A naive pluralisation function
  * @param noun the noun to return in plural form if `count` is more than 1
  * @param count how many of the word exist
- * @return A sentence with the count of noun(s)
+ * @param irregularPlural the plural form of the noun if not a simple pluralization e.g. 'people'
+ * @return A phrase with the count of noun(s)
  */
-export const pluralize = (noun: string, count: number): string => `${count} ${noun}${Math.abs(count) !== 1 ? 's' : ''}`
+export const pluralize = (noun: string, count: number, irregularPlural?: string): string =>
+  `${count} ${Math.abs(count) !== 1 ? irregularPlural || `${noun}s` : noun}`
 
 /**
  * Join a list of strings with commas and an "and"

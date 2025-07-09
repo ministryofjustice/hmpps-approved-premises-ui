@@ -71,7 +71,6 @@ describe('ApplicationService', () => {
       requestedFurtherInformation: cas1ApplicationSummaryFactory.buildList(1, {
         status: 'requestedFurtherInformation',
       }),
-      submitted: cas1ApplicationSummaryFactory.buildList(1, { status: 'submitted' }),
       awaitingAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'awaitingAssesment' }),
       unallocatedAssesment: cas1ApplicationSummaryFactory.buildList(1, { status: 'unallocatedAssesment' }),
       assesmentInProgress: cas1ApplicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
@@ -85,7 +84,6 @@ describe('ApplicationService', () => {
     }
 
     const submittedApplications = [
-      ...applications.submitted,
       ...applications.awaitingAssesment,
       ...applications.unallocatedAssesment,
       ...applications.assesmentInProgress,

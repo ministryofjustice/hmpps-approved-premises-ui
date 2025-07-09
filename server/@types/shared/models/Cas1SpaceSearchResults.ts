@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { Cas1SpaceSearchResult } from './Cas1SpaceSearchResult';
 export type Cas1SpaceSearchResults = {
-    resultsCount: number;
     results: Array<Cas1SpaceSearchResult>;
+    resultsCount: number;
 };
 

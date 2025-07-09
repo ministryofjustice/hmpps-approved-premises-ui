@@ -3,15 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
-import type { PersonSummary } from './PersonSummary';
+import type { FullPersonSummary } from './FullPersonSummary';
+import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
+import type { UnknownPersonSummary } from './UnknownPersonSummary';
 export type Cas1ChangeRequestSummary = {
-    id: string;
-    person: PersonSummary;
-    type: Cas1ChangeRequestType;
-    createdAt: string;
-    tier?: string;
-    expectedArrivalDate: string;
     actualArrivalDate?: string;
+    createdAt: string;
+    expectedArrivalDate: string;
+    id: string;
+    person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
     placementRequestId: string;
+    tier?: string;
+    type: Cas1ChangeRequestType;
 };
 

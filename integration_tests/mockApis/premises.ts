@@ -58,7 +58,7 @@ const stubPremisesStaffMembers = (args: { premisesId: string; staffMembers: Arra
     },
   })
 
-const stubPremiseCapacity = (args: {
+const stubPremisesCapacity = (args: {
   premisesId: string
   startDate: string
   endDate: string
@@ -116,7 +116,7 @@ export default {
   stubCas1AllPremises,
   stubSinglePremises,
   stubPremisesStaffMembers,
-  stubPremiseCapacity,
+  stubPremisesCapacity,
   stubPremisesDaySummary,
   verifyPremisesDaySummaryRequest,
 }

@@ -4,9 +4,9 @@
 /* eslint-disable */
 import type { NamedId } from './NamedId';
 export type Cas1SpaceBookingDeparture = {
-    reason: NamedId;
-    parentReason?: NamedId;
     moveOnCategory?: NamedId;
     notes?: string;
+    parentReason?: NamedId;
+    reason: NamedId;
 };
 

@@ -7,9 +7,14 @@ import type { Cas1TimelineEventContentPayload } from './Cas1TimelineEventContent
 import type { Cas1TimelineEventPayloadBookingSummary } from './Cas1TimelineEventPayloadBookingSummary';
 import type { NamedId } from './NamedId';
 export type Cas1PlacementChangeRequestRejectedPayload = (Cas1TimelineEventContentPayload & {
-    changeRequestId: string;
+    booking?: Cas1TimelineEventPayloadBookingSummary;
+    changeRequestId?: string;
+    changeRequestType?: Cas1ChangeRequestType;
+    reason?: NamedId;
+} & {
     booking: Cas1TimelineEventPayloadBookingSummary;
-    reason: NamedId;
+    changeRequestId: string;
     changeRequestType: Cas1ChangeRequestType;
+    reason: NamedId;
 });
 

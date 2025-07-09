@@ -197,7 +197,7 @@ context('Placement Requests', () => {
     cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubSinglePremises', premises)
     cy.task('stubPlacementRequest', placementRequest)
-    cy.task('stubPremiseCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
+    cy.task('stubPremisesCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
     // Given I have followed a link to a result from the suitability search
     const searchPage = SearchPage.visit(placementRequest)
@@ -234,7 +234,7 @@ context('Placement Requests', () => {
       endDate: dayCapacity.date,
       capacity: [dayCapacity],
     })
-    cy.task('stubPremiseCapacity', {
+    cy.task('stubPremisesCapacity', {
       premisesId: premises.id,
       startDate: dayCapacity.date,
       endDate: dayCapacity.date,
@@ -243,7 +243,6 @@ context('Placement Requests', () => {
 
     const premisesDaySummary = cas1PremisesDaySummaryFactory.build({
       forDate: dayCapacity.date,
-      capacity: premiseCapacityForDay.capacity[0],
     })
     cy.task('stubPremisesDaySummary', { premisesId: premises.id, date: dayCapacity.date, premisesDaySummary })
 
@@ -251,7 +250,7 @@ context('Placement Requests', () => {
     occupancyViewPage.clickCalendarDay(dayCapacity.date)
 
     // Then I should see the page showing details for the day
-    const dayAvailabilityPage = new DayAvailabilityPage(premises.id, premisesDaySummary, criteria)
+    const dayAvailabilityPage = new DayAvailabilityPage(premisesDaySummary, dayCapacity, criteria)
 
     // And I should see availability details
     dayAvailabilityPage.shouldShowDayAvailability()
@@ -300,7 +299,7 @@ context('Placement Requests', () => {
       startDate: newStartDate,
       endDate: newEndDate,
     })
-    cy.task('stubPremiseCapacity', {
+    cy.task('stubPremisesCapacity', {
       premisesId: premises.id,
       startDate: newStartDate,
       endDate: newEndDate,

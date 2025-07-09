@@ -19,6 +19,8 @@ const cas1PlacementApplicationsSingle = cas1PlacementApplications.path(':id')
 const cas1PlacementRequests = cas1Namespace.path('placement-requests')
 const cas1PlacementRequestSingle = cas1PlacementRequests.path(':placementRequestId')
 const cas1SpaceBookings = cas1PlacementRequestSingle.path('space-bookings')
+const cas1Tasks = cas1Namespace.path('tasks')
+const cas1TasksSingle = cas1Tasks.path(':taskType/:id')
 
 const cas1Reports = cas1Namespace.path('reports')
 
@@ -46,9 +48,6 @@ const person = people.path(':crn')
 
 const users = path('/users')
 const cas1Users = cas1Namespace.path('users')
-
-const tasks = path('/tasks')
-const taskSingle = tasks.path(':taskType/:id')
 
 const placementRequests = path('/placement-requests')
 const placementRequestsSingle = placementRequests.path(':placementRequestId')
@@ -155,13 +154,13 @@ export default {
     findSpaces: cas1Namespace.path('spaces/search'),
   },
   tasks: {
-    index: tasks,
+    index: cas1Tasks,
     type: {
-      index: tasks.path(':taskType'),
+      index: cas1Tasks.path(':taskType'),
     },
-    show: taskSingle,
+    show: cas1TasksSingle,
     allocations: {
-      create: taskSingle.path('allocations'),
+      create: cas1TasksSingle.path('allocations'),
     },
   },
   placementRequests: {
@@ -171,7 +170,7 @@ export default {
     booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
-      create: placementRequestsSingle.path('withdrawal'),
+      create: cas1PlacementRequestSingle.path('withdrawal'),
     },
     spaceBookings: {
       create: cas1SpaceBookings,

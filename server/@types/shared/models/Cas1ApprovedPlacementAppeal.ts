@@ -2,9 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+/**
+ * details of the cancellation
+ */
 export type Cas1ApprovedPlacementAppeal = {
     occurredAt: string;
-    reasonNotes?: string;
     placementAppealChangeRequestId: string;
+    reasonNotes?: string;
 };
 

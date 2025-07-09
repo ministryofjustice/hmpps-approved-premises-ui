@@ -1,20 +1,32 @@
+import { Cas1PremisesBedSummary, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import paths from '../paths/manage'
 import { cas1BedDetailFactory, cas1PremisesBedSummaryFactory, userDetailsFactory } from '../testutils/factories'
 import {
-  actionCell,
   bedActions,
-  bedDetails,
-  bedLink,
-  bedNameCell,
+  characteristicsSummary,
   bedsActions,
+  bedsTableHeader,
   bedsTableRows,
-  roomNameCell,
+  calculateBedCounts,
+  filterBedsByCharacteristics,
+  generateCharacteristicsLabels,
 } from './bedUtils'
+import { htmlCell, textCell } from './tableUtils'
+import { characteristicsBulletList } from './characteristicsUtils'
 
 describe('bedUtils', () => {
   const premisesId = 'premisesId'
-  const bedSummary = cas1PremisesBedSummaryFactory.build()
   const bedDetail = cas1BedDetailFactory.build()
+
+  const testCharacteristics: Array<Array<Cas1SpaceCharacteristic>> = [
+    ['isSingle', 'isSuitedForSexOffenders'],
+    ['isSingle', 'hasEnSuite'],
+    ['hasEnSuite'],
+    [],
+  ]
+  const bedSummaries: Array<Cas1PremisesBedSummary> = testCharacteristics.map(characteristics =>
+    cas1PremisesBedSummaryFactory.build({ characteristics }),
+  )
 
   describe('bedsActions', () => {
     it('returns the action to manage OOSB if the user has the create OOSB permission', () => {
@@ -40,52 +52,69 @@ describe('bedUtils', () => {
     })
   })
 
-  describe('roomNameCell', () => {
-    it('returns the name of the room', () => {
-      expect(roomNameCell(bedSummary)).toEqual({ text: bedSummary.roomName })
-    })
-  })
-
-  describe('bedNameCell', () => {
-    it('returns the name of the room', () => {
-      expect(bedNameCell(bedSummary)).toEqual({ text: bedSummary.bedName })
-    })
-  })
-
-  describe('actionCell', () => {
-    it('returns a link to manage the room', () => {
-      expect(actionCell(bedSummary, premisesId)).toEqual({
-        html: bedLink(bedSummary, premisesId),
-      })
-    })
-  })
-
   describe('bedsTableRows', () => {
-    it('returns the table rows given the rooms', () => {
-      const beds = [bedSummary]
+    const bedList = cas1PremisesBedSummaryFactory
+      .buildList(5)
+      .sort(({ bedName: name1 }, { bedName: name2 }) =>
+        name1.localeCompare(name2, 'en', { numeric: true, sensitivity: 'base' }),
+      )
 
-      expect(bedsTableRows(beds, premisesId)).toEqual([
-        [roomNameCell(bedSummary), bedNameCell(bedSummary), actionCell(bedSummary, premisesId)],
-      ])
+    it('returns the rows of the beds table', () => {
+      const expected = bedList.map(bed => {
+        return [
+          htmlCell(
+            `<a href="/manage/premises/premisesId/beds/${bed.id}" data-cy-bedId="${bed.id}"><span class="govuk-visually-hidden">bed name:</span>${bed.bedName}</a>`,
+          ),
+          textCell(bed.roomName),
+          htmlCell(characteristicsBulletList(bed.characteristics, { classes: 'govuk-list--compact' })),
+        ]
+      })
+      expect(bedsTableRows(bedList, premisesId)).toEqual(expected)
+    })
+
+    it('sorts the beds by bedName', () => {
+      expect(bedsTableRows([...bedList].reverse(), premisesId)).toEqual(bedsTableRows(bedList, premisesId))
+    })
+  })
+
+  describe('bedsTableHeader', () => {
+    it('renders the beds tableheader', () => {
+      expect(bedsTableHeader()).toEqual([{ text: 'Bed name' }, { text: 'Room name' }, { text: 'Room characteristics' }])
     })
   })
 
   describe('bedDetails', () => {
     it('returns a summary list of characteristics', () => {
-      const bed = cas1BedDetailFactory.build({
-        characteristics: ['hasStepFreeAccessToCommunalAreas', 'isSuitedForSexOffenders', 'isArsonSuitable'],
-      })
-
-      expect(bedDetails(bed)).toEqual({
+      expect(characteristicsSummary(bedSummaries[0].characteristics)).toEqual({
         rows: [
           {
             key: { text: 'Characteristics' },
             value: {
-              html: `<ul class="govuk-list govuk-list--bullet"><li>Suitable for active arson risk</li><li>Suitable for sexual offence risk</li></ul>`,
+              html: `<ul class="govuk-list govuk-list--bullet"><li>Single room</li><li>Suitable for sexual offence risk</li></ul>`,
             },
           },
         ],
       })
+    })
+  })
+
+  describe('calculateBedCounts', () => {
+    it('counts the number of each bed characteristic', () => {
+      expect(calculateBedCounts(bedSummaries)).toEqual({ isSingle: 2, isSuitedForSexOffenders: 1, hasEnSuite: 2 })
+    })
+  })
+
+  describe('filterBedsByCharacteristics', () => {
+    it('filters a set of bed summaries by AND-ing filter characteristics', () => {
+      const result = filterBedsByCharacteristics(bedSummaries, ['hasEnSuite', 'isSingle'])
+      expect(result).toEqual([bedSummaries[1]])
+    })
+  })
+
+  describe('generateCharacteristicsLabels', () => {
+    it('generates characterstics labels including a count', () => {
+      const result = generateCharacteristicsLabels({ isSingle: 2, acceptsSexOffenders: 1, hasEnSuite: 1 })
+      expect(result).toEqual({ hasEnSuite: 'En-suite (1)', isSingle: 'Single room (2)' })
     })
   })
 

@@ -2,14 +2,13 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import {
   ApType,
-  Gender,
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestRequestType,
   PlacementRequestStatus,
   type ReleaseTypeOption,
   WithdrawPlacementRequestReason,
-} from '../../@types/shared'
+} from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 import { fullPersonFactory } from './person'
 import risksFactory from './risks'
@@ -46,7 +45,6 @@ export default PlacementRequestFactory.define(() => {
   const desirableCriteria = essentialCriteria.filter(criteria => !essentialCriteria.includes(criteria))
   return {
     id: faker.string.uuid(),
-    gender: faker.helpers.arrayElement(['male', 'female']) as Gender,
     type: faker.helpers.arrayElement(Object.keys(apTypeLongLabels)) as ApType,
     expectedArrival: DateFormats.dateObjToIsoDate(faker.date.soon()),
     duration: faker.number.int({ min: 1, max: 12 }),

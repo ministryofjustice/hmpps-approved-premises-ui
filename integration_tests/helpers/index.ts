@@ -1,9 +1,9 @@
 import { add } from 'date-fns'
 import {
   ApprovedPremisesApplication,
+  Cas1Application,
   OASysQuestion,
   OASysSupportingInformationQuestion,
-  Unit,
 } from '@approved-premises/api'
 import { TableCell, TableRow } from '@approved-premises/ui'
 
@@ -59,7 +59,7 @@ const shouldShowTableRows = (tableRows: Array<TableRow>): void => {
   })
 }
 
-const updateApplicationReleaseDate = (data: Unit) => {
+const updateApplicationReleaseDate = (data: Cas1Application['data']): Cas1Application['data'] => {
   const releaseDate = add(new Date(), { months: 7 })
 
   return {

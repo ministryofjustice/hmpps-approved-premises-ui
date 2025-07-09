@@ -20,7 +20,7 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
             {{ showErrorSummary(errorSummary, errorTitle) }}
 
             <h1 class="govuk-heading-l">Record a departure</h1>
@@ -39,7 +39,7 @@
     }) }}
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
             <form action="{{ currentUrl }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

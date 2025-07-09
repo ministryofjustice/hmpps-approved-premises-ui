@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type BedSearchResultBedSummary = {
-    id: string;
-    name: string;
+export type DlqMessage = {
+    body: Record<string, any>;
+    messageId: string;
 };
 

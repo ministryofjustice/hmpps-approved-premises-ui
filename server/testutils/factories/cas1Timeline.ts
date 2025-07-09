@@ -47,7 +47,7 @@ export const cas1TimelineEventFactory = Factory.define<Cas1TimelineEvent>(() => 
   occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   content: faker.datatype.boolean() ? faker.lorem.sentences() : undefined,
   createdBySummary: userSummaryFactory.build(),
-  payload: cas1TimelineEventContentPayloadFactory.build(),
+  payload: undefined,
   associatedUrls: cas1TimelineEventAssociatedUrlFactory.buildList(1, { type: 'application' }),
   triggerSource: faker.helpers.arrayElement(cas1TriggerSourceTypes),
 }))
@@ -75,7 +75,6 @@ export const applicationTimelineFactory = Factory.define<Cas1ApplicationTimeline
   id: faker.string.uuid(),
   status: faker.helpers.arrayElement([
     'started',
-    'submitted',
     'rejected',
     'awaitingAssesment',
     'unallocatedAssesment',

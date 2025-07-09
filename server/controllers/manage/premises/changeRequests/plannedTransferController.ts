@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { TransferFormData } from '@approved-premises/ui'
 import { Params } from 'static-path'
-import { Cas1NewChangeRequest, Unit } from '@approved-premises/api'
+import { Cas1NewChangeRequest } from '@approved-premises/api'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 import { PlacementRequestService, PlacementService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
@@ -167,7 +167,7 @@ export default class PlannedTransfersController {
           spaceBookingId: placementId,
           type: 'plannedTransfer',
           reasonId: getChangeRequestReasonId(formData.transferReason, transferReasons),
-          requestJson: JSON.stringify(transferJson) as unknown as Unit,
+          requestJson: JSON.stringify(transferJson),
         }
 
         await this.placementRequestService.createPlannedTransfer(

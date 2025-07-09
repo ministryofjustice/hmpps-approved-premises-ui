@@ -2,38 +2,25 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
 import type { Cas1ChangeRequestSummary } from './Cas1ChangeRequestSummary';
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
+import type { Cas1SpaceBookingAction } from './Cas1SpaceBookingAction';
 import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellation';
 import type { Cas1SpaceBookingDates } from './Cas1SpaceBookingDates';
 import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
 import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
 import type { Cas1SpaceBookingSummaryStatus } from './Cas1SpaceBookingSummaryStatus';
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
+import type { FullPerson } from './FullPerson';
 import type { NamedId } from './NamedId';
-import type { Person } from './Person';
-import type { User } from './User';
+import type { RestrictedPerson } from './RestrictedPerson';
+import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
+import type { UnknownPerson } from './UnknownPerson';
 export type Cas1SpaceBooking = {
-    id: string;
-    applicationId: string;
-    assessmentId?: string;
-    person: Person;
-    tier?: string;
-    premises: NamedId;
-    apArea: NamedId;
-    bookedBy?: User;
-    /**
-     * use the better named 'placementRequestId'
-     * @deprecated
-     */
-    requestForPlacementId?: string;
-    placementRequestId?: string;
-    expectedArrivalDate: string;
-    expectedDepartureDate: string;
     actualArrivalDate?: string;
     /**
      * Use actualArrivalDate
-     * @deprecated
      */
     actualArrivalDateOnly?: string;
     /**
@@ -43,33 +30,45 @@ export type Cas1SpaceBooking = {
     actualDepartureDate?: string;
     /**
      * Use actualDepartureDate
-     * @deprecated
      */
     actualDepartureDateOnly?: string;
     /**
      * This value may not be defined even if a departure date is
      */
     actualDepartureTime?: string;
+    allowedActions: Array<Cas1SpaceBookingAction>;
+    apArea: NamedId;
+    applicationId: string;
+    assessmentId?: string;
+    bookedBy?: (ApprovedPremisesUser | TemporaryAccommodationUser);
+    cancellation?: Cas1SpaceBookingCancellation;
     /**
      * actual arrival date or, if not known, the expected arrival date.
-     * @deprecated
      */
     canonicalArrivalDate: string;
     /**
      * actual departure date or, if not known, the expected departure date
-     * @deprecated
      */
     canonicalDepartureDate: string;
-    departure?: Cas1SpaceBookingDeparture;
-    createdAt: string;
-    keyWorkerAllocation?: Cas1KeyWorkerAllocation;
-    otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;
-    cancellation?: Cas1SpaceBookingCancellation;
-    nonArrival?: Cas1SpaceBookingNonArrival;
-    deliusEventNumber?: string;
-    status?: Cas1SpaceBookingSummaryStatus;
     characteristics: Array<Cas1SpaceCharacteristic>;
-    allowedActions: any;
+    createdAt: string;
+    deliusEventNumber?: string;
+    departure?: Cas1SpaceBookingDeparture;
+    expectedArrivalDate: string;
+    expectedDepartureDate: string;
+    id: string;
+    keyWorkerAllocation?: Cas1KeyWorkerAllocation;
+    nonArrival?: Cas1SpaceBookingNonArrival;
     openChangeRequests: Array<Cas1ChangeRequestSummary>;
+    otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;
+    person: (FullPerson | RestrictedPerson | UnknownPerson);
+    placementRequestId?: string;
+    premises: NamedId;
+    /**
+     * use the better named 'placementRequestId'
+     */
+    requestForPlacementId?: string;
+    status?: Cas1SpaceBookingSummaryStatus;
+    tier?: string;
 };
 

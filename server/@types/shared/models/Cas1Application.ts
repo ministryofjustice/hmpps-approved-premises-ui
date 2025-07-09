@@ -8,48 +8,55 @@ import type { ApType } from './ApType';
 import type { AssessmentDecision } from './AssessmentDecision';
 import type { Cas1ApplicationUserDetails } from './Cas1ApplicationUserDetails';
 import type { Cas1CruManagementArea } from './Cas1CruManagementArea';
-import type { Person } from './Person';
+import type { FullPerson } from './FullPerson';
 import type { PersonRisks } from './PersonRisks';
 import type { PersonStatus } from './PersonStatus';
-import type { Unit } from './Unit';
+import type { RestrictedPerson } from './RestrictedPerson';
+import type { UnknownPerson } from './UnknownPerson';
 export type Cas1Application = {
-    id: string;
-    person: Person;
-    createdAt: string;
-    isWomensApplication?: boolean;
+    apArea?: ApArea;
+    apType?: ApType;
+    applicantUserDetails?: Cas1ApplicationUserDetails;
+    arrivalDate?: string;
+    assessmentDecision?: AssessmentDecision;
+    assessmentDecisionDate?: string;
+    assessmentId?: string;
     /**
-     * Use apType
-     * @deprecated
+     * If true, caseManagerUserDetails will provide case manager details. Otherwise, applicantUserDetails can be used for case manager details
      */
-    isPipeApplication?: boolean;
+    caseManagerIsNotApplicant?: boolean;
+    caseManagerUserDetails?: Cas1ApplicationUserDetails;
+    createdAt: string;
+    createdByUserId: string;
+    cruManagementArea?: Cas1CruManagementArea;
+    /**
+     * Any object
+     */
+    data?: any;
+    /**
+     * Any object
+     */
+    document?: any;
+    id: string;
     isEmergencyApplication?: boolean;
     /**
      * Use apType
      * @deprecated
      */
     isEsapApplication?: boolean;
-    apType?: ApType;
-    arrivalDate?: string;
-    risks?: PersonRisks;
-    createdByUserId: string;
-    schemaVersion: string;
-    outdatedSchema: boolean;
-    data?: Unit;
-    document?: Unit;
-    status: ApprovedPremisesApplicationStatus;
-    assessmentId?: string;
-    assessmentDecision?: AssessmentDecision;
-    assessmentDecisionDate?: string;
-    submittedAt?: string;
-    personStatusOnSubmission?: PersonStatus;
-    apArea?: ApArea;
-    cruManagementArea?: Cas1CruManagementArea;
-    applicantUserDetails?: Cas1ApplicationUserDetails;
     /**
-     * If true, caseManagerUserDetails will provide case manager details. Otherwise, applicantUserDetails can be used for case manager details
+     * Use apType
+     * @deprecated
      */
-    caseManagerIsNotApplicant?: boolean;
-    caseManagerUserDetails?: Cas1ApplicationUserDetails;
+    isPipeApplication?: boolean;
+    isWomensApplication?: boolean;
     licenceExpiryDate?: string;
+    outdatedSchema: boolean;
+    person: (FullPerson | RestrictedPerson | UnknownPerson);
+    personStatusOnSubmission?: PersonStatus;
+    risks?: PersonRisks;
+    schemaVersion: string;
+    status: ApprovedPremisesApplicationStatus;
+    submittedAt?: string;
 };
 

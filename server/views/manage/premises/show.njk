@@ -2,8 +2,6 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
-{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
@@ -14,6 +12,7 @@
 {% from "components/sortableTable/macro.njk" import sortableTable %}
 
 {%- from "./partials/_overbookingSummary.njk" import overbookingSummary -%}
+{% from "../../partials/filters.njk" import filterWrapper, filterSelect %}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -59,28 +58,10 @@
             }) }}
 
             {% if activeTab === 'upcoming' or activeTab === 'current' %}
-                <form action="{{ hrefPrefix }}" method="get" class="search-and-filter">
+                {% call filterWrapper('Filter') %}
                     <input type="hidden" name="activeTab" value="{{ activeTab }}" />
-
-                    <h3 class="govuk-heading-m">Filters</h3>
-
-                    <div class="search-and-filter__row">
-                        {{ govukSelect({
-                            id: 'keyworker',
-                            name: 'keyworker',
-                            label: {
-                                text: 'Keyworker',
-                                classes: 'govuk-label--s'
-                            },
-                            items: convertObjectsToSelectOptions(keyworkersList, 'All keyworkers', 'name', 'code', 'keyworker')
-                        }) }}
-
-                        {{ govukButton({
-                            text: 'Apply filters',
-                            preventDoubleClick: true
-                        }) }}
-                    </div>
-                </form>
+                    {{ filterSelect('keyworker','Keyworker',convertObjectsToSelectOptions(keyworkersList, 'All keyworkers', 'name', 'code', 'keyworker')) }}
+                {%- endcall %}
             {% endif %}
 
             {% if activeTab === 'search' %}

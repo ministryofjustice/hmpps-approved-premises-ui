@@ -1,4 +1,8 @@
-import { Cas1PremisesDaySummary, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import {
+  Cas1PremiseCapacityForDay,
+  Cas1PremisesDaySummary,
+  Cas1SpaceBookingCharacteristic,
+} from '@approved-premises/api'
 import Page from '../page'
 import {
   DayAvailabilityStatus,
@@ -7,18 +11,19 @@ import {
 } from '../../../server/utils/match/occupancy'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { daySummaryRows } from '../../../server/utils/premises/occupancy'
+import { canonicalDates } from '../../../server/utils/placements'
 
 export default class DayAvailabilityPage extends Page {
   availability: DayAvailabilityStatus
 
   constructor(
-    private readonly premisesId: string,
     private readonly daySummary: Cas1PremisesDaySummary,
+    private readonly dayCapacity: Cas1PremiseCapacityForDay,
     private readonly criteria: Array<Cas1SpaceBookingCharacteristic> = [],
   ) {
     super(DateFormats.isoDateToUIDate(daySummary.forDate, { format: 'long' }))
 
-    this.availability = dayAvailabilityStatus(daySummary.capacity, criteria)
+    this.availability = dayAvailabilityStatus(dayCapacity, criteria)
   }
 
   shouldShowDayAvailability() {
@@ -26,19 +31,25 @@ export default class DayAvailabilityPage extends Page {
     cy.get('strong').should('contain.text', title)
     cy.get('p').should('contain.text', detail)
 
-    const summaryList = daySummaryRows(this.daySummary, this.criteria, 'doubleRow')
+    const summaryList = daySummaryRows(this.dayCapacity, this.criteria, 'singleRow')
     const summaryRows = summaryList.rows.filter(({ value }) => value)
     this.shouldContainSummaryListItems(summaryRows)
     cy.get('table')
       .first()
       .within(() => {
-        cy.get('tbody tr').should('have.length', this.daySummary.spaceBookings.length)
-        this.daySummary.spaceBookings.forEach(({ canonicalArrivalDate, canonicalDepartureDate, person: { crn } }) => {
+        cy.get('tbody tr').should('have.length', this.daySummary.spaceBookingSummaries.length)
+        this.daySummary.spaceBookingSummaries.forEach(placement => {
+          const {
+            person: { crn },
+          } = placement
+          const { arrivalDate, departureDate } = canonicalDates(placement)
+
           cy.contains(crn)
-          cy.contains(DateFormats.isoDateToUIDate(canonicalArrivalDate, { format: 'short' }))
-          cy.contains(DateFormats.isoDateToUIDate(canonicalDepartureDate, { format: 'short' }))
+          cy.contains(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
+          cy.contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
         })
       })
+
     cy.get('table')
       .eq(1)
       .within(() => {

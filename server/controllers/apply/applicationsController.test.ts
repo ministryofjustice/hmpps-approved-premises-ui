@@ -228,7 +228,7 @@ describe('applicationsController', () => {
     })
 
     it('renders the readonly view if the application has been submitted', async () => {
-      application.status = 'submitted'
+      application.status = 'awaitingAssesment'
 
       const requestHandler = applicationsController.show()
 
@@ -270,7 +270,7 @@ describe('applicationsController', () => {
     describe('when the tab=timeline query param is present', () => {
       it('calls the timeline method on the application service and passes the tab: "timeline" property', async () => {
         const timelineEvents = cas1TimelineEventFactory.buildList(1)
-        application.status = 'submitted'
+        application.status = 'awaitingAssesment'
 
         const requestHandler = applicationsController.show()
 
@@ -302,7 +302,7 @@ describe('applicationsController', () => {
     describe('when the tab=placementRequests query param is present', () => {
       it('calls the getPlacementApplications method on the application service and passes the tab: "placementRequests" property', async () => {
         const requestsForPlacement = requestForPlacementFactory.buildList(1)
-        application.status = 'submitted'
+        application.status = 'awaitingAssesment'
 
         const requestHandler = applicationsController.show()
 

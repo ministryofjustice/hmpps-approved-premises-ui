@@ -10,7 +10,10 @@ import {
 
 context('Beds', () => {
   const premisesId = 'premisesId'
-  const bedSummaries = cas1PremisesBedSummaryFactory.buildList(5)
+  const bedSummaries = [
+    ...cas1PremisesBedSummaryFactory.buildList(4),
+    cas1PremisesBedSummaryFactory.build({ characteristics: [] }),
+  ]
   const bedDetail = cas1BedDetailFactory.build({ ...bedSummaries[0], name: bedSummaries[1].bedName })
   const premises = cas1PremisesFactory.build({ id: premisesId })
 
@@ -35,6 +38,15 @@ context('Beds', () => {
 
     // And I should have a link to view all of this premises' out-of-service beds
     bedsPage.shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId)
+
+    // When I filter the beds
+    bedsPage.filterBeds()
+
+    // Then I should see a reduced list of beds
+    bedsPage.shouldShowBeds(
+      bedSummaries.filter(({ characteristics }) => characteristics.includes('isStepFreeDesignated')),
+      premisesId,
+    )
 
     // When I click on a bed
     bedsPage.clickBed(bedDetail)

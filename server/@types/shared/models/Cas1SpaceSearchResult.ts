@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { Cas1PremisesSearchResultSummary } from './Cas1PremisesSearchResultSummary';
 export type Cas1SpaceSearchResult = {
-    premises: Cas1PremisesSearchResultSummary;
     distanceInMiles: number;
+    premises: Cas1PremisesSearchResultSummary;
 };
 

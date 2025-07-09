@@ -247,6 +247,7 @@ describe('matchUtils', () => {
       ).toEqual([
         { key: { text: 'Approved Premises' }, value: { text: premises.name } },
         { key: { text: 'Address' }, value: { text: `${premises.fullAddress}, ${premises.postcode}` } },
+        { key: { text: 'AP area' }, value: { text: premises.apArea.name } },
         {
           key: { text: 'Room criteria' },
           value: {
@@ -268,7 +269,6 @@ describe('matchUtils', () => {
         criteria,
       })
 
-      expect(rows).toHaveLength(6)
       expect(rows).toEqual(expect.not.arrayContaining([expect.objectContaining({ key: { text: 'Release type' } })]))
     })
 
@@ -282,7 +282,6 @@ describe('matchUtils', () => {
         actualArrivalDate: '2025-04-25',
       })
 
-      expect(rows).toHaveLength(7)
       expect(rows).toEqual(
         expect.arrayContaining([
           { key: { text: 'Actual arrival date' }, value: { text: 'Fri 25 Apr 2025' } },
@@ -292,6 +291,19 @@ describe('matchUtils', () => {
       expect(rows).toEqual(
         expect.not.arrayContaining([{ key: { text: 'Arrival date' }, value: { text: 'Fri 23 May 2025' } }]),
       )
+    })
+
+    it("returns summary list items without the AP area if the booking is for a women's AP", () => {
+      const rows = spaceBookingConfirmationSummaryListRows({
+        premises,
+        expectedArrivalDate,
+        expectedDepartureDate,
+        criteria,
+        releaseType: placementRequest.releaseType,
+        isWomensApplication: true,
+      })
+
+      expect(rows).toEqual(expect.not.arrayContaining([expect.objectContaining({ key: { text: 'AP area' } })]))
     })
   })
 

@@ -3,6 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { Task } from '@approved-premises/api'
 import { when } from 'jest-when'
+import { ErrorsAndUserInput, PaginatedResponse } from '@approved-premises/ui'
 import TasksController from './tasksController'
 import {
   applicationFactory,
@@ -15,8 +16,7 @@ import {
 } from '../testutils/factories'
 import { ApplicationService, CruManagementAreaService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
-import { ErrorsAndUserInput, PaginatedResponse } from '../@types/ui'
-import paths from '../paths/api'
+import paths from '../paths/tasks'
 
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import { tasksTableHeader, tasksTableRows, userQualificationsSelectOptions } from '../utils/tasks'

@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import { Cas1NewChangeRequest } from '@approved-premises/api'
 
-const changeRequestTypes = ['placementAppeal', 'placementExtension', 'plannedTransfer']
+const changeRequestTypes = ['placementAppeal', 'placementExtension', 'plannedTransfer'] as const
 
 class Cas1NewChangeRequestFactory extends Factory<Cas1NewChangeRequest> {
   placementAppeal() {

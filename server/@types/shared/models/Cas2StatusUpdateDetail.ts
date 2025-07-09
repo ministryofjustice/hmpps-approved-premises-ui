@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type OASysSection = {
-    section: number;
+export type Cas2StatusUpdateDetail = {
+    id: string;
+    label: string;
     name: string;
-    linkedToHarm?: boolean;
-    linkedToReOffending?: boolean;
 };
 

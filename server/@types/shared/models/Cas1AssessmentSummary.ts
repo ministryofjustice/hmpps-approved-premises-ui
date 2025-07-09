@@ -4,18 +4,20 @@
 /* eslint-disable */
 import type { AssessmentDecision } from './AssessmentDecision';
 import type { Cas1AssessmentStatus } from './Cas1AssessmentStatus';
-import type { Person } from './Person';
+import type { FullPerson } from './FullPerson';
 import type { PersonRisks } from './PersonRisks';
+import type { RestrictedPerson } from './RestrictedPerson';
+import type { UnknownPerson } from './UnknownPerson';
 export type Cas1AssessmentSummary = {
-    id: string;
     applicationId: string;
     arrivalDate?: string;
     createdAt: string;
     dateOfInfoRequest?: string;
     decision?: AssessmentDecision;
-    risks?: PersonRisks;
-    person: Person;
-    status: Cas1AssessmentStatus;
     dueAt: string;
+    id: string;
+    person: (FullPerson | RestrictedPerson | UnknownPerson);
+    risks?: PersonRisks;
+    status: Cas1AssessmentStatus;
 };
 
