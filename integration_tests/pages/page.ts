@@ -196,6 +196,7 @@ export default abstract class Page {
   }
 
   completeTextInput(name: string, value: string): void {
+    cy.get(`input[name="${name}"]`).clear()
     cy.get(`input[name="${name}"]`).type(value)
   }
 
