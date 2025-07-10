@@ -48,6 +48,7 @@ export default {
   https: production,
   staticResourceCacheDuration: 20,
   flags: {
+    maintenanceMode: getFlag('IN_MAINTENANCE_MODE'),
     oasysDisabled: getFlag('OASYS_DISABLED'),
     pocEnabled: getFlag('ENABLE_POC'),
   },

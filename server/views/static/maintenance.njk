@@ -1,0 +1,22 @@
+{% extends "partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - Service unavailable" %}
+{% set hideNav = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h1 class="govuk-heading-l">
+                Sorry, the service is unavailable
+            </h1>
+
+            <p>You will be able to use the service later.</p>
+
+            <p>If you were applying for an AP, we saved your answers.</p>
+
+            <p>If you need to apply for an Approved Premises urgently, contact your local Central Referral Unit (CRU)
+                team to
+                make a referral via NDelius.</p>
+        </div>
+    </div>
+{% endblock %}

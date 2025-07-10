@@ -21,6 +21,7 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import { setUpSentryErrorHandler, setUpSentryRequestHandler } from './middleware/setUpSentry'
+import setUpMaintenancePageRedirect from './middleware/setUpMaintenancePageRedirect'
 import { appInsightsMiddleware } from './utils/azureAppInsights'
 
 import routes from './routes'
@@ -53,6 +54,7 @@ export default function createApp(controllers: Controllers, services: Services):
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services))
+  app.use(setUpMaintenancePageRedirect())
   app.use((req, res, next) => {
     res.locals.infoMessages = req.flash('info')
     res.locals.successMessages = req.flash('success')
