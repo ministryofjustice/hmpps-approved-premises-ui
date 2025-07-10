@@ -11,6 +11,13 @@ export const roomCharacteristicMap: Record<Cas1SpaceBookingCharacteristic, strin
   isSuitedForSexOffenders: 'Suitable for sexual offence risk',
 }
 
+export const spaceSearchCriteriaApLevelLabels: Partial<Record<Cas1SpaceCharacteristic, string>> = {
+  acceptsSexOffenders: 'Sexual offences against adults',
+  acceptsChildSexOffenders: 'Sexual offences against children',
+  acceptsNonSexualChildOffenders: 'Non-sexual offences against children',
+  isCatered: 'Catered',
+}
+
 export const getRoomCharacteristicLabel = (characteristic: Cas1SpaceCharacteristic): string => {
   return roomCharacteristicMap[characteristic as Cas1SpaceBookingCharacteristic]
 }

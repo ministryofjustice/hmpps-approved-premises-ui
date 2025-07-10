@@ -1,6 +1,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
 
 {% macro filterWrapper(title) %}
@@ -44,7 +45,22 @@
     }) }}
 {% endmacro %}
 
-{% macro filterDatepicker(name, label, context) %}
+{% macro filterText(name, label) %}
+    {% set context=fetchContext() %}
+    {{ govukInput({
+        label: {
+            text: label,
+            classes: "govuk-label--s"
+        },
+        id: name,
+        name: name,
+        value: context[name],
+        errorMessage: context.errors[name]
+    }) }}
+{% endmacro %}
+
+{% macro filterDatepicker(name, label) %}
+    {% set context=fetchContext() %}
     {{ mojDatePicker({
         id: name,
         name: name,
@@ -56,3 +72,4 @@
         errorMessage: context.errors[name]
     }) }}
 {% endmacro %}
+

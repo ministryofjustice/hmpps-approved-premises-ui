@@ -8,8 +8,6 @@
   {% set describedBy = params.describedBy if params.describedBy else 
     "" %}
 
-  {% set prompt = params.prompt if params.prompt else 
-    "Please select" %}
   <div class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}" {%- for attribute, value in params.formGroup.attributes %} {{ attribute }}="{{ value }}"{% endfor %}>
     {{ govukLabel({
     html: params.label.html,
@@ -49,7 +47,9 @@
     {%- if params.disabled %} disabled{% endif %}
     {%- if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}
     {%- for attribute, value in params.attributes %} {{ attribute }}="{{ value }}"{% endfor %}>
-      <option value="" selected>{{ prompt }}</option>
+    {% if params.prompt %}
+      <option value="" selected>{{ params.prompt }}</option>
+      {% endif %}
       {% for optgroup in params.items %}
         {% if optgroup %}
           <optgroup label="{{ optgroup.label }}">
