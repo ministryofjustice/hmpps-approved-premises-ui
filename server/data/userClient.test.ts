@@ -16,7 +16,7 @@ describeClient('UserClient', provider => {
     const user = userFactory.build()
 
     it('should return a user', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a user profile',
         withRequest: {
@@ -42,7 +42,7 @@ describeClient('UserClient', provider => {
     const users = userSummaryFactory.buildList(4)
 
     it('should return all users without pagination', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of all users without pagination',
         withRequest: {
@@ -68,7 +68,7 @@ describeClient('UserClient', provider => {
     })
 
     it('should return all users with a given role without pagination', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of all users without pagination',
         withRequest: {
@@ -98,7 +98,7 @@ describeClient('UserClient', provider => {
     const users = userFactory.buildList(4)
 
     it('should return all users when no queries are specified', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of users',
         withRequest: {
@@ -137,7 +137,7 @@ describeClient('UserClient', provider => {
     })
 
     it('should return all users when a specific page number specified', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of users',
         withRequest: {
@@ -176,7 +176,7 @@ describeClient('UserClient', provider => {
     })
 
     it('should return all users when a specific sort direction specified', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of users',
         withRequest: {
@@ -215,7 +215,7 @@ describeClient('UserClient', provider => {
     })
 
     it('should query by role', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of users with roles',
         withRequest: {
@@ -255,7 +255,7 @@ describeClient('UserClient', provider => {
     })
 
     it('should query by qualifications', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of users with qualifications',
         withRequest: {
@@ -295,7 +295,7 @@ describeClient('UserClient', provider => {
     })
 
     it('should query by qualifications and roles', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a list of users with roles and qualifications',
         withRequest: {
@@ -341,7 +341,7 @@ describeClient('UserClient', provider => {
       const users = userFactory.buildList(1)
       const name = 'name'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to search for a user',
         withRequest: {
@@ -371,7 +371,7 @@ describeClient('UserClient', provider => {
       const user = userFactory.build()
       const name = 'name'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to search for a user in delius',
         withRequest: {

@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import SpaceSearchClient from './spaceSearchClient'
 import paths from '../paths/api'
 
@@ -23,7 +24,7 @@ describeCas1NamespaceClient('SpaceSearchClient', provider => {
       const spaceSearchResult = spaceSearchResultsFactory.build()
       const payload = spaceSearchParametersFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get details of available spaces matching the crieteria',
         withRequest: {
@@ -48,11 +49,11 @@ describeCas1NamespaceClient('SpaceSearchClient', provider => {
 
   describe('createSpaceBooking', () => {
     it('makes a POST request to the space booking endpoint', async () => {
-      const placementRequestId = 'placement-request-id'
+      const placementRequestId = faker.string.uuid()
       const newSpaceBooking = newSpaceBookingFactory.build()
       const spaceBooking = cas1SpaceBookingFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create a space booking from a placement request',
         withRequest: {

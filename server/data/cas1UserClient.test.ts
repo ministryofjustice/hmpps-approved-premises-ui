@@ -15,18 +15,16 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
 
   describe('getUser', () => {
     const user = userFactory.build()
-    const id = 'SOME_ID'
 
     it('should return a user', async () => {
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a user',
         withRequest: {
           method: 'GET',
-          path: paths.users.show({ id }),
+          path: paths.users.show({ id: user.id }),
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -35,7 +33,7 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUser(id)
+      const output = await userClient.getUser(user.id)
       expect(output).toEqual(user)
     })
   })
@@ -47,10 +45,10 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
       const updateUserData: Cas1UpdateUser = {
         roles: user.roles,
         qualifications: user.qualifications,
-        cruManagementAreaOverrideId: 'foo-id',
+        cruManagementAreaOverrideId: user.cruManagementAreaOverride.id,
       }
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to update a user',
         withRequest: {
@@ -58,7 +56,6 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
           path: paths.users.update({ id: user.id }),
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
           body: updateUserData,
         },
@@ -77,7 +74,7 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
     it('should delete a user', async () => {
       const user = userFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to delete a user',
         withRequest: {
@@ -85,7 +82,6 @@ describeCas1NamespaceClient('Cas1UserClient', provider => {
           path: paths.users.delete({ id: user.id }),
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {

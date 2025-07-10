@@ -22,7 +22,7 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
 
     Object.keys(data).forEach((key: keyof typeof data) => {
       it(`should return an array of ${key}`, async () => {
-        provider.addInteraction({
+        await provider.addInteraction({
           state: 'Server is healthy',
           uponReceiving: `A request to get ${key}`,
           withRequest: {

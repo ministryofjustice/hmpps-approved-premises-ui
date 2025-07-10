@@ -17,7 +17,7 @@ export default Cas1NewChangeRequestFactory.define(() => {
   return {
     spaceBookingId: faker.string.uuid(),
     type: faker.helpers.arrayElement(changeRequestTypes),
-    reasonId: faker.string.alpha({ length: { min: 3, max: 10 } }),
+    reasonId: faker.string.uuid(),
     requestJson: {},
   }
 })

@@ -29,7 +29,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
   describe('getPlacement', () => {
     it('gets the details for a placement by id', async () => {
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for placement details',
         withRequest: {
@@ -54,7 +54,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('gets the timeline for a placement', async () => {
       const timeLine: Array<Cas1TimelineEvent> = cas1TimelineEventFactory.buildList(10)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for placement timeline',
         withRequest: {
@@ -78,7 +78,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('patches a placement and returns it', async () => {
       const updatePlacement = cas1UpdateSpaceBookingFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to update a placement',
         withRequest: {
@@ -104,7 +104,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('creates and returns an arrival for a given placement', async () => {
       const newPlacementArrival = cas1NewArrivalFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to record a placement arrival',
         withRequest: {
@@ -130,7 +130,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('assigns a keyworker to a given placement', async () => {
       const keyworkerAssignment = cas1AssignKeyWorkerFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to assign a keyworker to a placement',
         withRequest: {
@@ -156,7 +156,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('records a non-arrival against a given placement', async () => {
       const nonArrival = cas1NonArrivalFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to record a non-arrival',
         withRequest: {
@@ -182,7 +182,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('creates a departure for a given placement', async () => {
       const newPlacementDeparture = cas1NewDepartureFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to record a placement departure',
         withRequest: {
@@ -206,7 +206,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('cancels the given placement', async () => {
       const cancellation = cas1NewSpaceBookingCancellationFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to cancel a placement',
         withRequest: {
@@ -230,7 +230,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('creates an emergency transfer', async () => {
       const newEmergencyTransfer = cas1NewEmergencyTransferFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to create an emergency transfer',
         withRequest: {
@@ -254,7 +254,7 @@ describeCas1NamespaceClient('PlacementClient', provider => {
     it('approves a placement appeal', async () => {
       const approvedPlacementAppeal: Cas1ApprovedPlacementAppeal = cas1ApprovedPlacementAppealfactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to approve a placement appeal',
         withRequest: {

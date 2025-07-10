@@ -19,7 +19,7 @@ export default class BookingClient {
   }
 
   async find(premisesId: Premises['id'], bookingId: Booking['id']): Promise<Booking> {
-    return (await this.restClient.get({ path: this.bookingPath(premisesId, bookingId) })) as Booking
+    return (await this.restClient.get({ path: paths.premises.bookings.show({ premisesId, bookingId }) })) as Booking
   }
 
   async findWithoutPremises(bookingId: Booking['id']): Promise<Booking> {
@@ -29,19 +29,19 @@ export default class BookingClient {
   }
 
   async allBookingsForPremisesId(premisesId: string): Promise<Array<Booking>> {
-    return (await this.restClient.get({ path: this.bookingsPath(premisesId) })) as Array<Booking>
+    return (await this.restClient.get({ path: paths.premises.bookings.index({ premisesId }) })) as Array<Booking>
   }
 
   async extendBooking(premisesId: string, bookingId: string, bookingExtension: NewExtension): Promise<Extension> {
     return (await this.restClient.post({
-      path: `/premises/${premisesId}/bookings/${bookingId}/extensions`,
+      path: paths.premises.bookings.extensions({ premisesId, bookingId }),
       data: bookingExtension,
     })) as Extension
   }
 
   async cancel(premisesId: string, bookingId: string, cancellation: NewCancellation): Promise<Cancellation> {
     const response = await this.restClient.post({
-      path: `${this.bookingPath(premisesId, bookingId)}/cancellations`,
+      path: paths.premises.bookings.cancellations({ premisesId, bookingId }),
       data: cancellation,
     })
 
@@ -53,13 +53,5 @@ export default class BookingClient {
       path: paths.premises.bookings.dateChange({ premisesId, bookingId }),
       data: dateChange,
     })
-  }
-
-  private bookingsPath(premisesId: string): string {
-    return `/premises/${premisesId}/bookings`
-  }
-
-  private bookingPath(premisesId: string, bookingId: string): string {
-    return [this.bookingsPath(premisesId), bookingId].join('/')
   }
 }

@@ -33,7 +33,7 @@ describeClient('PersonClient', provider => {
     it('should return a person', async () => {
       const person = personFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to search for a person',
         withRequest: {
@@ -60,7 +60,7 @@ describeClient('PersonClient', provider => {
     it('should return append checkCaseload if checkCaseload is true', async () => {
       const person = personFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to search for a person and check the caseload',
         withRequest: {
@@ -91,7 +91,7 @@ describeClient('PersonClient', provider => {
       const crn = 'crn'
       const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the case notes for a person',
         withRequest: {
@@ -119,7 +119,7 @@ describeClient('PersonClient', provider => {
       const crn = 'crn'
       const adjudications = adjudicationFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the adjudications for a person',
         withRequest: {
@@ -147,7 +147,7 @@ describeClient('PersonClient', provider => {
       const crn = 'crn'
       const acctAlerts = acctAlertFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the acctAlerts for a person',
         withRequest: {
@@ -174,7 +174,7 @@ describeClient('PersonClient', provider => {
       const crn = 'crn'
       const offences = activeOffenceFactory.buildList(5)
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get offences for a person',
         withRequest: {
@@ -199,10 +199,10 @@ describeClient('PersonClient', provider => {
   describe('document', () => {
     it('should pipe the document from the API', async () => {
       const crn = 'crn'
-      const documentId = '123'
+      const documentId = faker.string.uuid()
       const response = createMock<Response>({})
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a document for a person',
         withRequest: {
@@ -236,7 +236,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       const crn = 'crn'
       const oasysMetadata = cas1OASysMetadataFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the importable sections of OASys for a person',
         withRequest: {
@@ -265,7 +265,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       const group: Cas1OASysGroupName = faker.helpers.arrayElement(['riskToSelf', 'supportingInformation'])
       const oasysGroup = cas1OasysGroupFactory.build()
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving:
           'A request to get the questions and answers for a single group from OASys including optionals for supporting information',
@@ -296,7 +296,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
     it('calls the API with CRN', async () => {
       const crn = 'crn'
 
-      provider.addInteraction({
+      await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the timeline for a person',
         withRequest: {

@@ -24,7 +24,7 @@ describeCas1NamespaceClient('ReportClient', provider => {
         const endDate = '2025-04-30'
         const response = createMock<Response>({})
 
-        provider.addInteraction({
+        await provider.addInteraction({
           state: 'Server is healthy',
           uponReceiving: 'A request to get application reports ',
           withRequest: {
