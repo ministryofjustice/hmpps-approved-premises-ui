@@ -3,13 +3,13 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/filters.njk" import filterWrapper, filterSelect, filterDatepicker %}
 {% from "./_calendar.njk" import occupancyCalendar %}
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 
-{% extends "../../../partials/layout.njk" %}
+{% extends "partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -30,43 +30,11 @@
     <span class="govuk-caption-l">{{ premises.name }}</span>
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    <div class="search-and-filter">
-        <form action="{{ selfPath }}"
-              method="get">
-            <h2 class="govuk-heading-m">Filter</h2>
+    {% call filterWrapper('Filter') %}
+        {{ filterDatepicker('startDate', 'Start date', fetchContext()) }}
 
-            <div class="search-and-filter__row">
-                {{ govukDateInput({
-                    id: "startDate",
-                    namePrefix: "startDate",
-                    fieldset: {
-                        legend: {
-                            text: "Start date",
-                            classes: "govuk-fieldset__legend--s"
-                        }
-                    },
-                    items: dateFieldValues('startDate', errors),
-                    errorMessage: errors.startDate
-                }) }}
-
-                {{ govukSelect({
-                    id: 'durationDays',
-                    name: 'durationDays',
-                    label: {
-                        text: 'Duration',
-                        classes: 'govuk-label--s'
-                    },
-                    items: durationOptions
-                }) }}
-            </div>
-            <div class="search-and-filter__row">
-                {{ govukButton({
-                    text: 'Apply filters',
-                    preventDoubleClick: true
-                }) }}
-            </div>
-        </form>
-    </div>
+        {{ filterSelect('durationDays', 'Duration', durationOptions) }}
+    {% endcall %}
 
     {% if errorSummary.length === 0 %}
         <h2 class="govuk-heading-l">{{ calendarHeading }}</h2>

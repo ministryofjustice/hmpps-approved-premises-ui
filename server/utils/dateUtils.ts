@@ -128,6 +128,10 @@ export class DateFormats {
       : dateWithSlashes
   }
 
+  static dateObjectToDatepickerInput(date: Date): string {
+    return format(date, 'dd/MM/yyyy')
+  }
+
   /**
    * Converts input for a GDS date input https://design-system.service.gov.uk/components/date-input/
    * into a string
