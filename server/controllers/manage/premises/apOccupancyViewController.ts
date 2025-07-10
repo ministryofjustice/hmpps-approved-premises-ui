@@ -1,6 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { ObjectWithDateParts } from '@approved-premises/ui'
 import {
   Cas1PremiseCapacity,
   Cas1Premises,
@@ -27,7 +26,7 @@ import {
   tableCaptions,
   tableHeader,
 } from '../../../utils/premises/occupancy'
-import { DateFormats, dateAndTimeInputsAreValidDates, daysToWeeksAndDays } from '../../../utils/dateUtils'
+import { DateFormats, daysToWeeksAndDays, isoDateIsValid } from '../../../utils/dateUtils'
 import { placementDates } from '../../../utils/match'
 import { fetchErrorsAndUserInput, generateErrorMessages, generateErrorSummary } from '../../../utils/validation'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -47,42 +46,44 @@ export default class ApOccupancyViewController {
       const { token } = req.user
       const { premisesId } = req.params
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
-      let startDate
+
+      let startDate = DateFormats.dateObjectToDatepickerInput(new Date())
+      let startDateIso = DateFormats.dateObjToIsoDate(new Date())
+
       if (req.query.durationDays) {
-        if (dateAndTimeInputsAreValidDates(req.query as ObjectWithDateParts<'startDate'>, 'startDate')) {
-          startDate = DateFormats.dateAndTimeInputsToIsoString(
-            req.query as ObjectWithDateParts<'startDate'>,
-            'startDate',
-          ).startDate
-        } else {
+        startDate = String(req.query.startDate)
+        startDateIso = DateFormats.datepickerInputToIsoString(startDate)
+
+        if (!startDateIso || !isoDateIsValid(startDateIso)) {
           const dateError = { startDate: 'Enter a valid date' }
           Object.assign(errors, generateErrorMessages(dateError))
           errorSummary.push(generateErrorSummary(dateError)[0])
-          startDate = DateFormats.dateObjToIsoDate(new Date())
         }
       }
-      startDate = startDate || DateFormats.dateObjToIsoDate(new Date())
-      const { durationDays = '84', ...startDateParts } = req.query
+
+      const { durationDays = '84' } = req.query
+
       const premises = await this.premisesService.find(req.user.token, premisesId)
       let calendar: Calendar = []
+      let calendarHeading: string
+
       if (!errorSummary.length) {
-        const capacityDates = placementDates(String(startDate), parseInt(String(durationDays), 10) - 1)
+        const capacityDates = placementDates(startDateIso, parseInt(String(durationDays), 10) - 1)
         const capacity = await this.premisesService.getCapacity(token, premisesId, {
           startDate: capacityDates.startDate,
           endDate: capacityDates.endDate,
         })
         calendar = occupancyCalendar(capacity.capacity, premisesId)
+        calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDateIso, { format: 'short' })}`
       }
-      const calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
+
       return res.render('manage/premises/occupancy/view', {
         pageHeading: `View spaces in ${premises.name}`,
         premises,
         calendar,
         backLink: paths.premises.show({ premisesId }),
         calendarHeading,
-        ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),
-        ...startDateParts,
-        selfPath: paths.premises.occupancy.view({ premisesId }),
+        startDate,
         durationOptions: durationSelectOptions(String(durationDays)),
         errors,
         errorSummary,

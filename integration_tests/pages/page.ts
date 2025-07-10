@@ -234,6 +234,10 @@ export default abstract class Page {
     cy.get(`#${prefix}-year`).invoke('val').then(this.stripLeadingZeros).should('equal', year)
   }
 
+  datePickerShouldContainDate(name: string, date: string): void {
+    cy.get(`[name="${name}"]`).invoke('val').should('equal', date.split('-').reverse().join('/'))
+  }
+
   clickButton(text: string): void {
     cy.get('button').contains(text).click()
   }
@@ -427,6 +431,10 @@ export default abstract class Page {
     cy.get('textarea').clear()
   }
 
+  clearInput(name: string): void {
+    cy.get(`[name="${name}"]`).clear()
+  }
+
   clearDateInputs(prefix: string): void {
     cy.get(`#${prefix}-day`).clear()
     cy.get(`#${prefix}-month`).clear()
@@ -442,6 +450,11 @@ export default abstract class Page {
   clearAndCompleteDateInputs(prefix: string, date: string): void {
     this.clearDateInputs(prefix)
     this.completeDateInputs(prefix, date)
+  }
+
+  clearAndCompleteDatePicker(name: string, date: string): void {
+    this.clearInput(name)
+    this.completeDatePicker(name, date)
   }
 
   getTextInputByIdAndClear(id: string): void {
