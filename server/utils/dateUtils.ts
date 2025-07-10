@@ -34,6 +34,7 @@ const uiDateFormats = {
   long: 'ccc d MMM y',
   longNoYear: 'ccc d MMM',
   dateFieldHint: 'd M y',
+  datePicker: 'd/M/y',
 }
 type UiDateFormat = keyof typeof uiDateFormats
 

@@ -66,35 +66,21 @@ context('Premises occupancy', () => {
       page.clickAction('View spaces')
       // Then I should navigate to the occupancy view
       const occPage = Page.verifyOnPage(OccupancyViewPage, `View spaces in ${premises.name}`)
+
+      // and the start date should be today's date
+      occPage.datePickerShouldContainDate('startDate', startDate)
+
+      // and the duration should show '12 weeks'
+      occPage.shouldHaveSelectText('durationDays', '12 weeks')
+
+      // and the calendar should be shown
       occPage.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
       occPage.shouldShowCalendar(premisesCapacity)
     })
 
-    it('should allow the user to change the calendar duration', () => {
-      const endDate26 = DateFormats.dateObjToIsoDate(addDays(startDate, 7 * 26))
-      cy.task('stubPremisesCapacity', {
-        premisesId: premises.id,
-        startDate,
-        endDate: DateFormats.dateObjToIsoDate(addDays(endDate26, -1)),
-        premiseCapacity: premisesCapacity,
-      })
-      // When I visit the occupancy view page
-      const page = OccupancyViewPage.visit(premises)
-      // Then I should be shown the default period
-      page.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
-      // When I select a different duration
-      page.getSelectInputByIdAndSelectAnEntry('durationDays', '26 weeks')
-      // and click submit
-      page.clickSubmit()
-      // Then the duration should change
-      page.shouldShowCalendarHeading(startDate, 26 * 7)
-      // and the new duration should be selected
-      page.shouldHaveSelectText('durationDays', '26 weeks')
-    })
-
-    it('should allow the user to change the start date', () => {
+    it('should allow the user to change the start date and the calendar duration', () => {
       const newStartDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5))
-      const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5 + 12 * 7))
+      const newEndDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5 + 26 * 7))
 
       cy.task('stubPremisesCapacity', {
         premisesId: premises.id,
@@ -102,20 +88,30 @@ context('Premises occupancy', () => {
         endDate: DateFormats.dateObjToIsoDate(addDays(newEndDate, -1)),
         premiseCapacity: premisesCapacity,
       })
+
       // When I visit the occupancy view page
       const page = OccupancyViewPage.visit(premises)
+
       // Then I should be shown the default period
       page.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
-      // When I select a different start date
-      page.clearAndCompleteDateInputs('startDate', newStartDate)
+
+      // When I enter a different start date
+      page.clearAndCompleteDatePicker('startDate', newStartDate)
+
+      // And I select a different duration
+      page.getSelectInputByIdAndSelectAnEntry('durationDays', '26 weeks')
+
       // and click submit
-      page.clickSubmit()
-      // Then the start date should change
-      page.shouldShowCalendarHeading(newStartDate, 12 * 7)
+      page.clickApplyFilter()
+
+      // Then the start date should be populated
+      page.datePickerShouldContainDate('startDate', newStartDate)
+
       // and the new duration should be selected
-      page.shouldHaveSelectText('durationDays', '12 weeks')
-      // and the start date should be populated
-      page.dateInputsShouldContainDate('startDate', newStartDate)
+      page.shouldHaveSelectText('durationDays', '26 weeks')
+
+      // and the calendar heading should show the new start date and duration
+      page.shouldShowCalendarHeading(newStartDate, 26 * 7)
     })
 
     it('should validate the start date', () => {
@@ -134,22 +130,22 @@ context('Premises occupancy', () => {
       // Then I should be shown the default period
       page.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
       // When I select a bad start date and submit
-      page.clearAndCompleteDateInputs('startDate', badStartDate)
-      page.clickSubmit()
+      page.clearAndCompleteDatePicker('startDate', badStartDate)
+      page.clickApplyFilter()
       // Then an error should be shown
       page.shouldShowErrorMessagesForFields(['startDate'], {
         startDate: 'Enter a valid date',
       })
       // And the bad date I entered should be populated
-      page.dateInputsShouldContainDate('startDate', badStartDate)
+      page.datePickerShouldContainDate('startDate', badStartDate)
       // And the calendar should be blank
       cy.get('.calendar').should('not.exist')
       // When I select a different start date and click submit
-      page.clearAndCompleteDateInputs('startDate', newStartDate)
-      page.clickSubmit()
+      page.clearAndCompleteDatePicker('startDate', newStartDate)
+      page.clickApplyFilter()
       // Then the new start date should be shown
       page.shouldHaveSelectText('durationDays', '12 weeks')
-      page.dateInputsShouldContainDate('startDate', newStartDate)
+      page.datePickerShouldContainDate('startDate', newStartDate)
     })
 
     it('should not be available in the premises actions menu if the premises does not support space bookings', () => {
