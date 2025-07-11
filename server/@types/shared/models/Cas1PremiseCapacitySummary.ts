@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas2User = {
-    email?: string;
-    name: string;
+export type Cas1PremiseCapacitySummary = {
+    date: string;
+    inServiceBedCount: number;
+    vacantBedCount: number;
 };
 
