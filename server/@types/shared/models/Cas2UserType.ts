@@ -2,8 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas2User = {
-    email?: string;
-    name: string;
-};
-
+export type Cas2UserType = 'DELIUS' | 'NOMIS' | 'EXTERNAL';

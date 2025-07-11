@@ -20,6 +20,7 @@ export type PlacementApplication = {
      * Any object
      */
     data?: any;
+    dates?: PlacementDates;
     /**
      * Any object
      */
@@ -29,6 +30,9 @@ export type PlacementApplication = {
      */
     id: string;
     isWithdrawn: boolean;
+    /**
+     * Deprecated, use dates. Only populated with values after the placement application has been submitted
+     */
     placementDates: Array<PlacementDates>;
     submittedAt?: string;
     type: PlacementApplicationType;

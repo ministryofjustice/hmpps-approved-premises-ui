@@ -51,11 +51,9 @@ export type Cas1Application = {
     isPipeApplication?: boolean;
     isWomensApplication?: boolean;
     licenceExpiryDate?: string;
-    outdatedSchema: boolean;
     person: (FullPerson | RestrictedPerson | UnknownPerson);
     personStatusOnSubmission?: PersonStatus;
     risks?: PersonRisks;
-    schemaVersion: string;
     status: ApprovedPremisesApplicationStatus;
     submittedAt?: string;
 };

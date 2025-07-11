@@ -2,7 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
 import type { Cas1BookingCancelledContentPayload } from './Cas1BookingCancelledContentPayload';
 import type { Cas1BookingChangedContentPayload } from './Cas1BookingChangedContentPayload';
 import type { Cas1BookingMadeContentPayload } from './Cas1BookingMadeContentPayload';
@@ -11,7 +10,6 @@ import type { Cas1PlacementChangeRequestRejectedPayload } from './Cas1PlacementC
 import type { Cas1TimelineEventAssociatedUrl } from './Cas1TimelineEventAssociatedUrl';
 import type { Cas1TimelineEventType } from './Cas1TimelineEventType';
 import type { Cas1TriggerSourceType } from './Cas1TriggerSourceType';
-import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
 import type { UserSummary } from './UserSummary';
 export type Cas1TimelineEvent = {
     associatedUrls?: Array<Cas1TimelineEventAssociatedUrl>;
@@ -19,7 +17,6 @@ export type Cas1TimelineEvent = {
      * Timeline description. If a value is provided for 'payload', that should be instead be used to build a description
      */
     content?: string;
-    createdBy?: (ApprovedPremisesUser | TemporaryAccommodationUser);
     createdBySummary?: UserSummary;
     id: string;
     occurredAt: string;
