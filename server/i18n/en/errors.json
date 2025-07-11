@@ -96,13 +96,15 @@
   "startDate": {
     "empty": "You must enter a start date",
     "invalid": "The start date is an invalid date",
-    "conflict": "This bedspace is not available for these dates"
+    "conflict": "This bedspace is not available for these dates",
+    "fieldNameSuffix": "-day"
   },
   "endDate": {
     "empty": "You must enter a end date",
     "invalid": "The end date is an invalid date",
     "beforeStartDate": "The end date must be after the start date",
-    "conflict": "This bedspace is not available for these dates"
+    "conflict": "This bedspace is not available for these dates",
+    "fieldNameSuffix": "-day"
   },
   "referenceNumber": { "empty": "You must enter a reference number" },
   "query": { "empty": "You must enter a query" },
@@ -114,7 +116,8 @@
   "appealDate": {
     "empty": "You must enter an appeal date",
     "invalid": "You must enter a valid appeal date",
-    "mustNotBeFuture": "The appeal date must not be in the future"
+    "mustNotBeFuture": "The appeal date must not be in the future",
+    "fieldNameSuffix": "-day"
   },
   "appealDetail": { "empty": "You must enter the reason for the appeal" },
   "decision": { "empty": "You must provide the decision" },

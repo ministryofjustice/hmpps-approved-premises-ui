@@ -96,10 +96,14 @@ export default abstract class Page {
 
   shouldShowErrorMessagesForFields(fields: Array<string>, clientSideErrorMessages?: Record<string, string>): void {
     fields.forEach(field => {
-      const errorMessagesLookup = clientSideErrorMessages?.[field] ?? errorLookups[field].empty
-
-      cy.get('.govuk-error-summary').should('contain', errorMessagesLookup)
-      cy.get(`[data-cy-error-${field}]`).should('contain', errorMessagesLookup)
+      let message = clientSideErrorMessages?.[field]
+      let fieldNameSuffix
+      if (!message) {
+        message = errorLookups[field]?.empty
+        fieldNameSuffix = errorLookups[field]?.fieldNameSuffix
+      }
+      cy.get('.govuk-error-summary').should('contain', message)
+      cy.get(`[data-cy-error-${field}${fieldNameSuffix || ''}]`).should('contain', message)
     })
   }
 

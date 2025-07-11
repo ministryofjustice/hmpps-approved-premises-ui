@@ -10,6 +10,7 @@
 {% from "./partials/_occupancySummary.njk" import occupancySummary %}
 {% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../../partials/dateGds.njk" import dateGds %}
 
 {% extends "../../layout-with-details.njk" %}
 
@@ -126,37 +127,9 @@
 
                 <input type="hidden" name="criteria" value="{{ criteria }}" />
 
-                {{ govukDateInput({
-                    id: "arrivalDate",
-                    namePrefix: "arrivalDate",
-                    fieldset: {
-                        legend: {
-                            text: "Arrival date",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    hint: {
-                        text: arrivalDateHint
-                    },
-                    items: dateFieldValues('arrivalDate', errors),
-                    errorMessage: errors.arrivalDate
-                }) }}
+                {{ callMacro(dateGds,{name:"arrivalDate",label:"Arrival date", hint:arrivalDateHint}) }}
 
-                {{ govukDateInput({
-                    id: "departureDate",
-                    namePrefix: "departureDate",
-                    fieldset: {
-                        legend: {
-                            text: "Departure date",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    hint: {
-                        text: departureDateHint
-                    },
-                    items: dateFieldValues('departureDate', errors),
-                    errorMessage: errors.departureDate
-                }) }}
+                {{ callMacro(dateGds,{name:"departureDate",label:"Departure date", hint:departureDateHint}) }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({

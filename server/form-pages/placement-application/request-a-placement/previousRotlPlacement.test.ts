@@ -74,7 +74,7 @@ describe('PreviousRotlPlacement', () => {
         details:
           'You must provide details of any other previous ROT placements (including the location) and dates of stays.',
         lastAp: 'You must provide the name of the last Approved Premises the person stayed at',
-        lastPlacementDate: 'You must provide the date of the last placement',
+        'lastPlacementDate-day': 'You must provide the date of the last placement',
       })
     })
 
@@ -86,7 +86,7 @@ describe('PreviousRotlPlacement', () => {
         'lastPlacementDate-day': '199999',
       })
       expect(page.errors()).toEqual({
-        lastPlacementDate: 'The placement date is invalid',
+        'lastPlacementDate-day': 'The placement date is invalid',
       })
     })
   })

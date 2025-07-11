@@ -113,7 +113,7 @@ describe('ArrivalsController', () => {
         await checkDateErrors(
           {},
           {
-            arrivalDateTime: 'You must enter an arrival date',
+            'arrivalDateTime-day': 'You must enter an arrival date',
             arrivalTime: 'You must enter a time of arrival',
           },
         )
@@ -142,7 +142,7 @@ describe('ArrivalsController', () => {
 
         await checkDateErrors(body, {
           arrivalTime: 'You must enter a valid time of arrival in 24-hour format',
-          arrivalDateTime: 'You must enter a valid arrival date',
+          'arrivalDateTime-day': 'You must enter a valid arrival date',
         })
       })
 
@@ -155,7 +155,7 @@ describe('ArrivalsController', () => {
         }
 
         await checkDateErrors(body, {
-          arrivalDateTime: 'You must enter a valid arrival date',
+          'arrivalDateTime-day': 'You must enter a valid arrival date',
         })
       })
 
@@ -169,7 +169,7 @@ describe('ArrivalsController', () => {
           arrivalTime: format(date, 'HH:mm'),
         }
         await checkDateErrors(body, {
-          arrivalTime: 'The time of arrival must be in the past',
+          'arrivalDateTime-day': 'The time of arrival must be in the past',
         })
       })
 
@@ -183,7 +183,7 @@ describe('ArrivalsController', () => {
           arrivalTime: format(date, 'HH:mm'),
         }
         await checkDateErrors(body, {
-          arrivalDateTime: 'The date of arrival must be today or in the past',
+          'arrivalDateTime-day': 'The date of arrival must be today or in the past',
         })
       })
 
@@ -197,7 +197,7 @@ describe('ArrivalsController', () => {
           arrivalTime: format(date, 'HH:mm'),
         }
         await checkDateErrors(body, {
-          arrivalDateTime: 'The date of arrival cannot be more than 7 days ago',
+          'arrivalDateTime-day': 'The date of arrival cannot be more than 7 days ago',
         })
       })
     })

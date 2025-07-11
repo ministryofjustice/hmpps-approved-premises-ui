@@ -113,9 +113,9 @@ context('Change Placement', () => {
     changePlacementPage.clickContinue()
 
     // Then I should see some errors
-    changePlacementPage.shouldShowErrorMessagesForFields(['arrivalDate', 'departureDate'], {
-      arrivalDate: 'You must enter an arrival date',
-      departureDate: 'The departure date is an invalid date',
+    changePlacementPage.shouldShowErrorMessagesForFields(['arrivalDate-day', 'departureDate-day'], {
+      'arrivalDate-day': 'You must enter an arrival date',
+      'departureDate-day': 'The departure date is an invalid date',
     })
 
     // When I submit valid updated dates for the booking

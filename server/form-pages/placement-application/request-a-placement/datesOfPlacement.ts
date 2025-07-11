@@ -80,22 +80,23 @@ export default class DatesOfPlacement implements TasklistPage {
   errors() {
     const errors: Record<string, string> = {}
     if (this.body.datesOfPlacement.length === 0) {
-      errors[`datesOfPlacement_${this.body.datesOfPlacement.length}_arrivalDate`] =
+      errors[`datesOfPlacement_${this.body.datesOfPlacement.length}_arrivalDate[day]`] =
         'You must enter a date for the placement'
-      errors[`datesOfPlacement_${this.body.datesOfPlacement.length}_duration`] =
+      errors[`datesOfPlacement_${this.body.datesOfPlacement.length}_duration_weeks`] =
         'You must enter a duration for the placement'
     }
 
     this.body.datesOfPlacement.forEach((date, index) => {
       if (!dateAndTimeInputsAreValidDates(date, 'arrivalDate')) {
-        errors[`datesOfPlacement_${index}_arrivalDate`] = 'You must state a valid arrival date'
+        errors[`datesOfPlacement_${index}_arrivalDate[day]`] =
+          `You must state a valid arrival date for placement ${index + 1}`
       }
 
       if (
         !this.lengthInDays(date.durationWeeks, date.durationDays) ||
         this.lengthInDays(date.durationWeeks, date.durationDays) === '0'
       ) {
-        errors[`datesOfPlacement_${index}_duration`] = 'You must state the duration of the placement'
+        errors[`datesOfPlacement_${index}_duration_weeks`] = `You must state the duration of placement ${index + 1}`
       }
     })
 

@@ -11,6 +11,7 @@
 {% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
 {% from "../../../../match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
 {% from "../../../../match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
+{% from "../../../../partials/dateGds.njk" import dateGds %}
 
 {% extends "../../../../partials/layout.njk" %}
 
@@ -133,40 +134,12 @@
 
                 <input type="hidden" name="criteria" value="{{ criteria }}" />
                 {% if not placement.actualArrivalDate %}
-                    {{ govukDateInput({
-                        id: "arrivalDate",
-                        namePrefix: "arrivalDate",
-                        fieldset: {
-                            legend: {
-                                text: "New arrival date",
-                                classes: "govuk-fieldset__legend--m"
-                            }
-                        },
-                        hint: {
-                            text: arrivalDateHint
-                        },
-                        items: dateFieldValues('arrivalDate', errors),
-                        errorMessage: errors.arrivalDate
-                    }) }}
+                    {{ callMacro(dateGds,{name:"arrivalDate",label:"New arrival date",hint:arrivalDateHint}) }}
                 {% else %}
                     <input type="hidden" name="actualArrivalDate" value="{{ placement.actualArrivalDate }}" />
                 {% endif %}
 
-                {{ govukDateInput({
-                    id: "departureDate",
-                    namePrefix: "departureDate",
-                    fieldset: {
-                        legend: {
-                            text: "New departure date",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    hint: {
-                        text: departureDateHint
-                    },
-                    items: dateFieldValues('departureDate', errors),
-                    errorMessage: errors.departureDate
-                }) }}
+                {{ callMacro(dateGds,{name:"departureDate",label:"New departure date",hint:departureDateHint}) }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({

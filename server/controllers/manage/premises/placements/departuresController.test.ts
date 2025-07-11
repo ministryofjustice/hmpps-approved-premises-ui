@@ -153,7 +153,7 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       const expectedErrorData = {
-        departureDate: 'You must enter a date of departure',
+        'departureDate-day': 'You must enter a date of departure',
         departureTime: 'You must enter a time of departure',
         reasonId: 'You must select a reason',
       }
@@ -185,7 +185,7 @@ describe('DeparturesController', () => {
       await requestHandler(request, response, next)
 
       const expectedErrorData = {
-        departureDate: 'You must enter a valid date of departure',
+        'departureDate-day': 'You must enter a valid date of departure',
         departureTime: 'You must enter a valid time of departure in 24-hour format',
       }
 
@@ -209,7 +209,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureDate: 'The date of departure must be today or in the past',
+          'departureDate-day': 'The date of departure must be today or in the past',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -261,7 +261,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureDate: 'The date of departure must not be more than 7 days ago',
+          'departureDate-day': 'The date of departure must not be more than 7 days ago',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -285,7 +285,7 @@ describe('DeparturesController', () => {
         await requestHandler(request, response, next)
 
         const expectedErrorData = {
-          departureDate: 'The date of departure must be the same as or after 9 Nov 2024, when the person arrived',
+          'departureDate-day': 'The date of departure must be the same as or after 9 Nov 2024, when the person arrived',
         }
 
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data

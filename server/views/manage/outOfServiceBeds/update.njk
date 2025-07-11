@@ -7,8 +7,10 @@
 {% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "../../partials/dateGds.njk" import dateGds %}
 
 {% from "./partials/_pageHeading.njk" import outOfServiceBedPageHeading %}
+
 
 {% extends "../../partials/layout.njk" %}
 
@@ -45,31 +47,9 @@
 
             {{ showErrorSummary(errorSummary, errorTitle) }}
 
-            {{ govukDateInput({
-                id: "startDate",
-                namePrefix: "startDate",
-                items: dateFieldValues('startDate', outOfServiceBed.startDate),
-                errorMessage: errors.startDate,
-                fieldset: {
-                    legend: {
-                        text: "Start date",
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                }
-            }) }}
+            {{ callMacro(dateGds,{name:"startDate",label:"Start date", classes:"govuk-fieldset__legend--s"}) }}
 
-            {{ govukDateInput({
-                id: "endDate",
-                namePrefix: "endDate",
-                items: dateFieldValues('endDate', outOfServiceBed.endDate),
-                errorMessage: errors.endDate,
-                fieldset: {
-                    legend: {
-                        text: "End date",
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                }
-            }) }}
+            {{ callMacro(dateGds,{name:"endDate",label:"End date", classes:"govuk-fieldset__legend--s"}) }}
 
             {{ govukRadios({
                 idPrefix: "reason",

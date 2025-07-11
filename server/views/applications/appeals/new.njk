@@ -2,9 +2,9 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "../../components/formFields/form-page-input/macro.njk" import formPageInput %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "../../partials/dateGds.njk" import dateGds %}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -34,21 +34,12 @@
 
                 {{ showErrorSummary(errorSummary) }}
 
-                {{ govukDateInput({
-                    id: "appealDate",
-                    namePrefix: "appealDate",
-                    fieldset: {
-                        legend: {
-                            text: "When did you conduct the appeal?",
-                            classes: "govuk-fieldset__legend--s"
-                        }
-                    },
-                    hint: {
-                        text: "For example, 27 3 2007"
-                    },
-                    items: dateFieldValues('appealDate', errors),
-                    errorMessage: errors.appealDate
-                }) }}
+                {{ callMacro(dateGds,{
+                    name:"appealDate",
+                    label:"When did you conduct the appeal?",
+                    hint:"For example, 27 3 2007",
+                    classes:"govuk-fieldset__legend--s"})
+                }}
 
                 {{ govukTextarea({
                     name: "appeal[appealDetail]",

@@ -1,23 +1,13 @@
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../../../partials/dateGds.njk" import dateGds %}
 
 {% extends "./partials/layout.njk" %}
 
 {% block formContent %}
-    {{ govukDateInput({
-        id: "departureDate",
-        namePrefix: "departureDate",
-        items: dateFieldValues('departureDate', errors),
-        errorMessage: errors.departureDate,
-        fieldset: {
-            legend: {
-                text: "What is the departure date?",
-                classes: "govuk-fieldset__legend--m"
-            }
-        }
-    }) }}
+
+    {{ callMacro(dateGds,{name:"departureDate",label:"What is the departure date?"}) }}
 
     {{ govukInput({
         label: {

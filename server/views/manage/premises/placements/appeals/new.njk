@@ -4,6 +4,7 @@
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "../../../../partials/dateGds.njk" import dateGds %}
 {% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
 {% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
 
@@ -69,18 +70,7 @@
                     errorMessage: errors.areaManagerEmail
                 }) }}
 
-                {{ govukDateInput({
-                    id: "approvalDate",
-                    namePrefix: "approvalDate",
-                    items: dateFieldValues('approvalDate', errors),
-                    errorMessage: errors.approvalDate,
-                    fieldset: {
-                        legend: {
-                            text: "When was this approved?",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    }
-                }) }}
+                {{ callMacro(dateGds,{name:"approvalDate",label:"When was this approved?"}) }}
 
                 {{ govukRadios({
                     fieldset: {

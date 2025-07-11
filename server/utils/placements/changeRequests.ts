@@ -126,11 +126,11 @@ export const validateNewAppealResponse = (body: AppealFormData): void => {
     errors.areaManagerEmail = 'You must provide the email address of the approving area manager'
   }
   if (!approvalDate) {
-    errors.approvalDate = 'You must enter the date of the approval'
+    errors['approvalDate-day'] = 'You must enter the date of the approval'
   } else if (!dateAndTimeInputsAreValidDates(body as ObjectWithDateParts<'approvalDate'>, 'approvalDate')) {
-    errors.approvalDate = 'You must enter a valid approval date'
+    errors['approvalDate-day'] = 'You must enter a valid approval date'
   } else if (isAfter(approvalDate, new Date())) {
-    errors.approvalDate = 'The approval date must be today or in the past'
+    errors['approvalDate-day'] = 'The approval date must be today or in the past'
   }
   if (!appealReason) {
     errors.appealReason = 'You must select a reason for the appeal'

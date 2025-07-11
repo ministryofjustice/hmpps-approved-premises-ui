@@ -74,11 +74,11 @@ export default class PreviousRotlPlacement implements TasklistPage {
 
     if (this.body.previousRotlPlacement === 'yes') {
       if (!this.body.lastPlacementDate) {
-        errors.lastPlacementDate = 'You must provide the date of the last placement'
+        errors['lastPlacementDate-day'] = 'You must provide the date of the last placement'
       } else if (
         !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'lastPlacementDate'>, 'lastPlacementDate')
       ) {
-        errors.lastPlacementDate = 'The placement date is invalid'
+        errors['lastPlacementDate-day'] = 'The placement date is invalid'
       }
 
       if (!this.body.lastAp) {
