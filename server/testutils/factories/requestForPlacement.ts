@@ -10,6 +10,7 @@ export default Factory.define<RequestForPlacement>(() => ({
   createdByUserId: faker.string.uuid(),
   isWithdrawn: faker.datatype.boolean(),
   placementDates: placementDatesFactory.buildList(faker.number.int({ min: 1, max: 3 })),
+  dates: placementDatesFactory.build(),
   status: faker.helpers.arrayElement([
     'request_rejected',
     'request_submitted',

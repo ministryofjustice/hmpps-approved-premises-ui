@@ -272,7 +272,7 @@ context('show applications', () => {
 
     const noteAsTimelineEvent = cas1TimelineEventFactory.build({
       content: note.note,
-      createdBy: note.createdByUser,
+      createdBySummary: note.createdByUser,
       id: 'some-id',
       occurredAt: note.createdAt,
       type: 'application_timeline_note',
