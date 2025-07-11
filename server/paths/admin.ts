@@ -13,6 +13,8 @@ const withdrawalPath = placementRequestPath.path('withdrawal')
 
 const cruDashboardPath = adminPath.path('cru-dashboard')
 
+const nationalOccupancyPath = adminPath.path('national-occupancy')
+
 export default {
   admin: {
     cruDashboard: {
@@ -20,6 +22,9 @@ export default {
       changeRequests: cruDashboardPath.path('change-requests'),
       search: cruDashboardPath.path('search'),
       downloadOccupancyReport: cruDashboardPath.path('occupancy-report'),
+    },
+    nationalOccupancy: {
+      weekView: nationalOccupancyPath,
     },
     placementRequests: {
       index: placementRequestsPath,
