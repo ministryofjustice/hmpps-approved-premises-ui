@@ -9,9 +9,10 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "./partials/_occupancySummary.njk" import occupancySummary %}
 {% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/filters.njk" import filterDatepicker, filterSelect, filterCheckboxes %}
 
-{% extends "../../layout-with-details.njk" %}
+{% extends "match/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -33,7 +34,7 @@
 
     <section>
         <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
-            {% if not errors.startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
+            {% if not errors.startDate %}from {{ formatDate(startDateIso, { format: 'short' }) }}{% endif %}</h2>
 
         <div class="search-and-filter">
             <form action="{{ currentUrl }}" method="post">
@@ -42,42 +43,13 @@
                 <h3 class="govuk-heading-m">Filters</h3>
 
                 <div class="search-and-filter__row">
-                    {{ govukDateInput({
-                        id: "startDate",
-                        namePrefix: "startDate",
-                        fieldset: {
-                            legend: {
-                                text: "Availability start date",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        items: dateFieldValues('startDate', errors),
-                        errorMessage: errors.startDate
-                    }) }}
+                    {{ filterDatepicker('startDate', 'Availability start date', fetchContext()) }}
 
-                    {{ govukSelect({
-                        id: 'durationDays',
-                        name: 'durationDays',
-                        label: {
-                            text: 'Length of availability',
-                            classes: 'govuk-label--s'
-                        },
-                        items: durationOptions
-                    }) }}
+                    {{ filterSelect('durationDays', 'Length of availability', durationOptions) }}
                 </div>
 
                 <div class="search-and-filter__row">
-                    {{ govukCheckboxes({
-                        name: "roomCriteria",
-                        classes: "govuk-checkboxes--small govuk-checkboxes--inline",
-                        fieldset: {
-                            legend: {
-                                text: "Select following criteria",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        items: criteriaOptions
-                    }) }}
+                    {{ filterCheckboxes('roomCriteria', 'Room requirements', criteriaOptions) }}
                 </div>
 
                 <div class="search-and-filter__row">

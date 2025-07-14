@@ -10,7 +10,7 @@ import { DayAvailabilityStatus, dayAvailabilityStatus } from '../../../server/ut
 
 export default class OccupancyFilterPage extends Page {
   shouldShowFilters(startDate: string, selectedDuration: string, newCriteria: Array<string>) {
-    this.dateInputsShouldContainDate('startDate', startDate)
+    this.datePickerShouldContainDate('startDate', startDate)
     this.shouldHaveSelectText('durationDays', selectedDuration)
     newCriteria.forEach(criteria => {
       this.verifyCheckboxByLabel(criteria)
@@ -26,7 +26,7 @@ export default class OccupancyFilterPage extends Page {
     criteriaFieldName = 'roomCriteria',
   ) {
     if (filters.newStartDate) {
-      this.clearAndCompleteDateInputs('startDate', filters.newStartDate)
+      this.clearAndCompleteDatePicker('startDate', filters.newStartDate)
     }
 
     if (filters.newDuration) {

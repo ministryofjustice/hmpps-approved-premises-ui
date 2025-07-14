@@ -5,7 +5,7 @@ import { PlacementRequestService, PremisesService, SessionService, SpaceSearchSe
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
-import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../utils/dateUtils'
+import { DateFormats, isoDateIsValid } from '../../../utils/dateUtils'
 import { dayAvailabilityStatus, dayAvailabilityStatusMap, durationSelectOptions } from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
@@ -128,7 +128,8 @@ export default class {
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
         ...formValues,
-        ...DateFormats.isoDateToDateInputs(formValues.startDate, 'startDate'),
+        startDate: DateFormats.isoDateToUIDate(searchState.startDate, { format: 'datePicker' }),
+        startDateIso: searchState.startDate,
         ...userInput,
         durationOptions: durationSelectOptions(formValues.durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, formValues.roomCriteria),
@@ -147,18 +148,15 @@ export default class {
       const occupancyUrl = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
 
       try {
-        const { roomCriteria, durationDays, ...startDateInput } = req.body
+        const { roomCriteria, durationDays, startDate: startDateRaw } = req.body
 
-        if (dateIsBlank(startDateInput, 'startDate') || !dateAndTimeInputsAreValidDates(startDateInput, 'startDate')) {
+        const startDate = DateFormats.datepickerInputToIsoString(String(startDateRaw))
+
+        if (!startDate || !isoDateIsValid(startDate)) {
           throw new ValidationError({
             startDate: 'Enter a valid date',
           })
         }
-
-        const { startDate } = DateFormats.dateAndTimeInputsToIsoString(
-          startDateInput as ObjectWithDateParts<'startDate'>,
-          'startDate',
-        )
 
         await this.formData.update(id, req.session, {
           roomCriteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria) || [],

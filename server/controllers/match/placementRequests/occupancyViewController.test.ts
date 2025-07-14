@@ -128,7 +128,8 @@ describe('OccupancyViewController', () => {
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
         premises,
         ...searchState,
-        ...DateFormats.isoDateToDateInputs(searchState.startDate, 'startDate'),
+        startDate: DateFormats.isoDateToUIDate(searchState.startDate, { format: 'datePicker' }),
+        startDateIso: searchState.startDate,
         durationOptions: durationSelectOptions(searchState.durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, searchState.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
@@ -211,9 +212,7 @@ describe('OccupancyViewController', () => {
       }
       const expectedErrorSummary = [{ text: 'Enter a valid date', href: '#startDate' }]
       const expectedUserInput = {
-        'startDate-day': '32',
-        'startDate-month': '2',
-        'startDate-year': '2025',
+        startDate: '32/2/2025',
       }
       jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({
         errors: expectedErrors,
@@ -257,9 +256,7 @@ describe('OccupancyViewController', () => {
 
   describe('filterView', () => {
     const filterBody: Request['body'] = {
-      'startDate-day': '23',
-      'startDate-month': '3',
-      'startDate-year': '2025',
+      startDate: '23/3/2025',
       roomCriteria: ['isArsonSuitable', 'hasEnSuite', 'isSingle'],
       durationDays: '42',
     }
@@ -313,8 +310,8 @@ describe('OccupancyViewController', () => {
     })
 
     it.each([
-      ['empty', { 'startDate-day': '', 'startDate-month': '', 'startDate-year': '' }],
-      ['invalid', { 'startDate-day': '45', 'startDate-month': '14', 'startDate-year': '23' }],
+      ['empty', { startDate: '' }],
+      ['invalid', { startDate: '45/14/23' }],
     ])('returns an error if the start date is %s', async (_, dateInput) => {
       jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
 
