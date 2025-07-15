@@ -1,5 +1,6 @@
 import { cruManagementAreaFactory } from '../../testutils/factories'
-import { CRU_AREA_WOMENS, getManagementAreaSelectGroups } from './nationalOccupancyUtils'
+import { CRU_AREA_WOMENS, getApTypeOptions, getManagementAreaSelectGroups } from './nationalOccupancyUtils'
+import { apTypeLongLabels } from '../apTypeLabels'
 
 describe('nationalOccupancyUtils', () => {
   describe('getManagementAreaSelectGroups', () => {
@@ -48,6 +49,19 @@ describe('nationalOccupancyUtils', () => {
       const expected = resultNoSelect()
       expected[0].items[0].selected = true
       expect(getManagementAreaSelectGroups(cruManagementAreas, 'allMens', CRU_AREA_WOMENS)).toEqual(expected)
+    })
+  })
+
+  describe('getApTypeOptions', () => {
+    it('should render a set of ap type options with nothing selected', () => {
+      const optionList = getApTypeOptions()
+      expect(optionList).toHaveLength(Object.keys(apTypeLongLabels).length)
+      expect(optionList.findIndex(({ selected }) => selected)).toEqual(-1)
+    })
+
+    it('should render a set of ap type options with one selected', () => {
+      const optionList = getApTypeOptions(Object.keys(apTypeLongLabels)[3])
+      expect(optionList.findIndex(({ selected }) => selected)).toEqual(3)
     })
   })
 })

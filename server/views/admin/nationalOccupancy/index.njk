@@ -1,8 +1,8 @@
-{% extends "../../partials/layout.njk" %}
+{% extends "partials/layout.njk" %}
 
-{% from "../../partials/filters.njk" import filterWrapper, filterSelect, filterDatepicker, filterText, filterCheckboxes with context  %}
-{% from "../../components/formFields/selectWithOptgroup.njk" import govukSelectWithOptgroup %}
-{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/filters.njk" import filterWrapper, filterSelect, filterDatepicker, filterText, filterCheckboxes %}
+{% from "components/formFields/selectWithOptgroup.njk" import govukSelectWithOptgroup %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
@@ -17,11 +17,11 @@
 {% block content %}
 
     {{ showErrorSummary(errorSummary) }}
-<h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     {% call filterWrapper('Filter') %}
-        {{ filterDatepicker('arrivalDate', 'Arrival date') }}
-        {{ filterText('postcodeArea','Postcode area') }}
+        {{ filterDatepicker('arrivalDate', 'Arrival date', fetchContext()) }}
+        {{ filterText('postcode','Postcode area', fetchContext()) }}
         {{ govukSelectWithOptgroup({
             label: {
                 classes: "govuk-fieldset__legend--s",
@@ -32,9 +32,9 @@
             items: cruManagementAreaOptions
         }) }}
 
-        {{ filterSelect('apType','Type of AP',convertObjectsToSelectOptions(apTypes, null, 'name', 'id', 'apType', null, context)) }}
-        {{ filterCheckboxes('apCharacteristics','AP criteria',apCharacteristics) }}
-        {{ filterCheckboxes('roomCharacteristics','Room criteria',roomCharacteristics) }}
+        {{ filterSelect('apType','Type of AP',apTypeOptions ) }}
+        {{ filterCheckboxes('apCriteria','AP criteria',apCriteria) }}
+        {{ filterCheckboxes('roomCriteria','Room criteria',roomCriteria) }}
     {%- endcall %}
 
 {% endblock %}

@@ -11,12 +11,12 @@ context('National occupancy view', () => {
   ]
 
   const filterSettings = {
-    postcodeArea: 'SW13A',
+    postcode: 'SW1A',
     arrivalDate: '12/9/2024',
     apArea: cruManagementAreas[3].id,
     apType: 'pipe',
-    apCharacteristics: ['isCatered'],
-    roomCharacteristics: ['isWheelchairDesignated'],
+    apCriteria: ['isCatered'],
+    roomCriteria: ['isWheelchairDesignated'],
   }
 
   beforeEach(() => {
@@ -44,19 +44,29 @@ context('National occupancy view', () => {
 
     cy.log('When I set invalid filters and submit')
     viewPage.setInvalidFilters()
-    viewPage.applyFilters()
+    viewPage.clickButton('Apply filters')
 
     cy.log('Then I should see validation errors')
     viewPage.shouldSeeValidationErrors()
 
     cy.log('When I set valid filters')
     viewPage.setValidFilters(filterSettings)
+    viewPage.clickButton('Apply filters')
+
+    cy.log('Then the form should be populated with the correct data')
     viewPage.submitCheckQueryParameters(filterSettings)
+    viewPage.verifyFiltersPopulated(filterSettings)
+
+    cy.log('When I revisit the page with no query parameters')
+    const noQueryPage = NationalViewPage.visit()
+
+    cy.log('Then the filter should still be populated (from the session)')
+    noQueryPage.verifyFiltersPopulated(filterSettings)
   })
 
-  it('denys access to the view if user lacks permission', () => {
-    cy.log('Given I am signed in as a CRU member without occupancy view permission')
-    signIn('applicant', { permissions: ['cas1_view_cru_dashboard'] })
+  it('denies access to the view if user lacks permission', () => {
+    cy.log('Given I am signed in as a user with CRU dashboard permissions but without occupancy view permission')
+    signIn('cru_member', { permissions: ['cas1_view_cru_dashboard'] })
 
     cy.log('When I navigate to the CRU dashboard')
     const cruDashboard = ListPage.visit()

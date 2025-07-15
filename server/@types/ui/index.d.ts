@@ -465,15 +465,22 @@ export type SpaceSearchApCriteria = keyof typeof spaceSearchCriteriaApLevelLabel
 
 export type SpaceSearchRoomCriteria = keyof typeof roomCharacteristicMap
 
-export type SpaceSearchFormData = {
-  applicationId?: string
+type SpaceSearchCommonFields = {
   postcode?: string
   apType?: ApTypeCriteria
   apCriteria?: Array<SpaceSearchApCriteria>
   roomCriteria?: Array<SpaceSearchRoomCriteria>
   startDate?: string
-  durationDays?: number
   arrivalDate?: string
+}
+
+export type NationalSpaceSearchFormData = SpaceSearchCommonFields & {
+  apArea?: string
+}
+
+export type SpaceSearchFormData = SpaceSearchCommonFields & {
+  applicationId?: string
+  durationDays?: number
   departureDate?: string
 }
 
@@ -501,6 +508,7 @@ export type MultiPageFormData = {
   spaceSearch?: Record<PlacementRequestDetail['id'], SpaceSearchFormData>
   transfers?: Record<Cas1SpaceBooking['id'], TransferFormData>
   appeals?: Record<Cas1SpaceBooking[id], AppealFormData>
+  nationalSpaceSearch?: Record<string, NationalSpaceSearchFormData>
 }
 
 export type ChangeRequestReason =

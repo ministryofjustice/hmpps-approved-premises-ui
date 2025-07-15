@@ -198,7 +198,6 @@ export default abstract class Page {
   }
 
   completeTextInput(name: string, value: string): void {
-    cy.get(`input[name="${name}"]`).clear()
     cy.get(`input[name="${name}"]`).type(value)
   }
 
@@ -490,6 +489,10 @@ export default abstract class Page {
       .parent()
       .find('input')
       .should(checked ? 'be.checked' : 'not.be.checked')
+  }
+
+  verifyCheckboxByNameAndValue(name: string, value: string, checked = true) {
+    cy.get(`input[name="${name}"][value="${value}"]`).should(checked ? 'be.checked' : 'not.be.checked')
   }
 
   clearAndCompleteTextInputById(id: string, text: string): void {

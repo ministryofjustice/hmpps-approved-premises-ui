@@ -1,16 +1,19 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-import { when } from 'jest-when'
 import { faker } from '@faker-js/faker'
 import { cruManagementAreaFactory, userDetailsFactory } from '../../testutils/factories'
 import { CruManagementAreaService } from '../../services'
-import NationalOccupancyController from './nationalOccupancyController'
+import NationalOccupancyController, { defaultSessionKey } from './nationalOccupancyController'
 import { convertKeyValuePairToCheckBoxItems } from '../../utils/formUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
 import { apTypeLongLabels } from '../../utils/apTypeLabels'
 import { DateFormats } from '../../utils/dateUtils'
-import { CRU_AREA_WOMENS, getManagementAreaSelectGroups } from '../../utils/admin/nationalOccupancyUtils'
+import {
+  CRU_AREA_WOMENS,
+  getApTypeOptions,
+  getManagementAreaSelectGroups,
+} from '../../utils/admin/nationalOccupancyUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import * as validationUtils from '../../utils/validation'
 
@@ -18,7 +21,6 @@ describe('NationalOccupancyController', () => {
   const token = 'TEST_TOKEN'
   const user = userDetailsFactory.build()
 
-  let request: DeepMocked<Request>
   let response: DeepMocked<Response>
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -32,37 +34,44 @@ describe('NationalOccupancyController', () => {
 
   let nationalOccupancyController: NationalOccupancyController
 
+  const mockRequest = (query: Record<string, string | Array<string>> = {}, session: Record<string, string> = {}) =>
+    createMock<Request>({
+      user: { token },
+      query,
+      session: {
+        save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
+        multiPageFormData: { nationalSpaceSearch: { [defaultSessionKey]: session } },
+      },
+    })
+
   beforeEach(() => {
     jest.clearAllMocks()
-    request = createMock<Request>({ user: { token }, query: {} })
     response = createMock<Response>({ locals: { user } })
 
     cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
 
     nationalOccupancyController = new NationalOccupancyController(cruManagementAreaService)
-    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
-
-    when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
   })
 
   describe('index', () => {
     it('should render the form with default values', async () => {
+      const request = mockRequest({})
       await nationalOccupancyController.index()(request, response, next)
 
       expect(response.render).toBeCalledWith('admin/nationalOccupancy/index', {
         pageHeading: 'View all Approved Premises spaces',
         backLink: '/admin/cru-dashboard',
-        apCharacteristics: convertKeyValuePairToCheckBoxItems(spaceSearchCriteriaApLevelLabels, []),
-        roomCharacteristics: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, []),
-        apType: undefined,
-        apTypes: Object.entries(apTypeLongLabels).map(([id, name]) => ({ id, name })),
+        apCriteria: convertKeyValuePairToCheckBoxItems(spaceSearchCriteriaApLevelLabels, []),
+        roomCriteria: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, []),
+        apTypeOptions: getApTypeOptions(),
         arrivalDate: DateFormats.isoDateToUIDate(DateFormats.dateObjToIsoDate(new Date()), { format: 'datePicker' }),
         cruManagementAreaOptions: getManagementAreaSelectGroups(
           cruManagementAreas,
           undefined,
           cruManagementAreas[0].id,
         ),
-        postcodeArea: '',
+        postcode: '',
         errorSummary: errorsAndUserInput.errorSummary,
         errors: errorsAndUserInput.errors,
       })
@@ -70,60 +79,84 @@ describe('NationalOccupancyController', () => {
       expect(cruManagementAreaService.getCruManagementAreas).toBeCalled()
     })
 
-    it('should render the populated form', async () => {
+    it('should render form with data populated from the query', async () => {
       const arrivalDate = '16/12/2025'
       const apType = faker.helpers.arrayElement(Object.keys(apTypeLongLabels))
-      const postcodeArea = 'SW14A'
-      const roomCharacteristics = faker.helpers.arrayElements(Object.keys(roomCharacteristicMap), { min: 1, max: 3 })
-      const apCharacteristics = faker.helpers.arrayElements(Object.keys(spaceSearchCriteriaApLevelLabels), {
+      const postcode = 'SW1A'
+      const roomCriteria = faker.helpers.arrayElements(Object.keys(roomCharacteristicMap), { min: 1, max: 3 })
+      const apCriteria = faker.helpers.arrayElements(Object.keys(spaceSearchCriteriaApLevelLabels), {
         min: 1,
         max: 3,
       })
       const apArea = cruManagementAreas[1].id
 
-      const parameterRequest = createMock<Request>({
-        user: { token },
-        query: { arrivalDate, apType, apArea, postcodeArea, roomCharacteristics, apCharacteristics },
-      })
+      const request = mockRequest({ arrivalDate, apType, apArea, postcode, roomCriteria, apCriteria })
 
-      await nationalOccupancyController.index()(parameterRequest, response, next)
+      await nationalOccupancyController.index()(request, response, next)
 
       expect(response.render).toBeCalledWith(
         'admin/nationalOccupancy/index',
         expect.objectContaining({
-          apCharacteristics: convertKeyValuePairToCheckBoxItems(spaceSearchCriteriaApLevelLabels, apCharacteristics),
-          roomCharacteristics: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, roomCharacteristics),
-          apType,
+          apCriteria: convertKeyValuePairToCheckBoxItems(spaceSearchCriteriaApLevelLabels, apCriteria),
+          roomCriteria: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, roomCriteria),
+          apTypeOptions: getApTypeOptions(apType),
           arrivalDate,
           cruManagementAreaOptions: getManagementAreaSelectGroups(cruManagementAreas, apArea, cruManagementAreas[0].id),
-          postcodeArea,
+          postcode,
         }),
+      )
+    })
+
+    it('should render the form with data merged from the session and query with query dominant', async () => {
+      const queryData = {
+        arrivalDate: '16/12/2025',
+        apType: Object.keys(apTypeLongLabels)[0],
+      }
+      const sessionData = {
+        apType: Object.keys(apTypeLongLabels)[1],
+        postcode: 'SW1A',
+      }
+
+      const request = mockRequest(queryData, sessionData)
+
+      await nationalOccupancyController.index()(request, response, next)
+
+      const params = { ...sessionData, ...queryData }
+
+      expect(response.render).toBeCalledWith(
+        'admin/nationalOccupancy/index',
+        expect.objectContaining({
+          arrivalDate: params.arrivalDate,
+          postcode: params.postcode,
+          apTypeOptions: getApTypeOptions(params.apType),
+        }),
+      )
+      expect(request.session.save).toHaveBeenCalled()
+      expect(request.session.multiPageFormData.nationalSpaceSearch[defaultSessionKey]).toEqual(
+        expect.objectContaining({ ...sessionData, ...queryData }),
       )
     })
 
     it('should render errors on invalid input', async () => {
       const arrivalDate = '16/14/2025'
-      const postcodeArea = 'SW14AX'
+      const postcode = 'SW14AX'
 
-      const errorRequest = createMock<Request>({
-        user: { token },
-        query: { arrivalDate, postcodeArea },
-      })
+      const request = mockRequest({ arrivalDate, postcode })
 
-      await nationalOccupancyController.index()(errorRequest, response, next)
+      await nationalOccupancyController.index()(request, response, next)
 
       expect(response.render).toBeCalledWith(
         'admin/nationalOccupancy/index',
         expect.objectContaining({
-          postcodeArea,
+          postcode,
           arrivalDate,
           errors: {
-            arrivalDate: { attributes: { 'data-cy-error-arrivalDate': true }, text: 'Invalid arrival date' },
-            postcodeArea: { attributes: { 'data-cy-error-postcodeArea': true }, text: 'Invalid postcode area' },
+            arrivalDate: { attributes: { 'data-cy-error-arrivalDate': true }, text: 'Enter a valid arrival date' },
+            postcode: { attributes: { 'data-cy-error-postcode': true }, text: 'Enter a valid postcode area' },
           },
           errorSummary: [
-            { href: '#arrivalDate', text: 'Invalid arrival date' },
-            { href: '#postcodeArea', text: 'Invalid postcode area' },
+            { href: '#arrivalDate', text: 'Enter a valid arrival date' },
+            { href: '#postcode', text: 'Enter a valid postcode area' },
           ],
         }),
       )
@@ -133,6 +166,8 @@ describe('NationalOccupancyController', () => {
       const responseWomensUser: DeepMocked<Response> = createMock<Response>({
         locals: { user: { cruManagementArea: { id: CRU_AREA_WOMENS } } },
       })
+
+      const request = mockRequest({})
 
       await nationalOccupancyController.index()(request, responseWomensUser, next)
 

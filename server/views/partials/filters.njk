@@ -45,8 +45,7 @@
     }) }}
 {% endmacro %}
 
-{% macro filterText(name, label) %}
-    {% set context=fetchContext() %}
+{% macro filterText(name, label, context) %}
     {{ govukInput({
         label: {
             text: label,
@@ -59,8 +58,7 @@
     }) }}
 {% endmacro %}
 
-{% macro filterDatepicker(name, label) %}
-    {% set context=fetchContext() %}
+{% macro filterDatepicker(name, label, context) %}
     {{ mojDatePicker({
         id: name,
         name: name,
@@ -72,4 +70,3 @@
         errorMessage: context.errors[name]
     }) }}
 {% endmacro %}
-
