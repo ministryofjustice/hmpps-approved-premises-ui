@@ -129,7 +129,6 @@ export type { Cas1SpaceBookingAction } from './models/Cas1SpaceBookingAction';
 export type { Cas1SpaceBookingCancellation } from './models/Cas1SpaceBookingCancellation';
 export type { Cas1SpaceBookingCharacteristic } from './models/Cas1SpaceBookingCharacteristic';
 export type { Cas1SpaceBookingDates } from './models/Cas1SpaceBookingDates';
-export type { Cas1SpaceBookingDaySummary } from './models/Cas1SpaceBookingDaySummary';
 export type { Cas1SpaceBookingDaySummarySortField } from './models/Cas1SpaceBookingDaySummarySortField';
 export type { Cas1SpaceBookingDeparture } from './models/Cas1SpaceBookingDeparture';
 export type { Cas1SpaceBookingNonArrival } from './models/Cas1SpaceBookingNonArrival';
