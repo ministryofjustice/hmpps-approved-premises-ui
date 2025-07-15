@@ -1,16 +1,16 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { ObjectWithDateParts } from '@approved-premises/ui'
-import { addDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
   catchValidationErrorOrPropogate,
+  errorMessage,
+  errorSummary as addErrorSummary,
   fetchErrorsAndUserInput,
-  generateErrorMessages,
-  generateErrorSummary,
 } from '../../../../utils/validation'
 import {
   occupancySummary,
+  placementDates,
   spaceBookingConfirmationSummaryListRows,
   validateSpaceBooking,
 } from '../../../../utils/match'
@@ -18,7 +18,7 @@ import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCa
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
-import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
+import { DateFormats, daysToWeeksAndDays, isoDateIsValid } from '../../../../utils/dateUtils'
 import { CriteriaQuery } from '../../../match/placementRequests/occupancyViewController'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { durationSelectOptions, getClosestDuration } from '../../../../utils/match/occupancy'
@@ -36,7 +36,8 @@ type RequestParams = {
 
 interface ViewRequest extends Request {
   params: RequestParams
-  query: ObjectWithDateParts<'startDate'> & {
+  query: {
+    startDate: string
     durationDays: string
     criteria: CriteriaQuery
   }
@@ -77,47 +78,44 @@ export default class ChangesController {
     return async (req: ViewRequest, res: Response) => {
       const { token } = req.user
       const { premisesId, placementId } = req.params
-      const { durationDays: queryDurationDays, criteria: queryCriteria, ...startDateParts } = req.query
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const placement = await this.placementService.getPlacement(token, placementId)
+
       let pageHeading = 'Change placement'
       let startDate = placement.expectedArrivalDate
-      let endDate = placement.expectedDepartureDate
-      let durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
 
       if (placement.actualArrivalDate) {
-        startDate = placement.actualArrivalDate
-        endDate = DateFormats.dateObjToIsoDate(addDays(startDate, getClosestDuration(durationDays)))
-        durationDays = DateFormats.durationBetweenDates(endDate, startDate).number
         pageHeading = 'Extend placement'
+        startDate = placement.actualArrivalDate
       }
 
+      let startDateRaw = DateFormats.isoDateToUIDate(startDate, { format: 'datePicker' })
+      let durationDays = DateFormats.durationBetweenDates(placement.expectedDepartureDate, startDate).number
       let criteria: Array<Cas1SpaceBookingCharacteristic> = filterRoomLevelCriteria(placement.characteristics)
 
-      if (queryDurationDays) {
-        durationDays = Number(queryDurationDays)
-        criteria = makeArrayOfType(queryCriteria)
+      if (req.query.durationDays) {
+        startDateRaw = String(req.query.startDate)
+        startDate = DateFormats.datepickerInputToIsoString(startDateRaw)
+        durationDays = Number(req.query.durationDays)
+        criteria = makeArrayOfType(req.query.criteria)
 
-        if (dateAndTimeInputsAreValidDates(startDateParts, 'startDate')) {
-          startDate = DateFormats.dateAndTimeInputsToIsoString(startDateParts, 'startDate').startDate
-          endDate = DateFormats.dateObjToIsoDate(addDays(startDate, durationDays))
-        } else {
-          const startDateError = {
-            startDate: 'Enter a valid date',
-          }
-          errorSummary.push(...generateErrorSummary(startDateError))
-          Object.assign(errors, generateErrorMessages(startDateError))
+        if (!startDate || !isoDateIsValid(startDate)) {
+          const startDateErrorMessage = 'Enter a valid date'
+          errors.startDate = errorMessage('startDate', startDateErrorMessage)
+          errorSummary.push(addErrorSummary('startDate', startDateErrorMessage))
         }
       }
 
       let summary: OccupancySummary
       let calendar: Calendar
+      let calendarHeading: string
 
       if (!errors.startDate) {
+        const capacityDates = placementDates(startDate, durationDays - 1)
         const capacity = await this.premisesService.getCapacity(token, premisesId, {
-          startDate,
-          endDate,
+          startDate: capacityDates.startDate,
+          endDate: capacityDates.endDate,
           excludeSpaceBookingId: placement.id,
         })
         const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
@@ -134,6 +132,7 @@ export default class ChangesController {
 
         summary = occupancySummary(capacity.capacity, criteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, criteria)
+        calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
       }
 
       return res.render('manage/premises/placements/changes/new', {
@@ -143,18 +142,17 @@ export default class ChangesController {
         selectedCriteria: roomCharacteristicsInlineList(criteria, 'no room criteria'),
         arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Current departure date: ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'dateFieldHint' })}`,
-        startDate,
-        ...DateFormats.isoDateToDateInputs(startDate, 'startDate'),
+        startDate: startDateRaw,
         durationDays,
         criteria,
         placementSummary: placementOverviewSummary(placement),
-        durationOptions: durationSelectOptions(durationDays),
+        durationOptions: durationSelectOptions(getClosestDuration(durationDays)),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, criteria),
         summary,
         calendar,
+        calendarHeading,
         errors,
         errorSummary,
-        ...startDateParts,
         ...userInput,
       })
     }

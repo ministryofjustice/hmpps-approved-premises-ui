@@ -18,10 +18,12 @@ export class ChangePlacementPage extends OccupancyFilterPage {
     this.shouldContainSummaryListItems(placementOverviewSummary(this.placement).rows)
   }
 
-  shouldShowCalendarHeading(startDate, durationDays) {
-    cy.get('h2').contains(
-      `View availability for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
-    )
+  shouldShowCalendarHeading(startDate: string, durationDays: number) {
+    cy.get('h2')
+      .contains(/^(View availability for|Showing)/)
+      .contains(
+        `${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
+      )
   }
 
   completeForm(arrivalDate: string, departureDate: string) {
