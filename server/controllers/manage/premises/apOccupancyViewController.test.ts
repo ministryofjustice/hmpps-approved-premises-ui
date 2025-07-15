@@ -90,7 +90,7 @@ describe('AP occupancyViewController', () => {
         user: { token },
         params: { premisesId },
         flash: jest.fn(),
-        query: { 'startDate-year': '2024', 'startDate-month': '06', 'startDate-day': '20', durationDays: '7' },
+        query: { startDate: '20/06/2024', durationDays: '7' },
       })
       const { premisesSummary, premisesCapacity } = await mockPremises('2024-06-20')
 
@@ -116,7 +116,7 @@ describe('AP occupancyViewController', () => {
         user: { token },
         params: { premisesId },
         flash: jest.fn(),
-        query: { 'startDate-year': '2023', 'startDate-month': '02', 'startDate-day': '29', durationDays: '7' },
+        query: { startDate: 'not really a date', durationDays: '7' },
       })
       const { premisesSummary } = await mockPremises('2024-06-20')
 

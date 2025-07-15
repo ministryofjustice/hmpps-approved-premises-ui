@@ -218,7 +218,7 @@ export default abstract class Page {
   }
 
   completeDatePicker(name: string, date: string): void {
-    const formattedDate = date.split('-').reverse().join('/')
+    const formattedDate = date.split('-').reverse().map(this.stripLeadingZeros).join('/')
     this.completeTextInput(name, formattedDate)
   }
 
@@ -232,6 +232,12 @@ export default abstract class Page {
     cy.get(`#${prefix}-day`).invoke('val').then(this.stripLeadingZeros).should('equal', day)
     cy.get(`#${prefix}-month`).invoke('val').then(this.stripLeadingZeros).should('equal', month)
     cy.get(`#${prefix}-year`).invoke('val').then(this.stripLeadingZeros).should('equal', year)
+  }
+
+  datePickerShouldContainDate(name: string, date: string): void {
+    cy.get(`[name="${name}"]`)
+      .invoke('val')
+      .should('equal', date.split('-').map(this.stripLeadingZeros).reverse().join('/'))
   }
 
   clickButton(text: string): void {
@@ -427,6 +433,10 @@ export default abstract class Page {
     cy.get('textarea').clear()
   }
 
+  clearInput(name: string): void {
+    cy.get(`[name="${name}"]`).clear()
+  }
+
   clearDateInputs(prefix: string): void {
     cy.get(`#${prefix}-day`).clear()
     cy.get(`#${prefix}-month`).clear()
@@ -442,6 +452,11 @@ export default abstract class Page {
   clearAndCompleteDateInputs(prefix: string, date: string): void {
     this.clearDateInputs(prefix)
     this.completeDateInputs(prefix, date)
+  }
+
+  clearAndCompleteDatePicker(name: string, date: string): void {
+    this.clearInput(name)
+    this.completeDatePicker(name, date)
   }
 
   getTextInputByIdAndClear(id: string): void {
