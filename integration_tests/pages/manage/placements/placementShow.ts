@@ -20,7 +20,7 @@ export default class PlacementShowPage extends Page {
       title = `${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })}`
     }
     super(title)
-    this.checkPhaseBanner('Give us your feedback')
+    this.checkPhaseBanner()
   }
 
   static visit(placement: Cas1SpaceBooking, tab: PlacementTab = null): PlacementShowPage {
