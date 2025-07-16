@@ -1,6 +1,7 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
+import { addDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import {
   cas1PremiseCapacityFactory,
@@ -73,7 +74,7 @@ describe('changesController', () => {
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
         startDate: placement.expectedArrivalDate,
-        endDate: placement.expectedDepartureDate,
+        endDate: DateFormats.dateObjToIsoDate(addDays(placement.expectedArrivalDate, expectedDuration - 1)),
         excludeSpaceBookingId: placement.id,
       })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
@@ -86,10 +87,10 @@ describe('changesController', () => {
         placementSummary: placementOverviewSummary(placement),
         durationOptions: durationSelectOptions(expectedDuration),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, expectedCriteria),
-        startDate: placement.expectedArrivalDate,
-        ...DateFormats.isoDateToDateInputs(placement.expectedArrivalDate, 'startDate'),
+        startDate: DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'datePicker' }),
         durationDays: expectedDuration,
         criteria: expectedCriteria,
+        calendarHeading: 'Showing 4 weeks, 3 days from 2 Oct 2025',
         summary: occupancySummary(capacity.capacity, expectedCriteria),
         calendar: occupancyCalendar(capacity.capacity, expectedPlaceholderDayUrl, expectedCriteria),
         errorSummary: [],
@@ -100,9 +101,7 @@ describe('changesController', () => {
     describe('when filtering the view', () => {
       it('renders the change placement screen with a filtered view', async () => {
         const query = {
-          'startDate-day': '12',
-          'startDate-month': '5',
-          'startDate-year': '2025',
+          startDate: '12/5/2025',
           durationDays: '7',
           criteria: 'hasEnSuite',
         }
@@ -120,26 +119,24 @@ describe('changesController', () => {
 
         expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
           startDate: '2025-05-12',
-          endDate: '2025-05-19',
+          endDate: '2025-05-18',
           excludeSpaceBookingId: placement.id,
         })
         expect(response.render.mock.lastCall[1]).toEqual(
           expect.objectContaining({
             summary: occupancySummary(capacity.capacity, filterCriteria),
+            calendarHeading: 'Showing 1 week from 12 May 2025',
             calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria),
             durationOptions: durationSelectOptions(Number(query.durationDays)),
             criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, filterCriteria),
-            'startDate-day': '12',
-            'startDate-month': '5',
-            'startDate-year': '2025',
+            startDate: '12/5/2025',
           }),
         )
       })
 
       it('shows an error and does not display summary or calendar if the filter date is invalid', async () => {
         const query = {
-          'startDate-day': '12',
-          'startDate-year': '2025',
+          startDate: '12/14/2024',
           durationDays: '7',
         }
 
@@ -160,8 +157,7 @@ describe('changesController', () => {
                 text: 'Enter a valid date',
               },
             },
-            'startDate-day': '12',
-            'startDate-year': '2025',
+            startDate: '12/14/2024',
           }),
         )
       })

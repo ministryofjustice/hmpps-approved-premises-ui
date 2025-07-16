@@ -71,13 +71,13 @@ export default class ApOccupancyViewController {
       }
 
       return res.render('manage/premises/occupancy/view', {
+        backLink: paths.premises.show({ premisesId }),
         pageHeading: `View spaces in ${premises.name}`,
         premises,
-        calendar,
-        backLink: paths.premises.show({ premisesId }),
-        calendarHeading,
         startDate,
         durationOptions: durationSelectOptions(String(durationDays)),
+        calendarHeading,
+        calendar,
         errors: generateErrorMessages(errors),
         errorSummary: generateErrorSummary(errors),
       })

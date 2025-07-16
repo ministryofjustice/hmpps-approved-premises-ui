@@ -6,13 +6,14 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "partials/filters.njk" import filterWrapper, filterDatepicker, filterSelect, filterCheckboxes %}
 
-{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
-{% from "../../../../match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
-{% from "../../../../match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "components/keyDetails/macro.njk" import keyDetails %}
+{% from "match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
+{% from "match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
 
-{% extends "../../../../partials/layout.njk" %}
+{% extends "partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -39,65 +40,18 @@
     {% endcall %}
 
     <section>
-        <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
-            {% if not errors.startDate %}from {{ formatDate(startDate, { format: 'short' }) }}{% endif %}</h2>
+        {% call filterWrapper('Filter') %}
+            {{ filterDatepicker('startDate', 'Availability start date', fetchContext()) }}
 
-        <p>Your current booking is not included in this calendar.</p>
+            {{ filterSelect('durationDays', 'Length of availability', durationOptions) }}
 
-        <div class="search-and-filter">
-            <form action="{{ currentUrl }}" method="get">
-
-                <h3 class="govuk-heading-m">Filters</h3>
-
-                <div class="search-and-filter__row">
-                    {{ govukDateInput({
-                        id: "startDate",
-                        namePrefix: "startDate",
-                        fieldset: {
-                            legend: {
-                                text: "Availability start date",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        items: dateFieldValues('startDate', errors),
-                        errorMessage: errors.startDate
-                    }) }}
-
-                    {{ govukSelect({
-                        id: 'durationDays',
-                        name: 'durationDays',
-                        label: {
-                            text: 'Length of availability',
-                            classes: 'govuk-label--s'
-                        },
-                        items: durationOptions
-                    }) }}
-                </div>
-
-                <div class="search-and-filter__row">
-                    {{ govukCheckboxes({
-                        name: "criteria",
-                        classes: "govuk-checkboxes--small govuk-checkboxes--inline",
-                        fieldset: {
-                            legend: {
-                                text: "Select following criteria",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        items: criteriaOptions
-                    }) }}
-                </div>
-
-                <div class="search-and-filter__row">
-                    {{ govukButton({
-                        text: 'Apply filters',
-                        preventDoubleClick: true
-                    }) }}
-                </div>
-            </form>
-        </div>
+            {{ filterCheckboxes('criteria', 'Room requirements', criteriaOptions) }}
+        {% endcall %}
 
         {% if not errors.startDate %}
+            <h2 class="govuk-heading-l">{{ calendarHeading }}</h2>
+
+            <p>Your current booking is not included in this calendar.</p>
 
             <section class="govuk-visually-hidden">
                 {{ occupancySummary(summary) }}
