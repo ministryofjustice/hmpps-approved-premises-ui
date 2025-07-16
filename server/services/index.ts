@@ -51,7 +51,7 @@ export const services = () => {
   const placementService = new PlacementService(placementClientBuilder, cas1ReferenceDataClientBuilder)
   const personService = new PersonService(personClient)
   const bookingService = new BookingService(bookingClientBuilder)
-  const cancellationService = new CancellationService(bookingClientBuilder, referenceDataClientBuilder)
+  const cancellationService = new CancellationService(referenceDataClientBuilder)
   const outOfServiceBedService = new OutOfServiceBedService(
     outOfServiceBedClientBuilder,
     cas1ReferenceDataClientBuilder,

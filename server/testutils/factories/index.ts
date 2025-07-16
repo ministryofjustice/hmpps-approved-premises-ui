@@ -12,7 +12,6 @@ import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
 import bookingSummaryFactory from './placementRequestBookingSummary'
 import bookingFactory from './booking'
-import bookingExtensionFactory from './bookingExtension'
 import bookingNotMadeFactory from './bookingNotMade'
 import cancellationFactory from './cancellation'
 import clarificationNoteFactory from './clarificationNote'
@@ -116,7 +115,6 @@ export {
   assessmentSummaryFactory,
   bookingSummaryFactory,
   bookingFactory,
-  bookingExtensionFactory,
   bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,

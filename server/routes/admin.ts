@@ -14,7 +14,6 @@ export default function routes(controllers: Controllers, router: Router, service
     redirectController,
     adminPlacementRequestsController,
     cruDashboardController,
-    placementRequestsBookingsController,
     placementRequestWithdrawalsController,
     reportsController,
     userManagementController,
@@ -71,25 +70,6 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.admin.placementRequests.show.pattern, adminPlacementRequestsController.show(), {
     auditEvent: 'ADMIN_SHOW_PLACEMENT_REQUEST',
-  })
-
-  get(paths.admin.placementRequests.bookings.new.pattern, placementRequestsBookingsController.new(), {
-    auditEvent: 'ADMIN_PLACEMENT_REQUEST_NEW_BOOKING',
-    allowedPermissions: ['cas1_booking_create'],
-  })
-
-  post(paths.admin.placementRequests.bookings.create.pattern, placementRequestsBookingsController.create(), {
-    redirectAuditEventSpecs: [
-      {
-        path: paths.admin.placementRequests.bookings.new.pattern,
-        auditEvent: 'ADMIN_PLACEMENT_REQUEST_CREATE_BOOKING_FAILURE',
-      },
-      {
-        path: paths.admin.placementRequests.show.pattern,
-        auditEvent: 'ADMIN_PLACEMENT_REQUEST_CREATE_BOOKING_SUCCESS',
-      },
-    ],
-    allowedPermissions: ['cas1_booking_create'],
   })
 
   // TODO: determine permissions required for placement request withdrawals

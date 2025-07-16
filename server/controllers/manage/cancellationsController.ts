@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import type { Cas1NewSpaceBookingCancellation, NewCancellation } from '@approved-premises/api'
 
-import { BookingService, CancellationService, PlacementService } from '../../services'
+import { CancellationService, PlacementService } from '../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
@@ -13,42 +13,37 @@ import { canonicalDates } from '../../utils/placements'
 export default class CancellationsController {
   constructor(
     private readonly cancellationService: CancellationService,
-    private readonly bookingService: BookingService,
     private readonly placementService: PlacementService,
   ) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId, bookingId, placementId } = req.params
+      const { premisesId, placementId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const booking = bookingId && (await this.bookingService.find(req.user.token, premisesId, bookingId))
-      const placement = placementId && (await this.placementService.getPlacement(req.user.token, placementId))
-
+      const placement = await this.placementService.getPlacement(req.user.token, placementId)
       const cancellationReasons = await this.cancellationService.getCancellationReasons(req.user.token)
-      const applicationId: string = booking?.applicationId || placement?.applicationId
+
+      const applicationId: string = placement?.applicationId
       let backLink: string
 
       if (applicationId) {
         backLink = `${applyPaths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=placement`
       } else {
-        backLink = bookingId
-          ? paths.bookings.show({ premisesId, bookingId })
-          : paths.premises.placements.show({ premisesId, placementId })
+        backLink = paths.premises.placements.show({ premisesId, placementId })
       }
       const placementDates = placement && canonicalDates(placement)
-      const consolidatedBooking = {
-        id: booking?.id || placement?.id,
-        person: booking?.person || placement?.person,
-        arrivalDate: booking?.arrivalDate || placementDates?.arrivalDate,
-        departureDate: booking?.departureDate || placementDates?.departureDate,
+      const booking = {
+        id: placement?.id,
+        person: placement?.person,
+        arrivalDate: placementDates?.arrivalDate,
+        departureDate: placementDates?.departureDate,
       }
-      const formAction = booking
-        ? paths.bookings.cancellations.create({ premisesId, bookingId })
-        : paths.premises.placements.cancellations.create({ premisesId, placementId })
+      const formAction = paths.premises.placements.cancellations.create({ premisesId, placementId })
+
       res.render('cancellations/new', {
         premisesId,
-        booking: consolidatedBooking,
+        booking,
         backLink,
         formAction,
         cancellationReasons,
@@ -62,7 +57,7 @@ export default class CancellationsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId, bookingId, placementId } = req.params
+      const { premisesId, placementId } = req.params
 
       let date: string
 
@@ -73,29 +68,19 @@ export default class CancellationsController {
         date = DateFormats.dateObjToIsoDate(new Date())
       }
 
-      const cancellation = {
-        ...req.body.cancellation,
-        date,
-      } as NewCancellation
-
       const spaceBookingCancellation: Cas1NewSpaceBookingCancellation = {
         occurredAt: date,
-        reasonId: cancellation.reason,
-        reasonNotes: cancellation.otherReason,
+        reasonId: req.body.reason,
+        reasonNotes: req.body.otherReason,
       }
 
       try {
-        if (bookingId) {
-          await this.cancellationService.createCancellation(req.user.token, premisesId, bookingId, cancellation)
-        }
-        if (placementId) {
-          await this.placementService.createCancellation(
-            req.user.token,
-            premisesId,
-            placementId,
-            spaceBookingCancellation,
-          )
-        }
+        await this.placementService.createCancellation(
+          req.user.token,
+          premisesId,
+          placementId,
+          spaceBookingCancellation,
+        )
 
         res.render('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
       } catch (error) {
@@ -103,12 +88,7 @@ export default class CancellationsController {
           req,
           res,
           error as Error,
-          bookingId
-            ? paths.bookings.cancellations.new({
-                bookingId,
-                premisesId,
-              })
-            : paths.premises.placements.cancellations.new({ premisesId, placementId }),
+          paths.premises.placements.cancellations.new({ premisesId, placementId }),
         )
       }
     }
