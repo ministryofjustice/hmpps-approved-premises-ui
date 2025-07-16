@@ -10,7 +10,6 @@ import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
-import adminPaths from '../../paths/admin'
 import applyPaths from '../../paths/apply'
 import { fullPersonFactory } from '../../testutils/factories/person'
 
@@ -24,10 +23,6 @@ const setup = ({
   const userId = 'some-id'
   const user = userDetailsFactory.build({ roles: ['appeals_manager'], permissions: [...permissions], id: userId })
 
-  const actionCreatePlacement = {
-    href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
-    text: 'Create placement',
-  }
   const actionSearchForASpace = {
     href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
     text: 'Search for a space',
@@ -63,7 +58,6 @@ const setup = ({
   const adminActionsResult = adminActions(placementRequestDetail, user)
   return {
     placementRequestDetail,
-    actionCreatePlacement,
     actionSearchForASpace,
     actionAmendLegacyBooking,
     actionChangePlacement,
@@ -160,15 +154,6 @@ describe('adminIdentityBar', () => {
         })
 
         expect(adminActionsResult).toContainAction(actionSearchForASpace)
-      })
-
-      it('does not return the "Search for a space" action when user does not have cas1 space booking create permission', () => {
-        const { adminActionsResult, actionSearchForASpace } = setup({
-          placementRequestDetail,
-          permissions: ['cas1_booking_create'],
-        })
-
-        expect(adminActionsResult).not.toContainAction(actionSearchForASpace)
       })
     })
   })

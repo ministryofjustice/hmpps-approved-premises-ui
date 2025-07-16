@@ -49,12 +49,12 @@ describe('applicationAuthMiddleware', () => {
   })
 
   it('returns the handler when there are allowedPermissions specified and the user has one of those permissions', async () => {
-    const user = userDetailsFactory.build({ permissions: ['cas1_booking_create'] })
+    const user = userDetailsFactory.build({ permissions: ['cas1_space_booking_create'] })
     const response = createMock<Response>({ locals: { user } })
 
     const auditedHandler = applicationAuthMiddleware(handler, {
       allowedRoles: [],
-      allowedPermissions: ['cas1_booking_withdraw', 'cas1_process_an_appeal', 'cas1_booking_create'],
+      allowedPermissions: ['cas1_space_booking_view', 'cas1_space_booking_withdraw', 'cas1_space_booking_create'],
     })
 
     await auditedHandler(request, response, next)
@@ -63,14 +63,14 @@ describe('applicationAuthMiddleware', () => {
   })
 
   it('redirects with an error when the user does not have the correct permission', async () => {
-    const user = userDetailsFactory.build({ roles: ['user_manager'], permissions: ['cas1_booking_create'] })
+    const user = userDetailsFactory.build({ roles: ['user_manager'], permissions: ['cas1_space_booking_create'] })
     const response = createMock<Response>({ locals: { user } })
 
     const loggerSpy = jest.spyOn(logger, 'error')
 
     const auditedhandler = applicationAuthMiddleware(handler, {
       allowedRoles: [],
-      allowedPermissions: ['cas1_booking_withdraw', 'cas1_process_an_appeal'],
+      allowedPermissions: ['cas1_space_booking_withdraw', 'cas1_space_booking_view'],
     })
 
     await auditedhandler(request, response, next)

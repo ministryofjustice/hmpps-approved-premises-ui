@@ -4,7 +4,6 @@ import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
-import adminPaths from '../../paths/admin'
 import { hasPermission } from '../users'
 import { overallStatus } from '../placements'
 
@@ -76,12 +75,6 @@ export const adminActions = (
     actions.unshift({
       href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
       text: 'Search for a space',
-    })
-  }
-  if (hasPermission(user, ['cas1_booking_create'])) {
-    actions.unshift({
-      href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
-      text: 'Create placement',
     })
   }
 

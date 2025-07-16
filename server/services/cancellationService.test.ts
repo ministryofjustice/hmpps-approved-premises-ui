@@ -16,27 +16,12 @@ describe('DepartureService', () => {
 
   const token = 'SOME_TOKEN'
 
-  const service = new CancellationService(BookingClientFactory, ReferenceDataClientFactory)
+  const service = new CancellationService(ReferenceDataClientFactory)
 
   beforeEach(() => {
     jest.resetAllMocks()
     BookingClientFactory.mockReturnValue(bookingClient)
     ReferenceDataClientFactory.mockReturnValue(referenceDataClient)
-  })
-
-  describe('createCancellation', () => {
-    it('on success returns the cancellation that has been posted', async () => {
-      const newCancellation = newCancellationFactory.build()
-      const cancellation = cancellationFactory.build()
-
-      bookingClient.cancel.mockResolvedValue(cancellation)
-
-      const postedDeparture = await service.createCancellation(token, 'premisesId', 'bookingId', newCancellation)
-      expect(postedDeparture).toEqual(cancellation)
-
-      expect(BookingClientFactory).toHaveBeenCalledWith(token)
-      expect(bookingClient.cancel).toHaveBeenCalledWith('premisesId', 'bookingId', newCancellation)
-    })
   })
 
   describe('getCancellationReasons', () => {
