@@ -278,6 +278,15 @@ export default abstract class Page {
     cy.get('.moj-button-menu > button').should('not.exist')
   }
 
+  shouldHaveActions(actions: Array<{ label: string; link: string }>): void {
+    this.clickOpenActionsMenu()
+
+    cy.get('.moj-button-menu__item').should('have.length', actions.length)
+    actions.forEach(action => {
+      cy.get('.moj-button-menu__item').contains(action.label).should('exist').should('have.attr', 'href', action.link)
+    })
+  }
+
   shouldShowMappa = (): void => {
     cy.get('h3').contains('MAPPA')
     cy.get('h3').contains('CAT 2 / LEVEL 1')

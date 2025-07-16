@@ -1,12 +1,9 @@
 import {
-  ApplicationSortField,
   Cas1ApplicationSummary,
   Cas1PlacementRequestDetail,
   Cas1SpaceBooking,
   PlacementRequest,
-  PlacementRequestSortField,
   PlacementRequestStatus,
-  SortOrder,
 } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/admin'
@@ -58,29 +55,5 @@ export default class ListPage extends Page {
 
   shouldNotShowRequestTypeFilter(): void {
     cy.get('input[name="requestType"]').should('not.exist')
-  }
-
-  clickReadyToMatch(): void {
-    cy.get('a.moj-sub-navigation__link').contains('Ready to match').click()
-  }
-
-  clickMatched(): void {
-    cy.get('a.moj-sub-navigation__link').contains('Matched').click()
-  }
-
-  clickUnableToMatch(): void {
-    cy.get('a.moj-sub-navigation__link').contains('Unable to match').click()
-  }
-
-  clickSortBy(field: PlacementRequestSortField | ApplicationSortField): void {
-    super.clickSortBy(field)
-  }
-
-  clickApplyFilters(): void {
-    cy.get('button').contains('Apply filters').click()
-  }
-
-  shouldBeSortedByField(field: PlacementRequestSortField | ApplicationSortField, order: SortOrder): void {
-    super.shouldBeSortedByField(field, order)
   }
 }
