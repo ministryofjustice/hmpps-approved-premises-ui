@@ -2,12 +2,30 @@ import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../../page'
 
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
-import paths from '../../../../server/paths/admin'
 import { placementSummaryList } from '../../../../server/utils/placementRequests/placementSummaryList'
+
+import paths from '../../../../server/paths/admin'
+import matchPaths from '../../../../server/paths/match'
+import applyPaths from '../../../../server/paths/apply'
+import managePaths from '../../../../server/paths/manage'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: Cas1PlacementRequestDetail) {
     super('Placement request')
+
+    this.actions = {
+      'Search for a space': matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+      'Withdraw request for placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+      'Mark as unable to match': matchPaths.placementRequests.bookingNotMade.confirm({ id: placementRequest.id }),
+      'Withdraw placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+    }
+
+    if (placementRequest.booking) {
+      this.actions['Change placement'] = managePaths.premises.placements.changes.new({
+        premisesId: placementRequest.booking.premisesId,
+        placementId: placementRequest.booking.id,
+      })
+    }
   }
 
   static visit(placementRequestDetail: Cas1PlacementRequestDetail): ShowPage {

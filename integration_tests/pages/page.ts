@@ -35,6 +35,8 @@ export const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
 }
 
 export default abstract class Page {
+  actions: Record<string, string> = {}
+
   static verifyOnPage<T>(constructor: new (...args: Array<unknown>) => T, ...args: Array<unknown>): T {
     return new constructor(...args)
   }
@@ -278,12 +280,13 @@ export default abstract class Page {
     cy.get('.moj-button-menu > button').should('not.exist')
   }
 
-  shouldHaveActions(actions: Array<{ label: string; link: string }>): void {
+  shouldHaveActions(actions: Array<string>): void {
     this.clickOpenActionsMenu()
 
     cy.get('.moj-button-menu__item').should('have.length', actions.length)
-    actions.forEach(action => {
-      cy.get('.moj-button-menu__item').contains(action.label).should('exist').should('have.attr', 'href', action.link)
+
+    actions.forEach(label => {
+      cy.get('.moj-button-menu__item').contains(label).should('exist').should('have.attr', 'href', this.actions[label])
     })
   }
 

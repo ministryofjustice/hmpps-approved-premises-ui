@@ -26,9 +26,6 @@ import paths from '../../../server/paths/api'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
-import matchPaths from '../../../server/paths/match'
-import applyPaths from '../../../server/paths/apply'
-import managePaths from '../../../server/paths/manage'
 
 context('Placement Requests', () => {
   const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
@@ -160,20 +157,7 @@ context('Placement Requests', () => {
       showPage.shouldNotShowBookingInformation()
 
       // And I should see available actions
-      showPage.shouldHaveActions([
-        {
-          label: 'Search for a space',
-          link: matchPaths.v2Match.placementRequests.search.spaces({ id: unmatchedPlacementRequest.id }),
-        },
-        {
-          label: 'Withdraw request for placement',
-          link: applyPaths.applications.withdraw.new({ id: unmatchedPlacementRequest.applicationId }),
-        },
-        {
-          label: 'Mark as unable to match',
-          link: matchPaths.placementRequests.bookingNotMade.confirm({ id: unmatchedPlacementRequest.id }),
-        },
-      ])
+      showPage.shouldHaveActions(['Search for a space', 'Withdraw request for placement', 'Mark as unable to match'])
 
       // When I go back to the dashboard
       showPage.clickBack()
@@ -191,19 +175,7 @@ context('Placement Requests', () => {
       showPage.shouldShowSummary()
 
       // And I should see available actions
-      showPage.shouldHaveActions([
-        {
-          label: 'Change placement',
-          link: managePaths.premises.placements.changes.new({
-            premisesId: matchedPlacementRequest.booking.premisesId,
-            placementId: matchedPlacementRequest.booking.id,
-          }),
-        },
-        {
-          label: 'Withdraw placement',
-          link: applyPaths.applications.withdraw.new({ id: matchedPlacementRequest.applicationId }),
-        },
-      ])
+      showPage.shouldHaveActions(['Change placement', 'Withdraw placement'])
 
       // And I should see the booking information
       showPage.shouldShowBookingInformation()
