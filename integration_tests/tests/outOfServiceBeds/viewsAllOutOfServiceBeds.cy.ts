@@ -1,8 +1,8 @@
-import { apAreaFactory, cas1PremisesFactory, outOfServiceBedFactory } from '../../../../server/testutils/factories'
-import DashboardPage from '../../../pages/dashboard'
-import Page from '../../../pages/page'
-import { OutOfServiceBedIndexPage } from '../../../pages/manage/outOfServiceBeds'
-import { signIn } from '../../signIn'
+import { apAreaFactory, cas1PremisesFactory, outOfServiceBedFactory } from '../../../server/testutils/factories'
+import { signIn } from '../signIn'
+import DashboardPage from '../../pages/dashboard'
+import Page from '../../pages/page'
+import { OutOfServiceBedIndexPage } from '../../pages/manage/outOfServiceBeds'
 
 describe('CRU Member with permission to view out of service bed tile lists all OOS beds', () => {
   const apArea1 = apAreaFactory.build({
