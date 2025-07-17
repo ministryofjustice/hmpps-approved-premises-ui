@@ -52,7 +52,7 @@ context('Change Placement', () => {
     cy.task('reset')
 
     cy.log('Given I am signed in as a CRU member with Beta access')
-    signIn('cru_member_find_and_book_beta')
+    signIn('cru_member')
   })
 
   it('allows me to change the dates and criteria of a space booking', () => {

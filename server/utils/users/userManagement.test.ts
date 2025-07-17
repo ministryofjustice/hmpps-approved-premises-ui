@@ -119,12 +119,6 @@ describe('userRolesSelectOptions', () => {
       },
       {
         selected: false,
-        text: 'CRU member - enable out of service beds',
-        value: 'cru_member_enable_out_of_service_beds',
-      },
-      { selected: false, text: 'CRU member beta (find and book)', value: 'cru_member_find_and_book_beta' },
-      {
-        selected: false,
         text: 'Appeals manager',
         value: 'appeals_manager',
       },
@@ -157,12 +151,6 @@ describe('userRolesSelectOptions', () => {
         text: 'Excluded from placement application allocation',
         value: 'excluded_from_placement_application_allocation',
       },
-      {
-        selected: false,
-        text: 'CRU member - enable out of service beds',
-        value: 'cru_member_enable_out_of_service_beds',
-      },
-      { selected: false, text: 'CRU member beta (find and book)', value: 'cru_member_find_and_book_beta' },
       {
         selected: false,
         text: 'Appeals manager',

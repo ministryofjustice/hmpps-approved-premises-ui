@@ -43,13 +43,13 @@ context('Placement Requests', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubCruManagementAreaReferenceData')
+
+    // Given I am signed in as a CRU member
+    signIn('cru_member')
   })
   const defaultLicenceExpiryDate = '2030-06-05'
 
   it('allows me to search for an available space', () => {
-    // Given I am signed in as a CRU member with Beta access
-    signIn('cru_member_find_and_book_beta')
-
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
     const placementRequest = cas1PlacementRequestDetailFactory.build({ person })
@@ -161,9 +161,6 @@ context('Placement Requests', () => {
     const startDate = '2024-07-23'
     const endDate = '2024-08-06'
     const totalCapacity = 10
-
-    // Given I am signed in as a CRU member with Beta access
-    signIn('cru_member_find_and_book_beta')
 
     // And there is a placement request waiting for me to match
     const person = personFactory.build()
@@ -376,9 +373,6 @@ context('Placement Requests', () => {
   })
 
   it('allows me to mark a placement request as unable to match', () => {
-    // Given I am signed in as a CRU member with Beta access
-    signIn('cru_member_find_and_book_beta')
-
     // Given there is a placement request waiting for me to match
     const placementRequest = cas1PlacementRequestDetailFactory.build({
       status: 'notMatched',

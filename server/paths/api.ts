@@ -97,7 +97,6 @@ export default {
     bookings: {
       index: bookings,
       show: booking,
-      move: booking.path('moves'),
       dateChange: booking.path('date-changes'),
       cancellations: booking.path('cancellations'),
       extensions: booking.path('extensions'),
