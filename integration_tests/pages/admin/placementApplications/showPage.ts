@@ -1,14 +1,31 @@
-import { ApprovedPremises, Cas1PlacementRequestDetail } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import Page from '../../page'
 
-import { bookingSummaryList } from '../../../../server/utils/bookings'
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
-import paths from '../../../../server/paths/admin'
 import { placementSummaryList } from '../../../../server/utils/placementRequests/placementSummaryList'
+
+import paths from '../../../../server/paths/admin'
+import matchPaths from '../../../../server/paths/match'
+import applyPaths from '../../../../server/paths/apply'
+import managePaths from '../../../../server/paths/manage'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: Cas1PlacementRequestDetail) {
     super('Placement request')
+
+    this.actions = {
+      'Search for a space': matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+      'Withdraw request for placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+      'Mark as unable to match': matchPaths.placementRequests.bookingNotMade.confirm({ id: placementRequest.id }),
+      'Withdraw placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+    }
+
+    if (placementRequest.booking) {
+      this.actions['Change placement'] = managePaths.premises.placements.changes.new({
+        premisesId: placementRequest.booking.premisesId,
+        placementId: placementRequest.booking.id,
+      })
+    }
   }
 
   static visit(placementRequestDetail: Cas1PlacementRequestDetail): ShowPage {
@@ -24,34 +41,9 @@ export default class ShowPage extends Page {
     cy.contains('Booked placement').should('not.exist')
   }
 
-  shouldShowLegacyBookingInformation() {
-    cy.contains('Booked placement').should('exist')
-    this.shouldContainSummaryListItems(bookingSummaryList(this.placementRequest.booking).rows)
-  }
-
   shouldShowBookingInformation() {
     cy.contains('Booked placement').should('exist')
     this.shouldContainSummaryListItems(placementSummaryList(this.placementRequest).rows)
-  }
-
-  clickCreateBooking() {
-    cy.get('.moj-button-menu__toggle-button').click()
-    cy.contains('.moj-button-menu__item', 'Create placement').click()
-  }
-
-  clickAmendBooking() {
-    cy.get('.moj-button-menu__toggle-button').click()
-    cy.contains('.moj-button-menu__item', 'Amend placement').click()
-  }
-
-  clickWithdrawBooking() {
-    cy.get('.moj-button-menu__toggle-button').click()
-    cy.contains('.moj-button-menu__item', 'Withdraw placement').click()
-  }
-
-  clickWithdraw() {
-    cy.get('.moj-button-menu__toggle-button').click()
-    cy.contains('.moj-button-menu__item', 'Withdraw request for placement').click()
   }
 
   clickUnableToMatch() {
@@ -59,57 +51,7 @@ export default class ShowPage extends Page {
     cy.contains('.moj-button-menu__item', 'Mark as unable to match').click()
   }
 
-  shouldShowCreateBookingOption() {
-    this.buttonShouldExist('Create placement')
-  }
-
-  shouldShowAmendBookingOption() {
-    this.buttonShouldExist('Amend placement')
-  }
-
-  shouldShowChangePlacementOption() {
-    this.buttonShouldExist('Change placement')
-  }
-
-  shouldShowCancelBookingOption() {
-    this.buttonShouldExist('Withdraw placement')
-  }
-
-  shouldNotShowCreateBookingOption() {
-    this.buttonShouldNotExist('Create placement')
-  }
-
-  shouldNotShowAmendBookingOption() {
-    this.buttonShouldNotExist('Amend placement')
-  }
-
-  shouldNotShowChangePlacementOption() {
-    this.buttonShouldNotExist('Change placement')
-  }
-
-  shouldNotShowCancelBookingOption() {
-    this.buttonShouldNotExist('Cance placement')
-  }
-
   shouldShowParoleNotification() {
     cy.get('.govuk-notification-banner').contains('Parole board directed release').should('exist')
-  }
-
-  shouldShowPreferredAps(premises: Array<ApprovedPremises>) {
-    const apList = premises.map(p => `<li>${p.name}</li>`)
-    this.shouldContainSummaryListItems([
-      {
-        key: { text: 'Preferred APs' },
-        value: { html: `<ol class="govuk-list govuk-list--number">${apList.join('')}</ol>` },
-      },
-    ])
-  }
-
-  private buttonShouldExist(text: string) {
-    cy.contains('.moj-button-menu__item', text).should('exist')
-  }
-
-  private buttonShouldNotExist(text: string) {
-    cy.contains('.moj-button-menu__item', text).should('not.exist')
   }
 }

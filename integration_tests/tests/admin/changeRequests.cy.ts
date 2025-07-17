@@ -77,7 +77,7 @@ context('Change Requests', () => {
         changeRequestsListPage.clickLink(placementRequestPersonName)
 
         // Then I should see the Placement Request page
-        Page.verifyOnPage(ShowPage)
+        Page.verifyOnPage(ShowPage, placementRequestDetail)
       })
 
       it('allows me to filter by AP area', () => {

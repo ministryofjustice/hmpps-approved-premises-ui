@@ -35,6 +35,8 @@ export const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
 }
 
 export default abstract class Page {
+  actions: Record<string, string> = {}
+
   static verifyOnPage<T>(constructor: new (...args: Array<unknown>) => T, ...args: Array<unknown>): T {
     return new constructor(...args)
   }
@@ -276,6 +278,16 @@ export default abstract class Page {
 
   actionMenuShouldNotExist(): void {
     cy.get('.moj-button-menu > button').should('not.exist')
+  }
+
+  shouldHaveActions(actions: Array<string>): void {
+    this.clickOpenActionsMenu()
+
+    cy.get('.moj-button-menu__item').should('have.length', actions.length)
+
+    actions.forEach(label => {
+      cy.get('.moj-button-menu__item').contains(label).should('exist').should('have.attr', 'href', this.actions[label])
+    })
   }
 
   shouldShowMappa = (): void => {
