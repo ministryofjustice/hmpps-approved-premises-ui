@@ -35,8 +35,10 @@ describe('CRU Member with permission to view out of service bed tile lists all O
 
   beforeEach(() => {
     cy.task('reset')
-    // Given I am signed in as a CRU Member with the permission to view the out of service beds tile
-    signIn('cru_member_enable_out_of_service_beds')
+
+    // Given I am signed in as a CRU Member
+    signIn('cru_member')
+
     cy.task('stubApAreaReferenceData', { apArea: apArea1, additionalAreas: [apArea2] })
     cy.task('stubCas1AllPremises', { premises: allPremises })
   })

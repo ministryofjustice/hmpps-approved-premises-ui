@@ -7,8 +7,8 @@ describe('Future Manager lists all OOS beds for a particular premises', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as a CRU member with OOSB permissions
-    signIn('cru_member_enable_out_of_service_beds')
+    // Given I am signed in as a CRU member
+    signIn('cru_member')
   })
 
   const outOfServiceBeds = outOfServiceBedFactory.buildList(10)

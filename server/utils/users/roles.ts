@@ -9,7 +9,6 @@ import rolesToPermissions from './data/rolesToPermissions.json'
 export const roles: ReadonlyArray<RoleInUse> = [
   'assessor',
   'cru_member',
-  'cru_member_enable_out_of_service_beds',
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',
   'excluded_from_placement_application_allocation',
@@ -30,6 +29,7 @@ export const unusedRoles = [
   'matcher',
   'workflow_manager',
   'cru_member_find_and_book_beta',
+  'cru_member_enable_out_of_service_beds',
 ] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
@@ -68,10 +68,6 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   cru_member: {
     label: 'CRU member',
     hint: 'Assign to CRU Members who are not in the Find and Book Beta.',
-  },
-  cru_member_enable_out_of_service_beds: {
-    label: 'CRU member - Enable out of service beds',
-    hint: "Assign in addition to 'CRU member' or 'CRU member - Find and book beta' to enable access to out of service beds",
   },
   report_viewer: {
     label: 'Report viewer without PII',
