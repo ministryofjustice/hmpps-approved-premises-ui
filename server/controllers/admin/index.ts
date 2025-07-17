@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 
 import AdminPlacementRequestsController from './placementRequests/placementRequestsController'
-import PlacementRequestsBookingsController from './placementRequests/bookingsController'
 import PlacementRequestsWithdrawalsController from './placementRequests/withdrawalsController'
 import UserManagementController from './userManagementController'
 import DeliusUserController from './deliusUserController'
@@ -21,10 +20,6 @@ export const controllers = (services: Services) => {
     applicationService,
     premisesService,
   )
-  const placementRequestsBookingsController = new PlacementRequestsBookingsController(
-    placementRequestService,
-    premisesService,
-  )
   const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)
   const reportsController = new ReportsController(reportService)
   const userManagementController = new UserManagementController(services.userService, cruManagementAreaService)
@@ -37,7 +32,6 @@ export const controllers = (services: Services) => {
   return {
     adminPlacementRequestsController,
     cruDashboardController,
-    placementRequestsBookingsController,
     placementRequestWithdrawalsController,
     reportsController,
     userManagementController,
@@ -48,7 +42,6 @@ export const controllers = (services: Services) => {
 
 export {
   AdminPlacementRequestsController,
-  PlacementRequestsBookingsController,
   PlacementRequestsWithdrawalsController,
   ReportsController,
   DeliusUserController,

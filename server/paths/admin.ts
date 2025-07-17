@@ -7,8 +7,6 @@ const changeRequestPath = placementRequestPath.path('change-requests/:changeRequ
 
 const userManagementPath = adminPath.path('user-management')
 
-const bookingsPath = placementRequestPath.path('bookings')
-
 const withdrawalPath = placementRequestPath.path('withdrawal')
 
 const cruDashboardPath = adminPath.path('cru-dashboard')
@@ -25,10 +23,6 @@ export default {
       index: placementRequestsPath,
       search: placementRequestsPath.path('search'),
       show: placementRequestPath,
-      bookings: {
-        new: bookingsPath.path('new'),
-        create: bookingsPath,
-      },
       withdrawal: {
         new: withdrawalPath.path('new'),
         create: withdrawalPath,

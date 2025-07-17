@@ -94,13 +94,6 @@ export default {
     },
     rooms,
     room: rooms.path(':roomId'),
-    bookings: {
-      index: bookings,
-      show: booking,
-      dateChange: booking.path('date-changes'),
-      cancellations: booking.path('cancellations'),
-      extensions: booking.path('extensions'),
-    },
     placements: {
       show: cas1SpaceBookingSingle,
       index: cas1PremisesSingle.path('space-bookings'),
