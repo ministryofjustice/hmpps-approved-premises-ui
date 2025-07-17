@@ -1,16 +1,14 @@
 import {
-  ApprovedPremisesUserPermission,
-  ApprovedPremisesUserRole,
-  UserQualification,
+  ApprovedPremisesUserPermission as UserPermission,
   ApprovedPremisesUserRole as UserRole,
+  UserQualification,
 } from '@approved-premises/api'
-import { UserDetails } from '../../@types/ui'
+import { UserDetails } from '@approved-premises/ui'
 import rolesToPermissions from './data/rolesToPermissions.json'
 
 export const roles: ReadonlyArray<RoleInUse> = [
   'assessor',
   'cru_member',
-  'cru_member_find_and_book_beta',
   'cru_member_enable_out_of_service_beds',
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',
@@ -31,6 +29,7 @@ export const unusedRoles = [
   'role_admin',
   'matcher',
   'workflow_manager',
+  'cru_member_find_and_book_beta',
 ] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
@@ -73,10 +72,6 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   cru_member_enable_out_of_service_beds: {
     label: 'CRU member - Enable out of service beds',
     hint: "Assign in addition to 'CRU member' or 'CRU member - Find and book beta' to enable access to out of service beds",
-  },
-  cru_member_find_and_book_beta: {
-    label: 'CRU member - Find and book beta',
-    hint: 'Assign to CRU Members who are in the Find and Book Beta.',
   },
   report_viewer: {
     label: 'Report viewer without PII',
@@ -124,23 +119,20 @@ export const qualificationDictionary: QualificationLabelDictionary = {
 }
 
 type RoleToPermissionMapping = {
-  name: ApprovedPremisesUserRole
-  permissions: Array<ApprovedPremisesUserPermission>
+  name: UserRole
+  permissions: Array<UserPermission>
 }
 
 export const permissionsMap = rolesToPermissions as Array<RoleToPermissionMapping>
 
-export const roleToPermissions = (role: ApprovedPremisesUserRole) =>
+export const roleToPermissions = (role: UserRole) =>
   permissionsMap.find(mapping => mapping.name === role)?.permissions || []
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
 }
 
-export const hasPermission = (
-  user: UserDetails,
-  requiredPermissions: Array<ApprovedPremisesUserPermission>,
-): boolean => {
+export const hasPermission = (user: UserDetails, requiredPermissions: Array<UserPermission>): boolean => {
   return (user.permissions || []).filter(userPermission => requiredPermissions.includes(userPermission)).length >= 1
 }
 

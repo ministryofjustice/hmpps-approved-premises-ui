@@ -122,7 +122,6 @@ describe('userRolesSelectOptions', () => {
         text: 'CRU member - enable out of service beds',
         value: 'cru_member_enable_out_of_service_beds',
       },
-      { selected: false, text: 'CRU member beta (find and book)', value: 'cru_member_find_and_book_beta' },
       {
         selected: false,
         text: 'Appeals manager',
@@ -162,7 +161,6 @@ describe('userRolesSelectOptions', () => {
         text: 'CRU member - enable out of service beds',
         value: 'cru_member_enable_out_of_service_beds',
       },
-      { selected: false, text: 'CRU member beta (find and book)', value: 'cru_member_find_and_book_beta' },
       {
         selected: false,
         text: 'Appeals manager',

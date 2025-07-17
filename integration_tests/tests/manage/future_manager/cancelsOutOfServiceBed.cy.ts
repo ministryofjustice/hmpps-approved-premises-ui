@@ -14,8 +14,8 @@ describe('Cancelling an out of service bed', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as a CRU member with access to the Beta
-    signIn('cru_member_find_and_book_beta')
+    // Given I am signed in as a CRU member
+    signIn('cru_member')
   })
 
   it('should allow me to cancel an out of service bed', () => {
