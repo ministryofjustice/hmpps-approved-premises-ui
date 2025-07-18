@@ -2,4 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Usertype = 'nomis' | 'delius';
+export type PremisesLocalRestriction = {
+    /**
+     * restriction to a premises
+     */
+    description: string;
+};
+
