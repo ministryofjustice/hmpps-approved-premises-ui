@@ -255,7 +255,7 @@ export default abstract class Page {
   }
 
   clickLink(text: string): void {
-    cy.get('a').contains(text).click()
+    cy.get('a').contains(text).closest('a').click()
   }
 
   clickBack(): void {

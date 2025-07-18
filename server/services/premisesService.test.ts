@@ -1,5 +1,6 @@
 import type { ManWoman, PaginatedResponse } from '@approved-premises/ui'
 import type {
+  Cas1NationalOccupancy,
   Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummarySortField,
   Cas1SpaceBookingResidency,
@@ -13,6 +14,8 @@ import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
   cas1BedDetailFactory,
+  cas1NationalOccupancyFactory,
+  cas1NationalOccupancyParametersFactory,
   cas1PremiseCapacityFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesBedSummaryFactory,
@@ -140,6 +143,22 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getCapacity).toHaveBeenCalledWith(premisesId, startDate, endDate, excludeSpaceBookingId)
+    })
+  })
+
+  describe('getMultipleCapacity', () => {
+    const capacity: Cas1NationalOccupancy = cas1NationalOccupancyFactory.build()
+
+    beforeEach(() => {
+      premisesClient.getMultipleCapacity.mockResolvedValue(capacity)
+    })
+
+    it('should request capacity of multiple Premises', async () => {
+      const parameters = cas1NationalOccupancyParametersFactory.build()
+      const result = await service.getMultipleCapacity(token, parameters)
+
+      expect(result).toEqual(capacity)
+      expect(premisesClient.getMultipleCapacity).toHaveBeenCalledWith(parameters)
     })
   })
 

@@ -1,14 +1,22 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import { Cas1NationalOccupancy, Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import { NationalSpaceSearchFormData } from '@approved-premises/ui'
-import { CruManagementAreaService } from '../../services'
+import { CruManagementAreaService, PremisesService } from '../../services'
 import { DateFormats, isoDateIsValid } from '../../utils/dateUtils'
-import { getApTypeOptions, getManagementAreaSelectGroups } from '../../utils/admin/nationalOccupancyUtils'
+import {
+  expandManagementArea,
+  getApTypeOptions,
+  getManagementAreaSelectGroups,
+  getPagination,
+  processCapacity,
+  getCriteriaBlock,
+  getDateHeader,
+} from '../../utils/admin/nationalOccupancyUtils'
 import { convertKeyValuePairToCheckBoxItems, validPostcodeArea } from '../../utils/formUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
 import { makeArrayOfType } from '../../utils/utils'
-import { generateErrorMessages, generateErrorSummary } from '../../utils/validation'
+import { catchAPIErrorOrPropogate, generateErrorMessages, generateErrorSummary } from '../../utils/validation'
 import paths from '../../paths/admin'
 import MultiPageFormManager from '../../utils/multiPageFormManager'
 
@@ -17,7 +25,10 @@ export const defaultSessionKey = 'default'
 export default class NationalOccupancyController {
   formData: MultiPageFormManager<'nationalSpaceSearch'>
 
-  constructor(private readonly cruManagementAreaService: CruManagementAreaService) {
+  constructor(
+    private readonly premisesService: PremisesService,
+    private readonly cruManagementAreaService: CruManagementAreaService,
+  ) {
     this.formData = new MultiPageFormManager('nationalSpaceSearch')
   }
 
@@ -33,55 +44,86 @@ export default class NationalOccupancyController {
         query,
       } = req
 
+      let { fromDate } = query as { fromDate: string }
+
       const sessionData = this.formData.get(defaultSessionKey, req.session) || {}
-      const combinedQuery = { ...sessionData, ...query }
+
+      if (query.arrivalDate !== undefined) {
+        Object.assign(sessionData, query, {
+          apCriteria: query.apCriteria,
+          roomCriteria: query.roomCriteria,
+        })
+        fromDate = DateFormats.datepickerInputToIsoString(query.arrivalDate as string)
+      }
 
       const {
-        postcode,
+        postcode: rawPostcode,
         arrivalDate: rawArrivalDate,
         apArea,
         apType,
         roomCriteria,
         apCriteria,
-      } = combinedQuery as NationalSpaceSearchFormData
+      } = sessionData as NationalSpaceSearchFormData
+
+      const premisesCharacteristics = makeArrayOfType<Cas1SpaceCharacteristic>(apCriteria || [])
+      const roomCharacteristics = makeArrayOfType<Cas1SpaceCharacteristic>(roomCriteria || [])
 
       const errors: Record<string, string> = {}
 
       const slashToday = DateFormats.isoDateToUIDate(DateFormats.dateObjToIsoDate(new Date()), { format: 'datePicker' })
 
       const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(token)
-      const arrivalDate = rawArrivalDate || slashToday
+      const postcode = rawPostcode && rawPostcode.toUpperCase()
 
-      if (!isoDateIsValid(DateFormats.datepickerInputToIsoString(arrivalDate as string))) {
+      if (
+        query.arrivalDate !== undefined &&
+        !isoDateIsValid(DateFormats.datepickerInputToIsoString(rawArrivalDate as string))
+      ) {
         errors.arrivalDate = 'Enter a valid arrival date'
       }
+
       if (postcode && !validPostcodeArea(postcode)) {
         errors.postcode = 'Enter a valid postcode area'
       }
 
-      if (!errors.length) {
-        await this.formData.update(defaultSessionKey, req.session, combinedQuery)
+      if (!Object.keys(errors).length) {
+        await this.formData.update(defaultSessionKey, req.session, sessionData)
+      }
+
+      let capacity: Cas1NationalOccupancy
+
+      if (fromDate && !Object.keys(errors).length) {
+        try {
+          capacity = await this.premisesService.getMultipleCapacity(token, {
+            cruManagementAreaIds: expandManagementArea(cruManagementAreas, apArea),
+            fromDate,
+            postcodeArea: postcode,
+            premisesCharacteristics,
+            roomCharacteristics,
+          })
+        } catch (error) {
+          catchAPIErrorOrPropogate(req, res, error)
+        }
       }
 
       res.render('admin/nationalOccupancy/index', {
         pageHeading: 'View all Approved Premises spaces',
         backLink: paths.admin.cruDashboard.index({}),
-        arrivalDate,
+        pagination: capacity && getPagination(fromDate),
+        arrivalDate: rawArrivalDate || slashToday,
+        processedCapacity: capacity && processCapacity(capacity, postcode, apType),
+        dateHeader: capacity && getDateHeader(capacity),
         postcode: postcode || '',
         cruManagementAreaOptions: getManagementAreaSelectGroups(
           cruManagementAreas,
           apArea as string,
           cruManagementArea?.id,
         ),
-        roomCriteria: convertKeyValuePairToCheckBoxItems(
-          roomCharacteristicMap,
-          makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria),
-        ),
-        apCriteria: convertKeyValuePairToCheckBoxItems(
-          spaceSearchCriteriaApLevelLabels,
-          makeArrayOfType<Cas1SpaceCharacteristic>(apCriteria),
-        ),
+        roomCriteria: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, roomCharacteristics),
+        apCriteria: convertKeyValuePairToCheckBoxItems(spaceSearchCriteriaApLevelLabels, premisesCharacteristics),
         apTypeOptions: getApTypeOptions(apType),
+        fromDate,
+        criteriaBlock: getCriteriaBlock(premisesCharacteristics, roomCharacteristics),
         errors: generateErrorMessages(errors),
         errorSummary: generateErrorSummary(errors),
       })

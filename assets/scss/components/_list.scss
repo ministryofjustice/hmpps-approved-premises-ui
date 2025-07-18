@@ -1,3 +1,4 @@
+@use "govuk-frontend/dist/govuk" as *;
 .govuk-list {
   &--compact {
     margin-bottom: 0;
@@ -5,4 +6,20 @@
       margin-bottom: 0;
     }
   }
+}
+
+.details-list {
+  @include govuk-responsive-margin(5, 'top');
+  @include govuk-responsive-margin(5, 'bottom');
+  dl {
+  margin: 0;
+  display:flex;
+  dt {
+    @include govuk-font($size: 19, $weight: bold, $tabular: true);
+  }
+  dd {
+    @include govuk-font($size: 19, $tabular: true);
+    @include govuk-responsive-margin(2, 'left');
+  }
+}
 }

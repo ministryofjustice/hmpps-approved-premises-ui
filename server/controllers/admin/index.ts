@@ -29,7 +29,7 @@ export const controllers = (services: Services) => {
     services.placementRequestService,
     services.placementService,
   )
-  const nationalOccupancyController = new NationalOccupancyController(cruManagementAreaService)
+  const nationalOccupancyController = new NationalOccupancyController(premisesService, cruManagementAreaService)
 
   return {
     adminPlacementRequestsController,

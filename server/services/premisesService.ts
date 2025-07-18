@@ -1,5 +1,6 @@
 import type {
   Cas1BedDetail,
+  Cas1NationalOccupancyParameters,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
@@ -54,6 +55,11 @@ export default class PremisesService {
       query.endDate || query.startDate,
       query.excludeSpaceBookingId,
     )
+  }
+
+  async getMultipleCapacity(token: string, params: Cas1NationalOccupancyParameters) {
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getMultipleCapacity(params)
   }
 
   async getDaySummary(args: {

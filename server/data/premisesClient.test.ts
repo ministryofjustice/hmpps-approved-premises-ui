@@ -4,12 +4,14 @@ import {
   Cas1SpaceBookingSummary,
   SortDirection,
 } from '@approved-premises/api'
-import { PaginatedResponse } from '@approved-premises/ui'
+import type { PaginatedResponse } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker'
 import { createMock } from '@golevelup/ts-jest'
 import { Response } from 'express'
 import {
   cas1BedDetailFactory,
+  cas1NationalOccupancyFactory,
+  cas1NationalOccupancyParametersFactory,
   cas1PremiseCapacityFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesBedSummaryFactory,
@@ -302,6 +304,34 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
 
       const output = await premisesClient.getCapacity(premises.id, startDate, endDate, excludeSpaceBookingId)
       expect(output).toEqual(premiseCapacity)
+    })
+  })
+
+  describe('getMultipleCapacity', () => {
+    it('should retrieve the capacity for several premises', async () => {
+      const parameters = cas1NationalOccupancyParametersFactory.build()
+      const response = cas1NationalOccupancyFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the capacity for a set of premises',
+        withRequest: {
+          method: 'POST',
+          body: parameters,
+          path: paths.premises.nationalCapacity({}),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: response,
+        },
+      })
+
+      const result = await premisesClient.getMultipleCapacity(parameters)
+
+      expect(result).toEqual(response)
     })
   })
 

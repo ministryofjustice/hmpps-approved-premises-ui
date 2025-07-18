@@ -1,5 +1,7 @@
 import type {
   Cas1BedDetail,
+  Cas1NationalOccupancy,
+  Cas1NationalOccupancyParameters,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
@@ -57,6 +59,13 @@ export default class PremisesClient {
       path: paths.premises.capacity({ premisesId }),
       query: { startDate, endDate, excludeSpaceBookingId },
     })) as Cas1PremiseCapacity
+  }
+
+  async getMultipleCapacity(params: Cas1NationalOccupancyParameters): Promise<Cas1NationalOccupancy> {
+    return (await this.restClient.post({
+      path: paths.premises.nationalCapacity({}),
+      data: params,
+    })) as Cas1NationalOccupancy
   }
 
   async getDaySummary(args: {
