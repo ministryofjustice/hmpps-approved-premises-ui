@@ -491,6 +491,10 @@ export default abstract class Page {
       .should(checked ? 'be.checked' : 'not.be.checked')
   }
 
+  verifyCheckboxByNameAndValue(name: string, value: string, checked = true) {
+    cy.get(`input[name="${name}"][value="${value}"]`).should(checked ? 'be.checked' : 'not.be.checked')
+  }
+
   clearAndCompleteTextInputById(id: string, text: string): void {
     this.getTextInputByIdAndClear(id)
     this.getTextInputByIdAndEnterDetails(id, text)

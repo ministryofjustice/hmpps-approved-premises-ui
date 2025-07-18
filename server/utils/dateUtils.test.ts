@@ -104,6 +104,15 @@ describe('DateFormats', () => {
       expect(DateFormats.isoDateToUIDate(date, { format: 'dateFieldHint' })).toEqual(expectedUiDate)
     })
 
+    it.each([
+      ['2022-11-09T00:00', '9/11/2022'],
+      ['2022-04-11T00:00', '11/4/2022'],
+      ['2025-04-02T00:00', '2/4/2025'],
+      ['2025-04-02T23:30:00.000Z', '3/4/2025'],
+    ])('converts local ISO8601 date %s to a slash separated date picker date', (date, expectedUiDate) => {
+      expect(DateFormats.isoDateToUIDate(date, { format: 'datePicker' })).toEqual(expectedUiDate)
+    })
+
     it('raises an error if the date is not a valid ISO8601 date string', () => {
       const date = '23/11/2022'
 

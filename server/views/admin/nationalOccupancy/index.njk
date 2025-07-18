@@ -1,0 +1,40 @@
+{% extends "partials/layout.njk" %}
+
+{% from "partials/filters.njk" import filterWrapper, filterSelect, filterDatepicker, filterText, filterCheckboxes %}
+{% from "components/formFields/selectWithOptgroup.njk" import govukSelectWithOptgroup %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ showErrorSummary(errorSummary) }}
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    {% call filterWrapper('Filter') %}
+        {{ filterDatepicker('arrivalDate', 'Arrival date', fetchContext()) }}
+        {{ filterText('postcode','Postcode area', fetchContext()) }}
+        {{ govukSelectWithOptgroup({
+            label: {
+                classes: "govuk-fieldset__legend--s",
+                text: "AP area"
+            },
+            id: "apArea",
+            name: "apArea",
+            items: cruManagementAreaOptions
+        }) }}
+
+        {{ filterSelect('apType','Type of AP',apTypeOptions ) }}
+        {{ filterCheckboxes('apCriteria','AP criteria',apCriteria) }}
+        {{ filterCheckboxes('roomCriteria','Room criteria',roomCriteria) }}
+    {%- endcall %}
+
+{% endblock %}
