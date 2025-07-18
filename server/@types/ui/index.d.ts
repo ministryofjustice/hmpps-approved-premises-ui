@@ -472,6 +472,7 @@ type SpaceSearchCommonFields = {
   roomCriteria?: Array<SpaceSearchRoomCriteria>
   startDate?: string
   arrivalDate?: string
+  durationDays?: number
 }
 
 export type NationalSpaceSearchFormData = SpaceSearchCommonFields & {
@@ -481,7 +482,6 @@ export type NationalSpaceSearchFormData = SpaceSearchCommonFields & {
 
 export type SpaceSearchFormData = SpaceSearchCommonFields & {
   applicationId?: string
-  durationDays?: number
   departureDate?: string
 }
 

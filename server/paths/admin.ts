@@ -13,6 +13,8 @@ const cruDashboardPath = adminPath.path('cru-dashboard')
 
 const nationalOccupancyPath = adminPath.path('national-occupancy')
 
+const nationalOccupancyPremisesPath = nationalOccupancyPath.path('premises/:premisesId')
+
 export default {
   admin: {
     cruDashboard: {
@@ -23,7 +25,8 @@ export default {
     },
     nationalOccupancy: {
       weekView: nationalOccupancyPath,
-      premisesView: nationalOccupancyPath.path('premises/:premisesId'),
+      premisesView: nationalOccupancyPremisesPath,
+      premisesDayView: nationalOccupancyPremisesPath.path('date/:date'),
     },
     placementRequests: {
       index: placementRequestsPath,

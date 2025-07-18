@@ -20,6 +20,7 @@ export default function routes(controllers: Controllers, router: Router, service
     deliusUserController,
     changeRequestsController,
     nationalOccupancyController,
+    occupancyViewController,
   } = controllers
 
   get(paths.admin.cruDashboard.index.pattern, cruDashboardController.index(), {
@@ -42,6 +43,14 @@ export default function routes(controllers: Controllers, router: Router, service
   // National occupancy view
   get(paths.admin.nationalOccupancy.weekView.pattern, nationalOccupancyController.index(), {
     auditEvent: 'NATIONAL_OCCUPANCY_VIEW',
+    allowedPermissions: ['cas1_national_occupancy_view'],
+  })
+  get(paths.admin.nationalOccupancy.premisesView.pattern, nationalOccupancyController.premisesView(), {
+    auditEvent: 'NATIONAL_OCCUPANCY_PREMISES_VIEW',
+    allowedPermissions: ['cas1_national_occupancy_view'],
+  })
+  get(paths.admin.nationalOccupancy.premisesDayView.pattern, occupancyViewController.viewDay(), {
+    auditEvent: 'NATIONAL_OCCUPANCY_PREMISES__DAY_VIEW',
     allowedPermissions: ['cas1_national_occupancy_view'],
   })
 

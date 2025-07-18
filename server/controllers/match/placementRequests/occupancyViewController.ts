@@ -11,6 +11,7 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
 import managePaths from '../../../paths/manage'
+import adminPaths from '../../../paths/admin'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
 import { createQueryString, makeArrayOfType } from '../../../utils/utils'
@@ -221,27 +222,33 @@ export default class {
       const backLink = this.sessionService.getPageBackLink(
         paths.v2Match.placementRequests.search.dayOccupancy.pattern,
         req,
-        [paths.v2Match.placementRequests.search.occupancy.pattern, managePaths.premises.placements.changes.new.pattern],
+        [
+          paths.v2Match.placementRequests.search.occupancy.pattern,
+          managePaths.premises.placements.changes.new.pattern,
+          adminPaths.admin.nationalOccupancy.weekView.pattern,
+          adminPaths.admin.nationalOccupancy.premisesView.pattern,
+        ],
       )
 
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
+      const getPathWithDate = (pathDate: string) =>
+        id
+          ? paths.v2Match.placementRequests.search.dayOccupancy({
+              id,
+              premisesId,
+              date: pathDate,
+            })
+          : adminPaths.admin.nationalOccupancy.premisesDayView({ premisesId, date: pathDate })
 
       const {
         sortBy = 'canonicalArrivalDate',
         sortDirection = 'asc',
         hrefPrefix,
-      } = getPaginationDetails<SortablePlacementColumnField>(
-        req,
-        paths.v2Match.placementRequests.search.dayOccupancy({ id, premisesId, date }),
-      )
+      } = getPaginationDetails<SortablePlacementColumnField>(req, getPathWithDate(date))
       const getDayLink = (targetDate: string) =>
-        `${paths.v2Match.placementRequests.search.dayOccupancy({
-          id,
-          premisesId,
-          date: targetDate,
-        })}${createQueryString(req.query, { arrayFormat: 'repeat', addQueryPrefix: true })}`
+        `${getPathWithDate(targetDate)}${createQueryString(req.query, { arrayFormat: 'repeat', addQueryPrefix: true })}`
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const placementRequest = id && (await this.placementRequestService.getPlacementRequest(token, id))
       const premises = await this.premisesService.find(token, premisesId)
 
       const daySummary = await this.premisesService.getDaySummary({

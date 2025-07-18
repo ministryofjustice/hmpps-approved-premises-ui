@@ -96,8 +96,8 @@ describe('nationalOccupancyUtils', () => {
     it('should process the received capacity into a structure for the template to consume', () => {
       const postcode = 'RG15'
       const apiCapacity = cas1NationalOccupancyFactory.build()
+      const processed = processCapacity(apiCapacity, postcode, [])
 
-      const processed = processCapacity(apiCapacity, postcode)
       expect(processed).toHaveLength(apiCapacity.premises.length)
       processed.forEach(({ summaryRows, apCapacity }, index) => {
         const ap = apiCapacity.premises[index]
@@ -105,12 +105,12 @@ describe('nationalOccupancyUtils', () => {
         expect(summaryRows[1]).toEqual(apTypeShortLabels[ap.summary.apType])
         expect(summaryRows[2]).toEqual(`${ap.distanceInMiles.toFixed(1)} miles from ${postcode}`)
         apCapacity.forEach(({ capacity, classes, link }, characteristicIndex) => {
-          const { forRoomCharacteristic, inServiceBedCount, vacantBedCount } = ap.capacity[characteristicIndex]
+          const { forRoomCharacteristic, inServiceBedCount, vacantBedCount, date } = ap.capacity[characteristicIndex]
           expect(classes).toEqual(vacantBedCount > 0 ? 'govuk-tag--green' : 'govuk-tag--red')
           expect(capacity).toEqual(
             forRoomCharacteristic ? `${vacantBedCount}` : `${vacantBedCount}/${inServiceBedCount}`,
           )
-          expect(link).toEqual('#')
+          expect(link).toEqual(`/admin/national-occupancy/premises/${ap.summary.id}/date/${date}`)
         })
       })
     })
