@@ -24,9 +24,7 @@ export type Cas1Assessment = {
      */
     document?: any;
     id: string;
-    outdatedSchema: boolean;
     rejectionRationale?: string;
-    schemaVersion: string;
     status?: Cas1AssessmentStatus;
     submittedAt?: string;
 };
