@@ -71,7 +71,7 @@
                 {% set noteConditional %}
                     {{ govukTextarea(
                         {
-                            name: "cancellation[otherReason]",
+                            name: "otherReason",
                             id: "otherReason",
                             errorMessage: errors.otherReason,
                             label: {
@@ -82,7 +82,7 @@
                 {% endset -%}
 
                 {{ govukRadios({
-                    name: "cancellation[reason]",
+                    name: "reason",
                     id: "reason",
                     fieldset: {
                         legend: {

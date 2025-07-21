@@ -9,8 +9,6 @@ const v1BookingPath = v1BookingsPath.path(':bookingId')
 
 const v1PeoplePath = v1BookingsPath.path('people')
 
-const v1CancellationsPath = v1BookingPath.path('cancellations')
-
 const v1LostBedsPath = v1SinglePremisesPath.path('beds/:bedId/lost-beds')
 
 const v1BedsPath = v1SinglePremisesPath.path('beds')
@@ -103,10 +101,6 @@ const paths = {
 
   bookings: {
     show: bookingsPath.path(':bookingId'),
-    cancellations: {
-      new: v1CancellationsPath.path('new'), // no v2 equivalent
-      create: v1CancellationsPath, // no v2 equivalent
-    },
   },
   people: {
     find: v1PeoplePath, // no v2 equivalent

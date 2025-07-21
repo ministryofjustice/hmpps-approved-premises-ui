@@ -7,18 +7,12 @@ import { otherCancellationReasonId } from '../../../server/testutils/factories/n
 export default class CancellationCreatePage extends Page {
   constructor(
     public readonly premisesId: string,
-    public readonly bookingId: string,
+    public readonly placementId: string,
   ) {
     super('Confirm withdrawn placement')
   }
 
-  static visit(premisesId: string, bookingId: string): CancellationCreatePage {
-    cy.visit(paths.bookings.cancellations.new({ premisesId, bookingId }))
-
-    return new CancellationCreatePage(premisesId, bookingId)
-  }
-
-  static visitWithSpaceBooking(premisesId: string, placementId: string): CancellationCreatePage {
+  static visit(premisesId: string, placementId: string): CancellationCreatePage {
     cy.visit(paths.premises.placements.cancellations.new({ premisesId, placementId }))
 
     return new CancellationCreatePage(premisesId, placementId)
@@ -26,25 +20,19 @@ export default class CancellationCreatePage extends Page {
 
   completeForm(cancellation: NewCancellation): void {
     this.getLegend('Why is this placement being withdrawn?')
-    this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason)
+    this.checkRadioByNameAndValue('reason', cancellation.reason)
 
     if (cancellation.reason === otherCancellationReasonId && cancellation.otherReason) {
-      this.completeTextArea('cancellation[otherReason]', cancellation.otherReason)
+      this.completeTextArea('otherReason', cancellation.otherReason)
     }
 
     this.clickSubmit()
   }
 
-  shouldShowBacklinkToSpaceBooking(): void {
+  shouldShowBacklinkToPlacement(): void {
     cy.get('.govuk-back-link')
       .should('have.attr', 'href')
-      .and('include', paths.premises.placements.show({ premisesId: this.premisesId, placementId: this.bookingId }))
-  }
-
-  shouldShowBacklinkToBooking(): void {
-    cy.get('.govuk-back-link')
-      .should('have.attr', 'href')
-      .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
+      .and('include', paths.premises.placements.show({ premisesId: this.premisesId, placementId: this.placementId }))
   }
 
   shouldShowBackLinkToApplicationWithdraw(applicationId: string): void {

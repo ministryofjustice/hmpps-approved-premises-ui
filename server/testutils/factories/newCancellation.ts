@@ -15,13 +15,9 @@ class NewCancellationFactory extends Factory<NewCancellation> {
 }
 
 export default NewCancellationFactory.define(() => {
-  const date = faker.date.soon()
   return {
     id: faker.string.uuid(),
     date: DateFormats.dateObjToIsoDate(faker.date.soon()),
-    'date-day': date.getDate().toString(),
-    'date-month': date.getMonth().toString(),
-    'date-year': date.getFullYear().toString(),
     bookingId: faker.string.uuid(),
     reason: referenceDataFactory.cancellationReasons().build().id,
     notes: faker.lorem.sentence(),
