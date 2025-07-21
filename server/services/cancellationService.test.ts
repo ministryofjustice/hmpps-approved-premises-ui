@@ -1,17 +1,13 @@
 import CancellationService from './cancellationService'
-import BookingClient from '../data/bookingClient'
 import ReferenceDataClient from '../data/referenceDataClient'
 
-import { cancellationFactory, newCancellationFactory, referenceDataFactory } from '../testutils/factories'
+import { referenceDataFactory } from '../testutils/factories'
 
-jest.mock('../data/bookingClient.ts')
 jest.mock('../data/referenceDataClient.ts')
 
 describe('DepartureService', () => {
-  const bookingClient = new BookingClient(null) as jest.Mocked<BookingClient>
   const referenceDataClient = new ReferenceDataClient(null) as jest.Mocked<ReferenceDataClient>
 
-  const BookingClientFactory = jest.fn()
   const ReferenceDataClientFactory = jest.fn()
 
   const token = 'SOME_TOKEN'
@@ -20,7 +16,6 @@ describe('DepartureService', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    BookingClientFactory.mockReturnValue(bookingClient)
     ReferenceDataClientFactory.mockReturnValue(referenceDataClient)
   })
 

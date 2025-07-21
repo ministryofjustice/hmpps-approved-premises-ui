@@ -1,5 +1,5 @@
-import type { BespokeError, SelectOption, SummaryList, SummaryListItem } from '@approved-premises/ui'
-import type { Booking, BookingStatus, PlacementRequestBookingSummary } from '@approved-premises/api'
+import type { EntityType, BespokeError, SelectOption, SummaryListItem } from '@approved-premises/ui'
+import type { Booking, BookingStatus } from '@approved-premises/api'
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
@@ -7,28 +7,14 @@ import { DateFormats } from '../dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from '../utils'
 import { displayName } from '../personUtils'
-import { convertObjectsToRadioItems, summaryListItem } from '../formUtils'
+import { convertObjectsToRadioItems } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
-import { EntityType } from '../../@types/ui'
 
 type ConflictingEntityType = EntityType
 
 type ParsedConflictError = {
   conflictingEntityId: string
   conflictingEntityType: ConflictingEntityType
-}
-
-export const bookingSummaryList = (booking?: PlacementRequestBookingSummary): SummaryList => {
-  return booking
-    ? {
-        rows: [
-          summaryListItem('Approved Premises', booking.premisesName),
-          summaryListItem('Date of match', DateFormats.isoDateToUIDate(booking.createdAt)),
-          summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(booking.arrivalDate)),
-          summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(booking.departureDate)),
-        ],
-      }
-    : undefined
 }
 
 export const generateConflictBespokeError = (

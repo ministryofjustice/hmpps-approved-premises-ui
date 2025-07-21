@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import type { Cas1NewSpaceBookingCancellation, NewCancellation } from '@approved-premises/api'
+import type { Cas1NewSpaceBookingCancellation } from '@approved-premises/api'
 
 import { CancellationService, PlacementService } from '../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'

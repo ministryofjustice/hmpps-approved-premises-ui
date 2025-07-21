@@ -74,31 +74,6 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SHOW_BOOKING_REDIRECT',
   })
 
-  get(paths.deprecated.bookings.dateChanges.new.pattern, redirectController.redirect(paths.bookings.dateChanges.new), {
-    auditEvent: 'NEW_DATE_CHANGE_REDIRECT',
-  })
-  post(
-    paths.deprecated.bookings.dateChanges.create.pattern,
-    redirectController.redirect(paths.bookings.dateChanges.create),
-    {
-      auditEvent: 'CREATE_DATE_CHANGE_REDIRECT',
-    },
-  )
-
-  get(paths.deprecated.bookings.extensions.new.pattern, redirectController.redirect(paths.bookings.extensions.new), {
-    auditEvent: 'NEW_BOOKING_EXTENSION_REDIRECT',
-  })
-  post(
-    paths.deprecated.bookings.extensions.create.pattern,
-    redirectController.redirect(paths.bookings.extensions.create),
-    {
-      auditEvent: 'CREATE_BOOKING_EXTENSION_REDIRECT',
-    },
-  )
-  get(
-    paths.deprecated.bookings.extensions.confirm.pattern,
-    redirectController.redirect(paths.bookings.extensions.confirm),
-  )
   // End deprecated paths
 
   // Premises

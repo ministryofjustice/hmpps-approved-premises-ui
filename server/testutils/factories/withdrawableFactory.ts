@@ -1,10 +1,10 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import { DatePeriod, Withdrawable } from '../../@types/shared'
+import { DatePeriod, Withdrawable } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Withdrawable>(() => ({
-  type: faker.helpers.arrayElement(['placement_request', 'placement_application', 'booking']),
+  type: faker.helpers.arrayElement(['placement_request', 'placement_application', 'space_booking']),
   id: faker.string.uuid(),
   dates: datePeriodFactory.buildList(Math.floor(Math.random() * 2) + 1),
 }))

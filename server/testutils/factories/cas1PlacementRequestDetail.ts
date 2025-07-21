@@ -13,15 +13,6 @@ import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import bookingSummaryFactory from './placementRequestBookingSummary'
 
 class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDetail> {
-  withLegacyBooking() {
-    const legacyBooking = bookingSummaryFactory.build({ type: 'legacy' })
-    return this.params({
-      booking: legacyBooking,
-      legacyBooking,
-      spaceBookings: [],
-    })
-  }
-
   withSpaceBooking(booking?: Cas1SpaceBookingSummary, changeRequest?: Cas1ChangeRequestSummary) {
     const spaceBooking = booking || cas1SpaceBookingSummaryFactory.build()
     const bookingSummary = bookingSummaryFactory.fromSpaceBooking(spaceBooking).build()

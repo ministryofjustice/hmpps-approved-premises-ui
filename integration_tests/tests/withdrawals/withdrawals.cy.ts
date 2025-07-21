@@ -2,10 +2,10 @@ import { ApprovedPremisesUserPermission } from '@approved-premises/api'
 import {
   applicationFactory,
   cas1ApplicationSummaryFactory,
-  bookingFactory,
   placementApplicationFactory,
   placementRequestFactory,
   withdrawableFactory,
+  cas1SpaceBookingFactory,
 } from '../../../server/testutils/factories'
 
 import { ListPage } from '../../pages/apply'
@@ -29,7 +29,7 @@ context('Withdrawals', () => {
 
   describe('as a CRU user', () => {
     beforeEach(() => {
-      // Given I am signed in as a CRU member
+      cy.log('Given I am signed in as a CRU member')
       signIn('cru_member')
     })
 
@@ -54,31 +54,31 @@ context('Withdrawals', () => {
       })
       cy.task('stubPlacementApplication', placementApplication)
 
-      // When I visit the Withdraw page
+      cy.log('When I visit the Withdraw page')
       cy.visit(paths.applications.withdraw.new({ id: application.id }))
-      // Then I am asked what I want to withdraw
+      cy.log('Then I am asked what I want to withdraw')
       const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
 
-      // And I am shown the correct withdrawables
+      cy.log('And I am shown the correct withdrawables')
       newWithdrawalPage.shouldShowWithdrawableTypes(['placementRequest', 'application'])
       newWithdrawalPage.shouldNotShowWithdrawableTypes(['placement'])
 
-      // When I select 'placementRequest'
+      cy.log('When I select "placementRequest"')
       newWithdrawalPage.selectType('placementRequest')
       newWithdrawalPage.clickSubmit()
 
-      // Then I am shown a list of placement applications that can be withdrawn
+      cy.log('Then I am shown a list of placement applications that can be withdrawn')
       const selectWithdrawablePage = new NewWithdrawalPage('Select your request')
       selectWithdrawablePage.shouldShowWithdrawableGuidance('request')
       selectWithdrawablePage.checkForBackButton(paths.applications.withdraw.new({ id: application.id }))
       selectWithdrawablePage.shouldShowWithdrawables([placementApplicationWithdrawable])
       selectWithdrawablePage.shouldNotShowWithdrawables([applicationWithdrawable])
 
-      // When I select a placement application
+      cy.log('When I select a placement application')
       selectWithdrawablePage.selectWithdrawable(placementApplication.id)
       selectWithdrawablePage.clickSubmit()
 
-      // Then I am taken to the confirmation page
+      cy.log('Then I am taken to the confirmation page')
       Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage)
     })
 
@@ -100,28 +100,28 @@ context('Withdrawals', () => {
       cy.task('stubApplications', [application])
       cy.task('stubApplicationGet', { application })
 
-      // Given I am on the list page
+      cy.log('Given I am on the list page')
       const listPage = ListPage.visit([application], [], [])
 
-      // When I click 'Withdraw' on an application
+      cy.log('When I click "Withdraw" on an application')
       listPage.clickWithdraw()
 
-      // Then I am asked what I want to withdraw
+      cy.log('Then I am asked what I want to withdraw')
       const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
 
-      // When I select 'application'
+      cy.log('When I select "application"')
       newWithdrawalPage.selectType('application')
       newWithdrawalPage.clickSubmit()
 
-      // Then I am taken to the confirmation page
+      cy.log('Then I am taken to the confirmation page')
       Page.verifyOnPage(WithdrawApplicationPage)
     })
 
     it('withdraws a placement', () => {
       const application = cas1ApplicationSummaryFactory.build()
-      const placement = bookingFactory.build({ applicationId: application.id })
+      const placement = cas1SpaceBookingFactory.build({ applicationId: application.id })
       const placementWithdrawable = withdrawableFactory.build({
-        type: 'booking',
+        type: 'space_booking',
         id: placement.id,
       })
       const placementApplicationWithdrawable = withdrawableFactory.build({
@@ -138,43 +138,43 @@ context('Withdrawals', () => {
       })
       cy.task('stubApplications', [application])
       cy.task('stubApplicationGet', { application })
-      cy.task('stubBookingFindWithoutPremises', placement)
-      cy.task('stubBookingGet', { premisesId: placement.premises.id, booking: placement })
+      cy.task('stubSpaceBookingGetWithoutPremises', placement)
+      cy.task('stubSpaceBookingShow', placement)
       cy.task('stubCancellationReferenceData')
 
-      // When I visit the Withdraw page
+      cy.log('When I visit the Withdraw page')
       cy.visit(paths.applications.withdraw.new({ id: application.id }))
 
-      // Then I am asked what I want to withdraw
+      cy.log('Then I am asked what I want to withdraw')
       const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
 
-      // And I should see the correct withdrawable types
+      cy.log('And I should see the correct withdrawable types')
       newWithdrawalPage.shouldShowWithdrawableTypes(['placementRequest', 'placement', 'application'])
 
-      // When I select 'placement'
+      cy.log('When I select "placement"')
       newWithdrawalPage.selectType('placement')
       newWithdrawalPage.clickSubmit()
 
-      // Then I am shown a list of placements that can be withdrawn
+      cy.log('Then I am shown a list of placements that can be withdrawn')
       const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
       selectWithdrawablePage.shouldShowWithdrawableGuidance('placement')
       selectWithdrawablePage.checkForBackButton(paths.applications.withdraw.new({ id: application.id }))
       selectWithdrawablePage.shouldShowWithdrawables([placementWithdrawable])
       selectWithdrawablePage.shouldNotShowWithdrawables([placementApplicationWithdrawable, applicationWithdrawable])
-      selectWithdrawablePage.veryifyLink(placement.id, 'booking')
+      selectWithdrawablePage.veryifyLink(placement.id, 'space_booking')
 
-      // When I select a placement
+      cy.log('When I select a placement')
       selectWithdrawablePage.selectWithdrawable(placement.id)
       selectWithdrawablePage.clickSubmit()
 
-      // Then I am taken to the confirmation page
+      cy.log('Then I am taken to the confirmation page')
       Page.verifyOnPage(CancellationCreatePage)
     })
   })
 
   describe('as a non-CRU user', () => {
     beforeEach(() => {
-      // Given I am signed in as an applicant
+      cy.log('Given I am signed in as an applicant')
       signIn('applicant')
     })
 
@@ -198,13 +198,13 @@ context('Withdrawals', () => {
       cy.task('stubApplications', [application])
       cy.task('stubApplicationGet', { application })
 
-      // Given I am on the list page
+      cy.log('Given I am on the list page')
       const listPage = ListPage.visit([application], [], [])
 
-      // When I click 'Withdraw' on an application
+      cy.log('When I click "Withdraw" on an application')
       listPage.clickWithdraw()
 
-      // Then I am asked what I want to withdraw
+      cy.log('Then I am asked what I want to withdraw')
       const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
       newWithdrawalPage.checkForBackButton(paths.applications.index({}))
 
@@ -224,7 +224,7 @@ const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermi
     type: 'placement_application',
   })
   const placementWithdrawable = withdrawableFactory.build({
-    type: 'booking',
+    type: 'space_booking',
   })
   const withdrawables = withdrawablesFactory.build({
     withdrawables: [placementRequestWithdrawable, placementApplicationWithdrawable, placementWithdrawable],
@@ -240,21 +240,21 @@ const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermi
   cy.task('stubApAreaReferenceData')
   cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
 
-  // When I visit the Withdraw page
+  cy.log('When I visit the Withdraw page')
   cy.visit(paths.applications.withdraw.new({ id: application.id }))
 
-  // Then I am asked what I want to withdraw
+  cy.log('Then I am asked what I want to withdraw')
   const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
 
-  // And I am shown the correct withdrawables
+  cy.log('And I am shown the correct withdrawables')
   newWithdrawalPage.shouldShowWithdrawableTypes(['placementRequest', 'placement'])
   newWithdrawalPage.shouldNotShowWithdrawableTypes(['application'])
 
-  // When I select 'placementRequest'
+  cy.log('When I select "placementRequest"')
   newWithdrawalPage.selectType('placementRequest')
   newWithdrawalPage.clickSubmit()
 
-  // Then I am shown a list of placement requests that can be withdrawn
+  cy.log('Then I am shown a list of placement requests that can be withdrawn')
   const selectWithdrawablePage = new NewWithdrawalPage('Select your request')
   selectWithdrawablePage.shouldShowWithdrawableGuidance('request')
   selectWithdrawablePage.checkForBackButton(paths.applications.withdraw.new({ id: application.id }))
@@ -262,11 +262,11 @@ const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermi
   selectWithdrawablePage.shouldShowWithdrawables([placementRequestWithdrawable, placementApplicationWithdrawable])
   selectWithdrawablePage.shouldNotShowWithdrawables([placementWithdrawable])
 
-  // When I select a placement request
+  cy.log('When I select a placement request')
   selectWithdrawablePage.selectWithdrawable(placementRequest.id)
   selectWithdrawablePage.clickSubmit()
 
-  // Then I should see the withdrawal confirmation page
+  cy.log('Then I should see the withdrawal confirmation page')
   const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage)
 
   // With the appropriate withdrawal reasons for my role(s)
@@ -276,12 +276,12 @@ const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermi
     confirmationPage.shouldShowReasonsUnrelatedToCapacity()
   }
 
-  // And be able to state a reason
+  cy.log('And be able to state a reason')
   const withdrawalReason = 'DuplicatePlacementRequest'
   confirmationPage.selectReason(withdrawalReason)
   confirmationPage.clickConfirm()
 
-  // Then I am taken to the dashboard
+  cy.log('Then I am taken to the dashboard')
   let successPage: Page
   if (permissions.includes('cas1_view_cru_dashboard')) {
     successPage = Page.verifyOnPage(PrListPage)
@@ -289,6 +289,6 @@ const withdrawsAPlacementRequest = (permissions: Array<ApprovedPremisesUserPermi
     successPage = Page.verifyOnPage(DashboardPage)
   }
 
-  // And I see a confirmation
+  cy.log('And I see a confirmation')
   successPage.shouldShowBanner('withdrawn successfully', { exact: false })
 }

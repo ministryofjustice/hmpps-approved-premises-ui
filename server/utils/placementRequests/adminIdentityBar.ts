@@ -27,20 +27,7 @@ export const adminActions = (
   if (placementRequest.status === 'matched' && placementRequest.booking) {
     const matchedActions = []
 
-    if (placementRequest.booking.type === 'legacy') {
-      matchedActions.push({
-        href: managePaths.bookings.dateChanges.new({
-          premisesId: placementRequest.booking.premisesId,
-          bookingId: placementRequest.booking.id,
-        }),
-        text: 'Amend placement',
-      })
-    }
-
-    if (
-      placementRequest.booking.type === 'space' &&
-      ['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))
-    ) {
+    if (['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))) {
       matchedActions.push({
         href: managePaths.premises.placements.changes.new({
           premisesId: placementRequest.booking.premisesId,

@@ -6,7 +6,6 @@
 /* istanbul ignore file */
 
 import { buildAppInsightsClient, initialiseAppInsights } from '../utils/azureAppInsights'
-import BookingClient from './bookingClient'
 
 initialiseAppInsights()
 buildAppInsightsClient()
@@ -38,7 +37,6 @@ export const dataAccess = () => ({
   hmppsAuthClient: new HmppsAuthClient(new TokenStore(createRedisClient())),
   approvedPremisesClientBuilder: ((token: string) => new PremisesClient(token)) as RestClientBuilder<PremisesClient>,
   placementClientBuilder: ((token: string) => new PlacementClient(token)) as RestClientBuilder<PlacementClient>,
-  bookingClientBuilder: ((token: string) => new BookingClient(token)) as RestClientBuilder<BookingClient>,
   referenceDataClientBuilder: ((token: string) =>
     new ReferenceDataClient(token)) as RestClientBuilder<ReferenceDataClient>,
   cas1ReferenceDataClientBuilder: ((token: string) =>
@@ -63,7 +61,6 @@ export type DataAccess = ReturnType<typeof dataAccess>
 export {
   AppealClient,
   BedClient,
-  BookingClient,
   Cas1ReferenceDataClient,
   PremisesClient,
   HmppsAuthClient,

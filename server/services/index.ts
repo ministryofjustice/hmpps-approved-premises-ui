@@ -7,7 +7,6 @@ import UserService from './userService'
 import PremisesService from './premisesService'
 import PlacementService from './placementService'
 import PersonService from './personService'
-import BookingService from './bookingService'
 import CancellationService from './cancellationService'
 import ApplicationService from './applicationService'
 import OutOfServiceBedService from './outOfServiceBedService'
@@ -29,7 +28,6 @@ export const services = () => {
     appealClientBuilder,
     approvedPremisesClientBuilder,
     placementClientBuilder,
-    bookingClientBuilder,
     cas1ReferenceDataClientBuilder,
     referenceDataClientBuilder,
     outOfServiceBedClientBuilder,
@@ -50,7 +48,6 @@ export const services = () => {
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
   const placementService = new PlacementService(placementClientBuilder, cas1ReferenceDataClientBuilder)
   const personService = new PersonService(personClient)
-  const bookingService = new BookingService(bookingClientBuilder)
   const cancellationService = new CancellationService(referenceDataClientBuilder)
   const outOfServiceBedService = new OutOfServiceBedService(
     outOfServiceBedClientBuilder,
@@ -77,7 +74,6 @@ export const services = () => {
     premisesService,
     placementService,
     personService,
-    bookingService,
     cancellationService,
     outOfServiceBedService,
     applicationService,
@@ -102,7 +98,6 @@ export {
   PlacementService,
   PersonService,
   CancellationService,
-  BookingService,
   OutOfServiceBedService,
   ApplicationService,
   AssessmentService,

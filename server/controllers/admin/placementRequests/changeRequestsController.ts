@@ -13,7 +13,6 @@ import { PlacementRequestService, PlacementService } from '../../../services'
 import paths from '../../../paths/admin'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { placementSummaryList } from '../../../utils/placementRequests/placementSummaryList'
-import { bookingSummaryList } from '../../../utils/bookings'
 import { changeRequestSummaryList } from '../../../utils/placementRequests/changeRequestSummaryList'
 import { DateFormats } from '../../../utils/dateUtils'
 import { getChangeRequestReasonId, mapChangeRequestReasonsToRadios } from '../../../utils/placements/changeRequests'
@@ -43,11 +42,6 @@ export default class ChangeRequestsController {
         this.placementRequestService.getChangeRequestRejectionReasons(req.user.token, 'placementAppeal'),
       ])
 
-      const bookingSummary =
-        placementRequest.booking &&
-        (placementRequest.booking.type === 'space'
-          ? placementSummaryList(placementRequest)
-          : bookingSummaryList(placementRequest.booking))
       const changeRequestSummary = changeRequestSummaryList(changeRequest)
       const rejectionOptions = mapChangeRequestReasonsToRadios(rejectionReasons, '', {})
 
@@ -61,7 +55,7 @@ export default class ChangeRequestsController {
         placementRequest,
         pageHeading: 'Review appeal',
         backLink: paths.admin.placementRequests.show({ id: placementRequestId }),
-        bookingSummary,
+        bookingSummary: placementRequest.booking && placementSummaryList(placementRequest),
         changeRequestSummary,
         ...errorsAndUserInput,
         decisionOptions,

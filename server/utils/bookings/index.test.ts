@@ -5,7 +5,6 @@ import {
   bookingDepartureRows,
   bookingPersonRows,
   bookingShowDocumentRows,
-  bookingSummaryList,
   cancellationReasonsRadioItems,
   cancellationRows,
   generateConflictBespokeError,
@@ -13,7 +12,6 @@ import {
 import {
   arrivalFactory,
   bookingFactory,
-  bookingSummaryFactory,
   cancellationFactory,
   cancellationReasonFactory,
   departureFactory,
@@ -159,61 +157,6 @@ describe('bookingUtils', () => {
           },
         },
       ])
-    })
-  })
-
-  describe('bookingSummary', () => {
-    it('should return a summarylist of a BookingSummary', () => {
-      const createdAt = '2022-01-01'
-      const arrivalDate = '2022-03-01'
-      const departureDate = '2022-05-01'
-
-      const bookingSummary = bookingSummaryFactory.build({
-        createdAt,
-        arrivalDate,
-        departureDate,
-      })
-
-      expect(bookingSummaryList(bookingSummary)).toEqual({
-        rows: [
-          {
-            key: {
-              text: 'Approved Premises',
-            },
-            value: {
-              text: bookingSummary.premisesName,
-            },
-          },
-          {
-            key: {
-              text: 'Date of match',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(createdAt),
-            },
-          },
-          {
-            key: {
-              text: 'Expected arrival date',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(arrivalDate),
-            },
-          },
-          {
-            key: {
-              text: 'Expected departure date',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(departureDate),
-            },
-          },
-        ],
-      })
-    })
-
-    it('should return undefined if there is no booking', () => {
-      expect(bookingSummaryList(undefined)).toEqual(undefined)
     })
   })
 

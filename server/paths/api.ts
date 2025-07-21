@@ -35,8 +35,6 @@ const cas1ApplicationsSingle = cas1Applications.path(':id')
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
 const rooms = premisesSingle.path('rooms')
-const bookings = premisesSingle.path('bookings')
-const booking = bookings.path(':bookingId')
 
 const profile = path('/profile')
 

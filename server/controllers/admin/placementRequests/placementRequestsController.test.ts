@@ -10,7 +10,6 @@ import {
   cas1ChangeRequestSummaryFactory,
 } from '../../../testutils/factories'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
-import { bookingSummaryList } from '../../../utils/bookings'
 import { placementSummaryList } from '../../../utils/placementRequests/placementSummaryList'
 import { adminIdentityBar } from '../../../utils/placementRequests'
 import { changeRequestBanners } from '../../../utils/placementRequests/changeRequestsUtils'
@@ -61,24 +60,6 @@ describe('PlacementRequestsController', () => {
         ),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
-    })
-
-    it('should render the placement request template with a legacy booking', async () => {
-      const placementRequest = cas1PlacementRequestDetailFactory.withLegacyBooking().build()
-      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
-
-      const requestHandler = placementRequestsController.show()
-
-      request.params.id = 'some-uuid'
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'admin/placementRequests/show',
-        expect.objectContaining({
-          bookingSummaryList: bookingSummaryList(placementRequest.booking),
-        }),
-      )
     })
   })
 })

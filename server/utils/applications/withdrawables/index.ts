@@ -1,5 +1,5 @@
-import { Booking, BookingPremisesSummary, Cas1SpaceBooking, Withdrawable } from '../../../@types/shared'
-import { RadioItem } from '../../../@types/ui'
+import { BookingPremisesSummary, Cas1SpaceBooking, Withdrawable } from '@approved-premises/api'
+import { RadioItem } from '@approved-premises/ui'
 import matchPaths from '../../../paths/match'
 import managePaths from '../../../paths/manage'
 import { DateFormats } from '../../dateUtils'
@@ -56,7 +56,7 @@ export const withdrawableTypeRadioOptions = (
       hint: { html: hintCopy.placementRequest },
     })
 
-  if (withdrawables.find(w => ['booking', 'space_booking'].includes(w.type))) {
+  if (withdrawables.find(w => w.type === 'space_booking')) {
     radioItems.push({
       text: 'Placement/Booking',
       value: 'placement',
@@ -73,7 +73,7 @@ export const withdrawableTypeRadioOptions = (
 export const withdrawableRadioOptions = (
   withdrawables: Array<Withdrawable>,
   selectedWithdrawable?: Withdrawable['id'],
-  allBookings: Array<Booking | Cas1SpaceBooking> = [],
+  allBookings: Array<Cas1SpaceBooking> = [],
 ): Array<RadioItem> => {
   const withDrawableRadioSection = (
     withdrawable: Withdrawable,
@@ -107,22 +107,11 @@ export const withdrawableRadioOptions = (
     if (withdrawable.type === 'placement_application') {
       return withDrawableRadioSection(withdrawable, null, null)
     }
+
     if (withdrawable.type === 'placement_request') {
       return withDrawableRadioSection(withdrawable, null, matchPaths.placementRequests.show({ id: withdrawable.id }))
     }
-    if (withdrawable.type === 'booking') {
-      const booking = allBookings.find(b => b.id === withdrawable.id) as Booking
 
-      if (!booking) throw new Error(`Booking not found for withdrawable: ${withdrawable.id}`)
-      return withDrawableRadioSection(
-        withdrawable,
-        booking.premises,
-        managePaths.bookings.show({
-          premisesId: booking.premises.id,
-          bookingId: booking.id,
-        }),
-      )
-    }
     if (withdrawable.type === 'space_booking') {
       const placement = allBookings.find(b => b.id === withdrawable.id) as Cas1SpaceBooking
 
@@ -136,6 +125,7 @@ export const withdrawableRadioOptions = (
         }),
       )
     }
+
     throw new Error(`Unknown withdrawable type: ${withdrawable.type}`)
   })
 }
