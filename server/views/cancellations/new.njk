@@ -91,7 +91,7 @@
                         }
                     },
                     errorMessage: errors.reason,
-                    items: BookingUtils.cancellationReasonsRadioItems(cancellationReasons, noteConditional, fetchContext())
+                    items: CancellationUtils.cancellationReasonsRadioItems(cancellationReasons, noteConditional, fetchContext())
                 }) }}
 
                 {{ govukButton({

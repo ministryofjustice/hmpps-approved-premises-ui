@@ -36,7 +36,7 @@ import {
 } from '../../../utils/outOfServiceBedUtils'
 
 jest.mock('../../../utils/validation')
-jest.mock('../../../utils/bookings')
+jest.mock('../../../utils/cancellationUtils')
 jest.mock('../../../utils/getPaginationDetails')
 
 describe('OutOfServiceBedsController', () => {

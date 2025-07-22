@@ -46,7 +46,7 @@ import * as OASysUtils from './assessments/oasysUtils'
 import * as OffenceUtils from './offenceUtils'
 import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'
-import * as BookingUtils from './bookings'
+import * as CancellationUtils from './cancellationUtils'
 import * as TasklistUtils from './taskListUtils'
 import * as FormUtils from './formUtils'
 import * as UserUtils from './users'
@@ -249,7 +249,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)
   njkEnv.addGlobal('AttachDocumentsUtils', AttachDocumentsUtils)
   njkEnv.addGlobal('OasysImportUtils', OasysImportUtils)
-  njkEnv.addGlobal('BookingUtils', BookingUtils)
+  njkEnv.addGlobal('CancellationUtils', CancellationUtils)
   njkEnv.addGlobal('TasklistUtils', TasklistUtils)
   njkEnv.addGlobal('FormUtils', FormUtils)
   njkEnv.addGlobal('UserUtils', UserUtils)
