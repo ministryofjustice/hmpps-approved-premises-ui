@@ -1,6 +1,6 @@
 import { add } from 'date-fns'
+import { PlacementRequestSortField } from '@approved-premises/api'
 import {
-  bookingFactory,
   bookingSummaryFactory,
   personFactory,
   placementRequestFactory,
@@ -26,7 +26,6 @@ import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
-import { PlacementRequestSortField } from '../../@types/shared'
 import { linkTo } from '../utils'
 import adminPaths from '../../paths/admin'
 
@@ -108,7 +107,7 @@ describe('tableUtils', () => {
 
   describe('actualArrivalDateCell', () => {
     it('returns the arrival date from the booking if present', () => {
-      const booking = bookingFactory.build({ arrivalDate: '2022-01-01' })
+      const booking = bookingSummaryFactory.build({ arrivalDate: '2022-01-01' })
       const placementRequest = placementRequestFactory.build({ booking })
 
       expect(bookingArrivalDateCell(placementRequest)).toEqual({

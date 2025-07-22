@@ -6,19 +6,15 @@ import adjudicationFactory from './adjudication'
 import appealFactory from './appealFactory'
 import applicationFactory from './application'
 import cas1ApplicationSummaryFactory from './cas1ApplicationSummary'
-import arrivalFactory from './arrival'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
 import bookingSummaryFactory from './placementRequestBookingSummary'
-import bookingFactory from './booking'
 import bookingNotMadeFactory from './bookingNotMade'
 import cancellationFactory from './cancellation'
 import clarificationNoteFactory from './clarificationNote'
 import contingencyPlanPartnerFactory from './contingencyPlanPartner'
 import contingencyPlanQuestionsBodyFactory from './contingencyPlanQuestionsBody'
-import dateChangeFactory from './dateChange'
-import departureFactory from './departure'
 import documentFactory from './document'
 import newCancellationFactory from './newCancellation'
 import {
@@ -59,9 +55,7 @@ import taskWrapperFactory from './taskWrapperFactory'
 import userFactory, { userSummaryFactory, userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
-import bookingPremisesSummaryFactory from './bookingPremisesSummary'
 import withdrawableFactory from './withdrawableFactory'
-import cancellationReasonFactory from './cancellationReason'
 import newSpaceBookingFactory from './newSpaceBooking'
 import cas1PremisesSearchResultSummaryFactory from './cas1PremisesSearchResultSummary'
 import spaceSearchParametersFactory from './spaceSearchParameters'
@@ -109,13 +103,10 @@ export {
   applicationFactory,
   cas1ApplicationSummaryFactory,
   applicationTimelineFactory,
-  arrivalFactory,
   assessmentTaskFactory,
   assessmentFactory,
   assessmentSummaryFactory,
   bookingSummaryFactory,
-  bookingFactory,
-  bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
   cas1ApprovedPlacementAppealfactory,
@@ -150,8 +141,6 @@ export {
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
   cruManagementAreaFactory,
-  dateChangeFactory,
-  departureFactory,
   departureReasonFactory,
   documentFactory,
   newPlacementRequestBookingFactory,
@@ -194,7 +183,6 @@ export {
   userDetailsFactory,
   userWithWorkloadFactory,
   withdrawableFactory,
-  cancellationReasonFactory,
   newSpaceBookingFactory,
   cas1PremisesSearchResultSummaryFactory,
   spaceSearchParametersFactory,
