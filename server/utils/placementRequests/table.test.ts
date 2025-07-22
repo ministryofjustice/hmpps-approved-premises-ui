@@ -1,7 +1,7 @@
 import { add } from 'date-fns'
 import { PlacementRequestSortField } from '@approved-premises/api'
 import {
-  bookingSummaryFactory,
+  placementRequestBookingSummaryFactory,
   personFactory,
   placementRequestFactory,
   restrictedPersonFactory,
@@ -107,7 +107,7 @@ describe('tableUtils', () => {
 
   describe('actualArrivalDateCell', () => {
     it('returns the arrival date from the booking if present', () => {
-      const booking = bookingSummaryFactory.build({ arrivalDate: '2022-01-01' })
+      const booking = placementRequestBookingSummaryFactory.build({ arrivalDate: '2022-01-01' })
       const placementRequest = placementRequestFactory.build({ booking })
 
       expect(bookingArrivalDateCell(placementRequest)).toEqual({
@@ -204,7 +204,7 @@ describe('tableUtils', () => {
   describe('premisesNameCell', () => {
     it('returns the premises name', () => {
       const placementRequest = placementRequestFactory.build({
-        booking: bookingSummaryFactory.build({ premisesName: 'Premises Name' }),
+        booking: placementRequestBookingSummaryFactory.build({ premisesName: 'Premises Name' }),
       })
 
       expect(premisesNameCell(placementRequest)).toEqual({

@@ -10,12 +10,12 @@ import {
 
 import placementRequestFactory from './placementRequest'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
-import bookingSummaryFactory from './placementRequestBookingSummary'
+import placementRequestBookingSummaryFactory from './placementRequestBookingSummary'
 
 class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDetail> {
   withSpaceBooking(booking?: Cas1SpaceBookingSummary, changeRequest?: Cas1ChangeRequestSummary) {
     const spaceBooking = booking || cas1SpaceBookingSummaryFactory.build()
-    const bookingSummary = bookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
+    const bookingSummary = placementRequestBookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
     return this.params({
       booking: bookingSummary,
       legacyBooking: undefined,
@@ -27,7 +27,7 @@ class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDeta
 
 export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
   const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build()
-  const bookingSummary = bookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
+  const bookingSummary = placementRequestBookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
 
   const skipBooking = (['notMatched', 'unableToMatch'] as Array<PlacementRequestStatus>).includes(params.status)
 
