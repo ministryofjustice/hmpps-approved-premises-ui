@@ -20,6 +20,10 @@ export type Cas1Premises = {
      */
     fullAddress: string;
     id: string;
+    /**
+     * A list of restrictions that apply specifically to this approved premises.
+     */
+    localRestrictions?: Array<string>;
     managerDetails?: string;
     name: string;
     /**
