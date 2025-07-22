@@ -58,7 +58,7 @@ export const withdrawableTypeRadioOptions = (
 
   if (withdrawables.find(w => w.type === 'space_booking')) {
     radioItems.push({
-      text: 'Placement/Booking',
+      text: 'Placement',
       value: 'placement',
       checked: selectedItem === 'placement',
       hint: {
