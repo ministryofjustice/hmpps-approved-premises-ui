@@ -7,9 +7,9 @@ import {
   placementRequestFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
-describeClient('AssessmentClient', provider => {
+describeCas1NamespaceClient('AssessmentClient', provider => {
   let assessmentClient: AssessmentClient
 
   const token = 'token-1'

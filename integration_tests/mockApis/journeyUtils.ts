@@ -189,7 +189,7 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
         }
       : {
           method: 'GET',
-          url: `/assessments/${form.id}`,
+          url: `/cas1/assessments/${form.id}`,
         }
 
   const stubs = [

@@ -10,7 +10,7 @@ export default class TaskListPage extends TaskList {
   }
 
   static visit(assessment: ApprovedPremisesAssessment) {
-    cy.visit(`/assessments/${assessment.id}`)
+    cy.visit(`/cas1/assessments/${assessment.id}`)
     return new TaskListPage(assessment)
   }
 
