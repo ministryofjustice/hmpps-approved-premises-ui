@@ -12,6 +12,7 @@ import {
   timeAddLeadingZero,
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
+import { hasPermission } from '../../../../utils/users'
 
 export default class ArrivalsController {
   constructor(
@@ -67,7 +68,10 @@ export default class ArrivalsController {
             if (isToday(arrivalDateTime)) {
               errors.arrivalTime = 'The time of arrival must be in the past'
             } else errors.arrivalDateTime = 'The date of arrival must be today or in the past'
-          } else if (isPast(addDays(arrivalDateTime, 7))) {
+          } else if (
+            !hasPermission(req.session.user, ['cas1_space_booking_record_arrival_no_date_limit']) &&
+            isPast(addDays(arrivalDateTime, 7))
+          ) {
             errors.arrivalDateTime = 'The date of arrival cannot be more than 7 days ago'
           }
         }

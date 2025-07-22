@@ -4,7 +4,7 @@ import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { when } from 'jest-when'
 import { add, addDays, format } from 'date-fns'
 import ArrivalsController from './arrivalsController'
-import { cas1SpaceBookingFactory } from '../../../../testutils/factories'
+import { cas1SpaceBookingFactory, userFactory } from '../../../../testutils/factories'
 import { PremisesService } from '../../../../services'
 import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
@@ -30,7 +30,11 @@ describe('ArrivalsController', () => {
     jest.clearAllMocks()
 
     premisesService.getPlacement.mockResolvedValue(placement)
-    request = createMock<Request>({ user: { token }, params: { premisesId, placementId: placement.id } })
+    request = createMock<Request>({
+      user: { token },
+      params: { premisesId, placementId: placement.id },
+      session: { user: userFactory.build() },
+    })
 
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
@@ -94,9 +98,7 @@ describe('ArrivalsController', () => {
         arrivalTime: time,
       }
 
-      const requestHandler = arrivalsController.create()
-
-      await requestHandler(request, response, next)
+      await arrivalsController.create()(request, response, next)
 
       expect(placementService.createArrival).toHaveBeenCalledWith(token, premisesId, placement.id, {
         arrivalDate: date,
@@ -199,6 +201,18 @@ describe('ArrivalsController', () => {
         await checkDateErrors(body, {
           arrivalDateTime: 'The date of arrival cannot be more than 7 days ago',
         })
+      })
+
+      it('does not return an error for a date more than 7 days ago if the user has the correct permission', async () => {
+        request.body = {
+          ...DateFormats.dateObjectToDateInputs(addDays(new Date(), -8), 'arrivalDateTime'),
+          arrivalTime: '10:00',
+        }
+        request.session.user = userFactory.build({ permissions: ['cas1_space_booking_record_arrival_no_date_limit'] })
+
+        await arrivalsController.create()(request, response, next)
+
+        expect(validationUtils.catchValidationErrorOrPropogate).not.toHaveBeenCalled()
       })
     })
 
