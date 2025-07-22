@@ -228,13 +228,6 @@ export default {
         jsonBody: newPlacementRequestBookingConfirmationFactory.build(),
       },
     }),
-  verifyBookingFromPlacementRequest: async (placementRequest: PlacementRequest) =>
-    (
-      await getMatchingRequests({
-        method: 'POST',
-        url: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
-      })
-    ).body.requests,
   stubUnableToMatchPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
     stubFor({
       request: {
