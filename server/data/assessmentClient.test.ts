@@ -29,7 +29,7 @@ describeCas1NamespaceClient('AssessmentClient', provider => {
         uponReceiving: 'A request to get all assessments',
         withRequest: {
           method: 'GET',
-          path: paths.assessments.index.pattern,
+          path: paths.assessments.index({}),
           query: {
             statuses: 'awaiting_response,completed',
             page: '1',
@@ -38,7 +38,6 @@ describeCas1NamespaceClient('AssessmentClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
