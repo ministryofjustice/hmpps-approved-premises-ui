@@ -51,7 +51,7 @@ const cas1Users = cas1Namespace.path('users')
 const placementRequests = path('/placement-requests')
 const placementRequestsSingle = placementRequests.path(':placementRequestId')
 
-const cas1Assessments = cas1Namespace.path('/assessments')
+const cas1Assessments = cas1Namespace.path('assessments')
 const cas1AssessmentsSingle = cas1Assessments.path(':id')
 const cas1AssessmentsNotes = cas1AssessmentsSingle.path('notes')
 
