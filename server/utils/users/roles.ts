@@ -30,6 +30,7 @@ export const unusedRoles = [
   'workflow_manager',
   'cru_member_find_and_book_beta',
   'cru_member_enable_out_of_service_beds',
+  'ap_area_manager',
 ] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
