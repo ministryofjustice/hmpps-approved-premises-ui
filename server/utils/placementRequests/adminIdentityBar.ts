@@ -4,7 +4,6 @@ import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
-import adminPaths from '../../paths/admin'
 import { hasPermission } from '../users'
 import { overallStatus } from '../placements'
 
@@ -28,20 +27,7 @@ export const adminActions = (
   if (placementRequest.status === 'matched' && placementRequest.booking) {
     const matchedActions = []
 
-    if (placementRequest.booking.type === 'legacy') {
-      matchedActions.push({
-        href: managePaths.bookings.dateChanges.new({
-          premisesId: placementRequest.booking.premisesId,
-          bookingId: placementRequest.booking.id,
-        }),
-        text: 'Amend placement',
-      })
-    }
-
-    if (
-      placementRequest.booking.type === 'space' &&
-      ['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))
-    ) {
+    if (['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))) {
       matchedActions.push({
         href: managePaths.premises.placements.changes.new({
           premisesId: placementRequest.booking.premisesId,
@@ -76,12 +62,6 @@ export const adminActions = (
     actions.unshift({
       href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
       text: 'Search for a space',
-    })
-  }
-  if (hasPermission(user, ['cas1_booking_create'])) {
-    actions.unshift({
-      href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
-      text: 'Create placement',
     })
   }
 

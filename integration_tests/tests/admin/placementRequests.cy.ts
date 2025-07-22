@@ -6,7 +6,6 @@ import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 import {
   applicationFactory,
   cas1ApplicationSummaryFactory,
-  bookingFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
   cruManagementAreaFactory,
@@ -193,19 +192,15 @@ context('Placement Requests', () => {
       showPage.shouldShowParoleNotification()
     })
 
-    it('allows me to cancel a booking', () => {
+    it('allows me to cancel a placement', () => {
       const { matchedPlacementRequest, spaceBooking } = stubArtifacts()
       const cancellation = newCancellationFactory.build()
-      const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
+      const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'space_booking' })
       cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
       cy.task('stubCancellationCreate', {
         premisesId: matchedPlacementRequest.booking.premisesId,
-        bookingId: matchedPlacementRequest.booking.id,
+        placementId: matchedPlacementRequest.booking.id,
         cancellation,
-      })
-      cy.task('stubBookingGet', {
-        premisesId: matchedPlacementRequest.booking.premisesId,
-        booking: bookingFactory.build({ id: matchedPlacementRequest.booking.id }),
       })
       cy.task('stubCancellationReferenceData')
       const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
@@ -214,7 +209,7 @@ context('Placement Requests', () => {
         applicationId: matchedPlacementRequest.applicationId,
         withdrawables,
       })
-      cy.task('stubBookingFindWithoutPremises', spaceBooking)
+      cy.task('stubSpaceBookingGetWithoutPremises', spaceBooking)
 
       // When I visit the tasks dashboard
       const listPage = ListPage.visit()
@@ -251,15 +246,14 @@ context('Placement Requests', () => {
       confirmationPage.shouldShowPanel()
 
       // And a cancellation should have been created in the API
-      cy.task('verifyCancellationCreate', {
-        premisesId: matchedPlacementRequest.booking.premisesId,
-        bookingId: matchedPlacementRequest.booking.id,
-        cancellation,
-      }).then(requests => {
-        expect(requests).to.have.length(1)
-        const requestBody = JSON.parse(requests[0].body)
-
-        expect(requestBody.reason).equal(cancellation.reason)
+      cy.task(
+        'verifyApiPost',
+        paths.premises.placements.cancel({
+          premisesId: matchedPlacementRequest.booking.premisesId,
+          placementId: matchedPlacementRequest.booking.id,
+        }),
+      ).then(({ reasonId }) => {
+        expect(reasonId).equal(cancellation.reason)
       })
     })
 

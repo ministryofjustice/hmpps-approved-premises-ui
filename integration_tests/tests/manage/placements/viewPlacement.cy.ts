@@ -216,7 +216,7 @@ context('Placements', () => {
       // And there is an existing placement
       const { placement } = setup()
       // When I visit the placement page
-      // I should get an authorsation error
+      // I should get an authorisation error
       PlacementShowPage.visitUnauthorised(placement)
     })
   })

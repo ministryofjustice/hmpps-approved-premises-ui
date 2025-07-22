@@ -13,7 +13,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import { fullPersonFactory } from './person'
 import risksFactory from './risks'
 import userFactory from './user'
-import bookingSummary from './placementRequestBookingSummary'
+import placementRequestBookingSummaryFactory from './placementRequestBookingSummary'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 import { placementCriteriaLabels } from '../../utils/placementCriteriaUtils'
 import { allReleaseTypes } from '../../utils/applications/releaseTypeUtils'
@@ -64,7 +64,7 @@ export default PlacementRequestFactory.define(() => {
     assessmentDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessor: userFactory.build(),
     isParole: false,
-    booking: bookingSummary.build(),
+    booking: placementRequestBookingSummaryFactory.build(),
     isWithdrawn: false,
     withdrawalReason: faker.helpers.arrayElement([
       'DuplicatePlacementRequest',

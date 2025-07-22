@@ -3,8 +3,6 @@ import { resetStubs } from './integration_tests/mockApis/setup'
 import auth from './integration_tests/mockApis/auth'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import premises from './integration_tests/mockApis/premises'
-import booking from './integration_tests/mockApis/booking'
-import bookingExtension from './integration_tests/mockApis/bookingExtension'
 import cancellation from './integration_tests/mockApis/cancellation'
 import outOfServiceBed from './integration_tests/mockApis/outOfServiceBed'
 import person from './integration_tests/mockApis/person'
@@ -41,8 +39,6 @@ export default defineConfig({
         ...auth,
         ...tokenVerification,
         ...premises,
-        ...booking,
-        ...bookingExtension,
         ...cancellation,
         ...outOfServiceBed,
         ...person,

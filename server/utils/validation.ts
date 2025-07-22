@@ -5,7 +5,8 @@ import type { ErrorMessage, ErrorMessages, ErrorSummary, ErrorsAndUserInput } fr
 import { SanitisedError } from '../sanitisedError'
 import errorLookup from '../i18n/en/errors.json'
 import { TasklistAPIError, ValidationError } from './errors'
-import { generateConflictBespokeError } from './bookings'
+
+import { generateConflictBespokeError } from './outOfServiceBedUtils'
 
 interface InvalidParams {
   propertyName: string

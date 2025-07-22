@@ -10,7 +10,6 @@ import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
-import adminPaths from '../../paths/admin'
 import applyPaths from '../../paths/apply'
 import { fullPersonFactory } from '../../testutils/factories/person'
 
@@ -24,23 +23,10 @@ const setup = ({
   const userId = 'some-id'
   const user = userDetailsFactory.build({ roles: ['appeals_manager'], permissions: [...permissions], id: userId })
 
-  const actionCreatePlacement = {
-    href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
-    text: 'Create placement',
-  }
   const actionSearchForASpace = {
     href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
     text: 'Search for a space',
   }
-  const actionAmendLegacyBooking = placementRequestDetail.booking
-    ? {
-        href: managePaths.bookings.dateChanges.new({
-          premisesId: placementRequestDetail.booking.premisesId,
-          bookingId: placementRequestDetail.booking.id,
-        }),
-        text: 'Amend placement',
-      }
-    : undefined
 
   const actionChangePlacement = placementRequestDetail.booking
     ? {
@@ -63,9 +49,7 @@ const setup = ({
   const adminActionsResult = adminActions(placementRequestDetail, user)
   return {
     placementRequestDetail,
-    actionCreatePlacement,
     actionSearchForASpace,
-    actionAmendLegacyBooking,
     actionChangePlacement,
     actionWithdrawPlacement,
     actionWithdrawPlacementRequest,
@@ -87,44 +71,30 @@ describe('adminIdentityBar', () => {
     })
 
     describe('if the status of the placement request is `matched`', () => {
-      describe('if the placement request has a legacy booking', () => {
-        const placementRequestDetail = cas1PlacementRequestDetailFactory.withLegacyBooking().build()
+      it.each([
+        ['upcoming', cas1SpaceBookingSummaryFactory.upcoming().build()],
+        ['arrived', cas1SpaceBookingSummaryFactory.current().build()],
+      ])('should return an action to change the placement if it is %s', (_, spaceBooking) => {
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
 
-        it('should return an action to amend the booking', () => {
-          const { adminActionsResult, actionAmendLegacyBooking } = setup({
-            placementRequestDetail,
-            permissions: [],
-          })
-          expect(adminActionsResult).toEqual([actionAmendLegacyBooking])
+        const { adminActionsResult, actionChangePlacement } = setup({
+          placementRequestDetail,
+          permissions: [],
         })
+        expect(adminActionsResult).toEqual([actionChangePlacement])
       })
 
-      describe('if the placement request has a space booking', () => {
-        it.each([
-          ['upcoming', cas1SpaceBookingSummaryFactory.upcoming().build()],
-          ['arrived', cas1SpaceBookingSummaryFactory.current().build()],
-        ])('should return an action to change the placement if it is %s', (_, spaceBooking) => {
-          const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+      it.each([
+        ['not arrived', cas1SpaceBookingSummaryFactory.nonArrival().build()],
+        ['departed', cas1SpaceBookingSummaryFactory.departed().build()],
+      ])('should return no change placement action if the placement is %s', (_, spaceBooking) => {
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
 
-          const { adminActionsResult, actionChangePlacement } = setup({
-            placementRequestDetail,
-            permissions: [],
-          })
-          expect(adminActionsResult).toEqual([actionChangePlacement])
+        const { adminActionsResult, actionChangePlacement } = setup({
+          placementRequestDetail,
+          permissions: [],
         })
-
-        it.each([
-          ['not arrived', cas1SpaceBookingSummaryFactory.nonArrival().build()],
-          ['departed', cas1SpaceBookingSummaryFactory.departed().build()],
-        ])('should return no change placement action if the placement is %s', (_, spaceBooking) => {
-          const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
-
-          const { adminActionsResult, actionChangePlacement } = setup({
-            placementRequestDetail,
-            permissions: [],
-          })
-          expect(adminActionsResult).not.toContainAction(actionChangePlacement)
-        })
+        expect(adminActionsResult).not.toContainAction(actionChangePlacement)
       })
 
       it('should return an action to withdraw the placement if the user has the withdraw permission', () => {
@@ -160,15 +130,6 @@ describe('adminIdentityBar', () => {
         })
 
         expect(adminActionsResult).toContainAction(actionSearchForASpace)
-      })
-
-      it('does not return the "Search for a space" action when user does not have cas1 space booking create permission', () => {
-        const { adminActionsResult, actionSearchForASpace } = setup({
-          placementRequestDetail,
-          permissions: ['cas1_booking_create'],
-        })
-
-        expect(adminActionsResult).not.toContainAction(actionSearchForASpace)
       })
     })
   })

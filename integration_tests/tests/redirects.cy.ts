@@ -22,19 +22,8 @@ context('Redirects', () => {
       '/premises/:premisesId/beds/:bedId/lost-beds/new',
       '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/new',
     ],
-    [
-      '/premises/:premisesId/bookings/:bookingId/date-changes/new',
-      '/manage/premises/:premisesId/bookings/:bookingId/date-changes/new',
-    ],
-    [
-      '/premises/:premisesId/bookings/:bookingId/extensions/new',
-      '/manage/premises/:premisesId/bookings/:bookingId/extensions/new',
-    ],
-    [
-      '/premises/:premisesId/bookings/:bookingId/extensions/confirmation',
-      '/manage/premises/:premisesId/bookings/:bookingId/extensions/confirmation',
-    ],
-    ['/premises/:premisesId/bookings/:bookingId', '/manage/premises/:premisesId/bookings/:bookingId'],
+    ['/premises/:premisesId/bookings/:placementId', '/manage/premises/:premisesId/placements/:placementId'],
+    ['/manage/premises/:premisesId/bookings/:placementId', '/manage/premises/:premisesId/placements/:placementId'],
   ]
 
   redirects.forEach(([from, to]) => {

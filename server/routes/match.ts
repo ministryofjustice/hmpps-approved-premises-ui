@@ -24,14 +24,14 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.placementRequests.bookingNotMade.confirm.pattern, placementRequestBookingsController.bookingNotMade(), {
     auditEvent: 'NEW_BOOKING_NOT_MADE',
-    allowedPermissions: ['cas1_booking_create', 'cas1_space_booking_create'],
+    allowedPermissions: ['cas1_space_booking_create'],
   })
   post(
     paths.placementRequests.bookingNotMade.create.pattern,
     placementRequestBookingsController.createBookingNotMade(),
     {
       auditEvent: 'CREATE_BOOKING_NOT_MADE',
-      allowedPermissions: ['cas1_booking_create', 'cas1_space_booking_create'],
+      allowedPermissions: ['cas1_space_booking_create'],
     },
   )
 

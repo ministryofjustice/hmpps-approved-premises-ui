@@ -11,7 +11,7 @@ const withdrawPlacementRequestOrApplication = async (
   showPage: ShowPagePlacementApplications | ShowPageApply,
   applicationId: string,
 ) => {
-  const withdrawableName = withdrawable.type === 'booking' ? 'placement' : 'request'
+  const withdrawableName = withdrawable.type === 'space_booking' ? 'placement' : 'request'
 
   // Then I should see the withdrawable type selection page
   const selectWithdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')

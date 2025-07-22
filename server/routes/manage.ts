@@ -12,9 +12,6 @@ export default function routes(controllers: Controllers, router: Router, service
   const { get, post } = actions(router, services.auditService)
 
   const {
-    dateChangesController,
-    bookingsController,
-    bookingExtensionsController,
     premisesController,
     placementController,
     arrivalsController,
@@ -73,35 +70,14 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'UPDATE_LOST_BED_REDIRECT',
   })
 
-  get(paths.deprecated.bookings.show.pattern, redirectController.redirect(paths.bookings.show), {
+  // The following two URLs may still be present in old confirmation emails. Legacy bookings have been moved to space
+  // bookings with matching IDs, so these are now redirected accordingly.
+  get(paths.deprecated.bookings.show.pattern, redirectController.redirect(paths.premises.placements.show), {
     auditEvent: 'SHOW_BOOKING_REDIRECT',
   })
-
-  get(paths.deprecated.bookings.dateChanges.new.pattern, redirectController.redirect(paths.bookings.dateChanges.new), {
-    auditEvent: 'NEW_DATE_CHANGE_REDIRECT',
+  get(paths.bookings.show.pattern, redirectController.redirect(paths.premises.placements.show), {
+    auditEvent: 'SHOW_BOOKING_V2_REDIRECT',
   })
-  post(
-    paths.deprecated.bookings.dateChanges.create.pattern,
-    redirectController.redirect(paths.bookings.dateChanges.create),
-    {
-      auditEvent: 'CREATE_DATE_CHANGE_REDIRECT',
-    },
-  )
-
-  get(paths.deprecated.bookings.extensions.new.pattern, redirectController.redirect(paths.bookings.extensions.new), {
-    auditEvent: 'NEW_BOOKING_EXTENSION_REDIRECT',
-  })
-  post(
-    paths.deprecated.bookings.extensions.create.pattern,
-    redirectController.redirect(paths.bookings.extensions.create),
-    {
-      auditEvent: 'CREATE_BOOKING_EXTENSION_REDIRECT',
-    },
-  )
-  get(
-    paths.deprecated.bookings.extensions.confirm.pattern,
-    redirectController.redirect(paths.bookings.extensions.confirm),
-  )
   // End deprecated paths
 
   // Premises
@@ -332,65 +308,6 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.occupancy.day.pattern, apOccupancyViewController.dayView(), {
     auditEvent: 'VIEW_DAY_SUMMARY',
     allowedPermissions: ['cas1_premises_view'],
-  })
-
-  // Bookings
-  get(paths.bookings.show.pattern, bookingsController.show(), {
-    auditEvent: 'SHOW_BOOKING',
-  })
-
-  // Booking date changes
-  get(paths.bookings.dateChanges.new.pattern, dateChangesController.new(), {
-    auditEvent: 'NEW_DATE_CHANGE',
-    allowedPermissions: ['cas1_booking_change_dates'],
-  })
-  post(paths.bookings.dateChanges.create.pattern, dateChangesController.create(), {
-    auditEvent: 'DATE_CHANGE_SUCCESS',
-    allowedPermissions: ['cas1_booking_change_dates'],
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.dateChanges.new.pattern,
-        auditEvent: 'DATE_CHANGE_FAILURE',
-      },
-    ],
-  })
-
-  // Booking extensions
-  get(paths.bookings.extensions.new.pattern, bookingExtensionsController.new(), {
-    auditEvent: 'NEW_BOOKING_EXTENSION',
-    allowedPermissions: ['cas1_booking_change_dates'],
-  })
-  post(paths.bookings.extensions.create.pattern, bookingExtensionsController.create(), {
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.extensions.create.pattern,
-        auditEvent: 'CREATE_BOOKING_EXTENSION_FAILURE',
-      },
-      {
-        path: paths.bookings.extensions.confirm.pattern,
-        auditEvent: 'CREATE_BOOKING_EXTENSION_SUCCESS',
-      },
-    ],
-    allowedPermissions: ['cas1_booking_change_dates'],
-  })
-  get(paths.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm(), {
-    allowedPermissions: ['cas1_booking_change_dates'],
-  })
-
-  // Booking cancellations
-  get(paths.bookings.cancellations.new.pattern, cancellationsController.new(), {
-    auditEvent: 'NEW_CANCELLATION',
-    allowedPermissions: ['cas1_booking_withdraw'],
-  })
-  post(paths.bookings.cancellations.create.pattern, cancellationsController.create(), {
-    auditEvent: 'CREATE_CANCELLATION_SUCCESS',
-    redirectAuditEventSpecs: [
-      {
-        path: paths.bookings.cancellations.new.pattern,
-        auditEvent: 'CREATE_CANCELLATION_FAILURE',
-      },
-    ],
-    allowedPermissions: ['cas1_booking_withdraw'],
   })
 
   // Out of service beds

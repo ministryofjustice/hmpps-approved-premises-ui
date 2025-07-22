@@ -4,8 +4,6 @@ import {
   ApOccupancyViewController,
   ArrivalsController,
   BedsController,
-  BookingExtensionsController,
-  BookingsController,
   ChangesController,
   DeparturesController,
   KeyworkerController,
@@ -21,7 +19,6 @@ import {
 import manageRoutes from './manage'
 import { type Controllers } from '../controllers'
 import { type Services } from '../services'
-import DateChangeController from '../controllers/manage/dateChangesController'
 import actions from './utils'
 import paths from '../paths/manage'
 import CancellationsController from '../controllers/manage/cancellationsController'
@@ -32,10 +29,6 @@ jest.mock('./utils')
 
 describe('manage routes', () => {
   const router = Router()
-  const bookingExtensionsController: DeepMocked<BookingExtensionsController> = createMock<BookingExtensionsController>(
-    {},
-  )
-  const bookingsController: DeepMocked<BookingsController> = createMock<BookingsController>({})
   const premisesController: DeepMocked<PremisesController> = createMock<PremisesController>({})
   const arrivalsController: DeepMocked<ArrivalsController> = createMock<ArrivalsController>({})
   const nonArrivalsController: DeepMocked<NonArrivalsController> = createMock<NonArrivalsController>({})
@@ -47,7 +40,6 @@ describe('manage routes', () => {
     createMock<UpdateOutOfServiceBedsController>({})
   const outOfServiceBedCancellationController: DeepMocked<OutOfServiceBedCancellationController> =
     createMock<OutOfServiceBedCancellationController>({})
-  const dateChangesController: DeepMocked<DateChangeController> = createMock<DateChangeController>({})
 
   const cancellationsController: DeepMocked<CancellationsController> = createMock<CancellationsController>({})
   const redirectController: DeepMocked<RedirectController> = createMock<RedirectController>({})
@@ -59,13 +51,10 @@ describe('manage routes', () => {
   const plannedTransferController: DeepMocked<PlannedTransfersController> = createMock<PlannedTransfersController>()
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
-    bookingExtensionsController,
-    bookingsController,
     bedsController,
     outOfServiceBedsController,
     outOfServiceBedCancellationController,
     updateOutOfServiceBedsController,
-    dateChangesController,
     premisesController,
     arrivalsController,
     nonArrivalsController,

@@ -5,19 +5,12 @@ const v1PremisesPath = path('/premises')
 const v1SinglePremisesPath = v1PremisesPath.path(':premisesId')
 
 const v1BookingsPath = v1SinglePremisesPath.path('bookings')
-const v1BookingPath = v1BookingsPath.path(':bookingId')
 
 const v1PeoplePath = v1BookingsPath.path('people')
-
-const v1ExtensionsPath = v1BookingPath.path('extensions')
-
-const v1CancellationsPath = v1BookingPath.path('cancellations')
 
 const v1LostBedsPath = v1SinglePremisesPath.path('beds/:bedId/lost-beds')
 
 const v1BedsPath = v1SinglePremisesPath.path('beds')
-
-const v1DateChangesPath = v1BookingPath.path('date-changes')
 
 const deprecated = {
   premises: {
@@ -29,16 +22,10 @@ const deprecated = {
     },
   },
   bookings: {
-    show: v1BookingPath,
-    dateChanges: {
-      new: v1DateChangesPath.path('new'),
-      create: v1DateChangesPath,
-    },
-    extensions: {
-      new: v1ExtensionsPath.path('new'),
-      create: v1ExtensionsPath,
-      confirm: v1ExtensionsPath.path('confirmation'),
-    },
+    // This path may still present in old confirmation emails and therefore must be redirected. The original path
+    // used `:bookingId` as a parameter name, this has been changed to `:placementId` to allow for a straight redirect
+    // to the new Space Booking path.
+    show: v1BookingsPath.path(':placementId'),
   },
   lostBeds: {
     new: v1LostBedsPath.path('new'),
@@ -60,10 +47,7 @@ const placementChangesPath = singlePlacementPath.path('changes')
 const placementTransfersPath = singlePlacementPath.path('transfers')
 const placementAppealPath = singlePlacementPath.path('appeal')
 const bookingsPath = singlePremisesPath.path('bookings')
-const bookingPath = bookingsPath.path(':bookingId')
 const bedsPath = singlePremisesPath.path('beds')
-const dateChangesPath = bookingPath.path('date-changes')
-const extensionsPath = bookingPath.path('extensions')
 const outOfServiceBedsPath = singlePremisesPath.path('beds/:bedId/out-of-service-beds')
 const outOfServiceBedPath = outOfServiceBedsPath.path(':id')
 const outOfServiceBedsIndexPath = managePath.path('out-of-service-beds')
@@ -118,20 +102,8 @@ const paths = {
   },
 
   bookings: {
-    show: bookingsPath.path(':bookingId'),
-    dateChanges: {
-      new: dateChangesPath.path('new'),
-      create: dateChangesPath,
-    },
-    extensions: {
-      new: extensionsPath.path('new'),
-      create: extensionsPath,
-      confirm: extensionsPath.path('confirmation'),
-    },
-    cancellations: {
-      new: v1CancellationsPath.path('new'), // no v2 equivalent
-      create: v1CancellationsPath, // no v2 equivalent
-    },
+    // In effect deprecated: legacy bookings have been migrated to space bookings. A redirect is now in place.
+    show: bookingsPath.path(':placementId'),
   },
   people: {
     find: v1PeoplePath, // no v2 equivalent

@@ -1,9 +1,6 @@
 /* istanbul ignore file */
 
-import BookingsController from './bookingsController'
-import BookingExtensionsController from './bookingExtensionsController'
 import CancellationsController from './cancellationsController'
-import DateChangesController from './dateChangesController'
 
 import type { Services } from '../../services'
 import PremisesController from './premises/premisesController'
@@ -39,14 +36,7 @@ export const controllers = (services: Services) => {
   const outOfServiceBedCancellationController = new OutOfServiceBedCancellationController(
     services.outOfServiceBedService,
   )
-  const bookingsController = new BookingsController(services.bookingService)
-  const bookingExtensionsController = new BookingExtensionsController(services.bookingService)
-  const cancellationsController = new CancellationsController(
-    services.cancellationService,
-    services.bookingService,
-    services.placementService,
-  )
-  const dateChangesController = new DateChangesController(services.bookingService)
+  const cancellationsController = new CancellationsController(services.cancellationService, services.placementService)
   const placementController = new PlacementController(
     services.applicationService,
     services.assessmentService,
@@ -80,9 +70,6 @@ export const controllers = (services: Services) => {
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
     outOfServiceBedCancellationController,
-    bookingsController,
-    bookingExtensionsController,
-    dateChangesController,
     cancellationsController,
     placementController,
     keyworkerController,
@@ -105,8 +92,6 @@ export {
   OutOfServiceBedsController,
   UpdateOutOfServiceBedsController,
   OutOfServiceBedCancellationController,
-  BookingsController,
-  BookingExtensionsController,
   ApOccupancyViewController,
   ChangesController,
   TransfersController,

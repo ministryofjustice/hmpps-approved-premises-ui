@@ -2,8 +2,8 @@ import type { Booking, Cas1OutOfServiceBed, LostBed } from '@approved-premises/a
 import { EntityType } from '@approved-premises/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import Page from '../pages/page'
-import BookingShowPage from '../pages/manage/booking/show'
 import { OutOfServiceBedShowPage } from '../pages/manage/outOfServiceBeds/outOfServiceBedShow'
+import PlacementShowPage from '../pages/manage/placements/placementShow'
 
 export default class BedspaceConflictErrorComponent {
   constructor(
@@ -29,7 +29,7 @@ export default class BedspaceConflictErrorComponent {
     cy.get('.govuk-error-summary a').click()
 
     if (conflictingEntityType === 'booking') {
-      Page.verifyOnPage(BookingShowPage, [this.premisesId, conflictingEntity as Booking])
+      Page.verifyOnPage(PlacementShowPage, [this.premisesId, conflictingEntity as Booking])
     } else {
       Page.verifyOnPage(OutOfServiceBedShowPage, this.premisesId, conflictingEntity as Cas1OutOfServiceBed)
     }
