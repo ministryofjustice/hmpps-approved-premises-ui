@@ -70,10 +70,14 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'UPDATE_LOST_BED_REDIRECT',
   })
 
-  get(paths.deprecated.bookings.show.pattern, redirectController.redirect(paths.bookings.show), {
+  // The following two URLs may still be present in old confirmation emails. Legacy bookings have been moved to space
+  // bookings with matching IDs, so these are now redirected accordingly.
+  get(paths.deprecated.bookings.show.pattern, redirectController.redirect(paths.premises.placements.show), {
     auditEvent: 'SHOW_BOOKING_REDIRECT',
   })
-
+  get(paths.bookings.show.pattern, redirectController.redirect(paths.premises.placements.show), {
+    auditEvent: 'SHOW_BOOKING_V2_REDIRECT',
+  })
   // End deprecated paths
 
   // Premises

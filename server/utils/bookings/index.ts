@@ -1,14 +1,7 @@
-import type { EntityType, BespokeError, SelectOption, SummaryListItem } from '@approved-premises/ui'
-import type { Booking, BookingStatus } from '@approved-premises/api'
+import type { EntityType, BespokeError, SelectOption } from '@approved-premises/ui'
 import paths from '../../paths/manage'
-import applyPaths from '../../paths/apply'
-import assessPaths from '../../paths/assess'
-import { DateFormats } from '../dateUtils'
 import { SanitisedError } from '../../sanitisedError'
-import { linebreaksToParagraphs, linkTo } from '../utils'
-import { displayName } from '../personUtils'
 import { convertObjectsToRadioItems } from '../formUtils'
-import { StatusTag, StatusTagOptions } from '../statusTag'
 
 type ConflictingEntityType = EntityType
 
@@ -40,9 +33,9 @@ export const generateConflictBespokeError = (
           id: conflictingEntityId,
           tab: 'details',
         })}">existing out of service beds record</a>`
-      : `<a href="${paths.bookings.show({
+      : `<a href="${paths.premises.placements.show({
           premisesId,
-          bookingId: conflictingEntityId,
+          placementId: conflictingEntityId,
         })}">existing booking</a>`
   const message = datesGrammaticalNumber === 'plural' ? `They conflict with an ${link}` : `It conflicts with an ${link}`
 
@@ -58,186 +51,6 @@ const parseConflictError = (detail: string): ParsedConflictError => {
   const [message, conflictingEntityId] = detail.split(':').map((s: string) => s.trim())
   const conflictingEntityType = message.includes('out-of-service bed') ? 'lost-bed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
-}
-
-export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
-  return [
-    {
-      key: {
-        text: 'Name',
-      },
-      value: {
-        text: displayName(booking.person, { laoSuffix: true }),
-      },
-    },
-    {
-      key: {
-        text: 'CRN',
-      },
-      value: {
-        text: booking.person.crn,
-      },
-    },
-    {
-      key: {
-        text: 'Status',
-      },
-      value: {
-        html: new BookingStatusTag(booking.status).html(),
-      },
-    },
-  ]
-}
-
-export const bookingArrivalRows = (booking: Booking): Array<SummaryListItem> => {
-  const rows = []
-
-  if (booking.arrival) {
-    rows.push({
-      key: { text: 'Actual arrival date' },
-      value: { text: DateFormats.isoDateToUIDate(booking.arrival.arrivalDate) },
-    })
-
-    if (booking.arrival.notes) {
-      rows.push({
-        key: {
-          text: 'Notes',
-        },
-        value: {
-          html: linebreaksToParagraphs(booking.arrival.notes),
-        },
-      })
-    }
-  } else {
-    rows.push({
-      key: { text: 'Expected arrival date' },
-      value: { text: DateFormats.isoDateToUIDate(booking.arrivalDate) },
-    })
-  }
-
-  return rows
-}
-
-export const bookingDepartureRows = (booking: Booking): Array<SummaryListItem> => {
-  const rows = []
-
-  if (booking.departure) {
-    rows.push(
-      {
-        key: {
-          text: 'Actual departure date',
-        },
-        value: {
-          text: DateFormats.isoDateToUIDate(booking.departure.dateTime),
-        },
-      },
-      {
-        key: {
-          text: 'Reason',
-        },
-        value: {
-          text: booking.departure.reason.name,
-        },
-      },
-    )
-
-    if (booking.departure.notes) {
-      rows.push({
-        key: {
-          text: 'Notes',
-        },
-        value: {
-          html: linebreaksToParagraphs(booking.departure.notes),
-        },
-      })
-    }
-  } else {
-    rows.push({
-      key: { text: 'Expected departure date' },
-      value: { text: DateFormats.isoDateToUIDate(booking.departureDate) },
-    })
-  }
-
-  return rows
-}
-
-export const bookingShowDocumentRows = (booking: Booking): Array<SummaryListItem> => {
-  const rows = []
-
-  if (booking?.applicationId) {
-    rows.push({
-      key: {
-        text: 'Application',
-      },
-      value: {
-        html: linkTo(applyPaths.applications.show({ id: booking.applicationId }), {
-          text: 'View document',
-          hiddenText: 'View application',
-        }),
-      },
-    })
-  } else {
-    rows.push({
-      key: {
-        text: 'Application',
-      },
-      value: {
-        text: 'No application attached to booking',
-      },
-    })
-  }
-
-  if (booking?.assessmentId) {
-    rows.push({
-      key: {
-        text: 'Assessment',
-      },
-      value: {
-        html: linkTo(assessPaths.assessments.show({ id: booking.assessmentId }), {
-          text: 'View document',
-          hiddenText: 'View assessment',
-        }),
-      },
-    })
-  } else {
-    rows.push({
-      key: {
-        text: 'Assessment',
-      },
-      value: {
-        text: 'No assessment attached to booking',
-      },
-    })
-  }
-
-  return rows
-}
-
-export const cancellationRows = (booking: Booking): Array<SummaryListItem> => {
-  if (booking.cancellation) {
-    return [
-      {
-        key: {
-          text: 'Cancelled on',
-        },
-        value: {
-          text: DateFormats.isoDateToUIDate(booking.cancellation.createdAt),
-        },
-      },
-      {
-        key: {
-          text: 'Reason',
-        },
-        value: {
-          text:
-            booking.cancellation.reason.name === 'Other'
-              ? `${booking.cancellation.reason.name} - ${booking.cancellation.otherReason}`
-              : booking.cancellation.reason.name,
-        },
-      },
-    ]
-  }
-  return []
 }
 
 export const cancellationReasonsRadioItems = (
@@ -256,35 +69,4 @@ export const cancellationReasonsRadioItems = (
 
     return item
   })
-}
-
-export class BookingStatusTag extends StatusTag<BookingStatus> {
-  static readonly statuses: Record<BookingStatus, string> = {
-    arrived: 'Arrived',
-    'awaiting-arrival': 'Awaiting arrival',
-    'not-arrived': 'Not arrived',
-    departed: 'Departed',
-    cancelled: 'Cancelled',
-    provisional: 'Provisional',
-    confirmed: 'Confirmed',
-    closed: 'Closed',
-  }
-
-  static readonly colours: Record<BookingStatus, string> = {
-    arrived: '',
-    'awaiting-arrival': 'blue',
-    'not-arrived': 'red',
-    departed: 'pink',
-    cancelled: 'red',
-    provisional: 'yellow',
-    confirmed: 'blue',
-    closed: 'red',
-  }
-
-  constructor(status: BookingStatus, options?: StatusTagOptions) {
-    super(status, options, {
-      statuses: BookingStatusTag.statuses,
-      colours: BookingStatusTag.colours,
-    })
-  }
 }

@@ -5,7 +5,6 @@ const v1PremisesPath = path('/premises')
 const v1SinglePremisesPath = v1PremisesPath.path(':premisesId')
 
 const v1BookingsPath = v1SinglePremisesPath.path('bookings')
-const v1BookingPath = v1BookingsPath.path(':bookingId')
 
 const v1PeoplePath = v1BookingsPath.path('people')
 
@@ -23,7 +22,10 @@ const deprecated = {
     },
   },
   bookings: {
-    show: v1BookingPath,
+    // This path may still present in old confirmation emails and therefore must be redirected. The original path
+    // used `:bookingId` as a parameter name, this has been changed to `:placementId` to allow for a straight redirect
+    // to the new Space Booking path.
+    show: v1BookingsPath.path(':placementId'),
   },
   lostBeds: {
     new: v1LostBedsPath.path('new'),
@@ -100,7 +102,8 @@ const paths = {
   },
 
   bookings: {
-    show: bookingsPath.path(':bookingId'),
+    // In effect deprecated: legacy bookings have been migrated to space bookings. A redirect is now in place.
+    show: bookingsPath.path(':placementId'),
   },
   people: {
     find: v1PeoplePath, // no v2 equivalent
