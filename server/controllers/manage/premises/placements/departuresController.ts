@@ -1,6 +1,6 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewDeparture, Cas1SpaceBooking } from '@approved-premises/api'
-import { DepartureFormData, ErrorsAndUserInput, ObjectWithDateParts } from '@approved-premises/ui'
+import { DepartureFormData, ErrorsAndUserInput, ObjectWithDateParts, UserDetails } from '@approved-premises/ui'
 import { addDays, isBefore, isPast, isToday } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
@@ -22,6 +22,7 @@ import {
   PLANNED_MOVE_ON_REASON_ID,
 } from '../../../../utils/placements'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
+import { hasPermission } from '../../../../utils/users'
 
 const {
   premises: {
@@ -97,7 +98,11 @@ export default class DeparturesController {
     }
   }
 
-  private newErrors(body: DepartureFormData, placement: Cas1SpaceBooking): DepartureFormErrors | null {
+  private newErrors(
+    body: DepartureFormData,
+    placement: Cas1SpaceBooking,
+    user: UserDetails,
+  ): DepartureFormErrors | null {
     const errors: DepartureFormErrors = {}
 
     const { departureTime, departureDate, reasonId } = body
@@ -111,7 +116,10 @@ export default class DeparturesController {
     } else if (isBefore(departureDate, placement.actualArrivalDate)) {
       const actualArrivalDate = DateFormats.isoDateToUIDate(placement.actualArrivalDate, { format: 'short' })
       errors.departureDate = `The date of departure must be the same as or after ${actualArrivalDate}, when the person arrived`
-    } else if (isPast(addDays(departureDate, 7))) {
+    } else if (
+      !hasPermission(user, ['cas1_space_booking_record_departure_no_date_limit']) &&
+      isPast(addDays(departureDate, 7))
+    ) {
       errors.departureDate = 'The date of departure must not be more than 7 days ago'
     }
 
@@ -154,7 +162,7 @@ export default class DeparturesController {
           body as ObjectWithDateParts<'departureDate'>,
           'departureDate',
         ).departureDate
-        const errors = this.newErrors(body, placement)
+        const errors = this.newErrors(body, placement, req.session.user)
 
         if (errors) {
           throw new ValidationError(errors)
@@ -197,7 +205,7 @@ export default class DeparturesController {
 
       if (
         !departureFormSessionData ||
-        this.newErrors(departureFormSessionData, placement) ||
+        this.newErrors(departureFormSessionData, placement, req.session.user) ||
         departureFormSessionData.reasonId !== BREACH_OR_RECALL_REASON_ID
       ) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
@@ -255,7 +263,7 @@ export default class DeparturesController {
       } = await this.getFormPageData(req)
       if (
         !departureFormSessionData ||
-        this.newErrors(departureFormSessionData, placement) ||
+        this.newErrors(departureFormSessionData, placement, req.session.user) ||
         !isMoveOnReason.includes(departureFormSessionData.reasonId)
       ) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
@@ -315,7 +323,7 @@ export default class DeparturesController {
         errorsAndUserInput: { userInput, ...errorsData },
       } = await this.getFormPageData(req)
 
-      if (!departureFormSessionData || this.newErrors(departureFormSessionData, placement)) {
+      if (!departureFormSessionData || this.newErrors(departureFormSessionData, placement, req.session.user)) {
         return res.redirect(departurePaths.new({ premisesId, placementId }))
       }
 

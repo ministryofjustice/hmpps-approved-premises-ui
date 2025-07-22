@@ -10,6 +10,7 @@ import {
   cas1SpaceBookingFactory,
   departureReasonFactory,
   referenceDataFactory,
+  userFactory,
 } from '../../../../testutils/factories'
 import DeparturesController from './departuresController'
 import paths from '../../../../paths/manage'
@@ -88,6 +89,7 @@ describe('DeparturesController', () => {
       session: {
         save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
         multiPageFormData: { departures: { [placement.id]: departureFormData } },
+        user: userFactory.build({ permissions: [] }),
       },
     })
 
@@ -241,14 +243,13 @@ describe('DeparturesController', () => {
     })
 
     describe('Date too long ago', () => {
-      it('returns a date error if the date is more than 7 days ago', async () => {
-        const placementEarlyArrival = cas1SpaceBookingFactory.current().build({
-          actualArrivalDate: '2024-10-09',
-          actualArrivalTime: '11:30',
-        })
-        premisesService.getPlacement.mockResolvedValue(placementEarlyArrival)
+      const placementEarlyArrival = cas1SpaceBookingFactory.current().build({
+        actualArrivalDate: '2024-10-09',
+        actualArrivalTime: '11:30',
+      })
 
-        const requestHandler = departuresController.saveNew()
+      beforeEach(() => {
+        premisesService.getPlacement.mockResolvedValue(placementEarlyArrival)
 
         request.body = {
           'departureDate-day': '07',
@@ -257,8 +258,10 @@ describe('DeparturesController', () => {
           departureTime: '11:00',
           reasonId: rootDepartureReason1.id,
         }
+      })
 
-        await requestHandler(request, response, next)
+      it('returns a date error if the date is more than 7 days ago', async () => {
+        await departuresController.saveNew()(request, response, next)
 
         const expectedErrorData = {
           departureDate: 'The date of departure must not be more than 7 days ago',
@@ -267,6 +270,14 @@ describe('DeparturesController', () => {
         const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
         expect(errorData).toEqual(expectedErrorData)
+      })
+
+      it('does not return a date error if the user has the correct permission', async () => {
+        request.session.user = userFactory.build({ permissions: ['cas1_space_booking_record_departure_no_date_limit'] })
+
+        await departuresController.saveNew()(request, response, next)
+
+        expect(validationUtils.catchValidationErrorOrPropogate).not.toHaveBeenCalled()
       })
     })
 
