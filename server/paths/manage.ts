@@ -51,6 +51,7 @@ const bedsPath = singlePremisesPath.path('beds')
 const outOfServiceBedsPath = singlePremisesPath.path('beds/:bedId/out-of-service-beds')
 const outOfServiceBedPath = outOfServiceBedsPath.path(':id')
 const outOfServiceBedsIndexPath = managePath.path('out-of-service-beds')
+const localRestrictionsPath = singlePremisesPath.path('local-restrictions')
 
 const paths = {
   premises: {
@@ -98,6 +99,11 @@ const paths = {
     occupancy: {
       view: singlePremisesPath.path('occupancy'),
       day: singlePremisesPath.path('occupancy/day/:date'),
+    },
+    localRestrictions: {
+      index: localRestrictionsPath,
+      new: localRestrictionsPath.path('new'),
+      remove: localRestrictionsPath.path('remove/:id'),
     },
   },
 
