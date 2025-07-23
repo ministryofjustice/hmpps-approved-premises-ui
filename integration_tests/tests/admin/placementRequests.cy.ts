@@ -36,15 +36,12 @@ context('Placement Requests', () => {
     const matchedPlacementRequests = placementRequestFactory.buildList(3)
     const unableToMatchPlacementRequests = placementRequestFactory.unableToMatch().buildList(2)
 
-    const unmatchedPlacementRequest = cas1PlacementRequestDetailFactory.build({
-      ...unmatchedPlacementRequests[0],
-      spaceBookings: [],
-    })
+    const unmatchedPlacementRequest = cas1PlacementRequestDetailFactory.build(unmatchedPlacementRequests[0])
 
-    const parolePlacementRequest = cas1PlacementRequestDetailFactory.build({
-      ...unmatchedPlacementRequests[1],
-      spaceBookings: [],
-    })
+    const parolePlacementRequest = cas1PlacementRequestDetailFactory
+      .params(unmatchedPlacementRequests[1])
+      .withSpaceBooking()
+      .build()
 
     const matchedPlacementRequest = cas1PlacementRequestDetailFactory.build(matchedPlacementRequests[1])
     const spaceBooking = cas1SpaceBookingFactory.build({
