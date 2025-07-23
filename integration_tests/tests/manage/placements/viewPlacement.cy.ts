@@ -19,6 +19,9 @@ context('Placements', () => {
   describe('show', () => {
     beforeEach(() => {
       cy.task('reset')
+
+      // Given that I am signed in as an applicant
+      signIn('applicant')
     })
 
     const setup = (placementParameters = {}, mode: Mode = 'normal') => {
@@ -52,9 +55,7 @@ context('Placements', () => {
     }
 
     it('should show a placement', () => {
-      // Given that I am signed in as a future manager
-      signIn('future_manager')
-      // And there is an existing placement
+      // Given there is an existing placement
       const { placement } = setup()
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
@@ -67,9 +68,7 @@ context('Placements', () => {
     })
 
     it('should show placement details tabs', () => {
-      // Given that I am signed in as a future manager
-      signIn('future_manager')
-      // And there is an existing placement
+      // Given there is an existing placement
       const { placement, application, assessment, timeline, placementRequest } = setup()
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
@@ -109,9 +108,7 @@ context('Placements', () => {
     })
 
     it('should disable tabs if person is LAO', () => {
-      // Given that I am signed in as a future manager
-      signIn('future_manager')
-      // And there is an existing placement for a Limited Access person
+      // Given there is an existing placement for a Limited Access person
       const { placement } = setup({}, 'lao')
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
@@ -130,9 +127,7 @@ context('Placements', () => {
     })
 
     it('should disable tabs if offline application', () => {
-      // Given that I am signed in as a future manager
-      signIn('future_manager')
-      // And there is an existing placement for an offline application
+      // Given there is an existing placement for an offline application
       const { placement } = setup({}, 'offline')
       // When I visit the placement page
       const placementShowPage = PlacementShowPage.visit(placement)
@@ -162,9 +157,7 @@ context('Placements', () => {
     })
 
     it('should select a tab from the path', () => {
-      // Given that I am signed in as a future manager
-      signIn('future_manager')
-      // And there is an existing placement
+      // Given there is an existing placement
       const { placement, application } = setup()
       // When I visit the placement page with the timeline tab selected
       const placementShowPage = PlacementShowPage.visit(placement, 'application')
@@ -175,9 +168,7 @@ context('Placements', () => {
     })
 
     it('should show a placement with missing fields', () => {
-      // Given that I am signed in as a future manager
-      signIn('future_manager')
-      // And there is an existing placement with missing data
+      // Given there is an existing placement with missing data
       const { placement } = setup({
         actualArrivalDate: undefined,
         actualDepartureDate: undefined,
@@ -190,9 +181,7 @@ context('Placements', () => {
     })
 
     it('should show a list of linked placements', () => {
-      // Given that I am signed in as a future manager
-      signIn('future_manager')
-      // And there is an existing placement
+      // Given there is an existing placement
       const placementList = [
         { id: '1234', canonicalArrivalDate: '2024-06-10', canonicalDepartureDate: '2024-09-10' },
         { id: '1235', canonicalArrivalDate: '2026-01-02', canonicalDepartureDate: '2027-03-04' },
@@ -208,16 +197,6 @@ context('Placements', () => {
         'Placement 10 Jun 2024 to 10 Sep 2024',
         'Placement 2 Jan 2026 to 4 Mar 2027',
       ])
-    })
-
-    it('should require the correct permission to view a placement', () => {
-      // Given that I am signed in as an applicant
-      signIn('applicant')
-      // And there is an existing placement
-      const { placement } = setup()
-      // When I visit the placement page
-      // I should get an authorisation error
-      PlacementShowPage.visitUnauthorised(placement)
     })
   })
 })
