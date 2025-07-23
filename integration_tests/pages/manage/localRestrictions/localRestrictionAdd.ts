@@ -10,9 +10,11 @@ export class LocalRestrictionAddPage extends Page {
     this.shouldShowHeadingCaption(this.premises.name)
   }
 
-  completeForm(restrictionText: string): void {
-    this.clearInput('restriction')
-    this.completeTextInput('restriction', restrictionText)
+  completeForm(description: string): void {
+    this.clearInput('description')
+    if (description.length) {
+      this.completeTextInput('description', description)
+    }
     this.clickButton('Save')
   }
 }
