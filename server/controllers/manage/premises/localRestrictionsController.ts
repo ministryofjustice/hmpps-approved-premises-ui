@@ -18,4 +18,17 @@ export default class LocalRestrictionsController {
       })
     }
   }
+
+  new(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId } = req.params
+
+      const premises = await this.premisesService.find(req.user.token, premisesId)
+
+      return res.render('manage/premises/localRestrictions/new', {
+        backlink: paths.premises.localRestrictions.index({ premisesId: premises.id }),
+        premises,
+      })
+    }
+  }
 }

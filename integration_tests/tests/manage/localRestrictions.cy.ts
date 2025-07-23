@@ -3,9 +3,10 @@ import { cas1PremisesFactory, staffMemberFactory } from '../../../server/testuti
 import { PremisesShowPage } from '../../pages/manage'
 import Page from '../../pages/page'
 import { LocalRestrictionsPage } from '../../pages/manage/localRestrictions/localRestrictionsList'
+import { LocalRestrictionAddPage } from '../../pages/manage/localRestrictions/localRestrictionAdd'
 
 describe('Local restrictions', () => {
-  const premises = cas1PremisesFactory.build()
+  const premises = cas1PremisesFactory.build({ localRestrictions: [] })
   const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
   beforeEach(() => {
@@ -46,10 +47,10 @@ describe('Local restrictions', () => {
     restrictionsPage.shouldShowNoRestrictions()
 
     cy.log('When I click on Add a restriction')
-    // restrictionsPage.clickAction('Manage local restrictions')
+    restrictionsPage.clickLink('Add a restriction')
 
     cy.log('Then I should see the form to add a restriction')
-    // const addRestrictionsPage = Page.verifyOnPage(LocalRestrictionAddPage)
+    const addRestrictionsPage = Page.verifyOnPage(LocalRestrictionAddPage, premises)
 
     cy.log('When I submit the form empty')
     // addRestrictionsPage.completeForm('')

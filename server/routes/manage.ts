@@ -106,6 +106,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'LOCAL_RESTRICTIONS_VIEW',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
   })
+  get(paths.premises.localRestrictions.new.pattern, localRestrictionsController.new(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_NEW',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
+  })
 
   // Placements
   get(paths.premises.placements.showTabApplication.pattern, placementController.show('application'), {
