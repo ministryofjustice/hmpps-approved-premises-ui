@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import { signIn } from '../signIn'
 import { cas1PremisesFactory, staffMemberFactory } from '../../../server/testutils/factories'
 import { PremisesShowPage } from '../../pages/manage'
@@ -53,20 +54,20 @@ describe('Local restrictions', () => {
     const addRestrictionsPage = Page.verifyOnPage(LocalRestrictionAddPage, premises)
 
     cy.log('When I submit the form empty')
-    // addRestrictionsPage.completeForm('')
+    addRestrictionsPage.completeForm('')
 
     cy.log('Then I should see an error')
-    // addRestrictionsPage.shouldShowErrorMessagesForFields(['restriction'], {
-    //   restriction: 'Enter the restriction information',
-    // })
+    addRestrictionsPage.shouldShowErrorMessagesForFields(['description'], {
+      description: 'Enter details for the restriction',
+    })
 
     cy.log('When I submit a restriction that is more than 100 characters long')
-    // addRestrictionsPage.completeForm(faker.lorem.sentence(30))
+    addRestrictionsPage.completeForm(faker.word.words(20))
 
     cy.log('Then I should see an error')
-    // addRestrictionsPage.shouldShowErrorMessagesForFields(['restriction'], {
-    //   restriction: 'The restriction must be less than 100 characters long',
-    // })
+    addRestrictionsPage.shouldShowErrorMessagesForFields(['description'], {
+      description: 'The restriction must be less than 100 characters long',
+    })
 
     cy.log('When I submit a valid restriction')
     // const newRestriction = cas1PremisesNewLocalRestriction.build()

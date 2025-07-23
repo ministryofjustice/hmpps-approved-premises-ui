@@ -1,4 +1,8 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% extends "partials/layout.njk" %}
 
@@ -14,8 +18,37 @@
 
 {% block content %}
     {% include "_messages.njk" %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
 
-    <span class="govuk-caption-l">{{ premises.name }}</span>
-    <h1 class="govuk-heading-l">Add a local restriction</h1>
+            {{ showErrorSummary(errorSummary) }}
+
+            <span class="govuk-caption-l">{{ premises.name }}</span>
+            <h1 class="govuk-heading-l">Add a local restriction</h1>
+
+            <form method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukInput({
+                    label: {
+                        text: 'Enter the restriction information and relevant dates',
+                        classes: 'govuk-label--m'
+                    },
+                    hint: {
+                        text: 'Local restrictions are AP criteria that are not captured by the site survey. For example, ‘no hate based offences’'
+                    },
+                    name: "description",
+                    value: description,
+                    errorMessage: errors.description
+                }) }}
+
+                {{ govukButton({
+                    type: 'submit',
+                    text: 'Save',
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
