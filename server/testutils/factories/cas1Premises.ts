@@ -4,6 +4,8 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { Cas1Premises } from '@approved-premises/api'
 import { apAreaFactory } from './referenceData'
 import cas1OverbookingRangeFactory from './cas1OverbookingRange'
+import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestrictionSummary'
+import { characteristics } from './cas1PremisesSearchResultSummary'
 
 export default Factory.define<Cas1Premises>(() => ({
   id: faker.string.uuid(),
@@ -18,4 +20,6 @@ export default Factory.define<Cas1Premises>(() => ({
   supportsSpaceBookings: true,
   managerDetails: `${faker.person}`,
   overbookingSummary: cas1OverbookingRangeFactory.buildList(faker.number.int({ max: 3 })),
+  localRestrictions: cas1PremisesLocalRestrictionSummaryFactory.buildList(faker.number.int({ max: 3 })),
+  characteristics: faker.helpers.arrayElements(characteristics),
 }))
