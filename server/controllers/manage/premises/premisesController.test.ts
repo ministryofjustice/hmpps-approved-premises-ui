@@ -16,6 +16,7 @@ import {
   userDetailsFactory,
 } from '../../../testutils/factories'
 import {
+  premisesActions,
   premisesOverbookingSummary,
   premisesTableHead,
   premisesTableRows,
@@ -87,6 +88,7 @@ describe('V2PremisesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
         backlink: referrer,
         premises: premisesSummary,
+        menuActions: premisesActions(user, premisesSummary),
         summaryList: summaryListForPremises(premisesSummary),
         showPlacements: true,
         sortBy: 'canonicalArrivalDate',

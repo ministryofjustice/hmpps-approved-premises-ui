@@ -21,6 +21,7 @@ export default function routes(controllers: Controllers, router: Router, service
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
     outOfServiceBedCancellationController,
+    localRestrictionsController,
     cancellationsController,
     redirectController,
     keyworkerController,
@@ -98,6 +99,12 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.beds.show.pattern, bedsController.show(), {
     auditEvent: 'SHOW_BED',
     allowedPermissions: ['cas1_premises_view'],
+  })
+
+  // Local restrictions
+  get(paths.premises.localRestrictions.index.pattern, localRestrictionsController.index(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_VIEW',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
   })
 
   // Placements

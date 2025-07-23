@@ -10,6 +10,7 @@ import {
   summaryListForPremises,
   premisesTableRows,
   premisesTableHead,
+  premisesActions,
 } from '../../../utils/premises'
 
 type TabSettings = {
@@ -80,6 +81,7 @@ export default class PremisesController {
         backlink: this.sessionService.getPageBackLink(managePaths.premises.show.pattern, req, [
           managePaths.premises.index.pattern,
         ]),
+        menuActions: premisesActions(res.locals.user, premises),
         premises,
         summaryList: summaryListForPremises(premises),
         showPlacements,
