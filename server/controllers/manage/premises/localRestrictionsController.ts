@@ -14,6 +14,7 @@ export default class LocalRestrictionsController {
       return res.render('manage/premises/localRestrictions/index', {
         backlink: paths.premises.show({ premisesId: premises.id }),
         premises,
+        restrictions: premises.localRestrictions,
       })
     }
   }

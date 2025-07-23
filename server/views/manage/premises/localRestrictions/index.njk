@@ -1,4 +1,5 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% extends "partials/layout.njk" %}
 
@@ -17,5 +18,14 @@
 
     <span class="govuk-caption-l">{{ premises.name }}</span>
     <h1 class="govuk-heading-l">Local restrictions</h1>
+
+    {{ govukDetails({
+        summaryText: 'View criteria for this Approved Premises',
+        html: 'Premises criteria TBD'
+    }) }}
+
+    {% if not restrictions | length %}
+        <p>This AP has no local restrictions.</p>
+    {% endif %}
 
 {% endblock %}

@@ -37,8 +37,13 @@ describe('Local restrictions', () => {
     cy.log('Then I should see the local restrictions page')
     const restrictionsPage = Page.verifyOnPage(LocalRestrictionsPage, premises)
 
+    cy.log("And I should see a details component with the premises' criteria")
+    restrictionsPage.shouldExpandDetails('View criteria for this Approved Premises')
+    // TODO: add criteria to Cas1Premises
+    cy.contains('Premises criteria TBD').should('be.visible')
+
     cy.log('And I should see no local restrictions for the premises')
-    // restrictionsPage.shouldShowNoRestrictions()
+    restrictionsPage.shouldShowNoRestrictions()
 
     cy.log('When I click on Add a restriction')
     // restrictionsPage.clickAction('Manage local restrictions')
