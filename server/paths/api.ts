@@ -11,6 +11,7 @@ const cas1LostBedsSingle = cas1LostBeds.path(':id')
 const cas1LostBedsCancellations = cas1LostBedsSingle.path('cancellations')
 const cas1OutOfServiceBeds = cas1PremisesSingle.path('out-of-service-beds')
 const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
+const cas1LocalRestrictions = cas1PremisesSingle.path('local-restrictions')
 const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placementId')
 const cas1Capacity = cas1PremisesSingle.path('capacity')
 const cas1NationalCapacity = cas1Premises.path('capacity')
@@ -108,6 +109,10 @@ export default {
     },
     calendar: premisesSingle.path('calendar'),
     occupancyReport: cas1Premises.path('occupancy-report'),
+    localRestrictions: {
+      create: cas1LocalRestrictions,
+      delete: cas1LocalRestrictions.path(':localRestrictionId'),
+    },
   },
   bookings: {
     bookingWithoutPremisesPath: path('/bookings/:bookingId'),
