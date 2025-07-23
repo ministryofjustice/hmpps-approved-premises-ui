@@ -1,0 +1,21 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends "partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + premises.name %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backlink
+    }) }}
+{% endblock %}
+
+{% block content %}
+    {% include "_messages.njk" %}
+
+    <span class="govuk-caption-l">{{ premises.name }}</span>
+    <h1 class="govuk-heading-l">Add a local restriction</h1>
+
+{% endblock %}

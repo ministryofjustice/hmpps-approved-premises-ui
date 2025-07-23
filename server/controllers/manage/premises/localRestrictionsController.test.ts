@@ -28,27 +28,40 @@ describe('local restrictions controller', () => {
     premisesService.find.mockResolvedValue(premises)
   })
 
-  it("renders the list of the premises's local restrictions", async () => {
-    await localRestrictionsController.index()(request, response, next)
+  describe('index', () => {
+    it('renders the list of local restrictions for the premises', async () => {
+      await localRestrictionsController.index()(request, response, next)
 
-    expect(response.render).toHaveBeenCalledWith('manage/premises/localRestrictions/index', {
-      backlink: managePaths.premises.show({ premisesId: premises.id }),
-      premises,
-      restrictions: premises.localRestrictions,
+      expect(response.render).toHaveBeenCalledWith('manage/premises/localRestrictions/index', {
+        backlink: managePaths.premises.show({ premisesId: premises.id }),
+        premises,
+        restrictions: premises.localRestrictions,
+      })
+    })
+
+    it('renders a message if there are no restrictions', async () => {
+      const premisesNoRestrictions = cas1PremisesFactory.build({ localRestrictions: [] })
+      premisesService.find.mockResolvedValue(premisesNoRestrictions)
+
+      await localRestrictionsController.index()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/localRestrictions/index',
+        expect.objectContaining({
+          restrictions: [],
+        }),
+      )
     })
   })
 
-  it('renders a message if there are no restrictions', async () => {
-    const premisesNoRestrictions = cas1PremisesFactory.build({ localRestrictions: [] })
-    premisesService.find.mockResolvedValue(premisesNoRestrictions)
+  describe('new', () => {
+    it('renders the form to create a local restriction', async () => {
+      await localRestrictionsController.new()(request, response, next)
 
-    await localRestrictionsController.index()(request, response, next)
-
-    expect(response.render).toHaveBeenCalledWith(
-      'manage/premises/localRestrictions/index',
-      expect.objectContaining({
-        restrictions: [],
-      }),
-    )
+      expect(response.render).toHaveBeenCalledWith('manage/premises/localRestrictions/new', {
+        backlink: managePaths.premises.localRestrictions.index({ premisesId: premises.id }),
+        premises,
+      })
+    })
   })
 })
