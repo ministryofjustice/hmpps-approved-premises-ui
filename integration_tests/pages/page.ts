@@ -1,4 +1,4 @@
-import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell } from '@approved-premises/ui'
+import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
 import {
   Adjudication,
   ApprovedPremisesApplication as Application,
@@ -131,6 +131,10 @@ export default abstract class Page {
         expect(actual).to.contain(expected)
       }
     })
+  }
+
+  shouldShowHeadingCaption(text: string): void {
+    cy.get('.govuk-caption-l').should('contain.text', text)
   }
 
   shouldShowBanner(text: string, options: { exact: boolean } = { exact: true }): void {
@@ -500,7 +504,15 @@ export default abstract class Page {
     this.getTextInputByIdAndEnterDetails(id, text)
   }
 
-  shouldContainTableRows(rows: Array<Array<TableCell>>): void {
+  shouldContainTableColumns(columns: Array<string>): void {
+    cy.get('thead tr th').should('have.length', columns.length)
+
+    columns.forEach(column => {
+      cy.get('thead tr th').contains(column)
+    })
+  }
+
+  shouldContainTableRows(rows: Array<TableRow>): void {
     cy.get('tbody tr').should('have.length', rows.length)
 
     const textFromTableCell = (tableCell: TableCell): string => {
