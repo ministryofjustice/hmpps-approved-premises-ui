@@ -4,6 +4,7 @@ import { PremisesService } from '../../../services'
 import LocalRestrictionsController from './localRestrictionsController'
 import { cas1PremisesFactory } from '../../../testutils/factories'
 import managePaths from '../../../paths/manage'
+import cas1PremisesLocalRestrictionSummary from '../../../testutils/factories/cas1PremisesLocalRestrictionSummary'
 
 describe('local restrictions controller', () => {
   const token = 'TEST_TOKEN'
@@ -15,7 +16,9 @@ describe('local restrictions controller', () => {
   const premisesService = createMock<PremisesService>({})
   const localRestrictionsController = new LocalRestrictionsController(premisesService)
 
-  const premises = cas1PremisesFactory.build()
+  const premises = cas1PremisesFactory.build({
+    localRestrictions: cas1PremisesLocalRestrictionSummary.buildList(3),
+  })
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -31,6 +34,21 @@ describe('local restrictions controller', () => {
     expect(response.render).toHaveBeenCalledWith('manage/premises/localRestrictions/index', {
       backlink: managePaths.premises.show({ premisesId: premises.id }),
       premises,
+      restrictions: premises.localRestrictions,
     })
+  })
+
+  it('renders a message if there are no restrictions', async () => {
+    const premisesNoRestrictions = cas1PremisesFactory.build({ localRestrictions: [] })
+    premisesService.find.mockResolvedValue(premisesNoRestrictions)
+
+    await localRestrictionsController.index()(request, response, next)
+
+    expect(response.render).toHaveBeenCalledWith(
+      'manage/premises/localRestrictions/index',
+      expect.objectContaining({
+        restrictions: [],
+      }),
+    )
   })
 })
