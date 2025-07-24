@@ -5,6 +5,6 @@ import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Cas1PremisesLocalRestrictionSummary>(() => ({
   id: faker.string.uuid(),
-  createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+  createdAt: DateFormats.dateObjToIsoDate(faker.date.past()),
   description: faker.word.words({ count: { min: 1, max: 5 } }),
 }))

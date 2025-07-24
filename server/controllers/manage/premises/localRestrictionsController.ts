@@ -3,6 +3,7 @@ import { PremisesService } from '../../../services'
 import paths from '../../../paths/manage'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
+import { localRestrictionsTableRows } from '../../../utils/premises'
 
 export default class LocalRestrictionsController {
   constructor(private readonly premisesService: PremisesService) {}
@@ -19,7 +20,7 @@ export default class LocalRestrictionsController {
       return res.render('manage/premises/localRestrictions/index', {
         backlink: paths.premises.show({ premisesId }),
         premises,
-        restrictions: premises.localRestrictions,
+        restrictionsRows: localRestrictionsTableRows(premises),
       })
     }
   }
