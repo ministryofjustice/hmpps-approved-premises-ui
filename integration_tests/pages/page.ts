@@ -15,6 +15,7 @@ import {
   PrisonCaseNote,
   SortOrder,
 } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { summaryListSections } from '../../server/utils/applications/summaryListUtils'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -786,5 +787,31 @@ export default abstract class Page {
     cy.get('@details').invoke('attr', 'open').should('eq', undefined)
     cy.get('@details').get('.govuk-details__summary').click()
     cy.get('@details').invoke('attr', 'open').should('eq', 'open')
+  }
+
+  shouldShowCharacterCount(name: string, limit: number): void {
+    cy.get(`input[name="${name}"]`).as(`field-${name}`)
+    cy.get(`@field-${name}`).siblings('.govuk-character-count__status').as(`status-${name}`)
+
+    cy.get(`@status-${name}`).should('have.text', `You have ${limit} characters remaining`)
+
+    const value = faker.word.words(limit / 2).substring(0, limit - 1)
+
+    this.completeTextInput(name, value)
+
+    cy.get(`@field-${name}`).should('not.have.class', 'govuk-textarea--error')
+    cy.get(`@status-${name}`).should('have.text', 'You have 1 character remaining')
+
+    this.completeTextInput(name, 'a')
+
+    cy.get(`@field-${name}`).should('not.have.class', 'govuk-textarea--error')
+    cy.get(`@status-${name}`).should('have.text', 'You have 0 characters remaining')
+
+    this.completeTextInput(name, 'a')
+
+    cy.get(`@field-${name}`).should('have.class', 'govuk-textarea--error')
+    cy.get(`@status-${name}`).should('have.text', 'You have 1 character too many')
+
+    this.clearInput(name)
   }
 }

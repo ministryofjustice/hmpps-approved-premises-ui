@@ -59,6 +59,9 @@ describe('Local restrictions', () => {
     cy.log('Then I should see the form to add a restriction')
     const addRestrictionsPage = Page.verifyOnPage(LocalRestrictionAddPage, premises)
 
+    cy.log('And the field should have a character count')
+    addRestrictionsPage.shouldShowCharacterCount('description', 100)
+
     cy.log('When I submit the form empty')
     addRestrictionsPage.completeForm('')
 
