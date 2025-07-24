@@ -1,7 +1,7 @@
 import { Cas1PlacementRequestDetail, Cas1SpaceSearchResult, Cas1SpaceSearchResults } from '@approved-premises/api'
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import Page from '../page'
-import { addressRow, apTypeRow, distanceRow } from '../../../server/utils/match'
+import { addressRow, apTypeRow, distanceRow, restrictionsRow } from '../../../server/utils/match'
 import paths from '../../../server/paths/match'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
 import { characteristicsBulletList } from '../../../server/utils/characteristicsUtils'
@@ -44,7 +44,8 @@ export default class SearchPage extends Page {
             apTypeRow(result.premises.apType),
             addressRow(result),
             distanceRow(result, targetPostcodeDistrict),
-          ]
+            restrictionsRow(result),
+          ].filter(Boolean)
           this.shouldContainSummaryListItems(tableRows)
           const characteristicsHtml = characteristicsBulletList(result.premises.characteristics, {
             labels: spaceSearchResultsCharacteristicsLabels,
