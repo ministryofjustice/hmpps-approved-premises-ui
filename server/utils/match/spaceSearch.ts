@@ -24,7 +24,7 @@ import {
 import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from './spaceSearchLabels'
-import { addressRow, apTypeRow, characteristicsDetails, distanceRow } from '.'
+import { addressRow, apTypeRow, characteristicsDetails, distanceRow, restrictionsRow } from '.'
 
 export const initialiseSearchState = (placementRequest: Cas1PlacementRequestDetail): SpaceSearchFormData => {
   const allCriteria = [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria]
@@ -103,6 +103,7 @@ export const summaryCardRows = (
     !isWomensApplication && summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
     addressRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
+    restrictionsRow(spaceSearchResult),
   ].filter(Boolean)
 
 export const summaryCards = (

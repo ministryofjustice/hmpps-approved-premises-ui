@@ -1,4 +1,5 @@
 import { PlacementCriteria } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import {
   apTypeRadioItems,
   checkBoxesForCriteria,
@@ -10,12 +11,13 @@ import {
 } from './spaceSearch'
 import {
   cas1PlacementRequestDetailFactory,
+  cas1PremisesSearchResultSummaryFactory,
   spaceSearchResultFactory,
   spaceSearchStateFactory,
 } from '../../testutils/factories'
 import * as formUtils from '../formUtils'
 import { ApTypeCriteria, apTypeCriteriaLabels } from '../placementCriteriaUtils'
-import { addressRow, apTypeRow, distanceRow } from './index'
+import { addressRow, apTypeRow, distanceRow, restrictionsRow } from './index'
 import { summaryListItem } from '../formUtils'
 
 describe('Space search utils', () => {
@@ -66,7 +68,7 @@ describe('Space search utils', () => {
   })
 
   describe('filterRoomLevelCriteria', () => {
-    it('returns an array of AP-level criteria only', () => {
+    it('returns an array of room-level criteria only', () => {
       const criteria: Array<PlacementCriteria> = [
         'isGroundFloor',
         'isESAP',
@@ -201,7 +203,11 @@ describe('Space search utils', () => {
 
   describe('summaryCardsRow', () => {
     const postcodeArea = 'HR1 2AF'
-    const spaceSearchResult = spaceSearchResultFactory.build()
+    const spaceSearchResult = spaceSearchResultFactory.build({
+      premises: cas1PremisesSearchResultSummaryFactory.build({
+        localRestrictions: [faker.word.words(3), faker.word.words(3)],
+      }),
+    })
 
     it('calls the correct row functions', () => {
       expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
@@ -209,6 +215,7 @@ describe('Space search utils', () => {
         summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
+        restrictionsRow(spaceSearchResult),
       ])
     })
 
@@ -217,6 +224,7 @@ describe('Space search utils', () => {
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
+        restrictionsRow(spaceSearchResult),
       ])
     })
   })

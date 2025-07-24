@@ -1,4 +1,5 @@
 import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
+import { HtmlItem } from '@approved-premises/ui'
 import applyPaths from '../../paths/apply'
 import {
   cas1PremisesFactory,
@@ -21,6 +22,7 @@ import {
   preferredPostcodeRow,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
+  restrictionsRow,
   spaceBookingConfirmationSummaryListRows,
   startDateObjFromParams,
 } from '.'
@@ -179,6 +181,40 @@ describe('matchUtils', () => {
         key: { text: 'Distance' },
         value: { text: `1.2 miles from the desired location` },
       })
+    })
+  })
+
+  describe('restrictionsRow', () => {
+    it('returns a list with the correct restrictions', () => {
+      const searchResult = spaceSearchResultFactory.build({
+        premises: cas1PremisesSearchResultSummaryFactory.build({
+          localRestrictions: ['One', 'Two', 'Three'],
+        }),
+      })
+
+      const result = restrictionsRow(searchResult)
+
+      expect(result).toEqual({
+        key: { text: 'Restrictions' },
+        value: { html: expect.any(String) },
+      })
+      expect((result.value as HtmlItem).html).toMatchStringIgnoringWhitespace(`
+        <ul class="govuk-list govuk-list--bullet">
+          <li>One</li>
+          <li>Two</li>
+          <li>Three</li>
+        </ul>
+      `)
+    })
+
+    it('returns nothing if there are no restrictions', () => {
+      const searchResult = spaceSearchResultFactory.build({
+        premises: cas1PremisesSearchResultSummaryFactory.build({
+          localRestrictions: [],
+        }),
+      })
+
+      expect(restrictionsRow(searchResult)).toBeUndefined()
     })
   })
 
