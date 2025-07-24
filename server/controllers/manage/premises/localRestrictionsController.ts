@@ -76,4 +76,27 @@ export default class LocalRestrictionsController {
       }
     }
   }
+
+  remove(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const {
+        user: { token },
+        params: { premisesId, restrictionId },
+      } = req
+
+      try {
+        await this.premisesService.deleteLocalRestriction(token, premisesId, restrictionId)
+
+        req.flash('success', 'The restriction has been removed.')
+        return res.redirect(paths.premises.localRestrictions.index({ premisesId }))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          paths.premises.localRestrictions.index({ premisesId }),
+        )
+      }
+    }
+  }
 }

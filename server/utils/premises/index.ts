@@ -206,7 +206,7 @@ export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableR
       linkTo(
         managePaths.premises.localRestrictions.remove({
           premisesId: premises.id,
-          id: restriction.id,
+          restrictionId: restriction.id,
         }),
         { text: 'Remove', hiddenText: `restriction "${restriction.description}"` },
       ),

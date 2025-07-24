@@ -21,6 +21,7 @@ import {
   cas1PremisesBedSummaryFactory,
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
+  cas1PremisesLocalRestrictionSummaryFactory,
   cas1PremisesNewLocalRestrictionFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
@@ -346,6 +347,16 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.createLocalRestriction).toHaveBeenCalledWith(premisesId, newLocalRestriction)
+    })
+  })
+
+  describe('deleteLocalRestriction', () => {
+    it('calls the delete local restriction method on the client', async () => {
+      const localRestriction = cas1PremisesLocalRestrictionSummaryFactory.build()
+      await service.deleteLocalRestriction(token, premisesId, localRestriction.id)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.deleteLocalRestriction).toHaveBeenCalledWith(premisesId, localRestriction.id)
     })
   })
 })

@@ -125,4 +125,9 @@ export default class PremisesService {
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.createLocalRestriction(premisesId, newLocalRestriction)
   }
+
+  async deleteLocalRestriction(token: string, premisesId: string, restrictionId: string): Promise<unknown> {
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.deleteLocalRestriction(premisesId, restrictionId)
+  }
 }

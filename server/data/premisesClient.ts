@@ -136,4 +136,8 @@ export default class PremisesClient {
       data: newLocalRestriction,
     })
   }
+
+  async deleteLocalRestriction(premisesId: string, restrictionId: string): Promise<unknown> {
+    return this.restClient.delete(paths.premises.localRestrictions.delete({ premisesId, restrictionId }))
+  }
 }

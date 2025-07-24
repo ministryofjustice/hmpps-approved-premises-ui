@@ -100,22 +100,23 @@ describe('Local restrictions', () => {
     restrictionsPage.shouldShowRestrictions(premisesWithRestriction)
 
     cy.log('When I click on Remove next to a restriction')
-    // cy.task('stubSinglePremises', premises)
-    // restrictionsPage.clickLink(/^Remove/)
+    cy.task('stubPremisesLocalRestrictionDelete', { premisesId: premises.id, restrictionId: restriction.id })
+    cy.task('stubSinglePremises', premises)
+    restrictionsPage.clickLink(/^Remove/)
 
     cy.log('Then the restriction should have been removed')
-    // cy.task(
-    //   'verifyApiDelete',
-    //   apiPaths.premises.localRestrictions.delete({
-    //     premisesId: premises.id,
-    //     localRestrictionId: restriction.id,
-    //   }),
-    // )
+    cy.task(
+      'verifyApiDelete',
+      apiPaths.premises.localRestrictions.delete({
+        premisesId: premises.id,
+        restrictionId: restriction.id,
+      }),
+    )
 
     cy.log('Then I should see a confirmation the restriction has been removed')
-    // restrictionsPage.shouldShowBanner('The restriction has been removed.')
+    restrictionsPage.shouldShowBanner('The restriction has been removed.')
 
     cy.log('And I should see no local restrictions for the premises')
-    // restrictionsPage.shouldShowNoRestrictions()
+    restrictionsPage.shouldShowNoRestrictions()
   })
 })

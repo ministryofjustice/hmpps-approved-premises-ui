@@ -103,7 +103,7 @@ const paths = {
     localRestrictions: {
       index: localRestrictionsPath,
       new: localRestrictionsPath.path('new'),
-      remove: localRestrictionsPath.path('remove/:id'),
+      remove: localRestrictionsPath.path('remove/:restrictionId'),
     },
   },
 

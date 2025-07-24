@@ -1,11 +1,10 @@
-import { Cas1Premises, Cas1PremisesLocalRestrictionSummary } from '@approved-premises/api'
+import { Cas1Premises } from '@approved-premises/api'
 import Page from '../../page'
-import { DateFormats } from '../../../../server/utils/dateUtils'
 import managePaths from '../../../../server/paths/manage'
 import { localRestrictionsTableRows } from '../../../../server/utils/premises'
 
 export class LocalRestrictionsPage extends Page {
-  constructor(private readonly premises: Cas1Premises) {
+  constructor(readonly premises: Cas1Premises) {
     super('Local restrictions')
 
     this.shouldHaveBackLink(managePaths.premises.show({ premisesId: premises.id }))
