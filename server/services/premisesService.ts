@@ -6,6 +6,7 @@ import type {
   Cas1PremisesBasicSummary,
   Cas1PremisesBedSummary,
   Cas1PremisesDaySummary,
+  Cas1PremisesNewLocalRestriction,
   Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummarySortField,
   Cas1SpaceBookingSummarySortField,
@@ -114,5 +115,14 @@ export default class PremisesService {
   async getOccupancyReport(token: string, response: Response) {
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getOccupancyReport(response)
+  }
+
+  async createLocalRestriction(
+    token: string,
+    premisesId: string,
+    newLocalRestriction: Cas1PremisesNewLocalRestriction,
+  ): Promise<unknown> {
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.createLocalRestriction(premisesId, newLocalRestriction)
   }
 }

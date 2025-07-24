@@ -4,7 +4,7 @@ import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker'
 import { PremisesService } from '../../../services'
 import LocalRestrictionsController from './localRestrictionsController'
-import { cas1PremisesFactory } from '../../../testutils/factories'
+import { cas1PremisesFactory, cas1PremisesNewLocalRestrictionFactory } from '../../../testutils/factories'
 import managePaths from '../../../paths/manage'
 import cas1PremisesLocalRestrictionSummary from '../../../testutils/factories/cas1PremisesLocalRestrictionSummary'
 import * as validationUtils from '../../../utils/validation'
@@ -88,12 +88,14 @@ describe('local restrictions controller', () => {
   })
 
   describe('create', () => {
+    beforeEach(() => {
+      jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
+    })
+
     it.each([
       ['empty', '', 'Enter details for the restriction'],
       ['over 100 characters', faker.word.words(30), 'The restriction must be less than 100 characters long'],
     ])('returns an error if the description is %s', async (_, description, errorMessage) => {
-      jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
-
       request.body.description = description
 
       await localRestrictionsController.create()(request, response, next)
@@ -112,6 +114,20 @@ describe('local restrictions controller', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual(expectedErrorData)
+    })
+
+    it('creates the restriction', async () => {
+      const newLocalRestriction = cas1PremisesNewLocalRestrictionFactory.build()
+      request.body.description = newLocalRestriction.description
+
+      await localRestrictionsController.create()(request, response, next)
+
+      expect(premisesService.createLocalRestriction).toHaveBeenCalledWith(token, premises.id, newLocalRestriction)
+      expect(validationUtils.catchValidationErrorOrPropogate).not.toHaveBeenCalled()
+      expect(request.flash).toHaveBeenCalledWith('success', 'The restriction has been added.')
+      expect(response.redirect).toHaveBeenCalledWith(
+        managePaths.premises.localRestrictions.index({ premisesId: premises.id }),
+      )
     })
   })
 })
