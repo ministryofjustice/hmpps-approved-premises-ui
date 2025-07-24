@@ -109,7 +109,7 @@ export default {
     occupancyReport: cas1Premises.path('occupancy-report'),
     localRestrictions: {
       create: cas1LocalRestrictions,
-      delete: cas1LocalRestrictions.path(':localRestrictionId'),
+      delete: cas1LocalRestrictions.path(':restrictionId'),
     },
   },
   bookings: {

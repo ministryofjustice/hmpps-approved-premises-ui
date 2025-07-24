@@ -162,8 +162,9 @@ export const verifyApiRequest = async (
     method,
     url,
   })
+
   const { requests } = result.body
-  return JSON.parse(requests[0].body)
+  return requests[0].body ? JSON.parse(requests[0].body) : {}
 }
 
 export const verifyApiPost = (url: string) => verifyApiRequest(url, 'POST')

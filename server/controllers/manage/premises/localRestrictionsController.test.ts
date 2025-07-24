@@ -117,6 +117,22 @@ describe('local restrictions controller', () => {
       expect(errorData).toEqual(expectedErrorData)
     })
 
+    it('should handle API errors', async () => {
+      request.body.description = 'Valid restriction description'
+
+      const err = new Error('Error creating local restriction')
+      premisesService.createLocalRestriction.mockRejectedValue(err)
+
+      await localRestrictionsController.create()(request, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        err,
+        managePaths.premises.localRestrictions.new({ premisesId: premises.id }),
+      )
+    })
+
     it('creates the restriction', async () => {
       const newLocalRestriction = cas1PremisesNewLocalRestrictionFactory.build()
       request.body.description = newLocalRestriction.description
@@ -126,6 +142,37 @@ describe('local restrictions controller', () => {
       expect(premisesService.createLocalRestriction).toHaveBeenCalledWith(token, premises.id, newLocalRestriction)
       expect(validationUtils.catchValidationErrorOrPropogate).not.toHaveBeenCalled()
       expect(request.flash).toHaveBeenCalledWith('success', 'The restriction has been added.')
+      expect(response.redirect).toHaveBeenCalledWith(
+        managePaths.premises.localRestrictions.index({ premisesId: premises.id }),
+      )
+    })
+  })
+
+  describe('remove', () => {
+    beforeEach(() => {
+      request.params.restrictionId = 'some-id'
+    })
+
+    it('should handle API errors', async () => {
+      const err = new Error('Error deleting local restriction')
+
+      premisesService.deleteLocalRestriction.mockRejectedValue(err)
+
+      await localRestrictionsController.remove()(request, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        err,
+        managePaths.premises.localRestrictions.index({ premisesId: premises.id }),
+      )
+    })
+
+    it('should delete the restriction and redirect with a success message', async () => {
+      await localRestrictionsController.remove()(request, response, next)
+
+      expect(premisesService.deleteLocalRestriction).toHaveBeenCalledWith(token, premises.id, 'some-id')
+      expect(request.flash).toHaveBeenCalledWith('success', 'The restriction has been removed.')
       expect(response.redirect).toHaveBeenCalledWith(
         managePaths.premises.localRestrictions.index({ premisesId: premises.id }),
       )
