@@ -10,6 +10,8 @@ import cas1PremisesLocalRestrictionSummary from '../../../testutils/factories/ca
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import { localRestrictionsTableRows } from '../../../utils/premises'
+import { characteristicsBulletList } from '../../../utils/characteristicsUtils'
+import { spaceSearchResultsCharacteristicsLabels } from '../../../utils/match/spaceSearchLabels'
 
 describe('local restrictions controller', () => {
   const token = 'TEST_TOKEN'
@@ -41,6 +43,9 @@ describe('local restrictions controller', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/localRestrictions/index', {
         backlink: managePaths.premises.show({ premisesId: premises.id }),
         premises,
+        characteristics: characteristicsBulletList(premises.characteristics, {
+          labels: spaceSearchResultsCharacteristicsLabels,
+        }),
         restrictionsRows: localRestrictionsTableRows(premises),
       })
     })
