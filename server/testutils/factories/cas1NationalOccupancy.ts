@@ -13,12 +13,15 @@ import { roomCharacteristicMap, spaceSearchCriteriaApLevelLabels } from '../../u
 import cas1PremisesSearchResultSummaryFactory from './cas1PremisesSearchResultSummary'
 import postcodeAreas from '../../etc/postcodeAreas.json'
 
-export const cas1PremisesCapacitySummaryFactory = Factory.define<Cas1PremiseCapacitySummary>(() => ({
-  date: DateFormats.dateObjToIsoDate(faker.date.soon()),
-  forRoomCharacteristic: faker.helpers.arrayElement(Object.keys(roomCharacteristicMap)) as Cas1SpaceCharacteristic,
-  inServiceBedCount: faker.number.int({ min: 0, max: 20 }),
-  vacantBedCount: faker.number.int({ min: -5, max: 20 }),
-}))
+export const cas1PremisesCapacitySummaryFactory = Factory.define<Cas1PremiseCapacitySummary>(() => {
+  const inServiceBedCount = faker.number.int({ min: 0, max: 20 })
+  return {
+    date: DateFormats.dateObjToIsoDate(faker.date.soon()),
+    forRoomCharacteristic: faker.helpers.arrayElement(Object.keys(roomCharacteristicMap)) as Cas1SpaceCharacteristic,
+    inServiceBedCount,
+    vacantBedCount: faker.number.int({ min: -5, max: inServiceBedCount }),
+  }
+})
 
 export const cas1NationalOccupancyPremisesFactory = Factory.define<Cas1NationalOccupancyPremises>(() => {
   const capacity = Object.keys(roomCharacteristicMap).map((characteristic: Cas1SpaceCharacteristic) =>

@@ -1,19 +1,19 @@
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
+import { Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import { cas1NationalOccupancyFactory, cruManagementAreaFactory } from '../../testutils/factories'
 import {
   CRU_AREA_WOMENS,
   expandManagementArea,
   getApTypeOptions,
+  getCriteriaBlock,
   getDateHeader,
   getManagementAreaSelectGroups,
   getPagination,
   processCapacity,
 } from './nationalOccupancyUtils'
 import { apTypeLongLabels, apTypeShortLabels } from '../apTypeLabels'
-import { apTypes } from '../placementCriteriaUtils'
 import { DateFormats } from '../dateUtils'
-import { roundNumber } from '../utils'
 
 describe('nationalOccupancyUtils', () => {
   const mensAreas = cruManagementAreaFactory.buildList(6)
@@ -97,13 +97,13 @@ describe('nationalOccupancyUtils', () => {
       const postcode = 'RG15'
       const apiCapacity = cas1NationalOccupancyFactory.build()
 
-      const processed = processCapacity(apiCapacity, postcode, 'normal')
+      const processed = processCapacity(apiCapacity, postcode)
       expect(processed).toHaveLength(apiCapacity.premises.length)
       processed.forEach(({ summaryRows, apCapacity }, index) => {
         const ap = apiCapacity.premises[index]
         expect(summaryRows[0]).toMatch(ap.summary.name)
         expect(summaryRows[1]).toEqual(apTypeShortLabels[ap.summary.apType])
-        expect(summaryRows[2]).toEqual(`${roundNumber(ap.distanceInMiles,1)} miles from ${postcode}`)
+        expect(summaryRows[2]).toEqual(`${ap.distanceInMiles.toFixed(1)} miles from ${postcode}`)
         apCapacity.forEach(({ capacity, classes, link }, characteristicIndex) => {
           const { forRoomCharacteristic, inServiceBedCount, vacantBedCount } = ap.capacity[characteristicIndex]
           expect(classes).toEqual(vacantBedCount > 0 ? 'govuk-tag--green' : 'govuk-tag--red')
@@ -113,20 +113,6 @@ describe('nationalOccupancyUtils', () => {
           expect(link).toEqual('#')
         })
       })
-    })
-
-    it('should filter out APs of the wrong type', () => {
-      const filterApType = faker.helpers.arrayElement(apTypes.filter(apType => apType !== 'normal'))
-      const apiCapacity = cas1NationalOccupancyFactory.build()
-      apiCapacity.premises[1].summary.apType = filterApType
-
-      const filtered = processCapacity(apiCapacity, 'RG15', filterApType)
-      expect(filtered).toHaveLength(
-        apiCapacity.premises.filter(({ summary }) => summary.apType === filterApType).length,
-      )
-
-      const unFiltered = processCapacity(apiCapacity, 'RG15', 'normal')
-      expect(unFiltered).toHaveLength(apiCapacity.premises.length)
     })
   })
 
@@ -160,6 +146,21 @@ describe('nationalOccupancyUtils', () => {
       expect(dateHeader).toHaveLength(7)
       expect(dateHeader[0]).toEqual(DateFormats.dateObjtoUIDate(startDate, { format: 'longNoYear' }))
       expect(dateHeader[6]).toEqual(DateFormats.dateObjtoUIDate(addDays(startDate, 6), { format: 'longNoYear' }))
+    })
+  })
+
+  describe('getCriteriaBlock', () => {
+    const roomCriteria: Array<Cas1SpaceBookingCharacteristic> = ['isArsonSuitable', 'isStepFreeDesignated']
+    const apCriteria: Array<Cas1SpaceCharacteristic> = ['acceptsChildSexOffenders', 'isCatered']
+    it('should render the criteria block', () => {
+      expect(getCriteriaBlock(apCriteria, roomCriteria)).toEqual(
+        `<dl class="details-list"><dt>AP criteria:</dt><dd>Sexual offences against children,</dd><dd>Catered</dd><dt>Room criteria:</dt><dd>Suitable for active arson risk,</dd><dd>Step-free</dd></dl>`,
+      )
+    })
+    it('should handle empty and undefined lists', () => {
+      expect(getCriteriaBlock([], undefined)).toEqual(
+        `<dl class="details-list"><dt>AP criteria:</dt><dd>None</dd><dt>Room criteria:</dt><dd>None</dd></dl>`,
+      )
     })
   })
 })

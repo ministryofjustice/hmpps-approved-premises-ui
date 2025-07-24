@@ -111,7 +111,7 @@ export default class NationalViewPage extends Page {
       cy.contains(summary.name)
         .closest('tr')
         .within(() => {
-          cy.contains(`${distanceInMiles} miles from ${postcode}`)
+          cy.contains(`${distanceInMiles.toFixed(1)} miles from ${postcode}`)
           capacity.forEach(({ vacantBedCount, inServiceBedCount, forRoomCharacteristic }, index) => {
             const expected = forRoomCharacteristic ? `${vacantBedCount}` : `${vacantBedCount}/${inServiceBedCount}`
             cy.get('td').eq(index).invoke('text').should('contain', expected)

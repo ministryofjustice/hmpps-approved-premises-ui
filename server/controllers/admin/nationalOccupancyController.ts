@@ -1,6 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { Cas1NationalOccupancy, Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic } from '@approved-premises/api'
-import { NationalSpaceSearchFormData } from '@approved-premises/ui'
+import { Cas1NationalOccupancy, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import { CruManagementAreaService, PremisesService } from '../../services'
 import { DateFormats, isoDateIsValid } from '../../utils/dateUtils'
 import {
@@ -16,11 +15,21 @@ import { convertKeyValuePairToCheckBoxItems, validPostcodeArea } from '../../uti
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
 import { makeArrayOfType } from '../../utils/utils'
-import { catchAPIErrorOrPropogate, generateErrorMessages, generateErrorSummary } from '../../utils/validation'
+import { generateErrorMessages, generateErrorSummary } from '../../utils/validation'
 import paths from '../../paths/admin'
 import MultiPageFormManager from '../../utils/multiPageFormManager'
+import { apTypeToSpaceCharacteristicMap } from '../../utils/apTypeLabels'
 
 export const defaultSessionKey = 'default'
+
+interface IndexRequest extends Request {
+  query: {
+    fromDate: string
+    arrivalDate: string
+    apCriteria: Array<Cas1SpaceCharacteristic>
+    roomCriteria: Array<Cas1SpaceCharacteristic>
+  }
+}
 
 export default class NationalOccupancyController {
   formData: MultiPageFormManager<'nationalSpaceSearch'>
@@ -33,7 +42,7 @@ export default class NationalOccupancyController {
   }
 
   index(): TypedRequestHandler<Request, Response> {
-    return async (req: Request, res: Response) => {
+    return async (req: IndexRequest, res: Response) => {
       const {
         locals: {
           user: { cruManagementArea },
@@ -44,7 +53,7 @@ export default class NationalOccupancyController {
         query,
       } = req
 
-      let { fromDate } = query as { fromDate: string }
+      let { fromDate } = query
 
       const sessionData = this.formData.get(defaultSessionKey, req.session) || {}
 
@@ -63,7 +72,7 @@ export default class NationalOccupancyController {
         apType,
         roomCriteria,
         apCriteria,
-      } = sessionData as NationalSpaceSearchFormData
+      } = sessionData
 
       const premisesCharacteristics = makeArrayOfType<Cas1SpaceCharacteristic>(apCriteria || [])
       const roomCharacteristics = makeArrayOfType<Cas1SpaceCharacteristic>(roomCriteria || [])
@@ -93,17 +102,13 @@ export default class NationalOccupancyController {
       let capacity: Cas1NationalOccupancy
 
       if (fromDate && !Object.keys(errors).length) {
-        try {
-          capacity = await this.premisesService.getMultipleCapacity(token, {
-            cruManagementAreaIds: expandManagementArea(cruManagementAreas, apArea),
-            fromDate,
-            postcodeArea: postcode,
-            premisesCharacteristics,
-            roomCharacteristics,
-          })
-        } catch (error) {
-          catchAPIErrorOrPropogate(req, res, error)
-        }
+        capacity = await this.premisesService.getMultipleCapacity(token, {
+          cruManagementAreaIds: expandManagementArea(cruManagementAreas, apArea),
+          fromDate,
+          postcodeArea: postcode,
+          premisesCharacteristics: (premisesCharacteristics || []).concat(apTypeToSpaceCharacteristicMap[apType] || []),
+          roomCharacteristics,
+        })
       }
 
       res.render('admin/nationalOccupancy/index', {
@@ -111,7 +116,7 @@ export default class NationalOccupancyController {
         backLink: paths.admin.cruDashboard.index({}),
         pagination: capacity && getPagination(fromDate),
         arrivalDate: rawArrivalDate || slashToday,
-        processedCapacity: capacity && processCapacity(capacity, postcode, apType),
+        processedCapacity: capacity && processCapacity(capacity, postcode),
         dateHeader: capacity && getDateHeader(capacity),
         postcode: postcode || '',
         cruManagementAreaOptions: getManagementAreaSelectGroups(

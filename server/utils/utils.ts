@@ -233,7 +233,3 @@ export const objectFilter = (obj: Record<string, unknown>, fields: Array<string>
     return out
   }, {})
 }
-
-export const roundNumber = (n: number, dps = 1): number => {
-  return Math.round(n * 10 ** dps) / 10 ** dps
-}

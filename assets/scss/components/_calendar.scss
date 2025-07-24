@@ -111,6 +111,7 @@
   border-spacing: 2px;
   td,
   th {
+    height:1px;
     border: 1px solid $govuk-text-colour;
     padding: 10px;
     font-weight: normal;
@@ -123,11 +124,10 @@
     .calendar__link {
       text-decoration: none;
       color:  $govuk-text-colour;
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
+      display: block;
+      height:100%;
+      width:100%;
+      margin-left: -10px;
       padding: 10px;
 
       &:hover,

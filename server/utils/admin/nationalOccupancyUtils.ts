@@ -1,12 +1,17 @@
-import { ApType, Cas1CruManagementArea, Cas1NationalOccupancy, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import {
+  Cas1CruManagementArea,
+  Cas1NationalOccupancy,
+  Cas1SpaceBookingCharacteristic,
+  Cas1SpaceCharacteristic,
+} from '@approved-premises/api'
 import { SelectGroup } from '@approved-premises/ui'
 import { addDays } from 'date-fns'
 import { apTypeLongLabels, apTypeShortLabels } from '../apTypeLabels'
 import { convertObjectsToSelectOptions } from '../formUtils'
 import paths from '../../paths/admin'
-import { createQueryString, roundNumber } from '../utils'
+import { createQueryString } from '../utils'
 import { DateFormats } from '../dateUtils'
-import { getRoomCharacteristicLabel, spaceSearchCriteriaApLevelLabels } from '../characteristicsUtils'
+import { roomCharacteristicMap, spaceSearchCriteriaApLevelLabels } from '../characteristicsUtils'
 
 export const CRU_AREA_WOMENS = 'bfb04c2a-1954-4512-803d-164f7fcf252c'
 
@@ -46,33 +51,23 @@ export const expandManagementArea = (cruManagementAreas: Array<Cas1CruManagement
 export const processCapacity = (
   capacity: Cas1NationalOccupancy,
   postcode: string,
-  apType: ApType,
-): Array<{ summaryRows: Array<string>; apCapacity: Array<{ capacity: string; link: string; classes: string }> }> => {
-  return capacity.premises
-    .map(premises => {
-      const summaryRows = [
-        `<a class="govuk-link" href="national-occupancy/premises/${premises.summary.id}">${premises.summary.name}</a>`,
-        premises.summary.apArea.code,
-        apTypeShortLabels[premises.summary.apType],
-        postcode && `${roundNumber(premises.distanceInMiles, 1)} miles from ${postcode}`,
-      ].filter(Boolean)
-      const apCapacity = premises.capacity.map(({ forRoomCharacteristic, vacantBedCount, inServiceBedCount }) => {
-        return {
-          capacity: `${vacantBedCount}${forRoomCharacteristic ? '' : `/${inServiceBedCount}`}`,
-          link: '#',
-          classes: vacantBedCount > 0 ? 'govuk-tag--green' : 'govuk-tag--red',
-        }
-      })
+): Array<{ summaryRows: Array<string>; apCapacity: Array<{ capacity: string; link: string; classes: string }> }> =>
+  capacity.premises.map(premises => ({
+    summaryRows: [
+      `<a class="govuk-link" href="national-occupancy/premises/${premises.summary.id}">${premises.summary.name}</a>`,
+      premises.summary.apArea.code,
+      apTypeShortLabels[premises.summary.apType],
+      postcode && `${premises.distanceInMiles.toFixed(1)} miles from ${postcode}`,
+    ].filter(Boolean),
 
-      return apType === 'normal' || premises.summary.apType === apType
-        ? {
-            summaryRows,
-            apCapacity,
-          }
-        : undefined
-    })
-    .filter(Boolean)
-}
+    apCapacity: premises.capacity.map(({ forRoomCharacteristic, vacantBedCount, inServiceBedCount }) => {
+      return {
+        capacity: `${vacantBedCount}${forRoomCharacteristic ? '' : `/${inServiceBedCount}`}`,
+        link: '#',
+        classes: vacantBedCount > 0 ? 'govuk-tag--green' : 'govuk-tag--red',
+      }
+    }),
+  }))
 
 export const getPagination = (fromDate: string) => {
   const links = [-7, 7].map(
@@ -98,14 +93,14 @@ export const getCriteriaBlock = (
   apCriteria: Array<Cas1SpaceCharacteristic>,
   roomCriteria: Array<Cas1SpaceCharacteristic>,
 ) => {
-  const roomList = roomCriteria?.length
-    ? roomCriteria.map(characteristic => getRoomCharacteristicLabel(characteristic)).join(', ')
-    : 'None'
-  const apList = apCriteria?.length
-    ? apCriteria.map(characteristic => spaceSearchCriteriaApLevelLabels[characteristic]).join(', ')
-    : 'None'
-  return `<div class="details-list"><dl><dt>AP criteria:</dt><dd>${apList}</dd></dl>
-<dl><dt>Room criteria:</dt><dd>${roomList}</dd></dl></div>`
+  const ddList = (characteristics: Array<string>) =>
+    `<dd>${(characteristics?.length ? characteristics : ['None']).join(',</dd><dd>')}</dd>`
+
+  const roomList = ddList(
+    (roomCriteria || []).map(characteristic => roomCharacteristicMap[characteristic as Cas1SpaceBookingCharacteristic]),
+  )
+  const apList = ddList((apCriteria || []).map(characteristic => spaceSearchCriteriaApLevelLabels[characteristic]))
+  return `<dl class="details-list"><dt>AP criteria:</dt>${apList}<dt>Room criteria:</dt>${roomList}</dl>`
 }
 
 export const getDateHeader = (capacity: Cas1NationalOccupancy): Array<string> => {
