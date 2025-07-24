@@ -9,6 +9,7 @@ import managePaths from '../../../paths/manage'
 import cas1PremisesLocalRestrictionSummary from '../../../testutils/factories/cas1PremisesLocalRestrictionSummary'
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
+import { localRestrictionsTableRows } from '../../../utils/premises'
 
 describe('local restrictions controller', () => {
   const token = 'TEST_TOKEN'
@@ -40,7 +41,7 @@ describe('local restrictions controller', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/localRestrictions/index', {
         backlink: managePaths.premises.show({ premisesId: premises.id }),
         premises,
-        restrictions: premises.localRestrictions,
+        restrictionsRows: localRestrictionsTableRows(premises),
       })
     })
 
@@ -53,7 +54,7 @@ describe('local restrictions controller', () => {
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/localRestrictions/index',
         expect.objectContaining({
-          restrictions: [],
+          restrictionsRows: [],
         }),
       )
     })

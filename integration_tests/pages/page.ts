@@ -262,7 +262,7 @@ export default abstract class Page {
     cy.get('button').contains('Continue').click()
   }
 
-  clickLink(text: string): void {
+  clickLink(text: string | RegExp): void {
     cy.get('a').contains(text).closest('a').click()
   }
 

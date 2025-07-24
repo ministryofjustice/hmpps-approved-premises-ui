@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import { signIn } from '../signIn'
 import {
   cas1PremisesFactory,
+  cas1PremisesLocalRestrictionSummaryFactory,
   cas1PremisesNewLocalRestrictionFactory,
   staffMemberFactory,
 } from '../../../server/testutils/factories'
@@ -77,6 +78,11 @@ describe('Local restrictions', () => {
     cy.log('When I submit a valid restriction')
     cy.task('stubPremisesLocalRestrictionCreate', { premisesId: premises.id })
     const newRestriction = cas1PremisesNewLocalRestrictionFactory.build()
+    const restriction = cas1PremisesLocalRestrictionSummaryFactory.build({
+      description: newRestriction.description,
+    })
+    const premisesWithRestriction = { ...premises, localRestrictions: [restriction] }
+    cy.task('stubSinglePremises', premisesWithRestriction)
     addRestrictionsPage.completeForm(newRestriction.description)
 
     cy.log('Then the new restriction should have been saved')
@@ -86,20 +92,16 @@ describe('Local restrictions', () => {
       },
     )
 
-    // const restriction = cas1PremisesLocalRestrictionSummaryFactory.build({
-    //   description: newRestriction.description,
-    // })
-    // cy.task('stubSinglePremises', { ...premises, localRestrictions: [restriction] })
-
-    cy.log('Then I should see the list of restrictions')
+    cy.log('Then I should see a confirmation the restriction has been added')
     Page.verifyOnPage(LocalRestrictionsPage, premises)
-    // restrictionsPage.shouldShowRestrictions([restriction])
-
-    cy.log('And I should see a confirmation the restriction has been added')
     restrictionsPage.shouldShowBanner('The restriction has been added.')
 
+    cy.log('And I should see the list of restrictions')
+    restrictionsPage.shouldShowRestrictions(premisesWithRestriction)
+
     cy.log('When I click on Remove next to a restriction')
-    // restrictionsPage.clickLink('Remove')
+    // cy.task('stubSinglePremises', premises)
+    // restrictionsPage.clickLink(/^Remove/)
 
     cy.log('Then the restriction should have been removed')
     // cy.task(
