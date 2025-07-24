@@ -18,6 +18,7 @@ import {
   cas1PremisesBedSummaryFactory,
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
+  cas1PremisesNewLocalRestrictionFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
@@ -316,6 +317,16 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getOccupancyReport).toHaveBeenCalledWith(response)
+    })
+  })
+
+  describe('createLocalRestriction', () => {
+    it('calls the create local restriction method on the client', async () => {
+      const newLocalRestriction = cas1PremisesNewLocalRestrictionFactory.build()
+      await service.createLocalRestriction(token, premisesId, newLocalRestriction)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.createLocalRestriction).toHaveBeenCalledWith(premisesId, newLocalRestriction)
     })
   })
 })

@@ -15,6 +15,7 @@ import {
   cas1PremisesBedSummaryFactory,
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
+  cas1PremisesNewLocalRestrictionFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
@@ -389,6 +390,30 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       })
 
       await premisesClient.getOccupancyReport(response)
+    })
+  })
+
+  describe('createLocalRestriction', () => {
+    it('should create a local restriction', async () => {
+      const newLocalRestriction = cas1PremisesNewLocalRestrictionFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create a local restriction for a premises',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.localRestrictions.create({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          body: newLocalRestriction,
+        },
+        willRespondWith: {
+          status: 204,
+        },
+      })
+
+      await premisesClient.createLocalRestriction(premises.id, newLocalRestriction)
     })
   })
 })

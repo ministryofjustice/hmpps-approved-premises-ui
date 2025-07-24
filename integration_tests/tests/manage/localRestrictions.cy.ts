@@ -1,10 +1,15 @@
 import { faker } from '@faker-js/faker'
 import { signIn } from '../signIn'
-import { cas1PremisesFactory, staffMemberFactory } from '../../../server/testutils/factories'
+import {
+  cas1PremisesFactory,
+  cas1PremisesNewLocalRestrictionFactory,
+  staffMemberFactory,
+} from '../../../server/testutils/factories'
 import { PremisesShowPage } from '../../pages/manage'
 import Page from '../../pages/page'
 import { LocalRestrictionsPage } from '../../pages/manage/localRestrictions/localRestrictionsList'
 import { LocalRestrictionAddPage } from '../../pages/manage/localRestrictions/localRestrictionAdd'
+import apiPaths from '../../../server/paths/api'
 
 describe('Local restrictions', () => {
   const premises = cas1PremisesFactory.build({ localRestrictions: [] })
@@ -70,26 +75,28 @@ describe('Local restrictions', () => {
     })
 
     cy.log('When I submit a valid restriction')
-    // const newRestriction = cas1PremisesNewLocalRestriction.build()
-    // addRestrictionsPage.completeForm(newRestriction.description)
+    cy.task('stubPremisesLocalRestrictionCreate', { premisesId: premises.id })
+    const newRestriction = cas1PremisesNewLocalRestrictionFactory.build()
+    addRestrictionsPage.completeForm(newRestriction.description)
 
     cy.log('Then the new restriction should have been saved')
-    // cy.task('verifyApiPost', apiPaths.premises.localRestrictions.create({ premisesId: premises.id })).then(
-    //   ({ description }) => {
-    //     expect(description).equal(newRestriction.description)
-    //   },
-    // )
+    cy.task('verifyApiPost', apiPaths.premises.localRestrictions.create({ premisesId: premises.id })).then(
+      ({ description }) => {
+        expect(description).equal(newRestriction.description)
+      },
+    )
 
-    // const restriction = cas1PremisesLocalRestrictionSummary.build({
+    // const restriction = cas1PremisesLocalRestrictionSummaryFactory.build({
     //   description: newRestriction.description,
     // })
     // cy.task('stubSinglePremises', { ...premises, localRestrictions: [restriction] })
 
     cy.log('Then I should see the list of restrictions')
+    Page.verifyOnPage(LocalRestrictionsPage, premises)
     // restrictionsPage.shouldShowRestrictions([restriction])
 
     cy.log('And I should see a confirmation the restriction has been added')
-    // restrictionsPage.shouldShowBanner('The restriction has been added.')
+    restrictionsPage.shouldShowBanner('The restriction has been added.')
 
     cy.log('When I click on Remove next to a restriction')
     // restrictionsPage.clickLink('Remove')
