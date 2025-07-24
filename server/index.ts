@@ -5,7 +5,9 @@ import { createMetricsApp } from './monitoring/metricsApp'
 import createApp from './app'
 import { controllers } from './controllers'
 import { services } from './services'
+import { setUpSentryRequestHandler } from './middleware/setUpSentry'
 
+setUpSentryRequestHandler()
 promClient.collectDefaultMetrics()
 
 const serviceList = services()
