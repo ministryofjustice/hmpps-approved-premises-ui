@@ -157,6 +157,21 @@ export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?:
   }
 }
 
+export const restrictionsRow = (spaceSearchResult: SpaceSearchResult): SummaryListItem => {
+  return spaceSearchResult.premises.localRestrictions.length
+    ? {
+        key: { text: 'Restrictions' },
+        value: {
+          html: `
+            <ul class="govuk-list govuk-list--bullet">
+              ${spaceSearchResult.premises.localRestrictions.map(restriction => `<li>${restriction}</li>`).join('')}
+            </ul>
+          `,
+        },
+      }
+    : undefined
+}
+
 export const releaseTypeRow = (placementRequest: PlacementRequest) => ({
   key: {
     text: 'Release type',

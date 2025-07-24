@@ -17,6 +17,10 @@ export type Cas1PremisesSearchResultSummary = {
      */
     fullAddress: string;
     id: string;
+    /**
+     * A list of restrictions that apply specifically to this approved premises.
+     */
+    localRestrictions: Array<string>;
     name: string;
     postcode?: string;
 };

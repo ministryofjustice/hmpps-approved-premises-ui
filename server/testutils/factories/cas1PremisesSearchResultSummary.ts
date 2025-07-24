@@ -1,11 +1,13 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Cas1PremisesSearchResultSummary, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import type { Cas1Premises, Cas1PremisesSearchResultSummary, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import namedIdFactory from './namedId'
 import { sentenceCase } from '../../utils/utils'
+import cas1PremisesLocalRestrictionSummary from './cas1PremisesLocalRestrictionSummary'
+import { apTypes } from '../../utils/placementCriteriaUtils'
 
-const characteristics: ReadonlyArray<Cas1SpaceCharacteristic> = [
+export const characteristics: ReadonlyArray<Cas1SpaceCharacteristic> = [
   'acceptsChildSexOffenders',
   'acceptsHateCrimeOffenders',
   'acceptsNonSexualChildOffenders',
@@ -44,17 +46,29 @@ const characteristics: ReadonlyArray<Cas1SpaceCharacteristic> = [
   'arsonOffences',
 ]
 
-export default Factory.define<Cas1PremisesSearchResultSummary>(() => {
+class Cas1PremisesSearchResultsSummaryFactory extends Factory<Cas1PremisesSearchResultSummary> {
+  fromPremises(premises: Cas1Premises) {
+    return this.params({
+      ...premises,
+      localRestrictions: premises.localRestrictions.map(restriction => restriction.description),
+    })
+  }
+}
+
+export default Cas1PremisesSearchResultsSummaryFactory.define(() => {
   return {
     id: faker.string.uuid(),
     apCode: faker.string.alphanumeric(5),
     deliusQCode: faker.string.alphanumeric(5),
-    apType: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap', 'mhapStJosephs', 'mhapElliottHouse']),
+    apType: faker.helpers.arrayElement(apTypes),
     name: `${sentenceCase(faker.lorem.word({}))} ${faker.helpers.arrayElement(['House', 'Lodge', 'Cottage', 'Court', 'Place', 'Hall', 'Manor', 'Mansion'])}`,
     postcode: faker.location.zipCode(),
     apArea: namedIdFactory.build(),
     totalSpaceCount: faker.number.int({ min: 5, max: 50 }),
     fullAddress: `${faker.location.streetAddress()}, ${faker.location.county()}, ${faker.location.city()}`,
     characteristics: faker.helpers.arrayElements(characteristics),
+    localRestrictions: cas1PremisesLocalRestrictionSummary
+      .buildList(faker.number.int({ max: 3 }))
+      .map(restriction => restriction.description),
   }
 })

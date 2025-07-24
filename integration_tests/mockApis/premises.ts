@@ -112,6 +112,28 @@ const verifyPremisesDaySummaryRequest = async ({ premisesId, date }: { premisesI
     })
   ).body.requests
 
+const stubPremisesLocalRestrictionCreate = (args: { premisesId: string }) =>
+  stubFor({
+    request: {
+      method: 'POST',
+      urlPath: paths.premises.localRestrictions.create(args),
+    },
+    response: {
+      status: 204,
+    },
+  })
+
+const stubPremisesLocalRestrictionDelete = (args: { premisesId: string; restrictionId: string }) =>
+  stubFor({
+    request: {
+      method: 'DELETE',
+      urlPath: paths.premises.localRestrictions.delete(args),
+    },
+    response: {
+      status: 204,
+    },
+  })
+
 export default {
   stubCas1AllPremises,
   stubSinglePremises,
@@ -119,4 +141,6 @@ export default {
   stubPremisesCapacity,
   stubPremisesDaySummary,
   verifyPremisesDaySummaryRequest,
+  stubPremisesLocalRestrictionCreate,
+  stubPremisesLocalRestrictionDelete,
 }

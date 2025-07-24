@@ -18,6 +18,7 @@ import ChangesController from './premises/placements/changesController'
 import TransfersController from './premises/placements/transfersController'
 import PlannedTransferController from './premises/changeRequests/plannedTransferController'
 import PlacementAppealController from './premises/changeRequests/placementAppealController'
+import LocalRestrictionsController from './premises/localRestrictionsController'
 
 export const controllers = (services: Services) => {
   const premisesController = new PremisesController(
@@ -36,6 +37,7 @@ export const controllers = (services: Services) => {
   const outOfServiceBedCancellationController = new OutOfServiceBedCancellationController(
     services.outOfServiceBedService,
   )
+  const localRestrictionsController = new LocalRestrictionsController(services.premisesService)
   const cancellationsController = new CancellationsController(services.cancellationService, services.placementService)
   const placementController = new PlacementController(
     services.applicationService,
@@ -70,6 +72,7 @@ export const controllers = (services: Services) => {
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
     outOfServiceBedCancellationController,
+    localRestrictionsController,
     cancellationsController,
     placementController,
     keyworkerController,
@@ -92,6 +95,7 @@ export {
   OutOfServiceBedsController,
   UpdateOutOfServiceBedsController,
   OutOfServiceBedCancellationController,
+  LocalRestrictionsController,
   ApOccupancyViewController,
   ChangesController,
   TransfersController,

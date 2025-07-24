@@ -5,6 +5,7 @@ import type {
   Cas1PremisesBasicSummary,
   Cas1PremisesBedSummary,
   Cas1PremisesDaySummary,
+  Cas1PremisesNewLocalRestriction,
   Cas1SpaceBooking,
   Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingDaySummarySortField,
@@ -115,5 +116,19 @@ export default class PremisesClient {
       },
       response,
     )
+  }
+
+  async createLocalRestriction(
+    premisesId: string,
+    newLocalRestriction: Cas1PremisesNewLocalRestriction,
+  ): Promise<unknown> {
+    return this.restClient.post({
+      path: paths.premises.localRestrictions.create({ premisesId }),
+      data: newLocalRestriction,
+    })
+  }
+
+  async deleteLocalRestriction(premisesId: string, restrictionId: string): Promise<unknown> {
+    return this.restClient.delete(paths.premises.localRestrictions.delete({ premisesId, restrictionId }))
   }
 }
