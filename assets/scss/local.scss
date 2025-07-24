@@ -16,6 +16,11 @@
   }
 }
 
+/* This allows using the full character count functionality on a text input */
+.govuk-input.govuk-textarea--error {
+  border-color: govuk-colour("red");
+}
+
 .govuk-checkboxes--inline {
   display: flex;
   flex-wrap: wrap;

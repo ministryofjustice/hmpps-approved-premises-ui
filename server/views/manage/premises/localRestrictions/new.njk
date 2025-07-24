@@ -29,18 +29,24 @@
             <form method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukInput({
-                    label: {
-                        text: 'Enter the restriction information and relevant dates',
-                        classes: 'govuk-label--m'
-                    },
-                    hint: {
-                        text: 'Local restrictions are AP criteria that are not captured by the site survey. For example, ‘no hate based offences’'
-                    },
-                    name: "description",
-                    value: description,
-                    errorMessage: errors.description
-                }) }}
+                <div data-module="govuk-character-count" data-maxlength="100">
+                    {{ govukInput({
+                        label: {
+                            text: 'Enter the restriction information and relevant dates',
+                            classes: 'govuk-label--m'
+                        },
+                        hint: {
+                            text: 'Local restrictions are AP criteria that are not captured by the site survey. For example, ‘no hate based offences’'
+                        },
+                        classes: 'govuk-js-character-count',
+                        name: "description",
+                        value: description,
+                        errorMessage: errors.description
+                    }) }}
+                    <div id="description-info" class="govuk-hint govuk-character-count__message">
+                        You can enter up to 100 characters
+                    </div>
+                </div>
 
                 {{ govukButton({
                     type: 'submit',
