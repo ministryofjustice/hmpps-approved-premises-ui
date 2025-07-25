@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type PremisesLocalRestrictionSummary = {
+export type Cas1PremisesLocalRestrictionSummary = {
     /**
      * restriction added date
      */
@@ -11,5 +11,9 @@ export type PremisesLocalRestrictionSummary = {
      * restriction description
      */
     description: string;
+    /**
+     * restriction id
+     */
+    id: string;
 };
 

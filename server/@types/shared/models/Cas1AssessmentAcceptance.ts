@@ -19,6 +19,6 @@ export type Cas1AssessmentAcceptance = {
     notes?: string;
     placementDates?: PlacementDates;
     reasonForLateApplication?: string;
-    requirements?: PlacementRequirements;
+    requirements: PlacementRequirements;
 };
 
