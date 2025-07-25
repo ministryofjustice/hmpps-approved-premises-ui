@@ -1,4 +1,5 @@
 import type {
+  Cas1NationalOccupancy,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
@@ -104,6 +105,21 @@ const stubPremisesDaySummary = (args: {
   })
 }
 
+const stubNationalOccupancy = (args: { nationalOccupancy: Cas1NationalOccupancy }) =>
+  stubFor({
+    request: {
+      method: 'POST',
+      urlPath: paths.premises.nationalCapacity({}),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.nationalOccupancy,
+    },
+  })
+
 const verifyPremisesDaySummaryRequest = async ({ premisesId, date }: { premisesId: string; date: string }) =>
   (
     await getMatchingRequests({
@@ -118,5 +134,6 @@ export default {
   stubPremisesStaffMembers,
   stubPremisesCapacity,
   stubPremisesDaySummary,
+  stubNationalOccupancy,
   verifyPremisesDaySummaryRequest,
 }

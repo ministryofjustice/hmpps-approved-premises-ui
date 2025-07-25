@@ -1,4 +1,4 @@
-@use "govuk-frontend/dist/govuk" as *;
+@use 'govuk-frontend/dist/govuk' as *;
 
 .calendar__month {
   border-top: 1px solid $govuk-border-colour;
@@ -21,7 +21,8 @@
     padding: govuk-spacing(2) 0;
     text-decoration: none;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background: govuk-colour('blue');
       color: govuk-colour('white');
       text-decoration: underline;
@@ -102,5 +103,50 @@
     .calendar__date {
       margin-bottom: auto;
     }
+  }
+}
+
+.national-calendar {
+  border-collapse: separate;
+  border-spacing: 2px;
+  td,
+  th {
+    height:1px;
+    border: 1px solid $govuk-text-colour;
+    padding: 10px;
+    font-weight: normal;
+    position: relative;
+    @include govuk-font-size(16);
+    dl,
+    dd {
+      margin: 0;
+    }
+    .calendar__link {
+      text-decoration: none;
+      color:  $govuk-text-colour;
+      display: block;
+      height:100%;
+      width:100%;
+      margin-left: -10px;
+      padding: 10px;
+
+      &:hover,
+      &:focus {
+        background: govuk-colour('blue');
+        color: govuk-colour('white');
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+      }
+
+      &:focus {
+        outline: 3px solid govuk-colour('yellow');
+        outline-offset: -2px;
+        box-shadow: none;
+      }
+    }
+  }
+  .calendar-date-heading {
+    font-weight: normal;
+    @include govuk-font-size(16);
   }
 }

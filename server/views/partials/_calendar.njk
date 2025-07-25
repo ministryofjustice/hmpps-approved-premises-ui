@@ -29,3 +29,18 @@
         {% endfor %}
     </div>
 {% endmacro %}
+
+{% macro calendarKey() %}
+    <section id="calendar-key">
+        <h3 class="govuk-heading-m">Key</h3>
+
+        <ul class="calendar__month govuk-list">
+            <li class="calendar__day govuk-tag--green">
+                Available
+            </li>
+            <li class="calendar__day govuk-tag--red">
+                Full or overbooked
+            </li>
+        </ul>
+    </section>
+{% endmacro %}

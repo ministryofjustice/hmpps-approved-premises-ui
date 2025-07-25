@@ -66,6 +66,7 @@ import cas1PremisesBedSummaryFactory from './cas1PremisesBedSummary'
 import cas1PremisesFactory from './cas1Premises'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 import cas1PremiseCapacityFactory, { cas1PremiseCapacityForDayFactory } from './cas1PremiseCapacity'
+import cas1NationalOccupancyFactory, { cas1NationalOccupancyParametersFactory } from './cas1NationalOccupancy'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import cas1SpaceBookingFactory from './cas1SpaceBooking'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
@@ -117,6 +118,8 @@ export {
   cas1PremisesBasicSummaryFactory,
   cas1PremiseCapacityFactory,
   cas1PremiseCapacityForDayFactory,
+  cas1NationalOccupancyFactory,
+  cas1NationalOccupancyParametersFactory,
   cas1PremisesFactory,
   cas1PremisesDaySummaryFactory,
   cas1ReferenceDataFactory,
