@@ -52,9 +52,9 @@ const cas1Users = cas1Namespace.path('users')
 const placementRequests = path('/placement-requests')
 const placementRequestsSingle = placementRequests.path(':placementRequestId')
 
-const assessments = path('/assessments')
-const assessmentsSingle = assessments.path(':id')
-const assessmentsNotes = assessmentsSingle.path('notes')
+const cas1Assessments = cas1Namespace.path('assessments')
+const cas1AssessmentsSingle = cas1Assessments.path(':id')
+const cas1AssessmentsNotes = cas1AssessmentsSingle.path('notes')
 
 export default {
   manage: {
@@ -137,14 +137,14 @@ export default {
     },
   },
   assessments: {
-    index: assessments,
-    show: assessmentsSingle,
-    update: assessmentsSingle,
-    acceptance: assessmentsSingle.path('acceptance'),
-    rejection: assessmentsSingle.path('rejection'),
+    index: cas1Assessments,
+    show: cas1AssessmentsSingle,
+    update: cas1AssessmentsSingle,
+    acceptance: cas1AssessmentsSingle.path('acceptance'),
+    rejection: cas1AssessmentsSingle.path('rejection'),
     clarificationNotes: {
-      create: assessmentsNotes,
-      update: assessmentsNotes.path(':clarificationNoteId'),
+      create: cas1AssessmentsNotes,
+      update: cas1AssessmentsNotes.path(':clarificationNoteId'),
     },
   },
   match: {

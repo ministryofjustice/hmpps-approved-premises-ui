@@ -1,5 +1,6 @@
-import { ApprovedPremisesAssessment } from '../../../server/@types/shared/models/ApprovedPremisesAssessment'
+import { ApprovedPremisesAssessment } from '@approved-premises/api'
 import TaskList from '../taskListPage'
+import paths from '../../../server/paths/assess'
 
 export default class TaskListPage extends TaskList {
   constructor(assessment: ApprovedPremisesAssessment) {
@@ -10,7 +11,7 @@ export default class TaskListPage extends TaskList {
   }
 
   static visit(assessment: ApprovedPremisesAssessment) {
-    cy.visit(`/assessments/${assessment.id}`)
+    cy.visit(paths.assessments.show({ id: assessment.id }))
     return new TaskListPage(assessment)
   }
 

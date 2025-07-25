@@ -8,6 +8,7 @@ import { UiTask } from '@approved-premises/ui'
 import { bulkStub, getMatchingRequests } from './setup'
 import isAssessment from '../../server/utils/assessments/isAssessment'
 import getSections from '../../server/utils/assessments/getSections'
+import paths from '../../server/paths/api'
 
 export const generateStubsForPage = (
   page: string,
@@ -55,14 +56,15 @@ export const generateStubsForPage = (
   const pageResponse = cloneApplicationWithData({ form, data })
 
   const scenarioName = pageType === 'application' ? 'apply' : 'assess'
-  const url = `/${pageType}s`
+  const url =
+    pageType === 'application' ? paths.applications.show({ id: form.id }) : paths.assessments.show({ id: form.id })
 
   const getPageStub = {
     scenarioName,
     requiredScenarioState,
     request: {
       method: 'GET',
-      url: `${url}/${form.id}`,
+      url,
     },
     response: {
       status: 200,
@@ -77,7 +79,7 @@ export const generateStubsForPage = (
     newScenarioState,
     request: {
       method: 'PUT',
-      url: `${url}/${form.id}`,
+      url,
     },
     response: {
       status: 201,
@@ -94,7 +96,7 @@ const stubRequestBody = (form: Application | Assessment, formData: Record<string
   if (!isAssessment(form)) {
     return `
       {
-        "id": "{{request.pathSegments.[1]}}",
+        "id": "${form.id}",
         "person": ${JSON.stringify(form.person)},
         "createdByProbationOfficerId": "${form.createdByUserId}",
         "createdAt": "${form.createdAt}",
@@ -106,7 +108,7 @@ const stubRequestBody = (form: Application | Assessment, formData: Record<string
 
   return `
     {
-      "id": "{{request.pathSegments.[1]}}",
+      "id": "${form.id}",
       "createdAt": "${form.createdAt}",
       "submittedAt": "${form.submittedAt}",
       "application": "${form.application}",
@@ -121,17 +123,19 @@ export const generateTaskListStubForTask = (
   nextTask: string,
   data: Record<string, unknown>,
 ) => {
-  const applicationOrAssessment = isAssessment(form) ? 'assessment' : 'application'
+  const journeyType = isAssessment(form) ? 'assessment' : 'application'
+  const url =
+    journeyType === 'application' ? paths.applications.show({ id: form.id }) : paths.assessments.show({ id: form.id })
 
   const tasklistResponse = cloneApplicationWithData({ form, data })
 
   return {
-    scenarioName: applicationOrAssessment === 'application' ? 'apply' : 'assess',
+    scenarioName: journeyType === 'application' ? 'apply' : 'assess',
     requiredScenarioState: `${task}TaskUpdated`,
-    newScenarioState: nextTask ? `${nextTask}TaskStarted` : `${applicationOrAssessment}Complete`,
+    newScenarioState: nextTask ? `${nextTask}TaskStarted` : `${journeyType}Complete`,
     request: {
       method: 'GET',
-      url: `/${applicationOrAssessment}s/${form.id}`,
+      url,
     },
     response: {
       status: 200,
@@ -171,33 +175,28 @@ export const verifyApiPatch = (url: string) => verifyApiRequest(url, 'PATCH')
 export const verifyApiPut = (url: string) => verifyApiRequest(url, 'PUT')
 
 export const stubJourney = (form: Application | Assessment): SuperAgentRequest => {
-  type JourneyType =
-    | { scenarioName: 'assess'; urlPrefix: 'assessment' }
-    | { scenarioName: 'apply'; urlPrefix: 'application' }
-  const journeyType: JourneyType = isAssessment(form)
-    ? { scenarioName: 'assess', urlPrefix: 'assessment' }
-    : { scenarioName: 'apply', urlPrefix: 'application' }
+  const journeyType = isAssessment(form) ? 'assessment' : 'application'
+  const scenarioName = journeyType === 'assessment' ? 'assess' : 'apply'
 
-  const { scenarioName } = journeyType
-  const journeyName = journeyType.urlPrefix
-
-  const request =
-    journeyType.scenarioName === 'apply'
+  const startRequest =
+    journeyType === 'application'
       ? {
           method: 'POST',
-          url: `/applications?createWithRisks=true`,
+          url: `${paths.applications.new({})}?createWithRisks=true`,
         }
       : {
           method: 'GET',
-          url: `/assessments/${form.id}`,
+          url: paths.assessments.show({ id: form.id }),
         }
+  const getEndpoint =
+    journeyType === 'application' ? paths.applications.show({ id: form.id }) : paths.assessments.show({ id: form.id })
 
   const stubs = [
     {
       scenarioName,
       requiredScenarioState: `Started`,
-      newScenarioState: `${journeyName}Created`,
-      request,
+      newScenarioState: `${journeyType}Created`,
+      request: startRequest,
       response: {
         status: 201,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
@@ -206,11 +205,11 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
     },
     {
       scenarioName,
-      requiredScenarioState: `${journeyName}Created`,
-      newScenarioState: `${journeyName}Started`,
+      requiredScenarioState: `${journeyType}Created`,
+      newScenarioState: `${journeyType}Started`,
       request: {
         method: 'GET',
-        url: `/${journeyName}s/${form.id}`,
+        url: getEndpoint,
       },
       response: {
         status: 200,
@@ -245,11 +244,11 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
   })
 
   const journeyEndStub = {
-    scenarioName: journeyType.scenarioName,
-    requiredScenarioState: `${journeyType.urlPrefix}Complete`,
+    scenarioName,
+    requiredScenarioState: `${journeyType}Complete`,
     request: {
       method: 'GET',
-      url: `/${journeyType.urlPrefix}s/${form.id}`,
+      url: getEndpoint,
     },
     response: {
       status: 200,

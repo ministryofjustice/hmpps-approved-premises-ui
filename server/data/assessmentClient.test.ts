@@ -7,9 +7,9 @@ import {
   placementRequestFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
-describeClient('AssessmentClient', provider => {
+describeCas1NamespaceClient('AssessmentClient', provider => {
   let assessmentClient: AssessmentClient
 
   const token = 'token-1'
@@ -29,7 +29,7 @@ describeClient('AssessmentClient', provider => {
         uponReceiving: 'A request to get all assessments',
         withRequest: {
           method: 'GET',
-          path: paths.assessments.index.pattern,
+          path: paths.assessments.index({}),
           query: {
             statuses: 'awaiting_response,completed',
             page: '1',
@@ -38,7 +38,6 @@ describeClient('AssessmentClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
