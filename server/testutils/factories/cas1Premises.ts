@@ -1,9 +1,10 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Cas1Premises } from '@approved-premises/api'
+import type { Cas1Premises, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import { apAreaFactory } from './referenceData'
 import cas1OverbookingRangeFactory from './cas1OverbookingRange'
+import { spaceSearchCriteriaApLevelLabels } from '../../utils/characteristicsUtils'
 
 export default Factory.define<Cas1Premises>(() => ({
   id: faker.string.uuid(),
@@ -18,4 +19,7 @@ export default Factory.define<Cas1Premises>(() => ({
   supportsSpaceBookings: true,
   managerDetails: `${faker.person}`,
   overbookingSummary: cas1OverbookingRangeFactory.buildList(faker.number.int({ max: 3 })),
+  characteristics: faker.helpers.arrayElements(
+    Object.keys(spaceSearchCriteriaApLevelLabels) as Array<Cas1SpaceCharacteristic>,
+  ),
 }))
