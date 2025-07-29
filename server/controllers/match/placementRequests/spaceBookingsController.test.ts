@@ -127,6 +127,17 @@ describe('SpaceBookingsController', () => {
   })
 
   describe('create', () => {
+    it('redirects to the suitability search if no search state is present', async () => {
+      request.session.multiPageFormData = undefined
+
+      const requestHandler = spaceBookingsController.create()
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+      )
+    })
+
     it('should call the createSpaceBooking method on the spaceSearchService and redirect the user to the CRU dashboard', async () => {
       const newSpaceBooking: Cas1NewSpaceBooking = {
         premisesId: premises.id,

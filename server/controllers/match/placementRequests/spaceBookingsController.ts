@@ -77,6 +77,10 @@ export default class {
 
       const searchState = this.formData.get(id, req.session)
 
+      if (!searchState) {
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id }))
+      }
+
       const newSpaceBooking: Cas1NewSpaceBooking = {
         arrivalDate: searchState.arrivalDate,
         departureDate: searchState.departureDate,
