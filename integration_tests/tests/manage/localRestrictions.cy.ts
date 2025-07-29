@@ -46,7 +46,7 @@ describe('Local restrictions', () => {
     const restrictionsPage = Page.verifyOnPage(LocalRestrictionsPage, premises)
 
     cy.log("And I should see a details component with the premises' criteria")
-    restrictionsPage.shouldExpandDetails('View criteria for this Approved Premises')
+    restrictionsPage.shouldExpandDetails('View AP criteria')
     restrictionsPage.shouldShowPremisesCharacteristics()
 
     cy.log('And I should see no local restrictions for the premises')
