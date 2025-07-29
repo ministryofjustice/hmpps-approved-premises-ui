@@ -6,7 +6,7 @@ export class LocalRestrictionAddPage extends Page {
   constructor(private readonly premises: Cas1Premises) {
     super('Add a local restriction')
 
-    this.shouldHaveBackLink(managePaths.premises.localRestrictions.index({ premisesId: premises.id }))
+    this.checkForBackButton(managePaths.premises.localRestrictions.index({ premisesId: premises.id }))
     this.shouldShowHeadingCaption(this.premises.name)
   }
 

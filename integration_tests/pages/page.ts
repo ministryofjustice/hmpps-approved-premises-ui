@@ -134,10 +134,6 @@ export default abstract class Page {
     })
   }
 
-  shouldHaveBackLink(url: string): void {
-    cy.get('.govuk-back-link').should('have.attr', 'href', url)
-  }
-
   shouldShowHeadingCaption(text: string): void {
     cy.get('.govuk-caption-l').should('contain.text', text)
   }

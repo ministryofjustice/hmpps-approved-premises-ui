@@ -9,7 +9,7 @@ export class LocalRestrictionsPage extends Page {
   constructor(private readonly premises: Cas1Premises) {
     super('Local restrictions')
 
-    this.shouldHaveBackLink(managePaths.premises.show({ premisesId: premises.id }))
+    this.checkForBackButton(managePaths.premises.show({ premisesId: premises.id }))
     this.shouldShowHeadingCaption(premises.name)
   }
 
