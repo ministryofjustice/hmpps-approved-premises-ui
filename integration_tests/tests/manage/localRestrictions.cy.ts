@@ -74,7 +74,7 @@ describe('Local restrictions', () => {
 
     cy.log('Then I should see an error')
     addRestrictionsPage.shouldShowErrorMessagesForFields(['description'], {
-      description: 'The restriction must be less than 100 characters long',
+      description: 'The restriction must be 100 characters or less',
     })
 
     cy.log('When I submit a valid restriction')

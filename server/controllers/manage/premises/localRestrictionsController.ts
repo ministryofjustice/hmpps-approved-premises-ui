@@ -64,7 +64,7 @@ export default class LocalRestrictionsController {
         }
 
         if (description.length > 100) {
-          throw new ValidationError({ description: 'The restriction must be less than 100 characters long' })
+          throw new ValidationError({ description: 'The restriction must be 100 characters or less' })
         }
 
         await this.premisesService.createLocalRestriction(token, premisesId, { description })

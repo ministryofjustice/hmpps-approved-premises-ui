@@ -100,7 +100,7 @@ describe('local restrictions controller', () => {
 
     it.each([
       ['empty', '', 'Enter details for the restriction'],
-      ['over 100 characters', faker.word.words(30), 'The restriction must be less than 100 characters long'],
+      ['over 100 characters', faker.word.words(30), 'The restriction must be 100 characters or less'],
     ])('returns an error if the description is %s', async (_, description, errorMessage) => {
       request.body.description = description
 
