@@ -108,6 +108,11 @@ export default class PremisesController {
       })
       const areas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
+      // TODO: testing Sentry alerts -- remove once logging validated
+      if (req.query.selectedArea === 'foo') {
+        throw new Error('Invalid selected area')
+      }
+
       return res.render('manage/premises/index', {
         tableHead: premisesTableHead,
         tableRows: premisesTableRows(premisesSummaries),
