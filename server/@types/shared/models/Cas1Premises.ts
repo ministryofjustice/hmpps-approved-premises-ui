@@ -4,6 +4,8 @@
 /* eslint-disable */
 import type { ApArea } from './ApArea';
 import type { Cas1OverbookingRange } from './Cas1OverbookingRange';
+import type { Cas1PremisesLocalRestrictionSummary } from './Cas1PremisesLocalRestrictionSummary';
+import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 export type Cas1Premises = {
     apArea: ApArea;
     apCode: string;
@@ -16,10 +18,18 @@ export type Cas1Premises = {
      */
     bedCount: number;
     /**
+     * Room and premise characteristics
+     */
+    characteristics: Array<Cas1SpaceCharacteristic>;
+    /**
      * Full address, excluding postcode
      */
     fullAddress: string;
     id: string;
+    /**
+     * A list of restrictions that apply specifically to this approved premises.
+     */
+    localRestrictions?: Array<Cas1PremisesLocalRestrictionSummary>;
     managerDetails?: string;
     name: string;
     /**
@@ -27,7 +37,8 @@ export type Cas1Premises = {
      */
     outOfServiceBeds: number;
     /**
-     * over-bookings for the next 12 weeks
+     * This is deprecated and only returns an empty list
+     * @deprecated
      */
     overbookingSummary: Array<Cas1OverbookingRange>;
     postcode: string;

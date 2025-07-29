@@ -1,8 +1,9 @@
-import { cruManagementAreaFactory } from '../../../server/testutils/factories'
+import { cas1NationalOccupancyFactory, cruManagementAreaFactory } from '../../../server/testutils/factories'
 import { signIn } from '../signIn'
 import { CRU_AREA_WOMENS } from '../../../server/utils/admin/nationalOccupancyUtils'
 import NationalViewPage from '../../pages/admin/nationaOccupancy/nationalViewPage'
 import ListPage from '../../pages/admin/placementApplications/listPage'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 context('National occupancy view', () => {
   const cruManagementAreas = [
@@ -14,53 +15,72 @@ context('National occupancy view', () => {
     postcode: 'SW1A',
     arrivalDate: '12/9/2024',
     apArea: cruManagementAreas[3].id,
-    apType: 'pipe',
+    apType: 'normal',
     apCriteria: ['isCatered'],
     roomCriteria: ['isWheelchairDesignated'],
   }
+
+  const nationalOccupancy = cas1NationalOccupancyFactory.build()
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: [], status: 'notMatched' })
+    cy.task('stubNationalOccupancy', { nationalOccupancy })
   })
 
   it('allows me to set up filters for the national view', () => {
-    cy.log('Given that I sign in as a cru member with national occupancy view permissions')
+    GIVEN('that I sign in as a cru member with national occupancy view permissions')
     signIn('cru_member', { permissions: ['cas1_view_cru_dashboard', 'cas1_national_occupancy_view'] }) // TODO: Remove explicit permissions
 
-    cy.log('Given that I am on the CRU dashboard page')
+    GIVEN('that I am on the CRU dashboard page')
     const cruDashboard = ListPage.visit()
 
-    cy.log('When I select the action to view national availability')
+    WHEN('I select the action to view national availability')
     cruDashboard.clickAction('View all approved premises spaces')
 
-    cy.log('Then I should be on the national availabiliy view page')
+    THEN('I should be on the national availability view page')
     const viewPage = new NationalViewPage()
     viewPage.checkOnPage()
 
-    cy.log('And the filter should be at the default settings')
+    AND('the filter should be at the default settings')
     viewPage.verifyDefaultSettings()
 
-    cy.log('When I set invalid filters and submit')
+    WHEN('I set invalid filters and submit')
     viewPage.setInvalidFilters()
     viewPage.clickButton('Apply filters')
 
-    cy.log('Then I should see validation errors')
+    THEN('I should see validation errors')
     viewPage.shouldSeeValidationErrors()
 
-    cy.log('When I set valid filters')
+    WHEN('I set valid filters')
     viewPage.setValidFilters(filterSettings)
     viewPage.clickButton('Apply filters')
 
-    cy.log('Then the form should be populated with the correct data')
+    THEN('the form should be populated with the correct data')
     viewPage.submitCheckQueryParameters(filterSettings)
     viewPage.verifyFiltersPopulated(filterSettings)
 
-    cy.log('When I revisit the page with no query parameters')
+    AND('the calendar should be populated')
+    viewPage.verifyCalendarHeading(nationalOccupancy, '2024-09-12')
+    viewPage.verifyCalendarRendered(nationalOccupancy, filterSettings.postcode)
+
+    WHEN('I click next week')
+    viewPage.clickLink('Next week')
+
+    THEN('I should see the calendar for the following week')
+    viewPage.verifyCalendarHeading(nationalOccupancy, '2024-09-19')
+
+    WHEN('I click previous week')
+    viewPage.clickLink('Previous week')
+
+    THEN('I should see the calendar for the original week')
+    viewPage.verifyCalendarHeading(nationalOccupancy, '2024-09-12')
+
+    WHEN('I revisit the page with no query parameters')
     const noQueryPage = NationalViewPage.visit()
 
-    cy.log('Then the filter should still be populated (from the session)')
+    THEN('the filter should still be populated (from the session)')
     noQueryPage.verifyFiltersPopulated(filterSettings)
   })
 
@@ -68,13 +88,13 @@ context('National occupancy view', () => {
     cy.log('Given I am signed in as a user with CRU dashboard permissions but without occupancy view permission')
     signIn('cru_member', { permissions: ['cas1_view_cru_dashboard'] })
 
-    cy.log('When I navigate to the CRU dashboard')
+    WHEN('I navigate to the CRU dashboard')
     const cruDashboard = ListPage.visit()
 
-    cy.log('Then the action menu should not be shown')
+    THEN('the action menu should not be shown')
     cruDashboard.actionMenuShouldNotExist()
 
-    cy.log('When I try to navigate to the view directly - Then I should not have access')
+    WHEN('I try to navigate to the view directly - Then I should not have access')
     NationalViewPage.visitUnauthorised()
   })
 })

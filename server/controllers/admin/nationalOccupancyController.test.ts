@@ -2,17 +2,22 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker'
-import { cruManagementAreaFactory, userDetailsFactory } from '../../testutils/factories'
-import { CruManagementAreaService } from '../../services'
+import { ApType, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import { cas1NationalOccupancyFactory, cruManagementAreaFactory, userDetailsFactory } from '../../testutils/factories'
+import { CruManagementAreaService, PremisesService } from '../../services'
 import NationalOccupancyController, { defaultSessionKey } from './nationalOccupancyController'
 import { convertKeyValuePairToCheckBoxItems } from '../../utils/formUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
-import { apTypeLongLabels } from '../../utils/apTypeLabels'
+import { apTypeLongLabels, apTypeToSpaceCharacteristicMap } from '../../utils/apTypeLabels'
 import { DateFormats } from '../../utils/dateUtils'
 import {
   CRU_AREA_WOMENS,
   getApTypeOptions,
+  getCriteriaBlock,
+  getDateHeader,
   getManagementAreaSelectGroups,
+  getPagination,
+  processCapacity,
 } from '../../utils/admin/nationalOccupancyUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import * as validationUtils from '../../utils/validation'
@@ -25,11 +30,13 @@ describe('NationalOccupancyController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const cruManagementAreaService = createMock<CruManagementAreaService>({})
+  const premisesService = createMock<PremisesService>({})
 
   const cruManagementAreas = [
     ...cruManagementAreaFactory.buildList(5),
     cruManagementAreaFactory.build({ id: CRU_AREA_WOMENS }),
   ]
+  const nationalCapacity = cas1NationalOccupancyFactory.build()
   const errorsAndUserInput = createMock<ErrorsAndUserInput>({ errors: {}, errorSummary: [] })
 
   let nationalOccupancyController: NationalOccupancyController
@@ -49,9 +56,10 @@ describe('NationalOccupancyController', () => {
     response = createMock<Response>({ locals: { user } })
 
     cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
+    premisesService.getMultipleCapacity.mockResolvedValue(nationalCapacity)
 
-    nationalOccupancyController = new NationalOccupancyController(cruManagementAreaService)
-    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
+    nationalOccupancyController = new NationalOccupancyController(premisesService, cruManagementAreaService)
+    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
   })
 
   describe('index', () => {
@@ -74,6 +82,7 @@ describe('NationalOccupancyController', () => {
         postcode: '',
         errorSummary: errorsAndUserInput.errorSummary,
         errors: errorsAndUserInput.errors,
+        criteriaBlock: getCriteriaBlock([], []),
       })
 
       expect(cruManagementAreaService.getCruManagementAreas).toBeCalled()
@@ -81,30 +90,49 @@ describe('NationalOccupancyController', () => {
 
     it('should render form with data populated from the query', async () => {
       const arrivalDate = '16/12/2025'
-      const apType = faker.helpers.arrayElement(Object.keys(apTypeLongLabels))
+      const apType = faker.helpers.arrayElement(Object.keys(apTypeLongLabels)) as ApType
       const postcode = 'SW1A'
-      const roomCriteria = faker.helpers.arrayElements(Object.keys(roomCharacteristicMap), { min: 1, max: 3 })
+      const roomCriteria = faker.helpers.arrayElements(Object.keys(roomCharacteristicMap), {
+        min: 1,
+        max: 3,
+      }) as Array<Cas1SpaceCharacteristic>
       const apCriteria = faker.helpers.arrayElements(Object.keys(spaceSearchCriteriaApLevelLabels), {
         min: 1,
         max: 3,
-      })
+      }) as Array<Cas1SpaceCharacteristic>
       const apArea = cruManagementAreas[1].id
+
+      const allApCharacteristics = apCriteria.concat(apTypeToSpaceCharacteristicMap[apType] || [])
 
       const request = mockRequest({ arrivalDate, apType, apArea, postcode, roomCriteria, apCriteria })
 
       await nationalOccupancyController.index()(request, response, next)
 
-      expect(response.render).toBeCalledWith(
-        'admin/nationalOccupancy/index',
-        expect.objectContaining({
-          apCriteria: convertKeyValuePairToCheckBoxItems(spaceSearchCriteriaApLevelLabels, apCriteria),
-          roomCriteria: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, roomCriteria),
-          apTypeOptions: getApTypeOptions(apType),
-          arrivalDate,
-          cruManagementAreaOptions: getManagementAreaSelectGroups(cruManagementAreas, apArea, cruManagementAreas[0].id),
-          postcode,
-        }),
-      )
+      expect(response.render.mock.calls[0][1]).toEqual({
+        pageHeading: 'View all Approved Premises spaces',
+        backLink: '/admin/cru-dashboard',
+        apCriteria: convertKeyValuePairToCheckBoxItems(spaceSearchCriteriaApLevelLabels, apCriteria),
+        roomCriteria: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, roomCriteria),
+        apTypeOptions: getApTypeOptions(apType),
+        arrivalDate,
+        cruManagementAreaOptions: getManagementAreaSelectGroups(cruManagementAreas, apArea, cruManagementAreas[0].id),
+        postcode,
+        criteriaBlock: getCriteriaBlock(apCriteria, roomCriteria),
+        dateHeader: getDateHeader(nationalCapacity),
+        processedCapacity: processCapacity(nationalCapacity, postcode),
+        fromDate: '2025-12-16',
+        pagination: getPagination('2025-12-16'),
+        errorSummary: errorsAndUserInput.errorSummary,
+        errors: errorsAndUserInput.errors,
+      })
+
+      expect(premisesService.getMultipleCapacity).toHaveBeenCalledWith('TEST_TOKEN', {
+        cruManagementAreaIds: [apArea],
+        fromDate: '2025-12-16',
+        postcodeArea: postcode,
+        premisesCharacteristics: allApCharacteristics,
+        roomCharacteristics: roomCriteria,
+      })
     })
 
     it('should render the form with data merged from the session and query with query dominant', async () => {
@@ -168,7 +196,6 @@ describe('NationalOccupancyController', () => {
       })
 
       const request = mockRequest({})
-
       await nationalOccupancyController.index()(request, responseWomensUser, next)
 
       expect(responseWomensUser.render).toBeCalledWith(

@@ -75,6 +75,11 @@ const updateApplicationReleaseDate = (data: Cas1Application['data']): Cas1Applic
   }
 }
 
+const GIVEN = (comment: string) => cy.log(`** GIVEN ${comment}`)
+const WHEN = (comment: string) => cy.log(`** WHEN ${comment}`)
+const THEN = (comment: string) => cy.log(`** THEN ${comment}`)
+const AND = (comment: string) => cy.log(`** AND ${comment}`)
+
 export {
   offenceDetailSummariesFromApplication,
   supportInformationFromApplication,
@@ -84,4 +89,8 @@ export {
   updateApplicationReleaseDate,
   shouldShowTableRows,
   uiObjectValue,
+  GIVEN,
+  WHEN,
+  THEN,
+  AND,
 }

@@ -476,6 +476,7 @@ type SpaceSearchCommonFields = {
 
 export type NationalSpaceSearchFormData = SpaceSearchCommonFields & {
   apArea?: string
+  apType?: ApType
 }
 
 export type SpaceSearchFormData = SpaceSearchCommonFields & {

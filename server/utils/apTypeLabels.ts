@@ -1,4 +1,4 @@
-import { ApType } from '../@types/shared'
+import { ApType, Cas1SpaceCharacteristic } from '../@types/shared'
 
 export const apTypeLongLabels: Record<ApType, string> = {
   normal: 'Standard (all AP types)',
@@ -19,3 +19,12 @@ export const apTypeShortLabels: Record<ApType, string> = {
 } as const
 
 export type ApTypeLabel = (typeof apTypeLongLabels)[ApType]
+
+export const apTypeToSpaceCharacteristicMap: Record<ApType, Cas1SpaceCharacteristic> = {
+  normal: undefined,
+  pipe: 'isPIPE',
+  esap: 'isESAP',
+  rfap: 'isRecoveryFocussed',
+  mhapElliottHouse: 'isMHAPElliottHouse',
+  mhapStJosephs: 'isMHAPStJosephs',
+}

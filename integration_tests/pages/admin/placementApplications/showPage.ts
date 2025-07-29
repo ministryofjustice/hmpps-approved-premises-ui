@@ -53,5 +53,18 @@ export default class ShowPage extends Page {
 
   shouldShowParoleNotification() {
     cy.get('.govuk-notification-banner').contains('Parole board directed release').should('exist')
+
+    if (this.placementRequest.booking) {
+      cy.get('a')
+        .contains('change the arrival date')
+        .should(
+          'have.attr',
+          'href',
+          managePaths.premises.placements.changes.new({
+            premisesId: this.placementRequest.booking.premisesId,
+            placementId: this.placementRequest.booking.id,
+          }),
+        )
+    }
   }
 }

@@ -23,6 +23,7 @@ export default {
     },
     nationalOccupancy: {
       weekView: nationalOccupancyPath,
+      premisesView: nationalOccupancyPath.path('premises/:premisesId'),
     },
     placementRequests: {
       index: placementRequestsPath,
