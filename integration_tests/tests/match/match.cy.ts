@@ -187,7 +187,7 @@ context('Placement Requests', () => {
         spaceSearchResultFactory.build({
           premises: premisesSearchResultSummary.build({
             ...premises,
-            localRestrictions: premises.localRestrictions.map(({ description }) => description),
+            localRestrictions: (premises.localRestrictions || []).map(({ description }) => description),
           }),
         }),
         ...spaceSearchResultFactory.buildList(4),
