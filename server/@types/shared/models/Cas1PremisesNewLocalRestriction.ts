@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type PremisesLocalRestriction = {
+export type Cas1PremisesNewLocalRestriction = {
     /**
      * restriction to a premises
      */

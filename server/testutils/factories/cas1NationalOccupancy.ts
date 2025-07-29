@@ -29,7 +29,7 @@ export const cas1NationalOccupancyPremisesFactory = Factory.define<Cas1NationalO
   )
   return {
     capacity,
-    distanceInMiles: faker.number.float({ min: 1, max: 250 }),
+    distanceInMiles: faker.number.float({ fractionDigits: 4, min: 1, max: 250 }),
     summary: cas1PremisesSearchResultSummaryFactory.build(),
   }
 })
