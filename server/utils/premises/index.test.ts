@@ -346,7 +346,7 @@ describe('premisesUtils', () => {
           html: `<a href="${paths.premises.localRestrictions.remove({
             premisesId: premises.id,
             restrictionId: restrictions[0].id,
-          })}">Remove<span class="govuk-visually-hidden">restriction "Some description"</span></a>`,
+          })}" class="govuk-button govuk-button--secondary govuk-!-margin-0">Remove<span class="govuk-visually-hidden">restriction "Some description"</span></a>`,
         },
       ])
     })

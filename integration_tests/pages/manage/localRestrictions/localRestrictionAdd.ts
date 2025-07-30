@@ -15,6 +15,6 @@ export class LocalRestrictionAddPage extends Page {
     if (description.length) {
       this.completeTextInput('description', description)
     }
-    this.clickButton('Save')
+    this.clickButton('Add restriction')
   }
 }

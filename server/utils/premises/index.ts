@@ -208,7 +208,11 @@ export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableR
           premisesId: premises.id,
           restrictionId: restriction.id,
         }),
-        { text: 'Remove', hiddenText: `restriction "${restriction.description}"` },
+        {
+          text: 'Remove',
+          hiddenText: `restriction "${restriction.description}"`,
+          attributes: { class: 'govuk-button govuk-button--secondary govuk-!-margin-0' },
+        },
       ),
     ),
   ])

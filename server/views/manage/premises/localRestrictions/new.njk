@@ -32,11 +32,11 @@
                 <div data-module="govuk-character-count" data-maxlength="100">
                     {{ govukInput({
                         label: {
-                            text: 'Enter the restriction information and relevant dates',
+                            text: 'Enter details about the restriction',
                             classes: 'govuk-label--m'
                         },
                         hint: {
-                            text: 'Local restrictions are AP criteria that are not captured by the site survey. For example, ‘no hate based offences’'
+                            text: 'Add information that is not captured by the site survey and any relevant dates. For example, ‘no arson offences during November’.'
                         },
                         classes: 'govuk-js-character-count',
                         name: "description",
@@ -50,7 +50,7 @@
 
                 {{ govukButton({
                     type: 'submit',
-                    text: 'Save',
+                    text: 'Add restriction',
                     preventDoubleClick: true
                 }) }}
             </form>

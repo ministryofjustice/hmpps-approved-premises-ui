@@ -28,14 +28,7 @@
 
     {% if not restrictionsRows | length %}
         <p>This AP has no local restrictions.</p>
-    {% endif %}
-
-    {{ govukButton({
-        text: "Add a restriction",
-        href: paths.premises.localRestrictions.new({ premisesId: premises.id })
-    }) }}
-
-    {% if restrictionsRows | length %}
+    {% else %}
         {{ govukTable({
             head: [
                 { text: "Restriction" },
@@ -45,5 +38,10 @@
             rows: restrictionsRows
         }) }}
     {% endif %}
+
+    {{ govukButton({
+        text: "Add a restriction",
+        href: paths.premises.localRestrictions.new({ premisesId: premises.id })
+    }) }}
 
 {% endblock %}
