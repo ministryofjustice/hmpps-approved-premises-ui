@@ -6,7 +6,7 @@ import type {
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { occupancySummary } from '../../../server/utils/match'
-import { DayAvailabilityStatus, dayAvailabilityStatus } from '../../../server/utils/match/occupancy'
+import { DayAvailabilityStatus, dayAvailabilityStatusForCriteria } from '../../../server/utils/match/occupancy'
 
 export default class OccupancyFilterPage extends Page {
   shouldShowFilters(startDate: string, selectedDuration: string, newCriteria: Array<string>) {
@@ -57,29 +57,6 @@ export default class OccupancyFilterPage extends Page {
     }
   }
 
-  shouldShowOccupancyCalendar(
-    premiseCapacity: Cas1PremiseCapacity,
-    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
-  ) {
-    const firstMonth = DateFormats.isoDateToMonthAndYear(premiseCapacity.startDate)
-    cy.get('.govuk-heading-m').contains(firstMonth).should('exist')
-
-    premiseCapacity.capacity.forEach(capacity => {
-      const status = dayAvailabilityStatus(capacity, criteria)
-      let tagColour = 'green'
-      if (status !== 'available') tagColour = 'red'
-
-      const capacityText = `${capacity.availableBedCount - capacity.bookingCount}/${capacity.availableBedCount}`
-
-      cy.get('.calendar__day')
-        .contains(DateFormats.isoDateToUIDate(capacity.date, { format: 'longNoYear' }))
-        .closest('.calendar__day')
-        .should('have.class', `govuk-tag--${tagColour}`)
-        .should('contain.text', capacityText)
-        .should(criteria.length ? 'contain.text' : 'not.contain.text', 'your criteria')
-    })
-  }
-
   getOccupancyForDate(date: Date, capacity: Cas1PremiseCapacity): Cas1PremiseCapacityForDay {
     return capacity.capacity.find(day => day.date === DateFormats.dateObjToIsoDate(date))
   }
@@ -96,7 +73,7 @@ export default class OccupancyFilterPage extends Page {
   ): Array<Date> {
     const dates: Record<DayAvailabilityStatus, Date> = premiseCapacity.capacity.reduce(
       (statuses, day) => {
-        const status = dayAvailabilityStatus(day, criteria)
+        const status = dayAvailabilityStatusForCriteria(day, criteria)
 
         return {
           ...statuses,

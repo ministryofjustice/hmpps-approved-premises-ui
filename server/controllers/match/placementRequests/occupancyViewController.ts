@@ -6,7 +6,11 @@ import { occupancySummary, placementDates, validateSpaceBooking } from '../../..
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { DateFormats, isoDateIsValid } from '../../../utils/dateUtils'
-import { dayAvailabilityStatus, dayAvailabilityStatusMap, durationSelectOptions } from '../../../utils/match/occupancy'
+import {
+  dayAvailabilityStatusForCriteria,
+  dayAvailabilityStatusMap,
+  durationSelectOptions,
+} from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
@@ -264,7 +268,7 @@ export default class {
         excludeSpaceBookingId,
       })
       const dayCapacity = premisesCapacity.capacity[0]
-      const status = dayAvailabilityStatus(dayCapacity, filteredCriteria)
+      const status = dayAvailabilityStatusForCriteria(dayCapacity, filteredCriteria)
 
       return res.render('manage/premises/occupancy/dayView', {
         backLink,

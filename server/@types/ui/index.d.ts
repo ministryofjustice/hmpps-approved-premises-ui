@@ -467,7 +467,6 @@ export type SpaceSearchRoomCriteria = keyof typeof roomCharacteristicMap
 
 type SpaceSearchCommonFields = {
   postcode?: string
-  apType?: ApTypeCriteria
   apCriteria?: Array<SpaceSearchApCriteria>
   roomCriteria?: Array<SpaceSearchRoomCriteria>
   startDate?: string
@@ -483,6 +482,7 @@ export type NationalSpaceSearchFormData = SpaceSearchCommonFields & {
 export type SpaceSearchFormData = SpaceSearchCommonFields & {
   applicationId?: string
   departureDate?: string
+  apType?: ApTypeCriteria
 }
 
 export type DepartureFormData = ObjectWithDateParts<'departureDate'> & {

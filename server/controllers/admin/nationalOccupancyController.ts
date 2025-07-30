@@ -159,13 +159,13 @@ export default class NationalOccupancyController {
         })
       }
 
-      const { arrivalDate: arrivalDateSlash, roomCriteria, durationDays } = { durationDays: 84, ...sessionData }
+      const { arrivalDate: arrivalDateSlash, roomCriteria, durationDays = 84 } = sessionData
       const roomCharacteristics = makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria || [])
 
       let calendar: Calendar
       let premises: Cas1Premises
 
-      const arrivalDate = DateFormats.datepickerInputToIsoString(arrivalDateSlash as string)
+      const arrivalDate = DateFormats.datepickerInputToIsoString(arrivalDateSlash)
 
       const errors: Record<string, string> = {}
 

@@ -131,7 +131,8 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
+    occupancyViewPage.shouldShowCalendarKey('twoColour')
+    occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
   it('allows me to view spaces and occupancy capacity with blank licence expiry date', () => {
@@ -142,7 +143,8 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
+    occupancyViewPage.shouldShowCalendarKey('twoColour')
+    occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
   it('allows me to submit invalid dates in the book your placement form on occupancy view page and displays appropriate validation messages', () => {
@@ -267,7 +269,8 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
+    occupancyViewPage.shouldShowCalendarKey('twoColour')
+    occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     // And I should be able to see any day's availability details
     const datesByStatus = occupancyViewPage.getDatesForEachAvailabilityStatus(premiseCapacity, searchState.roomCriteria)
@@ -276,7 +279,8 @@ context('Placement Requests', () => {
     })
 
     // Then I should see the calendar again
-    occupancyViewPage.shouldShowOccupancyCalendar(premiseCapacity, searchState.roomCriteria)
+    occupancyViewPage.shouldShowCalendarKey('twoColour')
+    occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     // When I filter with an invalid date
     occupancyViewPage.filterAvailability({ newStartDate: '2025-02-35' })

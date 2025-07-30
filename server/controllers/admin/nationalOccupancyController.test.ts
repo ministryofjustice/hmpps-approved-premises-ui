@@ -1,8 +1,8 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
-import type { ErrorsAndUserInput } from '@approved-premises/ui'
+import type { ErrorsAndUserInput, NationalSpaceSearchFormData } from '@approved-premises/ui'
 import { faker } from '@faker-js/faker'
-import { ApType, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import { ApType, Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic } from '@approved-premises/api'
 import { ParsedQs } from 'qs'
 import {
   cas1NationalOccupancyFactory,
@@ -30,6 +30,7 @@ import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import * as validationUtils from '../../utils/validation'
 import { durationSelectOptions } from '../../utils/match/occupancy'
 import { occupancyCalendar } from '../../utils/match/occupancyCalendar'
+import { makeArrayOfType } from '../../utils/utils'
 
 describe('NationalOccupancyController', () => {
   const token = 'TEST_TOKEN'
@@ -55,9 +56,9 @@ describe('NationalOccupancyController', () => {
   let nationalOccupancyController: NationalOccupancyController
 
   const mockRequest = (
-    query: Record<string, string | Array<string> | number> = {},
-    session: Record<string, string | Array<string> | number> = {},
-    params: Record<string, string> = {},
+    query: Request['query'] = {},
+    session: NationalSpaceSearchFormData = {},
+    params: Request['params'] = {},
   ) =>
     createMock<Request>({
       user: { token },
@@ -156,12 +157,12 @@ describe('NationalOccupancyController', () => {
     })
 
     it('should render the form with data merged from the session and query with query dominant', async () => {
-      const queryData = {
+      const queryData: { arrivalDate: string; apType: ApType } = {
         arrivalDate: '16/12/2025',
-        apType: Object.keys(apTypeLongLabels)[0],
+        apType: makeArrayOfType<ApType>(Object.keys(apTypeLongLabels))[0],
       }
-      const sessionData = {
-        apType: Object.keys(apTypeLongLabels)[1],
+      const sessionData: { postcode: string; apType: ApType } = {
+        apType: makeArrayOfType<ApType>(Object.keys(apTypeLongLabels))[1],
         postcode: 'SW1A',
       }
 
@@ -255,7 +256,7 @@ describe('NationalOccupancyController', () => {
     })
 
     it('should read the room criteria and duration from the session', async () => {
-      const roomCriteria: Array<Cas1SpaceCharacteristic> = ['isSingle', 'isStepFreeDesignated']
+      const roomCriteria: Array<Cas1SpaceBookingCharacteristic> = ['isSingle', 'isStepFreeDesignated']
       const request = mockRequest({}, { roomCriteria, durationDays: 7, arrivalDate }, { premisesId: premises.id })
       await nationalOccupancyController.premisesView()(request, response, next)
       expect(response.render.mock.lastCall[1]).toEqual(
@@ -275,7 +276,7 @@ describe('NationalOccupancyController', () => {
 
     it('should write the room criteria and duration into the session if passed in query', async () => {
       const roomCriteria = ['isSingle', 'isStepFreeDesignated']
-      const query = { roomCriteria, durationDays: 7, arrivalDate }
+      const query = { roomCriteria, durationDays: '7', arrivalDate }
       const request = mockRequest(query, {}, { premisesId: premises.id })
 
       await nationalOccupancyController.premisesView()(request, response, next)

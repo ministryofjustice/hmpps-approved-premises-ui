@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { Cas1PremiseCapacityForDay } from '@approved-premises/api'
 import { cas1PremiseCapacityForDayFactory } from '../../testutils/factories'
-import { dayAvailabilityCount, dayAvailabilityStatus, durationSelectOptions } from './occupancy'
+import { dayAvailabilityCount, dayAvailabilityStatusForCriteria, durationSelectOptions } from './occupancy'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 
 const capacityWithCriteria: Cas1PremiseCapacityForDay = cas1PremiseCapacityForDayFactory.build({
@@ -67,19 +67,19 @@ describe('dayAvailabilityStatus', () => {
     it('returns available if there is availability', () => {
       const capacityForDay = cas1PremiseCapacityForDayFactory.available().build()
 
-      expect(dayAvailabilityStatus(capacityForDay)).toEqual('available')
+      expect(dayAvailabilityStatusForCriteria(capacityForDay)).toEqual('available')
     })
 
     it('returns overbooked if the day is overbooked', () => {
       const capacityForDay = cas1PremiseCapacityForDayFactory.overbooked().build()
 
-      expect(dayAvailabilityStatus(capacityForDay)).toEqual('overbooked')
+      expect(dayAvailabilityStatusForCriteria(capacityForDay)).toEqual('overbooked')
     })
 
     it('returns full if the day is at capacity', () => {
       const capacityForDay = cas1PremiseCapacityForDayFactory.full().build()
 
-      expect(dayAvailabilityStatus(capacityForDay)).toEqual('full')
+      expect(dayAvailabilityStatusForCriteria(capacityForDay)).toEqual('full')
     })
   })
 
@@ -95,17 +95,17 @@ describe('dayAvailabilityStatus', () => {
       })
 
       it('returns available if there is availability for all the criteria', () => {
-        expect(dayAvailabilityStatus(capacityForDay, ['isSuitedForSexOffenders', 'isArsonSuitable'])).toEqual(
-          'available',
-        )
+        expect(
+          dayAvailabilityStatusForCriteria(capacityForDay, ['isSuitedForSexOffenders', 'isArsonSuitable']),
+        ).toEqual('available')
       })
 
       it('returns full if one of the required criteria is full', () => {
-        expect(dayAvailabilityStatus(capacityForDay, ['isSingle', 'isArsonSuitable'])).toEqual('full')
+        expect(dayAvailabilityStatusForCriteria(capacityForDay, ['isSingle', 'isArsonSuitable'])).toEqual('full')
       })
 
       it('returns overbooked if one of the required criteria is overbooked', () => {
-        expect(dayAvailabilityStatus(capacityForDay, ['isSingle', 'hasEnSuite'])).toEqual('overbooked')
+        expect(dayAvailabilityStatusForCriteria(capacityForDay, ['isSingle', 'hasEnSuite'])).toEqual('overbooked')
       })
     })
 
@@ -120,7 +120,7 @@ describe('dayAvailabilityStatus', () => {
           characteristicAvailability,
         })
 
-        expect(dayAvailabilityStatus(capacity, ['isSingle'])).toEqual('full')
+        expect(dayAvailabilityStatusForCriteria(capacity, ['isSingle'])).toEqual('full')
       })
 
       it('returns overbooked if general availability is overbooked', () => {
@@ -128,7 +128,7 @@ describe('dayAvailabilityStatus', () => {
           characteristicAvailability,
         })
 
-        expect(dayAvailabilityStatus(capacity, ['hasEnSuite'])).toEqual('overbooked')
+        expect(dayAvailabilityStatusForCriteria(capacity, ['hasEnSuite'])).toEqual('overbooked')
       })
     })
   })

@@ -64,15 +64,13 @@
 
         {% if not errors.startDate %}
 
-
-
             <section class="govuk-visually-hidden">
                 {{ occupancySummary(summary) }}
             </section>
 
             {{ calendarKey() }}
 
-            <section aria-describedby="calendar-key">
+            <section id="calendar" aria-describedby="calendar-key">
                 {{ occupancyCalendar(calendar) }}
             </section>
         {% endif %}

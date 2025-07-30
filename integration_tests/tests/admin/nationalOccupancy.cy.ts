@@ -1,4 +1,5 @@
 import { ApType, Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import Page from '../../pages/page'
 import {
   cas1NationalOccupancyFactory,
   cas1PremiseCapacityFactory,
@@ -135,7 +136,7 @@ context('National occupancy view', () => {
     weekPage.clickLink(nationalOccupancy.premises[1].summary.name)
 
     THEN('I should be on the single premises view page')
-    const page = new PremisesOccupancyViewPage(`View spaces in ${premises.name}`)
+    const page = Page.verifyOnPage(PremisesOccupancyViewPage, `View spaces in ${premises.name}`)
 
     AND('the default duration should be set')
     page.shouldHaveSelectText('durationDays', 'Up to 12 weeks')
@@ -147,7 +148,9 @@ context('National occupancy view', () => {
     page.clickButton('Apply filters')
 
     THEN('I should see an error')
-    page.shouldSeeValidationErrors()
+    page.shouldShowErrorMessagesForFields(['arrivalDate'], {
+      arrivalDate: 'Enter a valid arrival date',
+    })
 
     WHEN('I correct the invalid date')
     page.clearInput('arrivalDate')
@@ -155,22 +158,27 @@ context('National occupancy view', () => {
     page.clickButton('Apply filters')
 
     AND('I should see the calendar')
-    page.shouldShowCalendarKey()
-    page.shouldShowCalendar(capacities[1].premiseCapacity, filterSettings.roomCriteria)
+    page.shouldShowCalendarKey('twoColour')
+    page.shouldShowCalendar({ premisesCapacity: capacities[1].premiseCapacity, criteria: filterSettings.roomCriteria })
 
     WHEN(`I change the 'filter' to no room criteria`)
     page.uncheckCheckboxbyNameAndValue('roomCriteria', 'isWheelchairDesignated')
     page.clickButton('Apply filters')
 
     THEN('I should see the calendar in no criteria format')
-    page.shouldShowCalendarKey()
-    page.shouldShowCalendar(capacities[1].premiseCapacity, [])
+    page.shouldShowCalendarKey('twoColour')
+    page.shouldShowCalendar({ premisesCapacity: capacities[1].premiseCapacity })
 
     WHEN('I click on a day')
     page.clickLink(DateFormats.isoDateToUIDate(daySummaryDate, { format: 'longNoYear' }))
 
     THEN('I should see the day details view for that day')
-    const dayPage = new DayAvailabilityPage(premisesDaySummary, capacities[2].premiseCapacity.capacity[0], [])
+    const dayPage = Page.verifyOnPage(
+      DayAvailabilityPage,
+      premisesDaySummary,
+      capacities[2].premiseCapacity.capacity[0],
+      [],
+    )
 
     AND('I should see availability details')
     dayPage.shouldShowDayAvailability()
@@ -180,7 +188,7 @@ context('National occupancy view', () => {
 
     THEN('I am on the AP view page again with all my settings unchanged')
     page.checkOnPage()
-    page.shouldBePopululatedWith({ durationText: 'Up to 1 week', arrivalDate: filterSettings.arrivalDate })
+    page.shouldBePopulatedWith({ durationText: 'Up to 1 week', arrivalDate: filterSettings.arrivalDate })
 
     WHEN('I click back')
     page.clickBack()

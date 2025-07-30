@@ -14,6 +14,8 @@ import {
   Cas1PlacementRequestDetail,
   PrisonCaseNote,
   SortOrder,
+  type Cas1PremiseCapacity,
+  type Cas1SpaceBookingCharacteristic,
 } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import errorLookups from '../../server/i18n/en/errors.json'
@@ -23,6 +25,8 @@ import { sentenceCase } from '../../server/utils/utils'
 import { SubmittedDocumentRenderer } from '../../server/utils/forms/submittedDocumentRenderer'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
 import { displayName, isFullPerson } from '../../server/utils/personUtils'
+import { dayAvailabilityCount, dayAvailabilityStatusForCriteria } from '../../server/utils/match/occupancy'
+import { dayStatusFromDayCapacity } from '../../server/utils/premises/occupancy'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
@@ -813,5 +817,52 @@ export default abstract class Page {
     cy.get(`@status-${name}`).should('have.text', 'You have 1 character too many')
 
     this.clearInput(name)
+  }
+
+  shouldShowCalendarKey(type: 'twoColour' | 'threeColour'): void {
+    cy.get('#calendar-key').within(() => {
+      cy.contains('Available')
+      if (type === 'twoColour') {
+        cy.contains('Full or overbooked')
+      } else {
+        cy.contains('Full')
+        cy.contains('Overbooked')
+      }
+    })
+  }
+
+  shouldShowCalendar({
+    premisesCapacity,
+    criteria = [],
+    verbose = false,
+  }: {
+    premisesCapacity: Cas1PremiseCapacity
+    criteria?: Array<Cas1SpaceBookingCharacteristic>
+    verbose?: boolean
+  }): void {
+    const statusClasses = verbose
+      ? { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: '' }
+      : { overbooked: 'govuk-tag--red', full: 'govuk-tag--red', available: 'govuk-tag--green' }
+    cy.get('#calendar').find('li').should('have.length', premisesCapacity.capacity.length)
+    cy.get('#calendar')
+      .find('li')
+      .each((day, index) => {
+        const capacity = premisesCapacity.capacity[index]
+        const { availableBedCount, bookingCount, date } = capacity
+        const dayStatus = verbose
+          ? dayStatusFromDayCapacity(capacity)
+          : dayAvailabilityStatusForCriteria(capacity, criteria)
+        cy.wrap(day).within(() => {
+          if (verbose) {
+            cy.contains(`${bookingCount} booked`)
+            cy.contains(`${availableBedCount - bookingCount} available`)
+          } else {
+            const bookableCount = dayAvailabilityCount(capacity, criteria)
+            cy.contains(criteria.length ? `${bookableCount}` : `${bookableCount}/${availableBedCount}`)
+          }
+          cy.contains(DateFormats.isoDateToUIDate(date, { format: 'longNoYear' }))
+        })
+        cy.wrap(day).should('have.class', statusClasses[dayStatus])
+      })
   }
 }

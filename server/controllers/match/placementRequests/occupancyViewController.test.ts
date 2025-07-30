@@ -19,7 +19,11 @@ import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
-import { dayAvailabilityStatus, dayAvailabilityStatusMap, durationSelectOptions } from '../../../utils/match/occupancy'
+import {
+  dayAvailabilityStatusForCriteria,
+  dayAvailabilityStatusMap,
+  durationSelectOptions,
+} from '../../../utils/match/occupancy'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { ValidationError } from '../../../utils/errors'
 import { filterRoomLevelCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
@@ -466,7 +470,10 @@ describe('OccupancyViewController', () => {
     const query = {
       criteria: ['isWheelchairDesignated', 'isArsonSuitable'],
     }
-    const expectedStatus = dayAvailabilityStatus(dayCapacity, filterRoomLevelCriteria(makeArrayOfType(query.criteria)))
+    const expectedStatus = dayAvailabilityStatusForCriteria(
+      dayCapacity,
+      filterRoomLevelCriteria(makeArrayOfType(query.criteria)),
+    )
 
     beforeEach(() => {
       premisesService.getDaySummary.mockResolvedValue(premisesDaySummary)
