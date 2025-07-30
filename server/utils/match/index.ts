@@ -25,7 +25,6 @@ import { characteristicsBulletList } from '../characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
 
 export { placementDates } from './placementDates'
-export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
 
 export const placementLength = (lengthInDays: number): string => {

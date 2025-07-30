@@ -9,7 +9,7 @@ import {
   cas1SpaceBookingFactory,
 } from '../../../../testutils/factories'
 import ChangesController from './changesController'
-import { occupancySummary, spaceBookingConfirmationSummaryListRows } from '../../../../utils/match'
+import { spaceBookingConfirmationSummaryListRows } from '../../../../utils/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import matchPaths from '../../../../paths/match'
 import managePaths from '../../../../paths/manage'
@@ -91,7 +91,6 @@ describe('changesController', () => {
         durationDays: expectedDuration,
         criteria: expectedCriteria,
         calendarHeading: 'Showing 4 weeks, 3 days from 2 Oct 2025',
-        summary: occupancySummary(capacity.capacity, expectedCriteria),
         calendar: occupancyCalendar(capacity.capacity, expectedPlaceholderDayUrl, expectedCriteria),
         errorSummary: [],
         errors: {},
@@ -124,7 +123,6 @@ describe('changesController', () => {
         })
         expect(response.render.mock.lastCall[1]).toEqual(
           expect.objectContaining({
-            summary: occupancySummary(capacity.capacity, filterCriteria),
             calendarHeading: 'Showing 1 week from 12 May 2025',
             calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria),
             durationOptions: durationSelectOptions(Number(query.durationDays)),
@@ -146,7 +144,6 @@ describe('changesController', () => {
         expect(premisesService.getCapacity).not.toHaveBeenCalled()
         expect(response.render.mock.lastCall[1]).toEqual(
           expect.objectContaining({
-            summary: undefined,
             calendar: undefined,
             durationOptions: durationSelectOptions(Number(query.durationDays)),
             criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, []),

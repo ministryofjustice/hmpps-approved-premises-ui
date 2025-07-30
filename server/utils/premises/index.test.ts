@@ -1,4 +1,4 @@
-import { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
+import { Cas1SpaceBookingResidency } from '@approved-premises/api'
 import { TextItem } from '@approved-premises/ui'
 import { addDays } from 'date-fns'
 import {
@@ -14,7 +14,6 @@ import {
   placementTableHeader,
   placementTableRows,
   premisesActions,
-  premisesOverbookingSummary,
   premisesTabItems,
   premisesTableRows,
   summaryListForPremises,
@@ -298,28 +297,6 @@ describe('premisesUtils', () => {
       ).toEqual({
         html: 'Upcoming<br/>Appeal requested<br/>Transfer requested',
       })
-    })
-  })
-
-  describe('premisesOverbookingSummary', () => {
-    it('Should generate the premisesOverbooking summary', () => {
-      const overbookingSummary: Array<Cas1OverbookingRange> = [
-        { startInclusive: '2025-03-01', endInclusive: '2025-04-01' },
-        { startInclusive: '2025-10-20', endInclusive: '2025-10-28' },
-        { startInclusive: '2025-10-30', endInclusive: '2025-10-30' },
-      ]
-
-      const premises = cas1PremisesFactory.build({ overbookingSummary })
-      expect(premisesOverbookingSummary(premises)).toEqual([
-        { duration: 32, from: '2025-03-01', to: '2025-04-01' },
-        { duration: 9, from: '2025-10-20', to: '2025-10-28' },
-        { duration: 1, from: '2025-10-30', to: '2025-10-30' },
-      ])
-    })
-    it('Should generate an empty premisesOverbooking summary', () => {
-      const overbookingSummary: Array<Cas1OverbookingRange> = []
-      const premises = cas1PremisesFactory.build({ overbookingSummary })
-      expect(premisesOverbookingSummary(premises)).toEqual([])
     })
   })
 

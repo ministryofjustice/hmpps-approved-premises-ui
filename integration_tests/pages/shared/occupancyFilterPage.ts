@@ -5,7 +5,6 @@ import type {
 } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { occupancySummary } from '../../../server/utils/match'
 import { DayAvailabilityStatus, dayAvailabilityStatusForCriteria } from '../../../server/utils/match/occupancy'
 
 export default class OccupancyFilterPage extends Page {
@@ -39,22 +38,6 @@ export default class OccupancyFilterPage extends Page {
       })
     }
     this.clickApplyFilter()
-  }
-
-  shouldShowOccupancySummary(
-    premiseCapacity: Cas1PremiseCapacity,
-    criteria: Array<Cas1SpaceBookingCharacteristic> = [],
-  ) {
-    const summary = occupancySummary(premiseCapacity.capacity, criteria)
-
-    if (!summary.overbooked) {
-      this.shouldShowBanner('The placement dates you have selected are available.')
-    } else if (!summary.available) {
-      this.shouldShowBanner('There are no spaces available for the dates you have selected.')
-    } else {
-      this.shouldShowBanner('Available on:', { exact: false })
-      this.shouldShowBanner('Overbooked on:', { exact: false })
-    }
   }
 
   getOccupancyForDate(date: Date, capacity: Cas1PremiseCapacity): Cas1PremiseCapacityForDay {

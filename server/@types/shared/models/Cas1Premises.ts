@@ -40,7 +40,7 @@ export type Cas1Premises = {
      * This is deprecated and only returns an empty list
      * @deprecated
      */
-    overbookingSummary: Array<Cas1OverbookingRange>;
+    // overbookingSummary: Array<Cas1OverbookingRange>;
     postcode: string;
     supportsSpaceBookings: boolean;
 };

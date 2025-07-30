@@ -10,7 +10,6 @@
 
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "components/keyDetails/macro.njk" import keyDetails %}
-{% from "match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
 {% from "match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "partials/_calendar.njk" import calendarKey %}
 
@@ -53,10 +52,6 @@
             <h2 class="govuk-heading-l">{{ calendarHeading }}</h2>
 
             <p>Your current booking is not included in this calendar.</p>
-
-            <section class="govuk-visually-hidden">
-                {{ occupancySummary(summary) }}
-            </section>
 
             {{ calendarKey() }}
 

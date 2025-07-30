@@ -540,9 +540,3 @@ export type AppealJson<K = ChangeRequestReason> = {
 }
 
 export type AppealFormData = ObjectWithDateParts<'approvalDate'> & AppealJson
-
-export type DateRange = {
-  from: string
-  to?: string
-  duration: number
-}

@@ -15,13 +15,8 @@ import {
   staffMemberFactory,
   userDetailsFactory,
 } from '../../../testutils/factories'
-import {
-  premisesActions,
-  premisesOverbookingSummary,
-  premisesTableHead,
-  premisesTableRows,
-  summaryListForPremises,
-} from '../../../utils/premises'
+
+import { premisesActions, premisesTableHead, premisesTableRows, summaryListForPremises } from '../../../utils/premises'
 
 describe('V2PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -99,7 +94,6 @@ describe('V2PremisesController', () => {
         hrefPrefix: '/manage/premises/some-uuid?activeTab=upcoming&',
         placements: paginatedPlacements.data,
         keyworkersList,
-        premisesOverbookingSummary: premisesOverbookingSummary(premisesSummary),
         viewSpacesLink: `/manage/premises/${premisesSummary.id}/occupancy`,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
