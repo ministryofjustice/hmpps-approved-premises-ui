@@ -815,41 +815,41 @@ export default abstract class Page {
     this.clearInput(name)
   }
 
-  shouldShowCalendarKey(type: 'twoColour' | 'threeColour'): void {
+  shouldShowCalendar({
+    premisesCapacity,
+    criteria = [],
+    colourMode = 'twoColour',
+    logic = 'match',
+  }: {
+    premisesCapacity: Cas1PremiseCapacity
+    criteria?: Array<Cas1SpaceBookingCharacteristic>
+    colourMode?: 'twoColour' | 'threeColour'
+    logic?: 'match' | 'manage'
+  }): void {
+    const statusClasses =
+      colourMode === 'threeColour'
+        ? { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: 'govuk-tag--green' }
+        : { overbooked: 'govuk-tag--red', full: 'govuk-tag--red', available: 'govuk-tag--green' }
+
     cy.get('#calendar-key').within(() => {
       cy.contains('Available')
-      if (type === 'twoColour') {
+      if (colourMode === 'twoColour') {
         cy.contains('Full or overbooked')
       } else {
         cy.contains('Full')
         cy.contains('Overbooked')
       }
     })
-  }
-
-  shouldShowCalendar({
-    premisesCapacity,
-    criteria = [],
-    verbose = false,
-  }: {
-    premisesCapacity: Cas1PremiseCapacity
-    criteria?: Array<Cas1SpaceBookingCharacteristic>
-    verbose?: boolean
-  }): void {
-    const statusClasses = verbose
-      ? { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: 'govuk-tag--green' }
-      : { overbooked: 'govuk-tag--red', full: 'govuk-tag--red', available: 'govuk-tag--green' }
     cy.get('#calendar').find('li').should('have.length', premisesCapacity.capacity.length)
     cy.get('#calendar')
       .find('li')
       .each((day, index) => {
         const capacity = premisesCapacity.capacity[index]
         const { availableBedCount, bookingCount, date } = capacity
-        const dayStatus = verbose
-          ? dayStatusFromDayCapacity(capacity)
-          : dayAvailabilityStatusForCriteria(capacity, criteria)
+        const dayStatus =
+          logic === 'manage' ? dayStatusFromDayCapacity(capacity) : dayAvailabilityStatusForCriteria(capacity, criteria)
         cy.wrap(day).within(() => {
-          if (verbose) {
+          if (logic === 'manage') {
             cy.contains(`${bookingCount} booked`)
             cy.contains(`${availableBedCount - bookingCount} available`)
           } else {

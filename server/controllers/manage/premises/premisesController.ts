@@ -6,7 +6,6 @@ import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import {
   PremisesTab,
-  premisesOverbookingSummary,
   summaryListForPremises,
   premisesTableRows,
   premisesTableHead,
@@ -95,7 +94,6 @@ export default class PremisesController {
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
         pageNumber: Number(paginatedPlacements?.pageNumber) || undefined,
         totalPages: Number(paginatedPlacements?.totalPages) || undefined,
-        premisesOverbookingSummary: premisesOverbookingSummary(premises),
         viewSpacesLink: managePaths.premises.occupancy.view({ premisesId: premises.id }),
       })
     }

@@ -109,17 +109,4 @@ export default class PremisesShowPage extends Page {
       })
     })
   }
-
-  shouldShowOverbookingSummary() {
-    cy.get('.govuk-notification-banner__content').should('contain.text', 'Overbooking in the next 12 weeks')
-    PremisesShowPage.overbookingSummary.forEach(({ startInclusive, endInclusive }) => {
-      const toText = startInclusive !== endInclusive ? ` to ${DateFormats.isoDateToUIDate(endInclusive)}` : ''
-      const dateRangeText = `${DateFormats.isoDateToUIDate(startInclusive)}${toText}`
-      const duration = DateFormats.formatDuration({
-        days: DateFormats.durationBetweenDates(endInclusive, startInclusive).number + 1,
-      })
-      cy.get('.govuk-notification-banner__content').contains(dateRangeText)
-      cy.get('.govuk-notification-banner__content').contains(duration)
-    })
-  }
 }

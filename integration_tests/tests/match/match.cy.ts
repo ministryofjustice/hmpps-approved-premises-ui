@@ -133,7 +133,6 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     AND('I should see an occupancy calendar')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
@@ -145,7 +144,6 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     AND('I should see an occupancy calendar')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
@@ -275,7 +273,6 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     AND('I should see an occupancy calendar')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     AND("I should be able to see any day's availability details")
@@ -284,8 +281,10 @@ context('Placement Requests', () => {
       shouldShowDayDetailsAndReturn(occupancyViewPage, date, premises, premiseCapacity, searchState.roomCriteria)
     })
 
+    AND('I should see a summary of occupancy')
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
+
     THEN('I should see the calendar again')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     WHEN('I filter with an invalid date')
