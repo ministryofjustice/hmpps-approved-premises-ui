@@ -73,7 +73,7 @@ export default {
     stubFor({
       request: {
         method: 'PUT',
-        url: paths.assessments.show({ id: assessment.id }),
+        url: paths.assessments.update({ id: assessment.id }),
       },
       response: {
         status: 201,
