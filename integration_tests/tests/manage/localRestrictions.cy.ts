@@ -12,6 +12,7 @@ import { LocalRestrictionsPage } from '../../pages/manage/localRestrictions/loca
 import { LocalRestrictionAddPage } from '../../pages/manage/localRestrictions/localRestrictionAdd'
 import apiPaths from '../../../server/paths/api'
 import { LocalRestrictionConfirmRemovePage } from '../../pages/manage/localRestrictions/localRestrictionConfirmRemove'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 describe('Local restrictions', () => {
   const premises = cas1PremisesFactory.build({ localRestrictions: [] })
@@ -31,54 +32,54 @@ describe('Local restrictions', () => {
       perPage: 2000,
     })
 
-    cy.log('Given I am signed in as a Future manager')
+    GIVEN('I am signed in as a Future manager')
     // TODO: Change role to 'future_manager' when feature is released
     signIn('janitor')
   })
 
   it('lets me see and manage a list of local restrictions for a premises', () => {
-    cy.log('When I visit the premises page')
+    WHEN('I visit the premises page')
     const premisesPage = PremisesShowPage.visit(premises)
 
-    cy.log('And I click on the Manage local restrictions action')
+    AND('I click on the Manage local restrictions action')
     premisesPage.clickAction('Manage local restrictions')
 
-    cy.log('Then I should see the local restrictions page')
+    THEN('I should see the local restrictions page')
     const restrictionsPage = Page.verifyOnPage(LocalRestrictionsPage, premises)
 
-    cy.log("And I should see a details component with the premises' criteria")
+    AND("I should see a details component with the premises' criteria")
     restrictionsPage.shouldExpandDetails('View AP criteria')
     restrictionsPage.shouldShowPremisesCharacteristics()
 
-    cy.log('And I should see no local restrictions for the premises')
+    AND('I should see no local restrictions for the premises')
     restrictionsPage.shouldShowNoRestrictions()
 
-    cy.log('When I click on Add a restriction')
+    WHEN('I click on Add a restriction')
     restrictionsPage.clickLink('Add a restriction')
 
-    cy.log('Then I should see the form to add a restriction')
+    THEN('I should see the form to add a restriction')
     const addRestrictionsPage = Page.verifyOnPage(LocalRestrictionAddPage, premises)
 
-    cy.log('And the field should have a character count')
+    AND('the field should have a character count')
     addRestrictionsPage.shouldShowCharacterCount('description', 100)
 
-    cy.log('When I submit the form empty')
+    WHEN('I submit the form empty')
     addRestrictionsPage.completeForm('')
 
-    cy.log('Then I should see an error')
+    THEN('I should see an error')
     addRestrictionsPage.shouldShowErrorMessagesForFields(['description'], {
       description: 'Enter details for the restriction',
     })
 
-    cy.log('When I submit a restriction that is more than 100 characters long')
+    WHEN('I submit a restriction that is more than 100 characters long')
     addRestrictionsPage.completeForm(faker.word.words(20))
 
-    cy.log('Then I should see an error')
+    THEN('I should see an error')
     addRestrictionsPage.shouldShowErrorMessagesForFields(['description'], {
       description: 'The restriction must be 100 characters or less',
     })
 
-    cy.log('When I submit a valid restriction')
+    WHEN('I submit a valid restriction')
     cy.task('stubPremisesLocalRestrictionCreate', { premisesId: premises.id })
     const newRestriction = cas1PremisesNewLocalRestrictionFactory.build()
     const restriction = cas1PremisesLocalRestrictionSummaryFactory.build({
@@ -88,35 +89,35 @@ describe('Local restrictions', () => {
     cy.task('stubSinglePremises', premisesWithRestriction)
     addRestrictionsPage.completeForm(newRestriction.description)
 
-    cy.log('Then the new restriction should have been saved')
+    THEN('the new restriction should have been saved')
     cy.task('verifyApiPost', apiPaths.premises.localRestrictions.create({ premisesId: premises.id })).then(
       ({ description }) => {
         expect(description).equal(newRestriction.description)
       },
     )
 
-    cy.log('Then I should see a confirmation the restriction has been added')
+    THEN('I should see a confirmation the restriction has been added')
     Page.verifyOnPage(LocalRestrictionsPage, premises)
     restrictionsPage.shouldShowBanner('The restriction has been added.')
 
-    cy.log('And I should see the list of restrictions')
+    AND('I should see the list of restrictions')
     restrictionsPage.shouldShowRestrictions(premisesWithRestriction)
 
-    cy.log('When I click on Remove next to a restriction')
+    WHEN('I click on Remove next to a restriction')
     restrictionsPage.clickLink(/^Remove/)
 
-    cy.log('Then I should see a confirmation page')
+    THEN('I should see a confirmation page')
     const confirmRemoveRestrictionPage = Page.verifyOnPage(LocalRestrictionConfirmRemovePage, premises)
 
-    cy.log('And I should see the details of the restriction I want to delete')
+    AND('I should see the details of the restriction I want to delete')
     confirmRemoveRestrictionPage.shouldShowInsetText(restriction.description)
 
-    cy.log('When I click confirm to remove the restriction')
+    WHEN('I click confirm to remove the restriction')
     cy.task('stubPremisesLocalRestrictionDelete', { premisesId: premises.id, restrictionId: restriction.id })
     cy.task('stubSinglePremises', premises)
     confirmRemoveRestrictionPage.clickButton('Confirm')
 
-    cy.log('Then the restriction should have been removed')
+    THEN('the restriction should have been removed')
     cy.task(
       'verifyApiDelete',
       apiPaths.premises.localRestrictions.delete({
@@ -125,10 +126,10 @@ describe('Local restrictions', () => {
       }),
     )
 
-    cy.log('Then I should see a confirmation the restriction has been removed')
+    THEN('I should see a confirmation the restriction has been removed')
     restrictionsPage.shouldShowBanner('The restriction has been removed.')
 
-    cy.log('And I should see no local restrictions for the premises')
+    AND('I should see no local restrictions for the premises')
     restrictionsPage.shouldShowNoRestrictions()
   })
 })
