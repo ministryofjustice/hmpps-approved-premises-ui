@@ -15,8 +15,11 @@ export class SearchPage extends MatchBasePage {
     await this.page.getByRole('button', { name: 'Update' }).click()
   }
 
-  async selectFirstAP() {
-    await this.page.getByRole('link', { name: 'View spaces' }).first().click()
+  async selectAp(premisesName: string) {
+    await this.page
+      .locator('.govuk-summary-card', { has: this.page.getByRole('heading', { name: premisesName }) })
+      .getByRole('link', { name: 'View spaces' })
+      .click()
   }
 
   async shouldShowApplicationDetails({
@@ -52,9 +55,5 @@ export class SearchPage extends MatchBasePage {
 
   async shouldShowPreferredPostcode(postcode: string) {
     await expect(this.page.locator('.govuk-details').getByText(postcode)).toBeVisible()
-  }
-
-  async retrieveFirstAPName(): Promise<Premises['name']> {
-    return this.page.locator('.govuk-summary-card__title').first().innerText()
   }
 }

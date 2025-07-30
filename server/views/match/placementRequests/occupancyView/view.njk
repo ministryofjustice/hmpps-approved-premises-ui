@@ -11,6 +11,7 @@
 {% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "partials/filters.njk" import filterDatepicker, filterSelect, filterCheckboxes %}
+{% from "partials/_calendar.njk" import calendarKey %}
 
 {% extends "match/layout-with-details.njk" %}
 
@@ -63,22 +64,13 @@
 
         {% if not errors.startDate %}
 
+
+
             <section class="govuk-visually-hidden">
                 {{ occupancySummary(summary) }}
             </section>
 
-            <section id="calendar-key">
-                <h3 class="govuk-heading-m">Key</h3>
-
-                <ul class="calendar__month govuk-list">
-                    <li class="calendar__day govuk-tag--green">
-                        Available
-                    </li>
-                    <li class="calendar__day govuk-tag--red">
-                        Full or overbooked
-                    </li>
-                </ul>
-            </section>
+            {{ calendarKey() }}
 
             <section aria-describedby="calendar-key">
                 {{ occupancyCalendar(calendar) }}

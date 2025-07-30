@@ -1,8 +1,10 @@
+import { Cas1NationalOccupancy } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/admin'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import { roomCharacteristicMap, spaceSearchCriteriaApLevelLabels } from '../../../../server/utils/characteristicsUtils'
 import { makeArrayOfType } from '../../../../server/utils/utils'
+import { getDateHeader } from '../../../../server/utils/admin/nationalOccupancyUtils'
 
 export default class NationalViewPage extends Page {
   constructor(title = 'View all Approved Premises spaces') {
@@ -81,5 +83,40 @@ export default class NationalViewPage extends Page {
     this.shouldBeSelected(expected.apType)
     expected.apCriteria.forEach(characteristic => this.verifyCheckboxByNameAndValue('apCriteria', characteristic))
     expected.roomCriteria.forEach(characteristic => this.verifyCheckboxByNameAndValue('roomCriteria', characteristic))
+  }
+
+  verifyCalendarHeading(occupancy: Cas1NationalOccupancy, fromDate: string) {
+    cy.contains(`Showing spaces from ${DateFormats.isoDateToUIDate(fromDate, { format: 'short' })}`)
+    cy.contains(`${occupancy.premises.length} Approved Premises found`)
+    cy.get('#calendar-key').within(() => {
+      cy.contains('Available')
+      cy.contains('Full or overbooked')
+    })
+  }
+
+  verifyCalendarRendered(occupancy: Cas1NationalOccupancy, postcode: string) {
+    cy.get('table')
+      .contains('Approved premises')
+      .closest('tr')
+      .within(() => {
+        getDateHeader(occupancy).forEach((uiDate, index) => {
+          cy.get('th')
+            .eq(index + 1)
+            .invoke('text')
+            .should('contain', uiDate)
+        })
+      })
+
+    occupancy.premises.forEach(({ summary, capacity, distanceInMiles }) => {
+      cy.contains(summary.name)
+        .closest('tr')
+        .within(() => {
+          cy.contains(`${distanceInMiles.toFixed(1)} miles from ${postcode}`)
+          capacity.forEach(({ vacantBedCount, inServiceBedCount, forRoomCharacteristic }, index) => {
+            const expected = forRoomCharacteristic ? `${vacantBedCount}` : `${vacantBedCount}/${inServiceBedCount}`
+            cy.get('td').eq(index).invoke('text').should('contain', expected)
+          })
+        })
+    })
   }
 }

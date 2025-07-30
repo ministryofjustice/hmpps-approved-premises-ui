@@ -163,7 +163,7 @@ describeCas1NamespaceClient('taskClient', provider => {
           },
         },
         willRespondWith: {
-          status: 201,
+          status: 200,
           body: task,
         },
       })

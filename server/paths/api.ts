@@ -13,6 +13,7 @@ const cas1OutOfServiceBeds = cas1PremisesSingle.path('out-of-service-beds')
 const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 const cas1SpaceBookingSingle = cas1PremisesSingle.path('space-bookings/:placementId')
 const cas1Capacity = cas1PremisesSingle.path('capacity')
+const cas1NationalCapacity = cas1Premises.path('capacity')
 const cas1DaySummary = cas1PremisesSingle.path('day-summary/:date')
 const cas1PlacementApplications = cas1Namespace.path('placement-applications')
 const cas1PlacementApplicationsSingle = cas1PlacementApplications.path(':id')
@@ -74,6 +75,7 @@ export default {
     show: cas1PremisesSingle,
     index: cas1Premises.path('summary'),
     capacity: cas1Capacity,
+    nationalCapacity: cas1NationalCapacity,
     daySummary: cas1DaySummary,
     summary: premisesSingle.path('summary'),
     lostBeds: {

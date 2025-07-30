@@ -4,12 +4,16 @@
 {% from "components/formFields/selectWithOptgroup.njk" import govukSelectWithOptgroup %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+{% from "partials/_calendar.njk" import calendarKey %}
+{% from "./partials/_weekCalendar.njk" import weekCalendar %}
+{
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block beforeContent %}
     {{ govukBackLink({
-        text: "Back",
+        text: "Back to CRU dashboard",
         href: backLink
     }) }}
 {% endblock %}
@@ -37,4 +41,28 @@
         {{ filterCheckboxes('roomCriteria','Room criteria',roomCriteria) }}
     {%- endcall %}
 
+    {% if processedCapacity %}
+
+        <section>
+            <h2 class="govuk-heading-l">Showing spaces from {{ formatDate(fromDate,{format:'short'}) }}</h2>
+            <h3 class="govuk-heading-m">{{ processedCapacity.length }} Approved Premises found</h3>
+            {{ criteriaBlock | safe }}
+
+            {% if postcode and processedCapacity.length > 1 %}
+                <p>Results are ordered by distance from postcode area: {{ postcode }}</p>
+            {% endif %}
+        </section>
+
+        {% if processedCapacity.length > 0 %}
+
+            {{ calendarKey() }}
+
+            {{ govukPagination(pagination) }}
+
+            <section aria-describedby="calendar-key">
+                {{ weekCalendar(processedCapacity, dateHeader) }}
+            </section>
+        {% endif %}
+
+    {% endif %}
 {% endblock %}

@@ -1,0 +1,36 @@
+{% macro weekCalendar(capacity, dateHeader) %}
+    <table class="govuk-table national-calendar">
+        <thead>
+        <tr>
+            <th class="govuk-!-font-weight-bold">Approved premises</th>
+            {% for date in dateHeader %}
+                <th class="calendar-date-heading">{{ date }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for ap in capacity %}
+            <tr>
+                <th class="govuk-table__header" scope="row" role="rowheader">
+                    <dl>
+                        {% for field in ap.summaryRows %}
+                            <dd>{{ field | safe }}</dd>
+                        {% endfor %}
+                    </dl>
+                </th>
+                {% for day in ap.apCapacity %}
+                    <td class="{{ day.classes }}" role="cell">
+                        <a class="calendar__link" href="#"
+                           {% if day.link %}href="{{ day.link }}"{% endif %}>
+                            <dl class="calendar__availability">
+                                <dt class="govuk-visually-hidden">Availability:</dt>
+                                <dd>{{ day.capacity }}</dd>
+                            </dl>
+                        </a>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}

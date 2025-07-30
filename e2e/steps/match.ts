@@ -79,8 +79,8 @@ export const matchAndBookApplication = async ({
   })
 
   // And I select an AP
-  const premisesName = await searchScreen.retrieveFirstAPName()
-  await searchScreen.selectFirstAP()
+  const premisesName = 'SWSC Men Premise 1'
+  await searchScreen.selectAp(premisesName)
 
   // Then I should see the occupancy view screen for that AP
   const occupancyViewPage = await OccupancyViewPage.initialize(page, premisesName)

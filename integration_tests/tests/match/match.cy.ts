@@ -185,7 +185,10 @@ context('Placement Requests', () => {
     const spaceSearchResults = spaceSearchResultsFactory.build({
       results: [
         spaceSearchResultFactory.build({
-          premises: premisesSearchResultSummary.build(premises),
+          premises: premisesSearchResultSummary.build({
+            ...premises,
+            localRestrictions: (premises.localRestrictions || []).map(({ description }) => description),
+          }),
         }),
         ...spaceSearchResultFactory.buildList(4),
       ],
