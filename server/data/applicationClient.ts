@@ -64,7 +64,8 @@ export default class ApplicationClient {
     return this.restClient.getPaginatedResponse<Cas1ApplicationSummary>({
       path: paths.applications.all.pattern,
       page: page.toString(),
-      query: { ...searchOptions, sortBy, sortDirection },
+      // TODO: testing Sentry alerts -- remove foo parameter once logging validated
+      query: { ...searchOptions, sortBy, sortDirection, foo: 'doesnotexist' },
     })
   }
 

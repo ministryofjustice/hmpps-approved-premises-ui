@@ -27,6 +27,9 @@
 
     {% include "./_change-request-banner.njk" %}
 
+    {# TODO: testing Sentry alerts -- remove once logging validated #}
+    {{ paths.premises.placements.changes.new({}) }}
+
     {% if placementRequest.isParole %}
         {% set html %}
             <p class="govuk-notification-banner__heading">
