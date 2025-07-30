@@ -82,6 +82,28 @@ export default class LocalRestrictionsController {
     }
   }
 
+  confirmRemove(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const {
+        user: { token },
+        params: { premisesId, restrictionId },
+      } = req
+
+      const { errorSummary } = fetchErrorsAndUserInput(req)
+
+      const premises = await this.premisesService.find(token, premisesId)
+
+      const restrictionToRemove = premises.localRestrictions.find(restriction => restriction.id === restrictionId)
+
+      return res.render('manage/premises/localRestrictions/confirmRemove', {
+        backlink: paths.premises.localRestrictions.index({ premisesId }),
+        premises,
+        restriction: restrictionToRemove,
+        errorSummary,
+      })
+    }
+  }
+
   remove(): RequestHandler {
     return async (req: Request, res: Response) => {
       const {
@@ -99,7 +121,7 @@ export default class LocalRestrictionsController {
           req,
           res,
           error as Error,
-          paths.premises.localRestrictions.index({ premisesId }),
+          paths.premises.localRestrictions.remove({ premisesId, restrictionId }),
         )
       }
     }

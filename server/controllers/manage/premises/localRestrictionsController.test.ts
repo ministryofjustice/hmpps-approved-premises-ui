@@ -153,6 +153,32 @@ describe('local restrictions controller', () => {
     })
   })
 
+  describe('confirmRemove', () => {
+    it('shows the restriction to be removed and any API errors', async () => {
+      const errorsAndUserInput: ErrorsAndUserInput = {
+        errorTitle: 'Some error title',
+        errors: {},
+        errorSummary: [{ text: 'Some error message' }],
+        userInput: {
+          restrictionId: premises.localRestrictions[1].id,
+        },
+      }
+      jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
+
+      request.params.restrictionId = premises.localRestrictions[1].id
+
+      await localRestrictionsController.confirmRemove()(request, response, next)
+
+      expect(premisesService.find).toHaveBeenCalledWith(token, premises.id)
+      expect(response.render).toHaveBeenCalledWith('manage/premises/localRestrictions/confirmRemove', {
+        backlink: managePaths.premises.localRestrictions.index({ premisesId: premises.id }),
+        premises,
+        restriction: premises.localRestrictions[1],
+        errorSummary: errorsAndUserInput.errorSummary,
+      })
+    })
+  })
+
   describe('remove', () => {
     beforeEach(() => {
       request.params.restrictionId = 'some-id'
@@ -169,7 +195,7 @@ describe('local restrictions controller', () => {
         request,
         response,
         err,
-        managePaths.premises.localRestrictions.index({ premisesId: premises.id }),
+        managePaths.premises.localRestrictions.remove({ premisesId: premises.id, restrictionId: 'some-id' }),
       )
     })
 

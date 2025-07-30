@@ -11,6 +11,7 @@ import Page from '../../pages/page'
 import { LocalRestrictionsPage } from '../../pages/manage/localRestrictions/localRestrictionsList'
 import { LocalRestrictionAddPage } from '../../pages/manage/localRestrictions/localRestrictionAdd'
 import apiPaths from '../../../server/paths/api'
+import { LocalRestrictionConfirmRemovePage } from '../../pages/manage/localRestrictions/localRestrictionConfirmRemove'
 
 describe('Local restrictions', () => {
   const premises = cas1PremisesFactory.build({ localRestrictions: [] })
@@ -102,9 +103,18 @@ describe('Local restrictions', () => {
     restrictionsPage.shouldShowRestrictions(premisesWithRestriction)
 
     cy.log('When I click on Remove next to a restriction')
+    restrictionsPage.clickLink(/^Remove/)
+
+    cy.log('Then I should see a confirmation page')
+    const confirmRemoveRestrictionPage = Page.verifyOnPage(LocalRestrictionConfirmRemovePage, premises)
+
+    cy.log('And I should see the details of the restriction I want to delete')
+    confirmRemoveRestrictionPage.shouldShowInsetText(restriction.description)
+
+    cy.log('When I click confirm to remove the restriction')
     cy.task('stubPremisesLocalRestrictionDelete', { premisesId: premises.id, restrictionId: restriction.id })
     cy.task('stubSinglePremises', premises)
-    restrictionsPage.clickLink(/^Remove/)
+    confirmRemoveRestrictionPage.clickButton('Confirm')
 
     cy.log('Then the restriction should have been removed')
     cy.task(

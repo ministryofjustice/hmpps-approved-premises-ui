@@ -3,11 +3,11 @@ import Page from '../../page'
 import managePaths from '../../../../server/paths/manage'
 
 export class LocalRestrictionAddPage extends Page {
-  constructor(private readonly premises: Cas1Premises) {
+  constructor(readonly premises: Cas1Premises) {
     super('Add a local restriction')
 
     this.checkForBackButton(managePaths.premises.localRestrictions.index({ premisesId: premises.id }))
-    this.shouldShowHeadingCaption(this.premises.name)
+    this.shouldShowHeadingCaption(premises.name)
   }
 
   completeForm(description: string): void {

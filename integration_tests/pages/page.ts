@@ -154,6 +154,10 @@ export default abstract class Page {
     cy.get('.moj-ticket-panel__content').should('not.exist')
   }
 
+  shouldShowInsetText(text: string): void {
+    cy.get('.govuk-inset-text').should('contain.text', text)
+  }
+
   radioByNameAndValueShouldNotExist(name: string, option: string): void {
     cy.get(`input[name = "${name}"][value = "${option}"]`).should('not.exist')
   }

@@ -114,7 +114,11 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'LOCAL_RESTRICTIONS_CREATE',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
   })
-  get(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.remove(), {
+  get(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.confirmRemove(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_DELETE_CONFIRM',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
+  })
+  post(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.remove(), {
     auditEvent: 'LOCAL_RESTRICTIONS_DELETE',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
   })
