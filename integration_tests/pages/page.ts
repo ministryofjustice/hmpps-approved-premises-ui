@@ -841,7 +841,7 @@ export default abstract class Page {
     verbose?: boolean
   }): void {
     const statusClasses = verbose
-      ? { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: '' }
+      ? { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: 'govuk-tag--green' }
       : { overbooked: 'govuk-tag--red', full: 'govuk-tag--red', available: 'govuk-tag--green' }
     cy.get('#calendar').find('li').should('have.length', premisesCapacity.capacity.length)
     cy.get('#calendar')

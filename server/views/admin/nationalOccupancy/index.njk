@@ -43,7 +43,7 @@
 
     {% if processedCapacity %}
 
-        <section>
+        <section id="calendar-heading">
             <h2 class="govuk-heading-l">Showing spaces from {{ formatDate(fromDate,{format:'short'}) }}</h2>
             <h3 class="govuk-heading-m">{{ processedCapacity.length }} Approved Premises found</h3>
             {{ criteriaBlock | safe }}

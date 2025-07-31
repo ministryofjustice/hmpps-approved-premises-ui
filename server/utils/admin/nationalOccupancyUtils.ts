@@ -61,9 +61,9 @@ export const processCapacity = (
       postcode && `${premises.distanceInMiles.toFixed(1)} miles from ${postcode}`,
     ].filter(Boolean),
 
-    apCapacity: premises.capacity.map(({ forRoomCharacteristic, vacantBedCount, inServiceBedCount, date }) => {
+    apCapacity: premises.capacity.map(({ vacantBedCount, inServiceBedCount, date }) => {
       return {
-        capacity: `${vacantBedCount}${forRoomCharacteristic ? '' : `/${inServiceBedCount}`}`,
+        capacity: `${vacantBedCount}${roomCriteria?.length ? '' : `/${inServiceBedCount}`}`,
         link: `${paths.admin.nationalOccupancy.premisesDayView({ premisesId: premises.summary.id, date })}${createQueryString(
           { criteria: roomCriteria },
           {
@@ -79,7 +79,7 @@ export const processCapacity = (
 export const getPagination = (fromDate: string) => {
   const links = [-7, 7].map(
     days =>
-      `${paths.admin.nationalOccupancy.weekView({})}${createQueryString({ fromDate: DateFormats.dateObjToIsoDate(addDays(fromDate, days)) }, { addQueryPrefix: true })}`,
+      `${paths.admin.nationalOccupancy.weekView({})}${createQueryString({ fromDate: DateFormats.dateObjToIsoDate(addDays(fromDate, days)) }, { addQueryPrefix: true })}#calendar-heading`,
   )
 
   return {
