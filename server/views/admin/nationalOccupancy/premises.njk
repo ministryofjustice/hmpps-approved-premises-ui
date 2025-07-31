@@ -1,0 +1,53 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/filters.njk" import filterWrapper, filterSelect, filterDatepicker, filterCheckboxes %}
+{% from "./partials/_singleApCalendar.njk" import occupancyCalendar %}
+{% from "partials/_calendar.njk" import calendarKey %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back to all APs",
+        href: backLink
+    }) }}
+{% endblock %}
+
+{% set titleHtml %}
+
+{% endset %}
+
+{% block content %}
+    {{ showErrorSummary(errorSummary) }}
+    <span class="govuk-caption-l">{{ premises.name }}</span>
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    {% call filterWrapper('Filter') %}
+        {{ filterDatepicker('arrivalDate', 'Arrival date', fetchContext()) }}
+        {{ filterSelect('durationDays', 'Duration', durationOptions) }}
+        {{ filterCheckboxes('roomCriteria', 'Room criteria', criteriaOptions) }}
+    {% endcall %}
+
+    {% if errorSummary.length === 0 %}
+
+        {{ criteriaBlock | safe }}
+
+        {{ calendarKey() }}
+
+        <section id="calendar" aria-describedby="calendar-key">
+            {{ occupancyCalendar(calendar) }}
+        </section>
+    {% endif %}
+
+{% endblock %}
+
+

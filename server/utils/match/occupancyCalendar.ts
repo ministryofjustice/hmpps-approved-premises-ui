@@ -1,6 +1,6 @@
 import type { Cas1PremiseCapacityForDay, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
-import { dayAvailabilityCount, type DayAvailabilityStatus, dayAvailabilityStatus } from './occupancy'
+import { dayAvailabilityCount, type DayAvailabilityStatus, dayAvailabilityStatusForCriteria } from './occupancy'
 
 type CalendarDay = {
   date: string
@@ -39,7 +39,7 @@ export const occupancyCalendar = (
     const calendarDay: CalendarDay = {
       date: day.date,
       name: DateFormats.isoDateToUIDate(day.date, { format: 'longNoYear' }),
-      status: dayAvailabilityStatus(day, criteria),
+      status: dayAvailabilityStatusForCriteria(day, criteria),
       capacity: day.availableBedCount,
       bookableCount,
       link: placeholderLink.replace(':date', day.date),

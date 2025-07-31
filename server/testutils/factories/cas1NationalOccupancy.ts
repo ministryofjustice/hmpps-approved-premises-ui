@@ -46,12 +46,18 @@ export const cas1NationalOccupancyParametersFactory = Factory.define<Cas1Nationa
   ) as Array<Cas1SpaceCharacteristic>,
 }))
 
-export default Factory.define<Cas1NationalOccupancy>(() => {
-  const startDate = DateFormats.dateObjToIsoDate(new Date())
-  const endDate = DateFormats.dateObjToIsoDate(addDays(startDate, 5))
+export default Factory.define<Cas1NationalOccupancy>(({ params }) => {
+  const startDate = params.startDate || DateFormats.dateObjToIsoDate(new Date())
+  const endDate = params.endDate || DateFormats.dateObjToIsoDate(addDays(startDate, 5))
+  const premises = cas1NationalOccupancyPremisesFactory.buildList(5)
+  premises.forEach(premisesOccupancy => {
+    premisesOccupancy.capacity.forEach((capacity, index) => {
+      capacity.date = DateFormats.dateObjToIsoDate(addDays(startDate, index))
+    })
+  })
   return {
     startDate,
     endDate,
-    premises: cas1NationalOccupancyPremisesFactory.buildList(5),
+    premises,
   }
 })

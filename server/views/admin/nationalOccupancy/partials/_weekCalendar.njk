@@ -11,7 +11,7 @@
         <tbody>
         {% for ap in capacity %}
             <tr>
-                <th class="govuk-table__header" scope="row" role="rowheader">
+                <th class="govuk-table__header" scope="row">
                     <dl>
                         {% for field in ap.summaryRows %}
                             <dd>{{ field | safe }}</dd>
@@ -19,12 +19,12 @@
                     </dl>
                 </th>
                 {% for day in ap.apCapacity %}
-                    <td class="{{ day.classes }}" role="cell">
-                        <a class="calendar__link" href="#"
-                           {% if day.link %}href="{{ day.link }}"{% endif %}>
+                    <td class="{{ day.classes }}">
+                        <a class="calendar__link"
+                           href="{{ day.link }}">
                             <dl class="calendar__availability">
                                 <dt class="govuk-visually-hidden">Availability:</dt>
-                                <dd>{{ day.capacity }}</dd>
+                                <dd class="govuk-!-font-weight-bold">{{ day.capacity }}</dd>
                             </dl>
                         </a>
                     </td>

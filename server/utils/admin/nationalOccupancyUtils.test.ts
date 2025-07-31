@@ -14,6 +14,7 @@ import {
 } from './nationalOccupancyUtils'
 import { apTypeLongLabels, apTypeShortLabels } from '../apTypeLabels'
 import { DateFormats } from '../dateUtils'
+import { createQueryString } from '../utils'
 
 describe('nationalOccupancyUtils', () => {
   const mensAreas = cruManagementAreaFactory.buildList(6)
@@ -93,27 +94,45 @@ describe('nationalOccupancyUtils', () => {
   })
 
   describe('processCapacity', () => {
-    it('should process the received capacity into a structure for the template to consume', () => {
-      const postcode = 'RG15'
-      const apiCapacity = cas1NationalOccupancyFactory.build()
+    it.each([
+      ['with criteria', ['hasEnsuite']],
+      ['without criteria', undefined],
+    ])(
+      'should process the received capacity into a structure for the template to consume %s',
+      (_, roomCriteria: Array<Cas1SpaceBookingCharacteristic>) => {
+        const postcode = 'RG15'
+        const apiCapacity = cas1NationalOccupancyFactory.build()
+        const processed = processCapacity(
+          apiCapacity,
+          postcode,
+          roomCriteria as unknown as Array<Cas1SpaceBookingCharacteristic>,
+        )
 
-      const processed = processCapacity(apiCapacity, postcode)
-      expect(processed).toHaveLength(apiCapacity.premises.length)
-      processed.forEach(({ summaryRows, apCapacity }, index) => {
-        const ap = apiCapacity.premises[index]
-        expect(summaryRows[0]).toMatch(ap.summary.name)
-        expect(summaryRows[1]).toEqual(apTypeShortLabels[ap.summary.apType])
-        expect(summaryRows[2]).toEqual(`${ap.distanceInMiles.toFixed(1)} miles from ${postcode}`)
-        apCapacity.forEach(({ capacity, classes, link }, characteristicIndex) => {
-          const { forRoomCharacteristic, inServiceBedCount, vacantBedCount } = ap.capacity[characteristicIndex]
-          expect(classes).toEqual(vacantBedCount > 0 ? 'govuk-tag--green' : 'govuk-tag--red')
-          expect(capacity).toEqual(
-            forRoomCharacteristic ? `${vacantBedCount}` : `${vacantBedCount}/${inServiceBedCount}`,
-          )
-          expect(link).toEqual('#')
+        expect(processed).toHaveLength(apiCapacity.premises.length)
+        processed.forEach(({ summaryRows, apCapacity }, index) => {
+          const ap = apiCapacity.premises[index]
+          expect(summaryRows[0]).toMatch(ap.summary.name)
+          expect(summaryRows[1]).toEqual(apTypeShortLabels[ap.summary.apType])
+          expect(summaryRows[2]).toEqual(`${ap.distanceInMiles.toFixed(1)} miles from ${postcode}`)
+          apCapacity.forEach(({ capacity, classes, link }, characteristicIndex) => {
+            const { inServiceBedCount, vacantBedCount, date } = ap.capacity[characteristicIndex]
+            expect(classes).toEqual(vacantBedCount > 0 ? 'govuk-tag--green' : 'govuk-tag--red')
+            expect(capacity).toEqual(
+              roomCriteria?.length ? `${vacantBedCount}` : `${vacantBedCount}/${inServiceBedCount}`,
+            )
+            expect(link).toEqual(
+              `/admin/national-occupancy/premises/${ap.summary.id}/date/${date}${createQueryString(
+                { criteria: roomCriteria },
+                {
+                  arrayFormat: 'repeat',
+                  addQueryPrefix: true,
+                },
+              )}`,
+            )
+          })
         })
-      })
-    })
+      },
+    )
   })
 
   describe('getPagination', () => {
@@ -123,11 +142,11 @@ describe('nationalOccupancyUtils', () => {
         expect.objectContaining({
           previous: {
             text: 'Previous week',
-            href: `/admin/national-occupancy?fromDate=2025-07-18`,
+            href: `/admin/national-occupancy?fromDate=2025-07-18#calendar-heading`,
           },
           next: {
             text: 'Next week',
-            href: `/admin/national-occupancy?fromDate=2025-08-01`,
+            href: `/admin/national-occupancy?fromDate=2025-08-01#calendar-heading`,
           },
         }),
       )

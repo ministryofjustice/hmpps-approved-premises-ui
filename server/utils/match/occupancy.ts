@@ -16,7 +16,7 @@ export const dayAvailabilityCount = (
 
 export type DayAvailabilityStatus = 'available' | 'full' | 'overbooked'
 
-export const dayAvailabilityStatus = (
+export const dayAvailabilityStatusForCriteria = (
   dayCapacity: Cas1PremiseCapacityForDay,
   criteria: Array<Cas1SpaceBookingCharacteristic> = [],
 ): DayAvailabilityStatus => {

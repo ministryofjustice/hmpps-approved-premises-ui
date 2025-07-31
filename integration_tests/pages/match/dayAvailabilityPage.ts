@@ -6,7 +6,7 @@ import {
 import Page from '../page'
 import {
   DayAvailabilityStatus,
-  dayAvailabilityStatus,
+  dayAvailabilityStatusForCriteria,
   dayAvailabilityStatusMap,
 } from '../../../server/utils/match/occupancy'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -23,7 +23,7 @@ export default class DayAvailabilityPage extends Page {
   ) {
     super(DateFormats.isoDateToUIDate(daySummary.forDate, { format: 'long' }))
 
-    this.availability = dayAvailabilityStatus(dayCapacity, criteria)
+    this.availability = dayAvailabilityStatusForCriteria(dayCapacity, criteria)
   }
 
   shouldShowDayAvailability() {

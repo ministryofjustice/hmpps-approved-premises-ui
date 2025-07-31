@@ -1,5 +1,10 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { Cas1NationalOccupancy, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import {
+  Cas1NationalOccupancy,
+  Cas1Premises,
+  Cas1SpaceBookingCharacteristic,
+  Cas1SpaceCharacteristic,
+} from '@approved-premises/api'
 import { CruManagementAreaService, PremisesService } from '../../services'
 import { DateFormats, isoDateIsValid } from '../../utils/dateUtils'
 import {
@@ -14,11 +19,14 @@ import {
 import { convertKeyValuePairToCheckBoxItems, validPostcodeArea } from '../../utils/formUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
-import { makeArrayOfType } from '../../utils/utils'
+import { createQueryString, makeArrayOfType } from '../../utils/utils'
 import { generateErrorMessages, generateErrorSummary } from '../../utils/validation'
 import paths from '../../paths/admin'
 import MultiPageFormManager from '../../utils/multiPageFormManager'
 import { apTypeToSpaceCharacteristicMap } from '../../utils/apTypeLabels'
+import { durationSelectOptions } from '../../utils/match/occupancy'
+import { type Calendar, occupancyCalendar } from '../../utils/match/occupancyCalendar'
+import { placementDates } from '../../utils/match'
 
 export const defaultSessionKey = 'default'
 
@@ -116,7 +124,7 @@ export default class NationalOccupancyController {
         backLink: paths.admin.cruDashboard.index({}),
         pagination: capacity && getPagination(fromDate),
         arrivalDate: rawArrivalDate || slashToday,
-        processedCapacity: capacity && processCapacity(capacity, postcode),
+        processedCapacity: capacity && processCapacity(capacity, postcode, roomCriteria),
         dateHeader: capacity && getDateHeader(capacity),
         postcode: postcode || '',
         cruManagementAreaOptions: getManagementAreaSelectGroups(
@@ -129,6 +137,72 @@ export default class NationalOccupancyController {
         apTypeOptions: getApTypeOptions(apType),
         fromDate,
         criteriaBlock: getCriteriaBlock(premisesCharacteristics, roomCharacteristics),
+        errors: generateErrorMessages(errors),
+        errorSummary: generateErrorSummary(errors),
+      })
+    }
+  }
+
+  premisesView(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const {
+        user: { token },
+        params: { premisesId },
+        query,
+      } = req
+
+      const sessionData = this.formData.get(defaultSessionKey, req.session) || {}
+
+      if (query.arrivalDate !== undefined) {
+        Object.assign(sessionData, query, {
+          roomCriteria: query.roomCriteria,
+        })
+      }
+
+      const { arrivalDate: arrivalDateSlash, roomCriteria, durationDays = 84 } = sessionData
+      const roomCharacteristics = makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria || [])
+
+      let calendar: Calendar
+      let premises: Cas1Premises
+
+      const arrivalDate = DateFormats.datepickerInputToIsoString(arrivalDateSlash)
+
+      const errors: Record<string, string> = {}
+
+      if (!isoDateIsValid(arrivalDate)) {
+        errors.arrivalDate = 'Enter a valid arrival date'
+      }
+
+      if (!Object.keys(errors).length) {
+        if (query.arrivalDate) {
+          await this.formData.update(defaultSessionKey, req.session, sessionData)
+        }
+        premises = await this.premisesService.find(token, premisesId)
+        const capacityDates = placementDates(arrivalDate, durationDays)
+        const capacity = await this.premisesService.getCapacity(token, premisesId, {
+          startDate: capacityDates.startDate,
+          endDate: capacityDates.endDate,
+        })
+
+        const placeholderDetailsUrl = `${paths.admin.nationalOccupancy.premisesDayView({ premisesId, date: ':date' })}${createQueryString(
+          { criteria: roomCharacteristics },
+          {
+            arrayFormat: 'repeat',
+            addQueryPrefix: true,
+          },
+        )}`
+        calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, roomCharacteristics)
+      }
+
+      return res.render('admin/nationalOccupancy/premises', {
+        pageHeading: premises && `View spaces in ${premises.name}`,
+        backLink: `${paths.admin.nationalOccupancy.weekView({})}?fromDate=${arrivalDate}`,
+        premises,
+        arrivalDate: arrivalDateSlash,
+        durationOptions: durationSelectOptions(durationDays),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, roomCharacteristics),
+        criteriaBlock: getCriteriaBlock(undefined, roomCharacteristics),
+        calendar,
         errors: generateErrorMessages(errors),
         errorSummary: generateErrorSummary(errors),
       })

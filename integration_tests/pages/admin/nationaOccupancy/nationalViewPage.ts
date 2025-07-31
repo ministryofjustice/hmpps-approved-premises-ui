@@ -119,4 +119,13 @@ export default class NationalViewPage extends Page {
         })
     })
   }
+
+  clickOnDayCell(premisesName: string, dayIndex: number) {
+    cy.get('a')
+      .contains(premisesName)
+      .closest('tr')
+      .within(() => {
+        cy.get(`td`).eq(dayIndex).click()
+      })
+  }
 }

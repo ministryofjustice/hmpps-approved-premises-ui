@@ -1,0 +1,13 @@
+{% extends "partials/_calendar.njk" %}
+
+{% block dayContent %}
+    {% if day.criteriaBookableCount is defined %}
+        <dd>
+            <span class="govuk-!-font-weight-bold">{{ day.criteriaBookableCount }}</span>
+        </dd>
+    {% else %}
+        <dd>
+            <span class="govuk-!-font-weight-bold">{{ day.bookableCount }}/{{ day.capacity }}</span>
+        </dd>
+    {% endif %}
+{% endblock %}
