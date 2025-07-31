@@ -1,4 +1,4 @@
-import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell } from '@approved-premises/ui'
+import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
 import {
   Adjudication,
   ApprovedPremisesApplication as Application,
@@ -15,6 +15,7 @@ import {
   PrisonCaseNote,
   SortOrder,
 } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { summaryListSections } from '../../server/utils/applications/summaryListUtils'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -133,6 +134,10 @@ export default abstract class Page {
     })
   }
 
+  shouldShowHeadingCaption(text: string): void {
+    cy.get('.govuk-caption-l').should('contain.text', text)
+  }
+
   shouldShowBanner(text: string, options: { exact: boolean } = { exact: true }): void {
     return this.elementShouldContainText('.govuk-notification-banner__content', text, options)
   }
@@ -147,6 +152,10 @@ export default abstract class Page {
 
   shouldNotShowTicketPanel(): void {
     cy.get('.moj-ticket-panel__content').should('not.exist')
+  }
+
+  shouldShowInsetText(text: string): void {
+    cy.get('.govuk-inset-text').should('contain.text', text)
   }
 
   radioByNameAndValueShouldNotExist(name: string, option: string): void {
@@ -254,7 +263,7 @@ export default abstract class Page {
     cy.get('button').contains('Continue').click()
   }
 
-  clickLink(text: string): void {
+  clickLink(text: string | RegExp): void {
     cy.get('a').contains(text).closest('a').click()
   }
 
@@ -500,7 +509,15 @@ export default abstract class Page {
     this.getTextInputByIdAndEnterDetails(id, text)
   }
 
-  shouldContainTableRows(rows: Array<Array<TableCell>>): void {
+  shouldContainTableColumns(columns: Array<string>): void {
+    cy.get('thead tr th').should('have.length', columns.length)
+
+    columns.forEach(column => {
+      cy.get('thead tr th').contains(column)
+    })
+  }
+
+  shouldContainTableRows(rows: Array<TableRow>): void {
     cy.get('tbody tr').should('have.length', rows.length)
 
     const textFromTableCell = (tableCell: TableCell): string => {
@@ -770,5 +787,31 @@ export default abstract class Page {
     cy.get('@details').invoke('attr', 'open').should('eq', undefined)
     cy.get('@details').get('.govuk-details__summary').click()
     cy.get('@details').invoke('attr', 'open').should('eq', 'open')
+  }
+
+  shouldShowCharacterCount(name: string, limit: number): void {
+    cy.get(`input[name="${name}"]`).as(`field-${name}`)
+    cy.get(`@field-${name}`).siblings('.govuk-character-count__status').as(`status-${name}`)
+
+    cy.get(`@status-${name}`).should('have.text', `You have ${limit} characters remaining`)
+
+    const value = faker.word.words(limit / 2).substring(0, limit - 1)
+
+    this.completeTextInput(name, value)
+
+    cy.get(`@field-${name}`).should('not.have.class', 'govuk-textarea--error')
+    cy.get(`@status-${name}`).should('have.text', 'You have 1 character remaining')
+
+    this.completeTextInput(name, 'a')
+
+    cy.get(`@field-${name}`).should('not.have.class', 'govuk-textarea--error')
+    cy.get(`@status-${name}`).should('have.text', 'You have 0 characters remaining')
+
+    this.completeTextInput(name, 'a')
+
+    cy.get(`@field-${name}`).should('have.class', 'govuk-textarea--error')
+    cy.get(`@status-${name}`).should('have.text', 'You have 1 character too many')
+
+    this.clearInput(name)
   }
 }

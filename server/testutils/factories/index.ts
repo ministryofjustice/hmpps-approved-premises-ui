@@ -93,6 +93,8 @@ import cas1ChangeRequestFactory from './cas1ChangeRequest'
 import cas1RejectChangeRequestFactory from './cas1RejectChangeRequest'
 import oasysQuestionFactory from './oasysQuestion'
 import cas1OasysGroupFactory, { roshSummaryFactory } from './cas1OASysGroup'
+import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestrictionSummary'
+import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestriction'
 
 export {
   acctAlertFactory,
@@ -193,4 +195,6 @@ export {
   spaceSearchResultsFactory,
   spaceSearchStateFactory,
   cas1RejectChangeRequestFactory,
+  cas1PremisesLocalRestrictionSummaryFactory,
+  cas1PremisesNewLocalRestrictionFactory,
 }

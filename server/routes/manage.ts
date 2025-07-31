@@ -21,6 +21,7 @@ export default function routes(controllers: Controllers, router: Router, service
     outOfServiceBedsController,
     updateOutOfServiceBedsController,
     outOfServiceBedCancellationController,
+    localRestrictionsController,
     cancellationsController,
     redirectController,
     keyworkerController,
@@ -98,6 +99,28 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.beds.show.pattern, bedsController.show(), {
     auditEvent: 'SHOW_BED',
     allowedPermissions: ['cas1_premises_view'],
+  })
+
+  // Local restrictions
+  get(paths.premises.localRestrictions.index.pattern, localRestrictionsController.index(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_VIEW',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
+  })
+  get(paths.premises.localRestrictions.new.pattern, localRestrictionsController.new(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_NEW',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
+  })
+  post(paths.premises.localRestrictions.new.pattern, localRestrictionsController.create(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_CREATE',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
+  })
+  get(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.confirmRemove(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_DELETE_CONFIRM',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
+  })
+  post(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.remove(), {
+    auditEvent: 'LOCAL_RESTRICTIONS_DELETE',
+    allowedPermissions: ['cas1_premises_local_restrictions_manage'],
   })
 
   // Placements

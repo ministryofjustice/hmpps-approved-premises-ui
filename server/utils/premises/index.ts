@@ -17,6 +17,7 @@ import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusHtml } from '../placements'
+import { htmlCell, textCell } from '../tableUtils'
 
 export { premisesActions } from './premisesActions'
 
@@ -196,3 +197,22 @@ export const premisesOverbookingSummary = (premises: Cas1Premises): Array<DateRa
     duration: DateFormats.durationBetweenDates(endInclusive, startInclusive).number + 1,
   }))
 }
+
+export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableRow> =>
+  premises.localRestrictions.map(restriction => [
+    textCell(restriction.description),
+    textCell(DateFormats.isoDateToUIDate(restriction.createdAt, { format: 'short' })),
+    htmlCell(
+      linkTo(
+        managePaths.premises.localRestrictions.remove({
+          premisesId: premises.id,
+          restrictionId: restriction.id,
+        }),
+        {
+          text: 'Remove',
+          hiddenText: `restriction "${restriction.description}"`,
+          attributes: { class: 'govuk-button govuk-button--secondary govuk-!-margin-0' },
+        },
+      ),
+    ),
+  ])

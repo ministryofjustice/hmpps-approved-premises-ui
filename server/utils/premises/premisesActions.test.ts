@@ -46,6 +46,19 @@ describe('premisesActions', () => {
     })
   })
 
+  describe('for users with manage local restrictions permissions', () => {
+    const user = userDetails.build({ permissions: ['cas1_premises_local_restrictions_manage'] })
+    const premises = cas1PremisesFactory.build()
+
+    it('includes the MANAGE LOCAL RESTRICTIONS action', () => {
+      expect(premisesActions(user, premises)).toContainAction({
+        text: 'Manage local restrictions',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.localRestrictions.index({ premisesId: premises.id }),
+      })
+    })
+  })
+
   describe('for users with no permissions', () => {
     const user = userDetails.build({ permissions: [] })
     const premises = cas1PremisesFactory.build()

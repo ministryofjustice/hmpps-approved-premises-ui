@@ -30,5 +30,13 @@ export const premisesActions = (user: UserDetails, premises: Cas1Premises) => {
     })
   }
 
+  if (hasPermission(user, ['cas1_premises_local_restrictions_manage'])) {
+    actions.push({
+      text: 'Manage local restrictions',
+      classes: 'govuk-button--secondary',
+      href: paths.premises.localRestrictions.index({ premisesId: premises.id }),
+    })
+  }
+
   return actions
 }

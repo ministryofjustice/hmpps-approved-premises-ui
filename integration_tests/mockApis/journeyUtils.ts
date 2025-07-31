@@ -160,19 +160,21 @@ export const copyCompleteTasksToData = ({ completeTasks, form }) => {
 
 export const verifyApiRequest = async (
   url: string,
-  method: 'POST' | 'PATCH' | 'PUT',
+  method: 'POST' | 'PATCH' | 'PUT' | 'DELETE',
 ): Promise<Record<string, unknown>> => {
   const result = await getMatchingRequests({
     method,
     url,
   })
+
   const { requests } = result.body
-  return JSON.parse(requests[0].body)
+  return requests[0].body ? JSON.parse(requests[0].body) : {}
 }
 
 export const verifyApiPost = (url: string) => verifyApiRequest(url, 'POST')
 export const verifyApiPatch = (url: string) => verifyApiRequest(url, 'PATCH')
 export const verifyApiPut = (url: string) => verifyApiRequest(url, 'PUT')
+export const verifyApiDelete = (url: string) => verifyApiRequest(url, 'DELETE')
 
 export const stubJourney = (form: Application | Assessment): SuperAgentRequest => {
   const journeyType = isAssessment(form) ? 'assessment' : 'application'

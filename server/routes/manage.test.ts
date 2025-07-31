@@ -15,6 +15,7 @@ import {
   TransfersController,
   UpdateOutOfServiceBedsController,
   PlacementAppealController,
+  LocalRestrictionsController,
 } from '../controllers/manage'
 import manageRoutes from './manage'
 import { type Controllers } from '../controllers'
@@ -41,6 +42,9 @@ describe('manage routes', () => {
   const outOfServiceBedCancellationController: DeepMocked<OutOfServiceBedCancellationController> =
     createMock<OutOfServiceBedCancellationController>({})
 
+  const localRestrictionsController: DeepMocked<LocalRestrictionsController> = createMock<LocalRestrictionsController>(
+    {},
+  )
   const cancellationsController: DeepMocked<CancellationsController> = createMock<CancellationsController>({})
   const redirectController: DeepMocked<RedirectController> = createMock<RedirectController>({})
   const keyworkerController: DeepMocked<KeyworkerController> = createMock<KeyworkerController>({})
@@ -59,6 +63,7 @@ describe('manage routes', () => {
     arrivalsController,
     nonArrivalsController,
     departuresController,
+    localRestrictionsController,
     cancellationsController,
     redirectController,
     placementController,

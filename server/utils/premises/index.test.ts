@@ -4,11 +4,13 @@ import { addDays } from 'date-fns'
 import {
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
+  cas1PremisesLocalRestrictionSummaryFactory,
   cas1SpaceBookingSummaryFactory,
 } from '../../testutils/factories'
 import {
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
+  localRestrictionsTableRows,
   placementTableHeader,
   placementTableRows,
   premisesActions,
@@ -318,6 +320,35 @@ describe('premisesUtils', () => {
       const overbookingSummary: Array<Cas1OverbookingRange> = []
       const premises = cas1PremisesFactory.build({ overbookingSummary })
       expect(premisesOverbookingSummary(premises)).toEqual([])
+    })
+  })
+
+  describe('localRestrictionsTableRows', () => {
+    it('returns table rows for a list of local restrictions', () => {
+      const restrictions = [
+        cas1PremisesLocalRestrictionSummaryFactory.build({
+          createdAt: '2025-07-12',
+          description: 'Some description',
+        }),
+        cas1PremisesLocalRestrictionSummaryFactory.build(),
+      ]
+      const premises = cas1PremisesFactory.build({
+        localRestrictions: restrictions,
+      })
+
+      const result = localRestrictionsTableRows(premises)
+
+      expect(result).toHaveLength(2)
+      expect(result[0]).toEqual([
+        { text: 'Some description' },
+        { text: '12 Jul 2025' },
+        {
+          html: `<a href="${paths.premises.localRestrictions.remove({
+            premisesId: premises.id,
+            restrictionId: restrictions[0].id,
+          })}" class="govuk-button govuk-button--secondary govuk-!-margin-0">Remove<span class="govuk-visually-hidden">restriction "Some description"</span></a>`,
+        },
+      ])
     })
   })
 })
