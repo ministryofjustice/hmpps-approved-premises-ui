@@ -1,5 +1,5 @@
 import type { Cas1ReferenceData } from '@approved-premises/ui'
-import { Cas1CruManagementArea } from '@approved-premises/api'
+import { Cas1CruManagementArea, Cas1OutOfServiceBedReason } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 
@@ -18,5 +18,11 @@ export default class Cas1ReferenceDataClient {
     return (await this.restClient.get({
       path: `/cas1/reference-data/cru-management-areas`,
     })) as Array<Cas1CruManagementArea>
+  }
+
+  async getOutOfServiceBedReasons(): Promise<Array<Cas1OutOfServiceBedReason>> {
+    return (await this.restClient.get({
+      path: '/cas1/reference-data/out-of-service-bed-reasons',
+    })) as Array<Cas1OutOfServiceBedReason>
   }
 }

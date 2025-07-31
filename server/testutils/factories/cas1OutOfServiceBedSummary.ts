@@ -1,19 +1,11 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import {
-  Cas1OutOfServiceBedReason,
-  Cas1OutOfServiceBedSummary,
-  Cas1SpaceBookingCharacteristic,
-} from '@approved-premises/api'
+import { Cas1OutOfServiceBedSummary, Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
+import { cas1OutOfServiceBedReasonFactory } from './cas1ReferenceData'
 
 export default Factory.define<Cas1OutOfServiceBedSummary>(({ sequence }) => {
-  const reason: Cas1OutOfServiceBedReason = {
-    id: faker.string.uuid(),
-    name: `${faker.word.verb()} ${faker.word.preposition()} ${faker.word.noun()}`,
-    isActive: true,
-  }
   const characteristics = faker.helpers.arrayElements(Object.keys(roomCharacteristicMap), {
     min: 0,
     max: 3,
@@ -27,7 +19,7 @@ export default Factory.define<Cas1OutOfServiceBedSummary>(({ sequence }) => {
     })}-${sequence}`,
     startDate: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 10 })),
     endDate: DateFormats.dateObjToIsoDate(faker.date.soon({ days: 10 })),
-    reason,
+    reason: cas1OutOfServiceBedReasonFactory.build(),
     characteristics,
   }
 })
