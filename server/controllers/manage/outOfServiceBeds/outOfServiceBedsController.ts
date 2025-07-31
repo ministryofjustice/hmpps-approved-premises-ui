@@ -1,13 +1,18 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField, Temporality } from '@approved-premises/api'
+import {
+  Cas1NewOutOfServiceBed,
+  Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
+  Temporality,
+} from '@approved-premises/api'
+import { ObjectWithDateParts } from '@approved-premises/ui'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
   generateConflictErrorAndRedirect,
 } from '../../../utils/validation'
 import paths from '../../../paths/manage'
-import { DateFormats } from '../../../utils/dateUtils'
+import { DateFormats, isoDateIsValid } from '../../../utils/dateUtils'
 import { SanitisedError } from '../../../sanitisedError'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../../services'
@@ -20,6 +25,8 @@ import {
   sortOutOfServiceBedRevisionsByUpdatedAt,
 } from '../../../utils/outOfServiceBedUtils'
 import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import { ValidationError } from '../../../utils/errors'
+import { isValidCrn } from '../../../utils/crn'
 
 interface ShowRequest extends Request {
   params: {
@@ -28,6 +35,22 @@ interface ShowRequest extends Request {
     id: string
     tab: 'details' | 'timeline'
   }
+}
+
+interface NewRequest extends Request {
+  params: {
+    premisesId: string
+    bedId: string
+  }
+}
+
+interface CreateRequest extends NewRequest {
+  body: ObjectWithDateParts<'startDate'> &
+    ObjectWithDateParts<'endDate'> & {
+      reason?: string
+      referenceNumber?: string
+      notes?: string
+    }
 }
 
 export default class OutOfServiceBedsController {
@@ -39,11 +62,12 @@ export default class OutOfServiceBedsController {
   ) {}
 
   new(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: NewRequest, res: Response) => {
       const { premisesId, bedId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
+
       return res.render('manage/outOfServiceBeds/new', {
         premisesId,
         bedId,
@@ -57,20 +81,57 @@ export default class OutOfServiceBedsController {
   }
 
   create(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: CreateRequest, res: Response) => {
       const { premisesId, bedId } = req.params
 
-      const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
-      const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
-
-      const outOfServiceBed = {
-        ...req.body.outOfServiceBed,
-        bedId,
-        startDate,
-        endDate,
-      }
+      const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
 
       try {
+        const errors: Partial<Record<keyof CreateRequest['body'], string>> = {}
+
+        const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
+        const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
+        const { reason, referenceNumber, notes } = req.body
+
+        if (!startDate) {
+          errors.startDate = 'You must enter a start date'
+        } else if (!isoDateIsValid(startDate)) {
+          errors.startDate = 'You must enter a valid start date'
+        }
+
+        if (!endDate) {
+          errors.endDate = 'You must enter an end date'
+        } else if (!isoDateIsValid(endDate)) {
+          errors.endDate = 'You must enter a valid end date'
+        }
+
+        if (!reason) {
+          errors.reason = 'You must select a reason'
+        } else if (outOfServiceBedReasons.find(data => data.id === reason)?.referenceType === 'crn') {
+          if (!referenceNumber) {
+            errors.referenceNumber = 'You must enter a CRN'
+          } else if (!isValidCrn(referenceNumber)) {
+            errors.referenceNumber = 'You must enter a valid CRN'
+          }
+        }
+
+        if (!notes) {
+          errors.notes = 'You must provide detail on why the bed is out of service'
+        }
+
+        if (Object.keys(errors).length > 0) {
+          throw new ValidationError(errors)
+        }
+
+        const outOfServiceBed: Cas1NewOutOfServiceBed = {
+          reason,
+          referenceNumber,
+          notes,
+          bedId,
+          startDate,
+          endDate,
+        }
+
         await this.outOfServiceBedService.createOutOfServiceBed(req.user.token, premisesId, outOfServiceBed)
 
         req.flash('success', 'The out of service bed has been recorded')

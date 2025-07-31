@@ -4,14 +4,11 @@ import { when } from 'jest-when'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { PaginatedResponse } from '@approved-premises/ui'
-import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
+import { Cas1OutOfServiceBed as OutOfServiceBed, Cas1OutOfServiceBedReason } from '@approved-premises/api'
 import { SanitisedError } from '../../../sanitisedError'
 import OutOfServiceBedsController from './outOfServiceBedsController'
-import {
-  catchValidationErrorOrPropogate,
-  fetchErrorsAndUserInput,
-  generateConflictErrorAndRedirect,
-} from '../../../utils/validation'
+import * as validationUtils from '../../../utils/validation'
+import outOfServiceBedReasonsJson from '../../../testutils/referenceData/stubs/cas1/out-of-service-bed-reasons.json'
 
 import paths from '../../../paths/manage'
 import {
@@ -34,17 +31,18 @@ import {
   outOfServiceBedTabs,
   premisesIndexTabs,
 } from '../../../utils/outOfServiceBedUtils'
+import { ValidationError } from '../../../utils/errors'
 
-jest.mock('../../../utils/validation')
-jest.mock('../../../utils/cancellationUtils')
 jest.mock('../../../utils/getPaginationDetails')
 
 describe('OutOfServiceBedsController', () => {
   const token = 'SOME_TOKEN'
   const backLink = '/back/link'
+
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
+  const errorsAndUserInput = createMock<ErrorsAndUserInput>()
 
   const outOfServiceBedService = createMock<OutOfServiceBedService>({})
   const premisesService = createMock<PremisesService>({})
@@ -62,7 +60,7 @@ describe('OutOfServiceBedsController', () => {
   const outOfServiceBed = outOfServiceBedFactory.build()
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
     request = createMock<Request>({
       user: { token },
       session: {
@@ -73,72 +71,57 @@ describe('OutOfServiceBedsController', () => {
         bedId: outOfServiceBed.bed.id,
       },
     })
+
     sessionService.getPageBackLink.mockReturnValue(backLink)
+    outOfServiceBedService.getOutOfServiceBedReasons.mockResolvedValue(
+      outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>,
+    )
+    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
+    jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
   })
 
   describe('new', () => {
-    it('renders the form', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+    it('renders the form with reasons, errors and user input', async () => {
+      await outOfServiceBedController.new()(request, response, next)
 
-      when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
-
-      const requestHandler = outOfServiceBedController.new()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'manage/outOfServiceBeds/new',
-        expect.objectContaining({ premisesId, bedId: request.params.bedId }),
-      )
-    })
-
-    it('renders the form with errors and user input if an error has been sent to the flash', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-
-      when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
-
-      const requestHandler = outOfServiceBedController.new()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'manage/outOfServiceBeds/new',
-        expect.objectContaining({
-          errors: errorsAndUserInput.errors,
-          errorSummary: errorsAndUserInput.errorSummary,
-          errorTitle: errorsAndUserInput.errorTitle,
-          ...errorsAndUserInput.userInput,
-        }),
-      )
+      expect(outOfServiceBedService.getOutOfServiceBedReasons).toHaveBeenCalledWith(token)
+      expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/new', {
+        premisesId,
+        bedId: request.params.bedId,
+        outOfServiceBedReasons: outOfServiceBedReasonsJson,
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        errorTitle: errorsAndUserInput.errorTitle,
+        ...errorsAndUserInput.userInput,
+      })
     })
   })
 
   describe('create', () => {
+    const validBody = {
+      'startDate-year': 2022,
+      'startDate-month': 8,
+      'startDate-day': 22,
+      'endDate-year': 2022,
+      'endDate-month': 9,
+      'endDate-day': 22,
+      reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
+      referenceNumber: '',
+      notes: 'Some notes',
+    }
+
     it('creates a outOfService bed and redirects to the bed page', async () => {
-      const requestHandler = outOfServiceBedController.create()
+      request.body = validBody
 
-      request.params = {
-        ...request.params,
-        bedId: outOfServiceBed.bed.id,
-      }
-
-      request.body = {
-        'startDate-year': 2022,
-        'startDate-month': 8,
-        'startDate-day': 22,
-        'endDate-year': 2022,
-        'endDate-month': 9,
-        'endDate-day': 22,
-        outOfServiceBed,
-      }
-
-      await requestHandler(request, response, next)
+      await outOfServiceBedController.create()(request, response, next)
 
       expect(outOfServiceBedService.createOutOfServiceBed).toHaveBeenCalledWith(token, premisesId, {
-        ...outOfServiceBed,
         startDate: '2022-08-22',
         endDate: '2022-09-22',
         bedId: request.params.bedId,
+        reason: request.body.reason,
+        referenceNumber: request.body.referenceNumber,
+        notes: request.body.notes,
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'The out of service bed has been recorded')
       expect(response.redirect).toHaveBeenCalledWith(
@@ -146,17 +129,92 @@ describe('OutOfServiceBedsController', () => {
       )
     })
 
-    describe('when errors are raised', () => {
-      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
-        const requestHandler = outOfServiceBedController.create()
+    describe('when there are errors', () => {
+      const expectErrors = (errors: Record<string, string>) => {
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          new ValidationError({}),
+          paths.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
+        )
 
-        const err = new Error()
+        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+        expect(errorData).toEqual(errors)
+      }
+
+      it('returns errors if start date, end date, reason or notes are missing', async () => {
+        request.body = {
+          'startDate-year': 2026,
+        }
+
+        await outOfServiceBedController.create()(request, response, next)
+
+        expectErrors({
+          startDate: 'You must enter a start date',
+          endDate: 'You must enter an end date',
+          reason: 'You must select a reason',
+          notes: 'You must provide detail on why the bed is out of service',
+        })
+      })
+
+      it('returns errors if the dates are invalid', async () => {
+        request.body = {
+          ...validBody,
+          'startDate-day': '45',
+          'endDate-year': 'nope',
+        }
+
+        await outOfServiceBedController.create()(request, response, next)
+
+        expectErrors({
+          startDate: 'You must enter a valid start date',
+          endDate: 'You must enter a valid end date',
+        })
+      })
+
+      describe('when the reason selected is linked to a person and needs a CRN to be entered', () => {
+        beforeEach(() => {
+          request.body = {
+            ...validBody,
+            reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'crn').id,
+          }
+        })
+
+        it('returns an error if the Work order reference number/CRN field is empty', async () => {
+          request.body.referenceNumber = ''
+
+          await outOfServiceBedController.create()(request, response, next)
+
+          expectErrors({
+            referenceNumber: 'You must enter a CRN',
+          })
+        })
+
+        it('returns an error if the Work order reference number/CRN field is an invalid CRN', async () => {
+          request.body.referenceNumber = 'not a crn'
+
+          await outOfServiceBedController.create()(request, response, next)
+
+          expectErrors({
+            referenceNumber: 'You must enter a valid CRN',
+          })
+        })
+      })
+    })
+
+    describe('when errors are raised by the API', () => {
+      beforeEach(() => {
+        request.body = { ...validBody }
+      })
+
+      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
+        const err = new Error('API error: cannot create OOSB')
 
         outOfServiceBedService.createOutOfServiceBed.mockRejectedValue(err)
 
-        await requestHandler(request, response, next)
+        await outOfServiceBedController.create()(request, response, next)
 
-        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
           request,
           response,
           err,
@@ -165,14 +223,20 @@ describe('OutOfServiceBedsController', () => {
       })
 
       it('should call generateConflictErrorAndRedirect if the error is a 409', async () => {
-        const requestHandler = outOfServiceBedController.create()
-        const err = createMock<SanitisedError>({ status: 409, data: 'some data' })
+        jest.spyOn(validationUtils, 'generateConflictErrorAndRedirect')
 
+        const err = createMock<SanitisedError>({
+          status: 409,
+          data: {
+            detail:
+              'An out-of-service bed already exists for dates from 2024-10-01 to 2024-10-14 which overlaps with the desired dates: 220a71da-bf5c-424d-94ff-254ecac5b857',
+          },
+        })
         outOfServiceBedService.createOutOfServiceBed.mockRejectedValue(err)
 
-        await requestHandler(request, response, next)
+        await outOfServiceBedController.create()(request, response, next)
 
-        expect(generateConflictErrorAndRedirect).toHaveBeenCalledWith(
+        expect(validationUtils.generateConflictErrorAndRedirect).toHaveBeenCalledWith(
           { ...request },
           { ...response },
           premisesId,
@@ -191,8 +255,6 @@ describe('OutOfServiceBedsController', () => {
       const bed = cas1BedDetailFactory.build({ id: outOfServiceBed.bed.id })
       premisesService.getBed.mockResolvedValue(bed)
 
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-      when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
       when(outOfServiceBedService.getOutOfServiceBed)
         .calledWith(request.user.token, premisesId, outOfServiceBed.id)
         .mockResolvedValue(outOfServiceBed)
