@@ -202,7 +202,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `/documents/${args.person.crn}/${args.document.id}`,
+        url: paths.people.documents({ crn: args.person.crn, documentId: args.document.id }),
       },
       response: {
         status: 200,

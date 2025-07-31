@@ -195,31 +195,6 @@ describeClient('PersonClient', provider => {
       expect(result).toEqual(offences)
     })
   })
-
-  describe('document', () => {
-    it('should pipe the document from the API', async () => {
-      const crn = 'crn'
-      const documentId = faker.string.uuid()
-      const response = createMock<Response>({})
-
-      await provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get a document for a person',
-        withRequest: {
-          method: 'GET',
-          path: paths.people.documents({ crn, documentId }),
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-        },
-      })
-
-      await personClient.document(crn, documentId, response)
-    })
-  })
 })
 
 describeCas1NamespaceClient('cas1PersonClient', provider => {
@@ -312,6 +287,31 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       })
 
       await personClient.timeline(crn)
+    })
+  })
+
+  describe('document', () => {
+    it('should pipe the document from the API', async () => {
+      const crn = 'crn'
+      const documentId = faker.string.uuid()
+      const response = createMock<Response>({})
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a document for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.documents({ crn, documentId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await personClient.document(crn, documentId, response)
     })
   })
 })
