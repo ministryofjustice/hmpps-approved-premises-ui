@@ -14,7 +14,7 @@ import {
   spaceSearchStateFactory,
 } from '../../../testutils/factories'
 import OccupancyViewController from './occupancyViewController'
-import { occupancySummary, placementDates } from '../../../utils/match'
+import { placementDates } from '../../../utils/match'
 import matchPaths from '../../../paths/match'
 import { occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import * as validationUtils from '../../../utils/validation'
@@ -137,7 +137,6 @@ describe('OccupancyViewController', () => {
         durationOptions: durationSelectOptions(searchState.durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, searchState.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
-        summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
         calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
         errors: {},
         errorSummary: [],
@@ -201,7 +200,6 @@ describe('OccupancyViewController', () => {
           'departureDate-month': '5',
           'departureDate-year': '2026',
           calendar: occupancyCalendar(premiseCapacity.capacity, placeholderDetailsUrl, searchState.roomCriteria),
-          summary: occupancySummary(premiseCapacity.capacity, searchState.roomCriteria),
         }),
       )
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
@@ -234,7 +232,6 @@ describe('OccupancyViewController', () => {
           errors: expectedErrors,
           errorSummary: expectedErrorSummary,
           ...expectedUserInput,
-          summary: undefined,
           calendar: undefined,
         }),
       )

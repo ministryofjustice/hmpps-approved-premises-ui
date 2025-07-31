@@ -2,7 +2,7 @@ import { Request, Response, TypedRequestHandler } from 'express'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { PlacementRequestService, PremisesService, SessionService, SpaceSearchService } from '../../../services'
-import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
+import { placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
 import { DateFormats, isoDateIsValid } from '../../../utils/dateUtils'
@@ -12,7 +12,6 @@ import {
   durationSelectOptions,
 } from '../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
-import { OccupancySummary } from '../../../utils/match/occupancySummary'
 import paths from '../../../paths/match'
 import managePaths from '../../../paths/manage'
 import adminPaths from '../../../paths/admin'
@@ -100,7 +99,6 @@ export default class {
       const { startDate, endDate } = placementDates(placementRequest.expectedArrival, placementRequest.duration)
       const premises = await this.premisesService.find(token, premisesId)
 
-      let summary: OccupancySummary
       let calendar: Calendar
 
       if (!errors.startDate) {
@@ -121,7 +119,6 @@ export default class {
           },
         )}`
 
-        summary = occupancySummary(capacity.capacity, searchState.roomCriteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, searchState.roomCriteria)
       }
 
@@ -139,7 +136,6 @@ export default class {
         durationOptions: durationSelectOptions(formValues.durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
-        summary,
         calendar,
         errors,
         errorSummary,

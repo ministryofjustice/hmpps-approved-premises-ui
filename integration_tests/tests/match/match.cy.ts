@@ -127,11 +127,7 @@ context('Placement Requests', () => {
     const { occupancyViewPage, premiseCapacity, searchState } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
-    // And I should see a summary of occupancy
-    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
-
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
@@ -139,11 +135,7 @@ context('Placement Requests', () => {
     const { occupancyViewPage, premiseCapacity, searchState } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(undefined)
 
-    // And I should see a summary of occupancy
-    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
-
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
@@ -265,11 +257,7 @@ context('Placement Requests', () => {
     // And I should see the filter form with populated values
     occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks', [])
 
-    // And I should see a summary of occupancy
-    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
-
     // And I should see an occupancy calendar
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     // And I should be able to see any day's availability details
@@ -279,7 +267,6 @@ context('Placement Requests', () => {
     })
 
     // Then I should see the calendar again
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     // When I filter with an invalid date

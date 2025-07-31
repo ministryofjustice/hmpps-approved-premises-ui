@@ -8,12 +8,7 @@ import {
   errorSummary as addErrorSummary,
   fetchErrorsAndUserInput,
 } from '../../../../utils/validation'
-import {
-  occupancySummary,
-  placementDates,
-  spaceBookingConfirmationSummaryListRows,
-  validateSpaceBooking,
-} from '../../../../utils/match'
+import { placementDates, spaceBookingConfirmationSummaryListRows, validateSpaceBooking } from '../../../../utils/match'
 import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import { placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
@@ -22,7 +17,6 @@ import { DateFormats, daysToWeeksAndDays, isoDateIsValid } from '../../../../uti
 import { CriteriaQuery } from '../../../match/placementRequests/occupancyViewController'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { durationSelectOptions, getClosestDuration } from '../../../../utils/match/occupancy'
-import { OccupancySummary } from '../../../../utils/match/occupancySummary'
 import managePaths from '../../../../paths/manage'
 import matchPaths from '../../../../paths/match'
 import adminPaths from '../../../../paths/admin'
@@ -107,7 +101,6 @@ export default class ChangesController {
         }
       }
 
-      let summary: OccupancySummary
       let calendar: Calendar
       let calendarHeading: string
 
@@ -130,7 +123,6 @@ export default class ChangesController {
           { arrayFormat: 'repeat', addQueryPrefix: true },
         )}`
 
-        summary = occupancySummary(capacity.capacity, criteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, criteria)
         calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
       }
@@ -148,7 +140,6 @@ export default class ChangesController {
         placementSummary: placementOverviewSummary(placement),
         durationOptions: durationSelectOptions(getClosestDuration(durationDays)),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, criteria),
-        summary,
         calendar,
         calendarHeading,
         errors,
