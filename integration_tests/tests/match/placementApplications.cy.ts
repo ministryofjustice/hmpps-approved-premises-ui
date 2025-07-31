@@ -220,7 +220,7 @@ context('Placement Applications', () => {
       })
       const documents = documentFactory.buildList(4)
       documents.forEach(document => {
-        cy.task('stubPersonDocument', { person: personFactory, document })
+        cy.task('stubPersonDocument', { person, document })
       })
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplicationUpdate', placementApplication)

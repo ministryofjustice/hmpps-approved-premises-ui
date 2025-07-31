@@ -196,7 +196,7 @@ export default {
     adjudications: person.path('adjudications'),
     acctAlerts: person.path('acct-alerts'),
     offences: person.path('offences'),
-    documents: path('/documents/:crn/:documentId'),
+    documents: cas1Namespace.path('/documents/:crn/:documentId'),
     oasys: {
       metadata: cas1Oasys.path('metadata'),
       answers: cas1Oasys.path('answers'),
