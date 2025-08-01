@@ -9,13 +9,29 @@ import {
 } from '../../../utils/validation'
 import paths from '../../../paths/manage'
 import { SanitisedError } from '../../../sanitisedError'
-import { outOfServiceBedSummaryList } from '../../../utils/outOfServiceBedUtils'
+import {
+  CreateOutOfServiceBedBody,
+  outOfServiceBedSummaryList,
+  validateOutOfServiceBedInput,
+} from '../../../utils/outOfServiceBedUtils'
+
+interface NewRequest extends Request {
+  params: {
+    premisesId: string
+    bedId: string
+    id: string
+  }
+}
+
+interface CreateRequest extends NewRequest {
+  body: CreateOutOfServiceBedBody
+}
 
 export default class UpdateOutOfServiceBedsController {
   constructor(private readonly outOfServiceBedService: OutOfServiceBedService) {}
 
   new(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: NewRequest, res: Response) => {
       const { premisesId, bedId, id } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
@@ -46,21 +62,12 @@ export default class UpdateOutOfServiceBedsController {
   }
 
   create(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: CreateRequest, res: Response) => {
       const { premisesId, bedId, id } = req.params
 
       try {
-        const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
-        const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
-        const { reason, referenceNumber, notes } = req.body
-
-        const outOfServiceBed = {
-          startDate,
-          endDate,
-          reason,
-          referenceNumber,
-          notes,
-        }
+        const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
+        const outOfServiceBed = validateOutOfServiceBedInput(req.body, outOfServiceBedReasons)
 
         await this.outOfServiceBedService.updateOutOfServiceBed(req.user.token, id, premisesId, outOfServiceBed)
 

@@ -1,6 +1,8 @@
 import {
+  Cas1NewOutOfServiceBed,
   Cas1OutOfServiceBed,
   Cas1OutOfServiceBed as OutOfServiceBed,
+  Cas1OutOfServiceBedReason,
   Cas1OutOfServiceBedRevision,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   Premises,
@@ -11,6 +13,7 @@ import {
   type EntityType,
   type IdentityBarMenu,
   IdentityBarMenuItem,
+  ObjectWithDateParts,
   SummaryList,
   SummaryListItem,
   TableCell,
@@ -19,12 +22,14 @@ import {
 
 import paths from '../paths/manage'
 import { linkTo } from './utils'
-import { DateFormats } from './dateUtils'
+import { DateFormats, isoDateIsValid } from './dateUtils'
 import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
 import { hasPermission } from './users'
 import { SanitisedError } from '../sanitisedError'
 import { summaryListItem } from './formUtils'
+import { isValidCrn } from './crn'
+import { ValidationError } from './errors'
 
 export const premisesIndexTabs = (premisesId: string, temporality: 'current' | 'future' | 'past') => [
   {
@@ -101,6 +106,7 @@ export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesI
   ])
 
 export const referenceNumberCell = (value: string): TableCell => ({ text: value || 'Not provided' })
+
 export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): TableCell => ({
   html: bedLink(bed, premisesId),
 })
@@ -259,4 +265,55 @@ const parseConflictError = (detail: string): ParsedConflictError => {
   const [message, conflictingEntityId] = detail.split(':').map((s: string) => s.trim())
   const conflictingEntityType = message.includes('out-of-service bed') ? 'lost-bed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
+}
+
+export type CreateOutOfServiceBedBody = ObjectWithDateParts<'startDate'> &
+  ObjectWithDateParts<'endDate'> & {
+    reason?: string
+    referenceNumber?: string
+    notes?: string
+  }
+
+export const validateOutOfServiceBedInput = (
+  body: CreateOutOfServiceBedBody,
+  outOfServiceBedReasons: Array<Cas1OutOfServiceBedReason>,
+  bedId?: string,
+): Cas1NewOutOfServiceBed => {
+  const { startDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'startDate')
+  const { endDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'endDate')
+  const { reason, referenceNumber, notes } = body
+
+  const errors: Partial<Record<keyof CreateOutOfServiceBedBody, string>> = {}
+
+  if (!startDate) {
+    errors.startDate = 'You must enter a start date'
+  } else if (!isoDateIsValid(startDate)) {
+    errors.startDate = 'You must enter a valid start date'
+  }
+
+  if (!endDate) {
+    errors.endDate = 'You must enter an end date'
+  } else if (!isoDateIsValid(endDate)) {
+    errors.endDate = 'You must enter a valid end date'
+  }
+
+  if (!reason) {
+    errors.reason = 'You must select a reason'
+  } else if (outOfServiceBedReasons.find(data => data.id === reason)?.referenceType === 'crn') {
+    if (!referenceNumber) {
+      errors.referenceNumber = 'You must enter a CRN'
+    } else if (!isValidCrn(referenceNumber)) {
+      errors.referenceNumber = 'You must enter a valid CRN'
+    }
+  }
+
+  if (!notes) {
+    errors.notes = 'You must provide detail on why the bed is out of service'
+  }
+
+  if (Object.keys(errors).length > 0) {
+    throw new ValidationError(errors)
+  }
+
+  return { bedId, startDate, endDate, reason, referenceNumber, notes }
 }

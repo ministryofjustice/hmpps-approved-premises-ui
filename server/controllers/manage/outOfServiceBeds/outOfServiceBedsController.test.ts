@@ -8,6 +8,7 @@ import { Cas1OutOfServiceBed as OutOfServiceBed, Cas1OutOfServiceBedReason } fro
 import { SanitisedError } from '../../../sanitisedError'
 import OutOfServiceBedsController from './outOfServiceBedsController'
 import * as validationUtils from '../../../utils/validation'
+import * as outOfServiceBedUtils from '../../../utils/outOfServiceBedUtils'
 import outOfServiceBedReasonsJson from '../../../testutils/referenceData/stubs/cas1/out-of-service-bed-reasons.json'
 
 import paths from '../../../paths/manage'
@@ -25,6 +26,7 @@ import { createQueryString } from '../../../utils/utils'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../../services'
 import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import {
+  CreateOutOfServiceBedBody,
   outOfServiceBedActions,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
@@ -60,7 +62,7 @@ describe('OutOfServiceBedsController', () => {
   const outOfServiceBed = outOfServiceBedFactory.build()
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.restoreAllMocks()
     request = createMock<Request>({
       user: { token },
       session: {
@@ -99,20 +101,20 @@ describe('OutOfServiceBedsController', () => {
   })
 
   describe('create', () => {
-    const validBody = {
-      'startDate-year': 2022,
-      'startDate-month': 8,
-      'startDate-day': 22,
-      'endDate-year': 2022,
-      'endDate-month': 9,
-      'endDate-day': 22,
+    const validBody: CreateOutOfServiceBedBody = {
+      'startDate-year': '2022',
+      'startDate-month': '8',
+      'startDate-day': '22',
+      'endDate-year': '2022',
+      'endDate-month': '9',
+      'endDate-day': '22',
       reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
       referenceNumber: '',
       notes: 'Some notes',
     }
 
     it('creates a outOfService bed and redirects to the bed page', async () => {
-      request.body = validBody
+      request.body = { ...validBody }
 
       await outOfServiceBedController.create()(request, response, next)
 
@@ -130,76 +132,25 @@ describe('OutOfServiceBedsController', () => {
       )
     })
 
-    describe('when there are errors', () => {
-      const expectErrors = (errors: Record<string, string>) => {
-        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
-          response,
-          new ValidationError({}),
-          paths.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
-        )
-
-        const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
-        expect(errorData).toEqual(errors)
-      }
-
-      it('returns errors if start date, end date, reason or notes are missing', async () => {
-        request.body = {
-          'startDate-year': 2026,
-        }
-
-        await outOfServiceBedController.create()(request, response, next)
-
-        expectErrors({
+    it('should handle validation errors and redirect to the form', async () => {
+      jest.spyOn(outOfServiceBedUtils, 'validateOutOfServiceBedInput').mockImplementation(() => {
+        throw new ValidationError({
           startDate: 'You must enter a start date',
-          endDate: 'You must enter an end date',
-          reason: 'You must select a reason',
-          notes: 'You must provide detail on why the bed is out of service',
         })
       })
 
-      it('returns errors if the dates are invalid', async () => {
-        request.body = {
-          ...validBody,
-          'startDate-day': '45',
-          'endDate-year': 'nope',
-        }
+      await outOfServiceBedController.create()(request, response, next)
 
-        await outOfServiceBedController.create()(request, response, next)
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        paths.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
+      )
 
-        expectErrors({
-          startDate: 'You must enter a valid start date',
-          endDate: 'You must enter a valid end date',
-        })
-      })
-
-      describe('when the reason selected is linked to a person and needs a CRN to be entered', () => {
-        beforeEach(() => {
-          request.body = {
-            ...validBody,
-            reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'crn').id,
-          }
-        })
-
-        it('returns an error if the Work order reference number/CRN field is empty', async () => {
-          request.body.referenceNumber = ''
-
-          await outOfServiceBedController.create()(request, response, next)
-
-          expectErrors({
-            referenceNumber: 'You must enter a CRN',
-          })
-        })
-
-        it('returns an error if the Work order reference number/CRN field is an invalid CRN', async () => {
-          request.body.referenceNumber = 'not a crn'
-
-          await outOfServiceBedController.create()(request, response, next)
-
-          expectErrors({
-            referenceNumber: 'You must enter a valid CRN',
-          })
-        })
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+      expect(errorData).toEqual({
+        startDate: 'You must enter a start date',
       })
     })
 

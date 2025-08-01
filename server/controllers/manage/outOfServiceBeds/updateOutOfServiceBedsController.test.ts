@@ -14,6 +14,8 @@ import { SanitisedError } from '../../../sanitisedError'
 import outOfServiceBedReasonsJson from '../../../testutils/referenceData/stubs/cas1/out-of-service-bed-reasons.json'
 import * as validationUtils from '../../../utils/validation'
 import { outOfServiceBedSummaryList } from '../../../utils/outOfServiceBedUtils'
+import { ValidationError } from '../../../utils/errors'
+import * as outOfServiceBedUtils from '../../../utils/outOfServiceBedUtils'
 
 describe('updateOutOfServiceBedController', () => {
   const token = 'SOME_TOKEN'
@@ -32,7 +34,7 @@ describe('updateOutOfServiceBedController', () => {
   const outOfServiceBed = outOfServiceBedFactory.build()
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.restoreAllMocks()
     request = createMock<Request>({
       user: { token },
       params: {
@@ -138,6 +140,32 @@ describe('updateOutOfServiceBedController', () => {
           tab: 'timeline',
         }),
       )
+    })
+
+    it('should handle validation errors and redirect to the form', async () => {
+      jest.spyOn(outOfServiceBedUtils, 'validateOutOfServiceBedInput').mockImplementation(() => {
+        throw new ValidationError({
+          notes: 'You must provide detail on why the bed is out of service',
+        })
+      })
+
+      await updateOutOfServiceBedController.create()(request, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        paths.outOfServiceBeds.update({
+          premisesId: request.params.premisesId,
+          bedId: request.params.bedId,
+          id: request.params.id,
+        }),
+      )
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+      expect(errorData).toEqual({
+        notes: 'You must provide detail on why the bed is out of service',
+      })
     })
 
     describe('when errors are raised by the API', () => {

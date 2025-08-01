@@ -5,6 +5,7 @@ import {
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
   bedRevisionDetails,
+  CreateOutOfServiceBedBody,
   generateConflictBespokeError,
   outOfServiceBedActions,
   outOfServiceBedSummaryList,
@@ -12,11 +13,14 @@ import {
   outOfServiceBedTableRows,
   referenceNumberCell,
   sortOutOfServiceBedRevisionsByUpdatedAt,
+  validateOutOfServiceBedInput,
 } from './outOfServiceBedUtils'
-import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
+import { Cas1OutOfServiceBedReason, Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
 import { sortHeader } from './sortHeader'
 import paths from '../paths/manage'
 import { SanitisedError } from '../sanitisedError'
+import outOfServiceBedReasonsJson from '../testutils/referenceData/stubs/cas1/out-of-service-bed-reasons.json'
+import { ValidationError } from './errors'
 
 describe('outOfServiceBedUtils', () => {
   describe('allOutOfServiceBedsTableHeaders', () => {
@@ -310,6 +314,90 @@ describe('outOfServiceBedUtils', () => {
             })}">existing booking</a>`,
           },
         ],
+      })
+    })
+  })
+
+  describe('validateOutOfServiceBedInput', () => {
+    const validBody: CreateOutOfServiceBedBody = {
+      'startDate-year': '2022',
+      'startDate-month': '8',
+      'startDate-day': '22',
+      'endDate-year': '2022',
+      'endDate-month': '9',
+      'endDate-day': '22',
+      reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
+      referenceNumber: '',
+      notes: 'Some notes',
+    }
+    const oosbReasons = outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>
+
+    it('throws if the dates are empty', () => {
+      const bodyEmptyDates = {
+        ...validBody,
+        'startDate-year': '',
+        'endDate-year': '',
+        'endDate-month': '',
+        'endDate-day': '',
+      }
+      try {
+        validateOutOfServiceBedInput(bodyEmptyDates, oosbReasons)
+      } catch (e) {
+        expect(e).toBeInstanceOf(ValidationError)
+        expect(e.data).toEqual({
+          startDate: 'You must enter a start date',
+          endDate: 'You must enter an end date',
+        })
+      }
+    })
+
+    it('returns errors if the dates are invalid', async () => {
+      const bodyInvalidDates = {
+        ...validBody,
+        'startDate-day': '45',
+        'endDate-year': 'nope',
+      }
+      try {
+        validateOutOfServiceBedInput(bodyInvalidDates, oosbReasons)
+      } catch (e) {
+        expect(e).toBeInstanceOf(ValidationError)
+        expect(e.data).toEqual({
+          startDate: 'You must enter a valid start date',
+          endDate: 'You must enter a valid end date',
+        })
+      }
+    })
+
+    describe('when the reason selected is linked to a person and needs a CRN to be entered', () => {
+      const bodyCrn = { ...validBody }
+      beforeEach(() => {
+        bodyCrn.reason = outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'crn').id
+      })
+
+      it('returns an error if the Work order reference number/CRN field is empty', async () => {
+        const bodyNoCrn = { ...bodyCrn, referenceNumber: '' }
+
+        try {
+          validateOutOfServiceBedInput(bodyNoCrn, oosbReasons)
+        } catch (e) {
+          expect(e).toBeInstanceOf(ValidationError)
+          expect(e.data).toEqual({
+            referenceNumber: 'You must enter a CRN',
+          })
+        }
+      })
+
+      it('returns an error if the Work order reference number/CRN field is an invalid CRN', async () => {
+        const bodyInvalidCrn = { ...bodyCrn, referenceNumber: 'not a crn' }
+
+        try {
+          validateOutOfServiceBedInput(bodyInvalidCrn, oosbReasons)
+        } catch (e) {
+          expect(e).toBeInstanceOf(ValidationError)
+          expect(e.data).toEqual({
+            referenceNumber: 'You must enter a valid CRN',
+          })
+        }
       })
     })
   })
