@@ -8,6 +8,7 @@ import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/tasks'
 import { userQualificationsSelectOptions } from '../utils/tasks'
+import { hasPermission } from '../utils/users'
 
 export default class TasksController {
   constructor(
@@ -19,6 +20,7 @@ export default class TasksController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
+      const canAllocate = hasPermission(res.locals.user, ['cas1_tasks_allocate'])
       const users = await this.userService.getUserList(req.user.token, ['assessor', 'appeals_manager'])
 
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
@@ -64,7 +66,7 @@ export default class TasksController {
 
       res.render('tasks/index', {
         pageHeading: 'Task Allocation',
-        taskRows: tasksTableRows(tasks.data, activeTab),
+        taskRows: tasksTableRows(tasks.data, activeTab, canAllocate),
         taskHeader: tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
         allocatedFilter,
         pageNumber: Number(tasks.pageNumber),

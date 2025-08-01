@@ -16,13 +16,21 @@ export default class AllocationsPage extends Page {
   constructor(
     private readonly application: Application,
     private readonly task: Task,
+    title?: string,
   ) {
-    super(`Reallocate`)
+    super(title || `Reallocate`)
   }
 
   static visit(application: Application, task: Task): AllocationsPage {
     cy.visit(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }))
     return new AllocationsPage(application, task)
+  }
+
+  static visitUnauthorised(task: Task): AllocationsPage {
+    cy.visit(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
+      failOnStatusCode: false,
+    })
+    return new AllocationsPage(null, null, `Authorisation Error`)
   }
 
   shouldShowInformationAboutTask() {
