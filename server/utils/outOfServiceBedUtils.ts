@@ -20,6 +20,7 @@ import {
   UserDetails,
 } from '@approved-premises/ui'
 
+import { isBefore } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { DateFormats, isoDateIsValid } from './dateUtils'
@@ -295,6 +296,10 @@ export const validateOutOfServiceBedInput = (
     errors.endDate = 'You must enter an end date'
   } else if (!isoDateIsValid(endDate)) {
     errors.endDate = 'You must enter a valid end date'
+  }
+
+  if (!errors.startDate && !errors.endDate && isBefore(endDate, startDate)) {
+    errors.endDate = 'The end date must be on or after the start date'
   }
 
   if (!reason) {

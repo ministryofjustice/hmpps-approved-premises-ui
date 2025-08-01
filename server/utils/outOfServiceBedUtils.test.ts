@@ -340,15 +340,18 @@ describe('outOfServiceBedUtils', () => {
         'endDate-month': '',
         'endDate-day': '',
       }
+      let error
       try {
         validateOutOfServiceBedInput(bodyEmptyDates, oosbReasons)
       } catch (e) {
-        expect(e).toBeInstanceOf(ValidationError)
-        expect(e.data).toEqual({
-          startDate: 'You must enter a start date',
-          endDate: 'You must enter an end date',
-        })
+        error = e
       }
+
+      expect(error).toBeInstanceOf(ValidationError)
+      expect(error.data).toEqual({
+        startDate: 'You must enter a start date',
+        endDate: 'You must enter an end date',
+      })
     })
 
     it('returns errors if the dates are invalid', async () => {
@@ -357,15 +360,41 @@ describe('outOfServiceBedUtils', () => {
         'startDate-day': '45',
         'endDate-year': 'nope',
       }
+      let error
       try {
         validateOutOfServiceBedInput(bodyInvalidDates, oosbReasons)
       } catch (e) {
-        expect(e).toBeInstanceOf(ValidationError)
-        expect(e.data).toEqual({
-          startDate: 'You must enter a valid start date',
-          endDate: 'You must enter a valid end date',
-        })
+        error = e
       }
+
+      expect(error).toBeInstanceOf(ValidationError)
+      expect(error.data).toEqual({
+        startDate: 'You must enter a valid start date',
+        endDate: 'You must enter a valid end date',
+      })
+    })
+
+    it('returns an error if the end date is before the start date', async () => {
+      const bodyEndBeforeStart = {
+        ...validBody,
+        'startDate-year': '2026',
+        'startDate-month': '10',
+        'startDate-day': '15',
+        'endDate-year': '2026',
+        'endDate-month': '10',
+        'endDate-day': '14',
+      }
+      let error
+      try {
+        validateOutOfServiceBedInput(bodyEndBeforeStart, oosbReasons)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeInstanceOf(ValidationError)
+      expect(error.data).toEqual({
+        endDate: 'The end date must be on or after the start date',
+      })
     })
 
     describe('when the reason selected is linked to a person and needs a CRN to be entered', () => {
@@ -377,27 +406,33 @@ describe('outOfServiceBedUtils', () => {
       it('returns an error if the Work order reference number/CRN field is empty', async () => {
         const bodyNoCrn = { ...bodyCrn, referenceNumber: '' }
 
+        let error
         try {
           validateOutOfServiceBedInput(bodyNoCrn, oosbReasons)
         } catch (e) {
-          expect(e).toBeInstanceOf(ValidationError)
-          expect(e.data).toEqual({
-            referenceNumber: 'You must enter a CRN',
-          })
+          error = e
         }
+
+        expect(error).toBeInstanceOf(ValidationError)
+        expect(error.data).toEqual({
+          referenceNumber: 'You must enter a CRN',
+        })
       })
 
       it('returns an error if the Work order reference number/CRN field is an invalid CRN', async () => {
         const bodyInvalidCrn = { ...bodyCrn, referenceNumber: 'not a crn' }
 
+        let error
         try {
           validateOutOfServiceBedInput(bodyInvalidCrn, oosbReasons)
         } catch (e) {
-          expect(e).toBeInstanceOf(ValidationError)
-          expect(e.data).toEqual({
-            referenceNumber: 'You must enter a valid CRN',
-          })
+          error = e
         }
+
+        expect(error).toBeInstanceOf(ValidationError)
+        expect(error.data).toEqual({
+          referenceNumber: 'You must enter a valid CRN',
+        })
       })
     })
   })

@@ -16,14 +16,16 @@ import outOfServiceBedReasonsJson from '../referenceData/stubs/cas1/out-of-servi
 import { getCrn } from './person'
 
 export const outOfServiceBedFactory = Factory.define<Cas1OutOfServiceBed>(() => {
+  const startDate = faker.date.future()
+  const endDate = faker.date.future({ refDate: startDate })
   const reason = cas1OutOfServiceBedReasonFactory.build(
     faker.helpers.arrayElement(outOfServiceBedReasonsJson) as Cas1OutOfServiceBedReason,
   )
   return {
     id: faker.string.uuid(),
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
-    startDate: DateFormats.dateObjToIsoDate(faker.date.future()),
-    endDate: DateFormats.dateObjToIsoDate(faker.date.future()),
+    startDate: DateFormats.dateObjToIsoDate(startDate),
+    endDate: DateFormats.dateObjToIsoDate(endDate),
     bed: namedIdFactory.build(),
     room: namedIdFactory.build(),
     premises: namedIdFactory.build(),

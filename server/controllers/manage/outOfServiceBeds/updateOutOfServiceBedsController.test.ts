@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import { when } from 'jest-when'
 
 import { ErrorsAndUserInput } from '@approved-premises/ui'
 import { Cas1OutOfServiceBedReason } from '@approved-premises/api'
@@ -44,9 +43,7 @@ describe('updateOutOfServiceBedController', () => {
       },
     })
 
-    when(outOfServiceBedService.getOutOfServiceBed)
-      .calledWith(request.user.token, premisesId, outOfServiceBed.id)
-      .mockResolvedValue(outOfServiceBed)
+    outOfServiceBedService.getOutOfServiceBed.mockResolvedValue(outOfServiceBed)
     outOfServiceBedService.getOutOfServiceBedReasons.mockResolvedValue(
       outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>,
     )
