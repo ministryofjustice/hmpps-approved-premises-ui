@@ -46,7 +46,11 @@ import referenceDataFactory, {
   nonArrivalReasonsFactory,
   probationRegionFactory,
 } from './referenceData'
-import cas1ReferenceDataFactory, { cruManagementAreaFactory } from './cas1ReferenceData'
+import cas1ReferenceDataFactory, {
+  cruManagementAreaFactory,
+  cas1OutOfServiceBedReasonFactory,
+  cas1DepartureReasonsFactory,
+} from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
 import staffMemberFactory from './staffMember'
@@ -115,6 +119,7 @@ export {
   cas1ApprovedPlacementAppealfactory,
   cas1BedDetailFactory,
   cas1ChangeRequestSummaryFactory,
+  cas1DepartureReasonsFactory,
   cas1PremisesBedSummaryFactory,
   cas1OutOfServiceBedSummaryFactory,
   cas1PremisesBasicSummaryFactory,
@@ -139,6 +144,7 @@ export {
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1OverbookingRangeFactory,
+  cas1OutOfServiceBedReasonFactory,
   cas1PlacementRequestDetailFactory,
   cas1KeyworkerAllocationFactory,
   cas1UpdateSpaceBookingFactory,

@@ -750,7 +750,7 @@ export default abstract class Page {
     }
 
     if (bedDetails.referenceNumber) {
-      cy.get('.govuk-summary-list__key').should('contain', 'Reference number')
+      cy.get('.govuk-summary-list__key').should('contain', 'Reference/CRN')
       cy.get('.govuk-summary-list__value').should('contain', bedDetails.referenceNumber)
     }
 

@@ -261,7 +261,7 @@ export interface ReferenceData {
   serviceScope: string
 }
 
-export interface Cas1ReferenceData {
+export type Cas1ReferenceData = {
   id: string
   name: string
   isActive: boolean

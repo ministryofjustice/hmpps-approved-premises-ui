@@ -1,11 +1,11 @@
-import { LostBedReason, Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
+import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
 import OutOfServiceBedService from './outOfServiceBedService'
 import OutOfServiceBedClient from '../data/outOfServiceBedClient'
 import Cas1ReferenceDataClient from '../data/cas1ReferenceDataClient'
 
 import {
-  cas1ReferenceDataFactory,
+  cas1OutOfServiceBedReasonFactory,
   newOutOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
@@ -51,15 +51,15 @@ describe('OutOfServiceBedService', () => {
   describe('getOutOfServiceBedReasons', () => {
     it('returns the list of reasons retrieved from the CAS1 reference data endpoint', async () => {
       const token = 'SOME_TOKEN'
-      const stubbedReferenceData = cas1ReferenceDataFactory.outOfServiceBedReason().buildList(5) as Array<LostBedReason>
+      const outOfServiceBedReasons = cas1OutOfServiceBedReasonFactory.buildList(5)
 
-      cas1ReferenceDataClient.getReferenceData.mockResolvedValue(stubbedReferenceData)
+      cas1ReferenceDataClient.getOutOfServiceBedReasons.mockResolvedValue(outOfServiceBedReasons)
 
       const retrievedReasons = await service.getOutOfServiceBedReasons(token)
 
-      expect(retrievedReasons).toEqual(stubbedReferenceData)
+      expect(retrievedReasons).toEqual(outOfServiceBedReasons)
       expect(Cas1ReferenceDataClientFactory).toHaveBeenCalledWith(token)
-      expect(cas1ReferenceDataClient.getReferenceData).toHaveBeenLastCalledWith('out-of-service-bed-reasons')
+      expect(cas1ReferenceDataClient.getOutOfServiceBedReasons).toHaveBeenCalled()
     })
   })
 

@@ -1,61 +1,59 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% macro outOfServiceBedDetails(outOfServiceBed, characteristicsHtml)%}
+{% macro outOfServiceBedDetails(outOfServiceBed, characteristicsHtml) %}
 
 
-  {{
-        govukSummaryList({
-          rows: [
+    {{ govukSummaryList({
+        rows: [
             {
-              key: {
+                key: {
                 text: "Start date"
-              },
-              value: {
+            },
+                value: {
                 text: formatDate(outOfServiceBed.startDate, {format: 'long'}) if outOfServiceBed.startDate else "None supplied"
-              }
-            },
-            {
-              key: {
-                text: "End date"
-              },
-              value: {
-                text: formatDate(outOfServiceBed.endDate, {format: 'long'}) if outOfServiceBed.startDate else "None supplied"
-              }
-            },
-            {
-              key: {
-                text: "Reason"
-              },
-              value: {
-                text: outOfServiceBed.reason.name if outOfServiceBed.reason.name else "None supplied"
-              }
-            },
-            {
-              key: {
-                text: "Reference number"
-              },
-              value: {
-                text: outOfServiceBed.referenceNumber if outOfServiceBed.referenceNumber else "None supplied"
-              }
-            },
-            {
-              key: {
-                text: "Additional information"
-              },
-              value: {
-                text: outOfServiceBed.notes if outOfServiceBed.notes else "None supplied"
-              }
-            },
-            {
-              key: {
-                text: "Characteristics"
-              },
-              value: {
-                html: characteristicsHtml
-              }
             }
-          ]
-        })
-      }}
+            },
+            {
+                key: {
+                text: "End date"
+            },
+                value: {
+                text: formatDate(outOfServiceBed.endDate, {format: 'long'}) if outOfServiceBed.startDate else "None supplied"
+            }
+            },
+            {
+                key: {
+                text: "Reason"
+            },
+                value: {
+                text: outOfServiceBed.reason.name if outOfServiceBed.reason.name else "None supplied"
+            }
+            },
+            {
+                key: {
+                text: "Reference/CRN"
+            },
+                value: {
+                text: outOfServiceBed.referenceNumber if outOfServiceBed.referenceNumber else "None supplied"
+            }
+            },
+            {
+                key: {
+                text: "Additional information"
+            },
+                value: {
+                text: outOfServiceBed.notes if outOfServiceBed.notes else "None supplied"
+            }
+            },
+            {
+                key: {
+                text: "Characteristics"
+            },
+                value: {
+                html: characteristicsHtml
+            }
+            }
+        ]
+    }) }}
 
 {% endmacro %}

@@ -23,9 +23,9 @@ export class OutOfServiceBedUpdatePage extends Page {
   completeForm(outOfServiceBedUpdate: OutOfServiceBed): void {
     this.clearAndCompleteDateInputs('startDate', outOfServiceBedUpdate.startDate)
     this.clearAndCompleteDateInputs('endDate', outOfServiceBedUpdate.endDate)
-    this.checkRadioByNameAndValue('outOfServiceBed[reason]', outOfServiceBedUpdate.reason.id)
+    this.checkRadioByNameAndValue('reason', outOfServiceBedUpdate.reason.id)
     if (outOfServiceBedUpdate.referenceNumber)
       this.clearAndCompleteTextInputById('referenceNumber', outOfServiceBedUpdate.referenceNumber)
-    this.completeTextArea('outOfServiceBed[notes]', outOfServiceBedUpdate.notes)
+    this.completeTextArea('notes', outOfServiceBedUpdate.notes)
   }
 }
