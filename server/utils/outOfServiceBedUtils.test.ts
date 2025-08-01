@@ -37,7 +37,7 @@ describe('outOfServiceBedUtils', () => {
         sortHeader<OutOfServiceBedSortField>('End date', 'endDate', sortBy, sortDirection, hrefPrefix),
         sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
         {
-          text: 'Ref number',
+          text: 'Reference/CRN',
         },
         sortHeader<OutOfServiceBedSortField>('Days lost', 'daysLost', sortBy, sortDirection, hrefPrefix),
         {
@@ -87,7 +87,7 @@ describe('outOfServiceBedUtils', () => {
         { text: 'Start date' },
         { text: 'End date' },
         { text: 'Reason' },
-        { text: 'Ref number' },
+        { text: 'Reference/CRN' },
         { text: 'Details' },
       ])
     })
@@ -171,7 +171,7 @@ describe('outOfServiceBedUtils', () => {
           { key: { text: 'Start date' }, value: { text: 'Sun 1 Feb 2026' } },
           { key: { text: 'End date' }, value: { text: 'Thu 12 Mar 2026' } },
           { key: { text: 'Reason' }, value: { text: outOfServiceBed.reason.name } },
-          { key: { text: 'Reference number/CRN' }, value: { text: '123' } },
+          { key: { text: 'Reference/CRN' }, value: { text: '123' } },
           {
             key: { text: 'Notes' },
             value: { html: `<span class="govuk-summary-list__textblock">some notes\ntwo lines</span>` },
@@ -222,7 +222,7 @@ describe('outOfServiceBedUtils', () => {
       })
 
       expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Reference number' }, value: { text: revision.referenceNumber } }]),
+        expect.arrayContaining([{ key: { text: 'Reference/CRN' }, value: { text: revision.referenceNumber } }]),
       )
     })
 

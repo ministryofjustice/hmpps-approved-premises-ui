@@ -62,7 +62,7 @@ export const allOutOfServiceBedsTableHeaders = (
     sortHeader<OutOfServiceBedSortField>('End date', 'endDate', sortBy, sortDirection, hrefPrefix),
     sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
     {
-      text: 'Ref number',
+      text: 'Reference/CRN',
     },
     sortHeader<OutOfServiceBedSortField>('Days lost', 'daysLost', sortBy, sortDirection, hrefPrefix),
     {
@@ -90,7 +90,7 @@ export const outOfServiceBedTableHeaders = () => [
   { text: 'Start date' },
   { text: 'End date' },
   { text: 'Reason' },
-  { text: 'Ref number' },
+  { text: 'Reference/CRN' },
   { text: 'Details' },
 ]
 
@@ -165,7 +165,7 @@ export const outOfServiceBedSummaryList = (outOfServiceBed: Cas1OutOfServiceBed)
     summaryListItem('Start date', DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'long' })),
     summaryListItem('End date', DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'long' })),
     summaryListItem('Reason', outOfServiceBed.reason.name),
-    summaryListItem('Reference number/CRN', outOfServiceBed.referenceNumber),
+    summaryListItem('Reference/CRN', outOfServiceBed.referenceNumber),
     summaryListItem('Notes', outOfServiceBed.notes, 'textBlock'),
   ],
 })
@@ -196,7 +196,7 @@ export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): Summa
 
   if (revision.referenceNumber) {
     summaryListItems.push({
-      key: textValue('Reference number'),
+      key: textValue('Reference/CRN'),
       value: textValue(revision.referenceNumber),
     })
   }
