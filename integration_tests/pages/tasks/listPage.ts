@@ -4,34 +4,50 @@ import paths from '../../../server/paths/tasks'
 import { allocatedTableRows, completedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/listTable'
 
 import { Task } from '../../../server/@types/shared'
-import { shouldShowTableRows } from '../../helpers'
+import { shouldShowTableRows, tableRowsToArrays } from '../../helpers'
 
 export default class ListPage extends Page {
-  constructor(
-    private readonly allocatedTasks: Array<Task>,
-    private readonly unallocatedTasks: Array<Task>,
-  ) {
+  constructor() {
     super('Task Allocation')
-    this.allocatedTasks = allocatedTasks
-    this.unallocatedTasks = unallocatedTasks
   }
 
-  static visit(allocatedTasks: Array<Task>, unallocatedTasks: Array<Task>, query?: string): ListPage {
+  static visit(query?: string): ListPage {
     const path = paths.tasks.index({})
     cy.visit(query ? `${path}?${query}` : path)
-    return new ListPage(allocatedTasks, unallocatedTasks)
+    return new ListPage()
   }
 
-  shouldShowAllocatedTasks(allocatedTasks = this.allocatedTasks): void {
-    shouldShowTableRows(allocatedTableRows(allocatedTasks))
+  shouldShowAllocatedTasks(tasks): void {
+    shouldShowTableRows(allocatedTableRows(tasks, true))
   }
 
-  shouldShowUnallocatedTasks(unallocatedTasks = this.unallocatedTasks): void {
-    shouldShowTableRows(unallocatedTableRows(unallocatedTasks))
+  shouldShowUnallocatedTasks(tasks): void {
+    shouldShowTableRows(unallocatedTableRows(tasks, true))
   }
 
-  shouldShowCompletedTasks(tasks: Array<Task>): void {
+  shouldShowCompletedTasks(tasks): void {
     shouldShowTableRows(completedTableRows(tasks))
+  }
+
+  private testContainsHeaderLinks(tasks: Array<Task>, shouldContain: boolean): void {
+    const headerTexts = tableRowsToArrays(allocatedTableRows(tasks, true)).map(row => row[0])
+    headerTexts.forEach(text => {
+      cy.contains('th', text).within(() => {
+        if (shouldContain) {
+          cy.get('a').should('have.text', text)
+        } else {
+          cy.get('a').should('not.exist')
+        }
+      })
+    })
+  }
+
+  shouldContainHeaderLinks(tasks: Array<Task>): void {
+    this.testContainsHeaderLinks(tasks, true)
+  }
+
+  shouldNotContainHeaderLinks(tasks: Array<Task>): void {
+    this.testContainsHeaderLinks(tasks, false)
   }
 
   shouldShowAllocatedToUserFilter() {

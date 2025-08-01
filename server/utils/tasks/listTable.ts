@@ -81,12 +81,17 @@ const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name,
 })
 
-const nameAnchorCell = (task: Task): TableCell => ({
-  html: linkTo(paths.tasks.show(taskParams(task)), {
-    text: displayName(task.personSummary, { showCrn: true }),
-    attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
-  }),
-})
+const nameAnchorCell = (task: Task, canAllocate: boolean): TableCell =>
+  canAllocate
+    ? {
+        html: linkTo(paths.tasks.show(taskParams(task)), {
+          text: displayName(task.personSummary, { showCrn: true }),
+          attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+        }),
+      }
+    : {
+        text: displayName(task.personSummary, { showCrn: true }),
+      }
 
 const apTypeCell = (task: Task): TableCell => ({
   text: apTypeShortLabels[task.apType] || '',
@@ -96,11 +101,11 @@ const apAreaCell = (task: Task): TableCell => ({
   text: task.apArea?.name || 'No area supplied',
 })
 
-const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
+const allocatedTableRows = (tasks: Array<Task>, canAllocate: boolean): Array<TableRow> => {
   const rows: Array<TableRow> = []
   tasks.forEach(task => {
     rows.push([
-      nameAnchorCell(task),
+      nameAnchorCell(task, canAllocate),
       daysUntilDueCell(task, 'task--index__warning'),
       arrivalDateCell(task),
       allocationCell(task),
@@ -114,12 +119,12 @@ const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   return rows
 }
 
-const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
+const unallocatedTableRows = (tasks: Array<Task>, canAllocate: boolean): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   tasks.forEach(task => {
     rows.push([
-      nameAnchorCell(task),
+      nameAnchorCell(task, canAllocate),
       daysUntilDueCell(task, 'task--index__warning'),
       arrivalDateCell(task),
       statusCell(task),
@@ -149,7 +154,7 @@ const completedTableRows = (tasks: Array<Task>): Array<TableRow> => {
 
   tasks.forEach(task => {
     rows.push([
-      nameAnchorCell(task),
+      nameAnchorCell(task, false),
       completedAtDateCell(task),
       completedByCell(task),
       taskTypeCell(task),
@@ -160,12 +165,12 @@ const completedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   return rows
 }
 
-const tasksTableRows = (tasks: Array<Task>, allocatedFilter: TaskTab): Array<TableRow> => {
+const tasksTableRows = (tasks: Array<Task>, allocatedFilter: TaskTab, canAllocate: boolean): Array<TableRow> => {
   if (allocatedFilter === 'allocated') {
-    return allocatedTableRows(tasks)
+    return allocatedTableRows(tasks, canAllocate)
   }
   if (allocatedFilter === 'unallocated') {
-    return unallocatedTableRows(tasks)
+    return unallocatedTableRows(tasks, canAllocate)
   }
   return completedTableRows(tasks)
 }

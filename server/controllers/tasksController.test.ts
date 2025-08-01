@@ -45,7 +45,7 @@ describe('TasksController', () => {
 
   describe('index', () => {
     const cruManagementArea = cruManagementAreaFactory.build()
-    const user = userDetailsFactory.build({ cruManagementArea })
+    const user = userDetailsFactory.build({ cruManagementArea, permissions: ['cas1_tasks_allocate'] })
     const users = userFactory.buildList(5)
     const tasks = taskFactory.buildList(1)
     const paginatedResponse = paginatedResponseFactory.build({
@@ -61,22 +61,21 @@ describe('TasksController', () => {
       when(cruManagementAreaService.getCruManagementAreas).calledWith(token).mockResolvedValue(cruManagementAreas)
       when(taskService.getAll).calledWith(expect.anything()).mockResolvedValue(paginatedResponse)
       when(userService.getUserList).calledWith(token, ['assessor', 'appeals_manager']).mockResolvedValue(users)
+      when(getPaginationDetails as jest.Mock)
+        .calledWith(request, paths.tasks.index({}), expect.anything())
+        .mockReturnValue(paginationDetails)
 
       response.locals.user = user
     })
 
     it('should render the tasks template with the users CRU management area filtered by default', async () => {
-      when(getPaginationDetails as jest.Mock)
-        .calledWith(request, paths.tasks.index({}), expect.anything())
-        .mockReturnValue(paginationDetails)
-
       const requestHandler = tasksController.index()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
         taskHeader: tasksTableHeader('allocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, 'allocated'),
+        taskRows: tasksTableRows(tasks, 'allocated', true),
         allocatedFilter: 'allocated',
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -144,7 +143,7 @@ describe('TasksController', () => {
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
         taskHeader: tasksTableHeader('unallocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, 'unallocated'),
+        taskRows: tasksTableRows(tasks, 'unallocated', true),
         allocatedFilter,
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -208,7 +207,7 @@ describe('TasksController', () => {
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
         taskHeader: tasksTableHeader('allocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, 'allocated'),
+        taskRows: tasksTableRows(tasks, 'allocated', true),
         allocatedFilter: paramPaginationDetails.allocatedFilter,
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -283,7 +282,7 @@ describe('TasksController', () => {
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
         taskHeader: tasksTableHeader(activeTab, 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, activeTab),
+        taskRows: tasksTableRows(tasks, activeTab, true),
         allocatedFilter,
         cruManagementAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -319,6 +318,19 @@ describe('TasksController', () => {
         crnOrName,
         isCompleted: true,
       })
+    })
+
+    it('should not render an allocation link if the user lacks permission', async () => {
+      response.locals.user = userDetailsFactory.build({ cruManagementArea, permissions: [] })
+
+      await tasksController.index()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'tasks/index',
+        expect.objectContaining({
+          taskRows: tasksTableRows(tasks, 'allocated', false),
+        }),
+      )
     })
   })
 

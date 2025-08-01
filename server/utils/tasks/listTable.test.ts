@@ -37,9 +37,9 @@ describe('table', () => {
       it('returns an array of table rows', () => {
         const task = taskFactory.build()
 
-        expect(allocatedTableRows([task])).toEqual([
+        expect(allocatedTableRows([task], true)).toEqual([
           [
-            nameAnchorCell(task),
+            nameAnchorCell(task, true),
             daysUntilDueCell(task, 'task--index__warning'),
             {
               text: task.expectedArrivalDate
@@ -68,9 +68,9 @@ describe('table', () => {
       it('returns an array of allocated table rows', () => {
         const task = taskFactory.build()
 
-        expect(tasksTableRows([task], 'allocated')).toEqual([
+        expect(tasksTableRows([task], 'allocated', true)).toEqual([
           [
-            nameAnchorCell(task),
+            nameAnchorCell(task, true),
             daysUntilDueCell(task, 'task--index__warning'),
             {
               text: task.expectedArrivalDate
@@ -103,9 +103,9 @@ describe('table', () => {
       it('returns an array of table rows', () => {
         const task = taskFactory.build()
 
-        expect(unallocatedTableRows([task])).toEqual([
+        expect(unallocatedTableRows([task], true)).toEqual([
           [
-            nameAnchorCell(task),
+            nameAnchorCell(task, true),
             daysUntilDueCell(task, 'task--index__warning'),
             {
               text: task.expectedArrivalDate
@@ -129,9 +129,9 @@ describe('table', () => {
       it('returns an array of unallocated table rows', () => {
         const task = taskFactory.build()
 
-        expect(tasksTableRows([task], 'unallocated')).toEqual([
+        expect(tasksTableRows([task], 'unallocated', true)).toEqual([
           [
-            nameAnchorCell(task),
+            nameAnchorCell(task, true),
             daysUntilDueCell(task, 'task--index__warning'),
             {
               text: task.expectedArrivalDate
@@ -231,13 +231,12 @@ describe('table', () => {
   })
 
   describe('nameAnchorCell', () => {
+    const task = taskFactory.build({
+      taskType: 'Assessment',
+    })
     it('returns the name when the person summary is FullPersonSummary  in the task', () => {
       const personSummary = fullPersonSummaryFactory.build()
-      const task = taskFactory.build({
-        taskType: 'Assessment',
-        personSummary,
-      })
-      expect(nameAnchorCell(task)).toEqual({
+      expect(nameAnchorCell({ ...task, personSummary }, true)).toEqual({
         html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
           text: personSummary.name,
           attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
@@ -246,11 +245,7 @@ describe('table', () => {
     })
     it('returns the Limited Access Offender (LAO) CRN when the person summary is RestrictedPersonSummary in the task', () => {
       const personSummary = fullPersonSummaryFactory.build({ personType: 'RestrictedPersonSummary' })
-      const task = taskFactory.build({
-        taskType: 'Assessment',
-        personSummary,
-      })
-      expect(nameAnchorCell(task)).toEqual({
+      expect(nameAnchorCell({ ...task, personSummary }, true)).toEqual({
         html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
           text: `LAO: ${personSummary.crn}`,
           attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
@@ -259,15 +254,17 @@ describe('table', () => {
     })
     it('returns the unknown person CRN when the person summary is UnknownPersonSummary  in the task', () => {
       const personSummary = fullPersonSummaryFactory.build({ personType: 'UnknownPersonSummary' })
-      const task = taskFactory.build({
-        taskType: 'Assessment',
-        personSummary,
-      })
-      expect(nameAnchorCell(task)).toEqual({
+      expect(nameAnchorCell({ ...task, personSummary }, true)).toEqual({
         html: linkTo(paths.tasks.show({ id: task.id, taskType: kebabCase(task.taskType) }), {
           text: `Unknown: ${personSummary.crn}`,
           attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
         }),
+      })
+    })
+    it('returns the person without a link if the canAllocate parameter is false', () => {
+      const personSummary = fullPersonSummaryFactory.build({ personType: 'UnknownPersonSummary' })
+      expect(nameAnchorCell({ ...task, personSummary }, false)).toEqual({
+        text: `Unknown: ${personSummary.crn}`,
       })
     })
   })
@@ -438,7 +435,7 @@ describe('table', () => {
 
       expect(completedTableRows([task])).toEqual([
         [
-          nameAnchorCell(task),
+          nameAnchorCell(task, false),
           completedAtDateCell(task),
           completedByCell(task),
           taskTypeCell(task),
@@ -450,9 +447,9 @@ describe('table', () => {
     it('returns an array of completed task table rows', () => {
       const task = taskFactory.build()
 
-      expect(tasksTableRows([task], 'completed')).toEqual([
+      expect(tasksTableRows([task], 'completed', true)).toEqual([
         [
-          nameAnchorCell(task),
+          nameAnchorCell(task, false),
           completedAtDateCell(task),
           completedByCell(task),
           taskTypeCell(task),
