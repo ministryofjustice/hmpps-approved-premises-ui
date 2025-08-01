@@ -21,14 +21,13 @@
 {% block content %}
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
             <form action="{{ paths.outOfServiceBeds.create({ premisesId: premisesId, bedId: bedId }) }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ showErrorSummary(errorSummary, errorTitle) }}
 
-                <h1 class="govuk-!-margin-bottom-0">Mark a bed as out of service</h1>
-                <p>Provide details of beds that are out of service within your AP estate</p>
+                <h1 class="govuk-heading-l">Mark a bed as out of service</h1>
 
                 {{ govukDateInput({
                     id: "startDate",
@@ -71,9 +70,12 @@
 
                 {{ govukInput({
                     label: {
-                        text: "Work order reference number"
+                        text: "Work order reference number or CRN",
+                        classes: 'govuk-label--s'
                     },
-                    classes: "govuk-input--width-6",
+                    hint: {
+                        text: "If the bed is on hold for a person, or if a double room is in use by a single person, enter the person's CRN. Otherwise, enter the work order reference number, if known."
+                    },
                     id: "referenceNumber",
                     name: "referenceNumber",
                     value: referenceNumber,
@@ -85,15 +87,18 @@
                     name: "notes",
                     value: notes,
                     label: {
-                        text: "Provide  detail about why the bed is out of service. If FM works are required you should update this record with any progress on that work.",
-                        classes: "govuk-fieldset__legend--s"
+                        text: "Details about why the bed is out of service",
+                        classes: "govuk-label--s"
+                    },
+                    hint: {
+                        text: 'If FM works are required you should update this record with any progress on that work.'
                     },
                     errorMessage: errors.notes
                 }) }}
 
                 {{ govukButton({
                     type: 'submit',
-                    text: "Save and continue",
+                    text: "Save",
                     preventDoubleClick: true
                 }) }}
             </form>
