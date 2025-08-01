@@ -78,6 +78,7 @@ context('Task Allocation', () => {
 
     // Then I should see the tasks that are allocated
     listPage.shouldShowAllocatedTasks()
+    listPage.shouldContainHeaderLinks(allocatedTasks)
 
     // And I should see the allocated to user select option
     listPage.shouldShowAllocatedToUserFilter()
@@ -85,6 +86,7 @@ context('Task Allocation', () => {
     // And the tasks that are unallocated
     listPage.clickTab('Unallocated')
     listPage.shouldShowUnallocatedTasks()
+    listPage.shouldContainHeaderLinks(unallocatedTasks)
 
     // And I should not see the allocated to user select option
     listPage.shouldNotShowAllocatedToUserFilter()
@@ -135,6 +137,28 @@ context('Task Allocation', () => {
 
     // And I should not see the allocated to user select option
     listPage.shouldNotShowAllocatedToUserFilter()
+  })
+
+  it(`Doesn't show allocation links if user lacks permission`, () => {
+    // Given I am signed in as a AP area manager (without the cas1_tasks_allocate permission)
+    signIn('ap_area_manager', user)
+
+    const allocatedTasks = taskFactory.buildList(1, { personSummary: fullPersonSummaryFactory.build() })
+
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasks,
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      cruManagementAreaId: cruManagementAreas[0].id,
+    })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit(allocatedTasks, [])
+
+    // Then I should see the tasks that are allocated
+    listPage.shouldShowAllocatedTasks()
+    listPage.shouldNotContainHeaderLinks(allocatedTasks)
   })
 
   it('supports pagination', () => {

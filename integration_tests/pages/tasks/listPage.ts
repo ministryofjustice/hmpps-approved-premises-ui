@@ -4,7 +4,7 @@ import paths from '../../../server/paths/tasks'
 import { allocatedTableRows, completedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/listTable'
 
 import { Task } from '../../../server/@types/shared'
-import { shouldShowTableRows } from '../../helpers'
+import { shouldShowTableRows, tableRowsToArrays } from '../../helpers'
 
 export default class ListPage extends Page {
   constructor(
@@ -23,15 +23,33 @@ export default class ListPage extends Page {
   }
 
   shouldShowAllocatedTasks(allocatedTasks = this.allocatedTasks): void {
-    shouldShowTableRows(allocatedTableRows(allocatedTasks))
+    shouldShowTableRows(allocatedTableRows(allocatedTasks, true))
   }
 
   shouldShowUnallocatedTasks(unallocatedTasks = this.unallocatedTasks): void {
-    shouldShowTableRows(unallocatedTableRows(unallocatedTasks))
+    shouldShowTableRows(unallocatedTableRows(unallocatedTasks, true))
   }
 
   shouldShowCompletedTasks(tasks: Array<Task>): void {
     shouldShowTableRows(completedTableRows(tasks))
+  }
+
+  shouldContainHeaderLinks(tasks: Array<Task>): void {
+    const headerTexts = tableRowsToArrays(allocatedTableRows(tasks, true)).map(row => row[0])
+    headerTexts.forEach(text => {
+      cy.contains('th', text).within(() => {
+        cy.get('a').should('have.text', text)
+      })
+    })
+  }
+
+  shouldNotContainHeaderLinks(tasks: Array<Task>): void {
+    const headerTexts = tableRowsToArrays(allocatedTableRows(tasks, true)).map(row => row[0])
+    headerTexts.forEach(text => {
+      cy.contains('th', text).within(() => {
+        cy.get('a').should('not.exist')
+      })
+    })
   }
 
   shouldShowAllocatedToUserFilter() {
