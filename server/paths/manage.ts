@@ -116,7 +116,6 @@ const paths = {
   },
   outOfServiceBeds: {
     new: outOfServiceBedsPath.path('new'),
-    create: outOfServiceBedsPath,
     premisesIndex: singlePremisesPath.path('out-of-service-beds').path(':temporality'),
     index: outOfServiceBedsIndexPath.path(':temporality'),
     show: outOfServiceBedPath.path(':tab'),

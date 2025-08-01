@@ -1,4 +1,5 @@
 import {
+  Cas1OutOfServiceBed,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedRevision,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
@@ -23,6 +24,7 @@ import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
 import { hasPermission } from './users'
 import { SanitisedError } from '../sanitisedError'
+import { summaryListItem } from './formUtils'
 
 export const premisesIndexTabs = (premisesId: string, temporality: 'current' | 'future' | 'past') => [
   {
@@ -152,6 +154,16 @@ export const outOfServiceBedTabs = (
   },
 ]
 
+export const outOfServiceBedSummaryList = (outOfServiceBed: Cas1OutOfServiceBed): SummaryList => ({
+  rows: [
+    summaryListItem('Start date', DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'long' })),
+    summaryListItem('End date', DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'long' })),
+    summaryListItem('Reason', outOfServiceBed.reason.name),
+    summaryListItem('Reference number/CRN', outOfServiceBed.referenceNumber),
+    summaryListItem('Notes', outOfServiceBed.notes, 'textBlock'),
+  ],
+})
+
 export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): SummaryList['rows'] => {
   const summaryListItems: Array<SummaryListItem> = []
 
@@ -197,21 +209,6 @@ export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1Out
   return revisions.sort((a, b) => {
     return a.updatedAt > b.updatedAt ? -1 : 1
   })
-}
-
-export const overwriteOoSBedWithUserInput = (userInput: Record<string, unknown>, outOfServiceBed: OutOfServiceBed) => {
-  if (userInput.outOfServiceBed && (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber) {
-    outOfServiceBed.referenceNumber = (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber
-  }
-
-  if (
-    (userInput?.outOfServiceBed as Record<string, string>)?.reason &&
-    typeof (userInput.outOfServiceBed as Record<string, string>)?.reason === 'string'
-  ) {
-    outOfServiceBed.reason.id = (userInput.outOfServiceBed as Record<string, string>).reason
-  }
-
-  return outOfServiceBed
 }
 
 type ConflictingEntityType = EntityType

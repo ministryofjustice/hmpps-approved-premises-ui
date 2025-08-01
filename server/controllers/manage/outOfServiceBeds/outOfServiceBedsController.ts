@@ -69,6 +69,7 @@ export default class OutOfServiceBedsController {
       const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
 
       return res.render('manage/outOfServiceBeds/new', {
+        backlink: paths.premises.beds.show({ premisesId, bedId }),
         premisesId,
         bedId,
         outOfServiceBedReasons,

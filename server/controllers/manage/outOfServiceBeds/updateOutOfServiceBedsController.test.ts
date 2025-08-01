@@ -2,23 +2,18 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 
-import { UpdateCas1OutOfServiceBed } from '@approved-premises/api'
 import { ErrorsAndUserInput } from '@approved-premises/ui'
+import { Cas1OutOfServiceBedReason } from '@approved-premises/api'
 import { OutOfServiceBedService } from '../../../services'
 import { outOfServiceBedFactory } from '../../../testutils/factories'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
 
 import { DateFormats } from '../../../utils/dateUtils'
 import paths from '../../../paths/manage'
-import {
-  catchValidationErrorOrPropogate,
-  fetchErrorsAndUserInput,
-  generateConflictErrorAndRedirect,
-} from '../../../utils/validation'
 import { SanitisedError } from '../../../sanitisedError'
-import * as OoSBedUtils from '../../../utils/outOfServiceBedUtils'
-
-jest.mock('../../../utils/validation')
+import outOfServiceBedReasonsJson from '../../../testutils/referenceData/stubs/cas1/out-of-service-bed-reasons.json'
+import * as validationUtils from '../../../utils/validation'
+import { outOfServiceBedSummaryList } from '../../../utils/outOfServiceBedUtils'
 
 describe('updateOutOfServiceBedController', () => {
   const token = 'SOME_TOKEN'
@@ -26,6 +21,9 @@ describe('updateOutOfServiceBedController', () => {
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
+  const errorsAndUserInput = createMock<ErrorsAndUserInput>({
+    userInput: {},
+  })
 
   const outOfServiceBedService = createMock<OutOfServiceBedService>({})
 
@@ -43,132 +41,63 @@ describe('updateOutOfServiceBedController', () => {
         id: outOfServiceBed.id,
       },
     })
+
     when(outOfServiceBedService.getOutOfServiceBed)
       .calledWith(request.user.token, premisesId, outOfServiceBed.id)
       .mockResolvedValue(outOfServiceBed)
+    outOfServiceBedService.getOutOfServiceBedReasons.mockResolvedValue(
+      outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>,
+    )
 
-    when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue({
-      errors: {},
-      errorSummary: [],
-      userInput: {},
-    })
+    jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
+    jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
   })
 
   describe('new', () => {
-    it('passes the premises, bed and OoS bed IDs through to the view when called', async () => {
-      const requestHandler = updateOutOfServiceBedController.new()
+    it('renders the form with existing OOSB data apart from notes, and any errors', async () => {
+      await updateOutOfServiceBedController.new()(request, response, next)
 
-      request.params = {
-        premisesId,
-        bedId: outOfServiceBed.bed.id,
-        id: outOfServiceBed.id,
-      }
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'manage/outOfServiceBeds/update',
-        expect.objectContaining({
+      expect(outOfServiceBedService.getOutOfServiceBed).toHaveBeenCalledWith(token, premisesId, outOfServiceBed.id)
+      expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/update', {
+        pageHeading: 'updateOutOfServiceBedsController',
+        backlink: paths.outOfServiceBeds.show({
           premisesId: request.params.premisesId,
           bedId: request.params.bedId,
           id: request.params.id,
+          tab: 'details',
         }),
-      )
-    })
-
-    it('calls the OoS bed service "get" method and passes the result to the review', async () => {
-      when(outOfServiceBedService.getOutOfServiceBed)
-        .calledWith(request.user.token, premisesId, outOfServiceBed.id)
-        .mockResolvedValue(outOfServiceBed)
-
-      const requestHandler = updateOutOfServiceBedController.new()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'manage/outOfServiceBeds/update',
-        expect.objectContaining({
-          outOfServiceBed,
-        }),
-      )
-    })
-
-    it('formats the start and end dates so they can prepopulate the inputs', async () => {
-      const requestHandler = updateOutOfServiceBedController.new()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'manage/outOfServiceBeds/update',
-        expect.objectContaining({
-          ...DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate'),
-          ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
-        }),
-      )
-    })
-
-    it('renders the form with errors and user input if theres an error', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-      when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
-
-      const requestHandler = updateOutOfServiceBedController.new()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          errors: errorsAndUserInput.errors,
-          errorSummary: errorsAndUserInput.errorSummary,
-          ...errorsAndUserInput.userInput,
-        }),
-      )
-    })
-
-    it('renders the form with errors and user input if theres an error', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-      when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
-
-      const requestHandler = updateOutOfServiceBedController.new()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          errors: errorsAndUserInput.errors,
-          errorSummary: errorsAndUserInput.errorSummary,
-          ...errorsAndUserInput.userInput,
-        }),
-      )
+        outOfServiceBedSummary: outOfServiceBedSummaryList(outOfServiceBed),
+        outOfServiceBedReasons: outOfServiceBedReasonsJson,
+        ...DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate'),
+        ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
+        reason: outOfServiceBed.reason.id,
+        referenceNumber: outOfServiceBed.referenceNumber,
+        notes: '',
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        errorTitle: errorsAndUserInput.errorTitle,
+      })
     })
 
     describe('if there is an error for a field', () => {
       it('overwrites the pre-existing OoS bed record when there is more recent user input ', async () => {
-        const errorsAndUserInput = createMock<ErrorsAndUserInput>({
-          userInput: {
-            startDate: '2025-06-01',
-            endDate: '2025-06-01',
-            referenceNumber: 'new reference number',
-          },
-        })
-        when(fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
+        const userInput = {
+          'startDate-year': '2025',
+          'startDate-month': '6',
+          'startDate-day': '1',
+          'endDate-year': '2025',
+          'endDate-month': '6',
+          'endDate-day': '12',
+          referenceNumber: 'new reference number',
+        }
+        jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue({ ...errorsAndUserInput, userInput })
 
-        const spy = jest
-          .spyOn(OoSBedUtils, 'overwriteOoSBedWithUserInput')
-          .mockReturnValue({ ...outOfServiceBed, ...errorsAndUserInput.userInput })
+        await updateOutOfServiceBedController.new()(request, response, next)
 
-        const requestHandler = updateOutOfServiceBedController.new()
-
-        await requestHandler(request, response, next)
-
-        expect(spy).toHaveBeenCalledWith(errorsAndUserInput.userInput, outOfServiceBed)
         expect(response.render).toHaveBeenCalledWith(
-          expect.anything(),
+          'manage/outOfServiceBeds/update',
           expect.objectContaining({
-            startDate: errorsAndUserInput.userInput.startDate,
-            endDate: errorsAndUserInput.userInput.endDate,
-            referenceNumber: errorsAndUserInput.userInput.referenceNumber,
+            ...userInput,
           }),
         )
       })
@@ -176,51 +105,31 @@ describe('updateOutOfServiceBedController', () => {
   })
 
   describe('create', () => {
-    const startDateFromInputs = DateFormats.isoDateToDateInputs(outOfServiceBed.startDate, 'startDate')
-    const endDateFromInputs = DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate')
-
-    const outOfServiceBedUpdate: UpdateCas1OutOfServiceBed = {
-      startDate: startDateFromInputs.startDate,
-      endDate: endDateFromInputs.endDate,
-      reason: outOfServiceBed.reason.id,
-      notes: outOfServiceBed.notes,
-      referenceNumber: outOfServiceBed.referenceNumber,
+    const validBody = {
+      'startDate-year': 2026,
+      'startDate-month': 8,
+      'startDate-day': 22,
+      'endDate-year': 2026,
+      'endDate-month': 9,
+      'endDate-day': 22,
+      reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
+      referenceNumber: '',
+      notes: 'Some notes',
     }
 
-    it('calls the OoS bed service "update" method with the correct parameters', async () => {
-      const requestBody = {
-        outOfServiceBed: { ...outOfServiceBedUpdate },
-        ...startDateFromInputs,
-        ...endDateFromInputs,
-      }
+    it('updates the OOSB record and redirects to the OOSB details page', async () => {
+      request.body = validBody
 
-      request.body = requestBody
+      await updateOutOfServiceBedController.create()(request, response, next)
 
-      const requestHandler = updateOutOfServiceBedController.create()
-
-      await requestHandler(request, response, next)
-
-      expect(outOfServiceBedService.updateOutOfServiceBed).toHaveBeenCalledWith(
-        token,
-        outOfServiceBed.id,
-        premisesId,
-        outOfServiceBedUpdate,
-      )
-    })
-
-    it('redirects to the show page with a success message if the update is successful', async () => {
-      const requestBody = {
-        outOfServiceBed: { ...outOfServiceBedUpdate },
-        ...startDateFromInputs,
-        ...endDateFromInputs,
-      }
-
-      request.body = requestBody
-
-      const requestHandler = updateOutOfServiceBedController.create()
-
-      await requestHandler(request, response, next)
-
+      expect(outOfServiceBedService.updateOutOfServiceBed).toHaveBeenCalledWith(token, outOfServiceBed.id, premisesId, {
+        startDate: '2026-08-22',
+        endDate: '2026-09-22',
+        reason: request.body.reason,
+        referenceNumber: request.body.referenceNumber,
+        notes: request.body.notes,
+      })
+      expect(request.flash).toHaveBeenCalledWith('success', 'The out of service bed record has been updated')
       expect(response.redirect).toHaveBeenCalledWith(
         paths.outOfServiceBeds.show({
           premisesId,
@@ -229,28 +138,21 @@ describe('updateOutOfServiceBedController', () => {
           tab: 'timeline',
         }),
       )
-      expect(request.flash).toHaveBeenCalledWith('success', expect.any(String))
     })
 
-    describe('when errors are raised', () => {
+    describe('when errors are raised by the API', () => {
+      beforeEach(() => {
+        request.body = { ...validBody }
+      })
+
       it('should call catchValidationErrorOrPropogate with a standard error', async () => {
-        const requestBody = {
-          outOfServiceBed: { ...outOfServiceBedUpdate },
-          ...startDateFromInputs,
-          ...endDateFromInputs,
-        }
-
-        request.body = requestBody
-
-        const requestHandler = updateOutOfServiceBedController.create()
-
-        const err = new Error()
+        const err = new Error('API error: cannot update OOSB record')
 
         outOfServiceBedService.updateOutOfServiceBed.mockRejectedValue(err)
 
-        await requestHandler(request, response, next)
+        await updateOutOfServiceBedController.create()(request, response, next)
 
-        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
           request,
           response,
           err,
@@ -263,22 +165,20 @@ describe('updateOutOfServiceBedController', () => {
       })
 
       it('should call generateConflictErrorAndRedirect if the error is a 409', async () => {
-        const requestBody = {
-          outOfServiceBed: { ...outOfServiceBedUpdate },
-          ...startDateFromInputs,
-          ...endDateFromInputs,
-        }
+        jest.spyOn(validationUtils, 'generateConflictErrorAndRedirect')
 
-        request.body = requestBody
-
-        const requestHandler = updateOutOfServiceBedController.create()
-        const err = createMock<SanitisedError>({ status: 409, data: 'some data' })
-
+        const err = createMock<SanitisedError>({
+          status: 409,
+          data: {
+            detail:
+              'An out-of-service bed already exists for dates from 2024-10-01 to 2024-10-14 which overlaps with the desired dates: 220a71da-bf5c-424d-94ff-254ecac5b857',
+          },
+        })
         outOfServiceBedService.updateOutOfServiceBed.mockRejectedValue(err)
 
-        await requestHandler(request, response, next)
+        await updateOutOfServiceBedController.create()(request, response, next)
 
-        expect(generateConflictErrorAndRedirect).toHaveBeenCalledWith(
+        expect(validationUtils.generateConflictErrorAndRedirect).toHaveBeenCalledWith(
           { ...request },
           { ...response },
           premisesId,

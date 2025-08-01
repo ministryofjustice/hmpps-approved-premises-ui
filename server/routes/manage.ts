@@ -57,7 +57,7 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.deprecated.lostBeds.new.pattern, redirectController.redirect(paths.outOfServiceBeds.new), {
     auditEvent: 'NEW_LOST_BED_REDIRECT',
   })
-  post(paths.deprecated.lostBeds.create.pattern, redirectController.redirect(paths.outOfServiceBeds.create), {
+  post(paths.deprecated.lostBeds.create.pattern, redirectController.redirect(paths.outOfServiceBeds.new), {
     auditEvent: 'CREATE_LOST_BED_REDIRECT',
   })
   get(
@@ -333,7 +333,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_OUT_OF_SERVICE_BED',
     allowedPermissions: ['cas1_out_of_service_bed_create'],
   })
-  post(paths.outOfServiceBeds.create.pattern, outOfServiceBedsController.create(), {
+  post(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.create(), {
     auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
     redirectAuditEventSpecs: [
       {

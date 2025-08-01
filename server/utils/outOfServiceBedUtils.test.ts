@@ -7,9 +7,9 @@ import {
   bedRevisionDetails,
   generateConflictBespokeError,
   outOfServiceBedActions,
+  outOfServiceBedSummaryList,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
-  overwriteOoSBedWithUserInput,
   referenceNumberCell,
   sortOutOfServiceBedRevisionsByUpdatedAt,
 } from './outOfServiceBedUtils'
@@ -153,6 +153,30 @@ describe('outOfServiceBedUtils', () => {
     })
   })
 
+  describe('outOfServiceBedSummaryList', () => {
+    it('renders a summary list with the OOSB details', () => {
+      const outOfServiceBed = outOfServiceBedFactory.build({
+        startDate: '2026-02-01',
+        endDate: '2026-03-12',
+        referenceNumber: '123',
+        notes: `some notes\ntwo lines`,
+      })
+
+      expect(outOfServiceBedSummaryList(outOfServiceBed)).toEqual({
+        rows: [
+          { key: { text: 'Start date' }, value: { text: 'Sun 1 Feb 2026' } },
+          { key: { text: 'End date' }, value: { text: 'Thu 12 Mar 2026' } },
+          { key: { text: 'Reason' }, value: { text: outOfServiceBed.reason.name } },
+          { key: { text: 'Reference number/CRN' }, value: { text: '123' } },
+          {
+            key: { text: 'Notes' },
+            value: { html: `<span class="govuk-summary-list__textblock">some notes\ntwo lines</span>` },
+          },
+        ],
+      })
+    })
+  })
+
   describe('bedRevisionDetails', () => {
     it('adds a formatted start date the summary list', () => {
       const startDate = new Date(2024, 2, 1)
@@ -218,28 +242,6 @@ describe('outOfServiceBedUtils', () => {
       const sortedRevisions = sortOutOfServiceBedRevisionsByUpdatedAt(unsortedRevisions)
 
       expect(sortedRevisions).toEqual([latestDate, middleDate, earliestDate])
-    })
-  })
-
-  describe('overwriteOoSBedWithUserInput', () => {
-    it('overwrites the reason ID if there is a reason in the userInput', () => {
-      const userInput = { outOfServiceBed: { reason: 'new reason' } }
-      const outOfServiceBed = outOfServiceBedFactory.build()
-
-      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual(
-        expect.objectContaining({
-          reason: expect.objectContaining({ id: 'new reason' }),
-        }),
-      )
-    })
-
-    it('overwrites the reference number if there is a reason in the userInput', () => {
-      const userInput = { outOfServiceBed: { referenceNumber: 'new reason' } }
-      const outOfServiceBed = outOfServiceBedFactory.build()
-
-      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual(
-        expect.objectContaining({ referenceNumber: 'new reason' }),
-      )
     })
   })
 
