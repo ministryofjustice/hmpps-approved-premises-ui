@@ -14,7 +14,7 @@ import DatesOfPlacement, {
   DateOfPlacement,
 } from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
-import { placementDurationFromApplication } from '../assessments/placementDurationFromApplication'
+import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
 

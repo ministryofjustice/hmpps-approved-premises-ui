@@ -3,7 +3,7 @@ import { weeksToDays } from 'date-fns'
 import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/match'
 import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
-import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
+import { placementDurationFromApplication } from '../../utils/applications/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,

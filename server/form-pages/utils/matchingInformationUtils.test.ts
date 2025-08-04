@@ -1,6 +1,6 @@
 import { when } from 'jest-when'
 import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
-import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
+import { placementDurationFromApplication } from '../../utils/applications/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -24,7 +24,7 @@ import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
 
-jest.mock('../../utils/assessments/placementDurationFromApplication')
+jest.mock('../../utils/applications/placementDurationFromApplication')
 jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('matchingInformationUtils', () => {

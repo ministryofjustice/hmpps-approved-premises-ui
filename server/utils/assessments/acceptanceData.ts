@@ -25,7 +25,7 @@ import {
   offenceAndRiskCriteria,
   placementRequirementCriteria,
 } from '../placementCriteriaUtils'
-import { placementDurationFromApplication } from './placementDurationFromApplication'
+import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
 import ApplicationTimeliness from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 import type { ApplicationTimelinessBody } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'

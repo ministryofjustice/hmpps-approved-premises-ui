@@ -4,7 +4,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
 import * as matchingInformtionUtils from '../../../utils/matchingInformationUtils'
 
-jest.mock('../../../../utils/assessments/placementDurationFromApplication')
+jest.mock('../../../../utils/applications/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 const assessment = assessmentFactory.build({
