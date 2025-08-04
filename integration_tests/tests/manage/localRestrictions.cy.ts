@@ -32,9 +32,8 @@ describe('Local restrictions', () => {
       perPage: 2000,
     })
 
-    GIVEN('I am signed in as a Future manager')
-    // TODO: Change role to 'future_manager' when feature is released
-    signIn('janitor')
+    GIVEN('I am signed in as a CRU member')
+    signIn('cru_member')
   })
 
   it('lets me see and manage a list of local restrictions for a premises', () => {
