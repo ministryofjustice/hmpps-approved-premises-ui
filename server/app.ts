@@ -60,6 +60,12 @@ export default function createApp(controllers: Controllers, services: Services):
     return next()
   })
   app.use(routes(controllers, services))
+
+  // TODO: Remove once Sentry setup validated
+  app.get('/debug-sentry', () => {
+    throw new Error('Sentry test error')
+  })
+
   app.use((req, res, next) => next(createError(404, 'Not found')))
 
   if (config.sentry.dsn) {
