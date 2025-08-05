@@ -44,7 +44,7 @@ export default class UpdateOutOfServiceBedsController {
       } = outOfServiceBed
 
       res.render('manage/outOfServiceBeds/update', {
-        pageHeading: 'updateOutOfServiceBedsController',
+        pageHeading: 'Update out of service bed record',
         backlink: paths.outOfServiceBeds.show({ premisesId, bedId, id, tab: 'details' }),
         outOfServiceBedSummary: outOfServiceBedSummaryList(outOfServiceBed),
         outOfServiceBedReasons,

@@ -8,7 +8,8 @@ export class UpdateOutOfServiceBedPage extends BasePage {
   }
 
   async updateBed(update: Record<string, string>) {
-    await this.page.getByLabel('Work order reference number').fill(update.referenceNumber)
+    await this.checkRadio('Planned FM works required')
+    await this.page.getByLabel('Work order reference number or CRN').fill(update.referenceNumber)
     await this.page.getByLabel('Provide additional information').fill(update.additionalInformation)
   }
 }

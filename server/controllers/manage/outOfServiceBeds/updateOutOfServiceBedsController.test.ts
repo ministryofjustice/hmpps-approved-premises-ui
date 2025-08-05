@@ -58,7 +58,7 @@ describe('updateOutOfServiceBedController', () => {
 
       expect(outOfServiceBedService.getOutOfServiceBed).toHaveBeenCalledWith(token, premisesId, outOfServiceBed.id)
       expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/update', {
-        pageHeading: 'updateOutOfServiceBedsController',
+        pageHeading: 'Update out of service bed record',
         backlink: paths.outOfServiceBeds.show({
           premisesId: request.params.premisesId,
           bedId: request.params.bedId,

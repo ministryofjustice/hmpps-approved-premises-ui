@@ -56,16 +56,24 @@
     errorMessage: errors.referenceNumber
 }) }}
 
+{% set notesLabel = "Details about why the bed is out of service" %}
+{% set notesHint = "If FM works are required you should update this record with any progress on that work." %}
+
+{% if "Update" in pageHeading %}
+    {% set notesLabel = "Provide additional information" %}
+    {% set notesHint = "Add further detail on the reason behind this update" %}
+{% endif %}
+
 {{ govukTextarea({
     id: "notes",
     name: "notes",
     value: notes,
     label: {
-        text: "Details about why the bed is out of service",
+        text: notesLabel,
         classes: "govuk-label--s"
     },
     hint: {
-        text: 'If FM works are required you should update this record with any progress on that work.'
+        text: notesHint
     },
     errorMessage: errors.notes
 }) }}

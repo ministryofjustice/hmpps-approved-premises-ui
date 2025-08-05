@@ -59,6 +59,7 @@ export default class OutOfServiceBedsController {
 
       return res.render('manage/outOfServiceBeds/new', {
         backlink: paths.premises.beds.show({ premisesId, bedId }),
+        pageHeading: 'Mark a bed as out of service',
         premisesId,
         bedId,
         outOfServiceBedReasons,

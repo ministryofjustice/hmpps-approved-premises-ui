@@ -89,6 +89,7 @@ describe('OutOfServiceBedsController', () => {
       expect(outOfServiceBedService.getOutOfServiceBedReasons).toHaveBeenCalledWith(token)
       expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/new', {
         backlink: paths.premises.beds.show({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
+        pageHeading: 'Mark a bed as out of service',
         premisesId,
         bedId: request.params.bedId,
         outOfServiceBedReasons: outOfServiceBedReasonsJson,
