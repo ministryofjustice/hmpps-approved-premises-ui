@@ -33,6 +33,12 @@ const cas1Oasys = cas1Person.path('oasys')
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
 
+const cas1Assessments = cas1Namespace.path('assessments')
+const cas1AssessmentsSingle = cas1Assessments.path(':id')
+const cas1AssessmentsNotes = cas1AssessmentsSingle.path('notes')
+
+const cas1ReferenceData = cas1Namespace.path('reference-data')
+
 // Non-namespaced
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
@@ -53,9 +59,7 @@ const cas1Users = cas1Namespace.path('users')
 const placementRequests = path('/placement-requests')
 const placementRequestsSingle = placementRequests.path(':placementRequestId')
 
-const cas1Assessments = cas1Namespace.path('assessments')
-const cas1AssessmentsSingle = cas1Assessments.path(':id')
-const cas1AssessmentsNotes = cas1AssessmentsSingle.path('notes')
+const referenceData = path('/reference-data')
 
 export default {
   manage: {
@@ -214,4 +218,6 @@ export default {
     profile: profile.path('v2'),
   },
   reports: cas1Reports.path(':reportName'),
+  cas1ReferenceData: cas1ReferenceData.path(':type'),
+  referenceData: referenceData.path(':type'),
 }

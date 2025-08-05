@@ -6,6 +6,7 @@ import {
   cruManagementAreaFactory,
 } from '../testutils/factories'
 import { describeCas1NamespaceClient } from '../testutils/describeClient'
+import paths from '../paths/api'
 
 describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
   let cas1ReferenceDataClient: Cas1ReferenceDataClient
@@ -30,7 +31,7 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
           uponReceiving: `A request to get ${key}`,
           withRequest: {
             method: 'GET',
-            path: `/cas1/reference-data/${key}`,
+            path: paths.cas1ReferenceData({ type: key }),
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -56,7 +57,7 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
         uponReceiving: `A request to get OOSB reasons`,
         withRequest: {
           method: 'GET',
-          path: `/cas1/reference-data/out-of-service-bed-reasons`,
+          path: paths.cas1ReferenceData({ type: 'out-of-service-bed-reasons' }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -81,7 +82,7 @@ describeCas1NamespaceClient('Cas1ReferenceDataClient', provider => {
         uponReceiving: `A request to get CRU management areas`,
         withRequest: {
           method: 'GET',
-          path: `/cas1/reference-data/cru-management-areas`,
+          path: paths.cas1ReferenceData({ type: 'cru-management-areas' }),
           headers: {
             authorization: `Bearer ${token}`,
           },
