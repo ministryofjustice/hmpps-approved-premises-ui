@@ -64,7 +64,7 @@ describeClient('placementRequestClient', provider => {
 
   describe('bookingNotMade', () => {
     it('makes a POST request to the booking not made endpoint', async () => {
-      const placementRequestId = 'placement-request-id'
+      const placementRequestId = faker.string.uuid()
       const body = {
         notes: 'some notes',
       }
