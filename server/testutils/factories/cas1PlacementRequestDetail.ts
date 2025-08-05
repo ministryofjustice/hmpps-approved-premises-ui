@@ -13,6 +13,24 @@ import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import placementRequestBookingSummaryFactory from './placementRequestBookingSummary'
 
 class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDetail> {
+  matched() {
+    return this.params({
+      status: 'matched',
+    })
+  }
+
+  notMatched() {
+    return this.params({
+      status: 'notMatched',
+    })
+  }
+
+  unableToMatch() {
+    return this.params({
+      status: 'unableToMatch',
+    })
+  }
+
   withSpaceBooking(booking?: Cas1SpaceBookingSummary, changeRequest?: Cas1ChangeRequestSummary) {
     const spaceBooking = booking || cas1SpaceBookingSummaryFactory.build()
     const bookingSummary = placementRequestBookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
