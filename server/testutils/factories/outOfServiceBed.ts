@@ -34,15 +34,14 @@ export const outOfServiceBedFactory = Factory.define<Cas1OutOfServiceBed>(() => 
     referenceNumber:
       reason.referenceType === 'crn'
         ? getCrn()
-        : faker.helpers.arrayElement([
+        : faker.helpers.maybe(() =>
             faker.string.alphanumeric({
               length: {
                 min: 5,
                 max: 10,
               },
             }),
-            undefined,
-          ]),
+          ),
     notes: faker.lorem.sentence(),
     daysLostCount: faker.number.int({ min: 1, max: 100 }),
     temporality: faker.helpers.arrayElement(['past', 'current', 'future'] as const),
