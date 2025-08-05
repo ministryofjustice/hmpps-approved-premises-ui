@@ -8,11 +8,12 @@ import lostBedReasonsJson from './lost-bed-reasons.json'
 import outOfServiceBedReasonsJson from './cas1/out-of-service-bed-reasons.json'
 import keyWorkersJson from './keyworkers.json'
 import probationRegionsJson from './probation-regions.json'
+import paths from '../../../paths/api'
 
 const departureReasons = {
   request: {
     method: 'GET',
-    url: '/cas1/reference-data/departure-reasons',
+    url: paths.cas1ReferenceData({ type: 'departure-reasons' }),
   },
   response: {
     status: 200,
@@ -26,7 +27,7 @@ const departureReasons = {
 const moveOnCategories = {
   request: {
     method: 'GET',
-    url: '/cas1/reference-data/move-on-categories',
+    url: paths.cas1ReferenceData({ type: 'move-on-categories' }),
   },
   response: {
     status: 200,
@@ -40,7 +41,7 @@ const moveOnCategories = {
 const destinationProviders = {
   request: {
     method: 'GET',
-    url: '/reference-data/destination-providers',
+    url: paths.referenceData({ type: 'destination-providers' }),
   },
   response: {
     status: 200,
@@ -54,7 +55,7 @@ const destinationProviders = {
 const cancellationReasons = {
   request: {
     method: 'GET',
-    url: '/reference-data/cancellation-reasons',
+    url: paths.referenceData({ type: 'cancellation-reasons' }),
   },
   response: {
     status: 200,
@@ -68,7 +69,7 @@ const cancellationReasons = {
 const lostBedReasons = {
   request: {
     method: 'GET',
-    url: '/reference-data/lost-bed-reasons',
+    url: paths.referenceData({ type: 'lost-bed-reasons' }),
   },
   response: {
     status: 200,
@@ -82,7 +83,7 @@ const lostBedReasons = {
 const outOfServiceBedReasons = {
   request: {
     method: 'GET',
-    url: '/cas1/reference-data/out-of-service-bed-reasons',
+    url: paths.cas1ReferenceData({ type: 'out-of-service-bed-reasons' }),
   },
   response: {
     status: 200,
@@ -96,7 +97,7 @@ const outOfServiceBedReasons = {
 const keyWorkers = {
   request: {
     method: 'GET',
-    url: '/reference-data/key-workers',
+    url: paths.referenceData({ type: 'key-workers' }),
   },
   response: {
     status: 200,
@@ -110,7 +111,7 @@ const keyWorkers = {
 const probationRegions = {
   request: {
     method: 'GET',
-    url: '/reference-data/probation-regions',
+    url: paths.referenceData({ type: 'probation-regions' }),
   },
   response: {
     status: 200,

@@ -5,18 +5,22 @@ import {
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
   bedRevisionDetails,
+  CreateOutOfServiceBedBody,
   generateConflictBespokeError,
   outOfServiceBedActions,
+  outOfServiceBedSummaryList,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
-  overwriteOoSBedWithUserInput,
   referenceNumberCell,
   sortOutOfServiceBedRevisionsByUpdatedAt,
+  validateOutOfServiceBedInput,
 } from './outOfServiceBedUtils'
-import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
+import { Cas1OutOfServiceBedReason, Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
 import { sortHeader } from './sortHeader'
 import paths from '../paths/manage'
 import { SanitisedError } from '../sanitisedError'
+import outOfServiceBedReasonsJson from '../testutils/referenceData/stubs/cas1/out-of-service-bed-reasons.json'
+import { ValidationError } from './errors'
 
 describe('outOfServiceBedUtils', () => {
   describe('allOutOfServiceBedsTableHeaders', () => {
@@ -33,7 +37,7 @@ describe('outOfServiceBedUtils', () => {
         sortHeader<OutOfServiceBedSortField>('End date', 'endDate', sortBy, sortDirection, hrefPrefix),
         sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
         {
-          text: 'Ref number',
+          text: 'Reference/CRN',
         },
         sortHeader<OutOfServiceBedSortField>('Days lost', 'daysLost', sortBy, sortDirection, hrefPrefix),
         {
@@ -83,7 +87,7 @@ describe('outOfServiceBedUtils', () => {
         { text: 'Start date' },
         { text: 'End date' },
         { text: 'Reason' },
-        { text: 'Ref number' },
+        { text: 'Reference/CRN' },
         { text: 'Details' },
       ])
     })
@@ -153,6 +157,30 @@ describe('outOfServiceBedUtils', () => {
     })
   })
 
+  describe('outOfServiceBedSummaryList', () => {
+    it('renders a summary list with the OOSB details', () => {
+      const outOfServiceBed = outOfServiceBedFactory.build({
+        startDate: '2026-02-01',
+        endDate: '2026-03-12',
+        referenceNumber: '123',
+        notes: `some notes\ntwo lines`,
+      })
+
+      expect(outOfServiceBedSummaryList(outOfServiceBed)).toEqual({
+        rows: [
+          { key: { text: 'Start date' }, value: { text: 'Sun 1 Feb 2026' } },
+          { key: { text: 'End date' }, value: { text: 'Thu 12 Mar 2026' } },
+          { key: { text: 'Reason' }, value: { text: outOfServiceBed.reason.name } },
+          { key: { text: 'Reference/CRN' }, value: { text: '123' } },
+          {
+            key: { text: 'Notes' },
+            value: { html: `<span class="govuk-summary-list__textblock">some notes\ntwo lines</span>` },
+          },
+        ],
+      })
+    })
+  })
+
   describe('bedRevisionDetails', () => {
     it('adds a formatted start date the summary list', () => {
       const startDate = new Date(2024, 2, 1)
@@ -194,7 +222,7 @@ describe('outOfServiceBedUtils', () => {
       })
 
       expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Reference number' }, value: { text: revision.referenceNumber } }]),
+        expect.arrayContaining([{ key: { text: 'Reference/CRN' }, value: { text: revision.referenceNumber } }]),
       )
     })
 
@@ -218,28 +246,6 @@ describe('outOfServiceBedUtils', () => {
       const sortedRevisions = sortOutOfServiceBedRevisionsByUpdatedAt(unsortedRevisions)
 
       expect(sortedRevisions).toEqual([latestDate, middleDate, earliestDate])
-    })
-  })
-
-  describe('overwriteOoSBedWithUserInput', () => {
-    it('overwrites the reason ID if there is a reason in the userInput', () => {
-      const userInput = { outOfServiceBed: { reason: 'new reason' } }
-      const outOfServiceBed = outOfServiceBedFactory.build()
-
-      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual(
-        expect.objectContaining({
-          reason: expect.objectContaining({ id: 'new reason' }),
-        }),
-      )
-    })
-
-    it('overwrites the reference number if there is a reason in the userInput', () => {
-      const userInput = { outOfServiceBed: { referenceNumber: 'new reason' } }
-      const outOfServiceBed = outOfServiceBedFactory.build()
-
-      expect(overwriteOoSBedWithUserInput(userInput, outOfServiceBed)).toEqual(
-        expect.objectContaining({ referenceNumber: 'new reason' }),
-      )
     })
   })
 
@@ -308,6 +314,97 @@ describe('outOfServiceBedUtils', () => {
             })}">existing booking</a>`,
           },
         ],
+      })
+    })
+  })
+
+  describe('validateOutOfServiceBedInput', () => {
+    const validBody: CreateOutOfServiceBedBody = {
+      'startDate-year': '2022',
+      'startDate-month': '8',
+      'startDate-day': '22',
+      'endDate-year': '2022',
+      'endDate-month': '9',
+      'endDate-day': '22',
+      reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
+      referenceNumber: '',
+      notes: 'Some notes',
+    }
+    const oosbReasons = outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>
+    const expectErrors = (userInput: CreateOutOfServiceBedBody, expectedErrors: Record<string, string>) => {
+      let error
+
+      try {
+        validateOutOfServiceBedInput(userInput, oosbReasons)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeInstanceOf(ValidationError)
+      expect(error.data).toEqual(expectedErrors)
+    }
+
+    it('throws if the dates are empty', () => {
+      const bodyEmptyDates = {
+        ...validBody,
+        'startDate-year': '',
+        'endDate-year': '',
+        'endDate-month': '',
+        'endDate-day': '',
+      }
+      expectErrors(bodyEmptyDates, {
+        startDate: 'You must enter a start date',
+        endDate: 'You must enter an end date',
+      })
+    })
+
+    it('returns errors if the dates are invalid', async () => {
+      const bodyInvalidDates = {
+        ...validBody,
+        'startDate-day': '45',
+        'endDate-year': 'nope',
+      }
+      expectErrors(bodyInvalidDates, {
+        startDate: 'You must enter a valid start date',
+        endDate: 'You must enter a valid end date',
+      })
+    })
+
+    it('returns an error if the end date is before the start date', async () => {
+      const bodyEndBeforeStart = {
+        ...validBody,
+        'startDate-year': '2026',
+        'startDate-month': '10',
+        'startDate-day': '15',
+        'endDate-year': '2026',
+        'endDate-month': '10',
+        'endDate-day': '14',
+      }
+      expectErrors(bodyEndBeforeStart, {
+        endDate: 'The end date must be on or after the start date',
+      })
+    })
+
+    describe('when the reason selected is linked to a person and needs a CRN to be entered', () => {
+      const bodyCrn = { ...validBody }
+      beforeEach(() => {
+        bodyCrn.reason = outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'crn').id
+      })
+
+      it('returns an error if the Work order reference number/CRN field is empty', async () => {
+        const bodyNoCrn = { ...bodyCrn, referenceNumber: '' }
+
+        expectErrors(bodyNoCrn, {
+          referenceNumber: 'You must enter a CRN',
+        })
+      })
+
+      it('returns an error if the Work order reference number/CRN field is an invalid CRN', async () => {
+        const bodyInvalidCrn = { ...bodyCrn, referenceNumber: 'not a crn' }
+
+        expectErrors(bodyInvalidCrn, {
+          referenceNumber: 'You must enter a valid CRN',
+        })
       })
     })
   })

@@ -19,13 +19,14 @@ import { signIn } from '../signIn'
 import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../../server/utils/outOfServiceBedUtils'
 import paths from '../../../server/paths/api'
 import BedShowPage from '../../pages/manage/bed/bedShow'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 describe('Out of service beds', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubOutOfServiceBedReasons')
 
-    // Given I am signed in as a Future manager
+    GIVEN('I am signed in as a Future manager')
     signIn('future_manager')
   })
 
@@ -35,20 +36,20 @@ describe('Out of service beds', () => {
     cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1, perPage: 50, premisesId: premises.id })
     cy.task('stubSinglePremises', premises)
 
-    // Given I am on the out-of-service bed list for the premises
+    GIVEN('I am on the out-of-service bed list for the premises')
     OutOfServiceBedPremisesIndexPage.visit(premises)
 
-    // Then I should see the list of out-of-service beds for the premises
+    THEN('I should see the list of out-of-service beds for the premises')
     const page = Page.verifyOnPage(OutOfServiceBedPremisesIndexPage, premises)
 
-    // And I should see the count of total results (not limited to page)
+    AND('I should see the count of total results (not limited to page)')
     page.hasCountOfAllResultsMatchingFilter()
   })
 
   describe('viewing an out of service bed record', () => {
     describe('for a new out of service bed with all nullable fields present in the initial OoS bed revision', () => {
       it('should show a out of service bed', () => {
-        // And I have created a out of service bed
+        AND('I have created a out of service bed')
         const bed = { name: 'abc', id: '123' }
         const premises = premisesFactory.build()
         const outOfServiceBed = outOfServiceBedFactory.build({ bed })
@@ -58,29 +59,29 @@ describe('Out of service beds', () => {
         cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
         cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
-        // And I visit that out of service bed's show page
+        AND("I visit that out of service bed's show page")
         const page = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
-        // Then I should see the latest details of that out of service bed
+        THEN('I should see the latest details of that out of service bed')
         page.shouldShowOutOfServiceBedDetail()
 
-        // And I should see the bed characteristics
+        AND('I should see the bed characteristics')
         page.shouldShowCharacteristics(bedDetail)
 
-        // And I should see links to the premises and bed in the page heading
+        AND('I should see links to the premises and bed in the page heading')
         page.shouldLinkToPremisesAndBed(outOfServiceBed)
 
-        // When I click the 'Timeline' tab
+        WHEN("I click the 'Timeline' tab")
         page.clickTab('Timeline')
 
-        // Then I should see the timeline of that out of service bed's revision
+        THEN("I should see the timeline of that out of service bed's revision")
         page.shouldShowTimeline()
       })
     })
 
     describe('for a legacy "lost bed" records migrated with all nullable fields not present in the initial OoS bed revision', () => {
       it('should show a out of service bed', () => {
-        // And I have created a out of service bed
+        AND('I have created a out of service bed')
         const bed = { name: 'abc', id: '123' }
         const premises = premisesFactory.build()
         const outOfServiceBedRevision = outOfServiceBedRevisionFactory.build({
@@ -100,13 +101,13 @@ describe('Out of service beds', () => {
         cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
         cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
-        // And I visit that out of service bed's show page
+        AND("I visit that out of service bed's show page")
         const page = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
-        // When I click the 'Timeline' tab
+        WHEN("I click the 'Timeline' tab")
         page.clickTab('Timeline')
 
-        // Then I should see the timeline of that out of service bed's revision
+        THEN("I should see the timeline of that out of service bed's revision")
         page.shouldShowTimeline()
       })
     })
@@ -128,14 +129,14 @@ describe('Out of service beds', () => {
       const bedDetail = cas1BedDetailFactory.build({ id: outOfServiceBed.bed.id, name: bedName })
       cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
-      // When I navigate to the out of service bed form
+      WHEN('I navigate to the out of service bed form')
       const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
 
-      // And I fill out the form
+      AND('I fill out the form')
       page.completeForm(outOfServiceBed)
       page.clickSubmit()
 
-      // Then a POST to the API should be made to create the OOSB record
+      THEN('a POST to the API should be made to create the OOSB record')
       cy.task('verifyApiPost', paths.manage.premises.outOfServiceBeds.create({ premisesId: premises.id })).then(
         (requestBody: Cas1NewOutOfServiceBed) => {
           expect(requestBody.startDate).equal(outOfServiceBed.startDate)
@@ -146,21 +147,21 @@ describe('Out of service beds', () => {
         },
       )
 
-      // And I should be redirected to the bed page
+      AND('I should be redirected to the bed page')
       const bedPage = Page.verifyOnPage(BedShowPage, bedName)
 
-      // And I should see the confirmation message
+      AND('I should see the confirmation message')
       bedPage.shouldShowBanner('The out of service bed has been recorded')
     })
 
     it('should show errors', () => {
-      // And a out of service bed is available
+      AND('a out of service bed is available')
       const premises = cas1PremisesFactory.build()
 
-      // When I navigate to the out of service bed form
+      WHEN('I navigate to the out of service bed form')
       const page = OutOfServiceBedCreatePage.visit(premises.id, 'bedId')
 
-      // And I have errors on validated fields
+      AND('I have errors on validated fields')
       cy.task('stubOutOfServiceBedErrors', {
         premisesId: premises.id,
         params: ['startDate', 'endDate', 'reason', 'notes'],
@@ -168,7 +169,7 @@ describe('Out of service beds', () => {
 
       page.clickSubmit()
 
-      // Then I should see error messages relating to that field
+      THEN('I should see error messages relating to that field')
       page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason', 'notes'])
     })
 
@@ -185,7 +186,7 @@ describe('Out of service beds', () => {
       const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
       cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
-      // When I navigate to the out of service bed form
+      WHEN('I navigate to the out of service bed form')
       const outOfServiceBed = outOfServiceBedFactory.build({
         bed,
         startDate: '2022-02-11',
@@ -199,11 +200,11 @@ describe('Out of service beds', () => {
 
       const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
 
-      // And I fill out the form
+      AND('I fill out the form')
       page.completeForm(outOfServiceBed)
       page.clickSubmit()
 
-      // Then I should see an error message
+      THEN('I should see an error message')
       page.shouldShowDateConflictErrorMessages(conflictingOutOfServiceBed, 'lost-bed')
     })
   })
@@ -217,30 +218,30 @@ describe('Out of service beds', () => {
       })
       const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
 
-      // Given I am viewing an out of service bed
+      GIVEN('I am viewing an out of service bed')
       cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
       cy.task('stubBed', { premisesId: premises.id, bedDetail })
       const showPage = OutOfServiceBedShowPage.visit(premises.id, outOfServiceBed)
 
-      // When I click 'Update record'
+      WHEN("I click 'Update record'")
       showPage.clickAction('Update out of service bed')
 
-      // Then I should be taken to the OoS bed update page
+      THEN('I should be taken to the OoS bed update page')
       const updatePage = Page.verifyOnPage(OutOfServiceBedUpdatePage, outOfServiceBed)
 
-      // And it should show the details of the bed from the OoS bed record
+      AND('it should show the details of the bed from the OoS bed record')
       updatePage.shouldShowOutOfServiceBedDetails(outOfServiceBed)
       updatePage.formShouldBePrepopulated()
 
-      // Given I want to update some details of the OoS bed
+      GIVEN('I want to update some details of the OoS bed')
       cy.task('stubOutOfServiceBedUpdate', { premisesId: premises.id, outOfServiceBed })
       const updatedOutOfServiceBed = outOfServiceBedFactory.build({ id: outOfServiceBed.id, bed })
 
-      // When I submit the form
+      WHEN('I submit the form')
       updatePage.completeForm(updatedOutOfServiceBed)
       updatePage.clickSubmit()
 
-      // Then the update is sent to the API
+      THEN('the update is sent to the API')
       cy.task(
         'verifyApiPut',
         paths.manage.premises.outOfServiceBeds.update({ premisesId: premises.id, id: outOfServiceBed.id }),
@@ -259,10 +260,10 @@ describe('Out of service beds', () => {
         expect(body).to.contain(expectedBody)
       })
 
-      // And I should be taken back to the OoS bed timeline page
+      AND('I should be taken back to the OoS bed timeline page')
       Page.verifyOnPage(OutOfServiceBedShowPage, premises.id, outOfServiceBed)
 
-      // And I should see a flash message informing me that the OoS bed has been updated
+      AND('I should see a flash message informing me that the OoS bed has been updated')
       showPage.shouldShowUpdateConfirmationMessage()
     })
 
@@ -275,17 +276,17 @@ describe('Out of service beds', () => {
           bed,
         })
 
-        // Given I am updating an out of service bed
+        GIVEN('I am updating an out of service bed')
         cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed })
         cy.task('stubUpdateOutOfServiceBedErrors', { premisesId: premises.id, outOfServiceBed, params: [dateField] })
 
         const updatePage = OutOfServiceBedUpdatePage.visit(premises.id, outOfServiceBed)
 
-        // When I submit the form with no date
+        WHEN('I submit the form with no date')
         updatePage.clearDateInputs(dateField)
         updatePage.clickSubmit()
 
-        // Then I see an error
+        THEN('I see an error')
         updatePage.shouldShowErrorMessagesForFields([dateField])
       })
     })
@@ -296,7 +297,7 @@ describe('Cancelling an out of service bed', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as a CRU member
+    GIVEN('I am signed in as a CRU member')
     signIn('cru_member')
   })
 
@@ -312,7 +313,7 @@ describe('Cancelling an out of service bed', () => {
     const outOfServiceBed = outOfServiceBeds[0]
     const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
 
-    // Given I am viewing an out of service bed
+    GIVEN('I am viewing an out of service bed')
     cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
     cy.task('stubBed', { premisesId, bedDetail })
     cy.task('stubCancelOutOfServiceBed', { premisesId, outOfServiceBedId: outOfServiceBed.id })
@@ -320,35 +321,35 @@ describe('Cancelling an out of service bed', () => {
     cy.task('stubSinglePremises', premises)
     const showPage = OutOfServiceBedShowPage.visit(premisesId, outOfServiceBed)
 
-    // When I click the action 'Cancel out of service bed'
+    WHEN("I click the action 'Cancel out of service bed'")
     showPage.clickAction('Cancel out of service bed')
 
-    // Then I should be taken to the OOSB cancellation confirmation page
+    THEN('I should be taken to the OOSB cancellation confirmation page')
     const cancelPage = Page.verifyOnPage(OutOfServiceBedCancelPage, outOfServiceBed)
     cancelPage.checkOnPage()
 
-    // And I should see the details of the OOSB I'm about to cancel
+    AND("I should see the details of the OOSB I'm about to cancel")
     cancelPage.warningMessageShouldBeShown()
 
-    // When I click 'Go back'
+    WHEN("I click 'Go back'")
     cancelPage.clickLink('Go back')
 
     // I should be back on the OOB detail page
     Page.verifyOnPage(OutOfServiceBedShowPage, premisesId, outOfServiceBed)
 
-    // When I click the action 'Cancel out of service bed' again
+    WHEN("I click the action 'Cancel out of service bed' again")
     showPage.clickAction('Cancel out of service bed')
 
-    // Then I should be back on the confirmation page
+    THEN('I should be back on the confirmation page')
     Page.verifyOnPage(OutOfServiceBedCancelPage, outOfServiceBed)
 
-    // When I click Cancel out of service bed
+    WHEN('I click Cancel out of service bed')
     cancelPage.clickDoCancel()
 
-    // Then the cancellation is sent to the API
+    THEN('the cancellation is sent to the API')
     cy.task('verifyApiPost', paths.manage.premises.outOfServiceBeds.cancel({ premisesId, id: outOfServiceBed.id }))
 
-    // And I should be taken to the OOSB list page
+    AND('I should be taken to the OOSB list page')
     const listPage = Page.verifyOnPage(OutOfServiceBedPremisesIndexPage, premises)
     listPage.shouldShowBanner(
       `Cancelled out of service bed for ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,

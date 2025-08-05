@@ -4,32 +4,52 @@ import type {
   Cas1NewOutOfServiceBed,
   Cas1OutOfServiceBed,
   Cas1OutOfServiceBedCancellation,
+  Cas1OutOfServiceBedReason,
   Cas1OutOfServiceBedRevision,
 } from '@approved-premises/api'
 
-import cas1ReferenceDataFactory from './cas1ReferenceData'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
 import namedIdFactory from './namedId'
+import { cas1OutOfServiceBedReasonFactory } from './cas1ReferenceData'
+import outOfServiceBedReasonsJson from '../referenceData/stubs/cas1/out-of-service-bed-reasons.json'
+import { getCrn } from './person'
 
-export const outOfServiceBedFactory = Factory.define<Cas1OutOfServiceBed>(() => ({
-  id: faker.string.uuid(),
-  createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
-  startDate: DateFormats.dateObjToIsoDate(faker.date.future()),
-  endDate: DateFormats.dateObjToIsoDate(faker.date.future()),
-  bed: namedIdFactory.build(),
-  room: namedIdFactory.build(),
-  premises: namedIdFactory.build(),
-  apArea: namedIdFactory.build(),
-  reason: cas1ReferenceDataFactory.outOfServiceBedReason().build(),
-  referenceNumber: faker.helpers.arrayElement([faker.string.uuid(), undefined]),
-  notes: faker.lorem.sentence(),
-  daysLostCount: faker.number.int({ min: 1, max: 100 }),
-  temporality: faker.helpers.arrayElement(['past', 'current', 'future'] as const),
-  status: faker.helpers.arrayElement(['active', 'cancelled'] as const),
-  cancellation: undefined,
-  revisionHistory: outOfServiceBedRevisionFactory.buildList(3),
-}))
+export const outOfServiceBedFactory = Factory.define<Cas1OutOfServiceBed>(() => {
+  const startDate = faker.date.future()
+  const endDate = faker.date.future({ refDate: startDate })
+  const reason = cas1OutOfServiceBedReasonFactory.build(
+    faker.helpers.arrayElement(outOfServiceBedReasonsJson) as Cas1OutOfServiceBedReason,
+  )
+  return {
+    id: faker.string.uuid(),
+    createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+    startDate: DateFormats.dateObjToIsoDate(startDate),
+    endDate: DateFormats.dateObjToIsoDate(endDate),
+    bed: namedIdFactory.build(),
+    room: namedIdFactory.build(),
+    premises: namedIdFactory.build(),
+    apArea: namedIdFactory.build(),
+    reason,
+    referenceNumber:
+      reason.referenceType === 'crn'
+        ? getCrn()
+        : faker.helpers.maybe(() =>
+            faker.string.alphanumeric({
+              length: {
+                min: 5,
+                max: 10,
+              },
+            }),
+          ),
+    notes: faker.lorem.sentence(),
+    daysLostCount: faker.number.int({ min: 1, max: 100 }),
+    temporality: faker.helpers.arrayElement(['past', 'current', 'future'] as const),
+    status: faker.helpers.arrayElement(['active', 'cancelled'] as const),
+    cancellation: undefined,
+    revisionHistory: outOfServiceBedRevisionFactory.buildList(3),
+  }
+})
 
 export const newOutOfServiceBedFactory = Factory.define<Cas1NewOutOfServiceBed>(() => {
   const startDate = faker.date.soon()
@@ -47,7 +67,7 @@ export const newOutOfServiceBedFactory = Factory.define<Cas1NewOutOfServiceBed>(
     'endDate-month': endDate.getMonth().toString(),
     'endDate-year': endDate.getFullYear().toString(),
     referenceNumber: faker.string.uuid(),
-    reason: cas1ReferenceDataFactory.outOfServiceBedReason().build().id,
+    reason: cas1OutOfServiceBedReasonFactory.build().id,
     serviceName: 'approved-premises',
   }
 })
@@ -75,7 +95,7 @@ export const outOfServiceBedRevisionFactory = Factory.define<Cas1OutOfServiceBed
     ] as const),
     startDate: DateFormats.dateObjToIsoDate(faker.date.past()),
     endDate: DateFormats.dateObjToIsoDate(faker.date.future()),
-    reason: cas1ReferenceDataFactory.outOfServiceBedReason().build(),
+    reason: cas1OutOfServiceBedReasonFactory.build(),
     referenceNumber: faker.number.int({ min: 1000, max: 99999 }).toString(),
     notes: faker.lorem.sentences(2),
   }

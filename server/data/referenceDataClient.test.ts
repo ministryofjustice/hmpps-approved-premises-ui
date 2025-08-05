@@ -15,6 +15,7 @@ import {
   referenceDataFactory,
 } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
+import paths from '../paths/api'
 
 describeClient('ReferenceDataClient', provider => {
   let referenceDataClient: ReferenceDataClient
@@ -42,7 +43,7 @@ describeClient('ReferenceDataClient', provider => {
           uponReceiving: `A request to get ${key}`,
           withRequest: {
             method: 'GET',
-            path: `/reference-data/${key}`,
+            path: paths.referenceData({ type: key }),
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -68,7 +69,7 @@ describeClient('ReferenceDataClient', provider => {
         uponReceiving: `A request to get probation regions`,
         withRequest: {
           method: 'GET',
-          path: `/reference-data/probation-regions`,
+          path: paths.referenceData({ type: 'probation-regions' }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -93,7 +94,7 @@ describeClient('ReferenceDataClient', provider => {
         uponReceiving: `A request to get AP areas`,
         withRequest: {
           method: 'GET',
-          path: `/reference-data/ap-areas`,
+          path: paths.referenceData({ type: 'ap-areas' }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -118,7 +119,7 @@ describeClient('ReferenceDataClient', provider => {
         uponReceiving: `A request to get Non-arrival reasons`,
         withRequest: {
           method: 'GET',
-          path: `/reference-data/non-arrival-reasons`,
+          path: paths.referenceData({ type: 'non-arrival-reasons' }),
           headers: {
             authorization: `Bearer ${token}`,
           },

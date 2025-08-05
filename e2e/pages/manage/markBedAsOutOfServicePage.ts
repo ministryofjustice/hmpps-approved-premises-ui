@@ -45,11 +45,9 @@ export class MarkBedAsOutOfServicePage extends BasePage {
     await this.enterOutOfServiceFromDate()
     await this.enterOutOfServiceToDate()
     await this.checkRadio('Planned Refurbishment (FM)')
-    await this.page.getByLabel('Work order reference number').fill('123456789')
+    await this.page.getByLabel('Work order reference number or CRN').fill('123456789')
     await this.page
-      .getByLabel(
-        'Provide  detail about why the bed is out of service. If FM works are required you should update this record with any progress on that work.',
-      )
+      .getByLabel('Details about why the bed is out of service')
       .fill('Reasons for bed being out of service')
   }
 

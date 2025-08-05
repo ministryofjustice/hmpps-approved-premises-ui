@@ -1,5 +1,8 @@
 import {
+  Cas1NewOutOfServiceBed,
+  Cas1OutOfServiceBed,
   Cas1OutOfServiceBed as OutOfServiceBed,
+  Cas1OutOfServiceBedReason,
   Cas1OutOfServiceBedRevision,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   Premises,
@@ -10,19 +13,24 @@ import {
   type EntityType,
   type IdentityBarMenu,
   IdentityBarMenuItem,
+  ObjectWithDateParts,
   SummaryList,
   SummaryListItem,
   TableCell,
   UserDetails,
 } from '@approved-premises/ui'
 
+import { isBefore } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
-import { DateFormats } from './dateUtils'
+import { DateFormats, isoDateIsValid } from './dateUtils'
 import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
 import { hasPermission } from './users'
 import { SanitisedError } from '../sanitisedError'
+import { summaryListItem } from './formUtils'
+import { isValidCrn } from './crn'
+import { ValidationError } from './errors'
 
 export const premisesIndexTabs = (premisesId: string, temporality: 'current' | 'future' | 'past') => [
   {
@@ -55,7 +63,7 @@ export const allOutOfServiceBedsTableHeaders = (
     sortHeader<OutOfServiceBedSortField>('End date', 'endDate', sortBy, sortDirection, hrefPrefix),
     sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
     {
-      text: 'Ref number',
+      text: 'Reference/CRN',
     },
     sortHeader<OutOfServiceBedSortField>('Days lost', 'daysLost', sortBy, sortDirection, hrefPrefix),
     {
@@ -83,7 +91,7 @@ export const outOfServiceBedTableHeaders = () => [
   { text: 'Start date' },
   { text: 'End date' },
   { text: 'Reason' },
-  { text: 'Ref number' },
+  { text: 'Reference/CRN' },
   { text: 'Details' },
 ]
 
@@ -99,6 +107,7 @@ export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesI
   ])
 
 export const referenceNumberCell = (value: string): TableCell => ({ text: value || 'Not provided' })
+
 export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): TableCell => ({
   html: bedLink(bed, premisesId),
 })
@@ -152,6 +161,16 @@ export const outOfServiceBedTabs = (
   },
 ]
 
+export const outOfServiceBedSummaryList = (outOfServiceBed: Cas1OutOfServiceBed): SummaryList => ({
+  rows: [
+    summaryListItem('Start date', DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'long' })),
+    summaryListItem('End date', DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'long' })),
+    summaryListItem('Reason', outOfServiceBed.reason.name),
+    summaryListItem('Reference/CRN', outOfServiceBed.referenceNumber),
+    summaryListItem('Notes', outOfServiceBed.notes, 'textBlock'),
+  ],
+})
+
 export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): SummaryList['rows'] => {
   const summaryListItems: Array<SummaryListItem> = []
 
@@ -178,7 +197,7 @@ export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): Summa
 
   if (revision.referenceNumber) {
     summaryListItems.push({
-      key: textValue('Reference number'),
+      key: textValue('Reference/CRN'),
       value: textValue(revision.referenceNumber),
     })
   }
@@ -197,21 +216,6 @@ export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1Out
   return revisions.sort((a, b) => {
     return a.updatedAt > b.updatedAt ? -1 : 1
   })
-}
-
-export const overwriteOoSBedWithUserInput = (userInput: Record<string, unknown>, outOfServiceBed: OutOfServiceBed) => {
-  if (userInput.outOfServiceBed && (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber) {
-    outOfServiceBed.referenceNumber = (userInput.outOfServiceBed as Record<string, string>)?.referenceNumber
-  }
-
-  if (
-    (userInput?.outOfServiceBed as Record<string, string>)?.reason &&
-    typeof (userInput.outOfServiceBed as Record<string, string>)?.reason === 'string'
-  ) {
-    outOfServiceBed.reason.id = (userInput.outOfServiceBed as Record<string, string>).reason
-  }
-
-  return outOfServiceBed
 }
 
 type ConflictingEntityType = EntityType
@@ -262,4 +266,59 @@ const parseConflictError = (detail: string): ParsedConflictError => {
   const [message, conflictingEntityId] = detail.split(':').map((s: string) => s.trim())
   const conflictingEntityType = message.includes('out-of-service bed') ? 'lost-bed' : 'booking'
   return { conflictingEntityId, conflictingEntityType }
+}
+
+export type CreateOutOfServiceBedBody = ObjectWithDateParts<'startDate'> &
+  ObjectWithDateParts<'endDate'> & {
+    reason?: string
+    referenceNumber?: string
+    notes?: string
+  }
+
+export const validateOutOfServiceBedInput = (
+  body: CreateOutOfServiceBedBody,
+  outOfServiceBedReasons: Array<Cas1OutOfServiceBedReason>,
+  bedId?: string,
+): Cas1NewOutOfServiceBed => {
+  const { startDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'startDate')
+  const { endDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'endDate')
+  const { reason, referenceNumber, notes } = body
+
+  const errors: Partial<Record<keyof CreateOutOfServiceBedBody, string>> = {}
+
+  if (!startDate) {
+    errors.startDate = 'You must enter a start date'
+  } else if (!isoDateIsValid(startDate)) {
+    errors.startDate = 'You must enter a valid start date'
+  }
+
+  if (!endDate) {
+    errors.endDate = 'You must enter an end date'
+  } else if (!isoDateIsValid(endDate)) {
+    errors.endDate = 'You must enter a valid end date'
+  }
+
+  if (!errors.startDate && !errors.endDate && isBefore(endDate, startDate)) {
+    errors.endDate = 'The end date must be on or after the start date'
+  }
+
+  if (!reason) {
+    errors.reason = 'You must select a reason'
+  } else if (outOfServiceBedReasons.find(data => data.id === reason)?.referenceType === 'crn') {
+    if (!referenceNumber) {
+      errors.referenceNumber = 'You must enter a CRN'
+    } else if (!isValidCrn(referenceNumber)) {
+      errors.referenceNumber = 'You must enter a valid CRN'
+    }
+  }
+
+  if (!notes) {
+    errors.notes = 'You must provide detail on why the bed is out of service'
+  }
+
+  if (Object.keys(errors).length > 0) {
+    throw new ValidationError(errors)
+  }
+
+  return { bedId, startDate, endDate, reason, referenceNumber, notes }
 }
