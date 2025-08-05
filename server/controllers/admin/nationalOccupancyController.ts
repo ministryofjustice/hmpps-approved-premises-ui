@@ -114,7 +114,10 @@ export default class NationalOccupancyController {
           cruManagementAreaIds: expandManagementArea(cruManagementAreas, apArea),
           fromDate,
           postcodeArea: postcode,
-          premisesCharacteristics: (premisesCharacteristics || []).concat(apTypeToSpaceCharacteristicMap[apType] || []),
+          premisesCharacteristics: (premisesCharacteristics || []).concat(
+            apTypeToSpaceCharacteristicMap[apType] || [],
+            roomCharacteristics || [],
+          ),
           roomCharacteristics,
         })
       }
