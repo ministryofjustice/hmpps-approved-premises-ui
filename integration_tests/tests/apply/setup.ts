@@ -1,4 +1,4 @@
-import { updateApplicationReleaseDate } from '../../helpers'
+import { GIVEN, updateApplicationReleaseDate } from '../../helpers'
 import {
   activeOffenceFactory,
   applicationFactory,
@@ -13,7 +13,7 @@ import { signIn } from '../signIn'
 export const setup = () => {
   cy.task('reset')
 
-  // Given I am signed in as an applicant
+  GIVEN('I am signed in as an applicant')
   signIn('applicant', { id: defaultUserId })
 
   cy.fixture('applicationData.json').then(applicationData => {

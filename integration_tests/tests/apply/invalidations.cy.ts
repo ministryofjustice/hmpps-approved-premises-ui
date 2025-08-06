@@ -1,22 +1,23 @@
 import { addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import * as ApplyPages from '../../pages/apply'
 import { setup } from './setup'
+import { AND, GIVEN, THEN } from '../../helpers'
 
 context('Apply', () => {
   beforeEach(setup)
 
   it('invalidates the check your answers step if an answer is changed', function test() {
-    // Given there is a complete application in the database
+    GIVEN('there is a complete application in the database')
     const application = { ...this.application, status: 'started' }
     cy.task('stubApplicationGet', { application })
 
-    // And I visit the tasklist
+    AND('I visit the tasklist')
     ApplyPages.TaskListPage.visit(application)
 
-    // And I click on a task
+    AND('I click on a task')
     cy.get('[data-cy-task-name="location-factors"]').click()
 
-    // And I change my response
+    AND('I change my response')
     this.application = addResponsesToFormArtifact(this.application, {
       task: 'location-factors',
       page: 'describe-location-factors',
@@ -31,13 +32,14 @@ context('Apply', () => {
     describeLocationFactorsPage.completeForm()
     describeLocationFactorsPage.clickSubmit()
 
-    // Then the application should be updated with the Check Your Answers section removed
+    THEN('the application should be updated with the Check Your Answers section removed')
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(1)
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
         'data',
         'arrivalDate',
+        'duration',
         'apType',
         'isWomensApplication',
         'targetLocation',
@@ -59,21 +61,21 @@ context('Apply', () => {
   })
 
   it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
-    // Given there is a complete application in the database
+    GIVEN('there is a complete application in the database')
     const application = { ...this.application, status: 'started' }
     cy.task('stubApplicationGet', { application })
 
-    // And I visit the tasklist
+    AND('I visit the tasklist')
     ApplyPages.TaskListPage.visit(application)
 
-    // And I click on a task
+    AND('I click on a task')
     cy.get('[data-cy-task-name="location-factors"]').click()
 
-    // And I review a section
+    AND('I review a section')
     const describeLocationFactorsPage = new ApplyPages.DescribeLocationFactors(this.application)
     describeLocationFactorsPage.clickSubmit()
 
-    // Then the application should be updated with the Check Your Answers section removed
+    THEN('the application should be updated with the Check Your Answers section removed')
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(1)
       const body = JSON.parse(requests[0].body)
@@ -81,6 +83,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'data',
         'arrivalDate',
+        'duration',
         'apType',
         'isWomensApplication',
         'targetLocation',

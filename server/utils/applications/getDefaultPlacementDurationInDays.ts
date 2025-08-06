@@ -1,10 +1,10 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
-import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 export const getDefaultPlacementDurationInDays = (application: Application) => {
-  const apType = retrieveQuestionResponseFromFormArtifact(
+  const apType = retrieveOptionalQuestionResponseFromFormArtifact(
     application,
     SelectApType,
     'type',

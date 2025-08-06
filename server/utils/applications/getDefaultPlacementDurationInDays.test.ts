@@ -1,8 +1,8 @@
 import { applicationFactory } from '../../testutils/factories'
-import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { getDefaultPlacementDurationInDays } from './getDefaultPlacementDurationInDays'
 
-jest.mock('../retrieveQuestionResponseFromFormArtifact.ts')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('getDefaultPlacementDurationInDays', () => {
   const application = applicationFactory.build()
@@ -16,12 +16,12 @@ describe('getDefaultPlacementDurationInDays', () => {
     [26, 'pipe'],
     [52, 'esap'],
   ])('returns %s weeks when the AP type is "%s"', (weeks, apType) => {
-    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce(apType)
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce(apType)
     expect(getDefaultPlacementDurationInDays(application)).toEqual(weeks * 7)
   })
 
   it('returns null when the AP type is anything else', () => {
-    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('something else')
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('something else')
     expect(getDefaultPlacementDurationInDays(application)).toEqual(null)
   })
 })

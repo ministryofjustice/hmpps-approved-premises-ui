@@ -3,7 +3,7 @@ import DatesOfPlacement from '../../form-pages/placement-application/request-a-p
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { getPageName, pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { applicationFactory, placementApplicationFactory } from '../../testutils/factories'
-import { placementDurationFromApplication } from '../assessments/placementDurationFromApplication'
+import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import { DateFormats } from '../dateUtils'
 import {
   durationAndArrivalDateFromPlacementApplication,
@@ -12,7 +12,7 @@ import {
 } from './placementApplicationSubmissionData'
 
 jest.mock('../../form-pages/utils')
-jest.mock('../../utils/assessments/placementDurationFromApplication')
+jest.mock('../applications/placementDurationFromApplication')
 
 const datesOfPlacement = [
   {

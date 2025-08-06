@@ -25,6 +25,7 @@ import { applicantAndCaseManagerDetails } from './applicantAndCaseManagerDetails
 import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { isWomensApplication } from './isWomensApplication'
 import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplication'
+import { placementDurationFromApplication } from './placementDurationFromApplication'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -62,6 +63,7 @@ const firstClassFields = <T>(
   const situation =
     releaseType === 'in_community' ? retrieveQuestionResponse(application, Situation, 'situation') : null
   const arrivalDate = arrivalDateFromApplication(application)
+  const duration = placementDurationFromApplication(application)
   const isEmergencyApplication = noticeType === 'emergency'
   const apAreaId = retrieveQuestionResponse(application, ConfirmYourDetails, 'area')
   const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } =
@@ -77,6 +79,7 @@ const firstClassFields = <T>(
     sentenceType,
     situation,
     arrivalDate,
+    duration,
     isEmergencyApplication,
     apAreaId,
     applicantUserDetails,

@@ -9,6 +9,7 @@ import {
   mockQuestionResponse,
 } from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
+import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { isInapplicable } from './utils'
 import { isWomensApplication } from './isWomensApplication'
 import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
@@ -19,6 +20,7 @@ import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplica
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./arrivalDateFromApplication')
+jest.mock('./placementDurationFromApplication')
 jest.mock('./utils')
 jest.mock('./isWomensApplication')
 jest.mock('./reasonForShortNoticeDetails')
@@ -57,10 +59,12 @@ describe('getApplicationData', () => {
     const releaseType: ReleaseTypeOption = 'licence'
     const sentenceType: SentenceTypeOption = 'standardDeterminate'
     const arrivalDate = '2023-01-01'
+    const duration = 84
     const licenceExpiryDate = DateFormats.dateObjToIsoDate(faker.date.soon())
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
+      ;(placementDurationFromApplication as jest.Mock).mockReturnValue(duration)
       ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       ;(licenceExpiryDateFromApplication as jest.Mock).mockReturnValue(licenceExpiryDate)
       mockOptionalQuestionResponse({
@@ -85,6 +89,7 @@ describe('getApplicationData', () => {
         situation: null,
         targetLocation,
         arrivalDate,
+        duration,
         isEmergencyApplication: true,
         apAreaId,
         applicantUserDetails,
@@ -166,6 +171,7 @@ describe('getApplicationData', () => {
   describe('getApplicationUpdateData', () => {
     it('returns empty attributes for a new application', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
+      ;(placementDurationFromApplication as jest.Mock).mockReturnValue(undefined)
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
       ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({})
@@ -180,6 +186,7 @@ describe('getApplicationData', () => {
         sentenceType: undefined,
         targetLocation: undefined,
         arrivalDate: undefined,
+        duration: undefined,
         isEmergencyApplication: false,
         apAreaId: undefined,
         caseManagerIsNotApplicant: undefined,
@@ -191,6 +198,7 @@ describe('getApplicationData', () => {
 
     it('returns all the defined attributes', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2023-01-01')
+      ;(placementDurationFromApplication as jest.Mock).mockReturnValue(56)
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
       ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({
@@ -214,6 +222,7 @@ describe('getApplicationData', () => {
         situation: null,
         targetLocation,
         arrivalDate: '2023-01-01',
+        duration: 56,
         isEmergencyApplication: true,
         apAreaId,
         caseManagerIsNotApplicant: true,

@@ -14,7 +14,7 @@ import {
 import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
-import { placementDurationFromApplication } from './placementDurationFromApplication'
+import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
 import { ApTypeCriteria } from '../placementCriteriaUtils'
 import ApplicationTimeliness, {
@@ -26,7 +26,7 @@ jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/arrivalDateFromApplication')
 jest.mock('../applications/applicantAndCaseManagerDetails')
-jest.mock('./placementDurationFromApplication')
+jest.mock('../applications/placementDurationFromApplication')
 jest.mock('../applications/getResponses')
 
 describe('acceptanceData', () => {
