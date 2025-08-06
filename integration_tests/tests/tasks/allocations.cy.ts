@@ -1,7 +1,7 @@
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import TaskListPage from '../../pages/tasks/listPage'
 import AllocationsPage from '../../pages/tasks/allocationPage'
 import Page from '../../pages/page'
-
 import {
   applicationFactory,
   cas1TimelineEventFactory,
@@ -63,7 +63,6 @@ context('Task Allocation', () => {
   describe('when logged in as CRU member', () => {
     beforeEach(() => {
       cy.task('reset')
-      // cy.task('stubSignIn')
       cy.task('stubGetAllTasks', {
         tasks,
         allocatedFilter: 'allocated',
@@ -77,10 +76,10 @@ context('Task Allocation', () => {
       cy.task('stubUserSummaryList', { users, roles: ['assessor', 'appeals_manager'] })
       cy.task('stubUserList', { users, roles: ['assessor', 'appeals_manager'] })
 
-      // And I am signed in as a CRU member with the correct CRU management area
+      GIVEN('I am signed in as a CRU member with the correct CRU management area')
       signIn('cru_member', { cruManagementArea })
 
-      // When I visit the task list page
+      WHEN('I visit the task list page')
       const taskListPage = TaskListPage.visit()
 
       cy.wrap(task).as('task')
@@ -101,30 +100,30 @@ context('Task Allocation', () => {
         reallocation: reallocationFactory.build({ taskType: this.task.taskType, user: this.selectedUser }),
       })
 
-      // And I click to allocate the task
+      AND('I click to allocate the task')
       this.taskListPage.clickTask(this.task)
 
-      // Then I should be on the Allocations page for that task
+      THEN('I should be on the Allocations page for that task')
       const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
 
-      // And I should see some information about that task
+      AND('I should see some information about that task')
       allocationsPage.shouldShowInformationAboutTask()
 
-      // And I should see a list of staff members who can be allocated to that task
+      AND('I should see a list of staff members who can be allocated to that task')
       allocationsPage.shouldShowUserTable(this.users, this.task)
 
-      // When I select a new user to allocate the application to
+      WHEN('I select a new user to allocate the application to')
       allocationsPage.clickAllocateToUser(this.users[0])
 
-      // Then I should be redirected to the index page
+      THEN('I should be redirected to the index page')
       Page.verifyOnPage(TaskListPage, [], [])
 
-      // And I should see a confirmation message
+      AND('I should see a confirmation message')
       this.taskListPage.shouldShowBanner(`Assessment has been allocated to ${this.selectedUser.name}`)
 
-      // And the API should have received the correct data
+      AND('the API should have received the correct data')
       cy.task('verifyAllocationCreate', this.task).then(requests => {
-        // Then the API should have had a clarification note added
+        THEN('the API should have had a clarification note added')
         expect(requests).to.have.length(1)
         const body = JSON.parse(requests[0].body)
 
@@ -140,10 +139,10 @@ context('Task Allocation', () => {
       })
       cy.task('stubApplicationGet', { application: this.applicationForRestrictedPerson })
 
-      // When I click on a task for a restricted person
+      WHEN('I click on a task for a restricted person')
       this.taskListPage.clickTask(this.taskWithRestrictedPerson)
 
-      // Then I should be on the Allocations page for that task
+      THEN('I should be on the Allocations page for that task')
       const allocationsPage = Page.verifyOnPage(
         AllocationsPage,
         this.applicationForRestrictedPerson,
@@ -154,49 +153,49 @@ context('Task Allocation', () => {
     })
 
     it('allows filters on users dashboard', function test() {
-      // And I click to view the task
+      AND('I click to view the task')
       this.taskListPage.clickTask(this.task)
 
-      // Then I should be on the Allocations page for that task
+      THEN('I should be on the Allocations page for that task')
       const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
 
-      // And I should see a list of staff members who can be allocated to that task
+      AND('I should see a list of staff members who can be allocated to that task')
       allocationsPage.shouldShowUserTable(this.users, this.task)
 
-      // And the table should be sortable
+      AND('the table should be sortable')
       allocationsPage.shouldBeSortableBy('Tasks pending')
       allocationsPage.shouldBeSortableBy('Name')
       allocationsPage.shouldBeSortableBy('Tasks completed in previous 7 days')
       allocationsPage.shouldBeSortableBy('Tasks completed in previous 30 days')
 
-      // When I filter by CRU Management Area
+      WHEN('I filter by CRU Management Area')
       allocationsPage.searchBy('cruManagementAreaId', this.cruManagementArea.id)
       allocationsPage.clickApplyFilter()
 
-      // Then I should be shown a list of users with that CRU Management Area
+      THEN('I should be shown a list of users with that CRU Management Area')
       let expectedUsers = this.users.filter(user => user.cruManagementArea.id === this.cruManagementArea.id)
       allocationsPage.shouldShowUserTable(expectedUsers, this.task)
 
-      // When I filter by all areas it should clear the filter
+      WHEN('I filter by all areas it should clear the filter')
       allocationsPage.searchBy('cruManagementAreaId', '')
       allocationsPage.clickApplyFilter()
 
-      // Then I should be shown a list of users for all areas
+      THEN('I should be shown a list of users for all areas')
       allocationsPage.shouldShowUserTable(this.users, this.task)
 
-      // When I filter by qualifications
+      WHEN('I filter by qualifications')
       allocationsPage.searchBy('qualification', this.qualification[0])
       allocationsPage.clickApplyFilter()
 
-      // Then I should be shown a list of users with that qualification
+      THEN('I should be shown a list of users with that qualification')
       expectedUsers = this.users.filter(user => user.qualifications?.includes(this.qualification[0]))
       allocationsPage.shouldShowUserTable(expectedUsers, this.task)
 
-      // When I filter by both filters
+      WHEN('I filter by both filters')
       allocationsPage.searchBy('cruManagementAreaId', this.cruManagementArea.id)
       allocationsPage.clickApplyFilter()
 
-      // Then I should be shown a list of users with that qualification and CRU Management Area
+      THEN('I should be shown a list of users with that qualification and CRU Management Area')
       expectedUsers = expectedUsers.filter(user => user.cruManagementArea.id === this.cruManagementArea.id)
       allocationsPage.shouldShowUserTable(expectedUsers, this.task)
     })
@@ -211,16 +210,16 @@ context('Task Allocation', () => {
       cy.task('stubApplicationGet', { application: updatedApplication })
       cy.task('stubApplicationTimeline', { applicationId: updatedApplication.id, timeline })
 
-      // And I click to allocate the task
+      AND('I click to allocate the task')
       this.taskListPage.clickTask(this.task)
 
-      // Then I should be on the Allocations page for that task
+      THEN('I should be on the Allocations page for that task')
       const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
 
-      // And I should see some information about that task
+      AND('I should see some information about that task')
       allocationsPage.shouldShowInformationAboutTask()
 
-      // Then I should see timeline page
+      THEN('I should see timeline page')
       allocationsPage.clickViewTimeline()
       allocationsPage.shouldShowTimelineTab()
     })
@@ -228,9 +227,9 @@ context('Task Allocation', () => {
 
   describe('when logged in as an AP area manager', () => {
     it('should prevent access to the allocate page', () => {
-      // And I am signed in as an ap area manager
+      AND('I am signed in as an ap area manager')
       signIn('ap_area_manager')
-      // Then I should see an error if I attempt to access the allocation page
+      THEN('I should see an error if I attempt to access the allocation page')
       AllocationsPage.visitUnauthorised(task)
     })
   })
