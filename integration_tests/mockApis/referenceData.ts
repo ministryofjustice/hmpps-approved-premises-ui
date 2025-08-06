@@ -9,6 +9,7 @@ import {
   nonArrivalReasonsFactory,
   referenceDataFactory,
 } from '../../server/testutils/factories'
+import paths from '../../server/paths/api'
 
 export const stubApAreaReferenceData = (
   {
@@ -28,7 +29,7 @@ export const stubApAreaReferenceData = (
   return stubFor({
     request: {
       method: 'GET',
-      url: '/reference-data/ap-areas',
+      url: paths.referenceData({ type: 'ap-areas' }),
     },
     response: {
       status: 200,
@@ -48,7 +49,7 @@ export const stubCruManagementAreaReferenceData = (
   return stubFor({
     request: {
       method: 'GET',
-      url: '/cas1/reference-data/cru-management-areas',
+      url: paths.cas1ReferenceData({ type: 'cru-management-areas' }),
     },
     response: {
       status: 200,
@@ -64,7 +65,7 @@ export const stubNonArrivalReasonsReferenceData = (nonArrivalReasons: Array<NonA
   return stubFor({
     request: {
       method: 'GET',
-      url: '/cas1/reference-data/non-arrival-reasons',
+      url: paths.cas1ReferenceData({ type: 'non-arrival-reasons' }),
     },
     response: {
       status: 200,
@@ -80,7 +81,7 @@ const stubDepartureReasonsReferenceData = (departureReasons?: Array<ReferenceDat
   stubFor({
     request: {
       method: 'GET',
-      url: '/cas1/reference-data/departure-reasons',
+      url: paths.cas1ReferenceData({ type: 'departure-reasons' }),
     },
     response: {
       status: 200,
@@ -95,7 +96,7 @@ const stubMoveOnCategoriesReferenceData = (moveOnCategories?: Array<ReferenceDat
   stubFor({
     request: {
       method: 'GET',
-      url: '/cas1/reference-data/move-on-categories',
+      url: paths.cas1ReferenceData({ type: 'move-on-categories' }),
     },
     response: {
       status: 200,
@@ -116,7 +117,7 @@ const stubChangeRequestReasonsReferenceData = ({
   stubFor({
     request: {
       method: 'GET',
-      url: `/cas1/reference-data/change-request-reasons/${changeRequestType}`,
+      url: paths.cas1ReferenceData({ type: `change-request-reasons/${changeRequestType}` }),
     },
     response: {
       status: 200,
@@ -137,7 +138,7 @@ const stubChangeRequestRejectionReasonsReferenceData = ({
   stubFor({
     request: {
       method: 'GET',
-      url: `/cas1/reference-data/change-request-rejection-reasons/${changeRequestType}`,
+      url: paths.cas1ReferenceData({ type: `change-request-rejection-reasons/${changeRequestType}` }),
     },
     response: {
       status: 200,

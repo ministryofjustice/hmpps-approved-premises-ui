@@ -102,6 +102,7 @@ export type { Cas1OASysSupportingInformationQuestionMetaData } from './models/Ca
 export type { Cas1OutOfServiceBed } from './models/Cas1OutOfServiceBed';
 export type { Cas1OutOfServiceBedCancellation } from './models/Cas1OutOfServiceBedCancellation';
 export type { Cas1OutOfServiceBedReason } from './models/Cas1OutOfServiceBedReason';
+export type { Cas1OutOfServiceBedReasonReferenceType } from './models/Cas1OutOfServiceBedReasonReferenceType';
 export type { Cas1OutOfServiceBedRevision } from './models/Cas1OutOfServiceBedRevision';
 export type { Cas1OutOfServiceBedRevisionType } from './models/Cas1OutOfServiceBedRevisionType';
 export type { Cas1OutOfServiceBedSortField } from './models/Cas1OutOfServiceBedSortField';
