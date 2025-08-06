@@ -19,7 +19,6 @@ import {
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
   paginatedResponseFactory,
-  placementRequestFactory,
 } from '../testutils/factories'
 import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
@@ -33,8 +32,78 @@ describeClient('placementRequestClient', provider => {
     placementRequestClient = new PlacementRequestClient(token)
   })
 
+  describe('createBooking', () => {
+    it('creates and returns a booking', async () => {
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
+      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
+      const newPlacementRequestBooking = newPlacementRequestBookingFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create a booking from a placement request',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
+          body: newPlacementRequestBooking,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bookingConfirmation,
+        },
+      })
+
+      const result = await placementRequestClient.createBooking(placementRequest.id, newPlacementRequestBooking)
+
+      expect(result).toEqual(bookingConfirmation)
+    })
+  })
+
+  describe('bookingNotMade', () => {
+    it('makes a POST request to the booking not made endpoint', async () => {
+      const placementRequestId = faker.string.uuid()
+      const body = {
+        notes: 'some notes',
+      }
+      const bookingNotMade = bookingNotMadeFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to mark a placement request as not booked',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.bookingNotMade({ placementRequestId }),
+          body,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bookingNotMade,
+        },
+      })
+
+      const result = await placementRequestClient.bookingNotMade(placementRequestId, body)
+
+      expect(result).toEqual(bookingNotMade)
+    })
+  })
+})
+
+describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
+  let placementRequestClient: PlacementRequestClient
+
+  const token = 'test-token'
+
+  beforeEach(() => {
+    placementRequestClient = new PlacementRequestClient(token)
+  })
+
   describe('dashboard', () => {
-    const placementRequests = placementRequestFactory.buildList(2)
+    const placementRequests = cas1PlacementRequestDetailFactory.buildList(2)
 
     it('makes a get request to the placementRequests dashboard endpoint for unmatched requests', async () => {
       await provider.addInteraction({
@@ -290,63 +359,29 @@ describeClient('placementRequestClient', provider => {
     })
   })
 
-  describe('createBooking', () => {
-    it('creates and returns a booking', async () => {
-      const placementRequest = placementRequestFactory.build()
-      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
-      const newPlacementRequestBooking = newPlacementRequestBookingFactory.build()
+  describe('find', () => {
+    it('makes a get request to the placementRequest endpoint', async () => {
+      const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
 
       await provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to create a booking from a placement request',
+        uponReceiving: 'A request to get a placement request',
         withRequest: {
-          method: 'POST',
-          path: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
-          body: newPlacementRequestBooking,
+          method: 'GET',
+          path: paths.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
           headers: {
             authorization: `Bearer ${token}`,
           },
         },
         willRespondWith: {
           status: 200,
-          body: bookingConfirmation,
+          body: placementRequestDetail,
         },
       })
 
-      const result = await placementRequestClient.createBooking(placementRequest.id, newPlacementRequestBooking)
+      const result = await placementRequestClient.find(placementRequestDetail.id)
 
-      expect(result).toEqual(bookingConfirmation)
-    })
-  })
-
-  describe('bookingNotMade', () => {
-    it('makes a POST request to the booking not made endpoint', async () => {
-      const placementRequestId = 'placement-request-id'
-      const body = {
-        notes: 'some notes',
-      }
-      const bookingNotMade = bookingNotMadeFactory.build()
-
-      await provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to mark a placement request as not booked',
-        withRequest: {
-          method: 'POST',
-          path: paths.placementRequests.bookingNotMade({ placementRequestId }),
-          body,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: bookingNotMade,
-        },
-      })
-
-      const result = await placementRequestClient.bookingNotMade(placementRequestId, body)
-
-      expect(result).toEqual(bookingNotMade)
+      expect(result).toEqual(placementRequestDetail)
     })
   })
 })

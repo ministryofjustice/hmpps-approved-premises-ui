@@ -17,6 +17,7 @@ import {
   cas1PlacementRequestDetailFactory,
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
+  cas1PlacementRequestSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
@@ -38,19 +39,20 @@ import premisesSearchResultSummary from '../../../server/testutils/factories/cas
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { placementDates } from '../../../server/utils/match'
 import { roomCharacteristicMap } from '../../../server/utils/characteristicsUtils'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 context('Placement Requests', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubCruManagementAreaReferenceData')
 
-    // Given I am signed in as a CRU member
+    GIVEN('I am signed in as a CRU member')
     signIn('cru_member')
   })
   const defaultLicenceExpiryDate = '2030-06-05'
 
   it('allows me to search for an available space', () => {
-    // And there is a placement request waiting for me to match
+    AND('there is a placement request waiting for me to match')
     const person = personFactory.build()
     const placementRequest = cas1PlacementRequestDetailFactory.build({ person })
     const spaceSearchResults = spaceSearchResultsFactory.build()
@@ -58,31 +60,31 @@ context('Placement Requests', () => {
     cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
 
-    // When I visit the search page
+    WHEN('I visit the search page')
     const searchPage = SearchPage.visit(placementRequest)
 
-    // Then I should see the details of the case I am matching
+    THEN('I should see the details of the case I am matching')
     searchPage.shouldShowCaseDetails(placementRequest)
 
-    // And I should see the search results
+    AND('I should see the search results')
     let numberOfSearches = 0
     searchPage.shouldDisplaySearchResults(spaceSearchResults, placementRequest.location)
     numberOfSearches += 1
 
-    // Given I want to search for a different space
-    // When I enter new details on the search screen
+    GIVEN('I want to search for a different space')
+    WHEN('I enter new details on the search screen')
     const newSearchState = spaceSearchState.build()
     searchPage.changeSearchParameters(newSearchState)
     searchPage.clickSubmit()
     numberOfSearches += 1
 
-    // Then I should see the search results
+    THEN('I should see the search results')
     Page.verifyOnPage(SearchPage)
 
-    // And the new search criteria should be selected
+    AND('the new search criteria should be selected')
     searchPage.shouldShowSearchParametersInInputs(newSearchState)
 
-    // And the parameters should be submitted to the API
+    AND('the parameters should be submitted to the API')
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
       const initialSearchRequestBody = JSON.parse(requests[0].body)
@@ -93,7 +95,7 @@ context('Placement Requests', () => {
         ...filterApLevelCriteria(allPlacementCriteria),
         ...filterRoomLevelCriteria(allPlacementCriteria),
       ]
-      // And the first request to the API should contain the criteria from the placement request
+      AND('the first request to the API should contain the criteria from the placement request')
       expect(initialSearchRequestBody).to.deep.equal({
         applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
@@ -105,7 +107,7 @@ context('Placement Requests', () => {
         ].filter(Boolean),
       })
 
-      // And the second request to the API should contain the new criteria I submitted
+      AND('the second request to the API should contain the new criteria I submitted')
       expect(secondSearchRequestBody).to.contain({
         applicationId: placementRequest.applicationId,
         durationInDays: placementRequest.duration,
@@ -127,10 +129,10 @@ context('Placement Requests', () => {
     const { occupancyViewPage, premiseCapacity, searchState } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
-    // And I should see a summary of occupancy
+    AND('I should see a summary of occupancy')
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
-    // And I should see an occupancy calendar
+    AND('I should see an occupancy calendar')
     occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
@@ -139,10 +141,10 @@ context('Placement Requests', () => {
     const { occupancyViewPage, premiseCapacity, searchState } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(undefined)
 
-    // And I should see a summary of occupancy
+    AND('I should see a summary of occupancy')
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
-    // And I should see an occupancy calendar
+    AND('I should see an occupancy calendar')
     occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
@@ -150,11 +152,11 @@ context('Placement Requests', () => {
   it('allows me to submit invalid dates in the book your placement form on occupancy view page and displays appropriate validation messages', () => {
     const { occupancyViewPage } = shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
-    // When I submit invalid dates
+    WHEN('I submit invalid dates')
     occupancyViewPage.completeForm('2024-11-25', '2024-11-24')
     occupancyViewPage.clickContinue()
 
-    // Then I should see validation messages
+    THEN('I should see validation messages')
     occupancyViewPage.shouldShowErrorSummaryAndErrorMessage('The departure date must be after the arrival date')
   })
 
@@ -164,7 +166,7 @@ context('Placement Requests', () => {
     const endDate = '2024-08-06'
     const totalCapacity = 10
 
-    // And there is a placement request waiting for me to match
+    AND('there is a placement request waiting for me to match')
     const person = personFactory.build()
     const premises = cas1PremisesFactory.build({ bedCount: totalCapacity })
     const placementRequest = cas1PlacementRequestDetailFactory.build({
@@ -175,6 +177,9 @@ context('Placement Requests', () => {
         licenceExpiryDate,
       }),
     })
+    const placementRequestSummary = cas1PlacementRequestSummaryFactory
+      .fromPlacementRequestDetail(placementRequest)
+      .build()
     const { startDate: requestedArrivalDate, endDate: requestedDepartureDate } = placementDates(
       placementRequest.expectedArrival,
       placementRequest.duration,
@@ -198,19 +203,20 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubPremisesCapacity', { premisesId: premises.id, startDate, endDate, premiseCapacity })
 
-    // Given I have followed a link to a result from the suitability search
+    GIVEN('I have followed a link to a result from the suitability search')
     const searchPage = SearchPage.visit(placementRequest)
     searchPage.clickSearchResult(spaceSearchResults.results[0])
 
-    // When I visit the occupancy view page
+    WHEN('I visit the occupancy view page')
     const occupancyViewPage = Page.verifyOnPage(OccupancyViewPage, premises.name)
 
-    // Then I should see the details of the case I am matching
+    THEN('I should see the details of the case I am matching')
     occupancyViewPage.shouldShowMatchingDetails(startDate, durationDays, placementRequest)
 
     return {
       occupancyViewPage,
       placementRequest,
+      placementRequestSummary,
       premiseCapacity,
       premises,
       startDate,
@@ -245,16 +251,16 @@ context('Placement Requests', () => {
     })
     cy.task('stubPremisesDaySummary', { premisesId: premises.id, date: dayCapacity.date, premisesDaySummary })
 
-    // When I click on a day on the calendar
+    WHEN('I click on a day on the calendar')
     occupancyViewPage.clickCalendarDay(dayCapacity.date)
 
-    // Then I should see the page showing details for the day
+    THEN('I should see the page showing details for the day')
     const dayAvailabilityPage = new DayAvailabilityPage(premisesDaySummary, dayCapacity, criteria)
 
-    // And I should see availability details
+    AND('I should see availability details')
     dayAvailabilityPage.shouldShowDayAvailability()
 
-    // When I click back
+    WHEN('I click back')
     dayAvailabilityPage.clickBack()
   }
 
@@ -262,35 +268,35 @@ context('Placement Requests', () => {
     const { occupancyViewPage, premiseCapacity, premises, startDate, searchState } =
       shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
-    // And I should see the filter form with populated values
+    AND('I should see the filter form with populated values')
     occupancyViewPage.shouldShowFilters(startDate, 'Up to 6 weeks', [])
 
-    // And I should see a summary of occupancy
+    AND('I should see a summary of occupancy')
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
-    // And I should see an occupancy calendar
+    AND('I should see an occupancy calendar')
     occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
-    // And I should be able to see any day's availability details
+    AND("I should be able to see any day's availability details")
     const datesByStatus = occupancyViewPage.getDatesForEachAvailabilityStatus(premiseCapacity, searchState.roomCriteria)
     datesByStatus.forEach(date => {
       shouldShowDayDetailsAndReturn(occupancyViewPage, date, premises, premiseCapacity, searchState.roomCriteria)
     })
 
-    // Then I should see the calendar again
+    THEN('I should see the calendar again')
     occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
-    // When I filter with an invalid date
+    WHEN('I filter with an invalid date')
     occupancyViewPage.filterAvailability({ newStartDate: '2025-02-35' })
 
-    // Then I should see an error message
+    THEN('I should see an error message')
     occupancyViewPage.shouldShowErrorMessagesForFields(['startDate'], {
       startDate: 'Enter a valid date',
     })
 
-    // When I filter for a different date and duration
+    WHEN('I filter for a different date and duration')
     const newStartDate = '2024-08-01'
     const newEndDate = '2024-08-07'
     const newDuration = 'Up to 1 week'
@@ -308,7 +314,7 @@ context('Placement Requests', () => {
     })
     occupancyViewPage.filterAvailability({ newStartDate, newDuration, newCriteria: newCriteriaLabels })
 
-    // Then I should see the filter form with updated values
+    THEN('I should see the filter form with updated values')
     occupancyViewPage.shouldShowFilters(newStartDate, newDuration, newCriteriaLabels)
 
     // I can see the currently selected room criteria
@@ -316,18 +322,25 @@ context('Placement Requests', () => {
   })
 
   it('allows me to book a space', () => {
-    const { occupancyViewPage, premises, placementRequest, searchState, requestedArrivalDate, requestedDepartureDate } =
-      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
+    const {
+      occupancyViewPage,
+      premises,
+      placementRequest,
+      placementRequestSummary,
+      searchState,
+      requestedArrivalDate,
+      requestedDepartureDate,
+    } = shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     const arrivalDate = '2024-07-23'
     const departureDate = '2024-08-08'
 
-    // Then I can see the currently selected room criteria
+    THEN('I can see the currently selected room criteria')
     occupancyViewPage.shouldShowSelectedCriteria(
       searchState.roomCriteria.map(criterion => roomCharacteristicMap[criterion]),
     )
 
-    // And I can see the requested dates in the hints
+    AND('I can see the requested dates in the hints')
     occupancyViewPage.shouldShowDateFieldHint(
       'arrivalDate',
       `Requested arrival date: ${DateFormats.isoDateToUIDate(requestedArrivalDate, { format: 'dateFieldHint' })}`,
@@ -337,32 +350,32 @@ context('Placement Requests', () => {
       `Requested departure date: ${DateFormats.isoDateToUIDate(requestedDepartureDate, { format: 'dateFieldHint' })}`,
     )
 
-    // And I fill in the requested arrival and departure dates
+    AND('I fill in the requested arrival and departure dates')
     occupancyViewPage.completeForm(arrivalDate, departureDate)
     occupancyViewPage.clickContinue()
 
     const page = Page.verifyOnPage(BookASpacePage)
 
-    // Then I should see the details of the case I am matching
+    THEN('I should see the details of the case I am matching')
     page.shouldShowPersonHeader(placementRequest.person as FullPerson)
 
-    // And I should see the details of the space I am booking
+    AND('I should see the details of the space I am booking')
     page.shouldShowBookingDetails(placementRequest, premises, arrivalDate, departureDate, searchState.roomCriteria)
 
-    // And when I complete the form
+    AND('when I complete the form')
     const spaceBooking = cas1SpaceBookingFactory.upcoming().build({ placementRequestId: placementRequest.id })
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'matched' })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequestSummary], status: 'matched' })
     cy.task('stubPlacementRequest', placementRequest)
     page.clickSubmit()
 
-    // Then I should be redirected to the 'Matched' tab
+    THEN("I should be redirected to the 'Matched' tab")
     const cruDashboard = Page.verifyOnPage(ListPage)
 
-    // And I should see a success message
+    AND('I should see a success message')
     cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequest)
 
-    // And the booking details should have been sent to the API
+    AND('the booking details should have been sent to the API')
     cy.task(
       'verifyApiPost',
       apiPaths.placementRequests.spaceBookings.create({ placementRequestId: placementRequest.id }),
@@ -377,32 +390,35 @@ context('Placement Requests', () => {
   })
 
   it('allows me to mark a placement request as unable to match', () => {
-    // Given there is a placement request waiting for me to match
-    const placementRequest = cas1PlacementRequestDetailFactory.build({
-      status: 'notMatched',
+    GIVEN('there is a placement request waiting for me to match')
+    const placementRequest = cas1PlacementRequestDetailFactory.notMatched().build({
       person: personFactory.build(),
     })
+    const placementRequestSummary = cas1PlacementRequestSummaryFactory
+      .fromPlacementRequestDetail(placementRequest)
+      .build()
 
     const spaceSearchResults = spaceSearchResultsFactory.build()
 
     cy.task('stubSpaceSearch', spaceSearchResults)
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubUnableToMatchPlacementRequest', placementRequest)
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequestSummary], status: 'notMatched' })
 
-    // When I visit the search
+    WHEN('I visit the search')
     const searchPage = SearchPage.visit(placementRequest)
-    // And I declare that I do not see a suitable space
+
+    AND('I declare that I do not see a suitable space')
     searchPage.clickUnableToMatch()
 
-    // Then I am able to complete a form to explain why the spaces weren't suitable
+    THEN("I am able to complete a form to explain why the spaces weren't suitable")
     const unableToMatchPage = new UnableToMatchPage()
 
-    // When I complete the form
+    WHEN('I complete the form')
     unableToMatchPage.completeForm()
     unableToMatchPage.clickSubmit()
 
-    // Then I should see a success message on the list page
+    THEN('I should see a success message on the list page')
     Page.verifyOnPage(ListPage)
   })
 })

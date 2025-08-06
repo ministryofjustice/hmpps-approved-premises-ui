@@ -1,6 +1,7 @@
 import {
   Cas1ApplicationSummary,
   Cas1PlacementRequestDetail,
+  Cas1PlacementRequestSummary,
   Cas1SpaceBooking,
   PlacementRequest,
   PlacementRequestStatus,
@@ -29,7 +30,10 @@ export default class ListPage extends Page {
     this.shouldShowBanner(`Place booked for ${spaceBooking.person.crn} ${body}`)
   }
 
-  shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>, status?: PlacementRequestStatus): void {
+  shouldShowPlacementRequests(
+    placementRequests: Array<Cas1PlacementRequestSummary>,
+    status?: PlacementRequestStatus,
+  ): void {
     const tableRows = dashboardTableRows(placementRequests, status)
     const rowItems = tableRowsToArrays(tableRows)
 

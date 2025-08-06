@@ -3,7 +3,8 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { Cas1SpaceSearchParameters } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
-import { placementCriteria } from './placementRequest'
+
+import { placementCriteria } from './cas1PlacementRequestDetail'
 
 export default Factory.define<Cas1SpaceSearchParameters>(() => {
   return {

@@ -171,7 +171,7 @@ export default {
   },
   placementRequests: {
     show: cas1PlacementRequestSingle,
-    dashboard: placementRequests.path('dashboard'),
+    dashboard: cas1PlacementRequests,
     changeRequests: cas1PlacementRequests.path('change-requests'),
     booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),

@@ -1,35 +1,14 @@
-import { add } from 'date-fns'
 import { PlacementRequestSortField } from '@approved-premises/api'
-import {
-  placementRequestBookingSummaryFactory,
-  personFactory,
-  placementRequestFactory,
-  restrictedPersonFactory,
-} from '../../testutils/factories'
-import {
-  applicationDateCell,
-  bookingArrivalDateCell,
-  dashboardTableHeader,
-  dashboardTableRows,
-  dueDateCell,
-  durationCell,
-  expectedArrivalDateCell,
-  nameCell,
-  premisesNameCell,
-  releaseTypeCell,
-  requestTypeCell,
-  statusCell,
-  tableRows,
-} from './table'
+import { cas1PlacementRequestSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
+import { dashboardTableHeader, dashboardTableRows, durationCell, nameCell } from './table'
 import { DateFormats } from '../dateUtils'
-import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { crnCell, tierCell } from '../tableUtils'
+import { htmlCell, textCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { displayName } from '../personUtils'
-import { linkTo } from '../utils'
+import { displayName, tierBadge } from '../personUtils'
+import * as utils from '../utils'
 import adminPaths from '../../paths/admin'
-
-jest.mock('../utils.ts')
+import { placementRequestStatus } from '../formUtils'
+import { fullPersonFactory } from '../../testutils/factories/person'
 
 describe('tableUtils', () => {
   beforeEach(() => {
@@ -37,12 +16,18 @@ describe('tableUtils', () => {
   })
 
   describe('nameCell', () => {
+    beforeEach(() => {
+      jest.spyOn(utils, 'linkTo')
+    })
+
     it('returns the name of the service user and a link with a placement request', () => {
-      const placementRequest = placementRequestFactory.withFullPerson().build()
+      const placementRequest = cas1PlacementRequestSummaryFactory.build({
+        person: fullPersonFactory.build(),
+      })
 
       nameCell(placementRequest)
 
-      expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
+      expect(utils.linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
         text: displayName(placementRequest.person),
         attributes: {
           'data-cy-placementRequestId': placementRequest.id,
@@ -52,217 +37,91 @@ describe('tableUtils', () => {
     })
 
     it('returns the crn cell with no link if the person is a restrictedPerson', () => {
-      const restrictedPersonTask = placementRequestFactory.build({
+      const restrictedPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
         person: restrictedPersonFactory.build(),
       })
 
-      expect(nameCell(restrictedPersonTask)).toEqual({
-        text: `LAO: ${restrictedPersonTask.person.crn}`,
+      expect(nameCell(restrictedPersonPlacementRequest)).toEqual({
+        text: `LAO: ${restrictedPersonPlacementRequest.person.crn}`,
       })
     })
 
     it('returns the persons name prefixed with "LAO: " if the person is a FullPerson and has the isRestricted flag', () => {
-      const restrictedPersonTask = placementRequestFactory.build({
+      const restrictedPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
         person: personFactory.build({ isRestricted: true }),
       })
 
-      nameCell(restrictedPersonTask)
+      nameCell(restrictedPersonPlacementRequest)
 
-      expect(linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: restrictedPersonTask.id }), {
-        text: displayName(restrictedPersonTask.person),
-        attributes: {
-          'data-cy-placementRequestId': restrictedPersonTask.id,
-          'data-cy-applicationId': restrictedPersonTask.applicationId,
+      expect(utils.linkTo).toHaveBeenCalledWith(
+        adminPaths.admin.placementRequests.show({ id: restrictedPersonPlacementRequest.id }),
+        {
+          text: displayName(restrictedPersonPlacementRequest.person),
+          attributes: {
+            'data-cy-placementRequestId': restrictedPersonPlacementRequest.id,
+            'data-cy-applicationId': restrictedPersonPlacementRequest.applicationId,
+          },
         },
-      })
+      )
     })
 
     it('returns the crn cell if the person is a unknown person', () => {
-      const unknownPersonTask = placementRequestFactory.build()
-      unknownPersonTask.person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
-
-      expect(nameCell(unknownPersonTask)).toEqual({
-        text: `Unknown: ${unknownPersonTask.person.crn}`,
+      const unknownPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
+        person: restrictedPersonFactory.build({ type: 'UnknownPerson' }),
       })
-    })
-  })
 
-  describe('expectedArrivalDateCell', () => {
-    it('returns a formatted arrival date with a placement request', () => {
-      const task = placementRequestFactory.build({ expectedArrival: '2022-01-01' })
-
-      expect(expectedArrivalDateCell(task)).toEqual({
-        text: DateFormats.isoDateToUIDate('2022-01-01'),
-      })
-    })
-
-    it('returns a formatted arrival date in short format', () => {
-      const task = placementRequestFactory.build({ expectedArrival: '2022-01-01' })
-
-      expect(expectedArrivalDateCell(task, 'short')).toEqual({
-        text: DateFormats.isoDateToUIDate('2022-01-01', { format: 'short' }),
-      })
-    })
-  })
-
-  describe('actualArrivalDateCell', () => {
-    it('returns the arrival date from the booking if present', () => {
-      const booking = placementRequestBookingSummaryFactory.build({ arrivalDate: '2022-01-01' })
-      const placementRequest = placementRequestFactory.build({ booking })
-
-      expect(bookingArrivalDateCell(placementRequest)).toEqual({
-        text: DateFormats.isoDateToUIDate(booking.arrivalDate, { format: 'short' }),
-      })
-    })
-
-    it('returns N/A if there is no booking', () => {
-      const placementRequest = placementRequestFactory.build({ booking: null })
-      expect(bookingArrivalDateCell(placementRequest)).toEqual({
-        text: 'N/A',
-      })
-    })
-  })
-
-  describe('applicationDateCell', () => {
-    it("returns the application's created at date", () => {
-      const task = placementRequestFactory.build({ applicationDate: '2022-01-01' })
-
-      expect(applicationDateCell(task)).toEqual({
-        text: DateFormats.isoDateToUIDate('2022-01-01', { format: 'short' }),
+      expect(nameCell(unknownPersonPlacementRequest)).toEqual({
+        text: `Unknown: ${unknownPersonPlacementRequest.person.crn}`,
       })
     })
   })
 
   describe('durationCell', () => {
     it('returns a formatted duration', () => {
-      const placementRequest = placementRequestFactory.build({ duration: 16 })
-
-      expect(durationCell(placementRequest)).toEqual({
+      expect(durationCell(16)).toEqual({
         text: '2 weeks, 2 days',
-      })
-    })
-  })
-
-  describe('requestTypeCell', () => {
-    it('returns parole if isParole is true', () => {
-      const placementRequest = placementRequestFactory.build({ isParole: true })
-
-      expect(requestTypeCell(placementRequest)).toEqual({
-        text: 'Parole',
-      })
-    })
-
-    it('returns standard if isParole is false', () => {
-      const placementRequest = placementRequestFactory.build({ isParole: false })
-
-      expect(requestTypeCell(placementRequest)).toEqual({
-        text: 'Standard release',
-      })
-    })
-  })
-
-  describe('dueDateCell', () => {
-    it('returns the difference in days between the arrival date and the due date', () => {
-      DateFormats.differenceInBusinessDays = jest.fn().mockReturnValue(7)
-
-      const arrivalDate = add(new Date(), { days: 14 })
-      const task = placementRequestFactory.build({
-        expectedArrival: DateFormats.dateObjToIsoDate(arrivalDate),
-      })
-
-      expect(dueDateCell(task, 7)).toEqual({
-        text: '7 days',
-      })
-    })
-  })
-
-  describe('releaseTypeCell', () => {
-    it('returns the release type', () => {
-      const task = placementRequestFactory.build({ releaseType: 'rotl' })
-
-      expect(releaseTypeCell(task)).toEqual({ text: allReleaseTypes.rotl })
-    })
-  })
-
-  describe('tableRows', () => {
-    it('returns table rows for placement requests', () => {
-      const placementRequest = placementRequestFactory.build()
-
-      expect(tableRows([placementRequest])).toEqual([
-        [
-          nameCell(placementRequest),
-          crnCell(placementRequest.person),
-          tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest),
-          dueDateCell(placementRequest, 7),
-          releaseTypeCell(placementRequest),
-        ],
-      ])
-    })
-  })
-
-  describe('premisesNameCell', () => {
-    it('returns the premises name', () => {
-      const placementRequest = placementRequestFactory.build({
-        booking: placementRequestBookingSummaryFactory.build({ premisesName: 'Premises Name' }),
-      })
-
-      expect(premisesNameCell(placementRequest)).toEqual({
-        text: 'Premises Name',
       })
     })
   })
 
   describe('dashboardTableRows', () => {
     it('returns table rows for non matched placement requests', () => {
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = cas1PlacementRequestSummaryFactory.build({ isParole: true })
 
       expect(dashboardTableRows([placementRequest], 'notMatched')).toEqual([
         [
           nameCell(placementRequest),
-          tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest, 'short'),
-          bookingArrivalDateCell(placementRequest),
-          applicationDateCell(placementRequest),
-          durationCell(placementRequest),
-          requestTypeCell(placementRequest),
-          statusCell(placementRequest),
+          htmlCell(tierBadge(placementRequest.personTier)),
+          textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
+          textCell('N/A'),
+          textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
+          durationCell(placementRequest.requestedPlacementDuration),
+          textCell('Parole'),
+          textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
         ],
       ])
     })
 
-    it('returns table rows for matched placement requests', () => {
-      const placementRequest = placementRequestFactory.build()
+    it('returns the request type as Standard release if the placement request is not of type parole', () => {
+      const placementRequest = cas1PlacementRequestSummaryFactory.build({ isParole: false })
 
-      expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
-        [
-          nameCell(placementRequest),
-          tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest, 'short'),
-          bookingArrivalDateCell(placementRequest),
-          applicationDateCell(placementRequest),
-          premisesNameCell(placementRequest),
-          requestTypeCell(placementRequest),
-          statusCell(placementRequest),
-        ],
-      ])
+      expect(dashboardTableRows([placementRequest], 'notMatched')[0][6]).toEqual(textCell('Standard release'))
     })
 
-    it('returns table rows when the status is undefined', () => {
-      const placementRequest = placementRequestFactory.build()
+    it('returns the booking premises name instead of the requested duration for matched placement requests', () => {
+      const placementRequest = cas1PlacementRequestSummaryFactory.matched().build()
 
-      expect(dashboardTableRows([placementRequest], undefined)).toEqual([
-        [
-          nameCell(placementRequest),
-          tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest, 'short'),
-          bookingArrivalDateCell(placementRequest),
-          applicationDateCell(placementRequest),
-          durationCell(placementRequest),
-          requestTypeCell(placementRequest),
-          statusCell(placementRequest),
-        ],
-      ])
+      expect(dashboardTableRows([placementRequest], 'matched')[0][5]).toEqual(
+        textCell(placementRequest.firstBookingPremisesName),
+      )
+    })
+
+    it('returns table rows with duration when the requested status is undefined', () => {
+      const placementRequest = cas1PlacementRequestSummaryFactory.build()
+
+      expect(dashboardTableRows([placementRequest], undefined)[0][5]).toEqual(
+        durationCell(placementRequest.requestedPlacementDuration),
+      )
     })
   })
 
