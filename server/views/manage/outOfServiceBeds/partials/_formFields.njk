@@ -1,0 +1,79 @@
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{{ govukDateInput({
+    id: "startDate",
+    namePrefix: "startDate",
+    items: dateFieldValues('startDate', errors),
+    errorMessage: errors.startDate,
+    fieldset: {
+        legend: {
+            text: "Start date",
+            classes: "govuk-fieldset__legend--s"
+        }
+    }
+}) }}
+
+{{ govukDateInput({
+    id: "endDate",
+    namePrefix: "endDate",
+    items: dateFieldValues('endDate', errors),
+    errorMessage: errors.endDate,
+    fieldset: {
+        legend: {
+            text: "End date",
+            classes: "govuk-fieldset__legend--s"
+        }
+    }
+}) }}
+
+{{ govukRadios({
+    idPrefix: "reason",
+    name: "reason",
+    fieldset: {
+        legend: {
+            text: "What is the reason for marking this bed as out of service?",
+            classes: "govuk-fieldset__legend--s"
+        }
+    },
+    items: convertObjectsToRadioItems(outOfServiceBedReasons, 'name', 'id', 'reason'),
+    errorMessage: errors.reason
+}) }}
+
+{{ govukInput({
+    label: {
+        text: "Work order reference number or CRN",
+        classes: 'govuk-label--s'
+    },
+    hint: {
+        text: "If the bed is on hold for a person, or if a double room is in use by a single person, enter the person's CRN. Otherwise, enter the work order reference number, if known."
+    },
+    id: "referenceNumber",
+    name: "referenceNumber",
+    value: referenceNumber,
+    errorMessage: errors.referenceNumber
+}) }}
+
+{% set notesLabel = "Details about why the bed is out of service" %}
+{% set notesHint = "If FM works are required you should update this record with any progress on that work." %}
+
+{% if "Update" in pageHeading %}
+    {% set notesLabel = "Provide additional information" %}
+    {% set notesHint = "Add further detail on the reason behind this update" %}
+{% endif %}
+
+{{ govukTextarea({
+    id: "notes",
+    name: "notes",
+    value: notes,
+    label: {
+        text: notesLabel,
+        classes: "govuk-label--s"
+    },
+    hint: {
+        text: notesHint
+    },
+    errorMessage: errors.notes
+}) }}

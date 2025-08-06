@@ -44,7 +44,7 @@
     "doesNotExist": "This reason does not exist"
   },
   "reason": {
-    "empty": "You must choose a valid reason"
+    "empty": "You must select a reason"
   },
   "notes": {
     "empty": "You must provide detail on why the bed is out of service"
@@ -81,7 +81,9 @@
     "doesNotExist": "The destination provider does not exist",
     "empty": "You must enter a destination provider"
   },
-  "moveOnCategoryId": { "empty": "You must enter a move on category" },
+  "moveOnCategoryId": {
+    "empty": "You must enter a move on category"
+  },
   "newDepartureDate": {
     "empty": "You must enter a new departure date",
     "invalid": "The departure date is an invalid date",
@@ -99,24 +101,36 @@
     "conflict": "This bedspace is not available for these dates"
   },
   "endDate": {
-    "empty": "You must enter a end date",
+    "empty": "You must enter an end date",
     "invalid": "The end date is an invalid date",
-    "beforeStartDate": "The end date must be after the start date",
+    "beforeStartDate": "The end date must be on or after the start date",
     "conflict": "This bedspace is not available for these dates"
   },
-  "referenceNumber": { "empty": "You must enter a reference number" },
-  "query": { "empty": "You must enter a query" },
+  "referenceNumber": {
+    "empty": "You must enter a reference number"
+  },
+  "query": {
+    "empty": "You must enter a query"
+  },
   "userId": {
     "empty": "You must choose a user to allocate the application to",
     "lackingQualifications": "This user lacks the necessary qualifications"
   },
-  "moveBed": { "empty": "You must select a bed to move the person to" },
+  "moveBed": {
+    "empty": "You must select a bed to move the person to"
+  },
   "appealDate": {
     "empty": "You must enter an appeal date",
     "invalid": "You must enter a valid appeal date",
     "mustNotBeFuture": "The appeal date must not be in the future"
   },
-  "appealDetail": { "empty": "You must enter the reason for the appeal" },
-  "decision": { "empty": "You must provide the decision" },
-  "decisionDetail": { "empty": "You must enter the reasons for the appeal decision" }
+  "appealDetail": {
+    "empty": "You must enter the reason for the appeal"
+  },
+  "decision": {
+    "empty": "You must provide the decision"
+  },
+  "decisionDetail": {
+    "empty": "You must enter the reasons for the appeal decision"
+  }
 }

@@ -48,7 +48,7 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
   // When I fill in and submit the manage out-of-service-bed form
   const markBedAsOutOfServicePage = await MarkBedAsOutOfServicePage.initialize(page, 'Mark a bed as out of service')
   await markBedAsOutOfServicePage.completeForm()
-  await markBedAsOutOfServicePage.clickSave()
+  await markBedAsOutOfServicePage.clickSubmit('Save')
 
   // If there is a booking conflict then add 3 days to the start date and try again
   await markBedAsOutOfServicePage.ensureNoBookingConflict()
@@ -122,7 +122,7 @@ test('Future manager updates an out of service bed', async ({ page, futureManage
     additionalInformation: `Additional information about update ${uniqueReferenceNumber}`,
   }
   await updateOOSBedPage.updateBed(update)
-  await updateOOSBedPage.clickSave()
+  await updateOOSBedPage.clickSubmit('Save')
 
   // Then I should see the out of service bed timeline page with the updated details
   const outOfServiceBedPage2 = await OutOfServiceBedPage.initialize(page)

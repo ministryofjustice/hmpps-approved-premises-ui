@@ -123,7 +123,7 @@ describe('NationalOccupancyController', () => {
       }) as Array<Cas1SpaceCharacteristic>
       const apArea = cruManagementAreas[1].id
 
-      const allApCharacteristics = apCriteria.concat(apTypeToSpaceCharacteristicMap[apType] || [])
+      const allApCharacteristics = apCriteria.concat(apTypeToSpaceCharacteristicMap[apType] || [], roomCriteria)
 
       const request = mockRequest({ arrivalDate, apType, apArea, postcode, roomCriteria, apCriteria })
 

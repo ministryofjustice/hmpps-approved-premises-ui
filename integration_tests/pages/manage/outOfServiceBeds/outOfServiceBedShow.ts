@@ -35,7 +35,7 @@ export class OutOfServiceBedShowPage extends Page {
     }
     if (this.outOfServiceBed.reason) this.assertDefinition('Reason', this.outOfServiceBed.reason.name)
     if (this.outOfServiceBed.referenceNumber)
-      this.assertDefinition('Reference number', this.outOfServiceBed.referenceNumber)
+      this.assertDefinition('Reference/CRN', this.outOfServiceBed.referenceNumber)
     if (this.outOfServiceBed.notes) this.assertDefinition('Additional information', this.outOfServiceBed.notes)
   }
 

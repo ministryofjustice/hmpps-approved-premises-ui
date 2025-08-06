@@ -1,124 +1,58 @@
-{% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "./partials/_pageHeading.njk" import outOfServiceBedPageHeading %}
 
 {% extends "../../partials/layout.njk" %}
 
-{% set pageHeading = "Update out of service bed record" %}
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
-{% set backLink = paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }) %}
 
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: backLink
+        href: backlink
     }) }}
 {% endblock %}
 
 {% block content %}
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        <h1>{{ pageHeading }}</h1>
+                {{ showErrorSummary(errorSummary, errorTitle) }}
 
-        {{ govukSummaryList({
-            rows:OutOfServiceBedUtils.bedRevisionDetails(outOfServiceBed)
-        }) }}
+                <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-        {{ govukInsetText({
-            text: "You can update any of the details if progress has been made since creating the out of service bed record.
-          Please provide additional information on the reason for the change before submitting."
-        }) }}
-        <form action="{{ paths.outOfServiceBeds.update({ premisesId: premisesId, bedId: bedId, id: id }) }}"
-              method="post">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukSummaryList(outOfServiceBedSummary) }}
 
-            {{ showErrorSummary(errorSummary, errorTitle) }}
+                {{ govukInsetText({
+                    text: "
+                        You can update any of the details if progress has been made since creating the out of service bed record.
+                        Please provide additional information on the reason for the change before submitting.
+                    "
+                }) }}
 
-            {{ govukDateInput({
-                id: "startDate",
-                namePrefix: "startDate",
-                items: dateFieldValues('startDate', outOfServiceBed.startDate),
-                errorMessage: errors.startDate,
-                fieldset: {
-                    legend: {
-                        text: "Start date",
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                }
-            }) }}
+                {% include './partials/_formFields.njk' %}
 
-            {{ govukDateInput({
-                id: "endDate",
-                namePrefix: "endDate",
-                items: dateFieldValues('endDate', outOfServiceBed.endDate),
-                errorMessage: errors.endDate,
-                fieldset: {
-                    legend: {
-                        text: "End date",
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                }
-            }) }}
+                {{ govukButton({
+                    type: 'submit',
+                    text: "Save",
+                    preventDoubleClick: true
+                }) }}
 
-            {{ govukRadios({
-                idPrefix: "reason",
-                name: "outOfServiceBed[reason]",
-                fieldset: {
-                    legend: {
-                        text: "What is the reason for marking this bed as out of service?",
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                },
-                items: convertObjectsToRadioItems(outOfServiceBedReasons, 'name', 'id', 'outOfServiceBed[reason][id]')
-            }) }}
-
-            {{ govukInput({
-                label: {
-                    text: "Work order reference number",
-                    classes: "govuk-fieldset__legend--s"
-                },
-                classes: "govuk-input--width-6",
-                id: "referenceNumber",
-                name: "outOfServiceBed[referenceNumber]",
-                value: outOfServiceBed.referenceNumber
-            }) }}
-
-            {{ govukTextarea({
-                id: "notes",
-                name: "outOfServiceBed[notes]",
-                label: {
-                    text: "Provide additional information",
-                    classes: "govuk-fieldset__legend--s"
-                },
-                hint: {
-                    text: "Add further detail on the reason behind this update"
-                },
-                errorMessage: errors.notes
-            }) }}
-
-            {{ govukButton({
-                text: "Save and continue",
-                name: "outOfServiceBed[submit]",
-                preventDoubleClick: true
-            }) }}
-
-            {{ govukButton({
-                text: "Go back",
-                href: paths.outOfServiceBeds.show({ premisesId: premisesId, bedId: bedId, id: id, tab: 'details' }),
-                classes: "govuk-button--secondary govuk-!-margin-left-3"
-            }) }}
-        </form>
+                {{ govukButton({
+                    text: "Go back",
+                    href: backlink,
+                    classes: "govuk-button--secondary govuk-!-margin-left-3"
+                }) }}
+            </form>
+        </div>
     </div>
 
-    {% endblock %}
+{% endblock %}

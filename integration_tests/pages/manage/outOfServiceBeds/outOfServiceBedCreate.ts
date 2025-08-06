@@ -31,16 +31,13 @@ export class OutOfServiceBedCreatePage extends Page {
     cy.get('input[name="endDate-month"]').type(String(endDate.getMonth() + 1))
     cy.get('input[name="endDate-year"]').type(String(endDate.getFullYear()))
 
+    cy.get(`input[name="reason"][value="${outOfServiceBed.reason.id}"]`).check()
+
     if (outOfServiceBed.referenceNumber) {
-      cy.get('input[name="outOfServiceBed[referenceNumber]"]').type(outOfServiceBed.referenceNumber)
+      cy.get('input[name="referenceNumber"]').type(outOfServiceBed.referenceNumber)
     }
 
-    cy.get(`input[name="outOfServiceBed[reason]"][value="${outOfServiceBed.reason.id}"]`).check()
-    cy.get('[name="outOfServiceBed[notes]"]').type(outOfServiceBed.notes)
-  }
-
-  public clickSubmit(): void {
-    cy.get('[name="outOfServiceBed[submit]"]').click()
+    cy.get('[name="notes"]').type(outOfServiceBed.notes)
   }
 
   shouldShowDateConflictErrorMessages(

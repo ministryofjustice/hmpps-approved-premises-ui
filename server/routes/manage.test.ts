@@ -101,7 +101,7 @@ describe('manage routes', () => {
   it('should allow a user with permission cas1 out of service bed create to create an out of service bed', () => {
     manageRoutes(controllers, router, services)
 
-    expect(postSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.create.pattern, outOfServiceBedsController.create(), {
+    expect(postSpy).toHaveBeenCalledWith(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.create(), {
       auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
       redirectAuditEventSpecs: [
         {

@@ -1,9 +1,10 @@
-import type { Cas1ReferenceData, PaginatedResponse } from '@approved-premises/ui'
+import type { PaginatedResponse } from '@approved-premises/ui'
 import type {
   Cas1NewOutOfServiceBed as NewOutOfServiceBed,
   Cas1NewOutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
+  Cas1OutOfServiceBedReason,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   Premises,
   SortDirection,
@@ -11,8 +12,6 @@ import type {
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
 import type { Cas1ReferenceDataClient, OutOfServiceBedClient, RestClientBuilder } from '../data'
-
-export type OutOfServiceBedReasons = Array<Cas1ReferenceData>
 
 export default class OutOfServiceBedService {
   constructor(
@@ -51,10 +50,10 @@ export default class OutOfServiceBedService {
     return outOfServiceBedClient.update(id, updateOutOfServiceBed, premisesId)
   }
 
-  async getOutOfServiceBedReasons(token: string): Promise<OutOfServiceBedReasons> {
+  async getOutOfServiceBedReasons(token: string): Promise<Array<Cas1OutOfServiceBedReason>> {
     const cas1ReferenceDataClient = this.cas1ReferenceDataClientFactory(token)
 
-    return cas1ReferenceDataClient.getReferenceData('out-of-service-bed-reasons')
+    return cas1ReferenceDataClient.getOutOfServiceBedReasons()
   }
 
   async getOutOfServiceBedsForAPremises(token: string, premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {

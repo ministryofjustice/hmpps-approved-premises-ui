@@ -7,17 +7,18 @@ import {
   generateConflictErrorAndRedirect,
 } from '../../../utils/validation'
 import paths from '../../../paths/manage'
-import { DateFormats } from '../../../utils/dateUtils'
 import { SanitisedError } from '../../../sanitisedError'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../../services'
 import {
+  CreateOutOfServiceBedBody,
   outOfServiceBedActions,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   outOfServiceBedTabs,
   premisesIndexTabs,
   sortOutOfServiceBedRevisionsByUpdatedAt,
+  validateOutOfServiceBedInput,
 } from '../../../utils/outOfServiceBedUtils'
 import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
@@ -30,6 +31,17 @@ interface ShowRequest extends Request {
   }
 }
 
+interface NewRequest extends Request {
+  params: {
+    premisesId: string
+    bedId: string
+  }
+}
+
+interface CreateRequest extends NewRequest {
+  body: CreateOutOfServiceBedBody
+}
+
 export default class OutOfServiceBedsController {
   constructor(
     private readonly outOfServiceBedService: OutOfServiceBedService,
@@ -39,12 +51,15 @@ export default class OutOfServiceBedsController {
   ) {}
 
   new(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: NewRequest, res: Response) => {
       const { premisesId, bedId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
+
       return res.render('manage/outOfServiceBeds/new', {
+        backlink: paths.premises.beds.show({ premisesId, bedId }),
+        pageHeading: 'Mark a bed as out of service',
         premisesId,
         bedId,
         outOfServiceBedReasons,
@@ -57,20 +72,13 @@ export default class OutOfServiceBedsController {
   }
 
   create(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: CreateRequest, res: Response) => {
       const { premisesId, bedId } = req.params
 
-      const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
-      const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
-
-      const outOfServiceBed = {
-        ...req.body.outOfServiceBed,
-        bedId,
-        startDate,
-        endDate,
-      }
-
       try {
+        const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
+        const outOfServiceBed = validateOutOfServiceBedInput(req.body, outOfServiceBedReasons, bedId)
+
         await this.outOfServiceBedService.createOutOfServiceBed(req.user.token, premisesId, outOfServiceBed)
 
         req.flash('success', 'The out of service bed has been recorded')

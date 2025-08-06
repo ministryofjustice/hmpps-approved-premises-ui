@@ -1,27 +1,68 @@
 [
   {
-    "id": "78b9c1a4-1d60-11ed-861d-0242ac120002",
-    "name": "Fire",
-    "isActive": true
-  },
-  {
-    "id": "51b44b8c-f7f3-415d-90c3-61bb7fb96286",
-    "name": "Damaged",
-    "isActive": true
-  },
-  {
-    "id": "9ddc9bfc-72fa-4a25-88c0-cc0ff8c6c00e",
-    "name": "Refurbishment",
-    "isActive": true
-  },
-  {
-    "id": "7f3eb6cd-b3fc-4a8d-b9ce-5959918ffbe8",
-    "name": "Staff shortage",
-    "isActive": true
-  },
-  {
-    "id": "1f2eb6cd-b3fc-4a8d-b9ce-5959918ffbe8",
+    "id": "6943e9e7-ffae-44ba-b2f4-bc299af8773c",
     "name": "Planned FM works required",
-    "isActive": true
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "55594aa8-1ae1-4a3c-b6f3-7bb55ff14807",
+    "name": "Double room with single occupancy – other (Non-FM)",
+    "isActive": true,
+    "referenceType": "crn"
+  },
+  {
+    "id": "ce0c151c-dda5-450c-8a7f-ca8895fecd04",
+    "name": "Double room with single occupancy – risk (Non-FM)",
+    "isActive": true,
+    "referenceType": "crn"
+  },
+  {
+    "id": "abd5af8d-8f8c-469a-8e22-85635f99ec0d",
+    "name": "Staff shortage / Illness (Non-FM)",
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "34467c03-b919-4423-b4e2-e0dc92520a56",
+    "name": "Damage by resident requiring FM Repair",
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "2f46e769-17a5-4b5c-b04a-a5a9a5b3f773",
+    "name": "Planned Refurbishment (FM)",
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "2f076b35-72d2-410e-9a92-6d00781a559c",
+    "name": "Other unplanned FM works required",
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "56da56bd-f20f-4830-9e44-ed3b7795cf5e",
+    "name": "Flood / Fire requiring FM repair",
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "051e7f55-a5a5-47a9-9bbf-a7b11a6ebf97",
+    "name": "Incident not requiring FM repair",
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "0e2c5f8b-bee7-4947-a3aa-a09d09af611e",
+    "name": "AP Closure / Operational Reduction in Capacity (Non-FM)",
+    "isActive": true,
+    "referenceType": "workOrder"
+  },
+  {
+    "id": "199bef2d-0839-40c0-85e2-00b84fde7fde",
+    "name": "Bed on hold",
+    "isActive": true,
+    "referenceType": "crn"
   }
 ]
