@@ -22,11 +22,7 @@ context('Task Allocation', () => {
 
   const cruManagementAreas = [...cruManagementAreaFactory.buildList(4), cruManagementArea]
   const qualifications = qualificationFactory.buildList(2)
-  // Given there are some users in the database
-  const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ qualifications })]
-  const selectedUser = users[0]
 
-  // And there is an allocated task
   const applicantUserDetails = applicationUserDetailsFactory.build()
   const caseManagerUserDetails = applicationUserDetailsFactory.build()
   const application = applicationFactory.build({
@@ -63,6 +59,10 @@ context('Task Allocation', () => {
   describe('when logged in as CRU member', () => {
     beforeEach(() => {
       cy.task('reset')
+      GIVEN('there are some users in the database')
+      const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ qualifications })]
+
+      AND('there is an allocated task')
       cy.task('stubGetAllTasks', {
         tasks,
         allocatedFilter: 'allocated',
@@ -87,7 +87,7 @@ context('Task Allocation', () => {
       cy.wrap(taskWithRestrictedPerson).as('taskWithRestrictedPerson')
       cy.wrap(tasks).as('tasks')
       cy.wrap(users).as('users')
-      cy.wrap(selectedUser).as('selectedUser')
+      cy.wrap(users[0]).as('selectedUser')
       cy.wrap(application).as('application')
       cy.wrap(applicationForRestrictedPerson).as('applicationForRestrictedPerson')
       cy.wrap(cruManagementArea).as('cruManagementArea')

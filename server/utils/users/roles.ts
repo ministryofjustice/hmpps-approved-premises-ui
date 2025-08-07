@@ -16,6 +16,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'report_viewer',
   'report_viewer_with_pii',
   'future_manager',
+  'ap_area_manager',
   'user_manager',
   'change_request_dev',
   'janitor',
@@ -30,7 +31,6 @@ export const unusedRoles = [
   'workflow_manager',
   'cru_member_find_and_book_beta',
   'cru_member_enable_out_of_service_beds',
-  'ap_area_manager',
 ] as const
 
 type UnusedRole = (typeof unusedRoles)[number]
@@ -81,6 +81,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   future_manager: {
     label: 'Future manager',
     hint: 'Provides access to manage and creating out of service beds',
+  },
+  ap_area_manager: {
+    label: 'AP area manager',
+    hint: 'Can access task allocation information, but cannot allocate tasks',
   },
   user_manager: {
     label: 'User manager',
