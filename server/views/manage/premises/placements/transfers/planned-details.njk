@@ -3,10 +3,9 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
-{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "../../../../partials/layout.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -26,11 +25,6 @@
         </li>
     </ul>
 {% endset %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
-{% endblock %}
 
 {% block beforeContent %}
     {{ govukBackLink({

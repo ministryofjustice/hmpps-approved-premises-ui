@@ -15,6 +15,7 @@ import * as validationUtils from '../../../../utils/validation'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import { allApprovedPremisesOptions, emergencyTransferSummaryList } from '../../../../utils/placements/transfers'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 describe('transfersController', () => {
   const token = 'TEST_TOKEN'
@@ -85,7 +86,7 @@ describe('transfersController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/new', {
         backlink: managePaths.premises.placements.show(params),
         pageHeading: 'Request a transfer',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
@@ -207,6 +208,7 @@ describe('transfersController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/emergency-details', {
         backlink: transfersNewPath,
         pageHeading: 'Enter the emergency transfer details',
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         approvedPremisesOptions: allApprovedPremisesOptions(allPremises),
         errors: errorsAndUserInput.errors,
@@ -368,7 +370,7 @@ describe('transfersController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/confirm', {
         backlink: managePaths.premises.placements.transfers.emergencyDetails(params),
         pageHeading: 'Confirm emergency transfer',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         summaryList: emergencyTransferSummaryList(sessionData),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,

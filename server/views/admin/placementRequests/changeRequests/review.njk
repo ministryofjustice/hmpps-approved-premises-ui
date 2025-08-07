@@ -3,19 +3,12 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../../../components/keyDetails/macro.njk" import keyDetails %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
-
-{% extends "../../../partials/layout.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(MatchUtils.keyDetails(placementRequest)) }}
-{% endblock %}
 
 {% block beforeContent %}
     {{ govukBackLink({
@@ -25,7 +18,7 @@
 {% endblock %}
 
 {% block content %}
-    {% include "../../../_messages.njk" %}
+    {% include "_messages.njk" %}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">

@@ -9,7 +9,8 @@ import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
-import { renderKeyworkersSelectOptions } from '../../../../utils/placements'
+import { placementKeyDetails, renderKeyworkersSelectOptions } from '../../../../utils/placements'
+import { assessmentKeyDetails } from '../../../../utils/assessments/utils'
 
 describe('keyworkerController', () => {
   const token = 'SOME_TOKEN'
@@ -54,6 +55,7 @@ describe('keyworkerController', () => {
       expect(premisesService.getKeyworkers).toHaveBeenCalledWith(token, premisesId)
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/keyworker', {
         placement,
+        contextKeyDetails: placementKeyDetails(placement),
         keyworkersOptions: renderKeyworkersSelectOptions(keyworkers, placement),
         currentKeyworkerName: placement.keyWorkerAllocation?.keyWorker?.name,
         errors: errorsAndUserInput.errors,

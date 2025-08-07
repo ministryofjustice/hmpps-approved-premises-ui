@@ -14,6 +14,7 @@ import {
   plannedTransferSummaryList,
   validateNew,
 } from '../../../../utils/placements/transfers'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 export default class PlannedTransfersController {
   formData: MultiPageFormManager<'transfers'>
@@ -58,7 +59,7 @@ export default class PlannedTransfersController {
       return res.render('manage/premises/placements/transfers/planned-details', {
         backlink: managePaths.premises.placements.transfers.new({ premisesId, placementId }),
         pageHeading: 'Enter the transfer details',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         transferReasonRadioItems,
         isFlexibleRadioItems,
         ...fetchErrorsAndUserInput(req),
@@ -134,8 +135,8 @@ export default class PlannedTransfersController {
 
       return res.render('manage/premises/placements/transfers/confirm', {
         backlink: managePaths.premises.placements.transfers.plannedDetails({ premisesId, placementId }),
+        contextKeyDetails: placementKeyDetails(placement),
         pageHeading: 'Confirm transfer request',
-        placement,
         summaryList: plannedTransferSummaryList(formData),
         ...fetchErrorsAndUserInput(req),
       })

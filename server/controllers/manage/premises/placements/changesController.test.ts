@@ -13,7 +13,7 @@ import { occupancySummary, spaceBookingConfirmationSummaryListRows } from '../..
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import managePaths from '../../../../paths/manage'
 import adminPaths from '../../../../paths/admin'
-import { placementOverviewSummary } from '../../../../utils/placements'
+import { placementKeyDetails, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { durationSelectOptions } from '../../../../utils/match/occupancy'
@@ -22,6 +22,7 @@ import { DateFormats } from '../../../../utils/dateUtils'
 import * as validationUtils from '../../../../utils/validation'
 import { ValidationError } from '../../../../utils/errors'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../../utils/characteristicsUtils'
+import { assessmentKeyDetails } from '../../../../utils/assessments/utils'
 
 describe('changesController', () => {
   const token = 'TEST_TOKEN'
@@ -92,6 +93,7 @@ describe('changesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
         backlink: '/backlink',
         pageHeading: 'Change placement',
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         selectedCriteria: roomCharacteristicsInlineList(expectedCriteria, 'no room criteria'),
         arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
@@ -350,7 +352,7 @@ describe('changesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',
         backlink: expectedBackLink,
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
           expectedArrivalDate: query.arrivalDate,

@@ -13,6 +13,7 @@ import { mapChangeRequestReasonsToRadios } from '../../../../utils/placements/ch
 import { convertObjectsToRadioItems } from '../../../../utils/formUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { plannedTransferSuccessMessage } from '../../../../utils/placements/transfers'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 describe('plannedTransferController', () => {
   const token = 'TEST_TOKEN'
@@ -80,7 +81,7 @@ describe('plannedTransferController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/planned-details', {
         backlink: paths.new,
         pageHeading: 'Enter the transfer details',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         transferReasonRadioItems,
         isFlexibleRadioItems,
         ...errors,
@@ -101,7 +102,7 @@ describe('plannedTransferController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/planned-details', {
         backlink: paths.new,
         pageHeading: 'Enter the transfer details',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         transferReasonRadioItems,
         isFlexibleRadioItems,
         ...errors,
@@ -166,7 +167,7 @@ describe('plannedTransferController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/transfers/confirm', {
         pageHeading: 'Confirm transfer request',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         backlink: paths.details,
         summaryList: transferUtils.plannedTransferSummaryList(sessionData),
         ...errors,
