@@ -1,11 +1,13 @@
-import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premises/api'
+import type { Cas1SpaceBooking, StaffMember } from '@approved-premises/api'
 import { RadioItem, SelectOption } from '@approved-premises/ui'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
+  personFactory,
   restrictedPersonFactory,
   staffMemberFactory,
+  tierEnvelopeFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
 import {
@@ -14,10 +16,11 @@ import {
   canonicalDates,
   departureInformation,
   detailedStatus,
-  getKeyDetail,
+  personKeyDetails,
   injectRadioConditionalHtml,
   otherBookings,
   overallStatus,
+  placementKeyDetails,
   placementOverviewSummary,
   placementStatusHtml,
   placementSummary,
@@ -30,6 +33,7 @@ import { DateFormats } from '../dateUtils'
 import paths from '../../paths/manage'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 import { characteristicsBulletList } from '../characteristicsUtils'
+import * as placementUtils from './index'
 
 describe('placementUtils', () => {
   describe('placement status', () => {
@@ -332,63 +336,79 @@ describe('placementUtils', () => {
     })
   })
 
-  describe('getKeyDetail', () => {
-    it('should return the key information from the person in the placement', () => {
-      const placement = cas1SpaceBookingFactory.build()
+  describe('personKeyDetails', () => {
+    const tier = tierEnvelopeFactory.build().value.level
 
-      expect(getKeyDetail(placement)).toEqual({
-        header: { key: '', showKey: false, value: (placement.person as FullPerson).name },
+    it('should return the key information for a placement', () => {
+      const person = personFactory.build()
+
+      expect(personKeyDetails(person, tier)).toEqual({
+        header: { key: '', showKey: false, value: person.name },
         items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
+          { key: { text: 'CRN' }, value: { text: person.crn } },
+          { key: { text: 'Tier' }, value: { text: tier } },
           {
             key: { text: 'Date of birth' },
             value: {
-              text: DateFormats.isoDateToUIDate((placement.person as FullPerson).dateOfBirth, { format: 'short' }),
+              text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
             },
           },
         ],
       })
     })
 
+    it('should show the tier as not available if it is not defined', () => {
+      const person = personFactory.build()
+
+      const result = personKeyDetails(person)
+
+      expect(result.items[1].value).toEqual({ text: 'Not available' })
+    })
+
     it('should prefix the name with LAO if the person is LAO', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: fullPersonFactory.build({
-          isRestricted: true,
-        }),
+      const person = fullPersonFactory.build({
+        isRestricted: true,
       })
 
-      const result = getKeyDetail(placement)
+      const result = personKeyDetails(person, tier)
 
-      expect(result.header.value).toEqual(`LAO: ${(placement.person as FullPerson).name}`)
+      expect(result.header.value).toEqual(`LAO: ${person.name}`)
     })
 
     it('should not show the name or date of birth for a restricted person', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: restrictedPersonFactory.build(),
-      })
+      const person = restrictedPersonFactory.build()
 
-      expect(getKeyDetail(placement)).toEqual({
+      expect(personKeyDetails(person, tier)).toEqual({
         header: { key: '', showKey: false, value: 'Limited Access Offender' },
         items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
+          { key: { text: 'CRN' }, value: { text: person.crn } },
+          { key: { text: 'Tier' }, value: { text: tier } },
         ],
       })
     })
 
     it('should not show the name or date of birth for an unknown person', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: unknownPersonFactory.build(),
-      })
+      const person = unknownPersonFactory.build()
 
-      expect(getKeyDetail(placement)).toEqual({
+      expect(personKeyDetails(person, tier)).toEqual({
         header: { key: '', showKey: false, value: 'Unknown person' },
         items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
+          { key: { text: 'CRN' }, value: { text: person.crn } },
+          { key: { text: 'Tier' }, value: { text: tier } },
         ],
       })
+    })
+  })
+
+  describe('placementKeyDetails', () => {
+    it('calls personKeyDetails with person and tier', () => {
+      jest.spyOn(placementUtils, 'personKeyDetails')
+
+      const placement = cas1SpaceBookingFactory.build()
+
+      placementKeyDetails(placement)
+
+      expect(placementUtils.personKeyDetails).toHaveBeenCalledWith(placement.person, placement.tier)
     })
   })
 

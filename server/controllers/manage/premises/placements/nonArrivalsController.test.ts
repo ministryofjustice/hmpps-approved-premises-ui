@@ -10,7 +10,7 @@ import * as validationUtils from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
-import { NON_ARRIVAL_REASON_OTHER_ID } from '../../../../utils/placements'
+import { NON_ARRIVAL_REASON_OTHER_ID, placementKeyDetails } from '../../../../utils/placements'
 
 describe('nonArrivalsController', () => {
   const token = 'SAMPLE_TOKEN'
@@ -53,6 +53,7 @@ describe('nonArrivalsController', () => {
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/non-arrival', {
         nonArrivalReasons,
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,

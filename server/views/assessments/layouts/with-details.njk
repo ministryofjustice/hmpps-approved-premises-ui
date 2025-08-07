@@ -1,7 +1,0 @@
-{% from "../../components/keyDetails/macro.njk" import keyDetails %}
-{% extends "../../partials/layout.njk" %}
-
-{% block header %}
-  {{ super() }}
-  {{ keyDetails(AssessmentUtils.keyDetails(assessment)) }}
-{% endblock %}

@@ -1,0 +1,10 @@
+{% from "components/keyDetails/macro.njk" import keyDetails %}
+{% extends "partials/layout.njk" %}
+
+{% block header %}
+    {{ super() }}
+
+    {% if contextKeyDetails %}
+        {{ keyDetails(contextKeyDetails) }}
+    {% endif %}
+{% endblock %}

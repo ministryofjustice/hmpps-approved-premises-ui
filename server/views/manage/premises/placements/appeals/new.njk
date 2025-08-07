@@ -4,10 +4,9 @@
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
-{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "../../../../partials/layout.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -16,11 +15,6 @@
         text: "Back",
         href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
     }) }}
-{% endblock %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block content %}
@@ -33,7 +27,7 @@
 
                 {{ showErrorSummary(errorSummary, errorTitle) }}
 
-                {% include "../../../../_messages.njk" %}
+                {% include "_messages.njk" %}
 
                 <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 

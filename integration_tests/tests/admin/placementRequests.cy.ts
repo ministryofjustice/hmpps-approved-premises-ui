@@ -18,7 +18,7 @@ import {
 import Page from '../../pages/page'
 import { CancellationCreatePage, UnableToMatchPage } from '../../pages/manage'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
-import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
+import { ApprovedPremisesApplication as Application, FullPerson } from '../../../server/@types/shared'
 import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
@@ -159,7 +159,10 @@ context('Placement Requests', () => {
       let showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
       AND('I should see the Key-person details in the blue banner')
-      showPage.shouldShowKeyPersonDetails(unmatchedPlacementRequest)
+      showPage.shouldShowKeyPersonDetails(
+        unmatchedPlacementRequest.person as FullPerson,
+        unmatchedPlacementRequest.risks?.tier?.value?.level,
+      )
 
       AND('I should see the information about the placement request')
       showPage.shouldShowSummary()

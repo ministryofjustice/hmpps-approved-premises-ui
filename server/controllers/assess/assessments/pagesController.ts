@@ -2,7 +2,7 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
 import { ApprovedPremisesAssessment as Assessment, Cas1UpdatedClarificationNote } from '@approved-premises/api'
-import { getPage } from '../../../utils/assessments/utils'
+import { assessmentKeyDetails, getPage } from '../../../utils/assessments/utils'
 import { AssessmentService } from '../../../services'
 
 import {
@@ -47,6 +47,7 @@ export default class PagesController {
         res.render(viewPath(page, 'assessments'), {
           assessmentId: req.params.id,
           assessment,
+          contextKeyDetails: assessmentKeyDetails(assessment),
           errors,
           errorSummary,
           task: taskName,
