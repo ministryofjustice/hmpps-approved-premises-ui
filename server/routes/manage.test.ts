@@ -25,6 +25,7 @@ import paths from '../paths/manage'
 import CancellationsController from '../controllers/manage/cancellationsController'
 import RedirectController from '../controllers/redirectController'
 import PlannedTransfersController from '../controllers/manage/premises/changeRequests/plannedTransferController'
+import OccupancyViewController from '../controllers/match/placementRequests/occupancyViewController'
 
 jest.mock('./utils')
 
@@ -53,6 +54,7 @@ describe('manage routes', () => {
   const transfersController: DeepMocked<TransfersController> = createMock<TransfersController>({})
   const placementAppealController: DeepMocked<PlacementAppealController> = createMock<PlacementAppealController>({})
   const plannedTransferController: DeepMocked<PlannedTransfersController> = createMock<PlannedTransfersController>()
+  const occupancyViewController: DeepMocked<OccupancyViewController> = createMock<OccupancyViewController>({})
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
     bedsController,
@@ -73,6 +75,7 @@ describe('manage routes', () => {
     transfersController,
     placementAppealController,
     plannedTransferController,
+    occupancyViewController,
   })
   const services: DeepMocked<Services> = createMock<Services>({})
 

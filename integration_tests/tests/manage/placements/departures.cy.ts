@@ -175,7 +175,7 @@ context('Departures', () => {
     const placementPage = PlacementShowPage.visit(placement)
 
     // Then the record departure option should not be present
-    placementPage.actionMenuShouldNotExist()
+    placementPage.actionShouldNotExist('Record departure')
 
     // When I navigate to the record departure page directly
     // Then I see an authorisation error
