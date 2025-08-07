@@ -59,7 +59,6 @@ export const cas1TimelineEventContentPayloadFactory = Factory.define<Cas1Timelin
 
 const cas1TimelineEventUrlTypes: ReadonlyArray<Cas1TimelineEventUrlType> = [
   'application',
-  'booking',
   'assessment',
   'assessmentAppeal',
   'spaceBooking',

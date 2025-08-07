@@ -653,11 +653,7 @@ describe('utils', () => {
       ['PIPE', 'pipe'],
       ['RFAP', 'rfap'],
     ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
-      const application = applicationFactory.build({
-        apType: applicationApType,
-        isEsapApplication: undefined,
-        isPipeApplication: undefined,
-      })
+      const application = applicationFactory.build({ apType: applicationApType })
       expect(getApplicationType(application)).toEqual(expectedOutput)
     })
   })
