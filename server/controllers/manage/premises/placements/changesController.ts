@@ -15,7 +15,7 @@ import {
   validateSpaceBooking,
 } from '../../../../utils/match'
 import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
-import { placementOverviewSummary } from '../../../../utils/placements'
+import { placementKeyDetails, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { DateFormats, daysToWeeksAndDays, isoDateIsValid } from '../../../../utils/dateUtils'
@@ -134,6 +134,7 @@ export default class ChangesController {
           managePaths.premises.placements.show.pattern,
           adminPaths.admin.placementRequests.show.pattern,
         ]),
+        contextKeyDetails: placementKeyDetails(placement),
         pageHeading,
         placement,
         selectedCriteria: roomCharacteristicsInlineList(criteria, 'no room criteria'),
@@ -209,8 +210,8 @@ export default class ChangesController {
 
       return res.render('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',
+        contextKeyDetails: placementKeyDetails(placement),
         backlink,
-        placement,
         summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
           actualArrivalDate: placement.actualArrivalDate,

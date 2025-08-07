@@ -13,6 +13,7 @@ import {
 } from '../../../../utils/dateUtils'
 import { ValidationError } from '../../../../utils/errors'
 import { hasPermission } from '../../../../utils/users'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 export default class ArrivalsController {
   constructor(
@@ -27,6 +28,7 @@ export default class ArrivalsController {
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
       return res.render('manage/premises/placements/arrival', {
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         errors,
         errorSummary,

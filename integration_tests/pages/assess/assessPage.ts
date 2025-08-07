@@ -3,7 +3,7 @@ import { ApprovedPremisesAssessment } from '@approved-premises/api'
 import Assess from '../../../server/form-pages/assess'
 import TasklistPage, { TasklistPageInterface } from '../../../server/form-pages/tasklistPage'
 import FormPage from '../formPage'
-import { keyDetails } from '../../../server/utils/assessments/utils'
+import { assessmentKeyDetails } from '../../../server/utils/assessments/utils'
 
 export default class AssessPage extends FormPage {
   tasklistPage: TasklistPage
@@ -20,7 +20,7 @@ export default class AssessPage extends FormPage {
     const Class = Assess.pages[taskName][pageName] as TasklistPageInterface
 
     this.tasklistPage = new Class(assessment.data?.[taskName]?.[pageName], assessment)
-    this.shouldShowKeyDetails(keyDetails(assessment))
+    this.shouldShowKeyDetails(assessmentKeyDetails(assessment))
     this.shouldShowMenuItem('Assess')
   }
 }

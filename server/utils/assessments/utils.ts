@@ -146,7 +146,7 @@ const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): stri
   return response
 }
 
-const keyDetails = (assessment: Assessment): KeyDetailsArgs => {
+const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
   return {
     header: {
       key: 'Name',
@@ -222,6 +222,6 @@ export {
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
   awaitingAssessmentStatuses,
-  keyDetails,
+  assessmentKeyDetails,
   assessmentsTabItems,
 }

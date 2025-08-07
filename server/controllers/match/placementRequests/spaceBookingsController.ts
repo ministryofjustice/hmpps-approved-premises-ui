@@ -6,6 +6,7 @@ import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { creationNotificationBody, spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 interface NewRequest extends Request {
   params: {
@@ -65,7 +66,7 @@ export default class {
       return res.render('match/placementRequests/spaceBookings/new', {
         backLink,
         submitLink,
-        placementRequest,
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         premises,
         summaryListRows,
         errors,

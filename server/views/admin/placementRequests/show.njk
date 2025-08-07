@@ -3,15 +3,9 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
-{% from "../../components/keyDetails/macro.njk" import keyDetails %}
-{% extends "../../partials/layout.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - View Placement Request" %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(MatchUtils.keyDetails(placementRequest)) }}
-{% endblock %}
 
 {% block beforeContent %}
     {{ govukBackLink({
@@ -21,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-    {% include "../../_messages.njk" %}
+    {% include "_messages.njk" %}
 
     {{ mojIdentityBar(adminIdentityBar) }}
 

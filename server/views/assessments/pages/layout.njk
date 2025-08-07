@@ -4,53 +4,53 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
-{% from "../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
-{% from "../../components/formFields/form-page-date-input/macro.njk" import formPageDateInput %}
-{% from "../../components/formFields/form-page-input/macro.njk" import formPageInput %}
-{% from "../../components/formFields/form-page-checkboxes/macro.njk" import formPageCheckboxes %}
-{% from "../../components/formFields/form-page-textarea/macro.njk" import formPageTextarea %}
-{% from "../../components/formFields/form-page-select/macro.njk" import formPageSelect %}
-{% from "../../components/keyDetails/macro.njk" import keyDetails %}
+{% from "components/formFields/form-page-radios/macro.njk" import formPageRadios %}
+{% from "components/formFields/form-page-date-input/macro.njk" import formPageDateInput %}
+{% from "components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "components/formFields/form-page-checkboxes/macro.njk" import formPageCheckboxes %}
+{% from "components/formFields/form-page-textarea/macro.njk" import formPageTextarea %}
+{% from "components/formFields/form-page-select/macro.njk" import formPageSelect %}
 
-{% extends "../layouts/with-details.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {% if page.previous() === 'dashboard' %}
-    {{ govukBackLink({
-      text: "Back",
-      href: paths.assessments.show({ id: assessmentId })
-    }) }}
-  {% elif page.previous() %}
-    {{ govukBackLink({
-      text: "Back",
-      href: paths.assessments.pages.show({ id: assessmentId, task: task, page: page.previous() })
-    }) }}
-  {% endif %}
+    {% if page.previous() === 'dashboard' %}
+        {{ govukBackLink({
+            text: "Back",
+            href: paths.assessments.show({ id: assessmentId })
+        }) }}
+        {% elif page.previous() %}
+        {{ govukBackLink({
+            text: "Back",
+            href: paths.assessments.pages.show({ id: assessmentId, task: task, page: page.previous() })
+        }) }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
-      <form action="{{ paths.assessments.pages.update({ id: assessmentId, task: task, page: page.name }) }}?_method=PUT" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+    <div class="govuk-grid-row">
+        <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
+            <form action="{{ paths.assessments.pages.update({ id: assessmentId, task: task, page: page.name }) }}?_method=PUT"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ showErrorSummary(errorSummary) }}
+                {{ showErrorSummary(errorSummary) }}
 
-        {% block questions %}{% endblock %}
+                {% block questions %}{% endblock %}
 
-        {{ govukButton({
-            text: "Submit",
-            preventDoubleClick: true
-        }) }}
-      </form>
+                {{ govukButton({
+                    text: "Submit",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock %}
