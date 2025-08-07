@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1TimelineEventUrlType = 'application' | 'booking' | 'assessment' | 'assessmentAppeal' | 'spaceBooking';
+export type Cas1TimelineEventUrlType = 'application' | 'assessment' | 'assessmentAppeal' | 'spaceBooking';
