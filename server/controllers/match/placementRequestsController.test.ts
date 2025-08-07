@@ -13,6 +13,8 @@ import {
 import paths from '../../paths/placementApplications'
 
 import { getResponses } from '../../utils/applications/getResponses'
+import { assessmentKeyDetails } from '../../utils/assessments/utils'
+import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
@@ -62,6 +64,7 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/show', {
         pageHeading: 'Matching information',
         placementRequest: placementRequestDetail,
+        contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })

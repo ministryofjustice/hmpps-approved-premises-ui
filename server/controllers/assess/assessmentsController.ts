@@ -7,9 +7,10 @@ import informationSetAsNotReceived from '../../utils/assessments/informationSetA
 
 import paths from '../../paths/assess'
 import { ApprovedPremisesAssessment, AssessmentSortField, AssessmentStatus, TaskSortField } from '../../@types/shared'
-import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
+import { assessmentKeyDetails, awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { remapArsonAssessmentData } from '../../form-pages/utils/matchingInformationUtils'
+import { placementKeyDetails } from '../../utils/placements'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
@@ -103,6 +104,7 @@ export default class AssessmentsController {
         res.render('assessments/tasklist', {
           assessment,
           pageHeading: tasklistPageHeading,
+          contextKeyDetails: assessmentKeyDetails(assessment),
           taskList,
           errorSummary,
           errors,

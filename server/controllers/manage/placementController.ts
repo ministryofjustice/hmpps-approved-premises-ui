@@ -11,7 +11,7 @@ import {
 } from '../../services'
 
 import { DateFormats } from '../../utils/dateUtils'
-import { PlacementTab, canonicalDates, placementTabItems } from '../../utils/placements'
+import { PlacementTab, canonicalDates, placementTabItems, placementKeyDetails } from '../../utils/placements'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
 import paths from '../../paths/manage'
 import applicationPaths from '../../paths/apply'
@@ -71,6 +71,7 @@ export default class PlacementController {
       }
 
       return res.render(`manage/premises/placements/show`, {
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         pageHeading,
         user,

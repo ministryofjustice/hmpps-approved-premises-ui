@@ -13,6 +13,7 @@ import * as changeRequestUtils from '../../../../utils/placements/changeRequests
 import managePaths from '../../../../paths/manage'
 import * as validationUtils from '../../../../utils/validation'
 import { ValidationError } from '../../../../utils/errors'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 describe('placementAppealController', () => {
   const token = 'TEST_TOKEN'
@@ -161,7 +162,7 @@ describe('placementAppealController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/appeals/confirm', {
         pageHeading: 'Confirm the appeal details',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         backLink: managePaths.premises.placements.appeal.new({ premisesId, placementId: placement.id }),
         postUrl: managePaths.premises.placements.appeal.confirm({ premisesId, placementId: placement.id }),
         summaryList: { rows: changeRequestUtils.getConfirmationSummary(sessionData) },

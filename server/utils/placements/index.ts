@@ -1,8 +1,9 @@
-import type {
+import {
   Cas1ChangeRequestType,
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
+  Person,
   StaffMember,
 } from '@approved-premises/api'
 import {
@@ -16,19 +17,19 @@ import {
 import { differenceInCalendarDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
-import { displayName, isFullPerson } from '../personUtils'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
 import { summaryListItem } from '../formUtils'
 import {
   ApTypeCriteria,
-  SpecialistApTypeCriteria,
   apTypeCriteriaLabels,
+  SpecialistApTypeCriteria,
   specialistApTypeCriteria,
 } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
+import { displayName, isFullPerson } from '../personUtils'
 
 export const overallStatusTextMap = {
   upcoming: 'Upcoming',
@@ -168,27 +169,37 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     }
   }
 
+  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_create'])) {
+    actionList.push({
+      href: paths.premises.placements.changes.new({
+        premisesId: placement.premises.id,
+        placementId: placement.id,
+      }),
+      classes: 'govuk-button--secondary',
+      text: 'Change placement',
+    })
+  }
+
   return actionList.length ? [{ items: actionList }] : null
 }
 
-export const getKeyDetail = (placement: Cas1SpaceBooking): KeyDetailsArgs => {
-  const { person, tier } = placement
-  return {
-    header: { value: displayName(person), key: '', showKey: false },
-    items: [
-      { key: textValue('CRN'), value: textValue(person.crn) },
-      { key: { text: 'Tier' }, value: { text: tier } },
-      isFullPerson(person)
-        ? {
-            key: { text: 'Date of birth' },
-            value: {
-              text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-            },
-          }
-        : undefined,
-    ],
-  }
-}
+export const getKeyDetail = (person: Person, tier?: string): KeyDetailsArgs => ({
+  header: { value: displayName(person), key: '', showKey: false },
+  items: [
+    { key: textValue('CRN'), value: textValue(person.crn) },
+    { key: { text: 'Tier' }, value: { text: tier || 'Not available' } },
+    isFullPerson(person)
+      ? {
+          key: { text: 'Date of birth' },
+          value: {
+            text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+          },
+        }
+      : undefined,
+  ],
+})
+
+export const placementKeyDetails = (placement: Cas1SpaceBooking) => getKeyDetail(placement.person, placement.tier)
 
 const formatDate = (date: string | null) => date && DateFormats.isoDateToUIDate(date)
 

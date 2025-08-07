@@ -11,6 +11,8 @@ import paths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
 import { DateFormats, timeAddLeadingZero } from '../../../../utils/dateUtils'
+import { assessmentKeyDetails } from '../../../../utils/assessments/utils'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 describe('ArrivalsController', () => {
   const token = 'SOME_TOKEN'
@@ -52,6 +54,7 @@ describe('ArrivalsController', () => {
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/arrival', {
         placement,
+        contextKeyDetails: placementKeyDetails(placement),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         errorTitle: errorsAndUserInput.errorTitle,

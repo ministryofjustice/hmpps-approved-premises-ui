@@ -1,11 +1,13 @@
-import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premises/api'
+import type { Cas1SpaceBooking, StaffMember } from '@approved-premises/api'
 import { RadioItem, SelectOption } from '@approved-premises/ui'
 import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
+  personFactory,
   restrictedPersonFactory,
   staffMemberFactory,
+  tierEnvelopeFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
 import {
@@ -18,6 +20,7 @@ import {
   injectRadioConditionalHtml,
   otherBookings,
   overallStatus,
+  placementKeyDetails,
   placementOverviewSummary,
   placementStatusHtml,
   placementSummary,
@@ -30,6 +33,7 @@ import { DateFormats } from '../dateUtils'
 import paths from '../../paths/manage'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 import { characteristicsBulletList } from '../characteristicsUtils'
+import * as placementUtils from './index'
 
 describe('placementUtils', () => {
   describe('placement status', () => {
@@ -177,6 +181,7 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_keyworker',
         'cas1_space_booking_record_non_arrival',
         'cas1_transfer_create',
+        'cas1_space_booking_create',
       ],
     })
     const premises = cas1PremisesFactory.build()
@@ -209,17 +214,22 @@ describe('placementUtils', () => {
       href: paths.premises.placements.transfers.new({ premisesId: premises.id, placementId }),
       text: 'Request a transfer',
     }
+    const changePlacementOption = {
+      classes: 'govuk-button--secondary',
+      href: paths.premises.placements.changes.new({ premisesId: premises.id, placementId }),
+      text: 'Change placement',
+    }
 
     describe('when the placement is in its initial state', () => {
       const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
 
-      it('should allow arrivals, non-arrivals and assignment of keyworker', () => {
+      it('should allow arrivals, non-arrivals, assigning a keyworker and changing the placement', () => {
         expect(actions(placementInitial, userDetails)).toEqual(
-          wrapOptions([keyworkerOption, arrivalOption, nonArrivalOption]),
+          wrapOptions([keyworkerOption, arrivalOption, nonArrivalOption, changePlacementOption]),
         )
       })
 
-      it('should require correct permissions for arrival, non-arrival and keyworker', () => {
+      it('should require correct permissions for arrival, non-arrival, assigning a keyworker and changing the placement', () => {
         expect(
           actions(
             placementInitial,
@@ -244,6 +254,14 @@ describe('placementUtils', () => {
             }),
           ),
         ).toEqual(wrapOptions([nonArrivalOption]))
+        expect(
+          actions(
+            placementInitial,
+            userDetailsFactory.build({
+              permissions: ['cas1_space_booking_create'],
+            }),
+          ),
+        ).toEqual(wrapOptions([changePlacementOption]))
       })
     })
 
@@ -261,9 +279,9 @@ describe('placementUtils', () => {
         expect(actions(placementAfterArrival, userDetailsFactory.build({ permissions: [] }))).toEqual(null)
       })
 
-      it('should allow recording a departure, assigning a keyworker and requesting a transfer', () => {
+      it('should allow recording a departure, assigning a keyworker, requesting a transfer and changing the placement', () => {
         expect(actions(placementAfterArrival, userDetails)).toEqual([
-          { items: [keyworkerOption, departureOption, requestTransferOption] },
+          { items: [keyworkerOption, departureOption, requestTransferOption, changePlacementOption] },
         ])
       })
 
@@ -288,6 +306,17 @@ describe('placementUtils', () => {
           ),
         ).toEqual([{ items: [requestTransferOption] }])
       })
+
+      it('should require the correct permission for changing the placement', () => {
+        expect(
+          actions(
+            placementAfterArrival,
+            userDetailsFactory.build({
+              permissions: ['cas1_space_booking_create'],
+            }),
+          ),
+        ).toEqual([{ items: [changePlacementOption] }])
+      })
     })
 
     describe('when the placement has both an arrival and a departure recorded', () => {
@@ -308,62 +337,78 @@ describe('placementUtils', () => {
   })
 
   describe('getKeyDetail', () => {
-    it('should return the key information from the person in the placement', () => {
-      const placement = cas1SpaceBookingFactory.build()
+    const tier = tierEnvelopeFactory.build().value.level
 
-      expect(getKeyDetail(placement)).toEqual({
-        header: { key: '', showKey: false, value: (placement.person as FullPerson).name },
+    it('should return the key information for a placement', () => {
+      const person = personFactory.build()
+
+      expect(getKeyDetail(person, tier)).toEqual({
+        header: { key: '', showKey: false, value: person.name },
         items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
+          { key: { text: 'CRN' }, value: { text: person.crn } },
+          { key: { text: 'Tier' }, value: { text: tier } },
           {
             key: { text: 'Date of birth' },
             value: {
-              text: DateFormats.isoDateToUIDate((placement.person as FullPerson).dateOfBirth, { format: 'short' }),
+              text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
             },
           },
         ],
       })
     })
 
+    it('should show the tier as not available if it is not defined', () => {
+      const person = personFactory.build()
+
+      const result = getKeyDetail(person)
+
+      expect(result.items[1].value).toEqual({ text: 'Not available' })
+    })
+
     it('should prefix the name with LAO if the person is LAO', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: fullPersonFactory.build({
-          isRestricted: true,
-        }),
+      const person = fullPersonFactory.build({
+        isRestricted: true,
       })
 
-      const result = getKeyDetail(placement)
+      const result = getKeyDetail(person, tier)
 
-      expect(result.header.value).toEqual(`LAO: ${(placement.person as FullPerson).name}`)
+      expect(result.header.value).toEqual(`LAO: ${person.name}`)
     })
 
     it('should not show the name or date of birth for a restricted person', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: restrictedPersonFactory.build(),
-      })
+      const person = restrictedPersonFactory.build()
 
-      expect(getKeyDetail(placement)).toEqual({
+      expect(getKeyDetail(person, tier)).toEqual({
         header: { key: '', showKey: false, value: 'Limited Access Offender' },
         items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
+          { key: { text: 'CRN' }, value: { text: person.crn } },
+          { key: { text: 'Tier' }, value: { text: tier } },
         ],
       })
     })
 
     it('should not show the name or date of birth for an unknown person', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: unknownPersonFactory.build(),
-      })
+      const person = unknownPersonFactory.build()
 
-      expect(getKeyDetail(placement)).toEqual({
+      expect(getKeyDetail(person, tier)).toEqual({
         header: { key: '', showKey: false, value: 'Unknown person' },
         items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
+          { key: { text: 'CRN' }, value: { text: person.crn } },
+          { key: { text: 'Tier' }, value: { text: tier } },
         ],
       })
+    })
+  })
+
+  describe('placementKeyDetails', () => {
+    it('calls getKeyDetails with person and tier', () => {
+      jest.spyOn(placementUtils, 'getKeyDetail')
+
+      const placement = cas1SpaceBookingFactory.build()
+
+      placementKeyDetails(placement)
+
+      expect(placementUtils.getKeyDetail).toHaveBeenCalledWith(placement.person, placement.tier)
     })
   })
 

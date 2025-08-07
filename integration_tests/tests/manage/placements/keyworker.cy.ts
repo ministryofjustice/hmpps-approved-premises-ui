@@ -59,7 +59,7 @@ context('Keyworker', () => {
     const placementPage = PlacementShowPage.visit(placement)
 
     // Then the record non-arrival option should not be present
-    placementPage.actionMenuShouldNotExist()
+    placementPage.actionShouldNotExist('Edit keyworker')
 
     // When I navigate to the keyworker page directly
     // Then I see an authorisation error

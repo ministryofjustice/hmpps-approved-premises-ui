@@ -16,6 +16,7 @@ export const controllers = (services: Services) => {
     applicationService,
     premisesService,
     sessionService,
+    placementService,
   } = services
 
   const placementRequestController = new PlacementRequestController(
@@ -33,8 +34,8 @@ export const controllers = (services: Services) => {
   const occupancyViewController = new OccupancyViewController(
     placementRequestService,
     premisesService,
-    spaceSearchService,
     sessionService,
+    placementService,
   )
 
   return {

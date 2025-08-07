@@ -18,8 +18,9 @@ import {
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import { ErrorsAndUserInput, PaginatedResponse } from '../../@types/ui'
-import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
+import { assessmentKeyDetails, awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { placementKeyDetails } from '../../utils/placements'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
@@ -186,6 +187,7 @@ describe('assessmentsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
+        contextKeyDetails: assessmentKeyDetails(assessment),
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
         errorSummary: [],
@@ -240,6 +242,7 @@ describe('assessmentsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
+        contextKeyDetails: assessmentKeyDetails(assessment),
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
         errorSummary: [],
@@ -265,6 +268,7 @@ describe('assessmentsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
           assessment,
+          contextKeyDetails: assessmentKeyDetails(assessment),
           pageHeading: 'Assess an Approved Premises (AP) application',
           taskList: stubTaskList,
           errorSummary: errorsAndUserInput.errorSummary,

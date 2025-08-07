@@ -2,7 +2,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { addDays } from 'date-fns'
-import { PlacementService, PremisesService } from '../../../../services'
+import { PlacementService, PremisesService, SessionService } from '../../../../services'
 import {
   cas1PremiseCapacityFactory,
   cas1PremisesFactory,
@@ -11,10 +11,9 @@ import {
 import ChangesController from './changesController'
 import { occupancySummary, spaceBookingConfirmationSummaryListRows } from '../../../../utils/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
-import matchPaths from '../../../../paths/match'
 import managePaths from '../../../../paths/manage'
 import adminPaths from '../../../../paths/admin'
-import { placementOverviewSummary } from '../../../../utils/placements'
+import { placementKeyDetails, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { durationSelectOptions } from '../../../../utils/match/occupancy'
@@ -23,6 +22,7 @@ import { DateFormats } from '../../../../utils/dateUtils'
 import * as validationUtils from '../../../../utils/validation'
 import { ValidationError } from '../../../../utils/errors'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../../utils/characteristicsUtils'
+import { assessmentKeyDetails } from '../../../../utils/assessments/utils'
 
 describe('changesController', () => {
   const token = 'TEST_TOKEN'
@@ -34,7 +34,8 @@ describe('changesController', () => {
 
   const placementService = createMock<PlacementService>()
   const premisesService = createMock<PremisesService>()
-  const changesController = new ChangesController(placementService, premisesService)
+  const sessionService = createMock<SessionService>()
+  const changesController = new ChangesController(placementService, premisesService, sessionService)
 
   const premises = cas1PremisesFactory.build()
   const placement = cas1SpaceBookingFactory
@@ -43,6 +44,11 @@ describe('changesController', () => {
   const capacity = cas1PremiseCapacityFactory.build()
   const params = { premisesId: premises.id, placementId: placement.id }
   const viewUrl = managePaths.premises.placements.changes.new(params)
+  const basePlaceholderDetailsUrl = managePaths.premises.placements.changes.dayOccupancy({
+    placementId: placement.id,
+    premisesId: premises.id,
+    date: ':date',
+  })
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -50,6 +56,7 @@ describe('changesController', () => {
     placementService.getPlacement.mockResolvedValue(placement)
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(capacity)
+    sessionService.getPageBackLink.mockReturnValue('/backlink')
     request = createMock<Request>({
       user: { token },
       params,
@@ -60,17 +67,23 @@ describe('changesController', () => {
 
   describe('new', () => {
     it('renders the change placement screen with current booking information', async () => {
-      const requestHandler = changesController.new()
-      await requestHandler(request, response, next)
+      await changesController.new()(request, response, next)
 
       const expectedCriteria = filterRoomLevelCriteria(placement.characteristics)
-      const expectedPlaceholderDayUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-        id: placement.placementRequestId,
-        premisesId: premises.id,
-        date: ':date',
-      })}?${createQueryString({ criteria: expectedCriteria, excludeSpaceBookingId: placement.id })}`
+      const expectedPlaceholderDayUrl = `${basePlaceholderDetailsUrl}${createQueryString(
+        { criteria: expectedCriteria },
+        {
+          arrayFormat: 'repeat',
+          addQueryPrefix: true,
+        },
+      )}`
       const expectedDuration = 31
 
+      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+        '/manage/premises/:premisesId/placements/:placementId/changes/new',
+        request,
+        ['/manage/premises/:premisesId/placements/:placementId', '/admin/placement-requests/:id'],
+      )
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
         startDate: placement.expectedArrivalDate,
@@ -78,8 +91,9 @@ describe('changesController', () => {
         excludeSpaceBookingId: placement.id,
       })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
-        backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
+        backlink: '/backlink',
         pageHeading: 'Change placement',
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         selectedCriteria: roomCharacteristicsInlineList(expectedCriteria, 'no room criteria'),
         arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
@@ -111,11 +125,9 @@ describe('changesController', () => {
         const requestHandler = changesController.new()
         await requestHandler({ ...request, query }, response, next)
 
-        const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-          id: placement.placementRequestId,
-          premisesId: premises.id,
-          date: ':date',
-        })}?${createQueryString({ criteria: filterCriteria, excludeSpaceBookingId: placement.id })}`
+        const expectedPlaceholderDayUrl = `${basePlaceholderDetailsUrl}?${createQueryString({
+          criteria: filterCriteria,
+        })}`
 
         expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
           startDate: '2025-05-12',
@@ -126,7 +138,7 @@ describe('changesController', () => {
           expect.objectContaining({
             summary: occupancySummary(capacity.capacity, filterCriteria),
             calendarHeading: 'Showing 1 week from 12 May 2025',
-            calendar: occupancyCalendar(capacity.capacity, placeholderDetailsUrl, filterCriteria),
+            calendar: occupancyCalendar(capacity.capacity, expectedPlaceholderDayUrl, filterCriteria),
             durationOptions: durationSelectOptions(Number(query.durationDays)),
             criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, filterCriteria),
             startDate: '12/5/2025',
@@ -340,7 +352,7 @@ describe('changesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',
         backlink: expectedBackLink,
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
           expectedArrivalDate: query.arrivalDate,
@@ -383,6 +395,21 @@ describe('changesController', () => {
         expectedUpdateBody,
       )
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, params.placementId)
+      expect(mockFlash).toHaveBeenCalledWith('success', 'Booking changed successfully')
+      expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
+    })
+
+    it('redirects the user to the placement for an offline placement', async () => {
+      placementService.updatePlacement.mockResolvedValue({})
+      placementService.getPlacement.mockResolvedValue({ ...placement, placementRequestId: undefined })
+
+      await changesController.create()({ ...request, body }, response, next)
+
+      const expectedRedirectUrl = managePaths.premises.placements.show({
+        premisesId: premises.id,
+        placementId: placement.id,
+      })
+
       expect(mockFlash).toHaveBeenCalledWith('success', 'Booking changed successfully')
       expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
     })

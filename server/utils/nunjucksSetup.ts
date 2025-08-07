@@ -52,7 +52,6 @@ import * as FormUtils from './formUtils'
 import * as UserUtils from './users'
 import * as TaskUtils from './tasks'
 import * as PlacementRequestUtils from './placementRequests'
-import * as MatchUtils from './match'
 import * as SummaryListUtils from './applications/summaryListUtils'
 import * as BedUtils from './bedUtils'
 import * as OutOfServiceBedUtils from './outOfServiceBedUtils'
@@ -255,7 +254,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('UserUtils', UserUtils)
   njkEnv.addGlobal('TaskUtils', TaskUtils)
   njkEnv.addGlobal('PlacementRequestUtils', PlacementRequestUtils)
-  njkEnv.addGlobal('MatchUtils', MatchUtils)
   njkEnv.addGlobal('SummaryListUtils', SummaryListUtils)
   njkEnv.addGlobal('BedUtils', BedUtils)
   njkEnv.addGlobal('OutOfServiceBedUtils', OutOfServiceBedUtils)

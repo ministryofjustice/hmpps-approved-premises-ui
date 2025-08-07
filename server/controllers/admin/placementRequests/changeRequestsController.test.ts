@@ -15,6 +15,8 @@ import { changeRequestSummaryList } from '../../../utils/placementRequests/chang
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import { DateFormats } from '../../../utils/dateUtils'
+import { placementKeyDetails } from '../../../utils/placements'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 describe('plannedTransferController', () => {
   const token = 'TEST_TOKEN'
@@ -80,11 +82,11 @@ describe('plannedTransferController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/changeRequests/review', {
         pageHeading: 'Review appeal',
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         backLink: `/admin/placement-requests/${placementRequest.id}`,
         bookingSummary: placementSummaryList(placementRequest),
         changeRequestSummary: changeRequestSummaryList(changeRequest),
         decisionOptions,
-        placementRequest,
         ...errorsAndUserInput,
       })
     })
