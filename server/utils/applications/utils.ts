@@ -354,7 +354,6 @@ const urlTypeForUi = (type: Cas1TimelineEventUrlType) => {
   const translations: Record<Cas1TimelineEventUrlType, string> = {
     application: 'application',
     assessment: 'assessment',
-    booking: 'placement',
     assessmentAppeal: 'appeal',
     spaceBooking: 'placement',
   }

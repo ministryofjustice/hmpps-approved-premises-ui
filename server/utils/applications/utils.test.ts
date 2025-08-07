@@ -653,11 +653,7 @@ describe('utils', () => {
       ['PIPE', 'pipe'],
       ['RFAP', 'rfap'],
     ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
-      const application = applicationFactory.build({
-        apType: applicationApType,
-        isEsapApplication: undefined,
-        isPipeApplication: undefined,
-      })
+      const application = applicationFactory.build({ apType: applicationApType })
       expect(getApplicationType(application)).toEqual(expectedOutput)
     })
   })
@@ -844,7 +840,6 @@ describe('utils', () => {
     it.each([
       ['application', 'application'],
       ['assessment', 'assessment'],
-      ['booking', 'placement'],
       ['assessmentAppeal', 'appeal'],
       ['spaceBooking', 'placement'],
     ])('Translates a "%s" url type to "%s"', (urlType: Cas1TimelineEventUrlType, translation: string) => {

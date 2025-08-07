@@ -6,6 +6,7 @@ import { addDays } from 'date-fns'
 
 import type {
   ApprovedPremisesApplication,
+  ApType,
   AssessmentDecision,
   Cas1ApplicationUserDetails,
   Cas1OASysSupportingInformationQuestionMetaData,
@@ -132,17 +133,6 @@ export const applicationUserDetailsFactory = new Factory<Cas1ApplicationUserDeta
   telephoneNumber: faker.phone.number(),
 }))
 
-const apTypeField = ():
-  | Pick<ApprovedPremisesApplication, 'isEsapApplication'>
-  | Pick<ApprovedPremisesApplication, 'isPipeApplication'>
-  | Pick<ApprovedPremisesApplication, 'apType'> => {
-  return faker.helpers.arrayElement([
-    { isEsapApplication: true },
-    { isPipeApplication: true },
-    { apType: faker.helpers.arrayElement(['normal', 'esap', 'mhapElliottHouse', 'mhapStJosephs', 'pipe', 'rfap']) },
-  ])
-}
-
 export default ApplicationFactory.define(() => ({
   type: 'CAS1',
   id: faker.string.uuid(),
@@ -163,5 +153,5 @@ export default ApplicationFactory.define(() => ({
   caseManagerUserDetails: applicationUserDetailsFactory.build(),
   applicantUserDetails: applicationUserDetailsFactory.build(),
   licenceExpiryDate: DateFormats.dateObjToIsoDateTime(faker.date.future()),
-  ...apTypeField(),
+  apType: faker.helpers.arrayElement(['normal', 'esap', 'mhapElliottHouse', 'mhapStJosephs', 'pipe', 'rfap']) as ApType,
 }))
