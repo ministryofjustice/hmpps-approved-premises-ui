@@ -1,13 +1,13 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { BedSummary, Cas1BedDetail } from '@approved-premises/api'
+import type { Cas1PremisesBedSummary, Cas1BedDetail } from '@approved-premises/api'
 
 import { stubFor } from './setup'
 
 import paths from '../../server/paths/api'
 
 export default {
-  stubBeds: (args: { premisesId: string; bedSummaries: Array<BedSummary> }): SuperAgentRequest =>
+  stubBeds: (args: { premisesId: string; bedSummaries: Array<Cas1PremisesBedSummary> }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',

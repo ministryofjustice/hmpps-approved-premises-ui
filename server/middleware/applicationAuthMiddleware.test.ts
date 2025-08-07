@@ -81,7 +81,7 @@ describe('applicationAuthMiddleware', () => {
   })
 
   it('redirects with an error if the user does not have the role and no required permissions are specified', async () => {
-    const user = userDetailsFactory.build({ roles: [], permissions: ['cas1_adhoc_booking_create'] })
+    const user = userDetailsFactory.build({ roles: [], permissions: ['cas1_space_booking_create'] })
     const response = createMock<Response>({ locals: { user } })
 
     const loggerSpy = jest.spyOn(logger, 'error')
