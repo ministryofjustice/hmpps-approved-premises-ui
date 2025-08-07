@@ -30,6 +30,7 @@ export default function routes(controllers: Controllers, router: Router, service
     transfersController,
     plannedTransferController,
     placementAppealController,
+    occupancyViewController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -250,6 +251,10 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   post(paths.premises.placements.changes.confirm.pattern, changesController.create(), {
     auditEvent: 'CREATE_BOOKING_CHANGE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  get(paths.premises.placements.changes.dayOccupancy.pattern, occupancyViewController.viewDay(), {
+    auditEvent: 'CREATE_BOOKING_VIEW_DAY_OCCUPANCY',
     allowedPermissions: ['cas1_space_booking_create'],
   })
 

@@ -1,7 +1,7 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { ObjectWithDateParts } from '@approved-premises/ui'
-import { PlacementService, PremisesService } from '../../../../services'
+import { PlacementService, PremisesService, SessionService } from '../../../../services'
 import {
   catchValidationErrorOrPropogate,
   errorMessage,
@@ -24,7 +24,6 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { durationSelectOptions, getClosestDuration } from '../../../../utils/match/occupancy'
 import { OccupancySummary } from '../../../../utils/match/occupancySummary'
 import managePaths from '../../../../paths/manage'
-import matchPaths from '../../../../paths/match'
 import adminPaths from '../../../../paths/admin'
 import { ValidationError } from '../../../../utils/errors'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../../utils/characteristicsUtils'
@@ -72,6 +71,7 @@ export default class ChangesController {
   constructor(
     private readonly placementService: PlacementService,
     private readonly premisesService: PremisesService,
+    private readonly sessionService: SessionService,
   ) {}
 
   new(): RequestHandler {
@@ -118,17 +118,11 @@ export default class ChangesController {
           endDate: capacityDates.endDate,
           excludeSpaceBookingId: placement.id,
         })
-        const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-          id: placement.placementRequestId,
+        const placeholderDetailsUrl = `${managePaths.premises.placements.changes.dayOccupancy({
           premisesId,
+          placementId,
           date: ':date',
-        })}${createQueryString(
-          {
-            criteria,
-            excludeSpaceBookingId: placement.id,
-          },
-          { arrayFormat: 'repeat', addQueryPrefix: true },
-        )}`
+        })}${createQueryString({ criteria }, { arrayFormat: 'repeat', addQueryPrefix: true })}`
 
         summary = occupancySummary(capacity.capacity, criteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, criteria)
@@ -136,7 +130,10 @@ export default class ChangesController {
       }
 
       return res.render('manage/premises/placements/changes/new', {
-        backlink: adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }),
+        backlink: this.sessionService.getPageBackLink(managePaths.premises.placements.changes.new.pattern, req, [
+          managePaths.premises.placements.show.pattern,
+          adminPaths.admin.placementRequests.show.pattern,
+        ]),
         pageHeading,
         placement,
         selectedCriteria: roomCharacteristicsInlineList(criteria, 'no room criteria'),
@@ -249,7 +246,14 @@ export default class ChangesController {
 
         req.flash('success', 'Booking changed successfully')
 
-        return res.redirect(adminPaths.admin.placementRequests.show({ id: placement.placementRequestId }))
+        const redirectUrl = placement.placementRequestId
+          ? adminPaths.admin.placementRequests.show({ id: placement.placementRequestId })
+          : managePaths.premises.placements.show({
+              premisesId,
+              placementId,
+            })
+
+        return res.redirect(redirectUrl)
       } catch (error) {
         const redirectUrl = `${managePaths.premises.placements.changes.confirm({
           premisesId,

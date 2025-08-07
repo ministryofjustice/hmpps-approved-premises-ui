@@ -207,7 +207,7 @@ export default abstract class Page {
   }
 
   uncheckAllCheckboxesByName(name: string): void {
-    cy.get(`input[name="${name}"]`).uncheck()
+    cy.get(`input[name="${name}"]:checkbox`).uncheck()
   }
 
   completeTextInput(name: string, value: string): void {

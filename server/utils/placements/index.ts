@@ -168,6 +168,17 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     }
   }
 
+  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_create'])) {
+    actionList.push({
+      href: paths.premises.placements.changes.new({
+        premisesId: placement.premises.id,
+        placementId: placement.id,
+      }),
+      classes: 'govuk-button--secondary',
+      text: 'Change placement',
+    })
+  }
+
   return actionList.length ? [{ items: actionList }] : null
 }
 

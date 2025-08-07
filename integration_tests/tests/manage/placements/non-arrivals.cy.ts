@@ -89,7 +89,7 @@ context('Non-arrivals', () => {
     const placementPage = PlacementShowPage.visit(placement)
 
     // Then the record non-arrival option should not be present
-    placementPage.actionMenuShouldNotExist()
+    placementPage.actionShouldNotExist('Record non-arrival')
 
     // When I navigate to the non-arrival page directly
     // Then I see an authorisation error
