@@ -7,7 +7,7 @@ export default Factory.define<ApprovedPremises>(() => ({
   id: faker.string.uuid(),
   service: 'approved-premises',
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
-  status: faker.helpers.arrayElement(['pending', 'active', 'archived']),
+  status: faker.helpers.arrayElement(['active', 'archived']),
   apCode: faker.string.alphanumeric(5),
   postcode: faker.location.zipCode(),
   bedCount: 50,

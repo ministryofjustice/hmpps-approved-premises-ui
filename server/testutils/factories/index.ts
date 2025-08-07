@@ -99,6 +99,7 @@ import oasysQuestionFactory from './oasysQuestion'
 import cas1OasysGroupFactory, { roshSummaryFactory } from './cas1OASysGroup'
 import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestrictionSummary'
 import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestriction'
+import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 
 export {
   acctAlertFactory,
@@ -149,6 +150,7 @@ export {
   cas1PlacementRequestSummaryFactory,
   cas1KeyworkerAllocationFactory,
   cas1UpdateSpaceBookingFactory,
+  cas1RequestedPlacementPeriodFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,

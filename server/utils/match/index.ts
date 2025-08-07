@@ -8,7 +8,6 @@ import {
   Cas1SpaceBookingCharacteristic,
   PlacementCriteria,
   PlacementRequest,
-  PlacementRequestDetail,
   ReleaseTypeOption,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchResult as SpaceSearchResult,
@@ -217,7 +216,7 @@ export const lengthOfStayRow = (lengthInDays: number) => ({
   },
 })
 
-export const preferredPostcodeRow = (postcodeDistrict: PlacementRequestDetail['location']) => ({
+export const preferredPostcodeRow = (postcodeDistrict: Cas1PlacementRequestDetail['location']) => ({
   key: {
     text: 'Preferred postcode',
   },

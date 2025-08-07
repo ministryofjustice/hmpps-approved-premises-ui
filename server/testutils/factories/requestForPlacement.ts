@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { RequestForPlacement } from '@approved-premises/api'
 import placementDatesFactory from './placementDates'
+import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 
 export default Factory.define<RequestForPlacement>(() => ({
   id: faker.string.uuid(),
@@ -22,6 +23,7 @@ export default Factory.define<RequestForPlacement>(() => ({
     'person_departed',
   ]),
   type: faker.helpers.arrayElement(['automatic', 'manual']),
+  requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
   document: {
     'request-a-placement': [
       {

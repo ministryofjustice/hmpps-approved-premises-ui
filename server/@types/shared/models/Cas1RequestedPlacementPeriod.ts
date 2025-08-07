@@ -2,7 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewReferralHistoryUserNote = {
-    message: string;
+export type Cas1RequestedPlacementPeriod = {
+    arrival: string;
+    arrivalFlexible?: boolean;
+    duration: number;
 };
 

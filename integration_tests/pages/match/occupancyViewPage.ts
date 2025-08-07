@@ -1,4 +1,4 @@
-import type { Cas1PlacementRequestDetail, Cas1Premises, PlacementRequestDetail } from '@approved-premises/api'
+import type { Cas1PlacementRequestDetail, Cas1Premises } from '@approved-premises/api'
 import paths from '../../../server/paths/match'
 import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
@@ -9,7 +9,7 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
     super(`View spaces in ${premisesName}`)
   }
 
-  static visit(placementRequest: PlacementRequestDetail, premises: Cas1Premises) {
+  static visit(placementRequest: Cas1PlacementRequestDetail, premises: Cas1Premises) {
     const path = paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id })
 
     cy.visit(path)
