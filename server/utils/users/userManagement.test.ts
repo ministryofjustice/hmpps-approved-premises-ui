@@ -127,6 +127,11 @@ describe('userRolesSelectOptions', () => {
         text: 'Future manager',
         value: 'future_manager',
       },
+      {
+        selected: false,
+        text: 'AP area manager',
+        value: 'ap_area_manager',
+      },
       { selected: false, text: 'User manager', value: 'user_manager' },
       { selected: false, text: 'Change request development', value: 'change_request_dev' },
       {
@@ -151,23 +156,12 @@ describe('userRolesSelectOptions', () => {
         text: 'Excluded from placement application allocation',
         value: 'excluded_from_placement_application_allocation',
       },
-      {
-        selected: false,
-        text: 'Appeals manager',
-        value: 'appeals_manager',
-      },
-      {
-        selected: false,
-        text: 'Future manager',
-        value: 'future_manager',
-      },
+      { selected: false, text: 'Appeals manager', value: 'appeals_manager' },
+      { selected: false, text: 'Future manager', value: 'future_manager' },
+      { selected: false, text: 'AP area manager', value: 'ap_area_manager' },
       { selected: false, text: 'User manager', value: 'user_manager' },
       { selected: false, text: 'Change request development', value: 'change_request_dev' },
-      {
-        selected: false,
-        text: 'Janitor',
-        value: 'janitor',
-      },
+      { selected: false, text: 'Janitor', value: 'janitor' },
     ])
   })
 })

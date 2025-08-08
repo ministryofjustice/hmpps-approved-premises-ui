@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { Task } from '@approved-premises/api'
-import { when } from 'jest-when'
-import { ErrorsAndUserInput, PaginatedResponse } from '@approved-premises/ui'
+import { SortDirection, Task, TaskSortField } from '@approved-premises/api'
+import { ErrorsAndUserInput, ErrorSummary, PaginatedResponse, TaskSearchQualification } from '@approved-premises/ui'
+import { faker } from '@faker-js/faker'
 import TasksController from './tasksController'
 import {
   applicationFactory,
@@ -45,180 +45,130 @@ describe('TasksController', () => {
 
   describe('index', () => {
     const cruManagementArea = cruManagementAreaFactory.build()
-    const user = userDetailsFactory.build({ cruManagementArea })
+    const user = userDetailsFactory.build({ cruManagementArea, permissions: ['cas1_tasks_allocate'] })
     const users = userFactory.buildList(5)
     const tasks = taskFactory.buildList(1)
     const paginatedResponse = paginatedResponseFactory.build({
       data: tasks,
     }) as PaginatedResponse<Task>
     const cruManagementAreas = cruManagementAreaFactory.buildList(3)
-    const paginationDetails = {
+
+    const paginationDetails: {
+      hrefPrefix: string
+      pageNumber: number
+      sortBy: TaskSortField
+      sortDirection: SortDirection
+    } = {
       hrefPrefix: paths.tasks.index({}),
       pageNumber: 1,
+      sortBy: faker.helpers.arrayElement(['person', 'dueAt', 'expectedArrivalDate', 'allocatedTo', 'apType']),
+      sortDirection: faker.helpers.arrayElement(['asc', 'desc']),
+    }
+    const template = 'tasks/index'
+    const renderParameters = {
+      pageHeading: 'Task Allocation',
+      taskHeader: tasksTableHeader(
+        'allocated',
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+        paginationDetails.hrefPrefix,
+      ),
+      taskRows: tasksTableRows(tasks, 'allocated', true),
+      allocatedFilter: 'allocated',
+      cruManagementAreas,
+      pageNumber: Number(paginatedResponse.pageNumber),
+      totalPages: Number(paginatedResponse.totalPages),
+      hrefPrefix: paginationDetails.hrefPrefix,
+      cruManagementArea: cruManagementArea.id,
+      userQualificationSelectOptions: userQualificationsSelectOptions(null),
+      users,
+      activeTab: 'allocated',
+    }
+
+    const apiGetAllParameters = {
+      allocatedFilter: 'allocated',
+      token,
+      sortBy: paginationDetails.sortBy,
+      sortDirection: paginationDetails.sortDirection,
+      page: paginationDetails.pageNumber,
+      cruManagementAreaId: cruManagementArea.id,
+      taskTypes: ['PlacementApplication', 'Assessment'],
+      requiredQualification: null as TaskSearchQualification,
+      isCompleted: false,
     }
 
     beforeEach(() => {
-      when(cruManagementAreaService.getCruManagementAreas).calledWith(token).mockResolvedValue(cruManagementAreas)
-      when(taskService.getAll).calledWith(expect.anything()).mockResolvedValue(paginatedResponse)
-      when(userService.getUserList).calledWith(token, ['assessor', 'appeals_manager']).mockResolvedValue(users)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
+      taskService.getAll.mockResolvedValue(paginatedResponse)
+      userService.getUserList.mockResolvedValue(users)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
       response.locals.user = user
     })
 
     it('should render the tasks template with the users CRU management area filtered by default', async () => {
-      when(getPaginationDetails as jest.Mock)
-        .calledWith(request, paths.tasks.index({}), expect.anything())
-        .mockReturnValue(paginationDetails)
+      await tasksController.index()(request, response, next)
 
-      const requestHandler = tasksController.index()
-      await requestHandler(request, response, next)
+      expect(response.render).toHaveBeenCalledWith(template, renderParameters)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/index', {
-        pageHeading: 'Task Allocation',
-        taskHeader: tasksTableHeader('allocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, 'allocated'),
-        allocatedFilter: 'allocated',
-        cruManagementAreas,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        cruManagementArea: cruManagementArea.id,
-        userQualificationSelectOptions: userQualificationsSelectOptions(null),
-        users,
-        activeTab: 'allocated',
-      })
-
-      expect(taskService.getAll).toHaveBeenCalledWith({
-        allocatedFilter: 'allocated',
-        token,
-        sortBy: 'createdAt',
-        sortDirection: 'asc',
-        page: 1,
-        cruManagementAreaId: cruManagementArea.id,
-        taskTypes: ['PlacementApplication', 'Assessment'],
-        requiredQualification: null,
-        isCompleted: false,
-      })
+      expect(taskService.getAll).toHaveBeenCalledWith(apiGetAllParameters)
     })
 
     it('should handle request parameters correctly', async () => {
-      const paramPaginationDetails = {
-        hrefPrefix: paths.tasks.index({}),
-        pageNumber: 1,
-        sortBy: 'name',
-        sortDirection: 'desc',
+      const query = {
+        activeTab: 'unallocated',
+        crnOrName: 'ABC123',
+        allocatedFilter: 'unallocated',
+        area: '1234',
+        allocatedToUserId: '123',
+        requiredQualification: 'emergency' as TaskSearchQualification,
       }
-      const cruManagementAreaId = '1234'
-      const allocatedFilter = 'unallocated'
-      const allocatedToUserId = '123'
-      const requiredQualification = 'emergency'
-      const crnOrName = 'ABC123'
-      const activeTab = 'unallocated'
 
-      const requestHandler = tasksController.index()
       const unallocatedRequest = {
         ...request,
-        query: {
-          activeTab,
-          allocatedFilter,
-          area: cruManagementAreaId,
-          allocatedToUserId,
-          requiredQualification,
-          crnOrName,
-        },
+        query,
       }
 
-      when(getPaginationDetails as jest.Mock)
-        .calledWith(unallocatedRequest, paths.tasks.index({}), {
-          activeTab,
-          allocatedFilter,
-          area: cruManagementAreaId,
-          allocatedToUserId,
-          requiredQualification,
-          crnOrName,
-        })
-        .mockReturnValue(paramPaginationDetails)
-
-      await requestHandler(unallocatedRequest, response, next)
+      await tasksController.index()(unallocatedRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
-        pageHeading: 'Task Allocation',
-        taskHeader: tasksTableHeader('unallocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, 'unallocated'),
-        allocatedFilter,
-        cruManagementAreas,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        cruManagementArea: cruManagementAreaId,
-        users,
-        allocatedToUserId,
-        userQualificationSelectOptions: userQualificationsSelectOptions(requiredQualification),
-        crnOrName,
-        activeTab,
+        ...renderParameters,
+        taskHeader: tasksTableHeader(
+          'unallocated',
+          paginationDetails.sortBy,
+          paginationDetails.sortDirection,
+          paginationDetails.hrefPrefix,
+        ),
+        taskRows: tasksTableRows(tasks, 'unallocated', true),
+
+        cruManagementArea: query.area,
+        allocatedFilter: query.allocatedFilter,
+        allocatedToUserId: query.allocatedToUserId,
+        userQualificationSelectOptions: userQualificationsSelectOptions(query.requiredQualification),
+        crnOrName: query.crnOrName,
+        activeTab: query.activeTab,
       })
 
-      expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
-        activeTab,
-        allocatedFilter,
-        area: cruManagementAreaId,
-        allocatedToUserId,
-        requiredQualification,
-        crnOrName,
-      })
+      expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), query)
 
       expect(taskService.getAll).toHaveBeenCalledWith({
-        allocatedFilter,
-        token,
-        sortBy: paramPaginationDetails.sortBy,
-        sortDirection: paramPaginationDetails.sortDirection,
-        page: paramPaginationDetails.pageNumber,
-        cruManagementAreaId,
+        ...apiGetAllParameters,
         taskTypes: ['PlacementApplication', 'Assessment'],
-        allocatedToUserId,
-        requiredQualification,
-        crnOrName,
+        allocatedFilter: query.allocatedFilter,
+        requiredQualification: query.requiredQualification,
+        cruManagementAreaId: query.area,
+        allocatedToUserId: query.allocatedToUserId,
+        crnOrName: query.crnOrName,
         isCompleted: false,
       })
     })
 
     it('should not send an area query if the  if the query is "all"', async () => {
-      const paramPaginationDetails = {
-        hrefPrefix: paths.tasks.index({}),
-        pageNumber: 1,
-        sortBy: 'createdAt',
-        sortDirection: 'asc',
-        allocatedFilter: 'allocated',
-      }
-
-      const requestHandler = tasksController.index()
       const requestWithQuery = { ...request, query: { area: 'all' } }
 
-      when(getPaginationDetails as jest.Mock)
-        .calledWith(requestWithQuery, paths.tasks.index({}), {
-          activeTab: 'allocated',
-          allocatedFilter: 'allocated',
-          area: 'all',
-          requiredQualification: null,
-        })
-        .mockReturnValue(paramPaginationDetails)
+      await tasksController.index()(requestWithQuery, response, next)
 
-      await requestHandler(requestWithQuery, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('tasks/index', {
-        pageHeading: 'Task Allocation',
-        taskHeader: tasksTableHeader('allocated', 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, 'allocated'),
-        allocatedFilter: paramPaginationDetails.allocatedFilter,
-        cruManagementAreas,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        cruManagementArea: 'all',
-        users,
-        userQualificationSelectOptions: userQualificationsSelectOptions(null),
-        activeTab: 'allocated',
-      })
+      expect(response.render).toHaveBeenCalledWith(template, { ...renderParameters, cruManagementArea: 'all' })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.tasks.index({}), {
         activeTab: 'allocated',
         allocatedFilter: 'allocated',
@@ -227,11 +177,7 @@ describe('TasksController', () => {
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
-        allocatedFilter: paramPaginationDetails.allocatedFilter,
-        token,
-        sortBy: paramPaginationDetails.sortBy,
-        sortDirection: paramPaginationDetails.sortDirection,
-        page: paramPaginationDetails.pageNumber,
+        ...apiGetAllParameters,
         cruManagementAreaId: '',
         taskTypes: ['PlacementApplication', 'Assessment'],
         requiredQualification: null,
@@ -240,85 +186,46 @@ describe('TasksController', () => {
     })
 
     it('should send isCompleted true for completed tab', async () => {
-      const paramPaginationDetails = {
-        hrefPrefix: paths.tasks.index({}),
-        pageNumber: 1,
-        sortBy: 'name',
-        sortDirection: 'desc',
-        activeTab: 'completed',
-      }
-      const cruManagementAreaId = '1234'
-      const allocatedFilter = 'unallocated'
-      const allocatedToUserId = '123'
-      const requiredQualification = 'emergency'
-      const crnOrName = 'ABC123'
       const activeTab = 'completed'
 
-      const requestHandler = tasksController.index()
-      const unallocatedRequest = {
+      const completedRequest = {
         ...request,
         query: {
           activeTab,
-          allocatedFilter,
-          area: cruManagementAreaId,
-          allocatedToUserId,
-          requiredQualification,
-          crnOrName,
         },
       }
 
-      when(getPaginationDetails as jest.Mock)
-        .calledWith(unallocatedRequest, paths.tasks.index({}), {
+      await tasksController.index()(completedRequest, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...renderParameters,
+        activeTab,
+        taskHeader: tasksTableHeader(
           activeTab,
-          allocatedFilter,
-          area: cruManagementAreaId,
-          allocatedToUserId,
-          requiredQualification,
-          crnOrName,
-        })
-        .mockReturnValue(paramPaginationDetails)
-
-      await requestHandler(unallocatedRequest, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('tasks/index', {
-        pageHeading: 'Task Allocation',
-        taskHeader: tasksTableHeader(activeTab, 'createdAt', 'asc', paginationDetails.hrefPrefix),
-        taskRows: tasksTableRows(tasks, activeTab),
-        allocatedFilter,
-        cruManagementAreas,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        cruManagementArea: cruManagementAreaId,
-        users,
-        allocatedToUserId,
-        userQualificationSelectOptions: userQualificationsSelectOptions(requiredQualification),
-        crnOrName,
-        activeTab,
-      })
-
-      expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
-        activeTab,
-        allocatedFilter,
-        area: cruManagementAreaId,
-        allocatedToUserId,
-        requiredQualification,
-        crnOrName,
+          paginationDetails.sortBy,
+          paginationDetails.sortDirection,
+          paginationDetails.hrefPrefix,
+        ),
+        taskRows: tasksTableRows(tasks, activeTab, true),
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
-        allocatedFilter,
-        token,
-        sortBy: paramPaginationDetails.sortBy,
-        sortDirection: paramPaginationDetails.sortDirection,
-        page: paramPaginationDetails.pageNumber,
-        cruManagementAreaId,
-        taskTypes: ['PlacementApplication', 'Assessment'],
-        allocatedToUserId,
-        requiredQualification,
-        crnOrName,
+        ...apiGetAllParameters,
         isCompleted: true,
       })
+    })
+
+    it('should not render an allocation link if the user lacks permission', async () => {
+      response.locals.user = userDetailsFactory.build({ cruManagementArea, permissions: [] })
+
+      await tasksController.index()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'tasks/index',
+        expect.objectContaining({
+          taskRows: tasksTableRows(tasks, 'allocated', false),
+        }),
+      )
     })
   })
 
@@ -327,6 +234,18 @@ describe('TasksController', () => {
     const taskWrapper = taskWrapperFactory.build({ task })
     const application = applicationFactory.build()
     const cruManagementAreas = cruManagementAreaFactory.buildList(3)
+    const template = 'tasks/show'
+    const expectedRenderParameters = {
+      pageHeading: `Reallocate Request for Placement`,
+      application,
+      task: taskWrapper.task,
+      users: taskWrapper.users,
+      errors: {},
+      errorSummary: [] as Array<ErrorSummary>,
+      cruManagementAreas,
+      cruManagementAreaId: '',
+      qualification: '',
+    }
 
     beforeEach(() => {
       cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
@@ -336,22 +255,11 @@ describe('TasksController', () => {
     })
 
     it('fetches the application and a list of qualified users', async () => {
-      const requestHandler = tasksController.show()
       request.params.taskType = 'placement-request'
 
-      await requestHandler(request, response, next)
+      await tasksController.show()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/show', {
-        pageHeading: `Reallocate Request for Placement`,
-        application,
-        task: taskWrapper.task,
-        users: taskWrapper.users,
-        errors: {},
-        errorSummary: [],
-        cruManagementAreas,
-        cruManagementAreaId: '',
-        qualification: '',
-      })
+      expect(response.render).toHaveBeenCalledWith(template, expectedRenderParameters)
 
       expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType, {
         cruManagementAreaId: '',
@@ -363,21 +271,14 @@ describe('TasksController', () => {
       const placementApplication = taskFactory.build({ taskType: 'PlacementApplication' })
       const placementApplicationTaskWrapper = taskWrapperFactory.build({ task: placementApplication })
       taskService.find.mockResolvedValue(placementApplicationTaskWrapper)
-      const requestHandler = tasksController.show()
       request.params.taskType = 'placement-request'
 
-      await requestHandler(request, response, next)
+      await tasksController.show()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/show', {
-        pageHeading: `Reallocate Request for Placement`,
-        application,
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...expectedRenderParameters,
         task: placementApplicationTaskWrapper.task,
         users: placementApplicationTaskWrapper.users,
-        errors: {},
-        errorSummary: [],
-        cruManagementAreas,
-        cruManagementAreaId: '',
-        qualification: '',
       })
 
       expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType, {
@@ -389,19 +290,12 @@ describe('TasksController', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = tasksController.show()
-      await requestHandler(request, response, next)
+      await tasksController.show()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/show', {
-        pageHeading: `Reallocate Request for Placement`,
-        application,
-        task: taskWrapper.task,
-        users: taskWrapper.users,
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...expectedRenderParameters,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        cruManagementAreas,
-        cruManagementAreaId: '',
-        qualification: '',
         ...errorsAndUserInput.userInput,
       })
     })
@@ -410,17 +304,11 @@ describe('TasksController', () => {
       const params = { id: 'task-id', taskType: 'placement-request' }
       const userFilters = { cruManagementAreaId: 'some-id', qualification: 'esap' }
       const requestWithQuery = { ...request, params, query: userFilters }
-      const requestHandler = tasksController.show()
-      await requestHandler(requestWithQuery, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/show', {
-        pageHeading: `Reallocate Request for Placement`,
-        application,
-        errors: {},
-        errorSummary: [],
-        task: taskWrapper.task,
-        users: taskWrapper.users,
-        cruManagementAreas,
+      await tasksController.show()(requestWithQuery, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...expectedRenderParameters,
         cruManagementAreaId: userFilters.cruManagementAreaId,
         qualification: userFilters.qualification,
       })

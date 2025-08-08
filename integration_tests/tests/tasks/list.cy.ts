@@ -1,4 +1,5 @@
 import { ApprovedPremisesUser } from '@approved-premises/api'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import ListPage from '../../pages/tasks/listPage'
 
 import {
@@ -31,7 +32,7 @@ context('Task Allocation', () => {
   })
 
   it('returns unauthorised if user does not have the cas1 view manage task permission', () => {
-    // Given I am signed in as an applicant with the correct AP area
+    GIVEN('I am signed in as an applicant with the correct AP area')
     signIn('applicant', { apArea })
 
     const path = paths.tasks.index({})
@@ -41,7 +42,7 @@ context('Task Allocation', () => {
   })
 
   it('shows a list of tasks for LAO', () => {
-    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
     const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(5)
@@ -73,29 +74,32 @@ context('Task Allocation', () => {
       cruManagementAreaId: cruManagementAreas[0].id,
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+    WHEN('I visit the tasks dashboard')
+    const listPage = ListPage.visit()
 
-    // Then I should see the tasks that are allocated
-    listPage.shouldShowAllocatedTasks()
+    THEN('I should see the tasks that are allocated')
+    listPage.shouldShowAllocatedTasks(allocatedTasks)
+    listPage.shouldContainHeaderLinks(allocatedTasks)
 
-    // And I should see the allocated to user select option
+    AND('I should see the allocated to user select option')
     listPage.shouldShowAllocatedToUserFilter()
 
-    // And the tasks that are unallocated
+    AND('the tasks that are unallocated')
     listPage.clickTab('Unallocated')
-    listPage.shouldShowUnallocatedTasks()
+    listPage.shouldShowUnallocatedTasks(unallocatedTasks)
+    listPage.shouldContainHeaderLinks(unallocatedTasks)
 
-    // And I should not see the allocated to user select option
+    AND('I should not see the allocated to user select option')
     listPage.shouldNotShowAllocatedToUserFilter()
 
-    // And the tasks that are completed
+    AND('the tasks that are completed')
     listPage.clickTab('Completed')
     listPage.shouldShowCompletedTasks(completedTasks)
+    listPage.shouldNotContainHeaderLinks(completedTasks)
   })
 
   it('shows a list of tasks', () => {
-    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
     const allocatedTasks = taskFactory.buildList(1, { personSummary: fullPersonSummaryFactory.build() })
@@ -120,31 +124,52 @@ context('Task Allocation', () => {
       cruManagementAreaId: cruManagementAreas[0].id,
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+    WHEN('I visit the tasks dashboard')
+    const listPage = ListPage.visit()
 
-    // Then I should see the tasks that are allocated
-    listPage.shouldShowAllocatedTasks()
+    THEN('I should see the tasks that are allocated')
+    listPage.shouldShowAllocatedTasks(allocatedTasks)
 
-    // And I should see the allocated to user select option
+    AND('I should see the allocated to user select option')
     listPage.shouldShowAllocatedToUserFilter()
 
-    // And the tasks that are unallocated
+    AND('the tasks that are unallocated')
     listPage.clickTab('Unallocated')
-    listPage.shouldShowUnallocatedTasks()
+    listPage.shouldShowUnallocatedTasks(unallocatedTasks)
 
-    // And I should not see the allocated to user select option
+    AND('I should not see the allocated to user select option')
     listPage.shouldNotShowAllocatedToUserFilter()
   })
 
+  it(`Doesn't show allocation links if user lacks permission`, () => {
+    GIVEN('I am signed in as a AP area manager (without the cas1_tasks_allocate permission)')
+    signIn('ap_area_manager', user)
+
+    const allocatedTasks = taskFactory.buildList(1, { personSummary: fullPersonSummaryFactory.build() })
+
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasks,
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      cruManagementAreaId: cruManagementAreas[0].id,
+    })
+
+    WHEN('I visit the tasks dashboard')
+    const listPage = ListPage.visit()
+
+    THEN('I should see the tasks that are allocated')
+    listPage.shouldShowAllocatedTasks(allocatedTasks)
+    listPage.shouldNotContainHeaderLinks(allocatedTasks)
+  })
+
   it('supports pagination', () => {
-    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
     const allocatedTasksPage1 = restrictedPersonSummaryTaskFactory.buildList(10)
     const allocatedTasksPage2 = restrictedPersonSummaryTaskFactory.buildList(10)
     const allocatedTasksPage9 = restrictedPersonSummaryTaskFactory.buildList(10)
-    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksPage1,
@@ -167,36 +192,36 @@ context('Task Allocation', () => {
       cruManagementAreaId: cruManagementAreas[0].id,
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit(allocatedTasksPage1, unallocatedTasks)
+    WHEN('I visit the tasks dashboard')
+    const listPage = ListPage.visit()
 
-    // Then I should see the tasks that are allocated
-    listPage.shouldShowAllocatedTasks()
-    // When I click next
+    THEN('I should see the tasks that are allocated')
+    listPage.shouldShowAllocatedTasks(allocatedTasksPage1)
+    WHEN('I click next')
     listPage.clickNext()
 
-    // Then the API should have received a request for the next page
+    THEN('the API should have received a request for the next page')
     cy.task('verifyTasksRequests', { page: '2', allocatedFilter: 'allocated' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // And I should see the tasks that are allocated
+    AND('I should see the tasks that are allocated')
     listPage.shouldShowAllocatedTasks(allocatedTasksPage2)
 
-    // When I click on a page number
+    WHEN('I click on a page number')
     listPage.clickPageNumber('9')
 
-    // Then the API should have received a request for the that page number
+    THEN('the API should have received a request for the that page number')
     cy.task('verifyTasksRequests', { page: '9', allocatedFilter: 'allocated' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // And I should see the tasks that are allocated
+    AND('I should see the tasks that are allocated')
     listPage.shouldShowAllocatedTasks(allocatedTasksPage9)
   })
 
   it('supports sorting', () => {
-    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
     const sortFields = ['dueAt', 'person', 'allocatedTo', 'expectedArrivalDate', 'apType']
@@ -230,26 +255,26 @@ context('Task Allocation', () => {
       })
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit(tasks, [])
+    WHEN('I visit the tasks dashboard')
+    const listPage = ListPage.visit()
 
-    // Then I should see the tasks that are allocated
-    listPage.shouldShowAllocatedTasks()
+    THEN('I should see the tasks that are allocated')
+    listPage.shouldShowAllocatedTasks(tasks)
 
     sortFields.forEach(sortField => {
-      // When I sort by the sortField in ascending order
+      WHEN('I sort by the sortField in ascending order')
       listPage.clickSortBy(sortField)
 
-      // Then the dashboard should be sorted by the sortField in ascending order
+      THEN('the dashboard should be sorted by the sortField in ascending order')
       listPage.shouldBeSortedByField(sortField, 'ascending')
 
-      // When I sort by the sortField in descending order
+      WHEN('I sort by the sortField in descending order')
       listPage.clickSortBy(sortField)
 
-      // Then the dashboard should be sorted by the sortField in ascending order
+      THEN('the dashboard should be sorted by the sortField in ascending order')
       listPage.shouldBeSortedByField(sortField, 'descending')
 
-      // And the API should have received a request for the correct sort order
+      AND('the API should have received a request for the correct sort order')
       cy.task('verifyTasksRequests', {
         allocatedFilter: 'allocated',
         page: '1',
@@ -283,12 +308,11 @@ context('Task Allocation', () => {
 
   Object.keys(filterOptions).forEach(key => {
     it(`allows filter by ${key}`, () => {
-      // Given I am signed in as a CRU member with the correct AP area and CRU management area
+      GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
       signIn('cru_member', user)
 
       const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
       const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1)
-      const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
       cy.task('stubGetAllTasks', {
         tasks: allocatedTasks,
@@ -297,13 +321,13 @@ context('Task Allocation', () => {
         cruManagementAreaId: cruManagementAreas[0].id,
       })
 
-      // When I visit the tasks dashboard
-      const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+      WHEN('I visit the tasks dashboard')
+      const listPage = ListPage.visit()
 
-      // Then I should see the tasks that are allocated
-      listPage.shouldShowAllocatedTasks()
+      THEN('I should see the tasks that are allocated')
+      listPage.shouldShowAllocatedTasks(allocatedTasks)
 
-      // When I filter by region
+      WHEN('I filter by region')
       cy.task('stubGetAllTasks', {
         tasks: allocatedTasksFiltered,
         allocatedFilter: 'allocated',
@@ -321,18 +345,17 @@ context('Task Allocation', () => {
       }
       listPage.clickApplyFilter()
 
-      // Then the page should show the results
+      THEN('the page should show the results')
       listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
     })
   })
 
   it('maintains filter on tab change', () => {
-    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
     const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
     const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1)
-    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasks,
@@ -341,13 +364,13 @@ context('Task Allocation', () => {
       cruManagementAreaId: cruManagementAreas[0].id,
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+    WHEN('I visit the tasks dashboard')
+    const listPage = ListPage.visit()
 
-    // Then I should see the tasks that are allocated
-    listPage.shouldShowAllocatedTasks()
+    THEN('I should see the tasks that are allocated')
+    listPage.shouldShowAllocatedTasks(allocatedTasks)
 
-    // When I filter by CRU Management area
+    WHEN('I filter by CRU Management area')
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFiltered,
       allocatedFilter: 'allocated',
@@ -367,21 +390,20 @@ context('Task Allocation', () => {
     listPage.searchBy('area', cruManagementAreas[1].id)
     listPage.clickApplyFilter()
 
-    // Then the page should show the results
+    THEN('the page should show the results')
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
 
-    // And click on unallocated tab
+    AND('click on unallocated tab')
     listPage.clickTab('Unallocated')
 
-    // Then the page should keep the area filter
+    THEN('the page should keep the area filter')
     listPage.shouldHaveSelectText('area', cruManagementAreas[1].name)
   })
 
   it('retains the unallocated filter when applying other filters', () => {
-    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
-    const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10)
     const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(10, { allocatedToStaffMember: undefined })
     const unallocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(1, {
       allocatedToStaffMember: undefined,
@@ -395,17 +417,13 @@ context('Task Allocation', () => {
       cruManagementAreaId: cruManagementAreas[0].id,
     })
 
-    // Given I am on the tasks dashboard filtering by the unallocated tab
-    const listPage = ListPage.visit(
-      allocatedTasks,
-      unallocatedTasks,
-      'allocatedFilter=unallocated&activeTab=unallocated',
-    )
+    GIVEN('I am on the tasks dashboard filtering by the unallocated tab')
+    const listPage = ListPage.visit('allocatedFilter=unallocated&activeTab=unallocated')
 
-    // Then I should see the tasks that are allocated
-    listPage.shouldShowUnallocatedTasks()
+    THEN('I should see the tasks that are allocated')
+    listPage.shouldShowUnallocatedTasks(unallocatedTasks)
 
-    // When I filter by region
+    WHEN('I filter by region')
     cy.task('stubGetAllTasks', {
       tasks: unallocatedTasksFiltered,
       allocatedFilter: 'unallocated',
@@ -417,19 +435,18 @@ context('Task Allocation', () => {
     listPage.searchBy('area', cruManagementAreas[0].id)
     listPage.clickApplyFilter()
 
-    // Then the status filter should be retained and allocated results should be shown
+    THEN('the status filter should be retained and allocated results should be shown')
     listPage.shouldHaveActiveTab('Unallocated')
     listPage.shouldShowUnallocatedTasks(unallocatedTasksFiltered)
   })
 
   it('defaults to user area but allows filter by all areas', () => {
-    // Given I am signed in as a CRU member with the correct AP area and CRU management area
+    GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
     const allocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1)
     const allocatedTasksFiltered = restrictedPersonSummaryTaskFactory.buildList(10)
     const allocatedTasksFilteredPage2 = restrictedPersonSummaryTaskFactory.buildList(10)
-    const unallocatedTasks = restrictedPersonSummaryTaskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasks,
@@ -461,41 +478,41 @@ context('Task Allocation', () => {
       cruManagementAreaId: '',
     })
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+    WHEN('I visit the tasks dashboard')
+    const listPage = ListPage.visit()
 
-    // Then I should see the tasks that are allocated to my area
-    listPage.shouldShowAllocatedTasks()
+    THEN('I should see the tasks that are allocated to my area')
+    listPage.shouldShowAllocatedTasks(allocatedTasks)
 
-    // When I filter by all regions
+    WHEN('I filter by all regions')
     listPage.searchBy('area', 'all')
     listPage.clickApplyFilter()
 
-    // Then the page should show the results
+    THEN('the page should show the results')
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
 
-    // When I visit the next page
+    WHEN('I visit the next page')
     listPage.clickNext()
 
     cy.task('verifyTasksRequests', { page: '2', allocatedFilter: 'allocated' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // Then the page should show the results
+    THEN('the page should show the results')
     listPage.shouldShowAllocatedTasks(allocatedTasksFilteredPage2)
 
-    // When I sort by the due date at in ascending order
+    WHEN('I sort by the due date at in ascending order')
     listPage.clickSortBy('dueAt')
 
-    // Then the dashboard should be sorted by the due date
+    THEN('the dashboard should be sorted by the due date')
     listPage.shouldBeSortedByField('dueAt', 'ascending')
 
-    // Then the page should show the filtered results
+    THEN('the page should show the filtered results')
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
   })
   ;(['taskType', 'decision', 'completedAt'] as const).forEach(sortField => {
     it(`supports pending placement requests sorting by ${sortField}`, () => {
-      // Given I am signed in as a CRU member with the correct AP area and CRU management area
+      GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
       signIn('cru_member', user)
 
       cy.task('stubGetAllTasks', {
@@ -534,22 +551,22 @@ context('Task Allocation', () => {
         cruManagementAreaId: cruManagementAreas[0].id,
       })
 
-      // When I visit the tasks dashboard
-      const listPage = ListPage.visit([], [])
+      WHEN('I visit the tasks dashboard')
+      const listPage = ListPage.visit()
 
-      // And click the completed tab
+      AND('click the completed tab')
       listPage.clickTab('Completed')
 
-      // Then I should tasks that are completed
+      THEN('I should tasks that are completed')
       listPage.shouldShowCompletedTasks(completedTasks)
 
-      // When I sort by sortField in ascending order
+      WHEN('I sort by sortField in ascending order')
       listPage.clickSortBy(sortField)
 
-      // Then the tasks should be sorted by sortField
+      THEN('the tasks should be sorted by sortField')
       listPage.shouldBeSortedByField(sortField, 'ascending')
 
-      // And the API should have received a request for the correct sort order
+      AND('the API should have received a request for the correct sort order')
       cy.task('verifyTasksRequests', {
         allocatedFilter: 'allocated',
         page: '1',
@@ -559,13 +576,13 @@ context('Task Allocation', () => {
         expect(requests).to.have.length(1)
       })
 
-      // When I sort by  descending order
+      WHEN('I sort by  descending order')
       listPage.clickSortBy(sortField)
 
-      // Then the tasks should be sorted in descending order
+      THEN('the tasks should be sorted in descending order')
       listPage.shouldBeSortedByField(sortField, 'descending')
 
-      // And the API should have received a request for the correct sort order
+      AND('the API should have received a request for the correct sort order')
       cy.task('verifyTasksRequests', {
         allocatedFilter: 'allocated',
         page: '1',

@@ -8,6 +8,7 @@ import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/tasks'
 import { userQualificationsSelectOptions } from '../utils/tasks'
+import { hasPermission } from '../utils/users'
 
 export default class TasksController {
   constructor(
@@ -25,6 +26,7 @@ export default class TasksController {
       const activeTab = (req.query.activeTab || 'allocated') as TaskTab
       const isCompleted = activeTab === 'completed'
 
+      const canAllocate = !isCompleted && hasPermission(res.locals.user, ['cas1_tasks_allocate'])
       const cruManagementAreaId = req.query.area || res.locals.user.cruManagementArea?.id
       const allocatedToUserId = req.query.allocatedToUserId as string
       const requiredQualification = req.query.requiredQualification
@@ -64,7 +66,7 @@ export default class TasksController {
 
       res.render('tasks/index', {
         pageHeading: 'Task Allocation',
-        taskRows: tasksTableRows(tasks.data, activeTab),
+        taskRows: tasksTableRows(tasks.data, activeTab, canAllocate),
         taskHeader: tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
         allocatedFilter,
         pageNumber: Number(tasks.pageNumber),
