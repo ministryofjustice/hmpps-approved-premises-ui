@@ -64,12 +64,11 @@ export default class SelectApType implements TasklistPage {
 
 export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {
   mhapElliottHouse: {
-    html: `<p class="govuk-body govuk-hint">To apply for this type of placement a person must have a confirmed diagnosis of a severe and enduring mental illness e.g. paranoid schizophrenia / bipolar affective disorder (the primary diagnosis should not be personality disorder).</p>
-        <p class="govuk-body govuk-hint">You will be required to complete and upload a <a class="govuk-link" target="_blank" href="https://justiceuk.sharepoint.com/:w:/r/sites/ApprovedPremisesCareerDevelopment/Shared%20Documents/CRU/St%20Josephs%20Referral%20form.doc?d=w0e510931be504df7be3b360bbe1b37fe&csf=1&web=1&e=XZd9u4">supplementary form (opens in a new tab)</a> to NDelius before your application is submitted.</p>
-      `,
+    html: `<p class="govuk-body govuk-hint">To apply for this type of placement a person must have a confirmed diagnosis of a severe and enduring mental illness e.g. paranoid schizophrenia / bipolar affective disorder (the primary diagnosis should not be personality disorder).</p>`,
   },
   mhapStJosephs: {
-    html: `<p class="govuk-body govuk-hint">To apply for this type of placement a person must:</p>
+    html: `
+      <p class="govuk-body govuk-hint">To apply for this type of placement a person must:</p>
       <ul class="govuk-list govuk-list--bullet govuk-hint">
         <li>have a confirmed diagnosis of a severe and enduring mental illness e.g. paranoid schizophrenia / bipolar affective disorder</li>
         <li>be managed by the Probation Service in Greater Manchester</li>
@@ -82,11 +81,11 @@ export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {
         <li>be under the care of community mental health services and the CPA process; or</li>
         <li>be under the care of secondary care mental health services within a custodial setting as an alternative to community mental health services</li>
       </ul>
-      <p class="govuk-body govuk-hint">You will be required to complete and upload a <a class="govuk-link" target="_blank" href="https://justiceuk.sharepoint.com/:w:/s/ApprovedPremisesCareerDevelopment/Eag6XVxypVBHhu-pBMrfvqIBTTva2uNFkKB9Tl6c6OX-jA?e=sGaEma">supplementary form (opens in a new tab)</a> to NDelius before your application is submitted.</p>
     `,
   },
   rfap: {
-    html: `<p class="govuk-body govuk-hint">You'll need to provide details on whether:</p>
+    html: `
+      <p class="govuk-body govuk-hint">You'll need to provide details on whether:</p>
       <ul class="govuk-list govuk-list--bullet govuk-hint">
         <li>the person has resided in an incentivised substance-free living (ISFL) area in custody</li>
         <li>the person has interacted with the DART team in custody</li>
