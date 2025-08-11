@@ -4,8 +4,8 @@ import type {
   AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   ClarificationNote,
-  NewClarificationNote,
-  UpdatedClarificationNote,
+  Cas1NewClarificationNote,
+  Cas1UpdatedClarificationNote,
 } from '@approved-premises/api'
 import { AssessmentSortField, SortDirection } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
@@ -65,7 +65,7 @@ export default class AssessmentClient {
 
   async createClarificationNote(
     assessmentId: string,
-    clarificationNote: NewClarificationNote,
+    clarificationNote: Cas1NewClarificationNote,
   ): Promise<ClarificationNote> {
     return (await this.restClient.post({
       path: paths.assessments.clarificationNotes.create({ id: assessmentId }),
@@ -76,7 +76,7 @@ export default class AssessmentClient {
   async updateClarificationNote(
     assessmentId: string,
     clarificationNoteId: string,
-    clarificationNote: UpdatedClarificationNote,
+    clarificationNote: Cas1UpdatedClarificationNote,
   ): Promise<ClarificationNote> {
     return (await this.restClient.put({
       path: paths.assessments.clarificationNotes.update({ id: assessmentId, clarificationNoteId }),

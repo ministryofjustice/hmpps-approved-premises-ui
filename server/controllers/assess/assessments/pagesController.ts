@@ -1,7 +1,7 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
-import { ApprovedPremisesAssessment as Assessment, UpdatedClarificationNote } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, Cas1UpdatedClarificationNote } from '@approved-premises/api'
 import { getPage } from '../../../utils/assessments/utils'
 import { AssessmentService } from '../../../services'
 
@@ -93,7 +93,7 @@ export default class PagesController {
               req.user.token,
               req.params.id,
               clarificationNote.id,
-              page.body as UpdatedClarificationNote,
+              page.body as Cas1UpdatedClarificationNote,
             )
           }
           res.redirect(paths.assessments.show({ id: req.params.id }))

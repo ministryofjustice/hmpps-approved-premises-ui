@@ -24,7 +24,6 @@ describeClient('UserClient', provider => {
           path: paths.users.profile({}),
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -53,7 +52,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -79,7 +77,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -111,7 +108,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -150,7 +146,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -189,7 +184,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -229,7 +223,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -269,7 +262,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -310,7 +302,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -352,7 +343,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -382,7 +372,6 @@ describeClient('UserClient', provider => {
           },
           headers: {
             authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
