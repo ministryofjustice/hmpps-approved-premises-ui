@@ -3,7 +3,7 @@ import { Request } from 'express'
 import {
   AssessmentAcceptance,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
-  UpdatedClarificationNote,
+  Cas1UpdatedClarificationNote,
 } from '@approved-premises/api'
 
 import { fromPartial } from '@total-typescript/shoehorn'
@@ -236,7 +236,7 @@ describe('AssessmentService', () => {
       const token = 'token'
       const id = 'some-uuid'
       const clarificationNote = clarificationNoteFactory.build()
-      const updatedNote: UpdatedClarificationNote = {
+      const updatedNote: Cas1UpdatedClarificationNote = {
         response: clarificationNote.response || '',
         responseReceivedOn: clarificationNote.responseReceivedOn || '',
       }

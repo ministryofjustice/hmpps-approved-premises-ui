@@ -12,6 +12,7 @@ import type {
   AssessmentTask,
   Cas1ApplicationSummary,
   Cas1CruManagementArea,
+  Cas1NewClarificationNote,
   Cas1OASysGroup,
   Cas1OASysGroupName,
   Cas1OASysMetadata,
@@ -312,7 +313,7 @@ export type DataServices = Partial<{
     createClarificationNote: (
       token: string,
       assessmentId: string,
-      clarificationNote: NewClarificationNote,
+      clarificationNote: Cas1NewClarificationNote,
     ) => Promise<void>
   }
   apAreaService: {

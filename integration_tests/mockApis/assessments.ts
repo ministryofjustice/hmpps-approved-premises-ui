@@ -4,9 +4,9 @@ import type {
   ApprovedPremisesAssessment as Assessment,
   AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
-  NewClarificationNote,
+  Cas1NewClarificationNote,
   SortDirection,
-  UpdatedClarificationNote,
+  Cas1UpdatedClarificationNote,
 } from '@approved-premises/api'
 
 import { AssessmentSortField } from '@approved-premises/api'
@@ -103,7 +103,7 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     }),
-  stubClarificationNoteCreate: (args: { assessment: Assessment; note: NewClarificationNote }): SuperAgentRequest =>
+  stubClarificationNoteCreate: (args: { assessment: Assessment; note: Cas1NewClarificationNote }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -120,7 +120,7 @@ export default {
   stubClarificationNoteUpdate: (args: {
     assessment: Assessment
     clarificationNoteId: string
-    note: UpdatedClarificationNote
+    note: Cas1UpdatedClarificationNote
   }): SuperAgentRequest =>
     stubFor({
       request: {

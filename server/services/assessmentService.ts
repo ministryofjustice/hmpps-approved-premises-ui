@@ -4,9 +4,9 @@ import {
   AssessmentSortField,
   AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
-  NewClarificationNote,
+  Cas1NewClarificationNote,
   SortDirection,
-  UpdatedClarificationNote,
+  Cas1UpdatedClarificationNote,
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
 
@@ -86,7 +86,7 @@ export default class AssessmentService {
     return client.acceptance(assessment.id, acceptanceData(assessment))
   }
 
-  async createClarificationNote(token: string, assessmentId: string, clarificationNote: NewClarificationNote) {
+  async createClarificationNote(token: string, assessmentId: string, clarificationNote: Cas1NewClarificationNote) {
     const client = this.assessmentClientFactory(token)
 
     return client.createClarificationNote(assessmentId, clarificationNote)
@@ -96,7 +96,7 @@ export default class AssessmentService {
     token: string,
     assessmentId: string,
     clarificationNoteId: string,
-    clarificationNote: UpdatedClarificationNote,
+    clarificationNote: Cas1UpdatedClarificationNote,
   ) {
     const client = this.assessmentClientFactory(token)
 
