@@ -47,7 +47,8 @@ interface ViewRequest extends Request {
 
 interface ViewDayRequest extends Request {
   params: {
-    id: string
+    id?: string
+    placementId?: string
     premisesId: string
     date: string
   }
@@ -220,8 +221,8 @@ export default class {
   viewDay(): TypedRequestHandler<Request> {
     return async (req: ViewDayRequest, res: Response) => {
       const { token } = req.user
-      const { id, premisesId, date } = req.params
-      const { criteria = [], excludeSpaceBookingId } = req.query
+      const { id: placementRequestId, premisesId, placementId, date } = req.params
+      const { criteria = [] } = req.query
 
       const backLink = this.sessionService.getPageBackLink(
         paths.v2Match.placementRequests.search.dayOccupancy.pattern,
@@ -235,24 +236,34 @@ export default class {
       )
 
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
-      const getPathWithDate = (pathDate: string) =>
-        id
-          ? paths.v2Match.placementRequests.search.dayOccupancy({
-              id,
-              premisesId,
-              date: pathDate,
-            })
-          : adminPaths.admin.nationalOccupancy.premisesDayView({ premisesId, date: pathDate })
+
+      const getPathWithDate = (pathDate: string) => {
+        if (placementRequestId) {
+          return paths.v2Match.placementRequests.search.dayOccupancy({
+            id: placementRequestId,
+            premisesId,
+            date: pathDate,
+          })
+        }
+
+        if (placementId) {
+          return managePaths.premises.placements.changes.dayOccupancy({ premisesId, placementId, date: pathDate })
+        }
+
+        return adminPaths.admin.nationalOccupancy.premisesDayView({ premisesId, date: pathDate })
+      }
 
       const {
         sortBy = 'canonicalArrivalDate',
         sortDirection = 'asc',
         hrefPrefix,
       } = getPaginationDetails<SortablePlacementColumnField>(req, getPathWithDate(date))
+
       const getDayLink = (targetDate: string) =>
         `${getPathWithDate(targetDate)}${createQueryString(req.query, { arrayFormat: 'repeat', addQueryPrefix: true })}`
 
-      const placementRequest = id && (await this.placementRequestService.getPlacementRequest(token, id))
+      const placementRequest =
+        placementRequestId && (await this.placementRequestService.getPlacementRequest(token, placementRequestId))
       const premises = await this.premisesService.find(token, premisesId)
 
       const daySummary = await this.premisesService.getDaySummary({
@@ -265,7 +276,7 @@ export default class {
 
       const premisesCapacity = await this.premisesService.getCapacity(token, premisesId, {
         startDate: date,
-        excludeSpaceBookingId,
+        excludeSpaceBookingId: placementId,
       })
       const dayCapacity = premisesCapacity.capacity[0]
       const status = dayAvailabilityStatusForCriteria(dayCapacity, filteredCriteria)

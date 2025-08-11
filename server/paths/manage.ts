@@ -82,6 +82,7 @@ const paths = {
       },
       changes: {
         new: placementChangesPath.path('new'),
+        dayOccupancy: placementChangesPath.path('occupancy/date/:date'),
         confirm: placementChangesPath.path('confirm'),
       },
       transfers: {
