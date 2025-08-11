@@ -68,7 +68,10 @@ export default class WithdrawalsController {
       }
 
       if (withdrawable.type === 'placement_request') {
-        return res.redirect(302, adminPaths.admin.placementRequests.withdrawal.new({ id: selectedWithdrawable }))
+        return res.redirect(
+          302,
+          adminPaths.admin.placementRequests.withdrawal.new({ placementRequestId: selectedWithdrawable }),
+        )
       }
 
       if (withdrawable.type === 'placement_application') {

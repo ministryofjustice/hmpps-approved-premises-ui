@@ -122,7 +122,7 @@ describe('withdrawalsController', () => {
           backLink: referrer,
         })
         expect(sessionService.getPageBackLink).toHaveBeenCalledWith('/applications/:id/withdrawals/new', thisRequest, [
-          '/admin/placement-requests/:id',
+          '/admin/placement-requests/:placementRequestId',
           '/applications/:id',
           '/applications',
         ])

@@ -116,25 +116,25 @@ describe('withdrawablesController', () => {
   })
 
   describe('create', () => {
+    const selectedWithdrawableId = 'some-id'
     ;[
       {
         type: 'placement_request',
-        path: adminPaths.admin.placementRequests.withdrawal.new,
+        path: adminPaths.admin.placementRequests.withdrawal.new({ placementRequestId: selectedWithdrawableId }),
       },
       {
         type: 'placement_application',
-        path: placementAppPaths.placementApplications.withdraw.new,
+        path: placementAppPaths.placementApplications.withdraw.new({ id: selectedWithdrawableId }),
       },
       {
         type: 'application',
-        path: applyPaths.applications.withdraw.new,
+        path: applyPaths.applications.withdraw.new({ id: selectedWithdrawableId }),
       },
     ].forEach(w => {
       it(`redirects to the ${w.type} withdrawal page`, async () => {
-        const selectedWithdrawable = 'some-id'
         const withdrawable = withdrawableFactory.build({
           type: w.type as Withdrawable['type'],
-          id: selectedWithdrawable,
+          id: selectedWithdrawableId,
         })
         const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
@@ -143,13 +143,13 @@ describe('withdrawablesController', () => {
         const requestHandler = withdrawablesController.create()
 
         await requestHandler(
-          { ...request, params: { id: applicationId }, body: { selectedWithdrawable } },
+          { ...request, params: { id: applicationId }, body: { selectedWithdrawable: selectedWithdrawableId } },
           response,
           next,
         )
         expect(request.flash).toHaveBeenCalledWith('applicationId', applicationId)
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
-        expect(response.redirect).toHaveBeenCalledWith(302, w.path({ id: selectedWithdrawable }))
+        expect(response.redirect).toHaveBeenCalledWith(302, w.path)
       })
     })
 

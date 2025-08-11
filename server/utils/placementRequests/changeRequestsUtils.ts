@@ -34,7 +34,7 @@ const nameCell = (changeRequest: Cas1ChangeRequestSummary): TableCell => {
   const name = displayName(changeRequest.person)
 
   return {
-    html: linkTo(adminPaths.admin.placementRequests.show({ id: changeRequest.placementRequestId }), {
+    html: linkTo(adminPaths.admin.placementRequests.show({ placementRequestId: changeRequest.placementRequestId }), {
       text: `${name}, ${changeRequest.person.crn}`,
     }),
   }
@@ -64,7 +64,7 @@ export const changeRequestBanners = (
   return changeRequests
     .map(({ id, type }) => {
       const link = adminPaths.admin.placementRequests.changeRequests.review({
-        id: placementRequestId,
+        placementRequestId,
         changeRequestId: id,
       })
       if (type === 'placementAppeal' && canAssessAppeal)

@@ -19,7 +19,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back to Placement request",
-        href: paths.admin.placementRequests.show({id: placementRequest.id})
+        href: paths.admin.placementRequests.show({ placementRequestId: placementRequest.id })
     }) }}
 {% endblock %}
 
@@ -130,7 +130,7 @@
             <p>If there are no suitable results for your search, mark this case as unable to match.</p>
             {{ govukButton({
                 text: "Unable to match",
-                href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}),
+                href: paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }),
                 preventDoubleClick: true
             }) }}
         </div>

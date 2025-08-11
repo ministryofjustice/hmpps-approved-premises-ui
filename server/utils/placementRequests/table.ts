@@ -39,7 +39,7 @@ export const nameCell = (placementRequest: Cas1PlacementRequestSummary): TableCe
 
   if (isFullPerson(placementRequest.person)) {
     return htmlCell(
-      linkTo(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
+      linkTo(adminPaths.admin.placementRequests.show({ placementRequestId: placementRequest.id }), {
         text: name,
         attributes: {
           'data-cy-placementRequestId': placementRequest.id,

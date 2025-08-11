@@ -13,7 +13,10 @@ export default class PlacementRequestsController {
 
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(
+        req.user.token,
+        req.params.placementRequestId,
+      )
 
       res.render('match/placementRequests/show', {
         pageHeading: `Matching information`,

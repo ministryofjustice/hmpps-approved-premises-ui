@@ -38,13 +38,15 @@ describe('spaceSearchController', () => {
 
   let spaceSearchController: SpaceSearchController
 
-  const searchPath = matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id })
+  const searchPath = matchPaths.v2Match.placementRequests.search.spaces({
+    placementRequestId: placementRequestDetail.id,
+  })
 
   beforeEach(() => {
     jest.clearAllMocks()
 
     request = createMock<Request>({
-      params: { id: placementRequestDetail.id },
+      params: { placementRequestId: placementRequestDetail.id },
       user: { token },
       session: {
         save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
@@ -121,7 +123,7 @@ describe('spaceSearchController', () => {
     })
 
     it('should clear the search state if coming from the placement request page', async () => {
-      request.headers.referer = `http://localhost${paths.admin.placementRequests.show({ id: placementRequestDetail.id })}`
+      request.headers.referer = `http://localhost${paths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id })}`
 
       const requestHandler = spaceSearchController.search()
       await requestHandler(request, response, next)

@@ -2,7 +2,7 @@ import { path } from 'static-path'
 
 const adminPath = path('/admin')
 const placementRequestsPath = adminPath.path('placement-requests')
-const placementRequestPath = placementRequestsPath.path(':id')
+const placementRequestPath = placementRequestsPath.path(':placementRequestId')
 const changeRequestPath = placementRequestPath.path('change-requests/:changeRequestId')
 
 const userManagementPath = adminPath.path('user-management')

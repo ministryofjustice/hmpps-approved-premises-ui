@@ -54,7 +54,7 @@ describe('withdrawalsController', () => {
       ;(
         placementApplicationWithdrawalReasons as jest.MockedFn<typeof placementApplicationWithdrawalReasons>
       ).mockReturnValue(placementApplicationWithdrawalReasonsReturnValue)
-      request.params.id = placementApplicationId
+      request.params.placementRequestId = placementApplicationId
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
     })
 
@@ -67,7 +67,7 @@ describe('withdrawalsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
-        id: request.params.id,
+        placementRequestId: request.params.placementRequestId,
         errors: errorsAndUserInput.errors,
         applicationId,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -88,7 +88,7 @@ describe('withdrawalsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
-        id: request.params.id,
+        placementRequestId: request.params.placementRequestId,
         errors: errorsAndUserInput.errors,
         applicationId: '',
         errorSummary: errorsAndUserInput.errorSummary,
@@ -107,7 +107,7 @@ describe('withdrawalsController', () => {
     })
 
     beforeEach(() => {
-      request.params.id = applicationId
+      request.params.placementRequestId = applicationId
       request.body = {
         reason: placementRequestDetail.withdrawalReason,
       }
@@ -150,7 +150,7 @@ describe('withdrawalsController', () => {
         request,
         response,
         err,
-        paths.admin.placementRequests.withdrawal.new({ id: request.params.id }),
+        paths.admin.placementRequests.withdrawal.new({ placementRequestId: request.params.placementRequestId }),
       )
     })
 
@@ -158,7 +158,7 @@ describe('withdrawalsController', () => {
       const requestHandler = withdrawalsController.create()
 
       await requestHandler(
-        { ...request, body: { ...request.body, reason: undefined }, params: { id: applicationId } },
+        { ...request, body: { ...request.body, reason: undefined }, params: { placementRequestId: applicationId } },
         response,
         next,
       )
@@ -167,7 +167,7 @@ describe('withdrawalsController', () => {
         request,
         response,
         new ErrorWithData({}),
-        paths.admin.placementRequests.withdrawal.new({ id: request.params.id }),
+        paths.admin.placementRequests.withdrawal.new({ placementRequestId: request.params.placementRequestId }),
       )
 
       const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data

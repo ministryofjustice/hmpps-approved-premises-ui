@@ -80,7 +80,7 @@ describe('withdrawableTypeRadioOptions', () => {
           .join(', '),
         checked: false,
         hint: {
-          html: linkTo(matchPaths.placementRequests.show({ id: prWithdrawable.id }), {
+          html: linkTo(matchPaths.placementRequests.show({ placementRequestId: prWithdrawable.id }), {
             text: 'See placement details (opens in a new tab)',
             attributes: { 'data-cy-withdrawable-id': prWithdrawable.id },
             openInNewTab: true,

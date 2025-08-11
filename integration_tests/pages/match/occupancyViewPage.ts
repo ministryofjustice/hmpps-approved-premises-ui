@@ -10,7 +10,10 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
   }
 
   static visit(placementRequest: Cas1PlacementRequestDetail, premises: Cas1Premises) {
-    const path = paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id })
+    const path = paths.v2Match.placementRequests.search.occupancy({
+      placementRequestId: placementRequest.id,
+      premisesId: premises.id,
+    })
 
     cy.visit(path)
 

@@ -9,7 +9,7 @@ import MultiPageFormManager from '../../../utils/multiPageFormManager'
 
 interface NewRequest extends Request {
   params: {
-    id: string
+    placementRequestId: string
     premisesId: string
   }
 }
@@ -28,24 +28,30 @@ export default class {
   new(): TypedRequestHandler<Request, Response> {
     return async (req: NewRequest, res: Response) => {
       const { token } = req.user
-      const { id, premisesId } = req.params
+      const { placementRequestId, premisesId } = req.params
 
-      const searchState = this.formData.get(id, req.session)
+      const searchState = this.formData.get(placementRequestId, req.session)
 
       if (!searchState) {
-        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       }
       if (!searchState.arrivalDate || !searchState.departureDate) {
-        return res.redirect(matchPaths.v2Match.placementRequests.search.occupancy({ id, premisesId }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.occupancy({ placementRequestId, premisesId }))
       }
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
       const premises = await this.premisesService.find(token, premisesId)
 
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
-      const submitLink = matchPaths.v2Match.placementRequests.spaceBookings.create({ id, premisesId })
-      const backLink = matchPaths.v2Match.placementRequests.search.occupancy({ id, premisesId })
+      const submitLink = matchPaths.v2Match.placementRequests.spaceBookings.create({
+        placementRequestId,
+        premisesId,
+      })
+      const backLink = matchPaths.v2Match.placementRequests.search.occupancy({
+        placementRequestId,
+        premisesId,
+      })
 
       const summaryListRows = spaceBookingConfirmationSummaryListRows({
         premises,
@@ -71,14 +77,14 @@ export default class {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const {
-        params: { id, premisesId },
+        params: { placementRequestId, premisesId },
         user: { token },
       } = req
 
-      const searchState = this.formData.get(id, req.session)
+      const searchState = this.formData.get(placementRequestId, req.session)
 
       if (!searchState) {
-        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       }
 
       const newSpaceBooking: Cas1NewSpaceBooking = {
@@ -89,7 +95,7 @@ export default class {
       }
 
       try {
-        const placement = await this.spaceSearchService.createSpaceBooking(token, id, newSpaceBooking)
+        const placement = await this.spaceSearchService.createSpaceBooking(token, placementRequestId, newSpaceBooking)
         const placementRequest = await this.placementRequestService.getPlacementRequest(
           token,
           placement.placementRequestId,
@@ -98,7 +104,7 @@ export default class {
           heading: `Place booked for ${placement.person.crn}`,
           body: creationNotificationBody(placement, placementRequest),
         })
-        this.formData.remove(id, req.session)
+        this.formData.remove(placementRequestId, req.session)
 
         return req.session.save(() => {
           res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)
@@ -108,7 +114,7 @@ export default class {
           req,
           res,
           error,
-          matchPaths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }),
+          matchPaths.v2Match.placementRequests.spaceBookings.new({ placementRequestId, premisesId }),
         )
       }
     }

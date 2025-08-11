@@ -247,7 +247,7 @@ export default class ChangesController {
         req.flash('success', 'Booking changed successfully')
 
         const redirectUrl = placement.placementRequestId
-          ? adminPaths.admin.placementRequests.show({ id: placement.placementRequestId })
+          ? adminPaths.admin.placementRequests.show({ placementRequestId: placement.placementRequestId })
           : managePaths.premises.placements.show({
               premisesId,
               placementId,

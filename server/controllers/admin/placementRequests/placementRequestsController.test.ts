@@ -44,7 +44,7 @@ describe('PlacementRequestsController', () => {
 
       const requestHandler = placementRequestsController.show()
 
-      request.params.id = placementRequest.id
+      request.params.placementRequestId = placementRequest.id
 
       await requestHandler(request, response, next)
 

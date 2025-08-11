@@ -27,13 +27,16 @@ describe('tableUtils', () => {
 
       nameCell(placementRequest)
 
-      expect(utils.linkTo).toHaveBeenCalledWith(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
-        text: displayName(placementRequest.person),
-        attributes: {
-          'data-cy-placementRequestId': placementRequest.id,
-          'data-cy-applicationId': placementRequest.applicationId,
+      expect(utils.linkTo).toHaveBeenCalledWith(
+        adminPaths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),
+        {
+          text: displayName(placementRequest.person),
+          attributes: {
+            'data-cy-placementRequestId': placementRequest.id,
+            'data-cy-applicationId': placementRequest.applicationId,
+          },
         },
-      })
+      )
     })
 
     it('returns the crn cell with no link if the person is a restrictedPerson', () => {
@@ -54,7 +57,7 @@ describe('tableUtils', () => {
       nameCell(restrictedPersonPlacementRequest)
 
       expect(utils.linkTo).toHaveBeenCalledWith(
-        adminPaths.admin.placementRequests.show({ id: restrictedPersonPlacementRequest.id }),
+        adminPaths.admin.placementRequests.show({ placementRequestId: restrictedPersonPlacementRequest.id }),
         {
           text: displayName(restrictedPersonPlacementRequest.person),
           attributes: {

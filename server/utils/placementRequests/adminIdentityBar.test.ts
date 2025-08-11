@@ -24,7 +24,7 @@ const setup = ({
   const user = userDetailsFactory.build({ roles: ['appeals_manager'], permissions: [...permissions], id: userId })
 
   const actionSearchForASpace = {
-    href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequestDetail.id }),
+    href: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequestDetail.id }),
     text: 'Search for a space',
   }
 

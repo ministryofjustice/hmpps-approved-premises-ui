@@ -31,12 +31,12 @@ describe('BookingsController', () => {
     it('should render the booking not made confirmation template', async () => {
       const placementRequestId = '123'
       const requestHandler = bookingsController.bookingNotMade()
-      await requestHandler({ ...request, params: { id: placementRequestId } }, response, next)
+      await requestHandler({ ...request, params: { placementRequestId } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/unable-to-match', {
         backLink: '/backlink',
         pageHeading: 'Mark as unable to match',
-        confirmPath: matchPaths.placementRequests.bookingNotMade.create({ id: placementRequestId }),
+        confirmPath: matchPaths.placementRequests.bookingNotMade.create({ placementRequestId }),
       })
     })
   })
@@ -50,7 +50,7 @@ describe('BookingsController', () => {
       const flash = jest.fn()
 
       const requestHandler = bookingsController.createBookingNotMade()
-      await requestHandler({ ...request, params: { id: placementRequestId }, body, flash }, response, next)
+      await requestHandler({ ...request, params: { placementRequestId }, body, flash }, response, next)
 
       expect(flash).toHaveBeenCalledWith('success', 'Placement request has been marked as unable to match')
       expect(response.redirect).toHaveBeenCalledWith(adminPaths.admin.cruDashboard.index({}))
