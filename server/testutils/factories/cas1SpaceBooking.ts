@@ -7,6 +7,7 @@ import type {
   Cas1SpaceBookingCancellation,
   Cas1SpaceBookingNonArrival,
   Person,
+  UserSummary,
 } from '@approved-premises/api'
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
@@ -22,6 +23,7 @@ import { BREACH_OR_RECALL_REASON_ID, PLANNED_MOVE_ON_REASON_ID } from '../../uti
 import { filterOutAPTypes } from '../../utils/match'
 import cas1ChangeRequestSummary from './cas1ChangeRequestSummary'
 import { placementCriteria } from './cas1PlacementRequestDetail'
+import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
@@ -91,6 +93,14 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   cancelled() {
     return this.params({
       cancellation: cas1NewSpaceBookingCancellationFactory.build(),
+    })
+  }
+
+  withAssignedKeyworker(keyworkerUser: UserSummary) {
+    return this.params({
+      keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
+        keyWorkerUser: keyworkerUser,
+      }),
     })
   }
 }

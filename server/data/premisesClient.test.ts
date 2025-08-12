@@ -10,6 +10,7 @@ import { createMock } from '@golevelup/ts-jest'
 import { Response } from 'express'
 import {
   cas1BedDetailFactory,
+  cas1CurrentKeyworkerFactory,
   cas1NationalOccupancyFactory,
   cas1NationalOccupancyParametersFactory,
   cas1PremiseCapacityFactory,
@@ -373,6 +374,31 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
         bookingsCriteriaFilter: ['hasEnSuite'],
       })
       expect(output).toEqual(premiseCapacity)
+    })
+  })
+
+  describe('getCurrentKeyworkers', () => {
+    it('should return a list of users currently assigned as keyworkers for a given premises', async () => {
+      const keyworkers = cas1CurrentKeyworkerFactory.buildList(15)
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users currently assigned as keyworkers for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.currentKeyworkers({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: keyworkers,
+        },
+      })
+
+      const output = await premisesClient.getCurrentKeyworkers(premises.id)
+      expect(output).toEqual(keyworkers)
     })
   })
 

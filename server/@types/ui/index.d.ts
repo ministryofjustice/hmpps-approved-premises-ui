@@ -123,15 +123,15 @@ export type TableCell = (TextItem | HtmlItem) & {
 
 export type TableRow = Array<TableCell>
 
-export type RadioItem = {
+export type RadioItemButton = {
   text: string
   value: string
   checked?: boolean
-  conditional?: {
-    html?: string
-  }
+  conditional?: HtmlItem
   hint?: TextItem | HtmlItem
 }
+
+export type RadioItem = RadioItemButton | Divider
 
 export type CheckBoxItem =
   | {

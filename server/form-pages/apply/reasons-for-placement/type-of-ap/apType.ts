@@ -1,4 +1,4 @@
-import type { BackwardsCompatibleApplyApType, RadioItem, TaskListErrors } from '@approved-premises/ui'
+import { BackwardsCompatibleApplyApType, HtmlItem, TaskListErrors } from '@approved-premises/ui'
 
 import { ApType, ApprovedPremisesApplication } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
@@ -62,7 +62,7 @@ export default class SelectApType implements TasklistPage {
   }
 }
 
-export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {
+export const apTypeHintText: Partial<Record<ApType, HtmlItem>> = {
   mhapElliottHouse: {
     html: `<p class="govuk-body govuk-hint">To apply for this type of placement a person must have a confirmed diagnosis of a severe and enduring mental illness e.g. paranoid schizophrenia / bipolar affective disorder (the primary diagnosis should not be personality disorder).</p>`,
   },
