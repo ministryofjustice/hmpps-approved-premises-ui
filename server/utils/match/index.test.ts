@@ -18,8 +18,7 @@ import {
   distanceRow,
   filterOutAPTypes,
   keyDetails,
-  placementLength,
-  preferredPostcodeRow,
+  formatDuration,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
   restrictionsRow,
@@ -144,16 +143,6 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('preferredPostcodeRow', () => {
-    it('returns preferred postcode', () => {
-      const postcode = 'B71'
-      expect(preferredPostcodeRow(postcode)).toEqual({
-        key: { text: 'Preferred postcode' },
-        value: { text: postcode },
-      })
-    })
-  })
-
   describe('distanceRow', () => {
     const spaceSearchResult = spaceSearchResultFactory.build()
     const postcodeArea = 'HR1 2AF'
@@ -260,7 +249,7 @@ describe('matchUtils', () => {
 
   describe('placementLength', () => {
     it('formats the number of days as weeks', () => {
-      expect(placementLength(16)).toEqual('2 weeks, 2 days')
+      expect(formatDuration(16)).toEqual('2 weeks, 2 days')
     })
   })
 

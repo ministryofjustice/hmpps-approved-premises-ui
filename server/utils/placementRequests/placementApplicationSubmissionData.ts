@@ -1,6 +1,7 @@
 import { addWeeks } from 'date-fns'
 import {
   ApprovedPremisesApplication as Application,
+  Cas1RequestedPlacementPeriod,
   PlacementApplication,
   PlacementType,
   SubmitPlacementApplication,
@@ -17,11 +18,6 @@ import AdditionalPlacementDetails from '../../form-pages/placement-application/r
 import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
-
-type DatesOfStay = {
-  expectedArrival: string
-  duration: number | null
-}
 
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
@@ -41,20 +37,12 @@ export const placementApplicationSubmissionData = (
   return {
     translatedDocument: placementApplication.document,
     placementType: reasonForPlacement,
-    placementDates: Array.isArray(placementDates) ? placementDates : [placementDates],
+    requestedPlacementPeriods: placementDates,
   }
 }
-
-export const durationAndArrivalDateFromRotlPlacementApplication = (dateOfPlacement: DateOfPlacement): DatesOfStay => {
-  return {
-    expectedArrival: dateOfPlacement.arrivalDate,
-    duration: Number(dateOfPlacement.duration),
-  }
-}
-
 export const retreivePlacementDatesFromRotlPlacementApplication = (
   placementApplication: PlacementApplication,
-): Array<DateOfPlacement> => {
+): Array<Cas1RequestedPlacementPeriod> => {
   const datesOfPlacement = retrieveOptionalQuestionResponseFromFormArtifact(
     placementApplication,
     DatesOfPlacement,
@@ -62,47 +50,35 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
   )
 
   if (datesOfPlacement) {
-    return datesOfPlacement
+    return (datesOfPlacement as Array<DateOfPlacement>).map(({ arrivalDate, durationDays, isFlexible }) => ({
+      arrival: arrivalDate,
+      arrivalFlexible: isFlexible === 'yes',
+      duration: Number(durationDays),
+    }))
   }
 
-  const dateOfPlacement = {} as DateOfPlacement
+  const dateOfPlacement: Cas1RequestedPlacementPeriod = {
+    arrival: retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'arrivalDate'),
+    arrivalFlexible: undefined,
+    duration: Number(retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'duration')),
+  }
 
-  const legacyProperties: Array<keyof DateOfPlacement> = [
-    'arrivalDate',
-    'arrivalDate-day',
-    'arrivalDate-month',
-    'arrivalDate-year',
-    'duration',
-    'durationDays',
-    'durationWeeks',
-  ]
-
-  legacyProperties.forEach(property => {
-    dateOfPlacement[property] = retrieveQuestionResponseFromFormArtifact(
-      placementApplication,
-      DatesOfPlacement,
-      property,
-    )
-  })
-
-  return [dateOfPlacement as DateOfPlacement]
+  return [dateOfPlacement]
 }
 
 export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
   reasonForPlacement: PlacementType,
   application: Application,
-): Array<DatesOfStay> => {
+): Array<Cas1RequestedPlacementPeriod> => {
   switch (reasonForPlacement) {
     case 'rotl': {
-      return retreivePlacementDatesFromRotlPlacementApplication(placementApplication).map(
-        durationAndArrivalDateFromRotlPlacementApplication,
-      )
+      return retreivePlacementDatesFromRotlPlacementApplication(placementApplication)
     }
     case 'additional_placement': {
       return [
         {
-          expectedArrival: retrieveQuestionResponseFromFormArtifact(
+          arrival: retrieveQuestionResponseFromFormArtifact(
             placementApplication,
             AdditionalPlacementDetails,
             'arrivalDate',
@@ -122,7 +98,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
 
       return [
         {
-          expectedArrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
+          arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
           duration: Number(placementDurationFromApplication(application)),
         },
       ]
@@ -131,7 +107,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
     default:
       return [
         {
-          expectedArrival: '',
+          arrival: '',
           duration: null,
         },
       ]

@@ -130,25 +130,16 @@ export default class ShowPage extends Page {
     user?: { id: string },
   ) {
     mapRequestsForPlacementToSummaryCards(requestsForPlacement, application, fromPartial(user)).forEach(
-      (requestForPlacementSummaryCard, i) => {
+      requestForPlacementSummaryCard => {
         cy.get(
           `[data-cy-placement-application-id="${requestForPlacementSummaryCard.card.attributes['data-cy-placement-application-id']}"]`,
         )
           .should('contain', requestForPlacementSummaryCard.card.title.text)
           .within(() => {
-            cy.get('.govuk-summary-list__row').should(
-              'have.length',
-              // all of the top level rows + 2 rows for each placement date
-              requestForPlacementSummaryCard.rows.length + requestsForPlacement[i].placementDates.length * 2,
-            )
             this.shouldContainSummaryListItems(requestForPlacementSummaryCard.rows)
           })
       },
     )
-  }
-
-  showsWithdrawalConfirmationMessage() {
-    this.shouldShowBanner('Request for placement for ', { exact: false })
   }
 
   showsNoteAddedConfirmationMessage() {

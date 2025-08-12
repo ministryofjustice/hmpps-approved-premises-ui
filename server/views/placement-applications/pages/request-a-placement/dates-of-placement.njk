@@ -2,298 +2,275 @@
 {% from "../../../components/formFields/form-page-day-weeks-input/macro.njk" import formPageDaysAndWeeksInput %}
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% extends "../../layout.njk" %}
 
 {% macro fieldset(index, includeButton = false) %}
-  {%
-    call govukFieldset({
-      classes: "govuk-fieldset toplevel-fieldset",
-      legend: {
-        text: "ROTL placement " + (
-        index + 1),
-        classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
-      },
-      attributes: {
-        "data-fieldset": index
-      }
-    })
-  %}
-  {% set fieldPrefix = "datesOfPlacement[" + index + "]" %}
-  {% set fieldName = fieldPrefix + '[arrivalDate]' %}
-  {% set dayFieldName = "datesOfPlacement[" + index + "][arrivalDate-day]" %}
-  {% set monthFieldName = "datesOfPlacement[" + index + "][arrivalDate-month]" %}
-  {% set yearFieldName = "datesOfPlacement[" + index + "][arrivalDate-year]" %}
-  {% set fieldId = "datesOfPlacement_" + index + "_arrivalDate" %}
-  {% set context = fetchContext() %}
-  {% set body = context.page.body %}
+    {% call govukFieldset({
+        classes: "govuk-fieldset toplevel-fieldset",
+        legend: {
+            text: "ROTL placement " + (
+            index + 1),
+            classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
+        },
+        attributes: {
+            "data-fieldset": index
+        }
+    }) %}
+        {% set fieldPrefix = "datesOfPlacement[" + index + "]" %}
+        {% set fieldName = fieldPrefix + '[arrivalDate]' %}
+        {% set dayFieldName = "datesOfPlacement[" + index + "][arrivalDate-day]" %}
+        {% set monthFieldName = "datesOfPlacement[" + index + "][arrivalDate-month]" %}
+        {% set yearFieldName = "datesOfPlacement[" + index + "][arrivalDate-year]" %}
+        {% set fieldId = "datesOfPlacement_" + index + "_arrivalDate" %}
+        {% set context = fetchContext() %}
+        {% set body = context.page.body %}
+        {% set durationDays = "durationDays" %}
 
-  {%set durationWeeks = "durationWeeks"%}
-  {%set durationDays = "durationDays"%}
+        {% set durationDaysName = "datesOfPlacement[" + index + "][" + durationDays + "]" %}
+        {% set isFlexibleName = "datesOfPlacement[" + index + "][isFlexible]" %}
 
-  {% set durationWeeksName = "datesOfPlacement[" + index + "][" + durationWeeks + "]" %}
-  {% set durationDaysName = "datesOfPlacement[" + index + "][" + durationDays + "]" %}
+        {% set arrivalDateDay = "arrivalDate-day" %}
+        {% set arrivalDateMonth = "arrivalDate-month" %}
+        {% set arrivalDateYear = "arrivalDate-year" %}
 
-  {%set arrivalDateDay = "arrivalDate-day"%}
-  {%set arrivalDateMonth = "arrivalDate-month"%}
-  {%set arrivalDateYear = "arrivalDate-year"%}
-
-  {{ govukDateInput({
-          id: fieldName,
-          fieldset: {
-          legend: {
-              text: "What is the arrival date?",
-                text: page.questions.arrivalDate
-              }
-          },
-          items: [
-                  {
+        {{ govukDateInput({
+            id: fieldName,
+            fieldset: {
+                legend: {
+                    text: "When will the person arrive?",
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            items: [
+                {
                     classes: "govuk-input--width-2 ",
                     id: fieldId + '[day]',
                     name: dayFieldName,
                     label: 'Day',
                     value: context.datesOfPlacement[index][arrivalDateDay]
-                  },
-                  {
+                },
+                {
                     classes: "govuk-input--width-2 ",
                     id: fieldId + '[month]',
                     name: monthFieldName,
-                    label: 'Month',                    
+                    label: 'Month',
                     value: context.datesOfPlacement[index][arrivalDateMonth]
 
-                  },
-                  {
+                },
+                {
                     classes: "govuk-input--width-4 ",
                     id: fieldId + '[year]',
                     name: yearFieldName,
-                    label: 'Year',                    
+                    label: 'Year',
                     value: context.datesOfPlacement[index][arrivalDateYear]
-                  }
-                  ],
-          errorMessage: errors[fieldId],
-          hint: {
-              text: "For example, 27 3 2024"
-          }
+                }
+            ],
+            errorMessage: errors[fieldId],
+            hint: {
+                text: "For example, 27 3 2024"
+            }
         }) }}
 
-  {% set durationFieldId = "datesOfPlacement_" + index + "_duration" %}
-  {% set hasDurationErrors = errors[durationFieldId].text %}
+        {%  set isFlexibleValue = context.datesOfPlacement[index].isFlexible %}
 
-  {% if hasDurationErrors %}
-    {% set wrapperClasses = "govuk-form-group govuk-form-group--error" %}
-    {% set inputClasses = "govuk-input--width-2 govuk-input--error" %}
-  {% else %}
-    {% set wrapperClasses = "govuk-form-group" %}
-    {% set inputClasses = "govuk-input--width-2" %}
-  {% endif %}
+        {{ govukRadios({
+            idPrefix: isFlexibleName,
+            name: isFlexibleName,
+            fieldset: {
+                legend: {
+                    text: 'Is this date flexible?',
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            items: [{text:'Yes',value:'yes', checked:isFlexibleValue=='yes'},{text:'No',value:'no',checked:isFlexibleValue=='no'}],
+            errorMessage: errors["datesOfPlacement_" + index + "_isFlexible"]
+        }) }}
 
-  {% set durationFieldName = fieldPrefix + '[duration]' %}
-  <div class="{{ wrapperClasses }}" id="{{ durationFieldId }}">
+        {% set durationFieldId = "datesOfPlacement_" + index + "_duration" %}
+        {% set hasDurationErrors = errors[durationFieldId].text %}
 
-    {% call govukFieldset({
-      legend: {
-        text: context.page.questions.duration,
-        classes: legendClasses
-      }
-    })
- %}
+        {% if hasDurationErrors %}
+            {% set wrapperClasses = "govuk-form-group govuk-form-group--error" %}
+            {% set inputClasses = "govuk-input--width-2 govuk-input--error" %}
+        {% else %}
+            {% set wrapperClasses = "govuk-form-group" %}
+            {% set inputClasses = "govuk-input--width-2" %}
+        {% endif %}
 
-    {% if hasDurationErrors %}
-      <p id="{{ durationFieldId }}-error" class="govuk-error-message" data-cy-error-{{ durationFieldId }}="true">
-        <span class="govuk-visually-hidden">Error:</span>
-        {{ errors[durationFieldId].text }}
-      </p>
-    {% endif %}
+        {% set durationFieldName = fieldPrefix + '[duration]' %}
+        <div class="{{ wrapperClasses }}" id="{{ durationFieldId }}">
 
-    {{
-      govukInput(
-        {
-          classes: inputClasses,
-          name: durationWeeksName,
-          id: "datesOfPlacement_" + index + "_duration_weeks",
-          formGroup: {
-            classes: "govuk-form-group--inline"
-          },
-          label: {
-            text: "Weeks"
-          },
-          value:  context.datesOfPlacement[index][durationWeeks]
-        },
-        context
-      )
-    }}
+            {% call govukFieldset({
+                legend: {
+                    text: 'How long should the Approved Premises placement last?',
+                    classes: legendClasses
+                }
+            }) %}
 
-    {{
-      govukInput(
-        {
-          classes: inputClasses,
-          name: durationDaysName,
-          id: "datesOfPlacement_" + index + "_duration_days",
-          formGroup: {
-            classes: "govuk-form-group--inline"
-          },
-          label: {
-            text: "Days"
-          },
-          value: context.datesOfPlacement[index][durationDays]
-        },
-        context
-      )
-    }}
+                {% if hasDurationErrors %}
+                    <p id="{{ durationFieldId }}-error" class="govuk-error-message"
+                       data-cy-error-{{ durationFieldId }}="true">
+                        <span class="govuk-visually-hidden">Error:</span>
+                        {{ errors[durationFieldId].text }}
+                    </p>
+                {% endif %}
+
+                {{ govukInput(
+                    {
+                        classes: inputClasses,
+                        name: durationDaysName,
+                        id: "datesOfPlacement_" + index + "_duration_days",
+                        formGroup: {
+                        classes: "govuk-form-group--inline"
+                    },
+                        label: {
+                        text: "Nights"
+                    },
+                        value: context.datesOfPlacement[index].durationDays
+                    },
+                    context
+                ) }}
+            {% endcall %}
+        </div>
+
+
+
+        {% if includeButton %}
+            {{ addButton() }}
+        {% endif %}
 
     {% endcall %}
-  </div>
-
-  {% if includeButton %}
-    {{ addButton() }}
-  {% endif %}
-
-  {% endcall %}
 {% endmacro %}
-  const errorClass = errors[durationFieldId] ? 'govuk-input--error' : ''
+
 {% macro addButton() %}
-  {{
-    govukButton({
-      text: "Remove",
-      attributes: {
-        "data-remove-input": "true"
-      },
-      classes: "govuk-button govuk-button--secondary moj-add-another__remove-button",
-      preventDoubleClick: true
-    })
-  }}
+    {{ govukButton({
+        text: "Remove",
+        attributes: {
+            "data-remove-input": "true"
+        },
+        classes: "govuk-button govuk-button--secondary moj-add-another__remove-button",
+        preventDoubleClick: true
+    }) }}
 {% endmacro %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
+<div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <form action="{{ paths.placementApplications.pages.update({ id: placementApplicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
-        <h1 class="govuk-heading-l">
-          {{ page.title }}
-        </h1>
+        <form action="{{ paths.placementApplications.pages.update({ id: placementApplicationId, task: task, page: page.name }) }}?_method=PUT"
+              method="post">
+            <h1 class="govuk-heading-l">
+                {{ page.title }}
+            </h1>
 
-        {% if errorSummary | length %}
-          {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: errorSummary
-          }) }}
-        {% endif %}
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            {% if errorSummary | length %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: errorSummary
+                }) }}
+            {% endif %}
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        <div id="fieldset-wrapper">
-          {% for i in range(0, 5) -%}
-            {{ fieldset(i) }}
-          {% endfor %}
-        </div>
+            <div id="fieldset-wrapper">
+                {% for i in range(0, 5) -%}
+                    {{ fieldset(i, true) }}
+                {% endfor %}
+            </div>
 
-        {{
-          govukButton({
-            text: "Add another placement",
-            attributes: {
-              "data-add-input": "true"
-            },
-            classes: "govuk-button--secondary",
-            preventDoubleClick: true
-          })
-        }}
+            {{ govukButton({
+                text: "Add another placement",
+                attributes: {
+                    "data-add-input": "true"
+                },
+                classes: "govuk-button--secondary",
+                preventDoubleClick: true
+            }) }}
 
-        {{
-          govukButton({
-            text: "Save and continue",
-            preventDoubleClick: true
-          })
-        }}
+            {{ govukButton({
+                text: "Save and continue",
+                preventDoubleClick: true
+            }) }}
 
-      </form>
+        </form>
 
     </div>
+</div>
 
-  {% endblock %}
+    {% endblock %}
 
-  {% block extraScripts %}
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-      function initializeAddButton() {
-        var addButton = document.querySelector('button[data-add-input]');
+    {% block extraScripts %}
+        <script type="text/javascript" nonce="{{ cspNonce }}">
+          function initializeAddButton() {
+            var addButton = document.querySelector('button[data-add-input]')
 
-        addButton.addEventListener("click", (event) => {
-          var fieldsets = document.querySelectorAll('.toplevel-fieldset')
-          var hiddenFieldsets = document.querySelectorAll('fieldset[class*="govuk-visually-hidden"]');
+            addButton.addEventListener('click', (event) => {
+              var fieldsets = document.querySelectorAll('.toplevel-fieldset')
+              var hiddenFieldsets = document.querySelectorAll('fieldset[class*="govuk-visually-hidden"]')
 
-          if (hiddenFieldsets.length) {
-            hiddenFieldsets[0]
-              .classList
-              .remove("govuk-visually-hidden");
-          } else {
-            var fieldsetWrapper = document.querySelector('#fieldset-wrapper')
-            var newFieldset = `{{ fieldset("INDEX", true) }}`
-              .replace('INDEX1', fieldsets.length + 1)
-              .replaceAll('INDEX', fieldsets.length + 1)
-            fieldsetWrapper.innerHTML += newFieldset;
+              if (hiddenFieldsets.length) {
+                hiddenFieldsets[0]
+                  .classList
+                  .remove('govuk-visually-hidden')
+              } else {
+                var fieldsetWrapper = document.querySelector('#fieldset-wrapper')
+                var newFieldset = `{{ fieldset("INDEX", true) }}`
+                  .replace('INDEX1', fieldsets.length + 1)
+                  .replaceAll('INDEX', fieldsets.length + 1)
+                fieldsetWrapper.innerHTML += newFieldset
 
-            var removeButtons = fieldsetWrapper.querySelectorAll('button[data-remove-input]');
-            initializeRemoveButtons(removeButtons);
+                var removeButtons = fieldsetWrapper.querySelectorAll('button[data-remove-input]')
+                initializeRemoveButtons(removeButtons)
+              }
+
+              event.preventDefault()
+            })
           }
 
-          event.preventDefault();
-        })
-      }
+          function initializeRemoveButtons(buttons) {
+            for (let i = 0; i < buttons.length; i++) {
 
-      function initializeRemoveButtons(buttons) {
-        for (let i = 0; i < buttons.length; i++) {
+              buttons[i].addEventListener('click', (event) => {
+                var fieldset = event.target.parentElement
+                var inputs = fieldset.querySelectorAll('input')
 
-          buttons[i].addEventListener("click", (event) => {
-            var fieldset = event.target.parentElement;
-            var inputs = fieldset.querySelectorAll('input');
+                fieldset
+                  .classList
+                  .add('govuk-visually-hidden')
 
-            fieldset
-              .classList
-              .add('govuk-visually-hidden');
+                for (var i = 0; i < inputs.length; i++) {
+                  inputs[i].value = ''
+                }
 
-            for (var i = 0; i < inputs.length; i++) {
-              inputs[i].value = '';
+                event.preventDefault()
+              })
             }
-
-            event.preventDefault();
-          })
-        }
-      }
-
-      function initializeFieldsets() {
-        var fieldsets = document.querySelectorAll('fieldset[data-fieldset]')
-
-        for (let i = 1; i < fieldsets.length; i++) {
-          var complete = false;
-
-          var arrivalDateDay = document.querySelector('input[name="datesOfPlacement[' + i + '][arrivalDate-day]"]');
-          var arrivalDateMonth = document.querySelector('input[name="datesOfPlacement[' + i + '][arrivalDate-month]"]');
-          var arrivalDateYear = document.querySelector('input[name="datesOfPlacement[' + i + '][arrivalDate-year]"]');
-          var durationWeeks = document.querySelector('input[name="datesOfPlacement[' + i + '][durationWeeks]"]');
-          var durationDays = document.querySelector('input[name="datesOfPlacement[' + i + '][durationDays]"]');
-
-          var fields = [arrivalDateDay, arrivalDateMonth, arrivalDateYear, durationWeeks, durationDays];
-
-          fields.forEach(function (field) {
-            if (field.value) {
-              complete = true;
-            }
-          })
-
-          if (complete === false) {
-            fieldsets[i]
-              .classList
-              .add('govuk-visually-hidden');
           }
-          fieldsets[i].innerHTML += `{{ addButton() }}`
-        }
 
-        var removeButtons = document.querySelectorAll('button[data-remove-input]');
+          function initializeFieldsets() {
+            var fieldsets = document.querySelectorAll('fieldset[data-fieldset]')
 
-        initializeAddButton();
-        initializeRemoveButtons(removeButtons);
-      }
+            for (let i = 1; i < fieldsets.length; i++) {
+              if(!['arrivalDate-day','arrivalDate-month','arrivalDate-year','durationDays','isFlexible'].some((field) => {
+                console.log('checking field',field, `input[name="datesOfPlacement[${i}][${field}]"]`, document.querySelector(`input[name="datesOfPlacement[${i}][${field}]"]`).type)
+                const input = document.querySelector(`input[name="datesOfPlacement[${i}][${field}]"]`)
+                return Boolean(input.type === 'radio' ? input.checked : input.value)
+              })) {
+                fieldsets[i]
+                  .classList
+                  .add('govuk-visually-hidden')
+              }
+              fieldsets[i].innerHTML += `{{ addButton() }}`
+            }
 
-      initializeFieldsets();
-    </script>
-  {% endblock %}
+            var removeButtons = document.querySelectorAll('button[data-remove-input]')
+
+            initializeAddButton()
+            initializeRemoveButtons(removeButtons)
+          }
+
+          initializeFieldsets()
+        </script>
+    {% endblock %}

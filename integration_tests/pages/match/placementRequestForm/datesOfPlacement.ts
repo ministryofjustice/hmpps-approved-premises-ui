@@ -11,8 +11,8 @@ export default class DatesOfPlacement extends Page {
   }
 
   datesOfPlacement = [
-    { dateOfPlacement: '2023-08-01', duration: { days: 5, weeks: 2 } },
-    { dateOfPlacement: '2023-07-02', duration: { days: 4, weeks: 1 } },
+    { dateOfPlacement: '2023-08-01', duration: { days: 19 }, isFlexible: 'yes' },
+    { dateOfPlacement: '2023-07-02', duration: { days: 11 }, isFlexible: 'no' },
   ]
 
   completeForm() {
@@ -20,7 +20,8 @@ export default class DatesOfPlacement extends Page {
       const parsedDate = DateFormats.isoToDateObj(date.dateOfPlacement)
 
       this.completeDatesOfPlacementDateInputs(parsedDate, index.toString())
-      this.completeDurationInputs(index.toString(), date.duration.weeks, date.duration.days)
+      this.completeDurationInputs(index.toString(), date.duration.days)
+      this.completeIsFlexible(index.toString(), date.isFlexible)
     })
   }
 
@@ -36,9 +37,12 @@ export default class DatesOfPlacement extends Page {
     cy.get(`[name="${prefix}[arrivalDate-year]`).type(date.getFullYear().toString())
   }
 
-  completeDurationInputs(index: string, weeks: number, days: number) {
-    this.clearAndCompleteTextInputById(`datesOfPlacement_${index}_duration_weeks`, weeks.toString())
+  completeDurationInputs(index: string, days: number) {
     this.clearAndCompleteTextInputById(`datesOfPlacement_${index}_duration_days`, days.toString())
+  }
+
+  completeIsFlexible(index: string, isFlexible: string) {
+    this.checkRadioByNameAndValue(`datesOfPlacement[${index}][isFlexible]`, isFlexible)
   }
 
   clearDateInputs(prefix: string): void {

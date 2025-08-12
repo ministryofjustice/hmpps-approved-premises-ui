@@ -1,5 +1,10 @@
 import { PageResponse, SummaryListActionItem, SummaryListItem, SummaryListWithCard } from '../../@types/ui'
-import { ApprovedPremisesApplication as Application, RequestForPlacement, User } from '../../@types/shared'
+import {
+  ApprovedPremisesApplication as Application,
+  Cas1RequestedPlacementPeriod,
+  RequestForPlacement,
+  User,
+} from '../../@types/shared'
 
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
@@ -44,18 +49,20 @@ export class RequestForPlacementSummaryCards {
     })
   }
 
-  private placementDates(): void {
+  private placementDates(placementPeriod: Cas1RequestedPlacementPeriod): void {
+    const items: Record<string, string> = {
+      'Expected arrival': DateFormats.isoDateToUIDate(placementPeriod.arrival, { format: 'short' }),
+      'Arrival date is flexible': { false: 'No', true: 'Yes' }[String(placementPeriod.arrivalFlexible)] || '',
+      Duration: `${placementPeriod.duration} nights`,
+    }
+    Object.entries(items).forEach(([key, value]) => {
+      if (!value) delete items[key]
+    })
+
     this.rows.push({
       key: { text: 'Placement dates' },
       value: {
-        html: embeddedSummaryListItem(
-          this.requestForPlacement.placementDates.map(date => {
-            return {
-              'Expected arrival': DateFormats.isoDateToUIDate(date.expectedArrival, { format: 'short' }),
-              Duration: `${date.duration} days`,
-            }
-          }),
-        ),
+        html: embeddedSummaryListItem([items]),
       },
     })
   }
@@ -109,8 +116,8 @@ export class RequestForPlacementSummaryCards {
     if (this.requestForPlacement.status === 'request_withdrawn') {
       this.withdrawalReason()
     }
-    if (this.requestForPlacement?.placementDates.length) {
-      this.placementDates()
+    if (this.requestForPlacement.requestedPlacementPeriod) {
+      this.placementDates(this.requestForPlacement.requestedPlacementPeriod)
     }
     this.questionAndAnswerRows()
     this.withdrawAction()

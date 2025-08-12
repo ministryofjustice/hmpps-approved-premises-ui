@@ -1,4 +1,4 @@
-import { Cas1Application } from '@approved-premises/api'
+import { Cas1Application, Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryListItem } from '@approved-premises/ui'
 import {
   applicationFactory,
@@ -33,6 +33,39 @@ describe('placementRequestSummaryList', () => {
         expectedApplicationId: placementRequest.applicationId,
         expectedLicenceExpiryDate: application.licenceExpiryDate,
         expectedPostcode: placementRequest.location,
+      }),
+    )
+  })
+
+  it('should display the correct summary for a ROTL', () => {
+    const rotlPlacementRequest: Cas1PlacementRequestDetail = { ...placementRequest, releaseType: 'rotl' }
+
+    expect(placementRequestSummaryList(rotlPlacementRequest).rows).toEqual(
+      expectedSummaryListItems({
+        isWithdrawn: false,
+        expectedApplicationId: placementRequest.applicationId,
+        expectedLicenceExpiryDate: application.licenceExpiryDate,
+        expectedPostcode: placementRequest.location,
+        isRotl: true,
+        expectFlexibleAndNights: true,
+      }),
+    )
+  })
+
+  it('should display a ROTL in old format if a legacy PR (isFlexible is null)', () => {
+    const rotlPlacementRequest: Cas1PlacementRequestDetail = {
+      ...placementRequest,
+      releaseType: 'rotl',
+      authorisedPlacementPeriod: { ...placementRequest.authorisedPlacementPeriod, arrivalFlexible: null },
+    }
+
+    expect(placementRequestSummaryList(rotlPlacementRequest).rows).toEqual(
+      expectedSummaryListItems({
+        isWithdrawn: false,
+        expectedApplicationId: placementRequest.applicationId,
+        expectedLicenceExpiryDate: application.licenceExpiryDate,
+        expectedPostcode: placementRequest.location,
+        isRotl: true,
       }),
     )
   })
@@ -121,6 +154,8 @@ describe('placementRequestSummaryList', () => {
     expectedApplicationId: string
     expectedLicenceExpiryDate: string
     expectedPostcode: string
+    isRotl?: boolean
+    expectFlexibleAndNights?: boolean
   }): Array<SummaryListItem> => {
     const apTypeListItem = generateApTypeListItem(options.expectedApplicationId)
     const rows = [
@@ -140,12 +175,22 @@ describe('placementRequestSummaryList', () => {
           text: 'Sun 23 Nov 2025',
         },
       },
+      options.expectFlexibleAndNights
+        ? {
+            key: {
+              text: 'Flexible date',
+            },
+            value: {
+              text: placementRequest.authorisedPlacementPeriod.arrivalFlexible ? 'Yes' : 'No',
+            },
+          }
+        : null,
       {
         key: {
           text: 'Length of stay',
         },
         value: {
-          text: '7 weeks, 3 days',
+          text: options.expectFlexibleAndNights ? '52 nights' : '7 weeks, 3 days',
         },
       },
       {
@@ -153,7 +198,7 @@ describe('placementRequestSummaryList', () => {
           text: 'Release type',
         },
         value: {
-          text: 'Home detention curfew (HDC)',
+          text: options.isRotl ? 'Release on Temporary Licence (ROTL)' : 'Home detention curfew (HDC)',
         },
       },
       {
@@ -201,9 +246,9 @@ describe('placementRequestSummaryList', () => {
       </strong>`,
         },
       }
-      rows.splice(7, 0, statusRow)
+      rows.splice(8, 0, statusRow)
     }
-    return rows
+    return rows.filter(Boolean)
   }
 
   const generateApTypeListItem = (expectedApplicationId: string) => {

@@ -2,7 +2,7 @@ import { ApprovedPremisesApplication as Application, PlacementApplication } from
 import { SummaryListWithCard } from '../../@types/ui'
 import PlacementApplicationForm from '../../form-pages/placement-application'
 import { forPagesInTask } from '../applications/forPagesInTask'
-import { mapPageForSummaryList } from './checkYourAnswersUtils'
+import { mapPageForSummaryList } from './reviewUtils'
 
 export const mapTaskForSummaryList = (
   placementApplication: PlacementApplication,
