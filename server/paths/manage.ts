@@ -68,7 +68,8 @@ const paths = {
       showTabPlacementRequest: singlePlacementPath.path('placement-request'),
       showTabTimeline: singlePlacementPath.path('timeline'),
       arrival: singlePlacementPath.path('arrival'),
-      keyworker: singlePlacementPath.path('keyworker'),
+      keyworker: singlePlacementPath.path('assign-keyworker'),
+      keyworkerDeprecated: singlePlacementPath.path('keyworker'),
       nonArrival: singlePlacementPath.path('non-arrival'),
       departure: {
         new: departurePath.path('new'),
