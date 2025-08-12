@@ -24,6 +24,8 @@ interface ShowRequest extends Request {
     crnOrName: string
     keyworker: string
     activeTab: PremisesTab
+    // TODO: Remove once Sentry setup validated
+    sentryDebug: string
   }
 }
 
@@ -42,6 +44,11 @@ export default class PremisesController {
 
   show(): RequestHandler {
     return async (req: ShowRequest, res: Response) => {
+      // TODO: Remove once Sentry setup validated
+      if (req.query.sentryDebug === 'true') {
+        throw new Error('Sentry test error')
+      }
+
       const tabSettings: Record<PremisesTab, TabSettings> = {
         upcoming: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'asc' },
         current: { pageSize: 2000, sortBy: 'personName', sortDirection: 'asc' },
