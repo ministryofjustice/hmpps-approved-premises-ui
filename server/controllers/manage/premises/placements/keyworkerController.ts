@@ -12,7 +12,7 @@ export default class KeyworkerController {
     private readonly placementService: PlacementService,
   ) {}
 
-  new(): RequestHandler {
+  newDeprecated(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { token } = req.user
       const { premisesId, placementId } = req.params
@@ -34,7 +34,7 @@ export default class KeyworkerController {
     }
   }
 
-  assign(): RequestHandler {
+  assignDeprecated(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
       try {
@@ -55,7 +55,7 @@ export default class KeyworkerController {
           req,
           res,
           error as Error,
-          managePaths.premises.placements.keyworker({
+          managePaths.premises.placements.keyworkerDeprecated({
             premisesId,
             placementId,
           }),

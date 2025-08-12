@@ -40,7 +40,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
-            <form action="{{ paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }) }}"
+            <form action="{{ paths.premises.placements.keyworkerDeprecated({ premisesId: placement.premises.id, placementId: placement.id }) }}"
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

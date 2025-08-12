@@ -4,6 +4,24 @@ import paths from '../../../../server/paths/manage'
 import apiPaths from '../../../../server/paths/api'
 
 export class KeyworkerAssignmentPage extends Page {
+  constructor(title: string = 'Edit keyworker') {
+    super(title)
+  }
+
+  static visitUnauthorised(placement: Cas1SpaceBooking): KeyworkerAssignmentPage {
+    cy.visit(paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }), {
+      failOnStatusCode: false,
+    })
+    return new KeyworkerAssignmentPage(`Authorisation Error`)
+  }
+
+  completeForm(value: string): void {
+    this.checkRadioByNameAndValue('keyworker', value)
+  }
+}
+
+// TODO: Remove deprecated page class when new flow released (APS-2644)
+export class DeprecatedKeyworkerAssignmentPage extends Page {
   constructor(
     private readonly placement: Cas1SpaceBooking,
     private readonly staffMembers: Array<StaffMember>,
@@ -12,11 +30,17 @@ export class KeyworkerAssignmentPage extends Page {
     super(title)
   }
 
-  static visitUnauthorised(placement: Cas1SpaceBooking): KeyworkerAssignmentPage {
-    cy.visit(paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }), {
-      failOnStatusCode: false,
-    })
-    return new KeyworkerAssignmentPage(null, null, `Authorisation Error`)
+  static visitUnauthorised(placement: Cas1SpaceBooking): DeprecatedKeyworkerAssignmentPage {
+    cy.visit(
+      paths.premises.placements.keyworkerDeprecated({
+        premisesId: placement.premises.id,
+        placementId: placement.id,
+      }),
+      {
+        failOnStatusCode: false,
+      },
+    )
+    return new DeprecatedKeyworkerAssignmentPage(null, null, `Authorisation Error`)
   }
 
   shouldShowKeyworkerList(placement: Cas1SpaceBooking): void {

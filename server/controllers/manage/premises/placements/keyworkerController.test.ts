@@ -26,7 +26,7 @@ describe('keyworkerController', () => {
   const placement = cas1SpaceBookingFactory.build()
   const testStaffCode = 'TestId'
   const uiPlacementPagePath = paths.premises.placements.show({ premisesId, placementId: placement.id })
-  const uiKeyworkerPagePath = paths.premises.placements.keyworker({ premisesId, placementId: placement.id })
+  const uiKeyworkerPagePath = paths.premises.placements.keyworkerDeprecated({ premisesId, placementId: placement.id })
   const keyworkers = staffMemberFactory.buildList(5, { keyWorker: true })
 
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe('keyworkerController', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = keyworkerController.new()
+      const requestHandler = keyworkerController.newDeprecated()
 
       await requestHandler(request, response, next)
 
@@ -67,7 +67,7 @@ describe('keyworkerController', () => {
 
   describe('assign', () => {
     it('assigns the keyworker and returns to the placement details page', async () => {
-      const requestHandler = keyworkerController.assign()
+      const requestHandler = keyworkerController.assignDeprecated()
       request.body = { staffCode: testStaffCode }
 
       await requestHandler(request, response, next)
@@ -80,7 +80,7 @@ describe('keyworkerController', () => {
     })
 
     it('returns error if page submitted without keyworker selected', async () => {
-      const requestHandler = keyworkerController.assign()
+      const requestHandler = keyworkerController.assignDeprecated()
 
       request.body = {}
 
@@ -103,7 +103,7 @@ describe('keyworkerController', () => {
 
     describe('when errors are raised by the API', () => {
       it('should call catchValidationErrorOrPropogate with a standard error', async () => {
-        const requestHandler = keyworkerController.assign()
+        const requestHandler = keyworkerController.assignDeprecated()
         request.body = { staffCode: testStaffCode }
 
         const err = new Error()
