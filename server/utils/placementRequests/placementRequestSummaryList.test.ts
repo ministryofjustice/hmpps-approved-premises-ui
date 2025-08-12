@@ -187,6 +187,14 @@ describe('placementRequestSummaryList', () => {
         : null,
       {
         key: {
+          text: 'Flexible date',
+        },
+        value: {
+          text: placementRequest.authorisedPlacementPeriod.arrivalFlexible ? 'Yes' : 'No',
+        },
+      },
+      {
+        key: {
           text: 'Length of stay',
         },
         value: {
