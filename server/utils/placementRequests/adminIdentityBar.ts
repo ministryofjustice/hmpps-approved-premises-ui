@@ -53,14 +53,14 @@ export const adminActions = (
       text: 'Withdraw request for placement',
     },
     {
-      href: matchPaths.placementRequests.bookingNotMade.confirm({ id: placementRequest.id }),
+      href: matchPaths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }),
       text: 'Mark as unable to match',
     },
   ]
 
   if (hasPermission(user, ['cas1_space_booking_create'])) {
     actions.unshift({
-      href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+      href: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }),
       text: 'Search for a space',
     })
   }

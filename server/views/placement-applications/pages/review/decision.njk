@@ -9,65 +9,65 @@
 {% extends "../../../partials/layout.njk" %}
 
 {% set mainClasses = "app-container govuk-body" %}
-{% set backLink = paths.placementRequests.index() + "#placement-applications" %}
 
 {% block beforeContent %}
     {{ govukBackLink({
-      text: "Back",
-      href: pageProps.backLink
+        text: "Back",
+        href: pageProps.backLink
     }) }}
 {% endblock %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">
-            {{ pageProps.pageHeading }}
-         </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">
+                {{ pageProps.pageHeading }}
+            </h1>
 
-        <form action="{{ paths.placementApplications.review.submission({ id: placementApplication.id }) }}" method="post">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <form action="{{ paths.placementApplications.review.submission({ id: placementApplication.id }) }}"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-            {{ showErrorSummary(errorSummary) }}
+                {{ showErrorSummary(errorSummary) }}
 
-            {% block questions %}
+                {% block questions %}
 
-              {{ formPageRadios({
-                fieldName: "decision",
-                fieldset: {
-                    legend: {
-                    html: '<legend>Make a decision on whether the person can still be placed, based on the new information provided by the probation practitioner.<br /><br />Before rejecting a request you must discuss the decision with the national Approved Premises central referral unit lead. Record details of the discussion and the rationale for the decision when summarising your decision.</legend>'
-                    }
-                },
-                items: [
-                    {
-                    value: "accepted",
-                    text: "Accept - proceed to match"
-                    },
-                    {
-                    value: "rejected",
-                    text: "Reject - no longer suitable for AP"
-                    }
-                ]
-                }, fetchContext()) }}
-            
-            {{ formPageTextarea({
-                fieldName: 'decisionSummary',
-                label: {
-                text: "Summarise your decision",
-                classes: "govuk-label--m"
-                }
-            }, fetchContext()) }}
+                    {{ formPageRadios({
+                        fieldName: "decision",
+                        fieldset: {
+                            legend: {
+                                html: '<legend>Make a decision on whether the person can still be placed, based on the new information provided by the probation practitioner.<br /><br />Before rejecting a request you must discuss the decision with the national Approved Premises central referral unit lead. Record details of the discussion and the rationale for the decision when summarising your decision.</legend>'
+                            }
+                        },
+                        items: [
+                            {
+                                value: "accepted",
+                                text: "Accept - proceed to match"
+                            },
+                            {
+                                value: "rejected",
+                                text: "Reject - no longer suitable for AP"
+                            }
+                        ]
+                    }, fetchContext()) }}
 
-            {% endblock %}
+                    {{ formPageTextarea({
+                        fieldName: 'decisionSummary',
+                        label: {
+                            text: "Summarise your decision",
+                            classes: "govuk-label--m"
+                        }
+                    }, fetchContext()) }}
 
-            {{ govukButton({
-                text: "Submit",
-                preventDoubleClick: true
-            }) }}
-        </form>
-    </div>
+                {% endblock %}
+
+                {{ govukButton({
+                    text: "Submit",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
     </div>
 
 {% endblock %}

@@ -21,7 +21,7 @@ describe('utils', () => {
       searchButton(placementRequest)
 
       expect(utils.linkTo).toHaveBeenCalledWith(
-        paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+        paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }),
         { text: 'Search', attributes: { class: 'govuk-button' } },
       )
     })

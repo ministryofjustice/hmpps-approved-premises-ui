@@ -22,7 +22,7 @@ export default class WithdrawalsController {
 
       return res.render('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
-        id: req.params.id,
+        placementRequestId: req.params.placementRequestId,
         applicationId,
         errors,
         errorSummary,
@@ -33,6 +33,7 @@ export default class WithdrawalsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { placementRequestId } = req.params
       try {
         const { reason } = req.body as {
           reason: string | undefined
@@ -46,7 +47,7 @@ export default class WithdrawalsController {
 
         const placementRequest = await this.placementRequestService.withdraw(
           req.user.token,
-          req.params.id,
+          placementRequestId,
           req.body.reason,
         )
 
@@ -66,7 +67,7 @@ export default class WithdrawalsController {
           req,
           res,
           error as Error,
-          paths.admin.placementRequests.withdrawal.new({ id: req.params.id }),
+          paths.admin.placementRequests.withdrawal.new({ placementRequestId }),
         )
       }
     }

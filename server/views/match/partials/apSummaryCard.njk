@@ -22,7 +22,7 @@
         },
         actions:{
             items:[{
-                href: paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: cardContent.spaceSearchResult.premises.id }),
+                href: paths.v2Match.placementRequests.search.occupancy({ placementRequestId: placementRequest.id, premisesId: cardContent.spaceSearchResult.premises.id }),
                 text: "View spaces",
                 visuallyHiddenText: "View spaces at " + cardContent.spaceSearchResult.premises.name
             }]

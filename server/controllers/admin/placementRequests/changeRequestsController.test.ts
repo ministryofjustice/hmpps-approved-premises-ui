@@ -61,7 +61,7 @@ describe('plannedTransferController', () => {
     jest.resetAllMocks()
     request = createMock<Request>({
       user: { token },
-      params: { id: placementRequest.id, changeRequestId: changeRequest.id },
+      params: { placementRequestId: placementRequest.id, changeRequestId: changeRequest.id },
       session: {
         save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
       },
@@ -100,7 +100,7 @@ describe('plannedTransferController', () => {
         response,
         new ValidationError({}),
         paths.admin.placementRequests.changeRequests.review({
-          id: placementRequest.id,
+          placementRequestId: placementRequest.id,
           changeRequestId: changeRequest.id,
         }),
       )
@@ -122,7 +122,9 @@ describe('plannedTransferController', () => {
         heading: 'Appeal actioned',
         body: "<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to match' list.</p>",
       })
-      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: placementRequest.id }))
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),
+      )
     })
 
     it('should reject the appeal if a rejection reason is given', async () => {
@@ -142,7 +144,9 @@ describe('plannedTransferController', () => {
         heading: 'Appeal rejected',
         body: '<p>The placement remains in place. An email will be sent to the AP manager that made the appeal.</p>',
       })
-      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: placementRequest.id }))
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),
+      )
     })
   })
 })

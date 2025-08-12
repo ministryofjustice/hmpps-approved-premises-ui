@@ -57,7 +57,7 @@ describe('PlacementRequestsController', () => {
 
       const requestHandler = placementRequestsController.show()
 
-      await requestHandler({ ...request, params: { id: placementRequestDetail.id } }, response, next)
+      await requestHandler({ ...request, params: { placementRequestId: placementRequestDetail.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/show', {
         pageHeading: 'Matching information',

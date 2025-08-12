@@ -33,7 +33,7 @@ describe('SpaceBookingsController', () => {
   const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ duration: 84 })
   const searchState = spaceSearchStateFactory.build()
 
-  const params = { id: placementRequestDetail.id, premisesId: premises.id }
+  const params = { placementRequestId: placementRequestDetail.id, premisesId: premises.id }
 
   let spaceBookingsController: SpaceBookingsController
 
@@ -61,7 +61,7 @@ describe('SpaceBookingsController', () => {
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)
 
-      expect(spaceBookingsController.formData.get).toHaveBeenCalledWith(params.id, request.session)
+      expect(spaceBookingsController.formData.get).toHaveBeenCalledWith(params.placementRequestId, request.session)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
         backLink: matchPaths.v2Match.placementRequests.search.occupancy(params),
@@ -108,7 +108,7 @@ describe('SpaceBookingsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: params.placementRequestId }),
       )
     })
 
@@ -134,7 +134,7 @@ describe('SpaceBookingsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: params.placementRequestId }),
       )
     })
 

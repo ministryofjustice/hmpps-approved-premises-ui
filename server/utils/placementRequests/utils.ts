@@ -11,7 +11,7 @@ export const formatReleaseType = (placementRequest: Cas1PlacementRequestDetail) 
   allReleaseTypes[placementRequest.releaseType]
 
 export const searchButton = (placementRequest: Cas1PlacementRequestDetail) =>
-  linkTo(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }), {
+  linkTo(paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }), {
     text: 'Search',
     attributes: { class: 'govuk-button' },
   })

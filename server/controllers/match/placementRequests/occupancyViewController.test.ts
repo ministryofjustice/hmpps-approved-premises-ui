@@ -63,11 +63,11 @@ describe('OccupancyViewController', () => {
   let request: Readonly<DeepMocked<Request>>
   const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
 
-  const params = { id: placementRequestDetail.id, premisesId: premises.id }
+  const params = { placementRequestId: placementRequestDetail.id, premisesId: premises.id }
 
   const occupancyViewUrl = matchPaths.v2Match.placementRequests.search.occupancy(params)
   const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-    id: placementRequestDetail.id,
+    placementRequestId: placementRequestDetail.id,
     premisesId: premises.id,
     date: ':date',
   })}${createQueryString({ criteria: searchState.roomCriteria }, { arrayFormat: 'repeat', addQueryPrefix: true })}`
@@ -152,7 +152,7 @@ describe('OccupancyViewController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: params.placementRequestId }),
       )
     })
 
@@ -481,7 +481,7 @@ describe('OccupancyViewController', () => {
     describe.each([
       [
         'for a placement request to help with Find & Book',
-        { premisesId: premises.id, id: placementRequestDetail.id, date },
+        { premisesId: premises.id, placementRequestId: placementRequestDetail.id, date },
         {
           pathPrefix: `/match/placement-requests/${placementRequestDetail.id}/space-search/occupancy/${premises.id}/date`,
           getCapacityArgs: { startDate: date },

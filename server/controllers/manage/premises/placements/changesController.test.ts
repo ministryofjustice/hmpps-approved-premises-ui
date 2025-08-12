@@ -81,7 +81,7 @@ describe('changesController', () => {
       expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/placements/:placementId/changes/new',
         request,
-        ['/manage/premises/:premisesId/placements/:placementId', '/admin/placement-requests/:id'],
+        ['/manage/premises/:premisesId/placements/:placementId', '/admin/placement-requests/:placementRequestId'],
       )
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
@@ -384,7 +384,9 @@ describe('changesController', () => {
         departureDate: '2025-07-05',
         characteristics: ['isSuitedForSexOffenders', 'isStepFreeDesignated'],
       }
-      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({ id: placement.placementRequestId })
+      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({
+        placementRequestId: placement.placementRequestId,
+      })
 
       expect(placementService.updatePlacement).toHaveBeenCalledWith(
         token,

@@ -20,7 +20,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back to other APs",
-        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id })
+        href: paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id })
     }) }}
 {% endblock %}
 
@@ -82,7 +82,7 @@
 
             <p><strong>Room criteria:</strong> {{ selectedCriteria }}</p>
 
-            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}"
+            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ placementRequestId: placementRequest.id, premisesId: premises.id }) }}"
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -128,19 +128,21 @@
                     {{ govukButton({
                         text: "Cancel",
                         classes: "govuk-button--secondary",
-                        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+                        href: paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }),
                         preventDoubleClick: true
                     }) }}
                 </div>
             </form>
             <h3 class="govuk-heading-m">If you are not booking this placement</h3>
             <p class="govuk-body">
-                <a href="{{ paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }) }}">Check for a
-                    space at another AP</a>
+                <a href="{{ paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }) }}">
+                    Check for a space at another AP
+                </a>
             </p>
             <p class="govuk-body">
-                <a href="{{ paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}) }}">Mark as unable
-                    to match</a>
+                <a href="{{ paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }) }}">
+                    Mark as unable to match
+                </a>
             </p>
         </section>
     {% endif %}

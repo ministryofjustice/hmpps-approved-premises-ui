@@ -31,17 +31,17 @@ export default class SpaceSearchController {
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { token } = req.user
-      const { id } = req.params
+      const { placementRequestId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
 
-      if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ id }))) {
-        await this.formData.remove(id, req.session)
+      if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ placementRequestId }))) {
+        await this.formData.remove(placementRequestId, req.session)
       }
 
       const searchState =
-        this.formData.get(id, req.session) ||
+        this.formData.get(placementRequestId, req.session) ||
         (await this.formData.update(placementRequest.id, req.session, initialiseSearchState(placementRequest)))
 
       const spaceSearchResults = (await this.spaceSearchService.search(token, searchState)).results
@@ -60,7 +60,7 @@ export default class SpaceSearchController {
         ),
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
-        formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+        formPath: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }),
         errors,
         errorSummary,
         ...formValues,
@@ -80,6 +80,7 @@ export default class SpaceSearchController {
 
   filterSearch(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { placementRequestId } = req.params
       try {
         const { postcode, apType, apCriteria = [], roomCriteria = [] } = req.body
 
@@ -89,20 +90,20 @@ export default class SpaceSearchController {
           })
         }
 
-        await this.formData.update(req.params.id, req.session, {
+        await this.formData.update(placementRequestId, req.session, {
           postcode,
           apType,
           apCriteria,
           roomCriteria,
         })
 
-        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error,
-          matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }),
+          matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }),
         )
       }
     }

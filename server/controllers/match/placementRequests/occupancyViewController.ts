@@ -40,14 +40,14 @@ export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBoo
 
 interface ViewRequest extends Request {
   params: {
-    id: string
+    placementRequestId: string
     premisesId: string
   }
 }
 
 interface ViewDayRequest extends Request {
   params: {
-    id?: string
+    placementRequestId?: string
     placementId?: string
     premisesId: string
     date: string
@@ -73,12 +73,12 @@ export default class {
   view(): TypedRequestHandler<Request> {
     return async (req: ViewRequest, res: Response) => {
       const { token } = req.user
-      const { id, premisesId } = req.params
+      const { placementRequestId, premisesId } = req.params
 
-      const searchState = this.formData.get(id, req.session)
+      const searchState = this.formData.get(placementRequestId, req.session)
 
       if (!searchState) {
-        return res.redirect(paths.v2Match.placementRequests.search.spaces({ id }))
+        return res.redirect(paths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       }
 
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
@@ -97,7 +97,7 @@ export default class {
         ...userInput,
       }
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
       const { startDate, endDate } = placementDates(placementRequest.expectedArrival, placementRequest.duration)
       const premises = await this.premisesService.find(token, premisesId)
 
@@ -111,7 +111,7 @@ export default class {
           endDate: capacityDates.endDate,
         })
         const placeholderDetailsUrl = `${paths.v2Match.placementRequests.search.dayOccupancy({
-          id,
+          placementRequestId,
           premisesId,
           date: ':date',
         })}${createQueryString(
@@ -150,8 +150,11 @@ export default class {
 
   filterView(): TypedRequestHandler<Request> {
     return async (req: ViewRequest, res: Response) => {
-      const { id, premisesId } = req.params
-      const occupancyUrl = paths.v2Match.placementRequests.search.occupancy({ id, premisesId })
+      const { placementRequestId, premisesId } = req.params
+      const occupancyUrl = paths.v2Match.placementRequests.search.occupancy({
+        placementRequestId,
+        premisesId,
+      })
 
       try {
         const { roomCriteria, durationDays, startDate: startDateRaw } = req.body
@@ -164,7 +167,7 @@ export default class {
           })
         }
 
-        await this.formData.update(id, req.session, {
+        await this.formData.update(placementRequestId, req.session, {
           roomCriteria: makeArrayOfType<Cas1SpaceBookingCharacteristic>(roomCriteria) || [],
           startDate,
           durationDays: Number(durationDays),
@@ -179,7 +182,7 @@ export default class {
 
   bookSpace(): TypedRequestHandler<Request> {
     return async (req: ViewRequest, res: Response) => {
-      const { id, premisesId } = req.params
+      const { placementRequestId, premisesId } = req.params
       const { body } = req
 
       try {
@@ -198,19 +201,19 @@ export default class {
           'departureDate',
         )
 
-        await this.formData.update(id, req.session, {
+        await this.formData.update(placementRequestId, req.session, {
           arrivalDate,
           departureDate,
         })
 
-        return res.redirect(paths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }))
+        return res.redirect(paths.v2Match.placementRequests.spaceBookings.new({ placementRequestId, premisesId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error,
           paths.v2Match.placementRequests.search.occupancy({
-            id,
+            placementRequestId,
             premisesId,
           }),
         )
@@ -221,7 +224,7 @@ export default class {
   viewDay(): TypedRequestHandler<Request> {
     return async (req: ViewDayRequest, res: Response) => {
       const { token } = req.user
-      const { id: placementRequestId, premisesId, placementId, date } = req.params
+      const { placementRequestId, premisesId, placementId, date } = req.params
       const { criteria = [] } = req.query
 
       const backLink = this.sessionService.getPageBackLink(
@@ -240,7 +243,7 @@ export default class {
       const getPathWithDate = (pathDate: string) => {
         if (placementRequestId) {
           return paths.v2Match.placementRequests.search.dayOccupancy({
-            id: placementRequestId,
+            placementRequestId,
             premisesId,
             date: pathDate,
           })

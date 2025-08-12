@@ -13,7 +13,7 @@ export default class SearchPage extends Page {
   }
 
   static visit(placementRequest: Cas1PlacementRequestDetail) {
-    cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
+    cy.visit(paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }))
     return new SearchPage()
   }
 

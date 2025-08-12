@@ -26,7 +26,7 @@ export default class ChangeRequestsController {
 
   review(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const { id: placementRequestId, changeRequestId } = req.params
+      const { placementRequestId, changeRequestId } = req.params
       const errorsAndUserInput = fetchErrorsAndUserInput(req)
 
       const [changeRequest, placementRequest, rejectionReasons]: [
@@ -54,7 +54,7 @@ export default class ChangeRequestsController {
       res.render('admin/placementRequests/changeRequests/review', {
         placementRequest,
         pageHeading: 'Review appeal',
-        backLink: paths.admin.placementRequests.show({ id: placementRequestId }),
+        backLink: paths.admin.placementRequests.show({ placementRequestId }),
         bookingSummary: placementRequest.booking && placementSummaryList(placementRequest),
         changeRequestSummary,
         ...errorsAndUserInput,
@@ -65,7 +65,7 @@ export default class ChangeRequestsController {
 
   decide(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const { id: placementRequestId, changeRequestId } = req.params
+      const { placementRequestId, changeRequestId } = req.params
       const {
         body: { decision, notes },
       } = req as { body: { decision: AppealDecision; notes: string } }
@@ -123,13 +123,13 @@ export default class ChangeRequestsController {
             body: `<p>The placement remains in place. An email will be sent to the AP manager that made the appeal.</p>`,
           })
         }
-        return res.redirect(paths.admin.placementRequests.show({ id: placementRequestId }))
+        return res.redirect(paths.admin.placementRequests.show({ placementRequestId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          paths.admin.placementRequests.changeRequests.review({ id: placementRequestId, changeRequestId }),
+          paths.admin.placementRequests.changeRequests.review({ placementRequestId, changeRequestId }),
         )
       }
     }

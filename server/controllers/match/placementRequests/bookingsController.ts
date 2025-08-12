@@ -11,7 +11,8 @@ export default class BookingsController {
 
   bookingNotMade(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const confirmPath = matchPaths.placementRequests.bookingNotMade.create({ id: req.params.id })
+      const { placementRequestId } = req.params
+      const confirmPath = matchPaths.placementRequests.bookingNotMade.create({ placementRequestId })
 
       const backLink = this.sessionService.getPageBackLink(
         matchPaths.placementRequests.bookingNotMade.confirm.pattern,
@@ -33,7 +34,9 @@ export default class BookingsController {
 
   createBookingNotMade(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      await this.placementRequestService.bookingNotMade(req.user.token, req.params.id, { notes: req.body.notes })
+      await this.placementRequestService.bookingNotMade(req.user.token, req.params.placementRequestId, {
+        notes: req.body.notes,
+      })
       req.flash('success', 'Placement request has been marked as unable to match')
 
       return res.redirect(adminPaths.admin.cruDashboard.index({}))

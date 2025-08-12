@@ -16,7 +16,7 @@ export default class ReviewChangeRequestPage extends Page {
   static visitUnauthorised(placementRequest: Cas1PlacementRequestDetail, changeRequest: Cas1ChangeRequest) {
     cy.visit(
       paths.admin.placementRequests.changeRequests.review({
-        id: placementRequest.id,
+        placementRequestId: placementRequest.id,
         changeRequestId: changeRequest.id,
       }),
       { failOnStatusCode: false },

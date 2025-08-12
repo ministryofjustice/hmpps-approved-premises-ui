@@ -14,9 +14,13 @@ export default class ShowPage extends Page {
     super('Placement request')
 
     this.actions = {
-      'Search for a space': matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+      'Search for a space': matchPaths.v2Match.placementRequests.search.spaces({
+        placementRequestId: placementRequest.id,
+      }),
       'Withdraw request for placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
-      'Mark as unable to match': matchPaths.placementRequests.bookingNotMade.confirm({ id: placementRequest.id }),
+      'Mark as unable to match': matchPaths.placementRequests.bookingNotMade.confirm({
+        placementRequestId: placementRequest.id,
+      }),
       'Withdraw placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
     }
 
@@ -29,7 +33,7 @@ export default class ShowPage extends Page {
   }
 
   static visit(placementRequestDetail: Cas1PlacementRequestDetail): ShowPage {
-    cy.visit(paths.admin.placementRequests.show({ id: placementRequestDetail.id }))
+    cy.visit(paths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id }))
     return new ShowPage(placementRequestDetail)
   }
 

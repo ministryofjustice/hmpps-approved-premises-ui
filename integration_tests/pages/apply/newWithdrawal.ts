@@ -64,7 +64,11 @@ export default class SelectWithdrawableTypePage extends Page {
 
   veryifyLink(id: Withdrawable['id'], type: Withdrawable['type']) {
     if (type === 'placement_request') {
-      cy.get(`[data-cy-withdrawable-id="${id}"]`).should('have.attr', 'href', matchPaths.placementRequests.show({ id }))
+      cy.get(`[data-cy-withdrawable-id="${id}"]`).should(
+        'have.attr',
+        'href',
+        matchPaths.placementRequests.show({ placementRequestId: id }),
+      )
     }
   }
 }
