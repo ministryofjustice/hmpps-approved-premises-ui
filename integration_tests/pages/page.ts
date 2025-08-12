@@ -857,8 +857,8 @@ export default abstract class Page {
             cy.contains(`${bookingCount} booked`)
             cy.contains(`${availableBedCount - bookingCount} available`)
           } else {
-            const bookableCount = dayAvailabilityCount(capacity, criteria)
-            cy.contains(criteria.length ? `${bookableCount}` : `${bookableCount}/${availableBedCount}`)
+            cy.contains(`${availableBedCount - bookingCount}/${availableBedCount} capacity`)
+            if (criteria.length) cy.contains(`${dayAvailabilityCount(capacity, criteria)} for your criteria`)
           }
           cy.contains(DateFormats.isoDateToUIDate(date, { format: 'longNoYear' }))
         })
