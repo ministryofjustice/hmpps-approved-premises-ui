@@ -8,10 +8,10 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "./partials/_occupancySummary.njk" import occupancySummary %}
-{% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "partials/filters.njk" import filterDatepicker, filterSelect, filterCheckboxes %}
-{% from "partials/_calendar.njk" import calendarKey %}
+{% from "partials/calendar/_occupancyCalendar.njk" import occupancyCalendar %}
+{% from "partials/calendar/_calendar.njk" import calendarKey %}
 
 {% extends "match/layout-with-details.njk" %}
 
