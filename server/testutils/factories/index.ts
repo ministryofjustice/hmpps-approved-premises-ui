@@ -100,6 +100,7 @@ import cas1OasysGroupFactory, { roshSummaryFactory } from './cas1OASysGroup'
 import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestrictionSummary'
 import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestriction'
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
+import cas1CurrentKeyworkerFactory from './cas1CurrentKeyworker'
 
 export {
   acctAlertFactory,
@@ -205,4 +206,5 @@ export {
   cas1RejectChangeRequestFactory,
   cas1PremisesLocalRestrictionSummaryFactory,
   cas1PremisesNewLocalRestrictionFactory,
+  cas1CurrentKeyworkerFactory,
 }

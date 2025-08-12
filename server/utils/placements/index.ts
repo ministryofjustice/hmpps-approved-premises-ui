@@ -30,6 +30,7 @@ import {
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
 import { displayName, isFullPerson } from '../personUtils'
+import { Cas1CurrentKeyWorker } from '../../@types/shared/models/Cas1CurrentKeyWorker'
 
 export const overallStatusTextMap = {
   upcoming: 'Upcoming',
@@ -116,7 +117,20 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
   const status = overallStatus(placement)
 
-  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
+  if (
+    ['upcoming', 'arrived'].includes(status) &&
+    hasPermission(user, ['cas1_experimental_new_assign_keyworker_flow'])
+  ) {
+    actionList.push({
+      text: 'Edit keyworker',
+      classes: 'govuk-button--secondary',
+      href: paths.premises.placements.keyworker({
+        premisesId: placement.premises.id,
+        placementId: placement.id,
+      }),
+    })
+    // TODO: Remove branch when new flow released (APS-2644)
+  } else if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
     actionList.push({
       text: 'Edit keyworker',
       classes: 'govuk-button--secondary',
@@ -338,6 +352,27 @@ export const otherBookings = (placement: Cas1SpaceBooking): SummaryList => ({
   ],
 })
 
+export const renderKeyworkersRadioOptions = (
+  currentKeyworkers: Array<Cas1CurrentKeyWorker>,
+  placement?: Cas1SpaceBooking,
+): Array<RadioItem> => {
+  const currentKeyworkersRadios = currentKeyworkers
+    .filter(keyworker => keyworker.summary.id !== placement?.keyWorkerAllocation?.keyWorkerUser?.id)
+    .map(keyworker => ({
+      text: keyworker.summary.name,
+      value: keyworker.summary.id,
+    }))
+
+  return [
+    ...currentKeyworkersRadios,
+    currentKeyworkersRadios.length ? { divider: 'or' } : undefined,
+    {
+      text: 'Assign a different keyworker',
+      value: 'new',
+    },
+  ].filter(Boolean)
+}
+
 export const renderKeyworkersSelectOptions = (
   staffList: Array<StaffMember>,
   placement: Cas1SpaceBooking,
@@ -402,7 +437,7 @@ export const processReferenceData = <T>(input: Array<IdAndName>, subst: IdAndNam
 }
 
 export const injectRadioConditionalHtml = (input: Array<RadioItem>, value: string, html: string): Array<RadioItem> =>
-  input.map((row: RadioItem) => (row.value === value ? { ...row, conditional: { html } } : row))
+  input.map(row => ('value' in row && row.value === value ? { ...row, conditional: { html } } : row))
 
 export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
 export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

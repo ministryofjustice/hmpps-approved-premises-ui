@@ -495,6 +495,16 @@ export default abstract class Page {
     cy.get(`[name="${name}"][value="${value}"]`).should('be.checked')
   }
 
+  verifyRadioByLabel(label: string, value: string, checked?: boolean): void {
+    let should = 'exist'
+
+    if (checked !== undefined) {
+      should = checked === true ? 'be.checked' : 'not.be.checked'
+    }
+
+    cy.get('label').contains(label).parent().find('input').should(should)
+  }
+
   verifyCheckboxByLabel(label: string, checked = true) {
     cy.get('label')
       .contains(label)

@@ -4,7 +4,11 @@ import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
-import { placementKeyDetails, renderKeyworkersSelectOptions } from '../../../../utils/placements'
+import {
+  placementKeyDetails,
+  renderKeyworkersSelectOptions,
+  renderKeyworkersRadioOptions,
+} from '../../../../utils/placements'
 
 export default class KeyworkerController {
   constructor(
@@ -12,6 +16,34 @@ export default class KeyworkerController {
     private readonly placementService: PlacementService,
   ) {}
 
+  new(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { token } = req.user
+      const { premisesId, placementId } = req.params
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      const [placement, currentKeyworkers] = await Promise.all([
+        await this.premisesService.getPlacement({
+          token,
+          premisesId,
+          placementId,
+        }),
+        await this.premisesService.getCurrentKeyworkers(token, premisesId),
+      ])
+
+      return res.render('manage/premises/placements/assignKeyworker/new', {
+        placement,
+        backlink: managePaths.premises.placements.show({ premisesId, placementId: placement.id }),
+        currentKeyworkerName: placement.keyWorkerAllocation?.keyWorkerUser?.name || 'Not assigned',
+        keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
+        errors,
+        errorSummary,
+        ...userInput,
+      })
+    }
+  }
+
+  // TODO: Remove handler when new flow released (APS-2644)
   newDeprecated(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { token } = req.user
@@ -34,6 +66,7 @@ export default class KeyworkerController {
     }
   }
 
+  // TODO: Remove handler when new flow released (APS-2644)
   assignDeprecated(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params

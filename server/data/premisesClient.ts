@@ -1,5 +1,6 @@
 import type {
   Cas1BedDetail,
+  Cas1CurrentKeyWorker,
   Cas1NationalOccupancy,
   Cas1NationalOccupancyParameters,
   Cas1PremiseCapacity,
@@ -109,6 +110,12 @@ export default class PremisesClient {
     return (await this.restClient.get({
       path: paths.premises.placements.show(args),
     })) as Cas1SpaceBooking
+  }
+
+  async getCurrentKeyworkers(premisesId: string): Promise<Array<Cas1CurrentKeyWorker>> {
+    return (await this.restClient.get({
+      path: paths.premises.currentKeyworkers({ premisesId }),
+    })) as Array<Cas1CurrentKeyWorker>
   }
 
   async getStaff(premisesId: string): Promise<Array<StaffMember>> {
