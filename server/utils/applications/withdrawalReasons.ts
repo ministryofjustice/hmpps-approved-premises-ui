@@ -1,5 +1,5 @@
-import { WithdrawalReason } from '../../@types/shared'
-import { RadioItem } from '../../@types/ui'
+import { WithdrawalReason } from '@approved-premises/api'
+import { HtmlItem } from '@approved-premises/ui'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
 import { filterByType } from '../utils'
 
@@ -36,7 +36,7 @@ export const placementNoLongerNeededOptions = filterByType<OtherReasons>(
   withdrawalReasons,
 )
 
-export const withdrawalRadioOptions = (conditionals: Partial<Record<WithdrawalReason, RadioItem['conditional']>>) => [
+export const withdrawalRadioOptions = (conditionals: Partial<Record<WithdrawalReason, HtmlItem>>) => [
   { divider: 'The application is no longer needed' },
   ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined, conditionals),
   { divider: 'A new application is needed' },

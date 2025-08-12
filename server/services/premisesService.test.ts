@@ -14,6 +14,7 @@ import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
   cas1BedDetailFactory,
+  cas1CurrentKeyworkerFactory,
   cas1NationalOccupancyFactory,
   cas1NationalOccupancyParametersFactory,
   cas1PremiseCapacityFactory,
@@ -313,6 +314,20 @@ describe('PremisesService', () => {
     })
   })
 
+  describe('getCurrentKeyworkers', () => {
+    it('returns the list of users currently assigned as keyworkers for the premises', async () => {
+      const keyworkers = cas1CurrentKeyworkerFactory.buildList(5)
+      premisesClient.getCurrentKeyworkers.mockResolvedValue(keyworkers)
+
+      const result = await service.getCurrentKeyworkers(token, premisesId)
+
+      expect(result).toEqual(keyworkers)
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getCurrentKeyworkers).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  // TODO: Remove service test when new flow released (APS-2644)
   describe('getKeyworkers', () => {
     it('returns the list of staff filtered for keyworkers in a premises', async () => {
       const keyworker = staffMemberFactory.build({ keyWorker: true })

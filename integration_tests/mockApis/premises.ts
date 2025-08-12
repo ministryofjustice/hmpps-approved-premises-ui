@@ -9,6 +9,7 @@ import type {
 
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
+import { Cas1CurrentKeyWorker } from '../../server/@types/shared/models/Cas1CurrentKeyWorker'
 
 const stubCas1AllPremises = (args: { premises: Array<Cas1PremisesBasicSummary>; cruManagementAreaId?: string }) => {
   return stubFor({
@@ -41,6 +42,21 @@ const stubSinglePremises = (premises: Cas1Premises) =>
         'Content-Type': 'application/json;charset=UTF-8',
       },
       jsonBody: premises,
+    },
+  })
+
+const stubPremisesCurrentKeyworkers = (args: { premisesId: string; currentKeyworkers: Array<Cas1CurrentKeyWorker> }) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: paths.premises.currentKeyworkers({ premisesId: args.premisesId }),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.currentKeyworkers,
     },
   })
 
@@ -153,6 +169,7 @@ const stubPremisesLocalRestrictionDelete = (args: { premisesId: string; restrict
 export default {
   stubCas1AllPremises,
   stubSinglePremises,
+  stubPremisesCurrentKeyworkers,
   stubPremisesStaffMembers,
   stubPremisesCapacity,
   stubPremisesDaySummary,

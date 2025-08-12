@@ -1,8 +1,13 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { FullPerson, PersonSummary, RestrictedPerson, UnknownPerson } from '@approved-premises/api'
-import { FullPersonSummary } from '@approved-premises/api'
+import type {
+  FullPerson,
+  PersonSummary,
+  FullPersonSummary,
+  RestrictedPerson,
+  UnknownPerson,
+} from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 export const getCrn = () => `C${faker.number.int({ min: 100000, max: 999999 })}`

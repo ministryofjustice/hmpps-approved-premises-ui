@@ -116,6 +116,7 @@ export default {
       create: cas1LocalRestrictions,
       delete: cas1LocalRestrictions.path(':restrictionId'),
     },
+    currentKeyworkers: cas1PremisesSingle.path('current-key-workers'),
   },
   bookings: {
     bookingWithoutPremisesPath: path('/bookings/:bookingId'),

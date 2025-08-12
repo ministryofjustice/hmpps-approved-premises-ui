@@ -1,0 +1,70 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/keyDetails/macro.njk" import keyDetails %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "partials/layout.njk" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backlink
+    }) }}
+{% endblock %}
+
+{% block header %}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% block content %}
+    {% include "_messages.njk" %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
+
+            <h1 class="govuk-heading-l">Assign or change someone’s keyworker </h1>
+        </div>
+    </div>
+
+    {{ govukSummaryList({
+        rows: [{
+            key: {
+                text: "Currently assigned keyworker"
+            },
+            value: {
+                text: currentKeyworkerName
+            }
+        }]
+    }) }}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "keyworker",
+                    fieldset: {
+                        legend: {
+                            text: "Select a keyworker",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: keyworkersOptions,
+                    errorMessage: errors.keyworker
+                }) }}
+
+                {{ govukButton({
+                    text: "Submit",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
