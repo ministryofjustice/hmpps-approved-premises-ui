@@ -78,9 +78,6 @@ context('Keyworker', () => {
   })
 
   it('Assigns a new user as a keyworker to a placement', () => {
-    // const
-    const selectedKeyworkerUser = currentKeyworkers[2].summary
-
     GIVEN('I am signed in as a future manager with new keyworker flow permission')
     signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
 
@@ -98,12 +95,20 @@ context('Keyworker', () => {
     keyworkerAssignmentPage.clickButton('Submit')
 
     THEN("I should be shown the 'Find a keyworker' page")
-    const findKeyworkerPage = Page.verifyOnPage(FindAKeyworkerPage)
+    const findKeyworkerPage = Page.verifyOnPage(FindAKeyworkerPage, placement)
 
-    // WHEN('I search for a keyworker')
-    // findKeyworkerPage.completeForm('Smith')
-    // findKeyworkerPage.clickButton('Search')
-    //
+    WHEN('I submit an empty search query')
+    findKeyworkerPage.clickButton('Search')
+
+    THEN('I should see an error message')
+    findKeyworkerPage.shouldShowErrorMessagesForFields(['nameOrEmail'], {
+      nameOrEmail: 'Enter a name or email',
+    })
+
+    WHEN('I search for a keyworker')
+    findKeyworkerPage.completeForm('Smith')
+    findKeyworkerPage.clickButton('Search')
+
     // AND("I click 'Assign keyworker'")
     // const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
     // cy.task('stubSpaceBookingShow', updatedPlacement)

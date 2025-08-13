@@ -2,6 +2,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/keyDetails/macro.njk" import keyDetails %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/filters.njk" import filterWrapper, filterText %}
 
 {% extends "partials/layout.njk" %}
 
@@ -28,6 +29,9 @@
         </div>
     </div>
 
+    {% call filterWrapper('Search', 'Search', 'post') %}
+        {{ filterText('nameOrEmail','Name or email address', fetchContext()) }}
+    {% endcall %}
     
 {% endblock %}
 

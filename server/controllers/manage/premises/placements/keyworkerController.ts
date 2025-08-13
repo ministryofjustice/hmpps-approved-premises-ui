@@ -1,7 +1,12 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { StaffMember } from '@approved-premises/api'
 import { PlacementService, PremisesService } from '../../../../services'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateErrorMessages,
+  generateErrorSummary,
+} from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
 import {
@@ -33,7 +38,7 @@ export default class KeyworkerController {
 
       return res.render('manage/premises/placements/assignKeyworker/new', {
         placement,
-        backlink: managePaths.premises.placements.show({ premisesId, placementId: placement.id }),
+        backlink: managePaths.premises.placements.show({ premisesId, placementId }),
         currentKeyworkerName: placement.keyWorkerAllocation?.keyWorkerUser?.name || 'Not assigned',
         keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
         errors,
@@ -47,6 +52,7 @@ export default class KeyworkerController {
     return async (req: Request, res: Response) => {
       const { token } = req.user
       const { premisesId, placementId } = req.params
+      const { nameOrEmail } = req.body
 
       const placement = await this.premisesService.getPlacement({
         token,
@@ -54,8 +60,19 @@ export default class KeyworkerController {
         placementId,
       })
 
+      const errors: Record<string, string> = {}
+
+      if (nameOrEmail !== undefined) {
+        if (!nameOrEmail) {
+          errors.nameOrEmail = 'Enter a name or email'
+        }
+      }
+
       return res.render('manage/premises/placements/assignKeyworker/find', {
         placement,
+        backlink: managePaths.premises.placements.keyworker.new({ premisesId, placementId }),
+        errors: generateErrorMessages(errors),
+        errorSummary: generateErrorSummary(errors),
       })
     }
   }
