@@ -189,6 +189,10 @@ export default abstract class Page {
     cy.get(`input[name="${name}"][value="${option}"]`).check()
   }
 
+  checkRadioByLabel(label: string): void {
+    cy.get('label').contains(label).parent().find('input[type="radio"]').check()
+  }
+
   checkCheckboxByNameAndValue(name: string, option: string): void {
     cy.get(`input[name="${name}"][value="${option}"]`).check()
   }

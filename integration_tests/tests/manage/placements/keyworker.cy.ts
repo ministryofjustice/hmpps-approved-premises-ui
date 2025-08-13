@@ -9,11 +9,13 @@ import {
 } from '../../../../server/testutils/factories'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import Page from '../../../pages/page'
+import apiPaths from '../../../../server/paths/api'
 
 const premises = cas1PremisesFactory.build()
 const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
 const staffMembers = staffMemberFactory.buildList(5, { keyWorker: true })
 const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
+const selectedKeyworkerUser = currentKeyworkers[2].summary
 
 context('Keyworker', () => {
   beforeEach(() => {
@@ -48,21 +50,26 @@ context('Keyworker', () => {
       keyworker: 'Select a keyworker',
     })
 
-    // WHEN('I select a keyworker and submit the form')
-    // page.completeForm(currentKeyworkers[1].summary.id)
-    // page.clickSubmit()
-    //
-    // THEN('I should be shown the placement page with a confirmation message')
-    // placementPage = new PlacementShowPage(placement)
-    // placementPage.shouldShowBanner('Keyworker assigned')
-    //
-    // AND('the API should have been called with the correct parameters')
-    // cy.task(
-    //   'verifyApiPost',
-    //   apiPaths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
-    // ).then(body => {
-    //   expect(body).to.deep.equal({ userId: currentKeyworkers[1].summary.id })
-    // })
+    WHEN('I select a keyworker and submit the form')
+    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
+    cy.task('stubSpaceBookingShow', updatedPlacement)
+    keyworkerAssignmentPage.completeForm(selectedKeyworkerUser.name)
+    keyworkerAssignmentPage.clickButton('Submit')
+
+    THEN('I should be shown the placement page with a confirmation message')
+    Page.verifyOnPage(PlacementShowPage, updatedPlacement)
+    placementPage.shouldShowBanner(`
+      Keyworker assigned 
+      You have assigned ${selectedKeyworkerUser.name} to ${updatedPlacement.person.crn}
+    `)
+
+    AND('the API should have been called with the correct parameters')
+    cy.task(
+      'verifyApiPost',
+      apiPaths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
+    ).then(body => {
+      expect(body).to.deep.equal({ userId: selectedKeyworkerUser.id })
+    })
   })
 
   // TODO: APS-2660
