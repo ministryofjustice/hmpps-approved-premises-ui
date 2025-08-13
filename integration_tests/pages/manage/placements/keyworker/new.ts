@@ -1,8 +1,8 @@
 import type { Cas1CurrentKeyWorker, Cas1SpaceBooking, StaffMember } from '@approved-premises/api'
-import Page from '../../page'
-import paths from '../../../../server/paths/manage'
-import apiPaths from '../../../../server/paths/api'
-import { UnauthorisedPage } from '../../unauthorised'
+import Page from '../../../page'
+import paths from '../../../../../server/paths/manage'
+import apiPaths from '../../../../../server/paths/api'
+import { UnauthorisedPage } from '../../../unauthorised'
 
 export class KeyworkerAssignmentPage extends Page {
   constructor(readonly placement: Cas1SpaceBooking) {
@@ -17,9 +17,15 @@ export class KeyworkerAssignmentPage extends Page {
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): UnauthorisedPage {
-    cy.visit(paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }), {
-      failOnStatusCode: false,
-    })
+    cy.visit(
+      paths.premises.placements.keyworker.new({
+        premisesId: placement.premises.id,
+        placementId: placement.id,
+      }),
+      {
+        failOnStatusCode: false,
+      },
+    )
     return new UnauthorisedPage()
   }
 

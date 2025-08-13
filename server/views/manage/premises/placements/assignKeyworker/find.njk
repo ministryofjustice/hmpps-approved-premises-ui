@@ -1,0 +1,33 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/keyDetails/macro.njk" import keyDetails %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "partials/layout.njk" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backlink
+    }) }}
+{% endblock %}
+
+{% block header %}
+    {{ super() }}
+    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
+{% endblock %}
+
+{% block content %}
+    {% include "_messages.njk" %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
+
+            <h1 class="govuk-heading-l">Find a keyworker </h1>
+        </div>
+    </div>
+
+    
+{% endblock %}
+
