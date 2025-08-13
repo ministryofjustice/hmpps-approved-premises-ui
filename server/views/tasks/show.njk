@@ -4,9 +4,10 @@
 
 {% from "components/sortableTable/macro.njk" import sortableTable %}
 
-{% from "../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/filters.njk" import filterWrapper, filterSelect %}
 
-{% extends "../partials/layout.njk" %}
+{% extends "partials/layout.njk" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -22,54 +23,27 @@
             {{ showErrorSummary(errorSummary) }}
         </div>
     </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">Allocate task to</h2>
+    {% if canAllocate %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m">Allocate task to</h2>
+            </div>
         </div>
-    </div>
 
-    <form action="{{ paths.tasks.show(TaskUtils.taskParams(task)) }}" method="get" class="search-and-filter">
+        {% call filterWrapper('Filters') %}
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            {{ filterSelect('cruManagementAreaId', 'AP area', convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementAreaId')) }}
+            {{ filterSelect('qualification', 'Qualifications', UserUtils.userQualificationsSelectOptions(qualification)) }}
+        {% endcall %}
 
-        <h2 class="govuk-heading-m">Filters</h2>
+        {{ sortableTable({
+            attributes: { 'data-module': 'moj-sortable-table' },
+            firstCellIsHeader: true,
+            head: TaskUtils.userTableHeader(),
+            rows: TaskUtils.userTableRows(users, task, csrfToken)
+        }) }}
 
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-
-        <div class="search-and-filter__row">
-            {{ govukSelect({
-                label: {
-                    text: "AP area",
-                    classes: "govuk-label--s"
-                },
-                id: "cruManagementAreaId",
-                name: "cruManagementAreaId",
-                items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementAreaId')
-            }) }}
-
-            {{ govukSelect({
-                label: {
-                    text: "Qualifications",
-                    classes: "govuk-label--s"
-                },
-                id: "qualification",
-                name: "qualification",
-                items: UserUtils.userQualificationsSelectOptions(qualification)
-            }) }}
-
-            {{ govukButton({
-                "name": "submit",
-                "text": "Apply filters",
-                "preventDoubleClick": true
-            }) }}
-        </div>
-    </form>
-
-    {{ sortableTable({
-        attributes: { 'data-module': 'moj-sortable-table' },
-        firstCellIsHeader: true,
-        head: TaskUtils.userTableHeader(),
-        rows: TaskUtils.userTableRows(users, task, csrfToken)
-    }) }}
+    {% endif %}
 
 {% endblock %}
 

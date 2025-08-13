@@ -25,8 +25,6 @@ export default class TasksController {
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
       const activeTab = (req.query.activeTab || 'allocated') as TaskTab
       const isCompleted = activeTab === 'completed'
-
-      const canAllocate = !isCompleted && hasPermission(res.locals.user, ['cas1_tasks_allocate'])
       const cruManagementAreaId = req.query.area || res.locals.user.cruManagementArea?.id
       const allocatedToUserId = req.query.allocatedToUserId as string
       const requiredQualification = req.query.requiredQualification
@@ -66,7 +64,7 @@ export default class TasksController {
 
       res.render('tasks/index', {
         pageHeading: 'Task Allocation',
-        taskRows: tasksTableRows(tasks.data, activeTab, canAllocate),
+        taskRows: tasksTableRows(tasks.data, activeTab),
         taskHeader: tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
         allocatedFilter,
         pageNumber: Number(tasks.pageNumber),
@@ -95,14 +93,14 @@ export default class TasksController {
       const application = await this.applicationService.findApplication(req.user.token, task.applicationId)
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const pageHeading =
-        task.taskType === 'PlacementApplication'
-          ? 'Reallocate Request for Placement'
-          : `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`
+      const canAllocate = task.status !== 'complete' && hasPermission(res.locals.user, ['cas1_tasks_allocate'])
+
+      const pageHeading = `${canAllocate ? 'Allocate' : 'View'} ${task.status === 'complete' ? 'completed ' : ''}${task.taskType === 'PlacementApplication' ? 'Request for Placement' : convertToTitleCase(sentenceCase(task.taskType))}`
 
       const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 
       res.render('tasks/show', {
+        canAllocate,
         pageHeading,
         application,
         task,
