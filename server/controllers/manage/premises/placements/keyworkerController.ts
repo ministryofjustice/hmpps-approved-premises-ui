@@ -43,6 +43,23 @@ export default class KeyworkerController {
     }
   }
 
+  find(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { token } = req.user
+      const { premisesId, placementId } = req.params
+
+      const placement = await this.premisesService.getPlacement({
+        token,
+        premisesId,
+        placementId,
+      })
+
+      return res.render('manage/premises/placements/assignKeyworker/find', {
+        placement,
+      })
+    }
+  }
+
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
@@ -54,6 +71,10 @@ export default class KeyworkerController {
           throw new ValidationError({
             keyworker: 'Select a keyworker',
           })
+        }
+
+        if (keyworker === 'new') {
+          return res.redirect(managePaths.premises.placements.keyworker.find({ premisesId, placementId }))
         }
 
         await this.placementService.assignKeyworker(req.user.token, premisesId, placementId, { userId: keyworker })
@@ -70,7 +91,7 @@ export default class KeyworkerController {
           req,
           res,
           error as Error,
-          managePaths.premises.placements.keyworker({
+          managePaths.premises.placements.keyworker.new({
             premisesId,
             placementId,
           }),

@@ -41,6 +41,7 @@ const managePath = path('/manage')
 const premisesPath = managePath.path('premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
 const singlePlacementPath = singlePremisesPath.path('placements/:placementId')
+const keyworkerPath = singlePlacementPath.path('assign-keyworker')
 const departurePath = singlePlacementPath.path('departure')
 const placementCancellationsPath = singlePlacementPath.path('cancellations')
 const placementChangesPath = singlePlacementPath.path('changes')
@@ -68,7 +69,10 @@ const paths = {
       showTabPlacementRequest: singlePlacementPath.path('placement-request'),
       showTabTimeline: singlePlacementPath.path('timeline'),
       arrival: singlePlacementPath.path('arrival'),
-      keyworker: singlePlacementPath.path('assign-keyworker'),
+      keyworker: {
+        new: keyworkerPath,
+        find: keyworkerPath.path('find'),
+      },
       keyworkerDeprecated: singlePlacementPath.path('keyworker'),
       nonArrival: singlePlacementPath.path('non-arrival'),
       departure: {

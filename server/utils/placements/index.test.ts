@@ -210,7 +210,7 @@ describe('placementUtils', () => {
     }
     const keyworkerOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({ premisesId: premises.id, placementId }),
+      href: paths.premises.placements.keyworker.new({ premisesId: premises.id, placementId }),
       text: 'Edit keyworker',
     }
     const keyworkerDeprecatedOption = {

@@ -96,7 +96,31 @@ describe('keyworkerController', () => {
     })
   })
 
+  describe('find', () => {
+    it('shows a form to search for a keyworker', async () => {
+      await keyworkerController.find()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/assignKeyworker/find', {
+        placement,
+      })
+    })
+  })
+
   describe('create', () => {
+    it("redirects to the Find a keyworker page if 'Assign a different keyworker' is selected", async () => {
+      request.body = { keyworker: 'new' }
+
+      await keyworkerController.create()(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.premises.placements.keyworker.find({
+          premisesId,
+          placementId: placement.id,
+        }),
+      )
+      expect(placementService.assignKeyworker).not.toHaveBeenCalled()
+    })
+
     it('assigns the keyworker and returns to the placement details page', async () => {
       const selectedKeyworkerUser = currentKeyworkers[0].summary
       premisesService.getPlacement.mockResolvedValue({
@@ -128,7 +152,7 @@ describe('keyworkerController', () => {
         request,
         response,
         new ValidationError({}),
-        paths.premises.placements.keyworker({ premisesId, placementId: placement.id }),
+        paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id }),
       )
 
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -152,7 +176,7 @@ describe('keyworkerController', () => {
           request,
           response,
           err,
-          paths.premises.placements.keyworker({ premisesId, placementId: placement.id }),
+          paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id }),
         )
       })
     })
