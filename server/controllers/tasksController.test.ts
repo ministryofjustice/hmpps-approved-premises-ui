@@ -240,7 +240,7 @@ describe('TasksController', () => {
     })
     const template = 'tasks/show'
     const expectedRenderParameters = {
-      pageHeading: `Reallocate Request for Placement`,
+      pageHeading: `Allocate Request for Placement`,
       application,
       task: taskWrapper.task,
       users: taskWrapper.users,
@@ -326,7 +326,11 @@ describe('TasksController', () => {
       taskWrapper.task.status = 'complete'
       await tasksController.show()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith(template, { ...expectedRenderParameters, canAllocate: false })
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...expectedRenderParameters,
+        canAllocate: false,
+        pageHeading: 'View Request for Placement',
+      })
     })
 
     it('removes the allocate section if the user lacks permission to allocate', async () => {
@@ -336,7 +340,11 @@ describe('TasksController', () => {
       })
       await tasksController.show()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith(template, { ...expectedRenderParameters, canAllocate: false })
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...expectedRenderParameters,
+        canAllocate: false,
+        pageHeading: 'View Request for Placement',
+      })
     })
   })
 })

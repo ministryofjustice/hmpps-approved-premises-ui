@@ -177,7 +177,7 @@ context('Task Allocation', () => {
       this.taskListPage.clickTask(taskCompleted)
 
       THEN('I should be on the Allocations page for that task')
-      const allocationsPage = Page.verifyOnPage(AllocationsPage, application, taskCompleted)
+      const allocationsPage = Page.verifyOnPage(AllocationsPage, application, taskCompleted, 'View')
       allocationsPage.shouldNotShowAllocationSection()
     })
 
@@ -269,7 +269,7 @@ context('Task Allocation', () => {
       this.taskListPage.clickTask(this.task)
 
       THEN('I should be on the view page for that task')
-      const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
+      const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task, 'View')
 
       AND('the allocation section should not be shown')
       allocationsPage.shouldNotShowAllocationSection()

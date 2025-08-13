@@ -18,7 +18,7 @@ export default class AllocationsPage extends Page {
     private readonly task: Task,
     title?: string,
   ) {
-    super(title || `Reallocate`)
+    super(title || `Allocate`)
   }
 
   static visit(application: Application, task: Task): AllocationsPage {

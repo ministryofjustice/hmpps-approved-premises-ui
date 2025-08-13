@@ -95,10 +95,7 @@ export default class TasksController {
 
       const canAllocate = task.status !== 'complete' && hasPermission(res.locals.user, ['cas1_tasks_allocate'])
 
-      const pageHeading =
-        task.taskType === 'PlacementApplication'
-          ? 'Reallocate Request for Placement'
-          : `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`
+      const pageHeading = `${canAllocate ? 'Allocate' : 'View'} ${task.taskType === 'PlacementApplication' ? 'Request for Placement' : convertToTitleCase(sentenceCase(task.taskType))}`
 
       const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
 

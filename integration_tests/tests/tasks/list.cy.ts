@@ -41,7 +41,7 @@ context('Task Allocation', () => {
     })
   })
 
-  it.only('shows a list of tasks for LAO', () => {
+  it('shows a list of tasks for LAO', () => {
     GIVEN('I am signed in as a CRU member with the correct AP area and CRU management area')
     signIn('cru_member', user)
 
