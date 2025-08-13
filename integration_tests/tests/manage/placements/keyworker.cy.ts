@@ -1,5 +1,8 @@
 import { signIn } from '../../signIn'
-import { DeprecatedKeyworkerAssignmentPage, KeyworkerAssignmentPage } from '../../../pages/manage/placements/keyworker'
+import {
+  DeprecatedKeyworkerAssignmentPage,
+  KeyworkerAssignmentPage,
+} from '../../../pages/manage/placements/keyworker/new'
 import { PlacementShowPage } from '../../../pages/manage'
 import {
   cas1CurrentKeyworkerFactory,
@@ -10,12 +13,12 @@ import {
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import Page from '../../../pages/page'
 import apiPaths from '../../../../server/paths/api'
+import { FindAKeyworkerPage } from '../../../pages/manage/placements/keyworker/find'
 
 const premises = cas1PremisesFactory.build()
 const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
 const staffMembers = staffMemberFactory.buildList(5, { keyWorker: true })
 const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
-const selectedKeyworkerUser = currentKeyworkers[2].summary
 
 context('Keyworker', () => {
   beforeEach(() => {
@@ -27,6 +30,8 @@ context('Keyworker', () => {
   })
 
   it('Assigns an existing keyworker to a placement', () => {
+    const selectedKeyworkerUser = currentKeyworkers[2].summary
+
     GIVEN('I am signed in as a future manager with new keyworker flow permission')
     signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
 
@@ -72,44 +77,53 @@ context('Keyworker', () => {
     })
   })
 
-  // TODO: APS-2660
-  // it('Assigns a new user as a keyworker to a placement', () => {
-  //   const allUsers = userFactory.buildList(15)
-  //
-  //   GIVEN('am signed in as a future manager with new keyworker flow permission')
-  //   signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
-  //
-  //   AND('am on the placement page')
-  //   let placementPage = PlacementShowPage.visit(placement)
-  //
-  //   WHEN('click on option to assign a keyworker')
-  //   placementPage.clickAction('Edit keyworker')
-  //
-  //   THEN('should open the keyworker assignment page')
-  //   const page = new KeyworkerAssignmentPage(users)
-  //
-  //   WHEN('select to assign a different keyworker')
-  //   page.completeForm('new')
-  //   page.clickSubmit()
-  //
-  //   THEN('should be shown the 'Find a keyworker' page')
-  //
-  //   WHEN('search for a keyworker')
-  //
-  //   AND('click 'Assign keyworker'')
-  //
-  //   THEN('should be shown the placement page with a confirmation message')
-  //   placementPage = new PlacementShowPage(placement)
-  //   placementPage.shouldShowBanner('Keyworker assigned')
-  //
-  //   AND('e API should have been called with the correct parameters')
-  //   cy.task(
-  //     'verifyApiPost',
-  //     apiPaths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
-  //   ).then(body => {
-  //     expect(body).to.deep.equal({ userId: users[1].id })
-  //   })
-  // })
+  it('Assigns a new user as a keyworker to a placement', () => {
+    // const
+    const selectedKeyworkerUser = currentKeyworkers[2].summary
+
+    GIVEN('I am signed in as a future manager with new keyworker flow permission')
+    signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
+
+    AND('I am on the placement page')
+    const placementPage = PlacementShowPage.visit(placement)
+
+    WHEN('I click on option to assign a keyworker')
+    placementPage.clickAction('Edit keyworker')
+
+    THEN('I should see the keyworker assignment page')
+    const keyworkerAssignmentPage = Page.verifyOnPage(KeyworkerAssignmentPage, placement)
+
+    WHEN('select to assign a different keyworker')
+    keyworkerAssignmentPage.completeForm('Assign a different keyworker')
+    keyworkerAssignmentPage.clickButton('Submit')
+
+    THEN("I should be shown the 'Find a keyworker' page")
+    const findKeyworkerPage = Page.verifyOnPage(FindAKeyworkerPage)
+
+    // WHEN('I search for a keyworker')
+    // findKeyworkerPage.completeForm('Smith')
+    // findKeyworkerPage.clickButton('Search')
+    //
+    // AND("I click 'Assign keyworker'")
+    // const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
+    // cy.task('stubSpaceBookingShow', updatedPlacement)
+    // findKeyworkerPage.clickAssignKeyworker('John Smith')
+    //
+    // THEN('I should be shown the placement page with a confirmation message')
+    // Page.verifyOnPage(PlacementShowPage, updatedPlacement)
+    // placementPage.shouldShowBanner(`
+    //   Keyworker assigned
+    //   You have assigned ${selectedKeyworkerUser.name} to ${updatedPlacement.person.crn}
+    // `)
+    //
+    // AND('the API should have been called with the correct parameters')
+    // cy.task(
+    //   'verifyApiPost',
+    //   apiPaths.premises.placements.keyworker.new({ premisesId: placement.premises.id, placementId: placement.id }),
+    // ).then(body => {
+    //   expect(body).to.deep.equal({ userId: selectedKeyworkerUser.id })
+    // })
+  })
 
   it('Requires the correct permission to edit a keyworker', () => {
     GIVEN('I am signed in as a CRU member')

@@ -124,7 +124,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     actionList.push({
       text: 'Edit keyworker',
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({
+      href: paths.premises.placements.keyworker.new({
         premisesId: placement.premises.id,
         placementId: placement.id,
       }),
