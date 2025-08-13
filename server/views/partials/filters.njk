@@ -4,14 +4,14 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
 
-{% macro filterWrapper(title) %}
+{% macro filterWrapper(title='Filter', buttonText='Apply filters', method='get') %}
     <div class="search-and-filter">
-        <form method="get">
+        <form method="{{ method }}">
             <h2 class="govuk-heading-m">{{ title }}</h2>
             <div class="search-and-filter__row">
                 {{ caller() }}
                 {{ govukButton({
-                    text: 'Apply filters',
+                    text: buttonText,
                     preventDoubleClick: true
                 }) }}
             </div>
