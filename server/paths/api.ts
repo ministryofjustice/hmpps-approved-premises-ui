@@ -53,7 +53,6 @@ const appeals = applicationsSingle.path('appeals')
 const people = path('/people')
 const person = people.path(':crn')
 
-const users = path('/users')
 const cas1Users = cas1Namespace.path('users')
 
 const placementRequests = path('/placement-requests')
@@ -208,10 +207,10 @@ export default {
     timeline: cas1Person.path('timeline'),
   },
   users: {
-    index: users,
-    summary: users.path('summary'),
-    search: users.path('search'),
-    searchDelius: users.path('delius'),
+    index: cas1Users,
+    summary: cas1Users.path('summary'),
+    search: cas1Users.path('search'),
+    searchDelius: cas1Users.path('delius'),
     show: cas1Users.path(':id'),
     update: cas1Users.path(':id'),
     delete: cas1Users.path(':id'),

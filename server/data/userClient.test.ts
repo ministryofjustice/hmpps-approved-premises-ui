@@ -1,9 +1,9 @@
 import UserClient from './userClient'
 import { userFactory, userSummaryFactory } from '../testutils/factories'
 import paths from '../paths/api'
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
-describeClient('UserClient', provider => {
+describeCas1NamespaceClient('UserClient', provider => {
   let userClient: UserClient
 
   const token = 'token-1'
