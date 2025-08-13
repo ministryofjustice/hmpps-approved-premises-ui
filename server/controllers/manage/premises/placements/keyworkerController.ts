@@ -43,6 +43,42 @@ export default class KeyworkerController {
     }
   }
 
+  create(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, placementId } = req.params
+
+      try {
+        const { keyworker } = req.body
+
+        if (!keyworker) {
+          throw new ValidationError({
+            keyworker: 'Select a keyworker',
+          })
+        }
+
+        await this.placementService.assignKeyworker(req.user.token, premisesId, placementId, { userId: keyworker })
+
+        const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
+
+        req.flash('success', {
+          header: 'Keyworker assigned',
+          body: `You have assigned ${placement.keyWorkerAllocation.keyWorkerUser.name} to ${placement.person.crn}`,
+        })
+        return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          managePaths.premises.placements.keyworker({
+            premisesId,
+            placementId,
+          }),
+        )
+      }
+    }
+  }
+
   // TODO: Remove handler when new flow released (APS-2644)
   newDeprecated(): RequestHandler {
     return async (req: Request, res: Response) => {

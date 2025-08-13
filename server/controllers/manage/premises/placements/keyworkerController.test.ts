@@ -5,6 +5,7 @@ import { when } from 'jest-when'
 import KeyworkerController from './keyworkerController'
 import {
   cas1CurrentKeyworkerFactory,
+  cas1KeyworkerAllocationFactory,
   cas1SpaceBookingFactory,
   staffMemberFactory,
   userSummaryFactory,
@@ -51,7 +52,7 @@ describe('keyworkerController', () => {
     request = createMock<Request>({ user: { token }, params: { premisesId, placementId: placement.id } })
 
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
-    jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
+    jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue()
   })
 
   describe('new', () => {
@@ -91,6 +92,68 @@ describe('keyworkerController', () => {
         placement: placementWithKeyworker,
         backlink: paths.premises.placements.show({ premisesId, placementId: placementWithKeyworker.id }),
         currentKeyworkerName: assignedKeyworker.name,
+      })
+    })
+  })
+
+  describe('create', () => {
+    it('assigns the keyworker and returns to the placement details page', async () => {
+      const selectedKeyworkerUser = currentKeyworkers[0].summary
+      premisesService.getPlacement.mockResolvedValue({
+        ...placement,
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({ keyWorkerUser: selectedKeyworkerUser }),
+      })
+
+      request.body = { keyworker: selectedKeyworkerUser.id }
+
+      await keyworkerController.create()(request, response, next)
+
+      expect(placementService.assignKeyworker).toHaveBeenCalledWith(token, premisesId, placement.id, {
+        userId: selectedKeyworkerUser.id,
+      })
+      expect(request.flash).toHaveBeenCalledWith('success', {
+        header: 'Keyworker assigned',
+        body: `You have assigned ${selectedKeyworkerUser.name} to ${placement.person.crn}`,
+      })
+      expect(response.redirect).toHaveBeenCalledWith(uiPlacementPagePath)
+    })
+
+    it('returns an error if the page is submitted without a keyworker selected', async () => {
+      request.body = {}
+
+      await keyworkerController.create()(request, response, next)
+
+      expect(placementService.assignKeyworker).not.toHaveBeenCalled()
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        paths.premises.placements.keyworker({ premisesId, placementId: placement.id }),
+      )
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        keyworker: 'Select a keyworker',
+      })
+    })
+
+    describe('when errors are raised by the API', () => {
+      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
+        request.body = { keyworker: 'does-not-exist' }
+
+        const err = new Error()
+
+        placementService.assignKeyworker.mockRejectedValueOnce(err)
+
+        await keyworkerController.create()(request, response, next)
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          err,
+          paths.premises.placements.keyworker({ premisesId, placementId: placement.id }),
+        )
       })
     })
   })
