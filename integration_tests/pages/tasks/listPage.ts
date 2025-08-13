@@ -18,36 +18,22 @@ export default class ListPage extends Page {
   }
 
   shouldShowAllocatedTasks(tasks): void {
-    shouldShowTableRows(allocatedTableRows(tasks, true))
+    shouldShowTableRows(allocatedTableRows(tasks))
   }
 
   shouldShowUnallocatedTasks(tasks): void {
-    shouldShowTableRows(unallocatedTableRows(tasks, true))
+    shouldShowTableRows(unallocatedTableRows(tasks))
   }
 
   shouldShowCompletedTasks(tasks): void {
     shouldShowTableRows(completedTableRows(tasks))
   }
 
-  private testContainsHeaderLinks(tasks: Array<Task>, shouldContain: boolean): void {
-    const headerTexts = tableRowsToArrays(allocatedTableRows(tasks, true)).map(row => row[0])
-    headerTexts.forEach(text => {
-      cy.contains('th', text).within(() => {
-        if (shouldContain) {
-          cy.get('a').should('have.text', text)
-        } else {
-          cy.get('a').should('not.exist')
-        }
-      })
-    })
-  }
-
   shouldContainHeaderLinks(tasks: Array<Task>): void {
-    this.testContainsHeaderLinks(tasks, true)
-  }
-
-  shouldNotContainHeaderLinks(tasks: Array<Task>): void {
-    this.testContainsHeaderLinks(tasks, false)
+    const headerTexts = tableRowsToArrays(allocatedTableRows(tasks)).map(row => row[0])
+    headerTexts.forEach(text => {
+      cy.contains('th a', text)
+    })
   }
 
   shouldShowAllocatedToUserFilter() {

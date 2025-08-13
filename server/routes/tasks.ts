@@ -19,7 +19,7 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.tasks.show.pattern, tasksController.show(), {
     auditEvent: 'SHOW_TASK',
-    allowedPermissions: ['cas1_tasks_allocate'],
+    allowedPermissions: ['cas1_view_manage_tasks'],
   })
   post(paths.tasks.allocations.create.pattern, allocationsController.create(), {
     auditEvent: 'REALLOCATE_TASK_SUCCESS',

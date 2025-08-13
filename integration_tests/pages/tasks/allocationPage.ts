@@ -70,4 +70,8 @@ export default class AllocationsPage extends Page {
   shouldShowTimelineTab() {
     cy.get('label').should('contain', 'Add a note to the application')
   }
+
+  shouldNotShowAllocationSection() {
+    cy.contains('Allocate task to').should('not.exist')
+  }
 }
