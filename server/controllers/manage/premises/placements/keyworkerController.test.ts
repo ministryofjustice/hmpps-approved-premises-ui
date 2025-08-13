@@ -112,7 +112,7 @@ describe('keyworkerController', () => {
         userId: selectedKeyworkerUser.id,
       })
       expect(request.flash).toHaveBeenCalledWith('success', {
-        header: 'Keyworker assigned',
+        heading: 'Keyworker assigned',
         body: `You have assigned ${selectedKeyworkerUser.name} to ${placement.person.crn}`,
       })
       expect(response.redirect).toHaveBeenCalledWith(uiPlacementPagePath)

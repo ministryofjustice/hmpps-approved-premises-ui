@@ -168,7 +168,8 @@ export const verifyApiRequest = async (
   })
 
   const { requests } = result.body
-  return requests[0].body ? JSON.parse(requests[0].body) : {}
+  const lastRequest = requests.pop()
+  return lastRequest.body ? JSON.parse(lastRequest.body) : {}
 }
 
 export const verifyApiPost = (url: string) => verifyApiRequest(url, 'POST')

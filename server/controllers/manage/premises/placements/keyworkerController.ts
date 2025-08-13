@@ -61,7 +61,7 @@ export default class KeyworkerController {
         const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
         req.flash('success', {
-          header: 'Keyworker assigned',
+          heading: 'Keyworker assigned',
           body: `You have assigned ${placement.keyWorkerAllocation.keyWorkerUser.name} to ${placement.person.crn}`,
         })
         return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
