@@ -40,14 +40,14 @@ context('Keyworker', () => {
     AND('I should see a list of users currently assigned as keyworkers')
     keyworkerAssignmentPage.shouldShowKeyworkersRadios(currentKeyworkers)
 
-    // WHEN('I submit the form without selecting a keyworker')
-    // page.clickSubmit()
-    //
-    // THEN('I should see an error message')
-    // page.shouldShowErrorMessagesForFields(['keyworker'], {
-    //   keyworker: 'Select a keyworker',
-    // })
-    //
+    WHEN('I submit the form without selecting a keyworker')
+    keyworkerAssignmentPage.clickButton('Submit')
+
+    THEN('I should see an error message')
+    keyworkerAssignmentPage.shouldShowErrorMessagesForFields(['keyworker'], {
+      keyworker: 'Select a keyworker',
+    })
+
     // WHEN('I select a keyworker and submit the form')
     // page.completeForm(currentKeyworkers[1].summary.id)
     // page.clickSubmit()
