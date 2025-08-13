@@ -23,8 +23,8 @@ export class KeyworkerAssignmentPage extends Page {
     return new UnauthorisedPage()
   }
 
-  completeForm(value: string): void {
-    this.checkRadioByNameAndValue('keyworker', value)
+  completeForm(keyworkerName: string): void {
+    this.checkCheckboxByLabel(keyworkerName)
   }
 
   shouldShowKeyworkersRadios(currentKeyworkers: Array<Cas1CurrentKeyWorker>) {
