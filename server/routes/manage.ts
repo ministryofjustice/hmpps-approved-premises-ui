@@ -173,6 +173,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'ASSIGN_KEYWORKER_FIND',
     allowedPermissions: ['cas1_experimental_new_assign_keyworker_flow'],
   })
+  post(paths.premises.placements.keyworker.find.pattern, keyworkerController.find(), {
+    auditEvent: 'ASSIGN_KEYWORKER_FIND_SUBMIT',
+    allowedPermissions: ['cas1_experimental_new_assign_keyworker_flow'],
+  })
   // TODO: Remove deprecated routes when new flow released (APS-2644)
   get(paths.premises.placements.keyworkerDeprecated.pattern, keyworkerController.newDeprecated(), {
     auditEvent: 'ASSIGN_KEYWORKER',

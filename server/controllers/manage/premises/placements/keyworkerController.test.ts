@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
-import type { ErrorsAndUserInput } from '@approved-premises/ui'
+import type { ErrorsAndUserInput, ErrorSummary } from '@approved-premises/ui'
 import { when } from 'jest-when'
 import KeyworkerController from './keyworkerController'
 import {
@@ -20,6 +20,7 @@ import {
   renderKeyworkersSelectOptions,
   renderKeyworkersRadioOptions,
 } from '../../../../utils/placements'
+import { generateErrorMessages, generateErrorSummary } from '../../../../utils/validation'
 
 describe('keyworkerController', () => {
   const token = 'SOME_TOKEN'
@@ -97,11 +98,37 @@ describe('keyworkerController', () => {
   })
 
   describe('find', () => {
-    it('shows a form to search for a keyworker', async () => {
+    const defaultRenderParams = {
+      placement,
+      backlink: paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id }),
+      errors: {},
+      errorSummary: [] as ErrorSummary,
+    }
+
+    it('shows a form to search for a keyworker but does not render a list of results', async () => {
+      await keyworkerController.find()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/placements/assignKeyworker/find',
+        defaultRenderParams,
+      )
+    })
+
+    it('shows an error if a search has been made with a blank query', async () => {
+      request.body = {
+        nameOrEmail: '',
+      }
+
+      const expectedErrors = {
+        nameOrEmail: 'Enter a name or email',
+      }
+
       await keyworkerController.find()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/assignKeyworker/find', {
-        placement,
+        ...defaultRenderParams,
+        errors: generateErrorMessages(expectedErrors),
+        errorSummary: generateErrorSummary(expectedErrors),
       })
     })
   })
