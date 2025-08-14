@@ -18,6 +18,7 @@ describe('keyworkers utils', () => {
           { text: user1.emailAddress },
           {
             html: `<button class="govuk-button govuk-button--secondary govuk-!-margin-0" type="submit" name="keyworker" value="${user1.id}">Assign keyworker</button>`,
+            classes: 'table__column--collapse',
           },
         ],
         [
@@ -25,6 +26,7 @@ describe('keyworkers utils', () => {
           { text: user2.emailAddress },
           {
             html: `<button class="govuk-button govuk-button--secondary govuk-!-margin-0" type="submit" name="keyworker" value="${user2.id}">Assign keyworker</button>`,
+            classes: 'table__column--collapse',
           },
         ],
       ])

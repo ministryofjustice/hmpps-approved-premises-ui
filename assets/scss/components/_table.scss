@@ -1,3 +1,7 @@
 .table__column--collapse {
   width: 1px;
+
+  & > button {
+    white-space: nowrap;
+  }
 }
