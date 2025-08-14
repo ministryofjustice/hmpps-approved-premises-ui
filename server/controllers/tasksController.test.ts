@@ -274,7 +274,7 @@ describe('TasksController', () => {
     })
 
     it('fetches the application and a list of qualified users for Placement Application task', async () => {
-      const placementApplication = taskFactory.build({ taskType: 'PlacementApplication' })
+      const placementApplication = taskFactory.build({ taskType: 'PlacementApplication', status: 'not_started' })
       const placementApplicationTaskWrapper = taskWrapperFactory.build({ task: placementApplication })
       taskService.find.mockResolvedValue(placementApplicationTaskWrapper)
       request.params.taskType = 'placement-request'
