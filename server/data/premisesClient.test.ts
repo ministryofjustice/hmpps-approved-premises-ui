@@ -143,6 +143,60 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       },
     )
 
+    it('should return a list of all placements matching a keyworker user ID, or a CRN or name, for a premises', async () => {
+      const paginatedPlacements = paginatedResponseFactory.build({
+        data: cas1SpaceBookingSummaryFactory.buildList(3),
+        pageSize: '20',
+        totalPages: '2',
+        totalResults: '40',
+      }) as PaginatedResponse<Cas1SpaceBookingSummary>
+      const crnOrName = faker.person.firstName()
+      const keyWorkerUserId = faker.string.uuid()
+      const page = 1
+      const sortBy = 'canonicalArrivalDate'
+      const sortDirection = 'desc'
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get placements matching "${crnOrName}" for a premises`,
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.placements.index({ premisesId: premises.id }),
+          query: {
+            crnOrName,
+            keyWorkerUserId,
+            sortBy,
+            sortDirection,
+            page: String(page),
+            perPage: paginatedPlacements.pageSize,
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: paginatedPlacements.data,
+          headers: {
+            'X-Pagination-PageSize': paginatedPlacements.pageSize,
+            'X-Pagination-TotalPages': paginatedPlacements.totalPages,
+            'X-Pagination-TotalResults': paginatedPlacements.totalResults,
+          },
+        },
+      })
+
+      const output = await premisesClient.getPlacements({
+        premisesId: premises.id,
+        crnOrName,
+        keyWorkerUserId,
+        page,
+        perPage: Number(paginatedPlacements.pageSize),
+        sortBy,
+        sortDirection,
+      })
+      expect(output).toEqual(paginatedPlacements)
+    })
+
     it('should return a list of all placements matching a keyworker code, or a CRN or name, for a premises', async () => {
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),

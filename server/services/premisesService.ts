@@ -88,6 +88,7 @@ export default class PremisesService {
     status?: string
     crnOrName?: string
     keyWorkerStaffCode?: string
+    keyWorkerUserId?: string
     page: number
     perPage: number
     sortBy: Cas1SpaceBookingSummarySortField

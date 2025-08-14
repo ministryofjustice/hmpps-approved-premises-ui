@@ -2,6 +2,7 @@ import { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premi
 import { TextItem } from '@approved-premises/ui'
 import { addDays } from 'date-fns'
 import {
+  cas1CurrentKeyworkerFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   cas1PremisesLocalRestrictionSummaryFactory,
@@ -11,6 +12,7 @@ import {
 import {
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
+  keyworkersToSelectOptions,
   localRestrictionsTableRows,
   placementTableHeader,
   placementTableRows,
@@ -227,6 +229,39 @@ describe('premisesUtils', () => {
       ]
       const tabSet = premisesTabItems(premises, 'upcoming')
       expect(tabSet).toEqual(expectedTabs)
+    })
+  })
+
+  describe('keyworkersToSelectOptions', () => {
+    const currentKeyworkers = [
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 2, currentBookingCount: 0 }),
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 0, currentBookingCount: 6 }),
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 2, currentBookingCount: 4 }),
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 0, currentBookingCount: 0 }),
+    ]
+
+    it('converts a list of current keyworkers to select options for the upcoming tab', () => {
+      expect(keyworkersToSelectOptions(currentKeyworkers, 'upcoming')).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: currentKeyworkers[0].summary.name, value: currentKeyworkers[0].summary.id },
+        { text: currentKeyworkers[2].summary.name, value: currentKeyworkers[2].summary.id },
+      ])
+    })
+
+    it('converts a list of current keyworkers to select options for the current tab', () => {
+      expect(keyworkersToSelectOptions(currentKeyworkers, 'current')).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: currentKeyworkers[1].summary.name, value: currentKeyworkers[1].summary.id },
+        { text: currentKeyworkers[2].summary.name, value: currentKeyworkers[2].summary.id },
+      ])
+    })
+
+    it('marks the given value as selected', () => {
+      expect(keyworkersToSelectOptions(currentKeyworkers, 'upcoming', currentKeyworkers[0].summary.id)).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: currentKeyworkers[0].summary.name, value: currentKeyworkers[0].summary.id, selected: true },
+        { text: currentKeyworkers[2].summary.name, value: currentKeyworkers[2].summary.id },
+      ])
     })
   })
 

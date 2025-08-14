@@ -1,4 +1,5 @@
 import type {
+  Cas1CurrentKeyWorker,
   Cas1OverbookingRange,
   Cas1Premises,
   Cas1PremisesBasicSummary,
@@ -19,7 +20,6 @@ import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusHtml } from '../placements'
 import { htmlCell, textCell } from '../tableUtils'
-import { convertObjectsToSelectOptions } from '../formUtils'
 
 export { premisesActions } from './premisesActions'
 
@@ -131,6 +131,25 @@ export const premisesTabItems = (premises: Cas1Premises, activeTab?: PremisesTab
     return { text: label, active: activeTab === key, href: getSelfLink(key) }
   })
 }
+
+export const keyworkersToSelectOptions = (
+  currentKeyworkers: Array<Cas1CurrentKeyWorker>,
+  activeTab: PremisesTab,
+  selected?: string,
+): Array<SelectOption> => [
+  { text: 'All keyworkers', value: '' },
+  ...currentKeyworkers
+    .filter(
+      keyworker =>
+        (activeTab === 'upcoming' && keyworker.upcomingBookingCount > 0) ||
+        (activeTab === 'current' && keyworker.currentBookingCount > 0),
+    )
+    .map(keyworker => ({
+      text: keyworker.summary.name,
+      value: keyworker.summary.id,
+      selected: selected === keyworker.summary.id || undefined,
+    })),
+]
 
 export const staffMembersToSelectOptions = (
   staffMembers: Array<StaffMember>,

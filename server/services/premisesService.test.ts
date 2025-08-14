@@ -252,6 +252,36 @@ describe('PremisesService', () => {
       })
     })
 
+    it('returns placements filtered by keyworker user ID for a given premises', async () => {
+      const keyWorkerUserId = 'Foo'
+      const sortBy = 'canonicalArrivalDate'
+      const sortDirection = 'desc'
+      const page = 1
+      const perPage = 20
+
+      const result = await service.getPlacements({
+        token,
+        premisesId,
+        page,
+        perPage,
+        sortBy,
+        sortDirection,
+        keyWorkerUserId,
+      })
+
+      expect(result).toEqual(paginatedPlacements)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getPlacements).toHaveBeenCalledWith({
+        premisesId,
+        keyWorkerUserId,
+        page,
+        perPage,
+        sortBy,
+        sortDirection,
+      })
+    })
+
     it('returns placements filtered by keyworker staff code for a given premises', async () => {
       const keyWorkerStaffCode = 'Foo'
       const sortBy = 'canonicalArrivalDate'
