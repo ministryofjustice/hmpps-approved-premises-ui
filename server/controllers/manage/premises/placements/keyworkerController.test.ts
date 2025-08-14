@@ -10,13 +10,15 @@ import {
   staffMemberFactory,
   userSummaryFactory,
 } from '../../../../testutils/factories'
-import { PremisesService } from '../../../../services'
+import { PremisesService, UserService } from '../../../../services'
 import * as validationUtils from '../../../../utils/validation'
 import paths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
 import { renderKeyworkersRadioOptions, renderKeyworkersSelectOptions } from '../../../../utils/placements'
 import { generateErrorMessages, generateErrorSummary } from '../../../../utils/validation'
+import { keyworkersTableHead, keyworkersTableRows } from '../../../../utils/placements/keyworkers'
+import { pagination } from '../../../../utils/pagination'
 
 describe('keyworkerController', () => {
   const token = 'SOME_TOKEN'
@@ -27,13 +29,15 @@ describe('keyworkerController', () => {
 
   const premisesService = createMock<PremisesService>()
   const placementService = createMock<PlacementService>()
+  const userService = createMock<UserService>()
 
-  const keyworkerController = new KeyworkerController(premisesService, placementService)
+  const keyworkerController = new KeyworkerController(premisesService, placementService, userService)
 
   const premisesId = 'premises-id'
   const placement = cas1SpaceBookingFactory.build({ keyWorkerAllocation: undefined })
   const testStaffCode = 'TestId'
   const uiPlacementPagePath = paths.premises.placements.show({ premisesId, placementId: placement.id })
+  const assignKeyworkerPath = paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id })
   const uiKeyworkerPagePath = paths.premises.placements.keyworkerDeprecated({ premisesId, placementId: placement.id })
   const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
   const keyworkers = staffMemberFactory.buildList(5, { keyWorker: true })
@@ -96,7 +100,9 @@ describe('keyworkerController', () => {
   describe('find', () => {
     const defaultRenderParams = {
       placement,
-      backlink: paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id }),
+      backlink: assignKeyworkerPath,
+      submitUrl: assignKeyworkerPath,
+      tableHead: keyworkersTableHead,
       errors: {},
       errorSummary: [] as ErrorSummary,
     }
@@ -111,7 +117,7 @@ describe('keyworkerController', () => {
     })
 
     it('shows an error if a search has been made with a blank query', async () => {
-      request.body = {
+      request.query = {
         nameOrEmail: '',
       }
 
@@ -123,8 +129,47 @@ describe('keyworkerController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/assignKeyworker/find', {
         ...defaultRenderParams,
+        nameOrEmail: '',
         errors: generateErrorMessages(expectedErrors),
         errorSummary: generateErrorSummary(expectedErrors),
+      })
+    })
+
+    it('fetches and shows results if a valid search query has been entered', async () => {
+      const availableKeyworkers = userSummaryFactory.buildList(6)
+
+      userService.getUsersSummaries.mockResolvedValue({
+        data: availableKeyworkers,
+        pageSize: '10',
+        pageNumber: '2',
+        totalPages: '2',
+        totalResults: '13',
+      })
+
+      request.query = {
+        nameOrEmail: 'Smith',
+        page: '2',
+      }
+
+      await keyworkerController.find()(request, response, next)
+
+      expect(userService.getUsersSummaries).toHaveBeenCalledWith(token, {
+        nameOrEmail: 'Smith',
+        page: 2,
+        permission: 'cas1_keyworker_assignable_as',
+      })
+      expect(response.render).toHaveBeenCalledWith('manage/premises/placements/assignKeyworker/find', {
+        ...defaultRenderParams,
+        nameOrEmail: 'Smith',
+        tableRows: keyworkersTableRows(availableKeyworkers),
+        pagination: pagination(
+          2,
+          2,
+          `${paths.premises.placements.keyworker.find({
+            premisesId,
+            placementId: placement.id,
+          })}?nameOrEmail=Smith&`,
+        ),
       })
     })
   })
@@ -175,7 +220,7 @@ describe('keyworkerController', () => {
         request,
         response,
         new ValidationError({}),
-        paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id }),
+        assignKeyworkerPath,
       )
 
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
@@ -199,7 +244,7 @@ describe('keyworkerController', () => {
           request,
           response,
           err,
-          paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id }),
+          assignKeyworkerPath,
         )
       })
     })

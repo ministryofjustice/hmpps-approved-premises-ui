@@ -9,6 +9,7 @@ import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   staffMemberFactory,
+  userSummaryFactory,
 } from '../../../../server/testutils/factories'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import Page from '../../../pages/page'
@@ -78,6 +79,17 @@ context('Keyworker', () => {
   })
 
   it('Assigns a new user as a keyworker to a placement', () => {
+    const searchQuery = 'Smith'
+    const availableKeyworkers = userSummaryFactory.buildList(5)
+    const selectedKeyworkerUser = availableKeyworkers[1]
+    const searchParams = {
+      permission: 'cas1_keyworker_assignable_as',
+      nameOrEmail: searchQuery,
+    }
+    cy.task('stubUsersSummaries', { users: [], ...searchParams, nameOrEmail: 'No match' })
+    cy.task('stubUsersSummaries', { users: availableKeyworkers, ...searchParams })
+    cy.task('stubUsersSummaries', { users: availableKeyworkers, ...searchParams, page: '2' })
+
     GIVEN('I am signed in as a future manager with new keyworker flow permission')
     signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
 
@@ -105,29 +117,43 @@ context('Keyworker', () => {
       nameOrEmail: 'Enter a name or email',
     })
 
-    WHEN('I search for a keyworker')
-    findKeyworkerPage.completeForm('Smith')
-    findKeyworkerPage.clickButton('Search')
+    WHEN('I search for a keyworker who does not exist')
+    findKeyworkerPage.completeForm('No match')
 
-    // AND("I click 'Assign keyworker'")
-    // const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
-    // cy.task('stubSpaceBookingShow', updatedPlacement)
-    // findKeyworkerPage.clickAssignKeyworker('John Smith')
-    //
-    // THEN('I should be shown the placement page with a confirmation message')
-    // Page.verifyOnPage(PlacementShowPage, updatedPlacement)
-    // placementPage.shouldShowBanner(`
-    //   Keyworker assigned
-    //   You have assigned ${selectedKeyworkerUser.name} to ${updatedPlacement.person.crn}
-    // `)
-    //
-    // AND('the API should have been called with the correct parameters')
-    // cy.task(
-    //   'verifyApiPost',
-    //   apiPaths.premises.placements.keyworker.new({ premisesId: placement.premises.id, placementId: placement.id }),
-    // ).then(body => {
-    //   expect(body).to.deep.equal({ userId: selectedKeyworkerUser.id })
-    // })
+    THEN('I should see there are no results')
+    findKeyworkerPage.shouldShowNoResults('No match')
+
+    WHEN('I search for a keyworker who exists')
+    findKeyworkerPage.completeForm(searchQuery)
+
+    THEN('I should see results')
+    findKeyworkerPage.shouldShowResults(availableKeyworkers)
+
+    WHEN('I click to view the second page of results')
+    findKeyworkerPage.clickPageNumber('2')
+
+    THEN('I should see results')
+    findKeyworkerPage.shouldShowResults(availableKeyworkers)
+
+    WHEN("I click 'Assign keyworker'")
+    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
+    cy.task('stubSpaceBookingShow', updatedPlacement)
+    findKeyworkerPage.clickAssignKeyworker(selectedKeyworkerUser.name)
+
+    THEN('I should be shown the placement page with a confirmation message')
+    Page.verifyOnPage(PlacementShowPage, updatedPlacement)
+    placementPage.shouldShowBanner(`
+      Keyworker assigned
+      You have assigned ${selectedKeyworkerUser.name} to ${updatedPlacement.person.crn}
+    `)
+
+    AND('the API should have been called with the correct parameters')
+    cy.task(
+      'verifyApiPost',
+      apiPaths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
+    ).then(body => {
+      expect(body).to.deep.equal({ userId: selectedKeyworkerUser.id })
+    })
   })
 
   it('Requires the correct permission to edit a keyworker', () => {

@@ -4,9 +4,9 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
 
-{% macro filterWrapper(title='Filter', buttonText='Apply filters', method='get') %}
+{% macro filterWrapper(title='Filter', buttonText='Apply filters') %}
     <div class="search-and-filter">
-        <form method="{{ method }}">
+        <form method="get">
             <h2 class="govuk-heading-m">{{ title }}</h2>
             <div class="search-and-filter__row">
                 {{ caller() }}

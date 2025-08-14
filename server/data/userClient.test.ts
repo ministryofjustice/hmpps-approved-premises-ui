@@ -37,6 +37,90 @@ describeCas1NamespaceClient('UserClient', provider => {
     })
   })
 
+  describe('getUsersSummaries', () => {
+    const users = userSummaryFactory.buildList(4)
+
+    it('should return all users summaries unfiltered with pagination', async () => {
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for all users',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.summary({}),
+          query: {
+            page: '1',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsersSummaries()
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should return all users summaries filtered with pagination', async () => {
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for specific users',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.summary({}),
+          query: {
+            page: '2',
+            nameOrEmail: 'Smith',
+            permission: 'cas1_assess_application',
+            roles: 'janitor,assessor',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '3',
+            'X-Pagination-TotalResults': '27',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsersSummaries({
+        page: 2,
+        nameOrEmail: 'Smith',
+        permission: 'cas1_assess_application',
+        roles: ['janitor', 'assessor'],
+      })
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '2',
+        totalPages: '3',
+        totalResults: '27',
+        pageSize: '10',
+      })
+    })
+  })
+
   describe('getUserList', () => {
     const users = userSummaryFactory.buildList(4)
 
