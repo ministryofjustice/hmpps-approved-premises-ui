@@ -6,6 +6,7 @@ import {
   cas1PremisesFactory,
   cas1PremisesLocalRestrictionSummaryFactory,
   cas1SpaceBookingSummaryFactory,
+  staffMemberFactory,
 } from '../../testutils/factories'
 import {
   cas1PremisesSummaryRadioOptions,
@@ -17,6 +18,7 @@ import {
   premisesOverbookingSummary,
   premisesTabItems,
   premisesTableRows,
+  staffMembersToSelectOptions,
   summaryListForPremises,
 } from '.'
 import { canonicalDates, placementStatusHtml } from '../placements'
@@ -225,6 +227,27 @@ describe('premisesUtils', () => {
       ]
       const tabSet = premisesTabItems(premises, 'upcoming')
       expect(tabSet).toEqual(expectedTabs)
+    })
+  })
+
+  describe('staffMembersToSelectOptions', () => {
+    const staffMembers = staffMemberFactory.buildList(2)
+
+    it('converts a list of staff members to select options', () => {
+      expect(staffMembersToSelectOptions(staffMembers)).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: staffMembers[0].name, value: staffMembers[0].code },
+        { text: staffMembers[1].name, value: staffMembers[1].code },
+      ])
+    })
+
+    it('marks the given value as selected', () => {
+      const selected = staffMembers[0].code
+      expect(staffMembersToSelectOptions(staffMembers, selected)).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: staffMembers[0].name, value: staffMembers[0].code, selected: true },
+        { text: staffMembers[1].name, value: staffMembers[1].code },
+      ])
     })
   })
 
