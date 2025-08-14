@@ -1,6 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { Cas1CruManagementArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
+import { SelectOption } from '@approved-premises/ui'
 import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -10,6 +11,7 @@ import {
   premisesTableRows,
   premisesTableHead,
   premisesActions,
+  staffMembersToSelectOptions,
 } from '../../../utils/premises'
 
 type TabSettings = {
@@ -56,10 +58,13 @@ export default class PremisesController {
 
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
       const showPlacements = premises.supportsSpaceBookings
-      const keyworkersList =
-        showPlacements && (activeTab === 'upcoming' || activeTab === 'current')
-          ? await this.premisesService.getKeyworkers(req.user.token, req.params.premisesId)
-          : undefined
+
+      let keyworkersSelectOptions: Array<SelectOption>
+
+      if (showPlacements && (activeTab === 'upcoming' || activeTab === 'current')) {
+        const staffMembers = await this.premisesService.getKeyworkers(req.user.token, req.params.premisesId)
+        keyworkersSelectOptions = staffMembersToSelectOptions(staffMembers, keyworker)
+      }
 
       const paginatedPlacements =
         showPlacements &&
@@ -88,7 +93,7 @@ export default class PremisesController {
         crnOrName,
         keyworker,
         placements: paginatedPlacements?.data,
-        keyworkersList,
+        keyworkersSelectOptions,
         hrefPrefix,
         sortBy: sortBy || tabSettings[activeTab].sortBy,
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
