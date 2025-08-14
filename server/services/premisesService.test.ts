@@ -252,8 +252,8 @@ describe('PremisesService', () => {
       })
     })
 
-    it('returns placements filtered by keyworker staff code for a given premises', async () => {
-      const keyWorkerStaffCode = 'Foo'
+    it('returns placements filtered by keyworker user ID for a given premises', async () => {
+      const keyWorkerUserId = 'Foo'
       const sortBy = 'canonicalArrivalDate'
       const sortDirection = 'desc'
       const page = 1
@@ -266,7 +266,7 @@ describe('PremisesService', () => {
         perPage,
         sortBy,
         sortDirection,
-        keyWorkerStaffCode,
+        keyWorkerUserId,
       })
 
       expect(result).toEqual(paginatedPlacements)
@@ -274,7 +274,7 @@ describe('PremisesService', () => {
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getPlacements).toHaveBeenCalledWith({
         premisesId,
-        keyWorkerStaffCode,
+        keyWorkerUserId,
         page,
         perPage,
         sortBy,
