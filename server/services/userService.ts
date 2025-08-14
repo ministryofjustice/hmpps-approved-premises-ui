@@ -11,6 +11,7 @@ import {
 import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
+import { UsersSearchParams } from '../data/userClient'
 
 export class DeliusAccountMissingStaffDetailsError extends Error {}
 
@@ -44,6 +45,11 @@ export default class UserService {
     const client = this.userClientFactory(token)
 
     return client.getUser(id)
+  }
+
+  async getUsersSummaries(token: string, searchParams: UsersSearchParams): Promise<PaginatedResponse<UserSummary>> {
+    const client = this.userClientFactory(token)
+    return client.getUsersSummaries(searchParams)
   }
 
   async getUserList(token: string, roles: Array<UserRole> = []): Promise<Array<UserSummary>> {

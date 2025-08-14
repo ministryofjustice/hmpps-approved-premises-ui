@@ -1,6 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { Cas1CruManagementArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
+import { SelectOption } from '@approved-premises/ui'
 import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -11,7 +12,10 @@ import {
   premisesTableRows,
   premisesTableHead,
   premisesActions,
+  staffMembersToSelectOptions,
+  keyworkersToSelectOptions,
 } from '../../../utils/premises'
+import { hasPermission } from '../../../utils/users'
 
 type TabSettings = {
   pageSize: number
@@ -42,6 +46,9 @@ export default class PremisesController {
 
   show(): RequestHandler {
     return async (req: ShowRequest, res: Response) => {
+      const { token } = req.user
+      const { premisesId } = req.params
+
       const tabSettings: Record<PremisesTab, TabSettings> = {
         upcoming: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'asc' },
         current: { pageSize: 2000, sortBy: 'personName', sortDirection: 'asc' },
@@ -51,26 +58,40 @@ export default class PremisesController {
       const { crnOrName, keyworker, activeTab = 'current' } = req.query
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1SpaceBookingSummarySortField>(
         req,
-        managePaths.premises.show({ premisesId: req.params.premisesId }),
+        managePaths.premises.show({ premisesId }),
         { activeTab, crnOrName, keyworker },
       )
 
-      const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
+      const premises = await this.premisesService.find(token, premisesId)
       const showPlacements = premises.supportsSpaceBookings
-      const keyworkersList =
-        showPlacements && (activeTab === 'upcoming' || activeTab === 'current')
-          ? await this.premisesService.getKeyworkers(req.user.token, req.params.premisesId)
-          : undefined
+
+      let keyworkersSelectOptions: Array<SelectOption>
+      let keyWorkerUserId: string
+      let keyWorkerStaffCode: string
+
+      if (showPlacements && (activeTab === 'upcoming' || activeTab === 'current')) {
+        if (hasPermission(res.locals.user, ['cas1_experimental_new_assign_keyworker_flow'])) {
+          const currentKeyworkers = await this.premisesService.getCurrentKeyworkers(token, premisesId)
+          keyworkersSelectOptions = keyworkersToSelectOptions(currentKeyworkers, activeTab, keyworker)
+          keyWorkerUserId = keyworker
+        } else {
+          // TODO: Remove condition when new flow released (APS-2644)
+          const staffMembers = await this.premisesService.getKeyworkers(token, premisesId)
+          keyworkersSelectOptions = staffMembersToSelectOptions(staffMembers, keyworker)
+          keyWorkerStaffCode = keyworker
+        }
+      }
 
       const paginatedPlacements =
         showPlacements &&
         (activeTab !== 'search' || Boolean(crnOrName)) &&
         (await this.premisesService.getPlacements({
-          token: req.user.token,
-          premisesId: req.params.premisesId,
+          token,
+          premisesId,
           status: activeTab !== 'search' ? activeTab : undefined,
           crnOrName,
-          keyWorkerStaffCode: keyworker || undefined,
+          keyWorkerStaffCode,
+          keyWorkerUserId,
           page: pageNumber || 1,
           perPage: tabSettings[activeTab].pageSize,
           sortBy: sortBy || tabSettings[activeTab].sortBy,
@@ -89,14 +110,14 @@ export default class PremisesController {
         crnOrName,
         keyworker,
         placements: paginatedPlacements?.data,
-        keyworkersList,
+        keyworkersSelectOptions,
         hrefPrefix,
         sortBy: sortBy || tabSettings[activeTab].sortBy,
         sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
         pageNumber: Number(paginatedPlacements?.pageNumber) || undefined,
         totalPages: Number(paginatedPlacements?.totalPages) || undefined,
         premisesOverbookingSummary: premisesOverbookingSummary(premises),
-        viewSpacesLink: managePaths.premises.occupancy.view({ premisesId: premises.id }),
+        viewSpacesLink: managePaths.premises.occupancy.view({ premisesId }),
       })
     }
   }

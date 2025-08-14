@@ -1,12 +1,15 @@
 import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premises/api'
 import { RadioItem, SelectOption } from '@approved-premises/ui'
 import {
+  cas1CurrentKeyworkerFactory,
+  cas1KeyworkerAllocationFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   restrictedPersonFactory,
   staffMemberFactory,
   userDetailsFactory,
+  userSummaryFactory,
 } from '../../testutils/factories'
 import {
   actions,
@@ -21,6 +24,7 @@ import {
   placementOverviewSummary,
   placementStatusHtml,
   placementSummary,
+  renderKeyworkersRadioOptions,
   renderKeyworkersSelectOptions,
   requirementsInformation,
   statusTextMap,
@@ -174,7 +178,7 @@ describe('placementUtils', () => {
       permissions: [
         'cas1_space_booking_record_arrival',
         'cas1_space_booking_record_departure',
-        'cas1_space_booking_record_keyworker',
+        'cas1_experimental_new_assign_keyworker_flow',
         'cas1_space_booking_record_non_arrival',
         'cas1_transfer_create',
         'cas1_space_booking_create',
@@ -202,7 +206,12 @@ describe('placementUtils', () => {
     }
     const keyworkerOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({ premisesId: premises.id, placementId }),
+      href: paths.premises.placements.keyworker.new({ premisesId: premises.id, placementId }),
+      text: 'Edit keyworker',
+    }
+    const keyworkerDeprecatedOption = {
+      classes: 'govuk-button--secondary',
+      href: paths.premises.placements.keyworkerDeprecated({ premisesId: premises.id, placementId }),
       text: 'Edit keyworker',
     }
     const requestTransferOption = {
@@ -230,7 +239,7 @@ describe('placementUtils', () => {
           actions(
             placementInitial,
             userDetailsFactory.build({
-              permissions: ['cas1_space_booking_record_keyworker'],
+              permissions: ['cas1_experimental_new_assign_keyworker_flow'],
             }),
           ),
         ).toEqual(wrapOptions([keyworkerOption]))
@@ -328,6 +337,33 @@ describe('placementUtils', () => {
 
       it('should allow nothing', () => {
         expect(actions(placementCancelled, userDetails)).toEqual(null)
+      })
+    })
+
+    // TODO: Remove deprecated test when new flow released (APS-2644)
+    describe('when the user only has the deprecated keyworker flow permission', () => {
+      const userWithDeprecatedPermission = userDetailsFactory.build({
+        permissions: ['cas1_space_booking_record_keyworker'],
+      })
+
+      describe('when the placement is in its initial state', () => {
+        const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
+
+        it('should allow assigning a keyworker (deprecated flow)', () => {
+          expect(actions(placementInitial, userWithDeprecatedPermission)).toEqual(
+            wrapOptions([keyworkerDeprecatedOption]),
+          )
+        })
+      })
+
+      describe('when the placement has an arrival recorded, but no departure', () => {
+        const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises })
+
+        it('should allow assigning a keyworker (deprecated flow)', () => {
+          expect(actions(placementAfterArrival, userWithDeprecatedPermission)).toEqual([
+            { items: [keyworkerDeprecatedOption] },
+          ])
+        })
       })
     })
   })
@@ -675,6 +711,42 @@ describe('placementUtils', () => {
       })
     })
   })
+
+  describe('renderKeyworkersRadioOptions', () => {
+    it('should return a list of current keyworkers', () => {
+      const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(1)
+
+      expect(renderKeyworkersRadioOptions(currentKeyworkers)).toEqual([
+        { text: currentKeyworkers[0].summary.name, value: currentKeyworkers[0].summary.id },
+        { divider: 'or' },
+        { text: 'Assign a different keyworker', value: 'new' },
+      ])
+    })
+
+    it('should exclude the currently assigned keyworker', () => {
+      const user = userSummaryFactory.build()
+      const currentKeyworkers = [
+        cas1CurrentKeyworkerFactory.build({ summary: user }),
+        cas1CurrentKeyworkerFactory.build(),
+      ]
+      const placement = cas1SpaceBookingFactory.build({
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
+          keyWorkerUser: user,
+        }),
+      })
+
+      expect(renderKeyworkersRadioOptions(currentKeyworkers, placement)).toEqual([
+        { text: currentKeyworkers[1].summary.name, value: currentKeyworkers[1].summary.id },
+        { divider: 'or' },
+        { text: 'Assign a different keyworker', value: 'new' },
+      ])
+    })
+
+    it('does not render the divider if there are no current keyworkers', () => {
+      expect(renderKeyworkersRadioOptions([])).toEqual([{ text: 'Assign a different keyworker', value: 'new' }])
+    })
+  })
+
   describe('renderKeyworkersSelectOptions', () => {
     const selectBlankOption: SelectOption = { text: 'Select a keyworker', value: null }
     const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })

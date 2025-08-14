@@ -1,5 +1,6 @@
 import type {
   Cas1BedDetail,
+  Cas1CurrentKeyWorker,
   Cas1NationalOccupancy,
   Cas1NationalOccupancyParameters,
   Cas1PremiseCapacity,
@@ -92,16 +93,18 @@ export default class PremisesClient {
     status?: string
     crnOrName?: string
     keyWorkerStaffCode?: string
+    keyWorkerUserId?: string
     page: number
     perPage: number
     sortBy: Cas1SpaceBookingSummarySortField
     sortDirection: SortDirection
   }): Promise<PaginatedResponse<Cas1SpaceBookingSummary>> {
-    const { premisesId, status, crnOrName, keyWorkerStaffCode, page, perPage, sortBy, sortDirection } = args
+    const { premisesId, status, crnOrName, keyWorkerStaffCode, keyWorkerUserId, page, perPage, sortBy, sortDirection } =
+      args
     return this.restClient.getPaginatedResponse<Cas1SpaceBookingSummary>({
       path: paths.premises.placements.index({ premisesId }),
       page: page.toString(),
-      query: { residency: status, crnOrName, keyWorkerStaffCode, sortBy, sortDirection, perPage },
+      query: { residency: status, crnOrName, keyWorkerStaffCode, keyWorkerUserId, sortBy, sortDirection, perPage },
     })
   }
 
@@ -109,6 +112,12 @@ export default class PremisesClient {
     return (await this.restClient.get({
       path: paths.premises.placements.show(args),
     })) as Cas1SpaceBooking
+  }
+
+  async getCurrentKeyworkers(premisesId: string): Promise<Array<Cas1CurrentKeyWorker>> {
+    return (await this.restClient.get({
+      path: paths.premises.currentKeyworkers({ premisesId }),
+    })) as Array<Cas1CurrentKeyWorker>
   }
 
   async getStaff(premisesId: string): Promise<Array<StaffMember>> {

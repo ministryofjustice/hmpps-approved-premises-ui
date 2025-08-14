@@ -49,7 +49,11 @@ export const controllers = (services: Services) => {
   )
   const arrivalsController = new ArrivalsController(services.premisesService, services.placementService)
   const nonArrivalsController = new NonArrivalsController(services.premisesService, services.placementService)
-  const keyworkerController = new KeyworkerController(services.premisesService, services.placementService)
+  const keyworkerController = new KeyworkerController(
+    services.premisesService,
+    services.placementService,
+    services.userService,
+  )
   const departuresController = new DeparturesController(services.premisesService, services.placementService)
   const apOccupancyViewController = new ApOccupancyViewController(services.premisesService, services.sessionService)
   const changesController = new ChangesController(

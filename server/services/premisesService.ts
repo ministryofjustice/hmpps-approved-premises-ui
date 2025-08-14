@@ -1,5 +1,6 @@
 import type {
   Cas1BedDetail,
+  Cas1CurrentKeyWorker,
   Cas1NationalOccupancyParameters,
   Cas1PremiseCapacity,
   Cas1Premises,
@@ -87,6 +88,7 @@ export default class PremisesService {
     status?: string
     crnOrName?: string
     keyWorkerStaffCode?: string
+    keyWorkerUserId?: string
     page: number
     perPage: number
     sortBy: Cas1SpaceBookingSummarySortField
@@ -101,6 +103,11 @@ export default class PremisesService {
     const { token, ...remainingArgs } = args
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getPlacement(remainingArgs)
+  }
+
+  async getCurrentKeyworkers(token: string, premisesId: string): Promise<Array<Cas1CurrentKeyWorker>> {
+    const premisesClient = this.premisesClientFactory(token)
+    return premisesClient.getCurrentKeyworkers(premisesId)
   }
 
   async getStaff(token: string, premisesId: string): Promise<Array<StaffMember>> {
