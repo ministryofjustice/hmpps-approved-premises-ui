@@ -79,7 +79,7 @@ describe('keyworkerController', () => {
     })
 
     it('should render the name of the currently assigned keyworker and exclude them from the list', async () => {
-      const assignedKeyworker = userSummaryFactory.build()
+      const assignedKeyworker = staffMemberFactory.build()
       const placementWithKeyworker = cas1SpaceBookingFactory.withAssignedKeyworker(assignedKeyworker).build()
       when(premisesService.getPlacement)
         .calledWith({ token, premisesId, placementId: placementWithKeyworker.id })
@@ -193,7 +193,9 @@ describe('keyworkerController', () => {
       const selectedKeyworkerUser = currentKeyworkers[0].summary
       premisesService.getPlacement.mockResolvedValue({
         ...placement,
-        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({ keyWorkerUser: selectedKeyworkerUser }),
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
+          keyWorker: staffMemberFactory.build(selectedKeyworkerUser),
+        }),
       })
 
       request.body = { keyworker: selectedKeyworkerUser.id }

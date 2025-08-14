@@ -18,21 +18,20 @@ import { FindAKeyworkerPage } from '../../../pages/manage/placements/keyworker/f
 
 const premises = cas1PremisesFactory.build()
 const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
-const staffMembers = staffMemberFactory.buildList(5, { keyWorker: true })
+
 const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
+const keyworkerUsers = userSummaryFactory.buildList(5)
+const selectedKeyworkerUser = keyworkerUsers[1]
+const selectedKeyworker = staffMemberFactory.build(selectedKeyworkerUser)
 
 context('Keyworker', () => {
   beforeEach(() => {
     cy.task('stubSinglePremises', premises)
     cy.task('stubSpaceBookingShow', placement)
-    cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers })
-    cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id, currentKeyworkers })
     cy.task('stubSpaceBookingAssignKeyworker', placement)
   })
 
   it('Assigns an existing keyworker to a placement', () => {
-    const selectedKeyworkerUser = currentKeyworkers[2].summary
-
     GIVEN('I am signed in as a future manager with new keyworker flow permission')
     signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
 
@@ -57,7 +56,7 @@ context('Keyworker', () => {
     })
 
     WHEN('I select a keyworker and submit the form')
-    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
+    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworker).build(placement)
     cy.task('stubSpaceBookingShow', updatedPlacement)
     keyworkerAssignmentPage.completeForm(selectedKeyworkerUser.name)
     keyworkerAssignmentPage.clickButton('Submit')
@@ -80,15 +79,14 @@ context('Keyworker', () => {
 
   it('Assigns a new user as a keyworker to a placement', () => {
     const searchQuery = 'Smith'
-    const availableKeyworkers = userSummaryFactory.buildList(5)
-    const selectedKeyworkerUser = availableKeyworkers[1]
+
     const searchParams = {
       permission: 'cas1_keyworker_assignable_as',
       nameOrEmail: searchQuery,
     }
     cy.task('stubUsersSummaries', { users: [], ...searchParams, nameOrEmail: 'No match' })
-    cy.task('stubUsersSummaries', { users: availableKeyworkers, ...searchParams })
-    cy.task('stubUsersSummaries', { users: availableKeyworkers, ...searchParams, page: '2' })
+    cy.task('stubUsersSummaries', { users: keyworkerUsers, ...searchParams })
+    cy.task('stubUsersSummaries', { users: keyworkerUsers, ...searchParams, page: '2' })
 
     GIVEN('I am signed in as a future manager with new keyworker flow permission')
     signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
@@ -127,16 +125,16 @@ context('Keyworker', () => {
     findKeyworkerPage.completeForm(searchQuery)
 
     THEN('I should see results')
-    findKeyworkerPage.shouldShowResults(availableKeyworkers)
+    findKeyworkerPage.shouldShowResults(keyworkerUsers)
 
     WHEN('I click to view the second page of results')
     findKeyworkerPage.clickPageNumber('2')
 
     THEN('I should see results')
-    findKeyworkerPage.shouldShowResults(availableKeyworkers)
+    findKeyworkerPage.shouldShowResults(keyworkerUsers)
 
     WHEN("I click 'Assign keyworker'")
-    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
+    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworker).build(placement)
     cy.task('stubSpaceBookingShow', updatedPlacement)
     findKeyworkerPage.clickAssignKeyworker(selectedKeyworkerUser.name)
 
@@ -173,6 +171,13 @@ context('Keyworker', () => {
 
   // TODO: Remove deprecated test when new flow released (APS-2644)
   describe('if the user does not have the experimental keyworker assignment permission (deprecated flow)', () => {
+    const staffMembers = staffMemberFactory.buildList(5, { keyWorker: true })
+
+    beforeEach(() => {
+      cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers })
+      cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id, currentKeyworkers })
+    })
+
     it('Assigns a keyworker to a placement', () => {
       GIVEN('I am signed in as a future manager')
       signIn('future_manager')

@@ -40,7 +40,7 @@ export default class KeyworkerController {
       return res.render('manage/premises/placements/assignKeyworker/new', {
         placement,
         backlink: managePaths.premises.placements.show({ premisesId, placementId }),
-        currentKeyworkerName: placement.keyWorkerAllocation?.keyWorkerUser?.name || 'Not assigned',
+        currentKeyworkerName: placement.keyWorkerAllocation?.keyWorker?.name || 'Not assigned',
         keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
         errors,
         errorSummary,
@@ -126,7 +126,7 @@ export default class KeyworkerController {
 
         req.flash('success', {
           heading: 'Keyworker assigned',
-          body: `You have assigned ${placement.keyWorkerAllocation.keyWorkerUser.name} to ${placement.person.crn}`,
+          body: `You have assigned ${placement.keyWorkerAllocation.keyWorker.name} to ${placement.person.crn}`,
         })
         return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
       } catch (error) {
