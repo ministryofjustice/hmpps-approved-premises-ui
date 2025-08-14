@@ -16,6 +16,7 @@ import { placementSummaryList } from '../../../utils/placementRequests/placement
 import { changeRequestSummaryList } from '../../../utils/placementRequests/changeRequestSummaryList'
 import { DateFormats } from '../../../utils/dateUtils'
 import { getChangeRequestReasonId, mapChangeRequestReasonsToRadios } from '../../../utils/placements/changeRequests'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 type AppealDecision = 'progress' | 'rejectNoLongerRequired' | 'rejectManagerDecision'
 export default class ChangeRequestsController {
@@ -52,7 +53,7 @@ export default class ChangeRequestsController {
       ]
 
       res.render('admin/placementRequests/changeRequests/review', {
-        placementRequest,
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         pageHeading: 'Review appeal',
         backLink: paths.admin.placementRequests.show({ placementRequestId }),
         bookingSummary: placementRequest.booking && placementSummaryList(placementRequest),

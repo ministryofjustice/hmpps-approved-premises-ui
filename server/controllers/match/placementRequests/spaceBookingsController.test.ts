@@ -16,6 +16,7 @@ import matchPaths from '../../../paths/match'
 import * as validationUtils from '../../../utils/validation'
 import * as matchUtils from '../../../utils/match'
 import { DateFormats } from '../../../utils/dateUtils'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 describe('SpaceBookingsController', () => {
   const token = 'SOME_TOKEN'
@@ -66,7 +67,7 @@ describe('SpaceBookingsController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
         backLink: matchPaths.v2Match.placementRequests.search.occupancy(params),
         submitLink: matchPaths.v2Match.placementRequests.spaceBookings.create(params),
-        placementRequest: placementRequestDetail,
+        contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
         premises,
         summaryListRows: matchUtils.spaceBookingConfirmationSummaryListRows({
           premises,

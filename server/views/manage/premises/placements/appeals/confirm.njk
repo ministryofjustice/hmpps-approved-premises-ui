@@ -1,12 +1,11 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
-{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
-
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 
-{% extends "../../../../partials/layout.njk" %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -15,11 +14,6 @@
         text: "Back",
         href: backLink
     }) }}
-{% endblock %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block content %}

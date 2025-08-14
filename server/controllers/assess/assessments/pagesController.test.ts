@@ -19,6 +19,7 @@ import { viewPath } from '../../../form-pages/utils'
 
 import { assessmentFactory, clarificationNoteFactory } from '../../../testutils/factories'
 import * as matchingInformationUtils from '../../../form-pages/utils/matchingInformationUtils'
+import { assessmentKeyDetails } from '../../../utils/assessments/utils'
 
 const PageConstructor = jest.fn()
 
@@ -27,6 +28,7 @@ jest.mock('../../../form-pages/utils')
 jest.mock('../../../utils/assessments/utils', () => {
   return {
     getPage: () => PageConstructor,
+    assessmentKeyDetails: jest.fn(),
   }
 })
 
@@ -74,6 +76,7 @@ describe('pagesController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         assessment,
+        contextKeyDetails: assessmentKeyDetails(assessment),
         task: someTask,
         page,
         errors: {},
@@ -97,6 +100,7 @@ describe('pagesController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         assessment,
+        contextKeyDetails: assessmentKeyDetails(assessment),
         task: someTask,
         page,
         errors: errorsAndUserInput.errors,

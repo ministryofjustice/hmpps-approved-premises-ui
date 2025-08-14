@@ -4,6 +4,7 @@ import { PlacementRequestService } from '../../../services'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { placementSummaryList } from '../../../utils/placementRequests/placementSummaryList'
 import { adminIdentityBar } from '../../../utils/placementRequests'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 export default class PlacementRequestsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -18,6 +19,7 @@ export default class PlacementRequestsController {
 
       res.render('admin/placementRequests/show', {
         adminIdentityBar: adminIdentityBar(placementRequest, res.locals.user),
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
         bookingSummaryList: placementRequest.booking ? placementSummaryList(placementRequest) : undefined,

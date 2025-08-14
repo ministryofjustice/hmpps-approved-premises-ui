@@ -2,15 +2,15 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% extends "../../layouts/with-details.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
     {{ govukBackLink({
-      text: "Back",
-      href: paths.assessments.show({ id: page.assessment.id })
+        text: "Back",
+        href: paths.assessments.show({ id: page.assessment.id })
     }) }}
 {% endblock %}
 
@@ -28,10 +28,11 @@
                 {% endfor %}
             {% endfor %}
 
-            <form action="{{ paths.assessments.pages.update({ id: assessmentId, task: task, page: page.name }) }}?_method=PUT" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <form action="{{ paths.assessments.pages.update({ id: assessmentId, task: task, page: page.name }) }}?_method=PUT"
+                  method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <input type="hidden" name="reviewed" value="1"/>
+                <input type="hidden" name="reviewed" value="1" />
 
                 {{ govukButton({
                     text: "Continue",

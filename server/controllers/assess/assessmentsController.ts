@@ -7,7 +7,7 @@ import informationSetAsNotReceived from '../../utils/assessments/informationSetA
 
 import paths from '../../paths/assess'
 import { ApprovedPremisesAssessment, AssessmentSortField, AssessmentStatus, TaskSortField } from '../../@types/shared'
-import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
+import { assessmentKeyDetails, awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { remapArsonAssessmentData } from '../../form-pages/utils/matchingInformationUtils'
 
@@ -86,6 +86,7 @@ export default class AssessmentsController {
         const referrer = req.headers.referer
 
         res.render('assessments/show', {
+          contextKeyDetails: assessmentKeyDetails(assessment),
           assessment,
           referrer,
         })
@@ -103,6 +104,7 @@ export default class AssessmentsController {
         res.render('assessments/tasklist', {
           assessment,
           pageHeading: tasklistPageHeading,
+          contextKeyDetails: assessmentKeyDetails(assessment),
           taskList,
           errorSummary,
           errors,

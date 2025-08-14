@@ -1,7 +1,7 @@
 import { Request, Response, TypedRequestHandler } from 'express'
-import type { ObjectWithDateParts } from '@approved-premises/ui'
+import type { KeyDetailsArgs, ObjectWithDateParts } from '@approved-premises/ui'
 import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { PlacementRequestService, PremisesService, SessionService, SpaceSearchService } from '../../../services'
+import { PlacementRequestService, PlacementService, PremisesService, SessionService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
@@ -35,6 +35,8 @@ import {
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
+import { placementKeyDetails } from '../../../utils/placements'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -64,8 +66,8 @@ export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
-    private readonly spaceSearchService: SpaceSearchService,
     private readonly sessionService: SessionService,
+    private readonly placementService: PlacementService,
   ) {
     this.formData = new MultiPageFormManager('spaceSearch')
   }
@@ -128,6 +130,7 @@ export default class {
 
       return res.render('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
         selectedCriteria: roomCharacteristicsInlineList(searchState.roomCriteria, 'no room criteria'),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
@@ -265,8 +268,6 @@ export default class {
       const getDayLink = (targetDate: string) =>
         `${getPathWithDate(targetDate)}${createQueryString(req.query, { arrayFormat: 'repeat', addQueryPrefix: true })}`
 
-      const placementRequest =
-        placementRequestId && (await this.placementRequestService.getPlacementRequest(token, placementRequestId))
       const premises = await this.premisesService.find(token, premisesId)
 
       const daySummary = await this.premisesService.getDaySummary({
@@ -284,12 +285,24 @@ export default class {
       const dayCapacity = premisesCapacity.capacity[0]
       const status = dayAvailabilityStatusForCriteria(dayCapacity, filteredCriteria)
 
+      let keyDetails: KeyDetailsArgs
+
+      if (placementRequestId) {
+        const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
+        keyDetails = placementRequestKeyDetails(placementRequest)
+      }
+
+      if (placementId) {
+        const placement = await this.placementService.getPlacement(token, placementId)
+        keyDetails = placementKeyDetails(placement)
+      }
+
       return res.render('manage/premises/occupancy/dayView', {
         backLink,
         pageHeading: DateFormats.isoDateToUIDate(date),
+        contextKeyDetails: keyDetails,
         dayAvailabilityStatus: dayAvailabilityStatusMap[status],
         daySummaryRows: daySummaryRows(dayCapacity, filteredCriteria, 'singleRow'),
-        placementRequest,
         premises,
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
