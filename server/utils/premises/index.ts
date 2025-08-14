@@ -7,6 +7,7 @@ import type {
   Cas1SpaceBookingSummarySortField,
   NamedId,
   SortDirection,
+  StaffMember,
 } from '@approved-premises/api'
 import { DateRange, SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
@@ -18,6 +19,7 @@ import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusHtml } from '../placements'
 import { htmlCell, textCell } from '../tableUtils'
+import { convertObjectsToSelectOptions } from '../formUtils'
 
 export { premisesActions } from './premisesActions'
 
@@ -128,6 +130,20 @@ export const premisesTabItems = (premises: Cas1Premises, activeTab?: PremisesTab
   return Object.entries(tabTextMap).map(([key, label]) => {
     return { text: label, active: activeTab === key, href: getSelfLink(key) }
   })
+}
+
+export const staffMembersToSelectOptions = (
+  staffMembers: Array<StaffMember>,
+  selected?: string,
+): Array<SelectOption> => {
+  return [
+    { text: 'All keyworkers', value: '' },
+    ...staffMembers.map(staffMember => ({
+      text: staffMember.name,
+      value: staffMember.code,
+      selected: selected === staffMember.code || undefined,
+    })),
+  ]
 }
 
 type ColumnField = Cas1SpaceBookingSummarySortField | 'status'
