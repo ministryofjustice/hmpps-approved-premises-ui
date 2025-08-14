@@ -1,6 +1,7 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { StaffMember } from '@approved-premises/api'
-import { PlacementService, PremisesService } from '../../../../services'
+import { TableRow } from '@approved-premises/ui'
+import { PlacementService, PremisesService, UserService } from '../../../../services'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
@@ -14,11 +15,15 @@ import {
   renderKeyworkersSelectOptions,
   renderKeyworkersRadioOptions,
 } from '../../../../utils/placements'
+import { keyworkersTableHead, keyworkersTableRows } from '../../../../utils/placements/keyworkers'
+import { Pagination, pagination as buildPagination } from '../../../../utils/pagination'
+import { createQueryString } from '../../../../utils/utils'
 
 export default class KeyworkerController {
   constructor(
     private readonly premisesService: PremisesService,
     private readonly placementService: PlacementService,
+    private readonly userService: UserService,
   ) {}
 
   new(): RequestHandler {
@@ -52,7 +57,7 @@ export default class KeyworkerController {
     return async (req: Request, res: Response) => {
       const { token } = req.user
       const { premisesId, placementId } = req.params
-      const { nameOrEmail } = req.body
+      const { nameOrEmail, page = '1' } = req.query
 
       const placement = await this.premisesService.getPlacement({
         token,
@@ -61,16 +66,41 @@ export default class KeyworkerController {
       })
 
       const errors: Record<string, string> = {}
+      let tableRows: Array<TableRow>
+      let pagination: Pagination
 
       if (nameOrEmail !== undefined) {
         if (!nameOrEmail) {
           errors.nameOrEmail = 'Enter a name or email'
+        } else {
+          const pageNumber = Number(page)
+          const results = await this.userService.getUsersSummaries(token, {
+            page: pageNumber,
+            nameOrEmail: nameOrEmail as string,
+            permission: 'cas1_keyworker_assignable_as',
+          })
+          tableRows = keyworkersTableRows(results.data)
+          pagination = buildPagination(
+            pageNumber,
+            Number(results.totalPages),
+            `${managePaths.premises.placements.keyworker.find({
+              premisesId,
+              placementId: placement.id,
+            })}?${createQueryString({ nameOrEmail })}&`,
+          )
         }
       }
 
+      const assignKeyworkerPath = managePaths.premises.placements.keyworker.new({ premisesId, placementId })
+
       return res.render('manage/premises/placements/assignKeyworker/find', {
         placement,
-        backlink: managePaths.premises.placements.keyworker.new({ premisesId, placementId }),
+        backlink: assignKeyworkerPath,
+        submitUrl: assignKeyworkerPath,
+        nameOrEmail,
+        tableRows,
+        tableHead: keyworkersTableHead,
+        pagination,
         errors: generateErrorMessages(errors),
         errorSummary: generateErrorSummary(errors),
       })

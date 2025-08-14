@@ -34,6 +34,7 @@ const userFactory = Factory.define<User>(() => ({
 export const userSummaryFactory = Factory.define<UserSummary>(() => ({
   name: faker.person.fullName(),
   id: faker.string.uuid(),
+  emailAddress: faker.internet.email(),
 }))
 
 export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ params }) => ({
