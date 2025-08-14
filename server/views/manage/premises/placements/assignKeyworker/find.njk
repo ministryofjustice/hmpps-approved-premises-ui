@@ -1,5 +1,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "components/keyDetails/macro.njk" import keyDetails %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "partials/filters.njk" import filterWrapper, filterText %}
@@ -29,9 +31,27 @@
         </div>
     </div>
 
-    {% call filterWrapper('Search', 'Search', 'post') %}
+    {% call filterWrapper('Search', 'Search') %}
         {{ filterText('nameOrEmail','Name or email address', fetchContext()) }}
     {% endcall %}
-    
+
+    {% if nameOrEmail | length > 0 %}
+        {% if tableRows | length > 0 %}
+            <form action="{{ submitUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukTable({
+                    captionClasses: "govuk-table__caption--m",
+                    head: tableHead,
+                    rows: tableRows
+                }) }}
+            </form>
+
+            {{ govukPagination(pagination) }}
+        {% else %}
+            <p class="govuk-heading-m">There are no results matching '{{ nameOrEmail }}'.</p>
+        {% endif %}
+    {% endif %}
+
 {% endblock %}
 

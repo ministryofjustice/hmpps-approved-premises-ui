@@ -1,13 +1,13 @@
-import { when } from 'jest-when'
 import UserService from './userService'
 import { UserClient } from '../data'
 
-import { paginatedResponseFactory, referenceDataFactory, userFactory } from '../testutils/factories'
+import { paginatedResponseFactory, referenceDataFactory, userFactory, userSummaryFactory } from '../testutils/factories'
 import { PaginatedResponse } from '../@types/ui'
 import { ApprovedPremisesUser } from '../@types/shared'
 import ReferenceDataClient from '../data/referenceDataClient'
 import { convertToTitleCase } from '../utils/utils'
 import { userProfileFactory } from '../testutils/factories/user'
+import { UsersSearchParams } from '../data/userClient'
 
 jest.mock('../data/userClient')
 jest.mock('../data/referenceDataClient.ts')
@@ -64,11 +64,35 @@ describe('User service', () => {
     })
   })
 
+  describe('getUsersSummaries', () => {
+    it('returns user summaries with specific criteria', async () => {
+      const searchParams: UsersSearchParams = {
+        page: 1,
+        nameOrEmail: 'john@test.com',
+        permission: 'cas1_space_booking_view',
+        roles: ['assessor', 'future_manager'],
+      }
+      const clientResponse = {
+        data: userSummaryFactory.buildList(3),
+        pageNumber: '1',
+        pageSize: '10',
+        totalPages: '3',
+        totalResults: '21',
+      }
+
+      userClient.getUsersSummaries.mockResolvedValue(clientResponse)
+
+      const result = await userService.getUsersSummaries(token, searchParams)
+
+      expect(result).toEqual(clientResponse)
+
+      expect(userClient.getUsersSummaries).toHaveBeenCalledWith(searchParams)
+    })
+  })
+
   describe('getUserList', () => {
     it('returns all users', async () => {
       const response = userFactory.buildList(4)
-
-      when(userClient.getUserList).calledWith().mockResolvedValue(response)
 
       userClient.getUserList.mockResolvedValue(response)
 
@@ -76,13 +100,11 @@ describe('User service', () => {
 
       expect(result).toEqual(response)
 
-      expect(userClient.getUserList).toHaveBeenCalled()
+      expect(userClient.getUserList).toHaveBeenCalledWith([])
     })
 
     it('returns all users with given roles', async () => {
       const response = userFactory.buildList(4)
-
-      when(userClient.getUserList).calledWith().mockResolvedValue(response)
 
       userClient.getUserList.mockResolvedValue(response)
 

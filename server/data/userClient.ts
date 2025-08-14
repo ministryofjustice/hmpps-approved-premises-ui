@@ -7,12 +7,20 @@ import type {
   ApprovedPremisesUserRole as UserRole,
   UserSortField,
   UserSummary,
+  ApprovedPremisesUserPermission as UserPermission,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
 import { PaginatedResponse } from '../@types/ui'
+
+export type UsersSearchParams = {
+  roles?: Array<UserRole>
+  permission?: UserPermission
+  nameOrEmail?: string
+  page: number
+}
 
 export default class UserClient {
   restClient: RestClient
@@ -29,11 +37,25 @@ export default class UserClient {
     return (await this.restClient.get({ path: paths.users.profile({}) })) as ProfileResponse
   }
 
+  async getUsersSummaries(filters: UsersSearchParams = { page: 1 }): Promise<PaginatedResponse<UserSummary>> {
+    const query = {
+      roles: filters.roles?.length ? filters.roles.join(',') : undefined,
+      permission: filters.permission,
+      nameOrEmail: filters.nameOrEmail,
+    }
+
+    return this.restClient.getPaginatedResponse({
+      path: paths.users.summary({}),
+      page: filters.page.toString(),
+      query,
+    })
+  }
+
   async getUserList(roles: Array<UserRole> = []): Promise<Array<UserSummary>> {
     return (await this.restClient.get({
       path: paths.users.summary({}),
       query: { roles: roles.join(',') },
-    })) as Promise<Array<User>>
+    })) as Promise<Array<UserSummary>>
   }
 
   async getUsers(
