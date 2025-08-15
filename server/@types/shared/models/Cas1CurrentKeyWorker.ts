@@ -2,11 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { StaffMember } from './StaffMember';
 import type { UserSummary } from './UserSummary';
-export type Cas1KeyWorkerAllocation = {
-    allocatedAt?: string;
-    keyWorker: StaffMember;
-    keyWorkerUser?: UserSummary;
+export type Cas1CurrentKeyWorker = {
+    currentBookingCount: number;
+    summary: UserSummary;
+    upcomingBookingCount: number;
 };
 
