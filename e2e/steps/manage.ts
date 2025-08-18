@@ -68,7 +68,7 @@ export const assignKeyWorker = async ({ page }: { page: Page }) => {
   await bookingPage.clickAction('Edit keyworker')
 
   // Then I see the page to edit the keyworker
-  const editKeyworkerPage = await EditKeyworkerPage.initialize(page, 'Edit keyworker details')
+  const editKeyworkerPage = await EditKeyworkerPage.initialize(page)
 
   // When I assign a new keyworker
   const { keyworkerName } = await editKeyworkerPage.selectKeyworker()
