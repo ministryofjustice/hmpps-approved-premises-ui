@@ -2,21 +2,15 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "components/keyDetails/macro.njk" import keyDetails %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "partials/layout.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
         href: backlink
     }) }}
-{% endblock %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
 {% endblock %}
 
 {% block content %}
