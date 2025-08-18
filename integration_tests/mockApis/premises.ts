@@ -10,6 +10,7 @@ import type {
 
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
+import { cas1CurrentKeyworkerFactory } from '../../server/testutils/factories'
 
 const stubCas1AllPremises = (args: { premises: Array<Cas1PremisesBasicSummary>; cruManagementAreaId?: string }) => {
   return stubFor({
@@ -45,7 +46,7 @@ const stubSinglePremises = (premises: Cas1Premises) =>
     },
   })
 
-const stubPremisesCurrentKeyworkers = (args: { premisesId: string; currentKeyworkers: Array<Cas1CurrentKeyWorker> }) =>
+const stubPremisesCurrentKeyworkers = (args: { premisesId: string; currentKeyworkers?: Array<Cas1CurrentKeyWorker> }) =>
   stubFor({
     request: {
       method: 'GET',
@@ -56,10 +57,11 @@ const stubPremisesCurrentKeyworkers = (args: { premisesId: string; currentKeywor
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: args.currentKeyworkers,
+      jsonBody: args.currentKeyworkers || cas1CurrentKeyworkerFactory.buildList(5),
     },
   })
 
+// TODO: Remove once new keyworker flow released (APS-2644)
 const stubPremisesStaffMembers = (args: { premisesId: string; staffMembers: Array<StaffMember> }) =>
   stubFor({
     request: {

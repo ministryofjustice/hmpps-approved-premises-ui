@@ -26,13 +26,16 @@ context('Premises occupancy', () => {
   const premisesCapacity = cas1PremiseCapacityFactory.build({ startDate, endDate })
 
   const placements = cas1SpaceBookingSummaryFactory.buildList(30)
-  const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
   beforeEach(() => {
     cy.task('reset')
 
     // Given there is a premises in the database
     cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id })
+
+    // TODO: Remove Staff Members stub once new keyworker flow released (APS-2644)
+    const keyworkers = staffMemberFactory.keyworker().buildList(5)
     cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
 
     // And it has a list of upcoming placements

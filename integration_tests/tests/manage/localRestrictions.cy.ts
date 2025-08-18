@@ -16,13 +16,17 @@ import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 describe('Local restrictions', () => {
   const premises = cas1PremisesFactory.build({ localRestrictions: [] })
-  const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
   beforeEach(() => {
     cy.task('reset')
 
     cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id })
+
+    // TODO: Remove Staff Members stub once new keyworker flow released (APS-2644)
+    const keyworkers = staffMemberFactory.keyworker().buildList(5)
     cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
+
     cy.task('stubSpaceBookingSummaryList', {
       premisesId: premises.id,
       placements: [],

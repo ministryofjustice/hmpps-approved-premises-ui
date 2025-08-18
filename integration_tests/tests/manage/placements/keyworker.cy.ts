@@ -31,6 +31,7 @@ context('Keyworker', () => {
   })
 
   it('Assigns an existing keyworker to a placement', () => {
+    // TODO: change sign-in to simply 'future_manager' once new keyworker flow released (APS-2644)
     GIVEN('I am signed in as a future manager with new keyworker flow permission')
     signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
 
