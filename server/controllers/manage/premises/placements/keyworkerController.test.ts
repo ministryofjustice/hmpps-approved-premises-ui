@@ -62,7 +62,7 @@ describe('keyworkerController', () => {
 
   describe('new', () => {
     const defaultRenderParams = {
-      placement,
+      contextKeyDetails: placementKeyDetails(placement),
       backlink: paths.premises.placements.show({ premisesId, placementId: placement.id }),
       currentKeyworkerName: 'Not assigned',
       keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
@@ -94,7 +94,7 @@ describe('keyworkerController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/assignKeyworker/new', {
         ...defaultRenderParams,
-        placement: placementWithKeyworker,
+        contextKeyDetails: placementKeyDetails(placementWithKeyworker),
         backlink: paths.premises.placements.show({ premisesId, placementId: placementWithKeyworker.id }),
         currentKeyworkerName: assignedKeyworker.name,
       })
@@ -103,7 +103,7 @@ describe('keyworkerController', () => {
 
   describe('find', () => {
     const defaultRenderParams = {
-      placement,
+      contextKeyDetails: placementKeyDetails(placement),
       backlink: assignKeyworkerPath,
       submitUrl: assignKeyworkerPath,
       tableHead: keyworkersTableHead,

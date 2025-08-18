@@ -42,7 +42,7 @@ export default class KeyworkerController {
       ])
 
       return res.render('manage/premises/placements/assignKeyworker/new', {
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         backlink: managePaths.premises.placements.show({ premisesId, placementId }),
         currentKeyworkerName: placement.keyWorkerAllocation?.keyWorkerUser?.name || 'Not assigned',
         keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
@@ -94,7 +94,7 @@ export default class KeyworkerController {
       const assignKeyworkerPath = managePaths.premises.placements.keyworker.new({ premisesId, placementId })
 
       return res.render('manage/premises/placements/assignKeyworker/find', {
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         backlink: assignKeyworkerPath,
         submitUrl: assignKeyworkerPath,
         nameOrEmail,
