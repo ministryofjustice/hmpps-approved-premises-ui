@@ -1,4 +1,5 @@
 import type {
+  Cas1CurrentKeyWorker,
   Cas1NationalOccupancy,
   Cas1PremiseCapacity,
   Cas1Premises,
@@ -9,7 +10,6 @@ import type {
 
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
-import { Cas1CurrentKeyWorker } from '../../server/@types/shared/models/Cas1CurrentKeyWorker'
 
 const stubCas1AllPremises = (args: { premises: Array<Cas1PremisesBasicSummary>; cruManagementAreaId?: string }) => {
   return stubFor({

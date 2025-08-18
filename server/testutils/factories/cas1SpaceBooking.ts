@@ -7,7 +7,7 @@ import type {
   Cas1SpaceBookingCancellation,
   Cas1SpaceBookingNonArrival,
   Person,
-  StaffMember,
+  UserSummary,
 } from '@approved-premises/api'
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
@@ -96,10 +96,10 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
     })
   }
 
-  withAssignedKeyworker(staffMember: StaffMember) {
+  withAssignedKeyworker(user: UserSummary) {
     return this.params({
       keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
-        keyWorker: staffMember,
+        keyWorkerUser: user,
       }),
     })
   }
