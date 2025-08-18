@@ -1,6 +1,7 @@
 import { PersonSummary } from '@approved-premises/api'
 import {
   cas1BedDetailFactory,
+  cas1CurrentKeyworkerFactory,
   cas1KeyworkerAllocationFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesBedSummaryFactory,
@@ -44,7 +45,7 @@ context('Premises', () => {
       WHEN('I visit the premises page')
       const premisesListPage = PremisesListPage.visit()
 
-      THEN('I should see premises in the user`s CRU management area listed')
+      THEN("I should see premises in the user's CRU management area listed")
       premisesListPage.shouldHaveSelectText('selectedArea', userCruArea.name)
       premisesListPage.shouldShowPremises(userPremises)
 
@@ -55,7 +56,7 @@ context('Premises', () => {
       premisesListPage.shouldHaveSelectText('selectedArea', filterCruArea.name)
       premisesListPage.shouldShowPremises(filteredPremises)
 
-      WHEN(`I select 'All areas'`)
+      WHEN("I select 'All areas'")
       premisesListPage.filterPremisesByArea('All areas')
 
       THEN('I should see all premises')
@@ -67,13 +68,17 @@ context('Premises', () => {
   describe('show', () => {
     const premises = cas1PremisesFactory.build()
     const placements = cas1SpaceBookingSummaryFactory.buildList(30)
-    const keyworkers = staffMemberFactory.keyworker().buildList(5)
+    const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
 
     beforeEach(() => {
       cy.task('reset')
 
-      GIVEN(`there is a premises in the database`)
+      GIVEN('there is a premises in the database')
       cy.task('stubSinglePremises', premises)
+      cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id, currentKeyworkers })
+
+      // TODO: Remove Staff Members stub once new keyworker flow released (APS-2644)
+      const keyworkers = staffMemberFactory.keyworker().buildList(5)
       cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
 
       AND('it has a list of placements')
@@ -102,7 +107,8 @@ context('Premises', () => {
       })
 
       GIVEN('I am signed in as a future manager')
-      signIn('future_manager')
+      // TODO: change sign-in to simply 'future_manager' once new keyworker flow released (APS-2644)
+      signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
     })
 
     it('should show a single premises details page', () => {
@@ -122,26 +128,26 @@ context('Premises', () => {
       WHEN('I visit premises details page')
       const page = PremisesShowPage.visit(premises)
 
-      THEN(`the 'current' tab should be selected by default`)
+      THEN("the 'current' tab should be selected by default")
       page.shouldHaveActiveTab('Current')
 
       AND('it should show all 30 placements')
       page.shouldHavePlacementListLengthOf(30)
 
-      WHEN(`I select the 'upcoming' tab`)
+      WHEN("I select the 'upcoming' tab")
       page.clickTab('Upcoming')
 
-      THEN(`the 'current' tab should be selected`)
+      THEN("the 'current' tab should be selected")
       page.shouldHaveActiveTab('Upcoming')
 
       AND('it should be paginated (20/page)')
       page.shouldHavePlacementListLengthOf(20)
       page.shouldHavePaginationControl()
 
-      WHEN(`I select the 'historical' tab`)
+      WHEN("I select the 'historical' tab")
       page.clickTab('Historical')
 
-      THEN(`the 'historical' tab should be selected`)
+      THEN("the 'historical' tab should be selected")
       page.shouldHaveActiveTab('Historical')
 
       AND('it should be paginated (20/page)')
@@ -150,7 +156,7 @@ context('Premises', () => {
     })
 
     it('should let the user filter by keyworker', () => {
-      const testKeyworker = keyworkers[2]
+      const testKeyworker = currentKeyworkers[2].summary
       const placementsWithKeyworker = cas1SpaceBookingSummaryFactory.buildList(6, {
         keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(testKeyworker),
       })
@@ -158,7 +164,7 @@ context('Premises', () => {
         premisesId: premises.id,
         placements: placementsWithKeyworker,
         residency: 'upcoming',
-        keyWorkerStaffCode: testKeyworker.code,
+        keyWorkerUserId: testKeyworker.id,
       })
 
       WHEN('I visit premises details page and select the upcoming tab')
@@ -176,7 +182,7 @@ context('Premises', () => {
       page.shouldShowListOfPlacements(placementsWithKeyworker)
       page.shouldShowInEveryTableRow(testKeyworker.name)
 
-      WHEN(`I clear the filter by selecting 'All keyworkers'`)
+      WHEN("I clear the filter by selecting 'All keyworkers'")
       page.selectKeyworker('All keyworkers')
       page.clickApplyFilter()
 
@@ -215,10 +221,10 @@ context('Premises', () => {
       WHEN('I visit premises details page')
       const page = PremisesShowPage.visit(premises)
 
-      AND(`I select to the 'search' tab`)
+      AND("I select to the 'search' tab")
       page.clickTab('Search for a booking')
 
-      THEN(`the 'search' tab should be selected`)
+      THEN("the 'search' tab should be selected")
       page.shouldHaveActiveTab('Search for a booking')
 
       AND('I should see the search form')
@@ -230,7 +236,7 @@ context('Premises', () => {
       WHEN('I submit a search using the form')
       page.searchByCrnOrName(searchName)
 
-      THEN(`the 'search' tab should be selected`)
+      THEN("the 'search' tab should be selected")
       page.shouldHaveActiveTab('Search for a booking')
 
       AND('the search form should be populated with my search term')
@@ -243,7 +249,7 @@ context('Premises', () => {
       cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements: [] })
       page.searchByCrnOrName('No results for this query')
 
-      THEN(`the 'search' tab should be selected`)
+      THEN("the 'search' tab should be selected")
       page.shouldHaveActiveTab('Search for a booking')
 
       AND('the search form should be populated with my search term')
@@ -294,7 +300,7 @@ context('Premises', () => {
       THEN('I should see all of the beds listed')
       bedsPage.shouldShowBeds(bedSummaries, premisesId)
 
-      AND(`I should have a link to view all of this premises' out-of-service beds`)
+      AND("I should have a link to view all of this premises' out-of-service beds")
       bedsPage.shouldIncludeLinkToAllPremisesOutOfServiceBeds(premisesId)
 
       WHEN('I filter the beds')
@@ -312,7 +318,7 @@ context('Premises', () => {
       THEN('I should be taken to the bed page')
       Page.verifyOnPage(BedShowPage, bedDetail.name)
 
-      GIVEN(`I'm on the bed page`)
+      GIVEN("I'm on the bed page")
       const bedPage = BedShowPage.visit(premisesId, bedDetail)
 
       THEN('I should see the room details')
