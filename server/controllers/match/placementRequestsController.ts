@@ -3,6 +3,7 @@ import { ApplicationService, PlacementApplicationService, PlacementRequestServic
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
+import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
 
 export default class PlacementRequestsController {
   constructor(
@@ -20,6 +21,7 @@ export default class PlacementRequestsController {
 
       res.render('match/placementRequests/show', {
         pageHeading: `Matching information`,
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
       })
     }

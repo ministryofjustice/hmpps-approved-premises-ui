@@ -19,6 +19,7 @@ import {
   BREACH_OR_RECALL_REASON_ID,
   LICENCE_EXPIRED_REASON_ID,
   MOVE_TO_AP_REASON_ID,
+  placementKeyDetails,
   PLANNED_MOVE_ON_REASON_ID,
 } from '../../../../utils/placements'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
@@ -89,6 +90,7 @@ export default class DeparturesController {
 
       return res.render('manage/premises/placements/departure/new', {
         backlink: placementPath({ premisesId, placementId }),
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         departureReasons,
         ...errorsData,
@@ -217,6 +219,7 @@ export default class DeparturesController {
 
       return res.render('manage/premises/placements/departure/breach-or-recall', {
         backlink: departurePaths.new({ premisesId, placementId }),
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         departureReasons,
         ...errorsData,
@@ -275,6 +278,7 @@ export default class DeparturesController {
         backlink: departurePaths.new({ premisesId, placementId }),
         premisesSummaries,
         MOVE_TO_AP_REASON_ID,
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         moveOnCategories,
         ...errorsData,
@@ -335,6 +339,7 @@ export default class DeparturesController {
       }
       return res.render('manage/premises/placements/departure/notes', {
         backlink,
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         ...errorsData,
         ...departureFormSessionData,

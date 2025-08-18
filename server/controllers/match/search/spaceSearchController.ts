@@ -17,6 +17,7 @@ import { ValidationError } from '../../../utils/errors'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 export default class SpaceSearchController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -53,6 +54,7 @@ export default class SpaceSearchController {
 
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         summaryCards: summaryCards(
           spaceSearchResults,
           formValues.postcode,

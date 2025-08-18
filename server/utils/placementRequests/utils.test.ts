@@ -1,6 +1,7 @@
 import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
-import { assessmentLink, formatReleaseType, searchButton, withdrawalMessage } from './utils'
+import { assessmentLink, formatReleaseType, placementRequestKeyDetails, searchButton, withdrawalMessage } from './utils'
 import * as utils from '../utils'
+import * as placementUtils from '../placements'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
@@ -46,6 +47,21 @@ describe('utils', () => {
       const date = '2021-01-01'
       expect(withdrawalMessage(15, date)).toEqual(
         `Request for placement for 2 weeks, 1 day starting on ${DateFormats.isoDateToUIDate(date, { format: 'short' })} withdrawn successfully`,
+      )
+    })
+  })
+
+  describe('placementRequestKeyDetails', () => {
+    it('calls getKeyDetails with person and tier', () => {
+      jest.spyOn(placementUtils, 'personKeyDetails')
+
+      const placementRequest = cas1PlacementRequestDetailFactory.build()
+
+      placementRequestKeyDetails(placementRequest)
+
+      expect(placementUtils.personKeyDetails).toHaveBeenCalledWith(
+        placementRequest.person,
+        placementRequest.risks.tier.value.level,
       )
     })
   })

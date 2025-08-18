@@ -4,15 +4,9 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% from "../../../components/keyDetails/macro.njk" import keyDetails %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "../../../partials/layout.njk" %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
-{% endblock %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% block beforeContent %}
     {{ govukBackLink({

@@ -1,4 +1,9 @@
-import { Cas1PlacementRequestDetail, Cas1SpaceSearchResult, Cas1SpaceSearchResults } from '@approved-premises/api'
+import {
+  Cas1PlacementRequestDetail,
+  Cas1SpaceSearchResult,
+  Cas1SpaceSearchResults,
+  FullPerson,
+} from '@approved-premises/api'
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import Page from '../page'
 import { addressRow, apTypeRow, distanceRow, restrictionsRow } from '../../../server/utils/match'
@@ -18,7 +23,7 @@ export default class SearchPage extends Page {
   }
 
   shouldShowCaseDetails(placementRequest: Cas1PlacementRequestDetail): void {
-    this.shouldShowKeyPersonDetails(placementRequest)
+    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson, placementRequest.risks?.tier?.value?.level)
     this.shouldShowMatchingDetails(placementRequest)
   }
 

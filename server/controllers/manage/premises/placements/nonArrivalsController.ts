@@ -4,7 +4,7 @@ import { PlacementService, PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
-import { NON_ARRIVAL_REASON_OTHER_ID, processReferenceData } from '../../../../utils/placements'
+import { NON_ARRIVAL_REASON_OTHER_ID, placementKeyDetails, processReferenceData } from '../../../../utils/placements'
 
 export default class NonArrivalsController {
   constructor(
@@ -23,6 +23,7 @@ export default class NonArrivalsController {
         { id: NON_ARRIVAL_REASON_OTHER_ID, name: 'Other - provide reasons' },
       )
       return res.render('manage/premises/placements/non-arrival', {
+        contextKeyDetails: placementKeyDetails(placement),
         nonArrivalReasons,
         placement,
         errors,

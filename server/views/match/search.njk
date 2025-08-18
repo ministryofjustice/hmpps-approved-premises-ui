@@ -10,7 +10,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
-{% extends "./layout-with-details.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 {% from "./partials/apSummaryCard.njk" import apSummaryCard %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}

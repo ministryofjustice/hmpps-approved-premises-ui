@@ -11,7 +11,7 @@ import {
   getPage,
   getReviewNavigationItems,
   groupAssessmements,
-  keyDetails,
+  assessmentKeyDetails,
   rejectionRationaleFromAssessmentResponses,
 } from './utils'
 
@@ -341,14 +341,14 @@ describe('utils', () => {
     })
   })
 
-  describe('keyDetails', () => {
+  describe('assessmentKeyDetails', () => {
     const person = personFactory.build()
 
     it('should return key details for an assessment when an arrival date is provided', () => {
       const application = applicationFactory.build({ arrivalDate: '2022-01-01', person })
       const assessment = assessmentFactory.build({ application })
 
-      expect(keyDetails(assessment)).toEqual({
+      expect(assessmentKeyDetails(assessment)).toEqual({
         header: {
           key: 'Name',
           value: displayName(person),
@@ -381,7 +381,7 @@ describe('utils', () => {
       const application = applicationFactory.build({ arrivalDate: undefined, person })
       const assessment = assessmentFactory.build({ application })
 
-      expect(keyDetails(assessment)).toEqual({
+      expect(assessmentKeyDetails(assessment)).toEqual({
         header: {
           key: 'Name',
           value: displayName(person),

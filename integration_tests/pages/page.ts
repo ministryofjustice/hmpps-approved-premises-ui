@@ -11,7 +11,6 @@ import {
   Person,
   PersonAcctAlert,
   PersonStatus,
-  Cas1PlacementRequestDetail,
   PrisonCaseNote,
   SortOrder,
   type Cas1PremiseCapacity,
@@ -24,7 +23,7 @@ import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
 import { SubmittedDocumentRenderer } from '../../server/utils/forms/submittedDocumentRenderer'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
-import { displayName, isFullPerson } from '../../server/utils/personUtils'
+import { displayName } from '../../server/utils/personUtils'
 import { dayAvailabilityCount, dayAvailabilityStatusForCriteria } from '../../server/utils/match/occupancy'
 import { dayStatusFromDayCapacity } from '../../server/utils/premises/occupancy'
 
@@ -768,14 +767,11 @@ export default abstract class Page {
     cy.get('[aria-label="Primary navigation"] a').contains(label).click()
   }
 
-  shouldShowKeyPersonDetails(placementRequest: Cas1PlacementRequestDetail) {
+  shouldShowKeyPersonDetails(person: FullPerson, tier: string) {
     cy.get('.prisoner-info').within(() => {
-      const { person } = placementRequest
-      if (!isFullPerson(person)) throw new Error('test requires a Full Person')
-
       cy.get('span').contains(displayName(person))
       cy.get('span').contains(`CRN: ${person.crn}`)
-      cy.get('span').contains(`Tier: ${placementRequest?.risks?.tier?.value.level}`)
+      cy.get('span').contains(`Tier: ${tier}`)
       cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)
     })
   }

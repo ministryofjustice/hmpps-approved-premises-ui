@@ -1,6 +1,11 @@
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
-import { Cas1PlacementRequestDetail, Cas1SpaceBooking, Cas1UpdateSpaceBooking } from '@approved-premises/api'
+import {
+  Cas1PlacementRequestDetail,
+  Cas1SpaceBooking,
+  Cas1UpdateSpaceBooking,
+  FullPerson,
+} from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import {
   cas1PremiseCapacityFactory,
@@ -81,6 +86,9 @@ context('Change Placement', () => {
 
     THEN('I should see the Change Placement page')
     const changePlacementPage = Page.verifyOnPage(ChangePlacementPage, placement)
+
+    AND('I should see the details of the person')
+    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson, placement.tier)
 
     AND('I should see an overview of the placement')
     changePlacementPage.shouldShowPlacementOverview()
@@ -186,6 +194,9 @@ context('Change Placement', () => {
 
     THEN('I should see the Change Placement page')
     const changePlacementPage = Page.verifyOnPage(ChangePlacementPage, placement)
+
+    AND('I should see the details of the person')
+    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson, placement.tier)
 
     AND('I should see an overview of the placement')
     changePlacementPage.shouldShowPlacementOverview()

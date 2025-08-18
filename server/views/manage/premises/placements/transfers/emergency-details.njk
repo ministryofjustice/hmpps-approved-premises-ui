@@ -3,17 +3,11 @@
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% from "../../../../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "../../../../components/keyDetails/macro.njk" import keyDetails %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "../../../../partials/layout.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
-{% endblock %}
 
 {% block beforeContent %}
     {{ govukBackLink({
