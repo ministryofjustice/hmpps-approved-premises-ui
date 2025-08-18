@@ -1,19 +1,17 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
 import type {
-  Cas1KeyWorkerAllocation,
   Cas1SpaceBooking,
   Cas1SpaceBookingAction,
   Cas1SpaceBookingCancellation,
   Cas1SpaceBookingNonArrival,
   Person,
-  StaffMember,
+  UserSummary,
 } from '@approved-premises/api'
 import { fullPersonFactory } from './person'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
 import userFactory from './user'
 
-import staffMemberFactory from './staffMember'
 import { DateFormats } from '../../utils/dateUtils'
 import cas1SpaceBookingNonArrivalFactory from './cas1SpaceBookingNonArrival'
 import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
@@ -96,11 +94,9 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
     })
   }
 
-  withAssignedKeyworker(staffMember: StaffMember) {
+  withAssignedKeyworker(user: UserSummary) {
     return this.params({
-      keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
-        keyWorker: staffMember,
-      }),
+      keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(user),
     })
   }
 }
@@ -138,7 +134,7 @@ export default Cas1SpaceBookingFactory.define(() => {
     canonicalDepartureDate,
     departure: cas1SpaceBookingDepartureFactory.build(),
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
-    keyWorkerAllocation: { keyWorker: staffMemberFactory.build() } as Cas1KeyWorkerAllocation,
+    keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(),
     otherBookingsInPremisesForCrn: cas1SpaceBookingDatesFactory.buildList(4),
     deliusEventNumber: String(faker.number.int()),
     nonArrival: undefined as Cas1SpaceBookingNonArrival,

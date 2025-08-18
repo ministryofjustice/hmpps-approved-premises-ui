@@ -248,7 +248,7 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
             ),
           ),
       ),
-      summaryRow('Key worker', keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
+      summaryRow('Key worker', keyWorkerAllocation?.name || 'Not assigned'),
       summaryRow('Delius Event Number', deliusEventNumber),
     ].filter(Boolean),
   }
@@ -356,7 +356,7 @@ export const renderKeyworkersRadioOptions = (
   placement?: Cas1SpaceBooking,
 ): Array<RadioItem> => {
   const currentKeyworkersRadios = currentKeyworkers
-    .filter(keyworker => keyworker.summary.id !== placement?.keyWorkerAllocation?.keyWorkerUser?.id)
+    .filter(keyworker => keyworker.summary.id !== placement?.keyWorkerAllocation?.userId)
     .map(keyworker => ({
       text: keyworker.summary.name,
       value: keyworker.summary.id,

@@ -9,7 +9,6 @@ import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   staffMemberFactory,
-  userSummaryFactory,
 } from '../../../../server/testutils/factories'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import Page from '../../../pages/page'
@@ -20,13 +19,13 @@ const premises = cas1PremisesFactory.build()
 const placement = cas1SpaceBookingFactory.upcoming().build({ premises })
 
 const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
-const keyworkerUsers = userSummaryFactory.buildList(5)
+const keyworkerUsers = currentKeyworkers.map(keyworker => keyworker.summary)
 const selectedKeyworkerUser = keyworkerUsers[1]
-const selectedKeyworker = staffMemberFactory.build(selectedKeyworkerUser)
 
 context('Keyworker', () => {
   beforeEach(() => {
     cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id, currentKeyworkers })
     cy.task('stubSpaceBookingShow', placement)
     cy.task('stubSpaceBookingAssignKeyworker', placement)
   })
@@ -56,7 +55,10 @@ context('Keyworker', () => {
     })
 
     WHEN('I select a keyworker and submit the form')
-    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworker).build(placement)
+    const updatedPlacement = cas1SpaceBookingFactory
+      .params(placement)
+      .withAssignedKeyworker(selectedKeyworkerUser)
+      .build()
     cy.task('stubSpaceBookingShow', updatedPlacement)
     keyworkerAssignmentPage.completeForm(selectedKeyworkerUser.name)
     keyworkerAssignmentPage.clickButton('Submit')
@@ -134,7 +136,10 @@ context('Keyworker', () => {
     findKeyworkerPage.shouldShowResults(keyworkerUsers)
 
     WHEN("I click 'Assign keyworker'")
-    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworker).build(placement)
+    const updatedPlacement = cas1SpaceBookingFactory
+      .params(placement)
+      .withAssignedKeyworker(selectedKeyworkerUser)
+      .build()
     cy.task('stubSpaceBookingShow', updatedPlacement)
     findKeyworkerPage.clickAssignKeyworker(selectedKeyworkerUser.name)
 
@@ -175,7 +180,6 @@ context('Keyworker', () => {
 
     beforeEach(() => {
       cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers })
-      cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id, currentKeyworkers })
     })
 
     it('Assigns a keyworker to a placement', () => {

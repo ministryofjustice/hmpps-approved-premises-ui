@@ -334,7 +334,7 @@ describe('premisesUtils', () => {
           ]
           return activeTab === 'historic'
             ? [...baseColumns, statusColumn]
-            : [...baseColumns, { text: placement.keyWorkerAllocation?.keyWorker?.name || 'Not assigned' }, statusColumn]
+            : [...baseColumns, { text: placement.keyWorkerAllocation?.name || 'Not assigned' }, statusColumn]
         })
         expect(tableRows).toEqual(expectedRows)
       },
