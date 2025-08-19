@@ -65,6 +65,7 @@ export default {
       residency?: Cas1SpaceBookingResidency
       crnOrName?: string
       keyWorkerStaffCode?: string
+      keyWorkerUserId?: string
     } & Partial<PaginatedRequestParams> &
       Partial<SortedRequestParams>,
   ) => {
@@ -76,6 +77,7 @@ export default {
       residency,
       crnOrName,
       keyWorkerStaffCode,
+      keyWorkerUserId,
     } = args
 
     const queryParameters: Record<string, Record<'equalTo', string | number>> = {
@@ -87,6 +89,7 @@ export default {
     if (residency) queryParameters.residency = { equalTo: residency }
     if (crnOrName) queryParameters.crnOrName = { equalTo: crnOrName }
     if (keyWorkerStaffCode) queryParameters.keyWorkerStaffCode = { equalTo: keyWorkerStaffCode }
+    if (keyWorkerUserId) queryParameters.keyWorkerUserId = { equalTo: keyWorkerUserId }
 
     return stubFor({
       request: {

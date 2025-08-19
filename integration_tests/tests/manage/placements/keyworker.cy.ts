@@ -56,7 +56,10 @@ context('Keyworker', () => {
     })
 
     WHEN('I select a keyworker and submit the form')
-    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
+    const updatedPlacement = cas1SpaceBookingFactory
+      .params(placement)
+      .withAssignedKeyworker(selectedKeyworkerUser)
+      .build()
     cy.task('stubSpaceBookingShow', updatedPlacement)
     keyworkerAssignmentPage.completeForm(selectedKeyworkerUser.name)
     keyworkerAssignmentPage.clickButton('Submit')
@@ -134,7 +137,10 @@ context('Keyworker', () => {
     findKeyworkerPage.shouldShowResults(keyworkerUsers)
 
     WHEN("I click 'Assign keyworker'")
-    const updatedPlacement = cas1SpaceBookingFactory.withAssignedKeyworker(selectedKeyworkerUser).build(placement)
+    const updatedPlacement = cas1SpaceBookingFactory
+      .params(placement)
+      .withAssignedKeyworker(selectedKeyworkerUser)
+      .build()
     cy.task('stubSpaceBookingShow', updatedPlacement)
     findKeyworkerPage.clickAssignKeyworker(selectedKeyworkerUser.name)
 
