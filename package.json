@@ -107,7 +107,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.823.0",
-    "@faker-js/faker": "^8.0.0",
+    "@faker-js/faker": "^9.0.0",
     "@microsoft/applicationinsights-web": "^3.3.8",
     "@ministryofjustice/frontend": "^5.1.5",
     "@playwright/test": "^1.52.0",
