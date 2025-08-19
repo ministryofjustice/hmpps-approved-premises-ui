@@ -3,14 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { StaffMember } from './StaffMember';
-import type { UserSummary } from './UserSummary';
 export type Cas1KeyWorkerAllocation = {
     allocatedAt?: string;
+    emailAddress?: string;
     /**
-     * Once keyWorkerUser is non optional, this will be removed
+     * This will be removed in a future release
      * @deprecated
      */
     keyWorker: StaffMember;
-    keyWorkerUser?: UserSummary;
+    name: string;
+    userId?: string;
 };
 
