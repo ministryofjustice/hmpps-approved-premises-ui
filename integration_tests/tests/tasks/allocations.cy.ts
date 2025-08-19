@@ -34,11 +34,14 @@ context('Task Allocation', () => {
     isWomensApplication: false,
   })
 
+  const allocatedToStaffMember = userFactory.build()
+
   const task = taskFactory.build({
-    allocatedToStaffMember: userFactory.build(),
+    allocatedToStaffMember,
     applicationId: application.id,
     taskType: 'Assessment',
     probationDeliveryUnit: { id: '2', name: 'East Sussex (includes Brighton and Hove)' },
+    status: 'in_progress',
   })
 
   const restrictedPerson = personFactory.build({ isRestricted: true })
@@ -49,49 +52,61 @@ context('Task Allocation', () => {
   })
 
   const taskWithRestrictedPerson = taskFactory.build({
-    allocatedToStaffMember: userFactory.build(),
+    allocatedToStaffMember,
     applicationId: applicationForRestrictedPerson.id,
     taskType: 'Assessment',
     probationDeliveryUnit: { id: '1', name: 'East Sussex (includes Brighton and Hove)' },
+    status: 'in_progress',
   })
 
-  const tasks = [task, taskWithRestrictedPerson]
-  describe('when logged in as CRU member', () => {
+  const taskCompleted = taskFactory.build({
+    allocatedToStaffMember,
+    applicationId: application.id,
+    taskType: 'Assessment',
+    probationDeliveryUnit: { id: '3', name: 'East Sussex (includes Brighton and Hove)' },
+    status: 'complete',
+  })
+
+  const tasks = [task, taskWithRestrictedPerson, taskCompleted]
+
+  beforeEach(() => {
+    cy.task('reset')
+    GIVEN('there are some users in the database')
+    const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ qualifications })]
+
+    AND('there is an allocated task')
+    cy.task('stubGetAllTasks', {
+      tasks,
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      cruManagementAreaId: cruManagementArea.id,
+    })
+    cy.task('stubTaskGet', { application, task, users })
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
+    cy.task('stubUserSummaryList', { users, roles: ['assessor', 'appeals_manager'] })
+    cy.task('stubUserList', { users, roles: ['assessor', 'appeals_manager'] })
+
+    cy.wrap(task).as('task')
+    cy.wrap(taskWithRestrictedPerson).as('taskWithRestrictedPerson')
+    cy.wrap(tasks).as('tasks')
+    cy.wrap(users).as('users')
+    cy.wrap(users[0]).as('selectedUser')
+    cy.wrap(application).as('application')
+    cy.wrap(applicationForRestrictedPerson).as('applicationForRestrictedPerson')
+    cy.wrap(cruManagementArea).as('cruManagementArea')
+    cy.wrap(qualifications).as('qualification')
+  })
+
+  describe('when logged in as a CRU member', () => {
     beforeEach(() => {
-      cy.task('reset')
-      GIVEN('there are some users in the database')
-      const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ qualifications })]
-
-      AND('there is an allocated task')
-      cy.task('stubGetAllTasks', {
-        tasks,
-        allocatedFilter: 'allocated',
-        page: '1',
-        sortDirection: 'asc',
-        cruManagementAreaId: cruManagementArea.id,
-      })
-      cy.task('stubTaskGet', { application, task, users })
-      cy.task('stubApplicationGet', { application })
-      cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
-      cy.task('stubUserSummaryList', { users, roles: ['assessor', 'appeals_manager'] })
-      cy.task('stubUserList', { users, roles: ['assessor', 'appeals_manager'] })
-
       GIVEN('I am signed in as a CRU member with the correct CRU management area')
       signIn('cru_member', { cruManagementArea })
 
       WHEN('I visit the task list page')
       const taskListPage = TaskListPage.visit()
-
-      cy.wrap(task).as('task')
       cy.wrap(taskListPage).as('taskListPage')
-      cy.wrap(taskWithRestrictedPerson).as('taskWithRestrictedPerson')
-      cy.wrap(tasks).as('tasks')
-      cy.wrap(users).as('users')
-      cy.wrap(users[0]).as('selectedUser')
-      cy.wrap(application).as('application')
-      cy.wrap(applicationForRestrictedPerson).as('applicationForRestrictedPerson')
-      cy.wrap(cruManagementArea).as('cruManagementArea')
-      cy.wrap(qualifications).as('qualification')
     })
 
     it('allows me to allocate a task', function test() {
@@ -150,6 +165,20 @@ context('Task Allocation', () => {
       )
 
       allocationsPage.shouldShowPersonIsLimitedAccessOffender()
+    })
+
+    it('hides the allocate section if the task is completed', function test() {
+      cy.task('stubTaskGet', {
+        application,
+        task: taskCompleted,
+        users: this.users,
+      })
+      WHEN('I click on a completed task')
+      this.taskListPage.clickTask(taskCompleted)
+
+      THEN('I should be on the Allocations page for that task')
+      const allocationsPage = Page.verifyOnPage(AllocationsPage, application, taskCompleted, 'View')
+      allocationsPage.shouldNotShowAllocationSection()
     })
 
     it('allows filters on users dashboard', function test() {
@@ -226,9 +255,32 @@ context('Task Allocation', () => {
   })
 
   describe('when logged in as an AP area manager', () => {
+    beforeEach(() => {
+      GIVEN('I am signed in as a CRU member with the correct CRU management area')
+      signIn('ap_area_manager', { cruManagementArea })
+
+      WHEN('I visit the task list page')
+      const taskListPage = TaskListPage.visit()
+      cy.wrap(taskListPage).as('taskListPage')
+    })
+
+    it('should prevent the user allocating tasks', function test() {
+      AND('I click to view the task')
+      this.taskListPage.clickTask(this.task)
+
+      THEN('I should be on the view page for that task')
+      const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task, 'View')
+
+      AND('the allocation section should not be shown')
+      allocationsPage.shouldNotShowAllocationSection()
+    })
+  })
+
+  describe('when logged in as basic user', function test() {
     it('should prevent access to the allocate page', () => {
-      AND('I am signed in as an ap area manager')
-      signIn('ap_area_manager')
+      WHEN('I am signed in as an applicant')
+      signIn('applicant')
+
       THEN('I should see an error if I attempt to access the allocation page')
       AllocationsPage.visitUnauthorised(task)
     })

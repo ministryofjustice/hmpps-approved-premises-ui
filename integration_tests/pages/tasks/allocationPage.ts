@@ -18,7 +18,7 @@ export default class AllocationsPage extends Page {
     private readonly task: Task,
     title?: string,
   ) {
-    super(title || `Reallocate`)
+    super(title || `Allocate`)
   }
 
   static visit(application: Application, task: Task): AllocationsPage {
@@ -69,5 +69,9 @@ export default class AllocationsPage extends Page {
 
   shouldShowTimelineTab() {
     cy.get('label').should('contain', 'Add a note to the application')
+  }
+
+  shouldNotShowAllocationSection() {
+    cy.contains('Allocate task to').should('not.exist')
   }
 }

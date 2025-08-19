@@ -73,7 +73,7 @@ describe('TasksController', () => {
         paginationDetails.sortDirection,
         paginationDetails.hrefPrefix,
       ),
-      taskRows: tasksTableRows(tasks, 'allocated', true),
+      taskRows: tasksTableRows(tasks, 'allocated'),
       allocatedFilter: 'allocated',
       cruManagementAreas,
       pageNumber: Number(paginatedResponse.pageNumber),
@@ -139,7 +139,7 @@ describe('TasksController', () => {
           paginationDetails.sortDirection,
           paginationDetails.hrefPrefix,
         ),
-        taskRows: tasksTableRows(tasks, 'unallocated', true),
+        taskRows: tasksTableRows(tasks, 'unallocated'),
 
         cruManagementArea: query.area,
         allocatedFilter: query.allocatedFilter,
@@ -206,7 +206,7 @@ describe('TasksController', () => {
           paginationDetails.sortDirection,
           paginationDetails.hrefPrefix,
         ),
-        taskRows: tasksTableRows(tasks, activeTab, true),
+        taskRows: tasksTableRows(tasks, activeTab),
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -223,20 +223,24 @@ describe('TasksController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'tasks/index',
         expect.objectContaining({
-          taskRows: tasksTableRows(tasks, 'allocated', false),
+          taskRows: tasksTableRows(tasks, 'allocated'),
         }),
       )
     })
   })
 
   describe('show', () => {
-    const task = taskFactory.build({ taskType: 'PlacementApplication' })
+    const task = taskFactory.build({ taskType: 'PlacementApplication', status: 'not_started' })
     const taskWrapper = taskWrapperFactory.build({ task })
     const application = applicationFactory.build()
     const cruManagementAreas = cruManagementAreaFactory.buildList(3)
+    const user = userDetailsFactory.build({
+      cruManagementArea: cruManagementAreas[0],
+      permissions: ['cas1_tasks_allocate'],
+    })
     const template = 'tasks/show'
     const expectedRenderParameters = {
-      pageHeading: `Reallocate Request for Placement`,
+      pageHeading: `Allocate Request for Placement`,
       application,
       task: taskWrapper.task,
       users: taskWrapper.users,
@@ -245,9 +249,11 @@ describe('TasksController', () => {
       cruManagementAreas,
       cruManagementAreaId: '',
       qualification: '',
+      canAllocate: true,
     }
 
     beforeEach(() => {
+      response.locals.user = user
       cruManagementAreaService.getCruManagementAreas.mockResolvedValue(cruManagementAreas)
       taskService.find.mockResolvedValue(taskWrapper)
       applicationService.findApplication.mockResolvedValue(application)
@@ -268,7 +274,7 @@ describe('TasksController', () => {
     })
 
     it('fetches the application and a list of qualified users for Placement Application task', async () => {
-      const placementApplication = taskFactory.build({ taskType: 'PlacementApplication' })
+      const placementApplication = taskFactory.build({ taskType: 'PlacementApplication', status: 'not_started' })
       const placementApplicationTaskWrapper = taskWrapperFactory.build({ task: placementApplication })
       taskService.find.mockResolvedValue(placementApplicationTaskWrapper)
       request.params.taskType = 'placement-request'
@@ -314,6 +320,32 @@ describe('TasksController', () => {
       })
 
       expect(taskService.find).toHaveBeenCalledWith(request.user.token, params.id, params.taskType, userFilters)
+    })
+
+    it('removes the allocate section if the task is completed', async () => {
+      taskWrapper.task.status = 'complete'
+      await tasksController.show()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...expectedRenderParameters,
+        canAllocate: false,
+        pageHeading: 'View completed Request for Placement',
+      })
+    })
+
+    it('removes the allocate section if the user lacks permission to allocate', async () => {
+      response.locals.user = userDetailsFactory.build({
+        cruManagementArea: cruManagementAreas[0],
+        permissions: ['cas1_view_manage_tasks'],
+      })
+      taskWrapper.task.status = 'not_started'
+      await tasksController.show()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(template, {
+        ...expectedRenderParameters,
+        canAllocate: false,
+        pageHeading: 'View Request for Placement',
+      })
     })
   })
 })
