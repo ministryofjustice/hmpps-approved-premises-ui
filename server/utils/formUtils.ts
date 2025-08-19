@@ -11,7 +11,7 @@ import type {
 } from '@approved-premises/ui'
 import type { RiskTierLevel } from '@approved-premises/api'
 import { PlacementRequestStatus } from '@approved-premises/api'
-import { resolvePath, sentenceCase } from './utils'
+import { isCardinal, resolvePath, sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
 export const dateFieldValues = (
@@ -195,6 +195,16 @@ export const summaryListItem = (
  */
 export function validPostcodeArea(potentialPostcode: string) {
   return postcodeAreas.includes(potentialPostcode.trim().toUpperCase())
+}
+
+/**
+ * Performs validation on a set of 'weeks' and 'days' fields
+ * @returns true if both fields are cardinal numbers or if one is a cardinal number and the other is empty
+ * @param weeks
+ * @param days
+ */
+export function validWeeksAndDaysDuration(weeks: string, days: string) {
+  return (isCardinal(weeks) && isCardinal(days)) || (isCardinal(weeks) && !days) || (!weeks && isCardinal(days))
 }
 
 /**

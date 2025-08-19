@@ -25,7 +25,7 @@ import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../util
 import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
-import { isCardinal } from '../../utils/utils'
+import { validWeeksAndDaysDuration } from '../../utils/formUtils'
 
 export interface TaskListPageField {
   name: string
@@ -65,8 +65,7 @@ export const lengthOfStay = ({
   lengthOfStayAgreed,
 }: MatchingInformationBody): string | undefined => {
   if (lengthOfStayAgreed === 'no') {
-    if ((lengthOfStayWeeks && !isCardinal(lengthOfStayWeeks)) || (lengthOfStayDays && !isCardinal(lengthOfStayDays)))
-      return undefined
+    if (!validWeeksAndDaysDuration(lengthOfStayWeeks, lengthOfStayDays)) return undefined
 
     const lengthOfStayWeeksInDays = weeksToDays(Number(lengthOfStayWeeks || 0))
     const totalLengthInDays = lengthOfStayWeeksInDays + Number(lengthOfStayDays || 0)
