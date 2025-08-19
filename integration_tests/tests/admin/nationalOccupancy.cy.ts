@@ -70,7 +70,7 @@ context('National occupancy view', () => {
 
   it('allows me to set up filters for the national view', () => {
     GIVEN('that I sign in as a cru member with national occupancy view permissions')
-    signIn('cru_member', { permissions: ['cas1_view_cru_dashboard', 'cas1_national_occupancy_view'] }) // TODO: Remove explicit permissions
+    signIn('cru_member')
 
     GIVEN('that I am on the CRU dashboard page')
     const cruDashboard = ListPage.visit()
@@ -125,7 +125,7 @@ context('National occupancy view', () => {
 
   it('allows me to see details of a premises and day', () => {
     GIVEN('I am signed in as a CRU member')
-    signIn('cru_member', { permissions: ['cas1_view_cru_dashboard', 'cas1_national_occupancy_view'] }) // TODO: Remove explicit permissions
+    signIn('cru_member')
 
     GIVEN('that I am on the National occupancy view page')
     const weekPage = NationalViewPage.visit()
@@ -214,14 +214,8 @@ context('National occupancy view', () => {
   })
 
   it('denies access to the view if user lacks permission', () => {
-    cy.log('Given I am signed in as a user with CRU dashboard permissions but without occupancy view permission')
-    signIn('cru_member', { permissions: ['cas1_view_cru_dashboard'] })
-
-    WHEN('I navigate to the CRU dashboard')
-    const cruDashboard = ListPage.visit()
-
-    THEN('the action menu should not be shown')
-    cruDashboard.actionMenuShouldNotExist()
+    cy.log('Given I am signed in as a user without CRU permissions')
+    signIn('applicant')
 
     WHEN('I try to navigate to the view directly - Then I should not have access')
     NationalViewPage.visitUnauthorised()
