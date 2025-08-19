@@ -468,7 +468,7 @@ describe('placementUtils', () => {
             key: { text: 'Actual length of stay' },
             value: { text: '29 weeks, 4 days' },
           },
-          { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.keyWorker?.name } },
+          { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.name } },
           { key: { text: 'Delius Event Number' }, value: { text: placement.deliusEventNumber } },
         ],
       })
@@ -750,9 +750,7 @@ describe('placementUtils', () => {
         cas1CurrentKeyworkerFactory.build(),
       ]
       const placement = cas1SpaceBookingFactory.build({
-        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
-          keyWorkerUser: user,
-        }),
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({ ...user, userId: user.id }),
       })
 
       expect(renderKeyworkersRadioOptions(currentKeyworkers, placement)).toEqual([
@@ -785,7 +783,7 @@ describe('placementUtils', () => {
 
     it('should exclude the currently assigned keyworker', () => {
       const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build({
-        keyWorkerAllocation: { keyWorker: { ...staffList[1] } },
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({ name: staffList[1].name, keyWorker: staffList[1] }),
       })
 
       const result = renderKeyworkersSelectOptions(staffList, placement)

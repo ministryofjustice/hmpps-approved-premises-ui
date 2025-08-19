@@ -68,7 +68,7 @@ export class DeprecatedKeyworkerAssignmentPage extends Page {
     this.shouldContainSummaryListItems([
       {
         key: { text: 'Keyworker' },
-        value: { text: placement.keyWorkerAllocation?.keyWorker?.name },
+        value: { text: placement.keyWorkerAllocation?.name },
       },
     ])
   }

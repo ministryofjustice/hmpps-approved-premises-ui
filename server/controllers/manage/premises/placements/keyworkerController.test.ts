@@ -197,9 +197,7 @@ describe('keyworkerController', () => {
       const selectedKeyworkerUser = currentKeyworkers[0].summary
       premisesService.getPlacement.mockResolvedValue({
         ...placement,
-        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
-          keyWorkerUser: selectedKeyworkerUser,
-        }),
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(selectedKeyworkerUser),
       })
 
       request.body = { keyworker: selectedKeyworkerUser.id }

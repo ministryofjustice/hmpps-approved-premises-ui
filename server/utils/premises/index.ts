@@ -217,7 +217,7 @@ export const placementTableRows = (
       tier: htmlValue(getTierOrBlank(tier)),
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
-      keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
+      keyWorkerName: textValue(keyWorkerAllocation?.name || 'Not assigned'),
       status: placementStatusHtml(placement),
     }
 

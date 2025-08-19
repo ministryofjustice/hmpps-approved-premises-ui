@@ -158,9 +158,7 @@ context('Premises', () => {
     it('should let the user filter by keyworker', () => {
       const testKeyworker = currentKeyworkers[2].summary
       const placementsWithKeyworker = cas1SpaceBookingSummaryFactory.buildList(6, {
-        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({
-          keyWorkerUser: testKeyworker,
-        }),
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(testKeyworker),
       })
       cy.task('stubSpaceBookingSummaryList', {
         premisesId: premises.id,
