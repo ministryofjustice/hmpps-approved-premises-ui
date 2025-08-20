@@ -42,17 +42,17 @@ export const cruDashboardTabItems = (
       href: cruDashboardTabLink({ cruManagementArea, status: 'pendingPlacement' }),
     },
     {
-      text: 'Ready to match',
+      text: 'Ready to book',
       active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
       href: cruDashboardTabLink({ cruManagementArea, requestType }),
     },
     {
-      text: 'Unable to match',
+      text: 'Unable to book',
       active: activeTab === 'unableToMatch',
       href: cruDashboardTabLink({ cruManagementArea, requestType, status: 'unableToMatch' }),
     },
     {
-      text: 'Matched',
+      text: 'Booked',
       active: activeTab === 'matched',
       href: cruDashboardTabLink({ cruManagementArea, requestType, status: 'matched' }),
     },

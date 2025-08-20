@@ -121,7 +121,7 @@ describe('plannedTransferController', () => {
       })
       expect(request.flash).toHaveBeenCalledWith('success', {
         heading: 'Appeal actioned',
-        body: "<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to match' list.</p>",
+        body: "<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to book' list.</p>",
       })
       expect(response.redirect).toHaveBeenCalledWith(
         paths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),

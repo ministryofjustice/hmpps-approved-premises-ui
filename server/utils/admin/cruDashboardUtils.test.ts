@@ -43,17 +43,17 @@ describe('CRU dashboard utilities', () => {
         {
           active: true,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole',
-          text: 'Ready to match',
+          text: 'Ready to book',
         },
         {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=unableToMatch',
-          text: 'Unable to match',
+          text: 'Unable to book',
         },
         {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=matched',
-          text: 'Matched',
+          text: 'Booked',
         },
         {
           active: false,
@@ -80,17 +80,17 @@ describe('CRU dashboard utilities', () => {
         {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease',
-          text: 'Ready to match',
+          text: 'Ready to book',
         },
         {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease&status=unableToMatch',
-          text: 'Unable to match',
+          text: 'Unable to book',
         },
         {
           active: true,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease&status=matched',
-          text: 'Matched',
+          text: 'Booked',
         },
         {
           active: false,
