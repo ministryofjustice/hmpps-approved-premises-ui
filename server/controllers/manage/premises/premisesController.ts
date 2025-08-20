@@ -63,13 +63,10 @@ export default class PremisesController {
       const showPlacements = premises.supportsSpaceBookings
 
       let keyworkersSelectOptions: Array<SelectOption>
-      let keyWorkerUserId: string
-      let keyWorkerStaffCode: string
 
       if (showPlacements && (activeTab === 'upcoming' || activeTab === 'current')) {
         const currentKeyworkers = await this.premisesService.getCurrentKeyworkers(token, premisesId)
         keyworkersSelectOptions = keyworkersToSelectOptions(currentKeyworkers, activeTab, keyworker)
-        keyWorkerUserId = keyworker
       }
 
       const paginatedPlacements =
@@ -80,8 +77,7 @@ export default class PremisesController {
           premisesId,
           status: activeTab !== 'search' ? activeTab : undefined,
           crnOrName,
-          keyWorkerStaffCode,
-          keyWorkerUserId,
+          keyWorkerUserId: keyworker || undefined,
           page: pageNumber || 1,
           perPage: tabSettings[activeTab].pageSize,
           sortBy: sortBy || tabSettings[activeTab].sortBy,
