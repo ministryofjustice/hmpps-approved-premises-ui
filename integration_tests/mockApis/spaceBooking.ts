@@ -64,7 +64,6 @@ export default {
       placements: Array<Cas1SpaceBookingSummary>
       residency?: Cas1SpaceBookingResidency
       crnOrName?: string
-      keyWorkerStaffCode?: string
       keyWorkerUserId?: string
     } & Partial<PaginatedRequestParams> &
       Partial<SortedRequestParams>,
@@ -76,7 +75,6 @@ export default {
       sortDirection = 'asc',
       residency,
       crnOrName,
-      keyWorkerStaffCode,
       keyWorkerUserId,
     } = args
 
@@ -88,7 +86,6 @@ export default {
     }
     if (residency) queryParameters.residency = { equalTo: residency }
     if (crnOrName) queryParameters.crnOrName = { equalTo: crnOrName }
-    if (keyWorkerStaffCode) queryParameters.keyWorkerStaffCode = { equalTo: keyWorkerStaffCode }
     if (keyWorkerUserId) queryParameters.keyWorkerUserId = { equalTo: keyWorkerUserId }
 
     return stubFor({

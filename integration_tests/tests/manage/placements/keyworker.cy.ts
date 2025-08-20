@@ -1,14 +1,10 @@
 import { signIn } from '../../signIn'
-import {
-  DeprecatedKeyworkerAssignmentPage,
-  KeyworkerAssignmentPage,
-} from '../../../pages/manage/placements/keyworker/new'
+import { KeyworkerAssignmentPage } from '../../../pages/manage/placements/keyworker/new'
 import { PlacementShowPage } from '../../../pages/manage'
 import {
   cas1CurrentKeyworkerFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
-  staffMemberFactory,
 } from '../../../../server/testutils/factories'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import Page from '../../../pages/page'
@@ -31,9 +27,8 @@ context('Keyworker', () => {
   })
 
   it('Assigns an existing keyworker to a placement', () => {
-    // TODO: change sign-in to simply 'future_manager' once new keyworker flow released (APS-2644)
-    GIVEN('I am signed in as a future manager with new keyworker flow permission')
-    signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
+    GIVEN('I am signed in as a future manager')
+    signIn('future_manager')
 
     AND('I am on the placement page')
     const placementPage = PlacementShowPage.visit(placement)
@@ -91,8 +86,8 @@ context('Keyworker', () => {
     cy.task('stubUsersSummaries', { users: keyworkerUsers, ...searchParams })
     cy.task('stubUsersSummaries', { users: keyworkerUsers, ...searchParams, page: '2' })
 
-    GIVEN('I am signed in as a future manager with new keyworker flow permission')
-    signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
+    GIVEN('I am signed in as a future manager')
+    signIn('future_manager')
 
     AND('I am on the placement page')
     const placementPage = PlacementShowPage.visit(placement)
@@ -173,61 +168,5 @@ context('Keyworker', () => {
     WHEN('I navigate to the keyworker page directly')
     THEN('I see an authorisation error')
     KeyworkerAssignmentPage.visitUnauthorised(placement)
-  })
-
-  // TODO: Remove deprecated test when new flow released (APS-2644)
-  describe('if the user does not have the experimental keyworker assignment permission (deprecated flow)', () => {
-    const staffMembers = staffMemberFactory.buildList(5, { keyWorker: true })
-
-    beforeEach(() => {
-      cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers })
-    })
-
-    it('Assigns a keyworker to a placement', () => {
-      GIVEN('I am signed in as a future manager')
-      signIn('future_manager')
-
-      AND('I am on the placement page')
-      let placementPage = PlacementShowPage.visit(placement)
-
-      WHEN('I click on option to assign a keyworker')
-      placementPage.clickAction('Edit keyworker')
-
-      THEN('I should open the deprecated keyworker assignment page')
-      const page = new DeprecatedKeyworkerAssignmentPage(placement, staffMembers)
-      page.shouldShowKeyworkerList(placement)
-
-      WHEN('I submit the form without selecting a keyworker')
-      page.clickSubmit()
-
-      THEN('I should see an error message')
-      page.shouldShowError()
-
-      WHEN('I select a keyworker and submit the form')
-      page.completeForm()
-      page.clickSubmit()
-
-      THEN('I should be shown the placement page with a confirmation message')
-      placementPage = new PlacementShowPage(placement)
-      placementPage.shouldShowBanner('Keyworker assigned')
-
-      AND('the API should have been called with the correct parameters')
-      page.checkApiCalled(placement)
-    })
-
-    it('Requires the correct permission to edit a keyworker', () => {
-      GIVEN('I am signed in as a CRU member')
-      signIn('cru_member')
-
-      AND('I am on the placement page')
-      const placementPage = PlacementShowPage.visit(placement)
-
-      THEN('the record non-arrival option should not be present')
-      placementPage.actionShouldNotExist('Edit keyworker')
-
-      WHEN('I navigate to the keyworker page directly')
-      THEN('I see an authorisation error')
-      DeprecatedKeyworkerAssignmentPage.visitUnauthorised(placement)
-    })
   })
 })

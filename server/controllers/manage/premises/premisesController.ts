@@ -11,10 +11,8 @@ import {
   premisesTableRows,
   premisesTableHead,
   premisesActions,
-  staffMembersToSelectOptions,
   keyworkersToSelectOptions,
 } from '../../../utils/premises'
-import { hasPermission } from '../../../utils/users'
 
 type TabSettings = {
   pageSize: number
@@ -69,16 +67,9 @@ export default class PremisesController {
       let keyWorkerStaffCode: string
 
       if (showPlacements && (activeTab === 'upcoming' || activeTab === 'current')) {
-        if (hasPermission(res.locals.user, ['cas1_experimental_new_assign_keyworker_flow'])) {
-          const currentKeyworkers = await this.premisesService.getCurrentKeyworkers(token, premisesId)
-          keyworkersSelectOptions = keyworkersToSelectOptions(currentKeyworkers, activeTab, keyworker)
-          keyWorkerUserId = keyworker
-        } else {
-          // TODO: Remove condition when new flow released (APS-2644)
-          const staffMembers = await this.premisesService.getKeyworkers(token, premisesId)
-          keyworkersSelectOptions = staffMembersToSelectOptions(staffMembers, keyworker)
-          keyWorkerStaffCode = keyworker
-        }
+        const currentKeyworkers = await this.premisesService.getCurrentKeyworkers(token, premisesId)
+        keyworkersSelectOptions = keyworkersToSelectOptions(currentKeyworkers, activeTab, keyworker)
+        keyWorkerUserId = keyworker
       }
 
       const paginatedPlacements =

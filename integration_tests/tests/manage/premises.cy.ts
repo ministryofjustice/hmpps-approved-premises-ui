@@ -8,7 +8,6 @@ import {
   cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
   cruManagementAreaFactory,
-  staffMemberFactory,
 } from '../../../server/testutils/factories'
 
 import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
@@ -77,10 +76,6 @@ context('Premises', () => {
       cy.task('stubSinglePremises', premises)
       cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id, currentKeyworkers })
 
-      // TODO: Remove Staff Members stub once new keyworker flow released (APS-2644)
-      const keyworkers = staffMemberFactory.keyworker().buildList(5)
-      cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
-
       AND('it has a list of placements')
       cy.task('stubSpaceBookingSummaryList', {
         premisesId: premises.id,
@@ -107,8 +102,7 @@ context('Premises', () => {
       })
 
       GIVEN('I am signed in as a future manager')
-      // TODO: change sign-in to simply 'future_manager' once new keyworker flow released (APS-2644)
-      signIn('future_manager', { permissions: ['cas1_experimental_new_assign_keyworker_flow'] })
+      signIn('future_manager')
     })
 
     it('should show a single premises details page', () => {

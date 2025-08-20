@@ -6,14 +6,7 @@ import {
   Person,
   Cas1CurrentKeyWorker,
 } from '@approved-premises/api'
-import {
-  KeyDetailsArgs,
-  RadioItem,
-  SelectOption,
-  SummaryList,
-  SummaryListItem,
-  UserDetails,
-} from '@approved-premises/ui'
+import { KeyDetailsArgs, RadioItem, SummaryList, SummaryListItem, UserDetails } from '@approved-premises/ui'
 import { differenceInCalendarDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
@@ -116,24 +109,11 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
   const status = overallStatus(placement)
 
-  if (
-    ['upcoming', 'arrived'].includes(status) &&
-    hasPermission(user, ['cas1_experimental_new_assign_keyworker_flow'])
-  ) {
+  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
     actionList.push({
       text: 'Edit keyworker',
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.keyworker.new({
-        premisesId: placement.premises.id,
-        placementId: placement.id,
-      }),
-    })
-    // TODO: Remove branch when new flow released (APS-2644)
-  } else if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
-    actionList.push({
-      text: 'Edit keyworker',
-      classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworkerDeprecated({
         premisesId: placement.premises.id,
         placementId: placement.id,
       }),
@@ -371,20 +351,6 @@ export const renderKeyworkersRadioOptions = (
     },
   ].filter(Boolean)
 }
-
-export const renderKeyworkersSelectOptions = (
-  staffList: Array<StaffMember>,
-  placement: Cas1SpaceBooking,
-): Array<SelectOption> => [
-  { text: 'Select a keyworker', value: null },
-  ...staffList
-    .filter(({ code }) => placement.keyWorkerAllocation?.keyWorker?.code !== code)
-    .map(({ name, code }) => ({
-      text: `${name}`,
-      value: `${code}`,
-      selected: false,
-    })),
-]
 
 export type PlacementTab = 'application' | 'assessment' | 'placementRequest' | 'placement' | 'timeline'
 

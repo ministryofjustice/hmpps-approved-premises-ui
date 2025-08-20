@@ -8,7 +8,6 @@ import type {
   Cas1SpaceBookingSummarySortField,
   NamedId,
   SortDirection,
-  StaffMember,
 } from '@approved-premises/api'
 import { SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
@@ -150,20 +149,6 @@ export const keyworkersToSelectOptions = (
       selected: selected === keyworker.summary.id || undefined,
     })),
 ]
-
-export const staffMembersToSelectOptions = (
-  staffMembers: Array<StaffMember>,
-  selected?: string,
-): Array<SelectOption> => {
-  return [
-    { text: 'All keyworkers', value: '' },
-    ...staffMembers.map(staffMember => ({
-      text: staffMember.name,
-      value: staffMember.code,
-      selected: selected === staffMember.code || undefined,
-    })),
-  ]
-}
 
 type ColumnField = Cas1SpaceBookingSummarySortField | 'status'
 

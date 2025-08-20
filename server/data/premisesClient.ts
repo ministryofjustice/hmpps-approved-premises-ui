@@ -15,7 +15,6 @@ import type {
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
   SortDirection,
-  StaffMember,
 } from '@approved-premises/api'
 import type { PaginatedResponse, PremisesFilters } from '@approved-premises/ui'
 import type { Response } from 'express'
@@ -116,12 +115,6 @@ export default class PremisesClient {
     return (await this.restClient.get({
       path: paths.premises.currentKeyworkers({ premisesId }),
     })) as Array<Cas1CurrentKeyWorker>
-  }
-
-  async getStaff(premisesId: string): Promise<Array<StaffMember>> {
-    return (await this.restClient.get({
-      path: paths.premises.staffMembers.index({ premisesId }),
-    })) as Array<StaffMember>
   }
 
   async getOccupancyReport(response: Response): Promise<void> {

@@ -1,5 +1,5 @@
-import type { Cas1SpaceBooking, StaffMember } from '@approved-premises/api'
-import { RadioItem, SelectOption } from '@approved-premises/ui'
+import type { Cas1SpaceBooking } from '@approved-premises/api'
+import { RadioItem } from '@approved-premises/ui'
 import {
   cas1CurrentKeyworkerFactory,
   cas1KeyworkerAllocationFactory,
@@ -8,7 +8,6 @@ import {
   cas1SpaceBookingSummaryFactory,
   personFactory,
   restrictedPersonFactory,
-  staffMemberFactory,
   tierEnvelopeFactory,
   userDetailsFactory,
   userSummaryFactory,
@@ -28,7 +27,6 @@ import {
   placementStatusHtml,
   placementSummary,
   renderKeyworkersRadioOptions,
-  renderKeyworkersSelectOptions,
   requirementsInformation,
   statusTextMap,
 } from '.'
@@ -182,7 +180,7 @@ describe('placementUtils', () => {
       permissions: [
         'cas1_space_booking_record_arrival',
         'cas1_space_booking_record_departure',
-        'cas1_experimental_new_assign_keyworker_flow',
+        'cas1_space_booking_record_keyworker',
         'cas1_space_booking_record_non_arrival',
         'cas1_transfer_create',
         'cas1_space_booking_create',
@@ -213,11 +211,6 @@ describe('placementUtils', () => {
       href: paths.premises.placements.keyworker.new({ premisesId: premises.id, placementId }),
       text: 'Edit keyworker',
     }
-    const keyworkerDeprecatedOption = {
-      classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworkerDeprecated({ premisesId: premises.id, placementId }),
-      text: 'Edit keyworker',
-    }
     const requestTransferOption = {
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.transfers.new({ premisesId: premises.id, placementId }),
@@ -243,7 +236,7 @@ describe('placementUtils', () => {
           actions(
             placementInitial,
             userDetailsFactory.build({
-              permissions: ['cas1_experimental_new_assign_keyworker_flow'],
+              permissions: ['cas1_space_booking_record_keyworker'],
             }),
           ),
         ).toEqual(wrapOptions([keyworkerOption]))
@@ -341,33 +334,6 @@ describe('placementUtils', () => {
 
       it('should allow nothing', () => {
         expect(actions(placementCancelled, userDetails)).toEqual(null)
-      })
-    })
-
-    // TODO: Remove deprecated test when new flow released (APS-2644)
-    describe('when the user only has the deprecated keyworker flow permission', () => {
-      const userWithDeprecatedPermission = userDetailsFactory.build({
-        permissions: ['cas1_space_booking_record_keyworker'],
-      })
-
-      describe('when the placement is in its initial state', () => {
-        const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
-
-        it('should allow assigning a keyworker (deprecated flow)', () => {
-          expect(actions(placementInitial, userWithDeprecatedPermission)).toEqual(
-            wrapOptions([keyworkerDeprecatedOption]),
-          )
-        })
-      })
-
-      describe('when the placement has an arrival recorded, but no departure', () => {
-        const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises })
-
-        it('should allow assigning a keyworker (deprecated flow)', () => {
-          expect(actions(placementAfterArrival, userWithDeprecatedPermission)).toEqual([
-            { items: [keyworkerDeprecatedOption] },
-          ])
-        })
       })
     })
   })
@@ -762,36 +728,6 @@ describe('placementUtils', () => {
 
     it('does not render the divider if there are no current keyworkers', () => {
       expect(renderKeyworkersRadioOptions([])).toEqual([{ text: 'Assign a different keyworker', value: 'new' }])
-    })
-  })
-
-  describe('renderKeyworkersSelectOptions', () => {
-    const selectBlankOption: SelectOption = { text: 'Select a keyworker', value: null }
-    const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
-
-    it('should return a list of keyworker selection options', () => {
-      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
-      const expected = [
-        selectBlankOption,
-        ...staffList.map(({ name, code }) => ({ text: name, value: code, selected: false })),
-      ]
-
-      const result = renderKeyworkersSelectOptions(staffList, placement)
-
-      expect(result).toEqual(expected)
-    })
-
-    it('should exclude the currently assigned keyworker', () => {
-      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build({
-        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({ name: staffList[1].name, keyWorker: staffList[1] }),
-      })
-
-      const result = renderKeyworkersSelectOptions(staffList, placement)
-
-      expect(result).toEqual([
-        selectBlankOption,
-        ...[staffList[0], staffList[2]].map(({ name, code }) => ({ text: name, value: code, selected: false })),
-      ])
     })
   })
 
