@@ -12,7 +12,6 @@ import type {
   Cas1SpaceBookingDaySummarySortField,
   Cas1SpaceBookingSummarySortField,
   SortDirection,
-  StaffMember,
 } from '@approved-premises/api'
 import type { PremisesFilters } from '@approved-premises/ui'
 import type { Response } from 'express'
@@ -108,15 +107,6 @@ export default class PremisesService {
   async getCurrentKeyworkers(token: string, premisesId: string): Promise<Array<Cas1CurrentKeyWorker>> {
     const premisesClient = this.premisesClientFactory(token)
     return premisesClient.getCurrentKeyworkers(premisesId)
-  }
-
-  async getStaff(token: string, premisesId: string): Promise<Array<StaffMember>> {
-    const premisesClient = this.premisesClientFactory(token)
-    return premisesClient.getStaff(premisesId)
-  }
-
-  async getKeyworkers(token: string, premisesId: string) {
-    return this.getStaff(token, premisesId).then(result => result.filter(member => member.keyWorker))
   }
 
   async getOccupancyReport(token: string, response: Response) {

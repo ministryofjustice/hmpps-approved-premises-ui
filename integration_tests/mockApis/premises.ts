@@ -5,7 +5,6 @@ import type {
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1PremisesDaySummary,
-  StaffMember,
 } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from './setup'
@@ -58,22 +57,6 @@ const stubPremisesCurrentKeyworkers = (args: { premisesId: string; currentKeywor
         'Content-Type': 'application/json;charset=UTF-8',
       },
       jsonBody: args.currentKeyworkers || cas1CurrentKeyworkerFactory.buildList(5),
-    },
-  })
-
-// TODO: Remove once new keyworker flow released (APS-2644)
-const stubPremisesStaffMembers = (args: { premisesId: string; staffMembers: Array<StaffMember> }) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: paths.premises.staffMembers.index({ premisesId: args.premisesId }),
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: args.staffMembers,
     },
   })
 
@@ -172,7 +155,6 @@ export default {
   stubCas1AllPremises,
   stubSinglePremises,
   stubPremisesCurrentKeyworkers,
-  stubPremisesStaffMembers,
   stubPremisesCapacity,
   stubPremisesDaySummary,
   stubNationalOccupancy,

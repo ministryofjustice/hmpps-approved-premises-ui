@@ -73,7 +73,6 @@ const paths = {
         new: keyworkerPath,
         find: keyworkerPath.path('find'),
       },
-      keyworkerDeprecated: singlePlacementPath.path('keyworker'),
       nonArrival: singlePlacementPath.path('non-arrival'),
       departure: {
         new: departurePath.path('new'),

@@ -27,7 +27,6 @@ import {
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
-  staffMemberFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/premisesClient')
@@ -330,20 +329,6 @@ describe('PremisesService', () => {
     })
   })
 
-  describe('getStaff', () => {
-    it('on success returns the list of staff in a premises', async () => {
-      const staffList = staffMemberFactory.buildList(5)
-      premisesClient.getStaff.mockResolvedValue(staffList)
-
-      const result = await service.getStaff(token, premisesId)
-
-      expect(result).toEqual(staffList)
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
-    })
-  })
-
   describe('getCurrentKeyworkers', () => {
     it('returns the list of users currently assigned as keyworkers for the premises', async () => {
       const keyworkers = cas1CurrentKeyworkerFactory.buildList(5)
@@ -354,23 +339,6 @@ describe('PremisesService', () => {
       expect(result).toEqual(keyworkers)
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getCurrentKeyworkers).toHaveBeenCalledWith(premisesId)
-    })
-  })
-
-  // TODO: Remove service test when new flow released (APS-2644)
-  describe('getKeyworkers', () => {
-    it('returns the list of staff filtered for keyworkers in a premises', async () => {
-      const keyworker = staffMemberFactory.build({ keyWorker: true })
-      const notKeyworker = staffMemberFactory.build({ keyWorker: false })
-
-      premisesClient.getStaff.mockResolvedValue([keyworker, notKeyworker])
-
-      const result = await service.getKeyworkers(token, premisesId)
-
-      expect(result).toEqual([keyworker])
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
     })
   })
 

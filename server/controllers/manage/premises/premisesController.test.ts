@@ -13,7 +13,6 @@ import {
   cas1SpaceBookingSummaryFactory,
   cruManagementAreaFactory,
   paginatedResponseFactory,
-  staffMemberFactory,
   userDetailsFactory,
 } from '../../../testutils/factories'
 import {
@@ -23,15 +22,15 @@ import {
   PremisesTab,
   premisesTableHead,
   premisesTableRows,
-  staffMembersToSelectOptions,
   summaryListForPremises,
 } from '../../../utils/premises'
+import { roleToPermissions } from '../../../utils/users/roles'
 
-describe('V2PremisesController', () => {
+describe('PremisesController', () => {
   const token = 'SOME_TOKEN'
   const cruManagementAreas = cruManagementAreaFactory.buildList(4)
   const user = userDetailsFactory.build({
-    permissions: ['cas1_space_booking_list', 'cas1_space_booking_view', 'cas1_experimental_new_assign_keyworker_flow'],
+    permissions: roleToPermissions('future_manager'),
     cruManagementArea: cruManagementAreas[2],
   })
   const premisesId = 'some-uuid'
@@ -224,53 +223,6 @@ describe('V2PremisesController', () => {
             keyWorkerUserId: selectedKeyworkerId,
           }),
         )
-      })
-    })
-
-    // TODO: Remove deprecated handler tests when new flow released (APS-2644)
-    describe('when the user does not have the new keyworker flow permission (deprecated keyworker flow)', () => {
-      const staffMembersList = staffMemberFactory.buildList(5, { keyWorker: true })
-      const selectedStaffMemberCode = staffMembersList[1].code
-
-      beforeEach(() => {
-        premisesService.getKeyworkers.mockResolvedValue(staffMembersList)
-        response.locals.user.permissions = ['cas1_premises_view']
-      })
-
-      describe.each(['upcoming', 'current'])('when viewing the "%s" tab', activeTab => {
-        it('should render the keyworkers filter based on staff members', async () => {
-          request.query = { activeTab }
-
-          await premisesController.show()(request, response, next)
-
-          expect(premisesService.getCurrentKeyworkers).not.toHaveBeenCalled()
-          expect(premisesService.getKeyworkers).toHaveBeenCalledWith(token, premisesId)
-          expect(response.render).toHaveBeenCalledWith(
-            'manage/premises/show',
-            expect.objectContaining({
-              keyworkersSelectOptions: staffMembersToSelectOptions(staffMembersList),
-            }),
-          )
-        })
-
-        it('should filter results by keyworker', async () => {
-          request.query = { activeTab, keyworker: selectedStaffMemberCode }
-
-          await premisesController.show()(request, response, next)
-
-          expect(response.render).toHaveBeenCalledWith(
-            'manage/premises/show',
-            expect.objectContaining({
-              keyworkersSelectOptions: staffMembersToSelectOptions(staffMembersList, selectedStaffMemberCode),
-              keyworker: selectedStaffMemberCode,
-            }),
-          )
-          expect(premisesService.getPlacements).toHaveBeenCalledWith(
-            expect.objectContaining({
-              keyWorkerStaffCode: selectedStaffMemberCode,
-            }),
-          )
-        })
       })
     })
 
