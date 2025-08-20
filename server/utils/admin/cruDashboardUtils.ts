@@ -1,9 +1,16 @@
 import { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
+import { PlacementRequestStatus } from '@approved-premises/api'
 import { ParsedQs } from 'qs'
 import { hasPermission } from '../users'
 import paths from '../../paths/admin'
 import { TabItem } from '../tasks/listTable'
 import { createQueryString } from '../utils'
+
+export const cruDashboardSubheadings: Record<PlacementRequestStatus, string> = {
+  notMatched: 'Applications assessed as suitable, ready to book.',
+  matched: 'Placements that have been booked.',
+  unableToMatch: 'Applications that have been marked as unable to book.',
+}
 
 export const cruDashboardActions = (user: UserDetails): Array<IdentityBarMenu> => {
   const reportView = {
@@ -34,16 +41,11 @@ export const cruDashboardTabItems = (
   activeTab?: string,
   cruManagementArea?: string,
   requestType?: string,
-): Array<TabItem> => {
-  return [
-    {
-      text: 'Pending Request for Placement',
-      active: activeTab === 'pendingPlacement',
-      href: cruDashboardTabLink({ cruManagementArea, status: 'pendingPlacement' }),
-    },
+): Array<TabItem> =>
+  [
     {
       text: 'Ready to book',
-      active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
+      active: activeTab === 'notMatched' || !activeTab,
       href: cruDashboardTabLink({ cruManagementArea, requestType }),
     },
     {
@@ -72,4 +74,3 @@ export const cruDashboardTabItems = (
       href: paths.admin.cruDashboard.search({}),
     },
   ].filter(Boolean)
-}

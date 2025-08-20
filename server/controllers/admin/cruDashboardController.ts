@@ -1,50 +1,84 @@
-import type { Request, Response, TypedRequestHandler } from 'express'
+import type { NextFunction, Request, Response, TypedRequestHandler } from 'express'
 import {
-  ApplicationSortField,
   Cas1ChangeRequestSortField,
   Cas1CruManagementArea,
   PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
-  ReleaseTypeOption,
+  SortDirection,
 } from '@approved-premises/api'
 import { PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
-import { ApplicationService, CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
+import createError from 'http-errors'
+import { CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import adminPaths from '../../paths/admin'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
-import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
-import {
-  pendingPlacementRequestTableHeader,
-  pendingPlacementRequestTableRows,
-  releaseTypeSelectOptions,
-} from '../../utils/applications/utils'
+import { cruDashboardActions, cruDashboardSubheadings, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
 import { pagination } from '../../utils/pagination'
 import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementRequests/table'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
 import { changeRequestsTableHeader, changeRequestsTableRows } from '../../utils/placementRequests/changeRequestsUtils'
 
+interface IndexRequest extends Request {
+  query: {
+    status?: PlacementRequestStatus
+    cruManagementArea?: Cas1CruManagementArea['id'] | 'all'
+    requestType?: PlacementRequestRequestType
+    sortBy?: PlacementRequestSortField
+    sortDirection?: SortDirection
+    page?: string
+  }
+}
+
 export default class CruDashboardController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly cruManagementAreaService: CruManagementAreaService,
-    private readonly applicationService: ApplicationService,
     private readonly premisesService: PremisesService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
-    return async (req: Request, res: Response) => {
-      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
-      const viewArgs =
-        req.query.status === 'pendingPlacement'
-          ? await this.getPendingApplications(req, res)
-          : await this.getPlacementRequests(req, res)
+    return async (req: IndexRequest, res: Response, next: NextFunction) => {
+      const { token } = req.user
+      const { user } = res.locals
+      const { status = 'notMatched', cruManagementArea = user.cruManagementArea?.id, requestType } = req.query
+
+      if (!['notMatched', 'unableToMatch', 'matched'].includes(status)) {
+        next(createError(404, 'Not found'))
+      }
+
+      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(token)
+
+      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
+        req,
+        adminPaths.admin.cruDashboard.index({}),
+        { status, cruManagementArea, requestType },
+      )
+
+      const dashboard = await this.placementRequestService.getDashboard(
+        token,
+        {
+          status,
+          cruManagementAreaId: cruManagementArea === 'all' ? undefined : cruManagementArea,
+          requestType,
+        },
+        pageNumber,
+        sortBy,
+        sortDirection,
+      )
 
       res.render('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
         actions: cruDashboardActions(res.locals.user),
         cruManagementAreas,
-        ...viewArgs,
+        cruManagementArea,
+        requestType,
+        activeTab: status,
+        subheading: cruDashboardSubheadings[status],
+        tabs: cruDashboardTabItems(user, status, cruManagementArea, requestType),
+        tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
+        tableRows: dashboardTableRows(dashboard.data, status),
+        pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),
       })
     }
   }
@@ -119,79 +153,6 @@ export default class CruDashboardController {
         tableRows: dashboardTableRows(dashboard.data),
         pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),
       })
-    }
-  }
-
-  private async getPendingApplications(req: Request, res: Response) {
-    const { status } = req.query
-    const { user } = res.locals
-    const cruManagementArea: Cas1CruManagementArea['id'] | 'all' =
-      req.query.cruManagementArea || user.cruManagementArea?.id
-    const releaseType = req.query.releaseType as ReleaseTypeOption
-
-    const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<ApplicationSortField>(
-      req,
-      adminPaths.admin.cruDashboard.index({}),
-      { status, cruManagementArea },
-    )
-    const applications = await this.applicationService.getAll(req.user.token, pageNumber, sortBy, sortDirection, {
-      status: 'pendingPlacementRequest',
-      cruManagementAreaId: cruManagementArea === 'all' ? undefined : cruManagementArea,
-      releaseType,
-    })
-
-    return {
-      cruManagementArea,
-      releaseTypes: releaseTypeSelectOptions(releaseType),
-      activeTab: 'pendingPlacement',
-      subheading: 'Applications that have been accepted but do not yet have an associated request for placement.',
-      tabs: cruDashboardTabItems(user, 'pendingPlacement', cruManagementArea),
-      tableHead: pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
-      tableRows: pendingPlacementRequestTableRows(applications.data),
-      pagination: pagination(Number(applications.pageNumber), Number(applications.totalPages), hrefPrefix),
-    }
-  }
-
-  private async getPlacementRequests(req: Request, res: Response) {
-    const { user } = res.locals
-    const status = (req.query.status ? req.query.status : 'notMatched') as PlacementRequestStatus
-    const cruManagementArea: Cas1CruManagementArea['id'] | 'all' =
-      req.query.cruManagementArea || user.cruManagementArea?.id
-    const requestType = req.query.requestType as PlacementRequestRequestType
-
-    const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
-      req,
-      adminPaths.admin.cruDashboard.index({}),
-      { status, cruManagementArea, requestType },
-    )
-
-    const dashboard = await this.placementRequestService.getDashboard(
-      req.user.token,
-      {
-        status,
-        cruManagementAreaId: cruManagementArea === 'all' ? undefined : cruManagementArea,
-        requestType,
-      },
-      pageNumber,
-      sortBy,
-      sortDirection,
-    )
-
-    const subheadings: Record<PlacementRequestStatus, string> = {
-      notMatched: 'Applications assessed as suitable, ready to book.',
-      matched: 'Placements that have been booked.',
-      unableToMatch: 'Applications that have been marked as unable to book.',
-    }
-
-    return {
-      cruManagementArea,
-      requestType,
-      activeTab: status,
-      subheading: subheadings[status],
-      tabs: cruDashboardTabItems(user, status, cruManagementArea, requestType),
-      tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
-      tableRows: dashboardTableRows(dashboard.data, status),
-      pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),
     }
   }
 

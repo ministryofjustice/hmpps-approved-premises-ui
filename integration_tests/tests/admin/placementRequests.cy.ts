@@ -5,7 +5,6 @@ import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 
 import {
   applicationFactory,
-  cas1ApplicationSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
   cruManagementAreaFactory,
@@ -23,7 +22,6 @@ import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
-import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
@@ -519,114 +517,6 @@ context('Placement Requests', () => {
 
         THEN('the status filter should be retained')
         listPage.shouldHaveActiveTab('Unable to book')
-      })
-    })
-
-    describe('pending request for placement', () => {
-      it('should list applications that have no placement request', () => {
-        const { cruManagementAreas } = stubArtifacts()
-
-        const applications = cas1ApplicationSummaryFactory.buildList(2)
-
-        cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
-
-        GIVEN('I am on the placement request dashboard filtering by the pendingPlacement status')
-        const listPage = ListPage.visit('status=pendingPlacement')
-
-        THEN('I should see a list of applications with no placement requests')
-        listPage.shouldShowApplications(applications)
-
-        cy.task('verifyDashboardRequest', {
-          status: 'pendingPlacementRequest',
-          sortDirection: 'asc',
-        }).then(requests => {
-          expect(requests).to.have.length(1)
-        })
-
-        AND('the Request Type filter should not be visible')
-        listPage.shouldNotShowRequestTypeFilter()
-
-        WHEN('I filter by AP area')
-        const areaApplications = cas1ApplicationSummaryFactory.buildList(2)
-        cy.task('stubAllApplications', {
-          applications: areaApplications,
-          page: '1',
-          sortDirection: 'asc',
-          searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
-        })
-        listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[3].name)
-        listPage.getSelectInputByIdAndSelectAnEntry('releaseType', allReleaseTypes.rotl)
-        listPage.clickApplyFilter()
-
-        THEN('I should see a list of applications with no placement requests for that area')
-        listPage.shouldShowApplications(areaApplications)
-
-        cy.task('verifyDashboardRequest', {
-          status: 'pendingPlacementRequest',
-          sortDirection: 'asc',
-          searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
-        }).then(requests => {
-          expect(requests).to.have.length(1)
-        })
-      })
-
-      const sortFields = ['tier', 'releaseType'] as const
-
-      sortFields.forEach(field => {
-        it(`supports pending placement requests sorting by ${field}`, () => {
-          stubArtifacts()
-          const applications = cas1ApplicationSummaryFactory.buildList(2)
-          cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
-          cy.task('stubAllApplications', {
-            applications,
-            sortBy: field,
-            sortDirection: 'asc',
-            searchOptions: { status: 'pendingPlacementRequest' },
-          })
-
-          cy.task('stubAllApplications', {
-            applications,
-            sortBy: field,
-            sortDirection: 'desc',
-            searchOptions: { status: 'pendingPlacementRequest' },
-          })
-
-          GIVEN('I am on the placement request dashboard filtering by the pendingPlacement status')
-          const listPage = ListPage.visit('status=pendingPlacement')
-
-          THEN('I should see a list of applications with no placement requests')
-          listPage.shouldShowApplications(applications)
-
-          WHEN('I sort by expected arrival in ascending order')
-          listPage.clickSortBy(field)
-
-          THEN('the dashboard should be sorted by field')
-          listPage.shouldBeSortedByField(field, 'ascending')
-
-          AND('the API should have received a request for the correct sort order')
-          cy.task('verifyDashboardRequest', {
-            status: 'pendingPlacementRequest',
-            sortBy: field,
-            sortDirection: 'asc',
-          }).then(requests => {
-            expect(requests).to.have.length(1)
-          })
-
-          WHEN('I sort by  descending order')
-          listPage.clickSortBy(field)
-
-          THEN('the dashboard should be sorted in descending order')
-          listPage.shouldBeSortedByField(field, 'descending')
-
-          AND('the API should have received a request for the correct sort order')
-          cy.task('verifyDashboardRequest', {
-            status: 'pendingPlacementRequest',
-            sortBy: field,
-            sortDirection: 'desc',
-          }).then(requests => {
-            expect(requests).to.have.length(1)
-          })
-        })
       })
     })
 
