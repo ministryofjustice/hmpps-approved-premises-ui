@@ -370,7 +370,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', placementRequest)
     page.clickSubmit()
 
-    THEN("I should be redirected to the 'Matched' tab")
+    THEN("I should be redirected to the 'Booked' tab")
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     AND('I should see a success message')
@@ -390,7 +390,7 @@ context('Placement Requests', () => {
     })
   })
 
-  it('allows me to mark a placement request as unable to match', () => {
+  it('allows me to mark a placement request as  unable to book', () => {
     GIVEN('there is a placement request waiting for me to match')
     const placementRequest = cas1PlacementRequestDetailFactory.notMatched().build({
       person: personFactory.build(),

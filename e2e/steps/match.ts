@@ -114,14 +114,14 @@ export const matchAndBookApplication = async ({
   const premisesId = page.url().match(/space-bookings\/(.[^/]*)/)[1] // Path: /match/placement-requests/:id/space-bookings/:premisesId/new
   await bookingPage.clickConfirm()
 
-  // Then I should see the Matched tab on the CRU dashboard
+  // Then I should see the Booked tab on the CRU dashboard
   cruDashboard = new ListPage(page)
 
   // And the placement should be listed
   await cruDashboard.findRowWithValues([
     DateFormats.isoDateToUIDate(datesOfPlacement.startDate, { format: 'short' }),
     premisesName,
-    'Matched',
+    'Booked',
   ])
 
   // When I reopen the placement request to change the dates

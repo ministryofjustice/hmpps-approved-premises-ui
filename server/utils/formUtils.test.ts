@@ -710,18 +710,18 @@ describe('placementRequestStatusSelectOptions', () => {
   it('should return select options for tiers with the all tiers option selected by default', () => {
     expect(placementRequestStatusSelectOptions(null)).toEqual([
       { selected: true, text: 'All statuses', value: '' },
-      { selected: false, text: 'Not matched', value: 'notMatched' },
-      { selected: false, text: 'Unable to match', value: 'unableToMatch' },
-      { selected: false, text: 'Matched', value: 'matched' },
+      { selected: false, text: 'Ready to book', value: 'notMatched' },
+      { selected: false, text: 'Unable to book', value: 'unableToMatch' },
+      { selected: false, text: 'Booked', value: 'matched' },
     ])
   })
 
   it('should return the selected status if provided', () => {
     expect(placementRequestStatusSelectOptions('matched')).toEqual([
       { selected: false, text: 'All statuses', value: '' },
-      { selected: false, text: 'Not matched', value: 'notMatched' },
-      { selected: false, text: 'Unable to match', value: 'unableToMatch' },
-      { selected: true, text: 'Matched', value: 'matched' },
+      { selected: false, text: 'Ready to book', value: 'notMatched' },
+      { selected: false, text: 'Unable to book', value: 'unableToMatch' },
+      { selected: true, text: 'Booked', value: 'matched' },
     ])
   })
 })

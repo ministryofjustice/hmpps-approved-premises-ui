@@ -27,10 +27,6 @@
                 menus: actions
             }) }}
 
-            <p class="govuk-body">
-                {{ subheading }}
-            </p>
-
             <form action="{{ currentUrl }}" method="get" class="search-and-filter">
                 {% if activeTab != 'changeRequests' %}
                     <input type="hidden" name="status" value="{{ activeTab }}">
@@ -86,6 +82,10 @@
                 label: 'Sub navigation',
                 items: tabs
             }) }}
+
+            <p class="govuk-body">
+                {{ subheading }}
+            </p>
 
             {{ sortableTable({
                 firstCellIsHeader: true,

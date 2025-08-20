@@ -137,20 +137,20 @@ context('Placement Requests', () => {
       THEN('I should see a list of unmatched placement requests')
       listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
-      WHEN('I click the Unable to match tab')
-      listPage.clickTab('Unable to match')
+      WHEN('I click the Unable to book tab')
+      listPage.clickTab('Unable to book')
 
-      THEN('I should see a list of unable to match placement requests')
+      THEN('I should see a list of  unable to book placement requests')
       listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests, 'unableToMatch')
 
-      WHEN('I click the Matched tab')
-      listPage.clickTab('Matched')
+      WHEN('I click the Booked tab')
+      listPage.clickTab('Booked')
 
       THEN('I should see a list of matched placement requests')
       listPage.shouldShowPlacementRequests(matchedPlacementRequests, 'matched')
 
-      WHEN('I click the Ready to match tab')
-      listPage.clickTab('Ready to match')
+      WHEN('I click the Ready to book tab')
+      listPage.clickTab('Ready to book')
 
       AND('I choose a placement request')
       listPage.clickPlacementRequest(unmatchedPlacementRequest)
@@ -171,13 +171,13 @@ context('Placement Requests', () => {
       showPage.shouldNotShowBookingInformation()
 
       AND('I should see available actions')
-      showPage.shouldHaveActions(['Search for a space', 'Withdraw request for placement', 'Mark as unable to match'])
+      showPage.shouldHaveActions(['Search for a space', 'Withdraw request for placement', 'Mark as unable to book'])
 
       WHEN('I go back to the dashboard')
       showPage.clickBack()
 
-      AND('I click the Matched tab')
-      listPage.clickTab('Matched')
+      AND('I click the Booked tab')
+      listPage.clickTab('Booked')
 
       AND('I click a placement request with a placement')
       listPage.clickPlacementRequest(matchedPlacementRequest)
@@ -229,8 +229,8 @@ context('Placement Requests', () => {
       WHEN('I visit the tasks dashboard')
       const listPage = ListPage.visit()
 
-      AND('I click the Matched tab')
-      listPage.clickTab('Matched')
+      AND('I click the Booked tab')
+      listPage.clickTab('Booked')
 
       AND('I choose a placement request')
       listPage.clickPlacementRequest(matchedPlacementRequest)
@@ -313,7 +313,7 @@ context('Placement Requests', () => {
       })
     })
 
-    it('allows me to mark a placement request as unable to match', () => {
+    it('allows me to mark a placement request as  unable to book', () => {
       const { unmatchedPlacementRequest } = stubArtifacts()
       cy.task('stubPlacementRequestUnableToMatch', unmatchedPlacementRequest)
 
@@ -326,19 +326,19 @@ context('Placement Requests', () => {
       THEN('I should be taken to the placement request page')
       const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
-      WHEN('I click on the unable to match button')
+      WHEN('I click on the  unable to book button')
       showPage.clickUnableToMatch()
 
-      THEN('I should be on the unable to match confirmation page')
+      THEN('I should be on the  unable to book confirmation page')
       const unableToMatchConfirmationPage = Page.verifyOnPage(UnableToMatchPage)
 
-      WHEN('I confirm I am unable to match the placement')
+      WHEN('I confirm I am  unable to book the placement')
       unableToMatchConfirmationPage.clickSubmit()
 
       THEN('I should see a confirmation message')
-      showPage.shouldShowBanner('Placement request has been marked as unable to match')
+      showPage.shouldShowBanner('Placement request has been marked as  unable to book')
 
-      AND('the placement should have been marked unable to match in the API')
+      AND('the placement should have been marked  unable to book in the API')
       cy.task('verifyPlacementRequestedMarkedUnableToMatch', unmatchedPlacementRequest).then(requests => {
         expect(requests).to.have.length(1)
       })
@@ -483,8 +483,8 @@ context('Placement Requests', () => {
           expect(requestType.values).to.deep.equal(['parole'])
         })
 
-        WHEN('I click the Matched tab')
-        listPage.clickTab('Matched')
+        WHEN('I click the Booked tab')
+        listPage.clickTab('Booked')
 
         THEN('the page should retain the area and request type filter')
         listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
@@ -518,7 +518,7 @@ context('Placement Requests', () => {
         listPage.clickApplyFilter()
 
         THEN('the status filter should be retained')
-        listPage.shouldHaveActiveTab('Unable to match')
+        listPage.shouldHaveActiveTab('Unable to book')
       })
     })
 

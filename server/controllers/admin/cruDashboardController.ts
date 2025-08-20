@@ -1,5 +1,4 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApplicationService, CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import {
   ApplicationSortField,
   Cas1ChangeRequestSortField,
@@ -8,9 +7,10 @@ import {
   PlacementRequestSortField,
   PlacementRequestStatus,
   ReleaseTypeOption,
-} from '../../@types/shared'
+} from '@approved-premises/api'
+import { PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
+import { ApplicationService, CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import adminPaths from '../../paths/admin'
-import { PlacementRequestDashboardSearchOptions } from '../../@types/ui'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
@@ -144,8 +144,7 @@ export default class CruDashboardController {
       cruManagementArea,
       releaseTypes: releaseTypeSelectOptions(releaseType),
       activeTab: 'pendingPlacement',
-      subheading:
-        'All applications that have been accepted but do not yet have an associated placement request are shown below',
+      subheading: 'Applications that have been accepted but do not yet have an associated request for placement.',
       tabs: cruDashboardTabItems(user, 'pendingPlacement', cruManagementArea),
       tableHead: pendingPlacementRequestTableHeader(sortBy, sortDirection, hrefPrefix),
       tableRows: pendingPlacementRequestTableRows(applications.data),
@@ -178,11 +177,17 @@ export default class CruDashboardController {
       sortDirection,
     )
 
+    const subheadings: Record<PlacementRequestStatus, string> = {
+      notMatched: 'Applications assessed as suitable, ready to book.',
+      matched: 'Placements that have been booked.',
+      unableToMatch: 'Applications that have been marked as unable to book.',
+    }
+
     return {
       cruManagementArea,
       requestType,
       activeTab: status,
-      subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
+      subheading: subheadings[status],
       tabs: cruDashboardTabItems(user, status, cruManagementArea, requestType),
       tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
       tableRows: dashboardTableRows(dashboard.data, status),

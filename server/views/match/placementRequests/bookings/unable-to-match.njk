@@ -19,25 +19,28 @@
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-                <p class="govuk-body">We recommend that you continue to search for a placement weekly until a match is found.</p>
-                <p class="govuk-body">If the expected arrival date is less than 4 weeks away, consider the referral prioritisation approach or escalation to an AP Area Manager.</p>
-                <p class="govuk-body">This application will be added to to the 'unable to match' tab on your dashboard.</p>
+                <p class="govuk-body">We recommend that you continue to search for a placement weekly until a match is
+                    found.</p>
+                <p class="govuk-body">If the expected arrival date is less than 4 weeks away, consider the referral
+                    prioritisation approach or escalation to an AP Area Manager.</p>
+                <p class="govuk-body">This application will be added to to the ' unable to book' tab on your
+                    dashboard.</p>
 
-                <form action="{{confirmPath}}" method="post">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <form action="{{ confirmPath }}" method="post">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                     {{ govukTextarea({
                         id: "notes",
                         name: "notes",
                         label: {
-                        text: "Provide detail about why you are unable to find a suitable bed in an Approved Premises",
-                        classes: "govuk-fieldset__legend--s"
+                            text: "Provide detail about why you are unable to find a suitable bed in an Approved Premises",
+                            classes: "govuk-fieldset__legend--s"
                         }
                     }) }}
 
                     {{ govukButton({
-                      text: "Continue",
-                      preventDoubleClick: true
+                        text: "Continue",
+                        preventDoubleClick: true
                     }) }}
                 </form>
             </div>

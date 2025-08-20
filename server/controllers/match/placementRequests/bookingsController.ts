@@ -26,7 +26,7 @@ export default class BookingsController {
 
       return res.render('match/placementRequests/bookings/unable-to-match', {
         backLink,
-        pageHeading: 'Mark as unable to match',
+        pageHeading: 'Mark as unable to book',
         confirmPath,
       })
     }
@@ -37,7 +37,7 @@ export default class BookingsController {
       await this.placementRequestService.bookingNotMade(req.user.token, req.params.placementRequestId, {
         notes: req.body.notes,
       })
-      req.flash('success', 'Placement request has been marked as unable to match')
+      req.flash('success', 'Placement request has been marked as  unable to book')
 
       return res.redirect(adminPaths.admin.cruDashboard.index({}))
     }

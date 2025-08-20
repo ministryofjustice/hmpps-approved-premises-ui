@@ -268,9 +268,9 @@ export const tierSelectOptions = (selectedOption: RiskTierLevel | undefined): Ar
 }
 
 export const placementRequestStatus: Record<PlacementRequestStatus, string> = {
-  notMatched: 'Not matched',
-  unableToMatch: 'Unable to match',
-  matched: 'Matched',
+  notMatched: 'Ready to book',
+  unableToMatch: 'Unable to book',
+  matched: 'Booked',
 }
 
 export const placementRequestStatusSelectOptions = (

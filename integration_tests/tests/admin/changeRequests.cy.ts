@@ -239,7 +239,7 @@ context('Change Requests', () => {
         // Then I will be on the placementRequest details page again
         showPage.checkOnPage()
         showPage.shouldShowBanner(`Appeal actioned
-          The appealed placement has been cancelled. You will need to re-book via the 'Ready to match' list.`)
+          The appealed placement has been cancelled. You will need to re-book via the 'Ready to book' list.`)
 
         // And the API was called to progress the appeal
         cy.task(

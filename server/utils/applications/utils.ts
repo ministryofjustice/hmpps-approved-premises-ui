@@ -285,7 +285,7 @@ export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
   person_arrived: 'Person arrived',
   person_not_arrived: 'Person not arrived',
   person_departed: 'Person departed',
-  booking_not_made: 'Unable to match',
+  booking_not_made: 'Unable to book',
   booking_cancelled: 'Placement cancelled',
   booking_changed: 'Placement changed',
   application_withdrawn: 'Application withdrawn',

@@ -54,7 +54,7 @@ export const adminActions = (
     },
     {
       href: matchPaths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }),
-      text: 'Mark as unable to match',
+      text: 'Mark as unable to book',
     },
   ]
 

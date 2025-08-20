@@ -70,38 +70,35 @@ describe('CruDashboardController', () => {
     const paginatedResponse = paginatedResponseFactory.build({
       data: cas1PlacementRequestSummaryFactory.buildList(2),
     }) as PaginatedResponse<Cas1PlacementRequestSummary>
+    const defaultHrefPrefix = `${indexPath}?${createQueryString({
+      status: 'notMatched',
+      cruManagementArea: user.cruManagementArea.id,
+    })}&`
+    const defaultRenderParameters = {
+      pageHeading: 'CRU Dashboard',
+      actions: cruDashboardActions(user),
+      subheading: 'Applications assessed as suitable, ready to book.',
+      activeTab: 'notMatched',
+      tabs: cruDashboardTabItems(user, 'notMatched', user.cruManagementArea.id),
+      tableHead: dashboardTableHeader('notMatched', 'name' as PlacementRequestSortField, 'asc', defaultHrefPrefix),
+      tableRows: dashboardTableRows(paginatedResponse.data, undefined),
+      pagination: pagination(
+        Number(paginatedResponse.pageNumber),
+        Number(paginatedResponse.totalPages),
+        defaultHrefPrefix,
+      ),
+      cruManagementAreas,
+      cruManagementArea: user.cruManagementArea.id,
+    }
 
     beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
     })
 
     it('should render the default tab with the users CRU management area filtered by default', async () => {
-      const expectedHrefPrefix = `${indexPath}?${createQueryString({
-        status: 'notMatched',
-        cruManagementArea: user.cruManagementArea.id,
-      })}&`
-      const requestHandler = cruDashboardController.index()
+      await cruDashboardController.index()(request, response, next)
 
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
-        pageHeading: 'CRU Dashboard',
-        actions: cruDashboardActions(response.locals.user),
-        subheading:
-          'All applications that have been assessed as suitable and require matching to an AP are listed below',
-        activeTab: 'notMatched',
-        tabs: cruDashboardTabItems(user, 'notMatched', user.cruManagementArea.id),
-        tableHead: dashboardTableHeader('notMatched', 'name' as PlacementRequestSortField, 'asc', expectedHrefPrefix),
-        tableRows: dashboardTableRows(paginatedResponse.data, undefined),
-        pagination: pagination(
-          Number(paginatedResponse.pageNumber),
-          Number(paginatedResponse.totalPages),
-          expectedHrefPrefix,
-        ),
-        cruManagementAreas,
-        cruManagementArea: user.cruManagementArea.id,
-        requestType: undefined,
-      })
+      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', defaultRenderParameters)
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
@@ -120,8 +117,6 @@ describe('CruDashboardController', () => {
     })
 
     it('should handle filtering parameters', async () => {
-      const requestHandler = cruDashboardController.index()
-
       const cruManagementArea = 'some-cru-management-area-id'
       const requestType = 'parole'
       const status = 'notMatched'
@@ -129,16 +124,28 @@ describe('CruDashboardController', () => {
 
       const notMatchedRequest = { ...request, query: filters }
 
-      await requestHandler(notMatchedRequest, response, next)
+      await cruDashboardController.index()(notMatchedRequest, response, next)
 
-      expect(response.render).toHaveBeenCalledWith(
-        'admin/cruDashboard/index',
-        expect.objectContaining({
-          activeTab: status,
-          cruManagementAreas,
-          cruManagementArea,
-        }),
-      )
+      const expectedHrefPrefix = `${indexPath}?${createQueryString({
+        status,
+        cruManagementArea,
+        requestType,
+      })}&`
+
+      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
+        ...defaultRenderParameters,
+        activeTab: status,
+        tabs: cruDashboardTabItems(user, status, cruManagementArea, requestType),
+        tableHead: dashboardTableHeader(status, 'name' as PlacementRequestSortField, 'asc', expectedHrefPrefix),
+        pagination: pagination(
+          Number(paginatedResponse.pageNumber),
+          Number(paginatedResponse.totalPages),
+          expectedHrefPrefix,
+        ),
+        cruManagementAreas,
+        cruManagementArea,
+        requestType,
+      })
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
@@ -151,32 +158,118 @@ describe('CruDashboardController', () => {
       expect(getPaginationDetails.getPaginationDetails).toHaveBeenCalledWith(notMatchedRequest, indexPath, filters)
     })
 
-    it('should not send an area query in the request if the  if the query is "all"', async () => {
-      const requestHandler = cruDashboardController.index()
-
+    it('should not send an area query in the request if the if the query is "all"', async () => {
+      const status = 'notMatched'
       const cruManagementArea = 'all'
       const filters = { cruManagementArea }
       const requestWithQuery = { ...request, query: filters }
 
-      await requestHandler(requestWithQuery, response, next)
+      await cruDashboardController.index()(requestWithQuery, response, next)
+
+      const expectedHrefPrefix = `${indexPath}?${createQueryString({
+        status,
+        cruManagementArea,
+      })}&`
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
-        { status: 'notMatched' },
+        { status },
         undefined,
         undefined,
         undefined,
       )
 
-      expect(response.render).toHaveBeenCalledWith(
-        'admin/cruDashboard/index',
-        expect.objectContaining({ cruManagementArea }),
+      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
+        ...defaultRenderParameters,
+        tabs: cruDashboardTabItems(user, status, cruManagementArea),
+        tableHead: dashboardTableHeader(status, 'name' as PlacementRequestSortField, 'asc', expectedHrefPrefix),
+        pagination: pagination(
+          Number(paginatedResponse.pageNumber),
+          Number(paginatedResponse.totalPages),
+          expectedHrefPrefix,
+        ),
+        cruManagementArea,
+      })
+    })
+
+    it('should render the booked tab', async () => {
+      await cruDashboardController.index()({ ...request, query: { status: 'matched' } }, response, next)
+
+      const expectedHrefPrefix = `${indexPath}?${createQueryString({
+        status: 'matched',
+        cruManagementArea: user.cruManagementArea.id,
+      })}&`
+
+      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
+        ...defaultRenderParameters,
+        activeTab: 'matched',
+        subheading: 'Placements that have been booked.',
+        tabs: cruDashboardTabItems(user, 'matched', user.cruManagementArea.id),
+        tableHead: dashboardTableHeader('matched', 'name' as PlacementRequestSortField, 'asc', expectedHrefPrefix),
+        tableRows: dashboardTableRows(paginatedResponse.data, 'matched'),
+        pagination: pagination(
+          Number(paginatedResponse.pageNumber),
+          Number(paginatedResponse.totalPages),
+          expectedHrefPrefix,
+        ),
+      })
+
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
+        token,
+        { cruManagementAreaId: user.cruManagementArea.id, requestType: undefined, status: 'matched' },
+        undefined,
+        undefined,
+        undefined,
       )
+
+      expect(getPaginationDetails.getPaginationDetails).toHaveBeenCalledWith(request, indexPath, {
+        status: 'matched',
+        cruManagementArea: user.cruManagementArea.id,
+      })
+    })
+
+    it('should render the unable to book tab', async () => {
+      await cruDashboardController.index()({ ...request, query: { status: 'unableToMatch' } }, response, next)
+
+      const expectedHrefPrefix = `${indexPath}?${createQueryString({
+        status: 'unableToMatch',
+        cruManagementArea: user.cruManagementArea.id,
+      })}&`
+
+      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
+        ...defaultRenderParameters,
+        activeTab: 'unableToMatch',
+        subheading: 'Applications that have been marked as unable to book.',
+        tabs: cruDashboardTabItems(user, 'unableToMatch', user.cruManagementArea.id),
+        tableHead: dashboardTableHeader(
+          'unableToMatch',
+          'name' as PlacementRequestSortField,
+          'asc',
+          expectedHrefPrefix,
+        ),
+        tableRows: dashboardTableRows(paginatedResponse.data, 'unableToMatch'),
+        pagination: pagination(
+          Number(paginatedResponse.pageNumber),
+          Number(paginatedResponse.totalPages),
+          expectedHrefPrefix,
+        ),
+      })
+
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
+        token,
+        { cruManagementAreaId: user.cruManagementArea.id, requestType: undefined, status: 'unableToMatch' },
+        undefined,
+        undefined,
+        undefined,
+      )
+
+      expect(getPaginationDetails.getPaginationDetails).toHaveBeenCalledWith(request, indexPath, {
+        status: 'unableToMatch',
+        cruManagementArea: user.cruManagementArea.id,
+      })
     })
 
     it('should render the pendingPlacement tab', async () => {
-      const requestHandler = cruDashboardController.index()
-
       const status = 'pendingPlacement'
       const cruManagementArea = 'some-cru-management-area-id'
       const releaseType = 'licence'
@@ -201,14 +294,12 @@ describe('CruDashboardController', () => {
         })
         .mockResolvedValue(paginatedApplications)
 
-      await requestHandler(requestWithQuery, response, next)
+      await cruDashboardController.index()(requestWithQuery, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
-        pageHeading: 'CRU Dashboard',
-        actions: cruDashboardActions(response.locals.user),
-        subheading:
-          'All applications that have been accepted but do not yet have an associated placement request are shown below',
+        ...defaultRenderParameters,
         activeTab: 'pendingPlacement',
+        subheading: 'Applications that have been accepted but do not yet have an associated request for placement.',
         tabs: cruDashboardTabItems(user, 'pendingPlacement', cruManagementArea),
         tableHead: pendingPlacementRequestTableHeader('name' as ApplicationSortField, 'asc', expectedHrefPrefix),
         tableRows: pendingPlacementRequestTableRows(paginatedApplications.data),
@@ -217,7 +308,6 @@ describe('CruDashboardController', () => {
           Number(paginatedApplications.totalPages),
           expectedHrefPrefix,
         ),
-        cruManagementAreas,
         cruManagementArea,
         releaseTypes: releaseTypeSelectOptions(releaseType),
       })
