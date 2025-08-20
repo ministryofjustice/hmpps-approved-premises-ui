@@ -3,6 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
 import * as matchingInformtionUtils from '../../../utils/matchingInformationUtils'
+import * as formUtils from '../../../../utils/formUtils'
 
 jest.mock('../../../../utils/applications/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
@@ -49,7 +50,7 @@ const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBo
 
 describe('MatchingInformation', () => {
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.restoreAllMocks()
   })
 
   describe('title', () => {
@@ -87,28 +88,19 @@ describe('MatchingInformation', () => {
       })
     })
 
-    it.each([
-      ['1', undefined, false],
-      ['1', '', false],
-      ['-1', '5', true],
-      ['7', '0', false],
-    ])(
-      'if lengthOfStayAgreed is "no", weeks is "%s" and days is "%s" it should error %s',
-      (weeks: string, days: string, shouldError: boolean) => {
-        const page = new MatchingInformation(
-          { ...defaultArguments, lengthOfStayAgreed: 'no', lengthOfStayWeeks: weeks, lengthOfStayDays: days },
-          assessment,
-        )
+    it('validates the duration fields', () => {
+      jest.spyOn(formUtils, 'validWeeksAndDaysDuration')
 
-        expect(page.errors()).toEqual(
-          shouldError
-            ? {
-                lengthOfStay: 'You must provide a recommended length of stay',
-              }
-            : {},
-        )
-      },
-    )
+      const page = new MatchingInformation(
+        { ...defaultArguments, lengthOfStayAgreed: 'no', lengthOfStayWeeks: 'a', lengthOfStayDays: 'b' },
+        assessment,
+      )
+
+      expect(page.errors()).toEqual({
+        lengthOfStay: 'You must provide a recommended length of stay',
+      })
+      expect(formUtils.validWeeksAndDaysDuration).toHaveBeenCalledWith('a', 'b')
+    })
 
     it("should return an error if the type is not available for a women's application", () => {
       const page = new MatchingInformation({ ...defaultArguments, apType: 'isMHAPElliottHouse' }, weAssessment)

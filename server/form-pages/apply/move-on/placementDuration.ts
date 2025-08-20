@@ -8,6 +8,7 @@ import TasklistPage from '../../tasklistPage'
 import { sentenceCase } from '../../../utils/utils'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
+import { validWeeksAndDaysDuration } from '../../../utils/formUtils'
 
 type PlacementDurationBody = {
   differentDuration: YesOrNo
@@ -73,11 +74,7 @@ export default class PlacementDuration implements TasklistPage {
     }
 
     if (this.body.differentDuration === 'yes') {
-      if (!this.body.durationDays) {
-        errors.duration = 'You must specify the duration of the placement'
-      }
-
-      if (!this.body.durationWeeks) {
+      if (!validWeeksAndDaysDuration(this.body.durationWeeks, this.body.durationDays)) {
         errors.duration = 'You must specify the duration of the placement'
       }
 

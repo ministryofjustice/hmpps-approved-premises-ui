@@ -7,6 +7,7 @@ import { applicationFactory } from '../../../testutils/factories'
 import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
 import { DateFormats } from '../../../utils/dateUtils'
+import * as formUtils from '../../../utils/formUtils'
 
 jest.mock('../../../utils/applications/getDefaultPlacementDurationInDays')
 jest.mock('../../../utils/applications/arrivalDateFromApplication')
@@ -106,21 +107,23 @@ describe('PlacementDuration', () => {
       })
     })
 
-    it('returns an error if the different duration response is yes but both durations are not set', () => {
-      let page = new PlacementDuration(
-        { differentDuration: 'yes', durationWeeks: '1', reason: 'Some reason' },
+    it('validates the duration fields', () => {
+      jest.spyOn(formUtils, 'validWeeksAndDaysDuration')
+
+      const page = new PlacementDuration(
+        {
+          differentDuration: 'yes',
+          durationWeeks: 'a',
+          durationDays: 'b',
+          reason: 'Some reason',
+        },
         application,
       )
 
       expect(page.errors()).toEqual({
         duration: 'You must specify the duration of the placement',
       })
-
-      page = new PlacementDuration({ differentDuration: 'yes', durationDays: '1', reason: 'Some reason' }, application)
-
-      expect(page.errors()).toEqual({
-        duration: 'You must specify the duration of the placement',
-      })
+      expect(formUtils.validWeeksAndDaysDuration).toHaveBeenCalledWith('a', 'b')
     })
   })
 

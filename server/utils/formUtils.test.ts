@@ -17,6 +17,7 @@ import {
   summaryListItem,
   tierSelectOptions,
   validPostcodeArea,
+  validWeeksAndDaysDuration,
 } from './formUtils'
 
 describe('formUtils', () => {
@@ -519,6 +520,29 @@ describe('formUtils', () => {
 
     it('when passed a non-postcode string returns false', () => {
       expect(validPostcodeArea('foo')).toBe(false)
+    })
+  })
+
+  describe('validWeeksAndDaysDuration', () => {
+    it.each([
+      ['1', '1'],
+      ['12', ''],
+      ['', '8'],
+      ['0', '12'],
+      ['3', '0'],
+    ])('returns true if weeks is "%s" and days is "%s"', (durationWeeks: string, durationDays: string) => {
+      expect(validWeeksAndDaysDuration(durationWeeks, durationDays)).toBe(true)
+    })
+
+    it.each([
+      ['', ''],
+      [undefined, undefined],
+      ['1', 'a'],
+      ['a', 'a'],
+      ['1', '-1'],
+      ['a', ''],
+    ])('returns false if weeks is "%s" and days is "%s"', (durationWeeks: string, durationDays: string) => {
+      expect(validWeeksAndDaysDuration(durationWeeks, durationDays)).toBe(false)
     })
   })
 
