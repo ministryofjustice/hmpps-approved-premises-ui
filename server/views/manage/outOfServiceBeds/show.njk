@@ -1,8 +1,8 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% from "./partials/_bedDetails.njk" import outOfServiceBedDetails %}
 {% from "./partials/_timeline.njk" import outOfServiceBedTimeline %}
 {% from "./partials/_pageHeading.njk" import outOfServiceBedPageHeading %}
 
@@ -35,7 +35,7 @@
         {% include "../../_messages.njk" %}
         {{ outOfServiceBedTimeline(outOfServiceBed.revisionHistory) }}
     {% else %}
-        {{ outOfServiceBedDetails(outOfServiceBed, characteristicsHtml) }}
+        {{ govukSummaryList(summaryList) }}
     {% endif %}
 
 {% endblock %}
