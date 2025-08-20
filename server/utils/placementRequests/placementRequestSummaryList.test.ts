@@ -57,7 +57,7 @@ describe('placementRequestSummaryList', () => {
       expectedSummaryListItems({
         isWithdrawn: false,
         expectedApplicationId: undefined,
-        expectedLicenceExpiryDate: '',
+        expectedLicenceExpiryDate: undefined,
         expectedPostcode: placementRequest.location,
       }),
     )

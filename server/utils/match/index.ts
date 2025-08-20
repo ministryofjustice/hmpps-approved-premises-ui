@@ -1,6 +1,5 @@
 import {
   ApType,
-  ApprovedPremisesApplication,
   Cas1PlacementRequestDetail,
   Cas1Premises,
   Cas1PremisesSearchResultSummary,
@@ -58,9 +57,9 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     !isWomensApplication && summaryListItem('AP area', premises.apArea.name),
     summaryListItem('Room criteria', characteristicsBulletList(criteria, { noneText: 'No room criteria' }), 'html'),
     actualArrivalDate
-      ? summaryListItem('Actual arrival date', DateFormats.isoDateToUIDate(actualArrivalDate))
-      : summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(expectedArrivalDate)),
-    summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(expectedDepartureDate)),
+      ? summaryListItem('Actual arrival date', actualArrivalDate, 'date')
+      : summaryListItem('Expected arrival date', expectedArrivalDate, 'date'),
+    summaryListItem('Expected departure date', expectedDepartureDate, 'date'),
     summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
     releaseType && summaryListItem('Release type', allReleaseTypes[releaseType]),
   ].filter(Boolean)
@@ -80,42 +79,17 @@ export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<
   ) as Array<SpaceCharacteristic>
 }
 
-export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDate: string) => ({
-  key: {
-    text: isParole ? 'Estimated arrival date' : 'Requested arrival date',
-  },
-  value: {
-    text: DateFormats.isoDateToUIDate(arrivalDate),
-  },
-})
+export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDate: string) =>
+  summaryListItem(isParole ? 'Estimated arrival date' : 'Requested arrival date', arrivalDate, 'date')
 
-export const departureDateRow = (departureDate: string) => ({
-  key: {
-    text: 'Requested departure date',
-  },
-  value: {
-    text: DateFormats.isoDateToUIDate(departureDate),
-  },
-})
+export const departureDateRow = (departureDate: string) =>
+  summaryListItem('Requested departure date', departureDate, 'date')
 
-export const apTypeRow = (apType: ApType) => ({
-  key: {
-    text: 'Type of AP',
-  },
-  value: {
-    text: apTypeLongLabels[apType],
-  },
-})
+export const apTypeRow = (apType: ApType) => summaryListItem('Type of AP', apTypeLongLabels[apType])
 
 export const apTypeWithViewTimelineActionRow = (placementRequest: Cas1PlacementRequestDetail) => {
-  const apTypeItem = {
-    key: {
-      text: 'Type of AP',
-    },
-    value: {
-      text: apTypeLongLabels[placementRequest.type],
-    },
-  }
+  const apTypeItem = apTypeRow(placementRequest.type)
+
   if (placementRequest.application) {
     return {
       ...apTypeItem,
@@ -146,14 +120,7 @@ export const characteristicsDetails = (spaceSearchResult: SpaceSearchResult): st
 
 export const distanceRow = (spaceSearchResult: SpaceSearchResult, postcodeArea?: string) => {
   const roundedDistanceInMiles = Math.round(spaceSearchResult.distanceInMiles * 10) / 10
-  return {
-    key: {
-      text: 'Distance',
-    },
-    value: {
-      text: `${roundedDistanceInMiles} miles from ${postcodeArea || 'the desired location'}`,
-    },
-  }
+  return summaryListItem('Distance', `${roundedDistanceInMiles} miles from ${postcodeArea || 'the desired location'}`)
 }
 
 export const restrictionsRow = (spaceSearchResult: SpaceSearchResult): SummaryListItem => {
@@ -171,30 +138,11 @@ export const restrictionsRow = (spaceSearchResult: SpaceSearchResult): SummaryLi
     : undefined
 }
 
-export const releaseTypeRow = (placementRequest: PlacementRequest) => ({
-  key: {
-    text: 'Release type',
-  },
-  value: {
-    text: allReleaseTypes[placementRequest.releaseType],
-  },
-})
+export const releaseTypeRow = (placementRequest: PlacementRequest) =>
+  summaryListItem('Release type', allReleaseTypes[placementRequest.releaseType])
 
-export const licenceExpiryDateRow = (placementRequest: Cas1PlacementRequestDetail) => {
-  let licenceExpiryDate: string | undefined
-  if (placementRequest.application && 'licenceExpiryDate' in placementRequest.application) {
-    const application = placementRequest.application as ApprovedPremisesApplication
-    licenceExpiryDate = application.licenceExpiryDate
-  }
-  return {
-    key: {
-      text: 'Licence expiry date',
-    },
-    value: {
-      text: licenceExpiryDate ? DateFormats.isoDateToUIDate(licenceExpiryDate) : '',
-    },
-  }
-}
+export const licenceExpiryDateRow = (placementRequest: Cas1PlacementRequestDetail) =>
+  summaryListItem('Licence expiry date', placementRequest.application?.licenceExpiryDate, 'date')
 
 export const startDateObjFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
   const dateParts = params as ObjectWithDateParts<'startDate'>
@@ -207,23 +155,11 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
-export const lengthOfStayRow = (lengthInDays: number) => ({
-  key: {
-    text: 'Length of stay',
-  },
-  value: {
-    text: placementLength(lengthInDays),
-  },
-})
+export const lengthOfStayRow = (lengthInDays: number) =>
+  summaryListItem('Length of stay', placementLength(lengthInDays))
 
-export const preferredPostcodeRow = (postcodeDistrict: Cas1PlacementRequestDetail['location']) => ({
-  key: {
-    text: 'Preferred postcode',
-  },
-  value: {
-    text: postcodeDistrict,
-  },
-})
+export const preferredPostcodeRow = (postcodeDistrict: Cas1PlacementRequestDetail['location']) =>
+  summaryListItem('Preferred postcode', postcodeDistrict)
 
 export const keyDetails = (placementRequest: Cas1PlacementRequestDetail): KeyDetailsArgs => {
   const { person } = placementRequest

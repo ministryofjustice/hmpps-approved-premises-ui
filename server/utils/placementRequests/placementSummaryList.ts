@@ -1,7 +1,6 @@
 import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryList } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
-import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements'
 
 export const placementSummaryList = (placementRequest: Cas1PlacementRequestDetail): SummaryList => {
@@ -11,9 +10,9 @@ export const placementSummaryList = (placementRequest: Cas1PlacementRequestDetai
     return {
       rows: [
         summaryListItem('Approved Premises', booking.premises.name),
-        summaryListItem('Date of match', DateFormats.isoDateToUIDate(placementRequest.booking.createdAt)),
-        summaryListItem('Expected arrival date', DateFormats.isoDateToUIDate(booking.expectedArrivalDate)),
-        summaryListItem('Expected departure date', DateFormats.isoDateToUIDate(booking.expectedDepartureDate)),
+        summaryListItem('Date of match', placementRequest.booking.createdAt, 'date'),
+        summaryListItem('Expected arrival date', booking.expectedArrivalDate, 'date'),
+        summaryListItem('Expected departure date', booking.expectedDepartureDate, 'date'),
         summaryListItem('Status', statusTextMap[detailedStatus(booking)]),
         booking.deliusEventNumber && summaryListItem('Delius event number', booking.deliusEventNumber),
       ].filter(Boolean),

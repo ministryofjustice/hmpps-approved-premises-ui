@@ -31,16 +31,16 @@ export const allApprovedPremisesOptions = (approvedPremises: Array<Cas1PremisesB
 
 export const emergencyTransferSummaryList = (formData: TransferFormData): SummaryList => ({
   rows: [
-    summaryListItem('Date of transfer', DateFormats.isoDateToUIDate(formData.transferDate)),
+    summaryListItem('Date of transfer', formData.transferDate, 'date'),
     summaryListItem('Reason for transfer', 'Emergency transfer'),
     summaryListItem('Transfer AP', formData.destinationPremisesName),
-    summaryListItem('Placement end date', DateFormats.isoDateToUIDate(formData.placementEndDate)),
+    summaryListItem('Placement end date', formData.placementEndDate, 'date'),
   ],
 })
 
 export const plannedTransferSummaryList = (formData: TransferFormData): SummaryList => ({
   rows: [
-    summaryListItem('Date of transfer', DateFormats.isoDateToUIDate(formData.transferDate)),
+    summaryListItem('Date of transfer', formData.transferDate, 'date'),
     summaryListItem('Is the date flexible', sentenceCase(formData.isFlexible)),
     summaryListItem('Reason for transfer', getChangeRequestReasonText(formData.transferReason as ChangeRequestReason)),
     summaryListItem('Any other information', formData.notes, 'textBlock'),
