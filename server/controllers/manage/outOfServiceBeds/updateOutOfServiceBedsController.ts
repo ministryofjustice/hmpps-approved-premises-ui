@@ -41,6 +41,7 @@ export default class UpdateOutOfServiceBedsController {
       const {
         reason: { id: reason },
         referenceNumber,
+        notes,
       } = outOfServiceBed
 
       res.render('manage/outOfServiceBeds/update', {
@@ -52,7 +53,7 @@ export default class UpdateOutOfServiceBedsController {
         ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
         reason,
         referenceNumber,
-        notes: '',
+        notes,
         errors,
         errorSummary,
         errorTitle,

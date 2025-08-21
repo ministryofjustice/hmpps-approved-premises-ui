@@ -48,8 +48,8 @@ describe('Out of service beds', () => {
 
   describe('viewing an out of service bed record', () => {
     describe('for a new out of service bed with all nullable fields present in the initial OoS bed revision', () => {
-      it('should show a out of service bed', () => {
-        AND('I have created a out of service bed')
+      it('should show an out of service bed', () => {
+        GIVEN('I have created a out of service bed')
         const bed = { name: 'abc', id: '123' }
         const premises = premisesFactory.build()
         const outOfServiceBed = outOfServiceBedFactory.build({ bed })
@@ -81,7 +81,7 @@ describe('Out of service beds', () => {
 
     describe('for a legacy "lost bed" records migrated with all nullable fields not present in the initial OoS bed revision', () => {
       it('should show a out of service bed', () => {
-        AND('I have created a out of service bed')
+        GIVEN('I have created a out of service bed')
         const bed = { name: 'abc', id: '123' }
         const premises = premisesFactory.build()
         const outOfServiceBedRevision = outOfServiceBedRevisionFactory.build({

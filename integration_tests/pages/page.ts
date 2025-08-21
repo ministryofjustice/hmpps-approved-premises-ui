@@ -768,7 +768,7 @@ export default abstract class Page {
     }
 
     if (bedDetails.notes) {
-      cy.get('.govuk-summary-list__key').should('contain', 'Notes')
+      cy.get('.govuk-summary-list__key').should('contain', 'Additional information')
       cy.get('.govuk-summary-list__value').should('contain', bedDetails.notes)
     }
   }

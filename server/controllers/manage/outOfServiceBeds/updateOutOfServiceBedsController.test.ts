@@ -71,7 +71,7 @@ describe('updateOutOfServiceBedController', () => {
         ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
         reason: outOfServiceBed.reason.id,
         referenceNumber: outOfServiceBed.referenceNumber,
-        notes: '',
+        notes: outOfServiceBed.notes,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         errorTitle: errorsAndUserInput.errorTitle,

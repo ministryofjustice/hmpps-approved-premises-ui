@@ -15,7 +15,6 @@ import {
   IdentityBarMenuItem,
   ObjectWithDateParts,
   SummaryList,
-  SummaryListItem,
   TableCell,
   UserDetails,
 } from '@approved-premises/ui'
@@ -161,56 +160,18 @@ export const outOfServiceBedTabs = (
   },
 ]
 
-export const outOfServiceBedSummaryList = (outOfServiceBed: Cas1OutOfServiceBed): SummaryList => ({
+export const outOfServiceBedSummaryList = (
+  outOfServiceBed: Cas1OutOfServiceBed | Cas1OutOfServiceBedRevision,
+  suppressBlank = false,
+): SummaryList => ({
   rows: [
-    summaryListItem('Start date', DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'long' })),
-    summaryListItem('End date', DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'long' })),
-    summaryListItem('Reason', outOfServiceBed.reason.name),
-    summaryListItem('Reference/CRN', outOfServiceBed.referenceNumber),
-    summaryListItem('Notes', outOfServiceBed.notes, 'textBlock'),
-  ],
+    summaryListItem('Start date', outOfServiceBed.startDate, 'date', suppressBlank),
+    summaryListItem('End date', outOfServiceBed.endDate, 'date', suppressBlank),
+    summaryListItem('Reason', outOfServiceBed.reason?.name, undefined, suppressBlank),
+    summaryListItem('Reference/CRN', outOfServiceBed.referenceNumber, undefined, suppressBlank),
+    summaryListItem('Additional information', outOfServiceBed.notes, 'textBlock', suppressBlank),
+  ].filter(Boolean),
 })
-
-export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): SummaryList['rows'] => {
-  const summaryListItems: Array<SummaryListItem> = []
-
-  if (revision.startDate) {
-    summaryListItems.push({
-      key: textValue('Start date'),
-      value: textValue(DateFormats.isoDateToUIDate(revision.startDate, { format: 'long' })),
-    })
-  }
-
-  if (revision.endDate) {
-    summaryListItems.push({
-      key: textValue('End date'),
-      value: textValue(DateFormats.isoDateToUIDate(revision.endDate, { format: 'long' })),
-    })
-  }
-
-  if (revision.reason) {
-    summaryListItems.push({
-      key: textValue('Reason'),
-      value: textValue(revision.reason.name),
-    })
-  }
-
-  if (revision.referenceNumber) {
-    summaryListItems.push({
-      key: textValue('Reference/CRN'),
-      value: textValue(revision.referenceNumber),
-    })
-  }
-
-  if (revision.notes) {
-    summaryListItems.push({
-      key: textValue('Notes'),
-      value: textValue(revision.notes),
-    })
-  }
-
-  return summaryListItems
-}
 
 export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1OutOfServiceBedRevision>) => {
   return revisions.sort((a, b) => {

@@ -28,12 +28,14 @@ import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils
 import {
   CreateOutOfServiceBedBody,
   outOfServiceBedActions,
+  outOfServiceBedSummaryList,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   outOfServiceBedTabs,
   premisesIndexTabs,
 } from '../../../utils/outOfServiceBedUtils'
 import { ValidationError } from '../../../utils/errors'
+import { summaryListItem } from '../../../utils/formUtils'
 
 jest.mock('../../../utils/getPaginationDetails')
 
@@ -212,7 +214,6 @@ describe('OutOfServiceBedsController', () => {
         .calledWith(request.user.token, premisesId, outOfServiceBed.id)
         .mockResolvedValue(outOfServiceBed)
 
-      const requestHandler = outOfServiceBedController.show()
       const req = {
         ...request,
         params: {
@@ -222,17 +223,27 @@ describe('OutOfServiceBedsController', () => {
           tab: 'details',
         },
       }
-      await requestHandler(req, response, next)
+      await outOfServiceBedController.show()(req, response, next)
+
+      const summaryList = outOfServiceBedSummaryList(outOfServiceBed)
+      summaryList.rows = [
+        ...summaryList.rows,
+        summaryListItem(
+          'Characteristics',
+          characteristicsBulletList(bed.characteristics, {
+            labels: roomCharacteristicMap,
+          }),
+          'html',
+        ),
+      ]
 
       expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/show', {
+        summaryList,
         outOfServiceBed,
         premisesId,
         bedId: bed.id,
         id: outOfServiceBed.id,
         activeTab,
-        characteristicsHtml: characteristicsBulletList(bed.characteristics, {
-          labels: roomCharacteristicMap,
-        }),
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
         backLink,
         actions: outOfServiceBedActions(request.session.user, premisesId, bed.id, outOfServiceBed.id),

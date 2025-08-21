@@ -24,9 +24,7 @@
         </p>
         <div class="moj-timeline__description">
           {{
-            govukSummaryList({
-              rows:OutOfServiceBedUtils.bedRevisionDetails(revision)
-            })
+            govukSummaryList(OutOfServiceBedUtils.outOfServiceBedSummaryList(revision,true))
           }}
         </div>
       </div>
