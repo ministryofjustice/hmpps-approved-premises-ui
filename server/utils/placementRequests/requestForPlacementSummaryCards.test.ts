@@ -61,7 +61,7 @@ describe('RequestForPlacementSummaryCards', () => {
       expect(summaryCard).toEqual({
         card: expect.objectContaining({
           title: {
-            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.createdAt, { format: 'short' })}`,
+            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.submittedAt, { format: 'short' })}`,
             headingLevel: '3',
           },
           attributes: {
@@ -194,7 +194,7 @@ describe('RequestForPlacementSummaryCards', () => {
       expect(summaryCard).toEqual({
         card: expect.objectContaining({
           title: {
-            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.createdAt, { format: 'short' })}`,
+            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.submittedAt, { format: 'short' })}`,
             headingLevel: '3',
           },
           attributes: {
