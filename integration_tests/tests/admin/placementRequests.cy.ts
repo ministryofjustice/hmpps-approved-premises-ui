@@ -360,7 +360,7 @@ context('Placement Requests', () => {
         const listPage = ListPage.visit()
 
         THEN('I should see a list of placement requests')
-        listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
+        listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
         WHEN('I click next')
         listPage.clickNext()
@@ -409,7 +409,7 @@ context('Placement Requests', () => {
           const listPage = ListPage.visit()
 
           THEN('I should see a list of placement requests')
-          listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
+          listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
           WHEN('I sort by expected arrival in ascending order')
           listPage.clickSortBy(field)
