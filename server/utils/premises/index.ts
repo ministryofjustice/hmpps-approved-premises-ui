@@ -1,6 +1,5 @@
 import type {
   Cas1CurrentKeyWorker,
-  Cas1OverbookingRange,
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1SpaceBookingResidency,

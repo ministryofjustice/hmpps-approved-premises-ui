@@ -18,11 +18,10 @@ import {
 import {
   keyworkersToSelectOptions,
   premisesActions,
-  premisesOverbookingSummary,
   PremisesTab,
   premisesTableHead,
   premisesTableRows,
-  summaryListForPremises
+  summaryListForPremises,
 } from '../../../utils/premises'
 import { roleToPermissions } from '../../../utils/users/roles'
 
