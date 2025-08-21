@@ -75,8 +75,11 @@ context('Premises occupancy', () => {
 
       // and the calendar should be shown
       occPage.shouldShowCalendarHeading(startDate, DateFormats.durationBetweenDates(endDate, startDate).number)
-      occPage.shouldShowCalendarKey('threeColour')
-      occPage.shouldShowCalendar({ premisesCapacity, verbose: true })
+      occPage.shouldShowCalendar({
+        premisesCapacity,
+        colourMode: 'threeColour',
+        logic: 'manage',
+      })
     })
 
     it('should allow the user to change the start date and the calendar duration', () => {

@@ -158,7 +158,6 @@ context('National occupancy view', () => {
     page.clickButton('Apply filters')
 
     AND('I should see the calendar')
-    page.shouldShowCalendarKey('twoColour')
     page.shouldShowCalendar({ premisesCapacity: capacities[1].premiseCapacity, criteria: filterSettings.roomCriteria })
 
     WHEN(`I change the 'filter' to no room criteria`)
@@ -166,7 +165,6 @@ context('National occupancy view', () => {
     page.clickButton('Apply filters')
 
     THEN('I should see the calendar in no criteria format')
-    page.shouldShowCalendarKey('twoColour')
     page.shouldShowCalendar({ premisesCapacity: capacities[1].premiseCapacity })
 
     WHEN('I click on a day')
