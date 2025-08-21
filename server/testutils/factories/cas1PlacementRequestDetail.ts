@@ -54,6 +54,7 @@ class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDeta
     const spaceBooking = booking || cas1SpaceBookingSummaryFactory.build()
     const bookingSummary = placementRequestBookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
     return this.params({
+      status: 'matched',
       booking: bookingSummary,
       legacyBooking: undefined,
       spaceBookings: [spaceBooking],

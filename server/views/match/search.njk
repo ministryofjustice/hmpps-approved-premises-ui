@@ -126,10 +126,10 @@
 
             {% endfor %}
 
-            <h3 class="govuk-heading-m">Mark this case as unable to match</h3>
-            <p>If there are no suitable results for your search, mark this case as unable to match.</p>
+            <h3 class="govuk-heading-m">Mark this case as unable to book</h3>
+            <p>If there are no suitable results for your search, mark this case as unable to book.</p>
             {{ govukButton({
-                text: "Unable to match",
+                text: "Unable to book",
                 href: paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }),
                 preventDoubleClick: true
             }) }}

@@ -17,30 +17,43 @@ export const dashboardTableRows = (
   placementRequests: Array<Cas1PlacementRequestSummary>,
   status?: PlacementRequestStatus,
 ): Array<TableRow> =>
-  placementRequests.map(placementRequest => [
-    nameCell(placementRequest),
-    htmlCell(tierBadge(placementRequest.personTier)),
-    textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
-    textCell('N/A'),
-    textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
-    status === 'matched'
-      ? textCell(placementRequest.firstBookingPremisesName)
-      : durationCell(placementRequest.requestedPlacementDuration),
-    textCell(placementRequest.isParole ? 'Parole' : 'Standard release'),
-    textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
-  ])
+  placementRequests.map(placementRequest => {
+    const row = [
+      nameCell(placementRequest),
+      htmlCell(tierBadge(placementRequest.personTier)),
+      textCell(placementRequest.isParole ? 'Parole' : 'Standard release'),
+    ]
+
+    if (status === 'matched') {
+      return [
+        ...row,
+        textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
+        textCell(placementRequest.firstBookingPremisesName),
+      ]
+    }
+
+    row.push(
+      textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
+      textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
+      durationCell(placementRequest.requestedPlacementDuration),
+    )
+
+    if (status === undefined) {
+      row.push(textCell(placementRequestStatus[placementRequest.placementRequestStatus]))
+    }
+
+    return row
+  })
 
 export const durationCell = (duration: number): TableCell => {
   return { text: DateFormats.formatDuration(daysToWeeksAndDays(duration), ['weeks', 'days']) }
 }
 
 export const nameCell = (placementRequest: Cas1PlacementRequestSummary): TableCell => {
-  const name = displayName(placementRequest.person, { showCrn: true })
-
   if (isFullPerson(placementRequest.person)) {
     return htmlCell(
       linkTo(adminPaths.admin.placementRequests.show({ placementRequestId: placementRequest.id }), {
-        text: name,
+        text: `${displayName(placementRequest.person)}, ${placementRequest.person.crn}`,
         attributes: {
           'data-cy-placementRequestId': placementRequest.id,
           'data-cy-applicationId': placementRequest.applicationId,
@@ -49,7 +62,7 @@ export const nameCell = (placementRequest: Cas1PlacementRequestSummary): TableCe
     )
   }
 
-  return textCell(name)
+  return textCell(displayName(placementRequest.person, { showCrn: true }))
 }
 
 export const dashboardTableHeader = (
@@ -58,28 +71,28 @@ export const dashboardTableHeader = (
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
-  return [
-    sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
-    sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-    sortHeader<PlacementRequestSortField>(
-      'Requested arrival date',
-      'expected_arrival',
-      sortBy,
-      sortDirection,
-      hrefPrefix,
-    ),
-    {
-      text: 'Booked arrival date',
-    },
-    sortHeader<PlacementRequestSortField>('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
-    status === 'matched'
-      ? {
-          text: 'Approved Premises',
-        }
-      : sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
-    sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-    {
-      text: 'Status',
-    },
+  const sortColumn = (label: string, sortableBy: PlacementRequestSortField) =>
+    sortHeader<PlacementRequestSortField>(label, sortableBy, sortBy, sortDirection, hrefPrefix)
+
+  const columns = [
+    sortColumn('Name and CRN', 'person_name'),
+    sortColumn('Tier', 'person_risks_tier'),
+    sortColumn('Request type', 'request_type'),
   ]
+
+  if (status === 'matched') {
+    return [...columns, { text: 'Booked arrival date' }, { text: 'Approved Premises' }]
+  }
+
+  columns.push(
+    sortColumn('Application date', 'application_date'),
+    sortColumn('Requested arrival date', 'expected_arrival'),
+    sortColumn('Length of stay', 'duration'),
+  )
+
+  if (status === undefined) {
+    columns.push({ text: 'Status' })
+  }
+
+  return columns
 }

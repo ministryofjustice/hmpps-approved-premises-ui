@@ -93,6 +93,6 @@ export default class SearchPage extends Page {
   }
 
   clickUnableToMatch(): void {
-    cy.get('.govuk-button').contains('Unable to match').click()
+    cy.get('.govuk-button').contains('Unable to book').click()
   }
 }
