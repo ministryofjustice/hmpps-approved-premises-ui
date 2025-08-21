@@ -82,7 +82,6 @@ import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
 import cas1PremisesDaySummaryFactory from './cas1PremisesDaySummary'
 import cas1OutOfServiceBedSummaryFactory from './cas1OutOfServiceBedSummary'
-import cas1OverbookingRangeFactory from './cas1OverbookingRange'
 import spaceSearchStateFactory from './spaceSearchState'
 import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
@@ -144,7 +143,6 @@ export {
   cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
-  cas1OverbookingRangeFactory,
   cas1OutOfServiceBedReasonFactory,
   cas1PlacementRequestDetailFactory,
   cas1PlacementRequestSummaryFactory,

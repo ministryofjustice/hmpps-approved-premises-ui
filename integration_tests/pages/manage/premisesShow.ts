@@ -1,18 +1,15 @@
-import type { Cas1OverbookingRange, Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import type { Cas1Premises, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { displayName } from '../../../server/utils/personUtils'
 import { canonicalDates, detailedStatus, statusTextMap } from '../../../server/utils/placements'
-import { cas1OverbookingRangeFactory } from '../../../server/testutils/factories'
 
 export default class PremisesShowPage extends Page {
   constructor(private readonly premises: Cas1Premises) {
     super(premises.name)
   }
-
-  static overbookingSummary: Array<Cas1OverbookingRange> = cas1OverbookingRangeFactory.buildList(4)
 
   static visit(premises: Cas1Premises): PremisesShowPage {
     cy.visit(paths.premises.show({ premisesId: premises.id }))
