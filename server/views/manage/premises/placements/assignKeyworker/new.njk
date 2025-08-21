@@ -1,18 +1,15 @@
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
-
-{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 
 {% extends "partials/layout-with-details.njk" %}
 
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: paths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
+        href: backlink
     }) }}
 {% endblock %}
 
@@ -23,14 +20,14 @@
         <div class="govuk-grid-column-two-thirds-from-desktop">
             {{ showErrorSummary(errorSummary, errorTitle) }}
 
-            <h1 class="govuk-heading-l">Edit keyworker details</h1>
+            <h1 class="govuk-heading-l">Assign or change someone’s keyworker </h1>
         </div>
     </div>
 
     {{ govukSummaryList({
         rows: [{
             key: {
-                text: "Keyworker"
+                text: "Currently assigned keyworker"
             },
             value: {
                 text: currentKeyworkerName
@@ -40,18 +37,22 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
-            <form action="{{ paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }) }}"
-                  method="post">
+            <form method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ govukSelect({
-                    label: {
-                        text: "Select keyworker",
-                        classes: "govuk-label--m"
+                {{ govukRadios({
+                    name: "keyworker",
+                    fieldset: {
+                        legend: {
+                            text: "Select a keyworker",
+                            classes: "govuk-fieldset__legend--m"
+                        }
                     },
-                    id: "staffCode",
-                    name: "staffCode",
-                    items: keyworkersOptions
+                    hint: {
+                        text: "If the person you are looking for does not appear on this list, select ‘assign a different keyworker’."
+                    },
+                    items: keyworkersOptions,
+                    errorMessage: errors.keyworker
                 }) }}
 
                 {{ govukButton({

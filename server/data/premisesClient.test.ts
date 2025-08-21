@@ -10,6 +10,7 @@ import { createMock } from '@golevelup/ts-jest'
 import { Response } from 'express'
 import {
   cas1BedDetailFactory,
+  cas1CurrentKeyworkerFactory,
   cas1NationalOccupancyFactory,
   cas1NationalOccupancyParametersFactory,
   cas1PremiseCapacityFactory,
@@ -22,7 +23,6 @@ import {
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
-  staffMemberFactory,
 } from '../testutils/factories'
 import PremisesClient from './premisesClient'
 import paths from '../paths/api'
@@ -142,7 +142,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       },
     )
 
-    it('should return a list of all placements matching a keyworker code, or a CRN or name, for a premises', async () => {
+    it('should return a list of all placements matching a keyworker user ID, or a CRN or name, for a premises', async () => {
       const paginatedPlacements = paginatedResponseFactory.build({
         data: cas1SpaceBookingSummaryFactory.buildList(3),
         pageSize: '20',
@@ -150,7 +150,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
         totalResults: '40',
       }) as PaginatedResponse<Cas1SpaceBookingSummary>
       const crnOrName = faker.person.firstName()
-      const keyWorkerStaffCode = faker.string.alphanumeric(8)
+      const keyWorkerUserId = faker.string.uuid()
       const page = 1
       const sortBy = 'canonicalArrivalDate'
       const sortDirection = 'desc'
@@ -163,7 +163,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
           path: paths.premises.placements.index({ premisesId: premises.id }),
           query: {
             crnOrName,
-            keyWorkerStaffCode,
+            keyWorkerUserId,
             sortBy,
             sortDirection,
             page: String(page),
@@ -187,7 +187,7 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
       const output = await premisesClient.getPlacements({
         premisesId: premises.id,
         crnOrName,
-        keyWorkerStaffCode,
+        keyWorkerUserId,
         page,
         perPage: Number(paginatedPlacements.pageSize),
         sortBy,
@@ -376,28 +376,28 @@ describeCas1NamespaceClient('PremisesCas1Client', provider => {
     })
   })
 
-  describe('getStaff', () => {
-    it('should return a list of staff for a given premises', async () => {
-      const staffList = staffMemberFactory.buildList(5)
+  describe('getCurrentKeyworkers', () => {
+    it('should return a list of users currently assigned as keyworkers for a given premises', async () => {
+      const keyworkers = cas1CurrentKeyworkerFactory.buildList(15)
 
       await provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get a list of staff for a premises',
+        uponReceiving: 'A request to get a list of users currently assigned as keyworkers for a premises',
         withRequest: {
           method: 'GET',
-          path: paths.premises.staffMembers.index({ premisesId: premises.id }),
+          path: paths.premises.currentKeyworkers({ premisesId: premises.id }),
           headers: {
             authorization: `Bearer ${token}`,
           },
         },
         willRespondWith: {
           status: 200,
-          body: staffList,
+          body: keyworkers,
         },
       })
 
-      const output = await premisesClient.getStaff(premises.id)
-      expect(output).toEqual(staffList)
+      const output = await premisesClient.getCurrentKeyworkers(premises.id)
+      expect(output).toEqual(keyworkers)
     })
   })
 

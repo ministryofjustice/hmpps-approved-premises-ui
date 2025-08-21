@@ -8,6 +8,7 @@ import {
   Cas1SpaceBooking,
   NamedId,
 } from '@approved-premises/api'
+import { RadioItem } from '@approved-premises/ui'
 import { ValidationError } from '../../../utils/errors'
 import { PlacementRequestService, PlacementService } from '../../../services'
 import paths from '../../../paths/admin'
@@ -46,7 +47,7 @@ export default class ChangeRequestsController {
       const changeRequestSummary = changeRequestSummaryList(changeRequest)
       const rejectionOptions = mapChangeRequestReasonsToRadios(rejectionReasons, '', {})
 
-      const decisionOptions: Array<{ value: string; text: string } | { divider: 'or' }> = [
+      const decisionOptions: Array<RadioItem> = [
         ...rejectionOptions,
         { divider: 'or' },
         { text: 'Progress appeal', value: 'progress' },

@@ -4,7 +4,6 @@ import {
   cas1PremisesFactory,
   cas1PremisesLocalRestrictionSummaryFactory,
   cas1PremisesNewLocalRestrictionFactory,
-  staffMemberFactory,
 } from '../../../server/testutils/factories'
 import { PremisesShowPage } from '../../pages/manage'
 import Page from '../../pages/page'
@@ -16,13 +15,12 @@ import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 describe('Local restrictions', () => {
   const premises = cas1PremisesFactory.build({ localRestrictions: [] })
-  const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
   beforeEach(() => {
     cy.task('reset')
 
     cy.task('stubSinglePremises', premises)
-    cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
+    cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id })
     cy.task('stubSpaceBookingSummaryList', {
       premisesId: premises.id,
       placements: [],

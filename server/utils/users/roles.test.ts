@@ -1,18 +1,12 @@
 import { ApprovedPremisesUserRole } from '@approved-premises/api'
 import { filterAllocationRoles, hasPermission, hasRole, roleToPermissions } from './roles'
 import { userDetailsFactory } from '../../testutils/factories'
+import rolesToPermissions from './data/rolesToPermissions.json'
 
 describe('roles utilities', () => {
   describe('roleToPermissions', () => {
-    it('returns an array of permissions for the given role', () => {
-      expect(roleToPermissions('user_manager')).toEqual(['cas1_user_list', 'cas1_user_management'])
-      expect(roleToPermissions('assessor')).toEqual([
-        'cas1_assess_appealed_application',
-        'cas1_assess_application',
-        'cas1_assess_placement_application',
-        'cas1_offline_application_view',
-        'cas1_view_assigned_assessments',
-      ])
+    it.each(rolesToPermissions)('returns an array of permissions for the role $name', ({ name, permissions }) => {
+      expect(roleToPermissions(name as ApprovedPremisesUserRole)).toEqual(permissions)
     })
 
     it('returns an empty array for a role that does not have a mapping', () => {

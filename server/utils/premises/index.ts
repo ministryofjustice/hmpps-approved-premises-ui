@@ -1,4 +1,5 @@
 import type {
+  Cas1CurrentKeyWorker,
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1SpaceBookingResidency,
@@ -129,6 +130,25 @@ export const premisesTabItems = (premises: Cas1Premises, activeTab?: PremisesTab
   })
 }
 
+export const keyworkersToSelectOptions = (
+  currentKeyworkers: Array<Cas1CurrentKeyWorker>,
+  activeTab: PremisesTab,
+  selected?: string,
+): Array<SelectOption> => [
+  { text: 'All keyworkers', value: '' },
+  ...currentKeyworkers
+    .filter(
+      keyworker =>
+        (activeTab === 'upcoming' && keyworker.upcomingBookingCount > 0) ||
+        (activeTab === 'current' && keyworker.currentBookingCount > 0),
+    )
+    .map(keyworker => ({
+      text: keyworker.summary.name,
+      value: keyworker.summary.id,
+      selected: selected === keyworker.summary.id || undefined,
+    })),
+]
+
 type ColumnField = Cas1SpaceBookingSummarySortField | 'status'
 
 type ColumnDefinition = {
@@ -181,7 +201,7 @@ export const placementTableRows = (
       tier: htmlValue(getTierOrBlank(tier)),
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
-      keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
+      keyWorkerName: textValue(keyWorkerAllocation?.name || 'Not assigned'),
       status: placementStatusHtml(placement),
     }
 

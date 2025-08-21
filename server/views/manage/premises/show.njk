@@ -57,7 +57,7 @@
             {% if activeTab === 'upcoming' or activeTab === 'current' %}
                 {% call filterWrapper('Filter') %}
                     <input type="hidden" name="activeTab" value="{{ activeTab }}" />
-                    {{ filterSelect('keyworker','Keyworker',convertObjectsToSelectOptions(keyworkersList, 'All keyworkers', 'name', 'code', 'keyworker')) }}
+                    {{ filterSelect('keyworker', 'Keyworker', keyworkersSelectOptions) }}
                 {%- endcall %}
             {% endif %}
 

@@ -14,6 +14,7 @@ import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
   cas1BedDetailFactory,
+  cas1CurrentKeyworkerFactory,
   cas1NationalOccupancyFactory,
   cas1NationalOccupancyParametersFactory,
   cas1PremiseCapacityFactory,
@@ -26,7 +27,6 @@ import {
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   paginatedResponseFactory,
-  staffMemberFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/premisesClient')
@@ -251,8 +251,8 @@ describe('PremisesService', () => {
       })
     })
 
-    it('returns placements filtered by keyworker staff code for a given premises', async () => {
-      const keyWorkerStaffCode = 'Foo'
+    it('returns placements filtered by keyworker user ID for a given premises', async () => {
+      const keyWorkerUserId = 'Foo'
       const sortBy = 'canonicalArrivalDate'
       const sortDirection = 'desc'
       const page = 1
@@ -265,7 +265,7 @@ describe('PremisesService', () => {
         perPage,
         sortBy,
         sortDirection,
-        keyWorkerStaffCode,
+        keyWorkerUserId,
       })
 
       expect(result).toEqual(paginatedPlacements)
@@ -273,7 +273,7 @@ describe('PremisesService', () => {
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getPlacements).toHaveBeenCalledWith({
         premisesId,
-        keyWorkerStaffCode,
+        keyWorkerUserId,
         page,
         perPage,
         sortBy,
@@ -299,33 +299,16 @@ describe('PremisesService', () => {
     })
   })
 
-  describe('getStaff', () => {
-    it('on success returns the list of staff in a premises', async () => {
-      const staffList = staffMemberFactory.buildList(5)
-      premisesClient.getStaff.mockResolvedValue(staffList)
+  describe('getCurrentKeyworkers', () => {
+    it('returns the list of users currently assigned as keyworkers for the premises', async () => {
+      const keyworkers = cas1CurrentKeyworkerFactory.buildList(5)
+      premisesClient.getCurrentKeyworkers.mockResolvedValue(keyworkers)
 
-      const result = await service.getStaff(token, premisesId)
+      const result = await service.getCurrentKeyworkers(token, premisesId)
 
-      expect(result).toEqual(staffList)
-
+      expect(result).toEqual(keyworkers)
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
-    })
-  })
-
-  describe('getKeyworkers', () => {
-    it('returns the list of staff filtered for keyworkers in a premises', async () => {
-      const keyworker = staffMemberFactory.build({ keyWorker: true })
-      const notKeyworker = staffMemberFactory.build({ keyWorker: false })
-
-      premisesClient.getStaff.mockResolvedValue([keyworker, notKeyworker])
-
-      const result = await service.getKeyworkers(token, premisesId)
-
-      expect(result).toEqual([keyworker])
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.getStaff).toHaveBeenCalledWith(premisesId)
+      expect(premisesClient.getCurrentKeyworkers).toHaveBeenCalledWith(premisesId)
     })
   })
 

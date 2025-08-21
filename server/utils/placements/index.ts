@@ -4,16 +4,9 @@ import {
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
   Person,
-  StaffMember,
+  Cas1CurrentKeyWorker,
 } from '@approved-premises/api'
-import {
-  KeyDetailsArgs,
-  RadioItem,
-  SelectOption,
-  SummaryList,
-  SummaryListItem,
-  UserDetails,
-} from '@approved-premises/ui'
+import { KeyDetailsArgs, RadioItem, SummaryList, SummaryListItem, UserDetails } from '@approved-premises/ui'
 import { differenceInCalendarDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
@@ -120,7 +113,10 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     actionList.push({
       text: 'Edit keyworker',
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.keyworker.new({
+        premisesId: placement.premises.id,
+        placementId: placement.id,
+      }),
     })
   }
 
@@ -232,7 +228,7 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
             ),
           ),
       ),
-      summaryRow('Key worker', keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
+      summaryRow('Key worker', keyWorkerAllocation?.name || 'Not assigned'),
       summaryRow('Delius Event Number', deliusEventNumber),
     ].filter(Boolean),
   }
@@ -335,19 +331,26 @@ export const otherBookings = (placement: Cas1SpaceBooking): SummaryList => ({
   ],
 })
 
-export const renderKeyworkersSelectOptions = (
-  staffList: Array<StaffMember>,
-  placement: Cas1SpaceBooking,
-): Array<SelectOption> => [
-  { text: 'Select a keyworker', value: null },
-  ...staffList
-    .filter(({ code }) => placement.keyWorkerAllocation?.keyWorker?.code !== code)
-    .map(({ name, code }) => ({
-      text: `${name}`,
-      value: `${code}`,
-      selected: false,
-    })),
-]
+export const renderKeyworkersRadioOptions = (
+  currentKeyworkers: Array<Cas1CurrentKeyWorker>,
+  placement?: Cas1SpaceBooking,
+): Array<RadioItem> => {
+  const currentKeyworkersRadios = currentKeyworkers
+    .filter(keyworker => keyworker.summary.id !== placement?.keyWorkerAllocation?.userId)
+    .map(keyworker => ({
+      text: keyworker.summary.name,
+      value: keyworker.summary.id,
+    }))
+
+  return [
+    ...currentKeyworkersRadios,
+    currentKeyworkersRadios.length ? { divider: 'or' } : undefined,
+    {
+      text: 'Assign a different keyworker',
+      value: 'new',
+    },
+  ].filter(Boolean)
+}
 
 export type PlacementTab = 'application' | 'assessment' | 'placementRequest' | 'placement' | 'timeline'
 
@@ -399,7 +402,7 @@ export const processReferenceData = <T>(input: Array<IdAndName>, subst: IdAndNam
 }
 
 export const injectRadioConditionalHtml = (input: Array<RadioItem>, value: string, html: string): Array<RadioItem> =>
-  input.map((row: RadioItem) => (row.value === value ? { ...row, conditional: { html } } : row))
+  input.map(row => ('value' in row && row.value === value ? { ...row, conditional: { html } } : row))
 
 export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
 export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

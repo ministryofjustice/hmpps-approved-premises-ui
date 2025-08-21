@@ -1,61 +1,139 @@
 import { type Request, RequestHandler, type Response } from 'express'
-import { StaffMember } from '@approved-premises/api'
-import { PlacementService, PremisesService } from '../../../../services'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
+import { TableRow } from '@approved-premises/ui'
+import { PlacementService, PremisesService, UserService } from '../../../../services'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateErrorMessages,
+  generateErrorSummary,
+} from '../../../../utils/validation'
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
-import { placementKeyDetails, renderKeyworkersSelectOptions } from '../../../../utils/placements'
+import { placementKeyDetails, renderKeyworkersRadioOptions } from '../../../../utils/placements'
+import { keyworkersTableHead, keyworkersTableRows } from '../../../../utils/placements/keyworkers'
+import { Pagination, pagination as buildPagination } from '../../../../utils/pagination'
+import { createQueryString } from '../../../../utils/utils'
 
 export default class KeyworkerController {
   constructor(
     private readonly premisesService: PremisesService,
     private readonly placementService: PlacementService,
+    private readonly userService: UserService,
   ) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { token } = req.user
       const { premisesId, placementId } = req.params
-      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const placement = await this.premisesService.getPlacement({ token, premisesId, placementId })
-      const keyworkers: Array<StaffMember> = await this.premisesService.getKeyworkers(token, premisesId)
+      const [placement, currentKeyworkers] = await Promise.all([
+        await this.premisesService.getPlacement({
+          token,
+          premisesId,
+          placementId,
+        }),
+        await this.premisesService.getCurrentKeyworkers(token, premisesId),
+      ])
 
-      return res.render('manage/premises/placements/keyworker', {
+      return res.render('manage/premises/placements/assignKeyworker/new', {
         contextKeyDetails: placementKeyDetails(placement),
-        currentKeyworkerName: placement.keyWorkerAllocation?.keyWorker?.name || 'Not assigned',
-        keyworkersOptions: renderKeyworkersSelectOptions(keyworkers, placement),
-        placement,
+        backlink: managePaths.premises.placements.show({ premisesId, placementId }),
+        currentKeyworkerName: placement.keyWorkerAllocation?.name || 'Not assigned',
+        keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
         errors,
         errorSummary,
-        errorTitle,
         ...userInput,
       })
     }
   }
 
-  assign(): RequestHandler {
+  find(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { token } = req.user
+      const { premisesId, placementId } = req.params
+      const { nameOrEmail, page = '1' } = req.query
+
+      const placement = await this.premisesService.getPlacement({
+        token,
+        premisesId,
+        placementId,
+      })
+
+      const errors: Record<string, string> = {}
+      let tableRows: Array<TableRow>
+      let pagination: Pagination
+
+      if (nameOrEmail !== undefined) {
+        if (!nameOrEmail) {
+          errors.nameOrEmail = 'Enter a name or email'
+        } else {
+          const pageNumber = Number(page)
+          const results = await this.userService.getUsersSummaries(token, {
+            page: pageNumber,
+            nameOrEmail: nameOrEmail as string,
+            permission: 'cas1_keyworker_assignable_as',
+          })
+          tableRows = keyworkersTableRows(results.data)
+          pagination = buildPagination(
+            pageNumber,
+            Number(results.totalPages),
+            `${managePaths.premises.placements.keyworker.find({
+              premisesId,
+              placementId: placement.id,
+            })}?${createQueryString({ nameOrEmail })}&`,
+          )
+        }
+      }
+
+      const assignKeyworkerPath = managePaths.premises.placements.keyworker.new({ premisesId, placementId })
+
+      return res.render('manage/premises/placements/assignKeyworker/find', {
+        contextKeyDetails: placementKeyDetails(placement),
+        backlink: assignKeyworkerPath,
+        submitUrl: assignKeyworkerPath,
+        nameOrEmail,
+        tableRows,
+        tableHead: keyworkersTableHead,
+        pagination,
+        errors: generateErrorMessages(errors),
+        errorSummary: generateErrorSummary(errors),
+      })
+    }
+  }
+
+  create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, placementId } = req.params
-      try {
-        const { staffCode } = req.body
 
-        if (!staffCode) {
+      try {
+        const { keyworker } = req.body
+
+        if (!keyworker) {
           throw new ValidationError({
-            staffCode: 'You must select a keyworker',
+            keyworker: 'Select a keyworker',
           })
         }
 
-        await this.placementService.assignKeyworker(req.user.token, premisesId, placementId, { staffCode })
+        if (keyworker === 'new') {
+          return res.redirect(managePaths.premises.placements.keyworker.find({ premisesId, placementId }))
+        }
 
-        req.flash('success', 'Keyworker assigned')
+        await this.placementService.assignKeyworker(req.user.token, premisesId, placementId, { userId: keyworker })
+
+        const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
+
+        req.flash('success', {
+          heading: 'Keyworker assigned',
+          body: `You have assigned ${placement.keyWorkerAllocation.name} to ${placement.person.crn}`,
+        })
         return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          managePaths.premises.placements.keyworker({
+          managePaths.premises.placements.keyworker.new({
             premisesId,
             placementId,
           }),

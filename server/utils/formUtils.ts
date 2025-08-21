@@ -5,6 +5,7 @@ import type {
   ErrorMessages,
   HtmlItem,
   RadioItem,
+  RadioItemButton,
   SelectOption,
   SummaryListItem,
   TextItem,
@@ -58,7 +59,7 @@ export const convertObjectsToRadioItems = (
   valueKey: string,
   fieldName: string,
   context: Record<string, unknown>,
-): Array<RadioItem> => {
+): Array<RadioItemButton> => {
   return items.map(item => {
     return {
       text: item[textKey],
@@ -100,9 +101,9 @@ export const convertObjectsToSelectOptions = (
 export function convertKeyValuePairToRadioItems<T extends object>(
   object: T,
   checkedItem?: keyof T,
-  conditionals?: Partial<Record<keyof T, RadioItem['conditional']>>,
-  hints?: Partial<Record<keyof T, RadioItem['hint']>>,
-): Array<RadioItem> {
+  conditionals?: Partial<Record<keyof T, HtmlItem>>,
+  hints?: Partial<Record<keyof T, TextItem | HtmlItem>>,
+): Array<RadioItemButton> {
   return Object.keys(object).map(key => {
     return {
       value: key,
@@ -135,8 +136,8 @@ export function convertKeyValuePairToCheckBoxItems<T extends object>(
 export function convertArrayToRadioItems<T extends string>(
   array: Array<T> | ReadonlyArray<T>,
   checkedItem: string,
-  labels?: Partial<Record<T, RadioItem['text']>>,
-  hints?: Partial<Record<T, RadioItem['hint']>>,
+  labels?: Partial<Record<T, string>>,
+  hints?: Partial<Record<T, TextItem | HtmlItem>>,
 ): Array<RadioItem> {
   return array.map(key => {
     const radioItem: RadioItem = {

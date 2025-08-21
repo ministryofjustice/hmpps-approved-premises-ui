@@ -8,7 +8,6 @@ import {
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
   cas1SpaceBookingSummaryFactory,
-  staffMemberFactory,
 } from '../../../server/testutils/factories'
 
 import { OccupancyViewPage, PremisesShowPage } from '../../pages/manage'
@@ -26,14 +25,13 @@ context('Premises occupancy', () => {
   const premisesCapacity = cas1PremiseCapacityFactory.build({ startDate, endDate })
 
   const placements = cas1SpaceBookingSummaryFactory.buildList(30)
-  const keyworkers = staffMemberFactory.keyworker().buildList(5)
 
   beforeEach(() => {
     cy.task('reset')
 
     // Given there is a premises in the database
     cy.task('stubSinglePremises', premises)
-    cy.task('stubPremisesStaffMembers', { premisesId: premises.id, staffMembers: keyworkers })
+    cy.task('stubPremisesCurrentKeyworkers', { premisesId: premises.id })
 
     // And it has a list of upcoming placements
     cy.task('stubSpaceBookingSummaryList', { premisesId: premises.id, placements, residency: 'upcoming' })

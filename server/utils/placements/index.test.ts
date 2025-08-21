@@ -1,14 +1,16 @@
-import type { Cas1SpaceBooking, StaffMember } from '@approved-premises/api'
-import { RadioItem, SelectOption } from '@approved-premises/ui'
+import type { Cas1SpaceBooking } from '@approved-premises/api'
+import { RadioItem } from '@approved-premises/ui'
 import {
+  cas1CurrentKeyworkerFactory,
+  cas1KeyworkerAllocationFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
   personFactory,
   restrictedPersonFactory,
-  staffMemberFactory,
   tierEnvelopeFactory,
   userDetailsFactory,
+  userSummaryFactory,
 } from '../../testutils/factories'
 import {
   actions,
@@ -24,7 +26,7 @@ import {
   placementOverviewSummary,
   placementStatusHtml,
   placementSummary,
-  renderKeyworkersSelectOptions,
+  renderKeyworkersRadioOptions,
   requirementsInformation,
   statusTextMap,
 } from '.'
@@ -206,7 +208,7 @@ describe('placementUtils', () => {
     }
     const keyworkerOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({ premisesId: premises.id, placementId }),
+      href: paths.premises.placements.keyworker.new({ premisesId: premises.id, placementId }),
       text: 'Edit keyworker',
     }
     const requestTransferOption = {
@@ -432,7 +434,7 @@ describe('placementUtils', () => {
             key: { text: 'Actual length of stay' },
             value: { text: '29 weeks, 4 days' },
           },
-          { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.keyWorker?.name } },
+          { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.name } },
           { key: { text: 'Delius Event Number' }, value: { text: placement.deliusEventNumber } },
         ],
       })
@@ -695,33 +697,37 @@ describe('placementUtils', () => {
       })
     })
   })
-  describe('renderKeyworkersSelectOptions', () => {
-    const selectBlankOption: SelectOption = { text: 'Select a keyworker', value: null }
-    const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
 
-    it('should return a list of keyworker selection options', () => {
-      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
-      const expected = [
-        selectBlankOption,
-        ...staffList.map(({ name, code }) => ({ text: name, value: code, selected: false })),
-      ]
+  describe('renderKeyworkersRadioOptions', () => {
+    it('should return a list of current keyworkers', () => {
+      const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(1)
 
-      const result = renderKeyworkersSelectOptions(staffList, placement)
-
-      expect(result).toEqual(expected)
+      expect(renderKeyworkersRadioOptions(currentKeyworkers)).toEqual([
+        { text: currentKeyworkers[0].summary.name, value: currentKeyworkers[0].summary.id },
+        { divider: 'or' },
+        { text: 'Assign a different keyworker', value: 'new' },
+      ])
     })
 
     it('should exclude the currently assigned keyworker', () => {
-      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build({
-        keyWorkerAllocation: { keyWorker: { ...staffList[1] } },
+      const user = userSummaryFactory.build()
+      const currentKeyworkers = [
+        cas1CurrentKeyworkerFactory.build({ summary: user }),
+        cas1CurrentKeyworkerFactory.build(),
+      ]
+      const placement = cas1SpaceBookingFactory.build({
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({ ...user, userId: user.id }),
       })
 
-      const result = renderKeyworkersSelectOptions(staffList, placement)
-
-      expect(result).toEqual([
-        selectBlankOption,
-        ...[staffList[0], staffList[2]].map(({ name, code }) => ({ text: name, value: code, selected: false })),
+      expect(renderKeyworkersRadioOptions(currentKeyworkers, placement)).toEqual([
+        { text: currentKeyworkers[1].summary.name, value: currentKeyworkers[1].summary.id },
+        { divider: 'or' },
+        { text: 'Assign a different keyworker', value: 'new' },
       ])
+    })
+
+    it('does not render the divider if there are no current keyworkers', () => {
+      expect(renderKeyworkersRadioOptions([])).toEqual([{ text: 'Assign a different keyworker', value: 'new' }])
     })
   })
 
