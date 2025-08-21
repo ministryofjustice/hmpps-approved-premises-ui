@@ -46,6 +46,8 @@ class Cas1PlacementRequestSummaryFactory extends Factory<Cas1PlacementRequestSum
       placementRequestStatus: placementRequestDetail.status,
       requestedPlacementArrivalDate: placementRequestDetail.expectedArrival,
       requestedPlacementDuration: placementRequestDetail.duration,
+      firstBookingArrivalDate: placementRequestDetail.booking?.arrivalDate,
+      firstBookingPremisesName: placementRequestDetail.booking?.premisesName,
     })
   }
 }
