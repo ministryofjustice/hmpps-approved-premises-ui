@@ -10,7 +10,7 @@ import {
 
 @Page({ name: 'sentence-type', bodyProperties: ['sentenceType'] })
 export default class SentenceType implements TasklistPage {
-  title = 'Which of the following best describes the sentence type the person is on?'
+  title = 'Which sentence type does the person have?'
 
   constructor(
     readonly body: { sentenceType?: SentenceTypeOption },

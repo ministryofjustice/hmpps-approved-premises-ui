@@ -21,7 +21,7 @@ type SentenceTypeResponse = Extract<SentenceTypeOption, 'communityOrder' | 'bail
 
 @Page({ name: 'situation', bodyProperties: ['situation'] })
 export default class Situation implements TasklistPage {
-  title = 'Which of the following options best describes the situation?'
+  title = 'What is the reason for placing this person in an AP?'
 
   situations: CommunityOrderSituations | BailPlacementSituations
 

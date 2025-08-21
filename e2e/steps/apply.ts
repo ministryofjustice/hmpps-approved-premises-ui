@@ -96,10 +96,7 @@ export const completeBasicInformationTask = async (
   await relevantDatesPage.clickSave()
 
   if (testMappaFlow) {
-    const sentenceTypePage = await ApplyPage.initialize(
-      page,
-      'Which of the following best describes the sentence type the person is on?',
-    )
+    const sentenceTypePage = await ApplyPage.initialize(page, 'Which sentence type does the person have?')
     await sentenceTypePage.checkRadio('Non-statutory, MAPPA case')
     await sentenceTypePage.clickSave()
 
@@ -108,14 +105,11 @@ export const completeBasicInformationTask = async (
     await managedByMappaPage.clickSave()
   }
 
-  const sentenceTypePage = await ApplyPage.initialize(
-    page,
-    'Which of the following best describes the sentence type the person is on?',
-  )
+  const sentenceTypePage = await ApplyPage.initialize(page, 'Which sentence type does the person have?')
   await sentenceTypePage.checkRadio('Standard determinate custody')
   await sentenceTypePage.clickSave()
 
-  const releaseTypePage = await ApplyPage.initialize(page, 'What type of release will the application support?')
+  const releaseTypePage = await ApplyPage.initialize(page, 'What is the release type?')
 
   const releaseType = 'Licence'
   await releaseTypePage.checkRadio(releaseType)

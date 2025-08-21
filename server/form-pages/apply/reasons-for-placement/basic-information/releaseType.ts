@@ -33,7 +33,7 @@ const selectableReleaseTypes = omit(allReleaseTypes, 'in_community')
 export default class ReleaseType implements TasklistPage {
   name = 'release-type'
 
-  title = 'What type of release will the application support?'
+  title = 'What is the release type?'
 
   releaseTypes: PossibleReleaseTypeOptions
 
