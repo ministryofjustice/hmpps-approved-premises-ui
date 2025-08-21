@@ -64,7 +64,7 @@ export class RequestForPlacementSummaryCards {
     return {
       card: {
         title: {
-          text: `Request made on ${DateFormats.isoDateToUIDate(this.requestForPlacement.createdAt, { format: 'short' })}`,
+          text: `Request made on ${DateFormats.isoDateToUIDate(this.requestForPlacement.submittedAt, { format: 'short' })}`,
           headingLevel: '3',
         },
         attributes: {
