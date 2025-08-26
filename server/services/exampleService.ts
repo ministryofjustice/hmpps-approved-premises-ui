@@ -1,9 +1,9 @@
-import ExampleApiClient from '../data/exampleApiClient'
+import CommunityPaybackApiClient from '../data/communityPaybackApiClient'
 
 export default class ExampleService {
-  constructor(private readonly exampleApiClient: ExampleApiClient) {}
+  constructor(private readonly communityPaybackApiClient: CommunityPaybackApiClient) {}
 
-  getCurrentTime() {
-    return this.exampleApiClient.getCurrentTime()
+  getExampleData() {
+    return this.communityPaybackApiClient.getExampleData()
   }
 }

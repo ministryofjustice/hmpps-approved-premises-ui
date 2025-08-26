@@ -1,24 +1,24 @@
-import ExampleApiClient from '../data/exampleApiClient'
+import CommunityPaybackApiClient from '../data/communityPaybackApiClient'
 import ExampleService from './exampleService'
 
-jest.mock('../data/exampleApiClient')
+jest.mock('../data/communityPaybackApiClient')
 
 describe('ExampleService', () => {
-  const exampleApiClient = new ExampleApiClient(null) as jest.Mocked<ExampleApiClient>
+  const communityPaybackApiClient = new CommunityPaybackApiClient(null) as jest.Mocked<CommunityPaybackApiClient>
   let exampleService: ExampleService
 
   beforeEach(() => {
-    exampleService = new ExampleService(exampleApiClient)
+    exampleService = new ExampleService(communityPaybackApiClient)
   })
 
-  it('should call getCurrentTime on the api client and return its result', async () => {
-    const expectedTime = '2025-01-01T12:00:00Z'
+  it('should call getExampleData on the api client and return its result', async () => {
+    const expectedData = 'example data'
 
-    exampleApiClient.getCurrentTime.mockResolvedValue(expectedTime)
+    communityPaybackApiClient.getExampleData.mockResolvedValue(expectedData)
 
-    const result = await exampleService.getCurrentTime()
+    const result = await exampleService.getExampleData()
 
-    expect(exampleApiClient.getCurrentTime).toHaveBeenCalledTimes(1)
-    expect(result).toEqual(expectedTime)
+    expect(communityPaybackApiClient.getExampleData).toHaveBeenCalledTimes(1)
+    expect(result).toEqual(expectedData)
   })
 })
