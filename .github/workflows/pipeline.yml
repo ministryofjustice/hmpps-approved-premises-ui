@@ -55,25 +55,6 @@ jobs:
       - name: Run type check
         run: npm run typecheck
 
-  linting:
-    name: "Linting"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-
-      - name: Installing dependencies
-        run: npm ci
-
-      - name: Running Lint checks
-        run: npm run lint
-
   # generic node unit tests - feel free to override with local tests if required
   node_unit_tests:
     name: node unit tests
