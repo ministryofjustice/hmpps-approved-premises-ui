@@ -29,7 +29,7 @@ afterEach(() => {
 describe('GET /', () => {
   it('should render index page', () => {
     auditService.logPageView.mockResolvedValue(null)
-    exampleService.getCurrentTime.mockResolvedValue('2025-01-01T12:00:00.000')
+    exampleService.getExampleData.mockResolvedValue('some example data')
 
     return request(app)
       .get('/')
@@ -37,18 +37,18 @@ describe('GET /', () => {
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('This site is under construction...')
-        expect(res.text).toContain('The time is currently 2025-01-01T12:00:00.000')
+        expect(res.text).toContain('some example data')
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.EXAMPLE_PAGE, {
           who: user.username,
           correlationId: expect.any(String),
         })
-        expect(exampleService.getCurrentTime).toHaveBeenCalled()
+        expect(exampleService.getExampleData).toHaveBeenCalled()
       })
   })
 
   it('service errors are handled', () => {
     auditService.logPageView.mockResolvedValue(null)
-    exampleService.getCurrentTime.mockRejectedValue(new Error('Some problem calling external api!'))
+    exampleService.getExampleData.mockRejectedValue(new Error('Some problem calling external api!'))
 
     return request(app)
       .get('/')

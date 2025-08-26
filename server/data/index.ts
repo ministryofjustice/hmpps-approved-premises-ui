@@ -15,7 +15,7 @@ import { createRedisClient } from './redisClient'
 import config from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import logger from '../../logger'
-import ExampleApiClient from './exampleApiClient'
+import ExampleApiClient from './communityPaybackApiClient'
 
 export const dataAccess = () => {
   const hmppsAuthClient = new AuthenticationClient(
