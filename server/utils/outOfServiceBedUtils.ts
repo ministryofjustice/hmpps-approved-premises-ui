@@ -27,7 +27,7 @@ import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
 import { hasPermission } from './users'
 import { SanitisedError } from '../sanitisedError'
-import { summaryListItem } from './formUtils'
+import { summaryListItem, summaryListItemNoBlankRows } from './formUtils'
 import { isValidCrn } from './crn'
 import { ValidationError } from './errors'
 
@@ -163,15 +163,18 @@ export const outOfServiceBedTabs = (
 export const outOfServiceBedSummaryList = (
   outOfServiceBed: Cas1OutOfServiceBed | Cas1OutOfServiceBedRevision,
   suppressBlank = false,
-): SummaryList => ({
-  rows: [
-    summaryListItem('Start date', outOfServiceBed.startDate, 'date', suppressBlank),
-    summaryListItem('End date', outOfServiceBed.endDate, 'date', suppressBlank),
-    summaryListItem('Reason', outOfServiceBed.reason?.name, undefined, suppressBlank),
-    summaryListItem('Reference/CRN', outOfServiceBed.referenceNumber, undefined, suppressBlank),
-    summaryListItem('Additional information', outOfServiceBed.notes, 'textBlock', suppressBlank),
-  ].filter(Boolean),
-})
+): SummaryList => {
+  const item: typeof summaryListItem = suppressBlank ? summaryListItemNoBlankRows : summaryListItem
+  return {
+    rows: [
+      item('Start date', outOfServiceBed.startDate, 'date'),
+      item('End date', outOfServiceBed.endDate, 'date'),
+      item('Reason', outOfServiceBed.reason?.name),
+      item('Reference/CRN', outOfServiceBed.referenceNumber),
+      item('Additional information', outOfServiceBed.notes, 'textBlock'),
+    ].filter(Boolean),
+  }
+}
 
 export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1OutOfServiceBedRevision>) => {
   return revisions.sort((a, b) => {

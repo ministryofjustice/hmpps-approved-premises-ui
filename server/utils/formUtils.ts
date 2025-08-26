@@ -190,19 +190,16 @@ const renderSummaryValue = (value: string, renderAs: RenderAs) => {
   }
 }
 
-export const summaryListItem = (
+export const summaryListItem = (label: string, value: string, renderAs: RenderAs = 'text'): SummaryListItem => ({
+  key: { text: label },
+  value: renderSummaryValue(value, renderAs),
+})
+
+export const summaryListItemNoBlankRows = (
   label: string,
   value: string,
   renderAs: RenderAs = 'text',
-  suppressBlank = false,
-): SummaryListItem => {
-  return !suppressBlank || value
-    ? {
-        key: { text: label },
-        value: renderSummaryValue(value, renderAs),
-      }
-    : undefined
-}
+): SummaryListItem => (value ? summaryListItem(label, value, renderAs) : undefined)
 
 /**
  * Performs validation on the area of a postcode (IE the first three or four characters)

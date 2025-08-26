@@ -19,6 +19,7 @@ import {
   tierSelectOptions,
   validPostcodeArea,
   validWeeksAndDaysDuration,
+  summaryListItemNoBlankRows,
 } from './formUtils'
 import { DateFormats } from './dateUtils'
 
@@ -653,8 +654,8 @@ describe('formUtils', () => {
     })
 
     it('should return undefined if value is falsey and blank suppression enabled', () => {
-      expect(summaryListItem(label, '', 'text')).toEqual({ key: { text: label }, value: { text: '' } })
-      expect(summaryListItem(label, '', 'text', true)).toEqual(undefined)
+      expect(summaryListItem(label, '')).toEqual({ key: { text: label }, value: { text: '' } })
+      expect(summaryListItemNoBlankRows(label, '')).toEqual(undefined)
     })
   })
 
