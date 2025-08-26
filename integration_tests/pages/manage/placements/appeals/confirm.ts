@@ -1,5 +1,4 @@
 import { AppealFormData } from '@approved-premises/ui'
-import { DateFormats } from '../../../../../server/utils/dateUtils'
 import Page from '../../../page'
 import { summaryListItem } from '../../../../../server/utils/formUtils'
 import { getAppealReasonText } from '../../../../../server/utils/placements/changeRequests'
@@ -21,7 +20,7 @@ export class ConfirmPage extends Page {
     this.shouldContainSummaryListItems([
       summaryListItem('Name of area manager', formDetails.areaManagerName.value),
       summaryListItem('Email address', formDetails.areaManagerEmail.value),
-      summaryListItem('Date they approved', DateFormats.isoDateToUIDate(formDetails.approvalDate.value)),
+      summaryListItem('Date they approved', formDetails.approvalDate.value, 'date'),
       summaryListItem('Reason for appeal', reasonText, 'textBlock'),
       summaryListItem('Any other information', formDetails.notes.value, 'textBlock'),
     ])

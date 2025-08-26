@@ -158,7 +158,7 @@ describe('changeRequest utilities', () => {
       expect(getConfirmationSummary(sessionData)).toEqual([
         summaryListItem('Name of area manager', sessionData.areaManagerName),
         summaryListItem('Email address', sessionData.areaManagerEmail),
-        summaryListItem('Date they approved', DateFormats.isoDateToUIDate(sessionData.approvalDate)),
+        summaryListItem('Date they approved', sessionData.approvalDate, 'date'),
         summaryListItem('Reason for appeal', getAppealReasonText(sessionData), 'textBlock'),
         summaryListItem('Any other information', sessionData.notes, 'textBlock'),
       ])

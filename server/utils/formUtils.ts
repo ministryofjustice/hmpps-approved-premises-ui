@@ -13,6 +13,7 @@ import type {
 import type { RiskTierLevel } from '@approved-premises/api'
 import { PlacementRequestStatus } from '@approved-premises/api'
 import { isCardinal, resolvePath, sentenceCase } from './utils'
+import { DateFormats } from './dateUtils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
 export const dateFieldValues = (
@@ -174,20 +175,31 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
   return Object.keys(values).map(key => summaryListItem(titles[key], String(values[key as keyof T])))
 }
 
-export const summaryListItem = (
+type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date'
+
+const renderSummaryValue = (value: string, renderAs: RenderAs) => {
+  switch (renderAs) {
+    case 'textBlock':
+      return { html: `<span class="govuk-summary-list__textblock">${value}</span>` }
+    case 'date':
+      return { text: (value && DateFormats.isoDateToUIDate(value)) || '' }
+    case 'html':
+      return { html: value }
+    default:
+      return { text: value }
+  }
+}
+
+export const summaryListItem = (label: string, value: string, renderAs: RenderAs = 'text'): SummaryListItem => ({
+  key: { text: label },
+  value: renderSummaryValue(value, renderAs),
+})
+
+export const summaryListItemNoBlankRows = (
   label: string,
   value: string,
-  renderAs: keyof TextItem | keyof HtmlItem | 'textBlock' = 'text',
-  supressBlank = false,
-): SummaryListItem => {
-  const htmlValue = renderAs === 'textBlock' ? `<span class="govuk-summary-list__textblock">${value}</span>` : value
-  return !supressBlank || value
-    ? {
-        key: { text: label },
-        value: renderAs === 'text' ? { text: value } : { html: htmlValue },
-      }
-    : undefined
-}
+  renderAs: RenderAs = 'text',
+): SummaryListItem => (value ? summaryListItem(label, value, renderAs) : undefined)
 
 /**
  * Performs validation on the area of a postcode (IE the first three or four characters)

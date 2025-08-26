@@ -6,14 +6,14 @@ import {
   Person,
   Cas1CurrentKeyWorker,
 } from '@approved-premises/api'
-import { KeyDetailsArgs, RadioItem, SummaryList, SummaryListItem, UserDetails } from '@approved-premises/ui'
+import { KeyDetailsArgs, RadioItem, SummaryList, UserDetails } from '@approved-premises/ui'
 import { differenceInCalendarDays } from 'date-fns'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
-import { summaryListItem } from '../formUtils'
+import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import {
   ApTypeCriteria,
   apTypeCriteriaLabels,
@@ -197,8 +197,6 @@ export const personKeyDetails = (person: Person, tier?: string): KeyDetailsArgs 
 
 export const placementKeyDetails = (placement: Cas1SpaceBooking) => personKeyDetails(placement.person, placement.tier)
 
-const formatDate = (date: string | null) => date && DateFormats.isoDateToUIDate(date)
-
 const formatTimeFromIsoDateTime = (dateTime: string | null) =>
   dateTime && DateFormats.timeFromDate(DateFormats.isoToDateObj(dateTime))
 
@@ -206,16 +204,14 @@ const formatTime = (time: string) => {
   return time ? DateFormats.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
 }
 
-const summaryRow = (key: string, value: string): SummaryListItem => value && summaryListItem(key, value)
-
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   const { createdAt, actualArrivalDate, actualDepartureDate, keyWorkerAllocation, deliusEventNumber } = placement
   return {
     rows: [
-      summaryRow('AP name', placement.premises.name),
-      summaryRow('Date allocated', formatDate(createdAt)),
-      summaryRow('Status', statusTextMap[detailedStatus(placement)]),
-      summaryRow(
+      summaryListItemNoBlankRows('AP name', placement.premises.name),
+      summaryListItemNoBlankRows('Date allocated', createdAt, 'date'),
+      summaryListItemNoBlankRows('Status', statusTextMap[detailedStatus(placement)]),
+      summaryListItemNoBlankRows(
         'Actual length of stay',
         actualArrivalDate &&
           actualDepartureDate &&
@@ -228,19 +224,19 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
             ),
           ),
       ),
-      summaryRow('Key worker', keyWorkerAllocation?.name || 'Not assigned'),
-      summaryRow('Delius Event Number', deliusEventNumber),
+      summaryListItemNoBlankRows('Key worker', keyWorkerAllocation?.name || 'Not assigned'),
+      summaryListItemNoBlankRows('Delius Event Number', deliusEventNumber),
     ].filter(Boolean),
   }
 }
 
 export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
-    summaryRow('Approved premises', placement.premises.name),
-    summaryRow('Date of match', formatDate(placement.createdAt)),
-    summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
-    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate)),
-    summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
+    summaryListItemNoBlankRows('Approved premises', placement.premises.name),
+    summaryListItemNoBlankRows('Date of match', placement.createdAt, 'date'),
+    summaryListItemNoBlankRows('Expected arrival date', placement.expectedArrivalDate, 'date'),
+    summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'date'),
+    summaryListItemNoBlankRows('Expected departure date', placement.expectedDepartureDate, 'date'),
     summaryListItem(
       'Room criteria',
       characteristicsBulletList(placement.characteristics, {
@@ -257,15 +253,15 @@ export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => 
   const { reason, notes, confirmedAt } = nonArrival || {}
   return {
     rows: [
-      summaryRow('Expected arrival date', formatDate(expectedArrivalDate)),
-      summaryRow('Actual arrival date', formatDate(actualArrivalDate)),
-      summaryRow('Arrival time', formatTime(actualArrivalTime)),
-      summaryRow(
+      summaryListItemNoBlankRows('Expected arrival date', expectedArrivalDate, 'date'),
+      summaryListItemNoBlankRows('Actual arrival date', actualArrivalDate, 'date'),
+      summaryListItemNoBlankRows('Arrival time', formatTime(actualArrivalTime)),
+      summaryListItemNoBlankRows(
         'Non arrival recorded at',
-        confirmedAt && `${formatDate(confirmedAt)} ${formatTimeFromIsoDateTime(confirmedAt)}`,
+        confirmedAt && `${DateFormats.isoDateToUIDate(confirmedAt)} ${formatTimeFromIsoDateTime(confirmedAt)}`,
       ),
-      summaryRow('Non arrival reason', reason?.name),
-      summaryRow('Non arrival any other information', notes),
+      summaryListItemNoBlankRows('Non arrival reason', reason?.name),
+      summaryListItemNoBlankRows('Non arrival any other information', notes),
     ].filter(Boolean),
   }
 }
@@ -281,13 +277,13 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
 
   return {
     rows: [
-      summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-      summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
-      summaryRow('Departure time', formatTime(placement.actualDepartureTime)),
-      summaryRow('Departure reason', reason),
-      summaryRow('Breach or recall', breachOrRecall),
-      summaryRow('Move on', placement.departure?.moveOnCategory?.name),
-      summaryListItem('More information', placement.departure?.notes, 'textBlock', true),
+      summaryListItemNoBlankRows('Expected departure date', placement.expectedDepartureDate, 'date'),
+      summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'date'),
+      summaryListItemNoBlankRows('Departure time', formatTime(placement.actualDepartureTime)),
+      summaryListItemNoBlankRows('Departure reason', reason),
+      summaryListItemNoBlankRows('Breach or recall', breachOrRecall),
+      summaryListItemNoBlankRows('Move on', placement.departure?.moveOnCategory?.name),
+      summaryListItemNoBlankRows('More information', placement.departure?.notes, 'textBlock'),
     ].filter(Boolean),
   }
 }

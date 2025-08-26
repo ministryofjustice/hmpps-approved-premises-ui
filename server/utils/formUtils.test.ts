@@ -1,6 +1,7 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorMessages } from '@approved-premises/ui'
+import { faker } from '@faker-js/faker'
 import {
   convertArrayToCheckboxItems,
   convertArrayToRadioItems,
@@ -18,7 +19,9 @@ import {
   tierSelectOptions,
   validPostcodeArea,
   validWeeksAndDaysDuration,
+  summaryListItemNoBlankRows,
 } from './formUtils'
+import { DateFormats } from './dateUtils'
 
 describe('formUtils', () => {
   describe('dateFieldValues', () => {
@@ -633,10 +636,16 @@ describe('formUtils', () => {
   describe('SummaryListItem', () => {
     const label = 'label'
     const value = 'test value'
+    const isoDate = DateFormats.dateObjToIsoDate(faker.date.anytime())
 
     it('should return a summary list item', () => {
       expect(summaryListItem(label, value)).toEqual({ key: { text: label }, value: { text: value } })
       expect(summaryListItem(label, value, 'html')).toEqual({ key: { text: label }, value: { html: value } })
+      expect(summaryListItem(label, isoDate, 'date')).toEqual({
+        key: { text: label },
+        value: { text: DateFormats.isoDateToUIDate(isoDate) },
+      })
+      expect(summaryListItem(label, undefined, 'date')).toEqual({ key: { text: label }, value: { text: '' } })
       expect(summaryListItem(label, value, 'textBlock')).toEqual({
         key: { text: label },
         value: { html: `<span class="govuk-summary-list__textblock">${value}</span>` },
@@ -645,8 +654,8 @@ describe('formUtils', () => {
     })
 
     it('should return undefined if value is falsey and blank suppression enabled', () => {
-      expect(summaryListItem(label, '', 'text')).toEqual({ key: { text: label }, value: { text: '' } })
-      expect(summaryListItem(label, '', 'text', true)).toEqual(undefined)
+      expect(summaryListItem(label, '')).toEqual({ key: { text: label }, value: { text: '' } })
+      expect(summaryListItemNoBlankRows(label, '')).toEqual(undefined)
     })
   })
 

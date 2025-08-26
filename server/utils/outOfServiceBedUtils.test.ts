@@ -1,10 +1,10 @@
+import { faker } from '@faker-js/faker'
 import { outOfServiceBedFactory, outOfServiceBedRevisionFactory, userDetailsFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
   actionCell,
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
-  bedRevisionDetails,
   CreateOutOfServiceBedBody,
   generateConflictBespokeError,
   outOfServiceBedActions,
@@ -158,80 +158,44 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('outOfServiceBedSummaryList', () => {
+    const startDate = DateFormats.dateObjToIsoDate(faker.date.soon({ days: 80 }))
+    const endDate = DateFormats.dateObjToIsoDate(faker.date.soon({ refDate: startDate, days: 80 }))
+    const outOfServiceBed = outOfServiceBedFactory.build({
+      startDate,
+      endDate,
+      referenceNumber: '123',
+      notes: `some notes\ntwo lines`,
+    })
+
+    const expectedRows = [
+      { key: { text: 'Start date' }, value: { text: DateFormats.isoDateToUIDate(startDate) } },
+      { key: { text: 'End date' }, value: { text: DateFormats.isoDateToUIDate(endDate) } },
+      { key: { text: 'Reason' }, value: { text: outOfServiceBed.reason.name } },
+      { key: { text: 'Reference/CRN' }, value: { text: '123' } },
+      {
+        key: { text: 'Additional information' },
+        value: { html: `<span class="govuk-summary-list__textblock">some notes\ntwo lines</span>` },
+      },
+    ]
+
     it('renders a summary list with the OOSB details', () => {
-      const outOfServiceBed = outOfServiceBedFactory.build({
-        startDate: '2026-02-01',
-        endDate: '2026-03-12',
-        referenceNumber: '123',
-        notes: `some notes\ntwo lines`,
-      })
-
       expect(outOfServiceBedSummaryList(outOfServiceBed)).toEqual({
-        rows: [
-          { key: { text: 'Start date' }, value: { text: 'Sun 1 Feb 2026' } },
-          { key: { text: 'End date' }, value: { text: 'Thu 12 Mar 2026' } },
-          { key: { text: 'Reason' }, value: { text: outOfServiceBed.reason.name } },
-          { key: { text: 'Reference/CRN' }, value: { text: '123' } },
-          {
-            key: { text: 'Notes' },
-            value: { html: `<span class="govuk-summary-list__textblock">some notes\ntwo lines</span>` },
-          },
-        ],
+        rows: expectedRows,
       })
     })
-  })
 
-  describe('bedRevisionDetails', () => {
-    it('adds a formatted start date the summary list', () => {
-      const startDate = new Date(2024, 2, 1)
-      const revision = outOfServiceBedRevisionFactory.build({
-        startDate: DateFormats.dateObjToIsoDate(startDate),
+    it('renders blank rows where data are not supplied', () => {
+      const expectedRowCopy = [...expectedRows]
+      expectedRowCopy.splice(0, 1, { key: { text: 'Start date' }, value: { text: '' } })
+      expect(outOfServiceBedSummaryList({ ...outOfServiceBed, startDate: undefined })).toEqual({
+        rows: expectedRowCopy,
       })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([
-          { key: { text: 'Start date' }, value: { text: DateFormats.dateObjtoUIDate(startDate) } },
-        ]),
-      )
     })
 
-    it('adds a formatted end date the summary list', () => {
-      const endDate = new Date(2024, 2, 1)
-      const revision = outOfServiceBedRevisionFactory.build({
-        endDate: DateFormats.dateObjToIsoDate(endDate),
+    it('omits blank rows where data are not supplied when supressBlank is set', () => {
+      expect(outOfServiceBedSummaryList({ ...outOfServiceBed, startDate: undefined }, true)).toEqual({
+        rows: expectedRows.slice(1),
       })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'End date' }, value: { text: DateFormats.dateObjtoUIDate(endDate) } }]),
-      )
-    })
-
-    it('adds a reason the summary list', () => {
-      const revision = outOfServiceBedRevisionFactory.build({
-        reason: { id: 'reasonId', name: 'reasonName' },
-      })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Reason' }, value: { text: revision.reason.name } }]),
-      )
-    })
-
-    it('adds a reference the summary list', () => {
-      const revision = outOfServiceBedRevisionFactory.build({
-        referenceNumber: '123',
-      })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Reference/CRN' }, value: { text: revision.referenceNumber } }]),
-      )
-    })
-
-    it('adds a notes item to the summary list', () => {
-      const revision = outOfServiceBedRevisionFactory.build({ notes: 'some note' })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Notes' }, value: { text: 'some note' } }]),
-      )
     })
   })
 
