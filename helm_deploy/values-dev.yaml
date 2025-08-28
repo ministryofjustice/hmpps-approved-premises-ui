@@ -5,7 +5,8 @@ generic-service:
   replicaCount: 2
 
   ingress:
-    host: community-payback-ui-dev.hmpps.service.justice.gov.uk
+    host: community-payback-dev.hmpps.service.justice.gov.uk
+    tlsSecretName: hmpps-community-payback-dev-cert
 
   env:
     INGRESS_URL: "https://community-payback-ui-dev.hmpps.service.justice.gov.uk"
