@@ -44,9 +44,9 @@ generic-service:
     hmpps-community-payback-ui-client-creds:
       CLIENT_CREDS_CLIENT_ID: 'CLIENT_CREDS_CLIENT_ID'
       CLIENT_CREDS_CLIENT_SECRET: 'CLIENT_CREDS_CLIENT_SECRET'
-    hmpps-community-payback-ui-auth-code:
+    hmpps-community-payback-ui:
       AUTH_CODE_CLIENT_ID: 'AUTH_CODE_CLIENT_ID'
-      AUTH_CODE_CLIENT_SECRET: 'AUTH_CODE_CLIENT_SECRET'    
+      AUTH_CODE_CLIENT_SECRET: 'AUTH_CODE_CLIENT_SECRET'
     hmpps-community-payback-ui-session-secret:
       SESSION_SECRET: 'SESSION_SECRET'
     hmpps-community-payback-ui-elasticache-redis:
