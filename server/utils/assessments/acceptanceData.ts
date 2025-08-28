@@ -98,45 +98,39 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
     'alternativeRadius',
   )
 
-  const criteria = criteriaFromMatchingInformation(matchingInformation)
-
   return {
     type: apType(matchingInformation.apType),
     location,
     radius: alternativeRadius || 50,
-    ...criteria,
+    essentialCriteria: criteriaFromMatchingInformation(matchingInformation),
+    desirableCriteria: [],
   }
 }
 
 export const criteriaFromMatchingInformation = (
   matchingInformation: MatchingInformationBody,
-): { essentialCriteria: Array<PlacementCriteria>; desirableCriteria: Array<PlacementCriteria> } => {
-  const essentialCriteria = [] as Array<PlacementCriteria>
-  const desirableCriteria = [] as Array<PlacementCriteria>
+): Array<PlacementCriteria> => {
+  const criteria: Array<PlacementCriteria> = []
 
   if (matchingInformation.apType !== 'normal') {
-    essentialCriteria.push(matchingInformation.apType)
+    criteria.push(matchingInformation.apType)
   }
 
   placementRequirementCriteria.forEach((requirement: PlacementRequirementCriteria) => {
-    if (matchingInformation[requirement] === 'essential') {
-      essentialCriteria.push(requirement)
-    }
-
-    if (matchingInformation[requirement] === 'desirable') {
-      desirableCriteria.push(requirement)
+    if (matchingInformation[requirement] === 'required') {
+      criteria.push(requirement)
     }
   })
 
   offenceAndRiskCriteria.forEach((requirement: OffenceAndRiskCriteria) => {
     if (matchingInformation[requirement] === 'relevant') {
-      essentialCriteria.push(requirement)
+      criteria.push(requirement)
     }
   })
 
-  if (essentialCriteria.includes('acceptsSexOffenders') || essentialCriteria.includes('acceptsChildSexOffenders')) {
-    essentialCriteria.push('isSuitedForSexOffenders')
+  if (criteria.includes('acceptsSexOffenders') || criteria.includes('acceptsChildSexOffenders')) {
+    criteria.push('isSuitedForSexOffenders')
   }
 
-  return { essentialCriteria, desirableCriteria }
+  return criteria
 }

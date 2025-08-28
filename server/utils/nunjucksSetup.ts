@@ -69,7 +69,6 @@ import adminPaths from '../paths/admin'
 import peoplePaths from '../paths/people'
 import staticPaths from '../paths/static'
 import placementApplicationsPaths from '../paths/placementApplications'
-import { radioMatrixTable } from './radioMatrixTable'
 import * as AppealsUtils from './appealsUtils'
 
 import config from '../config'
@@ -77,7 +76,6 @@ import { withdrawalRadioOptions } from './applications/withdrawalReasons'
 import { PersonStatusTag } from './people/personStatusTag'
 import { TaskStatusTag } from './tasks/statusTag'
 import { displayName } from './personUtils'
-import { UiPlacementCriteria } from './placementCriteriaUtils'
 import logger from '../../logger'
 
 export default function nunjucksSetup(app: express.Express, path: pathModule.PlatformPath): void {
@@ -166,18 +164,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     'convertKeyValuePairToRadioItems',
     function sendConvertKeyValuePairToRadioItems(items: Record<string, string>, checkedItem: string) {
       return convertKeyValuePairToRadioItems(items, checkedItem)
-    },
-  )
-
-  njkEnv.addGlobal(
-    'placementRequirementsTable',
-    function sendPlacementRequirementsTable(
-      headings: Array<string>,
-      requirements: Array<UiPlacementCriteria>,
-      preferences: Array<string>,
-      body: Record<string, string>,
-    ) {
-      return radioMatrixTable(headings, requirements, preferences, body)
     },
   )
 

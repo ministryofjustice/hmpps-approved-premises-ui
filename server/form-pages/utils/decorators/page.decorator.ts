@@ -21,7 +21,6 @@ const Page = (options: {
       constructor(...args: Array<any>) {
         super(...args)
         const [body, document] = args
-
         if (options.mergeBody) {
           this.body = { ...(this.body || {}), ...this.createBody(body, ...options.bodyProperties) }
         } else {

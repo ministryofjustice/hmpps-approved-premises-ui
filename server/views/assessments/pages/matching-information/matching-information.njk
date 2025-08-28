@@ -25,15 +25,15 @@
 
     <h2 class="govuk-heading-m">Placement requirements</h2>
 
-    {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskCriteria, page.offenceAndRiskInformationRelevance, page.body) | safe }}
+    {{ page.relevantInformationTable() | safe }}
 
-    {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.prepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
+    {{ page.prepopulatedRequirementsTable() | safe }}
 
     {{ govukInsetText({
         text: "You must enter the following requirements manually as these are not explicitly asked in the application."
     }) }}
 
-    {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.nonPrepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
+    {{ page.nonPrepopulatedRequirementsTable() | safe }}
 
     {% set lengthOfStayAgreedHint %}
         {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}
