@@ -98,6 +98,12 @@ jobs:
     with:
       environment: 'dev'
       app_version: '${{ needs.build.outputs.app_version }}'
+  node_e2e_tests:
+    name: Node e2e tests
+    if: github.ref == 'refs/heads/main'
+    needs: [deploy_dev]
+    uses: ./.github/workflows/e2e_tests.yml
+    secrets: inherit
   # deploy_preprod:
   #   name: Deploy to pre-production environment
   #   needs:

@@ -125,3 +125,4 @@ integration_tests/screenshots/
 */*.iml
 **/Chart.lock
 **/.DS_Store
+e2e-tests/playwright-report/
