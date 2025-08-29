@@ -114,7 +114,6 @@ describe('OccupancyViewController', () => {
 
   describe('view', () => {
     it('should render the occupancy view template with the search state details', async () => {
-
       await occupancyViewController.view()(request, response, next)
 
       const { startDate, endDate } = placementDates(

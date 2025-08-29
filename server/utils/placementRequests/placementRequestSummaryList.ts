@@ -22,7 +22,10 @@ export const placementRequestSummaryList = (
   placementRequest: Cas1PlacementRequestDetail,
   options: PlacementRequestSummaryListOptions = { showActions: true },
 ): SummaryList => {
-  const dates = placementDates(placementRequest.authorisedPlacementPeriod.arrival, String(placementRequest.authorisedPlacementPeriod.duration))
+  const dates = placementDates(
+    placementRequest.authorisedPlacementPeriod.arrival,
+    String(placementRequest.authorisedPlacementPeriod.duration),
+  )
   const rows: Array<SummaryListItem> = [
     requestedOrEstimatedArrivalDateRow(placementRequest.isParole, dates.startDate),
     departureDateRow(dates.endDate),

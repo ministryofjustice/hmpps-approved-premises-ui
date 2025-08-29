@@ -11,7 +11,7 @@ import cas1RequestedPlacementPeriod from '../../testutils/factories/cas1Requeste
 
 describe('adminSummary', () => {
   const placementRequest = cas1PlacementRequestDetailFactory.build({
-    authorisedPlacementPeriod:cas1RequestedPlacementPeriod.build({arrival:'2022-01-01',duration: 16}),
+    authorisedPlacementPeriod: cas1RequestedPlacementPeriod.build({ arrival: '2022-01-01', duration: 16 }),
     isParole: false,
   })
 
