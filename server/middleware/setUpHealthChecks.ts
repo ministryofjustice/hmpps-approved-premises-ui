@@ -19,5 +19,9 @@ export default function setUpHealthChecks(applicationInfo: ApplicationInfo): Rou
   router.get('/info', middleware.info)
   router.get('/ping', middleware.ping)
 
+  router.get('/debug-sentry', (_req, res) => {
+    throw new Error('Test Sentry error thrown.')
+  })
+
   return router
 }

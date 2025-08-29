@@ -39,4 +39,13 @@ context('Healthcheck', () => {
       cy.request({ url: '/health', method: 'GET', failOnStatusCode: false }).its('body.status').should('equal', 'DOWN')
     })
   })
+
+  context('Sentry check', () => {
+    it('Throws a test error', () => {
+      cy.request({ url: '/debug-sentry', method: 'GET', failOnStatusCode: false }).then(response => {
+        expect(response.status).to.equal(500)
+        expect(response.body).to.contain('Test Sentry error thrown.')
+      })
+    })
+  })
 })
