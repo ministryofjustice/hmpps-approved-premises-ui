@@ -3,7 +3,6 @@ import {
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
   Cas1SpaceBooking,
-  PlacementRequest,
   PlacementRequestStatus,
 } from '@approved-premises/api'
 import Page from '../../page'
@@ -53,7 +52,7 @@ export default class ListPage extends Page {
     shouldShowTableRows(pendingPlacementRequestTableRows(applications))
   }
 
-  clickPlacementRequest(placementRequest: PlacementRequest): void {
+  clickPlacementRequest(placementRequest: Cas1PlacementRequestDetail): void {
     cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
   }
 

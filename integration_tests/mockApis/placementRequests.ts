@@ -3,7 +3,6 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
-  PlacementRequest,
   PlacementRequestStatus,
   RiskTierLevel,
 } from '@approved-premises/api'
@@ -215,7 +214,7 @@ export default {
         jsonBody: placementRequestDetail,
       },
     }),
-  stubBookingFromPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubBookingFromPlacementRequest: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -229,7 +228,7 @@ export default {
         jsonBody: newPlacementRequestBookingConfirmationFactory.build(),
       },
     }),
-  stubUnableToMatchPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubUnableToMatchPlacementRequest: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -258,7 +257,7 @@ export default {
       },
     }),
 
-  stubPlacementRequestUnableToMatch: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubPlacementRequestUnableToMatch: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -271,14 +270,14 @@ export default {
         },
       },
     }),
-  verifyPlacementRequestWithdrawal: async (placementRequest: PlacementRequest) =>
+  verifyPlacementRequestWithdrawal: async (placementRequest: Cas1PlacementRequestDetail) =>
     (
       await getMatchingRequests({
         method: 'POST',
         url: paths.placementRequests.withdrawal.create({ placementRequestId: placementRequest.id }),
       })
     ).body.requests,
-  verifyPlacementRequestedMarkedUnableToMatch: async (placementRequest: PlacementRequest) =>
+  verifyPlacementRequestedMarkedUnableToMatch: async (placementRequest: Cas1PlacementRequestDetail) =>
     (
       await getMatchingRequests({
         method: 'POST',

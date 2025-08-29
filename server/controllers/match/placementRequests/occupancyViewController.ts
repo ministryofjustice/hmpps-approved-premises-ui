@@ -78,6 +78,7 @@ export default class {
       const { placementRequestId, premisesId } = req.params
 
       const searchState = this.formData.get(placementRequestId, req.session)
+      console.log('***  search state', searchState)
 
       if (!searchState) {
         return res.redirect(paths.v2Match.placementRequests.search.spaces({ placementRequestId }))
@@ -100,9 +101,10 @@ export default class {
       }
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
-      const { startDate, endDate } = placementDates(placementRequest.expectedArrival, placementRequest.duration)
+      console.log('***  placementRequest', placementRequest.authorisedPlacementPeriod)
+      const { startDate, endDate } = placementDates(placementRequest.authorisedPlacementPeriod.arrival, placementRequest.authorisedPlacementPeriod.duration)
       const premises = await this.premisesService.find(token, premisesId)
-
+      console.log('***  dates', startDate, endDate)
       let summary: OccupancySummary
       let calendar: Calendar
 

@@ -44,6 +44,7 @@ import {
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import { placementKeyDetails } from '../../../utils/placements'
+import cas1RequestedPlacementPeriodFactory from '../../../testutils/factories/cas1RequestedPlacementPeriod'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -58,7 +59,9 @@ describe('OccupancyViewController', () => {
 
   let occupancyViewController: OccupancyViewController
   const premises = cas1PremisesFactory.build()
-  const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ duration: 84 })
+  const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
+    authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ duration: 84 }),
+  })
   const searchState = initialiseSearchState(placementRequestDetail)
   const premiseCapacity = cas1PremiseCapacityFactory.build()
 
@@ -111,12 +114,12 @@ describe('OccupancyViewController', () => {
 
   describe('view', () => {
     it('should render the occupancy view template with the search state details', async () => {
-      const requestHandler = occupancyViewController.view()
-      await requestHandler(request, response, next)
+
+      await occupancyViewController.view()(request, response, next)
 
       const { startDate, endDate } = placementDates(
-        placementRequestDetail.expectedArrival,
-        placementRequestDetail.duration,
+        placementRequestDetail.authorisedPlacementPeriod.arrival,
+        placementRequestDetail.authorisedPlacementPeriod.duration,
       )
 
       expect(occupancyViewController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)

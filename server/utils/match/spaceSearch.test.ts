@@ -35,8 +35,8 @@ describe('Space search utils', () => {
         apType: 'isRecoveryFocussed',
         apCriteria: ['acceptsNonSexualChildOffenders'],
         roomCriteria: ['isStepFreeDesignated', 'hasEnSuite'],
-        startDate: placementRequest.expectedArrival,
-        durationDays: placementRequest.duration,
+        startDate: placementRequest.authorisedPlacementPeriod.arrival,
+        durationDays: placementRequest.authorisedPlacementPeriod.duration,
       })
     })
 

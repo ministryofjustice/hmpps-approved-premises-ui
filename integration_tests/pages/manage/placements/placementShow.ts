@@ -1,4 +1,4 @@
-import { Cas1SpaceBooking, PlacementRequest } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail, Cas1SpaceBooking } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 import { DateFormats } from '../../../../server/utils/dateUtils'
@@ -71,7 +71,7 @@ export default class PlacementShowPage extends Page {
     })
   }
 
-  shouldShowPlacementRequestDetails(placementRequest: PlacementRequest): void {
+  shouldShowPlacementRequestDetails(placementRequest: Cas1PlacementRequestDetail): void {
     cy.get('dl[data-cy-section="placement-request-summary"').within(() => {
       const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
       this.assertDefinition('Requested Arrival Date', DateFormats.isoDateToUIDate(dates.startDate, { format: 'short' }))
