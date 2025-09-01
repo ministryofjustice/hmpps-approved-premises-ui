@@ -18,7 +18,7 @@ jobs:
     name: Run the e2e tests
     runs-on: [self-hosted, Linux, X64, hmpps-github-actions-runner]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # Repository is specified to run the workflow from the API repository
           repository: 'ministryofjustice/hmpps-community-payback-ui'
