@@ -64,3 +64,17 @@ jobs:
           path: |
             e2e-tests/test_results/
             e2e-tests/playwright-report/
+
+  e2e_test_notify_slack:
+    name: "E2E test failure notification"
+    needs: e2e_test
+    if: ${{ always() && needs.e2e_test.result == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        uses: ministryofjustice/hmpps-community-payback-ui/.github/actions/slack_failure_notification@main
+        with:
+          title: "Community Payback E2E Tests"
+          job: "e2e_test"
+          channel_id: ${{ vars.NONPROD_RELEASES_SLACK_CHANNEL }}
+          slack_bot_token: ${{ secrets.HMPPS_SRE_SLACK_BOT_TOKEN }}
