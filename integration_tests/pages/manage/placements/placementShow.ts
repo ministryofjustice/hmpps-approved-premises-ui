@@ -73,7 +73,10 @@ export default class PlacementShowPage extends Page {
 
   shouldShowPlacementRequestDetails(placementRequest: Cas1PlacementRequestDetail): void {
     cy.get('dl[data-cy-section="placement-request-summary"').within(() => {
-      const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
+      const dates = placementDates(
+        placementRequest.authorisedPlacementPeriod.arrival,
+        String(placementRequest.authorisedPlacementPeriod.duration),
+      )
       this.assertDefinition('Requested Arrival Date', DateFormats.isoDateToUIDate(dates.startDate, { format: 'short' }))
       this.assertDefinition('Requested Departure Date', DateFormats.isoDateToUIDate(dates.endDate, { format: 'short' }))
       this.assertDefinition('Length of stay', placementLength(dates.placementLength))

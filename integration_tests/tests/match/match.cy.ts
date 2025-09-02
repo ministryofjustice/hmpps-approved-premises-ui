@@ -18,6 +18,7 @@ import {
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
   cas1PlacementRequestSummaryFactory,
+  cas1RequestedPlacementPeriodFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
@@ -98,8 +99,8 @@ context('Placement Requests', () => {
       AND('the first request to the API should contain the criteria from the placement request')
       expect(initialSearchRequestBody).to.deep.equal({
         applicationId: placementRequest.applicationId,
-        durationInDays: placementRequest.duration,
-        startDate: placementRequest.expectedArrival,
+        durationInDays: placementRequest.authorisedPlacementPeriod.duration,
+        startDate: placementRequest.authorisedPlacementPeriod.arrival,
         targetPostcodeDistrict: placementRequest.location,
         spaceCharacteristics: [
           placementRequest.type !== 'normal' && applyApTypeToAssessApType[placementRequest.type],
@@ -110,8 +111,8 @@ context('Placement Requests', () => {
       AND('the second request to the API should contain the new criteria I submitted')
       expect(secondSearchRequestBody).to.contain({
         applicationId: placementRequest.applicationId,
-        durationInDays: placementRequest.duration,
-        startDate: placementRequest.expectedArrival,
+        durationInDays: placementRequest.authorisedPlacementPeriod.duration,
+        startDate: placementRequest.authorisedPlacementPeriod.arrival,
         targetPostcodeDistrict: newSearchState.postcode,
       })
 
@@ -169,8 +170,10 @@ context('Placement Requests', () => {
     const premises = cas1PremisesFactory.build({ bedCount: totalCapacity })
     const placementRequest = cas1PlacementRequestDetailFactory.build({
       person,
-      expectedArrival: startDate,
-      duration: durationDays,
+      authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({
+        arrival: startDate,
+        duration: durationDays,
+      }),
       application: applicationFactory.build({
         licenceExpiryDate,
       }),
@@ -179,8 +182,8 @@ context('Placement Requests', () => {
       .fromPlacementRequestDetail(placementRequest)
       .build()
     const { startDate: requestedArrivalDate, endDate: requestedDepartureDate } = placementDates(
-      placementRequest.expectedArrival,
-      placementRequest.duration,
+      placementRequest.authorisedPlacementPeriod.arrival,
+      placementRequest.authorisedPlacementPeriod.duration,
     )
     const searchState = initialiseSearchState(placementRequest)
     const premiseCapacity = cas1PremiseCapacityFactory.build({

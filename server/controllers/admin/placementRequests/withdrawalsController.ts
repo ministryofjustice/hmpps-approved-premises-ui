@@ -50,11 +50,16 @@ export default class WithdrawalsController {
           placementRequestId,
           req.body.reason,
         )
-
         try {
-          req.flash('success', withdrawalMessage(placementRequest.duration, placementRequest.expectedArrival))
+          req.flash(
+            'success',
+            withdrawalMessage(
+              placementRequest.authorisedPlacementPeriod.duration,
+              placementRequest.authorisedPlacementPeriod.arrival,
+            ),
+          )
         } catch (error) {
-          req.flash('success', 'Placement application withdrawn')
+          req.flash('success', 'Placement request withdrawn')
         }
 
         const redirect = hasPermission(req.session.user, ['cas1_view_cru_dashboard'])

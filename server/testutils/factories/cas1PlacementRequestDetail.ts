@@ -111,7 +111,7 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
       : undefined,
     authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
     requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
-    expectedArrival: undefined as string,
-    duration: undefined as number,
+    expectedArrival: '2025-5-3',
+    duration: 10,
   }
 })

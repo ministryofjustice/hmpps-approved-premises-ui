@@ -130,8 +130,8 @@ describe('withdrawalsController', () => {
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.cruDashboard.index({}))
       expect(request.flash).toHaveBeenCalledWith('success', withdrawalMessageContent)
       expect(withdrawalMessage).toHaveBeenCalledWith(
-        placementRequestDetail.duration,
-        placementRequestDetail.expectedArrival,
+        placementRequestDetail.authorisedPlacementPeriod.duration,
+        placementRequestDetail.authorisedPlacementPeriod.arrival,
       )
     })
 
