@@ -1,6 +1,10 @@
 import { Cas1Application } from '@approved-premises/api'
 import { SummaryListItem } from '@approved-premises/ui'
-import { applicationFactory, cas1PlacementRequestDetailFactory } from '../../testutils/factories'
+import {
+  applicationFactory,
+  cas1PlacementRequestDetailFactory,
+  cas1RequestedPlacementPeriodFactory,
+} from '../../testutils/factories'
 import offlineApplicationFactory from '../../testutils/factories/offlineApplication'
 import { placementRequestSummaryList } from './placementRequestSummaryList'
 import { DateFormats } from '../dateUtils'
@@ -13,8 +17,10 @@ describe('placementRequestSummaryList', () => {
   const placementRequest = cas1PlacementRequestDetailFactory.build({
     isParole: false,
     releaseType: 'hdc',
-    expectedArrival: '2025-10-02',
-    duration: 52,
+    authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({
+      arrival: '2025-10-02',
+      duration: 52,
+    }),
     essentialCriteria: ['hasTactileFlooring'],
     application,
     notes: 'Test notes',

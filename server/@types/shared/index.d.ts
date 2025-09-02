@@ -243,7 +243,6 @@ export type { PlacementApplicationTask } from './models/PlacementApplicationTask
 export type { PlacementApplicationType } from './models/PlacementApplicationType';
 export type { PlacementCriteria } from './models/PlacementCriteria';
 export type { PlacementDates } from './models/PlacementDates';
-export type { PlacementRequest } from './models/PlacementRequest';
 export type { PlacementRequestBookingSummary } from './models/PlacementRequestBookingSummary';
 export type { PlacementRequestRequestType } from './models/PlacementRequestRequestType';
 export type { PlacementRequestSortField } from './models/PlacementRequestSortField';

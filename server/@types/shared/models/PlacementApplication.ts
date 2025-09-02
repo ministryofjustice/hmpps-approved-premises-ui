@@ -16,14 +16,12 @@ export type PlacementApplication = {
     canBeWithdrawn: boolean;
     createdAt: string;
     createdByUserId: string;
-    /**
-     * Any object
-     */
     data?: any;
-    dates?: PlacementDates;
     /**
-     * Any object
+     * please use requestedPlacementPeriod, authorisedPlacementPeriod instead
+     * @deprecated
      */
+    dates?: PlacementDates;
     document?: any;
     /**
      * If type is 'Additional', provides the PlacementApplication ID. If type is 'Initial' this field provides a PlacementRequest ID.
@@ -32,6 +30,7 @@ export type PlacementApplication = {
     isWithdrawn: boolean;
     /**
      * Deprecated, use dates. Only populated with values after the placement application has been submitted
+     * @deprecated
      */
     placementDates: Array<PlacementDates>;
     submittedAt?: string;

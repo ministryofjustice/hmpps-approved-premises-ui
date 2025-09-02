@@ -64,6 +64,7 @@ export default class PlacementController {
           req.user.token,
           placement.placementRequestId,
         )
+
         placementRequestSummaryRows = [
           ...adminSummary(placementRequestDetail).rows,
           ...matchingInformationSummaryRows(placementRequestDetail),

@@ -100,9 +100,11 @@ export default class {
       }
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
-      const { startDate, endDate } = placementDates(placementRequest.expectedArrival, placementRequest.duration)
+      const { startDate, endDate } = placementDates(
+        placementRequest.authorisedPlacementPeriod.arrival,
+        placementRequest.authorisedPlacementPeriod.duration,
+      )
       const premises = await this.premisesService.find(token, premisesId)
-
       let summary: OccupancySummary
       let calendar: Calendar
 

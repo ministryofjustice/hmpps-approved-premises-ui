@@ -22,11 +22,14 @@ export const placementRequestSummaryList = (
   placementRequest: Cas1PlacementRequestDetail,
   options: PlacementRequestSummaryListOptions = { showActions: true },
 ): SummaryList => {
-  const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
+  const dates = placementDates(
+    placementRequest.authorisedPlacementPeriod.arrival,
+    String(placementRequest.authorisedPlacementPeriod.duration),
+  )
   const rows: Array<SummaryListItem> = [
     requestedOrEstimatedArrivalDateRow(placementRequest.isParole, dates.startDate),
     departureDateRow(dates.endDate),
-    lengthOfStayRow(placementRequest.duration),
+    lengthOfStayRow(placementRequest.authorisedPlacementPeriod.duration),
     releaseTypeRow(placementRequest),
     licenceExpiryDateRow(placementRequest),
     options.showActions ? apTypeWithViewTimelineActionRow(placementRequest) : apTypeRow(placementRequest.type),

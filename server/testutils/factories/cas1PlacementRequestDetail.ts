@@ -16,6 +16,7 @@ import type {
 
 import { faker } from '@faker-js/faker/locale/en_GB'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
+import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 import placementRequestBookingSummaryFactory from './placementRequestBookingSummary'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
@@ -85,9 +86,7 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
     assessor: userFactory.build(),
     booking: skipBooking ? undefined : bookingSummary,
     desirableCriteria,
-    duration: faker.number.int({ min: 7, max: 84 }),
     essentialCriteria,
-    expectedArrival: skipBooking ? DateFormats.dateObjToIsoDate(faker.date.future()) : spaceBooking.expectedArrivalDate,
     id: faker.string.uuid(),
     isParole: false,
     isWithdrawn: false,
@@ -110,5 +109,9 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
           ...problemInPlacementReasons,
         ]) as WithdrawPlacementRequestReason)
       : undefined,
+    authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
+    requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
+    expectedArrival: '2025-5-3',
+    duration: 10,
   }
 })

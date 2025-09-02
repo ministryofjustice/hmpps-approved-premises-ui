@@ -35,8 +35,8 @@ export const initialiseSearchState = (placementRequest: Cas1PlacementRequestDeta
     apType: applyApTypeToAssessApType[placementRequest.type as ApTypeSpecialist] || 'normal',
     apCriteria: filterApLevelCriteria(allCriteria),
     roomCriteria: filterRoomLevelCriteria(allCriteria),
-    startDate: placementRequest.expectedArrival,
-    durationDays: placementRequest.duration,
+    startDate: placementRequest.authorisedPlacementPeriod.arrival,
+    durationDays: placementRequest.authorisedPlacementPeriod.duration,
   }
 }
 

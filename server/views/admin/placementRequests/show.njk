@@ -28,7 +28,7 @@
             </p>
             <p class="govuk-body">
                 The person's arrival date has been estimated
-                as {{ formatDate(placementRequest.expectedArrival) }}.
+                as {{ formatDate(placementRequest.authorisedPlacementPeriod.arrival) }}.
                 This is 6 weeks after the parole board's date of decision.
             </p>
             {% if placementRequest.booking %}

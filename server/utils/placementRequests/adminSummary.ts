@@ -8,7 +8,10 @@ import { placementDates, placementLength } from '../match'
 import paths from '../../paths/apply'
 
 export const adminSummary = (placementRequest: Cas1PlacementRequestDetail): SummaryList => {
-  const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
+  const dates = placementDates(
+    placementRequest.authorisedPlacementPeriod.arrival,
+    String(placementRequest.authorisedPlacementPeriod.duration),
+  )
 
   const rows: Array<SummaryListItem> = [
     {

@@ -71,8 +71,7 @@ describe('spaceSearchController', () => {
         spaceSearch: { [placementRequestDetail.id]: searchState },
       }
 
-      const requestHandler = spaceSearchController.search()
-      await requestHandler(request, response, next)
+      await spaceSearchController.search()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/search', {
         pageHeading: 'Find a space in an Approved Premises',

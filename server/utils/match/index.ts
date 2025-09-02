@@ -6,7 +6,6 @@ import {
   type Cas1SpaceBooking,
   Cas1SpaceBookingCharacteristic,
   PlacementCriteria,
-  PlacementRequest,
   ReleaseTypeOption,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchResult as SpaceSearchResult,
@@ -138,7 +137,7 @@ export const restrictionsRow = (spaceSearchResult: SpaceSearchResult): SummaryLi
     : undefined
 }
 
-export const releaseTypeRow = (placementRequest: PlacementRequest) =>
+export const releaseTypeRow = (placementRequest: Cas1PlacementRequestDetail) =>
   summaryListItem('Release type', allReleaseTypes[placementRequest.releaseType])
 
 export const licenceExpiryDateRow = (placementRequest: Cas1PlacementRequestDetail) =>
@@ -189,7 +188,7 @@ export const keyDetails = (placementRequest: Cas1PlacementRequestDetail): KeyDet
 
 export const creationNotificationBody = (
   placement: Cas1SpaceBooking,
-  placementRequest: PlacementRequest,
+  placementRequest: Cas1PlacementRequestDetail,
 ) => `<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>
 <li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequest.applicationDate, { format: 'short' })}</li></ul>
 <p>A confirmation email will be sent to the AP and probation practitioner.</p>`
