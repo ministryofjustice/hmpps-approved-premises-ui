@@ -91,10 +91,9 @@ context('Placement Requests', () => {
       const initialSearchRequestBody = JSON.parse(requests[0].body)
       const secondSearchRequestBody: Cas1SpaceSearchParameters = JSON.parse(requests[1].body)
 
-      const allPlacementCriteria = [...placementRequest.desirableCriteria, ...placementRequest.essentialCriteria]
       const filteredPlacementCriteria = [
-        ...filterApLevelCriteria(allPlacementCriteria),
-        ...filterRoomLevelCriteria(allPlacementCriteria),
+        ...filterApLevelCriteria(placementRequest.essentialCriteria),
+        ...filterRoomLevelCriteria(placementRequest.essentialCriteria),
       ]
       AND('the first request to the API should contain the criteria from the placement request')
       expect(initialSearchRequestBody).to.deep.equal({

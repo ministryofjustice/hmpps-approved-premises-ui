@@ -74,7 +74,6 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
   const skipBooking = (['notMatched', 'unableToMatch'] as Array<PlacementRequestStatus>).includes(params.status)
 
   const essentialCriteria = faker.helpers.arrayElements(placementCriteria)
-  const desirableCriteria = essentialCriteria.filter(criteria => !essentialCriteria.includes(criteria))
 
   return {
     application: {} as Cas1Application,
@@ -85,7 +84,7 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
     assessmentId: faker.string.uuid(),
     assessor: userFactory.build(),
     booking: skipBooking ? undefined : bookingSummary,
-    desirableCriteria,
+    desirableCriteria: [] as Array<PlacementCriteria>,
     essentialCriteria,
     id: faker.string.uuid(),
     isParole: false,

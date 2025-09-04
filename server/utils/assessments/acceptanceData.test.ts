@@ -133,8 +133,8 @@ describe('acceptanceData', () => {
         type: 'normal',
         location: 'ABC123',
         radius: '100',
-        essentialCriteria: criteriaFromMatchingInformation(matchingInformation),
         desirableCriteria: [],
+        essentialCriteria: criteriaFromMatchingInformation(matchingInformation),
       })
     })
 
