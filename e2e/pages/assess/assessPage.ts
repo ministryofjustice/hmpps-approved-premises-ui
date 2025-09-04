@@ -11,7 +11,7 @@ export class AssessPage extends BasePage {
 
   async checkListOfRequirements(
     requirements: Array<string>,
-    relevancy: 'essential' | 'desirable' | 'notRelevant' | 'relevant',
+    relevancy: 'required' | 'notRequired' | 'notRelevant' | 'relevant',
   ) {
     for (const requirement of requirements) {
       // eslint-disable-next-line no-await-in-loop
