@@ -100,6 +100,7 @@ export function getBody(
 }
 
 export function pageDataFromApplicationOrAssessment(Page: TasklistPageInterface, application: FormArtifact) {
+
   const pageName = getPageName(Page)
   const taskName = getTaskName(Page)
 

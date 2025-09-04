@@ -3,10 +3,10 @@ import {
   ApprovedPremisesApplication as Application,
   Cas1RequestedPlacementPeriod,
   PlacementApplication,
-  PlacementType,
+  ReleaseTypeOption,
   SubmitPlacementApplication,
 } from '../../@types/shared'
-import ReasonForPlacement from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
+
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -18,31 +18,31 @@ import AdditionalPlacementDetails from '../../form-pages/placement-application/r
 import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
+import { getSentenceType } from '../placementApplications'
 
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
   application: Application,
 ): SubmitPlacementApplication => {
-  const reasonForPlacement = retrieveQuestionResponseFromFormArtifact(
-    placementApplication,
-    ReasonForPlacement,
-    'reason',
-  )
+  const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
+  // let reasonForPlacement: PlacementType = 'additional_placement'
+  // if (releaseType === 'rotl') reasonForPlacement = 'rotl'
+  // if (releaseType === 'paroleDirectedLicence') reasonForPlacement = 'release_following_decision'
 
-  const placementDates = durationAndArrivalDateFromPlacementApplication(
-    placementApplication,
-    reasonForPlacement,
-    application,
-  )
+  const placementDates = durationAndArrivalDateFromPlacementApplication(placementApplication, releaseType, application)
   return {
     translatedDocument: placementApplication.document,
-    placementType: reasonForPlacement,
+    // placementType: reasonForPlacement,
     requestedPlacementPeriods: placementDates,
+    releaseType,
+    sentenceType,
+    situationType: situation,
   }
 }
 export const retreivePlacementDatesFromRotlPlacementApplication = (
   placementApplication: PlacementApplication,
 ): Array<Cas1RequestedPlacementPeriod> => {
+  console.log('** Getting rotl dates',placementApplication)
   const datesOfPlacement = retrieveOptionalQuestionResponseFromFormArtifact(
     placementApplication,
     DatesOfPlacement,
@@ -68,14 +68,27 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
 
 export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
-  reasonForPlacement: PlacementType,
+  reasonForPlacement: ReleaseTypeOption,
   application: Application,
 ): Array<Cas1RequestedPlacementPeriod> => {
   switch (reasonForPlacement) {
     case 'rotl': {
       return retreivePlacementDatesFromRotlPlacementApplication(placementApplication)
     }
-    case 'additional_placement': {
+    case 'paroleDirectedLicence': {
+      const decisionToReleaseDate = retrieveQuestionResponseFromFormArtifact(
+        placementApplication,
+        DecisionToRelease,
+        'decisionToReleaseDate',
+      )
+      return [
+        {
+          arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
+          duration: Number(placementDurationFromApplication(application)),
+        },
+      ]
+    }
+    default: {
       return [
         {
           arrival: retrieveQuestionResponseFromFormArtifact(
@@ -89,27 +102,5 @@ export const durationAndArrivalDateFromPlacementApplication = (
         },
       ]
     }
-    case 'release_following_decision': {
-      const decisionToReleaseDate = retrieveQuestionResponseFromFormArtifact(
-        placementApplication,
-        DecisionToRelease,
-        'decisionToReleaseDate',
-      )
-
-      return [
-        {
-          arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: Number(placementDurationFromApplication(application)),
-        },
-      ]
-    }
-
-    default:
-      return [
-        {
-          arrival: '',
-          duration: null,
-        },
-      ]
   }
 }

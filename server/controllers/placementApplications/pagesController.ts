@@ -36,6 +36,8 @@ export default class PagesController {
         )
 
         res.render(viewPath(page, 'placement-applications'), {
+          backLink:paths.placementApplications.pages.show({ id: req.params.id, task: taskName, page: page.previous() }),
+          formAction: `${paths.placementApplications.pages.update({ id: req.params.id, task: taskName, page: page.name }) }?_method=PUT`,
           placementApplicationId: req.params.id,
           errors,
           errorSummary,
@@ -62,7 +64,6 @@ export default class PagesController {
 
       try {
         await this.placementApplicationService.save(page, req)
-
         res.redirect(paths.placementApplications.pages.show({ id: req.params.id, task: taskName, page: page.next() }))
       } catch (error) {
         catchValidationErrorOrPropogate(

@@ -1,18 +1,18 @@
 import { omit, pick } from 'underscore'
 
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
-import type {  TaskListErrors } from '@approved-premises/ui'
+import type { PlacementApplication } from '@approved-premises/api'
+import type { TaskListErrors } from '@approved-premises/ui'
 
-import { getReleaseTypes } from '../../../utils/getReleaseTypes'
-import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import TasklistPage from '../../../tasklistPage'
-import SentenceType from './sentenceType'
-import { Page } from '../../../utils/decorators'
+import TasklistPage from '../../tasklistPage'
+import { Page } from '../../utils/decorators'
 import {
   PossibleReleaseTypeOptions,
-  SelectableReleaseTypes,
   selectableReleaseTypes,
-} from '../../../../utils/applications/releaseTypeUtils'
+  SelectableReleaseTypes,
+} from '../../../utils/applications/releaseTypeUtils'
+import { getReleaseTypes } from '../../utils/getReleaseTypes'
+
+
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -24,11 +24,12 @@ export default class ReleaseType implements TasklistPage {
 
   constructor(
     readonly body: { releaseType?: SelectableReleaseTypes },
-    readonly application: ApprovedPremisesApplication,
+    placementApplication: PlacementApplication,
   ) {
-    const sessionSentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType)
 
-    this.releaseTypes = getReleaseTypes(sessionSentenceType)
+    const { sentenceType } = placementApplication.data?.['request-a-placement']?.['sentence-type'] || {}
+
+    this.releaseTypes = getReleaseTypes(sentenceType)
 
     this.body = {
       releaseType: body.releaseType as SelectableReleaseTypes,
@@ -36,7 +37,9 @@ export default class ReleaseType implements TasklistPage {
   }
 
   next() {
-    return 'release-date'
+    if (this.body.releaseType === 'rotl') return 'previous-rotl-placement'
+    if (this.body.releaseType === 'paroleDirectedLicence') return 'decision-to-release'
+    return 'additional-placement-details'
   }
 
   previous() {

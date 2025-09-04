@@ -34,9 +34,12 @@ export default class PlacementApplicationService {
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const placementApplication = await this.getPlacementApplication(request.user.token, request.params.id)
-
+    console.log('****  loaded placement application - data:',placementApplication.data)
+    console.log('*****  request body', request.body)
     const body = getBody(Page, placementApplication, request, userInput)
+    console.log('********   Resulting body',body)
 
+   console.log('**  About to initialize page',Page.initialize)
     const page = Page.initialize
       ? await Page.initialize(body, placementApplication, request.user.token, dataServices)
       : new Page(body, placementApplication)
@@ -58,7 +61,7 @@ export default class PlacementApplicationService {
 
       const pageName = getPageName(page.constructor)
       const taskName = getTaskName(page.constructor)
-
+      console.log('**********  Saving page',pageName,taskName,'  data:',page.body)
       placementApplication.data = placementApplication.data || {}
       placementApplication.data[taskName] = placementApplication.data[taskName] || {}
       placementApplication.data[taskName][pageName] = page.body

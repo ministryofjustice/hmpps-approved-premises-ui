@@ -26,7 +26,7 @@ describe('DecisionToRelease', () => {
     })
   })
 
-  itShouldHavePreviousValue(new DecisionToRelease(body), 'reason-for-placement')
+  itShouldHavePreviousValue(new DecisionToRelease(body), 'release-type')
 
   itShouldHaveNextValue(new DecisionToRelease(body), 'additional-documents')
 

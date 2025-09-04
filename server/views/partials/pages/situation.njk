@@ -1,0 +1,22 @@
+{% extends "./layout.njk" %}
+
+{% block questions %}
+
+  {{
+    formPageRadios(
+      {
+        fieldName: "situation",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: page.items()
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}

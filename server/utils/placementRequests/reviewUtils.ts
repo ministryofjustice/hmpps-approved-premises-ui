@@ -18,7 +18,7 @@ export const mapPageForSummaryList = (
 ) => {
   return {
     card: {
-      title: { text: getPageTitle(placementApplication, pageName) },
+      title: { text:  getPageTitle(placementApplication, pageName)},
     },
     rows: pageResponsesAsSummaryListItems(placementApplication, pageName, application),
   }
