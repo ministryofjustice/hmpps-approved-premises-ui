@@ -1,6 +1,8 @@
 {% extends "govuk/template.njk" %}
 
 {% block head %}
+  {% include "./applicationInsightsScript.njk" %}
+
   <link href="{{ '/assets/css/index.css' | assetMap }}" rel="stylesheet"/>
 {% endblock %}
 
