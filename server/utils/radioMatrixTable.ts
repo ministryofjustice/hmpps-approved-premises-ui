@@ -16,12 +16,10 @@ export const cell = (requirement: string, preference: string, checked?: boolean)
         </td>`
 }
 
-export const row = (rowName: UiPlacementCriteria, option: Array<string>, value: string) => {
-  return `<tr>
+export const row = (rowName: UiPlacementCriteria, options: Array<string>, value: string) => `<tr>
   <th class="govuk-table__cell govuk-!-font-weight-regular" scope="row">${placementCriteriaLabels[rowName]}</td>
-    ${option.map(preference => cell(rowName, preference, value === preference)).join('')}
+    ${options.map(preference => cell(rowName, preference, value === preference)).join('')}
 </tr>`
-}
 
 export const heading = (headingNames: Array<string>) => {
   return `<thead class="govuk-table__head">

@@ -4,6 +4,12 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
 import * as matchingInformtionUtils from '../../../utils/matchingInformationUtils'
 import * as formUtils from '../../../../utils/formUtils'
+import {
+  nonPrepopulatablePlacementRequirementCriteria,
+  offenceAndRiskCriteria,
+  prepopulatablePlacementRequirementCriteria,
+} from '../../../../utils/placementCriteriaUtils'
+import { radioMatrixTable } from '../../../../utils/radioMatrixTable'
 
 jest.mock('../../../../utils/applications/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
@@ -17,12 +23,12 @@ const weAssessment = assessmentFactory.build({
 
 const defaultArguments = {
   apType: 'isESAP' as const,
-  isArsonSuitable: 'essential',
-  isWheelchairDesignated: 'essential',
-  isSingle: 'desirable',
-  isStepFreeDesignated: 'desirable',
-  isCatered: 'notRelevant',
-  hasEnSuite: 'notRelevant',
+  isArsonSuitable: 'required',
+  isWheelchairDesignated: 'required',
+  isSingle: 'notRequired',
+  isStepFreeDesignated: 'notRequired',
+  isCatered: 'notRequired',
+  hasEnSuite: 'notRequired',
   isSuitableForVulnerable: 'relevant',
   acceptsSexOffenders: 'relevant',
   acceptsChildSexOffenders: 'relevant',
@@ -31,7 +37,7 @@ const defaultArguments = {
   isSuitedForSexOffenders: 'notRelevant',
   lengthOfStayAgreed: 'yes',
   cruInformation: 'Some info',
-} as MatchingInformationBody
+} as Partial<MatchingInformationBody>
 
 const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBody> = {
   acceptsNonSexualChildOffenders: 'relevant',
@@ -39,11 +45,11 @@ const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBo
   acceptsHateCrimeOffenders: 'relevant',
   acceptsSexOffenders: 'relevant',
   apType: 'isPIPE',
-  isArsonSuitable: 'essential',
-  isCatered: 'essential',
-  isSingle: 'desirable',
+  isArsonSuitable: 'required',
+  isCatered: 'required',
+  isSingle: 'notRequired',
   isSuitableForVulnerable: 'relevant',
-  isSuitedForSexOffenders: 'desirable',
+  isSuitedForSexOffenders: 'notRequired',
   isWheelchairDesignated: 'notRelevant',
   lengthOfStay: '32',
 }
@@ -117,13 +123,13 @@ describe('MatchingInformation', () => {
 
       expect(page.response()).toEqual({
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
-        'Suitable for active arson risk': 'Essential',
-        'Room suitable for a person with sexual offences': 'Not relevant',
-        'Wheelchair accessible': 'Essential',
-        'Single room': 'Desirable',
-        'Step-free access': 'Desirable',
-        'Catering required': 'Not relevant',
-        'En-suite bathroom': 'Not relevant',
+        'Suitable for active arson risk': 'Required',
+        'Room suitable for a person with sexual offences': 'Not required',
+        'Wheelchair accessible': 'Required',
+        'Single room': 'Not required',
+        'Step-free access': 'Not required',
+        'Catering required': 'Not required',
+        'En-suite bathroom': 'Not required',
         'Vulnerable to exploitation': 'Relevant',
         'Sexual offences against an adult': 'Relevant',
         'Sexual offences against children': 'Relevant',
@@ -199,6 +205,56 @@ describe('MatchingInformation', () => {
           { value: 'isPIPE', text: 'Psychologically Informed Planned Environment (PIPE)', checked: false },
           { value: 'isESAP', text: 'Enhanced Security AP (ESAP)', checked: false },
         ])
+      })
+    })
+
+    describe('relevantInformationTable', () => {
+      it('should generate a table of relevant information', () => {
+        const page = new MatchingInformation({ isSuitableForVulnerable: 'relevant' }, weAssessment)
+
+        expect(page.relevantInformationTable()).toEqual(
+          radioMatrixTable(
+            ['Risks and offences to consider', 'Relevant', 'Not required'],
+            offenceAndRiskCriteria,
+            ['relevant' as const, 'notRelevant' as const],
+            page.body,
+          ),
+        )
+      })
+    })
+
+    describe('prepopulatedRequirementsTable', () => {
+      it('should generate a table of required pre-populatable criteria', () => {
+        const settings: Partial<MatchingInformationBody> = {
+          isSuitableForVulnerable: 'required',
+          isArsonSuitable: 'required',
+        }
+        const page = new MatchingInformation(settings, weAssessment)
+
+        expect(page.prepopulatedRequirementsTable()).toEqual(
+          radioMatrixTable(
+            ['Specify placement requirements', 'Required', 'Not required'],
+            prepopulatablePlacementRequirementCriteria,
+            ['required' as const, 'notRequired' as const],
+            page.body,
+          ),
+        )
+      })
+    })
+
+    describe('nonPrepopulatedRequirementsTable', () => {
+      it('should generate a table of required non pre-populatable criteria', () => {
+        const settings: Partial<MatchingInformationBody> = { isStepFreeDesignated: 'required', hasEnSuite: 'required' }
+        const page = new MatchingInformation(settings, weAssessment)
+
+        expect(page.nonPrepopulatedRequirementsTable()).toEqual(
+          radioMatrixTable(
+            ['Specify placement requirements', 'Required', 'Not required'],
+            nonPrepopulatablePlacementRequirementCriteria,
+            ['required' as const, 'notRequired' as const],
+            page.body,
+          ),
+        )
       })
     })
   })

@@ -18,10 +18,7 @@ describe('matchingInformationSummaryList', () => {
             text: 'Information for Matching',
           },
         },
-        rows: [
-          placementRequirementsRow(placementRequest, 'essential'),
-          placementRequirementsRow(placementRequest, 'desirable'),
-        ],
+        rows: [placementRequirementsRow(placementRequest)],
       })
     })
 
@@ -37,14 +34,13 @@ describe('matchingInformationSummaryList', () => {
           },
         },
         rows: [
-          placementRequirementsRow(placementRequest, 'essential'),
-          placementRequirementsRow(placementRequest, 'desirable'),
+          placementRequirementsRow(placementRequest),
           {
             key: {
               text: 'Observations from assessor',
             },
             value: {
-              text: placementRequest.notes,
+              html: '<span class="govuk-summary-list__textblock">Some notes</span>',
             },
           },
         ],
@@ -61,11 +57,7 @@ describe('matchingInformationSummaryList', () => {
             text: 'Information for Matching',
           },
         },
-        rows: [
-          preferredApsRow(placementRequest),
-          placementRequirementsRow(placementRequest, 'essential'),
-          placementRequirementsRow(placementRequest, 'desirable'),
-        ],
+        rows: [preferredApsRow(placementRequest), placementRequirementsRow(placementRequest)],
       })
     })
   })

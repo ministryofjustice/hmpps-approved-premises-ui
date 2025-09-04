@@ -82,6 +82,23 @@ type GetValuePlacementRequirement = {
   returnType: PlacementRequirementPreference
 }
 
+const getBodyValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequirement>(
+  body: MatchingInformationBody,
+  bodyField: T['bodyField'],
+  matchedReturnValue: T['returnType'],
+  unmatchedReturnValue: T['returnType'],
+): T['returnType'] => {
+  const bodyValue = body[bodyField]
+  if (bodyValue) {
+    if (![matchedReturnValue, unmatchedReturnValue].includes(bodyValue)) {
+      if (['essential', 'relevant', 'required'].includes(bodyValue)) return matchedReturnValue
+      if (['notRelevant', 'notRequired', 'desirable'].includes(bodyValue)) return unmatchedReturnValue
+    }
+    return bodyValue
+  }
+  return undefined
+}
+
 const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequirement>(
   body: MatchingInformationBody,
   bodyField: T['bodyField'],
@@ -91,9 +108,8 @@ const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequiremen
   matchedReturnValue: T['returnType'],
   unmatchedReturnValue: T['returnType'],
 ): T['returnType'] => {
-  if (body[bodyField]) {
-    return body[bodyField]
-  }
+  const bodyValue = getBodyValue(body, bodyField, matchedReturnValue, unmatchedReturnValue)
+  if (bodyValue) return bodyValue
 
   const match = fieldsToCheck.find(({ name, page, optional }) => {
     const retrieveMethod = optional
@@ -165,8 +181,8 @@ const defaultMatchingInformationValues = (
       application,
       [{ name: 'arson', page: Arson }],
       ['yes'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isCatered: getValue<GetValuePlacementRequirement>(
       body,
@@ -174,8 +190,8 @@ const defaultMatchingInformationValues = (
       application,
       [{ name: 'catering', page: Catering }],
       ['no'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isSingle: getValue<GetValuePlacementRequirement>(
       body,
@@ -190,8 +206,8 @@ const defaultMatchingInformationValues = (
         { name: 'traumaConcerns', page: RoomSharing },
       ],
       ['yes'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isSuitableForVulnerable: getValue<GetValueOffenceAndRisk>(
       body,
@@ -213,8 +229,8 @@ const defaultMatchingInformationValues = (
         { name: 'nonContactSexualOffencesAgainstChildren', page: DateOfOffence, optional: true },
       ],
       ['current', 'previous'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isWheelchairDesignated: getValue<GetValuePlacementRequirement>(
       body,
@@ -222,9 +238,11 @@ const defaultMatchingInformationValues = (
       application,
       [{ name: 'needsWheelchair', page: AccessNeedsFurtherQuestions, optional: true }],
       ['yes'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
+    isStepFreeDesignated: getBodyValue(body, 'isStepFreeDesignated', 'required', 'notRequired'),
+    hasEnSuite: getBodyValue(body, 'hasEnSuite', 'required', 'notRequired'),
   }
 }
 

@@ -2,6 +2,7 @@ import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { preferredApsRow } from './preferredApsRow'
 import { placementRequirementsRow } from './placementRequirementsRow'
+import { summaryListItem } from '../formUtils'
 
 export const matchingInformationSummary = (placementRequest: Cas1PlacementRequestDetail): SummaryListWithCard => {
   return {
@@ -25,18 +26,10 @@ export const matchingInformationSummaryRows = (
     rows.push(preferredAps)
   }
 
-  rows.push(placementRequirementsRow(placementRequest, 'essential'))
-  rows.push(placementRequirementsRow(placementRequest, 'desirable'))
+  rows.push(placementRequirementsRow(placementRequest))
 
   if (placementRequest.notes) {
-    rows.push({
-      key: {
-        text: 'Observations from assessor',
-      },
-      value: {
-        text: placementRequest.notes,
-      },
-    })
+    rows.push(summaryListItem('Observations from assessor', placementRequest.notes, 'textBlock'))
   }
   return rows
 }

@@ -175,7 +175,7 @@ describe('placementRequestSummaryList', () => {
       },
       {
         key: {
-          text: 'Essential Criteria',
+          text: 'Criteria',
         },
         value: {
           html: '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>',
@@ -183,18 +183,10 @@ describe('placementRequestSummaryList', () => {
       },
       {
         key: {
-          text: 'Desirable Criteria',
-        },
-        value: {
-          html: '<span class="text-grey">None</span>',
-        },
-      },
-      {
-        key: {
           text: 'Observations from assessor',
         },
         value: {
-          text: 'Test notes',
+          html: '<span class="govuk-summary-list__textblock">Test notes</span>',
         },
       },
     ]

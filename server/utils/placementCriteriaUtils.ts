@@ -23,21 +23,24 @@ export const applyApTypeToAssessApType: Record<ApTypeSpecialist, SpecialistApTyp
 }
 
 export const specialistApTypeCriteria = apTypes.map((type: ApTypeSpecialist) => applyApTypeToAssessApType[type])
-export const offenceAndRiskCriteria = [
+export const offenceAndRiskCriteria: Array<UiPlacementCriteria> = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',
   'acceptsChildSexOffenders',
   'acceptsNonSexualChildOffenders',
   'acceptsHateCrimeOffenders',
 ] as const
-export const prepopulatablePlacementRequirementCriteria = [
+export const prepopulatablePlacementRequirementCriteria: Array<UiPlacementCriteria> = [
   'isWheelchairDesignated',
   'isArsonSuitable',
   'isSingle',
   'isCatered',
   'isSuitedForSexOffenders',
 ] as const
-export const nonPrepopulatablePlacementRequirementCriteria = ['isStepFreeDesignated', 'hasEnSuite'] as const
+export const nonPrepopulatablePlacementRequirementCriteria: Array<UiPlacementCriteria> = [
+  'isStepFreeDesignated',
+  'hasEnSuite',
+] as const
 export const placementRequirementCriteria = [
   ...prepopulatablePlacementRequirementCriteria,
   ...nonPrepopulatablePlacementRequirementCriteria,
