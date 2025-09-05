@@ -29,7 +29,6 @@ export type Cas1PlacementRequestDetail = {
     assessor: ApprovedPremisesUser;
     authorisedPlacementPeriod: Cas1RequestedPlacementPeriod;
     booking?: PlacementRequestBookingSummary;
-    desirableCriteria: Array<PlacementCriteria>;
     /**
      * Use Cas1RequestedPlacementPeriod instead
      * @deprecated
