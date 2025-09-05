@@ -26,7 +26,6 @@ describe('Space search utils', () => {
       const placementRequest = cas1PlacementRequestDetailFactory.build({
         type: 'rfap',
         essentialCriteria: ['acceptsNonSexualChildOffenders', 'isStepFreeDesignated'],
-        desirableCriteria: ['hasEnSuite'],
       })
 
       expect(initialiseSearchState(placementRequest)).toEqual({
@@ -34,7 +33,7 @@ describe('Space search utils', () => {
         postcode: placementRequest.location,
         apType: 'isRecoveryFocussed',
         apCriteria: ['acceptsNonSexualChildOffenders'],
-        roomCriteria: ['isStepFreeDesignated', 'hasEnSuite'],
+        roomCriteria: ['isStepFreeDesignated'],
         startDate: placementRequest.authorisedPlacementPeriod.arrival,
         durationDays: placementRequest.authorisedPlacementPeriod.duration,
       })

@@ -27,14 +27,12 @@ import { spaceSearchCriteriaApLevelLabels } from './spaceSearchLabels'
 import { addressRow, apTypeRow, characteristicsDetails, distanceRow, restrictionsRow } from '.'
 
 export const initialiseSearchState = (placementRequest: Cas1PlacementRequestDetail): SpaceSearchFormData => {
-  const allCriteria = [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria]
-
   return {
     applicationId: placementRequest.applicationId,
     postcode: placementRequest.location,
     apType: applyApTypeToAssessApType[placementRequest.type as ApTypeSpecialist] || 'normal',
-    apCriteria: filterApLevelCriteria(allCriteria),
-    roomCriteria: filterRoomLevelCriteria(allCriteria),
+    apCriteria: filterApLevelCriteria(placementRequest.essentialCriteria),
+    roomCriteria: filterRoomLevelCriteria(placementRequest.essentialCriteria),
     startDate: placementRequest.authorisedPlacementPeriod.arrival,
     durationDays: placementRequest.authorisedPlacementPeriod.duration,
   }
