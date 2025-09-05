@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker/locale/en_GB'
 
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { ListPage, NotesConfirmationPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import { setup } from './setup'
@@ -22,7 +23,7 @@ context('show applications', () => {
   beforeEach(setup)
 
   it('shows a read-only version of the application', function test() {
-    // Given I have completed an application
+    GIVEN('I have completed an application')
     const timeline = cas1TimelineEventFactory.buildList(10)
 
     const updatedApplication = { ...this.application, status: 'awaitingAssesment', document: applicationDocument }
@@ -30,22 +31,22 @@ context('show applications', () => {
     cy.task('stubApplicationTimeline', { applicationId: updatedApplication.id, timeline })
     cy.task('stubApplications', [updatedApplication])
 
-    // And I visit the list page
+    AND('I visit the list page')
     const listPage = ListPage.visit([], [updatedApplication], [])
 
-    // When I click on the Submitted tab
+    WHEN('I click on`the Submitted tab')
     listPage.clickSubmittedTab()
 
-    // Then I should see my application
+    THEN('I should see my application')
     listPage.shouldShowInProgressApplications()
 
-    // When I click on my application
+    WHEN('I click`on my application')
     listPage.clickApplication(this.application)
 
-    // Then I should see a read-only version of the application
+    THEN('I should see a read-only version of the application')
     const showPage = Page.verifyOnPage(ShowPage, updatedApplication)
 
-    // And I should see the application details
+    AND('I should see the application details')
     showPage.shouldNotShowOfflineStatus()
     showPage.shouldShowPersonInformation()
     showPage.shouldShowResponses()
@@ -53,15 +54,15 @@ context('show applications', () => {
     showPage.clickOpenActionsMenu()
     showPage.shouldHaveWithdrawalLink()
 
-    // When I click on the 'Timeline' tab
+    WHEN(`I click on the 'Timeline' tab`)
     showPage.clickTimelineTab()
 
-    // Then I should see timeline page
+    THEN('I should see timeline page')
     showPage.shouldShowApplicationTimeline(timeline)
   })
 
   it('shows a read-only version of an unsubmitted withdrawn application', function test() {
-    // Given I have a withdrawn unsubmitted application
+    GIVEN('I have a withdrawn unsubmitted application')
     const assessmentDecision = assessmentFactory.build({ decision: 'accepted' })
     const updatedApplication = {
       ...this.application,
@@ -73,19 +74,19 @@ context('show applications', () => {
     }
     cy.task('stubApplicationGet', { application: updatedApplication })
 
-    // Then I should see a read-only version of the application
+    THEN('I should see a read-only version of the application')
     const showPage = ShowPage.visit(updatedApplication, 'application')
 
-    // And I should see a 'Withdrawn application' status tag
+    AND(`I should see a 'Withdrawn application' status tag`)
     showPage.shouldShowStatusTag('withdrawn')
 
-    // And I should see a link to the assessment with guidance
+    AND('I should see a link to the assessment with guidance')
     showPage.shouldShowAssessmentDetails()
 
-    // And I should see the application details
+    AND('I should see the application details')
     showPage.shouldShowResponsesForUnsubmittedWithdrawnApplication()
 
-    // When I click the 'Request for placement' tab
+    WHEN(`I click the 'Request for placement' tab`)
     const requestsForPlacement = requestForPlacementFactory.buildList(1, { status: 'request_withdrawn' })
     cy.task('stubApplicationRequestsForPlacement', {
       applicationId: updatedApplication.id,
@@ -93,12 +94,12 @@ context('show applications', () => {
     })
     showPage.clickRequestAPlacementTab()
 
-    // Then I do not see the 'Create request for placement' button
+    THEN(`I do not see the 'Create request for placement' button`)
     showPage.shouldNotShowCreatePlacementButton()
   })
 
   it('shows a read-only version of an expired application', function test() {
-    // Given I have an expired application
+    GIVEN('I have an expired application')
     const assessmentDecision = assessmentFactory.build({ decision: 'accepted' })
     const updatedApplication = {
       ...this.application,
@@ -110,28 +111,28 @@ context('show applications', () => {
     }
     cy.task('stubApplicationGet', { application: updatedApplication })
 
-    // Then I should see a read-only version of the application
+    THEN('I should see a read-only version of the application')
     const showPage = ShowPage.visit(updatedApplication, 'application')
 
-    // And I should see an 'Expired application' status tag
+    AND(`I should see an 'Expired application' status tag`)
     showPage.shouldShowStatusTag('expired')
 
-    // And I should see a link to the assessment with guidance
+    AND('I should see a link to the assessment with guidance')
     showPage.shouldShowAssessmentDetails(true)
 
-    // When I click the 'Request for placement' tab
+    WHEN(`I click the 'Request for placement' tab`)
     cy.task('stubApplicationRequestsForPlacement', {
       applicationId: updatedApplication.id,
       requestsForPlacement: [],
     })
     showPage.clickRequestAPlacementTab()
 
-    // Then I do not see the 'Create request for placement' button
+    THEN(`I do not see the 'Create request for placement' button`)
     showPage.shouldNotShowCreatePlacementButton()
   })
 
   it('links to an assessment when an application has been assessed', function test() {
-    // Given I have completed an application
+    GIVEN('I have completed an application')
     const application = {
       ...this.application,
       status: 'awaitingAssesment',
@@ -143,22 +144,22 @@ context('show applications', () => {
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplications', [application])
 
-    // And I visit the list page
+    AND('I visit the list page')
     const listPage = ListPage.visit([], [], [application])
 
-    // When I click on the Submitted tab
+    WHEN('I click on the Submitted tab')
     listPage.clickSubmittedTab()
 
-    // Then I should see my application
+    THEN('I should see my application')
     listPage.shouldShowSubmittedApplications()
 
-    // When I click on my application
+    WHEN('I clickon my application')
     listPage.clickApplication(this.application)
 
-    // Then I should see a read-only version of the application
+    THEN('I should see a read-only version of the application')
     const showPage = Page.verifyOnPage(ShowPage, application)
 
-    // And I should see details of the assessment
+    AND('I should see details of the assessment')
     showPage.shouldShowAssessmentDetails()
   })
 
@@ -171,16 +172,16 @@ context('show applications', () => {
     }
     cy.task('stubApplicationGet', { application })
 
-    // And I visit the application page
+    AND('I visit the application page')
     ShowPage.visit(application)
 
-    // Then I should see a stub application
+    THEN('I should see a stub application')
     const showPage = Page.verifyOnPage(ShowPage, application)
 
-    // And the application should show as offline
+    AND('the application should show as offline')
     showPage.shouldShowOfflineStatus()
 
-    // And I should see the person information
+    AND('I should see the person information')
     showPage.shouldShowPersonInformation()
   })
 
@@ -218,27 +219,26 @@ context('show applications', () => {
     cy.task('stubPlacementApplication', placementApplication)
     cy.task('stubSubmitPlacementApplicationWithdraw', placementApplication)
 
-    // Given I visit the application page
+    GIVEN('I visit the application page')
     ShowPage.visit(this.application)
     const showPage = Page.verifyOnPage(ShowPage, application)
 
-    // When I click the 'Request a placement' tab
+    WHEN(`I click the 'Request a placement' tab`)
     showPage.clickRequestAPlacementTab()
 
-    // Then I should see the placement requests
+    THEN('I should see the placement requests')
     showPage.shouldShowRequestsForPlacement(requestsForPlacement, application, {
       id: defaultUserId,
     })
 
-    // Given I want to withdraw a placement application
-    // When I click 'withdraw'
+    GIVEN('I want to withdraw a placement application')
+    WHEN(`I click 'withdraw'`)
     showPage.clickWithdraw(withdrawableRequestForPlacement.id)
 
+    THEN('The placement application should be withdrawn and I should see a banner')
     withdrawPlacementRequestOrApplication(withdrawable, showPage, application.id)
 
-    showPage.showsWithdrawalConfirmationMessage()
-
-    // And the API should have been called with the withdrawal reason
+    AND('the API should have been called with the withdrawal reason')
     cy.task('verifyPlacementApplicationWithdrawn', withdrawableRequestForPlacement.id).then(requests => {
       expect(requests).to.have.length(1)
 
@@ -266,7 +266,7 @@ context('show applications', () => {
     // Given I am on the timeline page of the application view
     const showPage = ShowPage.visit(application, 'timeline')
 
-    // When I enter a note into the text box
+    WHEN('I enter a note`into the text box')
     showPage.enterNote(note)
     showPage.clickAddNote()
 
@@ -281,21 +281,21 @@ context('show applications', () => {
     const updatedTimeline = [...timeline, noteAsTimelineEvent]
     cy.task('stubApplicationTimeline', { applicationId: application.id, timeline: updatedTimeline })
 
-    // Then I should see a confirmation page
+    THEN('I should see a confirmation page')
     const confirmationPage = Page.verifyOnPage(NotesConfirmationPage, application)
 
     confirmationPage.shouldShowNote(note)
 
-    // When I click 'Confirm'
+    WHEN(`I click 'Confirm'`)
     confirmationPage.clickConfirm()
 
-    // Then I should see a flash confirming the note has been added
+    THEN('I should see a flash confirming the note has been added')
     showPage.showsNoteAddedConfirmationMessage()
 
-    // And I should see the note in the timeline
+    AND('I should see the note in the timeline')
     showPage.shouldShowApplicationTimeline(updatedTimeline)
 
-    // And the API should have been called with the new note
+    AND('the API should have been called with the new note')
     cy.task('verifyApplicationNoteAdded', { id: application.id }).then(requests => {
       expect(requests).to.have.length(1)
 
