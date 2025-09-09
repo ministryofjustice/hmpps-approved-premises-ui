@@ -8,7 +8,7 @@ export default class CommunityPaybackApiClient extends RestClient {
     super('Community Payback API', config.apis.communityPaybackApi, logger, authenticationClient)
   }
 
-  getExampleData() {
-    return this.get({ path: '/example' }, asSystem())
+  getExampleData(username: string) {
+    return this.get({ path: '/example' }, asSystem(username))
   }
 }

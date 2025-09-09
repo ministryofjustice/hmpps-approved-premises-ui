@@ -27,7 +27,7 @@ describe('CommunityPaybackApiClient', () => {
         .matchHeader('authorization', 'Bearer test-system-token')
         .reply(200, { data: 'some data' })
 
-      const response = await communityPaybackApiClient.getExampleData()
+      const response = await communityPaybackApiClient.getExampleData('some-username')
 
       expect(response).toEqual({ data: 'some data' })
     })

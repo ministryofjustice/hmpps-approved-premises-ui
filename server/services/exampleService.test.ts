@@ -16,7 +16,7 @@ describe('ExampleService', () => {
 
     communityPaybackApiClient.getExampleData.mockResolvedValue(expectedData)
 
-    const result = await exampleService.getExampleData()
+    const result = await exampleService.getExampleData('some-username')
 
     expect(communityPaybackApiClient.getExampleData).toHaveBeenCalledTimes(1)
     expect(result).toEqual(expectedData)
