@@ -26,7 +26,7 @@ export default class ListPage extends Page {
 
   shouldShowSpaceBookingConfirmation(spaceBooking: Cas1SpaceBooking, placementRequest: Cas1PlacementRequestDetail) {
     const body = creationNotificationBody(spaceBooking, placementRequest)
-    this.shouldShowBanner(`Place booked for ${spaceBooking.person.crn} ${body}`)
+    this.shouldShowBanner(`Placement booked for ${spaceBooking.person.crn} ${body}`)
   }
 
   shouldShowPlacementRequests(

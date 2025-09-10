@@ -161,7 +161,7 @@ describe('SpaceBookingsController', () => {
         newSpaceBooking,
       )
       expect(flash).toHaveBeenCalledWith('success', {
-        heading: `Place booked for ${spaceBooking.person.crn}`,
+        heading: `Placement booked for ${spaceBooking.person.crn}`,
         body: `<ul><li><strong>Approved Premises:</strong> ${spaceBooking.premises.name}</li>
 <li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequestDetail.applicationDate, { format: 'short' })}</li></ul>
 <p>A confirmation email will be sent to the AP and probation practitioner.</p>`,
