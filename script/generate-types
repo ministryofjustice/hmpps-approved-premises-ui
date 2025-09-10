@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# script/generate-types: Generates typescript types from the API OpenApi spec
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+# NOTE: if you want to generate types from a specific branch, you can do this by checking out the API branch, and starting it in cp-stack,
+# and then call this script using:  ./script/generate-types http://localhost:8080/v3/api-docs/
+if [ -z "$1" ]; then
+  url="https://community-payback-api-dev.hmpps.service.justice.gov.uk/v3/api-docs"
+else
+  url=$1
+fi
+
+echo "==> Generating types using: $url"
+
+npx openapi-typescript-codegen -i "$url" -o ./server/@types/shared -c axios --exportServices false --exportCore false --useUnionTypes true
+
+echo "==> Renaming the declaration file..."
+
+mv ./server/@types/shared/index.ts ./server/@types/shared/index.d.ts
