@@ -10,6 +10,8 @@ export const textCell = (text: string): TableCell => ({ text })
 
 export const htmlCell = (html: string): TableCell => ({ html })
 
+export const dateCell = (date: string): TableCell => textCell(DateFormats.isoDateToUIDate(date, { format: 'short' }))
+
 export const crnCell = (item: { crn?: string }): TableCell => ({ text: item.crn })
 
 export const tierCell = (item: { tier?: RiskTierEnvelope }) => {

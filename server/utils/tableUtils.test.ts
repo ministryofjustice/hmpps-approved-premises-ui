@@ -6,12 +6,16 @@ import {
   tierEnvelopeFactory,
 } from '../testutils/factories'
 import { tierBadge } from './personUtils'
-import { crnCell, daysUntilDueCell, emailCell, tierCell } from './tableUtils'
+import { crnCell, dateCell, daysUntilDueCell, emailCell, tierCell } from './tableUtils'
 import { DateFormats } from './dateUtils'
 
-jest.mock('./dateUtils')
-
 describe('tableUtils', () => {
+  describe('dateCell', () => {
+    it('returns a cell with a date in the short format from an ISO date', () => {
+      expect(dateCell('2022-01-01')).toEqual({ text: '1 Jan 2022' })
+    })
+  })
+
   describe('crnCell', () => {
     it('returns the crn of the person the task is assigned to as a TableCell object', () => {
       const task = taskFactory.build()
@@ -34,17 +38,17 @@ describe('tableUtils', () => {
     })
   })
 
-  describe.each([['task'], ['assessmentSummary']])('daysUntilDueCell works with with `%s` item types', itemType => {
+  describe.each([
+    ['task', taskFactory],
+    ['assessment summary', assessmentSummaryFactory],
+  ])('daysUntilDueCell works with with `%s` item types', (_, factory) => {
     const date = new Date()
-
-    const item = {
-      task: taskFactory.build(),
-      assessmentSummary: assessmentSummaryFactory.build(),
-    }[itemType]
+    const item = factory.build()
 
     beforeAll(() => {
       jest.useFakeTimers()
       jest.setSystemTime(date)
+      jest.spyOn(DateFormats, 'differenceInBusinessDays')
     })
 
     afterAll(() => {
