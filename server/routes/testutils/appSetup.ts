@@ -9,6 +9,7 @@ import type { Services } from '../../services'
 import AuditService from '../../services/auditService'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import setUpWebSession from '../../middleware/setUpWebSession'
+import { Controllers } from '../../controllers'
 
 jest.mock('../../services/auditService')
 
@@ -25,7 +26,12 @@ export const user: HmppsUser = {
 
 export const flashProvider = jest.fn()
 
-function appSetup(services: Services, production: boolean, userSupplier: () => HmppsUser): Express {
+function appSetup(
+  controllers: Controllers,
+  services: Services,
+  production: boolean,
+  userSupplier: () => HmppsUser,
+): Express {
   const app = express()
 
   app.set('view engine', 'njk')
@@ -46,7 +52,7 @@ function appSetup(services: Services, production: boolean, userSupplier: () => H
   })
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
-  app.use(routes(services))
+  app.use(routes(controllers, services))
   app.use((req, res, next) => next(new NotFound()))
   app.use(errorHandler(production))
 
@@ -58,11 +64,13 @@ export function appWithAllRoutes({
   services = {
     auditService: new AuditService(null) as jest.Mocked<AuditService>,
   },
+  controllers = {},
   userSupplier = () => user,
 }: {
   production?: boolean
   services?: Partial<Services>
+  controllers?: Partial<Controllers>
   userSupplier?: () => HmppsUser
 }): Express {
-  return appSetup(services as Services, production, userSupplier)
+  return appSetup(controllers as Controllers, services as Services, production, userSupplier)
 }

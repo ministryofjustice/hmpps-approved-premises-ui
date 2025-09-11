@@ -21,8 +21,9 @@ import './instrument'
 
 import routes from './routes'
 import type { Services } from './services'
+import { Controllers } from './controllers'
 
-export default function createApp(services: Services): express.Application {
+export default function createApp(controllers: Controllers, services: Services): express.Application {
   const app = express()
 
   app.set('json spaces', 2)
@@ -41,7 +42,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
 
-  app.use(routes(services))
+  app.use(routes(controllers, services))
 
   Sentry.setupExpressErrorHandler(app)
 
