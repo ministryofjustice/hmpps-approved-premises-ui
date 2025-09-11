@@ -18,7 +18,7 @@ export default class ShowPage extends Page {
         placementRequestId: placementRequest.id,
       }),
       'Withdraw request for placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
-      'Mark as unable to match': matchPaths.placementRequests.bookingNotMade.confirm({
+      'Mark as unable to book': matchPaths.placementRequests.bookingNotMade.confirm({
         placementRequestId: placementRequest.id,
       }),
       'Withdraw placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
@@ -52,7 +52,7 @@ export default class ShowPage extends Page {
 
   clickUnableToMatch() {
     cy.get('.moj-button-menu__toggle-button').click()
-    cy.contains('.moj-button-menu__item', 'Mark as unable to match').click()
+    cy.contains('.moj-button-menu__item', 'Mark as unable to book').click()
   }
 
   shouldShowParoleNotification() {

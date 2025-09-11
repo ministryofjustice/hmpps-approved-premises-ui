@@ -19,6 +19,7 @@ import {
   spaceSearchResultsFactory,
   cas1PlacementRequestSummaryFactory,
   cas1RequestedPlacementPeriodFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
@@ -323,15 +324,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to book a space', () => {
-    const {
-      occupancyViewPage,
-      premises,
-      placementRequest,
-      placementRequestSummary,
-      searchState,
-      requestedArrivalDate,
-      requestedDepartureDate,
-    } = shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
+    const { occupancyViewPage, premises, placementRequest, searchState, requestedArrivalDate, requestedDepartureDate } =
+      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     const arrivalDate = '2024-07-23'
     const departureDate = '2024-08-08'
@@ -365,16 +359,26 @@ context('Placement Requests', () => {
 
     AND('when I complete the form')
     const spaceBooking = cas1SpaceBookingFactory.upcoming().build({ placementRequestId: placementRequest.id })
+    const spaceBookingSummary = cas1SpaceBookingSummaryFactory.build(spaceBooking)
+    const placementRequestWithBooking = cas1PlacementRequestDetailFactory
+      .params(placementRequest)
+      .withSpaceBooking(spaceBookingSummary)
+      .build()
+    const placementRequestWithBookingSummary = cas1PlacementRequestSummaryFactory
+      .fromPlacementRequestDetail(placementRequestWithBooking)
+      .build()
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequestSummary], status: 'matched' })
-    cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests: [placementRequestWithBookingSummary],
+      status: 'matched',
+    })
     page.clickSubmit()
 
-    THEN("I should be redirected to the 'Matched' tab")
+    THEN("I should be redirected to the 'Booked' tab")
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     AND('I should see a success message')
-    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequest)
+    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequestWithBooking)
 
     AND('the booking details should have been sent to the API')
     cy.task(
@@ -390,7 +394,7 @@ context('Placement Requests', () => {
     })
   })
 
-  it('allows me to mark a placement request as unable to match', () => {
+  it('allows me to mark a placement request as  unable to book', () => {
     GIVEN('there is a placement request waiting for me to match')
     const placementRequest = cas1PlacementRequestDetailFactory.notMatched().build({
       person: personFactory.build(),

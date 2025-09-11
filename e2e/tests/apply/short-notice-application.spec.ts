@@ -24,6 +24,7 @@ test('Apply, assess, match and book an short notice application for an Approved 
   })
 
   await matchAndBookApplication({
+    person,
     applicationId: id,
     page,
     apType,

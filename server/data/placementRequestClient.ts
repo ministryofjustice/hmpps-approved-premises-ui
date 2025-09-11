@@ -48,9 +48,9 @@ export default class PlacementRequestClient {
       requestType: '',
       cruManagementAreaId: '',
     },
-    page = 1,
-    sortBy: PlacementRequestSortField = 'created_at',
-    sortDirection: SortDirection = 'asc',
+    page: number = 1,
+    sortBy?: PlacementRequestSortField,
+    sortDirection?: SortDirection,
   ): Promise<PaginatedResponse<Cas1PlacementRequestSummary>> {
     const params: DashboardQueryParams = { ...allParams }
 

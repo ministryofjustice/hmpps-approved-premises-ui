@@ -17,7 +17,7 @@ export default {
     placementRequests,
     status,
     page = '1',
-    sortBy = 'created_at',
+    sortBy = 'expected_arrival',
     sortDirection = 'asc',
   }: {
     placementRequests: Array<Cas1PlacementRequestSummary>
@@ -121,7 +121,7 @@ export default {
   verifyPlacementRequestsDashboard: async ({
     status,
     page = '1',
-    sortBy = 'created_at',
+    sortBy = 'expected_arrival',
     sortDirection = 'asc',
   }: {
     status: PlacementRequestStatus

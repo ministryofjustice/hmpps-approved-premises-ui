@@ -35,7 +35,7 @@ describe('BookingsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/unable-to-match', {
         backLink: '/backlink',
-        pageHeading: 'Mark as unable to match',
+        pageHeading: 'Mark as unable to book',
         confirmPath: matchPaths.placementRequests.bookingNotMade.create({ placementRequestId }),
       })
     })
@@ -52,7 +52,7 @@ describe('BookingsController', () => {
       const requestHandler = bookingsController.createBookingNotMade()
       await requestHandler({ ...request, params: { placementRequestId }, body, flash }, response, next)
 
-      expect(flash).toHaveBeenCalledWith('success', 'Placement request has been marked as unable to match')
+      expect(flash).toHaveBeenCalledWith('success', 'Placement request has been marked as  unable to book')
       expect(response.redirect).toHaveBeenCalledWith(adminPaths.admin.cruDashboard.index({}))
       expect(placementRequestService.bookingNotMade).toHaveBeenCalledWith(token, placementRequestId, body)
     })

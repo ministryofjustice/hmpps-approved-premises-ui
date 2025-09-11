@@ -29,9 +29,9 @@ export default class PlacementRequestService {
   async getDashboard(
     token: string,
     filters: DashboardFilters,
-    page: number = 1,
-    sortBy: PlacementRequestSortField = 'created_at',
-    sortDirection: SortDirection = 'asc',
+    page?: number,
+    sortBy?: PlacementRequestSortField,
+    sortDirection?: SortDirection,
   ): Promise<PaginatedResponse<Cas1PlacementRequestSummary>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 

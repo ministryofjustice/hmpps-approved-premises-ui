@@ -34,25 +34,20 @@ export const cruDashboardTabItems = (
   activeTab?: string,
   cruManagementArea?: string,
   requestType?: string,
-): Array<TabItem> => {
-  return [
+): Array<TabItem> =>
+  [
     {
-      text: 'Pending Request for Placement',
-      active: activeTab === 'pendingPlacement',
-      href: cruDashboardTabLink({ cruManagementArea, status: 'pendingPlacement' }),
-    },
-    {
-      text: 'Ready to match',
-      active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
+      text: 'Ready to book',
+      active: activeTab === 'notMatched' || !activeTab,
       href: cruDashboardTabLink({ cruManagementArea, requestType }),
     },
     {
-      text: 'Unable to match',
+      text: 'Unable to book',
       active: activeTab === 'unableToMatch',
       href: cruDashboardTabLink({ cruManagementArea, requestType, status: 'unableToMatch' }),
     },
     {
-      text: 'Matched',
+      text: 'Booked',
       active: activeTab === 'matched',
       href: cruDashboardTabLink({ cruManagementArea, requestType, status: 'matched' }),
     },
@@ -72,4 +67,3 @@ export const cruDashboardTabItems = (
       href: paths.admin.cruDashboard.search({}),
     },
   ].filter(Boolean)
-}

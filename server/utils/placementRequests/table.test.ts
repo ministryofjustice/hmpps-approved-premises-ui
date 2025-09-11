@@ -1,5 +1,5 @@
-import { PlacementRequestSortField } from '@approved-premises/api'
-import { cas1PlacementRequestSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
+import { PlacementRequestSortField, PlacementRequestStatus } from '@approved-premises/api'
+import { cas1PlacementRequestSummaryFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { dashboardTableHeader, dashboardTableRows, durationCell, nameCell } from './table'
 import { DateFormats } from '../dateUtils'
 import { htmlCell, textCell } from '../tableUtils'
@@ -7,8 +7,8 @@ import { sortHeader } from '../sortHeader'
 import { displayName, tierBadge } from '../personUtils'
 import * as utils from '../utils'
 import adminPaths from '../../paths/admin'
-import { placementRequestStatus } from '../formUtils'
 import { fullPersonFactory } from '../../testutils/factories/person'
+import { placementRequestStatus } from '../formUtils'
 
 describe('tableUtils', () => {
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('tableUtils', () => {
       jest.spyOn(utils, 'linkTo')
     })
 
-    it('returns the name of the service user and a link with a placement request', () => {
+    it('returns the name and CRN of the person with a link to the placement request if the person is a Full Person', () => {
       const placementRequest = cas1PlacementRequestSummaryFactory.build({
         person: fullPersonFactory.build(),
       })
@@ -30,7 +30,7 @@ describe('tableUtils', () => {
       expect(utils.linkTo).toHaveBeenCalledWith(
         adminPaths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),
         {
-          text: displayName(placementRequest.person),
+          text: `${displayName(placementRequest.person)}, ${placementRequest.person.crn}`,
           attributes: {
             'data-cy-placementRequestId': placementRequest.id,
             'data-cy-applicationId': placementRequest.applicationId,
@@ -39,36 +39,17 @@ describe('tableUtils', () => {
       )
     })
 
-    it('returns the crn cell with no link if the person is a restrictedPerson', () => {
+    it("returns 'LAO:' and CRN with no link if the person is a restrictedPerson", () => {
       const restrictedPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
-        person: restrictedPersonFactory.build(),
+        person: restrictedPersonFactory.build({ crn: 'K888666' }),
       })
 
       expect(nameCell(restrictedPersonPlacementRequest)).toEqual({
-        text: `LAO: ${restrictedPersonPlacementRequest.person.crn}`,
+        text: `LAO: K888666`,
       })
     })
 
-    it('returns the persons name prefixed with "LAO: " if the person is a FullPerson and has the isRestricted flag', () => {
-      const restrictedPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
-        person: personFactory.build({ isRestricted: true }),
-      })
-
-      nameCell(restrictedPersonPlacementRequest)
-
-      expect(utils.linkTo).toHaveBeenCalledWith(
-        adminPaths.admin.placementRequests.show({ placementRequestId: restrictedPersonPlacementRequest.id }),
-        {
-          text: displayName(restrictedPersonPlacementRequest.person),
-          attributes: {
-            'data-cy-placementRequestId': restrictedPersonPlacementRequest.id,
-            'data-cy-applicationId': restrictedPersonPlacementRequest.applicationId,
-          },
-        },
-      )
-    })
-
-    it('returns the crn cell if the person is a unknown person', () => {
+    it('returns the crn cell with no link if the person is a unknown person', () => {
       const unknownPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
         person: restrictedPersonFactory.build({ type: 'UnknownPerson' }),
       })
@@ -88,43 +69,73 @@ describe('tableUtils', () => {
   })
 
   describe('dashboardTableRows', () => {
-    it('returns table rows for non matched placement requests', () => {
-      const placementRequest = cas1PlacementRequestSummaryFactory.build({ isParole: true })
+    const factories = {
+      notMatched: cas1PlacementRequestSummaryFactory.notMatched(),
+      unableToMatch: cas1PlacementRequestSummaryFactory.unableToMatch(),
+      matched: cas1PlacementRequestSummaryFactory.matched(),
+    }
 
-      expect(dashboardTableRows([placementRequest], 'notMatched')).toEqual([
+    it.each(['notMatched', 'unableToMatch'])(
+      'returns table rows for placement requests with status %s',
+      (status: PlacementRequestStatus) => {
+        const placementRequest = factories[status].build({
+          placementRequestStatus: status,
+          isParole: true,
+        })
+
+        expect(dashboardTableRows([placementRequest], status)).toEqual([
+          [
+            nameCell(placementRequest),
+            htmlCell(tierBadge(placementRequest.personTier)),
+            textCell('Parole'),
+            textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
+            textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
+            durationCell(placementRequest.requestedPlacementDuration),
+          ],
+        ])
+      },
+    )
+
+    it('returns table rows for matched placement requests', () => {
+      const placementRequest = factories.matched.build({ isParole: true })
+
+      expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
           htmlCell(tierBadge(placementRequest.personTier)),
-          textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
-          textCell('N/A'),
-          textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
-          durationCell(placementRequest.requestedPlacementDuration),
           textCell('Parole'),
-          textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
+          textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
+          textCell(placementRequest.firstBookingPremisesName),
         ],
       ])
     })
 
-    it('returns the request type as Standard release if the placement request is not of type parole', () => {
-      const placementRequest = cas1PlacementRequestSummaryFactory.build({ isParole: false })
+    it.each(['notMatched', 'unableToMatch', 'matched'])(
+      'returns the request type as Standard release if the placement request is not of type parole',
+      (status: PlacementRequestStatus) => {
+        const placementRequest = factories[status].build({
+          placementRequestStatus: status,
+          isParole: false,
+        })
 
-      expect(dashboardTableRows([placementRequest], 'notMatched')[0][6]).toEqual(textCell('Standard release'))
-    })
+        expect(dashboardTableRows([placementRequest], status)[0][2]).toEqual(textCell('Standard release'))
+      },
+    )
 
-    it('returns the booking premises name instead of the requested duration for matched placement requests', () => {
-      const placementRequest = cas1PlacementRequestSummaryFactory.matched().build()
+    it('returns table rows for the search tab', () => {
+      const placementRequest = cas1PlacementRequestSummaryFactory.build({ isParole: true })
 
-      expect(dashboardTableRows([placementRequest], 'matched')[0][5]).toEqual(
-        textCell(placementRequest.firstBookingPremisesName),
-      )
-    })
-
-    it('returns table rows with duration when the requested status is undefined', () => {
-      const placementRequest = cas1PlacementRequestSummaryFactory.build()
-
-      expect(dashboardTableRows([placementRequest], undefined)[0][5]).toEqual(
-        durationCell(placementRequest.requestedPlacementDuration),
-      )
+      expect(dashboardTableRows([placementRequest], undefined)).toEqual([
+        [
+          nameCell(placementRequest),
+          htmlCell(tierBadge(placementRequest.personTier)),
+          textCell('Parole'),
+          textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
+          textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
+          durationCell(placementRequest.requestedPlacementDuration),
+          textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
+        ],
+      ])
     })
   })
 
@@ -133,63 +144,63 @@ describe('tableUtils', () => {
     const sortDirection = 'asc'
     const hrefPrefix = 'http://example.com'
 
-    it('returns the default header for a non-matched view', () => {
-      expect(dashboardTableHeader('notMatched', sortBy, sortDirection, hrefPrefix)).toEqual([
-        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
+    it.each(['notMatched', 'unableToMatch'])(
+      'returns the table headers for the %s status',
+      (status: PlacementRequestStatus) => {
+        expect(dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix)).toEqual([
+          sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
+          sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+          sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+          sortHeader<PlacementRequestSortField>(
+            'Application date',
+            'application_date',
+            sortBy,
+            sortDirection,
+            hrefPrefix,
+          ),
+          sortHeader<PlacementRequestSortField>(
+            'Requested arrival date',
+            'expected_arrival',
+            sortBy,
+            sortDirection,
+            hrefPrefix,
+          ),
+          sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
+        ])
+      },
+    )
+
+    it('returns the table headers for the matched status', () => {
+      expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
+        sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+        { text: 'Booked arrival date' },
+        { text: 'Approved Premises' },
+      ])
+    })
+
+    it('returns the table headers when no status is provided', () => {
+      expect(dashboardTableHeader(undefined, sortBy, sortDirection, hrefPrefix)).toEqual([
+        sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>(
-          'Requested arrival date',
-          'expected_arrival',
+          'Application date',
+          'application_date',
           sortBy,
           sortDirection,
           hrefPrefix,
         ),
-        {
-          text: 'Booked arrival date',
-        },
         sortHeader<PlacementRequestSortField>(
-          'Application date',
-          'application_date',
+          'Requested arrival date',
+          'expected_arrival',
           sortBy,
           sortDirection,
           hrefPrefix,
         ),
         sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Status',
-        },
-      ])
-    })
-
-    it('returns the default header for a matched view', () => {
-      expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
-        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>(
-          'Requested arrival date',
-          'expected_arrival',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
-        {
-          text: 'Booked arrival date',
-        },
-        sortHeader<PlacementRequestSortField>(
-          'Application date',
-          'application_date',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
-        {
-          text: 'Approved Premises',
-        },
-        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Status',
-        },
+        { text: 'Status' },
       ])
     })
   })

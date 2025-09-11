@@ -103,7 +103,7 @@ export default class ChangeRequestsController {
 
           req.flash('success', {
             heading: 'Appeal actioned',
-            body: `<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to match' list.</p>`,
+            body: `<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to book' list.</p>`,
           })
         } else {
           const rejectionReasons = await this.placementRequestService.getChangeRequestRejectionReasons(

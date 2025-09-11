@@ -109,7 +109,7 @@ describe('adminIdentityBar', () => {
       })
     })
 
-    describe('if the status of the placement request is `not matched`', () => {
+    describe('if the status of the placement request is `Ready to book`', () => {
       const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
         status: 'notMatched',
       })

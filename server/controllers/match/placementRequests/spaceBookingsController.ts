@@ -102,7 +102,7 @@ export default class {
           placement.placementRequestId,
         )
         req.flash('success', {
-          heading: `Place booked for ${placement.person.crn}`,
+          heading: `Placement booked for ${placement.person.crn}`,
           body: creationNotificationBody(placement, placementRequest),
         })
         this.formData.remove(placementRequestId, req.session)

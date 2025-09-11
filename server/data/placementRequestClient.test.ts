@@ -105,14 +105,14 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
   describe('dashboard', () => {
     const placementRequests = cas1PlacementRequestDetailFactory.buildList(2)
 
-    it('makes a get request to the placementRequests dashboard endpoint for unmatched requests', async () => {
+    it('makes a get request to the placementRequests dashboard endpoint for ready to book requests', async () => {
       await provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get the placement requests dashboard view',
+        uponReceiving: 'A request to get the ready to book placement requests',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { status: 'notMatched', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
+          query: { status: 'notMatched', page: '1' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -139,18 +139,23 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
       })
     })
 
-    it('makes a get request to the placementRequests dashboard endpoint for matched requests ', async () => {
+    it('makes a get request to the placementRequests dashboard endpoint for booked requests ', async () => {
       const cruManagementAreaId = 'area-id'
       const requestType = 'standardRelease'
       const status = 'matched'
 
       await provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get the placement requests dashboard view',
+        uponReceiving: 'A request to get the booked placement requests',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { page: '1', sortBy: 'created_at', sortDirection: 'asc', requestType, cruManagementAreaId, status },
+          query: {
+            page: '1',
+            requestType,
+            cruManagementAreaId,
+            status,
+          },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -177,14 +182,14 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
       })
     })
 
-    it('makes a get request to the placementRequests dashboard endpoint for requests of another type', async () => {
+    it('makes a get request to the placementRequests dashboard endpoint for unable to book requests', async () => {
       await provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get the placement requests dashboard view',
+        uponReceiving: 'A request to get the unable to book placement requests',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { status: 'unableToMatch', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
+          query: { status: 'unableToMatch', page: '1' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -214,11 +219,11 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
     it('makes a get request to the placementRequests dashboard endpoint when searching by CRN', async () => {
       await provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get the placement requests dashboard view',
+        uponReceiving: 'A request to get the placement requests by CRN',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { crnOrName: normaliseCrn('crn123'), page: '1', sortBy: 'created_at', sortDirection: 'asc' },
+          query: { crnOrName: normaliseCrn('crn123'), page: '1' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -257,8 +262,6 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
             arrivalDateStart: '2020-01-01',
             arrivalDateEnd: '2020-03-01',
             page: '1',
-            sortBy: 'created_at',
-            sortDirection: 'asc',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -297,7 +300,7 @@ describeCas1NamespaceClient('Cas1PlacementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { status: 'notMatched', page: '2', sortBy: 'created_at', sortDirection: 'asc' },
+          query: { status: 'notMatched', page: '2' },
           headers: {
             authorization: `Bearer ${token}`,
           },
