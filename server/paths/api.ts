@@ -32,6 +32,7 @@ const cas1Oasys = cas1Person.path('oasys')
 
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
+const cas1Appeals = cas1ApplicationsSingle.path('appeals')
 
 const cas1Assessments = cas1Namespace.path('assessments')
 const cas1AssessmentsSingle = cas1Assessments.path(':id')
@@ -45,10 +46,6 @@ const premisesSingle = premises.path(':premisesId')
 const rooms = premisesSingle.path('rooms')
 
 const profile = path('/profile')
-
-const applications = path('/applications')
-const applicationsSingle = applications.path(':id')
-const appeals = applicationsSingle.path('appeals')
 
 const people = path('/people')
 const person = people.path(':crn')
@@ -125,24 +122,24 @@ export default {
     placementWithoutPremises: cas1Namespace.path('space-bookings/:placementId'),
   },
   applications: {
-    show: applicationsSingle,
+    show: cas1ApplicationsSingle,
     me: cas1Applications.path('me'),
     all: cas1Applications.path('all'),
-    update: applicationsSingle,
-    new: applications,
-    submission: applicationsSingle.path('submission'),
-    documents: applicationsSingle.path('documents'),
-    assessment: applicationsSingle.path('assessment'),
-    withdrawal: applicationsSingle.path('withdrawal'),
+    update: cas1ApplicationsSingle,
+    new: cas1Applications,
+    submission: cas1ApplicationsSingle.path('submission'),
+    documents: cas1ApplicationsSingle.path('documents'),
+    assessment: cas1ApplicationsSingle.path('assessment'),
+    withdrawal: cas1ApplicationsSingle.path('withdrawal'),
     timeline: cas1ApplicationsSingle.path('timeline'),
-    placementApplications: applicationsSingle.path('placement-applications'),
-    requestsForPlacement: applicationsSingle.path('requests-for-placement'),
-    addNote: applicationsSingle.path('notes'),
-    withdrawables: applicationsSingle.path('withdrawables'),
-    withdrawablesWithNotes: applicationsSingle.path('withdrawablesWithNotes'),
+    placementApplications: cas1ApplicationsSingle.path('placement-applications'),
+    requestsForPlacement: cas1ApplicationsSingle.path('requests-for-placement'),
+    addNote: cas1ApplicationsSingle.path('notes'),
+    withdrawables: cas1ApplicationsSingle.path('withdrawables'),
+    withdrawablesWithNotes: cas1ApplicationsSingle.path('withdrawablesWithNotes'),
     appeals: {
-      show: appeals.path(':appealId'),
-      create: appeals,
+      show: cas1Appeals.path(':appealId'),
+      create: cas1Appeals,
     },
   },
   assessments: {

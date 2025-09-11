@@ -271,7 +271,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: `${paths.applications.new({})}?createWithRisks=true`,
+        url: paths.applications.new({}),
       })
     ).body.requests,
   verifyApplicationUpdate: async (applicationId: string) =>

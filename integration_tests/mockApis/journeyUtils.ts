@@ -185,7 +185,7 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
     journeyType === 'application'
       ? {
           method: 'POST',
-          url: `${paths.applications.new({})}?createWithRisks=true`,
+          url: paths.applications.new({}),
         }
       : {
           method: 'GET',
