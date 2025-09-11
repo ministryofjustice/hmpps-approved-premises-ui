@@ -49,11 +49,16 @@ export default class CruDashboardController {
 
       const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(token)
 
-      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
-        req,
-        adminPaths.admin.cruDashboard.index({}),
-        { status, cruManagementArea, requestType },
-      )
+      const {
+        pageNumber = 1,
+        sortBy = 'expected_arrival',
+        sortDirection = 'asc',
+        hrefPrefix,
+      } = getPaginationDetails<PlacementRequestSortField>(req, adminPaths.admin.cruDashboard.index({}), {
+        status,
+        cruManagementArea,
+        requestType,
+      })
 
       const dashboard = await this.placementRequestService.getDashboard(
         token,

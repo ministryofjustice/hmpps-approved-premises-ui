@@ -84,7 +84,7 @@ describe('CruDashboardController', () => {
         subheading: cruDashboardSubheadings[status],
         activeTab: status,
         tabs: cruDashboardTabItems(user, status, user.cruManagementArea.id),
-        tableHead: dashboardTableHeader(status, 'name' as PlacementRequestSortField, 'asc', defaultHrefPrefix),
+        tableHead: dashboardTableHeader(status, 'expected_arrival', 'asc', defaultHrefPrefix),
         tableRows: dashboardTableRows(paginatedResponse.data, status),
         pagination: pagination(1, Number(paginatedResponse.totalPages), defaultHrefPrefix),
         cruManagementAreas,
@@ -103,9 +103,9 @@ describe('CruDashboardController', () => {
         expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
           token,
           { cruManagementAreaId: user.cruManagementArea.id, requestType: undefined, status },
-          undefined,
-          undefined,
-          undefined,
+          1,
+          'expected_arrival',
+          'asc',
         )
 
         expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
@@ -181,15 +181,15 @@ describe('CruDashboardController', () => {
         expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
           token,
           { status },
-          undefined,
-          undefined,
-          undefined,
+          1,
+          'expected_arrival',
+          'asc',
         )
 
         expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
           ...defaultRenderParameters,
           tabs: cruDashboardTabItems(user, status, cruManagementArea),
-          tableHead: dashboardTableHeader(status, 'name' as PlacementRequestSortField, 'asc', expectedHrefPrefix),
+          tableHead: dashboardTableHeader(status, 'expected_arrival', 'asc', expectedHrefPrefix),
           pagination: pagination(
             Number(paginatedResponse.pageNumber),
             Number(paginatedResponse.totalPages),

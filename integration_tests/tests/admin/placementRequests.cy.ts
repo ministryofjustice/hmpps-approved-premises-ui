@@ -383,7 +383,6 @@ context('Placement Requests', () => {
         'expected_arrival',
         'person_name',
         'person_risks_tier',
-        'expected_arrival',
         'application_date',
         'duration',
         'request_type',
@@ -411,10 +410,13 @@ context('Placement Requests', () => {
           THEN('I should see a list of placement requests')
           listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
-          WHEN('I sort by expected arrival in ascending order')
-          listPage.clickSortBy(field)
+          // The default sort is by expected_arrival, so there is no need to click to sort
+          if (field !== 'expected_arrival') {
+            WHEN(`I sort by ${field} in ascending order`)
+            listPage.clickSortBy(field)
+          }
 
-          THEN('the dashboard should be sorted by expected arrival')
+          THEN(`the dashboard should be sorted by ${field}`)
           listPage.shouldBeSortedByField(field, 'ascending')
 
           AND('the API should have received a request for the correct sort order')
@@ -426,10 +428,10 @@ context('Placement Requests', () => {
             expect(requests).to.have.length(1)
           })
 
-          WHEN('I sort by expected arrival in descending order')
+          WHEN(`I sort by ${field} in descending order`)
           listPage.clickSortBy(field)
 
-          THEN('the dashboard should be sorted by expected arrival in descending order')
+          THEN(`the dashboard should be sorted by ${field} in descending order`)
           listPage.shouldBeSortedByField(field, 'descending')
 
           AND('the API should have received a request for the correct sort order')
