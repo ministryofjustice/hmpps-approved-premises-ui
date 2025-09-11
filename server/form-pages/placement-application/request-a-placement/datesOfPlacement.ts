@@ -1,5 +1,6 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
+import { weeksToDays } from 'date-fns'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
@@ -10,14 +11,13 @@ import { datesOfPlacementItem } from '../../../utils/placementRequests/datesOfPl
 
 type DateOfPlacementFromUi = {
   durationDays: string
+  durationWeeks: string
   isFlexible: string
 } & ObjectWithDateParts<'arrivalDate'>
 
-export type DateOfPlacement = {
+export interface DateOfPlacement extends DateOfPlacementFromUi {
   duration: string
-  durationDays: string
-  isFlexible: string
-} & ObjectWithDateParts<'arrivalDate'>
+}
 
 export type Body = {
   datesOfPlacement: Array<DateOfPlacementFromUi>
@@ -65,7 +65,7 @@ export default class DatesOfPlacement implements TasklistPage {
 
   response() {
     const result = this.body.datesOfPlacement.map(date => {
-      return datesOfPlacementItem(Number(date.durationDays), date.arrivalDate, date.isFlexible === 'yes')
+      return datesOfPlacementItem(Number(this.lengthInDays(date)), date.arrivalDate, date.isFlexible === 'yes')
     })
 
     return { 'Dates of placement': result }
@@ -80,7 +80,7 @@ export default class DatesOfPlacement implements TasklistPage {
         errors[`datesOfPlacement_${index}_arrivalDate`] = 'Enter an arrival date for the placement'
       }
 
-      if (!Number(date.durationDays)) {
+      if (!Number(this.lengthInDays(date))) {
         errors[`datesOfPlacement_${index}_duration`] = 'Enter the duration of the placement'
       }
       if (!date.isFlexible) {
@@ -91,24 +91,34 @@ export default class DatesOfPlacement implements TasklistPage {
     return errors as TaskListErrors<this>
   }
 
+  private lengthInDays(date: DateOfPlacementFromUi): string | undefined {
+    if (date.durationWeeks || date.durationDays) {
+      const lengthOfStayWeeksInDays = weeksToDays(Number(date.durationWeeks))
+      const totalLengthInDays = lengthOfStayWeeksInDays + Number(date.durationDays)
+
+      return String(totalLengthInDays)
+    }
+    return undefined
+  }
+
   private inputsPopulated(datesArr: Array<DateOfPlacementFromUi> | undefined) {
-    // isFlexible is excluded as the user cannot uncheck this so cannot be counted as a populated block if only isFlexible is set
     return (datesArr || []).filter(
-      dates => dateAndTimeInputsAreValidDates(dates, 'arrivalDate') || Boolean(dates.durationDays),
+      dates =>
+        dateAndTimeInputsAreValidDates(dates, 'arrivalDate') ||
+        Boolean(dates.durationDays) ||
+        Boolean(dates.durationWeeks) ||
+        Boolean(dates.isFlexible),
     )
   }
 
   private mapDateInputs(dates: Array<DateOfPlacementFromUi>): Array<DateOfPlacement> {
-    const result = dates.map(date => {
+    return dates.map(date => {
       return {
         ...date,
-        duration: date.durationDays,
-        durationDays: date.durationDays,
+        duration: this.lengthInDays(date),
         isFlexible: date.isFlexible,
         ...DateFormats.dateAndTimeInputsToIsoString(date, 'arrivalDate'),
       }
     })
-
-    return result
   }
 }

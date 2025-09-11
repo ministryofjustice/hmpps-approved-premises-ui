@@ -8,7 +8,7 @@
 
 {% macro fieldset(index, includeButton = false) %}
     {% call govukFieldset({
-        classes: "govuk-fieldset toplevel-fieldset",
+        classes: "govuk-fieldset toplevel-fieldset moj-add-another__item",
         legend: {
             text: "ROTL placement " + (
             index + 1),
@@ -26,8 +26,10 @@
         {% set fieldId = "datesOfPlacement_" + index + "_arrivalDate" %}
         {% set context = fetchContext() %}
         {% set body = context.page.body %}
-        {% set durationDays = "durationDays" %}
+        {%set durationWeeks = "durationWeeks"%}
+        {%set durationDays = "durationDays"%}
 
+        {% set durationWeeksName = "datesOfPlacement[" + index + "][" + durationWeeks + "]" %}
         {% set durationDaysName = "datesOfPlacement[" + index + "][" + durationDays + "]" %}
         {% set isFlexibleName = "datesOfPlacement[" + index + "][isFlexible]" %}
 
@@ -117,7 +119,26 @@
                     </p>
                 {% endif %}
 
-                {{ govukInput(
+                {{
+                govukInput(
+                    {
+                        classes: inputClasses,
+                        name: durationWeeksName,
+                        id: "datesOfPlacement_" + index + "_duration_weeks",
+                        formGroup: {
+                        classes: "govuk-form-group--inline"
+                    },
+                        label: {
+                        text: "Weeks"
+                    },
+                        value:  context.datesOfPlacement[index][durationWeeks]
+                    },
+                    context
+                )
+                }}
+
+                {{
+                govukInput(
                     {
                         classes: inputClasses,
                         name: durationDaysName,
@@ -126,15 +147,15 @@
                         classes: "govuk-form-group--inline"
                     },
                         label: {
-                        text: "Nights"
+                        text: "Days"
                     },
-                        value: context.datesOfPlacement[index].durationDays
+                        value: context.datesOfPlacement[index][durationDays]
                     },
                     context
-                ) }}
+                )
+                }}
             {% endcall %}
         </div>
-
 
 
         {% if includeButton %}
@@ -234,14 +255,16 @@
 
               buttons[i].addEventListener('click', (event) => {
                 var fieldset = event.target.parentElement
-                var inputs = fieldset.querySelectorAll('input')
 
                 fieldset
                   .classList
                   .add('govuk-visually-hidden')
 
-                for (var i = 0; i < inputs.length; i++) {
-                  inputs[i].value = ''
+                for (input of fieldset.querySelectorAll('input[type=text]')) {
+                  input.value = ''
+                }
+                for (input of fieldset.querySelectorAll('input[type=radio]')) {
+                  input.checked = false
                 }
 
                 event.preventDefault()
@@ -254,7 +277,6 @@
 
             for (let i = 1; i < fieldsets.length; i++) {
               if(!['arrivalDate-day','arrivalDate-month','arrivalDate-year','durationDays','isFlexible'].some((field) => {
-                console.log('checking field',field, `input[name="datesOfPlacement[${i}][${field}]"]`, document.querySelector(`input[name="datesOfPlacement[${i}][${field}]"]`).type)
                 const input = document.querySelector(`input[name="datesOfPlacement[${i}][${field}]"]`)
                 return Boolean(input.type === 'radio' ? input.checked : input.value)
               })) {
