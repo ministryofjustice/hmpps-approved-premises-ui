@@ -1,6 +1,8 @@
 import { ApprovedPremisesApplicationStatus as ApplicationStatus } from '../../../server/@types/shared'
 import {
+  applicationFactory,
   cas1ApplicationSummaryFactory,
+  personFactory,
   placementApplicationFactory,
   requestForPlacementFactory,
   restrictedPersonFactory,
@@ -8,8 +10,11 @@ import {
 import { applicationSuitableStatuses } from '../../../server/utils/applications/utils'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import DashboardPage from '../../pages/apply/dashboard'
-import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
 import { signIn } from '../signIn'
+import CheckSentenceTypePage from '../../pages/match/placementRequestForm/checkSentenceType'
+import Page from '../../pages/page'
+import { defaultUserId } from '../../mockApis/auth'
+import applicationDocument from '../../fixtures/applicationDocument.json'
 
 context('All applications', () => {
   beforeEach(() => {
@@ -203,8 +208,16 @@ context('All applications', () => {
         data: placementApplicationData,
         applicationId,
       })
+      const completedApplication = applicationFactory.completed('accepted').build({
+        id: applicationId,
+        createdByUserId: defaultUserId,
+        person: personFactory.build(),
+        document: applicationDocument,
+      })
+
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
+      cy.task('stubApplicationGet', { application: completedApplication })
 
       // When I access the applications dashboard
       const page = DashboardPage.visit(applications)
@@ -216,7 +229,7 @@ context('All applications', () => {
       page.clickRequestForPlacementLink()
 
       // And I should be on placement request
-      ReasonForPlacementPage.visit(placementApplicationId)
+      Page.verifyOnPage(CheckSentenceTypePage, placementApplicationId)
     })
   })
 

@@ -13,6 +13,7 @@ import paths from '../../paths/placementApplications'
 import { UnknownPageError } from '../../utils/errors'
 import { viewPath } from '../../form-pages/utils'
 import { getPage } from '../../utils/applications/getPage'
+import { LegacyError } from '../../services/placementApplicationService'
 
 export default class PagesController {
   constructor(
@@ -36,6 +37,12 @@ export default class PagesController {
         )
 
         res.render(viewPath(page, 'placement-applications'), {
+          backLink: paths.placementApplications.pages.show({
+            id: req.params.id,
+            task: taskName,
+            page: page.previous(),
+          }),
+          formAction: `${paths.placementApplications.pages.update({ id: req.params.id, task: taskName, page: page.name })}?_method=PUT`,
           placementApplicationId: req.params.id,
           errors,
           errorSummary,
@@ -44,6 +51,16 @@ export default class PagesController {
           ...page.body,
         })
       } catch (error) {
+        if (error instanceof LegacyError) {
+          res.redirect(
+            paths.placementApplications.pages.show({
+              id: req.params.id,
+              task: taskName,
+              page: 'sentence-type-check',
+            }),
+          )
+          return
+        }
         if (error instanceof UnknownPageError) {
           next(createError(404, 'Not found'))
         } else {
@@ -56,15 +73,23 @@ export default class PagesController {
   update(taskName: TaskNames, pageName: string) {
     return async (req: Request, res: Response) => {
       const Page = getPage(taskName, pageName, 'placement-applications')
-      const page = await this.placementApplicationService.initializePage(Page, req, {
-        applicationService: this.applicationService,
-      })
-
       try {
+        const page = await this.placementApplicationService.initializePage(Page, req, {
+          applicationService: this.applicationService,
+        })
         await this.placementApplicationService.save(page, req)
-
         res.redirect(paths.placementApplications.pages.show({ id: req.params.id, task: taskName, page: page.next() }))
       } catch (error) {
+        if (error instanceof LegacyError) {
+          res.redirect(
+            paths.placementApplications.pages.show({
+              id: req.params.id,
+              task: taskName,
+              page: 'sentence-type-check',
+            }),
+          )
+          return
+        }
         catchValidationErrorOrPropogate(
           req,
           res,

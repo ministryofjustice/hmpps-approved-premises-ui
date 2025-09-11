@@ -3,10 +3,10 @@ import {
   ApprovedPremisesApplication as Application,
   Cas1RequestedPlacementPeriod,
   PlacementApplication,
-  PlacementType,
+  ReleaseTypeOption,
   SubmitPlacementApplication,
 } from '../../@types/shared'
-import ReasonForPlacement from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
+
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -19,26 +19,20 @@ import { placementDurationFromApplication } from '../applications/placementDurat
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
 import { makeArrayOfType } from '../utils'
+import { getSentenceType } from '../placementApplications'
 
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
   application: Application,
 ): SubmitPlacementApplication => {
-  const reasonForPlacement = retrieveQuestionResponseFromFormArtifact(
-    placementApplication,
-    ReasonForPlacement,
-    'reason',
-  )
-
-  const placementDates = durationAndArrivalDateFromPlacementApplication(
-    placementApplication,
-    reasonForPlacement,
-    application,
-  )
+  const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
+  const placementDates = durationAndArrivalDateFromPlacementApplication(placementApplication, releaseType, application)
   return {
     translatedDocument: placementApplication.document,
-    placementType: reasonForPlacement,
     requestedPlacementPeriods: placementDates,
+    releaseType,
+    sentenceType,
+    situationType: situation,
   }
 }
 export const retreivePlacementDatesFromRotlPlacementApplication = (
@@ -69,14 +63,27 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
 
 export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
-  reasonForPlacement: PlacementType,
+  reasonForPlacement: ReleaseTypeOption,
   application: Application,
 ): Array<Cas1RequestedPlacementPeriod> => {
   switch (reasonForPlacement) {
     case 'rotl': {
       return retreivePlacementDatesFromRotlPlacementApplication(placementApplication)
     }
-    case 'additional_placement': {
+    case 'paroleDirectedLicence': {
+      const decisionToReleaseDate = retrieveQuestionResponseFromFormArtifact(
+        placementApplication,
+        DecisionToRelease,
+        'decisionToReleaseDate',
+      )
+      return [
+        {
+          arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
+          duration: Number(placementDurationFromApplication(application)),
+        },
+      ]
+    }
+    default: {
       return [
         {
           arrival: retrieveQuestionResponseFromFormArtifact(
@@ -90,27 +97,5 @@ export const durationAndArrivalDateFromPlacementApplication = (
         },
       ]
     }
-    case 'release_following_decision': {
-      const decisionToReleaseDate = retrieveQuestionResponseFromFormArtifact(
-        placementApplication,
-        DecisionToRelease,
-        'decisionToReleaseDate',
-      )
-
-      return [
-        {
-          arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: Number(placementDurationFromApplication(application)),
-        },
-      ]
-    }
-
-    default:
-      return [
-        {
-          arrival: '',
-          duration: null,
-        },
-      ]
   }
 }

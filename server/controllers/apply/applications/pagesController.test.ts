@@ -39,6 +39,8 @@ describe('pagesController', () => {
 
   const PageConstructor = jest.fn()
   const page = createMock<TasklistPage>({})
+  page.previous.mockReturnValue('previous-page')
+  page.name = 'page-name'
 
   let pagesController: PagesController
 
@@ -51,6 +53,17 @@ describe('pagesController', () => {
   })
 
   describe('show', () => {
+    const defaultRender = (req: Request) => ({
+      applicationId: req.params.id,
+      backLink: '/applications/some-uuid/tasks/basic-information/pages/previous-page',
+      formAction: '/applications/some-uuid/tasks/basic-information/pages/page-name?_method=PUT',
+      task: someTask,
+      page,
+      errors: {},
+      errorSummary: [] as Array<Error>,
+      ...page.body,
+    })
+
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
@@ -70,14 +83,7 @@ describe('pagesController', () => {
       expect(getPage).toHaveBeenCalledWith(someTask, 'some-page', 'applications')
       expect(applicationService.initializePage).toHaveBeenCalledWith(PageConstructor, request, dataServices, {})
 
-      expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
-        applicationId: request.params.id,
-        task: someTask,
-        page,
-        errors: {},
-        errorSummary: [],
-        ...page.body,
-      })
+      expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', defaultRender(request))
     })
 
     it('shows errors and user input when returning from an error state', async () => {
@@ -96,12 +102,9 @@ describe('pagesController', () => {
       )
 
       expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
-        applicationId: request.params.id,
-        task: someTask,
-        page,
+        ...defaultRender(request),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        ...page.body,
       })
     })
 

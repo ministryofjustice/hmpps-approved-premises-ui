@@ -1,0 +1,42 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% extends "./layout.njk" %}
+
+{% set conditionalHtml %}
+{% set html %}
+<p class="govuk-body">A person on non-statutory sentence must be managed by MAPPA in order to be placed in an Approved Premises.</p>
+<p class="govuk-body">Check the person’s sentence type on NDelius and return to the sentence type question.</p>
+{% endset %}
+
+{{ govukNotificationBanner({
+        html: html
+    }) }}
+{% endset -%}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">
+        {{ page.title }}
+    </h1>
+
+    {{
+        formPageRadios({
+            fieldName: 'managedByMappa',
+            items: [
+            {
+                value: "yes",
+                text: "Yes"
+            },
+            {
+                value: "no",
+                text: "No",
+                conditional: {
+                    html: conditionalHtml
+                }
+            }
+            ]
+        },
+        fetchContext()
+        )
+    }}
+{% endblock %}

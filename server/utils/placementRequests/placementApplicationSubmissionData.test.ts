@@ -53,19 +53,27 @@ describe('placementApplicationSubmissionData', () => {
 
   describe('placementApplicationSubmissionData', () => {
     it('returns the data in the correct format for submission', () => {
-      const placementApplication = placementApplicationFactory.build()
+      const placementApplication = placementApplicationFactory.build({
+        data: {
+          'request-a-placement': {
+            'sentence-type-check': { sentenceTypeCheck: 'yes' },
+            'release-type': { releaseType: 'rotl' },
+            'sentence-type': { sentenceType: 'licence' },
+          },
+        },
+      })
 
       ;(
         pageDataFromApplicationOrAssessment as jest.MockedFn<typeof pageDataFromApplicationOrAssessment>
       ).mockReturnValue({
-        reason: 'rotl',
         datesOfPlacement,
       })
       ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('reason')
       ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('dates-of-placement')
 
       expect(placementApplicationSubmissionData(placementApplication, applicationFactory.build())).toEqual({
-        placementType: 'rotl',
+        sentenceType: 'licence',
+        releaseType: 'rotl',
         translatedDocument: {},
         requestedPlacementPeriods: datesOfPlacementForApi,
       })
@@ -120,7 +128,7 @@ describe('placementApplicationSubmissionData', () => {
       expect(
         durationAndArrivalDateFromPlacementApplication(
           placementApplication,
-          'additional_placement',
+          'not_applicable',
           applicationFactory.build(),
         ),
       ).toEqual([
@@ -144,7 +152,7 @@ describe('placementApplicationSubmissionData', () => {
       expect(
         durationAndArrivalDateFromPlacementApplication(
           placementApplication,
-          'release_following_decision',
+          'paroleDirectedLicence',
           applicationFactory.build(),
         ),
       ).toEqual([

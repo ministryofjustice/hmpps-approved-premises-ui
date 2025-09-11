@@ -29,6 +29,7 @@ export default {
         jsonBody: applications,
       },
     }),
+
   stubAllApplications: ({
     applications,
     page = '1',
@@ -80,6 +81,7 @@ export default {
       },
     })
   },
+
   verifyDashboardRequest: async ({
     page = '1',
     sortBy = 'createdAt',
@@ -118,6 +120,7 @@ export default {
 
     return request.body.requests
   },
+
   stubApplicationGet: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -130,6 +133,7 @@ export default {
         jsonBody: args.application,
       },
     }),
+
   stubApplicationDocuments: (args: {
     application: ApprovedPremisesApplication
     documents: Array<Document>
@@ -145,6 +149,7 @@ export default {
         jsonBody: args.documents,
       },
     }),
+
   stubApplicationSubmit: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -156,6 +161,7 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     }),
+
   stubApplicationWithdrawn: (args: { applicationId: string }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -167,6 +173,7 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     }),
+
   stubApplicationTimeline: (args: { applicationId: string; timeline: Array<Cas1TimelineEvent> }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -179,6 +186,7 @@ export default {
         jsonBody: args.timeline,
       },
     }),
+
   stubApplicationRequestsForPlacement: ({
     requestsForPlacement,
     applicationId,
@@ -234,6 +242,7 @@ export default {
         jsonBody: withdrawables,
       },
     }),
+
   stubAppeals: ({ applicationId, appeal }: { applicationId: string; appeal: Appeal }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -246,6 +255,7 @@ export default {
         jsonBody: appeal,
       },
     }),
+
   stubAppealCreate: ({ applicationId, appeal }: { applicationId: string; appeal: Appeal }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -258,6 +268,7 @@ export default {
         jsonBody: appeal,
       },
     }),
+
   stubAppealErrors: ({ applicationId, params }: { applicationId: string; params: Array<string> }) =>
     stubFor(errorStub(params, paths.applications.appeals.create({ id: applicationId }))),
   verifyApplicationWithdrawn: async (args: { applicationId: string }) =>

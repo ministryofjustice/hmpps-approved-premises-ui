@@ -1,8 +1,9 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
+import { itShouldHaveNextValue } from '../../shared-examples'
 
 import AdditionalPlacementDetails, { Body } from './additionalPlacementDetails'
 import { DateFormats } from '../../../utils/dateUtils'
+import { placementApplicationFactory } from '../../../testutils/factories'
 
 describe('AdditionalPlacementDetails', () => {
   const body = {
@@ -14,9 +15,11 @@ describe('AdditionalPlacementDetails', () => {
     reason: 'Some reason',
   } as Body
 
+  const placementApplicaton = placementApplicationFactory.build()
+
   describe('body', () => {
     it('should set the body', () => {
-      const page = new AdditionalPlacementDetails(body)
+      const page = new AdditionalPlacementDetails(body, placementApplicaton)
 
       expect(page.body).toEqual({
         duration: '12',
@@ -31,18 +34,37 @@ describe('AdditionalPlacementDetails', () => {
     })
   })
 
-  itShouldHavePreviousValue(new AdditionalPlacementDetails(body), 'reason-for-placement')
+  it('previous should return to sentence type check page if the sentence/release type have not been changed', () => {
+    expect(new AdditionalPlacementDetails(body, placementApplicaton).previous()).toEqual('sentence-type-check')
+  })
 
-  itShouldHaveNextValue(new AdditionalPlacementDetails(body), 'updates-to-application')
+  it('previous should return to variable page if the sentence/release type has been changed', () => {
+    const placementApplicationChanged = {
+      ...placementApplicaton,
+      data: {
+        'request-a-placement': {
+          'sentence-type-check': {
+            sentenceTypeCheck: 'yes',
+          },
+          'sentence-type': {
+            sentenceType: 'standardDeterminate',
+          },
+        },
+      },
+    }
+    expect(new AdditionalPlacementDetails(body, placementApplicationChanged).previous()).toEqual('release-type')
+  })
+
+  itShouldHaveNextValue(new AdditionalPlacementDetails(body, placementApplicaton), 'updates-to-application')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
-      const page = new AdditionalPlacementDetails(body)
+      const page = new AdditionalPlacementDetails(body, placementApplicaton)
       expect(page.errors()).toEqual({})
     })
 
     it('should return errors if additionalPlacementDetails is blank', () => {
-      const page = new AdditionalPlacementDetails(fromPartial({}))
+      const page = new AdditionalPlacementDetails(fromPartial({}), placementApplicaton)
       expect(page.errors()).toEqual({
         arrivalDate: "You must state the person's arrival date",
         duration: 'You must state the duration of the placement',
@@ -51,12 +73,15 @@ describe('AdditionalPlacementDetails', () => {
     })
 
     it('should return errors if the last placement date is invalid', () => {
-      const page = new AdditionalPlacementDetails({
-        ...body,
-        'arrivalDate-year': '99999',
-        'arrivalDate-month': '99999',
-        'arrivalDate-day': '199999',
-      })
+      const page = new AdditionalPlacementDetails(
+        {
+          ...body,
+          'arrivalDate-year': '99999',
+          'arrivalDate-month': '99999',
+          'arrivalDate-day': '199999',
+        },
+        placementApplicaton,
+      )
       expect(page.errors()).toEqual({
         arrivalDate: 'The placement date is invalid',
       })
@@ -65,7 +90,7 @@ describe('AdditionalPlacementDetails', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new AdditionalPlacementDetails(body)
+      const page = new AdditionalPlacementDetails(body, placementApplicaton)
 
       expect(page.response()).toEqual({
         'How long should the Approved Premises placement last?': '1 week, 5 days',

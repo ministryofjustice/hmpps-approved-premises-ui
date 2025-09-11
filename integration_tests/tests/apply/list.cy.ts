@@ -1,13 +1,17 @@
 import { ListPage, StartPage } from '../../pages/apply'
 
 import {
+  applicationFactory,
   cas1ApplicationSummaryFactory,
   personFactory,
   placementApplicationFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
-import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
+
 import { signIn } from '../signIn'
+import CheckSentenceTypePage from '../../pages/match/placementRequestForm/checkSentenceType'
+import { defaultUserId } from '../../mockApis/auth'
+import applicationDocument from '../../fixtures/applicationDocument.json'
 
 context('Applications dashboard', () => {
   beforeEach(() => {
@@ -142,6 +146,12 @@ context('Applications dashboard', () => {
         'stubApplications',
         [inProgressApplications, requestedFurtherInformationApplications, awaitingPlacementApplications].flat(),
       )
+      const completedApplication = applicationFactory.completed('accepted').build({
+        id: applicationId,
+        createdByUserId: defaultUserId,
+        person: personFactory.build(),
+        document: applicationDocument,
+      })
 
       // And there is a placement application in the DB
       const placementApplicationId = '123'
@@ -152,6 +162,7 @@ context('Applications dashboard', () => {
       })
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
+      cy.task('stubApplicationGet', { application: completedApplication })
 
       // When I visit the Previous Applications page
       const page = ListPage.visit(
@@ -167,7 +178,7 @@ context('Applications dashboard', () => {
       page.clickRequestForPlacementLink()
 
       // And I should be on placement request
-      ReasonForPlacementPage.visit(placementApplicationId)
+      Page.verifyOnPage(CheckSentenceTypePage, placementApplicationId)
     })
   })
 })

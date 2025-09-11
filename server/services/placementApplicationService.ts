@@ -12,6 +12,10 @@ import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
 import { placementApplicationSubmissionData } from '../utils/placementRequests/placementApplicationSubmissionData'
 import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
+import CheckSentenceTypePage from '../form-pages/placement-application/request-a-placement/sentenceTypeCheck'
+import { getSentenceType } from '../utils/placementApplications'
+
+export class LegacyError extends Error {}
 
 export default class PlacementApplicationService {
   constructor(private readonly placementApplicationClientFactory: RestClientBuilder<PlacementApplicationClient>) {}
@@ -34,7 +38,10 @@ export default class PlacementApplicationService {
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const placementApplication = await this.getPlacementApplication(request.user.token, request.params.id)
-
+    if (Page !== CheckSentenceTypePage) {
+      const { sentenceTypeCheck } = getSentenceType(placementApplication)
+      if (!sentenceTypeCheck) throw new LegacyError()
+    }
     const body = getBody(Page, placementApplication, request, userInput)
 
     const page = Page.initialize
@@ -58,7 +65,6 @@ export default class PlacementApplicationService {
 
       const pageName = getPageName(page.constructor)
       const taskName = getTaskName(page.constructor)
-
       placementApplication.data = placementApplication.data || {}
       placementApplication.data[taskName] = placementApplication.data[taskName] || {}
       placementApplication.data[taskName][pageName] = page.body
