@@ -21,7 +21,7 @@ import {
 } from '../../testutils/factories'
 import paths from '../../paths/admin'
 import * as getPaginationDetails from '../../utils/getPaginationDetails'
-import { cruDashboardActions, cruDashboardSubheadings, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
+import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
 import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementRequests/table'
 import { pagination } from '../../utils/pagination'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
@@ -81,7 +81,6 @@ describe('CruDashboardController', () => {
       const defaultRenderParameters = {
         pageHeading: 'CRU Dashboard',
         actions: cruDashboardActions(user),
-        subheading: cruDashboardSubheadings[status],
         activeTab: status,
         tabs: cruDashboardTabItems(user, status, user.cruManagementArea.id),
         tableHead: dashboardTableHeader(status, 'expected_arrival', 'asc', defaultHrefPrefix),
@@ -229,7 +228,6 @@ describe('CruDashboardController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
         actions: cruDashboardActions(response.locals.user),
-        subheading: 'Requests for changes to placements.',
         activeTab: 'changeRequests',
         tabs: cruDashboardTabItems(user, 'changeRequests', user.cruManagementArea.id),
         tableHead: changeRequestsTableHeader('name', 'asc', expectedHrefPrefix),

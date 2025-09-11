@@ -13,7 +13,7 @@ import { CruManagementAreaService, PlacementRequestService, PremisesService } fr
 import adminPaths from '../../paths/admin'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
-import { cruDashboardActions, cruDashboardSubheadings, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
+import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
 import { pagination } from '../../utils/pagination'
 import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementRequests/table'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
@@ -81,7 +81,6 @@ export default class CruDashboardController {
         cruManagementArea,
         requestType,
         activeTab: status,
-        subheading: cruDashboardSubheadings[status],
         tabs: cruDashboardTabItems(user, status, cruManagementArea, requestType),
         tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
         tableRows: dashboardTableRows(dashboard.data, status),
@@ -113,7 +112,6 @@ export default class CruDashboardController {
 
       res.render('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
-        subheading: 'Requests for changes to placements.',
         actions: cruDashboardActions(user),
         tabs: cruDashboardTabItems(user, 'changeRequests', cruManagementArea),
         activeTab: 'changeRequests',
