@@ -6,7 +6,7 @@
 
 {% extends "../../layout.njk" %}
 
-{% macro fieldset(index, includeButton = false) %}
+{% macro dateBlock(index, includeButton = false) %}
     {% call govukFieldset({
         classes: "govuk-fieldset toplevel-fieldset moj-add-another__item",
         legend: {
@@ -26,8 +26,8 @@
         {% set fieldId = "datesOfPlacement_" + index + "_arrivalDate" %}
         {% set context = fetchContext() %}
         {% set body = context.page.body %}
-        {%set durationWeeks = "durationWeeks"%}
-        {%set durationDays = "durationDays"%}
+        {% set durationWeeks = "durationWeeks" %}
+        {% set durationDays = "durationDays" %}
 
         {% set durationWeeksName = "datesOfPlacement[" + index + "][" + durationWeeks + "]" %}
         {% set durationDaysName = "datesOfPlacement[" + index + "][" + durationDays + "]" %}
@@ -75,7 +75,7 @@
             }
         }) }}
 
-        {%  set isFlexibleValue = context.datesOfPlacement[index].isFlexible %}
+        {% set isFlexibleValue = context.datesOfPlacement[index].isFlexible %}
 
         {{ govukRadios({
             idPrefix: isFlexibleName,
@@ -119,8 +119,7 @@
                     </p>
                 {% endif %}
 
-                {{
-                govukInput(
+                {{ govukInput(
                     {
                         classes: inputClasses,
                         name: durationWeeksName,
@@ -134,11 +133,9 @@
                         value:  context.datesOfPlacement[index][durationWeeks]
                     },
                     context
-                )
-                }}
+                ) }}
 
-                {{
-                govukInput(
+                {{ govukInput(
                     {
                         classes: inputClasses,
                         name: durationDaysName,
@@ -152,8 +149,7 @@
                         value: context.datesOfPlacement[index][durationDays]
                     },
                     context
-                )
-                }}
+                ) }}
             {% endcall %}
         </div>
 
@@ -178,49 +174,49 @@
 
 {% block content %}
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <form action="{{ paths.placementApplications.pages.update({ id: placementApplicationId, task: task, page: page.name }) }}?_method=PUT"
-              method="post">
-            <h1 class="govuk-heading-l">
-                {{ page.title }}
-            </h1>
+            <form action="{{ paths.placementApplications.pages.update({ id: placementApplicationId, task: task, page: page.name }) }}?_method=PUT"
+                  method="post">
+                <h1 class="govuk-heading-l">
+                    {{ page.title }}
+                </h1>
 
-            {% if errorSummary | length %}
-                {{ govukErrorSummary({
-                    titleText: "There is a problem",
-                    errorList: errorSummary
+                {% if errorSummary | length %}
+                    {{ govukErrorSummary({
+                        titleText: "There is a problem",
+                        errorList: errorSummary
+                    }) }}
+                {% endif %}
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <div id="fieldset-wrapper">
+                    {% for i in range(0, 5) -%}
+                        {{ dateBlock(i, i > 0) }}
+                    {% endfor %}
+                </div>
+
+                {{ govukButton({
+                    text: "Add another placement",
+                    attributes: {
+                        "data-add-input": "true"
+                    },
+                    classes: "govuk-button--secondary",
+                    preventDoubleClick: true
                 }) }}
-            {% endif %}
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-            <div id="fieldset-wrapper">
-                {% for i in range(0, 5) -%}
-                    {{ fieldset(i, true) }}
-                {% endfor %}
-            </div>
+                {{ govukButton({
+                    text: "Save and continue",
+                    preventDoubleClick: true
+                }) }}
 
-            {{ govukButton({
-                text: "Add another placement",
-                attributes: {
-                    "data-add-input": "true"
-                },
-                classes: "govuk-button--secondary",
-                preventDoubleClick: true
-            }) }}
+            </form>
 
-            {{ govukButton({
-                text: "Save and continue",
-                preventDoubleClick: true
-            }) }}
-
-        </form>
-
+        </div>
     </div>
-</div>
 
-    {% endblock %}
+{% endblock %}
 
     {% block extraScripts %}
         <script type="text/javascript" nonce="{{ cspNonce }}">
@@ -237,7 +233,7 @@
                   .remove('govuk-visually-hidden')
               } else {
                 var fieldsetWrapper = document.querySelector('#fieldset-wrapper')
-                var newFieldset = `{{ fieldset("INDEX", true) }}`
+                var newFieldset = `{{ dateBlock("INDEX", true) }}`
                   .replace('INDEX1', fieldsets.length + 1)
                   .replaceAll('INDEX', fieldsets.length + 1)
                 fieldsetWrapper.innerHTML += newFieldset
@@ -276,9 +272,12 @@
             var fieldsets = document.querySelectorAll('fieldset[data-fieldset]')
 
             for (let i = 1; i < fieldsets.length; i++) {
-              if(!['arrivalDate-day','arrivalDate-month','arrivalDate-year','durationDays','isFlexible'].some((field) => {
-                const input = document.querySelector(`input[name="datesOfPlacement[${i}][${field}]"]`)
-                return Boolean(input.type === 'radio' ? input.checked : input.value)
+              if (!['arrivalDate-day', 'arrivalDate-month', 'arrivalDate-year', 'durationDays', 'durationWeeks', 'isFlexible'].some((field) => {
+                const inputs = document.querySelectorAll(`input[name="datesOfPlacement[${i}][${field}]"]`) || []
+                return [...inputs].some((input) => {
+                  console.log('input', input.type, input.checked, input.value)
+                  return Boolean(input.type === 'radio' ? input.checked : input.value)
+                })
               })) {
                 fieldsets[i]
                   .classList

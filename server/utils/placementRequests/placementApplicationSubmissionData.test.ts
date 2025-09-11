@@ -18,7 +18,8 @@ describe('placementApplicationSubmissionData', () => {
   const datesOfPlacement = [
     {
       duration: '15',
-      durationDays: '15',
+      durationDays: '1',
+      durationWeeks: '2',
       'arrivalDate-year': '2023',
       'arrivalDate-month': '12',
       'arrivalDate-day': '1',
@@ -27,7 +28,8 @@ describe('placementApplicationSubmissionData', () => {
     },
     {
       duration: '23',
-      durationDays: '23',
+      durationDays: '2',
+      durationWeeks: '3',
       'arrivalDate-year': '2024',
       'arrivalDate-month': '1',
       'arrivalDate-day': '2',
