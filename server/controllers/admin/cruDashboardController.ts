@@ -39,9 +39,11 @@ export default class CruDashboardController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: IndexRequest, res: Response, next: NextFunction) => {
-      const { token } = req.user
       const { user } = res.locals
-      const { status = 'notMatched', cruManagementArea = user.cruManagementArea?.id, requestType } = req.query
+      const {
+        user: { token },
+        query: { status = 'notMatched', cruManagementArea = user.cruManagementArea?.id, requestType },
+      } = req
 
       if (!['notMatched', 'unableToMatch', 'matched'].includes(status)) {
         next(createError(404, 'Not found'))
