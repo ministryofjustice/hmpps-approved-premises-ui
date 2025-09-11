@@ -25,11 +25,8 @@ export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
 
-export const formatDuration = (lengthInDays: number, showNights = false): string => {
-  return showNights
-    ? `${lengthInDays} nights`
-    : DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
-}
+export const formatDuration = (lengthInDays: number): string =>
+  DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
 
 type SpaceBookingConfirmationData = {
   premises: Cas1Premises

@@ -34,7 +34,7 @@ export const placementRequestSummaryList = (
     requestedOrEstimatedArrivalDateRow(placementRequest.isParole, startDate),
     summaryListItem('Requested departure date', endDate, 'date'),
     summaryListItemNoBlankRows('Flexible date', isRotl && (arrivalFlexible ? 'Yes' : 'No')),
-    summaryListItem('Length of stay', formatDuration(duration, isRotl)),
+    summaryListItem('Length of stay', formatDuration(duration)),
     summaryListItem('Release type', allReleaseTypes[releaseType]),
     summaryListItem('Licence expiry date', application?.licenceExpiryDate, 'date'),
     options.showActions ? apTypeWithViewTimelineActionRow(placementRequest) : apTypeRow(placementRequest.type),

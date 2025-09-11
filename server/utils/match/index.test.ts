@@ -247,8 +247,8 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('placementLength', () => {
-    it('formats the number of days as weeks', () => {
+  describe('formatDuration', () => {
+    it('formats the number of days as weeks and days', () => {
       expect(formatDuration(16)).toEqual('2 weeks, 2 days')
     })
   })
