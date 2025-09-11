@@ -225,7 +225,7 @@ context('Assess', () => {
       task: 'make-a-decision',
       page: 'make-a-decision',
       keyValuePairs: {
-        decision: 'otherReasons',
+        decision: 'notNecessaryOrProportionate',
         decisionRationale: 'reject reason',
       },
     })

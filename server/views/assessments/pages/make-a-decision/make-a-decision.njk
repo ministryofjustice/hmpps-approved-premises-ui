@@ -3,56 +3,54 @@
 
 {% block questions %}
 
-  <div class="govuk-form-group">
+    <div class="govuk-form-group">
 
-    {% call govukFieldset({
-      legend: {
-        text: "Make a decision",
-        classes: "govuk-fieldset__legend--l",
-        isPageHeading: true
-      }
-    }) %}
-    <p>This decision is conditional on a place being available in a suitable AP and any other requirements you have stipulated in the assessment.</p>
-    <p>Select one option from the list below. Options have been grouped by the reason for the decision.</p>
-
-    <div class="govuk-radios" data-module="govuk-radios">
-
-      {% for sectionName, subsection in page.responses %}
-        <h2>{{sectionName}}</h2>
-
-        {% for questionId, fullQuestion in subsection %}
-          {% set checked = page.decision == questionId %}
-
-          <div class="govuk-radios__item">
-            {% if checked %}
-              <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio" value="{{ questionId }}" checked>
-            {% else %}
-              <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio" value="{{ questionId }}" >
-              {%endif%}
-
-              <label class="govuk-label govuk-radios__label" for="{{ questionId }}">
-                {{ fullQuestion }}
-              </label>
-            </div>
-
-          {% endfor %}
-
-          {%endfor%}
-        </div>
-
-        {%endcall%}
-      </div>
-      {{
-        formPageTextarea(
-          {
-            fieldName: "decisionRationale",
-            type: "textarea",
-            label: {
-              text: "Rationale for your decision",
-              classes: "govuk-label--m"
+        {% call govukFieldset({
+            legend: {
+                text: "Make a decision",
+                classes: "govuk-fieldset__legend--l",
+                isPageHeading: true
             }
-          },
-          fetchContext()
-        )
-      }}
-    {% endblock %}
+        }) %}
+            <p>This decision is conditional on a place being available in a suitable AP and any other requirements you
+                have stipulated in the assessment.</p>
+            <p>Select one option from the list below. Options have been grouped by the reason for the decision.</p>
+            <p>If you are making a rejection, select the primary reason for the rejection and identify any additional
+                reasons when providing the rationale for your decision.</p>
+
+            <div class="govuk-radios" data-module="govuk-radios">
+
+                {% for sectionName, subsection in page.responses %}
+                    <h2>{{ sectionName }}</h2>
+
+                    {% for questionId, fullQuestion in subsection %}
+                        {% set checked = page.decision == questionId %}
+
+                        <div class="govuk-radios__item">
+                            {% if checked %}
+                                <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio"
+                                       value="{{ questionId }}" checked>
+                            {% else %}
+                                <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio"
+                                       value="{{ questionId }}">
+                            {% endif %}
+
+                            <label class="govuk-label govuk-radios__label" for="{{ questionId }}">
+                                {{ fullQuestion }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endcall %}
+    </div>
+
+    {{ formPageTextarea({
+        fieldName: "decisionRationale",
+        type: "textarea",
+        label: {
+            text: "Rationale for your decision",
+            classes: "govuk-label--m"
+        }
+    }, fetchContext()) }}
+{% endblock %}
