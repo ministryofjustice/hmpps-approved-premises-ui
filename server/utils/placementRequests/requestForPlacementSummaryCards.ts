@@ -5,7 +5,7 @@ import {
   RequestForPlacement,
   User,
 } from '../../@types/shared'
-
+import { formatDuration } from '../match'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
@@ -53,7 +53,7 @@ export class RequestForPlacementSummaryCards {
     const items: Record<string, string> = {
       'Expected arrival': DateFormats.isoDateToUIDate(placementPeriod.arrival, { format: 'short' }),
       'Arrival date is flexible': { false: 'No', true: 'Yes' }[String(placementPeriod.arrivalFlexible)] || '',
-      Duration: `${placementPeriod.duration} nights`,
+      Duration: `${formatDuration(placementPeriod.duration)}`,
     }
     Object.entries(items).forEach(([key, value]) => {
       if (!value) delete items[key]

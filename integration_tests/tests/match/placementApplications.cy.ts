@@ -83,10 +83,11 @@ context('Placement Applications', () => {
       GIVEN('I am on the placement application form and start an application')
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplication.id)
 
-      WHEN('I complete the form')
+      WHEN('I select ROTL')
       placementReasonPage.completeForm('rotl')
       placementReasonPage.clickSubmit()
 
+      AND('I complete the previous ROTL form')
       const previousRotlPlacementPage = new PreviousRotlPlacement()
       previousRotlPlacementPage.completeForm()
       previousRotlPlacementPage.clickSubmit()
@@ -95,10 +96,22 @@ context('Placement Applications', () => {
       sameApPage.completeForm()
       sameApPage.clickSubmit()
 
+      AND('I add placement dates date')
       const datesOfPlacementPage = new DateOfPlacement()
+
+      WHEN('I submit the form empty')
+      datesOfPlacementPage.clickSaveAndContinue()
+      THEN('I should see errors')
+      datesOfPlacementPage.shouldShowErrors()
+
+      AND('I should be able to add and remove date blocks')
+      datesOfPlacementPage.addAndRemoveBlock()
+
+      WHEN('I complete the form and submit')
       datesOfPlacementPage.completeForm()
       datesOfPlacementPage.clickSaveAndContinue()
 
+      THEN('I am on the application updates page')
       const updatesToApplication = new UpdatesToApplication()
       updatesToApplication.completeForm()
       updatesToApplication.clickSubmit()

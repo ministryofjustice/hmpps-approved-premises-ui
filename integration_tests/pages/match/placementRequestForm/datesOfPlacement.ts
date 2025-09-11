@@ -11,8 +11,8 @@ export default class DatesOfPlacement extends Page {
   }
 
   datesOfPlacement = [
-    { dateOfPlacement: '2023-08-01', duration: { days: 19 }, isFlexible: 'yes' },
-    { dateOfPlacement: '2023-07-02', duration: { days: 11 }, isFlexible: 'no' },
+    { dateOfPlacement: '2023-08-01', duration: { weeks: 2, days: 5 }, isFlexible: 'yes' },
+    { dateOfPlacement: '2023-07-02', duration: { weeks: 1, days: 4 }, isFlexible: 'no' },
   ]
 
   completeForm() {
@@ -20,13 +20,20 @@ export default class DatesOfPlacement extends Page {
       const parsedDate = DateFormats.isoToDateObj(date.dateOfPlacement)
 
       this.completeDatesOfPlacementDateInputs(parsedDate, index.toString())
-      this.completeDurationInputs(index.toString(), date.duration.days)
+      this.completeDurationInputs(index.toString(), date.duration.weeks, date.duration.days)
       this.completeIsFlexible(index.toString(), date.isFlexible)
     })
   }
 
-  clickAddAnother() {
-    cy.get('button').contains('Add another').click()
+  addAndRemoveBlock() {
+    const checkItems = (count: number) =>
+      cy.get('.moj-add-another__item:not(.govuk-visually-hidden)').should('have.length', count)
+
+    checkItems(2)
+    this.clickButton('Add another')
+    checkItems(3)
+    cy.get('.moj-add-another__item:not(.govuk-visually-hidden) button').eq(2).click({ force: true })
+    checkItems(2)
   }
 
   completeDatesOfPlacementDateInputs(date: Date, index: string): void {
@@ -37,12 +44,13 @@ export default class DatesOfPlacement extends Page {
     cy.get(`[name="${prefix}[arrivalDate-year]`).type(date.getFullYear().toString())
   }
 
-  completeDurationInputs(index: string, days: number) {
+  completeDurationInputs(index: string, weeks: number, days: number) {
+    this.clearAndCompleteTextInputById(`datesOfPlacement_${index}_duration_weeks`, weeks.toString())
     this.clearAndCompleteTextInputById(`datesOfPlacement_${index}_duration_days`, days.toString())
   }
 
   completeIsFlexible(index: string, isFlexible: string) {
-    this.checkRadioByNameAndValue(`datesOfPlacement[${index}][isFlexible]`, isFlexible)
+    this.checkRadioByNameAndValue(`datesOfPlacement[${index}][isFlexible]`, isFlexible ? 'yes' : 'no')
   }
 
   clearDateInputs(prefix: string): void {
@@ -53,5 +61,11 @@ export default class DatesOfPlacement extends Page {
 
   clickSaveAndContinue() {
     cy.get('button').contains('Save and continue').click()
+  }
+
+  shouldShowErrors() {
+    this.shouldShowErrorMessagesForFields(['datesOfPlacement_0_isFlexible'], {
+      datesOfPlacement_0_isFlexible: 'State if the placement date is flexible',
+    })
   }
 }

@@ -84,7 +84,7 @@ describe('RequestForPlacementSummaryCards', () => {
                 {
                   'Expected arrival': '24 Apr 2024',
                   'Arrival date is flexible': 'Yes',
-                  Duration: '123 nights',
+                  Duration: '17 weeks, 4 days',
                 },
               ]),
             },

@@ -50,10 +50,10 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
   )
 
   if (datesOfPlacement) {
-    return (datesOfPlacement as Array<DateOfPlacement>).map(({ arrivalDate, durationDays, isFlexible }) => ({
+    return (datesOfPlacement as Array<DateOfPlacement>).map(({ arrivalDate, duration, isFlexible }) => ({
       arrival: arrivalDate,
       arrivalFlexible: isFlexible === 'yes',
-      duration: Number(durationDays),
+      duration: Number(duration),
     }))
   }
 

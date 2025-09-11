@@ -47,7 +47,7 @@ describe('placementRequestSummaryList', () => {
         expectedLicenceExpiryDate: application.licenceExpiryDate,
         expectedPostcode: placementRequest.location,
         isRotl: true,
-        expectFlexibleAndNights: true,
+        expectFlexible: true,
       }),
     )
   })
@@ -155,7 +155,7 @@ describe('placementRequestSummaryList', () => {
     expectedLicenceExpiryDate: string
     expectedPostcode: string
     isRotl?: boolean
-    expectFlexibleAndNights?: boolean
+    expectFlexible?: boolean
   }): Array<SummaryListItem> => {
     const apTypeListItem = generateApTypeListItem(options.expectedApplicationId)
     const rows = [
@@ -175,7 +175,7 @@ describe('placementRequestSummaryList', () => {
           text: 'Sun 23 Nov 2025',
         },
       },
-      options.expectFlexibleAndNights
+      options.expectFlexible
         ? {
             key: {
               text: 'Flexible date',
@@ -190,7 +190,7 @@ describe('placementRequestSummaryList', () => {
           text: 'Length of stay',
         },
         value: {
-          text: options.expectFlexibleAndNights ? '52 nights' : '7 weeks, 3 days',
+          text: '7 weeks, 3 days',
         },
       },
       {
