@@ -195,6 +195,9 @@ context('Placement Requests', () => {
       WHEN('I go back to the dashboard')
       showPage.clickBack()
 
+      AND('I click the Ready to book tab')
+      showPage.clickTab('Ready to book')
+
       AND('I click the parole placement request')
       listPage.clickPlacementRequest(parolePlacementRequest)
 
@@ -446,23 +449,7 @@ context('Placement Requests', () => {
       })
 
       it(`supports filtering`, () => {
-        const {
-          unmatchedPlacementRequests,
-          matchedPlacementRequests,
-          unableToMatchPlacementRequests,
-          cruManagementAreas,
-        } = stubArtifacts()
-        cy.task('stubPlacementRequestsDashboard', {
-          placementRequests: [
-            ...unmatchedPlacementRequests,
-            ...matchedPlacementRequests,
-            ...unableToMatchPlacementRequests,
-          ],
-          status: 'notMatched',
-          sortBy: 'created_at',
-          sortDirection: 'asc',
-        })
-        cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
+        const { matchedPlacementRequests, cruManagementAreas, matchedPlacementRequest } = stubArtifacts()
 
         GIVEN('I am on the placement request dashboard')
         const listPage = ListPage.visit()
@@ -487,6 +474,20 @@ context('Placement Requests', () => {
         listPage.clickTab('Booked')
 
         THEN('the page should retain the area and request type filter')
+        listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
+        listPage.shouldHaveSelectText('requestType', 'Parole')
+
+        WHEN('I click on a placement request')
+        listPage.clickPlacementRequest(matchedPlacementRequest)
+
+        THEN("I should see the placement request's details")
+        const placementRequestPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
+
+        WHEN('I click the back link')
+        placementRequestPage.clickBack()
+
+        THEN('I should be taken back to the placement request dashboard with the correct status and filters applied')
+        listPage.shouldShowPlacementRequests(matchedPlacementRequests, 'matched')
         listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
         listPage.shouldHaveSelectText('requestType', 'Parole')
       })
