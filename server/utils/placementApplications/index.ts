@@ -23,12 +23,9 @@ export const getSentenceType = (
     applicationSentenceType: SentenceTypeOption
     situation: SituationOption
   } = pageData?.['sentence-type-check'] || {}
-  const { releaseType: updatedReleaseType }: { releaseType: ReleaseTypeOption } =
-    pageData?.['release-type'] || {}
-  const { sentenceType: updatedSentenceType }: { sentenceType: SentenceTypeOption } =
-    pageData?.['sentence-type'] || {}
-  const { situation: updatedSituation }: { situation: SituationOption } =
-    pageData?.situation || {}
+  const { releaseType: updatedReleaseType }: { releaseType: ReleaseTypeOption } = pageData?.['release-type'] || {}
+  const { sentenceType: updatedSentenceType }: { sentenceType: SentenceTypeOption } = pageData?.['sentence-type'] || {}
+  const { situation: updatedSituation }: { situation: SituationOption } = pageData?.situation || {}
 
   const updated = sentenceTypeCheck === 'yes'
 

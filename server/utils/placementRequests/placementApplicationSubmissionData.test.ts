@@ -59,7 +59,6 @@ describe('placementApplicationSubmissionData', () => {
             'sentence-type-check': { sentenceTypeCheck: 'yes' },
             'release-type': { releaseType: 'rotl' },
             'sentence-type': { sentenceType: 'licence' },
-
           },
         },
       })

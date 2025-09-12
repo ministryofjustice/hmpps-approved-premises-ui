@@ -1,5 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
+import { itShouldHaveNextValue } from '../../shared-examples'
 
 import AdditionalPlacementDetails, { Body } from './additionalPlacementDetails'
 import { DateFormats } from '../../../utils/dateUtils'
@@ -46,9 +46,9 @@ describe('AdditionalPlacementDetails', () => {
           'sentence-type-check': {
             sentenceTypeCheck: 'yes',
           },
-          'sentence-type':{
-            sentenceType:'standardDeterminate'
-          }
+          'sentence-type': {
+            sentenceType: 'standardDeterminate',
+          },
         },
       },
     }

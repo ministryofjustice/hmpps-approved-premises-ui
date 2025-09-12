@@ -15,23 +15,23 @@ describe('Situation', () => {
 
   describe('body', () => {
     it('should set the body', () => {
-      const page = new Situation({ situation: 'riskManagement' })
+      const page = new Situation({ situation: 'riskManagement' }, application)
 
       expect(page.body).toEqual({ situation: 'riskManagement' })
     })
   })
 
-  itShouldHavePreviousValue(new Situation({}), 'sentence-type')
-  itShouldHaveNextValue(new Situation({}), 'release-date')
+  itShouldHavePreviousValue(new Situation({}, application), 'sentence-type')
+  itShouldHaveNextValue(new Situation({}, application), 'release-date')
 
   describe('errors', () => {
     it('should return an empty object if the situation is populated', () => {
-      const page = new Situation({ situation: 'riskManagement' })
+      const page = new Situation({ situation: 'riskManagement' }, application)
       expect(page.errors()).toEqual({})
     })
 
     it('should return an errors if the situation is not populated', () => {
-      const page = new Situation({})
+      const page = new Situation({}, application)
       expect(page.errors()).toEqual({ situation: 'You must choose a situation' })
     })
   })
@@ -41,7 +41,7 @@ describe('Situation', () => {
       it('if the sentence type is "communityOrder" then the items should be correct', () => {
         ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('communityOrder')
 
-        const items = new Situation({ situation: 'riskManagement' }).items()
+        const items = new Situation({ situation: 'riskManagement' }, application).items()
 
         expect(items.length).toEqual(2)
         expect(items[0]).toEqual({
@@ -59,7 +59,7 @@ describe('Situation', () => {
       it('if the sentence type is "bailPlacement" then the items should be correct', () => {
         ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('bailPlacement')
 
-        const items = new Situation({ situation: 'bailAssessment' }).items()
+        const items = new Situation({ situation: 'bailAssessment' }, application).items()
 
         expect(items.length).toEqual(3)
         expect(items[0]).toEqual({
@@ -75,7 +75,7 @@ describe('Situation', () => {
     it('marks an option as selected when the releaseType is set', () => {
       ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('communityOrder')
 
-      const page = new Situation({ situation: 'riskManagement' })
+      const page = new Situation({ situation: 'riskManagement' }, application)
 
       const selectedOptions = page.items().filter(item => item.checked)
 
@@ -84,7 +84,7 @@ describe('Situation', () => {
     })
 
     it('marks no options as selected when the releaseType is not set', () => {
-      const page = new Situation({})
+      const page = new Situation({}, application)
 
       const selectedOptions = page.items().filter(item => item.checked)
 
@@ -94,7 +94,7 @@ describe('Situation', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new Situation({ situation: 'riskManagement' })
+      const page = new Situation({ situation: 'riskManagement' }, application)
 
       expect(page.response()).toEqual({
         [page.title]: 'Application for risk management/public protection',

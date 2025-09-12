@@ -1,12 +1,11 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
+import type { PlacementApplication } from '@approved-premises/api'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
 import { sentenceCase } from '../../../utils/utils'
 import { dateBodyProperties } from '../../utils/dateBodyProperties'
-import { adjacentPageFromSentenceType } from '../../../utils/applications/adjacentPageFromSentenceType'
-import type { PlacementApplication } from '@approved-premises/api'
 
 export type Body = ObjectWithDateParts<'lastPlacementDate'> & {
   previousRotlPlacement: YesOrNo
@@ -31,7 +30,10 @@ export default class PreviousRotlPlacement implements TasklistPage {
 
   body: Body
 
-  constructor(public _body: Body, private placementApplication: PlacementApplication) {
+  constructor(
+    public _body: Body,
+    private placementApplication: PlacementApplication,
+  ) {
     this.body = {
       previousRotlPlacement: _body.previousRotlPlacement,
       lastAp: _body.lastAp,
@@ -45,7 +47,7 @@ export default class PreviousRotlPlacement implements TasklistPage {
 
   previous() {
     const { sentenceTypeCheck } = this.placementApplication.data?.['request-a-placement']?.['sentence-type-check'] || {}
-    return sentenceTypeCheck === 'yes' ? 'release-type':'sentence-type-check'
+    return sentenceTypeCheck === 'yes' ? 'release-type' : 'sentence-type-check'
   }
 
   next() {

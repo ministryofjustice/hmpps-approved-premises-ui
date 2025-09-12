@@ -36,8 +36,12 @@ export default class PagesController {
         )
 
         res.render(viewPath(page, 'placement-applications'), {
-          backLink:paths.placementApplications.pages.show({ id: req.params.id, task: taskName, page: page.previous() }),
-          formAction: `${paths.placementApplications.pages.update({ id: req.params.id, task: taskName, page: page.name }) }?_method=PUT`,
+          backLink: paths.placementApplications.pages.show({
+            id: req.params.id,
+            task: taskName,
+            page: page.previous(),
+          }),
+          formAction: `${paths.placementApplications.pages.update({ id: req.params.id, task: taskName, page: page.name })}?_method=PUT`,
           placementApplicationId: req.params.id,
           errors,
           errorSummary,

@@ -1,4 +1,4 @@
-import type { PageResponse, ReleaseTypeOptions, TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { PageResponse, TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import { Page } from '../../utils/decorators'
 import { yesOrNoResponseWithDetailForYes } from '../../utils'
@@ -59,8 +59,13 @@ export default class UpdatesToApplication implements TasklistPage {
   }
 
   previous() {
-    const { applicationReleaseType, sentenceTypeCheck }: { sentenceTypeCheck:string ,applicationReleaseType:ReleaseTypeOption } = this.placementApplication.data?.['request-a-placement']?.['sentence-type-check'] || {}
-    const {releaseType: updatedReleaseType}:{ releaseType: ReleaseTypeOption } = this.placementApplication.data?.['request-a-placement']?.['release-type'] || {}
+    const {
+      applicationReleaseType,
+      sentenceTypeCheck,
+    }: { sentenceTypeCheck: string; applicationReleaseType: ReleaseTypeOption } =
+      this.placementApplication.data?.['request-a-placement']?.['sentence-type-check'] || {}
+    const { releaseType: updatedReleaseType }: { releaseType: ReleaseTypeOption } =
+      this.placementApplication.data?.['request-a-placement']?.['release-type'] || {}
     const releaseType = sentenceTypeCheck === 'yes' ? updatedReleaseType : applicationReleaseType
 
     if (releaseType === 'rotl') {

@@ -1,4 +1,4 @@
-import { omit, pick } from 'underscore'
+import { omit } from 'underscore'
 import { ReleaseTypeOptions } from '@approved-premises/ui'
 import { ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 
@@ -31,6 +31,9 @@ export type PossibleReleaseTypeOptions =
   | StandardDeterminateReleaseTypeOptions
   | LifeIppReleaseTypeOptions
 
-export type SentenceTypeResponse = Extract<SentenceTypeOption, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
+export type SentenceTypeResponse = Extract<
+  SentenceTypeOption,
+  'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'
+>
 
 export const selectableReleaseTypes = omit(allReleaseTypes, 'in_community')

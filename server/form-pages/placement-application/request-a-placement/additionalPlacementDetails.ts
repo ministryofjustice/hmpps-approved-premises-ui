@@ -50,7 +50,6 @@ export default class AdditionalPlacementDetails implements TasklistPage {
 
   previous() {
     const { sentenceTypeCheck, sentenceType } = getSentenceType(this.placementApplication)
-    console.log('sentenceTypeCheck', sentenceTypeCheck)
     return sentenceTypeCheck === 'yes' ? adjacentPageFromSentenceType(sentenceType) : 'sentence-type-check'
   }
 

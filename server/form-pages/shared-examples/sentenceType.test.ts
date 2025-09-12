@@ -1,4 +1,3 @@
-import { applicationFactory } from '../../testutils/factories'
 import { adjacentPageFromSentenceType } from '../../utils/applications/adjacentPageFromSentenceType'
 import { itShouldHavePreviousValue } from './index'
 
@@ -7,7 +6,6 @@ import SentenceType from './sentenceType'
 jest.mock('../../utils/applications/adjacentPageFromSentenceType')
 
 describe('SentenceType', () => {
-
   describe('body', () => {
     it('should set the body', () => {
       const page = new SentenceType({ sentenceType: 'standardDeterminate' })

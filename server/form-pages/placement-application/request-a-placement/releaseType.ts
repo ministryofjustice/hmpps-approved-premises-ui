@@ -1,5 +1,3 @@
-import { omit, pick } from 'underscore'
-
 import type { PlacementApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
@@ -11,8 +9,6 @@ import {
   SelectableReleaseTypes,
 } from '../../../utils/applications/releaseTypeUtils'
 import { getReleaseTypes } from '../../utils/getReleaseTypes'
-
-
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -26,7 +22,6 @@ export default class ReleaseType implements TasklistPage {
     readonly body: { releaseType?: SelectableReleaseTypes },
     placementApplication: PlacementApplication,
   ) {
-
     const { sentenceType } = placementApplication.data?.['request-a-placement']?.['sentence-type'] || {}
 
     this.releaseTypes = getReleaseTypes(sentenceType)

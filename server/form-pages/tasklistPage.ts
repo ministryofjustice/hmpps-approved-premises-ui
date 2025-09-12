@@ -15,7 +15,7 @@ export interface TasklistPageInterface {
 export default abstract class TasklistPage {
   abstract title: string
 
-  abstract name?:string
+  abstract name?: string
 
   abstract body: Record<string, unknown>
 

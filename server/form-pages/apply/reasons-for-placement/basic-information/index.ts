@@ -55,5 +55,5 @@ import CaseManagerInformation from './caseManagerInformation'
 export default class BasicInformation {}
 
 export const pages = {
-  SentenceType
+  SentenceType,
 }

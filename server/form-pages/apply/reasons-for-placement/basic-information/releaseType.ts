@@ -1,7 +1,5 @@
-import { omit, pick } from 'underscore'
-
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
-import type {  TaskListErrors } from '@approved-premises/ui'
+import type { TaskListErrors } from '@approved-premises/ui'
 
 import { getReleaseTypes } from '../../../utils/getReleaseTypes'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'

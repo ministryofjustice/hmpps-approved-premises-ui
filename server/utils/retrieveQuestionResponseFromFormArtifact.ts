@@ -1,5 +1,5 @@
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
-import { getPageName, getTaskName, pageDataFromApplicationOrAssessment } from '../form-pages/utils'
+import { getPageName, pageDataFromApplicationOrAssessment } from '../form-pages/utils'
 import { SessionDataError } from './errors'
 import { camelCase } from './utils'
 import { FormArtifact } from '../@types/ui'
@@ -18,12 +18,10 @@ export const retrieveQuestionResponseFromFormArtifact = (
 ) => {
   const pageData = pageDataFromApplicationOrAssessment(Page as TasklistPageInterface, formArtifact)
   const pageName = getPageName(Page as TasklistPage['constructor'])
-  console.log('*** pageData', pageData)
-  console.log('*** question', question)
   const q = question || camelCase(pageName)
 
   if (!pageData) {
-    throw new SessionDataError(`Question ${q} was not found in the session`)
+    throw new SessionDataError(`Page data for question ${pageName} was not found in the session`)
   }
 
   const response = pageData[q]
@@ -57,10 +55,3 @@ export const retrieveOptionalQuestionResponseFromFormArtifact = (
 
   return response
 }
-
-// export const writeQuestionResponseToFormArtifact = (formArtifact:FormArtifact, Page:TasklistPageInterface, question:string, value:string) => {
-//   const pageName = getPageName(Page)
-//   const taskName = getTaskName(Page)
-//   application
-//
-// }

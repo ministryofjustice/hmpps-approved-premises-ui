@@ -1,5 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHavePreviousValue } from './'
+import { itShouldHavePreviousValue } from '.'
 
 import ManagedByMappa from './managedByMappa'
 

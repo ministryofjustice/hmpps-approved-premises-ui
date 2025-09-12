@@ -30,10 +30,8 @@ export default class SentenceTypeCheck implements TasklistPage {
 
   summaryRows: Array<SummaryListItem>
 
-
-
   constructor(
-    public body:Body,
+    public body: Body,
     private placementApplication: PlacementApplication,
   ) {}
 

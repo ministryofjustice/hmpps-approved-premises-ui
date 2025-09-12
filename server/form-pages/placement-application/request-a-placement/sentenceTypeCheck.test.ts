@@ -3,7 +3,6 @@ import { itShouldHavePreviousValue } from '../../shared-examples/index'
 
 import SentenceTypeCheck, { Body } from './sentenceTypeCheck'
 import { applicationFactory, placementApplicationFactory } from '../../../testutils/factories'
-import ReleaseType from './releaseType'
 import { ApplicationService } from '../../../services'
 
 describe('SentenceTypeCheck', () => {
@@ -67,7 +66,7 @@ describe('SentenceTypeCheck', () => {
 
   describe('initialize', () => {
     const findApplication = jest.fn(() => application)
-    const applicationService = { findApplication }  as unknown as ApplicationService
+    const applicationService = { findApplication } as unknown as ApplicationService
     const dataServices: Partial<DataServices> = { applicationService }
     const token = 'test-token'
 

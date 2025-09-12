@@ -1,10 +1,10 @@
+import { pick } from 'underscore'
 import {
   PossibleReleaseTypeOptions,
   selectableReleaseTypes,
   SentenceTypeResponse,
 } from '../../utils/applications/releaseTypeUtils'
 import { SessionDataError } from '../../utils/errors'
-import { pick } from 'underscore'
 
 export const getReleaseTypes = (sessionSentenceType: SentenceTypeResponse): PossibleReleaseTypeOptions => {
   if (sessionSentenceType === 'standardDeterminate') {

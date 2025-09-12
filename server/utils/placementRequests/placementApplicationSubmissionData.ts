@@ -42,7 +42,6 @@ export const placementApplicationSubmissionData = (
 export const retreivePlacementDatesFromRotlPlacementApplication = (
   placementApplication: PlacementApplication,
 ): Array<Cas1RequestedPlacementPeriod> => {
-  console.log('** Getting rotl dates',placementApplication)
   const datesOfPlacement = retrieveOptionalQuestionResponseFromFormArtifact(
     placementApplication,
     DatesOfPlacement,
