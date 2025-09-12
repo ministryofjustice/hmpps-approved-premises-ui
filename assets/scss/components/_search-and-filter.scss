@@ -1,0 +1,27 @@
+.search-and-filter {
+  background-color: govuk-colour('light-grey');
+
+  @include govuk-responsive-padding(6);
+  @include govuk-responsive-margin(6, 'bottom');
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: govuk-spacing(4);
+
+    & .govuk-form-group {
+      margin-bottom: 0;
+    }
+
+    & .govuk-button {
+      margin-bottom: 2px;
+    }
+
+    & + & {
+      margin-top: govuk-spacing(4);
+    }
+  }
+}
