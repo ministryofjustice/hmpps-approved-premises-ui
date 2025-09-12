@@ -5,7 +5,7 @@ import { yesOrNoResponseWithDetailForYes } from '../../utils'
 
 import TasklistPage from '../../tasklistPage'
 import { PlacementApplication, ReleaseTypeOption } from '../../../@types/shared'
-import { applicationLink } from '../../../utils/placementRequests'
+import { applicationLink } from '../../../utils/placementRequests/applicationLink'
 
 export type Body = YesOrNoWithDetail<'significantEvents'> &
   YesOrNoWithDetail<'changedCirumstances'> &
