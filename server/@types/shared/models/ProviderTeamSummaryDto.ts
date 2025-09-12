@@ -2,8 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ProviderSummary = {
+export type ProviderTeamSummaryDto = {
+    /**
+     * Community Payback (UPW) provider team id
+     */
     id: number;
+    /**
+     * Community Payback (UPW) provider team name
+     */
     name: string;
 };
 
