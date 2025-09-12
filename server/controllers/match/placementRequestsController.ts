@@ -36,7 +36,7 @@ export default class PlacementRequestsController {
         paths.placementApplications.pages.show({
           id: application.id,
           task: 'request-a-placement',
-          page: 'reason-for-placement',
+          page: 'sentence-type-check',
         }),
       )
     }

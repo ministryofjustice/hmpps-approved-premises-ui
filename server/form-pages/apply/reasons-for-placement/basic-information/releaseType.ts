@@ -1,33 +1,16 @@
-import { omit, pick } from 'underscore'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { TaskListErrors } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, SentenceTypeOption } from '@approved-premises/api'
-import type { ReleaseTypeOptions, TaskListErrors } from '@approved-premises/ui'
-
-import { SessionDataError } from '../../../../utils/errors'
+import { getReleaseTypes } from '../../../utils/getReleaseTypes'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import SentenceType from './sentenceType'
 import { Page } from '../../../utils/decorators'
-import { allReleaseTypes } from '../../../../utils/applications/releaseTypeUtils'
-
-type SelectableReleaseTypes = keyof PossibleReleaseTypeOptions
-type ExtendedDetermindateReleaseTypeOptions = Pick<
-  ReleaseTypeOptions,
-  'rotl' | 'extendedDeterminateLicence' | 'paroleDirectedLicence'
->
-type StandardDeterminateReleaseTypeOptions = Pick<
-  ReleaseTypeOptions,
-  'licence' | 'paroleDirectedLicence' | 'rotl' | 'hdc' | 'pss'
->
-type LifeIppReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
-type PossibleReleaseTypeOptions =
-  | ExtendedDetermindateReleaseTypeOptions
-  | StandardDeterminateReleaseTypeOptions
-  | LifeIppReleaseTypeOptions
-
-type SentenceTypeResponse = Extract<SentenceTypeOption, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
-
-const selectableReleaseTypes = omit(allReleaseTypes, 'in_community')
+import {
+  PossibleReleaseTypeOptions,
+  SelectableReleaseTypes,
+  selectableReleaseTypes,
+} from '../../../../utils/applications/releaseTypeUtils'
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -43,7 +26,7 @@ export default class ReleaseType implements TasklistPage {
   ) {
     const sessionSentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType)
 
-    this.releaseTypes = this.getReleaseTypes(sessionSentenceType)
+    this.releaseTypes = getReleaseTypes(sessionSentenceType)
 
     this.body = {
       releaseType: body.releaseType as SelectableReleaseTypes,
@@ -80,25 +63,5 @@ export default class ReleaseType implements TasklistPage {
         checked: this.body.releaseType === value,
       }
     })
-  }
-
-  getReleaseTypes(sessionSentenceType: SentenceTypeResponse): PossibleReleaseTypeOptions {
-    if (sessionSentenceType === 'standardDeterminate') {
-      return pick(selectableReleaseTypes, [
-        'licence',
-        'paroleDirectedLicence',
-        'rotl',
-        'hdc',
-        'pss',
-        'reReleasedPostRecall',
-      ])
-    }
-    if (sessionSentenceType === 'life' || sessionSentenceType === 'ipp') {
-      return pick(selectableReleaseTypes, ['rotl', 'licence'])
-    }
-    if (sessionSentenceType === 'extendedDeterminate') {
-      return pick(selectableReleaseTypes, ['rotl', 'extendedDeterminateLicence', 'paroleDirectedLicence'])
-    }
-    throw new SessionDataError(`Unknown sentence type ${sessionSentenceType}`)
   }
 }

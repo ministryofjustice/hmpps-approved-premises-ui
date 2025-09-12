@@ -1,11 +1,12 @@
 import { addWeeks } from 'date-fns'
 import {
   ApprovedPremisesApplication as Application,
+  Cas1RequestedPlacementPeriod,
   PlacementApplication,
-  PlacementType,
+  ReleaseTypeOption,
   SubmitPlacementApplication,
 } from '../../@types/shared'
-import ReasonForPlacement from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
+
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -17,44 +18,30 @@ import AdditionalPlacementDetails from '../../form-pages/placement-application/r
 import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
-
-type DatesOfStay = {
-  expectedArrival: string
-  duration: number | null
-}
+import { getSentenceType } from '../placementApplications'
 
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
   application: Application,
 ): SubmitPlacementApplication => {
-  const reasonForPlacement = retrieveQuestionResponseFromFormArtifact(
-    placementApplication,
-    ReasonForPlacement,
-    'reason',
-  )
+  const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
+  // let reasonForPlacement: PlacementType = 'additional_placement'
+  // if (releaseType === 'rotl') reasonForPlacement = 'rotl'
+  // if (releaseType === 'paroleDirectedLicence') reasonForPlacement = 'release_following_decision'
 
-  const placementDates = durationAndArrivalDateFromPlacementApplication(
-    placementApplication,
-    reasonForPlacement,
-    application,
-  )
+  const placementDates = durationAndArrivalDateFromPlacementApplication(placementApplication, releaseType, application)
   return {
     translatedDocument: placementApplication.document,
-    placementType: reasonForPlacement,
-    placementDates: Array.isArray(placementDates) ? placementDates : [placementDates],
+    // placementType: reasonForPlacement,
+    requestedPlacementPeriods: placementDates,
+    releaseType,
+    sentenceType,
+    situationType: situation,
   }
 }
-
-export const durationAndArrivalDateFromRotlPlacementApplication = (dateOfPlacement: DateOfPlacement): DatesOfStay => {
-  return {
-    expectedArrival: dateOfPlacement.arrivalDate,
-    duration: Number(dateOfPlacement.duration),
-  }
-}
-
 export const retreivePlacementDatesFromRotlPlacementApplication = (
   placementApplication: PlacementApplication,
-): Array<DateOfPlacement> => {
+): Array<Cas1RequestedPlacementPeriod> => {
   const datesOfPlacement = retrieveOptionalQuestionResponseFromFormArtifact(
     placementApplication,
     DatesOfPlacement,
@@ -62,47 +49,48 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
   )
 
   if (datesOfPlacement) {
-    return datesOfPlacement
+    return (datesOfPlacement as Array<DateOfPlacement>).map(({ arrivalDate, duration, isFlexible }) => ({
+      arrival: arrivalDate,
+      arrivalFlexible: isFlexible === 'yes',
+      duration: Number(duration),
+    }))
   }
 
-  const dateOfPlacement = {} as DateOfPlacement
+  const dateOfPlacement: Cas1RequestedPlacementPeriod = {
+    arrival: retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'arrivalDate'),
+    arrivalFlexible: undefined,
+    duration: Number(retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'duration')),
+  }
 
-  const legacyProperties: Array<keyof DateOfPlacement> = [
-    'arrivalDate',
-    'arrivalDate-day',
-    'arrivalDate-month',
-    'arrivalDate-year',
-    'duration',
-    'durationDays',
-    'durationWeeks',
-  ]
-
-  legacyProperties.forEach(property => {
-    dateOfPlacement[property] = retrieveQuestionResponseFromFormArtifact(
-      placementApplication,
-      DatesOfPlacement,
-      property,
-    )
-  })
-
-  return [dateOfPlacement as DateOfPlacement]
+  return [dateOfPlacement]
 }
 
 export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
-  reasonForPlacement: PlacementType,
+  reasonForPlacement: ReleaseTypeOption,
   application: Application,
-): Array<DatesOfStay> => {
+): Array<Cas1RequestedPlacementPeriod> => {
   switch (reasonForPlacement) {
     case 'rotl': {
-      return retreivePlacementDatesFromRotlPlacementApplication(placementApplication).map(
-        durationAndArrivalDateFromRotlPlacementApplication,
-      )
+      return retreivePlacementDatesFromRotlPlacementApplication(placementApplication)
     }
-    case 'additional_placement': {
+    case 'paroleDirectedLicence': {
+      const decisionToReleaseDate = retrieveQuestionResponseFromFormArtifact(
+        placementApplication,
+        DecisionToRelease,
+        'decisionToReleaseDate',
+      )
       return [
         {
-          expectedArrival: retrieveQuestionResponseFromFormArtifact(
+          arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
+          duration: Number(placementDurationFromApplication(application)),
+        },
+      ]
+    }
+    default: {
+      return [
+        {
+          arrival: retrieveQuestionResponseFromFormArtifact(
             placementApplication,
             AdditionalPlacementDetails,
             'arrivalDate',
@@ -113,27 +101,5 @@ export const durationAndArrivalDateFromPlacementApplication = (
         },
       ]
     }
-    case 'release_following_decision': {
-      const decisionToReleaseDate = retrieveQuestionResponseFromFormArtifact(
-        placementApplication,
-        DecisionToRelease,
-        'decisionToReleaseDate',
-      )
-
-      return [
-        {
-          expectedArrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: Number(placementDurationFromApplication(application)),
-        },
-      ]
-    }
-
-    default:
-      return [
-        {
-          expectedArrival: '',
-          duration: null,
-        },
-      ]
   }
 }

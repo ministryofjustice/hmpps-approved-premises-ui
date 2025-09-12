@@ -25,9 +25,8 @@ export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
 
-export const placementLength = (lengthInDays: number): string => {
-  return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
-}
+export const formatDuration = (lengthInDays: number): string =>
+  DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
 
 type SpaceBookingConfirmationData = {
   premises: Cas1Premises
@@ -80,9 +79,6 @@ export const filterOutAPTypes = (requirements: Array<PlacementCriteria>): Array<
 
 export const requestedOrEstimatedArrivalDateRow = (isParole: boolean, arrivalDate: string) =>
   summaryListItem(isParole ? 'Estimated arrival date' : 'Requested arrival date', arrivalDate, 'date')
-
-export const departureDateRow = (departureDate: string) =>
-  summaryListItem('Requested departure date', departureDate, 'date')
 
 export const apTypeRow = (apType: ApType) => summaryListItem('Type of AP', apTypeLongLabels[apType])
 
@@ -137,12 +133,6 @@ export const restrictionsRow = (spaceSearchResult: SpaceSearchResult): SummaryLi
     : undefined
 }
 
-export const releaseTypeRow = (placementRequest: Cas1PlacementRequestDetail) =>
-  summaryListItem('Release type', allReleaseTypes[placementRequest.releaseType])
-
-export const licenceExpiryDateRow = (placementRequest: Cas1PlacementRequestDetail) =>
-  summaryListItem('Licence expiry date', placementRequest.application?.licenceExpiryDate, 'date')
-
 export const startDateObjFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
   const dateParts = params as ObjectWithDateParts<'startDate'>
   if (dateParts['startDate-day'] && dateParts['startDate-month'] && dateParts['startDate-year']) {
@@ -153,12 +143,6 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
 
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
-
-export const lengthOfStayRow = (lengthInDays: number) =>
-  summaryListItem('Length of stay', placementLength(lengthInDays))
-
-export const preferredPostcodeRow = (postcodeDistrict: Cas1PlacementRequestDetail['location']) =>
-  summaryListItem('Preferred postcode', postcodeDistrict)
 
 export const keyDetails = (placementRequest: Cas1PlacementRequestDetail): KeyDetailsArgs => {
   const { person } = placementRequest

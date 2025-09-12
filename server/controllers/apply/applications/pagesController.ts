@@ -27,9 +27,11 @@ export default class PagesController {
 
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
         const page = await this.applicationService.initializePage(Page, req, this.dataServices, userInput)
-
         res.render(viewPath(page, 'applications'), {
-          applicationId: req.params.id,
+          backLink: paths.applications.pages.show({ id: req.params.id, task: taskName, page: page.previous() }),
+          formAction: `${paths.applications.pages.update({ id: req.params.id, task: taskName, page: page.name })}?_method=PUT`,
+
+          applicationId: req.params.id, // TODO: remove once all layouts moved to shared
           errors,
           errorSummary,
           task: taskName,

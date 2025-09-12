@@ -1,5 +1,6 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
+import type { PlacementApplication } from '@approved-premises/api'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
@@ -29,7 +30,10 @@ export default class PreviousRotlPlacement implements TasklistPage {
 
   body: Body
 
-  constructor(public _body: Body) {
+  constructor(
+    public _body: Body,
+    private placementApplication: PlacementApplication,
+  ) {
     this.body = {
       previousRotlPlacement: _body.previousRotlPlacement,
       lastAp: _body.lastAp,
@@ -42,7 +46,8 @@ export default class PreviousRotlPlacement implements TasklistPage {
   }
 
   previous() {
-    return 'reason-for-placement'
+    const { sentenceTypeCheck } = this.placementApplication.data?.['request-a-placement']?.['sentence-type-check'] || {}
+    return sentenceTypeCheck === 'yes' ? 'release-type' : 'sentence-type-check'
   }
 
   next() {

@@ -25,7 +25,6 @@ export const forPagesInTask = (
 
     const Page = getPage(task.id, pageName, journeyTypeFromArtifact(formArtifact))
     const body = formArtifact?.data?.[task.id]?.[pageName]
-
     if (body) {
       const page = new Page(body, formArtifact)
       callback(page, pageName)
