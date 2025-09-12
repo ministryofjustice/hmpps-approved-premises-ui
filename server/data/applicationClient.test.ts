@@ -37,9 +37,7 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'POST',
           path: paths.applications.new.pattern,
-          query: {
-            createWithRisks: 'true',
-          },
+          query: {},
           body: {
             crn: application.person.crn,
             convictionId: offence.convictionId,
@@ -77,9 +75,7 @@ describeClient('ApplicationClient', provider => {
           withRequest: {
             method: 'POST',
             path: paths.applications.new.pattern,
-            query: {
-              createWithRisks: 'false',
-            },
+            query: {},
             body: {
               crn: application.person.crn,
               convictionId: offence.convictionId,

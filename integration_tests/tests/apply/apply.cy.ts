@@ -65,7 +65,7 @@ context('Apply', () => {
     cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
       expect(requests).to.have.length(1)
 
-      expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
+      expect(requests[0].url).to.equal(`/cas1/applications/${this.application.id}/submission`)
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
@@ -356,7 +356,7 @@ context('Apply', () => {
     cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
       expect(requests).to.have.length(1)
 
-      expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
+      expect(requests[0].url).to.equal(`/cas1/applications/${this.application.id}/submission`)
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
