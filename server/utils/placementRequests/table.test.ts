@@ -175,8 +175,14 @@ describe('tableUtils', () => {
         sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-        { text: 'Booked arrival date' },
-        { text: 'Approved Premises' },
+        sortHeader<PlacementRequestSortField>(
+          'Booked arrival date',
+          'canonical_arrival_date',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
+        sortHeader<PlacementRequestSortField>('Approved Premises', 'name', sortBy, sortDirection, hrefPrefix),
       ])
     })
 
