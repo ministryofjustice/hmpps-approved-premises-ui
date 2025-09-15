@@ -22,8 +22,8 @@ export default class MakeADecision implements TasklistPage {
       accommodationNeedOnly: 'Accommodation need only',
       needsCannotBeMet: 'Health / social care / disability needs cannot be met',
       supervisionPeriodTooShort: 'Remaining supervision period too short',
-      riskTooLow: 'Risk too low',
-      otherReasons: 'Not suitable for other reasons',
+      notNecessaryOrProportionate: 'AP not necessary or proportionate to manage the identified risk',
+      riskCanBeManagedOtherWay: 'Risk can be appropriately managed with other control measures',
     },
     'Reject, insufficient information': {
       insufficientMoveOnPlan: 'Insufficient move on plan',
@@ -36,6 +36,7 @@ export default class MakeADecision implements TasklistPage {
       riskToCommunity: 'Risk to community',
       riskToOthersInAP: 'Risk to other people in AP',
       riskToStaff: 'Risk to staff',
+      riskToSelf: 'Risk to self',
     },
     'Application withdrawn': {
       withdrawnByPp: 'Application withdrawn by the probation practitioner',
