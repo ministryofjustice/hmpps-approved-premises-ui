@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 import ProviderService from '../services/providerService'
+import { ProjectAllocationDto } from '../@types/shared'
 
 export default class SessionsController {
   constructor(private readonly providerService: ProviderService) {}
@@ -14,7 +15,9 @@ export default class SessionsController {
         text: team.name,
       }))
 
-      res.render('sessions/show', { teamItems })
+      const sessions: Array<ProjectAllocationDto> = []
+
+      res.render('sessions/show', { teamItems, sessions })
     }
   }
 }

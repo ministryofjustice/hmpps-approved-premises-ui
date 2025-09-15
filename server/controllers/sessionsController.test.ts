@@ -34,6 +34,7 @@ describe('SessionsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('sessions/show', {
         teamItems: [{ value: 1001, text: 'Team Lincoln' }],
+        sessions: [],
       })
     })
   })
