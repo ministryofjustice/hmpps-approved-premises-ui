@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
 
-import { PlacementRequestService } from '../../../services'
+import { PlacementRequestService, SessionService } from '../../../services'
 import {
   userDetailsFactory,
   cas1PlacementRequestDetailFactory,
@@ -28,16 +28,18 @@ describe('PlacementRequestsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
+  const sessionService = createMock<SessionService>({})
 
   let placementRequestsController: PlacementRequestsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    placementRequestsController = new PlacementRequestsController(placementRequestService)
+    placementRequestsController = new PlacementRequestsController(placementRequestService, sessionService)
   })
 
   describe('show', () => {
     it('should render the placement request template with a space booking', async () => {
+      jest.spyOn(sessionService, 'getPageBackLink').mockReturnValue('/admin/cru-dashboard?status=unableToMatch&page=2')
       const placementRequest = cas1PlacementRequestDetailFactory.build({
         openChangeRequests: cas1ChangeRequestSummaryFactory.buildList(2),
       })
@@ -49,7 +51,13 @@ describe('PlacementRequestsController', () => {
 
       await requestHandler(request, response, next)
 
+      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+        '/admin/placement-requests/:placementRequestId',
+        request,
+        ['/admin/cru-dashboard', '/admin/cru-dashboard/change-requests', '/admin/cru-dashboard/search'],
+      )
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/show', {
+        backlink: '/admin/cru-dashboard?status=unableToMatch&page=2',
         adminIdentityBar: adminIdentityBar(placementRequest, response.locals.user),
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
