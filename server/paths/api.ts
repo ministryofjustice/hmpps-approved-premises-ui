@@ -40,12 +40,12 @@ const cas1AssessmentsNotes = cas1AssessmentsSingle.path('notes')
 
 const cas1ReferenceData = cas1Namespace.path('reference-data')
 
+const cas1Profile = cas1Namespace.path('/profile')
+
 // Non-namespaced
 const premises = path('/premises')
 const premisesSingle = premises.path(':premisesId')
 const rooms = premisesSingle.path('rooms')
-
-const profile = path('/profile')
 
 const people = path('/people')
 const person = people.path(':crn')
@@ -212,7 +212,7 @@ export default {
     show: cas1Users.path(':id'),
     update: cas1Users.path(':id'),
     delete: cas1Users.path(':id'),
-    profile: profile.path('v2'),
+    profile: cas1Profile,
   },
   reports: cas1Reports.path(':reportName'),
   cas1ReferenceData: cas1ReferenceData.path(':type'),

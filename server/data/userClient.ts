@@ -1,6 +1,5 @@
 import type {
   Cas1UpdateUser,
-  ProfileResponse,
   SortDirection,
   ApprovedPremisesUser as User,
   UserQualification,
@@ -8,6 +7,7 @@ import type {
   UserSortField,
   UserSummary,
   ApprovedPremisesUserPermission as UserPermission,
+  Cas1ProfileResponse,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
@@ -33,8 +33,8 @@ export default class UserClient {
     return (await this.restClient.get({ path: paths.users.show({ id }) })) as User
   }
 
-  async getUserProfile(): Promise<ProfileResponse> {
-    return (await this.restClient.get({ path: paths.users.profile({}) })) as ProfileResponse
+  async getUserProfile(): Promise<Cas1ProfileResponse> {
+    return (await this.restClient.get({ path: paths.users.profile({}) })) as Cas1ProfileResponse
   }
 
   async getUsersSummaries(filters: UsersSearchParams = { page: 1 }): Promise<PaginatedResponse<UserSummary>> {
