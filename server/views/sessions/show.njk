@@ -1,0 +1,79 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Search sessions" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+  <h1>Search sessions</h1>
+
+  <form action="" method="get" class="search-and-filter">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <h2 class="govuk-heading-m">Filters</h2>
+
+    <div class="search-and-filter__row">
+      {{ govukSelect({
+          label: {
+              text: "Provider",
+              classes: "govuk-label--s"
+          },
+          id: "provider",
+          name: "provider",
+          items: [{
+              value: "1000",
+              text: "East of England"
+            }]
+          }) }}
+
+      {{ govukSelect({
+          label: {
+              text: "Team",
+              classes: "govuk-label--s"
+          },
+          id: "team",
+          name: "team",
+          items: teamItems
+      }) }}
+    </div>
+
+    <div class="search-and-filter__row">
+
+    {{ govukDateInput({
+      id: "startDate",
+      namePrefix: "startDate",
+      fieldset: {
+        legend: {
+          text: "From",
+          classes: "govuk-!-font-weight-bold"
+        }
+      }
+    }) }}
+
+    {{ govukDateInput({
+      id: "endDate",
+      namePrefix: "endDate",
+      fieldset: {
+        legend: {
+          text: "To",
+          classes: "govuk-!-font-weight-bold"
+        }
+      }
+    }) }}
+
+    {{ govukButton({
+      "name": "submit",
+      "text": "Apply filters",
+      preventDoubleClick: true
+    }) }}
+    </div>
+
+  </form>
+
+  {% include "./_table.njk" %}
+
+{% endblock %}

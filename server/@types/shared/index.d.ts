@@ -4,7 +4,9 @@
 /* eslint-disable */
 
 export type { Example } from './models/Example';
-export type { ProviderSummaries } from './models/ProviderSummaries';
+export type { ProjectAllocationDto } from './models/ProjectAllocationDto';
+export type { ProjectAllocationsDto } from './models/ProjectAllocationsDto';
 export type { ProviderSummariesDto } from './models/ProviderSummariesDto';
-export type { ProviderSummary } from './models/ProviderSummary';
 export type { ProviderSummaryDto } from './models/ProviderSummaryDto';
+export type { ProviderTeamSummariesDto } from './models/ProviderTeamSummariesDto';
+export type { ProviderTeamSummaryDto } from './models/ProviderTeamSummaryDto';

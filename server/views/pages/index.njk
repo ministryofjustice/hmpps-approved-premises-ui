@@ -1,12 +1,22 @@
 {% extends "../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - Home" %}
+{% set pageTitle = applicationName %}
 {% set mainClasses = "app-container govuk-body" %}
+{% set bodyClasses = "dashboard--index" %}
 
 {% block content %}
 
-  <h1>This site is under construction...</h1>
+  <h1>Community Payback</h1>
 
-  <p id="timestamp">{{ exampleData | dump }}</p>
+  <div class="card-container">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="govuk-heading-s">
+          <a class="govuk-link" href="{{ paths.sessions.show() }}">Search sessions</a>
+        </h2>
+        <p class="govuk-body">Search and filter project sessions by team and date</p>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
