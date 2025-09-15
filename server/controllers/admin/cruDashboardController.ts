@@ -53,7 +53,7 @@ export default class CruDashboardController {
 
       const {
         pageNumber = 1,
-        sortBy = 'expected_arrival',
+        sortBy = status === 'matched' ? 'canonical_arrival_date' : 'expected_arrival',
         sortDirection = 'asc',
         hrefPrefix,
       } = getPaginationDetails<PlacementRequestSortField>(req, adminPaths.admin.cruDashboard.index({}), {

@@ -77,7 +77,10 @@ context('Placement Requests', () => {
     unmatchedPlacementRequest.application = application
 
     cy.task('stubPlacementRequestsDashboard', { placementRequests: unmatchedPlacementRequests, status: 'notMatched' })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests: matchedPlacementRequests,
+      status: 'matched',
+    })
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: unableToMatchPlacementRequests,
       status: 'unableToMatch',

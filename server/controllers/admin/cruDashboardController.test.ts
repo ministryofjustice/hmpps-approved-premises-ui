@@ -64,10 +64,10 @@ describe('CruDashboardController', () => {
     }
 
     describe.each([
-      ['ready to book', 'notMatched'],
-      ['unable to book', 'unableToMatch'],
-      ['booked', 'matched'],
-    ])('when showing the %s tab', (_, status: PlacementRequestStatus) => {
+      ['ready to book', 'notMatched', 'expected_arrival'],
+      ['unable to book', 'unableToMatch', 'expected_arrival'],
+      ['booked', 'matched', 'canonical_arrival_date'],
+    ])('when showing the %s tab', (_, status: PlacementRequestStatus, defaultSort: PlacementRequestSortField) => {
       const basePath = paths.admin.cruDashboard.index({})
       const paginatedResponse = paginatedResponseFactory.build({
         data: factories[status].buildList(2),
@@ -83,7 +83,7 @@ describe('CruDashboardController', () => {
         actions: cruDashboardActions(user),
         activeTab: status,
         tabs: cruDashboardTabItems(user, status, user.cruManagementArea.id),
-        tableHead: dashboardTableHeader(status, 'expected_arrival', 'asc', defaultHrefPrefix),
+        tableHead: dashboardTableHeader(status, defaultSort, 'asc', defaultHrefPrefix),
         tableRows: dashboardTableRows(paginatedResponse.data, status),
         pagination: pagination(1, Number(paginatedResponse.totalPages), defaultHrefPrefix),
         cruManagementAreas,
@@ -103,7 +103,7 @@ describe('CruDashboardController', () => {
           token,
           { cruManagementAreaId: user.cruManagementArea.id, requestType: undefined, status },
           1,
-          'expected_arrival',
+          defaultSort,
           'asc',
         )
 
@@ -177,18 +177,12 @@ describe('CruDashboardController', () => {
           cruManagementArea,
         })}&`
 
-        expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
-          token,
-          { status },
-          1,
-          'expected_arrival',
-          'asc',
-        )
+        expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, { status }, 1, defaultSort, 'asc')
 
         expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
           ...defaultRenderParameters,
           tabs: cruDashboardTabItems(user, status, cruManagementArea),
-          tableHead: dashboardTableHeader(status, 'expected_arrival', 'asc', expectedHrefPrefix),
+          tableHead: dashboardTableHeader(status, defaultSort, 'asc', expectedHrefPrefix),
           pagination: pagination(
             Number(paginatedResponse.pageNumber),
             Number(paginatedResponse.totalPages),
