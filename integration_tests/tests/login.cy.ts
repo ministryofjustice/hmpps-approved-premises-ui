@@ -5,6 +5,7 @@ import AuthManageDetailsPage from '../pages/authManageDetails'
 import { userProfileFactory } from '../../server/testutils/factories/user'
 import { userFactory } from '../../server/testutils/factories'
 import DeliusMissingStaffDetails from '../pages/deliusMissingStaffDetails'
+import UnsupportedProbationRegion from '../pages/unsupportedProbationRegion'
 import ShowPage from '../pages/admin/userManagement/showPage'
 import { signIn } from './signIn'
 
@@ -75,12 +76,20 @@ context('SignIn', () => {
     indexPage.headerUserName().contains('B. Brown')
   })
 
-  it('Delius account missing staff details user directed to DeliusMissingStaffDetails', () => {
+  it('Shows the user a specific error page if their account is missing a staff record', () => {
     const profile = userProfileFactory.build({ user: userFactory.build(), loadError: 'staff_record_not_found' })
     cy.task('stubAuthUser', { name: 'J. Smith', profile })
     cy.signIn()
 
     Page.verifyOnPage(DeliusMissingStaffDetails)
+  })
+
+  it('Shows the user a specific error page if their account has an unsupported probation region', () => {
+    const profile = userProfileFactory.build({ user: userFactory.build(), loadError: 'unsupported_probation_region' })
+    cy.task('stubAuthUser', { name: 'J. Smith', profile })
+    cy.signIn()
+
+    Page.verifyOnPage(UnsupportedProbationRegion)
   })
 
   it('refreshes user details from the API if an API call returns a changed user version', () => {
