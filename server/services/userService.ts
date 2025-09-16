@@ -14,6 +14,7 @@ import { convertToTitleCase } from '../utils/utils'
 import { UsersSearchParams } from '../data/userClient'
 
 export class DeliusAccountMissingStaffDetailsError extends Error {}
+export class UnsupportedProbationRegionError extends Error {}
 
 export default class UserService {
   constructor(
@@ -24,9 +25,15 @@ export default class UserService {
   async getActingUser(token: string): Promise<UserDetails> {
     const client = this.userClientFactory(token)
     const profile = await client.getUserProfile()
+
     if (profile.loadError === 'staff_record_not_found') {
       throw new DeliusAccountMissingStaffDetailsError('Delius account missing staff details')
     }
+
+    if (profile.loadError === 'unsupported_probation_region') {
+      throw new UnsupportedProbationRegionError('Unsupported probation region')
+    }
+
     const user = profile.user as User
     return {
       name: user.deliusUsername,

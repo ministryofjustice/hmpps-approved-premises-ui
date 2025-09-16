@@ -1,4 +1,4 @@
-import UserService from './userService'
+import UserService, { DeliusAccountMissingStaffDetailsError, UnsupportedProbationRegionError } from './userService'
 import { UserClient } from '../data'
 
 import { paginatedResponseFactory, referenceDataFactory, userFactory, userSummaryFactory } from '../testutils/factories'
@@ -46,6 +46,42 @@ describe('User service', () => {
       expect(result.active).toEqual(approvedPremisesUser.isActive)
       expect(result.apArea).toEqual(approvedPremisesUser.apArea)
       expect(result.cruManagementArea).toEqual(approvedPremisesUser.cruManagementArea)
+    })
+
+    it('throws an error if the user staff record does not exist', async () => {
+      userClient.getUserProfile.mockResolvedValueOnce({
+        deliusUsername: 'SOME_USER',
+        loadError: 'staff_record_not_found',
+      })
+
+      let error: Error
+
+      try {
+        await userService.getActingUser(token)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeInstanceOf(DeliusAccountMissingStaffDetailsError)
+      expect(error.message).toEqual('Delius account missing staff details')
+    })
+
+    it("throws an error if the user's probation region is not supported", async () => {
+      userClient.getUserProfile.mockResolvedValueOnce({
+        deliusUsername: 'SOME_USER',
+        loadError: 'unsupported_probation_region',
+      })
+
+      let error: Error
+
+      try {
+        await userService.getActingUser(token)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeInstanceOf(UnsupportedProbationRegionError)
+      expect(error.message).toEqual('Unsupported probation region')
     })
   })
 

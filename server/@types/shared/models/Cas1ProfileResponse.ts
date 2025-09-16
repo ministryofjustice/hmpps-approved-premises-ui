@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
-import type { LoadError } from './LoadError';
+import type { Cas1LoadError } from './Cas1LoadError';
 export type Cas1ProfileResponse = {
     /**
      * The Delius username of the user. This field is mandatory.
@@ -14,7 +14,7 @@ export type Cas1ProfileResponse = {
      * The potential error encountered while loading the profile,Null if no error occurred.
      *
      */
-    loadError?: LoadError;
+    loadError?: Cas1LoadError;
     /**
      * The user details. Null if there is an error or user details are unavailable.
      */

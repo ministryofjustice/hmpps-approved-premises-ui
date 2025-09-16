@@ -80,6 +80,7 @@ export type { Cas1ClarificationNote } from './models/Cas1ClarificationNote';
 export type { Cas1CruManagementArea } from './models/Cas1CruManagementArea';
 export type { Cas1CurrentKeyWorker } from './models/Cas1CurrentKeyWorker';
 export type { Cas1KeyWorkerAllocation } from './models/Cas1KeyWorkerAllocation';
+export type { Cas1LoadError } from './models/Cas1LoadError';
 export type { Cas1NationalOccupancy } from './models/Cas1NationalOccupancy';
 export type { Cas1NationalOccupancyParameters } from './models/Cas1NationalOccupancyParameters';
 export type { Cas1NationalOccupancyPremises } from './models/Cas1NationalOccupancyPremises';

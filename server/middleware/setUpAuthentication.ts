@@ -19,6 +19,10 @@ export default function setUpAuth(): Router {
     return res.render('deliusMissingStaffDetails', { hideNav: true })
   })
 
+  router.get('/unsupported-probation-region', (req, res) => {
+    return res.render('unsupportedProbationRegion', { hideNav: true })
+  })
+
   router.get('/autherror', (req, res) => {
     res.status(401)
     if (req.session.messages) {
