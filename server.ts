@@ -1,4 +1,5 @@
-// Require app insights before anything else to allow for instrumentation of bunyan and express
+// Require Sentry and App Insights setup before anything else to allow for instrumentation of bunyan and express
+import './server/sentryInstrumentation'
 import 'applicationinsights'
 
 import { app, metricsApp } from './server/index'
