@@ -5,6 +5,7 @@ const sessionsPath = path('/sessions')
 const paths = {
   sessions: {
     show: sessionsPath,
+    search: sessionsPath.path('search'),
   },
 }
 

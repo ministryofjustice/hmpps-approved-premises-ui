@@ -21,5 +21,10 @@ export default function routes(controllers: Controllers, { auditService }: Servi
     await handler(req, res, next)
   })
 
+  router.get('/sessions/search', async (req, res, next) => {
+    const handler = sessionsController.search()
+    await handler(req, res, next)
+  })
+
   return router
 }
