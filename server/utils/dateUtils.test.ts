@@ -358,8 +358,11 @@ describe('DateFormats', () => {
   })
 
   describe('formatDuration', () => {
-    it('formats a duration with the given unit', () => {
-      expect(DateFormats.formatDuration({ days: '4', weeks: '7' })).toEqual('7 weeks, 4 days')
+    it('formats a duration in days as weeks and days', () => {
+      expect(DateFormats.formatDuration(1)).toEqual('1 day')
+      expect(DateFormats.formatDuration(7)).toEqual('1 week')
+      expect(DateFormats.formatDuration('17')).toEqual('2 weeks, 3 days')
+      expect(DateFormats.formatDuration('')).toEqual('')
     })
   })
 

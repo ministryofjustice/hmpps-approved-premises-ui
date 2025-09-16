@@ -2,7 +2,7 @@ import { Cas1SpaceBooking } from '@approved-premises/api'
 import OccupancyFilterPage from '../../../shared/occupancyFilterPage'
 import { placementOverviewSummary } from '../../../../../server/utils/placements'
 import paths from '../../../../../server/paths/manage'
-import { DateFormats, daysToWeeksAndDays } from '../../../../../server/utils/dateUtils'
+import { DateFormats } from '../../../../../server/utils/dateUtils'
 
 export class ChangePlacementPage extends OccupancyFilterPage {
   constructor(private readonly placement: Cas1SpaceBooking) {
@@ -22,7 +22,7 @@ export class ChangePlacementPage extends OccupancyFilterPage {
     cy.get('h2')
       .contains(/^(View availability for|Showing)/)
       .contains(
-        `${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
+        `${DateFormats.formatDuration(durationDays)} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
       )
   }
 

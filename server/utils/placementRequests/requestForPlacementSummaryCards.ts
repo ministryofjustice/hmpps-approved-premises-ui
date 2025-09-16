@@ -1,11 +1,10 @@
-import { PageResponse, SummaryListActionItem, SummaryListItem, SummaryListWithCard } from '../../@types/ui'
+import { PageResponse, SummaryListActionItem, SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import {
   ApprovedPremisesApplication as Application,
   Cas1RequestedPlacementPeriod,
   RequestForPlacement,
   User,
-} from '../../@types/shared'
-import { formatDuration } from '../match'
+} from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
@@ -53,7 +52,7 @@ export class RequestForPlacementSummaryCards {
     const items: Record<string, string> = {
       'Expected arrival': DateFormats.isoDateToUIDate(placementPeriod.arrival, { format: 'short' }),
       'Arrival date is flexible': { false: 'No', true: 'Yes' }[String(placementPeriod.arrivalFlexible)] || '',
-      Duration: `${formatDuration(placementPeriod.duration)}`,
+      Duration: `${DateFormats.formatDuration(placementPeriod.duration)}`,
     }
     Object.entries(items).forEach(([key, value]) => {
       if (!value) delete items[key]

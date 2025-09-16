@@ -29,7 +29,6 @@ export const getPageTitle = (placementApplication: PlacementApplication, pageNam
   return new Page(placementApplication.data?.['request-a-placement'][pageName], placementApplication).title
 }
 
-// Called directly from the review template during assessment
 export const placementApplicationQuestionsForReview = (placementApplication: PlacementApplication) => {
   return {
     card: {

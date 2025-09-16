@@ -18,7 +18,6 @@ import {
   distanceRow,
   filterOutAPTypes,
   keyDetails,
-  formatDuration,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
   restrictionsRow,
@@ -244,12 +243,6 @@ describe('matchUtils', () => {
           }),
         ).toEqual({ startDate: '2023-04-11', 'startDate-day': '11', 'startDate-month': '4', 'startDate-year': '2023' })
       })
-    })
-  })
-
-  describe('formatDuration', () => {
-    it('formats the number of days as weeks and days', () => {
-      expect(formatDuration(16)).toEqual('2 weeks, 2 days')
     })
   })
 

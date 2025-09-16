@@ -17,12 +17,12 @@ const datesMarkup = embeddedSummaryListItem([
   {
     'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2023-08-01')),
     'Is the date flexible?': 'Yes',
-    'How long should the Approved Premises placement last?': '5 nights',
+    'How long should the Approved Premises placement last?': '5 days',
   },
   {
     'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2024-08-01')),
     'Is the date flexible?': 'No',
-    'How long should the Approved Premises placement last?': '25 nights',
+    'How long should the Approved Premises placement last?': '3 weeks, 4 days',
   },
 ])
 
@@ -133,12 +133,12 @@ describe('checkYourAnswersUtils', () => {
                 {
                   'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2023, 7, 1)),
                   'Is the date flexible?': 'Yes',
-                  'How long should the Approved Premises placement last?': '5 nights',
+                  'How long should the Approved Premises placement last?': '5 days',
                 },
                 {
                   'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2024, 7, 1)),
                   'Is the date flexible?': 'No',
-                  'How long should the Approved Premises placement last?': '25 nights',
+                  'How long should the Approved Premises placement last?': '3 weeks, 4 days',
                 },
               ],
             },

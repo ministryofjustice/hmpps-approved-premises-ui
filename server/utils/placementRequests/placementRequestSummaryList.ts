@@ -5,12 +5,12 @@ import {
   apTypeRow,
   apTypeWithViewTimelineActionRow,
   placementDates,
-  formatDuration,
   requestedOrEstimatedArrivalDateRow,
 } from '../match'
 import { matchingInformationSummaryRows } from './matchingInformationSummaryList'
-import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
+import { summaryListItem } from '../formUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { DateFormats } from '../dateUtils'
 
 type PlacementRequestSummaryListOptions = {
   showActions?: boolean
@@ -28,22 +28,19 @@ export const placementRequestSummaryList = (
   } = placementRequest
   const { startDate, endDate } = placementDates(arrival, String(duration))
 
-  const isRotl = releaseType === 'rotl' && [true, false].includes(arrivalFlexible)
+  const isRotl = releaseType === 'rotl' && arrivalFlexible !== undefined
 
   const rows: Array<SummaryListItem> = [
     requestedOrEstimatedArrivalDateRow(placementRequest.isParole, startDate),
     summaryListItem('Requested departure date', endDate, 'date'),
-    summaryListItemNoBlankRows('Flexible date', isRotl && (arrivalFlexible ? 'Yes' : 'No')),
-    summaryListItem('Length of stay', formatDuration(duration)),
+    isRotl && summaryListItem('Flexible date', arrivalFlexible ? 'Yes' : 'No'),
+    summaryListItem('Length of stay', DateFormats.formatDuration(duration)),
     summaryListItem('Release type', allReleaseTypes[releaseType]),
     summaryListItem('Licence expiry date', application?.licenceExpiryDate, 'date'),
     options.showActions ? apTypeWithViewTimelineActionRow(placementRequest) : apTypeRow(placementRequest.type),
     summaryListItem('Preferred postcode', location),
+    placementRequest.isWithdrawn && withdrawnStatusTag,
   ].filter(Boolean)
-
-  if (placementRequest.isWithdrawn) {
-    rows.push(withdrawnStatusTag)
-  }
 
   const matchingInformationRows = matchingInformationSummaryRows(placementRequest)
   return { rows: rows.concat(matchingInformationRows) }

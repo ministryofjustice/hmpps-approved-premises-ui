@@ -32,7 +32,7 @@ export default class DatesOfPlacement extends Page {
     checkItems(2)
     this.clickButton('Add another')
     checkItems(3)
-    cy.get('.moj-add-another__item:not(.govuk-visually-hidden) button').eq(2).click({ force: true })
+    cy.get('.moj-add-another__item:not(.govuk-visually-hidden) button').eq(2).click()
     checkItems(2)
   }
 

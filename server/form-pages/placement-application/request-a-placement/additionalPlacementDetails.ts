@@ -3,7 +3,7 @@ import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
-import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, weeksAndDaysToDays } from '../../../utils/dateUtils'
 import { dateBodyProperties } from '../../utils/dateBodyProperties'
 
 export type Body = {
@@ -53,10 +53,9 @@ export default class AdditionalPlacementDetails implements TasklistPage {
   response() {
     return {
       [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(this.body.arrivalDate),
-      [this.questions.duration]: DateFormats.formatDuration({
-        weeks: this.body.durationWeeks,
-        days: this.body.durationDays,
-      }),
+      [this.questions.duration]: DateFormats.formatDuration(
+        weeksAndDaysToDays(this.body.durationWeeks, this.body.durationDays),
+      ),
       [this.questions.reason]: this.body.reason,
     }
   }

@@ -8,7 +8,7 @@ import {
 } from '@approved-premises/api'
 import { KeyDetailsArgs, RadioItem, SummaryList, UserDetails } from '@approved-premises/ui'
 import { differenceInCalendarDays } from 'date-fns'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { htmlValue, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
@@ -216,12 +216,10 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
         actualArrivalDate &&
           actualDepartureDate &&
           DateFormats.formatDuration(
-            daysToWeeksAndDays(
-              DateFormats.durationBetweenDates(
-                DateFormats.isoToDateObj(actualDepartureDate),
-                DateFormats.isoToDateObj(actualArrivalDate),
-              ).number,
-            ),
+            DateFormats.durationBetweenDates(
+              DateFormats.isoToDateObj(actualDepartureDate),
+              DateFormats.isoToDateObj(actualArrivalDate),
+            ).number,
           ),
       ),
       summaryListItemNoBlankRows('Key worker', keyWorkerAllocation?.name || 'Not assigned'),
