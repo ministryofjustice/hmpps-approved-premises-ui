@@ -130,7 +130,6 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           htmlCell(tierBadge(placementRequest.personTier)),
           textCell('Parole'),
-          textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
           textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
           durationCell(placementRequest.requestedPlacementDuration),
           textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
@@ -186,18 +185,11 @@ describe('tableUtils', () => {
       ])
     })
 
-    it('returns the table headers when no status is provided', () => {
+    it('returns the table headers when no status is provided (Search tab)', () => {
       expect(dashboardTableHeader(undefined, sortBy, sortDirection, hrefPrefix)).toEqual([
         sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>(
-          'Application date',
-          'application_date',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
         sortHeader<PlacementRequestSortField>(
           'Requested arrival date',
           'expected_arrival',
