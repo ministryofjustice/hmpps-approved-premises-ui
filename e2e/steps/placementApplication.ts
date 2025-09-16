@@ -59,6 +59,7 @@ export const createPlacementApplication = async ({ page }: { page: Page }) => {
   const datePage = new ApplyPage(page)
   await datePage.fillReleaseDateField('standard')
   await datePage.fillDurationField({ weeks: 12, days: 0 })
+  await datePage.checkRadio('Yes')
   await datePage.clickContinue()
 
   const updatesToPlacementPage = new ApplyPage(page)
