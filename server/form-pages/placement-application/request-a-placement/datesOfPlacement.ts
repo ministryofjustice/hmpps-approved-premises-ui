@@ -3,7 +3,7 @@ import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import { weeksToDays } from 'date-fns'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
-import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsEmpty } from '../../../utils/dateUtils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
 import { PlacementApplication } from '../../../@types/shared'
 import PreviousRotlPlacement from './previousRotlPlacement'
@@ -41,7 +41,6 @@ export default class DatesOfPlacement implements TasklistPage {
 
   set body(value: Body) {
     const validatedInputs = this.inputsPopulated(value.datesOfPlacement)
-
     const mappedInputs = this.mapDateInputs(validatedInputs)
 
     this._body = {
@@ -64,8 +63,12 @@ export default class DatesOfPlacement implements TasklistPage {
   }
 
   response() {
-    const result = this.body.datesOfPlacement.map(date => {
-      return datesOfPlacementItem(Number(this.lengthInDays(date)), date.arrivalDate, date.isFlexible === 'yes')
+    const result = this.body.datesOfPlacement.map(dateBlock => {
+      return datesOfPlacementItem(
+        Number(this.lengthInDays(dateBlock)),
+        dateBlock.arrivalDate,
+        dateBlock.isFlexible === 'yes',
+      )
     })
 
     return { 'Dates of placement': result }
@@ -104,7 +107,7 @@ export default class DatesOfPlacement implements TasklistPage {
   private inputsPopulated(datesArr: Array<DateOfPlacementFromUi> | undefined) {
     return (datesArr || []).filter(
       dates =>
-        dateAndTimeInputsAreValidDates(dates, 'arrivalDate') ||
+        !dateIsEmpty(dates, 'arrivalDate') ||
         Boolean(dates.durationDays) ||
         Boolean(dates.durationWeeks) ||
         Boolean(dates.isFlexible),

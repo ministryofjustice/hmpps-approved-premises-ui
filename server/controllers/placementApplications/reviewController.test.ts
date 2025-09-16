@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import type { ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
+import type { ErrorsAndUserInput, ErrorSummary, FormPages, SummaryListItem } from '@approved-premises/ui'
 import { placementApplicationFactory } from '../../testutils/factories/index'
 import ReviewController from './reviewController'
 import { PlacementApplicationService } from '../../services'
 import PlacementRequest from '../../form-pages/placement-application'
+import * as reviewUtils from '../../utils/placementRequests/reviewUtils'
 
 import assessPaths from '../../paths/assess'
 import {
@@ -25,7 +26,6 @@ PlacementRequest.pages = {} as FormPages
 
 describe('reviewController', () => {
   const id = 'some-uuid'
-
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = jest.fn()
 
@@ -40,6 +40,8 @@ describe('reviewController', () => {
 
   let reviewController: ReviewController
 
+  const reviewQuestions = { card: { title: { text: 'title' } }, rows: [] as Array<SummaryListItem> }
+
   beforeEach(() => {
     reviewController = new ReviewController(placementApplicationService)
     request = createMock<Request>({
@@ -50,6 +52,7 @@ describe('reviewController', () => {
         token: 'token',
       },
     })
+    jest.spyOn(reviewUtils, 'placementApplicationQuestionsForReview').mockReturnValue(reviewQuestions)
   })
 
   afterEach(() => {
@@ -57,6 +60,16 @@ describe('reviewController', () => {
   })
 
   describe('show', () => {
+    const expectedRenderParameters = {
+      pageProps: {
+        pageHeading: 'Review information',
+        backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
+      },
+      reviewQuestions,
+      placementApplication,
+      errors: {},
+      errorSummary: [] as Array<ErrorSummary>,
+    }
     it('renders the review page', async () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
         return { errors: {}, errorSummary: [], userInput: {} }
@@ -67,19 +80,12 @@ describe('reviewController', () => {
         return { applicationId: id, step: 'review' }
       })
 
-      const requestHandler = reviewController.show('review')
+      await reviewController.show('review')(request, response, next)
 
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
-        pageProps: {
-          pageHeading: 'Review information',
-          backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
-        },
-        placementApplication,
-        errors: {},
-        errorSummary: [],
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'placement-applications/pages/review/review',
+        expectedRenderParameters,
+      )
     })
 
     it('renders the decision page', async () => {
@@ -92,18 +98,14 @@ describe('reviewController', () => {
         return { applicationId: id, step: 'decision' }
       })
 
-      const requestHandler = reviewController.show('decision')
-
-      await requestHandler(request, response, next)
+      await reviewController.show('decision')(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/decision', {
+        ...expectedRenderParameters,
         pageProps: {
           pageHeading: 'Make a decision',
           backLink: placementApplicationPaths.placementApplications.show({ id }),
         },
-        placementApplication,
-        errors: {},
-        errorSummary: [],
       })
     })
 
@@ -116,16 +118,10 @@ describe('reviewController', () => {
         return { applicationId: id, step: 'review' }
       })
 
-      const requestHandler = reviewController.show('review')
-
-      await requestHandler(request, response, next)
+      await reviewController.show('review')(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
-        pageProps: {
-          pageHeading: 'Review information',
-          backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
-        },
-        placementApplication,
+        ...expectedRenderParameters,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
@@ -141,16 +137,14 @@ describe('reviewController', () => {
         return { applicationId: id, step: 'decision' }
       })
 
-      const requestHandler = reviewController.show('decision')
-
-      await requestHandler(request, response, next)
+      await reviewController.show('decision')(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/decision', {
+        ...expectedRenderParameters,
         pageProps: {
           pageHeading: 'Make a decision',
           backLink: placementApplicationPaths.placementApplications.show({ id }),
         },
-        placementApplication,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,

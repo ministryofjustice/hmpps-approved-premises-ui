@@ -10,7 +10,7 @@ import {
   placementSummary,
   requirementsInformation,
 } from '../../../../server/utils/placements'
-import { placementDates, formatDuration } from '../../../../server/utils/match'
+import { placementDates } from '../../../../server/utils/match'
 
 export default class PlacementShowPage extends Page {
   constructor(placement: Cas1SpaceBooking | null, pageHeading?: string) {
@@ -79,7 +79,7 @@ export default class PlacementShowPage extends Page {
       )
       this.assertDefinition('Requested Arrival Date', DateFormats.isoDateToUIDate(dates.startDate, { format: 'short' }))
       this.assertDefinition('Requested Departure Date', DateFormats.isoDateToUIDate(dates.endDate, { format: 'short' }))
-      this.assertDefinition('Length of stay', formatDuration(dates.placementLength))
+      this.assertDefinition('Length of stay', DateFormats.formatDuration(dates.placementLength))
     })
   }
 }

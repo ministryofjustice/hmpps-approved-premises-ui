@@ -11,7 +11,7 @@ import {
   Cas1SpaceSearchResult as SpaceSearchResult,
 } from '@approved-premises/api'
 import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { apTypeLongLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
 import { textValue } from '../applications/helpers'
@@ -24,9 +24,6 @@ import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
 export { validateSpaceBooking } from './validateSpaceBooking'
-
-export const formatDuration = (lengthInDays: number): string =>
-  DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
 
 type SpaceBookingConfirmationData = {
   premises: Cas1Premises

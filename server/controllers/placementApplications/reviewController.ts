@@ -12,6 +12,7 @@ import {
 import { PlacementApplicationReview } from '../../utils/placementApplications/review'
 import assessPaths from '../../paths/assess'
 import placementApplicationPaths from '../../paths/placementApplications'
+import { placementApplicationQuestionsForReview } from '../../utils/placementRequests/reviewUtils'
 
 export default class ReviewController {
   constructor(private readonly placementApplicationService: PlacementApplicationService) {}
@@ -38,6 +39,7 @@ export default class ReviewController {
             }
 
       res.render(`placement-applications/pages/review/${review.step}`, {
+        reviewQuestions: placementApplicationQuestionsForReview(placementApplication),
         pageProps,
         placementApplication,
         errors,

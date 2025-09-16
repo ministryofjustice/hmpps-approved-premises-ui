@@ -1,6 +1,6 @@
 import type { Cas1Premises } from '@approved-premises/api'
 import Page from '../page'
-import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
+import { DateFormats } from '../../../server/utils/dateUtils'
 import paths from '../../../server/paths/manage'
 
 export default class OccupancyViewPage extends Page {
@@ -21,7 +21,7 @@ export default class OccupancyViewPage extends Page {
   }
 
   shouldShowCalendarHeading(startDate: string, durationDays: number): void {
-    const calendarTitle = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
+    const calendarTitle = `Showing ${DateFormats.formatDuration(durationDays)} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
     cy.contains(calendarTitle)
   }
 }

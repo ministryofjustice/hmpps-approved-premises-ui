@@ -2,7 +2,7 @@ import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approv
 import { weeksToDays } from 'date-fns'
 import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/match'
-import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
+import { DateFormats } from '../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../utils/applications/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -269,7 +269,7 @@ export const remapArsonAssessmentData = (
 
 const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplication): SummaryList => {
   const duration = placementDurationFromApplication(application)
-  const formattedDuration = DateFormats.formatDuration(daysToWeeksAndDays(duration))
+  const formattedDuration = DateFormats.formatDuration(duration)
   const rows: SummaryList['rows'] = [
     { key: { text: 'Placement duration' }, value: { text: formattedDuration, classes: 'placement-duration' } },
   ]

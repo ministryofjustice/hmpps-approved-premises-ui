@@ -6,7 +6,7 @@
 
 {% extends "../../layout.njk" %}
 
-{% macro dateBlock(index, includeButton = false) %}
+{% macro dateBlock(index) %}
     {% call govukFieldset({
         classes: "govuk-fieldset toplevel-fieldset moj-add-another__item",
         legend: {
@@ -154,7 +154,7 @@
         </div>
 
 
-        {% if includeButton %}
+        {% if index !== 0 %}
             {{ addButton() }}
         {% endif %}
 
@@ -224,29 +224,22 @@
             var addButton = document.querySelector('button[data-add-input]')
 
             addButton.addEventListener('click', (event) => {
-              var fieldsets = document.querySelectorAll('.toplevel-fieldset')
-              var hiddenFieldsets = document.querySelectorAll('fieldset[class*="govuk-visually-hidden"]')
-
-              if (hiddenFieldsets.length) {
-                hiddenFieldsets[0]
-                  .classList
-                  .remove('govuk-visually-hidden')
-              } else {
-                var fieldsetWrapper = document.querySelector('#fieldset-wrapper')
-                var newFieldset = `{{ dateBlock("INDEX", true) }}`
-                  .replace('INDEX1', fieldsets.length + 1)
-                  .replaceAll('INDEX', fieldsets.length + 1)
-                fieldsetWrapper.innerHTML += newFieldset
-
-                var removeButtons = fieldsetWrapper.querySelectorAll('button[data-remove-input]')
-                initializeRemoveButtons(removeButtons)
-              }
-
               event.preventDefault()
+              const nextIndex = document.querySelectorAll('.toplevel-fieldset').length + 1
+              var fieldsetWrapper = document.querySelector('#fieldset-wrapper')
+              var newFieldset = `{{ dateBlock('INDEX') }}`
+                .replace('INDEX1', nextIndex)
+                .replaceAll('INDEX', nextIndex)
+              fieldsetWrapper.innerHTML += newFieldset
+
+              initializeRemoveButtons()
+
             })
           }
 
-          function initializeRemoveButtons(buttons) {
+          function initializeRemoveButtons() {
+            const buttons = document.querySelectorAll('button[data-remove-input]')
+
             for (let i = 0; i < buttons.length; i++) {
 
               buttons[i].addEventListener('click', (event) => {
@@ -275,21 +268,17 @@
               if (!['arrivalDate-day', 'arrivalDate-month', 'arrivalDate-year', 'durationDays', 'durationWeeks', 'isFlexible'].some((field) => {
                 const inputs = document.querySelectorAll(`input[name="datesOfPlacement[${i}][${field}]"]`) || []
                 return [...inputs].some((input) => {
-                  console.log('input', input.type, input.checked, input.value)
                   return Boolean(input.type === 'radio' ? input.checked : input.value)
                 })
               })) {
-                fieldsets[i]
-                  .classList
-                  .add('govuk-visually-hidden')
+                fieldsets[i].remove()
+              } else {
+                fieldsets[i].innerHTML += `{{ addButton() }}`
               }
-              fieldsets[i].innerHTML += `{{ addButton() }}`
             }
 
-            var removeButtons = document.querySelectorAll('button[data-remove-input]')
-
             initializeAddButton()
-            initializeRemoveButtons(removeButtons)
+            initializeRemoveButtons()
           }
 
           initializeFieldsets()

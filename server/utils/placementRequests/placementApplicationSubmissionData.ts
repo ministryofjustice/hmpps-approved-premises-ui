@@ -18,6 +18,7 @@ import AdditionalPlacementDetails from '../../form-pages/placement-application/r
 import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
+import { makeArrayOfType } from '../utils'
 
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
@@ -50,7 +51,7 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
   )
 
   if (datesOfPlacement) {
-    return (datesOfPlacement as Array<DateOfPlacement>).map(({ arrivalDate, duration, isFlexible }) => ({
+    return makeArrayOfType<DateOfPlacement>(datesOfPlacement).map(({ arrivalDate, duration, isFlexible }) => ({
       arrival: arrivalDate,
       arrivalFlexible: isFlexible === 'yes',
       duration: Number(duration),
