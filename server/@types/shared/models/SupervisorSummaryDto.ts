@@ -2,10 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Example = {
+export type SupervisorSummaryDto = {
     /**
-     * Name of the API
+     * Supervisor id
      */
-    apiName: string;
+    id: number;
+    /**
+     * Supervisor name
+     */
+    name: string;
 };
 
