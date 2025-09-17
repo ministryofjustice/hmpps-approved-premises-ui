@@ -7,37 +7,38 @@ export type ProjectAllocationDto = {
      * Project allocation id
      */
     id: number;
+    projectId: number;
     /**
      * Project name
      */
     projectName: string;
     /**
-     * Team id
-     */
-    teamId: number;
-    /**
-     * Allocation start date
-     */
-    startDate: string;
-    /**
-     * Allocation end date
-     */
-    endDate: string;
-    /**
      * Project code
      */
     projectCode: string;
     /**
+     * Allocation date
+     */
+    date: string;
+    /**
+     * Allocation start time
+     */
+    startTime: string;
+    /**
+     * Allocation end time
+     */
+    endTime: string;
+    /**
      * Number of offenders allocated
      */
-    allocated: number;
+    numberOfOffendersAllocated: number;
     /**
      * Number of offenders with outcomes
      */
-    outcomes: number;
+    numberOfOffendersWithOutcomes: number;
     /**
      * Number of offenders with enforcements
      */
-    enforcements: number;
+    numberOfOffendersWithEA: number;
 };
 
