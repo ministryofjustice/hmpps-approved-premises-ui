@@ -47,6 +47,7 @@ export default class CruDashboardController {
 
       if (!['notMatched', 'unableToMatch', 'matched'].includes(status)) {
         next(createError(404, 'Not found'))
+        return
       }
 
       const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(token)
