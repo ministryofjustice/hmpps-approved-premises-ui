@@ -101,14 +101,40 @@ context('Placement Applications', () => {
 
       WHEN('I submit the form empty')
       datesOfPlacementPage.clickSaveAndContinue()
+
       THEN('I should see errors')
       datesOfPlacementPage.shouldShowErrors()
 
-      AND('I should be able to add and remove date blocks')
-      datesOfPlacementPage.addAndRemoveBlock()
+      WHEN('I populate the form')
+      datesOfPlacementPage.populateBlock(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.populateBlock(1, datesOfPlacementPage.datesOfPlacement[1])
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
 
-      WHEN('I complete the form and submit')
-      datesOfPlacementPage.completeForm()
+      AND('I should be able to add and remove date blocks without affecting the form population')
+      datesOfPlacementPage.addAndRemoveBlock()
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
+
+      WHEN('I add a new block and populate it')
+      datesOfPlacementPage.clickButton('Add another')
+      datesOfPlacementPage.populateBlock(2, datesOfPlacementPage.datesOfPlacement[2])
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
+      datesOfPlacementPage.verifyBlockPopulated(2, datesOfPlacementPage.datesOfPlacement[2])
+
+      AND('I delete the block in the middle')
+      datesOfPlacementPage.checkBlockTitles(3)
+      datesOfPlacementPage.removeBlock(1)
+
+      THEN('The third block should remain populated')
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(2, datesOfPlacementPage.datesOfPlacement[2])
+
+      AND('the block titles should be fixed')
+      datesOfPlacementPage.checkBlockTitles(2)
+
+      WHEN('I submit the form')
       datesOfPlacementPage.clickSaveAndContinue()
 
       THEN('I am on the application updates page')

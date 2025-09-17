@@ -10,8 +10,7 @@
     {% call govukFieldset({
         classes: "govuk-fieldset toplevel-fieldset moj-add-another__item",
         legend: {
-            text: "ROTL placement " + (
-            index + 1),
+            text: "ROTL placement " + (index + 1),
             classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
         },
         attributes: {
@@ -19,26 +18,12 @@
         }
     }) %}
         {% set fieldPrefix = "datesOfPlacement[" + index + "]" %}
-        {% set fieldName = fieldPrefix + '[arrivalDate]' %}
-        {% set dayFieldName = "datesOfPlacement[" + index + "][arrivalDate-day]" %}
-        {% set monthFieldName = "datesOfPlacement[" + index + "][arrivalDate-month]" %}
-        {% set yearFieldName = "datesOfPlacement[" + index + "][arrivalDate-year]" %}
-        {% set fieldId = "datesOfPlacement_" + index + "_arrivalDate" %}
+        {% set fieldId = "datesOfPlacement_" + index %}
         {% set context = fetchContext() %}
         {% set body = context.page.body %}
-        {% set durationWeeks = "durationWeeks" %}
-        {% set durationDays = "durationDays" %}
-
-        {% set durationWeeksName = "datesOfPlacement[" + index + "][" + durationWeeks + "]" %}
-        {% set durationDaysName = "datesOfPlacement[" + index + "][" + durationDays + "]" %}
-        {% set isFlexibleName = "datesOfPlacement[" + index + "][isFlexible]" %}
-
-        {% set arrivalDateDay = "arrivalDate-day" %}
-        {% set arrivalDateMonth = "arrivalDate-month" %}
-        {% set arrivalDateYear = "arrivalDate-year" %}
 
         {{ govukDateInput({
-            id: fieldName,
+            id: fieldId + '_arrivalDate',
             fieldset: {
                 legend: {
                     text: "When will the person arrive?",
@@ -48,28 +33,28 @@
             items: [
                 {
                     classes: "govuk-input--width-2 ",
-                    id: fieldId + '[day]',
-                    name: dayFieldName,
+                    id: fieldId + '_arrivalDate_day',
+                    name: fieldPrefix + "[arrivalDate-day]",
                     label: 'Day',
-                    value: context.datesOfPlacement[index][arrivalDateDay]
+                    value: context.datesOfPlacement[index]["arrivalDate-day"]
                 },
                 {
                     classes: "govuk-input--width-2 ",
-                    id: fieldId + '[month]',
-                    name: monthFieldName,
+                    id: fieldId + '_arrivalDate_month',
+                    name: fieldPrefix + "[arrivalDate-month]",
                     label: 'Month',
-                    value: context.datesOfPlacement[index][arrivalDateMonth]
+                    value: context.datesOfPlacement[index]["arrivalDate-month"]
 
                 },
                 {
                     classes: "govuk-input--width-4 ",
-                    id: fieldId + '[year]',
-                    name: yearFieldName,
+                    id: fieldId+ '_arrivalDate_year',
+                    name: fieldPrefix + "[arrivalDate-year]",
                     label: 'Year',
-                    value: context.datesOfPlacement[index][arrivalDateYear]
+                    value: context.datesOfPlacement[index]["arrivalDate-year"]
                 }
             ],
-            errorMessage: errors[fieldId],
+            errorMessage: errors[fieldId+"_arrivalDate"],
             hint: {
                 text: "For example, 27 3 2024"
             }
@@ -78,8 +63,8 @@
         {% set isFlexibleValue = context.datesOfPlacement[index].isFlexible %}
 
         {{ govukRadios({
-            idPrefix: isFlexibleName,
-            name: isFlexibleName,
+            idPrefix: fieldId + '_isFlexible',
+            name: fieldPrefix + "[isFlexible]",
             fieldset: {
                 legend: {
                     text: 'Is this date flexible?',
@@ -87,27 +72,26 @@
                 }
             },
             items: [{text:'Yes',value:'yes', checked:isFlexibleValue=='yes'},{text:'No',value:'no',checked:isFlexibleValue=='no'}],
-            errorMessage: errors["datesOfPlacement_" + index + "_isFlexible"]
+            errorMessage: errors[fieldId + "_isFlexible"]
         }) }}
 
-        {% set durationFieldId = "datesOfPlacement_" + index + "_duration" %}
+        {% set durationFieldId = fieldId + "_duration" %}
         {% set hasDurationErrors = errors[durationFieldId].text %}
 
+        {% set inputErrorClasses = "" %}
+        {% set wrapperErrorClasses = "" %}
         {% if hasDurationErrors %}
-            {% set wrapperClasses = "govuk-form-group govuk-form-group--error" %}
-            {% set inputClasses = "govuk-input--width-2 govuk-input--error" %}
-        {% else %}
-            {% set wrapperClasses = "govuk-form-group" %}
-            {% set inputClasses = "govuk-input--width-2" %}
+            {% set inputErrorClasses = " govuk-input--error" %}
+            {% set wrapperErrorClasses = " govuk-form-group--error" %}
         {% endif %}
 
-        {% set durationFieldName = fieldPrefix + '[duration]' %}
-        <div class="{{ wrapperClasses }}" id="{{ durationFieldId }}">
+        <div class="govuk-form-group {{ wrapperErrorClasses }}"
+             id="{{ durationFieldId }}">
 
             {% call govukFieldset({
                 legend: {
                     text: 'How long should the Approved Premises placement last?',
-                    classes: legendClasses
+                    classes: "govuk-fieldset__legend--s"
                 }
             }) %}
 
@@ -121,8 +105,8 @@
 
                 {{ govukInput(
                     {
-                        classes: inputClasses,
-                        name: durationWeeksName,
+                        classes: "govuk-input--width-2" + inputErrorClasses,
+                        name: "datesOfPlacement[" + index + "][durationWeeks]",
                         id: "datesOfPlacement_" + index + "_duration_weeks",
                         formGroup: {
                         classes: "govuk-form-group--inline"
@@ -130,15 +114,15 @@
                         label: {
                         text: "Weeks"
                     },
-                        value:  context.datesOfPlacement[index][durationWeeks]
+                        value:  context.datesOfPlacement[index]["durationWeeks"]
                     },
                     context
                 ) }}
 
                 {{ govukInput(
                     {
-                        classes: inputClasses,
-                        name: durationDaysName,
+                        classes: "govuk-input--width-2" + inputErrorClasses,
+                        name: fieldPrefix + "[durationDays]",
                         id: "datesOfPlacement_" + index + "_duration_days",
                         formGroup: {
                         classes: "govuk-form-group--inline"
@@ -146,7 +130,7 @@
                         label: {
                         text: "Days"
                     },
-                        value: context.datesOfPlacement[index][durationDays]
+                        value: context.datesOfPlacement[index]["durationDays"]
                     },
                     context
                 ) }}
@@ -220,67 +204,49 @@
 
     {% block extraScripts %}
         <script type="text/javascript" nonce="{{ cspNonce }}">
-          function initializeAddButton() {
-            var addButton = document.querySelector('button[data-add-input]')
 
-            addButton.addEventListener('click', (event) => {
-              event.preventDefault()
-              const nextIndex = document.querySelectorAll('.toplevel-fieldset').length + 1
-              var fieldsetWrapper = document.querySelector('#fieldset-wrapper')
-              var newFieldset = `{{ dateBlock('INDEX') }}`
-                .replace('INDEX1', nextIndex)
-                .replaceAll('INDEX', nextIndex)
-              fieldsetWrapper.innerHTML += newFieldset
+          const addHandler = (event) => {
+            event.preventDefault()
+            let nextIndex = 0
+            document.querySelectorAll('fieldset[data-fieldset]').forEach((el) => {
+              const index = Number(el.getAttribute('data-fieldset'))
+              nextIndex = Math.max(nextIndex, index + 1)
+            })
 
-              initializeRemoveButtons()
+            const newFieldset = `{{ dateBlock('INDEX') }}`.replaceAll('INDEX1', nextIndex + 1).replaceAll('INDEX', nextIndex)
+            const fieldSet = document.createElement('div')
+            fieldSet.innerHTML = newFieldset
 
+            fieldSet.querySelector('button[data-remove-input]').addEventListener('click', removeHandler)
+            document.querySelector('#fieldset-wrapper').appendChild(fieldSet.children[0])
+          }
+
+          const removeHandler = (event) => {
+            event.preventDefault()
+            event.target.closest('.toplevel-fieldset').remove()
+            reLabel()
+          }
+
+          function reLabel() {
+            document.querySelectorAll('fieldset[data-fieldset] > legend').forEach((legend, index) => {
+              legend.innerText = `ROTL placement ${index + 1}`
             })
           }
 
-          function initializeRemoveButtons() {
-            const buttons = document.querySelectorAll('button[data-remove-input]')
+          function initialize() {
+            document.querySelectorAll('fieldset[data-fieldset]').forEach((fieldSet,index) => {
+              const inputs = fieldSet.querySelectorAll('input')
+              if (index > 0 && ![...inputs].some((input) => Boolean(input.type === 'radio' ? input.checked : input.value))) fieldSet.remove()
+            })
 
-            for (let i = 0; i < buttons.length; i++) {
+            document.querySelector('button[data-add-input]').addEventListener('click', addHandler)
 
-              buttons[i].addEventListener('click', (event) => {
-                var fieldset = event.target.parentElement
-
-                fieldset
-                  .classList
-                  .add('govuk-visually-hidden')
-
-                for (input of fieldset.querySelectorAll('input[type=text]')) {
-                  input.value = ''
-                }
-                for (input of fieldset.querySelectorAll('input[type=radio]')) {
-                  input.checked = false
-                }
-
-                event.preventDefault()
-              })
-            }
+            document.querySelectorAll('button[data-remove-input]').forEach((button) => {
+              button.addEventListener('click', removeHandler)
+            })
+            reLabel()
           }
 
-          function initializeFieldsets() {
-            var fieldsets = document.querySelectorAll('fieldset[data-fieldset]')
-
-            for (let i = 1; i < fieldsets.length; i++) {
-              if (!['arrivalDate-day', 'arrivalDate-month', 'arrivalDate-year', 'durationDays', 'durationWeeks', 'isFlexible'].some((field) => {
-                const inputs = document.querySelectorAll(`input[name="datesOfPlacement[${i}][${field}]"]`) || []
-                return [...inputs].some((input) => {
-                  return Boolean(input.type === 'radio' ? input.checked : input.value)
-                })
-              })) {
-                fieldsets[i].remove()
-              } else {
-                fieldsets[i].innerHTML += `{{ addButton() }}`
-              }
-            }
-
-            initializeAddButton()
-            initializeRemoveButtons()
-          }
-
-          initializeFieldsets()
+          initialize()
         </script>
     {% endblock %}

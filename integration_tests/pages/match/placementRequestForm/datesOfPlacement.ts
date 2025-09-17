@@ -13,26 +13,53 @@ export default class DatesOfPlacement extends Page {
   datesOfPlacement = [
     { dateOfPlacement: '2023-08-01', duration: { weeks: 2, days: 5 }, isFlexible: 'yes' },
     { dateOfPlacement: '2023-07-02', duration: { weeks: 1, days: 4 }, isFlexible: 'no' },
+    { dateOfPlacement: '2024-09-05', duration: { weeks: 0, days: 3 }, isFlexible: 'yes' },
   ]
 
   completeForm() {
-    this.datesOfPlacement.forEach((date, index) => {
-      const parsedDate = DateFormats.isoToDateObj(date.dateOfPlacement)
-
-      this.completeDatesOfPlacementDateInputs(parsedDate, index.toString())
-      this.completeDurationInputs(index.toString(), date.duration.weeks, date.duration.days)
-      this.completeIsFlexible(index.toString(), date.isFlexible)
+    this.datesOfPlacement.forEach((dateBlock, index) => {
+      this.populateBlock(index, dateBlock)
     })
   }
 
+  populateBlock(index: number, dateBlock) {
+    const parsedDate = DateFormats.isoToDateObj(dateBlock.dateOfPlacement)
+
+    this.completeDatesOfPlacementDateInputs(parsedDate, index.toString())
+    this.completeDurationInputs(index.toString(), dateBlock.duration.weeks, dateBlock.duration.days)
+    this.completeIsFlexible(index.toString(), dateBlock.isFlexible)
+  }
+
+  verifyBlockPopulated(index: number, dateBlock) {
+    const prefix = `datesOfPlacement_${String(index)}_arrivalDate_`
+
+    const values = dateBlock.dateOfPlacement.split('-')
+    ;['year', 'month', 'day'].forEach((part: string, i) => {
+      cy.get(`#${prefix}${part}`).should('have.value', String(Number(values[i])))
+    })
+  }
+
+  checkBlockTitles(blockCount: number) {
+    for (let index = 0; index < blockCount; index += 1) {
+      cy.get('fieldset[data-fieldset] > legend')
+        .eq(index)
+        .should('contain.text', `ROTL placement ${index + 1}`)
+    }
+  }
+
+  removeBlock(index: number) {
+    cy.get('.moj-add-another__remove-button')
+      .eq(index - 1)
+      .click()
+  }
+
   addAndRemoveBlock() {
-    const checkItems = (count: number) =>
-      cy.get('.moj-add-another__item:not(.govuk-visually-hidden)').should('have.length', count)
+    const checkItems = (count: number) => cy.get('.moj-add-another__item').should('have.length', count)
 
     checkItems(2)
     this.clickButton('Add another')
     checkItems(3)
-    cy.get('.moj-add-another__item:not(.govuk-visually-hidden) button').eq(2).click()
+    this.removeBlock(2)
     checkItems(2)
   }
 
