@@ -1,0 +1,46 @@
+name: Generate Types
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-types:
+    runs-on: [self-hosted, hmpps-github-actions-runner]
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Generate Types
+        run: ./script/generate-types ${{ vars.API_SPEC_URL }}
+
+      # We need to use a GitHub App token rather than a Github token to ensure further workflows are triggered when opening a pull request in the next step.
+      # See: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#workarounds-to-trigger-further-workflow-runs
+      - name: Generate Token
+        uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          title: 'API model updates'
+          commit-message: 'Updating community-payback-api models from OpenAPI specification'
+          body: 'Updating community-payback-api models from OpenAPI specification.  This PR was created automatically from the generate-types.yml Workflow'
+          delete-branch: true
+          branch: update-api-types
+          base: main
