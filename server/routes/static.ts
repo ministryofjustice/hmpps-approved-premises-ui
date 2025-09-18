@@ -19,5 +19,9 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'VIEW_MAINTENANCE',
   })
 
+  get(staticPaths.pages.privacyNotice.pattern, staticController.render('privacy'), {
+    auditEvent: 'VIEW_PRIVACY_STATEMENT',
+  })
+
   return router
 }
