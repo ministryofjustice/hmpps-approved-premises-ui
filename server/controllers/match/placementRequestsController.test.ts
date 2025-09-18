@@ -83,7 +83,7 @@ describe('PlacementRequestsController', () => {
         paths.placementApplications.pages.show({
           id: placementApplication.id,
           task: 'request-a-placement',
-          page: 'reason-for-placement',
+          page: 'sentence-type-check',
         }),
       )
       expect(placementApplicationService.create).toHaveBeenCalledWith(token, applicationId)

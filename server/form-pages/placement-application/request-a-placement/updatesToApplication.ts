@@ -4,10 +4,8 @@ import { Page } from '../../utils/decorators'
 import { yesOrNoResponseWithDetailForYes } from '../../utils'
 
 import TasklistPage from '../../tasklistPage'
-import { PlacementApplication } from '../../../@types/shared'
+import { PlacementApplication, ReleaseTypeOption } from '../../../@types/shared'
 import { applicationLink } from '../../../utils/placementRequests/applicationLink'
-import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
-import ReasonForPlacement from './reasonForPlacement'
 
 export type Body = YesOrNoWithDetail<'significantEvents'> &
   YesOrNoWithDetail<'changedCirumstances'> &
@@ -61,25 +59,24 @@ export default class UpdatesToApplication implements TasklistPage {
   }
 
   previous() {
-    const reasonForPlacement = retrieveQuestionResponseFromFormArtifact(
-      this.placementApplication,
-      ReasonForPlacement,
-      'reason',
-    )
+    const {
+      applicationReleaseType,
+      sentenceTypeCheck,
+    }: { sentenceTypeCheck: string; applicationReleaseType: ReleaseTypeOption } =
+      this.placementApplication.data?.['request-a-placement']?.['sentence-type-check'] || {}
+    const { releaseType: updatedReleaseType }: { releaseType: ReleaseTypeOption } =
+      this.placementApplication.data?.['request-a-placement']?.['release-type'] || {}
+    const releaseType = sentenceTypeCheck === 'yes' ? updatedReleaseType : applicationReleaseType
 
-    if (reasonForPlacement === 'rotl') {
+    if (releaseType === 'rotl') {
       return 'dates-of-placement'
     }
 
-    if (reasonForPlacement === 'additional_placement') {
-      return 'additional-placement-details'
-    }
-
-    if (reasonForPlacement === 'release_following_decision') {
+    if (releaseType === 'paroleDirectedLicence') {
       return 'additional-documents'
     }
 
-    throw new Error('Unknown reason for placement')
+    return 'additional-placement-details'
   }
 
   next() {

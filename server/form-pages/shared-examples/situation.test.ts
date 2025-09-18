@@ -1,10 +1,10 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { applicationFactory } from '../../../../testutils/factories'
-import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '.'
+import { applicationFactory } from '../../testutils/factories'
+import { retrieveQuestionResponseFromFormArtifact } from '../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import Situation from './situation'
 
-jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
+jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact', () => {
   return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => 'communityOrder') }
 })
 

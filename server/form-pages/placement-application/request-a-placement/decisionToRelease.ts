@@ -36,7 +36,7 @@ export default class DecisionToRelease implements TasklistPage {
   }
 
   previous() {
-    return 'reason-for-placement'
+    return 'release-type'
   }
 
   next() {

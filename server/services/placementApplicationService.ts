@@ -34,7 +34,6 @@ export default class PlacementApplicationService {
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const placementApplication = await this.getPlacementApplication(request.user.token, request.params.id)
-
     const body = getBody(Page, placementApplication, request, userInput)
 
     const page = Page.initialize
@@ -58,7 +57,6 @@ export default class PlacementApplicationService {
 
       const pageName = getPageName(page.constructor)
       const taskName = getTaskName(page.constructor)
-
       placementApplication.data = placementApplication.data || {}
       placementApplication.data[taskName] = placementApplication.data[taskName] || {}
       placementApplication.data[taskName][pageName] = page.body

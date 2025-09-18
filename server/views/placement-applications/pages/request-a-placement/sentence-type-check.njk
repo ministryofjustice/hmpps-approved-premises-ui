@@ -1,0 +1,35 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "components/formFields/form-page-radios/macro.njk" import formPageRadios %}
+
+{% extends "../../layout.njk" %}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">
+        {{ page.title }}
+    </h1>
+
+    {{ govukSummaryList({
+        rows: page.summaryRows
+    }) }}
+    <input type="hidden" name="applicationReleaseType" value="{{ page.applicationReleaseType }}"/>
+    <input type="hidden" name="applicationSentenceType" value="{{ page.applicationSentenceType }}"/>
+    {{
+    formPageRadios(
+        {
+            fieldName: "sentenceTypeCheck",
+            fieldset: {
+            legend: {
+                text: "Has the sentence or release type changed?",
+                classes: "govuk-fieldset__legend--m",
+                isPageHeading: true
+            }
+        },
+            items:  page.yesNoOptions
+        },
+        fetchContext()
+    )
+    }}
+
+{% endblock %}

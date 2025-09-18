@@ -1,7 +1,11 @@
 /* istanbul ignore file */
 
 import { Section, Task } from '../../utils/decorators'
-import ReasonsForPlacement from './reasonForPlacement'
+import SentenceTypeCheck from './sentenceTypeCheck'
+import SentenceType from './sentenceType'
+import ReleaseType from './releaseType'
+import Situation from './situation'
+import ManagedByMappa from './managedByMappa'
 import PreviousRotlPlacement from './previousRotlPlacement'
 import SameAp from './sameAp'
 import DatesOfPlacement from './datesOfPlacement'
@@ -15,7 +19,11 @@ import AdditionalDocuments from './additionalDocuments'
   name: 'Request a placement',
   slug: 'request-a-placement',
   pages: [
-    ReasonsForPlacement,
+    SentenceTypeCheck,
+    SentenceType,
+    ReleaseType,
+    Situation,
+    ManagedByMappa,
     PreviousRotlPlacement,
     AdditionalPlacementDetails,
     SameAp,

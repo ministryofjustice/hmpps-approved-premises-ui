@@ -1,5 +1,6 @@
+import { omit } from 'underscore'
 import { ReleaseTypeOptions } from '@approved-premises/ui'
-import { ReleaseTypeOption } from '@approved-premises/api'
+import { ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 
 export const allReleaseTypes: ReleaseTypeOptions = {
   licence: 'Licence',
@@ -14,3 +15,25 @@ export const allReleaseTypes: ReleaseTypeOptions = {
 }
 
 export type ReleaseTypeLabel = (typeof allReleaseTypes)[ReleaseTypeOption]
+
+export type SelectableReleaseTypes = keyof PossibleReleaseTypeOptions
+export type ExtendedDetermindateReleaseTypeOptions = Pick<
+  ReleaseTypeOptions,
+  'rotl' | 'extendedDeterminateLicence' | 'paroleDirectedLicence'
+>
+type StandardDeterminateReleaseTypeOptions = Pick<
+  ReleaseTypeOptions,
+  'licence' | 'paroleDirectedLicence' | 'rotl' | 'hdc' | 'pss'
+>
+type LifeIppReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
+export type PossibleReleaseTypeOptions =
+  | ExtendedDetermindateReleaseTypeOptions
+  | StandardDeterminateReleaseTypeOptions
+  | LifeIppReleaseTypeOptions
+
+export type SentenceTypeResponse = Extract<
+  SentenceTypeOption,
+  'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'
+>
+
+export const selectableReleaseTypes = omit(allReleaseTypes, 'in_community')
