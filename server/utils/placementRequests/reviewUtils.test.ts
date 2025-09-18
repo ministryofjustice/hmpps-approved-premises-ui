@@ -2,7 +2,6 @@ import { PlacementApplication } from '../../@types/shared'
 import paths from '../../paths/placementApplications'
 import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, documentFactory, placementApplicationFactory } from '../../testutils/factories'
-import placementDates from '../../testutils/factories/placementDates'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { DateFormats } from '../dateUtils'
 import {
@@ -10,17 +9,19 @@ import {
   mapPageForSummaryList,
   pageResponsesAsSummaryListItems,
   placementApplicationQuestionsForReview,
-} from './checkYourAnswersUtils'
+} from './reviewUtils'
 
 jest.mock('../applications/forPagesInTask')
 
 const datesMarkup = embeddedSummaryListItem([
   {
     'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2023-08-01')),
+    'Is the date flexible?': 'Yes',
     'How long should the Approved Premises placement last?': '5 days',
   },
   {
     'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2024-08-01')),
+    'Is the date flexible?': 'No',
     'How long should the Approved Premises placement last?': '3 weeks, 4 days',
   },
 ])
@@ -99,95 +100,6 @@ describe('checkYourAnswersUtils', () => {
         },
       ])
     })
-
-    describe('if the page name is "dates-of-placement"', () => {
-      describe('and there are is a placementDates key on the placement application', () => {
-        it('returns the dates from the placement application', () => {
-          const placementDate1 = placementDates.build({ duration: 5, expectedArrival: '2023-08-01' })
-          const placementDate2 = placementDates.build({ duration: 25, expectedArrival: '2024-08-01' })
-          const rotlPlacementApplication = placementApplicationFactory.build({
-            placementDates: [placementDate1, placementDate2],
-            applicationId: application.id,
-          })
-
-          expect(pageResponsesAsSummaryListItems(rotlPlacementApplication, 'dates-of-placement', application)).toEqual([
-            {
-              key: {
-                text: 'Dates of placement',
-              },
-              value: {
-                html: datesMarkup,
-              },
-
-              actions: {
-                items: [
-                  {
-                    href: `/placement-applications/${rotlPlacementApplication.id}/tasks/request-a-placement/pages/dates-of-placement`,
-                    text: 'Change',
-                    visuallyHiddenText: 'Dates of placement',
-                  },
-                ],
-              },
-            },
-          ])
-        })
-      })
-
-      describe('and there are is not a placementDates key on the placement application', () => {
-        it('returns the dates from the data blob', () => {
-          const rotlPlacementApplication = placementApplicationFactory.build({
-            placementDates: undefined,
-            applicationId: application.id,
-          })
-
-          ;(rotlPlacementApplication.data as Record<string, unknown>)['request-a-placement'] = {
-            'dates-of-placement': {
-              datesOfPlacement: [
-                {
-                  arrivalDate: '2023-08-01',
-                  'arrivalDate-day': '01',
-                  'arrivalDate-month': '8',
-                  'arrivalDate-year': '2023',
-                  duration: '5',
-                  durationDays: '5',
-                  durationWeeks: '0',
-                },
-                {
-                  arrivalDate: '2024-08-02',
-                  'arrivalDate-day': '01',
-                  'arrivalDate-month': '8',
-                  'arrivalDate-year': '2024',
-                  duration: '25',
-                  durationDays: '4',
-                  durationWeeks: '3 ',
-                },
-              ],
-            },
-          }
-
-          expect(pageResponsesAsSummaryListItems(rotlPlacementApplication, 'dates-of-placement', application)).toEqual([
-            {
-              key: {
-                text: 'Dates of placement',
-              },
-              value: {
-                html: datesMarkup,
-              },
-
-              actions: {
-                items: [
-                  {
-                    href: `/placement-applications/${rotlPlacementApplication.id}/tasks/request-a-placement/pages/dates-of-placement`,
-                    text: 'Change',
-                    visuallyHiddenText: 'Dates of placement',
-                  },
-                ],
-              },
-            },
-          ])
-        })
-      })
-    })
   })
 
   describe('placementApplicationQuestionsForReview', () => {
@@ -211,40 +123,7 @@ describe('checkYourAnswersUtils', () => {
       expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
     })
 
-    it('should use the placementDates from the application if they exist', () => {
-      const placementApp = placementApplicationFactory.build({
-        document: {
-          'request-a-placement': [
-            {
-              'Dates of placement': [],
-            },
-          ],
-        },
-        placementDates: [
-          { duration: 5, expectedArrival: '2023-08-01' },
-          { duration: 25, expectedArrival: '2024-08-01' },
-        ],
-      })
-      const expected = {
-        card: {
-          title: {
-            text: 'Placement application information',
-          },
-        },
-        rows: [
-          {
-            key: { text: 'Dates of placement' },
-            value: {
-              html: datesMarkup,
-            },
-          },
-        ],
-      }
-
-      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
-    })
-
-    it('should responses from the document if placementDates dont exist', () => {
+    it('should show date responses from the document', () => {
       const placementApp = placementApplicationFactory.build({
         placementDates: undefined,
         document: {
@@ -253,10 +132,12 @@ describe('checkYourAnswersUtils', () => {
               'Dates of placement': [
                 {
                   'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2023, 7, 1)),
+                  'Is the date flexible?': 'Yes',
                   'How long should the Approved Premises placement last?': '5 days',
                 },
                 {
                   'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2024, 7, 1)),
+                  'Is the date flexible?': 'No',
                   'How long should the Approved Premises placement last?': '3 weeks, 4 days',
                 },
               ],

@@ -1,13 +1,9 @@
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 
-export const datesOfPlacementItem = (duration: number, expectedArrivalDate: string) => {
+export const datesOfPlacementItem = (duration: number, expectedArrivalDate: string, isFlexible: boolean) => {
   return {
     'When will the person arrive?': DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'long' }),
-    'How long should the Approved Premises placement last?': DateFormats.formatDuration(
-      {
-        ...daysToWeeksAndDays(duration),
-      },
-      ['weeks', 'days'],
-    ),
+    'Is the date flexible?': isFlexible ? 'Yes' : 'No',
+    'How long should the Approved Premises placement last?': DateFormats.formatDuration(duration),
   }
 }

@@ -18,7 +18,7 @@ import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCa
 import { placementKeyDetails, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
-import { DateFormats, daysToWeeksAndDays, isoDateIsValid } from '../../../../utils/dateUtils'
+import { DateFormats, isoDateIsValid } from '../../../../utils/dateUtils'
 import { CriteriaQuery } from '../../../match/placementRequests/occupancyViewController'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { durationSelectOptions, getClosestDuration } from '../../../../utils/match/occupancy'
@@ -126,7 +126,7 @@ export default class ChangesController {
 
         summary = occupancySummary(capacity.capacity, criteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, criteria)
-        calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
+        calendarHeading = `Showing ${DateFormats.formatDuration(durationDays)} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
       }
 
       return res.render('manage/premises/placements/changes/new', {

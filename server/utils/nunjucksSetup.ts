@@ -34,7 +34,7 @@ import { navigationItems } from './navigationItems'
 
 import { StatusTagOptions } from './statusTag'
 import { ApplicationStatusTag } from './applications/statusTag'
-import { DateFormats, daysToWeeksAndDays, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
+import { DateFormats, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
 import { pagination } from './pagination'
 import { sortHeader } from './sortHeader'
 import { SubmittedDocumentRenderer } from './forms/submittedDocumentRenderer'
@@ -120,7 +120,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('formatDate', (date: string, options: { format: 'short' | 'long' } = { format: 'long' }) =>
     DateFormats.isoDateToUIDate(date, options),
   )
-  njkEnv.addGlobal('formatDuration', (days: number) => DateFormats.formatDuration(daysToWeeksAndDays(days)))
+  njkEnv.addGlobal('formatDuration', (days: number) => DateFormats.formatDuration(days))
   njkEnv.addGlobal('formatDateTime', (date: string) => DateFormats.isoDateTimeToUIDateTime(date))
   njkEnv.addGlobal('dateObjToUIDate', (date: Date) => DateFormats.dateObjtoUIDate(date))
   njkEnv.addGlobal(
