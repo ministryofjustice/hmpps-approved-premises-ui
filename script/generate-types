@@ -7,9 +7,9 @@ set -e
 cd "$(dirname "$0")/.."
 
 # NOTE: if you want to generate types from a specific branch, you can do this by checking out the API branch, and starting it in cp-stack,
-# and then call this script using:  ./script/generate-types http://localhost:8080/v3/api-docs/
+# and then call this script using:  ./script/generate-types http://localhost:8080/v3/api-docs/ForCommunityPaybackUI
 if [ -z "$1" ]; then
-  url="https://community-payback-api-dev.hmpps.service.justice.gov.uk/v3/api-docs"
+  url="https://community-payback-api-dev.hmpps.service.justice.gov.uk/v3/api-docs/ForCommunityPaybackUI"
 else
   url=$1
 fi
