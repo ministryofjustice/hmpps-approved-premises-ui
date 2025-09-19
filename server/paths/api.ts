@@ -2,6 +2,7 @@ import { path } from 'static-path'
 
 const providersPath = path('/providers')
 const projectsPath = path('/projects')
+const referenceDataPath = path('/references')
 
 export default {
   providers: {
@@ -9,5 +10,8 @@ export default {
   },
   projects: {
     sessions: projectsPath.path('allocations'),
+  },
+  referenceData: {
+    projectTypes: referenceDataPath.path('project-types'),
   },
 }
