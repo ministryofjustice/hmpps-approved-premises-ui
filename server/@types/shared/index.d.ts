@@ -22,3 +22,7 @@ export type { ProviderTeamSummariesDto } from './models/ProviderTeamSummariesDto
 export type { ProviderTeamSummaryDto } from './models/ProviderTeamSummaryDto';
 export type { SupervisorSummariesDto } from './models/SupervisorSummariesDto';
 export type { SupervisorSummaryDto } from './models/SupervisorSummaryDto';
+export type { UpdateAppointmentAttendanceDataDto } from './models/UpdateAppointmentAttendanceDataDto';
+export type { UpdateAppointmentEnforcementDto } from './models/UpdateAppointmentEnforcementDto';
+export type { UpdateAppointmentOutcomeDto } from './models/UpdateAppointmentOutcomeDto';
+export type { UpdateAppointmentOutcomesDto } from './models/UpdateAppointmentOutcomesDto';
