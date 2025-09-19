@@ -40,5 +40,24 @@ describe('ReferenceDataClient', () => {
 
       expect(response).toEqual(projectTypes)
     })
+
+    it('should make a GET request to the enforment-actions path using user token and return the response body', async () => {
+      const enforcementActions = {
+        enforcementActions: [
+          {
+            id: 1001,
+            name: 'Cleaning',
+          },
+        ],
+      }
+      nock(config.apis.communityPaybackApi.url)
+        .get(path.referenceData.enforcementActions.pattern)
+        .matchHeader('authorization', 'Bearer test-system-token')
+        .reply(200, enforcementActions)
+
+      const response = await referenceDataClient.getEnforcementActions('some-username')
+
+      expect(response).toEqual(enforcementActions)
+    })
   })
 })

@@ -3,7 +3,7 @@ import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients
 import config from '../config'
 import logger from '../../logger'
 import paths from '../paths/api'
-import { ProjectTypesDto } from '../@types/shared'
+import { EnforcementActionsDto, ProjectTypesDto } from '../@types/shared'
 
 export default class ReferenceDataClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient) {
@@ -12,6 +12,11 @@ export default class ReferenceDataClient extends RestClient {
 
   getProjectTypes(username: string): Promise<ProjectTypesDto> {
     const path = paths.referenceData.projectTypes.pattern
+    return this.get({ path }, asSystem(username))
+  }
+
+  getEnforcementActions(username: string): Promise<EnforcementActionsDto> {
+    const path = paths.referenceData.enforcementActions.pattern
     return this.get({ path }, asSystem(username))
   }
 }
