@@ -59,5 +59,24 @@ describe('ReferenceDataClient', () => {
 
       expect(response).toEqual(enforcementActions)
     })
+
+    it('should make a GET request to the contact-outcomes path using user token and return the response body', async () => {
+      const contactOutcomes = {
+        contactOutcomes: [
+          {
+            id: 1001,
+            name: 'Cleaning',
+          },
+        ],
+      }
+      nock(config.apis.communityPaybackApi.url)
+        .get(path.referenceData.contactOutcomes.pattern)
+        .matchHeader('authorization', 'Bearer test-system-token')
+        .reply(200, contactOutcomes)
+
+      const response = await referenceDataClient.getContactOutcomes('some-username')
+
+      expect(response).toEqual(contactOutcomes)
+    })
   })
 })
