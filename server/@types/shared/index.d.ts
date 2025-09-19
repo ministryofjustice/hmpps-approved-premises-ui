@@ -7,6 +7,8 @@ export type { AppointmentDto } from './models/AppointmentDto';
 export type { AppointmentsDto } from './models/AppointmentsDto';
 export type { ContactOutcomeDto } from './models/ContactOutcomeDto';
 export type { ContactOutcomesDto } from './models/ContactOutcomesDto';
+export type { EnforcementActionDto } from './models/EnforcementActionDto';
+export type { EnforcementActionsDto } from './models/EnforcementActionsDto';
 export type { ErrorResponse } from './models/ErrorResponse';
 export type { OffenderDto } from './models/OffenderDto';
 export type { OffenderFullDto } from './models/OffenderFullDto';
