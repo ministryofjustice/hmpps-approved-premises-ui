@@ -6,10 +6,14 @@ export type ContactOutcomeDto = {
     /**
      * Contact outcome identifier
      */
-    id: number;
+    id: string;
     /**
      * Contact outcome name
      */
     name: string;
+    /**
+     * Contact outcome code
+     */
+    code: string;
 };
 
