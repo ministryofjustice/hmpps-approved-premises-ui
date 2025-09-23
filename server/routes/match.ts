@@ -18,6 +18,7 @@ export default function routes(controllers: Controllers, router: Router, service
     placementRequestBookingsController,
     spaceBookingsController,
     occupancyViewController,
+    newPlacementController,
   } = controllers
 
   get(paths.placementRequests.show.pattern, placementRequestController.show(), { auditEvent: 'SHOW_PLACEMENT_REQUEST' })
@@ -34,6 +35,11 @@ export default function routes(controllers: Controllers, router: Router, service
       allowedPermissions: ['cas1_space_booking_create'],
     },
   )
+
+  get(paths.v2Match.placementRequests.newPlacement.new.pattern, newPlacementController.new(), {
+    auditEvent: 'NEW_NEW_PLACEMENT',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
 
   get(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
     auditEvent: 'SPACE_SEARCH',
