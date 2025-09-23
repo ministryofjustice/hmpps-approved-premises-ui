@@ -61,4 +61,24 @@ describe('DateFormats', () => {
       expect(() => DateFormats.isoToDateObj(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
     })
   })
+
+  describe('stripTime', () => {
+    it('strips ":SS" data from a time string', () => {
+      const time = '23:12:12'
+
+      expect(DateFormats.stripTime(time)).toEqual('23:12')
+    })
+
+    it('returns the same if no seconds data', () => {
+      const time = '23:12'
+
+      expect(DateFormats.stripTime(time)).toEqual('23:12')
+    })
+
+    const invalidTimes = ['23:12;00', '23:12trr', 'someText', 'some:text', 'tr:12:13', 'tr:12:']
+
+    it.each(invalidTimes)('raises an error if the time is not in the right format', time => {
+      expect(() => DateFormats.stripTime(time)).toThrow(new InvalidDateStringError(`Invalid time: ${time}`))
+    })
+  })
 })
