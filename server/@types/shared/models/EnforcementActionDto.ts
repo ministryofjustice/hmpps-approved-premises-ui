@@ -6,10 +6,14 @@ export type EnforcementActionDto = {
     /**
      * Enforcement outcome identifier
      */
-    id: number;
+    id: string;
     /**
      * Enforcement outcome name
      */
     name: string;
+    /**
+     * Enforcement outcome code
+     */
+    code: string;
 };
 

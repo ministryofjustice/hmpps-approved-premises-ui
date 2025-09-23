@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UpdateAppointmentEnforcementDto = {
-    enforcementActionId: number;
+    enforcementActionId: string;
     respondBy: string;
 };
 
