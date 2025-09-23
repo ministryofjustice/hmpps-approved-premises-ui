@@ -22,6 +22,9 @@ export default class ShowPage extends Page {
         placementRequestId: placementRequest.id,
       }),
       'Withdraw placement': applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+      'Create new placement': matchPaths.v2Match.placementRequests.newPlacement.new({
+        placementRequestId: placementRequest.id,
+      }),
     }
 
     if (placementRequest.booking) {
