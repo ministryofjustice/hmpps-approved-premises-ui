@@ -4,7 +4,6 @@ import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
-import { placementLength } from '../match'
 import { adminSummary, apTypeCell, releaseTypeCell } from './adminSummary'
 import paths from '../../paths/apply'
 import cas1RequestedPlacementPeriod from '../../testutils/factories/cas1RequestedPlacementPeriod'
@@ -54,7 +53,7 @@ describe('adminSummary', () => {
         text: 'Length of stay',
       },
       value: {
-        text: placementLength(16),
+        text: DateFormats.formatDuration(16),
       },
     },
     apTypeCell(placementRequest),

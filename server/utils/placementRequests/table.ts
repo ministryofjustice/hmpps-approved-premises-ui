@@ -6,7 +6,7 @@ import {
 } from '@approved-premises/api'
 import { TableCell, TableRow } from '@approved-premises/ui'
 import adminPaths from '../../paths/admin'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
@@ -32,7 +32,7 @@ export const dashboardTableRows = (
   )
 
 export const durationCell = (duration: number): TableCell => {
-  return { text: DateFormats.formatDuration(daysToWeeksAndDays(duration), ['weeks', 'days']) }
+  return { text: DateFormats.formatDuration(duration) }
 }
 
 export const nameCell = (placementRequest: Cas1PlacementRequestSummary): TableCell => {

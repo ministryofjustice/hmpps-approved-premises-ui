@@ -28,12 +28,13 @@ import ReviewApplicationConfirmPage from '../../pages/match/reviewApplicationFor
 import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import { signIn } from '../signIn'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 context('Placement Applications', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as an assessor
+    GIVEN('I am signed in as an assessor')
     signIn('assessor', {
       id: defaultUserId,
     })
@@ -41,7 +42,7 @@ context('Placement Applications', () => {
 
   it('allows me to complete form if the reason for placement is ROTL', () => {
     cy.fixture('rotlPlacementApplicationData.json').then(placementApplicationData => {
-      // Given I have completed an application I am viewing a completed application
+      GIVEN('I have completed an application I am viewing a completed application')
       const completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
         createdByUserId: defaultUserId,
@@ -51,7 +52,7 @@ context('Placement Applications', () => {
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
-      // And there is a placement application in the DB
+      AND('there is a placement application in the DB')
       const placementApplicationId = '123'
       const placementApplication = placementApplicationFactory.build({
         id: placementApplicationId,
@@ -70,22 +71,23 @@ context('Placement Applications', () => {
         requestsForPlacement: [requestForPlacement],
       })
 
-      // Given I am on the readonly application view
+      GIVEN('I am on the readonly application view')
       const showPage = ShowPage.visit(completedApplication)
 
-      // When I click the Request Placement Application tab
+      WHEN('I click the Request Placement Application tab')
       showPage.clickRequestAPlacementTab()
 
-      // Then I should be able to create a placement
+      THEN('I should be able to create a placement')
       showPage.clickCreatePlacementButton()
 
-      // Given I am on the placement application form and start and application
+      GIVEN('I am on the placement application form and start an application')
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplication.id)
 
-      // When I complete the form
+      WHEN('I select ROTL')
       placementReasonPage.completeForm('rotl')
       placementReasonPage.clickSubmit()
 
+      AND('I complete the previous ROTL form')
       const previousRotlPlacementPage = new PreviousRotlPlacement()
       previousRotlPlacementPage.completeForm()
       previousRotlPlacementPage.clickSubmit()
@@ -94,10 +96,48 @@ context('Placement Applications', () => {
       sameApPage.completeForm()
       sameApPage.clickSubmit()
 
+      AND('I add placement dates date')
       const datesOfPlacementPage = new DateOfPlacement()
-      datesOfPlacementPage.completeForm()
+
+      WHEN('I submit the form empty')
       datesOfPlacementPage.clickSaveAndContinue()
 
+      THEN('I should see errors')
+      datesOfPlacementPage.shouldShowErrors()
+
+      WHEN('I populate the form')
+      datesOfPlacementPage.populateBlock(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.populateBlock(1, datesOfPlacementPage.datesOfPlacement[1])
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
+
+      AND('I should be able to add and remove date blocks without affecting the form population')
+      datesOfPlacementPage.addAndRemoveBlock()
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
+
+      WHEN('I add a new block and populate it')
+      datesOfPlacementPage.clickButton('Add another')
+      datesOfPlacementPage.populateBlock(2, datesOfPlacementPage.datesOfPlacement[2])
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
+      datesOfPlacementPage.verifyBlockPopulated(2, datesOfPlacementPage.datesOfPlacement[2])
+
+      AND('I delete the block in the middle')
+      datesOfPlacementPage.checkBlockTitles(3)
+      datesOfPlacementPage.removeBlock(1)
+
+      THEN('The third block should remain populated')
+      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.verifyBlockPopulated(2, datesOfPlacementPage.datesOfPlacement[2])
+
+      AND('the block titles should be fixed')
+      datesOfPlacementPage.checkBlockTitles(2)
+
+      WHEN('I submit the form')
+      datesOfPlacementPage.clickSaveAndContinue()
+
+      THEN('I am on the application updates page')
       const updatesToApplication = new UpdatesToApplication()
       updatesToApplication.completeForm()
       updatesToApplication.clickSubmit()
@@ -106,7 +146,7 @@ context('Placement Applications', () => {
       checkYourAnswersPage.completeForm()
       checkYourAnswersPage.clickSubmit()
 
-      // Then I should be taken to the confirmation page
+      THEN('I should be taken to the confirmation page')
       Page.verifyOnPage(ConfirmationPage)
       cy.task('verifyPlacementApplicationSubmit', placementApplication.id).then(requests => {
         expect(requests).to.have.length(1)
@@ -115,14 +155,14 @@ context('Placement Applications', () => {
 
         const body = JSON.parse(requests[0].body)
 
-        expect(body).to.have.keys('placementDates', 'placementType', 'translatedDocument')
+        expect(body).to.have.keys('requestedPlacementPeriods', 'placementType', 'translatedDocument')
       })
     })
   })
 
   it('allows me to complete form if the reason for placement is an additional placement on an existing application', () => {
     cy.fixture('existingApplicationPlacementApplication.json').then(placementApplicationData => {
-      // Given I have completed an application I am viewing a completed application
+      GIVEN('I have completed an application I am viewing a completed application')
       const completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
         createdByUserId: defaultUserId,
@@ -132,7 +172,7 @@ context('Placement Applications', () => {
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
-      // And there is a placement application in the DB
+      AND('there is a placement application in the DB')
       const placementApplicationId = '123'
       const placementApplication = placementApplicationFactory.build({
         id: placementApplicationId,
@@ -149,19 +189,19 @@ context('Placement Applications', () => {
         requestsForPlacement: [requestForPlacement],
       })
 
-      // Given I am on the readonly application view
+      GIVEN('I am on the readonly application view')
       const showPage = ShowPage.visit(completedApplication)
 
-      // When I click the Request Placement Application tab
+      WHEN('I click the Request Placement Application tab')
       showPage.clickRequestAPlacementTab()
 
-      // Then I should be able to create a placement
+      THEN('I should be able to create a placement')
       showPage.clickCreatePlacementButton()
 
-      // Given I am on the placement application form and start and application
+      GIVEN('I am on the placement application form and start and application')
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
 
-      // When I complete the form
+      WHEN('I complete the form')
       placementReasonPage.completeForm('additional_placement')
       placementReasonPage.clickSubmit()
 
@@ -177,7 +217,7 @@ context('Placement Applications', () => {
       checkYourAnswersPage.completeForm()
       checkYourAnswersPage.clickSubmit()
 
-      // Then I should be taken to the confirmation page
+      THEN('I should be taken to the confirmation page')
       Page.verifyOnPage(ConfirmationPage)
       cy.task('verifyPlacementApplicationSubmit', placementApplication.id).then(requests => {
         expect(requests).to.have.length(1)
@@ -186,14 +226,14 @@ context('Placement Applications', () => {
 
         const body = JSON.parse(requests[0].body)
 
-        expect(body).to.have.keys('placementDates', 'placementType', 'translatedDocument')
+        expect(body).to.have.keys('requestedPlacementPeriods', 'placementType', 'translatedDocument')
       })
     })
   })
 
   it('allows me to complete form if the reason for placement is parole board', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
-      // Given I have completed an application I am viewing a completed application
+      GIVEN('I have completed an application I am viewing a completed application')
       const person = personFactory.build()
       let completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
@@ -211,7 +251,7 @@ context('Placement Applications', () => {
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
-      // And there is a placement application in the DB
+      AND('there is a placement application in the DB')
       const placementApplicationId = '123'
       const placementApplication = placementApplicationFactory.build({
         id: placementApplicationId,
@@ -233,19 +273,19 @@ context('Placement Applications', () => {
         requestsForPlacement: [requestForPlacement],
       })
 
-      // Given I am on the readonly application view
+      GIVEN('I am on the readonly application view')
       const showPage = ShowPage.visit(completedApplication)
 
-      // When I click the Request Placement Application tab
+      WHEN('I click the Request Placement Application tab')
       showPage.clickRequestAPlacementTab()
 
-      // Then I should be able to create a placement
+      THEN('I should be able to create a placement')
       showPage.clickCreatePlacementButton()
 
-      // Given I am on the placement application form and start and application
+      GIVEN('I am on the placement application form and start and application')
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
 
-      // When I complete the form
+      WHEN('I complete the form')
       placementReasonPage.completeForm('release_following_decision')
       placementReasonPage.clickSubmit()
 
@@ -270,7 +310,7 @@ context('Placement Applications', () => {
   })
 
   it('allows me to review an application', () => {
-    // Given there is a placement request task and placement application in the database
+    GIVEN('there is a placement request task and placement application in the database')
     const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
 
     const document = {
@@ -288,26 +328,26 @@ context('Placement Applications', () => {
       sortDirection: null,
     })
 
-    // When I visit the placementRequests dashboard
+    WHEN('I visit the placementRequests dashboard')
     const listPage = ListPage.visit('requests_for_placement')
     listPage.clickRequestsForPlacement()
 
-    // And I click on the first name
+    AND('I click on the first name')
     listPage.clickPersonName(placementApplicationTasks[0].personName)
 
-    // Then I should be taken to the review applications page
+    THEN('I should be taken to the review applications page')
     const page = Page.verifyOnPage(ReviewApplicationPage)
     page.checkPageContents(placementApplication)
 
-    // And when I complete the form
+    AND('when I complete the form')
     page.completeForm()
     page.clickSubmit()
 
-    // Then I should be taken to the decision page
+    THEN('I should be taken to the decision page')
 
     const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
 
-    // And when I complete the form
+    AND('when I complete the form')
 
     cy.task('stubSubmitPlacementApplicationDecision', placementApplication)
 
@@ -315,7 +355,7 @@ context('Placement Applications', () => {
     decisionPage.getTextInputByIdAndEnterDetails('decisionSummary', 'some summary notes')
     decisionPage.clickSubmit()
 
-    // Then I should be taken to the confirm submission page
+    THEN('I should be taken to the confirm submission page')
     cy.task('verifyPlacementApplicationReviewSubmit', placementApplication.id).then(requests => {
       expect(requests).to.have.length(1)
       expect(requests[0].url).to.equal(paths.placementApplications.submitDecision({ id: placementApplication.id }))
@@ -329,7 +369,7 @@ context('Placement Applications', () => {
   })
 
   it('renders with errors if I do not complete the summary of changes in the review', () => {
-    // Given there is a placement request task and placement application in the database
+    GIVEN('there is a placement request task and placement application in the database')
     const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
 
     const document = {
@@ -347,26 +387,26 @@ context('Placement Applications', () => {
       sortDirection: null,
     })
 
-    // When I visit the placementRequests dashboard
+    WHEN('I visit the placementRequests dashboard')
     const listPage = ListPage.visit('requests_for_placement')
 
-    // And I click on the first name
+    AND('I click on the first name')
     listPage.clickPersonName(placementApplicationTasks[0].personName)
 
-    // Then I should be taken to the review applications page
+    THEN('I should be taken to the review applications page')
     const page = Page.verifyOnPage(ReviewApplicationPage)
 
-    // And when I click submit without entering text
+    AND('when I click submit without entering text')
     page.clickSubmit()
 
-    // Then the page should render with errors
+    THEN('the page should render with errors')
     page.shouldShowErrorMessagesForFields(['summaryOfChanges'], {
       summaryOfChanges: 'You must provide a summary of the changes',
     })
   })
 
   it('renders with errors if I do not complete the decision summary in the review', () => {
-    // Given there is a placement request task and placement application in the database
+    GIVEN('there is a placement request task and placement application in the database')
     const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
 
     const document = {
@@ -383,25 +423,25 @@ context('Placement Applications', () => {
       sortDirection: null,
     })
 
-    // When I visit the placementRequests dashboard
+    WHEN('I visit the placementRequests dashboard')
     const listPage = ListPage.visit('requests_for_placement')
 
-    // And I click on the first name
+    AND('I click on the first name')
     listPage.clickPersonName(placementApplicationTasks[0].personName)
 
-    // Then I should be taken to the review applications page
+    THEN('I should be taken to the review applications page')
     const page = Page.verifyOnPage(ReviewApplicationPage)
 
-    // And when I complete the form
+    AND('when I complete the form')
     page.completeForm()
 
-    // Then I should be taken to the decision page
+    THEN('I should be taken to the decision page')
     const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
 
-    // And when I click submit
+    AND('when I click submit')
     decisionPage.clickSubmit()
 
-    // Then the page should render with errors
+    THEN('the page should render with errors')
     decisionPage.shouldShowErrorMessagesForFields(['decision', 'decisionSummary'], {
       decision: 'You must provide a decision',
       decisionSummary: 'You must provide a decision summary',
@@ -409,7 +449,7 @@ context('Placement Applications', () => {
   })
 
   it('does not allow me to create a placement application if I did not create the application', () => {
-    // Given there is an accepted application that I did not create
+    GIVEN('there is an accepted application that I did not create')
     const application = applicationFactory.completed('accepted').build({
       id: '123',
       person: personFactory.build(),
@@ -417,15 +457,15 @@ context('Placement Applications', () => {
     })
     cy.task('stubApplicationGet', { application })
 
-    // When I visit the readonly application view
+    WHEN('I visit the readonly application view')
     const showPage = ShowPage.visit(application)
 
-    // Then I should not be able to click submit
+    THEN('I should not be able to click submit')
     showPage.shouldNotShowCreatePlacementButton()
   })
 
   it('does not allow me to create a placement application if the assessment was rejected', () => {
-    // Given there is an rejected application that I created
+    GIVEN('there is an rejected application that I created')
     const application = applicationFactory.completed('rejected').build({
       id: '123',
       createdByUserId: defaultUserId,
@@ -434,15 +474,15 @@ context('Placement Applications', () => {
     })
     cy.task('stubApplicationGet', { application })
 
-    // When I visit the readonly application view
+    WHEN('I visit the readonly application view')
     const showPage = ShowPage.visit(application)
 
-    // Then I should not be able to click submit
+    THEN('I should not be able to click submit')
     showPage.shouldNotShowCreatePlacementButton()
   })
 
   it('does not allow me to create a placement application if the assessment is not yet assessed', () => {
-    // Given there is an unassesed application that I created
+    GIVEN('there is an unassesed application that I created')
     const application = applicationFactory.build({
       status: 'awaitingAssesment',
       id: '123',
@@ -453,10 +493,10 @@ context('Placement Applications', () => {
     })
     cy.task('stubApplicationGet', { application })
 
-    // When I visit the readonly application view
+    WHEN('I visit the readonly application view')
     const showPage = ShowPage.visit(application)
 
-    // Then I should not be able to click submit
+    THEN('I should not be able to click submit')
     showPage.shouldNotShowCreatePlacementButton()
   })
 })

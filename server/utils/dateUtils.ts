@@ -1,5 +1,4 @@
 import {
-  Duration,
   addBusinessDays as addBusinsessDaysWithoutBankHolidays,
   addDays,
   differenceInBusinessDays as differenceInBusinessDaysDateFns,
@@ -18,16 +17,6 @@ import {
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
 import rawBankHolidays from '../data/bankHolidays/bank-holidays.json'
-
-type DurationWithNumberOrString = {
-  years?: number | string
-  months?: number | string
-  weeks?: number | string
-  days?: number | string
-  hours?: number | string
-  minutes?: number | string
-  seconds?: number | string
-}
 
 const uiDateFormats = {
   short: 'd MMM y',
@@ -234,20 +223,9 @@ export class DateFormats {
     return formatISO(this.isoToDateObj(isoDateTime), { representation: 'time' }).substring(0, 5)
   }
 
-  static formatDuration(
-    duration: DurationWithNumberOrString,
-    durationFormat: Array<'weeks' | 'days'> = ['weeks', 'days'],
-  ): string {
-    const formattedDuration: Duration = {}
-
-    Object.keys(duration).forEach((k: keyof Duration) => {
-      formattedDuration[k] = Number(duration[k])
-    })
-
-    return formatDuration(formattedDuration, {
-      format: durationFormat,
-      delimiter: ', ',
-    })
+  static formatDuration(days: number | string): string {
+    const numDays = Number(days)
+    return formatDuration({ weeks: Math.floor(numDays / 7), days: numDays % 7 }, { delimiter: ', ' })
   }
 
   static timeFromDate(date: Date): string {
@@ -315,11 +293,20 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   return isoDateIsValid(dateString[key])
 }
 
+// TODO: This fn returns true unless all date parts are populated.
+//       Check the logic of using this and switch to dateIsEmpty if valid
 export const dateIsBlank = <K extends string | number>(
   dateInputObj: Partial<ObjectWithDateParts<K>>,
   key: K,
 ): boolean => {
   return !['year' as const, 'month' as const, 'day' as const].every(part => !!dateInputObj[`${key}-${part}`])
+}
+
+export const dateIsEmpty = <K extends string | number>(
+  dateInputObj: Partial<ObjectWithDateParts<K>>,
+  key: K,
+): boolean => {
+  return !['year' as const, 'month' as const, 'day' as const].some(part => !!dateInputObj[`${key}-${part}`])
 }
 
 export const dateIsPast = (date: string | number | Date): boolean =>
@@ -376,6 +363,10 @@ export const daysToWeeksAndDays = (days: string | number): { days: number; weeks
     days: daysAsNumber - durationWeeks * 7,
     weeks: durationWeeks,
   }
+}
+
+export const weeksAndDaysToDays = (weeks:number | string,days:number | string):number => {
+  return Number(weeks || 0)*7 + Number(days || 0)
 }
 
 export const timeIsValid24hrFormat = (time: string): Boolean => {

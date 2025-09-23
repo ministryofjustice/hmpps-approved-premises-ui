@@ -26,7 +26,7 @@ import {
   tableCaptions,
   tableHeader,
 } from '../../../utils/premises/occupancy'
-import { DateFormats, daysToWeeksAndDays, isoDateIsValid } from '../../../utils/dateUtils'
+import { DateFormats, isoDateIsValid } from '../../../utils/dateUtils'
 import { placementDates } from '../../../utils/match'
 import { generateErrorMessages, generateErrorSummary } from '../../../utils/validation'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -67,7 +67,7 @@ export default class ApOccupancyViewController {
           endDate: capacityDates.endDate,
         })
         calendar = occupancyCalendar(capacity.capacity, premisesId)
-        calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDateIso, { format: 'short' })}`
+        calendarHeading = `Showing ${DateFormats.formatDuration(String(durationDays))} from ${DateFormats.isoDateToUIDate(startDateIso, { format: 'short' })}`
       }
 
       return res.render('manage/premises/occupancy/view', {

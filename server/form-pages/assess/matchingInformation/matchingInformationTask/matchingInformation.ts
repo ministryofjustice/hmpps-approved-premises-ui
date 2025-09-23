@@ -6,7 +6,7 @@ import {
   lengthOfStay,
   suggestedStaySummaryListOptions,
 } from '../../../utils/matchingInformationUtils'
-import { DateFormats, daysToWeeksAndDays } from '../../../../utils/dateUtils'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -159,10 +159,7 @@ export default class MatchingInformation implements TasklistPage {
     response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
 
     if (this.body.lengthOfStayAgreed === 'no') {
-      response['Recommended length of stay'] = DateFormats.formatDuration(daysToWeeksAndDays(lengthOfStay(this.body)), [
-        'weeks',
-        'days',
-      ])
+      response['Recommended length of stay'] = DateFormats.formatDuration(lengthOfStay(this.body))
     }
 
     if (this.body.cruInformation) {

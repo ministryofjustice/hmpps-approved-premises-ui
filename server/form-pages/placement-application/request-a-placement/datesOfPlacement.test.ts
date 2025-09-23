@@ -13,15 +13,17 @@ describe('DateOfPlacement', () => {
   const body = {
     datesOfPlacement: [
       {
-        durationDays: '1',
         durationWeeks: '2',
+        durationDays: '1',
+        isFlexible: 'yes',
         'arrivalDate-day': '1',
         'arrivalDate-month': '12',
         'arrivalDate-year': '2023',
       },
       {
-        durationDays: '2',
-        durationWeeks: '3',
+        durationWeeks: '2',
+        durationDays: '3',
+        isFlexible: 'no',
         'arrivalDate-day': '2',
         'arrivalDate-month': '1',
         'arrivalDate-year': '2024',
@@ -47,15 +49,17 @@ describe('DateOfPlacement', () => {
             'arrivalDate-month': '12',
             'arrivalDate-day': '1',
             arrivalDate: '2023-12-01',
+            isFlexible: 'yes',
           },
           {
-            duration: '23',
-            durationDays: '2',
-            durationWeeks: '3',
+            duration: '17',
+            durationDays: '3',
+            durationWeeks: '2',
             'arrivalDate-year': '2024',
             'arrivalDate-month': '1',
             'arrivalDate-day': '2',
             arrivalDate: '2024-01-02',
+            isFlexible: 'no',
           },
         ],
       })
@@ -103,8 +107,9 @@ describe('DateOfPlacement', () => {
     it('should return errors if the first date and duration is blank', () => {
       const page = new DateOfPlacementPage(fromPartial({}), placementApplication)
       expect(page.errors()).toEqual({
-        datesOfPlacement_0_arrivalDate: 'You must enter a date for the placement',
-        datesOfPlacement_0_duration: 'You must enter a duration for the placement',
+        datesOfPlacement_0_arrivalDate: 'Enter an arrival date for the placement',
+        datesOfPlacement_0_duration: 'Enter the duration of the placement',
+        datesOfPlacement_0_isFlexible: 'State if the placement date is flexible',
       })
     })
 
@@ -118,7 +123,7 @@ describe('DateOfPlacement', () => {
         placementApplication,
       )
       expect(page.errors()).toEqual({
-        datesOfPlacement_0_arrivalDate: 'You must state a valid arrival date',
+        datesOfPlacement_0_arrivalDate: 'Enter an arrival date for the placement',
       })
     })
 
@@ -128,7 +133,17 @@ describe('DateOfPlacement', () => {
         placementApplication,
       )
       expect(page.errors()).toEqual({
-        datesOfPlacement_0_duration: 'You must state the duration of the placement',
+        datesOfPlacement_0_duration: 'Enter the duration of the placement',
+      })
+    })
+
+    it('should return an error if the isFlexible radio is blank', () => {
+      const page = new DateOfPlacementPage(
+        fromPartial({ datesOfPlacement: [{ ...body.datesOfPlacement[0], isFlexible: '' }] }),
+        placementApplication,
+      )
+      expect(page.errors()).toEqual({
+        datesOfPlacement_0_isFlexible: 'State if the placement date is flexible',
       })
     })
 
@@ -146,7 +161,7 @@ describe('DateOfPlacement', () => {
         },
         placementApplication,
       )
-      expect(page.errors()).toEqual({ datesOfPlacement_0_arrivalDate: 'You must state a valid arrival date' })
+      expect(page.errors()).toEqual({ datesOfPlacement_0_arrivalDate: 'Enter an arrival date for the placement' })
     })
 
     it('should return errors if the duration is empty', () => {
@@ -156,14 +171,14 @@ describe('DateOfPlacement', () => {
             {
               ...body.datesOfPlacement[0],
               durationDays: '0',
-              durationWeeks: '0',
+              durationWeeks: '',
             },
           ],
         },
         placementApplication,
       )
 
-      expect(page.errors()).toEqual({ datesOfPlacement_0_duration: 'You must state the duration of the placement' })
+      expect(page.errors()).toEqual({ datesOfPlacement_0_duration: 'Enter the duration of the placement' })
     })
   })
 
@@ -179,13 +194,15 @@ describe('DateOfPlacement', () => {
               body.datesOfPlacement[0],
               'arrivalDate',
             ),
+            'Is the date flexible?': 'Yes',
           },
           {
-            'How long should the Approved Premises placement last?': '3 weeks, 2 days',
+            'How long should the Approved Premises placement last?': '2 weeks, 3 days',
             'When will the person arrive?': DateFormats.dateAndTimeInputsToUiDate(
               body.datesOfPlacement[1],
               'arrivalDate',
             ),
+            'Is the date flexible?': 'No',
           },
         ],
       })

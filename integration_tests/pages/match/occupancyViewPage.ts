@@ -1,6 +1,6 @@
 import type { Cas1PlacementRequestDetail, Cas1Premises } from '@approved-premises/api'
 import paths from '../../../server/paths/match'
-import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
+import { DateFormats } from '../../../server/utils/dateUtils'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
 import OccupancyFilterPage from '../shared/occupancyFilterPage'
 
@@ -27,7 +27,7 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
     })
     cy.get('.govuk-heading-l')
       .contains(
-        `View availability for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
+        `View availability for ${DateFormats.formatDuration(durationDays)} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
       )
       .should('exist')
   }

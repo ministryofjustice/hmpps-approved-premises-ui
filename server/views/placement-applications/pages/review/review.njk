@@ -11,50 +11,48 @@
 
 {% block beforeContent %}
     {{ govukBackLink({
-      text: "Back",
-      href: pageProps.backLink
+        text: "Back",
+        href: pageProps.backLink
     }) }}
 {% endblock %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
         <h1 class="govuk-heading-l">
             {{ pageProps.pageHeading }}
-         </h1>
+        </h1>
 
         {{ showErrorSummary(errorSummary) }}
 
         {% if placementApplication.applicationCompletedAt %}
             <p>
-                <a href="{{paths.applications.show({id: placementApplication.applicationId})}}">View application</a> 
-                (Completed on {{formatDateTime(placementApplication.applicationCompletedAt)}})
+                <a href="{{ paths.applications.show({id: placementApplication.applicationId}) }}">View application</a>
+                (Completed on {{ formatDateTime(placementApplication.applicationCompletedAt) }})
             </p>
         {% endif %}
 
         {% if placementApplication.assessmentCompletedAt %}
             <p>
-                <a href="{{paths.assessments.show({id: placementApplication.assessmentId})}}">View assessment</a> 
-                (Completed on {{formatDateTime(placementApplication.assessmentCompletedAt)}})
+                <a href="{{ paths.assessments.show({id: placementApplication.assessmentId}) }}">View assessment</a>
+                (Completed on {{ formatDateTime(placementApplication.assessmentCompletedAt) }})
             </p>
-        {%endif%}
+        {% endif %}
 
-
-        {{ govukSummaryList(PlacementRequestUtils.placementApplicationQuestionsForReview(placementApplication)) }}
+        {{ govukSummaryList(reviewQuestions) }}
 
         <form action="{{ paths.placementApplications.review.update({ id: placementApplication.id }) }}" method="post">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
             {% block questions %}
-           
-            {{ formPageTextarea({
-                fieldName: 'summaryOfChanges',
-                label: {
-                text: "Summarise any significant changes that have happened between the assessment and this placement request",
-                classes: "govuk-label--s"
-                }
-            }, fetchContext()) }}
+
+                {{ formPageTextarea({
+                    fieldName: 'summaryOfChanges',
+                    label: {
+                        text: "Summarise any significant changes that have happened between the assessment and this placement request",
+                        classes: "govuk-label--s"
+                    }
+                }, fetchContext()) }}
 
             {% endblock %}
 
@@ -63,7 +61,6 @@
                 preventDoubleClick: true
             }) }}
         </form>
-    </div>
     </div>
 
 {% endblock %}
