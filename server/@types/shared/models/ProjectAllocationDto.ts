@@ -21,11 +21,11 @@ export type ProjectAllocationDto = {
      */
     date: string;
     /**
-     * Allocation start time
+     * Allocation start local time
      */
     startTime: string;
     /**
-     * Allocation end time
+     * Allocation end local time
      */
     endTime: string;
     /**

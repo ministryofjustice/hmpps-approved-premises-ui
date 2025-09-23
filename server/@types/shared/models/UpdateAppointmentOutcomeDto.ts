@@ -6,7 +6,13 @@ import type { UpdateAppointmentAttendanceDataDto } from './UpdateAppointmentAtte
 import type { UpdateAppointmentEnforcementDto } from './UpdateAppointmentEnforcementDto';
 export type UpdateAppointmentOutcomeDto = {
     projectTypeId: number;
+    /**
+     * The start local time of the appointment
+     */
     startTime: string;
+    /**
+     * The end local time of the appointment
+     */
     endTime: string;
     contactOutcomeId: string;
     supervisorTeamId: number;
