@@ -34,7 +34,7 @@ export default class FindASessionPage extends Page {
   }
 
   shouldShowSearchResults() {
-    cy.get('td').eq(0).should('have.text', '2025-09-07')
+    cy.get('td').eq(0).should('have.text', '7 September 2025')
     cy.get('td').eq(1).should('have.text', 'project-name')
     cy.get('td').eq(2).should('have.text', 'prj')
     cy.get('td').eq(3).should('have.text', '09:00')

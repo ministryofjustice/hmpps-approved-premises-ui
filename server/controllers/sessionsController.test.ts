@@ -5,6 +5,7 @@ import SessionsController from './sessionsController'
 import ProviderService from '../services/providerService'
 import SessionService from '../services/sessionService'
 import { ProjectAllocationsDto } from '../@types/shared'
+import DateFormats from '../utils/dateUtils'
 
 describe('SessionsController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
@@ -70,7 +71,7 @@ describe('SessionsController', () => {
         teamItems: [{ value: 1001, text: 'Team Lincoln' }],
         sessionRows: [
           [
-            { text: allocation.date },
+            { text: DateFormats.isoDateToUIDate(allocation.date, { format: 'medium' }) },
             { text: allocation.projectName },
             { text: allocation.projectCode },
             { text: allocation.startTime },

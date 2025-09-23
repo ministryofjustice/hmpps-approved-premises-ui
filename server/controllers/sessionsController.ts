@@ -2,6 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 import ProviderService from '../services/providerService'
 import { ProjectAllocationsDto } from '../@types/shared'
 import SessionService from '../services/sessionService'
+import DateFormats from '../utils/dateUtils'
 
 export default class SessionsController {
   constructor(
@@ -58,7 +59,7 @@ export default class SessionsController {
   private sessionRows(sessions: ProjectAllocationsDto) {
     return sessions.allocations.map(session => {
       return [
-        { text: session.date },
+        { text: DateFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
         { text: session.projectName },
         { text: session.projectCode },
         { text: session.startTime },
