@@ -37,6 +37,13 @@ export const adminActions = (
       })
     }
 
+    if (hasPermission(user, ['cas1_space_booking_create'])) {
+      matchedActions.push({
+        href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequest.id }),
+        text: 'Create new placement',
+      })
+    }
+
     if (hasPermission(user, ['cas1_booking_withdraw'])) {
       matchedActions.push({
         href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),

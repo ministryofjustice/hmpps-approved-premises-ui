@@ -1,9 +1,19 @@
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { signIn } from '../signIn'
+import ShowPage from '../../pages/admin/placementApplications/showPage'
+import { cas1PlacementRequestDetailFactory } from '../../../server/testutils/factories'
+import Page from '../../pages/page'
+import NewPlacementPage from '../../pages/match/newPlacementPage'
 
 context('New Placement', () => {
+  let placementRequest: Cas1PlacementRequestDetail
+
   beforeEach(() => {
     cy.task('reset')
+
+    placementRequest = cas1PlacementRequestDetailFactory.build()
+    cy.task('stubPlacementRequest', placementRequest)
   })
 
   it('allows me to create a new placement', () => {
@@ -11,8 +21,13 @@ context('New Placement', () => {
     signIn('cru_member')
 
     WHEN('I view a placement request')
+    const placementRequestPage = ShowPage.visit(placementRequest)
+
     AND("I click on the 'Create New Placement' action")
-    THEN('I should see the form to create a new placement')
+    placementRequestPage.clickAction('Create new placement')
+
+    THEN('I should see the page to create a new placement')
+    Page.verifyOnPage(NewPlacementPage)
 
     WHEN('I submit the form with no values')
     THEN('I should see error messages')
