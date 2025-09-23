@@ -8,7 +8,7 @@ export type UpdateAppointmentOutcomeDto = {
     projectTypeId: number;
     startTime: string;
     endTime: string;
-    contactOutcomeId: number;
+    contactOutcomeId: string;
     supervisorTeamId: number;
     supervisorOfficerId: number;
     notes: string;
