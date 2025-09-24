@@ -3,7 +3,6 @@ import {
   ProbationRegion,
   SortDirection,
   ApprovedPremisesUser as User,
-  UserQualification,
   ApprovedPremisesUserRole as UserRole,
   UserSortField,
   type UserSummary,
@@ -11,7 +10,7 @@ import {
 import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
-import { UsersSearchParams } from '../data/userClient'
+import { UsersSearchFilters, UsersSearchParams } from '../data/userClient'
 
 export class DeliusAccountMissingStaffDetailsError extends Error {}
 export class UnsupportedProbationRegionError extends Error {}
@@ -66,16 +65,13 @@ export default class UserService {
 
   async getUsers(
     token: string,
-    areaId: string = '',
-    roles: Array<UserRole> = [],
-    qualifications: Array<UserQualification> = [],
-    nameOrEmail = '',
+    filters: UsersSearchFilters = {},
     page: number = 1,
     sortBy: UserSortField = 'name',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<User>> {
     const client = this.userClientFactory(token)
-    return client.getUsers(areaId, roles, qualifications, nameOrEmail, page, sortBy, sortDirection)
+    return client.getUsers(filters, page, sortBy, sortDirection)
   }
 
   async updateUser(token: string, userId: string, updateUserData: Cas1UpdateUser): Promise<User> {

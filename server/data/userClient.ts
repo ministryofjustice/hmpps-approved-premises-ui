@@ -22,6 +22,13 @@ export type UsersSearchParams = {
   page: number
 }
 
+export type UsersSearchFilters = {
+  cruManagementAreaId?: string
+  roles?: Array<UserRole>
+  qualifications?: Array<UserQualification>
+  nameOrEmail?: string
+}
+
 export default class UserClient {
   restClient: RestClient
 
@@ -59,36 +66,19 @@ export default class UserClient {
   }
 
   async getUsers(
-    cruManagementAreaId: string = '',
-    roles: Array<UserRole> = [],
-    qualifications: Array<UserQualification> = [],
-    nameOrEmail = '',
+    filters: UsersSearchFilters = {},
     page = 1,
     sortBy: UserSortField = 'name',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<User>> {
-    const filters = {} as Record<string, string>
-
-    if (roles.length) {
-      filters.roles = roles.join(',')
-    }
-
-    if (qualifications.length) {
-      filters.qualifications = qualifications.join(',')
-    }
-
-    if (cruManagementAreaId) {
-      filters.cruManagementAreaId = cruManagementAreaId
-    }
-
-    if (nameOrEmail) {
-      filters.nameOrEmail = nameOrEmail
-    }
+    const { nameOrEmail, cruManagementAreaId } = filters
+    const roles = filters.roles ? filters.roles.join(',') : undefined
+    const qualifications = filters.qualifications ? filters.qualifications.join(',') : undefined
 
     return this.restClient.getPaginatedResponse({
       path: paths.users.index({}),
       page: page.toString(),
-      query: { ...filters, sortBy, sortDirection },
+      query: { nameOrEmail, cruManagementAreaId, roles, qualifications, sortBy, sortDirection },
     })
   }
 

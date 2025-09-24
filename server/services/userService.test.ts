@@ -7,7 +7,7 @@ import { ApprovedPremisesUser } from '../@types/shared'
 import ReferenceDataClient from '../data/referenceDataClient'
 import { convertToTitleCase } from '../utils/utils'
 import { userProfileFactory } from '../testutils/factories/user'
-import { UsersSearchParams } from '../data/userClient'
+import { UsersSearchFilters, UsersSearchParams } from '../data/userClient'
 
 jest.mock('../data/userClient')
 jest.mock('../data/referenceDataClient.ts')
@@ -160,28 +160,18 @@ describe('User service', () => {
 
       userClient.getUsers.mockResolvedValue(response)
 
-      const result = await userService.getUsers(
-        token,
-        'test',
-        ['applicant', 'assessor'],
-        ['pipe'],
-        'Foo Smith',
-        1,
-        'name',
-        'asc',
-      )
+      const filters: UsersSearchFilters = {
+        cruManagementAreaId: 'test',
+        roles: ['applicant', 'assessor'],
+        qualifications: ['pipe'],
+        nameOrEmail: 'Foo Smith',
+      }
+
+      const result = await userService.getUsers(token, filters, 1, 'name', 'asc')
 
       expect(result).toEqual(response)
 
-      expect(userClient.getUsers).toHaveBeenCalledWith(
-        'test',
-        ['applicant', 'assessor'],
-        ['pipe'],
-        'Foo Smith',
-        1,
-        'name',
-        'asc',
-      )
+      expect(userClient.getUsers).toHaveBeenCalledWith(filters, 1, 'name', 'asc')
     })
   })
 

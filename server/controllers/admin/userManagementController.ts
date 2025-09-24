@@ -28,10 +28,12 @@ export default class UserController {
 
       const usersResponse = await this.userService.getUsers(
         req.user.token,
-        selectedArea,
-        [role],
-        [qualification],
-        nameOrEmail,
+        {
+          cruManagementAreaId: selectedArea,
+          roles: role ? [role] : undefined,
+          qualifications: qualification ? [qualification] : undefined,
+          nameOrEmail,
+        },
         pageNumber,
         sortBy,
         sortDirection,

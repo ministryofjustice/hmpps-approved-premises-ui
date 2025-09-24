@@ -58,10 +58,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        [],
-        [],
-        undefined,
+        {},
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -112,10 +109,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        '1234',
-        [],
-        [],
-        undefined,
+        { cruManagementAreaId: '1234' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -146,10 +140,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        ['assessor'],
-        [],
-        undefined,
+        { roles: ['assessor'] },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -167,8 +158,6 @@ describe('UserManagementController', () => {
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
         role: 'assessor',
-        qualification: undefined,
-        area: undefined,
       })
     })
 
@@ -180,10 +169,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        [],
-        ['esap'],
-        undefined,
+        { qualifications: ['esap'] },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -200,10 +186,7 @@ describe('UserManagementController', () => {
         selectedQualification: 'esap',
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
-        role: undefined,
         qualification: 'esap',
-        nameOrEmail: undefined,
-        area: undefined,
       })
     })
 
@@ -215,10 +198,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        [],
-        [],
-        'Harry',
+        { nameOrEmail: 'Harry' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -235,10 +215,7 @@ describe('UserManagementController', () => {
         nameOrEmail: 'Harry',
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
-        role: undefined,
-        qualification: undefined,
         nameOrEmail: 'Harry',
-        area: undefined,
       })
     })
 
@@ -250,10 +227,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        ['assessor'],
-        ['esap'],
-        'David',
+        { roles: ['assessor'], qualifications: ['esap'], nameOrEmail: 'David' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -275,7 +249,6 @@ describe('UserManagementController', () => {
         role: 'assessor',
         qualification: 'esap',
         nameOrEmail: 'David',
-        area: undefined,
       })
     })
   })
