@@ -84,6 +84,37 @@ describe('SessionsController', () => {
       })
     })
 
+    it('should return teamItems with selected team', async () => {
+      const sessions: ProjectAllocationsDto = {
+        allocations: [],
+      }
+
+      sessionService.getSessions.mockResolvedValue(sessions)
+
+      const firstTeam = { id: 1, name: 'Team Lincoln' }
+      const secondTeam = { id: 2, name: 'Team Grantham' }
+
+      const teams = {
+        providers: [firstTeam, secondTeam],
+      }
+
+      providerService.getTeams.mockResolvedValue(teams)
+
+      const response = createMock<Response>()
+      const requestHandler = sessionsController.search()
+      const requestWithTeam = createMock<Request>({})
+      requestWithTeam.query.team = '2'
+      await requestHandler(requestWithTeam, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+        teamItems: [
+          { value: firstTeam.id, text: firstTeam.name, selected: false },
+          { value: secondTeam.id, text: secondTeam.name, selected: true },
+        ],
+        sessionRows: [],
+      })
+    })
+
     it('should render empty results if error code returned from client', async () => {
       const requestHandler = sessionsController.search()
       const err = { data: {}, status: 404 }

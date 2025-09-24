@@ -29,7 +29,7 @@ export default class SessionsController {
 
       try {
         const providerId = '1000'
-        const teamItems = await this.getTeams(providerId, res)
+        const teamItems = await this.getTeams(providerId, res, teamId)
 
         const sessions = await this.sessionService.getSessions({
           username: res.locals.user.username,
@@ -46,13 +46,18 @@ export default class SessionsController {
     }
   }
 
-  private async getTeams(providerId: string, res: Response) {
+  private async getTeams(providerId: string, res: Response, teamId: number | undefined = undefined) {
     const teams = await this.providerService.getTeams(providerId, res.locals.user.username)
 
-    const teamItems = teams.providers.map(team => ({
-      value: team.id,
-      text: team.name,
-    }))
+    const teamItems = teams.providers.map(team => {
+      const selected = teamId ? team.id === teamId : undefined
+
+      return {
+        value: team.id,
+        text: team.name,
+        selected,
+      }
+    })
     return teamItems
   }
 
