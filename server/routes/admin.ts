@@ -143,7 +143,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
     allowedPermissions: ['cas1_user_management'],
   })
-  put(paths.admin.userManagement.update.pattern, userManagementController.update(), {
+  put(paths.admin.userManagement.edit.pattern, userManagementController.update(), {
     auditEvent: 'ADMIN_UPDATE_USER_PERMISSIONS_SUCCESS',
     allowedPermissions: ['cas1_user_management'],
   })

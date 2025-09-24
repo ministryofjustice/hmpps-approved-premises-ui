@@ -32,7 +32,7 @@
 
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-            <form action="{{ paths.admin.userManagement.update({id: updateUser.id}) }}?_method=PUT" method="post">
+            <form action="{{ paths.admin.userManagement.edit({id: updateUser.id}) }}?_method=PUT" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
                 {{ govukSummaryList({
