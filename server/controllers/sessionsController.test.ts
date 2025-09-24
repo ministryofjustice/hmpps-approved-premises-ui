@@ -3,6 +3,8 @@ import type { NextFunction, Request, Response } from 'express'
 
 import SessionsController from './sessionsController'
 import ProviderService from '../services/providerService'
+import SessionService from '../services/sessionService'
+import { ProjectAllocationsDto } from '../@types/shared'
 
 describe('SessionsController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
@@ -10,9 +12,10 @@ describe('SessionsController', () => {
 
   let sessionsController: SessionsController
   const providerService = createMock<ProviderService>()
+  const sessionService = createMock<SessionService>()
 
   beforeEach(() => {
-    sessionsController = new SessionsController(providerService)
+    sessionsController = new SessionsController(providerService, sessionService)
   })
 
   describe('show', () => {
@@ -34,7 +37,66 @@ describe('SessionsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('sessions/show', {
         teamItems: [{ value: 1001, text: 'Team Lincoln' }],
-        sessions: [],
+      })
+    })
+  })
+
+  describe('search', () => {
+    it('should render the dashboard page with search results', async () => {
+      const allocation = {
+        id: 1001,
+        projectId: 3,
+        date: '2025-09-07',
+        projectName: 'project-name',
+        projectCode: 'prj',
+        startTime: '09:00',
+        endTime: '17:00',
+        numberOfOffendersAllocated: 5,
+        numberOfOffendersWithOutcomes: 3,
+        numberOfOffendersWithEA: 1,
+      }
+
+      const sessions: ProjectAllocationsDto = {
+        allocations: [allocation],
+      }
+
+      const response = createMock<Response>()
+      sessionService.getSessions.mockResolvedValue(sessions)
+
+      const requestHandler = sessionsController.search()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+        teamItems: [{ value: 1001, text: 'Team Lincoln' }],
+        sessionRows: [
+          [
+            { text: allocation.date },
+            { text: allocation.projectName },
+            { text: allocation.projectCode },
+            { text: allocation.startTime },
+            { text: allocation.endTime },
+            { text: allocation.numberOfOffendersAllocated },
+            { text: allocation.numberOfOffendersWithOutcomes },
+            { text: allocation.numberOfOffendersWithEA },
+          ],
+        ],
+      })
+    })
+
+    it('should render empty results if error code returned from client', async () => {
+      const requestHandler = sessionsController.search()
+      const err = { data: {}, status: 404 }
+
+      sessionService.getSessions.mockImplementation(() => {
+        throw err
+      })
+
+      const response = createMock<Response>()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+        teamItems: [],
+        sessionRows: [],
       })
     })
   })

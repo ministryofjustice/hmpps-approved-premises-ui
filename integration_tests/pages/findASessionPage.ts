@@ -19,4 +19,28 @@ export default class FindASessionPage extends Page {
     cy.get('legend').contains('From')
     cy.get('legend').contains('To')
   }
+
+  completeSearchForm() {
+    cy.get('#startDate-day').type('18')
+    cy.get('#startDate-month').type('09')
+    cy.get('#startDate-year').type('2025')
+    cy.get('#endDate-day').type('20')
+    cy.get('#endDate-month').type('09')
+    cy.get('#endDate-year').type('2025')
+  }
+
+  submitForm() {
+    cy.get('button').click()
+  }
+
+  shouldShowSearchResults() {
+    cy.get('td').eq(0).should('have.text', '2025-09-07')
+    cy.get('td').eq(1).should('have.text', 'project-name')
+    cy.get('td').eq(2).should('have.text', 'prj')
+    cy.get('td').eq(3).should('have.text', '09:00')
+    cy.get('td').eq(4).should('have.text', '17:00')
+    cy.get('td').eq(5).should('have.text', '5')
+    cy.get('td').eq(6).should('have.text', '3')
+    cy.get('td').eq(7).should('have.text', '1')
+  }
 }

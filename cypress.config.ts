@@ -4,6 +4,7 @@ import auth from './integration_tests/mockApis/auth'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import exampleApi from './integration_tests/mockApis/exampleApi'
 import providers from './integration_tests/mockApis/providers'
+import sessions from './integration_tests/mockApis/sessions'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -23,6 +24,7 @@ export default defineConfig({
         ...tokenVerification,
         ...exampleApi,
         ...providers,
+        ...sessions,
       })
     },
     baseUrl: 'http://localhost:3007',
