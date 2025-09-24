@@ -147,10 +147,6 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'ADMIN_UPDATE_USER_PERMISSIONS_SUCCESS',
     allowedPermissions: ['cas1_user_management'],
   })
-  post(paths.admin.userManagement.search.pattern, userManagementController.search(), {
-    auditEvent: 'ADMIN_SEARCH_USERS',
-    allowedPermissions: ['cas1_user_management'],
-  })
 
   return router
 }

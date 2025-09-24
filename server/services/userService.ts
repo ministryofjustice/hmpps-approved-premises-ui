@@ -69,12 +69,13 @@ export default class UserService {
     areaId: string = '',
     roles: Array<UserRole> = [],
     qualifications: Array<UserQualification> = [],
+    nameOrEmail = '',
     page: number = 1,
     sortBy: UserSortField = 'name',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<User>> {
     const client = this.userClientFactory(token)
-    return client.getUsers(areaId, roles, qualifications, page, sortBy, sortDirection)
+    return client.getUsers(areaId, roles, qualifications, nameOrEmail, page, sortBy, sortDirection)
   }
 
   async updateUser(token: string, userId: string, updateUserData: Cas1UpdateUser): Promise<User> {

@@ -116,6 +116,7 @@ const stubUserSummaryList = (args: { users: Array<UserSummary>; roles: Array<Use
 
 const stubUsers = (args: {
   users: Array<User>
+  nameOrEmail?: string
   roles?: Array<UserRole>
   qualifications?: Array<UserQualification>
   apAreaId: string
@@ -134,6 +135,12 @@ const stubUsers = (args: {
       equalTo: args.sortDirection || 'asc',
     },
   } as Record<string, unknown>
+
+  if (args.nameOrEmail) {
+    queryParameters.nameOrEmail = {
+      equalTo: args.nameOrEmail,
+    }
+  }
 
   if (args.roles) {
     queryParameters.roles = {

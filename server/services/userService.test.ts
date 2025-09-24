@@ -153,18 +153,35 @@ describe('User service', () => {
   })
 
   describe('getUsers', () => {
-    it('returns users by role and qualification', async () => {
+    it('returns users by role, qualification and name or email', async () => {
       const response = paginatedResponseFactory.build({
         data: userFactory.buildList(4),
       }) as PaginatedResponse<ApprovedPremisesUser>
 
       userClient.getUsers.mockResolvedValue(response)
 
-      const result = await userService.getUsers(token, 'test', ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
+      const result = await userService.getUsers(
+        token,
+        'test',
+        ['applicant', 'assessor'],
+        ['pipe'],
+        'Foo Smith',
+        1,
+        'name',
+        'asc',
+      )
 
       expect(result).toEqual(response)
 
-      expect(userClient.getUsers).toHaveBeenCalledWith('test', ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
+      expect(userClient.getUsers).toHaveBeenCalledWith(
+        'test',
+        ['applicant', 'assessor'],
+        ['pipe'],
+        'Foo Smith',
+        1,
+        'name',
+        'asc',
+      )
     })
   })
 

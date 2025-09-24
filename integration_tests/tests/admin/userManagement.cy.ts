@@ -94,27 +94,6 @@ context('User management', () => {
     showPage.shouldHaveCriteriaSelected(updatedRoles.roles as unknown as Array<string>)
   })
 
-  it('allows searching for users', () => {
-    const usersForResults = userFactory.buildList(10)
-    const initialUsers = userFactory.buildList(10)
-    cy.task('stubUsers', { users: initialUsers })
-    cy.task('stubCruManagementAreaReferenceData')
-
-    // When I visit the list page
-    const page = ListPage.visit()
-
-    // Then I should see the users and their details
-    page.shouldShowUsers(initialUsers)
-
-    // When I search for a user
-    const searchTerm = 'search term'
-    cy.task('stubUserSearch', { results: usersForResults, searchTerm })
-    page.search(searchTerm)
-
-    // Then the page should show the results
-    page.shouldShowUsers(usersForResults)
-  })
-
   it('enables adding a user from Delius', () => {
     const users = userFactory.buildList(10)
     cy.task('stubCruManagementAreaReferenceData')
@@ -287,7 +266,7 @@ context('User management', () => {
     })
   })
 
-  it('allows filter for users', () => {
+  it('allows filtering users', () => {
     const usersForResultsPage1 = userFactory.buildList(1)
     const usersForResultsPage2 = userFactory.buildList(1)
     const cruManagementAreas = cruManagementAreaFactory.buildList(5)
@@ -305,17 +284,20 @@ context('User management', () => {
     // When I search for a user
     cy.task('stubUsers', {
       users: usersForResultsPage1,
+      nameOrEmail: 'Foo',
       roles: ['assessor'] as Array<ApprovedPremisesUserRole>,
       qualifications: ['lao'] as Array<UserQualification>,
       cruManagementAreaId: cruManagementAreas[2].id,
     })
     cy.task('stubUsers', {
       users: usersForResultsPage2,
+      nameOrEmail: 'Foo',
       roles: ['assessor'] as Array<ApprovedPremisesUserRole>,
       qualifications: ['lao'] as Array<UserQualification>,
       cruManagementAreaId: cruManagementAreas[2].id,
       page: '2',
     })
+    page.completeTextInput('nameOrEmail', 'Foo')
     page.searchBy('role', 'assessor')
     page.searchBy('area', cruManagementAreas[2].id)
     page.searchBy('qualification', 'lao')

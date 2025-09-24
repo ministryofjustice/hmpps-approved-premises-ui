@@ -62,6 +62,7 @@ export default class UserClient {
     cruManagementAreaId: string = '',
     roles: Array<UserRole> = [],
     qualifications: Array<UserQualification> = [],
+    nameOrEmail = '',
     page = 1,
     sortBy: UserSortField = 'name',
     sortDirection: SortDirection = 'asc',
@@ -78,6 +79,10 @@ export default class UserClient {
 
     if (cruManagementAreaId) {
       filters.cruManagementAreaId = cruManagementAreaId
+    }
+
+    if (nameOrEmail) {
+      filters.nameOrEmail = nameOrEmail
     }
 
     return this.restClient.getPaginatedResponse({

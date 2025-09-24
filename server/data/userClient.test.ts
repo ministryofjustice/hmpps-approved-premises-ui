@@ -243,7 +243,7 @@ describeCas1NamespaceClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', [], [], 2)
+      const output = await userClient.getUsers('', [], [], '', 2)
 
       expect(output).toEqual({
         data: users,
@@ -281,7 +281,7 @@ describeCas1NamespaceClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', [], [], 1, 'name', 'asc')
+      const output = await userClient.getUsers('', [], [], '', 1, 'name', 'asc')
 
       expect(output).toEqual({
         data: users,
@@ -400,6 +400,47 @@ describeCas1NamespaceClient('UserClient', provider => {
       })
 
       const output = await userClient.getUsers('', ['assessor', 'appeals_manager'], ['pipe', 'emergency'])
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should query by qualifications, roles and name or email', async () => {
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users with roles, qualifications and name',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            roles: 'assessor',
+            qualifications: 'pipe',
+            nameOrEmail: 'John',
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsers('', ['assessor'], ['pipe'], 'John')
 
       expect(output).toEqual({
         data: users,
