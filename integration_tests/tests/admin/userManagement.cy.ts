@@ -8,17 +8,18 @@ import SearchDeliusPage from '../../pages/admin/userManagement/searchDeliusPage'
 import ShowPage from '../../pages/admin/userManagement/showPage'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 context('User management', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as a User manager
+    GIVEN('I am signed in as a User manager')
     signIn('user_manager')
   })
 
   it('allows the user to view and update users', () => {
-    // Given there are users in the DB
+    GIVEN('there are users in the DB')
     const users = userFactory.buildList(10, { roles: ['assessor'], cruManagementAreaOverride: undefined })
     const user = users[0]
     const cruManagementAreas = cruManagementAreaFactory.buildList(5)
@@ -26,23 +27,23 @@ context('User management', () => {
     cy.task('stubUsers', { users })
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
 
-    // When I visit the list page
+    WHEN('I visit the list page')
     const listPage = ListPage.visit()
 
-    // Then I should see the users and their details
+    THEN('I should see the users and their details')
     listPage.shouldShowUsers(users)
 
-    // Given I want to manage a user's permissions
-    // When I click on a user's name
+    GIVEN("I want to manage a user's permissions")
+    WHEN("I click on a user's name")
     listPage.clickUser(user.name)
 
-    // Then I am taken to the user's permissions page
+    THEN("I am taken to the user's permissions page")
     const showPage = Page.verifyOnPage(ShowPage)
 
     showPage.checkForBackButton(paths.admin.userManagement.index({}))
     showPage.shouldShowUserDetails(user)
 
-    // When I update the user's CRU management area, roles and qualifications
+    WHEN("I update the user's CRU management area, roles and qualifications")
     const updatedCruManagementArea = cruManagementAreas[1]
     const updatedRoles = {
       roles: ['cru_member', 'report_viewer'] as const,
@@ -71,7 +72,7 @@ context('User management', () => {
     cy.task('stubFindUser', { user: updatedUser, id: user.id })
     showPage.clickSubmit()
 
-    // Then the user is updated in the DB
+    THEN('the user is updated in the DB')
     cy.task('verifyUserUpdate', user.id).then(requests => {
       expect(requests).to.have.length(1)
 
@@ -84,10 +85,10 @@ context('User management', () => {
       })
     })
 
-    // And I should see a message confirming the details have been updated
+    AND('I should see a message confirming the details have been updated')
     showPage.shouldShowBanner('User updated')
 
-    // And I should see updated user roles
+    AND('I should see updated user roles')
     const revisitedListPage = ListPage.visit()
     revisitedListPage.shouldShowUsers(users)
     revisitedListPage.clickUser(user.name)
@@ -98,41 +99,41 @@ context('User management', () => {
     const users = userFactory.buildList(10)
     cy.task('stubCruManagementAreaReferenceData')
     cy.task('stubUsers', { users })
-    // Given I am on the list page
+    GIVEN('I am on the list page')
     const listPage = ListPage.visit()
 
-    // When I click the add user button
+    WHEN('I click the add user button')
     listPage.clickAddUser()
 
-    // Then I am taken to the add user page
+    THEN('I am taken to the add user page')
     const searchDeliusPage = Page.verifyOnPage(SearchDeliusPage)
     searchDeliusPage.checkForBackButton(paths.admin.userManagement.index({}))
 
-    // When I search for a username that doesn't exist
+    WHEN("I search for a username that doesn't exist")
     const notFoundSearchTerm = 'user not in delius'
     cy.task('stubNotFoundDeliusUserSearch', { searchTerm: notFoundSearchTerm })
     searchDeliusPage.searchForUser(notFoundSearchTerm)
 
-    // Then I should see an error
+    THEN('I should see an error')
     searchDeliusPage.shouldShowErrorMessagesForFields(['username'], {
       username: 'User not found. Enter the NDelius username as appears on NDelius',
     })
 
-    // When I search for a user
+    WHEN('I search for a user')
     const newUser = userFactory.build()
     cy.task('stubDeliusUserSearch', { result: newUser, searchTerm: newUser.deliusUsername })
     searchDeliusPage.searchForUser(newUser.deliusUsername)
 
-    // Then I should be taken to the confirm details of the new user page
+    THEN('I should be taken to the confirm details of the new user page')
     const confirmationPage = Page.verifyOnPage(ConfirmUserDetailsPage)
     confirmationPage.checkForBackButton(paths.admin.userManagement.new({}))
     confirmationPage.shouldShowUserDetails(newUser)
 
-    // When I click 'continue'
+    WHEN(" click 'continue'")
     cy.task('stubFindUser', { user: newUser, id: newUser.id })
     confirmationPage.clickContinue()
 
-    // Then I should be taken to the user management dashboard
+    THEN('I should be taken to the user management dashboard')
     Page.verifyOnPage(ShowPage)
   })
 
@@ -143,24 +144,24 @@ context('User management', () => {
     cy.task('stubFindUser', { user: userToDelete, id: userToDelete.id })
     cy.task('stubCruManagementAreaReferenceData')
 
-    // Given I am on a user's permissions page
+    GIVEN("I am on a user's permissions page")
     const permissionsPage = ShowPage.visit(userToDelete.id)
 
-    // When I click the delete user button
+    WHEN('I click the delete user button')
     permissionsPage.clickRemoveAccess()
 
-    // Then I should be taken to the confirmation screen
+    THEN('I should be taken to the confirmation screen')
     const confirmationPage = Page.verifyOnPage(ConfirmDeletionPage)
     confirmationPage.checkForBackButton(paths.admin.userManagement.edit({ id: userToDelete.id }))
 
-    // When I click 'Remove access'
+    WHEN(" click 'Remove access'")
     cy.task('stubUserDelete', { id: userToDelete.id })
     confirmationPage.clickSubmit()
 
-    // Then I should be redirected to the user management dashboard
+    THEN('I should be redirected to the user management dashboard')
     const listPage = Page.verifyOnPage(ListPage)
 
-    // And I should see a message confirming the user has been deleted
+    AND('I should see a message confirming the user has been deleted')
     listPage.shouldShowBanner('User deleted')
   })
 
@@ -183,32 +184,32 @@ context('User management', () => {
       page: '9',
     })
 
-    // When I visit the tasks dashboard
+    WHEN('I visit the tasks dashboard')
     const listPage = ListPage.visit()
 
-    // Then I should see a list of placement requests
+    THEN('I should see a list of placement requests')
     listPage.shouldShowUsers(usersPage1)
 
-    // When I click next
+    WHEN('I click next')
     listPage.clickNext()
 
-    // Then the API should have received a request for the next page
+    THEN('the API should have received a request for the next page')
     cy.task('verifyUsersRequest', { page: '2' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // And the second page of users should be shown
+    AND('the second page of users should be shown')
     listPage.shouldShowUsers(usersPage2)
 
-    // When I click on a page number
+    WHEN('I click on a page number')
     listPage.clickPageNumber('9')
 
-    // Then the API should have received a request for the next page
+    THEN('the API should have received a request for the next page')
     cy.task('verifyUsersRequest', { page: '9' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // And the users for that page number should be shown
+    AND('the users for that page number should be shown')
     listPage.shouldShowUsers(usersPage9)
   })
 
@@ -231,19 +232,19 @@ context('User management', () => {
     })
     cy.task('stubCruManagementAreaReferenceData')
 
-    // When I visit the tasks dashboard
+    WHEN('I visit the tasks dashboard')
     const listPage = ListPage.visit()
 
-    // Then I should see a list of placement requests
+    THEN('I should see a list of placement requests')
     listPage.shouldShowUsers(users)
 
-    // When I sort by expected arrival in ascending order
+    WHEN('I sort by expected arrival in ascending order')
     listPage.clickSortBy('name')
 
-    // Then the dashboard should be sorted by expected arrival
+    THEN('the dashboard should be sorted by expected arrival')
     listPage.shouldBeSortedByField('name', 'ascending')
 
-    // And the API should have received a request for the correct sort order
+    AND('the API should have received a request for the correct sort order')
     cy.task('verifyUsersRequest', {
       sortBy: 'name',
       sortDirection: 'asc',
@@ -251,13 +252,13 @@ context('User management', () => {
       expect(requests).to.have.length.greaterThan(0)
     })
 
-    // When I sort by expected arrival in descending order
+    WHEN('I sort by expected arrival in descending order')
     listPage.clickSortBy('name')
 
-    // Then the dashboard should be sorted by expected arrival in descending order
+    THEN('the dashboard should be sorted by expected arrival in descending order')
     listPage.shouldBeSortedByField('name', 'descending')
 
-    // And the API should have received a request for the correct sort order
+    AND('the API should have received a request for the correct sort order')
     cy.task('verifyUsersRequest', {
       sortBy: 'name',
       sortDirection: 'desc',
@@ -275,13 +276,13 @@ context('User management', () => {
     cy.task('stubUsers', { users: initialUsers })
     cy.task('stubCruManagementAreaReferenceData', { cruManagementAreas })
 
-    // When I visit the list page
+    WHEN('I visit the list page')
     const page = ListPage.visit()
 
-    // Then I should see the users and their details
+    THEN('I should see the users and their details')
     page.shouldShowUsers(initialUsers)
 
-    // When I search for a user
+    WHEN('I search for a user')
     cy.task('stubUsers', {
       users: usersForResultsPage1,
       nameOrEmail: 'Foo',
@@ -303,13 +304,13 @@ context('User management', () => {
     page.searchBy('qualification', 'lao')
     page.clickApplyFilter()
 
-    // Then the page should show the results
+    THEN('the page should show the results')
     page.shouldShowUsers(usersForResultsPage1)
 
-    // When I click on a page number
+    WHEN('I click on a page number')
     page.clickPageNumber('2')
 
-    // Then the page should show the results for the second page
+    THEN('the page should show the results for the second page')
     page.shouldShowUsers(usersForResultsPage2)
   })
 })
