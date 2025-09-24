@@ -6,10 +6,14 @@ export type ProjectTypeDto = {
     /**
      * Project type identifier
      */
-    id: number;
+    id: string;
     /**
      * Project type name
      */
     name: string;
+    /**
+     * Project type code
+     */
+    code: string;
 };
 
