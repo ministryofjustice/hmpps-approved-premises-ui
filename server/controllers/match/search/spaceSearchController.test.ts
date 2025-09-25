@@ -76,11 +76,7 @@ describe('spaceSearchController', () => {
       expect(response.render).toHaveBeenCalledWith('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
         contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
-        summaryCards: summaryCards(
-          spaceSearchResults.results,
-          searchState.postcode,
-          placementRequestDetail.application.isWomensApplication,
-        ),
+        summaryCards: summaryCards(spaceSearchResults.results, searchState.postcode, placementRequestDetail),
         placementRequest: placementRequestDetail,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
         formPath: searchPath,

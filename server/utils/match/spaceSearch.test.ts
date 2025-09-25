@@ -7,7 +7,8 @@ import {
   filterRoomLevelCriteria,
   initialiseSearchState,
   spaceSearchStateToApiPayload,
-  summaryCardRows,
+  summaryCardRow,
+  summaryCards,
 } from './spaceSearch'
 import {
   cas1PlacementRequestDetailFactory,
@@ -19,6 +20,7 @@ import * as formUtils from '../formUtils'
 import { ApTypeCriteria, apTypeCriteriaLabels } from '../placementCriteriaUtils'
 import { addressRow, apTypeRow, distanceRow, restrictionsRow } from './index'
 import { summaryListItem } from '../formUtils'
+import * as artifactUtils from '../retrieveQuestionResponseFromFormArtifact'
 
 describe('Space search utils', () => {
   describe('initialiseSearchState', () => {
@@ -209,7 +211,7 @@ describe('Space search utils', () => {
     })
 
     it('calls the correct row functions', () => {
-      expect(summaryCardRows(spaceSearchResult, postcodeArea)).toEqual([
+      expect(summaryCardRow(spaceSearchResult, postcodeArea)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
         summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
         addressRow(spaceSearchResult),
@@ -219,12 +221,52 @@ describe('Space search utils', () => {
     })
 
     it('does not return the ap area row if the placement request is for a womens AP', () => {
-      expect(summaryCardRows(spaceSearchResult, postcodeArea, true)).toEqual([
+      expect(summaryCardRow(spaceSearchResult, postcodeArea, true)).toEqual([
         apTypeRow(spaceSearchResult.premises.apType),
         addressRow(spaceSearchResult),
         distanceRow(spaceSearchResult, postcodeArea),
         restrictionsRow(spaceSearchResult),
       ])
+    })
+  })
+
+  describe('summaryCards', () => {
+    const resultsList = spaceSearchResultFactory.buildList(10)
+    const preferredList = spaceSearchResultFactory.buildList(3)
+    const allResults = [...resultsList, ...preferredList]
+    const placementRequest = cas1PlacementRequestDetailFactory.build()
+
+    afterEach(() => {
+      jest.resetAllMocks()
+    })
+
+    it('should render the results by distance if there are no preferred APs', () => {
+      const sortedResults = summaryCards(allResults, '123456', placementRequest)
+
+      expect(sortedResults[0].spaceSearchResult.distanceInMiles).toEqual(
+        allResults.reduce((min, result) => Math.min(min, result.distanceInMiles), 1000),
+      )
+      expect(sortedResults[12].spaceSearchResult.distanceInMiles).toEqual(
+        allResults.reduce((max, result) => Math.max(max, result.distanceInMiles), 0),
+      )
+    })
+
+    it('should move preferred APs to the top, if provided', () => {
+      jest
+        .spyOn(artifactUtils, 'retrieveOptionalQuestionResponseFromFormArtifact')
+        .mockReturnValue(preferredList.map(result => result.premises))
+
+      const sortedResults = summaryCards(allResults, '123456', placementRequest)
+
+      preferredList.forEach((preferred, index) => {
+        expect(sortedResults[index].spaceSearchResult).toEqual(preferred)
+      })
+      expect(sortedResults[3].spaceSearchResult.distanceInMiles).toEqual(
+        resultsList.reduce((min, result) => Math.min(min, result.distanceInMiles), 1000),
+      )
+      expect(sortedResults[12].spaceSearchResult.distanceInMiles).toEqual(
+        resultsList.reduce((max, result) => Math.max(max, result.distanceInMiles), 0),
+      )
     })
   })
 })
