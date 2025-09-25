@@ -1,4 +1,5 @@
 import {
+  ApprovedPremises,
   Cas1PlacementRequestDetail,
   Cas1SpaceCharacteristic,
   Cas1SpaceSearchParameters,
@@ -25,6 +26,7 @@ import { convertKeyValuePairToRadioItems, summaryListItem } from '../formUtils'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from './spaceSearchLabels'
 import { addressRow, apTypeRow, characteristicsDetails, distanceRow, restrictionsRow } from '.'
+import { getPreferredApsFromApplication } from '../placementRequests/getPreferredApsFromApplication'
 
 export const initialiseSearchState = (placementRequest: Cas1PlacementRequestDetail): SpaceSearchFormData => {
   return {
@@ -95,24 +97,40 @@ export const summaryCardRows = (
   spaceSearchResult: SpaceSearchResult,
   postcodeArea: string,
   isWomensApplication = false,
-): Array<SummaryListItem> =>
-  [
+): Array<SummaryListItem> => {
+  return [
     apTypeRow(spaceSearchResult.premises.apType),
     !isWomensApplication && summaryListItem('AP area', spaceSearchResult.premises.apArea.name),
     addressRow(spaceSearchResult),
     distanceRow(spaceSearchResult, postcodeArea),
     restrictionsRow(spaceSearchResult),
   ].filter(Boolean)
+}
 
 export const summaryCards = (
   spaceSearchResult: Array<Cas1SpaceSearchResult>,
   postcode: string,
-  isWomensApplication: boolean,
+  placementRequest: Cas1PlacementRequestDetail,
 ) => {
-  return spaceSearchResult.map((result: Cas1SpaceSearchResult) => {
+  const preferredApMap: Record<string, string> = getPreferredApsFromApplication(placementRequest).reduce(
+    (map, ap: ApprovedPremises, index) => {
+      return { ...map, [ap.id]: String(index) }
+    },
+    {} as Record<string, string>,
+  )
+
+  const sortedResult = [...spaceSearchResult].sort((a: Cas1SpaceSearchResult, b: Cas1SpaceSearchResult): number => {
+    const [prefA, prefB] = [a, b].map(record => preferredApMap[record.premises.id])
+
+    if (!prefA && !prefB) return a.distanceInMiles > b.distanceInMiles ? 1 : -1
+    if (prefA && prefB) return prefA > prefB ? 1 : -1
+    return prefA ? -1 : 1
+  })
+
+  return sortedResult.map((result: Cas1SpaceSearchResult) => {
     return {
       spaceSearchResult: result,
-      summaryCardRows: summaryCardRows(result, postcode, isWomensApplication),
+      summaryCardRows: summaryCardRows(result, postcode, placementRequest.application.isWomensApplication),
       characteristicsHtml: characteristicsDetails(result),
     }
   })

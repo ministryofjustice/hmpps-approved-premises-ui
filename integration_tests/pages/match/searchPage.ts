@@ -38,6 +38,7 @@ export default class SearchPage extends Page {
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {
     cy.get('h2').contains(`${spaceSearchResults.resultsCount} Approved Premises found`)
+    cy.contains('Results are ordered by suitable preferred AP and distance from location.')
 
     spaceSearchResults.results.forEach(result => {
       cy.contains('h3', result.premises.name)
