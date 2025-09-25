@@ -68,5 +68,6 @@ context('Home', () => {
 
     //  Then I see the search results
     page.shouldShowSearchResults()
+    page.shouldShowPopulatedSearchForm()
   })
 })

@@ -43,4 +43,13 @@ export default class FindASessionPage extends Page {
     cy.get('td').eq(6).should('have.text', '3')
     cy.get('td').eq(7).should('have.text', '1')
   }
+
+  shouldShowPopulatedSearchForm() {
+    cy.get('#startDate-day').should('have.value', '18')
+    cy.get('#startDate-month').should('have.value', '09')
+    cy.get('#startDate-year').should('have.value', '2025')
+    cy.get('#endDate-day').should('have.value', '20')
+    cy.get('#endDate-month').should('have.value', '09')
+    cy.get('#endDate-year').should('have.value', '2025')
+  }
 }
