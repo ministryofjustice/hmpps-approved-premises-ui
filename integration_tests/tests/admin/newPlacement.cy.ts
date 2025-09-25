@@ -27,10 +27,17 @@ context('New Placement', () => {
     placementRequestPage.clickAction('Create new placement')
 
     THEN('I should see the page to create a new placement')
-    Page.verifyOnPage(NewPlacementPage)
+    const newPlacementPage = Page.verifyOnPage(NewPlacementPage)
 
     WHEN('I submit the form with no values')
+    newPlacementPage.clickButton('Save and continue')
+
     THEN('I should see error messages')
+    newPlacementPage.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason'], {
+      startDate: 'Enter or select an arrival date',
+      endDate: 'Enter or select a departure date',
+      reason: 'Enter a reason',
+    })
 
     WHEN('I complete the form')
     THEN('I should see the page to check placement criteria')

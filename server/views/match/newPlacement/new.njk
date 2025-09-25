@@ -1,5 +1,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% extends "partials/layout.njk" %}
 
@@ -15,9 +18,55 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
+
             <h1 class="govuk-heading-xl">{{ pageHeading }}</h1>
 
             <form action="{{ currentUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ mojDatePicker({
+                    id: "startDate",
+                    name: "startDate",
+                    label: {
+                        text: "What is the expected arrival date?",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: "For example, 17/5/2026"
+                    },
+                    value: startDate,
+                    errorMessage: errors.startDate
+                }) }}
+
+                {{ mojDatePicker({
+                    id: "endDate",
+                    name: "endDate",
+                    label: {
+                        text: "What is the expected departure date?",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: "For example, 23/6/2026"
+                    },
+                    value: endDate,
+                    errorMessage: errors.endDate
+                }) }}
+
+                {{ govukTextarea({
+                    id: "reason",
+                    name: "reason",
+                    label: {
+                        text: "What is the reason for the new placement?",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: "If the person is being transferred to a new AP, include the name of the person that requested the transfer"
+                    },
+                    value: reason,
+                    errorMessage: errors.reason
+                }) }}
+
                 {{ govukButton({
                     text: "Save and continue",
                     preventDoubleClick: true
