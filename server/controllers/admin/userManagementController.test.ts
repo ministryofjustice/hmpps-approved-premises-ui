@@ -58,9 +58,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        [],
-        [],
+        {},
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -111,9 +109,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        '1234',
-        [],
-        [],
+        { cruManagementAreaId: '1234' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -144,9 +140,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        ['assessor'],
-        [],
+        { roles: ['assessor'] },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -164,8 +158,6 @@ describe('UserManagementController', () => {
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
         role: 'assessor',
-        qualification: undefined,
-        area: undefined,
       })
     })
 
@@ -177,9 +169,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        [],
-        ['esap'],
+        { qualifications: ['esap'] },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -196,23 +186,48 @@ describe('UserManagementController', () => {
         selectedQualification: 'esap',
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
-        role: undefined,
         qualification: 'esap',
-        area: undefined,
       })
     })
 
-    it('applies more than one filter', async () => {
-      const requestWithQuery = { ...request, query: { qualification: 'esap', role: 'assessor' } }
+    it('filters users by name or email', async () => {
+      const requestWithQuery = { ...request, query: { nameOrEmail: 'Harry' } }
       const requestHandler = userManagementController.index()
 
       await requestHandler(requestWithQuery, response, next)
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
-        undefined,
-        ['assessor'],
-        ['esap'],
+        { nameOrEmail: 'Harry' },
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        nameOrEmail: 'Harry',
+      })
+      expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
+        nameOrEmail: 'Harry',
+      })
+    })
+
+    it('applies more than one filter', async () => {
+      const requestWithQuery = { ...request, query: { qualification: 'esap', role: 'assessor', nameOrEmail: 'David' } }
+      const requestHandler = userManagementController.index()
+
+      await requestHandler(requestWithQuery, response, next)
+
+      expect(userService.getUsers).toHaveBeenCalledWith(
+        token,
+        { roles: ['assessor'], qualifications: ['esap'], nameOrEmail: 'David' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -228,29 +243,12 @@ describe('UserManagementController', () => {
         sortDirection: paginationDetails.sortDirection,
         selectedQualification: 'esap',
         selectedRole: 'assessor',
+        nameOrEmail: 'David',
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
         role: 'assessor',
         qualification: 'esap',
-        area: undefined,
-      })
-    })
-  })
-
-  describe('search', () => {
-    it('calls the service method with the query and renders the index template with the result', async () => {
-      const users = userFactory.buildList(1)
-      userService.search.mockResolvedValue(users)
-      const name = 'name'
-
-      const requestHandler = userManagementController.search()
-      await requestHandler({ ...request, body: { name } }, response, next)
-
-      expect(userService.search).toHaveBeenCalledWith(token, name)
-      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
-        pageHeading: 'User management dashboard',
-        users,
-        name,
+        nameOrEmail: 'David',
       })
     })
   })
