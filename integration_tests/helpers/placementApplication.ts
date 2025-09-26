@@ -9,16 +9,12 @@ import {
 import { AND, GIVEN, THEN, WHEN } from './index'
 import { ShowPage } from '../pages/apply'
 import Page from '../pages/page'
-import SituationPage from '../pages/match/placementRequestForm/situation'
-import CheckSentenceTypePage from '../pages/match/placementRequestForm/checkSentenceType'
-import SentenceTypePage from '../pages/match/placementRequestForm/sentenceTypePage'
-import ReleaseTypePage from '../pages/match/placementRequestForm/releaseTypePage'
 import UpdatesToApplication from '../pages/match/placementRequestForm/updatesToApplication'
 import CheckYourAnswers from '../pages/match/placementRequestForm/checkYourAnswers'
-import ConfirmationPage from '../pages/match/placementRequestForm/confirmationPage'
 import { sentenceTypes } from '../../server/utils/applications/adjacentPageFromSentenceType'
 import { allReleaseTypes } from '../../server/utils/applications/releaseTypeUtils'
-import { situations } from '../../server/form-pages/shared-examples/situation'
+import { situations } from '../../server/form-pages/shared/situation'
+import CheckSentenceTypePage from '../pages/match/placementRequestForm/checkSentenceType'
 
 export interface SentenceTypeOptions {
   sentenceType?: SentenceTypeOption
@@ -36,6 +32,10 @@ export default class placementApplicationHelper {
     private readonly placementApplication: PlacementApplication,
   ) {}
 
+  /**
+   * Starts a placement application up to the branch for different types, either following the route to select sentence type and release type or situation if sentence information supplied
+   * or uses the sentence info from the application if not
+   * * */
   startApplication({ sentenceType, releaseType, situation }: SentenceTypeOptions = {}) {
     GIVEN('I am on the readonly application view')
     const showPage = ShowPage.visit(this.application)
@@ -47,7 +47,7 @@ export default class placementApplicationHelper {
     showPage.clickCreatePlacementButton()
 
     GIVEN('I am on the sentence type confirmation page')
-    const checkSentenceTypePage = Page.verifyOnPage(CheckSentenceTypePage, this.placementApplication.id)
+    const checkSentenceTypePage = Page.verifyOnPage(CheckSentenceTypePage)
 
     WHEN('I submit the page, I see an error')
     checkSentenceTypePage.clickButton('Save and continue')
@@ -65,7 +65,7 @@ export default class placementApplicationHelper {
       checkSentenceTypePage.clickButton('Save and continue')
 
       THEN('I should be on the sentence type selection page')
-      const sentenceTypePage = Page.verifyOnPage(SentenceTypePage, this.placementApplication.id)
+      const sentenceTypePage = Page.verifyOnPage(Page, 'Which sentence type does the person have?')
 
       WHEN('if try to submit, I should see an error')
       sentenceTypePage.clickButton('Save and continue')
@@ -88,7 +88,7 @@ export default class placementApplicationHelper {
 
       if (releaseType) {
         THEN('I should be on the release type selection page')
-        const releaseTypePage = Page.verifyOnPage(ReleaseTypePage, this.placementApplication.id)
+        const releaseTypePage = Page.verifyOnPage(Page, 'What is the release type?')
 
         WHEN('I try to submit, I should see an error')
         releaseTypePage.clickButton('Save and continue')
@@ -105,7 +105,7 @@ export default class placementApplicationHelper {
       }
       if (situation) {
         THEN('I should be on the situation selection page')
-        const situationPage = Page.verifyOnPage(SituationPage, this.placementApplication.id)
+        const situationPage = Page.verifyOnPage(Page, 'What is the reason for placing this person in an AP?')
 
         WHEN('I try to submit, I should see an error')
         situationPage.clickButton('Save and continue')
@@ -151,15 +151,15 @@ export default class placementApplicationHelper {
     const checkYourAnswersPage = new CheckYourAnswers()
     cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication: this.placementApplication })
 
-    THEN('I should be able go go back through the form using the back buttons and forward again')
+    AND('I should be able go go back through the form using the back buttons and forward again')
     this.clickBackAndForward([...pageList, updatesToApplication, checkYourAnswersPage])
 
-    WHEN('I submit the check page')
+    WHEN('I submit the check your answers page')
     checkYourAnswersPage.completeForm()
     checkYourAnswersPage.clickSubmit()
 
     THEN('I should be taken to the confirmation page')
-    Page.verifyOnPage(ConfirmationPage)
+    Page.verifyOnPage(Page, 'Request for placement confirmed')
 
     AND('the correct submission should have been made')
     cy.task('verifyPlacementApplicationSubmit', this.placementApplication.id).then(requests => {

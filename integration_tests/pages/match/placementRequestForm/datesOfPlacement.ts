@@ -86,26 +86,18 @@ export default class DatesOfPlacement extends Page {
     cy.get(`[name="${prefix}[arrivalDate-year]"`).clear()
   }
 
-  clickSaveAndContinue() {
-    cy.get('button').contains('Save and continue').click()
-  }
-
-  shouldShowErrors() {
-    this.shouldShowErrorMessagesForFields(['datesOfPlacement_0_isFlexible'], {
-      datesOfPlacement_0_isFlexible: 'State if the placement date is flexible',
-    })
-  }
-
   clickSubmit() {
     this.clickButton('Save and continue')
   }
 
   exercisePage() {
     WHEN('I submit the form empty')
-    this.clickSaveAndContinue()
+    this.clickButton('Save and continue')
 
     THEN('I should see errors')
-    this.shouldShowErrors()
+    this.shouldShowErrorMessagesForFields(['datesOfPlacement_0_isFlexible'], {
+      datesOfPlacement_0_isFlexible: 'State if the placement date is flexible',
+    })
 
     WHEN('I populate the form')
     this.populateBlock(0, this.datesOfPlacement[0])

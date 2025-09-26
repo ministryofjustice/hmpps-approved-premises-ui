@@ -16,7 +16,7 @@ export default class ManagedByMappa implements TasklistPage {
     return 'sentence-type'
   }
 
-  next(): 'sentence-type' | 'release-date' | 'additional-placement-details' {
+  next(): string {
     return this.body.managedByMappa === 'yes' ? 'release-date' : 'sentence-type'
   }
 

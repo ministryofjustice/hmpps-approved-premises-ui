@@ -3,7 +3,7 @@ import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retr
 import SentenceType from './sentenceType'
 import { Page } from '../../../utils/decorators'
 import { SelectableReleaseTypes } from '../../../../utils/applications/releaseTypeUtils'
-import BaseReleaseType from '../../../shared-examples/releaseType'
+import BaseReleaseType from '../../../shared/releaseType'
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType extends BaseReleaseType {

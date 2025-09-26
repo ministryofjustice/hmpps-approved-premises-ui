@@ -4,7 +4,7 @@ import { fromPartial } from '@total-typescript/shoehorn'
 import PreferredAps from './preferredAps'
 import { PremisesService } from '../../../../services'
 import { applicationFactory, cas1PremisesBasicSummaryFactory } from '../../../../testutils/factories'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 describe('PreferredAps', () => {
   let premisesService: DeepMocked<PremisesService>

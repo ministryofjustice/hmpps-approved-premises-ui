@@ -132,11 +132,16 @@ describe('placementApplicationService', () => {
       }
 
       placementApplicationClient.find.mockResolvedValue(legacyApplication)
+
+      let error: LegacyError
+
       try {
         await service.initializePage(Page, request, dataServices)
-      } catch (error) {
-        expect(error).toBeInstanceOf(LegacyError)
+      } catch (e) {
+        error = e
       }
+
+      expect(error).toBeInstanceOf(LegacyError)
     })
   })
 

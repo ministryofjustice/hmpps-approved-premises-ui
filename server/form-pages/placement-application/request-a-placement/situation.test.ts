@@ -1,4 +1,4 @@
-import { itShouldHaveNextValue } from '../../shared-examples/index'
+import { itShouldHaveNextValue } from '../../shared/index'
 
 import Situation from './situation'
 import { placementApplicationFactory } from '../../../testutils/factories'

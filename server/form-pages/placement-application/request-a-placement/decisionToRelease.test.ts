@@ -1,5 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHaveNextValue } from '../../shared-examples'
+import { itShouldHaveNextValue } from '../../shared'
 
 import DecisionToRelease, { Body } from './decisionToRelease'
 import { DateFormats } from '../../../utils/dateUtils'
@@ -33,15 +33,16 @@ describe('DecisionToRelease', () => {
       })
     })
   })
+  describe('previous', () => {
+    it('previous - sentence type unchanged', () => {
+      jest.spyOn(artifactUtils, 'retrieveQuestionResponseFromFormArtifact').mockReturnValue('no')
+      expect(new DecisionToRelease(body, placementApplicaton).previous()).toEqual('sentence-type-check')
+    })
 
-  it('previous - sentence type unchanged', () => {
-    jest.spyOn(artifactUtils, 'retrieveQuestionResponseFromFormArtifact').mockReturnValue('no')
-    expect(new DecisionToRelease(body, placementApplicaton).previous()).toEqual('sentence-type-check')
-  })
-
-  it('previous - sentence type changed', () => {
-    jest.spyOn(artifactUtils, 'retrieveQuestionResponseFromFormArtifact').mockReturnValue('yes')
-    expect(new DecisionToRelease(body, placementApplicaton).previous()).toEqual('release-type')
+    it('previous - sentence type changed', () => {
+      jest.spyOn(artifactUtils, 'retrieveQuestionResponseFromFormArtifact').mockReturnValue('yes')
+      expect(new DecisionToRelease(body, placementApplicaton).previous()).toEqual('release-type')
+    })
   })
 
   itShouldHaveNextValue(new DecisionToRelease(body, placementApplicaton), 'additional-documents')

@@ -1,5 +1,5 @@
 import { YesOrNo } from '@approved-premises/ui'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import DescribeLocationFactors from './describeLocationFactors'
 

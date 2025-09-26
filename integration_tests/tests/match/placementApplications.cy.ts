@@ -153,7 +153,7 @@ context('Placement Applications', () => {
       datesOfPlacementPage.exercisePage()
 
       WHEN('I submit the form')
-      datesOfPlacementPage.clickSaveAndContinue()
+      datesOfPlacementPage.clickButton('Save and continue')
       cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
       helper.completeApplication({
@@ -239,11 +239,13 @@ context('Placement Applications', () => {
 
       THEN('I should be on the previous ROTL page')
       const previousRotlPlacementPage = new PreviousRotlPlacement()
+
+      WHEN('I enter previous ROTL information')
       previousRotlPlacementPage.completeForm()
       previousRotlPlacementPage.clickSubmit()
       cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
-      AND('I complete same app page')
+      AND('I complete the same AP page')
       const sameApPage = Page.verifyOnPage(SameAp)
       sameApPage.completeForm()
       sameApPage.clickSubmit()
@@ -252,7 +254,7 @@ context('Placement Applications', () => {
       AND('I add one placement date')
       const datesOfPlacementPage = Page.verifyOnPage(DateOfPlacement)
       datesOfPlacementPage.populateBlock(0, datesOfPlacementPage.datesOfPlacement[0])
-      datesOfPlacementPage.clickSaveAndContinue()
+      datesOfPlacementPage.clickButton('Save and continue')
       cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
       helper.completeApplication({
@@ -328,7 +330,7 @@ context('Placement Applications', () => {
       const page = Page.verifyOnPage(ReviewApplicationPage)
       page.checkPageContents(placementApplication)
 
-      AND('when I complete the form')
+      WHEN('I complete the form')
       page.completeForm()
       page.clickSubmit()
 
@@ -336,7 +338,7 @@ context('Placement Applications', () => {
 
       const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
 
-      AND('when I complete the form')
+      WHEN('I complete the form')
 
       cy.task('stubSubmitPlacementApplicationDecision', placementApplication)
 
@@ -385,7 +387,7 @@ context('Placement Applications', () => {
       THEN('I should be taken to the review applications page')
       const page = Page.verifyOnPage(ReviewApplicationPage)
 
-      AND('when I click submit without entering text')
+      WHEN('I click submit without entering text')
       page.clickSubmit()
 
       THEN('the page should render with errors')
@@ -421,13 +423,13 @@ context('Placement Applications', () => {
       THEN('I should be taken to the review applications page')
       const page = Page.verifyOnPage(ReviewApplicationPage)
 
-      AND('when I complete the form')
+      WHEN('I complete the form')
       page.completeForm()
 
       THEN('I should be taken to the decision page')
       const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
 
-      AND('when I click submit')
+      WHEN('I click submit')
       decisionPage.clickSubmit()
 
       THEN('the page should render with errors')

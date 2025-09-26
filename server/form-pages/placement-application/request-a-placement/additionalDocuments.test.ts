@@ -2,7 +2,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
 import { ApplicationService, PersonService } from '../../../services'
 import { applicationFactory, documentFactory, placementApplicationFactory } from '../../../testutils/factories'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared'
 
 import AdditionalDocuments from './additionalDocuments'
 

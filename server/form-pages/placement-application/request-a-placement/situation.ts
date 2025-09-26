@@ -1,5 +1,5 @@
 import { FormArtifact } from '@approved-premises/ui'
-import SituationBase, { Body } from '../../shared-examples/situation'
+import SituationBase, { Body } from '../../shared/situation'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
 import SentenceType from './sentenceType'
 

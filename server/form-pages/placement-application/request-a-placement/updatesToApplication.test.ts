@@ -1,5 +1,5 @@
 import { placementApplicationFactory } from '../../../testutils/factories'
-import { itShouldHaveNextValue } from '../../shared-examples'
+import { itShouldHaveNextValue } from '../../shared'
 
 import UpdatesToApplication, { Body } from './updatesToApplication'
 

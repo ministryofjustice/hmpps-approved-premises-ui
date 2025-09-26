@@ -1,6 +1,6 @@
 import { assessmentFactory } from '../../../../testutils/factories'
 import { YesOrNo } from '../../../../@types/ui'
-import { itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHavePreviousValue } from '../../../shared'
 
 import SuitabilityAssessment from './suitabilityAssessment'
 import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'

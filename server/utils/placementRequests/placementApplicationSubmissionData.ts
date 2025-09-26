@@ -5,7 +5,7 @@ import {
   PlacementApplication,
   ReleaseTypeOption,
   SubmitPlacementApplication,
-} from '../../@types/shared'
+} from '@approved-premises/api'
 
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,

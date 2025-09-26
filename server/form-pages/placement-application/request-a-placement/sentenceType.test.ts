@@ -1,4 +1,4 @@
-import { itShouldHavePreviousValue } from '../../shared-examples/index'
+import { itShouldHavePreviousValue } from '../../shared/index'
 
 import SentenceType from './sentenceType'
 

@@ -1,5 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHaveNextValue } from '../../shared-examples'
+import { itShouldHaveNextValue } from '../../shared'
 
 import AdditionalPlacementDetails, { Body } from './additionalPlacementDetails'
 import { DateFormats } from '../../../utils/dateUtils'
@@ -38,7 +38,7 @@ describe('AdditionalPlacementDetails', () => {
     expect(new AdditionalPlacementDetails(body, placementApplicaton).previous()).toEqual('sentence-type-check')
   })
 
-  it('previous should return to variable page if the sentence/release type has been changed', () => {
+  it('previous should return to the release type page if the sentence/release type has been changed', () => {
     const placementApplicationChanged = {
       ...placementApplicaton,
       data: {

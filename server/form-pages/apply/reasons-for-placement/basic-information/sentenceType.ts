@@ -1,3 +1,3 @@
-import SentenceType from '../../../shared-examples/sentenceType'
+import SentenceType from '../../../shared/sentenceType'
 
 export default SentenceType

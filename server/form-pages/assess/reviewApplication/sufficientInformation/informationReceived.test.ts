@@ -2,7 +2,7 @@ import { when } from 'jest-when'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import InformationReceived from './informationReceived'
 import SufficientInformation from './sufficientInformation'

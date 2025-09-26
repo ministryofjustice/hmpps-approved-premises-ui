@@ -1,5 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHaveNextValue } from '../../shared-examples'
+import { itShouldHaveNextValue } from '../../shared'
 
 import DateOfPlacementPage from './datesOfPlacement'
 import { placementApplicationFactory } from '../../../testutils/factories'

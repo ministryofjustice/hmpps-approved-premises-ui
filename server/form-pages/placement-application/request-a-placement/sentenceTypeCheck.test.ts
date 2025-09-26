@@ -1,5 +1,5 @@
 import { DataServices, YesOrNo } from '@approved-premises/ui'
-import { itShouldHavePreviousValue } from '../../shared-examples/index'
+import { itShouldHavePreviousValue } from '../../shared/index'
 
 import SentenceTypeCheck, { Body } from './sentenceTypeCheck'
 import { applicationFactory, placementApplicationFactory } from '../../../testutils/factories'
@@ -8,9 +8,15 @@ import { ApplicationService } from '../../../services'
 describe('SentenceTypeCheck', () => {
   const application = applicationFactory.build()
   const placementApplication = placementApplicationFactory.build({ applicationId: application.id })
+  const findApplication = jest.fn(() => application)
+  const applicationService = { findApplication } as unknown as ApplicationService
+  const dataServices: Partial<DataServices> = { applicationService }
+  const token = 'test-token'
+
   describe('title', () => {
     expect(new SentenceTypeCheck({}, placementApplication).title).toBe('Check the sentencing information')
   })
+
   itShouldHavePreviousValue(new SentenceTypeCheck({}, placementApplication), '')
 
   describe('next', () => {
@@ -65,11 +71,6 @@ describe('SentenceTypeCheck', () => {
   })
 
   describe('initialize', () => {
-    const findApplication = jest.fn(() => application)
-    const applicationService = { findApplication } as unknown as ApplicationService
-    const dataServices: Partial<DataServices> = { applicationService }
-    const token = 'test-token'
-
     beforeEach(() => {
       jest.clearAllMocks()
     })
@@ -91,6 +92,21 @@ describe('SentenceTypeCheck', () => {
       expect(findApplication).not.toHaveBeenCalled()
       expect(page.applicationReleaseType).toEqual('paroleDirectedLicence')
       expect(page.applicationSentenceType).toEqual('life')
+    })
+  })
+
+  describe('summaryRows', () => {
+    it('should return the correct summary rows from the application', async () => {
+      const page = await SentenceTypeCheck.initialize(
+        { applicationSentenceType: 'life', applicationReleaseType: 'paroleDirectedLicence' },
+        placementApplication,
+        token,
+        dataServices,
+      )
+      expect(page.summaryRows).toEqual([
+        { key: { text: 'Sentence type' }, value: { text: 'Life sentence' } },
+        { key: { text: 'Release type' }, value: { text: 'Licence (Parole directed)' } },
+      ])
     })
   })
 })

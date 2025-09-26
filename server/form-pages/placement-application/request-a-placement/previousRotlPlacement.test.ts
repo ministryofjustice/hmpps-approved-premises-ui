@@ -1,5 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHavePreviousValue } from '../../shared-examples'
+import { itShouldHavePreviousValue } from '../../shared'
 
 import PreviousRotlPlacement, { Body } from './previousRotlPlacement'
 import { DateFormats } from '../../../utils/dateUtils'

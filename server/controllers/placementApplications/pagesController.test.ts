@@ -54,8 +54,8 @@ describe('pagesController', () => {
   describe('show', () => {
     const defaultRender = (req: Request) => ({
       placementApplicationId: req.params.id,
-      backLink: '/placement-applications/some-uuid/tasks/basic-information/pages/previous-page',
-      formAction: '/placement-applications/some-uuid/tasks/basic-information/pages/page-name?_method=PUT',
+      backLink: `/placement-applications/${req.params.id}/tasks/basic-information/pages/previous-page`,
+      formAction: `/placement-applications/${req.params.id}/tasks/basic-information/pages/page-name?_method=PUT`,
       task: someTask,
       page,
       errors: {},

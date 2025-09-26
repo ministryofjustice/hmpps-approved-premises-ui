@@ -1,4 +1,4 @@
-import SentenceTypeBase from '../../shared-examples/sentenceType'
+import SentenceTypeBase from '../../shared/sentenceType'
 
 export default class SentenceType extends SentenceTypeBase {
   previous() {

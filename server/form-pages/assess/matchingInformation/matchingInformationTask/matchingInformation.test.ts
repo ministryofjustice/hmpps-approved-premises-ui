@@ -1,5 +1,5 @@
 import { applicationFactory, assessmentFactory } from '../../../../testutils/factories'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
 import * as matchingInformtionUtils from '../../../utils/matchingInformationUtils'

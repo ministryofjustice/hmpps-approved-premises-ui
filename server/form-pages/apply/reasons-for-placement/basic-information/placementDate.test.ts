@@ -1,6 +1,6 @@
 import { add, sub } from 'date-fns'
 import { when } from 'jest-when'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import PlacementDate from './placementDate'
 import { DateFormats } from '../../../../utils/dateUtils'

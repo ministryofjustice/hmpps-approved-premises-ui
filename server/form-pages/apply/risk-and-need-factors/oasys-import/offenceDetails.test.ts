@@ -5,7 +5,7 @@ import { PersonService } from '../../../../services'
 import { applicationFactory, cas1OasysGroupFactory, risksFactory } from '../../../../testutils/factories'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import OffenceDetails from './offenceDetails'
 

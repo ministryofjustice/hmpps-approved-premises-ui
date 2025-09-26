@@ -4,7 +4,7 @@ import { Page } from '../../utils/decorators'
 import { SelectableReleaseTypes } from '../../../utils/applications/releaseTypeUtils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
 import SentenceType from './sentenceType'
-import BaseReleaseType from '../../shared-examples/releaseType'
+import BaseReleaseType from '../../shared/releaseType'
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType extends BaseReleaseType {

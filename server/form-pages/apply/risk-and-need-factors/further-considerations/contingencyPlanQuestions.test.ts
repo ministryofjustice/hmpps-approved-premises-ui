@@ -5,7 +5,7 @@ import {
   contingencyPlanQuestionsBodyFactory,
 } from '../../../../testutils/factories'
 
-import { itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHavePreviousValue } from '../../../shared'
 
 import ContingencyPlanQuestions from './contingencyPlanQuestions'
 

@@ -1,4 +1,4 @@
-import ManagedByMappaBase from '../../shared-examples/managedByMappa'
+import ManagedByMappaBase from '../../shared/managedByMappa'
 
 export default class ManagedByMappa extends ManagedByMappaBase {
   next() {

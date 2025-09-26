@@ -1,3 +1,3 @@
-import ManagedByMappa from '../../../shared-examples/managedByMappa'
+import ManagedByMappa from '../../../shared/managedByMappa'
 
 export default ManagedByMappa

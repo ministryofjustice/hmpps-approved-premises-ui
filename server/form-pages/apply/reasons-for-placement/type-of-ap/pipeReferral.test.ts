@@ -1,5 +1,5 @@
 import { DateFormats } from '../../../../utils/dateUtils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import PipeReferral from './pipeReferral'
 
