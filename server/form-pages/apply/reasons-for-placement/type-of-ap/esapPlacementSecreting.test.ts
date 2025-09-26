@@ -1,4 +1,4 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 import * as formUtils from '../../../../utils/formUtils'
 
 import EsapPlacementSecreting, { secretingHistory } from './esapPlacementSecreting'

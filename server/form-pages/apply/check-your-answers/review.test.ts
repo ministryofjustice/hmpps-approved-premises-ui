@@ -1,4 +1,4 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared'
 
 import Review from './review'
 import { applicationFactory } from '../../../testutils/factories'

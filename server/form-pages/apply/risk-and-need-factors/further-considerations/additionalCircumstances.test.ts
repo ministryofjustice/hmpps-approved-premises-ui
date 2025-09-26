@@ -1,5 +1,5 @@
 import { YesOrNo } from '@approved-premises/ui'
-import { itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHavePreviousValue } from '../../../shared'
 
 import AdditionalCircumstances from './additionalCircumstances'
 import { applicationFactory } from '../../../../testutils/factories'

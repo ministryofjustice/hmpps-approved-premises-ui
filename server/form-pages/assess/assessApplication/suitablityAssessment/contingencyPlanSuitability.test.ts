@@ -1,5 +1,5 @@
 import { assessmentFactory } from '../../../../testutils/factories'
-import { itShouldHaveNextValue } from '../../../shared-examples'
+import { itShouldHaveNextValue } from '../../../shared'
 
 import ContingencyPlanSuitability, { ContingencyPlanSuitabilityBody } from './contingencyPlanSuitability'
 

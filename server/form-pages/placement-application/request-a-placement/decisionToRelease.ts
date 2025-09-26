@@ -1,9 +1,12 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
+import { PlacementApplication } from '@approved-premises/api'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
 import { dateBodyProperties } from '../../utils/dateBodyProperties'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
+import SentenceTypeCheck from './sentenceTypeCheck'
 
 export type Body = {
   informationFromDirectionToRelease: string
@@ -25,7 +28,10 @@ export default class DecisionToRelease implements TasklistPage {
 
   body: Body
 
-  constructor(_body: Body) {
+  constructor(
+    _body: Body,
+    private readonly placementApplication: PlacementApplication,
+  ) {
     this.body = {
       ...DateFormats.dateAndTimeInputsToIsoString(
         _body as ObjectWithDateParts<'decisionToReleaseDate'>,
@@ -36,7 +42,13 @@ export default class DecisionToRelease implements TasklistPage {
   }
 
   previous() {
-    return 'reason-for-placement'
+    return retrieveQuestionResponseFromFormArtifact(
+      this.placementApplication,
+      SentenceTypeCheck,
+      'sentenceTypeCheck',
+    ) === 'yes'
+      ? 'release-type'
+      : 'sentence-type-check'
   }
 
   next() {

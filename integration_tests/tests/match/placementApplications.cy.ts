@@ -1,4 +1,5 @@
-import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
+import { ReleaseTypeOption } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import {
   applicationFactory,
   documentFactory,
@@ -13,22 +14,18 @@ import ReviewApplicationDecisionPage from '../../pages/match/reviewApplicationFo
 import { ShowPage } from '../../pages/apply'
 import DateOfPlacement from '../../pages/match/placementRequestForm/datesOfPlacement'
 import PreviousRotlPlacement from '../../pages/match/placementRequestForm/previousRotlPlacement'
-import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
 import SameAp from '../../pages/match/placementRequestForm/sameAp'
-import UpdatesToApplication from '../../pages/match/placementRequestForm/updatesToApplication'
-import CheckYourAnswers from '../../pages/match/placementRequestForm/checkYourAnswers'
-import ConfirmationPage from '../../pages/match/placementRequestForm/confirmationPage'
 import AdditionalPlacementDetailsPage from '../../pages/match/placementRequestForm/additionalPlacementDetails'
 import DecisionToRelease from '../../pages/match/placementRequestForm/decisionToRelease'
 import AdditionalDocuments from '../../pages/match/placementRequestForm/additionalDocuments'
 import Page from '../../pages/page'
 import paths from '../../../server/paths/api'
-import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 import ReviewApplicationConfirmPage from '../../pages/match/reviewApplicationForm/confirmPage'
 import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import { signIn } from '../signIn'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
+import Helper, { SentenceTypeOptions } from '../../helpers/placementApplication'
 
 context('Placement Applications', () => {
   beforeEach(() => {
@@ -40,463 +37,460 @@ context('Placement Applications', () => {
     })
   })
 
-  it('allows me to complete form if the reason for placement is ROTL', () => {
-    cy.fixture('rotlPlacementApplicationData.json').then(placementApplicationData => {
+  describe('Create a placement application', () => {
+    const person = personFactory.build()
+    const completedApplication = applicationFactory.completed('accepted').build({
+      id: '123',
+      createdByUserId: defaultUserId,
+      person,
+      document: applicationDocument,
+    })
+
+    const placementApplicationId = '123'
+    const placementApplication = placementApplicationFactory.build({
+      id: placementApplicationId,
+      applicationId: completedApplication.id,
+    })
+
+    const documents = documentFactory.buildList(4)
+
+    const requestForPlacement = requestForPlacementFactory.build({})
+
+    beforeEach(() => {
       GIVEN('I have completed an application I am viewing a completed application')
-      const completedApplication = applicationFactory.completed('accepted').build({
-        id: '123',
-        createdByUserId: defaultUserId,
-        person: personFactory.build(),
-        document: applicationDocument,
-      })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
       AND('there is a placement application in the DB')
-      const placementApplicationId = '123'
-      const placementApplication = placementApplicationFactory.build({
-        id: placementApplicationId,
-        data: placementApplicationData,
-        applicationId: completedApplication.id,
-      })
 
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplicationUpdate', placementApplication)
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
+      documents.forEach(document => {
+        cy.task('stubPersonDocument', { person, document })
+      })
+      cy.task('stubApplicationDocuments', { application: completedApplication, documents })
 
-      const requestForPlacement = requestForPlacementFactory.build({})
       cy.task('stubApplicationRequestsForPlacement', {
         applicationId: completedApplication.id,
         requestsForPlacement: [requestForPlacement],
       })
+    })
 
-      GIVEN('I am on the readonly application view')
-      const showPage = ShowPage.visit(completedApplication)
+    it('allows me to complete form selecting a standard release type', () => {
+      WHEN('I start creating the placement application and select a release type of licence')
+      const releaseType: ReleaseTypeOption = faker.helpers.arrayElement([
+        'licence',
+        'hdc',
+        'pss',
+        'reReleasedPostRecall',
+      ])
+      const helper = new Helper(completedApplication, placementApplication)
+      const { checkSentenceTypePage, sentenceTypePage, releaseTypePage } = helper.startApplication({
+        sentenceType: 'standardDeterminate',
+        releaseType,
+      })
 
-      WHEN('I click the Request Placement Application tab')
-      showPage.clickRequestAPlacementTab()
+      THEN('I should be on the additional placements details page')
+      const additionalPlacementDetailsPage = new AdditionalPlacementDetailsPage()
 
-      THEN('I should be able to create a placement')
-      showPage.clickCreatePlacementButton()
+      WHEN('I add addditional details and submit')
+      additionalPlacementDetailsPage.completeForm()
+      additionalPlacementDetailsPage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
-      GIVEN('I am on the placement application form and start an application')
-      const placementReasonPage = ReasonForPlacementPage.visit(placementApplication.id)
+      helper.completeApplication({
+        pageList: [checkSentenceTypePage, sentenceTypePage, releaseTypePage, additionalPlacementDetailsPage],
+        sentenceType: 'standardDeterminate',
+        releaseType,
+      })
+    })
 
-      WHEN('I select ROTL')
-      placementReasonPage.completeForm('rotl')
-      placementReasonPage.clickSubmit()
+    it('allows me to complete form selecting a situation flow', () => {
+      WHEN('I start creating the placement application and select a release type of in community')
+      const sentenceTypeOptions: SentenceTypeOptions = { sentenceType: 'communityOrder', situation: 'riskManagement' }
+      const helper = new Helper(completedApplication, placementApplication)
+      const { checkSentenceTypePage, sentenceTypePage, situationPage } = helper.startApplication(sentenceTypeOptions)
+
+      THEN('I should be on the additional placements details page')
+      const additionalPlacementDetailsPage = new AdditionalPlacementDetailsPage()
+
+      WHEN('I add addditional details and submit')
+      additionalPlacementDetailsPage.completeForm()
+      additionalPlacementDetailsPage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
+
+      helper.completeApplication({
+        pageList: [checkSentenceTypePage, sentenceTypePage, situationPage, additionalPlacementDetailsPage],
+        ...sentenceTypeOptions,
+      })
+    })
+
+    it('allows me to complete the form if the reason for placement is ROTL', () => {
+      const helper = new Helper(completedApplication, placementApplication)
+      WHEN('I start creating the placement application and select a release type of ROTL')
+      const { checkSentenceTypePage, sentenceTypePage, releaseTypePage } = helper.startApplication({
+        sentenceType: 'standardDeterminate',
+        releaseType: 'rotl',
+      })
 
       AND('I complete the previous ROTL form')
       const previousRotlPlacementPage = new PreviousRotlPlacement()
       previousRotlPlacementPage.completeForm()
       previousRotlPlacementPage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
       const sameApPage = new SameAp()
+      sameApPage.checkOnPage()
       sameApPage.completeForm()
       sameApPage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
-      AND('I add placement dates date')
-      const datesOfPlacementPage = new DateOfPlacement()
-
-      WHEN('I submit the form empty')
-      datesOfPlacementPage.clickSaveAndContinue()
-
-      THEN('I should see errors')
-      datesOfPlacementPage.shouldShowErrors()
-
-      WHEN('I populate the form')
-      datesOfPlacementPage.populateBlock(0, datesOfPlacementPage.datesOfPlacement[0])
-      datesOfPlacementPage.populateBlock(1, datesOfPlacementPage.datesOfPlacement[1])
-      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
-      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
-
-      AND('I should be able to add and remove date blocks without affecting the form population')
-      datesOfPlacementPage.addAndRemoveBlock()
-      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
-      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
-
-      WHEN('I add a new block and populate it')
-      datesOfPlacementPage.clickButton('Add another')
-      datesOfPlacementPage.populateBlock(2, datesOfPlacementPage.datesOfPlacement[2])
-      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
-      datesOfPlacementPage.verifyBlockPopulated(1, datesOfPlacementPage.datesOfPlacement[1])
-      datesOfPlacementPage.verifyBlockPopulated(2, datesOfPlacementPage.datesOfPlacement[2])
-
-      AND('I delete the block in the middle')
-      datesOfPlacementPage.checkBlockTitles(3)
-      datesOfPlacementPage.removeBlock(1)
-
-      THEN('The third block should remain populated')
-      datesOfPlacementPage.verifyBlockPopulated(0, datesOfPlacementPage.datesOfPlacement[0])
-      datesOfPlacementPage.verifyBlockPopulated(2, datesOfPlacementPage.datesOfPlacement[2])
-
-      AND('the block titles should be fixed')
-      datesOfPlacementPage.checkBlockTitles(2)
+      THEN('I am on the multiple ROTL dates page')
+      const datesOfPlacementPage = Page.verifyOnPage(DateOfPlacement)
+      AND('I can add and remove dates and populate the dates')
+      datesOfPlacementPage.exercisePage()
 
       WHEN('I submit the form')
-      datesOfPlacementPage.clickSaveAndContinue()
+      datesOfPlacementPage.clickButton('Save and continue')
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
-      THEN('I am on the application updates page')
-      const updatesToApplication = new UpdatesToApplication()
-      updatesToApplication.completeForm()
-      updatesToApplication.clickSubmit()
+      helper.completeApplication({
+        pageList: [
+          checkSentenceTypePage,
+          sentenceTypePage,
+          releaseTypePage,
+          previousRotlPlacementPage,
+          sameApPage,
+          datesOfPlacementPage,
+        ],
+        releaseType: 'rotl',
+        sentenceType: 'standardDeterminate',
+      })
+    })
 
-      const checkYourAnswersPage = new CheckYourAnswers()
-      checkYourAnswersPage.completeForm()
-      checkYourAnswersPage.clickSubmit()
+    it('allows me to complete form if the release type is parole', () => {
+      WHEN('I start creating the placement application and select a release type of parole')
+      const helper = new Helper(completedApplication, placementApplication)
+      const { checkSentenceTypePage, sentenceTypePage, releaseTypePage } = helper.startApplication({
+        sentenceType: 'standardDeterminate',
+        releaseType: 'paroleDirectedLicence',
+      })
 
-      THEN('I should be taken to the confirmation page')
-      Page.verifyOnPage(ConfirmationPage)
-      cy.task('verifyPlacementApplicationSubmit', placementApplication.id).then(requests => {
-        expect(requests).to.have.length(1)
+      THEN('I should be on the decision to release page')
+      const decisionToReleasePage = Page.verifyOnPage(DecisionToRelease, placementApplication.id)
 
-        expect(requests[0].url).to.equal(paths.placementApplications.submit({ id: placementApplication.id }))
+      WHEN('I complete the page and submit')
+      decisionToReleasePage.completeForm()
+      decisionToReleasePage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
 
-        const body = JSON.parse(requests[0].body)
+      THEN('I should be on the add documents page')
+      const additionalDocumentsPage = Page.verifyOnPage(AdditionalDocuments, documents, documents.slice(0, 2))
+      additionalDocumentsPage.shouldDisplayDocuments()
 
-        expect(body).to.have.keys('requestedPlacementPeriods', 'placementType', 'translatedDocument')
+      WHEN('I complete the documents page and submit')
+      additionalDocumentsPage.completeForm()
+      additionalDocumentsPage.clickSubmit()
+
+      helper.completeApplication({
+        pageList: [
+          checkSentenceTypePage,
+          sentenceTypePage,
+          releaseTypePage,
+          decisionToReleasePage,
+          additionalDocumentsPage,
+        ],
+        sentenceType: 'standardDeterminate',
+        releaseType: 'paroleDirectedLicence',
+      })
+    })
+
+    it('uses the licence release type copied from the assessment', () => {
+      cy.task('stubApplicationGet', {
+        application: { ...completedApplication, releaseType: 'licence', sentenceType: 'standardDeterminate' },
+      })
+      WHEN('I start creating the placement and say that the release type has not changed')
+      const helper = new Helper(completedApplication, placementApplication)
+      const { checkSentenceTypePage } = helper.startApplication()
+
+      AND('I complete he additional details')
+      const additionalPlacementDetailsPage = Page.verifyOnPage(AdditionalPlacementDetailsPage)
+      additionalPlacementDetailsPage.completeForm()
+      additionalPlacementDetailsPage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
+
+      AND('I complete the rest of the form')
+      helper.completeApplication({
+        pageList: [checkSentenceTypePage, additionalPlacementDetailsPage],
+        sentenceType: 'standardDeterminate',
+        releaseType: 'licence',
+      })
+    })
+
+    it('uses the rotl release type copied from the assessment', () => {
+      cy.task('stubApplicationGet', {
+        application: { ...completedApplication, releaseType: 'rotl', sentenceType: 'standardDeterminate' },
+      })
+      WHEN('I start creating the placement and say that the release type has not changed')
+      const helper = new Helper(completedApplication, placementApplication)
+      const { checkSentenceTypePage } = helper.startApplication()
+
+      THEN('I should be on the previous ROTL page')
+      const previousRotlPlacementPage = new PreviousRotlPlacement()
+
+      WHEN('I enter previous ROTL information')
+      previousRotlPlacementPage.completeForm()
+      previousRotlPlacementPage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
+
+      AND('I complete the same AP page')
+      const sameApPage = Page.verifyOnPage(SameAp)
+      sameApPage.completeForm()
+      sameApPage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
+
+      AND('I add one placement date')
+      const datesOfPlacementPage = Page.verifyOnPage(DateOfPlacement)
+      datesOfPlacementPage.populateBlock(0, datesOfPlacementPage.datesOfPlacement[0])
+      datesOfPlacementPage.clickButton('Save and continue')
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
+
+      helper.completeApplication({
+        pageList: [checkSentenceTypePage, previousRotlPlacementPage, sameApPage, datesOfPlacementPage],
+        sentenceType: 'standardDeterminate',
+        releaseType: 'rotl',
+      })
+    })
+
+    it('uses the parole release type copied from the assessment', () => {
+      cy.task('stubApplicationGet', {
+        application: {
+          ...completedApplication,
+          releaseType: 'paroleDirectedLicence',
+          sentenceType: 'standardDeterminate',
+        },
+      })
+      WHEN('I start creating the placement and say that the release type has not changed')
+      const helper = new Helper(completedApplication, placementApplication)
+      const { checkSentenceTypePage } = helper.startApplication()
+
+      THEN('I should be on the the decision to release page')
+      const decisionToReleasePage = Page.verifyOnPage(DecisionToRelease, placementApplication.id)
+
+      WHEN('I complete the decision to release page')
+      decisionToReleasePage.completeForm()
+      decisionToReleasePage.clickSubmit()
+      cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })
+
+      AND('I complete the add documents page')
+      const additionalDocumentsPage = Page.verifyOnPage(AdditionalDocuments, documents, documents.slice(0, 2))
+      additionalDocumentsPage.shouldDisplayDocuments()
+      additionalDocumentsPage.completeForm()
+      additionalDocumentsPage.clickSubmit()
+
+      AND('I complete the rest of the form')
+      helper.completeApplication({
+        pageList: [checkSentenceTypePage, decisionToReleasePage, additionalDocumentsPage],
+        sentenceType: 'standardDeterminate',
+        releaseType: 'paroleDirectedLicence',
       })
     })
   })
 
-  it('allows me to complete form if the reason for placement is an additional placement on an existing application', () => {
-    cy.fixture('existingApplicationPlacementApplication.json').then(placementApplicationData => {
-      GIVEN('I have completed an application I am viewing a completed application')
-      const completedApplication = applicationFactory.completed('accepted').build({
+  describe('Review a placement application', () => {
+    it('allows me to review a placement application', () => {
+      GIVEN('there is a placement request task and placement application in the database')
+      const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
+
+      const document = {
+        'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
+      }
+      const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
+      cy.task('stubPlacementApplication', placementApplication)
+
+      cy.task('stubGetAllTasks', {
+        types: ['PlacementApplication'],
+        tasks: placementApplicationTasks,
+        allocatedToUserId: defaultUserId,
+        allocatedFilter: 'allocated',
+        sortBy: null,
+        sortDirection: null,
+      })
+
+      WHEN('I visit the placementRequests dashboard')
+      const listPage = ListPage.visit('requests_for_placement')
+      listPage.clickRequestsForPlacement()
+
+      AND('I click on the first name')
+      listPage.clickPersonName(placementApplicationTasks[0].personName)
+
+      THEN('I should be taken to the review applications page')
+      const page = Page.verifyOnPage(ReviewApplicationPage)
+      page.checkPageContents(placementApplication)
+
+      WHEN('I complete the form')
+      page.completeForm()
+      page.clickSubmit()
+
+      THEN('I should be taken to the decision page')
+
+      const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
+
+      WHEN('I complete the form')
+
+      cy.task('stubSubmitPlacementApplicationDecision', placementApplication)
+
+      decisionPage.checkRadioByNameAndValue('decision', 'accepted')
+      decisionPage.getTextInputByIdAndEnterDetails('decisionSummary', 'some summary notes')
+      decisionPage.clickSubmit()
+
+      THEN('I should be taken to the confirm submission page')
+      cy.task('verifyPlacementApplicationReviewSubmit', placementApplication.id).then(requests => {
+        expect(requests).to.have.length(1)
+        expect(requests[0].url).to.equal(paths.placementApplications.submitDecision({ id: placementApplication.id }))
+
+        const body = JSON.parse(requests[0].body)
+
+        expect(body).to.contain.keys('decision', 'decisionSummary', 'summaryOfChanges')
+      })
+
+      Page.verifyOnPage(ReviewApplicationConfirmPage)
+    })
+
+    it('renders with errors if I do not complete the summary of changes in the review', () => {
+      GIVEN('there is a placement request task and placement application in the database')
+      const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
+
+      const document = {
+        'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
+      }
+      const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
+      cy.task('stubPlacementApplication', placementApplication)
+
+      cy.task('stubGetAllTasks', {
+        type: 'PlacementApplication',
+        tasks: placementApplicationTasks,
+        allocatedToUserId: defaultUserId,
+        allocatedFilter: 'allocated',
+        sortBy: null,
+        sortDirection: null,
+      })
+
+      WHEN('I visit the placementRequests dashboard')
+      const listPage = ListPage.visit('requests_for_placement')
+
+      AND('I click on the first name')
+      listPage.clickPersonName(placementApplicationTasks[0].personName)
+
+      THEN('I should be taken to the review applications page')
+      const page = Page.verifyOnPage(ReviewApplicationPage)
+
+      WHEN('I click submit without entering text')
+      page.clickSubmit()
+
+      THEN('the page should render with errors')
+      page.shouldShowErrorMessagesForFields(['summaryOfChanges'], {
+        summaryOfChanges: 'You must provide a summary of the changes',
+      })
+    })
+
+    it('renders with errors if I do not complete the decision summary in the review', () => {
+      GIVEN('there is a placement request task and placement application in the database')
+      const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
+
+      const document = {
+        'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
+      }
+      const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
+      cy.task('stubPlacementApplication', placementApplication)
+      cy.task('stubGetAllTasks', {
+        type: 'PlacementApplication',
+        tasks: placementApplicationTasks,
+        allocatedToUserId: defaultUserId,
+        allocatedFilter: 'allocated',
+        sortBy: null,
+        sortDirection: null,
+      })
+
+      WHEN('I visit the placementRequests dashboard')
+      const listPage = ListPage.visit('requests_for_placement')
+
+      AND('I click on the first name')
+      listPage.clickPersonName(placementApplicationTasks[0].personName)
+
+      THEN('I should be taken to the review applications page')
+      const page = Page.verifyOnPage(ReviewApplicationPage)
+
+      WHEN('I complete the form')
+      page.completeForm()
+
+      THEN('I should be taken to the decision page')
+      const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
+
+      WHEN('I click submit')
+      decisionPage.clickSubmit()
+
+      THEN('the page should render with errors')
+      decisionPage.shouldShowErrorMessagesForFields(['decision', 'decisionSummary'], {
+        decision: 'You must provide a decision',
+        decisionSummary: 'You must provide a decision summary',
+      })
+    })
+  })
+
+  describe('Check suitability of application', () => {
+    it('does not allow me to create a placement application if I did not create the application', () => {
+      GIVEN('there is an accepted application that I did not create')
+      const application = applicationFactory.completed('accepted').build({
+        id: '123',
+        person: personFactory.build(),
+        document: applicationDocument,
+      })
+      cy.task('stubApplicationGet', { application })
+
+      WHEN('I visit the readonly application view')
+      const showPage = ShowPage.visit(application)
+
+      THEN('I should not be able to click submit')
+      showPage.shouldNotShowCreatePlacementButton()
+    })
+
+    it('does not allow me to create a placement application if the assessment was rejected', () => {
+      GIVEN('there is an rejected application that I created')
+      const application = applicationFactory.completed('rejected').build({
         id: '123',
         createdByUserId: defaultUserId,
         person: personFactory.build(),
         document: applicationDocument,
       })
-      cy.task('stubApplicationGet', { application: completedApplication })
-      cy.task('stubApplications', [completedApplication])
+      cy.task('stubApplicationGet', { application })
 
-      AND('there is a placement application in the DB')
-      const placementApplicationId = '123'
-      const placementApplication = placementApplicationFactory.build({
-        id: placementApplicationId,
-        data: placementApplicationData,
-        applicationId: completedApplication.id,
-      })
-      cy.task('stubCreatePlacementApplication', placementApplication)
-      cy.task('stubPlacementApplicationUpdate', placementApplication)
-      cy.task('stubSubmitPlacementApplication', placementApplication)
-      cy.task('stubPlacementApplication', placementApplication)
-      const requestForPlacement = requestForPlacementFactory.build({})
-      cy.task('stubApplicationRequestsForPlacement', {
-        applicationId: completedApplication.id,
-        requestsForPlacement: [requestForPlacement],
-      })
+      WHEN('I visit the readonly application view')
+      const showPage = ShowPage.visit(application)
 
-      GIVEN('I am on the readonly application view')
-      const showPage = ShowPage.visit(completedApplication)
-
-      WHEN('I click the Request Placement Application tab')
-      showPage.clickRequestAPlacementTab()
-
-      THEN('I should be able to create a placement')
-      showPage.clickCreatePlacementButton()
-
-      GIVEN('I am on the placement application form and start and application')
-      const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
-
-      WHEN('I complete the form')
-      placementReasonPage.completeForm('additional_placement')
-      placementReasonPage.clickSubmit()
-
-      const additionalPlacementDetailsPage = new AdditionalPlacementDetailsPage()
-      additionalPlacementDetailsPage.completeForm()
-      additionalPlacementDetailsPage.clickSubmit()
-
-      const updatesToApplication = new UpdatesToApplication()
-      updatesToApplication.completeForm()
-      updatesToApplication.clickSubmit()
-
-      const checkYourAnswersPage = new CheckYourAnswers()
-      checkYourAnswersPage.completeForm()
-      checkYourAnswersPage.clickSubmit()
-
-      THEN('I should be taken to the confirmation page')
-      Page.verifyOnPage(ConfirmationPage)
-      cy.task('verifyPlacementApplicationSubmit', placementApplication.id).then(requests => {
-        expect(requests).to.have.length(1)
-
-        expect(requests[0].url).to.equal(paths.placementApplications.submit({ id: placementApplication.id }))
-
-        const body = JSON.parse(requests[0].body)
-
-        expect(body).to.have.keys('requestedPlacementPeriods', 'placementType', 'translatedDocument')
-      })
+      THEN('I should not be able to click submit')
+      showPage.shouldNotShowCreatePlacementButton()
     })
-  })
 
-  it('allows me to complete form if the reason for placement is parole board', () => {
-    cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
-      GIVEN('I have completed an application I am viewing a completed application')
-      const person = personFactory.build()
-      let completedApplication = applicationFactory.completed('accepted').build({
+    it('does not allow me to create a placement application if the assessment is not yet assessed', () => {
+      GIVEN('there is an unassesed application that I created')
+      const application = applicationFactory.build({
+        status: 'awaitingAssesment',
         id: '123',
         createdByUserId: defaultUserId,
-        person,
+        assessmentDecision: undefined,
+        person: personFactory.build(),
         document: applicationDocument,
       })
-      completedApplication = addResponseToFormArtifact(completedApplication, {
-        task: 'type-of-ap',
-        page: 'ap-type',
-        key: 'type',
-        value: 'normal',
-      }) as Application
+      cy.task('stubApplicationGet', { application })
 
-      cy.task('stubApplicationGet', { application: completedApplication })
-      cy.task('stubApplications', [completedApplication])
+      WHEN('I visit the readonly application view')
+      const showPage = ShowPage.visit(application)
 
-      AND('there is a placement application in the DB')
-      const placementApplicationId = '123'
-      const placementApplication = placementApplicationFactory.build({
-        id: placementApplicationId,
-        data: placementApplicationData,
-        applicationId: completedApplication.id,
-      })
-      const documents = documentFactory.buildList(4)
-      documents.forEach(document => {
-        cy.task('stubPersonDocument', { person, document })
-      })
-      cy.task('stubCreatePlacementApplication', placementApplication)
-      cy.task('stubPlacementApplicationUpdate', placementApplication)
-      cy.task('stubSubmitPlacementApplication', placementApplication)
-      cy.task('stubPlacementApplication', placementApplication)
-      cy.task('stubApplicationDocuments', { application: completedApplication, documents })
-      const requestForPlacement = requestForPlacementFactory.build({})
-      cy.task('stubApplicationRequestsForPlacement', {
-        applicationId: completedApplication.id,
-        requestsForPlacement: [requestForPlacement],
-      })
-
-      GIVEN('I am on the readonly application view')
-      const showPage = ShowPage.visit(completedApplication)
-
-      WHEN('I click the Request Placement Application tab')
-      showPage.clickRequestAPlacementTab()
-
-      THEN('I should be able to create a placement')
-      showPage.clickCreatePlacementButton()
-
-      GIVEN('I am on the placement application form and start and application')
-      const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
-
-      WHEN('I complete the form')
-      placementReasonPage.completeForm('release_following_decision')
-      placementReasonPage.clickSubmit()
-
-      const decisionToReleasePage = new DecisionToRelease()
-      decisionToReleasePage.completeForm()
-      decisionToReleasePage.clickSubmit()
-
-      const additionalDocumentsPage = new AdditionalDocuments(documents, documents.slice(0, 2))
-      additionalDocumentsPage.shouldDisplayDocuments()
-      additionalDocumentsPage.completeForm()
-      additionalDocumentsPage.clickSubmit()
-
-      const updatesToApplication = new UpdatesToApplication()
-      updatesToApplication.completeForm()
-      updatesToApplication.clickSubmit()
-
-      const checkYourAnswersPage = new CheckYourAnswers()
-
-      checkYourAnswersPage.completeForm()
-      checkYourAnswersPage.clickSubmit()
+      THEN('I should not be able to click submit')
+      showPage.shouldNotShowCreatePlacementButton()
     })
-  })
-
-  it('allows me to review an application', () => {
-    GIVEN('there is a placement request task and placement application in the database')
-    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
-
-    const document = {
-      'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
-    }
-    const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
-    cy.task('stubPlacementApplication', placementApplication)
-
-    cy.task('stubGetAllTasks', {
-      types: ['PlacementApplication'],
-      tasks: placementApplicationTasks,
-      allocatedToUserId: defaultUserId,
-      allocatedFilter: 'allocated',
-      sortBy: null,
-      sortDirection: null,
-    })
-
-    WHEN('I visit the placementRequests dashboard')
-    const listPage = ListPage.visit('requests_for_placement')
-    listPage.clickRequestsForPlacement()
-
-    AND('I click on the first name')
-    listPage.clickPersonName(placementApplicationTasks[0].personName)
-
-    THEN('I should be taken to the review applications page')
-    const page = Page.verifyOnPage(ReviewApplicationPage)
-    page.checkPageContents(placementApplication)
-
-    AND('when I complete the form')
-    page.completeForm()
-    page.clickSubmit()
-
-    THEN('I should be taken to the decision page')
-
-    const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
-
-    AND('when I complete the form')
-
-    cy.task('stubSubmitPlacementApplicationDecision', placementApplication)
-
-    decisionPage.checkRadioByNameAndValue('decision', 'accepted')
-    decisionPage.getTextInputByIdAndEnterDetails('decisionSummary', 'some summary notes')
-    decisionPage.clickSubmit()
-
-    THEN('I should be taken to the confirm submission page')
-    cy.task('verifyPlacementApplicationReviewSubmit', placementApplication.id).then(requests => {
-      expect(requests).to.have.length(1)
-      expect(requests[0].url).to.equal(paths.placementApplications.submitDecision({ id: placementApplication.id }))
-
-      const body = JSON.parse(requests[0].body)
-
-      expect(body).to.contain.keys('decision', 'decisionSummary', 'summaryOfChanges')
-    })
-
-    Page.verifyOnPage(ReviewApplicationConfirmPage)
-  })
-
-  it('renders with errors if I do not complete the summary of changes in the review', () => {
-    GIVEN('there is a placement request task and placement application in the database')
-    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
-
-    const document = {
-      'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
-    }
-    const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
-    cy.task('stubPlacementApplication', placementApplication)
-
-    cy.task('stubGetAllTasks', {
-      type: 'PlacementApplication',
-      tasks: placementApplicationTasks,
-      allocatedToUserId: defaultUserId,
-      allocatedFilter: 'allocated',
-      sortBy: null,
-      sortDirection: null,
-    })
-
-    WHEN('I visit the placementRequests dashboard')
-    const listPage = ListPage.visit('requests_for_placement')
-
-    AND('I click on the first name')
-    listPage.clickPersonName(placementApplicationTasks[0].personName)
-
-    THEN('I should be taken to the review applications page')
-    const page = Page.verifyOnPage(ReviewApplicationPage)
-
-    AND('when I click submit without entering text')
-    page.clickSubmit()
-
-    THEN('the page should render with errors')
-    page.shouldShowErrorMessagesForFields(['summaryOfChanges'], {
-      summaryOfChanges: 'You must provide a summary of the changes',
-    })
-  })
-
-  it('renders with errors if I do not complete the decision summary in the review', () => {
-    GIVEN('there is a placement request task and placement application in the database')
-    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
-
-    const document = {
-      'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
-    }
-    const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
-    cy.task('stubPlacementApplication', placementApplication)
-    cy.task('stubGetAllTasks', {
-      type: 'PlacementApplication',
-      tasks: placementApplicationTasks,
-      allocatedToUserId: defaultUserId,
-      allocatedFilter: 'allocated',
-      sortBy: null,
-      sortDirection: null,
-    })
-
-    WHEN('I visit the placementRequests dashboard')
-    const listPage = ListPage.visit('requests_for_placement')
-
-    AND('I click on the first name')
-    listPage.clickPersonName(placementApplicationTasks[0].personName)
-
-    THEN('I should be taken to the review applications page')
-    const page = Page.verifyOnPage(ReviewApplicationPage)
-
-    AND('when I complete the form')
-    page.completeForm()
-
-    THEN('I should be taken to the decision page')
-    const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
-
-    AND('when I click submit')
-    decisionPage.clickSubmit()
-
-    THEN('the page should render with errors')
-    decisionPage.shouldShowErrorMessagesForFields(['decision', 'decisionSummary'], {
-      decision: 'You must provide a decision',
-      decisionSummary: 'You must provide a decision summary',
-    })
-  })
-
-  it('does not allow me to create a placement application if I did not create the application', () => {
-    GIVEN('there is an accepted application that I did not create')
-    const application = applicationFactory.completed('accepted').build({
-      id: '123',
-      person: personFactory.build(),
-      document: applicationDocument,
-    })
-    cy.task('stubApplicationGet', { application })
-
-    WHEN('I visit the readonly application view')
-    const showPage = ShowPage.visit(application)
-
-    THEN('I should not be able to click submit')
-    showPage.shouldNotShowCreatePlacementButton()
-  })
-
-  it('does not allow me to create a placement application if the assessment was rejected', () => {
-    GIVEN('there is an rejected application that I created')
-    const application = applicationFactory.completed('rejected').build({
-      id: '123',
-      createdByUserId: defaultUserId,
-      person: personFactory.build(),
-      document: applicationDocument,
-    })
-    cy.task('stubApplicationGet', { application })
-
-    WHEN('I visit the readonly application view')
-    const showPage = ShowPage.visit(application)
-
-    THEN('I should not be able to click submit')
-    showPage.shouldNotShowCreatePlacementButton()
-  })
-
-  it('does not allow me to create a placement application if the assessment is not yet assessed', () => {
-    GIVEN('there is an unassesed application that I created')
-    const application = applicationFactory.build({
-      status: 'awaitingAssesment',
-      id: '123',
-      createdByUserId: defaultUserId,
-      assessmentDecision: undefined,
-      person: personFactory.build(),
-      document: applicationDocument,
-    })
-    cy.task('stubApplicationGet', { application })
-
-    WHEN('I visit the readonly application view')
-    const showPage = ShowPage.visit(application)
-
-    THEN('I should not be able to click submit')
-    showPage.shouldNotShowCreatePlacementButton()
   })
 })

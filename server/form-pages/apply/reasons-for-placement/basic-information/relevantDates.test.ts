@@ -1,6 +1,6 @@
 import { applicationFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import RelevantDates, { RelevantDateKeys, RelevantDatesBody, relevantDateKeys } from './relevantDates'
 

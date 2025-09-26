@@ -1,4 +1,4 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 import { applicationFactory } from '../../../../testutils/factories'

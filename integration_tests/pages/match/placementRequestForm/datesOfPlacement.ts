@@ -1,5 +1,6 @@
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import Page from '../../page'
+import { AND, THEN, WHEN } from '../../../helpers'
 
 export default class DatesOfPlacement extends Page {
   constructor() {
@@ -53,14 +54,13 @@ export default class DatesOfPlacement extends Page {
       .click()
   }
 
-  addAndRemoveBlock() {
-    const checkItems = (count: number) => cy.get('.moj-add-another__item').should('have.length', count)
-
-    checkItems(2)
+  addAndRemoveBlock(initialCount: number = 0) {
+    const checkItems = (count: number) => cy.get('.moj-add-another__item').should('have.length', initialCount + count)
+    checkItems(0)
     this.clickButton('Add another')
-    checkItems(3)
-    this.removeBlock(2)
-    checkItems(2)
+    checkItems(1)
+    this.removeBlock(initialCount)
+    checkItems(0)
   }
 
   completeDatesOfPlacementDateInputs(date: Date, index: string): void {
@@ -86,13 +86,45 @@ export default class DatesOfPlacement extends Page {
     cy.get(`[name="${prefix}[arrivalDate-year]"`).clear()
   }
 
-  clickSaveAndContinue() {
-    cy.get('button').contains('Save and continue').click()
+  clickSubmit() {
+    this.clickButton('Save and continue')
   }
 
-  shouldShowErrors() {
+  exercisePage() {
+    WHEN('I submit the form empty')
+    this.clickButton('Save and continue')
+
+    THEN('I should see errors')
     this.shouldShowErrorMessagesForFields(['datesOfPlacement_0_isFlexible'], {
       datesOfPlacement_0_isFlexible: 'State if the placement date is flexible',
     })
+
+    WHEN('I populate the form')
+    this.populateBlock(0, this.datesOfPlacement[0])
+    this.clickButton('Add another')
+    this.populateBlock(1, this.datesOfPlacement[1])
+
+    AND('I should be able to add and remove date blocks without affecting the form population')
+    this.addAndRemoveBlock(2)
+    this.verifyBlockPopulated(0, this.datesOfPlacement[0])
+    this.verifyBlockPopulated(1, this.datesOfPlacement[1])
+
+    WHEN('I add a new block and populate it')
+    this.clickButton('Add another')
+    this.populateBlock(2, this.datesOfPlacement[2])
+    this.verifyBlockPopulated(0, this.datesOfPlacement[0])
+    this.verifyBlockPopulated(1, this.datesOfPlacement[1])
+    this.verifyBlockPopulated(2, this.datesOfPlacement[2])
+
+    AND('I delete the block in the middle')
+    this.checkBlockTitles(3)
+    this.removeBlock(1)
+
+    THEN('The third block should remain populated')
+    this.verifyBlockPopulated(0, this.datesOfPlacement[0])
+    this.verifyBlockPopulated(2, this.datesOfPlacement[2])
+
+    AND('the block titles should be fixed')
+    this.checkBlockTitles(2)
   }
 }

@@ -21,7 +21,6 @@
         {% set fieldId = "datesOfPlacement_" + index %}
         {% set context = fetchContext() %}
         {% set body = context.page.body %}
-
         {{ govukDateInput({
             id: fieldId + '_arrivalDate',
             fieldset: {

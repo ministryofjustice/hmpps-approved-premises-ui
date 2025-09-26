@@ -1,5 +1,5 @@
 import { lowerCase } from '../../../../utils/utils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 import CaseManagerInformation, { CaseManagerDetails, caseManagerKeys } from './caseManagerInformation'
 
 describe('CaseMangerInformation', () => {

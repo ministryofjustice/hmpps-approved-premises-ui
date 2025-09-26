@@ -38,7 +38,7 @@ export const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
   return { actual: actual.text().replace(/\s+/g, ''), expected: doc.body.innerText.replace(/\s+/g, '') }
 }
 
-export default abstract class Page {
+export default class Page {
   actions: Record<string, string> = {}
 
   static verifyOnPage<T>(constructor: new (...args: Array<unknown>) => T, ...args: Array<unknown>): T {

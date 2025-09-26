@@ -1,5 +1,5 @@
 import { YesNoOrIDK } from '@approved-premises/ui'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import PreviousPlacements from './previousPlacements'
 

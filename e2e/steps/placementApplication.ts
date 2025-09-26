@@ -42,14 +42,19 @@ export const startPlacementApplication = async ({ page }: { page: Page }, applic
 }
 
 export const createPlacementApplication = async ({ page }: { page: Page }) => {
-  const reasonForPlacementPage = new ApplyPage(page)
-  await reasonForPlacementPage.checkRadioInGroup(
-    'Why are you requesting a placement?',
-    'Release on Temporary Licence (ROTL)',
-  )
-  await reasonForPlacementPage.clickSave()
+  const checkSentenceTypePage = await ApplyPage.initialize(page, 'Check the sentencing information')
+  await checkSentenceTypePage.checkRadioInGroup('Has the sentence or release type changed?', 'Yes')
+  await checkSentenceTypePage.clickSave()
 
-  const previousPlacementPage = new ApplyPage(page)
+  const sentenceTypePage = await ApplyPage.initialize(page, 'Which sentence type does the person have?')
+  await sentenceTypePage.checkRadio('Standard determinate custody')
+  await sentenceTypePage.clickSave()
+
+  const releaseTypePage = await ApplyPage.initialize(page, 'What is the release type?')
+  await releaseTypePage.checkRadio('Release on Temporary Licence (ROTL)')
+  await releaseTypePage.clickSave()
+
+  const previousPlacementPage = await ApplyPage.initialize(page, 'Request for placement')
   await previousPlacementPage.checkRadioInGroup(
     'Has this person previously had a placement at an Approved Premises for ROTL?',
     'No',
