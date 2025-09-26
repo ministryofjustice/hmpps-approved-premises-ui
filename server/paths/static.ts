@@ -4,6 +4,7 @@ const paths = {
   pages: {
     accessibilityStatement: path('/accessibility'),
     maintenance: path('/maintenance'),
+    cookiesPolicy: path('/cookies'),
   },
 }
 
