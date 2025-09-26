@@ -6,6 +6,5 @@ export type ReferralRejectionReason = {
     id: string;
     isActive: boolean;
     name: string;
-    serviceScope: string;
 };
 
