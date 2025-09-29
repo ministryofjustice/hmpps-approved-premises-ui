@@ -1,5 +1,5 @@
 import { Cas1PlacementRequestDetail, FullPerson } from '@approved-premises/api'
-import Page from '../page'
+import Page from '../../page'
 
 export default class NewPlacementPage extends Page {
   constructor(placementRequest: Cas1PlacementRequestDetail) {

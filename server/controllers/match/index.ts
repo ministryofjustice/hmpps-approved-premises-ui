@@ -7,7 +7,7 @@ import OccupancyViewController from './placementRequests/occupancyViewController
 import SpaceBookingsController from './placementRequests/spaceBookingsController'
 
 import type { Services } from '../../services'
-import NewPlacementController from './newPlacementController'
+import NewPlacementController from './newPlacement/newPlacementController'
 
 export const controllers = (services: Services) => {
   const {

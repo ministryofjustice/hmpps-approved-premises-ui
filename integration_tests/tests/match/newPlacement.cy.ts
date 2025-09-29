@@ -6,9 +6,9 @@ import { signIn } from '../signIn'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 import { cas1PlacementRequestDetailFactory } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
-import NewPlacementPage from '../../pages/match/newPlacementPage'
+import NewPlacementPage from '../../pages/match/newPlacement/newPlacementPage'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import CheckCriteriaPage from '../../pages/match/checkCriteriaPage'
+import CheckCriteriaPage from '../../pages/match/newPlacement/checkCriteriaPage'
 
 context('New Placement', () => {
   let placementRequest: Cas1PlacementRequestDetail
