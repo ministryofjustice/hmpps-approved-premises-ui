@@ -7,6 +7,8 @@ import adminPaths from '../../paths/admin'
 import matchPaths from '../../paths/match'
 import * as validationUtils from '../../utils/validation'
 import { ValidationError } from '../../utils/errors'
+import { criteriaSummaryList } from '../../utils/match/newPlacement'
+import { PlacementRequestService } from '../../services'
 
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
@@ -15,6 +17,7 @@ describe('newPlacementController', () => {
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
+  const placementRequestService = createMock<PlacementRequestService>({})
 
   let newPlacementController: NewPlacementController
 
@@ -28,8 +31,9 @@ describe('newPlacementController', () => {
       flash: jest.fn(),
     })
 
-    newPlacementController = new NewPlacementController()
+    newPlacementController = new NewPlacementController(placementRequestService)
 
+    placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
   })
 
@@ -49,6 +53,24 @@ describe('newPlacementController', () => {
   })
 
   describe('saveNew', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2025-09-29'))
+    })
+
+    it('redirects to the Check placement criteria page if the form is valid', async () => {
+      const validBody = {
+        startDate: '3/11/2025',
+        endDate: '4/1/2026',
+        reason: 'Area now excluded',
+      }
+
+      await newPlacementController.saveNew()({ ...request, body: validBody }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.newPlacement.criteria({ placementRequestId: placementRequestDetail.id }),
+      )
+    })
+
     it('redirects to the form page with errors if the form is not valid', async () => {
       await newPlacementController.saveNew()({ ...request, body: {} }, response, next)
 
@@ -66,6 +88,28 @@ describe('newPlacementController', () => {
         endDate: 'Enter or select a departure date',
         reason: 'Enter a reason',
       })
+    })
+  })
+
+  describe('criteria', () => {
+    const defaultRenderParameters = {
+      backlink: matchPaths.v2Match.placementRequests.newPlacement.new({
+        placementRequestId: placementRequestDetail.id,
+      }),
+      pageHeading: 'Check the placement criteria',
+      criteriaSummary: criteriaSummaryList(placementRequestDetail),
+      criteriaChangedRadioItems: [
+        { value: 'yes', text: 'Yes' },
+        { value: 'no', text: 'No' },
+      ],
+      errors: {},
+      errorSummary: [] as Array<string>,
+    }
+
+    it('renders the check placement criteria template', async () => {
+      await newPlacementController.criteria()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('match/newPlacement/check-criteria', defaultRenderParameters)
     })
   })
 })

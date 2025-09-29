@@ -1,10 +1,13 @@
 import { Cas1PlacementRequestDetail } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { signIn } from '../signIn'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 import { cas1PlacementRequestDetailFactory } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import NewPlacementPage from '../../pages/match/newPlacementPage'
+import { DateFormats } from '../../../server/utils/dateUtils'
+import CheckCriteriaPage from '../../pages/match/checkCriteriaPage'
 
 context('New Placement', () => {
   let placementRequest: Cas1PlacementRequestDetail
@@ -40,7 +43,17 @@ context('New Placement', () => {
     })
 
     WHEN('I complete the form')
+    const startDate = faker.date.future()
+    const endDate = faker.date.soon({ refDate: startDate })
+    newPlacementPage.completeForm({
+      startDate: DateFormats.dateObjtoUIDate(startDate, { format: 'datePicker' }),
+      endDate: DateFormats.dateObjtoUIDate(endDate, { format: 'datePicker' }),
+      reason: faker.word.words(10),
+    })
+    newPlacementPage.clickButton('Save and continue')
+
     THEN('I should see the page to check placement criteria')
+    Page.verifyOnPage(CheckCriteriaPage)
 
     WHEN('I submit the form with no values')
     THEN('I should see an error message')

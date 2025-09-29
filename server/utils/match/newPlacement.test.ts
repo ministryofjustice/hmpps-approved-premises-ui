@@ -1,5 +1,6 @@
 import { ValidationError } from '../errors'
-import { validateNewPlacement } from './newPlacement'
+import { criteriaSummaryList, validateNewPlacement } from './newPlacement'
+import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 
 describe('new placement utils', () => {
   describe('validateNewPlacement', () => {
@@ -52,6 +53,46 @@ describe('new placement utils', () => {
       }
       expect(error).toBeInstanceOf(ValidationError)
       expect(error.data).toEqual(expectedErrors)
+    })
+  })
+
+  describe('criteriaSummaryList', () => {
+    it('returns a summary list for a placement request with no requirements', () => {
+      const placementRequest = cas1PlacementRequestDetailFactory.build({
+        type: 'normal',
+        essentialCriteria: [],
+      })
+
+      expect(criteriaSummaryList(placementRequest)).toEqual({
+        rows: [
+          { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
+          { key: { text: 'AP criteria' }, value: { html: '<span class="text-grey">None</span>' } },
+          { key: { text: 'Room criteria' }, value: { html: '<span class="text-grey">None</span>' } },
+        ],
+      })
+    })
+
+    it('returns a summary list for a placement request with requirements', () => {
+      const placementRequest = cas1PlacementRequestDetailFactory.build({
+        type: 'pipe',
+        essentialCriteria: ['isCatered', 'isWheelchairDesignated', 'isStepFreeDesignated'],
+      })
+
+      expect(criteriaSummaryList(placementRequest)).toEqual({
+        rows: [
+          { key: { text: 'AP type' }, value: { text: 'Psychologically Informed Planned Environment (PIPE)' } },
+          {
+            key: { text: 'AP criteria' },
+            value: { html: '<ul class="govuk-list govuk-list--bullet"><li>Catered</li></ul>' },
+          },
+          {
+            key: { text: 'Room criteria' },
+            value: {
+              html: '<ul class="govuk-list govuk-list--bullet"><li>Wheelchair accessible</li><li>Step-free</li></ul>',
+            },
+          },
+        ],
+      })
     })
   })
 })
