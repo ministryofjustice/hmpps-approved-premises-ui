@@ -1,0 +1,26 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{{ govukTable({
+    classes: "govuk-table--small-text-until-tablet",
+    head: [
+      {
+        text: "Name"
+      },
+      {
+        text: "CRN"
+      },
+      {
+        text: "Hours ordered"
+      },
+      {
+        text: "Completed hours"
+      },
+      {
+        text: "Remaining hours"
+      },
+      {
+        text: "Attendance"
+      }
+    ],
+    rows: sessionList
+  }) }}

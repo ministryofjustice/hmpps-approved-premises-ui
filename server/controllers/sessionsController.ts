@@ -4,6 +4,7 @@ import { ProjectAllocationsDto } from '../@types/shared'
 import SessionService from '../services/sessionService'
 import DateFormats from '../utils/dateUtils'
 import GovukFrontendDateInput from '../forms/GovukFrontendDateInput'
+import SessionUtils from '../utils/sessionUtils'
 
 export default class SessionsController {
   constructor(
@@ -52,6 +53,18 @@ export default class SessionsController {
         // Response error handling to be added
         res.render('sessions/index', { ...pageSearchValues, teamItems: [], sessionRows: [] })
       }
+    }
+  }
+
+  show(): RequestHandler {
+    return async (_req: Request, res: Response) => {
+      const { id } = _req.params
+      const { date } = _req.query
+      const session = await this.sessionService.getSession(res.locals.user.username, id, date.toString())
+      const project = session.appointments[0]
+      const sessionList = SessionUtils.sessionListTableRows(session)
+
+      res.render('sessions/show', { project, sessionList })
     }
   }
 

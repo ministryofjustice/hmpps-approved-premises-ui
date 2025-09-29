@@ -1,0 +1,28 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = project.projectName %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: paths.sessions.index.pattern
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+<span class="govuk-caption-l">{{ project.projectCode }}</span>
+<h1 class="govuk-heading-l">{{ project.projectName }}</h1>
+</div>
+</div>
+
+<h2 class="govuk-heading-m">Session list</h2>
+
+{% if sessionList | length %}
+  {% include "./_sessionList.njk" %}
+{% endif %}
+
+{% endblock %}

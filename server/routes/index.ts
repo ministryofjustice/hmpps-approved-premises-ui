@@ -3,6 +3,7 @@ import { Router } from 'express'
 import type { Services } from '../services'
 import { Page } from '../services/auditService'
 import { Controllers } from '../controllers'
+import paths from '../paths'
 
 export default function routes(controllers: Controllers, { auditService }: Services): Router {
   const router = Router()
@@ -23,6 +24,11 @@ export default function routes(controllers: Controllers, { auditService }: Servi
 
   router.get('/sessions/search', async (req, res, next) => {
     const handler = sessionsController.search()
+    await handler(req, res, next)
+  })
+
+  router.get(paths.sessions.show.pattern, async (req, res, next) => {
+    const handler = sessionsController.show()
     await handler(req, res, next)
   })
 

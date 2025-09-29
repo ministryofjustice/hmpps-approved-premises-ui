@@ -6,6 +6,7 @@ const paths = {
   sessions: {
     index: sessionsPath,
     search: sessionsPath.path('search'),
+    show: sessionsPath.path(':id'),
   },
 }
 
