@@ -10,10 +10,23 @@ import { ValidationError } from '../../../utils/errors'
 import { criteriaSummaryList } from '../../../utils/match/newPlacement'
 import { PlacementRequestService } from '../../../services'
 import { personKeyDetails } from '../../../utils/placements'
+import {
+  apTypeRadioItems,
+  checkBoxesForCriteria,
+  filterApLevelCriteria,
+  filterRoomLevelCriteria,
+} from '../../../utils/match/spaceSearch'
+import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
+import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import { applyApTypeToAssessApType, type ApTypeSpecialist } from '../../../utils/placementCriteriaUtils'
 
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
   const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
+  const contextKeyDetails = personKeyDetails(
+    placementRequestDetail.person,
+    placementRequestDetail.risks.tier.value.level,
+  )
 
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -23,6 +36,8 @@ describe('newPlacementController', () => {
   let newPlacementController: NewPlacementController
 
   beforeEach(() => {
+    jest.clearAllMocks()
+
     request = createMock<Request>({
       params: { placementRequestId: placementRequestDetail.id },
       user: { token },
@@ -40,7 +55,7 @@ describe('newPlacementController', () => {
 
   describe('new', () => {
     const defaultRenderParameters = {
-      contextKeyDetails: personKeyDetails(placementRequestDetail.person, placementRequestDetail.risks.tier.value.level),
+      contextKeyDetails,
       backlink: adminPaths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
       pageHeading: 'New placement details',
       errors: {},
@@ -69,7 +84,9 @@ describe('newPlacementController', () => {
       await newPlacementController.saveNew()({ ...request, body: validBody }, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.newPlacement.criteria({ placementRequestId: placementRequestDetail.id }),
+        matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({
+          placementRequestId: placementRequestDetail.id,
+        }),
       )
     })
 
@@ -93,9 +110,9 @@ describe('newPlacementController', () => {
     })
   })
 
-  describe('criteria', () => {
+  describe('checkCriteria', () => {
     const defaultRenderParameters = {
-      contextKeyDetails: personKeyDetails(placementRequestDetail.person, placementRequestDetail.risks.tier.value.level),
+      contextKeyDetails,
       backlink: matchPaths.v2Match.placementRequests.newPlacement.new({
         placementRequestId: placementRequestDetail.id,
       }),
@@ -110,9 +127,104 @@ describe('newPlacementController', () => {
     }
 
     it('renders the check placement criteria template', async () => {
-      await newPlacementController.criteria()(request, response, next)
+      await newPlacementController.checkCriteria()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/newPlacement/check-criteria', defaultRenderParameters)
+    })
+  })
+
+  describe('saveCheckCriteria', () => {
+    it('redirects to the form page with an error if the form is not valid', async () => {
+      await newPlacementController.saveCheckCriteria()({ ...request, body: {} }, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({
+          placementRequestId: placementRequestDetail.id,
+        }),
+      )
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        criteriaChanged: 'Select if the criteria have changed',
+      })
+    })
+
+    it('redirects to the Update placement criteria page if the criteria have changed', async () => {
+      await newPlacementController.saveCheckCriteria()({ ...request, body: { criteriaChanged: 'yes' } }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({
+          placementRequestId: placementRequestDetail.id,
+        }),
+      )
+    })
+
+    it('redirects to the Suitability search page if the criteria have not changed', async () => {
+      await newPlacementController.saveCheckCriteria()({ ...request, body: { criteriaChanged: 'no' } }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequestDetail.id }),
+      )
+    })
+  })
+
+  describe('updateCriteria', () => {
+    const defaultRenderParameters = {
+      contextKeyDetails,
+      backlink: matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({
+        placementRequestId: placementRequestDetail.id,
+      }),
+      pageHeading: 'Update the placement criteria',
+      typeOfApRadioItems: apTypeRadioItems(
+        applyApTypeToAssessApType[placementRequestDetail.type as ApTypeSpecialist] || 'normal',
+      ),
+      criteriaCheckboxGroups: [
+        checkBoxesForCriteria(
+          'AP requirements',
+          'apCriteria',
+          spaceSearchCriteriaApLevelLabels,
+          filterApLevelCriteria(placementRequestDetail.essentialCriteria),
+        ),
+        checkBoxesForCriteria(
+          'Room requirements',
+          'roomCriteria',
+          roomCharacteristicMap,
+          filterRoomLevelCriteria(placementRequestDetail.essentialCriteria),
+        ),
+      ],
+      errors: {},
+      errorSummary: [] as Array<string>,
+    }
+
+    it('renders the form to update the new placement criteria', async () => {
+      await newPlacementController.updateCriteria()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('match/newPlacement/update-criteria', defaultRenderParameters)
+    })
+  })
+
+  describe('saveUpdateCriteria', () => {
+    it('redirects to the form page with an error if the form is not valid', async () => {
+      await newPlacementController.saveUpdateCriteria()({ ...request, body: {} }, response, next)
+
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({
+          placementRequestId: placementRequestDetail.id,
+        }),
+      )
+
+      const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        typeOfAp: 'Select the type of AP',
+      })
     })
   })
 })
