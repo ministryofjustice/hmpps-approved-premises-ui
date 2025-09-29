@@ -44,6 +44,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_PLACEMENT_SAVE',
     allowedPermissions: ['cas1_space_booking_create'],
   })
+  get(paths.v2Match.placementRequests.newPlacement.criteria.pattern, newPlacementController.criteria(), {
+    auditEvent: 'NEW_PLACEMENT_CRITERIA',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
 
   get(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
     auditEvent: 'SPACE_SEARCH',

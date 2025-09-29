@@ -1,6 +1,15 @@
 import { NewPlacementFormData } from '@approved-premises/ui'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { ValidationError } from '../errors'
 import { DateFormats, isoDateIsValid } from '../dateUtils'
+import { summaryListItem } from '../formUtils'
+import { applyApTypeToAssessApType, apTypeCriteriaLabels, type ApTypeSpecialist } from '../placementCriteriaUtils'
+import {
+  characteristicsBulletList,
+  roomCharacteristicMap,
+  spaceSearchCriteriaApLevelLabels,
+} from '../characteristicsUtils'
+import { filterApLevelCriteria, filterRoomLevelCriteria } from './spaceSearch'
 
 type NewPlacementFormErrors = {
   [K in keyof NewPlacementFormData]?: string
@@ -39,3 +48,26 @@ export const validateNewPlacement = (body: Partial<NewPlacementFormData>) => {
     throw new ValidationError(errors)
   }
 }
+
+export const criteriaSummaryList = (placementRequest: Cas1PlacementRequestDetail) => ({
+  rows: [
+    summaryListItem(
+      'AP type',
+      apTypeCriteriaLabels[applyApTypeToAssessApType[placementRequest.type as ApTypeSpecialist] || 'normal'],
+    ),
+    summaryListItem(
+      'AP criteria',
+      characteristicsBulletList(filterApLevelCriteria(placementRequest.essentialCriteria), {
+        labels: spaceSearchCriteriaApLevelLabels,
+      }),
+      'html',
+    ),
+    summaryListItem(
+      'Room criteria',
+      characteristicsBulletList(filterRoomLevelCriteria(placementRequest.essentialCriteria), {
+        labels: roomCharacteristicMap,
+      }),
+      'html',
+    ),
+  ],
+})

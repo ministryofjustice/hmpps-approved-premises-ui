@@ -22,6 +22,7 @@ const v2Match = {
     },
     newPlacement: {
       new: v2NewPlacementPath.path('new'),
+      criteria: v2NewPlacementPath.path('check-criteria'),
     },
   },
 }

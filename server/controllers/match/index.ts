@@ -38,7 +38,7 @@ export const controllers = (services: Services) => {
     sessionService,
     placementService,
   )
-  const newPlacementController = new NewPlacementController()
+  const newPlacementController = new NewPlacementController(placementRequestService)
 
   return {
     placementRequestController,
