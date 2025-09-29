@@ -1,13 +1,18 @@
 import { AppointmentsDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import paths from '../paths'
 import DateFormats from './dateUtils'
 import HtmlUtils from './hmtlUtils'
+import { createQueryString } from './utils'
 
 export default class SessionUtils {
   static sessionResultTableRows(sessions: ProjectAllocationsDto) {
     return sessions.allocations.map(session => {
+      const showPath = `${paths.sessions.show({ id: session.projectId.toString() })}?${createQueryString({ date: session.date })}`
+      const projectLink = HtmlUtils.getAnchor(session.projectName, showPath)
+
       return [
         {
-          html: `${HtmlUtils.getElementWithContent(session.projectName)}${HtmlUtils.getElementWithContent(session.projectCode)}`,
+          html: `${HtmlUtils.getElementWithContent(projectLink)}${HtmlUtils.getElementWithContent(session.projectCode)}`,
         },
         { text: DateFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
         { text: DateFormats.stripTime(session.startTime) },

@@ -1,18 +1,22 @@
 import { OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import paths from '../paths'
 import DateFormats from './dateUtils'
 import HtmlUtils from './hmtlUtils'
 import SessionUtils from './sessionUtils'
+import { createQueryString } from './utils'
 
 describe('SessionUtils', () => {
   describe('sessionResultTableRows', () => {
     const fakeFormattedDate = '20 January 2026'
     const fakeFormattedTime = '12:00'
     const fakeElement = '<div>project</div>'
+    const fakeLink = '<a>link</a>'
 
     beforeEach(() => {
       jest.spyOn(DateFormats, 'isoDateToUIDate').mockReturnValue(fakeFormattedDate)
       jest.spyOn(DateFormats, 'stripTime').mockReturnValue(fakeFormattedTime)
       jest.spyOn(HtmlUtils, 'getElementWithContent').mockReturnValue(fakeElement)
+      jest.spyOn(HtmlUtils, 'getAnchor').mockReturnValue(fakeLink)
     })
 
     it('returns session results formatted into expected table rows', () => {
@@ -35,7 +39,12 @@ describe('SessionUtils', () => {
 
       const result = SessionUtils.sessionResultTableRows(sessions)
 
-      expect(HtmlUtils.getElementWithContent).toHaveBeenNthCalledWith(1, allocation.projectName)
+      expect(HtmlUtils.getAnchor).toHaveBeenCalledWith(
+        allocation.projectName,
+        `${paths.sessions.show({ id: allocation.projectId.toString() })}?${createQueryString({ date: allocation.date })}`,
+      )
+
+      expect(HtmlUtils.getElementWithContent).toHaveBeenNthCalledWith(1, fakeLink)
       expect(HtmlUtils.getElementWithContent).toHaveBeenNthCalledWith(2, allocation.projectCode)
 
       expect(result).toEqual([
