@@ -2,7 +2,6 @@ import { Factory } from 'fishery'
 import { Cas1KeyWorkerAllocation } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
-import staffMemberFactory from './staffMember'
 
 export default Factory.define<Cas1KeyWorkerAllocation>(({ params }) => {
   const name = params?.name || faker.person.fullName()
@@ -11,6 +10,6 @@ export default Factory.define<Cas1KeyWorkerAllocation>(({ params }) => {
     allocatedAt: DateFormats.dateObjToIsoDate(faker.date.recent()),
     emailAddress: faker.internet.email(),
     name,
-    keyWorker: staffMemberFactory.build({ name }),
+    userId: faker.string.uuid(),
   }
 })
