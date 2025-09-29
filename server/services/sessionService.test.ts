@@ -1,4 +1,4 @@
-import { ProjectAllocationsDto } from '../@types/shared'
+import { AppointmentsDto, ProjectAllocationsDto } from '../@types/shared'
 import SessionClient from '../data/sessionClient'
 import SessionService from './sessionService'
 
@@ -42,5 +42,31 @@ describe('ProviderService', () => {
     expect(sessionClient.getSessions).toHaveBeenCalledTimes(1)
     expect(result).toEqual(sessions)
     expect(result.allocations[0]).toEqual(sessions.allocations[0])
+  })
+
+  it('should call find on the client and return its result', async () => {
+    const session: AppointmentsDto = {
+      appointments: [
+        {
+          id: 1001,
+          projectName: 'Park cleaning',
+          requirementMinutes: 600,
+          completedMinutes: 500,
+          offender: {
+            forename: 'John',
+            surname: 'Smith',
+            crn: 'CRN123',
+            objectType: 'OffenderFull',
+          },
+        },
+      ],
+    }
+
+    sessionClient.find.mockResolvedValue(session)
+    const result = await sessionService.getSession('some-username', '1', '2025-01-01')
+
+    expect(sessionClient.find).toHaveBeenCalledTimes(1)
+    expect(result).toEqual(session)
+    expect(result.appointments[0]).toEqual(session.appointments[0])
   })
 })

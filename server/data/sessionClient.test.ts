@@ -3,6 +3,7 @@ import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients
 import SessionClient from './sessionClient'
 import config from '../config'
 import { createQueryString } from '../utils/utils'
+import { AppointmentsDto } from '../@types/shared'
 
 describe('SessionClient', () => {
   let sessionClient: SessionClient
@@ -22,6 +23,40 @@ describe('SessionClient', () => {
   })
 
   describe('getSessions', () => {
+    it('should make a GET request to the sessions path using user token and return the response body', async () => {
+      const projectId = '1'
+      const date = '2026-01-01'
+      const queryString = createQueryString({ date })
+
+      const session: AppointmentsDto = {
+        appointments: [
+          {
+            id: 1001,
+            projectName: 'Park cleaning',
+            requirementMinutes: 600,
+            completedMinutes: 500,
+            offender: {
+              forename: 'John',
+              surname: 'Smith',
+              crn: 'CRN123',
+              objectType: 'OffenderFull',
+            },
+          },
+        ],
+      }
+
+      nock(config.apis.communityPaybackApi.url)
+        .get(`/projects/${projectId}/appointments?${queryString}`)
+        .matchHeader('authorization', 'Bearer test-system-token')
+        .reply(200, session)
+
+      const response = await sessionClient.find('some-username', projectId, date)
+
+      expect(response).toEqual(session)
+    })
+  })
+
+  describe('find', () => {
     it('should make a GET request to the sessions path using user token and return the response body', async () => {
       const startDate = '2026-01-01'
       const endDate = '2026-05-01'
