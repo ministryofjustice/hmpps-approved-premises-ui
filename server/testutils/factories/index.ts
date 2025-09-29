@@ -52,7 +52,6 @@ import cas1ReferenceDataFactory, {
 } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
-import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
 import userFactory, { userSummaryFactory, userWithWorkloadFactory } from './user'
@@ -186,7 +185,6 @@ export {
   requestForPlacementFactory,
   risksFactory,
   roshSummaryFactory,
-  staffMemberFactory,
   taskFactory,
   taskWrapperFactory,
   tierEnvelopeFactory,
