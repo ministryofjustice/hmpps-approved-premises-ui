@@ -26,7 +26,7 @@ describe('SessionsController', () => {
     })
   })
 
-  describe('show', () => {
+  describe('index', () => {
     it('should render the dashboard page', async () => {
       const teams = {
         providers: [
@@ -40,10 +40,10 @@ describe('SessionsController', () => {
       const response = createMock<Response>()
       providerService.getTeams.mockResolvedValue(teams)
 
-      const requestHandler = sessionsController.show()
+      const requestHandler = sessionsController.index()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+      expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [{ value: 1001, text: 'Team Lincoln' }],
       })
     })
@@ -74,7 +74,7 @@ describe('SessionsController', () => {
       const requestHandler = sessionsController.search()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+      expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [{ value: 1001, text: 'Team Lincoln' }],
         sessionRows: [
           [
@@ -115,7 +115,7 @@ describe('SessionsController', () => {
       requestWithTeam.query.team = '2'
       await requestHandler(requestWithTeam, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+      expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [
           { value: firstTeam.id, text: firstTeam.name, selected: false },
           { value: secondTeam.id, text: secondTeam.name, selected: true },
@@ -137,7 +137,7 @@ describe('SessionsController', () => {
       const response = createMock<Response>()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+      expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [],
         sessionRows: [],
         startDateItems: [],
@@ -175,7 +175,7 @@ describe('SessionsController', () => {
       requestWithDates.query = query
       await requestHandler(requestWithDates, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('sessions/show', {
+      expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [],
         sessionRows: [],
         startDateItems: dateParts,

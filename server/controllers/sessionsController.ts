@@ -11,12 +11,12 @@ export default class SessionsController {
     private readonly sessionService: SessionService,
   ) {}
 
-  show(): RequestHandler {
+  index(): RequestHandler {
     return async (_req: Request, res: Response) => {
       const providerId = '1000'
       const teamItems = await this.getTeams(providerId, res)
 
-      res.render('sessions/show', { teamItems })
+      res.render('sessions/index', { teamItems })
     }
   }
 
@@ -47,10 +47,10 @@ export default class SessionsController {
           endDate,
         })
 
-        res.render('sessions/show', { ...pageSearchValues, teamItems, sessionRows: this.sessionRows(sessions) })
+        res.render('sessions/index', { ...pageSearchValues, teamItems, sessionRows: this.sessionRows(sessions) })
       } catch {
         // Response error handling to be added
-        res.render('sessions/show', { ...pageSearchValues, teamItems: [], sessionRows: [] })
+        res.render('sessions/index', { ...pageSearchValues, teamItems: [], sessionRows: [] })
       }
     }
   }

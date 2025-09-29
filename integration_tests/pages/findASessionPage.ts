@@ -7,7 +7,7 @@ export default class FindASessionPage extends Page {
   }
 
   static visit(): FindASessionPage {
-    cy.visit(paths.sessions.show({}))
+    cy.visit(paths.sessions.index({}))
 
     return new FindASessionPage()
   }

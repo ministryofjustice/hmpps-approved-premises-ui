@@ -17,7 +17,7 @@ export default function routes(controllers: Controllers, { auditService }: Servi
   })
 
   router.get('/sessions', async (req, res, next) => {
-    const handler = sessionsController.show()
+    const handler = sessionsController.index()
     await handler(req, res, next)
   })
 
