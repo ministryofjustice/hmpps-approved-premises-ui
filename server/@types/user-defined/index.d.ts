@@ -4,3 +4,5 @@ export interface GetSessionsRequest {
   startDate: string
   endDate: string
 }
+
+export type GovUkStatusTagColour = 'grey' | 'red' | 'yellow'
