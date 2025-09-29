@@ -7,10 +7,12 @@ describe('SessionUtils', () => {
   describe('sessionResultTableRows', () => {
     const fakeFormattedDate = '20 January 2026'
     const fakeFormattedTime = '12:00'
+    const fakeElement = '<div>project</div>'
 
     beforeEach(() => {
       jest.spyOn(DateFormats, 'isoDateToUIDate').mockReturnValue(fakeFormattedDate)
       jest.spyOn(DateFormats, 'stripTime').mockReturnValue(fakeFormattedTime)
+      jest.spyOn(HtmlUtils, 'getElementWithContent').mockReturnValue(fakeElement)
     })
 
     it('returns session results formatted into expected table rows', () => {
@@ -32,11 +34,14 @@ describe('SessionUtils', () => {
       }
 
       const result = SessionUtils.sessionResultTableRows(sessions)
+
+      expect(HtmlUtils.getElementWithContent).toHaveBeenNthCalledWith(1, allocation.projectName)
+      expect(HtmlUtils.getElementWithContent).toHaveBeenNthCalledWith(2, allocation.projectCode)
+
       expect(result).toEqual([
         [
+          { html: fakeElement + fakeElement },
           { text: fakeFormattedDate },
-          { text: allocation.projectName },
-          { text: allocation.projectCode },
           { text: fakeFormattedTime },
           { text: fakeFormattedTime },
           { text: allocation.numberOfOffendersAllocated },

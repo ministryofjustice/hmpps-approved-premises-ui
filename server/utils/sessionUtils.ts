@@ -6,9 +6,10 @@ export default class SessionUtils {
   static sessionResultTableRows(sessions: ProjectAllocationsDto) {
     return sessions.allocations.map(session => {
       return [
+        {
+          html: `${HtmlUtils.getElementWithContent(session.projectName)}${HtmlUtils.getElementWithContent(session.projectCode)}`,
+        },
         { text: DateFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
-        { text: session.projectName },
-        { text: session.projectCode },
         { text: DateFormats.stripTime(session.startTime) },
         { text: DateFormats.stripTime(session.endTime) },
         { text: session.numberOfOffendersAllocated },
