@@ -1,5 +1,6 @@
 import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
+import { addDays } from 'date-fns'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { signIn } from '../signIn'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
@@ -30,7 +31,7 @@ context('New Placement', () => {
     placementRequestPage.clickAction('Create new placement')
 
     THEN('I should see the page to create a new placement')
-    const newPlacementPage = Page.verifyOnPage(NewPlacementPage)
+    const newPlacementPage = Page.verifyOnPage(NewPlacementPage, placementRequest)
 
     WHEN('I submit the form with no values')
     newPlacementPage.clickButton('Save and continue')
@@ -44,7 +45,7 @@ context('New Placement', () => {
 
     WHEN('I complete the form')
     const startDate = faker.date.future()
-    const endDate = faker.date.soon({ refDate: startDate })
+    const endDate = addDays(startDate, 10)
     newPlacementPage.completeForm({
       startDate: DateFormats.dateObjtoUIDate(startDate, { format: 'datePicker' }),
       endDate: DateFormats.dateObjtoUIDate(endDate, { format: 'datePicker' }),
@@ -53,7 +54,7 @@ context('New Placement', () => {
     newPlacementPage.clickButton('Save and continue')
 
     THEN('I should see the page to check placement criteria')
-    Page.verifyOnPage(CheckCriteriaPage)
+    Page.verifyOnPage(CheckCriteriaPage, placementRequest)
 
     WHEN('I submit the form with no values')
     THEN('I should see an error message')

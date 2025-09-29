@@ -9,6 +9,7 @@ import * as validationUtils from '../../utils/validation'
 import { ValidationError } from '../../utils/errors'
 import { criteriaSummaryList } from '../../utils/match/newPlacement'
 import { PlacementRequestService } from '../../services'
+import { personKeyDetails } from '../../utils/placements'
 
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
@@ -39,6 +40,7 @@ describe('newPlacementController', () => {
 
   describe('new', () => {
     const defaultRenderParameters = {
+      contextKeyDetails: personKeyDetails(placementRequestDetail.person, placementRequestDetail.risks.tier.value.level),
       backlink: adminPaths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
       pageHeading: 'New placement details',
       errors: {},
@@ -93,6 +95,7 @@ describe('newPlacementController', () => {
 
   describe('criteria', () => {
     const defaultRenderParameters = {
+      contextKeyDetails: personKeyDetails(placementRequestDetail.person, placementRequestDetail.risks.tier.value.level),
       backlink: matchPaths.v2Match.placementRequests.newPlacement.new({
         placementRequestId: placementRequestDetail.id,
       }),

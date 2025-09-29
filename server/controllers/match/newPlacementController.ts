@@ -5,6 +5,7 @@ import matchPaths from '../../paths/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import { criteriaSummaryList, validateNewPlacement } from '../../utils/match/newPlacement'
 import { PlacementRequestService } from '../../services'
+import { personKeyDetails } from '../../utils/placements'
 
 export default class NewPlacementController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -16,7 +17,13 @@ export default class NewPlacementController {
 
       const backlink = adminPaths.admin.placementRequests.show({ placementRequestId })
 
+      const placementRequest = await this.placementRequestService.getPlacementRequest(
+        req.user.token,
+        placementRequestId,
+      )
+
       return res.render('match/newPlacement/new', {
+        contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
         backlink,
         pageHeading: 'New placement details',
         errors,
@@ -59,6 +66,7 @@ export default class NewPlacementController {
       )
 
       return res.render('match/newPlacement/check-criteria', {
+        contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
         backlink,
         pageHeading: 'Check the placement criteria',
         criteriaSummary: criteriaSummaryList(placementRequest),
