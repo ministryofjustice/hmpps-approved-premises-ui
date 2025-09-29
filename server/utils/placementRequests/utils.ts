@@ -5,7 +5,7 @@ import { linkTo } from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
-import { personKeyDetails } from '../placements'
+import { personKeyDetails } from '../applications/helpers'
 
 export const formatReleaseType = (placementRequest: Cas1PlacementRequestDetail) =>
   allReleaseTypes[placementRequest.releaseType]

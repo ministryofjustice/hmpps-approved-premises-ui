@@ -4,7 +4,7 @@ import { SelectedWithdrawableType } from '../../../server/utils/applications/wit
 import Page, { parseHtml } from '../page'
 
 export default class SelectWithdrawableTypePage extends Page {
-  constructor(heading: 'What do you want to withdraw?' | `Select your ${'placement' | 'request'}`) {
+  constructor(heading: string) {
     super(heading)
   }
 

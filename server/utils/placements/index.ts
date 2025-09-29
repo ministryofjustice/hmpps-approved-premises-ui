@@ -3,13 +3,12 @@ import {
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
-  Person,
   Cas1CurrentKeyWorker,
 } from '@approved-premises/api'
-import { KeyDetailsArgs, RadioItem, SummaryList, UserDetails } from '@approved-premises/ui'
+import { RadioItem, SummaryList, UserDetails } from '@approved-premises/ui'
 import { differenceInCalendarDays } from 'date-fns'
 import { DateFormats } from '../dateUtils'
-import { htmlValue, textValue } from '../applications/helpers'
+import { htmlValue, personKeyDetails, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { TabItem } from '../tasks/listTable'
@@ -22,7 +21,6 @@ import {
 } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
-import { displayName, isFullPerson } from '../personUtils'
 
 export const overallStatusTextMap = {
   upcoming: 'Upcoming',
@@ -178,22 +176,6 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
 
   return actionList.length ? [{ items: actionList }] : null
 }
-
-export const personKeyDetails = (person: Person, tier?: string): KeyDetailsArgs => ({
-  header: { value: displayName(person), key: '', showKey: false },
-  items: [
-    { key: textValue('CRN'), value: textValue(person.crn) },
-    { key: { text: 'Tier' }, value: { text: tier || 'Not available' } },
-    isFullPerson(person)
-      ? {
-          key: { text: 'Date of birth' },
-          value: {
-            text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-          },
-        }
-      : undefined,
-  ],
-})
 
 export const placementKeyDetails = (placement: Cas1SpaceBooking) => personKeyDetails(placement.person, placement.tier)
 
@@ -397,6 +379,22 @@ export const processReferenceData = <T>(input: Array<IdAndName>, subst: IdAndNam
 
 export const injectRadioConditionalHtml = (input: Array<RadioItem>, value: string, html: string): Array<RadioItem> =>
   input.map(row => ('value' in row && row.value === value ? { ...row, conditional: { html } } : row))
+
+export const withdrawalMessage = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): string => {
+  const { arrivalDate, departureDate } = canonicalDates(placement)
+  return `Placement at ${placement.premises.name} from ${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })} has been withdrawn`
+}
+
+export const withdrawalSummaryList = (placement: Cas1SpaceBooking) => {
+  const { arrivalDate, departureDate } = canonicalDates(placement)
+  return {
+    rows: [
+      summaryListItem('Approved premises', placement?.premises.name),
+      summaryListItem('Arrival date', arrivalDate, 'date'),
+      summaryListItem('Departure date', departureDate, 'date'),
+    ],
+  }
+}
 
 export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
 export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

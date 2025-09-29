@@ -11,8 +11,9 @@ import {
 
 import paths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
-import { withdrawableFactory } from '../../../testutils/factories'
+import { applicationFactory, withdrawableFactory } from '../../../testutils/factories'
 import withdrawablesFactory from '../../../testutils/factories/withdrawablesFactory'
+import { applicationKeyDetails } from '../../../utils/applications/helpers'
 
 jest.mock('../../../utils/validation')
 
@@ -28,11 +29,20 @@ describe('withdrawalsController', () => {
   const applicationService = createMock<ApplicationService>({})
   const sessionService = createMock<SessionService>()
   sessionService.getPageBackLink.mockReturnValue(referrer)
+  const application = applicationFactory.build()
+
+  const defaultRenderParameters = {
+    pageHeading: 'What do you want to withdraw?',
+    id: applicationId,
+    contextKeyDetails: applicationKeyDetails(application),
+    backLink: referrer,
+  }
 
   let withdrawalsController: WithdrawalsController
 
   beforeEach(() => {
     withdrawalsController = new WithdrawalsController(applicationService, sessionService)
+    applicationService.findApplication.mockResolvedValue(application)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
@@ -115,11 +125,9 @@ describe('withdrawalsController', () => {
 
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
-          pageHeading: 'What do you want to withdraw?',
-          id: applicationId,
+          ...defaultRenderParameters,
           withdrawables: withdrawables.withdrawables,
           notes: withdrawables.notes,
-          backLink: referrer,
         })
         expect(sessionService.getPageBackLink).toHaveBeenCalledWith('/applications/:id/withdrawals/new', thisRequest, [
           '/admin/placement-requests/:placementRequestId',
@@ -143,11 +151,9 @@ describe('withdrawalsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
-        pageHeading: 'What do you want to withdraw?',
-        id: applicationId,
-        withdrawables: [],
+        ...defaultRenderParameters,
+        withdrawables: withdrawables.withdrawables,
         notes: withdrawables.notes,
-        backLink: referrer,
       })
     })
   })
@@ -169,6 +175,7 @@ describe('withdrawalsController', () => {
       expect(response.render).toHaveBeenCalledWith('applications/withdrawals/new', {
         pageHeading: 'Do you want to withdraw this application?',
         applicationId,
+        contextKeyDetails: applicationKeyDetails(application),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
