@@ -4,7 +4,6 @@
 /* eslint-disable */
 
 export type { AppointmentDto } from './models/AppointmentDto';
-export type { AppointmentOutcomeDomainEventDetailDto } from './models/AppointmentOutcomeDomainEventDetailDto';
 export type { AppointmentsDto } from './models/AppointmentsDto';
 export type { ContactOutcomeDto } from './models/ContactOutcomeDto';
 export type { ContactOutcomesDto } from './models/ContactOutcomesDto';
