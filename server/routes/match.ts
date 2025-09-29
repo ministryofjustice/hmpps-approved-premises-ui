@@ -44,10 +44,26 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'NEW_PLACEMENT_SAVE',
     allowedPermissions: ['cas1_space_booking_create'],
   })
-  get(paths.v2Match.placementRequests.newPlacement.criteria.pattern, newPlacementController.criteria(), {
-    auditEvent: 'NEW_PLACEMENT_CRITERIA',
+  get(paths.v2Match.placementRequests.newPlacement.checkCriteria.pattern, newPlacementController.checkCriteria(), {
+    auditEvent: 'NEW_PLACEMENT_CHECK_CRITERIA',
     allowedPermissions: ['cas1_space_booking_create'],
   })
+  post(paths.v2Match.placementRequests.newPlacement.checkCriteria.pattern, newPlacementController.saveCheckCriteria(), {
+    auditEvent: 'NEW_PLACEMENT_CHECK_CRITERIA_SAVE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  get(paths.v2Match.placementRequests.newPlacement.updateCriteria.pattern, newPlacementController.updateCriteria(), {
+    auditEvent: 'NEW_PLACEMENT_UPDATE_CRITERIA',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  post(
+    paths.v2Match.placementRequests.newPlacement.updateCriteria.pattern,
+    newPlacementController.saveUpdateCriteria(),
+    {
+      auditEvent: 'NEW_PLACEMENT_UPDATE_CRITERIA_SAVE',
+      allowedPermissions: ['cas1_space_booking_create'],
+    },
+  )
 
   get(paths.v2Match.placementRequests.search.spaces.pattern, spaceSearchController.search(), {
     auditEvent: 'SPACE_SEARCH',

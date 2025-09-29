@@ -4,11 +4,13 @@ import { addDays } from 'date-fns'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { signIn } from '../signIn'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
-import { cas1PlacementRequestDetailFactory } from '../../../server/testutils/factories'
+import { cas1PlacementRequestDetailFactory, spaceSearchResultsFactory } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import NewPlacementPage from '../../pages/match/newPlacement/newPlacementPage'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import CheckCriteriaPage from '../../pages/match/newPlacement/checkCriteriaPage'
+import UpdateCriteriaPage from '../../pages/match/newPlacement/updateCriteriaPage'
+import SearchPage from '../../pages/match/searchPage'
 
 context('New Placement', () => {
   let placementRequest: Cas1PlacementRequestDetail
@@ -16,8 +18,14 @@ context('New Placement', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    placementRequest = cas1PlacementRequestDetailFactory.build()
+    placementRequest = cas1PlacementRequestDetailFactory.build({
+      type: 'normal',
+      essentialCriteria: ['isCatered', 'isWheelchairDesignated', 'isStepFreeDesignated'],
+    })
     cy.task('stubPlacementRequest', placementRequest)
+
+    const spaceSearchResults = spaceSearchResultsFactory.build()
+    cy.task('stubSpaceSearch', spaceSearchResults)
   })
 
   it('allows me to create a new placement', () => {
@@ -54,16 +62,33 @@ context('New Placement', () => {
     newPlacementPage.clickButton('Save and continue')
 
     THEN('I should see the page to check placement criteria')
-    Page.verifyOnPage(CheckCriteriaPage, placementRequest)
+    const checkCriteriaPage = Page.verifyOnPage(CheckCriteriaPage, placementRequest)
 
     WHEN('I submit the form with no values')
+    checkCriteriaPage.clickButton('Save and continue')
+
     THEN('I should see an error message')
+    checkCriteriaPage.shouldShowErrorMessagesForFields(['criteriaChanged'], {
+      criteriaChanged: 'Select if the criteria have changed',
+    })
 
     WHEN('I complete the form')
+    checkCriteriaPage.checkRadioByLabel('Yes')
+    checkCriteriaPage.clickButton('Save and continue')
+
     THEN('I should see the form to update placement criteria')
+    const updateCriteriaPage = Page.verifyOnPage(UpdateCriteriaPage, placementRequest)
 
     WHEN('I complete the form')
+    updateCriteriaPage.completeForm({
+      typeOfAp: 'isPIPE',
+      apCriteria: ['isCatered'],
+      roomCriteria: ['isWheelchairDesignated', 'isArsonSuitable'],
+    })
+    updateCriteriaPage.clickButton('Save and continue')
+
     THEN('I should see the suitability search page with the new placement information')
+    Page.verifyOnPage(SearchPage)
 
     // Add a test for filtering results or consider this covered in main suitability search integration test?
 
