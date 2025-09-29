@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
-import adminPaths from '../../paths/admin'
-import matchPaths from '../../paths/match'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
-import { criteriaSummaryList, validateNewPlacement } from '../../utils/match/newPlacement'
-import { PlacementRequestService } from '../../services'
-import { personKeyDetails } from '../../utils/placements'
+import adminPaths from '../../../paths/admin'
+import matchPaths from '../../../paths/match'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
+import { criteriaSummaryList, validateNewPlacement } from '../../../utils/match/newPlacement'
+import { PlacementRequestService } from '../../../services'
+import { personKeyDetails } from '../../../utils/placements'
 
 export default class NewPlacementController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}

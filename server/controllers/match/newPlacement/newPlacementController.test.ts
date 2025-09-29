@@ -1,15 +1,15 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import NewPlacementController from './newPlacementController'
-import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory } from '../../../testutils/factories'
 
-import adminPaths from '../../paths/admin'
-import matchPaths from '../../paths/match'
-import * as validationUtils from '../../utils/validation'
-import { ValidationError } from '../../utils/errors'
-import { criteriaSummaryList } from '../../utils/match/newPlacement'
-import { PlacementRequestService } from '../../services'
-import { personKeyDetails } from '../../utils/placements'
+import adminPaths from '../../../paths/admin'
+import matchPaths from '../../../paths/match'
+import * as validationUtils from '../../../utils/validation'
+import { ValidationError } from '../../../utils/errors'
+import { criteriaSummaryList } from '../../../utils/match/newPlacement'
+import { PlacementRequestService } from '../../../services'
+import { personKeyDetails } from '../../../utils/placements'
 
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
