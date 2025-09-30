@@ -6,9 +6,11 @@
 
 {% block questions %}
 
-    <h1 class="govuk-heading-l">
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-8">
         {{ page.title }}
     </h1>
+
+    <p>Sentence information selected on the original application.</p>
 
     {{ govukSummaryList({
         rows: page.summaryRows
