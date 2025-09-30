@@ -48,14 +48,14 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: {
-          ...appointments,
+          ...mockAppointments,
         },
       },
     })
   },
 }
 
-const appointments: AppointmentsDto = {
+export const mockAppointments: AppointmentsDto = {
   appointments: [
     {
       id: 1001,

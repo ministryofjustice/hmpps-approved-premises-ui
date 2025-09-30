@@ -107,6 +107,7 @@ context('Home', () => {
     page.clickOnASession()
 
     //  Then I see the session details page
-    Page.verifyOnPage(ViewSessionPage)
+    const sessionDetailsPage = Page.verifyOnPage(ViewSessionPage)
+    sessionDetailsPage.shouldShowAppointmentsList()
   })
 })
