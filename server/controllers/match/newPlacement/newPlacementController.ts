@@ -137,16 +137,29 @@ export default class NewPlacementController {
           throw new ValidationError({ criteriaChanged: 'Select if the criteria have changed' })
         }
 
+        if (criteriaChanged === 'yes') {
+          await this.formData.update(placementRequestId, req.session, {
+            newPlacementCriteriaChanged: true,
+          })
+
+          res.redirect(matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({ placementRequestId }))
+          return
+        }
+
+        const placementRequest = await this.placementRequestService.getPlacementRequest(
+          req.user.token,
+          placementRequestId,
+        )
+        const { apType, apCriteria, roomCriteria } = initialiseSearchState(placementRequest)
+
         await this.formData.update(placementRequestId, req.session, {
-          newPlacementCriteriaChanged: criteriaChanged === 'yes',
+          newPlacementCriteriaChanged: false,
+          apType,
+          apCriteria,
+          roomCriteria,
         })
 
-        const redirect =
-          criteriaChanged === 'yes'
-            ? matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({ placementRequestId })
-            : matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId })
-
-        res.redirect(redirect)
+        res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       } catch (error) {
         catchValidationErrorOrPropogate(
           req,

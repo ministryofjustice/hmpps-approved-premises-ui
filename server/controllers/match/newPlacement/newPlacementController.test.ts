@@ -219,11 +219,16 @@ describe('newPlacementController', () => {
       )
     })
 
-    it('saves the search state and redirects to the Suitability search page if the criteria have not changed', async () => {
+    it('saves the search state with initial criteria and redirects to the Suitability search page if the criteria have not changed', async () => {
+      const { apType, apCriteria, roomCriteria } = initialiseSearchState(placementRequestDetail)
+
       await newPlacementController.saveCheckCriteria()({ ...request, body: { criteriaChanged: 'no' } }, response, next)
 
       expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
         newPlacementCriteriaChanged: false,
+        apType,
+        apCriteria,
+        roomCriteria,
       })
       expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.spaces(params))
     })
