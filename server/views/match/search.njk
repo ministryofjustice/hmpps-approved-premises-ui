@@ -18,8 +18,8 @@
 
 {% block beforeContent %}
     {{ govukBackLink({
-        text: "Back to Placement request",
-        href: paths.admin.placementRequests.show({ placementRequestId: placementRequest.id })
+        text: backlinkLabel,
+        href: backlink
     }) }}
 {% endblock %}
 
@@ -38,9 +38,15 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
+    {% call govukDetails({summaryText: "Placement request information", open: not newPlacementSummaryList}) %}
         {{ govukSummaryList(placementRequestInfoSummaryList) }}
     {% endcall %}
+
+    {% if newPlacementSummaryList %}
+        {% call govukDetails({summaryText: "New placement information", open: true}) %}
+            {{ govukSummaryList(newPlacementSummaryList) }}
+        {% endcall %}
+    {% endif %}
 
     <h2 class="govuk-heading-m">{{ summaryCards | length }} Approved Premises found</h2>
 

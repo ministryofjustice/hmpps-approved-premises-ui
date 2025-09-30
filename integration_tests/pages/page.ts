@@ -499,7 +499,7 @@ export default class Page {
     cy.get(`[name="${name}"][value="${value}"]`).should('be.checked')
   }
 
-  verifyRadioByLabel(label: string, value: string, checked?: boolean): void {
+  verifyRadioByLabel(label: string, checked?: boolean): void {
     let should = 'exist'
 
     if (checked !== undefined) {

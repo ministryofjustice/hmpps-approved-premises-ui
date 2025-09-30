@@ -1,6 +1,7 @@
 import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { signIn } from '../signIn'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
@@ -29,6 +30,12 @@ context('New Placement', () => {
   })
 
   it('allows me to create a new placement', () => {
+    const newPlacementArrivalDate = faker.date.future()
+    const newPlacementDepartureDate = addDays(newPlacementArrivalDate, 10)
+    const arrivalDateValue = DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'datePicker' })
+    const departureDateValue = DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' })
+    const reason = faker.word.words(10)
+
     GIVEN('I am signed in as a CRU member')
     signIn('cru_member')
 
@@ -45,20 +52,14 @@ context('New Placement', () => {
     newPlacementPage.clickButton('Save and continue')
 
     THEN('I should see error messages')
-    newPlacementPage.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason'], {
-      startDate: 'Enter or select an arrival date',
-      endDate: 'Enter or select a departure date',
+    newPlacementPage.shouldShowErrorMessagesForFields(['arrivalDate', 'departureDate', 'reason'], {
+      arrivalDate: 'Enter or select an arrival date',
+      departureDate: 'Enter or select a departure date',
       reason: 'Enter a reason',
     })
 
     WHEN('I complete the form')
-    const startDate = faker.date.future()
-    const endDate = addDays(startDate, 10)
-    newPlacementPage.completeForm({
-      startDate: DateFormats.dateObjtoUIDate(startDate, { format: 'datePicker' }),
-      endDate: DateFormats.dateObjtoUIDate(endDate, { format: 'datePicker' }),
-      reason: faker.word.words(10),
-    })
+    newPlacementPage.completeForm({ arrivalDate: arrivalDateValue, departureDate: departureDateValue, reason })
     newPlacementPage.clickButton('Save and continue')
 
     THEN('I should see the page to check placement criteria')
@@ -72,7 +73,69 @@ context('New Placement', () => {
       criteriaChanged: 'Select if the criteria have changed',
     })
 
-    WHEN('I complete the form')
+    WHEN('I complete the form and say the criteria have not changed')
+    checkCriteriaPage.checkRadioByLabel('No')
+    checkCriteriaPage.clickButton('Save and continue')
+
+    THEN('I should see the suitability search page with the new placement information')
+    const searchPage = Page.verifyOnPage(SearchPage)
+    const expectedSearchFormData: SpaceSearchFormData = {
+      postcode: placementRequest.location,
+      startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+      arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+      departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
+      newPlacementReason: reason,
+      newPlacementCriteriaChanged: false,
+      apType: 'normal',
+      apCriteria: ['isCatered'],
+      roomCriteria: ['isWheelchairDesignated', 'isStepFreeDesignated'],
+    }
+    searchPage.shouldShowNewPlacementDetails(expectedSearchFormData)
+    searchPage.shouldShowSearchParametersInInputs(expectedSearchFormData)
+
+    WHEN('I click the back link')
+    searchPage.clickBack()
+
+    THEN('I should see the page to check placement criteria')
+    Page.verifyOnPage(CheckCriteriaPage, placementRequest)
+
+    AND('the form should be populated')
+    checkCriteriaPage.verifyRadioByLabel('No', true)
+
+    WHEN('I click the back link')
+    checkCriteriaPage.clickBack()
+
+    THEN('I should see the page to create a new placement')
+    Page.verifyOnPage(NewPlacementPage, placementRequest)
+
+    AND('the form should be populated')
+    newPlacementPage.shouldBePopulated({ arrivalDate: arrivalDateValue, departureDate: departureDateValue, reason })
+
+    WHEN('I click the back link')
+    newPlacementPage.clickBack()
+
+    THEN('I should see the placement request page')
+    Page.verifyOnPage(ShowPage, placementRequest)
+
+    WHEN("I click on the 'Create New Placement' action")
+    placementRequestPage.clickAction('Create new placement')
+
+    THEN('I should see the page to create a new placement')
+    Page.verifyOnPage(NewPlacementPage, placementRequest)
+
+    AND('the form should be populated')
+    newPlacementPage.shouldBePopulated({ arrivalDate: arrivalDateValue, departureDate: departureDateValue, reason })
+
+    WHEN('I submit the form')
+    newPlacementPage.clickButton('Save and continue')
+
+    THEN('I should see the page to check placement criteria')
+    Page.verifyOnPage(CheckCriteriaPage, placementRequest)
+
+    AND('the form should be populated')
+    checkCriteriaPage.verifyRadioByLabel('No', true)
+
+    WHEN('I confirm the criteria have changed')
     checkCriteriaPage.checkRadioByLabel('Yes')
     checkCriteriaPage.clickButton('Save and continue')
 

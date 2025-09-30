@@ -26,8 +26,8 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ mojDatePicker({
-                    id: "startDate",
-                    name: "startDate",
+                    id: "arrivalDate",
+                    name: "arrivalDate",
                     label: {
                         text: "What is the expected arrival date?",
                         classes: "govuk-label--m"
@@ -35,13 +35,13 @@
                     hint: {
                         text: "For example, 17/5/2026"
                     },
-                    value: startDate,
-                    errorMessage: errors.startDate
+                    value: arrivalDate,
+                    errorMessage: errors.arrivalDate
                 }) }}
 
                 {{ mojDatePicker({
-                    id: "endDate",
-                    name: "endDate",
+                    id: "departureDate",
+                    name: "departureDate",
                     label: {
                         text: "What is the expected departure date?",
                         classes: "govuk-label--m"
@@ -49,8 +49,8 @@
                     hint: {
                         text: "For example, 23/6/2026"
                     },
-                    value: endDate,
-                    errorMessage: errors.endDate
+                    value: departureDate,
+                    errorMessage: errors.departureDate
                 }) }}
 
                 {{ govukTextarea({
