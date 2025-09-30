@@ -48,6 +48,7 @@ export default class placementApplicationHelper {
 
     GIVEN('I am on the sentence type confirmation page')
     const checkSentenceTypePage = Page.verifyOnPage(CheckSentenceTypePage)
+    checkSentenceTypePage.verifyPageContent()
 
     WHEN('I submit the page, I see an error')
     checkSentenceTypePage.clickButton('Save and continue')
