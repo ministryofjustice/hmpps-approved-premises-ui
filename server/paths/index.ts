@@ -4,8 +4,9 @@ const sessionsPath = path('/sessions')
 
 const paths = {
   sessions: {
-    show: sessionsPath,
+    index: sessionsPath,
     search: sessionsPath.path('search'),
+    show: sessionsPath.path(':id'),
   },
 }
 

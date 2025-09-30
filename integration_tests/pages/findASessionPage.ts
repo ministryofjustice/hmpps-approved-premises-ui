@@ -7,7 +7,7 @@ export default class FindASessionPage extends Page {
   }
 
   static visit(): FindASessionPage {
-    cy.visit(paths.sessions.show({}))
+    cy.visit(paths.sessions.index({}))
 
     return new FindASessionPage()
   }
@@ -34,14 +34,14 @@ export default class FindASessionPage extends Page {
   }
 
   shouldShowSearchResults() {
-    cy.get('td').eq(0).should('have.text', '7 September 2025')
-    cy.get('td').eq(1).should('have.text', 'project-name')
-    cy.get('td').eq(2).should('have.text', 'prj')
-    cy.get('td').eq(3).should('have.text', '09:00')
-    cy.get('td').eq(4).should('have.text', '17:00')
-    cy.get('td').eq(5).should('have.text', '5')
-    cy.get('td').eq(6).should('have.text', '3')
-    cy.get('td').eq(7).should('have.text', '1')
+    cy.get('td').eq(0).should('contain.text', 'project-name')
+    cy.get('td').eq(0).should('contain.text', 'prj')
+    cy.get('td').eq(1).should('have.text', '7 September 2025')
+    cy.get('td').eq(2).should('have.text', '09:00')
+    cy.get('td').eq(3).should('have.text', '17:00')
+    cy.get('td').eq(4).should('have.text', '5')
+    cy.get('td').eq(5).should('have.text', '3')
+    cy.get('td').eq(6).should('have.text', '1')
   }
 
   shouldShowPopulatedSearchForm() {

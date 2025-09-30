@@ -1,83 +1,28 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% extends "../partials/layout.njk" %}
 
-{% from "govuk/components/select/macro.njk" import govukSelect %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
-
-{% set pageTitle = applicationName + " - Track progress on Community Payback" %}
+{% set pageTitle = project.projectName %}
 {% set mainClasses = "app-container govuk-body" %}
 
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: paths.sessions.index.pattern
+  }) }}
+{% endblock %}
+
 {% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+<span class="govuk-caption-l">{{ project.projectCode }}</span>
+<h1 class="govuk-heading-l">{{ project.projectName }}</h1>
+</div>
+</div>
 
-  <h1>Track progress on Community Payback</h1>
+<h2 class="govuk-heading-m">Session list</h2>
 
-  <form action="{{ paths.sessions.search() }}" method="get" class="search-and-filter">
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-
-    <h2 class="govuk-heading-m">Find a session</h2>
-
-    <div class="search-and-filter__row">
-      {{ govukSelect({
-          label: {
-              text: "Region",
-              classes: "govuk-label--s"
-          },
-          id: "provider",
-          name: "provider",
-          items: [{
-              value: "1000",
-              text: "East of England"
-            }]
-          }) }}
-
-      {{ govukSelect({
-          label: {
-              text: "Team",
-              classes: "govuk-label--s"
-          },
-          id: "team",
-          name: "team",
-          items: teamItems
-      }) }}
-    </div>
-
-    <div class="search-and-filter__row">
-
-    {{ govukDateInput({
-      id: "startDate",
-      namePrefix: "startDate",
-      fieldset: {
-        legend: {
-          text: "From",
-          classes: "govuk-!-font-weight-bold"
-        }
-      },
-      items: startDateItems
-    }) }}
-
-    {{ govukDateInput({
-      id: "endDate",
-      namePrefix: "endDate",
-      fieldset: {
-        legend: {
-          text: "To",
-          classes: "govuk-!-font-weight-bold"
-        }
-      },
-      items: endDateItems
-    }) }}
-
-    {{ govukButton({
-      "name": "submit",
-      "text": "Search",
-      preventDoubleClick: true
-    }) }}
-    </div>
-
-  </form>
-
-  {% if sessionRows | length %}
-    {% include "./_table.njk" %}
-  {% endif %}
+{% if sessionList | length %}
+  {% include "./_sessionList.njk" %}
+{% endif %}
 
 {% endblock %}

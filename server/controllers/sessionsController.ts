@@ -1,9 +1,8 @@
 import type { Request, RequestHandler, Response } from 'express'
 import ProviderService from '../services/providerService'
-import { ProjectAllocationsDto } from '../@types/shared'
 import SessionService from '../services/sessionService'
-import DateFormats from '../utils/dateUtils'
 import GovukFrontendDateInput from '../forms/GovukFrontendDateInput'
+import SessionUtils from '../utils/sessionUtils'
 
 export default class SessionsController {
   constructor(
@@ -11,12 +10,12 @@ export default class SessionsController {
     private readonly sessionService: SessionService,
   ) {}
 
-  show(): RequestHandler {
+  index(): RequestHandler {
     return async (_req: Request, res: Response) => {
       const providerId = '1000'
       const teamItems = await this.getTeams(providerId, res)
 
-      res.render('sessions/show', { teamItems })
+      res.render('sessions/index', { teamItems })
     }
   }
 
@@ -47,11 +46,27 @@ export default class SessionsController {
           endDate,
         })
 
-        res.render('sessions/show', { ...pageSearchValues, teamItems, sessionRows: this.sessionRows(sessions) })
+        res.render('sessions/index', {
+          ...pageSearchValues,
+          teamItems,
+          sessionRows: SessionUtils.sessionResultTableRows(sessions),
+        })
       } catch {
         // Response error handling to be added
-        res.render('sessions/show', { ...pageSearchValues, teamItems: [], sessionRows: [] })
+        res.render('sessions/index', { ...pageSearchValues, teamItems: [], sessionRows: [] })
       }
+    }
+  }
+
+  show(): RequestHandler {
+    return async (_req: Request, res: Response) => {
+      const { id } = _req.params
+      const { date } = _req.query
+      const session = await this.sessionService.getSession(res.locals.user.username, id, date.toString())
+      const project = session.appointments[0]
+      const sessionList = SessionUtils.sessionListTableRows(session)
+
+      res.render('sessions/show', { project, sessionList })
     }
   }
 
@@ -68,20 +83,5 @@ export default class SessionsController {
       }
     })
     return teamItems
-  }
-
-  private sessionRows(sessions: ProjectAllocationsDto) {
-    return sessions.allocations.map(session => {
-      return [
-        { text: DateFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
-        { text: session.projectName },
-        { text: session.projectCode },
-        { text: DateFormats.stripTime(session.startTime) },
-        { text: DateFormats.stripTime(session.endTime) },
-        { text: session.numberOfOffendersAllocated },
-        { text: session.numberOfOffendersWithOutcomes },
-        { text: session.numberOfOffendersWithEA },
-      ]
-    })
   }
 }

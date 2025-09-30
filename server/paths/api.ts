@@ -10,6 +10,7 @@ export default {
   },
   projects: {
     sessions: projectsPath.path('allocations'),
+    sessionAppointments: projectsPath.path(':projectId').path('appointments'),
   },
   referenceData: {
     projectTypes: referenceDataPath.path('project-types'),
