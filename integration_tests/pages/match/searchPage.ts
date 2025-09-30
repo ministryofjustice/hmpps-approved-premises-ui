@@ -11,6 +11,7 @@ import paths from '../../../server/paths/match'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
 import { characteristicsBulletList } from '../../../server/utils/characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from '../../../server/utils/match/spaceSearchLabels'
+import { newPlacementSummaryList } from '../../../server/utils/match/newPlacement'
 
 export default class SearchPage extends Page {
   constructor() {
@@ -34,6 +35,10 @@ export default class SearchPage extends Page {
         cy.get('.govuk-details__summary').should('contain.text', 'Placement request information')
         this.shouldContainSummaryListItems(placementRequestSummaryList(placementRequest, { showActions: false }).rows)
       })
+  }
+
+  shouldShowNewPlacementDetails(searchState: SpaceSearchFormData) {
+    this.shouldContainSummaryListItems(newPlacementSummaryList(searchState).rows)
   }
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {

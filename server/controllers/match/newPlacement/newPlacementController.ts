@@ -7,18 +7,18 @@ import { criteriaSummaryList, validateNewPlacement } from '../../../utils/match/
 import { PlacementRequestService } from '../../../services'
 import { personKeyDetails } from '../../../utils/placements'
 import { ValidationError } from '../../../utils/errors'
-import {
-  apTypeRadioItems,
-  checkBoxesForCriteria,
-  filterApLevelCriteria,
-  filterRoomLevelCriteria,
-} from '../../../utils/match/spaceSearch'
-import { applyApTypeToAssessApType, type ApTypeSpecialist } from '../../../utils/placementCriteriaUtils'
+import { apTypeRadioItems, checkBoxesForCriteria, initialiseSearchState } from '../../../utils/match/spaceSearch'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import MultiPageFormManager from '../../../utils/multiPageFormManager'
+import { DateFormats } from '../../../utils/dateUtils'
 
 export default class NewPlacementController {
-  constructor(private readonly placementRequestService: PlacementRequestService) {}
+  formData: MultiPageFormManager<'spaceSearch'>
+
+  constructor(private readonly placementRequestService: PlacementRequestService) {
+    this.formData = new MultiPageFormManager('spaceSearch')
+  }
 
   new(): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -32,13 +32,27 @@ export default class NewPlacementController {
         placementRequestId,
       )
 
+      const searchState =
+        this.formData.get(placementRequestId, req.session) ||
+        (await this.formData.update(placementRequestId, req.session, initialiseSearchState(placementRequest)))
+
+      const formValues = {
+        arrivalDate: searchState.arrivalDate
+          ? DateFormats.isoDateToUIDate(searchState.arrivalDate, { format: 'datePicker' })
+          : userInput.arrivalDate,
+        departureDate: searchState.departureDate
+          ? DateFormats.isoDateToUIDate(searchState.departureDate, { format: 'datePicker' })
+          : userInput.departureDate,
+        reason: searchState.newPlacementReason || userInput.reason,
+      }
+
       return res.render('match/newPlacement/new', {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
         backlink,
         pageHeading: 'New placement details',
         errors,
         errorSummary,
-        ...userInput,
+        ...formValues,
       })
     }
   }
@@ -51,7 +65,11 @@ export default class NewPlacementController {
       try {
         validateNewPlacement(body)
 
-        // TODO: save data into session
+        await this.formData.update(placementRequestId, req.session, {
+          arrivalDate: DateFormats.datepickerInputToIsoString(body.arrivalDate),
+          departureDate: DateFormats.datepickerInputToIsoString(body.departureDate),
+          newPlacementReason: body.reason,
+        })
 
         res.redirect(matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId }))
       } catch (error) {
@@ -77,6 +95,12 @@ export default class NewPlacementController {
         placementRequestId,
       )
 
+      const searchState = this.formData.get(placementRequestId, req.session)
+
+      if (!searchState) {
+        return res.redirect(matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }))
+      }
+
       return res.render('match/newPlacement/check-criteria', {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
         backlink,
@@ -86,10 +110,12 @@ export default class NewPlacementController {
           {
             value: 'yes',
             text: 'Yes',
+            checked: searchState.newPlacementCriteriaChanged === true,
           },
           {
             text: 'No',
             value: 'no',
+            checked: searchState.newPlacementCriteriaChanged === false,
           },
         ],
         errors,
@@ -111,7 +137,9 @@ export default class NewPlacementController {
           throw new ValidationError({ criteriaChanged: 'Select if the criteria have changed' })
         }
 
-        // TODO: save data into session
+        await this.formData.update(placementRequestId, req.session, {
+          newPlacementCriteriaChanged: criteriaChanged === 'yes',
+        })
 
         const redirect =
           criteriaChanged === 'yes'
@@ -142,26 +170,25 @@ export default class NewPlacementController {
         placementRequestId,
       )
 
+      const searchState = this.formData.get(placementRequestId, req.session)
+
+      if (!searchState) {
+        return res.redirect(matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }))
+      }
+
       return res.render('match/newPlacement/update-criteria', {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
         backlink,
         pageHeading: 'Update the placement criteria',
-        typeOfApRadioItems: apTypeRadioItems(
-          applyApTypeToAssessApType[placementRequest.type as ApTypeSpecialist] || 'normal',
-        ),
+        typeOfApRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(
             'AP requirements',
             'apCriteria',
             spaceSearchCriteriaApLevelLabels,
-            filterApLevelCriteria(placementRequest.essentialCriteria),
+            searchState.apCriteria,
           ),
-          checkBoxesForCriteria(
-            'Room requirements',
-            'roomCriteria',
-            roomCharacteristicMap,
-            filterRoomLevelCriteria(placementRequest.essentialCriteria),
-          ),
+          checkBoxesForCriteria('Room requirements', 'roomCriteria', roomCharacteristicMap, searchState.roomCriteria),
         ],
         errors,
         errorSummary,
@@ -175,13 +202,17 @@ export default class NewPlacementController {
       const { placementRequestId } = req.params
 
       try {
-        const { typeOfAp } = req.body
+        const { typeOfAp, apCriteria, roomCriteria } = req.body
 
         if (!typeOfAp) {
           throw new ValidationError({ typeOfAp: 'Select the type of AP' })
         }
 
-        // TODO: save data into session
+        await this.formData.update(placementRequestId, req.session, {
+          apType: typeOfAp,
+          apCriteria,
+          roomCriteria,
+        })
 
         res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       } catch (error) {

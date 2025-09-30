@@ -1,7 +1,8 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import NewPlacementController from './newPlacementController'
-import { cas1PlacementRequestDetailFactory } from '../../../testutils/factories'
+import { cas1PlacementRequestDetailFactory, spaceSearchStateFactory } from '../../../testutils/factories'
 
 import adminPaths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
@@ -15,10 +16,12 @@ import {
   checkBoxesForCriteria,
   filterApLevelCriteria,
   filterRoomLevelCriteria,
+  initialiseSearchState,
 } from '../../../utils/match/spaceSearch'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import { applyApTypeToAssessApType, type ApTypeSpecialist } from '../../../utils/placementCriteriaUtils'
+import { DateFormats } from '../../../utils/dateUtils'
 
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
@@ -27,6 +30,7 @@ describe('newPlacementController', () => {
     placementRequestDetail.person,
     placementRequestDetail.risks.tier.value.level,
   )
+  const params = { placementRequestId: placementRequestDetail.id }
 
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -39,7 +43,7 @@ describe('newPlacementController', () => {
     jest.clearAllMocks()
 
     request = createMock<Request>({
-      params: { placementRequestId: placementRequestDetail.id },
+      params,
       user: { token },
       session: {
         save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
@@ -51,21 +55,49 @@ describe('newPlacementController', () => {
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
+    jest.spyOn(newPlacementController.formData, 'get')
+    jest.spyOn(newPlacementController.formData, 'update')
+    jest.spyOn(newPlacementController.formData, 'remove')
   })
 
   describe('new', () => {
     const defaultRenderParameters = {
       contextKeyDetails,
-      backlink: adminPaths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
+      backlink: adminPaths.admin.placementRequests.show(params),
       pageHeading: 'New placement details',
       errors: {},
       errorSummary: [] as Array<string>,
     }
 
-    it('renders the new placement template', async () => {
+    it('renders the new placement template with the session search state', async () => {
+      const searchState = spaceSearchStateFactory.build({
+        newPlacementReason: 'Reason for the new placement',
+      })
+      request.session.multiPageFormData = {
+        spaceSearch: { [placementRequestDetail.id]: searchState },
+      }
+
+      await newPlacementController.new()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('match/newPlacement/new', {
+        ...defaultRenderParameters,
+        arrivalDate: DateFormats.isoDateToUIDate(searchState.arrivalDate, { format: 'datePicker' }),
+        departureDate: DateFormats.isoDateToUIDate(searchState.departureDate, { format: 'datePicker' }),
+        reason: searchState.newPlacementReason,
+      })
+    })
+
+    it('renders the new placement template and initialises the search state', async () => {
+      const expectedSearchState: SpaceSearchFormData = initialiseSearchState(placementRequestDetail)
+
       await newPlacementController.new()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/newPlacement/new', defaultRenderParameters)
+      expect(newPlacementController.formData.update).toHaveBeenCalledWith(
+        placementRequestDetail.id,
+        request.session,
+        expectedSearchState,
+      )
     })
   })
 
@@ -74,15 +106,20 @@ describe('newPlacementController', () => {
       jest.useFakeTimers().setSystemTime(new Date('2025-09-29'))
     })
 
-    it('redirects to the Check placement criteria page if the form is valid', async () => {
+    it('saves the search state and redirects to the Check placement criteria page if the form is valid', async () => {
       const validBody = {
-        startDate: '3/11/2025',
-        endDate: '4/1/2026',
+        arrivalDate: '3/11/2025',
+        departureDate: '4/1/2026',
         reason: 'Area now excluded',
       }
 
       await newPlacementController.saveNew()({ ...request, body: validBody }, response, next)
 
+      expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        arrivalDate: '2025-11-03',
+        departureDate: '2026-01-04',
+        newPlacementReason: 'Area now excluded',
+      })
       expect(response.redirect).toHaveBeenCalledWith(
         matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({
           placementRequestId: placementRequestDetail.id,
@@ -97,16 +134,17 @@ describe('newPlacementController', () => {
         request,
         response,
         new ValidationError({}),
-        matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequestDetail.id }),
+        matchPaths.v2Match.placementRequests.newPlacement.new(params),
       )
 
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
-        startDate: 'Enter or select an arrival date',
-        endDate: 'Enter or select a departure date',
+        arrivalDate: 'Enter or select an arrival date',
+        departureDate: 'Enter or select a departure date',
         reason: 'Enter a reason',
       })
+      expect(newPlacementController.formData.update).not.toHaveBeenCalled()
     })
   })
 
@@ -119,17 +157,31 @@ describe('newPlacementController', () => {
       pageHeading: 'Check the placement criteria',
       criteriaSummary: criteriaSummaryList(placementRequestDetail),
       criteriaChangedRadioItems: [
-        { value: 'yes', text: 'Yes' },
-        { value: 'no', text: 'No' },
+        { value: 'yes', text: 'Yes', checked: true },
+        { value: 'no', text: 'No', checked: false },
       ],
       errors: {},
       errorSummary: [] as Array<string>,
     }
 
-    it('renders the check placement criteria template', async () => {
+    it('renders the check placement criteria template with the session search state', async () => {
+      const searchState = spaceSearchStateFactory.build({
+        newPlacementReason: 'Reason for the new placement',
+        newPlacementCriteriaChanged: true,
+      })
+      request.session.multiPageFormData = {
+        spaceSearch: { [placementRequestDetail.id]: searchState },
+      }
+
       await newPlacementController.checkCriteria()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/newPlacement/check-criteria', defaultRenderParameters)
+    })
+
+    it('redirects to the new placement page if there is no search state', async () => {
+      await newPlacementController.checkCriteria()(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.newPlacement.new(params))
     })
   })
 
@@ -151,11 +203,15 @@ describe('newPlacementController', () => {
       expect(errorData).toEqual({
         criteriaChanged: 'Select if the criteria have changed',
       })
+      expect(newPlacementController.formData.update).not.toHaveBeenCalled()
     })
 
-    it('redirects to the Update placement criteria page if the criteria have changed', async () => {
+    it('saves the search state and redirects to the Update placement criteria page if the criteria have changed', async () => {
       await newPlacementController.saveCheckCriteria()({ ...request, body: { criteriaChanged: 'yes' } }, response, next)
 
+      expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        newPlacementCriteriaChanged: true,
+      })
       expect(response.redirect).toHaveBeenCalledWith(
         matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({
           placementRequestId: placementRequestDetail.id,
@@ -163,12 +219,13 @@ describe('newPlacementController', () => {
       )
     })
 
-    it('redirects to the Suitability search page if the criteria have not changed', async () => {
+    it('saves the search state and redirects to the Suitability search page if the criteria have not changed', async () => {
       await newPlacementController.saveCheckCriteria()({ ...request, body: { criteriaChanged: 'no' } }, response, next)
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequestDetail.id }),
-      )
+      expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        newPlacementCriteriaChanged: false,
+      })
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.spaces(params))
     })
   })
 
@@ -200,10 +257,40 @@ describe('newPlacementController', () => {
       errorSummary: [] as Array<string>,
     }
 
-    it('renders the form to update the new placement criteria', async () => {
+    it('renders the form to update the new placement criteria with the search state data', async () => {
+      const searchState = spaceSearchStateFactory.build({
+        newPlacementReason: 'Reason for the new placement',
+        newPlacementCriteriaChanged: true,
+        apType: 'isPIPE',
+        apCriteria: ['acceptsNonSexualChildOffenders'],
+        roomCriteria: ['isSingle'],
+      })
+      request.session.multiPageFormData = {
+        spaceSearch: { [placementRequestDetail.id]: searchState },
+      }
+
       await newPlacementController.updateCriteria()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('match/newPlacement/update-criteria', defaultRenderParameters)
+      expect(newPlacementController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(response.render).toHaveBeenCalledWith('match/newPlacement/update-criteria', {
+        ...defaultRenderParameters,
+        typeOfApRadioItems: apTypeRadioItems(searchState.apType),
+        criteriaCheckboxGroups: [
+          checkBoxesForCriteria(
+            'AP requirements',
+            'apCriteria',
+            spaceSearchCriteriaApLevelLabels,
+            searchState.apCriteria,
+          ),
+          checkBoxesForCriteria('Room requirements', 'roomCriteria', roomCharacteristicMap, searchState.roomCriteria),
+        ],
+      })
+    })
+
+    it('redirects to the new placement page if there is no search state', async () => {
+      await newPlacementController.updateCriteria()(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.newPlacement.new(params))
     })
   })
 
@@ -225,6 +312,22 @@ describe('newPlacementController', () => {
       expect(errorData).toEqual({
         typeOfAp: 'Select the type of AP',
       })
+    })
+
+    it('saves the search state and redirects to the suitability search page', async () => {
+      const validBody = {
+        typeOfAp: 'normal',
+        apCriteria: ['isArsonDesignated'],
+        roomCriteria: ['isSingle'],
+      }
+      await newPlacementController.saveUpdateCriteria()({ ...request, body: validBody }, response, next)
+
+      expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
+        apType: 'normal',
+        apCriteria: ['isArsonDesignated'],
+        roomCriteria: ['isSingle'],
+      })
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.spaces(params))
     })
   })
 })

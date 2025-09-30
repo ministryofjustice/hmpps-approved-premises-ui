@@ -1,4 +1,4 @@
-import { NewPlacementFormData } from '@approved-premises/ui'
+import { SpaceSearchFormData, SummaryList } from '@approved-premises/ui'
 import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { ValidationError } from '../errors'
 import { DateFormats, isoDateIsValid } from '../dateUtils'
@@ -11,33 +11,39 @@ import {
 } from '../characteristicsUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from './spaceSearch'
 
-type NewPlacementFormErrors = {
-  [K in keyof NewPlacementFormData]?: string
+type NewPlacementForm = {
+  arrivalDate: string
+  departureDate: string
+  reason: string
 }
 
-export const validateNewPlacement = (body: Partial<NewPlacementFormData>) => {
+type NewPlacementFormErrors = {
+  [K in keyof NewPlacementForm]?: string
+}
+
+export const validateNewPlacement = (body: Partial<NewPlacementForm>) => {
   const errors: NewPlacementFormErrors = {}
 
-  const startDate = DateFormats.datepickerInputToIsoString(body.startDate)
-  const endDate = DateFormats.datepickerInputToIsoString(body.endDate)
+  const startDate = DateFormats.datepickerInputToIsoString(body.arrivalDate)
+  const endDate = DateFormats.datepickerInputToIsoString(body.departureDate)
   const today = DateFormats.dateObjToIsoDate(new Date())
 
   if (!startDate) {
-    errors.startDate = 'Enter or select an arrival date'
+    errors.arrivalDate = 'Enter or select an arrival date'
   } else if (!isoDateIsValid(startDate)) {
-    errors.startDate = 'Enter a valid arrival date'
+    errors.arrivalDate = 'Enter a valid arrival date'
   } else if (startDate <= today) {
-    errors.startDate = 'The arrival date must be in the future'
+    errors.arrivalDate = 'The arrival date must be in the future'
   }
 
   if (!endDate) {
-    errors.endDate = 'Enter or select a departure date'
+    errors.departureDate = 'Enter or select a departure date'
   } else if (!isoDateIsValid(endDate)) {
-    errors.endDate = 'Enter a valid departure date'
+    errors.departureDate = 'Enter a valid departure date'
   } else if (endDate <= today) {
-    errors.endDate = 'The departure date must be in the future'
-  } else if (!errors.startDate && endDate <= startDate) {
-    errors.endDate = 'The departure date must be after the arrival date'
+    errors.departureDate = 'The departure date must be in the future'
+  } else if (!errors.arrivalDate && endDate <= startDate) {
+    errors.departureDate = 'The departure date must be after the arrival date'
   }
 
   if (!body.reason) {
@@ -71,3 +77,34 @@ export const criteriaSummaryList = (placementRequest: Cas1PlacementRequestDetail
     ),
   ],
 })
+
+export const newPlacementSummaryList = (searchState: SpaceSearchFormData): SummaryList =>
+  searchState.newPlacementReason
+    ? {
+        rows: [
+          summaryListItem('Expected arrival date', searchState.arrivalDate, 'date'),
+          summaryListItem('Expected departure date', searchState.departureDate, 'date'),
+          summaryListItem(
+            'Length of stay',
+            DateFormats.formatDuration(
+              DateFormats.durationBetweenDates(
+                DateFormats.isoToDateObj(searchState.departureDate),
+                DateFormats.isoToDateObj(searchState.arrivalDate),
+              ).number,
+            ),
+          ),
+          summaryListItem('Type of AP', apTypeCriteriaLabels[searchState.apType]),
+          summaryListItem(
+            'AP requirements',
+            characteristicsBulletList(searchState.apCriteria, { labels: spaceSearchCriteriaApLevelLabels }),
+            'html',
+          ),
+          summaryListItem(
+            'Room requirements',
+            characteristicsBulletList(searchState.roomCriteria, { labels: roomCharacteristicMap }),
+            'html',
+          ),
+          summaryListItem('Reason', searchState.newPlacementReason, 'textBlock'),
+        ],
+      }
+    : undefined
