@@ -33,6 +33,10 @@ export default class FindASessionPage extends Page {
     cy.get('button').click()
   }
 
+  clickOnASession() {
+    cy.get('a').contains('project-name').click()
+  }
+
   shouldShowSearchResults() {
     cy.get('td').eq(0).should('contain.text', 'project-name')
     cy.get('td').eq(0).should('contain.text', 'prj')
