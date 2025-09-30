@@ -1,7 +1,23 @@
-import { AppointmentsDto, OffenderFullDto } from '../@types/shared'
+import { AppointmentsDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import DateFormats from './dateUtils'
 import HtmlUtils from './hmtlUtils'
 
 export default class SessionUtils {
+  static sessionResultTableRows(sessions: ProjectAllocationsDto) {
+    return sessions.allocations.map(session => {
+      return [
+        { text: DateFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
+        { text: session.projectName },
+        { text: session.projectCode },
+        { text: DateFormats.stripTime(session.startTime) },
+        { text: DateFormats.stripTime(session.endTime) },
+        { text: session.numberOfOffendersAllocated },
+        { text: session.numberOfOffendersWithOutcomes },
+        { text: session.numberOfOffendersWithEA },
+      ]
+    })
+  }
+
   static sessionListTableRows(session: AppointmentsDto) {
     return session.appointments.map(appointment => {
       const offender = appointment.offender as OffenderFullDto

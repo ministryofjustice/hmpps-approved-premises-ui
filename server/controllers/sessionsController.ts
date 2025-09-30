@@ -1,8 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 import ProviderService from '../services/providerService'
-import { ProjectAllocationsDto } from '../@types/shared'
 import SessionService from '../services/sessionService'
-import DateFormats from '../utils/dateUtils'
 import GovukFrontendDateInput from '../forms/GovukFrontendDateInput'
 import SessionUtils from '../utils/sessionUtils'
 
@@ -48,7 +46,11 @@ export default class SessionsController {
           endDate,
         })
 
-        res.render('sessions/index', { ...pageSearchValues, teamItems, sessionRows: this.sessionRows(sessions) })
+        res.render('sessions/index', {
+          ...pageSearchValues,
+          teamItems,
+          sessionRows: SessionUtils.sessionResultTableRows(sessions),
+        })
       } catch {
         // Response error handling to be added
         res.render('sessions/index', { ...pageSearchValues, teamItems: [], sessionRows: [] })
@@ -81,20 +83,5 @@ export default class SessionsController {
       }
     })
     return teamItems
-  }
-
-  private sessionRows(sessions: ProjectAllocationsDto) {
-    return sessions.allocations.map(session => {
-      return [
-        { text: DateFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
-        { text: session.projectName },
-        { text: session.projectCode },
-        { text: DateFormats.stripTime(session.startTime) },
-        { text: DateFormats.stripTime(session.endTime) },
-        { text: session.numberOfOffendersAllocated },
-        { text: session.numberOfOffendersWithOutcomes },
-        { text: session.numberOfOffendersWithEA },
-      ]
-    })
   }
 }

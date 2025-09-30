@@ -5,8 +5,8 @@ import SessionsController from './sessionsController'
 import ProviderService from '../services/providerService'
 import SessionService from '../services/sessionService'
 import { ProjectAllocationsDto } from '../@types/shared'
-import DateFormats from '../utils/dateUtils'
 import GovukFrontendDateInput from '../forms/GovukFrontendDateInput'
+import SessionUtils from '../utils/sessionUtils'
 
 jest.mock('../forms/GovukFrontendDateInput')
 
@@ -21,9 +21,6 @@ describe('SessionsController', () => {
 
   beforeEach(() => {
     sessionsController = new SessionsController(providerService, sessionService)
-    govukInputMock.mockImplementation(() => {
-      return { items: [] }
-    })
   })
 
   describe('index', () => {
@@ -50,6 +47,14 @@ describe('SessionsController', () => {
   })
 
   describe('search', () => {
+    const resultTableRowsSpy = jest.spyOn(SessionUtils, 'sessionResultTableRows')
+    beforeEach(() => {
+      govukInputMock.mockImplementation(() => {
+        return { items: [] }
+      })
+      resultTableRowsSpy.mockReturnValue([])
+    })
+
     it('should render the dashboard page with search results', async () => {
       const allocation = {
         id: 1001,
@@ -64,6 +69,10 @@ describe('SessionsController', () => {
         numberOfOffendersWithEA: 1,
       }
 
+      const formattedSessionRows = [[{ text: 'Some value' }, { text: 'Another value' }]]
+
+      resultTableRowsSpy.mockReturnValue(formattedSessionRows)
+
       const sessions: ProjectAllocationsDto = {
         allocations: [allocation],
       }
@@ -74,20 +83,11 @@ describe('SessionsController', () => {
       const requestHandler = sessionsController.search()
       await requestHandler(request, response, next)
 
+      expect(resultTableRowsSpy).toHaveBeenCalledWith(sessions)
+
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [{ value: 1001, text: 'Team Lincoln' }],
-        sessionRows: [
-          [
-            { text: DateFormats.isoDateToUIDate(allocation.date, { format: 'medium' }) },
-            { text: allocation.projectName },
-            { text: allocation.projectCode },
-            { text: allocation.startTime },
-            { text: allocation.endTime },
-            { text: allocation.numberOfOffendersAllocated },
-            { text: allocation.numberOfOffendersWithOutcomes },
-            { text: allocation.numberOfOffendersWithEA },
-          ],
-        ],
+        sessionRows: formattedSessionRows,
         startDateItems: [],
         endDateItems: [],
       })
