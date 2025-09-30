@@ -61,6 +61,7 @@ export default class {
         criteria: searchState.roomCriteria,
         releaseType: placementRequest.releaseType,
         isWomensApplication: placementRequest.application.isWomensApplication,
+        newPlacementReason: searchState.newPlacementReason,
       })
 
       return res.render('match/placementRequests/spaceBookings/new', {

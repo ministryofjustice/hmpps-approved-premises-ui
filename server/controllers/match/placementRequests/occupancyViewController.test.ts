@@ -4,6 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
 import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import { PlacementRequestService, PlacementService, PremisesService, SessionService } from '../../../services'
 import {
   cas1PlacementRequestDetailFactory,
@@ -45,6 +46,7 @@ import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../u
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import { placementKeyDetails } from '../../../utils/placements'
 import cas1RequestedPlacementPeriodFactory from '../../../testutils/factories/cas1RequestedPlacementPeriod'
+import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -259,6 +261,30 @@ describe('OccupancyViewController', () => {
         expect.objectContaining({
           ...DateFormats.isoDateToDateInputs(fullSearchState.arrivalDate, 'arrivalDate'),
           ...DateFormats.isoDateToDateInputs(fullSearchState.departureDate, 'departureDate'),
+        }),
+      )
+    })
+
+    it('should show the new placement summary if the user is booking a new placement', async () => {
+      const newPlacementArrivalDate = faker.date.future()
+      const newPlacementDepartureDate = faker.date.future({ refDate: newPlacementArrivalDate })
+      const searchStateWithNewPlacement = {
+        ...searchState,
+        arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+        departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
+        newPlacementCriteriaChanged: false,
+        newPlacementReason: 'Some reason',
+      }
+      request.session.multiPageFormData.spaceSearch = {
+        [placementRequestDetail.id]: searchStateWithNewPlacement,
+      }
+
+      await occupancyViewController.view()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
         }),
       )
     })
