@@ -102,6 +102,25 @@ describe('SpaceBookingsController', () => {
       )
     })
 
+    it('should render the summary list with the reason for the new placement', async () => {
+      jest.spyOn(matchUtils, 'spaceBookingConfirmationSummaryListRows')
+      request.session.multiPageFormData.spaceSearch = {
+        [placementRequestDetail.id]: {
+          ...searchState,
+          newPlacementReason: 'Reason for the new placement',
+          newPlacementCriteriaChanged: false,
+        },
+      }
+
+      await spaceBookingsController.new()(request, response, next)
+
+      expect(matchUtils.spaceBookingConfirmationSummaryListRows).toHaveBeenCalledWith(
+        expect.objectContaining({
+          newPlacementReason: 'Reason for the new placement',
+        }),
+      )
+    })
+
     it('redirects to the suitability search if no search state is present', async () => {
       request.session.multiPageFormData = undefined
 

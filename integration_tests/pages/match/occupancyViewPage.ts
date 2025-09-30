@@ -37,6 +37,11 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
     this.completeDateInputs('departureDate', departureDate)
   }
 
+  shouldHaveFormPopulated(arrivalDate: string, departureDate: string) {
+    this.dateInputsShouldContainDate('arrivalDate', arrivalDate)
+    this.dateInputsShouldContainDate('departureDate', departureDate)
+  }
+
   shouldShowErrorSummaryAndErrorMessage(message: string): void {
     cy.get('.govuk-error-summary').should('contain', message)
     cy.get(`.govuk-error-message`).should('contain', message)

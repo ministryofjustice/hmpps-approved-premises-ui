@@ -252,6 +252,7 @@ describe('matchUtils', () => {
     const expectedArrivalDate = '2025-09-23'
     const expectedDepartureDate = '2025-11-18'
     const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
+    const newPlacementReason = 'Some reason'
 
     it('returns summary list items for the space booking confirmation screen', () => {
       expect(
@@ -322,6 +323,21 @@ describe('matchUtils', () => {
       })
 
       expect(rows).toEqual(expect.not.arrayContaining([expect.objectContaining({ key: { text: 'AP area' } })]))
+    })
+
+    it('returns summary list items with the reason for a new placement', () => {
+      const rows = spaceBookingConfirmationSummaryListRows({
+        premises,
+        expectedArrivalDate,
+        expectedDepartureDate,
+        criteria,
+        releaseType: placementRequest.releaseType,
+        newPlacementReason,
+      })
+
+      expect(rows).toEqual(
+        expect.arrayContaining([{ key: { text: 'Reason for placement' }, value: { text: newPlacementReason } }]),
+      )
     })
   })
 

@@ -118,6 +118,8 @@ describe('newPlacementController', () => {
       expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
         arrivalDate: '2025-11-03',
         departureDate: '2026-01-04',
+        startDate: '2025-11-03',
+        durationDays: 62,
         newPlacementReason: 'Area now excluded',
       })
       expect(response.redirect).toHaveBeenCalledWith(
@@ -241,7 +243,7 @@ describe('newPlacementController', () => {
         placementRequestId: placementRequestDetail.id,
       }),
       pageHeading: 'Update the placement criteria',
-      typeOfApRadioItems: apTypeRadioItems(
+      apTypeRadioItems: apTypeRadioItems(
         applyApTypeToAssessApType[placementRequestDetail.type as ApTypeSpecialist] || 'normal',
       ),
       criteriaCheckboxGroups: [
@@ -279,7 +281,7 @@ describe('newPlacementController', () => {
       expect(newPlacementController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(response.render).toHaveBeenCalledWith('match/newPlacement/update-criteria', {
         ...defaultRenderParameters,
-        typeOfApRadioItems: apTypeRadioItems(searchState.apType),
+        apTypeRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(
             'AP requirements',
@@ -315,13 +317,13 @@ describe('newPlacementController', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
-        typeOfAp: 'Select the type of AP',
+        apType: 'Select the type of AP',
       })
     })
 
     it('saves the search state and redirects to the suitability search page', async () => {
       const validBody = {
-        typeOfAp: 'normal',
+        apType: 'normal',
         apCriteria: ['isArsonDesignated'],
         roomCriteria: ['isSingle'],
       }

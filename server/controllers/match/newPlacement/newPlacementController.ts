@@ -65,9 +65,14 @@ export default class NewPlacementController {
       try {
         validateNewPlacement(body)
 
+        const arrivalDate = DateFormats.datepickerInputToIsoString(body.arrivalDate)
+        const departureDate = DateFormats.datepickerInputToIsoString(body.departureDate)
+
         await this.formData.update(placementRequestId, req.session, {
-          arrivalDate: DateFormats.datepickerInputToIsoString(body.arrivalDate),
-          departureDate: DateFormats.datepickerInputToIsoString(body.departureDate),
+          arrivalDate,
+          departureDate,
+          startDate: arrivalDate,
+          durationDays: DateFormats.durationBetweenDates(departureDate, arrivalDate).number,
           newPlacementReason: body.reason,
         })
 
@@ -193,7 +198,7 @@ export default class NewPlacementController {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
         backlink,
         pageHeading: 'Update the placement criteria',
-        typeOfApRadioItems: apTypeRadioItems(searchState.apType),
+        apTypeRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(
             'AP requirements',
@@ -215,14 +220,14 @@ export default class NewPlacementController {
       const { placementRequestId } = req.params
 
       try {
-        const { typeOfAp, apCriteria, roomCriteria } = req.body
+        const { apType, apCriteria, roomCriteria } = req.body
 
-        if (!typeOfAp) {
-          throw new ValidationError({ typeOfAp: 'Select the type of AP' })
+        if (!apType) {
+          throw new ValidationError({ apType: 'Select the type of AP' })
         }
 
         await this.formData.update(placementRequestId, req.session, {
-          apType: typeOfAp,
+          apType,
           apCriteria,
           roomCriteria,
         })

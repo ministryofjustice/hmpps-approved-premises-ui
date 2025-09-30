@@ -1,41 +1,57 @@
-import { Cas1PlacementRequestDetail } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { signIn } from '../signIn'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
-import { cas1PlacementRequestDetailFactory, spaceSearchResultsFactory } from '../../../server/testutils/factories'
+import {
+  cas1PlacementRequestDetailFactory,
+  cas1PremiseCapacityFactory,
+  cas1PremisesFactory,
+  spaceSearchResultsFactory,
+} from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import NewPlacementPage from '../../pages/match/newPlacement/newPlacementPage'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import CheckCriteriaPage from '../../pages/match/newPlacement/checkCriteriaPage'
 import UpdateCriteriaPage from '../../pages/match/newPlacement/updateCriteriaPage'
 import SearchPage from '../../pages/match/searchPage'
+import OccupancyViewPage from '../../pages/match/occupancyViewPage'
+import BookASpacePage from '../../pages/match/bookASpacePage'
 
 context('New Placement', () => {
-  let placementRequest: Cas1PlacementRequestDetail
+  const newPlacementArrivalDate = faker.date.future()
+  const newPlacementDepartureDate = addDays(newPlacementArrivalDate, 10)
+  const arrivalDateValue = DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'datePicker' })
+  const departureDateValue = DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' })
+  const reason = faker.word.words(10)
+
+  const placementRequest = cas1PlacementRequestDetailFactory.build({
+    type: 'normal',
+    essentialCriteria: ['isCatered', 'isWheelchairDesignated', 'isStepFreeDesignated'],
+  })
+  const spaceSearchResults = spaceSearchResultsFactory.build()
+  const chosenResult = spaceSearchResults.results[1]
+  const premises = cas1PremisesFactory.build({ ...chosenResult.premises, localRestrictions: [] })
+  const capacity = cas1PremiseCapacityFactory.build({
+    startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+    endDate: DateFormats.dateObjToIsoDate(addDays(newPlacementDepartureDate, -1)),
+  })
 
   beforeEach(() => {
     cy.task('reset')
-
-    placementRequest = cas1PlacementRequestDetailFactory.build({
-      type: 'normal',
-      essentialCriteria: ['isCatered', 'isWheelchairDesignated', 'isStepFreeDesignated'],
-    })
     cy.task('stubPlacementRequest', placementRequest)
-
-    const spaceSearchResults = spaceSearchResultsFactory.build()
     cy.task('stubSpaceSearch', spaceSearchResults)
+    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesCapacity', {
+      premisesId: premises.id,
+      premiseCapacity: capacity,
+      startDate: capacity.startDate,
+      endDate: capacity.endDate,
+    })
   })
 
   it('allows me to create a new placement', () => {
-    const newPlacementArrivalDate = faker.date.future()
-    const newPlacementDepartureDate = addDays(newPlacementArrivalDate, 10)
-    const arrivalDateValue = DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'datePicker' })
-    const departureDateValue = DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' })
-    const reason = faker.word.words(10)
-
     GIVEN('I am signed in as a CRU member')
     signIn('cru_member')
 
@@ -145,30 +161,64 @@ context('New Placement', () => {
     WHEN('I complete the form')
     updateCriteriaPage.completeForm({
       typeOfAp: 'isPIPE',
-      apCriteria: ['isCatered'],
-      roomCriteria: ['isWheelchairDesignated', 'isArsonSuitable'],
+      apCriteria: ['acceptsChildSexOffenders'],
+      roomCriteria: ['isArsonSuitable'],
     })
     updateCriteriaPage.clickButton('Save and continue')
 
     THEN('I should see the suitability search page with the new placement information')
     Page.verifyOnPage(SearchPage)
-
-    // Add a test for filtering results or consider this covered in main suitability search integration test?
+    const expectedSearchFormDataAfterUpdate: SpaceSearchFormData = {
+      postcode: placementRequest.location,
+      startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+      arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+      departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
+      newPlacementReason: reason,
+      newPlacementCriteriaChanged: false,
+      apType: 'isPIPE',
+      apCriteria: ['acceptsChildSexOffenders'],
+      roomCriteria: ['isArsonSuitable'],
+    }
+    searchPage.shouldShowNewPlacementDetails(expectedSearchFormDataAfterUpdate)
+    searchPage.shouldShowSearchParametersInInputs(expectedSearchFormDataAfterUpdate)
 
     WHEN('I click on a result')
+
+    searchPage.clickSearchResult(chosenResult)
+
     THEN('I should see the occupancy view for the premises with the new placement information')
+    const occupancyViewPage = Page.verifyOnPage(OccupancyViewPage, chosenResult.premises.name)
+    occupancyViewPage.shouldShowNewPlacementDetails(expectedSearchFormDataAfterUpdate)
 
-    // Add a test for filtering view or consider this covered in main occupancy view integration test?
+    AND('The dates should already be completed in the form')
+    occupancyViewPage.shouldHaveFormPopulated(
+      DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+      DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
+    )
 
-    WHEN('I submit the form with no values')
-    THEN('I should see error messages')
+    WHEN('I submit the form')
+    occupancyViewPage.clickButton('Continue')
 
-    WHEN('I complete the form')
-    THEN('I should see the page to confirm the new placement')
+    THEN('I should see the page to confirm the new placement with the new placement information')
+    const confirmBookingPage = Page.verifyOnPage(BookASpacePage)
+    confirmBookingPage.shouldShowBookingDetails(
+      placementRequest,
+      chosenResult.premises,
+      expectedSearchFormDataAfterUpdate.arrivalDate,
+      expectedSearchFormDataAfterUpdate.departureDate,
+      expectedSearchFormDataAfterUpdate.roomCriteria,
+      reason,
+    )
 
     WHEN('I confirm the new placement')
+    // confirmBookingPage.clickButton('Confirm and book')
+
     THEN('I should see the placement request page')
+    // Page.verifyOnPage(ShowPage, placementRequest)
+
     AND('I should see a confirmation banner')
+    // placementRequestPage.shouldShowBanner('New placement created')
+
     AND('The new placement details should be shown')
   })
 })

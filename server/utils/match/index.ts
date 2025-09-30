@@ -33,6 +33,7 @@ type SpaceBookingConfirmationData = {
   criteria: Array<Cas1SpaceBookingCharacteristic>
   releaseType?: ReleaseTypeOption
   isWomensApplication?: boolean
+  newPlacementReason?: string
 }
 
 export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfirmationData): Array<SummaryListItem> => {
@@ -44,6 +45,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     criteria,
     releaseType,
     isWomensApplication,
+    newPlacementReason,
   } = data
 
   return [
@@ -57,6 +59,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     summaryListItem('Expected departure date', expectedDepartureDate, 'date'),
     summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
     releaseType && summaryListItem('Release type', allReleaseTypes[releaseType]),
+    newPlacementReason && summaryListItem('Reason for placement', newPlacementReason),
   ].filter(Boolean)
 }
 
