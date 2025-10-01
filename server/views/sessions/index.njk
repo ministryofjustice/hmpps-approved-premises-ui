@@ -3,11 +3,14 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../showErrorSummary.njk" import showErrorSummary %}
 
 {% set pageTitle = applicationName + " - Track progress on Community Payback" %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
+
+  {{ showErrorSummary(errorSummary) }}
 
   <h1>Track progress on Community Payback</h1>
 
@@ -37,7 +40,8 @@
           },
           id: "team",
           name: "team",
-          items: teamItems
+          items: teamItems,
+          errorMessage: errors.team
       }) }}
     </div>
 
@@ -52,7 +56,8 @@
           classes: "govuk-!-font-weight-bold"
         }
       },
-      items: startDateItems
+      items: startDateItems,
+      errorMessage: errors['startDate-day']
     }) }}
 
     {{ govukDateInput({
@@ -64,7 +69,8 @@
           classes: "govuk-!-font-weight-bold"
         }
       },
-      items: endDateItems
+      items: endDateItems,
+      errorMessage: errors['endDate-day']
     }) }}
 
     {{ govukButton({
