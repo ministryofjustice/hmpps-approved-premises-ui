@@ -1,10 +1,14 @@
 import { path } from 'static-path'
 
+const appointmentsPath = path('/appointments')
 const providersPath = path('/providers')
 const projectsPath = path('/projects')
 const referenceDataPath = path('/references')
 
 export default {
+  appointments: {
+    singleAppointment: appointmentsPath.path(':appointmentId'),
+  },
   providers: {
     teams: providersPath.path(':providerId/teams'),
   },
