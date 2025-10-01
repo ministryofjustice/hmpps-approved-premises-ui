@@ -48,11 +48,70 @@ describe('SessionsController', () => {
 
   describe('search', () => {
     const resultTableRowsSpy = jest.spyOn(SessionUtils, 'sessionResultTableRows')
+
     beforeEach(() => {
       govukInputMock.mockImplementation(() => {
         return { items: [] }
       })
       resultTableRowsSpy.mockReturnValue([])
+    })
+
+    it('should throw an error if the request for team data fails', async () => {
+      const requestHandler = sessionsController.search()
+      const err = { data: {}, status: 404 }
+
+      providerService.getTeams.mockImplementation(() => {
+        throw err
+      })
+
+      const response = createMock<Response>()
+      await expect(requestHandler(request, response, next)).rejects.toThrow('Something went wrong')
+    })
+
+    it('should render the track progress page with errors', async () => {
+      const requestHandler = sessionsController.search()
+
+      const firstTeam = { id: 1, name: 'Team Lincoln' }
+      const secondTeam = { id: 2, name: 'Team Grantham' }
+
+      const teams = {
+        providers: [firstTeam, secondTeam],
+      }
+
+      providerService.getTeams.mockResolvedValue(teams)
+
+      const req: DeepMocked<Request> = createMock<Request>({
+        query: {
+          team: '1',
+        },
+      })
+
+      const response = createMock<Response>()
+      await requestHandler(req, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('sessions/index', {
+        teamItems: [
+          { value: firstTeam.id, text: firstTeam.name, selected: true },
+          { value: secondTeam.id, text: secondTeam.name, selected: false },
+        ],
+        sessionRows: [],
+        startDateItems: [],
+        endDateItems: [],
+        errors: {
+          'startDate-day': { text: 'Include the start date' },
+          'endDate-day': { text: 'Include the end date' },
+        },
+        errorSummary: [
+          {
+            text: 'Include the start date',
+            href: '#startDate-day',
+          },
+          {
+            text: 'Include the end date',
+            href: '#endDate-day',
+          },
+        ],
+      })
     })
 
     it('should render the dashboard page with search results', async () => {
@@ -80,13 +139,24 @@ describe('SessionsController', () => {
       const response = createMock<Response>()
       sessionService.getSessions.mockResolvedValue(sessions)
 
+      const firstTeam = { id: 1, name: 'Team Lincoln' }
+      const secondTeam = { id: 2, name: 'Team Grantham' }
+
+      const teams = {
+        providers: [firstTeam, secondTeam],
+      }
+
+      providerService.getTeams.mockResolvedValue(teams)
+
       const requestHandler = sessionsController.search()
       await requestHandler(request, response, next)
 
       expect(resultTableRowsSpy).toHaveBeenCalledWith(sessions)
-
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
-        teamItems: [{ value: 1001, text: 'Team Lincoln' }],
+        teamItems: [
+          { value: firstTeam.id, text: firstTeam.name, selected: undefined },
+          { value: secondTeam.id, text: secondTeam.name, selected: undefined },
+        ],
         sessionRows: formattedSessionRows,
         startDateItems: [],
         endDateItems: [],
@@ -126,7 +196,7 @@ describe('SessionsController', () => {
       })
     })
 
-    it('should render empty results if error code returned from client', async () => {
+    it('should render empty session results if error code returned from session client', async () => {
       const requestHandler = sessionsController.search()
       const err = { data: {}, status: 404 }
 
@@ -134,14 +204,36 @@ describe('SessionsController', () => {
         throw err
       })
 
+      const firstTeam = { id: 1, name: 'Team Lincoln' }
+      const secondTeam = { id: 2, name: 'Team Grantham' }
+
+      const teams = {
+        providers: [firstTeam, secondTeam],
+      }
+
+      providerService.getTeams.mockResolvedValue(teams)
+
       const response = createMock<Response>()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
-        teamItems: [],
+        teamItems: [
+          {
+            selected: undefined,
+            text: 'Team Lincoln',
+            value: 1,
+          },
+          {
+            selected: undefined,
+            text: 'Team Grantham',
+            value: 2,
+          },
+        ],
         sessionRows: [],
         startDateItems: [],
         endDateItems: [],
+        errors: {},
+        errorSummary: [],
       })
     })
 
@@ -164,6 +256,7 @@ describe('SessionsController', () => {
       const response = createMock<Response>()
       const requestWithDates = createMock<Request>({})
       const query = {
+        team: '1',
         'startDate-day': '07',
         'startDate-month': '07',
         'startDate-year': '2024',
@@ -176,10 +269,23 @@ describe('SessionsController', () => {
       await requestHandler(requestWithDates, response, next)
 
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
-        teamItems: [],
+        teamItems: [
+          {
+            selected: true,
+            text: 'Team Lincoln',
+            value: 1,
+          },
+          {
+            selected: false,
+            text: 'Team Grantham',
+            value: 2,
+          },
+        ],
         sessionRows: [],
         startDateItems: dateParts,
         endDateItems: dateParts,
+        errors: {},
+        errorSummary: [],
       })
     })
   })

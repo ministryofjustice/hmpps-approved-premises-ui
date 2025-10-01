@@ -1,8 +1,8 @@
 import type { Request, RequestHandler, Response } from 'express'
 import ProviderService from '../services/providerService'
 import SessionService from '../services/sessionService'
-import GovukFrontendDateInput from '../forms/GovukFrontendDateInput'
 import SessionUtils from '../utils/sessionUtils'
+import TrackProgressPage, { TrackProgressPageInput } from '../pages/trackProgressPage'
 
 export default class SessionsController {
   constructor(
@@ -21,23 +21,30 @@ export default class SessionsController {
 
   search(): RequestHandler {
     return async (_req: Request, res: Response) => {
+      let teamItems
+
       // Assigning the query object to a standard object prototype to resolve TypeError: Cannot convert object to primitive value
       const query = { ..._req.query }
-      const startDateInput = new GovukFrontendDateInput(query, 'startDate')
-      const endDateInput = new GovukFrontendDateInput(query, 'endDate')
-
-      const teamId = Number(query.team)
-      const startDate = `${query['startDate-year']}-${query['startDate-month']}-${query['startDate-day']}`
-      const endDate = `${query['endDate-year']}-${query['endDate-month']}-${query['endDate-day']}`
-
-      const pageSearchValues = {
-        startDateItems: startDateInput.items,
-        endDateItems: endDateInput.items,
-      }
 
       try {
         const providerId = '1000'
-        const teamItems = await this.getTeams(providerId, res, teamId)
+        teamItems = await this.getTeams(providerId, res, Number(query.team))
+      } catch {
+        throw new Error('Something went wrong')
+      }
+
+      const page = new TrackProgressPage(_req.query)
+      const validationErrors = page.validationErrors()
+      const pageSearchValues = page.items()
+
+      try {
+        if (Object.keys(validationErrors).length !== 0) {
+          throw new Error('Validation error')
+        }
+
+        const teamId = Number(query.team)
+        const startDate = `${query['startDate-year']}-${query['startDate-month']}-${query['startDate-day']}`
+        const endDate = `${query['endDate-year']}-${query['endDate-month']}-${query['endDate-day']}`
 
         const sessions = await this.sessionService.getSessions({
           username: res.locals.user.username,
@@ -52,8 +59,18 @@ export default class SessionsController {
           sessionRows: SessionUtils.sessionResultTableRows(sessions),
         })
       } catch {
-        // Response error handling to be added
-        res.render('sessions/index', { ...pageSearchValues, teamItems: [], sessionRows: [] })
+        const errorSummary = Object.keys(validationErrors).map(k => ({
+          text: validationErrors[k as keyof TrackProgressPageInput].text,
+          href: `#${k}`,
+        }))
+
+        res.render('sessions/index', {
+          errorSummary,
+          errors: validationErrors,
+          teamItems,
+          sessionRows: [],
+          ...pageSearchValues,
+        })
       }
     }
   }
