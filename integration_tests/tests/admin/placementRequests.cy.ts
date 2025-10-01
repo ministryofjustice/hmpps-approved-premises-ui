@@ -202,7 +202,7 @@ context('Placement Requests', () => {
       showPage.shouldHaveActions(['Change placement', 'Withdraw placement', 'Create new placement'])
 
       AND('I should see the booking information')
-      showPage.shouldShowBookingInformation()
+      showPage.shouldShowBookingInformation(matchedPlacementRequest.spaceBookings)
 
       WHEN('I go back to the dashboard')
       showPage.clickBack()

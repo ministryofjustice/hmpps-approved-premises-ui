@@ -1,8 +1,8 @@
-import { Cas1PlacementRequestDetail } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import Page from '../../page'
 
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
-import { placementSummaryList } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementSummaryList, placementTitle } from '../../../../server/utils/placementRequests/placementSummaryList'
 
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'
@@ -48,9 +48,13 @@ export default class ShowPage extends Page {
     cy.contains('Booked placement').should('not.exist')
   }
 
-  shouldShowBookingInformation() {
-    cy.contains('Booked placement').should('exist')
-    this.shouldContainSummaryListItems(placementSummaryList(this.placementRequest).rows)
+  shouldShowBookingInformation(bookings: Array<Cas1SpaceBookingSummary>) {
+    cy.contains(bookings.length > 1 ? 'Booked placements' : 'Booked placement').should('exist')
+
+    bookings.forEach(booking => {
+      cy.contains(placementTitle(booking)).should('exist')
+      this.shouldContainSummaryListItems(placementSummaryList(booking).rows)
+    })
   }
 
   clickUnableToMatch() {

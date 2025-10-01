@@ -2,7 +2,7 @@ import type { Request, Response, TypedRequestHandler } from 'express'
 import { changeRequestBanners } from '../../../utils/placementRequests/changeRequestsUtils'
 import { PlacementRequestService, SessionService } from '../../../services'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
-import { placementSummaryList } from '../../../utils/placementRequests/placementSummaryList'
+import { placementsSummaries } from '../../../utils/placementRequests/placementSummaryList'
 import { adminIdentityBar } from '../../../utils/placementRequests'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import paths from '../../../paths/admin'
@@ -31,7 +31,7 @@ export default class PlacementRequestsController {
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
-        bookingSummaryList: placementRequest.booking ? placementSummaryList(placementRequest) : undefined,
+        placements: placementsSummaries(placementRequest),
         changeRequestBanners: changeRequestBanners(
           placementRequestId,
           placementRequest.openChangeRequests,

@@ -9,6 +9,7 @@ import {
   cas1PremiseCapacityFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingSummaryFactory,
   personFactory,
   spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
@@ -28,7 +29,7 @@ context('New Placement', () => {
   const departureDateValue = DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' })
   const reason = faker.word.words(10)
 
-  const placementRequest = cas1PlacementRequestDetailFactory.build({
+  const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking().build({
     person: personFactory.build({ type: 'FullPerson', name: 'Dave Watts' }),
     type: 'normal',
     essentialCriteria: ['isCatered', 'isWheelchairDesignated', 'isStepFreeDesignated'],
@@ -40,7 +41,7 @@ context('New Placement', () => {
     startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
     endDate: DateFormats.dateObjToIsoDate(addDays(newPlacementDepartureDate, -1)),
   })
-  const spaceBooking = cas1SpaceBookingFactory.upcoming().build({
+  const newPlacement = cas1SpaceBookingFactory.upcoming().build({
     placementRequestId: placementRequest.id,
     person: placementRequest.person,
     expectedArrivalDate: '2026-02-28',
@@ -59,7 +60,7 @@ context('New Placement', () => {
       startDate: capacity.startDate,
       endDate: capacity.endDate,
     })
-    cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
+    cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking: newPlacement })
   })
 
   it('allows me to create a new placement', () => {
@@ -222,6 +223,11 @@ context('New Placement', () => {
     )
 
     WHEN('I confirm the new placement')
+    const newPlacementSummary = cas1SpaceBookingSummaryFactory.build(newPlacement)
+    cy.task('stubPlacementRequest', {
+      ...placementRequest,
+      spaceBookings: [...placementRequest.spaceBookings, newPlacementSummary],
+    })
     confirmBookingPage.clickButton('Confirm and book')
 
     THEN('I should see the placement request page')
@@ -235,5 +241,6 @@ context('New Placement', () => {
     `)
 
     AND('The new placement details should be shown')
+    placementRequestPage.shouldShowBookingInformation([...placementRequest.spaceBookings, newPlacementSummary])
   })
 })
