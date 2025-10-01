@@ -25,6 +25,7 @@ import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import * as placementsUtils from '../../../utils/placementRequests/placements'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -115,6 +116,10 @@ describe('spaceSearchController', () => {
         newPlacementCriteriaChanged: false,
       }
 
+      beforeEach(() => {
+        jest.spyOn(placementsUtils, 'getPlacementOfStatus')
+      })
+
       it('should render with the new placement details', async () => {
         request.session.multiPageFormData = {
           spaceSearch: {
@@ -124,6 +129,7 @@ describe('spaceSearchController', () => {
 
         await spaceSearchController.search()(request, response, next)
 
+        expect(placementsUtils.getPlacementOfStatus).toHaveBeenCalledWith('arrived', placementRequestDetail)
         expect(response.render).toHaveBeenCalledWith(
           'match/search',
           expect.objectContaining({

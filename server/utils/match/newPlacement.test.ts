@@ -1,7 +1,7 @@
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import { ValidationError } from '../errors'
 import { criteriaSummaryList, newPlacementSummaryList, validateNewPlacement } from './newPlacement'
-import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
+import { cas1PlacementRequestDetailFactory, cas1SpaceBookingSummaryFactory } from '../../testutils/factories'
 
 describe('new placement utils', () => {
   describe('validateNewPlacement', () => {
@@ -101,16 +101,16 @@ describe('new placement utils', () => {
   })
 
   describe('newPlacementSummaryList', () => {
-    it('renders summary list items for a search state with new placement details', () => {
-      const searchState: SpaceSearchFormData = {
-        arrivalDate: '2026-04-14',
-        departureDate: '2026-05-07',
-        newPlacementReason: 'Because',
-        apCriteria: ['acceptsSexOffenders'],
-        roomCriteria: ['isArsonSuitable', 'isWheelchairDesignated'],
-        apType: 'isESAP',
-      }
+    const searchState: SpaceSearchFormData = {
+      arrivalDate: '2026-04-14',
+      departureDate: '2026-05-07',
+      newPlacementReason: 'Because',
+      apCriteria: ['acceptsSexOffenders'],
+      roomCriteria: ['isArsonSuitable', 'isWheelchairDesignated'],
+      apType: 'isESAP',
+    }
 
+    it('renders summary list items for a search state with new placement details', () => {
       expect(newPlacementSummaryList(searchState)).toEqual({
         rows: [
           { key: { text: 'Expected arrival date' }, value: { text: 'Tue 14 Apr 2026' } },
@@ -132,8 +132,22 @@ describe('new placement utils', () => {
       })
     })
 
+    it('returns the current placement premises name if the placement exists', () => {
+      const currentPlacement = cas1SpaceBookingSummaryFactory.current().build({
+        premises: {
+          name: 'The current premises name',
+        },
+      })
+      const summaryList = newPlacementSummaryList(searchState, currentPlacement)
+      expect(summaryList.rows).toHaveLength(8)
+      expect(summaryList.rows[0]).toEqual({
+        key: { text: 'Current AP' },
+        value: { text: 'The current premises name' },
+      })
+    })
+
     it('returns undefined if no new placement details are present', () => {
-      const searchState: SpaceSearchFormData = {
+      const searchStateNoNewPlacement: SpaceSearchFormData = {
         arrivalDate: '2026-04-14',
         departureDate: '2026-05-07',
         apCriteria: ['acceptsSexOffenders'],
@@ -141,7 +155,7 @@ describe('new placement utils', () => {
         apType: 'isESAP',
       }
 
-      expect(newPlacementSummaryList(searchState)).toEqual(undefined)
+      expect(newPlacementSummaryList(searchStateNoNewPlacement)).toEqual(undefined)
     })
   })
 })

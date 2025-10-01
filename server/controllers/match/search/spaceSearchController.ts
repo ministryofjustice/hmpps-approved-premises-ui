@@ -19,6 +19,7 @@ import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import { getPlacementOfStatus } from '../../../utils/placementRequests/placements'
 
 export default class SpaceSearchController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -71,7 +72,10 @@ export default class SpaceSearchController {
         summaryCards: summaryCards(spaceSearchResults, formValues.postcode, placementRequest),
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
-        newPlacementSummaryList: newPlacementSummaryList(searchState),
+        newPlacementSummaryList: newPlacementSummaryList(
+          searchState,
+          getPlacementOfStatus('arrived', placementRequest),
+        ),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }),
         errors,
         errorSummary,
