@@ -55,11 +55,7 @@ export default class SpaceSearchController {
       res.render('match/search', {
         pageHeading: 'Find a space in an Approved Premises',
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
-        summaryCards: summaryCards(
-          spaceSearchResults,
-          formValues.postcode,
-          placementRequest.application.isWomensApplication,
-        ),
+        summaryCards: summaryCards(spaceSearchResults, formValues.postcode, placementRequest),
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }),
