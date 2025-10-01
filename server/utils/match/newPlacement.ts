@@ -1,5 +1,5 @@
 import { SpaceSearchFormData, SummaryList } from '@approved-premises/ui'
-import { Cas1PlacementRequestDetail } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { ValidationError } from '../errors'
 import { DateFormats, isoDateIsValid } from '../dateUtils'
 import { summaryListItem } from '../formUtils'
@@ -78,10 +78,14 @@ export const criteriaSummaryList = (placementRequest: Cas1PlacementRequestDetail
   ],
 })
 
-export const newPlacementSummaryList = (searchState: SpaceSearchFormData): SummaryList =>
+export const newPlacementSummaryList = (
+  searchState: SpaceSearchFormData,
+  currentPlacement?: Cas1SpaceBookingSummary,
+): SummaryList =>
   searchState.newPlacementReason
     ? {
         rows: [
+          currentPlacement && summaryListItem('Current AP', currentPlacement.premises.name),
           summaryListItem('Expected arrival date', searchState.arrivalDate, 'date'),
           summaryListItem('Expected departure date', searchState.departureDate, 'date'),
           summaryListItem(
@@ -105,6 +109,6 @@ export const newPlacementSummaryList = (searchState: SpaceSearchFormData): Summa
             'html',
           ),
           summaryListItem('Reason', searchState.newPlacementReason, 'textBlock'),
-        ],
+        ].filter(Boolean),
       }
     : undefined

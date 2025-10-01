@@ -39,6 +39,7 @@ import { placementRequestKeyDetails } from '../../../utils/placementRequests/uti
 import { placementKeyDetails } from '../../../utils/placements'
 import logger from '../../../../logger'
 import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import { getPlacementOfStatus } from '../../../utils/placementRequests/placements'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -149,7 +150,10 @@ export default class {
         durationOptions: durationSelectOptions(formValues.durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
-        newPlacementSummaryList: newPlacementSummaryList(searchState),
+        newPlacementSummaryList: newPlacementSummaryList(
+          searchState,
+          getPlacementOfStatus('arrived', placementRequest),
+        ),
         summary,
         calendar,
         errors,

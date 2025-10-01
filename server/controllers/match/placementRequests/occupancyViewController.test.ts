@@ -47,6 +47,7 @@ import { placementRequestKeyDetails } from '../../../utils/placementRequests/uti
 import { placementKeyDetails } from '../../../utils/placements'
 import cas1RequestedPlacementPeriodFactory from '../../../testutils/factories/cas1RequestedPlacementPeriod'
 import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import * as placementsUtils from '../../../utils/placementRequests/placements'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -115,6 +116,10 @@ describe('OccupancyViewController', () => {
   })
 
   describe('view', () => {
+    beforeEach(() => {
+      jest.spyOn(placementsUtils, 'getPlacementOfStatus')
+    })
+
     it('should render the occupancy view template with the search state details', async () => {
       await occupancyViewController.view()(request, response, next)
 
@@ -281,6 +286,7 @@ describe('OccupancyViewController', () => {
 
       await occupancyViewController.view()(request, response, next)
 
+      expect(placementsUtils.getPlacementOfStatus).toHaveBeenCalledWith('arrived', placementRequestDetail)
       expect(response.render).toHaveBeenCalledWith(
         'match/placementRequests/occupancyView/view',
         expect.objectContaining({
