@@ -73,11 +73,7 @@ describe('spaceSearchController', () => {
       backlinkLabel: 'Back to placement request',
       pageHeading: 'Find a space in an Approved Premises',
       contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
-      summaryCards: summaryCards(
-        spaceSearchResults.results,
-        searchState.postcode,
-        placementRequestDetail
-      ),
+      summaryCards: summaryCards(spaceSearchResults.results, searchState.postcode, placementRequestDetail),
       placementRequest: placementRequestDetail,
       placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
       formPath: searchPath,
