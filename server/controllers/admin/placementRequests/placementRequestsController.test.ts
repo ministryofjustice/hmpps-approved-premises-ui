@@ -10,7 +10,7 @@ import {
   cas1ChangeRequestSummaryFactory,
 } from '../../../testutils/factories'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
-import { placementSummaryList } from '../../../utils/placementRequests/placementSummaryList'
+import { placementsSummaries } from '../../../utils/placementRequests/placementSummaryList'
 import { adminIdentityBar } from '../../../utils/placementRequests'
 import { changeRequestBanners } from '../../../utils/placementRequests/changeRequestsUtils'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
@@ -62,7 +62,7 @@ describe('PlacementRequestsController', () => {
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
-        bookingSummaryList: placementSummaryList(placementRequest),
+        placements: placementsSummaries(placementRequest),
         changeRequestBanners: changeRequestBanners(
           placementRequest.id,
           placementRequest.openChangeRequests,
