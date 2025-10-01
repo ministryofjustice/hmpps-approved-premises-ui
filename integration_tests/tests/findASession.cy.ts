@@ -7,9 +7,9 @@
 //      Given I am logged in
 //      When I visit the 'find a session' page
 //      Then I see the search form
-
 import FindASessionPage from '../pages/findASessionPage'
 import Page from '../pages/page'
+import ViewSessionPage from '../pages/viewSessionPage'
 
 context('Home', () => {
   beforeEach(() => {
@@ -69,5 +69,45 @@ context('Home', () => {
     //  Then I see the search results
     page.shouldShowSearchResults()
     page.shouldShowPopulatedSearchForm()
+  })
+
+  //  Scenario: viewing a session
+  it('lets me view a session from the dashboard', () => {
+    // Given I am logged in and on the sessions page
+    cy.signIn()
+    cy.task('stubGetTeams', { providerId: '1000', teams: { providers: [{ id: 1, name: 'Team 1' }] } })
+    FindASessionPage.visit()
+    const page = Page.verifyOnPage(FindASessionPage)
+    page.completeSearchForm()
+
+    //  When I search for a session
+    cy.task('stubGetSessions', {
+      request: { teamId: 1, startDate: '2025-09-18', endDate: '2025-09-20', username: 'some-name' },
+      sessions: {
+        allocations: [
+          {
+            id: 1001,
+            projectId: 3,
+            date: '2025-09-07',
+            projectName: 'project-name',
+            projectCode: 'prj',
+            startTime: '09:00:00',
+            endTime: '17:00:00',
+            numberOfOffendersAllocated: 5,
+            numberOfOffendersWithOutcomes: 3,
+            numberOfOffendersWithEA: 1,
+          },
+        ],
+      },
+    })
+    page.submitForm()
+
+    // And I click on a session in the results
+    cy.task('stubFindSession', { projectId: '3' })
+    page.clickOnASession()
+
+    //  Then I see the session details page
+    const sessionDetailsPage = Page.verifyOnPage(ViewSessionPage)
+    sessionDetailsPage.shouldShowAppointmentsList()
   })
 })
