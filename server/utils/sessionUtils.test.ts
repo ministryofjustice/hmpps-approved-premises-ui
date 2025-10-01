@@ -6,11 +6,12 @@ import SessionUtils from './sessionUtils'
 import { createQueryString } from './utils'
 
 describe('SessionUtils', () => {
+  const fakeLink = '<a>link</a>'
+
   describe('sessionResultTableRows', () => {
     const fakeFormattedDate = '20 January 2026'
     const fakeFormattedTime = '12:00'
     const fakeElement = '<div>project</div>'
-    const fakeLink = '<a>link</a>'
 
     beforeEach(() => {
       jest.spyOn(DateFormats, 'isoDateToUIDate').mockReturnValue(fakeFormattedDate)
@@ -64,7 +65,11 @@ describe('SessionUtils', () => {
   describe('sessionListTableRows', () => {
     it('returns session formatted into expected table rows', () => {
       const mockTag = '<strong>Status</strong>'
+      const mockHiddenText = '<span></span>'
       jest.spyOn(HtmlUtils, 'getStatusTag').mockReturnValue(mockTag)
+      jest.spyOn(HtmlUtils, 'getAnchor').mockReturnValue(fakeLink)
+      jest.spyOn(HtmlUtils, 'getHiddenText').mockReturnValue(mockHiddenText)
+
       const offender: OffenderFullDto = {
         crn: 'CRN123',
         forename: 'Sam',
@@ -87,8 +92,22 @@ describe('SessionUtils', () => {
 
       const result = SessionUtils.sessionListTableRows(session)
 
+      expect(HtmlUtils.getHiddenText).toHaveBeenCalledWith(`${offender.forename} ${offender.surname}`)
+      expect(HtmlUtils.getAnchor).toHaveBeenCalledWith(
+        `Update ${mockHiddenText}`,
+        paths.appointments.update({ appointmentId: '1' }),
+      )
+
       expect(result).toEqual([
-        [{ text: 'Sam Smith' }, { text: 'CRN123' }, { text: 2 }, { text: 1 }, { text: 1 }, { html: mockTag }],
+        [
+          { text: 'Sam Smith' },
+          { text: 'CRN123' },
+          { text: 2 },
+          { text: 1 },
+          { text: 1 },
+          { html: mockTag },
+          { html: fakeLink },
+        ],
       ])
     })
   })
