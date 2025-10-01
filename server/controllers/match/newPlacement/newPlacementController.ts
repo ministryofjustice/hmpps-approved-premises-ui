@@ -197,7 +197,7 @@ export default class NewPlacementController {
       return res.render('match/newPlacement/update-criteria', {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
         backlink,
-        pageHeading: 'Update the placement criteria',
+        pageHeading: 'Update placement criteria',
         apTypeRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(
