@@ -8,6 +8,8 @@ import {
   cas1PlacementRequestDetailFactory,
   cas1PremiseCapacityFactory,
   cas1PremisesFactory,
+  cas1SpaceBookingFactory,
+  personFactory,
   spaceSearchResultsFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
@@ -27,6 +29,7 @@ context('New Placement', () => {
   const reason = faker.word.words(10)
 
   const placementRequest = cas1PlacementRequestDetailFactory.build({
+    person: personFactory.build({ type: 'FullPerson', name: 'Dave Watts' }),
     type: 'normal',
     essentialCriteria: ['isCatered', 'isWheelchairDesignated', 'isStepFreeDesignated'],
   })
@@ -36,6 +39,13 @@ context('New Placement', () => {
   const capacity = cas1PremiseCapacityFactory.build({
     startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
     endDate: DateFormats.dateObjToIsoDate(addDays(newPlacementDepartureDate, -1)),
+  })
+  const spaceBooking = cas1SpaceBookingFactory.upcoming().build({
+    placementRequestId: placementRequest.id,
+    person: placementRequest.person,
+    expectedArrivalDate: '2026-02-28',
+    expectedDepartureDate: '2026-04-10',
+    premises: { name: 'Premises name', id: 'some-id' },
   })
 
   beforeEach(() => {
@@ -49,6 +59,7 @@ context('New Placement', () => {
       startDate: capacity.startDate,
       endDate: capacity.endDate,
     })
+    cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
   })
 
   it('allows me to create a new placement', () => {
@@ -211,13 +222,17 @@ context('New Placement', () => {
     )
 
     WHEN('I confirm the new placement')
-    // confirmBookingPage.clickButton('Confirm and book')
+    confirmBookingPage.clickButton('Confirm and book')
 
     THEN('I should see the placement request page')
-    // Page.verifyOnPage(ShowPage, placementRequest)
+    Page.verifyOnPage(ShowPage, placementRequest)
 
     AND('I should see a confirmation banner')
-    // placementRequestPage.shouldShowBanner('New placement created')
+    placementRequestPage.shouldShowBanner(`
+      Placement created
+      A placement has been created for Dave Watts at Premises name from Sat 28 Feb 2026 to Fri 10 Apr 2026.
+      The original placement requires changes to the departure date.
+    `)
 
     AND('The new placement details should be shown')
   })

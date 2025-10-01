@@ -176,3 +176,8 @@ export const creationNotificationBody = (
 ) => `<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>
 <li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequest.applicationDate, { format: 'short' })}</li></ul>
 <p>A confirmation email will be sent to the AP and probation practitioner.</p>`
+
+export const creationNotificationBodyNewPlacement = (placement: Cas1SpaceBooking) => `
+  <p>A placement has been created for ${displayName(placement.person)} at ${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)} to ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate)}.</p>
+  <p>The original placement requires changes to the departure date.</p>
+`
