@@ -242,7 +242,7 @@ describe('newPlacementController', () => {
       backlink: matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({
         placementRequestId: placementRequestDetail.id,
       }),
-      pageHeading: 'Update the placement criteria',
+      pageHeading: 'Update placement criteria',
       apTypeRadioItems: apTypeRadioItems(
         applyApTypeToAssessApType[placementRequestDetail.type as ApTypeSpecialist] || 'normal',
       ),

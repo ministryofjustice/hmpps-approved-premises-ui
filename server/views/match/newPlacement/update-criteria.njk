@@ -22,41 +22,46 @@
 
             <h1 class="govuk-heading-xl">{{ pageHeading }}</h1>
 
-            <form action="{{ currentUrl }}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <p>Select the criteria to search for a new AP.</p>
 
-                {{ govukRadios({
-                    name: "apType",
-                    fieldset: {
-                        legend: {
-                            text: 'Type of AP',
-                            classes: 'govuk-fieldset__legend--m',
-                            isPageHeading: false
-                        }
-                    },
-                    items: apTypeRadioItems
-                }) }}
-
-                {% for group in criteriaCheckboxGroups %}
-                    {{ govukCheckboxes({
-                        name: group.fieldName + '[]',
-                        fieldset: {
-                            legend: {
-                                text: group.legend,
-                                isPageHeading: false,
-                                classes: 'govuk-fieldset__legend--m'
-                            }
-                        },
-                        items: group.items
-                    }) }}
-                {% endfor %}
-
-                {{ govukButton({
-                    text: "Save and continue",
-                    preventDoubleClick: true
-                }) }}
-            </form>
         </div>
     </div>
+
+    <form action="{{ currentUrl }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ govukRadios({
+            name: "apType",
+            classes: "govuk-radios--small govuk-radios--inline",
+            fieldset: {
+                legend: {
+                    text: 'Type of AP',
+                    classes: 'govuk-fieldset__legend--m',
+                    isPageHeading: false
+                }
+            },
+            items: apTypeRadioItems
+        }) }}
+
+        {% for group in criteriaCheckboxGroups %}
+            {{ govukCheckboxes({
+                name: group.fieldName + '[]',
+                classes: "govuk-checkboxes--small govuk-checkboxes--inline",
+                fieldset: {
+                    legend: {
+                        text: group.legend,
+                        isPageHeading: false,
+                        classes: 'govuk-fieldset__legend--m'
+                    }
+                },
+                items: group.items
+            }) }}
+        {% endfor %}
+
+        {{ govukButton({
+            text: "Save and continue",
+            preventDoubleClick: true
+        }) }}
+    </form>
 {% endblock %}
 
