@@ -22,6 +22,14 @@ describe('HTMLUtils', () => {
     })
   })
 
+  describe('getHiddenText', () => {
+    it('returns an element with the govuk hidden class containing given content', () => {
+      const result = HtmlUtils.getHiddenText('Some content')
+
+      expect(result).toEqual('<span class="govuk-visually-hidden">Some content</span>')
+    })
+  })
+
   describe('getStatusTag', () => {
     const colours = ['grey', 'red', 'yellow']
     it.each(colours)('returns a GOV.UK Frontend status tag component with the given colour and label', colour => {

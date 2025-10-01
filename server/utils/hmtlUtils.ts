@@ -9,6 +9,10 @@ export default class HtmlUtils {
     return `<${element}>${text}</${element}>`
   }
 
+  static getHiddenText = (text: string): string => {
+    return `<span class="govuk-visually-hidden">${text}</span>`
+  }
+
   static getStatusTag = (statusLabel: string, colour: GovUkStatusTagColour): string => {
     return `<strong class="govuk-tag govuk-tag--${colour}">${statusLabel}</strong>`
   }
