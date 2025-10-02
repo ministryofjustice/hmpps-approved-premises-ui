@@ -81,4 +81,17 @@ describe('DateTimeFormats', () => {
       expect(() => DateTimeFormats.stripTime(time)).toThrow(new InvalidDateStringError(`Invalid time: ${time}`))
     })
   })
+
+  describe('minutesToHoursAndMinutes', () => {
+    const testCases = [
+      [90, '1:30'],
+      [120, '2:00'],
+      [61, '1:01'],
+      [640, '10:40'],
+    ]
+
+    it.each(testCases)('formats %d to %s', (minutes: number, expected: string) => {
+      expect(DateTimeFormats.minutesToHoursAndMinutes(minutes)).toEqual(expected)
+    })
+  })
 })

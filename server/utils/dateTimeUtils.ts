@@ -57,11 +57,32 @@ export default class DateTimeFormats {
   }
 
   /**
+   * Converts a number representing minutes to h:MM
+   * @param number representing minutes
+   * @returns A string
+   */
+  static minutesToHoursAndMinutes(minutes: number): string {
+    const hours = Math.floor(minutes / 60)
+    const minutesRemaining = minutes % 60
+
+    return `${hours}:${DateTimeFormats.padTimePart(minutesRemaining)}`
+  }
+
+  /**
    * Check that a string is in the HH:MM or HH:MM:SS format (12 or 24 hour clock).
    * @param string a time string
    * @returns A boolean
    */
   private static isValidTime(time: string) {
     return time.match(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]($|:[0-5][0-9]$)/)
+  }
+
+  /**
+   * Convert a number to string and add a 0 at the start if a single digit.
+   * @param number
+   * @returns A string
+   */
+  private static padTimePart(time: number): string {
+    return time.toString().padStart(2, '0')
   }
 }
