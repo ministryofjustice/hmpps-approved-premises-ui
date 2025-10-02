@@ -412,19 +412,21 @@ describe('placementUtils', () => {
     })
 
     it('should return the arrival information', () => {
-      expect(arrivalInformation(placement)).toEqual({
+      const arrivedPlacement = cas1SpaceBookingFactory.current().build()
+
+      expect(arrivalInformation(arrivedPlacement)).toEqual({
         rows: [
           {
             key: { text: 'Expected arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.expectedArrivalDate) },
+            value: { text: DateFormats.isoDateToUIDate(arrivedPlacement.expectedArrivalDate) },
           },
           {
             key: { text: 'Actual arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDate) },
+            value: { text: DateFormats.isoDateToUIDate(arrivedPlacement.actualArrivalDate) },
           },
           {
             key: { text: 'Arrival time' },
-            value: { text: placement.actualArrivalTime || '' },
+            value: { text: arrivedPlacement.actualArrivalTime },
           },
         ],
       })
@@ -474,9 +476,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Departure time' },
-              value: {
-                text: (departedPlacement.actualDepartureTime || '').substring(0, 5),
-              },
+              value: { text: departedPlacement.actualDepartureTime },
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
             {

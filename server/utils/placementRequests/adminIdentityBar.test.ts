@@ -8,7 +8,7 @@ import {
 } from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
-import managePaths from '../../paths/manage'
+import adminPaths from '../../paths/admin'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -30,10 +30,7 @@ const setup = ({
 
   const actionChangePlacement = placementRequestDetail.booking
     ? {
-        href: managePaths.premises.placements.changes.new({
-          premisesId: placementRequestDetail.booking.premisesId,
-          placementId: placementRequestDetail.booking.id,
-        }),
+        href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequestDetail.id }),
         text: 'Change placement',
       }
     : undefined
