@@ -50,6 +50,6 @@ export default class ViewSessionPage extends Page {
     cy.get('td')
       .eq(4)
       .should('have.text', (appointment.requirementMinutes - appointment.completedMinutes) / 60)
-    cy.get('td').eq(5).should('have.text', 'Empty')
+    cy.get('td').eq(5).should('have.text', 'Not entered')
   }
 }
