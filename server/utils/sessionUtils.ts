@@ -27,14 +27,23 @@ export default class SessionUtils {
   static sessionListTableRows(session: AppointmentsDto) {
     return session.appointments.map(appointment => {
       const offender = appointment.offender as OffenderFullDto
+      const offenderName = `${offender.forename} ${offender.surname}`
       const minutesRemaining = appointment.requirementMinutes - appointment.completedMinutes
+      const actionContent = `Update ${HtmlUtils.getHiddenText(offenderName)}`
+
       return [
-        { text: `${offender.forename} ${offender.surname}` },
+        { text: offenderName },
         { text: appointment.offender.crn },
         { text: SessionUtils.getHours(appointment.requirementMinutes) },
         { text: SessionUtils.getHours(appointment.completedMinutes) },
         { text: SessionUtils.getHours(minutesRemaining) },
         { html: SessionUtils.getStatusTag() },
+        {
+          html: HtmlUtils.getAnchor(
+            actionContent,
+            paths.appointments.update({ appointmentId: appointment.id.toString() }),
+          ),
+        },
       ]
     })
   }

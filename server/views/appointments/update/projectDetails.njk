@@ -1,0 +1,55 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+  {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = 'Check project details' %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+  {% include "../_offenderDetails.njk" %}
+
+  <h2 class="govuk-heading-m">Check project details</h2>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: {
+              text: "Project"
+            },
+            value: {
+              text: appointment.projectName
+            }
+          },
+          {
+            key: {
+              text: "Project type"
+            },
+            value: {
+              text: ''
+            }
+          },
+          {
+            key: {
+              text: "Supervising team"
+            },
+            value: {
+              text: ''
+            }
+          },
+          {
+            key: {
+              text: "Date and time"
+            },
+            value: {
+              text: ''
+            }
+          }
+        ]
+      }) }}
+    </div>
+  </div>
+{% endblock %}
