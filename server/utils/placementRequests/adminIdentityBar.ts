@@ -1,7 +1,7 @@
 import { Cas1PlacementRequestDetail } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 
-import managePaths from '../../paths/manage'
+import adminPaths from '../../paths/admin'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { hasPermission } from '../users'
@@ -29,11 +29,15 @@ export const adminActions = (
 
     if (['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))) {
       matchedActions.push({
-        href: managePaths.premises.placements.changes.new({
-          premisesId: placementRequest.booking.premisesId,
-          placementId: placementRequest.booking.id,
-        }),
+        href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id }),
         text: 'Change placement',
+      })
+    }
+
+    if (hasPermission(user, ['cas1_space_booking_create'])) {
+      matchedActions.push({
+        href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequest.id }),
+        text: 'Create new placement',
       })
     }
 

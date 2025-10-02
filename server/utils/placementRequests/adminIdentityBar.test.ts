@@ -8,7 +8,7 @@ import {
 } from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
-import managePaths from '../../paths/manage'
+import adminPaths from '../../paths/admin'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -30,14 +30,15 @@ const setup = ({
 
   const actionChangePlacement = placementRequestDetail.booking
     ? {
-        href: managePaths.premises.placements.changes.new({
-          premisesId: placementRequestDetail.booking.premisesId,
-          placementId: placementRequestDetail.booking.id,
-        }),
+        href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequestDetail.id }),
         text: 'Change placement',
       }
     : undefined
 
+  const actionCreateNewPlacement = {
+    href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequestDetail.id }),
+    text: 'Create new placement',
+  }
   const actionWithdrawPlacement = {
     href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
     text: 'Withdraw placement',
@@ -51,6 +52,7 @@ const setup = ({
     placementRequestDetail,
     actionSearchForASpace,
     actionChangePlacement,
+    actionCreateNewPlacement,
     actionWithdrawPlacement,
     actionWithdrawPlacementRequest,
     adminActionsResult,
@@ -95,6 +97,17 @@ describe('adminIdentityBar', () => {
           permissions: [],
         })
         expect(adminActionsResult).not.toContainAction(actionChangePlacement)
+      })
+
+      it('should return an action to create a new placement if the user has the create placement permission', () => {
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
+
+        const { adminActionsResult, actionCreateNewPlacement } = setup({
+          placementRequestDetail,
+          permissions: ['cas1_space_booking_create'],
+        })
+
+        expect(adminActionsResult).toContainAction(actionCreateNewPlacement)
       })
 
       it('should return an action to withdraw the placement if the user has the withdraw permission', () => {

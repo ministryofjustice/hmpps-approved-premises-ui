@@ -39,6 +39,7 @@ export default {
       changeRequests: {
         review: changeRequestPath.path('review'),
       },
+      selectPlacement: placementRequestPath.path('select-placement'),
     },
     reports: {
       new: adminPath.path('reports'),

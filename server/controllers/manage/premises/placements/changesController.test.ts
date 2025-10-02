@@ -81,7 +81,11 @@ describe('changesController', () => {
       expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/placements/:placementId/changes/new',
         request,
-        ['/manage/premises/:premisesId/placements/:placementId', '/admin/placement-requests/:placementRequestId'],
+        [
+          '/manage/premises/:premisesId/placements/:placementId',
+          '/admin/placement-requests/:placementRequestId',
+          '/admin/placement-requests/:placementRequestId/select-placement',
+        ],
       )
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
