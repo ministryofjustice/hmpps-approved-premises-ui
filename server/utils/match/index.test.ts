@@ -337,7 +337,12 @@ describe('matchUtils', () => {
       })
 
       expect(rows).toEqual(
-        expect.arrayContaining([{ key: { text: 'Reason for placement' }, value: { text: newPlacementReason } }]),
+        expect.arrayContaining([
+          {
+            key: { text: 'Reason for placement' },
+            value: { html: `<span class="govuk-summary-list__textblock">${newPlacementReason}</span>` },
+          },
+        ]),
       )
     })
   })

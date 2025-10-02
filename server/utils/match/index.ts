@@ -59,7 +59,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     summaryListItem('Expected departure date', expectedDepartureDate, 'date'),
     summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
     releaseType && summaryListItem('Release type', allReleaseTypes[releaseType]),
-    newPlacementReason && summaryListItem('Reason for placement', newPlacementReason),
+    newPlacementReason && summaryListItem('Reason for placement', newPlacementReason, 'textBlock'),
   ].filter(Boolean)
 }
 
