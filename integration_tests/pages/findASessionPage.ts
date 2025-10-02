@@ -29,6 +29,12 @@ export default class FindASessionPage extends Page {
     cy.get('#endDate-year').type('2025')
   }
 
+  completeStartDate() {
+    cy.get('#startDate-day').type('18')
+    cy.get('#startDate-month').type('09')
+    cy.get('#startDate-year').type('2025')
+  }
+
   submitForm() {
     cy.get('button').click()
   }
@@ -55,5 +61,9 @@ export default class FindASessionPage extends Page {
     cy.get('#endDate-day').should('have.value', '20')
     cy.get('#endDate-month').should('have.value', '09')
     cy.get('#endDate-year').should('have.value', '2025')
+  }
+
+  shouldShowErrorSummary() {
+    cy.get('.govuk-error-summary__list').find('a[href="#endDate-day"]').should('have.text', 'Include the end date')
   }
 }

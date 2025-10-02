@@ -7,6 +7,14 @@
 //      Given I am logged in
 //      When I visit the 'find a session' page
 //      Then I see the search form
+//
+//  Scenario: displaying error summary
+//      Given I am logged in
+//      When I visit the 'find a session' page
+//      And I only input the start date
+//      And I search for sessions
+//      Then I see the error summary
+
 import FindASessionPage from '../pages/findASessionPage'
 import Page from '../pages/page'
 import ViewSessionPage from '../pages/viewSessionPage'
@@ -109,5 +117,25 @@ context('Home', () => {
     //  Then I see the session details page
     const sessionDetailsPage = Page.verifyOnPage(ViewSessionPage)
     sessionDetailsPage.shouldShowAppointmentsList()
+  })
+
+  //  Scenario: displaying error summary
+  it('displays an error summary when form submission fails', () => {
+    // Given I am logged in
+    cy.signIn()
+
+    //  When I visit the 'find a session' page
+    cy.task('stubGetTeams', { providerId: '1000', teams: { providers: [{ id: 1, name: 'Team 1' }] } })
+    FindASessionPage.visit()
+    const page = Page.verifyOnPage(FindASessionPage)
+
+    // And I only input the start date
+    page.completeStartDate()
+
+    // And I search for sessions
+    page.submitForm()
+
+    // Then I see the error summary
+    page.shouldShowErrorSummary()
   })
 })
