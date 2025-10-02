@@ -28,9 +28,8 @@ export default class ShowPage extends Page {
     }
 
     if (placementRequest.booking) {
-      this.actions['Change placement'] = managePaths.premises.placements.changes.new({
-        premisesId: placementRequest.booking.premisesId,
-        placementId: placementRequest.booking.id,
+      this.actions['Change placement'] = paths.admin.placementRequests.selectPlacement({
+        placementRequestId: placementRequest.id,
       })
     }
   }

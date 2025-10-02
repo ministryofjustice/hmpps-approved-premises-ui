@@ -81,6 +81,15 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'ADMIN_SHOW_PLACEMENT_REQUEST',
   })
 
+  get(paths.admin.placementRequests.selectPlacement.pattern, adminPlacementRequestsController.selectPlacement(), {
+    auditEvent: 'ADMIN_CHANGE_PLACEMENT',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+  post(paths.admin.placementRequests.selectPlacement.pattern, adminPlacementRequestsController.saveSelectPlacement(), {
+    auditEvent: 'ADMIN_CHANGE_PLACEMENT_SAVE',
+    allowedPermissions: ['cas1_space_booking_create'],
+  })
+
   // TODO: determine permissions required for placement request withdrawals
   get(paths.admin.placementRequests.withdrawal.new.pattern, placementRequestWithdrawalsController.new(), {
     auditEvent: 'ADMIN_NEW_PLACEMENT_REQUEST_WITHDRAWL',
