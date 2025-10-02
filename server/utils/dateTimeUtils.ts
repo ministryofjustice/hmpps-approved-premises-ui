@@ -2,13 +2,13 @@ import { format, parseISO } from 'date-fns'
 
 import InvalidDateStringError from '../errors/invalidDateStringError'
 
-export default class DateFormats {
+export default class DateTimeFormats {
   /**
    * @param isoDate an ISO date string.
    * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
    */
   static isoDateToUIDate(isoDate: string, options: { format: 'short' | 'long' | 'medium' } = { format: 'long' }) {
-    return DateFormats.dateObjtoUIDate(DateFormats.isoToDateObj(isoDate), options)
+    return DateTimeFormats.dateObjtoUIDate(DateTimeFormats.isoToDateObj(isoDate), options)
   }
 
   /**
@@ -47,7 +47,7 @@ export default class DateFormats {
    * @returns A string
    */
   static stripTime(time: string) {
-    if (!DateFormats.isValidTime(time)) {
+    if (!DateTimeFormats.isValidTime(time)) {
       throw new InvalidDateStringError(`Invalid time: ${time}`)
     }
 

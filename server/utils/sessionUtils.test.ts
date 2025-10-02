@@ -1,6 +1,6 @@
 import { OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
 import paths from '../paths'
-import DateFormats from './dateUtils'
+import DateTimeFormats from './dateTimeUtils'
 import HtmlUtils from './hmtlUtils'
 import SessionUtils from './sessionUtils'
 import { createQueryString } from './utils'
@@ -14,8 +14,8 @@ describe('SessionUtils', () => {
     const fakeElement = '<div>project</div>'
 
     beforeEach(() => {
-      jest.spyOn(DateFormats, 'isoDateToUIDate').mockReturnValue(fakeFormattedDate)
-      jest.spyOn(DateFormats, 'stripTime').mockReturnValue(fakeFormattedTime)
+      jest.spyOn(DateTimeFormats, 'isoDateToUIDate').mockReturnValue(fakeFormattedDate)
+      jest.spyOn(DateTimeFormats, 'stripTime').mockReturnValue(fakeFormattedTime)
       jest.spyOn(HtmlUtils, 'getElementWithContent').mockReturnValue(fakeElement)
       jest.spyOn(HtmlUtils, 'getAnchor').mockReturnValue(fakeLink)
     })
