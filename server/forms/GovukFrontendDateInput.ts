@@ -17,29 +17,31 @@ export default class GovukFrontendDateInput {
 
   private yearValue: string
 
-  constructor(query: ParsedQs, key: string) {
+  constructor(query: ParsedQs, key: string, hasError: boolean = false) {
     this.dayValue = GovukFrontendDateInput.getDatePartQueryValue(query, key, 'day')
     this.monthValue = GovukFrontendDateInput.getDatePartQueryValue(query, key, 'month')
     this.yearValue = GovukFrontendDateInput.getDatePartQueryValue(query, key, 'year')
 
-    this.buildItems()
+    this.buildItems(hasError)
   }
 
-  private buildItems(): void {
+  private buildItems(hasError: boolean): void {
+    const errorClass = hasError ? ' govuk-input--error' : ''
+
     this.items = [
       {
         name: 'day',
-        classes: 'govuk-input--width-2',
+        classes: `govuk-input--width-2${errorClass}`,
         value: this.dayValue,
       },
       {
         name: 'month',
-        classes: 'govuk-input--width-2',
+        classes: `govuk-input--width-2${errorClass}`,
         value: this.monthValue,
       },
       {
         name: 'year',
-        classes: 'govuk-input--width-4',
+        classes: `govuk-input--width-4${errorClass}`,
         value: this.yearValue,
       },
     ]

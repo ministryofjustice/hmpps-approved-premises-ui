@@ -57,4 +57,34 @@ describe('GovUkFrontendDateInput', () => {
       },
     ])
   })
+
+  it('includes error styles when `hasError` is true', () => {
+    const query = {
+      'date-day': '09',
+      'date-month': '10',
+      'date-year': '2025',
+      'another-day': '22',
+    }
+
+    const hasError = true
+    const input = new GovukFrontendDateInput(query, 'date', hasError)
+
+    expect(input.items).toEqual([
+      {
+        name: 'day',
+        classes: 'govuk-input--width-2 govuk-input--error',
+        value: '09',
+      },
+      {
+        name: 'month',
+        classes: 'govuk-input--width-2 govuk-input--error',
+        value: '10',
+      },
+      {
+        name: 'year',
+        classes: 'govuk-input--width-4 govuk-input--error',
+        value: '2025',
+      },
+    ])
+  })
 })
