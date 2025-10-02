@@ -8,6 +8,10 @@ import { createQueryString } from './utils'
 describe('SessionUtils', () => {
   const fakeLink = '<a>link</a>'
 
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
   describe('sessionResultTableRows', () => {
     const fakeFormattedDate = '20 January 2026'
     const fakeFormattedTime = '12:00'
@@ -69,6 +73,7 @@ describe('SessionUtils', () => {
       jest.spyOn(HtmlUtils, 'getStatusTag').mockReturnValue(mockTag)
       jest.spyOn(HtmlUtils, 'getAnchor').mockReturnValue(fakeLink)
       jest.spyOn(HtmlUtils, 'getHiddenText').mockReturnValue(mockHiddenText)
+      jest.spyOn(DateTimeFormats, 'minutesToHoursAndMinutes').mockReturnValue('1:00')
 
       const offender: OffenderFullDto = {
         crn: 'CRN123',
@@ -102,13 +107,48 @@ describe('SessionUtils', () => {
         [
           { text: 'Sam Smith' },
           { text: 'CRN123' },
-          { text: 2 },
-          { text: 1 },
-          { text: 1 },
+          { text: '1:00' },
+          { text: '1:00' },
+          { text: '1:00' },
           { html: mockTag },
           { html: fakeLink },
         ],
       ])
+    })
+
+    it('calculates and formats times completed', () => {
+      jest.spyOn(DateTimeFormats, 'minutesToHoursAndMinutes').mockReturnValue('1:00')
+
+      const offender: OffenderFullDto = {
+        crn: 'CRN123',
+        forename: 'Sam',
+        surname: 'Smith',
+        middleNames: [],
+        objectType: 'Full',
+      }
+
+      const session = {
+        appointments: [
+          {
+            id: 1,
+            projectName: 'Community garden',
+            offender,
+            requirementMinutes: 120,
+            completedMinutes: 90,
+          },
+        ],
+      }
+
+      const result = SessionUtils.sessionListTableRows(session)
+
+      expect(DateTimeFormats.minutesToHoursAndMinutes).toHaveBeenNthCalledWith(1, 120)
+      expect(DateTimeFormats.minutesToHoursAndMinutes).toHaveBeenNthCalledWith(2, 90)
+      expect(DateTimeFormats.minutesToHoursAndMinutes).toHaveBeenNthCalledWith(3, 30)
+
+      const row = result[0]
+      expect(row[2]).toEqual({ text: '1:00' })
+      expect(row[3]).toEqual({ text: '1:00' })
+      expect(row[4]).toEqual({ text: '1:00' })
     })
   })
 })

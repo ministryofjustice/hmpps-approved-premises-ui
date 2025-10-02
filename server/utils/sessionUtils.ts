@@ -34,9 +34,9 @@ export default class SessionUtils {
       return [
         { text: offenderName },
         { text: appointment.offender.crn },
-        { text: SessionUtils.getHours(appointment.requirementMinutes) },
-        { text: SessionUtils.getHours(appointment.completedMinutes) },
-        { text: SessionUtils.getHours(minutesRemaining) },
+        { text: DateTimeFormats.minutesToHoursAndMinutes(appointment.requirementMinutes) },
+        { text: DateTimeFormats.minutesToHoursAndMinutes(appointment.completedMinutes) },
+        { text: DateTimeFormats.minutesToHoursAndMinutes(minutesRemaining) },
         { html: SessionUtils.getStatusTag() },
         {
           html: HtmlUtils.getAnchor(
@@ -50,9 +50,5 @@ export default class SessionUtils {
 
   private static getStatusTag() {
     return HtmlUtils.getStatusTag('Not entered', 'grey')
-  }
-
-  private static getHours(minutes: number): number {
-    return minutes / 60
   }
 }
