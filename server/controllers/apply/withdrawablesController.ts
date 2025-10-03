@@ -6,6 +6,7 @@ import adminPaths from '../../paths/admin'
 import placementAppPaths from '../../paths/placementApplications'
 import managePaths from '../../paths/manage'
 import { SelectedWithdrawableType, sortAndFilterWithdrawables } from '../../utils/applications/withdrawables'
+import { placementKeyDetails } from '../../utils/placements'
 
 export default class WithdrawalsController {
   constructor(
@@ -30,12 +31,13 @@ export default class WithdrawalsController {
         )
 
         return res.render('applications/withdrawables/show', {
-          pageHeading: 'Select your placement',
+          pageHeading: 'Select placement to withdraw',
           id,
           withdrawables: placementWithdrawables,
           allBookings: [...placements],
           withdrawableType: 'placement',
           notes: withdrawables.notes,
+          contextKeyDetails: placementKeyDetails(placements[0]),
         })
       }
 

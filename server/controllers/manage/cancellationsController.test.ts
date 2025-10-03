@@ -14,7 +14,7 @@ import {
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { canonicalDates } from '../../utils/placements'
+import { placementKeyDetails, withdrawalMessage, withdrawalSummaryList } from '../../utils/placements'
 
 jest.mock('../../utils/validation')
 
@@ -49,24 +49,18 @@ describe('cancellationsController', () => {
         return { errors: {}, errorSummary: [], userInput: {} }
       })
 
-      const requestHandler = cancellationsController.new()
-
-      await requestHandler({ ...request, params: { premisesId, placementId: placement.id } }, response, next)
-
-      const { person, id } = placement
-      const { arrivalDate, departureDate } = canonicalDates(placement)
+      await cancellationsController.new()(
+        { ...request, params: { premisesId, placementId: placement.id } },
+        response,
+        next,
+      )
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
-        premisesId,
-        booking: {
-          arrivalDate,
-          departureDate,
-          person,
-          id,
-        },
         backLink,
         cancellationReasons,
-        pageHeading: 'Confirm withdrawn placement',
+        pageHeading: 'Confirm placement to withdraw',
+        contextKeyDetails: placementKeyDetails(placement),
+        summaryList: withdrawalSummaryList(placement),
         formAction: paths.premises.placements.cancellations.create({ premisesId, placementId: placement.id }),
         errors: {},
         errorSummary: [],
@@ -150,7 +144,8 @@ describe('cancellationsController', () => {
         },
       )
 
-      expect(response.render).toHaveBeenCalledWith('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
+      expect(response.redirect).toHaveBeenCalledWith(`/admin/placement-requests/${placement.placementRequestId}`)
+      expect(request.flash).toHaveBeenCalledWith('success', withdrawalMessage(placement))
     })
 
     it('should catch the validation errors when the API returns an error creating a placement cancellation', async () => {

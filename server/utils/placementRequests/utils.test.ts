@@ -1,7 +1,7 @@
 import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
 import { assessmentLink, formatReleaseType, placementRequestKeyDetails, searchButton, withdrawalMessage } from './utils'
 import * as utils from '../utils'
-import * as placementUtils from '../placements'
+import * as applicationHelpers from '../applications/helpers'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
@@ -53,13 +53,13 @@ describe('utils', () => {
 
   describe('placementRequestKeyDetails', () => {
     it('calls getKeyDetails with person and tier', () => {
-      jest.spyOn(placementUtils, 'personKeyDetails')
+      jest.spyOn(applicationHelpers, 'personKeyDetails')
 
       const placementRequest = cas1PlacementRequestDetailFactory.build()
 
       placementRequestKeyDetails(placementRequest)
 
-      expect(placementUtils.personKeyDetails).toHaveBeenCalledWith(
+      expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(
         placementRequest.person,
         placementRequest.risks.tier.value.level,
       )

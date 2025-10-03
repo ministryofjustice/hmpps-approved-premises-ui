@@ -6,9 +6,6 @@ import {
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
-  personFactory,
-  restrictedPersonFactory,
-  tierEnvelopeFactory,
   userDetailsFactory,
   userSummaryFactory,
 } from '../../testutils/factories'
@@ -18,7 +15,6 @@ import {
   canonicalDates,
   departureInformation,
   detailedStatus,
-  personKeyDetails,
   injectRadioConditionalHtml,
   otherBookings,
   overallStatus,
@@ -29,13 +25,14 @@ import {
   renderKeyworkersRadioOptions,
   requirementsInformation,
   statusTextMap,
+  withdrawalMessage,
+  withdrawalSummaryList,
 } from '.'
 import { DateFormats } from '../dateUtils'
 
 import paths from '../../paths/manage'
-import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 import { characteristicsBulletList } from '../characteristicsUtils'
-import * as placementUtils from './index'
+import * as applicationHelpers from '../applications/helpers'
 
 describe('placementUtils', () => {
   describe('placement status', () => {
@@ -338,79 +335,15 @@ describe('placementUtils', () => {
     })
   })
 
-  describe('personKeyDetails', () => {
-    const tier = tierEnvelopeFactory.build().value.level
-
-    it('should return the key information for a placement', () => {
-      const person = personFactory.build()
-
-      expect(personKeyDetails(person, tier)).toEqual({
-        header: { key: '', showKey: false, value: person.name },
-        items: [
-          { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
-          {
-            key: { text: 'Date of birth' },
-            value: {
-              text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-            },
-          },
-        ],
-      })
-    })
-
-    it('should show the tier as not available if it is not defined', () => {
-      const person = personFactory.build()
-
-      const result = personKeyDetails(person)
-
-      expect(result.items[1].value).toEqual({ text: 'Not available' })
-    })
-
-    it('should prefix the name with LAO if the person is LAO', () => {
-      const person = fullPersonFactory.build({
-        isRestricted: true,
-      })
-
-      const result = personKeyDetails(person, tier)
-
-      expect(result.header.value).toEqual(`LAO: ${person.name}`)
-    })
-
-    it('should not show the name or date of birth for a restricted person', () => {
-      const person = restrictedPersonFactory.build()
-
-      expect(personKeyDetails(person, tier)).toEqual({
-        header: { key: '', showKey: false, value: 'Limited Access Offender' },
-        items: [
-          { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
-        ],
-      })
-    })
-
-    it('should not show the name or date of birth for an unknown person', () => {
-      const person = unknownPersonFactory.build()
-
-      expect(personKeyDetails(person, tier)).toEqual({
-        header: { key: '', showKey: false, value: 'Unknown person' },
-        items: [
-          { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
-        ],
-      })
-    })
-  })
-
   describe('placementKeyDetails', () => {
     it('calls personKeyDetails with person and tier', () => {
-      jest.spyOn(placementUtils, 'personKeyDetails')
+      jest.spyOn(applicationHelpers, 'personKeyDetails')
 
       const placement = cas1SpaceBookingFactory.build()
 
       placementKeyDetails(placement)
 
-      expect(placementUtils.personKeyDetails).toHaveBeenCalledWith(placement.person, placement.tier)
+      expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(placement.person, placement.tier)
     })
   })
 
@@ -742,6 +675,34 @@ describe('placementUtils', () => {
       expect(injectRadioConditionalHtml(radioList, 'two', testHtml)).toEqual(
         expect.arrayContaining([{ text: 'Two', value: 'two', conditional: { html: testHtml } }]),
       )
+    })
+  })
+
+  describe('withdrawal utilities', () => {
+    const placement = cas1SpaceBookingFactory.build({
+      premises: { name: 'premises-name' },
+      actualArrivalDate: '2024-01-20',
+      expectedDepartureDate: '2024-11-04',
+      actualDepartureDate: undefined,
+    })
+    describe('withdrawalMessage', () => {
+      it('should return the placement withdrawal confirmation message', () => {
+        expect(withdrawalMessage(placement)).toEqual(
+          'Placement at premises-name from 20 Jan 2024 to 4 Nov 2024 has been withdrawn',
+        )
+      })
+    })
+
+    describe('withdrawalSummaryList', () => {
+      it('should generate the summary list for the withdrawl confirmation page', () => {
+        expect(withdrawalSummaryList(placement)).toEqual({
+          rows: [
+            { key: { text: 'Approved premises' }, value: { text: 'premises-name' } },
+            { key: { text: 'Arrival date' }, value: { text: 'Sat 20 Jan 2024' } },
+            { key: { text: 'Departure date' }, value: { text: 'Mon 4 Nov 2024' } },
+          ],
+        })
+      })
     })
   })
 })

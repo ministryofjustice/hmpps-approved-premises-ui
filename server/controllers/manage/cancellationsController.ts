@@ -8,7 +8,8 @@ import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
-import { canonicalDates } from '../../utils/placements'
+import adminPaths from '../../paths/admin'
+import { placementKeyDetails, withdrawalMessage, withdrawalSummaryList } from '../../utils/placements'
 
 export default class CancellationsController {
   constructor(
@@ -32,22 +33,14 @@ export default class CancellationsController {
       } else {
         backLink = paths.premises.placements.show({ premisesId, placementId })
       }
-      const placementDates = placement && canonicalDates(placement)
-      const booking = {
-        id: placement?.id,
-        person: placement?.person,
-        arrivalDate: placementDates?.arrivalDate,
-        departureDate: placementDates?.departureDate,
-      }
-      const formAction = paths.premises.placements.cancellations.create({ premisesId, placementId })
 
       res.render('cancellations/new', {
-        premisesId,
-        booking,
+        contextKeyDetails: placementKeyDetails(placement),
+        summaryList: withdrawalSummaryList(placement),
         backLink,
-        formAction,
+        formAction: paths.premises.placements.cancellations.create({ premisesId, placementId }),
         cancellationReasons,
-        pageHeading: 'Confirm withdrawn placement',
+        pageHeading: 'Confirm placement to withdraw',
         errors,
         errorSummary,
         ...userInput,
@@ -75,6 +68,7 @@ export default class CancellationsController {
       }
 
       try {
+        const placement = await this.placementService.getPlacement(req.user.token, placementId)
         await this.placementService.createCancellation(
           req.user.token,
           premisesId,
@@ -82,7 +76,8 @@ export default class CancellationsController {
           spaceBookingCancellation,
         )
 
-        res.render('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
+        req.flash('success', withdrawalMessage(placement))
+        res.redirect(adminPaths.admin.placementRequests.show({ placementRequestId: placement.placementRequestId }))
       } catch (error) {
         catchValidationErrorOrPropogate(
           req,

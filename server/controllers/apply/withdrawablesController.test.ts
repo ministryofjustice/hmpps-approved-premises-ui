@@ -4,13 +4,14 @@ import { NextFunction } from 'express'
 import { Withdrawable } from '@approved-premises/api'
 import { ApplicationService, PlacementService } from '../../services'
 import WithdrawablesController from './withdrawablesController'
-import { cas1SpaceBookingFactory, withdrawableFactory } from '../../testutils/factories'
+import { applicationFactory, cas1SpaceBookingFactory, withdrawableFactory } from '../../testutils/factories'
 import adminPaths from '../../paths/admin'
 import managePaths from '../../paths/manage'
 import placementAppPaths from '../../paths/placementApplications'
 import applyPaths from '../../paths/apply'
 import { sortAndFilterWithdrawables } from '../../utils/applications/withdrawables'
 import withdrawablesFactory from '../../testutils/factories/withdrawablesFactory'
+import { applicationKeyDetails } from '../../utils/applications/helpers'
 
 jest.mock('../../utils/applications/withdrawables')
 
@@ -28,11 +29,14 @@ describe('withdrawablesController', () => {
 
   let withdrawablesController: WithdrawablesController
 
+  const application = applicationFactory.build()
+
   beforeEach(() => {
     withdrawablesController = new WithdrawablesController(applicationService, placementService)
     request = createMock<Request>({ user: { token }, flash })
     response = createMock<Response>({})
     jest.clearAllMocks()
+    applicationService.findApplication.mockResolvedValue(application)
   })
 
   describe('show', () => {
@@ -79,9 +83,11 @@ describe('withdrawablesController', () => {
         const selectedWithdrawableType = 'placement'
         const spaceBookingWithdrawables = withdrawableFactory.buildList(2, { type: 'space_booking' })
         const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
-        const spaceBookings = cas1SpaceBookingFactory.buildList(2).map((b, i) => {
-          return { ...b, id: spaceBookingWithdrawables[i].id }
-        })
+        const spaceBookings = cas1SpaceBookingFactory
+          .buildList(2, { person: application.person, tier: application.risks.tier.value.level })
+          .map((b, i) => {
+            return { ...b, id: spaceBookingWithdrawables[i].id }
+          })
         const withdrawable = [applicationWithdrawable, ...spaceBookingWithdrawables]
         const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
@@ -91,9 +97,7 @@ describe('withdrawablesController', () => {
         )
         spaceBookings.forEach(b => placementService.getPlacement.mockResolvedValueOnce(b))
 
-        const requestHandler = withdrawablesController.show()
-
-        await requestHandler(
+        await withdrawablesController.show()(
           { ...request, params: { id: applicationId }, query: { selectedWithdrawableType } },
           response,
           next,
@@ -101,12 +105,13 @@ describe('withdrawablesController', () => {
         expect(sortAndFilterWithdrawables).toHaveBeenCalledWith(withdrawable, ['space_booking'])
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
-          pageHeading: 'Select your placement',
+          pageHeading: 'Select placement to withdraw',
           id: applicationId,
           withdrawables: spaceBookingWithdrawables,
           allBookings: spaceBookings,
           withdrawableType: 'placement',
           notes: withdrawables.notes,
+          contextKeyDetails: applicationKeyDetails(application),
         })
         expect(placementService.getPlacement).toHaveBeenCalledTimes(2)
         expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[0].id)

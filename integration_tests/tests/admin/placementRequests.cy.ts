@@ -21,9 +21,9 @@ import { ApprovedPremisesApplication as Application, FullPerson } from '../../..
 import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
-import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
+import PlacementRequestPage from '../../pages/match/placementRequestPage'
 
 context('Placement Requests', () => {
   const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
@@ -33,8 +33,12 @@ context('Placement Requests', () => {
       cas1PlacementRequestSummaryFactory.notMatched().build({ applicationId: application.id }),
       cas1PlacementRequestSummaryFactory.notMatched().build({ isParole: true }),
     ]
-    const matchedPlacementRequests = cas1PlacementRequestSummaryFactory.matched().buildList(3)
-    const unableToMatchPlacementRequests = cas1PlacementRequestSummaryFactory.unableToMatch().buildList(2)
+    const matchedPlacementRequests = cas1PlacementRequestSummaryFactory
+      .matched()
+      .buildList(3, { applicationId: application.id })
+    const unableToMatchPlacementRequests = cas1PlacementRequestSummaryFactory
+      .unableToMatch()
+      .buildList(2, { applicationId: application.id })
 
     const unmatchedPlacementRequest = cas1PlacementRequestDetailFactory
       .params(unmatchedPlacementRequests[0])
@@ -49,14 +53,17 @@ context('Placement Requests', () => {
     const matchedPlacementRequest = cas1PlacementRequestDetailFactory
       .params({
         id: matchedPlacementRequests[1].id,
+        applicationId: application.id,
         status: 'matched',
       })
       .matched()
       .build()
+
     const spaceBooking = cas1SpaceBookingFactory.build({
       applicationId: application.id,
       premises: { id: matchedPlacementRequest.booking.premisesId },
       id: matchedPlacementRequest.booking.id,
+      placementRequestId: matchedPlacementRequest.id,
     })
 
     const unableToMatchPlacementRequest = cas1PlacementRequestDetailFactory
@@ -75,7 +82,8 @@ context('Placement Requests', () => {
     }) as Application
 
     unmatchedPlacementRequest.application = application
-
+    unmatchedPlacementRequest.applicationId = application.id
+    cy.task('stubApplicationGet', { application })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: unmatchedPlacementRequests, status: 'notMatched' })
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: matchedPlacementRequests,
@@ -96,6 +104,7 @@ context('Placement Requests', () => {
     const cas1SpaceBookingPremises = cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: true })
     cy.task('stubCas1AllPremises', { premises: [...cas1premises, ...cas1SpaceBookingPremises] })
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
+    cy.task('stubSpaceBookingGetWithoutPremises', spaceBooking)
 
     return {
       application,
@@ -228,7 +237,6 @@ context('Placement Requests', () => {
         applicationId: matchedPlacementRequest.applicationId,
         withdrawables,
       })
-      cy.task('stubSpaceBookingGetWithoutPremises', spaceBooking)
 
       WHEN('I visit the tasks dashboard')
       const listPage = ListPage.visit()
@@ -249,7 +257,7 @@ context('Placement Requests', () => {
       withdrawableTypePage.selectType('placement')
       withdrawableTypePage.clickSubmit()
 
-      const withdrawablePage = new NewWithdrawalPage('Select your placement')
+      const withdrawablePage = new NewWithdrawalPage('Select placement to withdraw')
       withdrawablePage.shouldShowWithdrawableGuidance('placement')
       withdrawablePage.selectWithdrawable(withdrawable.id)
       withdrawablePage.clickSubmit()
@@ -261,8 +269,9 @@ context('Placement Requests', () => {
       cancellationPage.completeForm(cancellation)
 
       THEN('I should see a confirmation message')
-      const confirmationPage = new BookingCancellationConfirmPage()
-      confirmationPage.shouldShowPanel()
+      const placementRequestPage = new PlacementRequestPage()
+
+      placementRequestPage.shouldShowWithdrawalBanner(spaceBooking)
 
       AND('a cancellation should have been created in the API')
       cy.task(
