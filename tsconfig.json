@@ -12,7 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "experimentalDecorators": true,
-    "typeRoots": ["./server/@types", "./node_modules/@types"]
+    "typeRoots": ["./server/@types", "./node_modules/@types"],
+    "lib": ["es2016","dom"]
   },
   "exclude": [
     "node_modules",
