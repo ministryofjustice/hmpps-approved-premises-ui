@@ -15,8 +15,8 @@ import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { placementKeyDetails } from '../../../server/utils/placements'
 
 context('Cancellation', () => {
-  const createStubs = (noApplication = false) => {
-    const application = !noApplication && applicationFactory.build()
+  const createStubs = (createApplication = true) => {
+    const application = createApplication && applicationFactory.build()
     const premises = premisesFactory.build()
     const placementRequest = cas1PlacementRequestDetailFactory.build()
     const placement = cas1SpaceBookingFactory.build({
@@ -106,7 +106,7 @@ context('Cancellation', () => {
   it('should allow me to create a cancellation for a space-booking without an applicationId', () => {
     GIVEN('a placement is available')
 
-    const { placementId, premisesId, cancellation, placement } = createStubs(true)
+    const { placementId, premisesId, cancellation, placement } = createStubs(false)
 
     cy.task('stubCancellationCreate', { premisesId, placementId, cancellation })
 
