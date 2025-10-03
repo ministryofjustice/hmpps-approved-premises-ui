@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UpdateAppointmentAttendanceDataDto } from './UpdateAppointmentAttendanceDataDto';
-import type { UpdateAppointmentEnforcementDto } from './UpdateAppointmentEnforcementDto';
+import type { AttendanceDataDto } from './AttendanceDataDto';
+import type { EnforcementDto } from './EnforcementDto';
 export type UpdateAppointmentOutcomeDto = {
-    projectTypeId: string;
     /**
      * The start local time of the appointment
      */
@@ -15,10 +14,9 @@ export type UpdateAppointmentOutcomeDto = {
      */
     endTime: string;
     contactOutcomeId: string;
-    supervisorTeamId: number;
-    supervisorOfficerId: number;
-    notes: string;
-    attendanceData?: UpdateAppointmentAttendanceDataDto;
-    enforcementData?: UpdateAppointmentEnforcementDto;
+    supervisorOfficerCode: string;
+    notes?: string;
+    attendanceData?: AttendanceDataDto;
+    enforcementData?: EnforcementDto;
 };
 
