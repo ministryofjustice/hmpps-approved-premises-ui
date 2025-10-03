@@ -1,24 +1,24 @@
 import InvalidDateStringError from '../errors/invalidDateStringError'
-import DateFormats from './dateUtils'
+import DateTimeFormats from './dateTimeUtils'
 
-describe('DateFormats', () => {
+describe('DateTimeFormats', () => {
   describe('isoDateToUIDate', () => {
     it('converts a ISO8601 date string to a GOV.UK formatted date', () => {
       const date = '2022-11-11T00:00:00.000Z'
 
-      expect(DateFormats.isoDateToUIDate(date)).toEqual('Friday 11 November 2022')
+      expect(DateTimeFormats.isoDateToUIDate(date)).toEqual('Friday 11 November 2022')
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {
       const date = '23/11/2022'
 
-      expect(() => DateFormats.isoDateToUIDate(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
+      expect(() => DateTimeFormats.isoDateToUIDate(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
     })
 
     it('raises an error if the date is not a date string', () => {
       const date = 'NOT A DATE'
 
-      expect(() => DateFormats.isoDateToUIDate(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
+      expect(() => DateTimeFormats.isoDateToUIDate(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
     })
   })
 
@@ -26,19 +26,19 @@ describe('DateFormats', () => {
     it('converts a date to a short format date', () => {
       const date = new Date('2022-11-11T00:00:00.000Z')
 
-      expect(DateFormats.dateObjtoUIDate(date, { format: 'short' })).toEqual('11/11/2022')
+      expect(DateTimeFormats.dateObjtoUIDate(date, { format: 'short' })).toEqual('11/11/2022')
     })
 
     it('converts a date to a medium format date', () => {
       const date = new Date('2022-11-11T00:00:00.000Z')
 
-      expect(DateFormats.dateObjtoUIDate(date, { format: 'medium' })).toEqual('11 November 2022')
+      expect(DateTimeFormats.dateObjtoUIDate(date, { format: 'medium' })).toEqual('11 November 2022')
     })
 
     it('converts a date to a long format date', () => {
       const date = new Date('2022-11-11T00:00:00.000Z')
 
-      expect(DateFormats.dateObjtoUIDate(date)).toEqual('Friday 11 November 2022')
+      expect(DateTimeFormats.dateObjtoUIDate(date)).toEqual('Friday 11 November 2022')
     })
   })
 
@@ -46,19 +46,19 @@ describe('DateFormats', () => {
     it('converts a ISO8601 date string', () => {
       const date = '2022-11-11T00:00:00.000Z'
 
-      expect(DateFormats.isoToDateObj(date)).toEqual(new Date(2022, 10, 11))
+      expect(DateTimeFormats.isoToDateObj(date)).toEqual(new Date(2022, 10, 11))
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {
       const date = '23/11/2022'
 
-      expect(() => DateFormats.isoToDateObj(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
+      expect(() => DateTimeFormats.isoToDateObj(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
     })
 
     it('raises an error if the date is not a date string', () => {
       const date = 'NOT A DATE'
 
-      expect(() => DateFormats.isoToDateObj(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
+      expect(() => DateTimeFormats.isoToDateObj(date)).toThrow(new InvalidDateStringError(`Invalid Date: ${date}`))
     })
   })
 
@@ -66,19 +66,32 @@ describe('DateFormats', () => {
     it('strips ":SS" data from a time string', () => {
       const time = '23:12:12'
 
-      expect(DateFormats.stripTime(time)).toEqual('23:12')
+      expect(DateTimeFormats.stripTime(time)).toEqual('23:12')
     })
 
     it('returns the same if no seconds data', () => {
       const time = '23:12'
 
-      expect(DateFormats.stripTime(time)).toEqual('23:12')
+      expect(DateTimeFormats.stripTime(time)).toEqual('23:12')
     })
 
     const invalidTimes = ['23:12;00', '23:12trr', 'someText', 'some:text', 'tr:12:13', 'tr:12:']
 
     it.each(invalidTimes)('raises an error if the time is not in the right format', time => {
-      expect(() => DateFormats.stripTime(time)).toThrow(new InvalidDateStringError(`Invalid time: ${time}`))
+      expect(() => DateTimeFormats.stripTime(time)).toThrow(new InvalidDateStringError(`Invalid time: ${time}`))
+    })
+  })
+
+  describe('minutesToHoursAndMinutes', () => {
+    const testCases = [
+      [90, '1:30'],
+      [120, '2:00'],
+      [61, '1:01'],
+      [640, '10:40'],
+    ]
+
+    it.each(testCases)('formats %d to %s', (minutes: number, expected: string) => {
+      expect(DateTimeFormats.minutesToHoursAndMinutes(minutes)).toEqual(expected)
     })
   })
 })

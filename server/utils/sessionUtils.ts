@@ -1,6 +1,6 @@
 import { AppointmentsDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
 import paths from '../paths'
-import DateFormats from './dateUtils'
+import DateTimeFormats from './dateTimeUtils'
 import HtmlUtils from './hmtlUtils'
 import { createQueryString } from './utils'
 
@@ -14,9 +14,9 @@ export default class SessionUtils {
         {
           html: `${HtmlUtils.getElementWithContent(projectLink)}${HtmlUtils.getElementWithContent(session.projectCode)}`,
         },
-        { text: DateFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
-        { text: DateFormats.stripTime(session.startTime) },
-        { text: DateFormats.stripTime(session.endTime) },
+        { text: DateTimeFormats.isoDateToUIDate(session.date, { format: 'medium' }) },
+        { text: DateTimeFormats.stripTime(session.startTime) },
+        { text: DateTimeFormats.stripTime(session.endTime) },
         { text: session.numberOfOffendersAllocated },
         { text: session.numberOfOffendersWithOutcomes },
         { text: session.numberOfOffendersWithEA },
@@ -34,9 +34,9 @@ export default class SessionUtils {
       return [
         { text: offenderName },
         { text: appointment.offender.crn },
-        { text: SessionUtils.getHours(appointment.requirementMinutes) },
-        { text: SessionUtils.getHours(appointment.completedMinutes) },
-        { text: SessionUtils.getHours(minutesRemaining) },
+        { text: DateTimeFormats.minutesToHoursAndMinutes(appointment.requirementMinutes) },
+        { text: DateTimeFormats.minutesToHoursAndMinutes(appointment.completedMinutes) },
+        { text: DateTimeFormats.minutesToHoursAndMinutes(minutesRemaining) },
         { html: SessionUtils.getStatusTag() },
         {
           html: HtmlUtils.getAnchor(
@@ -50,9 +50,5 @@ export default class SessionUtils {
 
   private static getStatusTag() {
     return HtmlUtils.getStatusTag('Not entered', 'grey')
-  }
-
-  private static getHours(minutes: number): number {
-    return minutes / 60
   }
 }

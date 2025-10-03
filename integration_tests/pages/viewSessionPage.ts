@@ -26,30 +26,40 @@ export default class ViewSessionPage extends Page {
     cy.get('tr')
       .eq(1)
       .within(() => {
-        this.shouldShowAppointmentDetails(appointments[0])
+        this.shouldShowAppointmentDetails(appointments[0], this.expectedTimeDetails[0])
       })
 
     cy.get('tr')
       .eq(2)
       .within(() => {
-        this.shouldShowAppointmentDetails(appointments[1])
+        this.shouldShowAppointmentDetails(appointments[1], this.expectedTimeDetails[1])
       })
   }
 
-  private shouldShowAppointmentDetails(appointment: AppointmentDto) {
+  private shouldShowAppointmentDetails(
+    appointment: AppointmentDto,
+    expectedTime: { ordered: string; completed: string; remaining: string },
+  ) {
     const offender = appointment.offender as OffenderFullDto
 
     cy.get('td').eq(0).should('have.text', `${offender.forename} ${offender.surname}`)
     cy.get('td').eq(1).should('have.text', offender.crn)
-    cy.get('td')
-      .eq(2)
-      .should('have.text', appointment.requirementMinutes / 60)
-    cy.get('td')
-      .eq(3)
-      .should('have.text', appointment.completedMinutes / 60)
-    cy.get('td')
-      .eq(4)
-      .should('have.text', (appointment.requirementMinutes - appointment.completedMinutes) / 60)
+    cy.get('td').eq(2).should('have.text', expectedTime.ordered)
+    cy.get('td').eq(3).should('have.text', expectedTime.completed)
+    cy.get('td').eq(4).should('have.text', expectedTime.remaining)
     cy.get('td').eq(5).should('have.text', 'Not entered')
   }
+
+  private expectedTimeDetails = [
+    {
+      ordered: '10:00',
+      completed: '8:20',
+      remaining: '1:40',
+    },
+    {
+      ordered: '15:00',
+      completed: '10:00',
+      remaining: '5:00',
+    },
+  ]
 }
