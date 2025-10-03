@@ -25,7 +25,7 @@ type StandardDeterminateReleaseTypeOptions = Pick<
   ReleaseTypeOptions,
   'licence' | 'paroleDirectedLicence' | 'rotl' | 'hdc' | 'pss'
 >
-type LifeIppReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
+type LifeIppReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'paroleDirectedLicence'>
 export type PossibleReleaseTypeOptions =
   | ExtendedDetermindateReleaseTypeOptions
   | StandardDeterminateReleaseTypeOptions
