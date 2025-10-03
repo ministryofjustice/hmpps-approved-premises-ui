@@ -73,7 +73,7 @@ export default class ReleaseType implements TasklistPage {
       ])
     }
     if (this.sentenceType === 'life' || this.sentenceType === 'ipp') {
-      return pick(selectableReleaseTypes, ['rotl', 'licence'])
+      return pick(selectableReleaseTypes, ['rotl', 'paroleDirectedLicence'])
     }
     if (this.sentenceType === 'extendedDeterminate') {
       return pick(selectableReleaseTypes, ['rotl', 'extendedDeterminateLicence', 'paroleDirectedLicence'])
