@@ -49,7 +49,7 @@ export default class SessionUtils {
   }
 
   private static getStatusTag() {
-    return HtmlUtils.getStatusTag('Empty', 'grey')
+    return HtmlUtils.getStatusTag('Not entered', 'grey')
   }
 
   private static getHours(minutes: number): number {
