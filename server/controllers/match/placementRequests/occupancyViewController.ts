@@ -37,6 +37,9 @@ import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../u
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import { placementKeyDetails } from '../../../utils/placements'
+import logger from '../../../../logger'
+import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import { getPlacementOfStatus } from '../../../utils/placementRequests/placements'
 
 export type CriteriaQuery = Array<Cas1SpaceBookingCharacteristic> | Cas1SpaceBookingCharacteristic
 
@@ -82,6 +85,8 @@ export default class {
       if (!searchState) {
         return res.redirect(paths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       }
+
+      logger.debug('>>>>> searchState', searchState)
 
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
@@ -145,6 +150,10 @@ export default class {
         durationOptions: durationSelectOptions(formValues.durationDays),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, formValues.roomCriteria),
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
+        newPlacementSummaryList: newPlacementSummaryList(
+          searchState,
+          getPlacementOfStatus('arrived', placementRequest),
+        ),
         summary,
         calendar,
         errors,
