@@ -16,6 +16,7 @@ describe('ProviderService', () => {
       providers: [
         {
           id: 1001,
+          code: 'XRT123',
           name: 'Team Lincoln',
         },
       ],
