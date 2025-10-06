@@ -175,7 +175,7 @@ context('Applications dashboard', () => {
       page.clickSubmittedTab()
 
       // Then I should be able to create a placement
-      page.clickRequestForPlacementLink()
+      page.clickLink('Create placement request')
 
       // And I should be on placement request
       Page.verifyOnPage(CheckSentenceTypePage, placementApplicationId)

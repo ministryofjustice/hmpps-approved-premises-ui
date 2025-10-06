@@ -3,6 +3,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "./partials/_readonly-application.njk" import applicationReadonlyView %}
+{% from "./partials/_readonly-assessment.njk" import assessmentReadonlyView %}
 {% from "./partials/_timeline.njk" import timeline %}
 {% from "./partials/_request-a-placement.njk" import requestAPlacement %}
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
@@ -20,27 +21,18 @@
                 {{ mojIdentityBar(ApplyUtils.applicationIdentityBar(application, pageHeading, user)) }}
 
                 {% include "../_messages.njk" %}
-
+                {% set decision = 'not suitable' %}
+                {% if application.assessmentDecision === 'accepted' %}
+                    {% set decision = 'suitable' %}
+                {% endif %}
                 {% if application.assessmentDecision %}
                     {% set html %}
-                        <p class="govuk-body">Application was {{ application.assessmentDecision }}
-                            on {{ formatDate(application.assessmentDecisionDate) }}.</p>
-
-                        {% if application.status === 'expired' %}
-                            <p class="govuk-body">Applications expire 12 months after being assessed as suitable. You
-                                cannot submit any new requests for placement.</p>
-                            <p class="govuk-body">You’ll need to submit a new application for this person to be
-                                assessed.</p>
-                        {% else %}
-                            <p class="govuk-body">Applications expire 12 months after being assessed as ‘suitable’.
-                                You’ll then need to submit a new application for this person to be assessed.</p>
-                            <p class="govuk-body">Booked placements are unaffected.</p>
-                        {% endif %}
-
-                        <p class="govuk-body">
-                            <a href="{{ paths.assessments.show({id: application.assessmentId}) }}"
-                               data-cy-assessmentId="{{ application.assessmentId }}">View assessment</a>
+                        <p class="govuk-body">Assessed
+                            as {{ decision }}: {{ formatDate(application.assessmentDecisionDate) }}
                         </p>
+                        {% if application.status !== 'expired' and application.assessmentDecision !== 'rejected' %}
+                            <p class="govuk-body">Application expires on: {{ applicationExpiryDate }}</p>
+                        {% endif %}
                     {% endset %}
 
                     {{ govukInsetText({
@@ -50,34 +42,32 @@
 
             </div>
 
+            {% if application.assessmentDecision === 'accepted' and application.status !== 'withdrawn' and application.status !== 'expired' %}
+                <form action="{{ paths.placementApplications.create({}) }}" method="post">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                    <input type="hidden" name="applicationId" value="{{ application.id }}" />
+                    {{ govukButton({
+                        text: "Create placement request",
+                        preventDoubleClick: true
+                    }) }}
+                </form>
+            {% endif %}
+
             <div class="govuk-grid-column-full">
-                {{ mojSubNavigation({
-                    items: [{
-                        text: 'Application',
-                        href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.application),
-                        active: tab === ApplyUtils.applicationShowPageTabs.application
-                    }, {
-                        text: 'Timeline',
-                        href:  ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.timeline),
-                        active: tab === ApplyUtils.applicationShowPageTabs.timeline
-                    },
-                        {
-                            text: 'Request for placement',
-                            href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.placementRequests),
-                            active: tab === ApplyUtils.applicationShowPageTabs.placementRequests
-                        }
-                    ]
-                }) }}
+                {{ mojSubNavigation({items:tabs}) }}
             </div>
 
             <div class="govuk-grid-column-full">
-                {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
+                {% if tab === 'timeline' %}
 
                     {{ timeline(ApplyUtils.mapApplicationTimelineEventsForUi(timelineEvents), application, csrfToken) }}
 
-                    {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
+                    {% elif tab === 'placementRequests' %}
 
                     {{ requestAPlacement(requestsForPlacement, application, user, csrfToken) }}
+
+                    {% elif tab === 'assessment' %}
+                    {{ assessmentReadonlyView(assessment) }}
                 {% else %}
                     {{ applicationReadonlyView(application) }}
                 {% endif %}

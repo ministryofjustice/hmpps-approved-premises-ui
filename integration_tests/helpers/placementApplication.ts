@@ -40,11 +40,8 @@ export default class placementApplicationHelper {
     GIVEN('I am on the readonly application view')
     const showPage = ShowPage.visit(this.application)
 
-    WHEN('I click the Request Placement Application tab')
-    showPage.clickRequestAPlacementTab()
-
-    THEN('I should be able to create a placement request')
-    showPage.clickCreatePlacementButton()
+    WHEN('I click the button to create a placement request')
+    showPage.clickButton('Create placement request')
 
     GIVEN('I am on the sentence type confirmation page')
     const checkSentenceTypePage = Page.verifyOnPage(CheckSentenceTypePage)

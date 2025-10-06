@@ -1,5 +1,5 @@
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "../../partials/personDetails.njk" import personDetails %}
+{% from "../../partials/documentSections.njk" import documentSections %}
 
 {% macro applicationReadonlyView(application) %}
 
@@ -12,12 +12,7 @@
     {{ personDetails(application.person, statusOnSubmission = application.personStatusOnSubmission) }}
 
     {% if application.type !== 'Offline' %}
-        {% for section in sections %}
-            <h2 class="govuk-heading-l">{{ section.title }}</h2>
-            {% for task in section.tasks %}
-                {{ govukSummaryList(task) }}
-            {% endfor %}
-        {% endfor %}
+        {{ documentSections(sections) }}
     {% endif %}
 
 {% endmacro %}

@@ -77,32 +77,28 @@ const applicationTableRows = (applications: Array<Cas1ApplicationSummary>): Arra
   ])
 }
 
-export const applicationsTabs = (applications: GroupedApplications) => {
-  const tabs = [
-    {
-      label: 'In progress',
-      id: 'applications',
-      rows: applicationTableRows(applications.inProgress),
-    },
-    {
-      label: 'Further information requested',
-      id: 'further-information-requested',
-      rows: applicationTableRows(applications.requestedFurtherInformation),
-    },
-    {
-      label: 'Submitted',
-      id: 'applications-submitted',
-      rows: applicationTableRows(applications.submitted),
-    },
-    {
-      label: 'Inactive',
-      id: 'inactive',
-      rows: applicationTableRows(applications.inactive),
-    },
-  ]
-
-  return tabs
-}
+export const applicationsTabs = (applications: GroupedApplications) => [
+  {
+    label: 'In progress',
+    id: 'applications',
+    rows: applicationTableRows(applications.inProgress),
+  },
+  {
+    label: 'Further information requested',
+    id: 'further-information-requested',
+    rows: applicationTableRows(applications.requestedFurtherInformation),
+  },
+  {
+    label: 'Submitted',
+    id: 'applications-submitted',
+    rows: applicationTableRows(applications.submitted),
+  },
+  {
+    label: 'Inactive',
+    id: 'inactive',
+    rows: applicationTableRows(applications.inactive),
+  },
+]
 
 const dashboardTableHeader = (
   sortBy: ApplicationSortField,
@@ -158,7 +154,7 @@ export const actionsLink = (application: Cas1ApplicationSummary) => {
   if (application.hasRequestsForPlacement) {
     return linkTo(paths.applications.show({ id: application.id }), {
       text: 'View placement request(s)',
-      query: { tab: applicationShowPageTabs.placementRequests },
+      query: { tab: 'placementRequests' },
     })
   }
 
@@ -168,7 +164,7 @@ export const actionsLink = (application: Cas1ApplicationSummary) => {
 
   if (applicationSuitableStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
     return linkTo(placementApplicationPaths.placementApplications.create({}), {
-      text: 'Create request for placement',
+      text: 'Create placement request',
       query: { id: application.id },
     })
   }
@@ -220,15 +216,7 @@ const isInapplicable = (application: Application): boolean => {
     'agreedCaseWithManager',
   )
 
-  if (isExceptionalCase === 'no') {
-    return true
-  }
-
-  if (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no') {
-    return true
-  }
-
-  return false
+  return isExceptionalCase === 'no' || (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no')
 }
 
 const tierQualificationPage = (application: Application) => {
@@ -376,17 +364,27 @@ const lengthOfStayForUI = (duration: number) => {
 
   return 'None supplied'
 }
+export type ApplicationShowPageTab = 'application' | 'assessment' | 'placementRequests' | 'timeline'
 
-export const applicationShowPageTabs = {
-  application: 'application',
-  timeline: 'timeline',
-  placementRequests: 'placementRequests',
+const tabLabels: Record<ApplicationShowPageTab, string> = {
+  application: 'Application',
+  assessment: 'Assessment',
+  placementRequests: 'Placement requests',
+  timeline: 'Timeline',
 }
 
-export type ApplicationShowPageTab = keyof typeof applicationShowPageTabs
+export const applicationShowPageTab = (applicationId: string, tab: ApplicationShowPageTab): string =>
+  `${paths.applications.show({ id: applicationId })}?tab=${tab}`
 
-export const applicationShowPageTab = (id: Application['id'], tab: ApplicationShowPageTab) =>
-  `${paths.applications.show({ id })}?tab=${applicationShowPageTabs[tab]}`
+export const getApplicationShowPageTabs = (applicationId: string, tab: ApplicationShowPageTab) => {
+  return Object.entries(tabLabels).map(([tabKey, text]: [ApplicationShowPageTab, string]) => {
+    return {
+      text,
+      href: applicationShowPageTab(applicationId, tabKey),
+      active: tab === tabKey,
+    }
+  })
+}
 
 export type ApplicationStatusForFilter = ApplicationStatus | typeof applicationSuitableStatuses
 

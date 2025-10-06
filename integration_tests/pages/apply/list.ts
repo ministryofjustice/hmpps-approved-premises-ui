@@ -46,10 +46,6 @@ export default class ListPage extends Page {
     this.shouldShowApplications(this.inactiveApplications, /Expired application|Application withdrawn/)
   }
 
-  clickRequestForPlacementLink() {
-    cy.get('a').contains('Create request for placement').click()
-  }
-
   clickSubmit() {
     cy.get('.govuk-button').click()
   }
