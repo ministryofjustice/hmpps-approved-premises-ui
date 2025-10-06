@@ -65,7 +65,7 @@ export default class SessionsController {
       const session = await this.sessionService.getSession(res.locals.user.username, id, date.toString())
       const sessionList = SessionUtils.sessionListTableRows(session.appointmentSummaries)
 
-      res.render('sessions/show', { project: session, sessionList })
+      res.render('sessions/show', { session, sessionList })
     }
   }
 
