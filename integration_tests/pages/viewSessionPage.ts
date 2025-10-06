@@ -1,4 +1,4 @@
-import { AppointmentDto, OffenderFullDto } from '../../server/@types/shared'
+import { AppointmentSummaryDto, OffenderFullDto } from '../../server/@types/shared'
 import { mockAppointments } from '../mockApis/sessions'
 import paths from '../../server/paths'
 
@@ -21,23 +21,23 @@ export default class ViewSessionPage extends Page {
   }
 
   shouldShowAppointmentsList() {
-    const { appointments } = mockAppointments
+    const { appointmentSummaries } = mockAppointments
 
     cy.get('tr')
       .eq(1)
       .within(() => {
-        this.shouldShowAppointmentDetails(appointments[0], this.expectedTimeDetails[0])
+        this.shouldShowAppointmentDetails(appointmentSummaries[0], this.expectedTimeDetails[0])
       })
 
     cy.get('tr')
       .eq(2)
       .within(() => {
-        this.shouldShowAppointmentDetails(appointments[1], this.expectedTimeDetails[1])
+        this.shouldShowAppointmentDetails(appointmentSummaries[1], this.expectedTimeDetails[1])
       })
   }
 
   private shouldShowAppointmentDetails(
-    appointment: AppointmentDto,
+    appointment: AppointmentSummaryDto,
     expectedTime: { ordered: string; completed: string; remaining: string },
   ) {
     const offender = appointment.offender as OffenderFullDto

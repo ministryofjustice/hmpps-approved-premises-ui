@@ -3,7 +3,7 @@ import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients
 import config from '../config'
 import logger from '../../logger'
 import paths from '../paths/api'
-import { AppointmentsDto, ProjectAllocationsDto } from '../@types/shared'
+import { ProjectAllocationsDto, SessionDto } from '../@types/shared'
 import { GetSessionsRequest } from '../@types/user-defined'
 import { createQueryString } from '../utils/utils'
 
@@ -19,9 +19,9 @@ export default class SessionClient extends RestClient {
     )) as ProjectAllocationsDto
   }
 
-  async find(username: string, projectId: string, date: string): Promise<AppointmentsDto> {
+  async find(username: string, projectId: string, date: string): Promise<SessionDto> {
     const path = paths.projects.sessionAppointments({ projectId })
     const query = createQueryString({ date })
-    return (await this.get({ path, query }, asSystem(username))) as AppointmentsDto
+    return (await this.get({ path, query }, asSystem(username))) as SessionDto
   }
 }

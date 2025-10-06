@@ -3,7 +3,7 @@ import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients
 import SessionClient from './sessionClient'
 import config from '../config'
 import { createQueryString } from '../utils/utils'
-import { AppointmentsDto } from '../@types/shared'
+import { SessionDto } from '../@types/shared'
 
 describe('SessionClient', () => {
   let sessionClient: SessionClient
@@ -28,11 +28,16 @@ describe('SessionClient', () => {
       const date = '2026-01-01'
       const queryString = createQueryString({ date })
 
-      const session: AppointmentsDto = {
-        appointments: [
+      const session: SessionDto = {
+        projectName: 'Park cleaning',
+        projectCode: 'XCT12',
+        projectLocation: 'Hammersmith',
+        date: '2025-01-02',
+        startTime: '11:00',
+        endTime: '12:00',
+        appointmentSummaries: [
           {
             id: 1001,
-            projectName: 'Park cleaning',
             requirementMinutes: 600,
             completedMinutes: 500,
             offender: {

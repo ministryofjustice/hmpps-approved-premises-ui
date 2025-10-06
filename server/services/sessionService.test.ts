@@ -1,4 +1,4 @@
-import { AppointmentsDto, ProjectAllocationsDto } from '../@types/shared'
+import { ProjectAllocationsDto, SessionDto } from '../@types/shared'
 import SessionClient from '../data/sessionClient'
 import SessionService from './sessionService'
 
@@ -45,11 +45,16 @@ describe('ProviderService', () => {
   })
 
   it('should call find on the client and return its result', async () => {
-    const session: AppointmentsDto = {
-      appointments: [
+    const session: SessionDto = {
+      projectName: 'Park cleaning',
+      projectCode: 'XCT12',
+      projectLocation: 'Hammersmith',
+      date: '2025-01-02',
+      startTime: '11:00',
+      endTime: '12:00',
+      appointmentSummaries: [
         {
           id: 1001,
-          projectName: 'Park cleaning',
           requirementMinutes: 600,
           completedMinutes: 500,
           offender: {
@@ -67,6 +72,6 @@ describe('ProviderService', () => {
 
     expect(sessionClient.find).toHaveBeenCalledTimes(1)
     expect(result).toEqual(session)
-    expect(result.appointments[0]).toEqual(session.appointments[0])
+    expect(result.appointmentSummaries[0]).toEqual(session.appointmentSummaries[0])
   })
 })

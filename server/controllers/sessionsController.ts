@@ -63,10 +63,9 @@ export default class SessionsController {
       const { id } = _req.params
       const { date } = _req.query
       const session = await this.sessionService.getSession(res.locals.user.username, id, date.toString())
-      const project = session.appointments[0]
-      const sessionList = SessionUtils.sessionListTableRows(session)
+      const sessionList = SessionUtils.sessionListTableRows(session.appointmentSummaries)
 
-      res.render('sessions/show', { project, sessionList })
+      res.render('sessions/show', { project: session, sessionList })
     }
   }
 

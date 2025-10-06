@@ -28,9 +28,12 @@ describe('AppointmentsController', () => {
       const appointment: AppointmentDto = {
         id: 1001,
         projectName: 'Community Garden Maintenance',
-        requirementMinutes: 2400,
-        completedMinutes: 480,
         offender,
+        supervisingTeam: 'Team Lincoln',
+        projectCode: 'XCT12',
+        date: '2025-01-02',
+        startTime: '11:00',
+        endTime: '12:00',
       }
 
       const response = createMock<Response>()

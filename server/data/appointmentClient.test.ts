@@ -21,8 +21,11 @@ describe('find', () => {
     const appointment: AppointmentDto = {
       id: 1001,
       projectName: 'Community Garden Maintenance',
-      requirementMinutes: 2400,
-      completedMinutes: 480,
+      projectCode: 'XCT12',
+      supervisingTeam: 'Team Lincoln',
+      date: '2025-01-02',
+      startTime: '11:00',
+      endTime: '12:00',
       offender: {
         crn: 'string',
         objectType: 'Full',
