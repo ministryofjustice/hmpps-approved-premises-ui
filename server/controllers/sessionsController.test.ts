@@ -29,6 +29,7 @@ describe('SessionsController', () => {
         providers: [
           {
             id: 1001,
+            code: 'XRT134',
             name: 'Team Lincoln',
           },
         ],
@@ -71,8 +72,8 @@ describe('SessionsController', () => {
     it('should render the track progress page with errors', async () => {
       const requestHandler = sessionsController.search()
 
-      const firstTeam = { id: 1, name: 'Team Lincoln' }
-      const secondTeam = { id: 2, name: 'Team Grantham' }
+      const firstTeam = { id: 1, code: 'XR123', name: 'Team Lincoln' }
+      const secondTeam = { id: 2, code: 'XR124', name: 'Team Grantham' }
 
       const teams = {
         providers: [firstTeam, secondTeam],
@@ -139,8 +140,8 @@ describe('SessionsController', () => {
       const response = createMock<Response>()
       sessionService.getSessions.mockResolvedValue(sessions)
 
-      const firstTeam = { id: 1, name: 'Team Lincoln' }
-      const secondTeam = { id: 2, name: 'Team Grantham' }
+      const firstTeam = { id: 1, code: 'XR123', name: 'Team Lincoln' }
+      const secondTeam = { id: 2, code: 'XR124', name: 'Team Grantham' }
 
       const teams = {
         providers: [firstTeam, secondTeam],
@@ -170,8 +171,8 @@ describe('SessionsController', () => {
 
       sessionService.getSessions.mockResolvedValue(sessions)
 
-      const firstTeam = { id: 1, name: 'Team Lincoln' }
-      const secondTeam = { id: 2, name: 'Team Grantham' }
+      const firstTeam = { id: 1, code: 'XR123', name: 'Team Lincoln' }
+      const secondTeam = { id: 2, code: 'XR124', name: 'Team Grantham' }
 
       const teams = {
         providers: [firstTeam, secondTeam],
@@ -204,8 +205,8 @@ describe('SessionsController', () => {
         throw err
       })
 
-      const firstTeam = { id: 1, name: 'Team Lincoln' }
-      const secondTeam = { id: 2, name: 'Team Grantham' }
+      const firstTeam = { id: 1, code: 'XR123', name: 'Team Lincoln' }
+      const secondTeam = { id: 2, code: 'XR124', name: 'Team Grantham' }
 
       const teams = {
         providers: [firstTeam, secondTeam],

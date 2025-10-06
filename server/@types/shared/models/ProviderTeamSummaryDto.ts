@@ -8,6 +8,10 @@ export type ProviderTeamSummaryDto = {
      */
     id: number;
     /**
+     * Community Payback (UPW) provider team code
+     */
+    code: string;
+    /**
      * Community Payback (UPW) provider team name
      */
     name: string;
