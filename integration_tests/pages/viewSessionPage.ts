@@ -56,6 +56,10 @@ export default class ViewSessionPage extends Page {
       })
   }
 
+  shouldNotHaveUpdateLinksForOffenders() {
+    cy.get('a').contains('Update').should('not.exist')
+  }
+
   private shouldShowAppointmentDetails(appointment: AppointmentSummaryDto) {
     const offender = appointment.offender as OffenderFullDto
 

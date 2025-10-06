@@ -1,4 +1,4 @@
-import { AppointmentSummaryDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import { AppointmentSummaryDto, OffenderDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
 import Offender from '../models/offender'
 import paths from '../paths'
 import DateTimeFormats from './dateTimeUtils'
@@ -158,6 +158,34 @@ describe('SessionUtils', () => {
       expect(row[2]).toEqual({ text: '1:00' })
       expect(row[3]).toEqual({ text: '1:00' })
       expect(row[4]).toEqual({ text: '1:00' })
+    })
+
+    it('returns session row with no update button if offender is limited', () => {
+      offenderMock.mockImplementation(() => {
+        return {
+          name: '',
+          crn: 'CRN123',
+          isLimited: true,
+        }
+      })
+
+      const offender: OffenderDto = {
+        crn: 'CRN123',
+        objectType: 'Limited',
+      }
+
+      const appointments: AppointmentSummaryDto[] = [
+        {
+          id: 1,
+          offender,
+          requirementMinutes: 120,
+          completedMinutes: 60,
+        },
+      ]
+
+      const result = SessionUtils.sessionListTableRows(appointments)
+      const sessionRow = result[0]
+      expect(sessionRow[sessionRow.length - 1]).toEqual({ text: '' })
     })
   })
 })

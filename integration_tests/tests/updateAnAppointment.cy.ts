@@ -47,5 +47,6 @@ context('Session details', () => {
 
     // Then I see limited information about offenders and cannot update
     page.shouldShowOffendersWithNoNames()
+    page.shouldNotHaveUpdateLinksForOffenders()
   })
 })
