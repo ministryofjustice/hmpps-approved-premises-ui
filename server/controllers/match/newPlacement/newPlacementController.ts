@@ -26,8 +26,6 @@ export default class NewPlacementController {
       const { placementRequestId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const backlink = adminPaths.admin.placementRequests.show({ placementRequestId })
-
       const placementRequest = await this.placementRequestService.getPlacementRequest(
         req.user.token,
         placementRequestId,
@@ -49,7 +47,7 @@ export default class NewPlacementController {
 
       return res.render('match/newPlacement/new', {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
-        backlink,
+        backlink: adminPaths.admin.placementRequests.show({ placementRequestId }),
         pageHeading: 'New placement details',
         errors,
         errorSummary,
@@ -94,8 +92,6 @@ export default class NewPlacementController {
       const { placementRequestId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const backlink = matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId })
-
       const placementRequest = await this.placementRequestService.getPlacementRequest(
         req.user.token,
         placementRequestId,
@@ -109,7 +105,7 @@ export default class NewPlacementController {
 
       return res.render('match/newPlacement/check-criteria', {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
-        backlink,
+        backlink: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }),
         pageHeading: 'Check the placement criteria',
         criteriaSummary: criteriaSummaryList(placementRequest),
         criteriaChangedRadioItems: convertKeyValuePairToRadioItems(
@@ -174,8 +170,6 @@ export default class NewPlacementController {
       const { placementRequestId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const backlink = matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId })
-
       const placementRequest = await this.placementRequestService.getPlacementRequest(
         req.user.token,
         placementRequestId,
@@ -189,7 +183,7 @@ export default class NewPlacementController {
 
       return res.render('match/newPlacement/update-criteria', {
         contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
-        backlink,
+        backlink: matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId }),
         pageHeading: 'Update placement criteria',
         apTypeRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
