@@ -86,7 +86,7 @@ describe('SessionClient', () => {
       }
 
       nock(config.apis.communityPaybackApi.url)
-        .get(`/projects/allocations?${queryString}`)
+        .get(`/projects/session-search?${queryString}`)
         .matchHeader('authorization', 'Bearer test-system-token')
         .reply(200, sessions)
 

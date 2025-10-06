@@ -13,7 +13,7 @@ export default {
     teams: providersPath.path(':providerId/teams'),
   },
   projects: {
-    sessions: projectsPath.path('allocations'),
+    sessions: projectsPath.path('session-search'),
     sessionAppointments: projectsPath.path(':projectId').path('appointments'),
   },
   referenceData: {
