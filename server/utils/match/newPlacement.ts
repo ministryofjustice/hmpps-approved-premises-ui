@@ -79,13 +79,20 @@ export const criteriaSummaryList = (placementRequest: Cas1PlacementRequestDetail
 })
 
 export const newPlacementSummaryList = (
-  searchState: SpaceSearchFormData,
+  {
+    apType,
+    apCriteria,
+    roomCriteria,
+    newPlacementArrivalDate,
+    newPlacementDepartureDate,
+    newPlacementReason,
+  }: SpaceSearchFormData,
   currentPlacement?: Cas1SpaceBookingSummary,
 ): SummaryList => {
-  if (!searchState.newPlacementReason) return undefined
+  if (!newPlacementReason) return undefined
 
-  const arrivalDateIso = DateFormats.datepickerInputToIsoString(searchState.newPlacementArrivalDate)
-  const departureDateIso = DateFormats.datepickerInputToIsoString(searchState.newPlacementDepartureDate)
+  const arrivalDateIso = DateFormats.datepickerInputToIsoString(newPlacementArrivalDate)
+  const departureDateIso = DateFormats.datepickerInputToIsoString(newPlacementDepartureDate)
 
   return {
     rows: [
@@ -96,18 +103,18 @@ export const newPlacementSummaryList = (
         'Length of stay',
         DateFormats.formatDuration(DateFormats.durationBetweenDates(arrivalDateIso, departureDateIso).number),
       ),
-      summaryListItem('Type of AP', apTypeCriteriaLabels[searchState.apType]),
+      summaryListItem('Type of AP', apTypeCriteriaLabels[apType]),
       summaryListItem(
         'AP requirements',
-        characteristicsBulletList(searchState.apCriteria, { labels: spaceSearchCriteriaApLevelLabels }),
+        characteristicsBulletList(apCriteria, { labels: spaceSearchCriteriaApLevelLabels }),
         'html',
       ),
       summaryListItem(
         'Room requirements',
-        characteristicsBulletList(searchState.roomCriteria, { labels: roomCharacteristicMap }),
+        characteristicsBulletList(roomCriteria, { labels: roomCharacteristicMap }),
         'html',
       ),
-      summaryListItem('Reason', searchState.newPlacementReason, 'textBlock'),
+      summaryListItem('Reason', newPlacementReason, 'textBlock'),
     ].filter(Boolean),
   }
 }
