@@ -102,12 +102,12 @@ describe('adminIdentityBar', () => {
         expect(adminActionsResult).not.toContainAction(actionChangePlacement)
       })
 
-      it('should return an action to create a new placement if the user has the create placement permission', () => {
+      it('should return an action to create a new placement if the user has the create additional space booking permission', () => {
         const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
 
         const { adminActionsResult, actionCreateNewPlacement } = setup({
           placementRequestDetail,
-          permissions: ['cas1_space_booking_create'],
+          permissions: ['cas1_space_booking_create_additional'],
         })
 
         expect(adminActionsResult).toContainAction(actionCreateNewPlacement)

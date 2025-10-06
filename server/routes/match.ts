@@ -38,30 +38,30 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.v2Match.placementRequests.newPlacement.new.pattern, newPlacementController.new(), {
     auditEvent: 'NEW_PLACEMENT',
-    allowedPermissions: ['cas1_space_booking_create'],
+    allowedPermissions: ['cas1_space_booking_create_additional'],
   })
   post(paths.v2Match.placementRequests.newPlacement.new.pattern, newPlacementController.saveNew(), {
     auditEvent: 'NEW_PLACEMENT_SAVE',
-    allowedPermissions: ['cas1_space_booking_create'],
+    allowedPermissions: ['cas1_space_booking_create_additional'],
   })
   get(paths.v2Match.placementRequests.newPlacement.checkCriteria.pattern, newPlacementController.checkCriteria(), {
     auditEvent: 'NEW_PLACEMENT_CHECK_CRITERIA',
-    allowedPermissions: ['cas1_space_booking_create'],
+    allowedPermissions: ['cas1_space_booking_create_additional'],
   })
   post(paths.v2Match.placementRequests.newPlacement.checkCriteria.pattern, newPlacementController.saveCheckCriteria(), {
     auditEvent: 'NEW_PLACEMENT_CHECK_CRITERIA_SAVE',
-    allowedPermissions: ['cas1_space_booking_create'],
+    allowedPermissions: ['cas1_space_booking_create_additional'],
   })
   get(paths.v2Match.placementRequests.newPlacement.updateCriteria.pattern, newPlacementController.updateCriteria(), {
     auditEvent: 'NEW_PLACEMENT_UPDATE_CRITERIA',
-    allowedPermissions: ['cas1_space_booking_create'],
+    allowedPermissions: ['cas1_space_booking_create_additional'],
   })
   post(
     paths.v2Match.placementRequests.newPlacement.updateCriteria.pattern,
     newPlacementController.saveUpdateCriteria(),
     {
       auditEvent: 'NEW_PLACEMENT_UPDATE_CRITERIA_SAVE',
-      allowedPermissions: ['cas1_space_booking_create'],
+      allowedPermissions: ['cas1_space_booking_create_additional'],
     },
   )
 
