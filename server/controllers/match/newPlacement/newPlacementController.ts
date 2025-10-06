@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express'
+import { Request, Response, RequestHandler } from 'express'
 
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import adminPaths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
@@ -21,15 +22,32 @@ export default class NewPlacementController {
     this.formData = new MultiPageFormManager('spaceSearch')
   }
 
-  new(): RequestHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const { placementRequestId } = req.params
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+  private async getViewParameters(req: Request) {
+    const { placementRequestId } = req.params
+    const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+    const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, placementRequestId)
+    const contextKeyDetails = personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level)
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(
-        req.user.token,
-        placementRequestId,
-      )
+    return { placementRequestId, placementRequest, contextKeyDetails, errors, errorSummary, userInput }
+  }
+
+  private getSearchStateOrRedirect(req: Request, res: Response): SpaceSearchFormData {
+    const { placementRequestId } = req.params
+
+    const searchState = this.formData.get(placementRequestId, req.session)
+
+    if (!searchState) {
+      res.redirect(matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }))
+      return {}
+    }
+
+    return searchState
+  }
+
+  new(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { placementRequestId, placementRequest, contextKeyDetails, errors, errorSummary, userInput } =
+        await this.getViewParameters(req)
 
       const searchState =
         this.formData.get(placementRequestId, req.session) ||
@@ -46,7 +64,7 @@ export default class NewPlacementController {
       }
 
       return res.render('match/newPlacement/new', {
-        contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
+        contextKeyDetails,
         backlink: adminPaths.admin.placementRequests.show({ placementRequestId }),
         pageHeading: 'New placement details',
         errors,
@@ -57,9 +75,11 @@ export default class NewPlacementController {
   }
 
   saveNew(): RequestHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const { placementRequestId } = req.params
-      const { body } = req
+    return async (req: Request, res: Response) => {
+      const {
+        params: { placementRequestId },
+        body,
+      } = req
 
       try {
         validateNewPlacement(body)
@@ -88,23 +108,13 @@ export default class NewPlacementController {
   }
 
   checkCriteria(): RequestHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const { placementRequestId } = req.params
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-
-      const placementRequest = await this.placementRequestService.getPlacementRequest(
-        req.user.token,
-        placementRequestId,
-      )
-
-      const searchState = this.formData.get(placementRequestId, req.session)
-
-      if (!searchState) {
-        return res.redirect(matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }))
-      }
+    return async (req: Request, res: Response) => {
+      const { placementRequestId, placementRequest, contextKeyDetails, errors, errorSummary, userInput } =
+        await this.getViewParameters(req)
+      const searchState = this.getSearchStateOrRedirect(req, res)
 
       return res.render('match/newPlacement/check-criteria', {
-        contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
+        contextKeyDetails,
         backlink: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }),
         pageHeading: 'Check the placement criteria',
         criteriaSummary: criteriaSummaryList(placementRequest),
@@ -120,13 +130,13 @@ export default class NewPlacementController {
   }
 
   saveCheckCriteria(): RequestHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const { placementRequestId } = req.params
-      const { body } = req
+    return async (req: Request, res: Response) => {
+      const {
+        params: { placementRequestId },
+        body: { criteriaChanged },
+      } = req
 
       try {
-        const { criteriaChanged } = body
-
         if (!criteriaChanged) {
           throw new ValidationError({ criteriaChanged: 'Select if the criteria have changed' })
         }
@@ -166,23 +176,13 @@ export default class NewPlacementController {
   }
 
   updateCriteria(): RequestHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const { placementRequestId } = req.params
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-
-      const placementRequest = await this.placementRequestService.getPlacementRequest(
-        req.user.token,
-        placementRequestId,
-      )
-
-      const searchState = this.formData.get(placementRequestId, req.session)
-
-      if (!searchState) {
-        return res.redirect(matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }))
-      }
+    return async (req: Request, res: Response) => {
+      const { placementRequestId, contextKeyDetails, errors, errorSummary, userInput } =
+        await this.getViewParameters(req)
+      const searchState = this.getSearchStateOrRedirect(req, res)
 
       return res.render('match/newPlacement/update-criteria', {
-        contextKeyDetails: personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level),
+        contextKeyDetails,
         backlink: matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId }),
         pageHeading: 'Update placement criteria',
         apTypeRadioItems: apTypeRadioItems(searchState.apType),
@@ -203,12 +203,13 @@ export default class NewPlacementController {
   }
 
   saveUpdateCriteria(): RequestHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const { placementRequestId } = req.params
+    return async (req: Request, res: Response) => {
+      const {
+        params: { placementRequestId },
+        body: { apType, apCriteria, roomCriteria },
+      } = req
 
       try {
-        const { apType, apCriteria, roomCriteria } = req.body
-
         if (!apType) {
           throw new ValidationError({ apType: 'Select the type of AP' })
         }
