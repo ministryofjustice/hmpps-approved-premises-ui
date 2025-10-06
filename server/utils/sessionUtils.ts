@@ -1,8 +1,10 @@
-import { AppointmentSummaryDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import { AppointmentSummaryDto, ProjectAllocationsDto } from '../@types/shared'
+import Offender from '../models/offender'
 import paths from '../paths'
 import DateTimeFormats from './dateTimeUtils'
 import HtmlUtils from './hmtlUtils'
 import { createQueryString } from './utils'
+import { GovUKTableRow } from '../@types/user-defined'
 
 export default class SessionUtils {
   static sessionResultTableRows(sessions: ProjectAllocationsDto) {
@@ -26,26 +28,33 @@ export default class SessionUtils {
 
   static sessionListTableRows(appointmentSummaries: AppointmentSummaryDto[]) {
     return appointmentSummaries.map(appointment => {
-      const offender = appointment.offender as OffenderFullDto
-      const offenderName = `${offender.forename} ${offender.surname}`
+      const offender = new Offender(appointment.offender)
       const minutesRemaining = appointment.requirementMinutes - appointment.completedMinutes
-      const actionContent = `Update ${HtmlUtils.getHiddenText(offenderName)}`
 
       return [
-        { text: offenderName },
-        { text: appointment.offender.crn },
+        { text: offender.name },
+        { text: offender.crn },
         { text: DateTimeFormats.minutesToHoursAndMinutes(appointment.requirementMinutes) },
         { text: DateTimeFormats.minutesToHoursAndMinutes(appointment.completedMinutes) },
         { text: DateTimeFormats.minutesToHoursAndMinutes(minutesRemaining) },
         { html: SessionUtils.getStatusTag() },
-        {
-          html: HtmlUtils.getAnchor(
-            actionContent,
-            paths.appointments.update({ appointmentId: appointment.id.toString() }),
-          ),
-        },
+        SessionUtils.getActionRow(appointment.id, offender),
       ]
     })
+  }
+
+  private static getActionRow(appointmentId: number, offender: Offender): GovUKTableRow {
+    if (offender.isLimited) {
+      return { text: '' }
+    }
+
+    const actionContent = `Update ${HtmlUtils.getHiddenText(offender.name)}`
+    const linkHtml = HtmlUtils.getAnchor(
+      actionContent,
+      paths.appointments.update({ appointmentId: appointmentId.toString() }),
+    )
+
+    return { html: linkHtml }
   }
 
   private static getStatusTag() {

@@ -25,7 +25,7 @@ export const mockOffender: OffenderFullDto = {
   forename: 'John',
   surname: 'Smith',
   crn: 'CRN123',
-  objectType: 'OffenderFull',
+  objectType: 'Full',
   middleNames: [],
 }
 
