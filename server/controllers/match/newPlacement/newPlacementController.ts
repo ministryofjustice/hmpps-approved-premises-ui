@@ -53,15 +53,7 @@ export default class NewPlacementController {
         this.formData.get(placementRequestId, req.session) ||
         (await this.formData.update(placementRequestId, req.session, initialiseSearchState(placementRequest)))
 
-      const formValues = {
-        arrivalDate: searchState.arrivalDate
-          ? DateFormats.isoDateToUIDate(searchState.arrivalDate, { format: 'datePicker' })
-          : userInput.arrivalDate,
-        departureDate: searchState.departureDate
-          ? DateFormats.isoDateToUIDate(searchState.departureDate, { format: 'datePicker' })
-          : userInput.departureDate,
-        reason: searchState.newPlacementReason || userInput.reason,
-      }
+      const formValues = { ...searchState, ...userInput }
 
       return res.render('match/newPlacement/new', {
         contextKeyDetails,
@@ -84,15 +76,14 @@ export default class NewPlacementController {
       try {
         validateNewPlacement(body)
 
-        const arrivalDate = DateFormats.datepickerInputToIsoString(body.arrivalDate)
-        const departureDate = DateFormats.datepickerInputToIsoString(body.departureDate)
+        const [arrivalDate, departureDate] = [body.newPlacementArrivalDate, body.newPlacementDepartureDate].map(
+          DateFormats.datepickerInputToIsoString,
+        )
 
         await this.formData.update(placementRequestId, req.session, {
-          arrivalDate,
-          departureDate,
+          ...body,
           startDate: arrivalDate,
           durationDays: DateFormats.durationBetweenDates(departureDate, arrivalDate).number,
-          newPlacementReason: body.reason,
         })
 
         res.redirect(matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId }))

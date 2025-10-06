@@ -129,7 +129,7 @@ describe('spaceSearchController', () => {
         expect(response.render).toHaveBeenCalledWith(
           'match/search',
           expect.objectContaining({
-            newPlacementCriteriaChanged: false,
+            newPlacementCriteriaChanged: 'no',
             newPlacementReason: 'Reason for the new placement',
             newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
           }),
@@ -137,8 +137,8 @@ describe('spaceSearchController', () => {
       })
 
       it.each([
-        ['have changed', true, matchPaths.v2Match.placementRequests.newPlacement.updateCriteria],
-        ['have not changed', false, matchPaths.v2Match.placementRequests.newPlacement.checkCriteria],
+        ['have changed', 'yes', matchPaths.v2Match.placementRequests.newPlacement.updateCriteria],
+        ['have not changed', 'no', matchPaths.v2Match.placementRequests.newPlacement.checkCriteria],
       ])(
         'renders the correct back link if the criteria %s',
         async (_, newPlacementCriteriaChanged, expectedBackLink) => {

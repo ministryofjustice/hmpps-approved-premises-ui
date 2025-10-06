@@ -6,9 +6,9 @@ import { cas1PlacementRequestDetailFactory, cas1SpaceBookingSummaryFactory } fro
 describe('new placement utils', () => {
   describe('validateNewPlacement', () => {
     const validBody = {
-      arrivalDate: '01/01/2026',
-      departureDate: '01/01/2027',
-      reason: 'foo',
+      newPlacementArrivalDate: '01/01/2026',
+      newPlacementDepartureDate: '01/01/2027',
+      newPlacementReason: 'foo',
     }
 
     beforeEach(() => {
@@ -18,33 +18,33 @@ describe('new placement utils', () => {
     it.each([
       [
         'fields are empty',
-        { arrivalDate: '', departureDate: '', reason: '' },
+        { newPlacementArrivalDate: '', newPlacementDepartureDate: '', newPlacementReason: '' },
         {
-          arrivalDate: 'Enter or select an arrival date',
-          departureDate: 'Enter or select a departure date',
-          reason: 'Enter a reason',
+          newPlacementArrivalDate: 'Enter or select an arrival date',
+          newPlacementDepartureDate: 'Enter or select a departure date',
+          newPlacementReason: 'Enter a reason',
         },
       ],
       [
         'the arrival and end dates are invalid',
-        { arrivalDate: '32/2/2026', departureDate: 'not a date' },
+        { newPlacementArrivalDate: '32/2/2026', newPlacementDepartureDate: 'not a date' },
         {
-          arrivalDate: 'Enter a valid arrival date',
-          departureDate: 'Enter a valid departure date',
+          newPlacementArrivalDate: 'Enter a valid arrival date',
+          newPlacementDepartureDate: 'Enter a valid departure date',
         },
       ],
       [
         'the arrival and departure dates are in the past',
-        { arrivalDate: '01/01/2024', departureDate: '01/01/2025' },
+        { newPlacementArrivalDate: '01/01/2024', newPlacementDepartureDate: '01/01/2025' },
         {
-          arrivalDate: 'The arrival date must be in the future',
-          departureDate: 'The departure date must be in the future',
+          newPlacementArrivalDate: 'The arrival date must be in the future',
+          newPlacementDepartureDate: 'The departure date must be in the future',
         },
       ],
       [
         'the departure date is before the start date',
-        { departureDate: '12/12/2025' },
-        { departureDate: 'The departure date must be after the arrival date' },
+        { newPlacementDepartureDate: '12/12/2025' },
+        { newPlacementDepartureDate: 'The departure date must be after the arrival date' },
       ],
     ])('throws an error when %s', (_, body, expectedErrors) => {
       const fullBody = { ...validBody, ...body }
@@ -102,8 +102,8 @@ describe('new placement utils', () => {
 
   describe('newPlacementSummaryList', () => {
     const searchState: SpaceSearchFormData = {
-      arrivalDate: '2026-04-14',
-      departureDate: '2026-05-07',
+      newPlacementArrivalDate: '14/4/2026',
+      newPlacementDepartureDate: '7/5/2026',
       newPlacementReason: 'Because',
       apCriteria: ['acceptsSexOffenders'],
       roomCriteria: ['isArsonSuitable', 'isWheelchairDesignated'],
@@ -148,8 +148,6 @@ describe('new placement utils', () => {
 
     it('returns undefined if no new placement details are present', () => {
       const searchStateNoNewPlacement: SpaceSearchFormData = {
-        arrivalDate: '2026-04-14',
-        departureDate: '2026-05-07',
         apCriteria: ['acceptsSexOffenders'],
         roomCriteria: ['isArsonSuitable', 'isWheelchairDesignated'],
         apType: 'isESAP',

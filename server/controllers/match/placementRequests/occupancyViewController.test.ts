@@ -5,6 +5,7 @@ import { when } from 'jest-when'
 import { addDays } from 'date-fns'
 import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import { PlacementRequestService, PlacementService, PremisesService, SessionService } from '../../../services'
 import {
   cas1PlacementRequestDetailFactory,
@@ -273,11 +274,11 @@ describe('OccupancyViewController', () => {
     it('should show the new placement summary if the user is booking a new placement', async () => {
       const newPlacementArrivalDate = faker.date.future()
       const newPlacementDepartureDate = faker.date.future({ refDate: newPlacementArrivalDate })
-      const searchStateWithNewPlacement = {
+      const searchStateWithNewPlacement: SpaceSearchFormData = {
         ...searchState,
         arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
         departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
-        newPlacementCriteriaChanged: false,
+        newPlacementCriteriaChanged: 'no',
         newPlacementReason: 'Some reason',
       }
       request.session.multiPageFormData.spaceSearch = {

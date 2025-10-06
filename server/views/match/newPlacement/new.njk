@@ -26,8 +26,8 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ mojDatePicker({
-                    id: "arrivalDate",
-                    name: "arrivalDate",
+                    id: "newPlacementArrivalDate",
+                    name: "newPlacementArrivalDate",
                     label: {
                         text: "What is the expected arrival date?",
                         classes: "govuk-label--m"
@@ -35,13 +35,13 @@
                     hint: {
                         text: "For example, 17/5/2026"
                     },
-                    value: arrivalDate,
-                    errorMessage: errors.arrivalDate
+                    value: newPlacementArrivalDate,
+                    errorMessage: errors.newPlacementArrivalDate
                 }) }}
 
                 {{ mojDatePicker({
-                    id: "departureDate",
-                    name: "departureDate",
+                    id: "newPlacementDepartureDate",
+                    name: "newPlacementDepartureDate",
                     label: {
                         text: "What is the expected departure date?",
                         classes: "govuk-label--m"
@@ -49,13 +49,13 @@
                     hint: {
                         text: "For example, 23/6/2026"
                     },
-                    value: departureDate,
-                    errorMessage: errors.departureDate
+                    value: newPlacementDepartureDate,
+                    errorMessage: errors.newPlacementDepartureDate
                 }) }}
 
                 {{ govukTextarea({
-                    id: "reason",
-                    name: "reason",
+                    id: "newPlacementReason",
+                    name: "newPlacementReason",
                     label: {
                         text: "What is the reason for the new placement?",
                         classes: "govuk-label--m"
@@ -63,8 +63,8 @@
                     hint: {
                         text: "If the person is being transferred to a new AP, include the name of the person that requested the transfer"
                     },
-                    value: reason,
-                    errorMessage: errors.reason
+                    value: newPlacementReason,
+                    errorMessage: errors.newPlacementReason
                 }) }}
 
                 {{ govukButton({

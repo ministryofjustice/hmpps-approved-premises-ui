@@ -21,7 +21,6 @@ import {
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import { applyApTypeToAssessApType, type ApTypeSpecialist } from '../../../utils/placementCriteriaUtils'
-import { DateFormats } from '../../../utils/dateUtils'
 
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
@@ -71,6 +70,8 @@ describe('newPlacementController', () => {
 
     it('renders the new placement template with the session search state', async () => {
       const searchState = spaceSearchStateFactory.build({
+        newPlacementArrivalDate: '3/11/2025',
+        newPlacementDepartureDate: '4/1/2026',
         newPlacementReason: 'Reason for the new placement',
       })
       request.session.multiPageFormData = {
@@ -81,9 +82,7 @@ describe('newPlacementController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/newPlacement/new', {
         ...defaultRenderParameters,
-        arrivalDate: DateFormats.isoDateToUIDate(searchState.arrivalDate, { format: 'datePicker' }),
-        departureDate: DateFormats.isoDateToUIDate(searchState.departureDate, { format: 'datePicker' }),
-        reason: searchState.newPlacementReason,
+        ...searchState,
       })
     })
 
@@ -92,7 +91,10 @@ describe('newPlacementController', () => {
 
       await newPlacementController.new()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('match/newPlacement/new', defaultRenderParameters)
+      expect(response.render).toHaveBeenCalledWith('match/newPlacement/new', {
+        ...defaultRenderParameters,
+        ...expectedSearchState,
+      })
       expect(newPlacementController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
         request.session,
@@ -108,16 +110,16 @@ describe('newPlacementController', () => {
 
     it('saves the search state and redirects to the Check placement criteria page if the form is valid', async () => {
       const validBody = {
-        arrivalDate: '3/11/2025',
-        departureDate: '4/1/2026',
-        reason: 'Area now excluded',
+        newPlacementArrivalDate: '3/11/2025',
+        newPlacementDepartureDate: '4/1/2026',
+        newPlacementReason: 'Area now excluded',
       }
 
       await newPlacementController.saveNew()({ ...request, body: validBody }, response, next)
 
       expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
-        arrivalDate: '2025-11-03',
-        departureDate: '2026-01-04',
+        newPlacementArrivalDate: '3/11/2025',
+        newPlacementDepartureDate: '4/1/2026',
         startDate: '2025-11-03',
         durationDays: 62,
         newPlacementReason: 'Area now excluded',
@@ -142,9 +144,9 @@ describe('newPlacementController', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
-        arrivalDate: 'Enter or select an arrival date',
-        departureDate: 'Enter or select a departure date',
-        reason: 'Enter a reason',
+        newPlacementArrivalDate: 'Enter or select an arrival date',
+        newPlacementDepartureDate: 'Enter or select a departure date',
+        newPlacementReason: 'Enter a reason',
       })
       expect(newPlacementController.formData.update).not.toHaveBeenCalled()
     })

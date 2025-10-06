@@ -23,11 +23,12 @@ import OccupancyViewPage from '../../pages/match/occupancyViewPage'
 import BookASpacePage from '../../pages/match/bookASpacePage'
 
 context('New Placement', () => {
-  const newPlacementArrivalDate = faker.date.future()
-  const newPlacementDepartureDate = addDays(newPlacementArrivalDate, 10)
-  const arrivalDateValue = DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'datePicker' })
-  const departureDateValue = DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' })
-  const reason = faker.word.words(10)
+  const newArrivalDate = faker.date.future()
+  const newDepartureDate = addDays(newArrivalDate, 10)
+
+  const newPlacementArrivalDate = DateFormats.dateObjtoUIDate(newArrivalDate, { format: 'datePicker' })
+  const newPlacementDepartureDate = DateFormats.dateObjtoUIDate(newDepartureDate, { format: 'datePicker' })
+  const newPlacementReason = faker.word.words(10)
 
   const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking().build({
     person: personFactory.build({ type: 'FullPerson', name: 'Dave Watts' }),
@@ -38,8 +39,8 @@ context('New Placement', () => {
   const chosenResult = spaceSearchResults.results[1]
   const premises = cas1PremisesFactory.build({ ...chosenResult.premises, localRestrictions: [] })
   const capacity = cas1PremiseCapacityFactory.build({
-    startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
-    endDate: DateFormats.dateObjToIsoDate(addDays(newPlacementDepartureDate, -1)),
+    startDate: DateFormats.dateObjToIsoDate(newArrivalDate),
+    endDate: DateFormats.dateObjToIsoDate(addDays(newDepartureDate, -1)),
   })
   const newPlacement = cas1SpaceBookingFactory.upcoming().build({
     placementRequestId: placementRequest.id,
@@ -80,14 +81,21 @@ context('New Placement', () => {
     newPlacementPage.clickButton('Save and continue')
 
     THEN('I should see error messages')
-    newPlacementPage.shouldShowErrorMessagesForFields(['arrivalDate', 'departureDate', 'reason'], {
-      arrivalDate: 'Enter or select an arrival date',
-      departureDate: 'Enter or select a departure date',
-      reason: 'Enter a reason',
-    })
+    newPlacementPage.shouldShowErrorMessagesForFields(
+      ['newPlacementArrivalDate', 'newPlacementDepartureDate', 'newPlacementReason'],
+      {
+        newPlacementArrivalDate: 'Enter or select an arrival date',
+        newPlacementDepartureDate: 'Enter or select a departure date',
+        newPlacementReason: 'Enter a reason',
+      },
+    )
 
     WHEN('I complete the form')
-    newPlacementPage.completeForm({ arrivalDate: arrivalDateValue, departureDate: departureDateValue, reason })
+    newPlacementPage.completeForm({
+      newPlacementArrivalDate,
+      newPlacementDepartureDate,
+      newPlacementReason,
+    })
     newPlacementPage.clickButton('Save and continue')
 
     THEN('I should see the page to check placement criteria')
@@ -109,11 +117,11 @@ context('New Placement', () => {
     const searchPage = Page.verifyOnPage(SearchPage)
     const expectedSearchFormData: SpaceSearchFormData = {
       postcode: placementRequest.location,
-      startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
-      arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
-      departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
-      newPlacementReason: reason,
-      newPlacementCriteriaChanged: false,
+      startDate: DateFormats.dateObjToIsoDate(newArrivalDate),
+      newPlacementArrivalDate: DateFormats.dateObjToIsoDate(newArrivalDate),
+      departureDate: DateFormats.dateObjToIsoDate(newDepartureDate),
+      newPlacementReason,
+      newPlacementCriteriaChanged: 'no',
       apType: 'normal',
       apCriteria: ['isCatered'],
       roomCriteria: ['isWheelchairDesignated', 'isStepFreeDesignated'],
@@ -137,7 +145,11 @@ context('New Placement', () => {
     Page.verifyOnPage(NewPlacementPage, placementRequest)
 
     AND('the form should be populated')
-    newPlacementPage.shouldBePopulated({ arrivalDate: arrivalDateValue, departureDate: departureDateValue, reason })
+    newPlacementPage.shouldBePopulated({
+      newPlacementArrivalDate,
+      newPlacementDepartureDate,
+      newPlacementReason,
+    })
 
     WHEN('I click the back link')
     newPlacementPage.clickBack()
@@ -152,7 +164,11 @@ context('New Placement', () => {
     Page.verifyOnPage(NewPlacementPage, placementRequest)
 
     AND('the form should be populated')
-    newPlacementPage.shouldBePopulated({ arrivalDate: arrivalDateValue, departureDate: departureDateValue, reason })
+    newPlacementPage.shouldBePopulated({
+      newPlacementArrivalDate,
+      newPlacementDepartureDate,
+      newPlacementReason,
+    })
 
     WHEN('I submit the form')
     newPlacementPage.clickButton('Save and continue')
@@ -182,11 +198,11 @@ context('New Placement', () => {
     Page.verifyOnPage(SearchPage)
     const expectedSearchFormDataAfterUpdate: SpaceSearchFormData = {
       postcode: placementRequest.location,
-      startDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
-      arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
-      departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
-      newPlacementReason: reason,
-      newPlacementCriteriaChanged: false,
+      startDate: DateFormats.dateObjToIsoDate(newArrivalDate),
+      newPlacementArrivalDate,
+      newPlacementDepartureDate,
+      newPlacementReason,
+      newPlacementCriteriaChanged: 'no',
       apType: 'isPIPE',
       apCriteria: ['acceptsChildSexOffenders'],
       roomCriteria: ['isArsonSuitable'],
@@ -202,10 +218,10 @@ context('New Placement', () => {
     const occupancyViewPage = Page.verifyOnPage(OccupancyViewPage, chosenResult.premises.name)
     occupancyViewPage.shouldShowNewPlacementDetails(expectedSearchFormDataAfterUpdate)
 
-    AND('The dates should already be completed in the form')
-    occupancyViewPage.shouldHaveFormPopulated(
-      DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
-      DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
+    WHEN('I submit the new placement dates')
+    occupancyViewPage.completeForm(
+      DateFormats.dateObjToIsoDate(newArrivalDate),
+      DateFormats.dateObjToIsoDate(newDepartureDate),
     )
 
     WHEN('I submit the form')
@@ -216,10 +232,10 @@ context('New Placement', () => {
     confirmBookingPage.shouldShowBookingDetails(
       placementRequest,
       chosenResult.premises,
-      expectedSearchFormDataAfterUpdate.arrivalDate,
-      expectedSearchFormDataAfterUpdate.departureDate,
+      DateFormats.dateObjToIsoDate(newArrivalDate),
+      DateFormats.dateObjToIsoDate(newDepartureDate),
       expectedSearchFormDataAfterUpdate.roomCriteria,
-      reason,
+      newPlacementReason,
     )
 
     WHEN('I confirm the new placement')

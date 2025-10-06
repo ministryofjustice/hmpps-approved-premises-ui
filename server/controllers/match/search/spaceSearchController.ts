@@ -58,9 +58,10 @@ export default class SpaceSearchController {
       let backlinkLabel = 'Back to placement request'
 
       if (searchState.newPlacementReason) {
-        backlink = searchState.newPlacementCriteriaChanged
-          ? matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({ placementRequestId })
-          : matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId })
+        backlink =
+          searchState.newPlacementCriteriaChanged === 'yes'
+            ? matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({ placementRequestId })
+            : matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId })
         backlinkLabel = 'Back'
       }
 
