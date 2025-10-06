@@ -887,4 +887,8 @@ export default class Page {
   shouldShowNewPlacementDetails(searchState: SpaceSearchFormData) {
     this.shouldContainSummaryListItems(newPlacementSummaryList(searchState).rows)
   }
+
+  shouldNotShow(text: string, selector: string = 'body') {
+    cy.get(selector).contains(text).should('not.exist')
+  }
 }

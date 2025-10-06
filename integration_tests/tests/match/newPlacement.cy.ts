@@ -210,13 +210,19 @@ context('New Placement', () => {
     searchPage.shouldShowNewPlacementDetails(expectedSearchFormDataAfterUpdate)
     searchPage.shouldShowSearchParametersInInputs(expectedSearchFormDataAfterUpdate)
 
-    WHEN('I click on a result')
+    AND('it should not show an option to mark as unable to match')
+    searchPage.shouldNotShow('Mark this case as unable to book')
+    searchPage.shouldNotShow('Unable to book', 'button')
 
+    WHEN('I click on a result')
     searchPage.clickSearchResult(chosenResult)
 
     THEN('I should see the occupancy view for the premises with the new placement information')
     const occupancyViewPage = Page.verifyOnPage(OccupancyViewPage, chosenResult.premises.name)
     occupancyViewPage.shouldShowNewPlacementDetails(expectedSearchFormDataAfterUpdate)
+
+    AND('it should not show an option to mark as unable to match')
+    searchPage.shouldNotShow('Mark as unable to book', 'a')
 
     WHEN('I submit the new placement dates')
     occupancyViewPage.completeForm(
