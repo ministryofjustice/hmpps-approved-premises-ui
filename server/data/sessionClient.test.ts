@@ -22,8 +22,8 @@ describe('SessionClient', () => {
     jest.resetAllMocks()
   })
 
-  describe('getSessions', () => {
-    it('should make a GET request to the sessions path using user token and return the response body', async () => {
+  describe('find', () => {
+    it('should make a GET request to the find sessions path using user token and return the response body', async () => {
       const projectId = '1'
       const date = '2026-01-01'
       const queryString = createQueryString({ date })
@@ -61,20 +61,20 @@ describe('SessionClient', () => {
     })
   })
 
-  describe('find', () => {
+  describe('getSessions', () => {
     it('should make a GET request to the sessions path using user token and return the response body', async () => {
       const startDate = '2026-01-01'
       const endDate = '2026-05-01'
-      const teamId = 1
+      const teamCode = 'XRTC123'
 
-      const queryString = createQueryString({ startDate, endDate, teamId })
+      const queryString = createQueryString({ startDate, endDate, teamCode })
 
       const sessions = {
         allocations: [
           {
             id: 1,
             projectName: 'Community Garden Maintenance',
-            teamId,
+            teamId: 4,
             startDate,
             endDate,
             projectCode: '123',
@@ -92,7 +92,7 @@ describe('SessionClient', () => {
 
       const response = await sessionClient.getSessions({
         username: 'some-username',
-        teamId,
+        teamCode,
         startDate,
         endDate,
       })

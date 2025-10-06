@@ -13,8 +13,8 @@ export default {
     sessions: ProjectAllocationsDto
   }): SuperAgentRequest => {
     const queryParameters: Record<string, unknown> = {
-      teamId: {
-        equalTo: request.teamId.toString(),
+      teamCode: {
+        equalTo: request.teamCode,
       },
       startDate: {
         equalTo: request.startDate,
