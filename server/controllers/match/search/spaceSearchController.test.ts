@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { SpaceSearchFormData } from '@approved-premises/ui'
+import { SpaceSearchFormData, YesOrNo } from '@approved-premises/ui'
 import SpaceSearchController from './spaceSearchController'
 import {
   cas1PlacementRequestDetailFactory,
@@ -109,7 +109,7 @@ describe('spaceSearchController', () => {
       const searchStateWithNewPlacement = {
         ...searchState,
         newPlacementReason: 'Reason for the new placement',
-        newPlacementCriteriaChanged: false,
+        newPlacementCriteriaChanged: 'no' as YesOrNo,
       }
 
       beforeEach(() => {
