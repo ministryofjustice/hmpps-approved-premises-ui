@@ -1,0 +1,48 @@
+{
+  "review-application": [{ "Have you reviewed all of the application and documents provided?": "Yes" }],
+  "sufficient-information": [
+    {
+      "Is there enough information in the application for you to make a decision?": "Yes",
+      "What additional information is needed?": ""
+    }
+  ],
+  "suitability-assessment": [
+    {
+      "Does the application identify the risk factors that an Approved Premises (AP) placement can support?": "Yes",
+      "Does the application explain how an AP placement would be beneficial for risk management?": "Yes",
+      "Are there factors to consider regarding the location of placement?": "No",
+      "Is the move on plan sufficient?": "Yes"
+    },
+    { "Do you agree with the applicant's reason for submission outside of National Standards timescales?": "Yes" }
+  ],
+  "required-actions": [
+    {
+      "Are there any additional actions required by the probation practitioner to make a placement viable?": "No",
+      "Are any additional curfews or sign ins recommended?": "No",
+      "Are there concerns that the person poses a potentially unmanageable risk to staff or others?": "No",
+      "Are there any additional recommendations for the receiving AP manager?": "No"
+    }
+  ],
+  "make-a-decision": [
+    { "Decision": "Accept as suitable for an AP: Accept", "Decision rationale": "No rationale provided" }
+  ],
+  "matching-information": [
+    {
+      "What type of AP is required?": "Standard AP",
+      "Wheelchair accessible": "Not required",
+      "Suitable for active arson risk": "Not required",
+      "Single room": "Not required",
+      "Catering required": "Not required",
+      "Room suitable for a person with sexual offences": "Not required",
+      "Step-free access": "Required",
+      "En-suite bathroom": "Not required",
+      "Vulnerable to exploitation": "Not relevant",
+      "Sexual offences against an adult": "Not relevant",
+      "Sexual offences against children": "Not relevant",
+      "Non sexual offences against children": "Not relevant",
+      "Hate based offences": "Not relevant",
+      "Do you agree with the suggested length of stay?": "Yes"
+    }
+  ],
+  "check-your-answers": []
+}

@@ -1,3 +1,4 @@
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { ApprovedPremisesApplicationStatus as ApplicationStatus } from '../../../server/@types/shared'
 import {
   applicationFactory,
@@ -20,12 +21,12 @@ context('All applications', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as an applicant
+    GIVEN('I am signed in as an applicant')
     signIn('applicant')
   })
 
   it('lists all applications with pagination', () => {
-    // Given there are multiple pages of applications
+    GIVEN('there are multiple pages of applications')
     const page1Applications = cas1ApplicationSummaryFactory.buildList(10)
     const page2Applications = cas1ApplicationSummaryFactory.buildList(10)
     const page3Applications = cas1ApplicationSummaryFactory.buildList(10)
@@ -34,49 +35,49 @@ context('All applications', () => {
     cy.task('stubAllApplications', { applications: page2Applications, page: '2' })
     cy.task('stubAllApplications', { applications: page3Applications, page: '3' })
 
-    // When I access the applications dashboard
+    WHEN('I access the applications dashboard')
     const page1 = DashboardPage.visit(page1Applications)
 
-    // Then I should see the first result
+    THEN('I should see the first result')
     page1.shouldShowApplications()
 
-    // When I click to see the next page
+    WHEN('I click to see the next page')
     page1.clickNext()
     const page2 = new DashboardPage(page2Applications)
 
-    // Then the API should have received a request for the next page
+    THEN('the API should have received a request for the next page')
     cy.task('verifyDashboardRequest', { page: '2' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // And I should see the next page of applications
+    AND('I should see the next page of applications')
     page2.shouldShowApplications()
 
-    // When I click on a page number
+    WHEN('I click on a page number')
     page2.clickPageNumber('3')
     const page3 = new DashboardPage(page3Applications)
 
-    // Then the API should have received a request for the next page
+    THEN('the API should have received a request for the next page')
     cy.task('verifyDashboardRequest', { page: '3' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // Then I should see the applications for that page
+    THEN('I should see the applications for that page')
     page3.shouldShowApplications()
   })
 
   it('lists all applications for lao', () => {
-    // Given there is a page of application
+    GIVEN('there is a page of application')
     const page1Applications = cas1ApplicationSummaryFactory.buildList(1)
 
     page1Applications[0].person = restrictedPersonFactory.build()
 
     cy.task('stubAllApplications', { applications: page1Applications, page: '1' })
 
-    // When I access the applications dashboard
+    WHEN('I access the applications dashboard')
     const page1 = DashboardPage.visit(page1Applications)
 
-    // Then I should see the first result
+    THEN('I should see the first result')
     page1.shouldShowApplications()
   })
 
@@ -85,7 +86,7 @@ context('All applications', () => {
   })
 
   it('supports sorting by createdAt', () => {
-    // Given there is a page of applications
+    GIVEN('there is a page of applications')
     const applications = cas1ApplicationSummaryFactory.buildList(10)
 
     cy.task('stubAllApplications', { applications, page: '1' })
@@ -96,37 +97,37 @@ context('All applications', () => {
       sortDirection: 'asc',
     })
 
-    // When I access the applications dashboard
+    WHEN('I access the applications dashboard')
     const page = DashboardPage.visit(applications)
 
-    // Then I should see the first result
+    THEN('I should see the first result')
     page.shouldShowApplications()
 
-    // Then the API should have received a request for the sort
+    THEN('the API should have received a request for the sort')
     cy.task('verifyDashboardRequest', { page: '1', sortBy: 'createdAt', sortDirection: 'desc' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // When I sort by created at
+    WHEN('I sort by created at')
     page.clickSortBy('createdAt')
 
-    // Then the API should have received a request for the sort
+    THEN('the API should have received a request for the sort')
     cy.task('verifyDashboardRequest', { page: '1', sortBy: 'createdAt', sortDirection: 'desc' }).then(requests => {
       expect(requests).to.have.length(2)
     })
 
-    // And the page should show the sorted items
+    AND('the page should show the sorted items')
     page.shouldBeSortedByField('createdAt', 'descending')
 
-    // When I click the sort button again
+    WHEN('I click the sort button again')
     page.clickSortBy('createdAt')
 
-    // Then the API should have received a request for the sort
+    THEN('the API should have received a request for the sort')
     cy.task('verifyDashboardRequest', { page: '1', sortBy: 'createdAt', sortDirection: 'asc' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // And the page should show the sorted items
+    AND('the page should show the sorted items')
     page.shouldBeSortedByField('createdAt', 'ascending')
   })
 
@@ -135,7 +136,7 @@ context('All applications', () => {
   })
 
   it('supports filtering', () => {
-    // Given there is a page of applications
+    GIVEN('there is a page of applications')
     const applications = cas1ApplicationSummaryFactory.buildList(10)
     const statusFilter: ApplicationStatus = 'rejected'
     cy.task('stubAllApplications', { applications })
@@ -145,42 +146,42 @@ context('All applications', () => {
       searchOptions: { status: statusFilter },
     })
 
-    // When I access the applications dashboard
+    WHEN('I access the applications dashboard')
     let page = DashboardPage.visit(applications)
 
-    // Then I should see all of the applications
+    THEN('I should see all of the applications')
     page.shouldShowApplications()
 
-    // When I search by CRN or Name
+    WHEN('I search by CRN or Name')
     page.searchByCrnOrName('foo')
 
-    // Then the API should have received a request for the query
+    THEN('the API should have received a request for the query')
     cy.task('verifyDashboardRequest', { page: '1', searchOptions: { crnOrName: normaliseCrn('foo') } }).then(
       requests => {
         expect(requests).to.have.length.greaterThan(0)
       },
     )
 
-    // And I should see the search results that match that query
+    AND('I should see the search results that match that query')
     page = new DashboardPage([applications[1]])
     page.shouldShowApplications()
 
-    // When I search by status
+    WHEN('I search by status')
     page.searchByStatus(statusFilter)
 
-    // Then the API should have received a request for the query
+    THEN('the API should have received a request for the query')
     cy.task('verifyDashboardRequest', { page: '1', searchOptions: { status: statusFilter } }).then(requests => {
       expect(requests).to.have.length.greaterThan(0)
     })
 
-    // And I should see the search results that match that query
+    AND('I should see the search results that match that query')
     page = new DashboardPage([applications[2], applications[3]])
     page.shouldShowApplications()
 
-    // When I filter by application suitable
+    WHEN('I filter by application suitable')
     page.searchByStatus(applicationSuitableStatuses)
 
-    // then the API should have received a request for the query
+    THEN('the API should have received a request for the query')
     cy.task('verifyDashboardRequest', {
       page: '1',
       searchOptions: { status: applicationSuitableStatuses.toString() },
@@ -193,7 +194,7 @@ context('All applications', () => {
 
   it('request for placement for application status awaiting placement', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
-      // Given there is a page of applications
+      GIVEN('there is a page of applications')
       const applications = cas1ApplicationSummaryFactory.buildList(1, {
         status: 'awaitingPlacement',
         hasRequestsForPlacement: false,
@@ -201,7 +202,7 @@ context('All applications', () => {
       const applicationId = applications[0].id
       cy.task('stubAllApplications', { applications })
 
-      // And there is a placement application in the DB
+      AND('there is a placement application in the DB')
       const placementApplicationId = '123'
       const placementApplication = placementApplicationFactory.build({
         id: placementApplicationId,
@@ -219,22 +220,22 @@ context('All applications', () => {
       cy.task('stubPlacementApplication', placementApplication)
       cy.task('stubApplicationGet', { application: completedApplication })
 
-      // When I access the applications dashboard
+      WHEN('I access the applications dashboard')
       const page = DashboardPage.visit(applications)
 
-      // Then I should see all the applications
+      THEN('I should see all the applications')
       page.shouldShowApplications()
 
-      // And I should be able to click on request for placement
+      AND('I should be able to click on request for placement')
       page.clickRequestForPlacementLink()
 
-      // And I should be on placement request
+      AND('I should be on placement request')
       Page.verifyOnPage(CheckSentenceTypePage, placementApplicationId)
     })
   })
 
   it('navigate to request for placement tab for application with at least one request for placement', () => {
-    // Given there is a page of applications
+    GIVEN('there is a page of applications')
     const applications = cas1ApplicationSummaryFactory.buildList(1, {
       status: 'awaitingPlacement',
       hasRequestsForPlacement: true,
@@ -245,28 +246,28 @@ context('All applications', () => {
     cy.task('stubAllApplications', { applications: [application] })
     cy.task('stubApplicationGet', { application })
 
-    // And there is a request for placement in the DB
+    AND('there is a request for placement in the DB')
     const requestsForPlacement = requestForPlacementFactory.buildList(1)
     cy.task('stubApplicationRequestsForPlacement', {
       applicationId,
       requestsForPlacement,
     })
 
-    // When I access the applications dashboard
+    WHEN('I access the applications dashboard')
     const page = DashboardPage.visit([application])
 
-    // Then I should see all the applications
+    THEN('I should see all the applications')
     page.shouldShowApplications()
 
-    // And I should be able to click on request for placement
-    page.clickViewPlacementRequestsLink()
+    AND('I should be able to click on request for placement')
+    page.clickLink('View placement request(s)')
 
-    // And I should be on request for placement tab
-    page.shouldContainRequestAPlacementTab()
+    AND('I should be on request for placement tab')
+    page.shouldContainPlacementRequestTab()
   })
 
   const shouldSortByField = (field: string) => {
-    // Given there is a page of applications
+    GIVEN('there is a page of applications')
     const applications = cas1ApplicationSummaryFactory.buildList(10)
 
     cy.task('stubAllApplications', { applications, page: '1' })
@@ -283,32 +284,32 @@ context('All applications', () => {
       sortDirection: 'desc',
     })
 
-    // When I access the applications dashboard
+    WHEN('I access the applications dashboard')
     const page = DashboardPage.visit(applications)
 
-    // Then I should see the first result
+    THEN('I should see the first result')
     page.shouldShowApplications()
 
-    // When I sort by Tier
+    WHEN('I sort by Tier')
     page.clickSortBy(field)
 
-    // Then the API should have received a request for the sort
+    THEN('the API should have received a request for the sort')
     cy.task('verifyDashboardRequest', { page: '1', sortBy: field, sortDirection: 'asc' }).then(requests => {
       expect(requests).to.have.length.greaterThan(0)
     })
 
-    // And the page should show the sorted items
+    AND('the page should show the sorted items')
     page.shouldBeSortedByField(field, 'ascending')
 
-    // When I click the sort button again
+    WHEN('I click the sort button again')
     page.clickSortBy(field)
 
-    // Then the API should have received a request for the sort
+    THEN('the API should have received a request for the sort')
     cy.task('verifyDashboardRequest', { page: '1', sortBy: field, sortDirection: 'desc' }).then(requests => {
       expect(requests).to.have.length.greaterThan(0)
     })
 
-    // And the page should show the sorted items
+    AND('the page should show the sorted items')
     page.shouldBeSortedByField(field, 'descending')
   }
 })

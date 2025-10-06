@@ -2,20 +2,27 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
-import { PersonService } from '../../services'
+import { AssessmentService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import {
+  ApplicationShowPageTab,
   applicationShowPageTabs,
   applicationsTabs,
   applicationStatusSelectOptions,
   firstPageOfApplicationJourney,
+  getApplicationShowPageTabs,
 } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { ApplicationSortField } from '../../@types/shared'
+import {
+  ApplicationSortField,
+  ApprovedPremisesAssessment,
+  Cas1TimelineEvent,
+  RequestForPlacement,
+} from '../../@types/shared'
 import { ApplicationDashboardSearchOptions } from '../../@types/ui'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 import { RestrictedPersonError } from '../../utils/errors'
@@ -25,6 +32,7 @@ export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placemen
 export default class ApplicationsController {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly assessmentService: AssessmentService,
     private readonly personService: PersonService,
   ) {}
 
@@ -94,29 +102,37 @@ export default class ApplicationsController {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       if (application.status !== 'started') {
-        const referrer = req.headers.referer
-        const defaultParams = { application, referrer, pageHeading: 'Approved Premises application' }
+        const {
+          query: { tab = 'application' },
+          user: { token },
+        } = req
+        const renderParams: {
+          timelineEvents?: Array<Cas1TimelineEvent>
+          requestsForPlacement?: Array<RequestForPlacement>
+          assessment?: ApprovedPremisesAssessment
+        } = {}
 
-        if (req.query.tab === applicationShowPageTabs.timeline) {
-          const timelineEvents = await this.applicationService.timeline(req.user.token, application.id)
-
-          return res.render('applications/show', { ...defaultParams, timelineEvents, tab: 'timeline' })
+        if (tab === applicationShowPageTabs.timeline) {
+          renderParams.timelineEvents = await this.applicationService.timeline(token, application.id)
         }
-
-        if (req.query.tab === applicationShowPageTabs.placementRequests) {
-          const requestsForPlacement = await this.applicationService.getRequestsForPlacement(
-            req.user.token,
+        if (tab === applicationShowPageTabs.placementRequests) {
+          renderParams.requestsForPlacement = await this.applicationService.getRequestsForPlacement(
+            token,
             application.id,
           )
-
-          return res.render('applications/show', {
-            ...defaultParams,
-            requestsForPlacement,
-            tab: 'placementRequests',
-          })
+        }
+        if (tab === applicationShowPageTabs.assessment) {
+          renderParams.assessment = await this.assessmentService.findAssessment(token, application.assessmentId)
         }
 
-        return res.render('applications/show', { ...defaultParams, tab: 'application' })
+        return res.render('applications/show', {
+          referrer: req.headers.referer,
+          pageHeading: 'Approved Premises application',
+          application,
+          ...renderParams,
+          tab: tab || 'application',
+          tabs: getApplicationShowPageTabs(application.id, tab as ApplicationShowPageTab),
+        })
       }
       return res.render('applications/tasklist', { application, taskList, errorSummary, errors })
     }

@@ -21,8 +21,9 @@ export const controllers = (services: Services) => {
     appealService,
     placementService,
     sessionService,
+    assessmentService,
   } = services
-  const applicationsController = new ApplicationsController(applicationService, personService)
+  const applicationsController = new ApplicationsController(applicationService, assessmentService, personService)
   const pagesController = new PagesController(applicationService, {
     personService,
     applicationService,

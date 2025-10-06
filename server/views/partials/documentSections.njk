@@ -1,0 +1,10 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro documentSections(sections) %}
+    {% for section in sections %}
+        <h2 class="govuk-heading-l">{{ section.title }}</h2>
+        {% for task in section.tasks %}
+            {{ govukSummaryList(task) }}
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}

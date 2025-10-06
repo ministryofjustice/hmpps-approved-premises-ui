@@ -6,7 +6,7 @@ import { AppealApplicationPage } from './appealApplicationPage'
 export class ShowPage extends BasePage {
   async createPlacementRequest(): Promise<void> {
     await this.clickPlacementRequestsTab()
-    await this.page.getByRole('button', { name: 'Create request for placement', exact: true }).click()
+    await this.page.getByRole('button', { name: 'Create placement request', exact: true }).click()
   }
 
   async clickPlacementRequestsTab(): Promise<void> {

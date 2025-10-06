@@ -20,7 +20,7 @@ export default class DashboardPage extends Page {
   }
 
   clickRequestForPlacementLink() {
-    cy.get('a').contains('Create request for placement').click()
+    this.clickLink('Create placement request')
   }
 
   searchByCrnOrName(crnOrName: string): void {
@@ -33,11 +33,7 @@ export default class DashboardPage extends Page {
     this.clickSubmit()
   }
 
-  clickViewPlacementRequestsLink() {
-    cy.get('a').contains('View placement request(s)').click()
-  }
-
-  shouldContainRequestAPlacementTab() {
-    cy.get('a').contains('Request for placement')
+  shouldContainPlacementRequestTab() {
+    cy.get('a').contains('Placement requests')
   }
 }

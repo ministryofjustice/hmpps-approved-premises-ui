@@ -6,7 +6,6 @@ import type {
   RequestForPlacement,
 } from '@approved-premises/api'
 import { fromPartial } from '@total-typescript/shoehorn'
-
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
@@ -52,10 +51,6 @@ export default class ShowPage extends Page {
     )
   }
 
-  clickCreatePlacementButton() {
-    cy.get('button').contains('Create request for placement').click()
-  }
-
   shouldNotShowCreatePlacementButton() {
     cy.contains('Create request for placement').should('not.exist')
   }
@@ -69,6 +64,8 @@ export default class ShowPage extends Page {
   }
 
   shouldShowAssessmentDetails(expired = false) {
+    this.clickTab('Assessment')
+
     cy.get('.govuk-inset-text')
       .contains(
         `Application was ${this.application.assessmentDecision} on ${DateFormats.isoDateToUIDate(
@@ -94,8 +91,6 @@ export default class ShowPage extends Page {
         .should('exist')
       cy.get('.govuk-inset-text').contains('Booked placements are unaffected.').should('exist')
     }
-
-    cy.get(`a[data-cy-assessmentId="${this.application.assessmentId}"]`).should('exist')
   }
 
   shouldShowPersonInformation() {
@@ -112,10 +107,6 @@ export default class ShowPage extends Page {
 
   clickTimelineTab() {
     cy.get('.moj-sub-navigation a').contains('Timeline').click()
-  }
-
-  clickRequestAPlacementTab() {
-    cy.get('a').contains('Request for placement').click()
   }
 
   clickWithdraw(placementRequestId: string) {

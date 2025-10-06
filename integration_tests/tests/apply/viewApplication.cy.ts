@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker/locale/en_GB'
-
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { ListPage, NotesConfirmationPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
@@ -17,6 +15,7 @@ import { defaultUserId } from '../../mockApis/auth'
 import paths from '../../../server/paths/api'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import assessmenDocument from '../../fixtures/assessmentDocument.json'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('show applications', () => {
@@ -63,7 +62,7 @@ context('show applications', () => {
 
   it('shows a read-only version of an unsubmitted withdrawn application', function test() {
     GIVEN('I have a withdrawn unsubmitted application')
-    const assessmentDecision = assessmentFactory.build({ decision: 'accepted' })
+    const assessmentDecision = assessmentFactory.build({ decision: 'accepted', document: assessmenDocument })
     const updatedApplication = {
       ...this.application,
       status: 'withdrawn',
@@ -73,6 +72,7 @@ context('show applications', () => {
       assessmentId: assessmentDecision.id,
     }
     cy.task('stubApplicationGet', { application: updatedApplication })
+    cy.task('stubAssessment', assessmentDecision)
 
     THEN('I should see a read-only version of the application')
     const showPage = ShowPage.visit(updatedApplication, 'application')
@@ -80,21 +80,23 @@ context('show applications', () => {
     AND(`I should see a 'Withdrawn application' status tag`)
     showPage.shouldShowStatusTag('withdrawn')
 
-    AND('I should see a link to the assessment with guidance')
+    AND('I should see the assessment details')
     showPage.shouldShowAssessmentDetails()
+    showPage.shouldShowCheckYourAnswersResponses(assessmentDecision)
 
     AND('I should see the application details')
+    showPage.clickTab('Application')
     showPage.shouldShowResponsesForUnsubmittedWithdrawnApplication()
 
-    WHEN(`I click the 'Request for placement' tab`)
+    WHEN(`I click the 'Placement request' tab`)
     const requestsForPlacement = requestForPlacementFactory.buildList(1, { status: 'request_withdrawn' })
     cy.task('stubApplicationRequestsForPlacement', {
       applicationId: updatedApplication.id,
       requestsForPlacement,
     })
-    showPage.clickRequestAPlacementTab()
+    showPage.clickLink('Placement request')
 
-    THEN(`I do not see the 'Create request for placement' button`)
+    THEN(`I do not see the 'Create placement request' button`)
     showPage.shouldNotShowCreatePlacementButton()
   })
 
@@ -110,6 +112,7 @@ context('show applications', () => {
       assessmentId: assessmentDecision.id,
     }
     cy.task('stubApplicationGet', { application: updatedApplication })
+    cy.task('stubAssessment', assessmentDecision)
 
     THEN('I should see a read-only version of the application')
     const showPage = ShowPage.visit(updatedApplication, 'application')
@@ -120,28 +123,28 @@ context('show applications', () => {
     AND('I should see a link to the assessment with guidance')
     showPage.shouldShowAssessmentDetails(true)
 
-    WHEN(`I click the 'Request for placement' tab`)
+    WHEN(`I click the 'PLacement request' tab`)
     cy.task('stubApplicationRequestsForPlacement', {
       applicationId: updatedApplication.id,
       requestsForPlacement: [],
     })
-    showPage.clickRequestAPlacementTab()
+    showPage.clickLink('Placement request')
 
-    THEN(`I do not see the 'Create request for placement' button`)
+    THEN(`I do not see the 'Create placement request' button`)
     showPage.shouldNotShowCreatePlacementButton()
   })
 
-  it('links to an assessment when an application has been assessed', function test() {
+  it('shows the assessment when an application has been assessed', function test() {
     GIVEN('I have completed an application')
     const application = {
       ...this.application,
       status: 'awaitingAssesment',
       assessmentDecision: 'accepted',
       assessmentDecisionDate: '2023-01-01',
-      assessmentId: faker.string.uuid(),
       document: applicationDocument,
     }
     cy.task('stubApplicationGet', { application })
+    cy.task('stubAssessment', this.assessment)
     cy.task('stubApplications', [application])
 
     AND('I visit the list page')
@@ -210,6 +213,7 @@ context('show applications', () => {
       applicationId: application.id,
       requestsForPlacement: [...requestsForPlacement, withdrawableRequestForPlacement],
     })
+    cy.task('stubAssessment', this.assessment)
     const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
     cy.task('stubWithdrawablesWithNotes', {
@@ -223,8 +227,8 @@ context('show applications', () => {
     ShowPage.visit(this.application)
     const showPage = Page.verifyOnPage(ShowPage, application)
 
-    WHEN(`I click the 'Request a placement' tab`)
-    showPage.clickRequestAPlacementTab()
+    WHEN(`I click the 'Placement request' tab`)
+    showPage.clickLink('Placement request')
 
     THEN('I should see the placement requests')
     showPage.shouldShowRequestsForPlacement(requestsForPlacement, application, {
