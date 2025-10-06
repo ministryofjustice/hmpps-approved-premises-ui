@@ -10,7 +10,7 @@ import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import { criteriaSummaryList } from '../../../utils/match/newPlacement'
 import { PlacementRequestService } from '../../../services'
-import { personKeyDetails } from '../../../utils/placements'
+import { personKeyDetails } from '../../../utils/applications/helpers'
 import {
   apTypeRadioItems,
   checkBoxesForCriteria,
