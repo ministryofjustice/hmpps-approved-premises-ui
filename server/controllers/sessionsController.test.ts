@@ -42,7 +42,7 @@ describe('SessionsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
-        teamItems: [{ value: 1001, text: 'Team Lincoln' }],
+        teamItems: [{ value: 'XRT134', text: 'Team Lincoln' }],
       })
     })
   })
@@ -83,7 +83,7 @@ describe('SessionsController', () => {
 
       const req: DeepMocked<Request> = createMock<Request>({
         query: {
-          team: '1',
+          team: 'XR123',
         },
       })
 
@@ -92,8 +92,8 @@ describe('SessionsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [
-          { value: firstTeam.id, text: firstTeam.name, selected: true },
-          { value: secondTeam.id, text: secondTeam.name, selected: false },
+          { value: firstTeam.code, text: firstTeam.name, selected: true },
+          { value: secondTeam.code, text: secondTeam.name, selected: false },
         ],
         sessionRows: [],
         startDateItems: [],
@@ -155,8 +155,8 @@ describe('SessionsController', () => {
       expect(resultTableRowsSpy).toHaveBeenCalledWith(sessions)
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [
-          { value: firstTeam.id, text: firstTeam.name, selected: undefined },
-          { value: secondTeam.id, text: secondTeam.name, selected: undefined },
+          { value: firstTeam.code, text: firstTeam.name, selected: undefined },
+          { value: secondTeam.code, text: secondTeam.name, selected: undefined },
         ],
         sessionRows: formattedSessionRows,
         startDateItems: [],
@@ -183,13 +183,13 @@ describe('SessionsController', () => {
       const response = createMock<Response>()
       const requestHandler = sessionsController.search()
       const requestWithTeam = createMock<Request>({})
-      requestWithTeam.query.team = '2'
+      requestWithTeam.query.team = 'XR124'
       await requestHandler(requestWithTeam, response, next)
 
       expect(response.render).toHaveBeenCalledWith('sessions/index', {
         teamItems: [
-          { value: firstTeam.id, text: firstTeam.name, selected: false },
-          { value: secondTeam.id, text: secondTeam.name, selected: true },
+          { value: firstTeam.code, text: firstTeam.name, selected: false },
+          { value: secondTeam.code, text: secondTeam.name, selected: true },
         ],
         sessionRows: [],
         startDateItems: [],
@@ -222,12 +222,12 @@ describe('SessionsController', () => {
           {
             selected: undefined,
             text: 'Team Lincoln',
-            value: 1,
+            value: 'XR123',
           },
           {
             selected: undefined,
             text: 'Team Grantham',
-            value: 2,
+            value: 'XR124',
           },
         ],
         sessionRows: [],
@@ -254,10 +254,19 @@ describe('SessionsController', () => {
         throw err
       })
 
+      const firstTeam = { id: 1, code: 'XR123', name: 'Team Lincoln' }
+      const secondTeam = { id: 2, code: 'XR124', name: 'Team Grantham' }
+
+      const teams = {
+        providers: [firstTeam, secondTeam],
+      }
+
+      providerService.getTeams.mockResolvedValue(teams)
+
       const response = createMock<Response>()
       const requestWithDates = createMock<Request>({})
       const query = {
-        team: '1',
+        team: 'XR123',
         'startDate-day': '07',
         'startDate-month': '07',
         'startDate-year': '2024',
@@ -274,12 +283,12 @@ describe('SessionsController', () => {
           {
             selected: true,
             text: 'Team Lincoln',
-            value: 1,
+            value: 'XR123',
           },
           {
             selected: false,
             text: 'Team Grantham',
-            value: 2,
+            value: 'XR124',
           },
         ],
         sessionRows: [],

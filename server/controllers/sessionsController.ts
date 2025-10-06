@@ -25,10 +25,11 @@ export default class SessionsController {
 
       // Assigning the query object to a standard object prototype to resolve TypeError: Cannot convert object to primitive value
       const query = { ..._req.query }
+      const teamCode = query.team?.toString() ?? undefined
 
       try {
         const providerId = '1000'
-        teamItems = await this.getTeams(providerId, res, Number(query.team))
+        teamItems = await this.getTeams(providerId, res, teamCode)
       } catch {
         throw new Error('Something went wrong')
       }
@@ -42,13 +43,12 @@ export default class SessionsController {
           throw new Error('Validation error')
         }
 
-        const teamId = Number(query.team)
         const startDate = `${query['startDate-year']}-${query['startDate-month']}-${query['startDate-day']}`
         const endDate = `${query['endDate-year']}-${query['endDate-month']}-${query['endDate-day']}`
 
         const sessions = await this.sessionService.getSessions({
           username: res.locals.user.username,
-          teamId,
+          teamCode,
           startDate,
           endDate,
         })
@@ -86,14 +86,14 @@ export default class SessionsController {
     }
   }
 
-  private async getTeams(providerId: string, res: Response, teamId: number | undefined = undefined) {
+  private async getTeams(providerId: string, res: Response, teamCode: string | undefined = undefined) {
     const teams = await this.providerService.getTeams(providerId, res.locals.user.username)
 
     const teamItems = teams.providers.map(team => {
-      const selected = teamId ? team.id === teamId : undefined
+      const selected = teamCode ? team.code === teamCode : undefined
 
       return {
-        value: team.id,
+        value: team.code,
         text: team.name,
         selected,
       }

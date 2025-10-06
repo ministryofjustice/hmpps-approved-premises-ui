@@ -1,6 +1,6 @@
 export interface GetSessionsRequest {
   username: string
-  teamId: number
+  teamCode: string
   startDate: string
   endDate: string
 }
