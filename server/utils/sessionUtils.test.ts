@@ -1,4 +1,4 @@
-import { OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import { AppointmentSummaryDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
 import paths from '../paths'
 import DateTimeFormats from './dateTimeUtils'
 import HtmlUtils from './hmtlUtils'
@@ -83,19 +83,16 @@ describe('SessionUtils', () => {
         objectType: 'Full',
       }
 
-      const session = {
-        appointments: [
-          {
-            id: 1,
-            projectName: 'Community garden',
-            offender,
-            requirementMinutes: 120,
-            completedMinutes: 60,
-          },
-        ],
-      }
+      const appointments: AppointmentSummaryDto[] = [
+        {
+          id: 1,
+          offender,
+          requirementMinutes: 120,
+          completedMinutes: 60,
+        },
+      ]
 
-      const result = SessionUtils.sessionListTableRows(session)
+      const result = SessionUtils.sessionListTableRows(appointments)
 
       expect(HtmlUtils.getHiddenText).toHaveBeenCalledWith(`${offender.forename} ${offender.surname}`)
       expect(HtmlUtils.getAnchor).toHaveBeenCalledWith(
@@ -127,19 +124,16 @@ describe('SessionUtils', () => {
         objectType: 'Full',
       }
 
-      const session = {
-        appointments: [
-          {
-            id: 1,
-            projectName: 'Community garden',
-            offender,
-            requirementMinutes: 120,
-            completedMinutes: 90,
-          },
-        ],
-      }
+      const appointments: AppointmentSummaryDto[] = [
+        {
+          id: 1,
+          offender,
+          requirementMinutes: 120,
+          completedMinutes: 90,
+        },
+      ]
 
-      const result = SessionUtils.sessionListTableRows(session)
+      const result = SessionUtils.sessionListTableRows(appointments)
 
       expect(DateTimeFormats.minutesToHoursAndMinutes).toHaveBeenNthCalledWith(1, 120)
       expect(DateTimeFormats.minutesToHoursAndMinutes).toHaveBeenNthCalledWith(2, 90)

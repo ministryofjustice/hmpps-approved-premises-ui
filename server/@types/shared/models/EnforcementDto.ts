@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type UpdateAppointmentEnforcementDto = {
-    enforcementActionId: string;
-    respondBy: string;
+export type EnforcementDto = {
+    enforcementActionId?: string;
+    respondBy?: string;
 };
 

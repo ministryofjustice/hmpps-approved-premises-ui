@@ -1,4 +1,4 @@
-import { AppointmentsDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import { AppointmentSummaryDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
 import paths from '../paths'
 import DateTimeFormats from './dateTimeUtils'
 import HtmlUtils from './hmtlUtils'
@@ -24,8 +24,8 @@ export default class SessionUtils {
     })
   }
 
-  static sessionListTableRows(session: AppointmentsDto) {
-    return session.appointments.map(appointment => {
+  static sessionListTableRows(appointmentSummaries: AppointmentSummaryDto[]) {
+    return appointmentSummaries.map(appointment => {
       const offender = appointment.offender as OffenderFullDto
       const offenderName = `${offender.forename} ${offender.surname}`
       const minutesRemaining = appointment.requirementMinutes - appointment.completedMinutes

@@ -1,7 +1,7 @@
 import type { SuperAgentRequest } from 'superagent'
 import { stubFor } from './wiremock'
 import paths from '../../server/paths/api'
-import type { ProjectAllocationsDto, AppointmentsDto } from '../../server/@types/shared'
+import type { ProjectAllocationsDto, SessionDto } from '../../server/@types/shared'
 import type { GetSessionsRequest } from '../../server/@types/user-defined'
 
 export default {
@@ -55,11 +55,16 @@ export default {
   },
 }
 
-export const mockAppointments: AppointmentsDto = {
-  appointments: [
+export const mockAppointments: SessionDto = {
+  projectName: 'Park cleaning',
+  projectCode: 'XCT12',
+  projectLocation: 'Hammersmith',
+  date: '2025-01-02',
+  startTime: '11:00',
+  endTime: '12:00',
+  appointmentSummaries: [
     {
       id: 1001,
-      projectName: 'Park cleaning',
       requirementMinutes: 600,
       completedMinutes: 500,
       offender: {
@@ -71,7 +76,6 @@ export const mockAppointments: AppointmentsDto = {
     },
     {
       id: 1002,
-      projectName: 'Park cleaning',
       requirementMinutes: 900,
       completedMinutes: 600,
       offender: {

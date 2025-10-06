@@ -32,7 +32,10 @@ export const mockOffender: OffenderFullDto = {
 export const mockAppointment: AppointmentDto = {
   id: 1001,
   projectName: 'Park cleaning',
-  requirementMinutes: 600,
-  completedMinutes: 500,
+  projectCode: 'XCT12',
+  supervisingTeam: 'Team Lincoln',
+  date: '2025-01-02',
+  startTime: '11:00',
+  endTime: '12:00',
   offender: mockOffender,
 }
