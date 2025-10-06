@@ -21,16 +21,10 @@
   border-color: govuk-colour("red");
 }
 
-.govuk-checkboxes--inline,
-.govuk-radios--inline {
+.govuk-checkboxes--inline {
   display: flex;
   flex-wrap: wrap;
   gap: govuk-spacing(3);
-
-  & .govuk-radios__divider,
-  & .govuk-checkboxes__divider {
-    display: none;
-  }
 
   & label {
     min-inline-size: fit-content;

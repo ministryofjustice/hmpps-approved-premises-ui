@@ -32,7 +32,6 @@
 
         {{ govukRadios({
             name: "apType",
-            classes: "govuk-radios--small govuk-radios--inline",
             fieldset: {
                 legend: {
                     text: 'Type of AP',
@@ -46,7 +45,6 @@
         {% for group in criteriaCheckboxGroups %}
             {{ govukCheckboxes({
                 name: group.fieldName + '[]',
-                classes: "govuk-checkboxes--small govuk-checkboxes--inline",
                 fieldset: {
                     legend: {
                         text: group.legend,
