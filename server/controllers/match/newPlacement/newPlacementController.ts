@@ -12,6 +12,7 @@ import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSear
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { DateFormats } from '../../../utils/dateUtils'
+import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
 
 export default class NewPlacementController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -111,18 +112,10 @@ export default class NewPlacementController {
         backlink,
         pageHeading: 'Check the placement criteria',
         criteriaSummary: criteriaSummaryList(placementRequest),
-        criteriaChangedRadioItems: [
-          {
-            value: 'yes',
-            text: 'Yes',
-            checked: searchState.newPlacementCriteriaChanged === true,
-          },
-          {
-            text: 'No',
-            value: 'no',
-            checked: searchState.newPlacementCriteriaChanged === false,
-          },
-        ],
+        criteriaChangedRadioItems: convertKeyValuePairToRadioItems(
+          { yes: 'Yes', no: 'No' },
+          searchState.newPlacementCriteriaChanged,
+        ),
         errors,
         errorSummary,
         ...userInput,
@@ -144,7 +137,7 @@ export default class NewPlacementController {
 
         if (criteriaChanged === 'yes') {
           await this.formData.update(placementRequestId, req.session, {
-            newPlacementCriteriaChanged: true,
+            newPlacementCriteriaChanged: 'yes',
           })
 
           res.redirect(matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({ placementRequestId }))
@@ -158,7 +151,7 @@ export default class NewPlacementController {
         const { apType, apCriteria, roomCriteria } = initialiseSearchState(placementRequest)
 
         await this.formData.update(placementRequestId, req.session, {
-          newPlacementCriteriaChanged: false,
+          newPlacementCriteriaChanged: 'no',
           apType,
           apCriteria,
           roomCriteria,

@@ -169,7 +169,7 @@ describe('newPlacementController', () => {
     it('renders the check placement criteria template with the session search state', async () => {
       const searchState = spaceSearchStateFactory.build({
         newPlacementReason: 'Reason for the new placement',
-        newPlacementCriteriaChanged: true,
+        newPlacementCriteriaChanged: 'yes',
       })
       request.session.multiPageFormData = {
         spaceSearch: { [placementRequestDetail.id]: searchState },
@@ -212,7 +212,7 @@ describe('newPlacementController', () => {
       await newPlacementController.saveCheckCriteria()({ ...request, body: { criteriaChanged: 'yes' } }, response, next)
 
       expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
-        newPlacementCriteriaChanged: true,
+        newPlacementCriteriaChanged: 'yes',
       })
       expect(response.redirect).toHaveBeenCalledWith(
         matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({
@@ -227,7 +227,7 @@ describe('newPlacementController', () => {
       await newPlacementController.saveCheckCriteria()({ ...request, body: { criteriaChanged: 'no' } }, response, next)
 
       expect(newPlacementController.formData.update).toHaveBeenCalledWith(placementRequestDetail.id, request.session, {
-        newPlacementCriteriaChanged: false,
+        newPlacementCriteriaChanged: 'no',
         apType,
         apCriteria,
         roomCriteria,
@@ -267,7 +267,7 @@ describe('newPlacementController', () => {
     it('renders the form to update the new placement criteria with the search state data', async () => {
       const searchState = spaceSearchStateFactory.build({
         newPlacementReason: 'Reason for the new placement',
-        newPlacementCriteriaChanged: true,
+        newPlacementCriteriaChanged: 'yes',
         apType: 'isPIPE',
         apCriteria: ['acceptsNonSexualChildOffenders'],
         roomCriteria: ['isSingle'],
