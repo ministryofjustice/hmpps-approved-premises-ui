@@ -1,9 +1,12 @@
 import { AppointmentSummaryDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import Offender from '../models/offender'
 import paths from '../paths'
 import DateTimeFormats from './dateTimeUtils'
 import HtmlUtils from './hmtlUtils'
 import SessionUtils from './sessionUtils'
 import { createQueryString } from './utils'
+
+jest.mock('../models/offender')
 
 describe('SessionUtils', () => {
   const fakeLink = '<a>link</a>'
@@ -67,6 +70,18 @@ describe('SessionUtils', () => {
   })
 
   describe('sessionListTableRows', () => {
+    const offenderMock: jest.Mock = Offender as unknown as jest.Mock<Offender>
+
+    beforeEach(() => {
+      offenderMock.mockImplementation(() => {
+        return {
+          name: 'Sam Smith',
+          crn: 'CRN123',
+          isLimited: false,
+        }
+      })
+    })
+
     it('returns session formatted into expected table rows', () => {
       const mockTag = '<strong>Status</strong>'
       const mockHiddenText = '<span></span>'

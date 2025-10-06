@@ -37,7 +37,13 @@ export default {
       },
     })
   },
-  stubFindSession: ({ projectId }: { projectId: string }): SuperAgentRequest => {
+  stubFindSession: ({
+    projectId,
+    responseHasLimitedOffenders = false,
+  }: {
+    projectId: string
+    responseHasLimitedOffenders: boolean
+  }): SuperAgentRequest => {
     const pattern = paths.projects.sessionAppointments({ projectId })
     return stubFor({
       request: {
@@ -48,14 +54,14 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: {
-          ...mockAppointments,
+          ...mockAppointments(responseHasLimitedOffenders),
         },
       },
     })
   },
 }
 
-export const mockAppointments: SessionDto = {
+export const mockAppointments = (hasLimitedOffenders: boolean = false): SessionDto => ({
   projectName: 'Park cleaning',
   projectCode: 'XCT12',
   projectLocation: 'Hammersmith',
@@ -67,23 +73,33 @@ export const mockAppointments: SessionDto = {
       id: 1001,
       requirementMinutes: 600,
       completedMinutes: 500,
-      offender: {
-        forename: 'John',
-        surname: 'Smith',
-        crn: 'CRN123',
-        objectType: 'OffenderFull',
-      },
+      offender: hasLimitedOffenders
+        ? {
+            crn: 'CRN123',
+            objectType: 'Limited',
+          }
+        : {
+            forename: 'John',
+            surname: 'Smith',
+            crn: 'CRN123',
+            objectType: 'Full',
+          },
     },
     {
       id: 1002,
       requirementMinutes: 900,
       completedMinutes: 600,
-      offender: {
-        forename: 'Roberta',
-        surname: 'John',
-        crn: 'CRN124',
-        objectType: 'OffenderFull',
-      },
+      offender: hasLimitedOffenders
+        ? {
+            crn: 'CRN124',
+            objectType: 'Limited',
+          }
+        : {
+            forename: 'Roberta',
+            surname: 'John',
+            crn: 'CRN124',
+            objectType: 'Full',
+          },
     },
   ],
-}
+})

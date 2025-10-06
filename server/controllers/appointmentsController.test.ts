@@ -4,21 +4,34 @@ import type { NextFunction, Request, Response } from 'express'
 import AppointmentService from '../services/appointmentService'
 import AppointmentsController from './appointmentsController'
 import { AppointmentDto, OffenderFullDto } from '../@types/shared'
+import Offender from '../models/offender'
+
+jest.mock('../models/offender')
 
 describe('AppointmentsController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
+  const offenderMock: jest.Mock = Offender as unknown as jest.Mock<Offender>
+  const offender = {
+    name: 'Sam Smith',
+    crn: 'CRN123',
+    isLimited: false,
+  }
 
   let appointmentsController: AppointmentsController
   const appointmentService = createMock<AppointmentService>()
 
   beforeEach(() => {
+    jest.resetAllMocks()
     appointmentsController = new AppointmentsController(appointmentService)
+    offenderMock.mockImplementation(() => {
+      return offender
+    })
   })
 
   describe('update', () => {
     it('should render the check project details page', async () => {
-      const offender: OffenderFullDto = {
+      const offenderResponse: OffenderFullDto = {
         crn: 'string',
         objectType: 'Full',
         forename: 'string',
@@ -28,7 +41,7 @@ describe('AppointmentsController', () => {
       const appointment: AppointmentDto = {
         id: 1001,
         projectName: 'Community Garden Maintenance',
-        offender,
+        offender: offenderResponse,
         supervisingTeam: 'Team Lincoln',
         projectCode: 'XCT12',
         date: '2025-01-02',
