@@ -10,7 +10,7 @@ export default {
     singleAppointment: appointmentsPath.path(':appointmentId'),
   },
   providers: {
-    teams: providersPath.path(':providerId/teams'),
+    teams: providersPath.path(':providerCode/teams'),
   },
   projects: {
     sessions: projectsPath.path('session-search'),

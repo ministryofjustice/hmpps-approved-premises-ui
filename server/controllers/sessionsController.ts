@@ -5,6 +5,8 @@ import SessionUtils from '../utils/sessionUtils'
 import TrackProgressPage, { TrackProgressPageInput } from '../pages/trackProgressPage'
 
 export default class SessionsController {
+  private readonly providerCode = 'ABC123'
+
   constructor(
     private readonly providerService: ProviderService,
     private readonly sessionService: SessionService,
@@ -12,8 +14,7 @@ export default class SessionsController {
 
   index(): RequestHandler {
     return async (_req: Request, res: Response) => {
-      const providerId = '1000'
-      const teamItems = await this.getTeams(providerId, res)
+      const teamItems = await this.getTeams(this.providerCode, res)
 
       res.render('sessions/index', { teamItems })
     }
@@ -28,8 +29,7 @@ export default class SessionsController {
       const teamCode = query.team?.toString() ?? undefined
 
       try {
-        const providerId = '1000'
-        teamItems = await this.getTeams(providerId, res, teamCode)
+        teamItems = await this.getTeams(this.providerCode, res, teamCode)
       } catch {
         throw new Error('Something went wrong')
       }
@@ -86,8 +86,8 @@ export default class SessionsController {
     }
   }
 
-  private async getTeams(providerId: string, res: Response, teamCode: string | undefined = undefined) {
-    const teams = await this.providerService.getTeams(providerId, res.locals.user.username)
+  private async getTeams(providerCode: string, res: Response, teamCode: string | undefined = undefined) {
+    const teams = await this.providerService.getTeams(providerCode, res.locals.user.username)
 
     const teamItems = teams.providers.map(team => {
       const selected = teamCode ? team.code === teamCode : undefined

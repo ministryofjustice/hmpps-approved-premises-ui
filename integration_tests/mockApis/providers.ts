@@ -4,11 +4,11 @@ import paths from '../../server/paths/api'
 import type { ProviderTeamSummariesDto } from '../../server/@types/shared/models/ProviderTeamSummariesDto'
 
 export default {
-  stubGetTeams: (args: { providerId: string; teams: ProviderTeamSummariesDto }): SuperAgentRequest =>
+  stubGetTeams: (args: { teams: ProviderTeamSummariesDto }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.providers.teams({ providerId: args.providerId }),
+        urlPattern: paths.providers.teams({ providerCode: 'ABC123' }),
       },
       response: {
         status: 200,

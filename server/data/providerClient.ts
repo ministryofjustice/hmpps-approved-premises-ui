@@ -10,9 +10,9 @@ export default class ProviderClient extends RestClient {
     super('providerClient', config.apis.communityPaybackApi, logger, authenticationClient)
   }
 
-  async getTeams(providerId: string, username: string): Promise<ProviderTeamSummariesDto> {
+  async getTeams(providerCode: string, username: string): Promise<ProviderTeamSummariesDto> {
     return (await this.get(
-      { path: paths.providers.teams({ providerId }) },
+      { path: paths.providers.teams({ providerCode }) },
       asSystem(username),
     )) as ProviderTeamSummariesDto
   }

@@ -31,7 +31,7 @@ context('Home', () => {
     cy.signIn()
 
     //  When I visit the 'find a session' page
-    cy.task('stubGetTeams', { providerId: '1000', teams: { providers: [{ id: 1, name: 'Team 1', code: 'XRTC12' }] } })
+    cy.task('stubGetTeams', { teams: { providers: [{ id: 1, name: 'Team 1', code: 'XRTC12' }] } })
     FindASessionPage.visit()
     const page = Page.verifyOnPage(FindASessionPage)
 
@@ -45,7 +45,7 @@ context('Home', () => {
     cy.signIn()
 
     //  When I visit the 'find a session' page
-    cy.task('stubGetTeams', { providerId: '1000', teams: { providers: [{ id: 1, code: 'XRTC12', name: 'Team 1' }] } })
+    cy.task('stubGetTeams', { teams: { providers: [{ id: 1, code: 'XRTC12', name: 'Team 1' }] } })
     FindASessionPage.visit()
     const page = Page.verifyOnPage(FindASessionPage)
 
@@ -83,7 +83,7 @@ context('Home', () => {
   it('lets me view a session from the dashboard', () => {
     // Given I am logged in and on the sessions page
     cy.signIn()
-    cy.task('stubGetTeams', { providerId: '1000', teams: { providers: [{ id: 1, code: 'XRTC12', name: 'Team 1' }] } })
+    cy.task('stubGetTeams', { teams: { providers: [{ id: 1, code: 'XRTC12', name: 'Team 1' }] } })
     FindASessionPage.visit()
     const page = Page.verifyOnPage(FindASessionPage)
     page.completeSearchForm()
@@ -125,7 +125,7 @@ context('Home', () => {
     cy.signIn()
 
     //  When I visit the 'find a session' page
-    cy.task('stubGetTeams', { providerId: '1000', teams: { providers: [{ id: 1, name: 'Team 1' }] } })
+    cy.task('stubGetTeams', { teams: { providers: [{ id: 1, name: 'Team 1' }] } })
     FindASessionPage.visit()
     const page = Page.verifyOnPage(FindASessionPage)
 
