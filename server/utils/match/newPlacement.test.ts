@@ -34,14 +34,6 @@ describe('new placement utils', () => {
         },
       ],
       [
-        'the arrival and departure dates are in the past',
-        { newPlacementArrivalDate: '01/01/2024', newPlacementDepartureDate: '01/01/2025' },
-        {
-          newPlacementArrivalDate: 'The arrival date must be in the future',
-          newPlacementDepartureDate: 'The departure date must be in the future',
-        },
-      ],
-      [
         'the departure date is before the start date',
         { newPlacementDepartureDate: '12/12/2025' },
         { newPlacementDepartureDate: 'The departure date must be after the arrival date' },

@@ -26,22 +26,17 @@ export const validateNewPlacement = (body: Partial<NewPlacementForm>) => {
 
   const startDate = DateFormats.datepickerInputToIsoString(body.newPlacementArrivalDate)
   const endDate = DateFormats.datepickerInputToIsoString(body.newPlacementDepartureDate)
-  const today = DateFormats.dateObjToIsoDate(new Date())
 
   if (!startDate) {
     errors.newPlacementArrivalDate = 'Enter or select an arrival date'
   } else if (!isoDateIsValid(startDate)) {
     errors.newPlacementArrivalDate = 'Enter a valid arrival date'
-  } else if (startDate <= today) {
-    errors.newPlacementArrivalDate = 'The arrival date must be in the future'
   }
 
   if (!endDate) {
     errors.newPlacementDepartureDate = 'Enter or select a departure date'
   } else if (!isoDateIsValid(endDate)) {
     errors.newPlacementDepartureDate = 'Enter a valid departure date'
-  } else if (endDate <= today) {
-    errors.newPlacementDepartureDate = 'The departure date must be in the future'
   } else if (!errors.newPlacementArrivalDate && endDate <= startDate) {
     errors.newPlacementDepartureDate = 'The departure date must be after the arrival date'
   }
