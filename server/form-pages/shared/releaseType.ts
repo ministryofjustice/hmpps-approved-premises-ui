@@ -1,13 +1,15 @@
 import type { FormArtifact, TaskListErrors } from '@approved-premises/ui'
 
-import { pick } from 'underscore'
 import TasklistPage from '../tasklistPage'
 import { Page } from '../utils/decorators'
 import {
-  PossibleReleaseTypeOptions,
-  SelectableReleaseTypes,
+  standardDeterminateReleaseTypes,
+  extendedDeterminateReleaseTypes,
+  lifeIppReleaseTypes,
   selectableReleaseTypes,
+  SelectableReleaseTypes,
   SentenceTypeResponse,
+  PossibleReleaseTypeOptions,
 } from '../../utils/applications/releaseTypeUtils'
 import { SessionDataError } from '../../utils/errors'
 
@@ -63,20 +65,13 @@ export default class ReleaseType implements TasklistPage {
 
   getReleaseTypes(): PossibleReleaseTypeOptions {
     if (this.sentenceType === 'standardDeterminate') {
-      return pick(selectableReleaseTypes, [
-        'licence',
-        'paroleDirectedLicence',
-        'rotl',
-        'hdc',
-        'pss',
-        'reReleasedPostRecall',
-      ])
+      return standardDeterminateReleaseTypes
     }
     if (this.sentenceType === 'life' || this.sentenceType === 'ipp') {
-      return pick(selectableReleaseTypes, ['rotl', 'paroleDirectedLicence'])
+      return lifeIppReleaseTypes
     }
     if (this.sentenceType === 'extendedDeterminate') {
-      return pick(selectableReleaseTypes, ['rotl', 'extendedDeterminateLicence', 'paroleDirectedLicence'])
+      return extendedDeterminateReleaseTypes
     }
     throw new SessionDataError(`Unknown sentence type ${this.sentenceType}`)
   }
