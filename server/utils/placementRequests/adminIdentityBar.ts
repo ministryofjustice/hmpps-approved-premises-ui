@@ -24,10 +24,10 @@ export const adminActions = (
   placementRequest: Cas1PlacementRequestDetail,
   user: UserDetails,
 ): Array<IdentityBarMenuItem> => {
-  if (placementRequest.status === 'matched' && placementRequest.booking) {
+  if (placementRequest.status === 'matched' && placementRequest.spaceBookings.length > 0) {
     const matchedActions = []
 
-    if (['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))) {
+    if (placementRequest.spaceBookings.find(booking => ['upcoming', 'arrived'].includes(overallStatus(booking)))) {
       matchedActions.push({
         href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id }),
         text: 'Change placement',

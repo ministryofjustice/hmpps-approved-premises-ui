@@ -25,12 +25,7 @@ export default class ShowPage extends Page {
       'Create new placement': matchPaths.v2Match.placementRequests.newPlacement.new({
         placementRequestId: placementRequest.id,
       }),
-    }
-
-    if (placementRequest.booking) {
-      this.actions['Change placement'] = paths.admin.placementRequests.selectPlacement({
-        placementRequestId: placementRequest.id,
-      })
+      'Change placement': paths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id }),
     }
   }
 

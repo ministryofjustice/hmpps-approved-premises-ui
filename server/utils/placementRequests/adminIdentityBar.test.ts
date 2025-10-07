@@ -28,12 +28,10 @@ const setup = ({
     text: 'Search for a space',
   }
 
-  const actionChangePlacement = placementRequestDetail.booking
-    ? {
-        href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequestDetail.id }),
-        text: 'Change placement',
-      }
-    : undefined
+  const actionChangePlacement = {
+    href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequestDetail.id }),
+    text: 'Change placement',
+  }
 
   const actionCreateNewPlacement = {
     href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequestDetail.id }),
@@ -48,6 +46,7 @@ const setup = ({
     text: 'Withdraw request for placement',
   }
   const adminActionsResult = adminActions(placementRequestDetail, user)
+
   return {
     placementRequestDetail,
     actionSearchForASpace,
@@ -73,11 +72,20 @@ describe('adminIdentityBar', () => {
     })
 
     describe('if the status of the placement request is `matched`', () => {
+      const upcomingBooking = cas1SpaceBookingSummaryFactory.upcoming().build()
+      const currentBooking = cas1SpaceBookingSummaryFactory.current().build()
+      const notArrivedBooking = cas1SpaceBookingSummaryFactory.nonArrival().build()
+      const departedBooking = cas1SpaceBookingSummaryFactory.departed().build()
+
       it.each([
-        ['upcoming', cas1SpaceBookingSummaryFactory.upcoming().build()],
-        ['arrived', cas1SpaceBookingSummaryFactory.current().build()],
-      ])('should return an action to change the placement if it is %s', (_, spaceBooking) => {
-        const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+        ['the only placement is upcoming', [upcomingBooking]],
+        ['at least one placement is upcoming', [departedBooking, upcomingBooking]],
+        ['the only placement is arrived', [currentBooking]],
+        ['at least one placement is arrived', [departedBooking, currentBooking]],
+      ])('should return an action to change the placement if %s', (_, spaceBookings) => {
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.matched().build({
+          spaceBookings,
+        })
 
         const { adminActionsResult, actionChangePlacement } = setup({
           placementRequestDetail,
@@ -87,10 +95,13 @@ describe('adminIdentityBar', () => {
       })
 
       it.each([
-        ['not arrived', cas1SpaceBookingSummaryFactory.nonArrival().build()],
-        ['departed', cas1SpaceBookingSummaryFactory.departed().build()],
-      ])('should return no change placement action if the placement is %s', (_, spaceBooking) => {
-        const placementRequestDetail = cas1PlacementRequestDetailFactory.withSpaceBooking(spaceBooking).build()
+        ['no placement is upcoming or arrived', [departedBooking, notArrivedBooking]],
+        ['there are no placements', []],
+      ])('should return no change placement action if %s', (_, spaceBookings) => {
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
+          status: spaceBookings.length > 0 ? 'matched' : 'notMatched',
+          spaceBookings,
+        })
 
         const { adminActionsResult, actionChangePlacement } = setup({
           placementRequestDetail,
