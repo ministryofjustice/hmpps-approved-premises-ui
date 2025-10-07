@@ -60,12 +60,13 @@
 
     {{ govukSummaryList(placementRequestSummaryList) }}
 
-    {% if bookingSummaryList %}
-        <h2 class="govuk-heading-l">Booked placement</h2>
+    {% if placements | length > 0 %}
+        <h2 class="govuk-heading-l">Booked placement{% if placements | length > 1 %}s{% endif %}</h2>
 
-        <h3 class="govuk-heading-m">Placement information</h3>
-
-        {{ govukSummaryList(bookingSummaryList) }}
+        {% for placement in placements %}
+            <h3 class="govuk-heading-m">{{ placement.title }}</h3>
+            {{ govukSummaryList(placement.summaryList) }}
+        {% endfor %}
     {% endif %}
 {% endblock %}
 

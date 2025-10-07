@@ -4,7 +4,11 @@ import { PlacementRequestService, PremisesService, SpaceSearchService } from '..
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
-import { creationNotificationBody, spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
+import {
+  creationNotificationBody,
+  creationNotificationBodyNewPlacement,
+  spaceBookingConfirmationSummaryListRows,
+} from '../../../utils/match'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
@@ -61,6 +65,7 @@ export default class {
         criteria: searchState.roomCriteria,
         releaseType: placementRequest.releaseType,
         isWomensApplication: placementRequest.application.isWomensApplication,
+        newPlacementReason: searchState.newPlacementReason,
       })
 
       return res.render('match/placementRequests/spaceBookings/new', {
@@ -93,22 +98,34 @@ export default class {
         departureDate: searchState.departureDate,
         premisesId,
         characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
+        reason: searchState.newPlacementReason,
       }
 
       try {
         const placement = await this.spaceSearchService.createSpaceBooking(token, placementRequestId, newSpaceBooking)
-        const placementRequest = await this.placementRequestService.getPlacementRequest(
-          token,
-          placement.placementRequestId,
-        )
-        req.flash('success', {
-          heading: `Placement booked for ${placement.person.crn}`,
-          body: creationNotificationBody(placement, placementRequest),
-        })
+        let redirect = `${paths.admin.cruDashboard.index({})}?status=matched`
+
+        if (searchState.newPlacementReason) {
+          req.flash('success', {
+            heading: 'Placement created',
+            body: creationNotificationBodyNewPlacement(placement),
+          })
+          redirect = paths.admin.placementRequests.show({ placementRequestId })
+        } else {
+          const placementRequest = await this.placementRequestService.getPlacementRequest(
+            token,
+            placement.placementRequestId,
+          )
+          req.flash('success', {
+            heading: `Placement booked for ${placement.person.crn}`,
+            body: creationNotificationBody(placement, placementRequest),
+          })
+        }
+
         this.formData.remove(placementRequestId, req.session)
 
         return req.session.save(() => {
-          res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)
+          res.redirect(redirect)
         })
       } catch (error) {
         return catchValidationErrorOrPropogate(

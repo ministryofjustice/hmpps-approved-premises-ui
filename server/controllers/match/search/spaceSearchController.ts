@@ -18,6 +18,8 @@ import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
+import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import { getPlacementOfStatus } from '../../../utils/placementRequests/placements'
 
 export default class SpaceSearchController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -52,12 +54,29 @@ export default class SpaceSearchController {
         ...userInput,
       }
 
+      let backlink = paths.admin.placementRequests.show({ placementRequestId })
+      let backlinkLabel = 'Back to placement request'
+
+      if (searchState.newPlacementReason) {
+        backlink =
+          searchState.newPlacementCriteriaChanged === 'yes'
+            ? matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({ placementRequestId })
+            : matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId })
+        backlinkLabel = 'Back'
+      }
+
       res.render('match/search', {
+        backlink,
+        backlinkLabel,
         pageHeading: 'Find a space in an Approved Premises',
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         summaryCards: summaryCards(spaceSearchResults, formValues.postcode, placementRequest),
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
+        newPlacementSummaryList: newPlacementSummaryList(
+          searchState,
+          getPlacementOfStatus('arrived', placementRequest),
+        ),
         formPath: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }),
         errors,
         errorSummary,

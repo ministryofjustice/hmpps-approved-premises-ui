@@ -7,6 +7,7 @@ import {
   cas1ChangeRequestFactory,
   cas1PlacementRequestDetailFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../../testutils/factories'
 import { PlacementRequestService, PlacementService } from '../../../services'
 import ChangeRequestsController from './changeRequestsController'
@@ -29,7 +30,8 @@ describe('plannedTransferController', () => {
   const controller = new ChangeRequestsController(placementRequestService, placementService)
 
   const placement = cas1SpaceBookingFactory.upcoming().build()
-  const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking().build()
+  const placementSummary = cas1SpaceBookingSummaryFactory.build(placement)
+  const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking(placementSummary).build()
   const changeRequest = cas1ChangeRequestFactory.placementAppeal().build({ spaceBookingId: placement.id })
   const changeRequestRejectionReasons: Array<{ name: ChangeRequestReason; id: string }> = [
     { name: 'noSuitableApAvailable', id: faker.string.uuid() },
@@ -83,7 +85,7 @@ describe('plannedTransferController', () => {
         pageHeading: 'Review appeal',
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         backLink: `/admin/placement-requests/${placementRequest.id}`,
-        bookingSummary: placementSummaryList(placementRequest),
+        bookingSummary: placementSummaryList(placementSummary),
         changeRequestSummary: changeRequestSummaryList(changeRequest),
         decisionOptions,
         ...errorsAndUserInput,

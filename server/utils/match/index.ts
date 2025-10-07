@@ -33,6 +33,7 @@ type SpaceBookingConfirmationData = {
   criteria: Array<Cas1SpaceBookingCharacteristic>
   releaseType?: ReleaseTypeOption
   isWomensApplication?: boolean
+  newPlacementReason?: string
 }
 
 export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfirmationData): Array<SummaryListItem> => {
@@ -44,6 +45,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     criteria,
     releaseType,
     isWomensApplication,
+    newPlacementReason,
   } = data
 
   return [
@@ -57,6 +59,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     summaryListItem('Expected departure date', expectedDepartureDate, 'date'),
     summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
     releaseType && summaryListItem('Release type', allReleaseTypes[releaseType]),
+    newPlacementReason && summaryListItem('Reason for placement', newPlacementReason, 'textBlock'),
   ].filter(Boolean)
 }
 
@@ -173,3 +176,8 @@ export const creationNotificationBody = (
 ) => `<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>
 <li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequest.applicationDate, { format: 'short' })}</li></ul>
 <p>A confirmation email will be sent to the AP and probation practitioner.</p>`
+
+export const creationNotificationBodyNewPlacement = (placement: Cas1SpaceBooking) => `
+  <p>A placement has been created for ${displayName(placement.person)} at ${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)} to ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate)}.</p>
+  <p>The original placement requires changes to the departure date.</p>
+`

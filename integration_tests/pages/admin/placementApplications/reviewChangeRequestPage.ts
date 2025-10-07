@@ -26,6 +26,6 @@ export default class ReviewChangeRequestPage extends Page {
 
   shouldContainSummaryInformation() {
     this.shouldContainSummaryListItems(changeRequestSummaryList(this.changeRequest).rows)
-    this.shouldContainSummaryListItems(placementSummaryList(this.placementRequest).rows)
+    this.shouldContainSummaryListItems(placementSummaryList(this.placementRequest.spaceBookings[0]).rows)
   }
 }

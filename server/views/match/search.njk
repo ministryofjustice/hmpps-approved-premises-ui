@@ -18,8 +18,8 @@
 
 {% block beforeContent %}
     {{ govukBackLink({
-        text: "Back to Placement request",
-        href: paths.admin.placementRequests.show({ placementRequestId: placementRequest.id })
+        text: backlinkLabel,
+        href: backlink
     }) }}
 {% endblock %}
 
@@ -38,9 +38,15 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
+    {% call govukDetails({summaryText: "Placement request information", open: not newPlacementSummaryList}) %}
         {{ govukSummaryList(placementRequestInfoSummaryList) }}
     {% endcall %}
+
+    {% if newPlacementSummaryList %}
+        {% call govukDetails({summaryText: "New placement information", open: true}) %}
+            {{ govukSummaryList(newPlacementSummaryList) }}
+        {% endcall %}
+    {% endif %}
 
     <h2 class="govuk-heading-m">{{ summaryCards | length }} Approved Premises found</h2>
 
@@ -128,13 +134,15 @@
 
             {% endfor %}
 
-            <h3 class="govuk-heading-m">Mark this case as unable to book</h3>
-            <p>If there are no suitable results for your search, mark this case as unable to book.</p>
-            {{ govukButton({
-                text: "Unable to book",
-                href: paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }),
-                preventDoubleClick: true
-            }) }}
+            {% if not newPlacementSummaryList %}
+                <h3 class="govuk-heading-m">Mark this case as unable to book</h3>
+                <p>If there are no suitable results for your search, mark this case as unable to book.</p>
+                {{ govukButton({
+                    text: "Unable to book",
+                    href: paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }),
+                    preventDoubleClick: true
+                }) }}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

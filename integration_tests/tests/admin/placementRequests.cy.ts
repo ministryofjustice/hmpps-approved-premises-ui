@@ -1,4 +1,5 @@
 import { formatDate } from 'date-fns/format'
+import { ApprovedPremisesApplication as Application, FullPerson } from '@approved-premises/api'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
@@ -17,7 +18,6 @@ import {
 import Page from '../../pages/page'
 import { CancellationCreatePage, UnableToMatchPage } from '../../pages/manage'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
-import { ApprovedPremisesApplication as Application, FullPerson } from '../../../server/@types/shared'
 import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
@@ -199,10 +199,10 @@ context('Placement Requests', () => {
       showPage.shouldShowSummary()
 
       AND('I should see available actions')
-      showPage.shouldHaveActions(['Change placement', 'Withdraw placement'])
+      showPage.shouldHaveActions(['Change placement', 'Withdraw placement', 'Create new placement'])
 
       AND('I should see the booking information')
-      showPage.shouldShowBookingInformation()
+      showPage.shouldShowBookingInformation(matchedPlacementRequest.spaceBookings)
 
       WHEN('I go back to the dashboard')
       showPage.clickBack()

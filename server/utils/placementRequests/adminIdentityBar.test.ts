@@ -38,6 +38,10 @@ const setup = ({
       }
     : undefined
 
+  const actionCreateNewPlacement = {
+    href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequestDetail.id }),
+    text: 'Create new placement',
+  }
   const actionWithdrawPlacement = {
     href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
     text: 'Withdraw placement',
@@ -51,6 +55,7 @@ const setup = ({
     placementRequestDetail,
     actionSearchForASpace,
     actionChangePlacement,
+    actionCreateNewPlacement,
     actionWithdrawPlacement,
     actionWithdrawPlacementRequest,
     adminActionsResult,
@@ -95,6 +100,17 @@ describe('adminIdentityBar', () => {
           permissions: [],
         })
         expect(adminActionsResult).not.toContainAction(actionChangePlacement)
+      })
+
+      it('should return an action to create a new placement if the user has the create additional space booking permission', () => {
+        const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
+
+        const { adminActionsResult, actionCreateNewPlacement } = setup({
+          placementRequestDetail,
+          permissions: ['cas1_space_booking_create_additional'],
+        })
+
+        expect(adminActionsResult).toContainAction(actionCreateNewPlacement)
       })
 
       it('should return an action to withdraw the placement if the user has the withdraw permission', () => {

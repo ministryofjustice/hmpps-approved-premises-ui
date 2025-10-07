@@ -6,6 +6,7 @@ const v2PlacementRequestPath = v2PlacementRequestsPath.path(':placementRequestId
 const v2PlacementRequestSearchPath = v2PlacementRequestPath.path('space-search')
 const v2PlacementRequestSearchOccupancyPath = v2PlacementRequestSearchPath.path('occupancy/:premisesId')
 const v2SpaceBookingsPath = v2PlacementRequestPath.path('space-bookings/:premisesId')
+const v2NewPlacementPath = v2PlacementRequestPath.path('new-placement')
 
 const v2Match = {
   placementRequests: {
@@ -18,6 +19,11 @@ const v2Match = {
     spaceBookings: {
       new: v2SpaceBookingsPath.path('new'),
       create: v2SpaceBookingsPath,
+    },
+    newPlacement: {
+      new: v2NewPlacementPath.path('new'),
+      checkCriteria: v2NewPlacementPath.path('check-criteria'),
+      updateCriteria: v2NewPlacementPath.path('update-criteria'),
     },
   },
 }

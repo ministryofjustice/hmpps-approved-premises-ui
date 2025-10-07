@@ -4,6 +4,8 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
 import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import { PlacementRequestService, PlacementService, PremisesService, SessionService } from '../../../services'
 import {
   cas1PlacementRequestDetailFactory,
@@ -45,6 +47,8 @@ import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../u
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import { placementKeyDetails } from '../../../utils/placements'
 import cas1RequestedPlacementPeriodFactory from '../../../testutils/factories/cas1RequestedPlacementPeriod'
+import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import * as placementsUtils from '../../../utils/placementRequests/placements'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -113,6 +117,10 @@ describe('OccupancyViewController', () => {
   })
 
   describe('view', () => {
+    beforeEach(() => {
+      jest.spyOn(placementsUtils, 'getPlacementOfStatus')
+    })
+
     it('should render the occupancy view template with the search state details', async () => {
       await occupancyViewController.view()(request, response, next)
 
@@ -259,6 +267,31 @@ describe('OccupancyViewController', () => {
         expect.objectContaining({
           ...DateFormats.isoDateToDateInputs(fullSearchState.arrivalDate, 'arrivalDate'),
           ...DateFormats.isoDateToDateInputs(fullSearchState.departureDate, 'departureDate'),
+        }),
+      )
+    })
+
+    it('should show the new placement summary if the user is booking a new placement', async () => {
+      const newPlacementArrivalDate = faker.date.future()
+      const newPlacementDepartureDate = faker.date.future({ refDate: newPlacementArrivalDate })
+      const searchStateWithNewPlacement: SpaceSearchFormData = {
+        ...searchState,
+        arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
+        departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
+        newPlacementCriteriaChanged: 'no',
+        newPlacementReason: 'Some reason',
+      }
+      request.session.multiPageFormData.spaceSearch = {
+        [placementRequestDetail.id]: searchStateWithNewPlacement,
+      }
+
+      await occupancyViewController.view()(request, response, next)
+
+      expect(placementsUtils.getPlacementOfStatus).toHaveBeenCalledWith('arrived', placementRequestDetail)
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
         }),
       )
     })

@@ -484,6 +484,10 @@ export type SpaceSearchFormData = SpaceSearchCommonFields & {
   applicationId?: string
   departureDate?: string
   apType?: ApTypeCriteria
+  newPlacementArrivalDate?: string
+  newPlacementDepartureDate?: string
+  newPlacementReason?: string
+  newPlacementCriteriaChanged?: YesOrNo
 }
 
 export type DepartureFormData = ObjectWithDateParts<'departureDate'> & {

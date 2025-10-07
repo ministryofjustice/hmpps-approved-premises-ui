@@ -34,8 +34,8 @@ export class KeyworkerAssignmentPage extends Page {
 
   shouldShowKeyworkersRadios(currentKeyworkers: Array<Cas1CurrentKeyWorker>) {
     currentKeyworkers.forEach((currentKeyworker: Cas1CurrentKeyWorker) => {
-      this.verifyRadioByLabel(currentKeyworker.summary.name, currentKeyworker.summary.id)
+      this.verifyRadioByLabel(currentKeyworker.summary.name)
     })
-    this.verifyRadioByLabel('Assign a different keyworker', 'new')
+    this.verifyRadioByLabel('Assign a different keyworker')
   }
 }

@@ -29,9 +29,15 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
+    {% call govukDetails({ summaryText: "Placement request information", open: not newPlacementSummaryList }) %}
         {{ govukSummaryList(placementRequestInfoSummaryList) }}
     {% endcall %}
+
+    {% if newPlacementSummaryList %}
+        {% call govukDetails({summaryText: "New placement information", open: true}) %}
+            {{ govukSummaryList(newPlacementSummaryList) }}
+        {% endcall %}
+    {% endif %}
 
     <section>
         <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
@@ -139,11 +145,14 @@
                     Search for a space at another AP
                 </a>
             </p>
-            <p class="govuk-body">
-                <a href="{{ paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }) }}">
-                    Mark as unable to book
-                </a>
-            </p>
+
+            {% if not newPlacementSummaryList %}
+                <p class="govuk-body">
+                    <a href="{{ paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }) }}">
+                        Mark as unable to book
+                    </a>
+                </p>
+            {% endif %}
         </section>
     {% endif %}
 {% endblock %}

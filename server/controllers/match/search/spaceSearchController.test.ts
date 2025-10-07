@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { SpaceSearchFormData } from '@approved-premises/ui'
+import { SpaceSearchFormData, YesOrNo } from '@approved-premises/ui'
 import SpaceSearchController from './spaceSearchController'
 import {
   cas1PlacementRequestDetailFactory,
@@ -24,6 +24,8 @@ import paths from '../../../paths/admin'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
+import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import * as placementsUtils from '../../../utils/placementRequests/placements'
 
 describe('spaceSearchController', () => {
   const token = 'SOME_TOKEN'
@@ -65,38 +67,101 @@ describe('spaceSearchController', () => {
   })
 
   describe('search', () => {
+    const searchState = spaceSearchStateFactory.build()
+    const defaultRenderParameters = {
+      backlink: paths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
+      backlinkLabel: 'Back to placement request',
+      pageHeading: 'Find a space in an Approved Premises',
+      contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
+      summaryCards: summaryCards(spaceSearchResults.results, searchState.postcode, placementRequestDetail),
+      placementRequest: placementRequestDetail,
+      placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
+      formPath: searchPath,
+      ...searchState,
+      apTypeRadioItems: apTypeRadioItems(searchState.apType),
+      criteriaCheckboxGroups: [
+        checkBoxesForCriteria(
+          'AP requirements',
+          'apCriteria',
+          spaceSearchCriteriaApLevelLabels,
+          searchState.apCriteria,
+        ),
+        checkBoxesForCriteria('Room requirements', 'roomCriteria', roomCharacteristicMap, searchState.roomCriteria),
+      ],
+      errors: {},
+      errorSummary: [] as Array<string>,
+    }
+
     it('it should render the search template with the search state found in session', async () => {
-      const searchState = spaceSearchStateFactory.build()
       request.session.multiPageFormData = {
         spaceSearch: { [placementRequestDetail.id]: searchState },
       }
 
       await spaceSearchController.search()(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('match/search', {
-        pageHeading: 'Find a space in an Approved Premises',
-        contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
-        summaryCards: summaryCards(spaceSearchResults.results, searchState.postcode, placementRequestDetail),
-        placementRequest: placementRequestDetail,
-        placementRequestInfoSummaryList: placementRequestSummaryList(placementRequestDetail, { showActions: false }),
-        formPath: searchPath,
-        ...searchState,
-        apTypeRadioItems: apTypeRadioItems(searchState.apType),
-        criteriaCheckboxGroups: [
-          checkBoxesForCriteria(
-            'AP requirements',
-            'apCriteria',
-            spaceSearchCriteriaApLevelLabels,
-            searchState.apCriteria,
-          ),
-          checkBoxesForCriteria('Room requirements', 'roomCriteria', roomCharacteristicMap, searchState.roomCriteria),
-        ],
-        errors: {},
-        errorSummary: [],
-      })
+      expect(response.render).toHaveBeenCalledWith('match/search', defaultRenderParameters)
       expect(spaceSearchController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
       expect(spaceSearchService.search).toHaveBeenCalledWith(token, searchState)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
+    })
+
+    describe('when the search is part of a new placement', () => {
+      const searchStateWithNewPlacement = {
+        ...searchState,
+        newPlacementReason: 'Reason for the new placement',
+        newPlacementCriteriaChanged: 'no' as YesOrNo,
+      }
+
+      beforeEach(() => {
+        jest.spyOn(placementsUtils, 'getPlacementOfStatus')
+      })
+
+      it('should render with the new placement details', async () => {
+        request.session.multiPageFormData = {
+          spaceSearch: {
+            [placementRequestDetail.id]: searchStateWithNewPlacement,
+          },
+        }
+
+        await spaceSearchController.search()(request, response, next)
+
+        expect(placementsUtils.getPlacementOfStatus).toHaveBeenCalledWith('arrived', placementRequestDetail)
+        expect(response.render).toHaveBeenCalledWith(
+          'match/search',
+          expect.objectContaining({
+            newPlacementCriteriaChanged: 'no',
+            newPlacementReason: 'Reason for the new placement',
+            newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
+          }),
+        )
+      })
+
+      it.each([
+        ['have changed', 'yes', matchPaths.v2Match.placementRequests.newPlacement.updateCriteria],
+        ['have not changed', 'no', matchPaths.v2Match.placementRequests.newPlacement.checkCriteria],
+      ])(
+        'renders the correct back link if the criteria %s',
+        async (_, newPlacementCriteriaChanged, expectedBackLink) => {
+          request.session.multiPageFormData = {
+            spaceSearch: {
+              [placementRequestDetail.id]: {
+                ...searchStateWithNewPlacement,
+                newPlacementCriteriaChanged,
+              },
+            },
+          }
+
+          await spaceSearchController.search()(request, response, next)
+
+          expect(response.render).toHaveBeenCalledWith(
+            'match/search',
+            expect.objectContaining({
+              backlink: expectedBackLink({ placementRequestId: placementRequestDetail.id }),
+              backlinkLabel: 'Back',
+            }),
+          )
+        },
+      )
     })
 
     it('should create the space search state if not found in session', async () => {
@@ -151,7 +216,6 @@ describe('spaceSearchController', () => {
         userInput: expectedUserInput,
       })
 
-      const searchState = spaceSearchStateFactory.build()
       request.session.multiPageFormData = {
         spaceSearch: { [placementRequestDetail.id]: searchState },
       }

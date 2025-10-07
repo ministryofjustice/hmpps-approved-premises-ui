@@ -1,4 +1,11 @@
-import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
+import {
+  KeyDetailsArgs,
+  PersonRisksUI,
+  SpaceSearchFormData,
+  SummaryListItem,
+  TableCell,
+  TableRow,
+} from '@approved-premises/ui'
 import {
   Adjudication,
   ApprovedPremisesApplication as Application,
@@ -26,6 +33,7 @@ import { eventTypeTranslations } from '../../server/utils/applications/utils'
 import { displayName } from '../../server/utils/personUtils'
 import { dayAvailabilityCount, dayAvailabilityStatusForCriteria } from '../../server/utils/match/occupancy'
 import { dayStatusFromDayCapacity } from '../../server/utils/premises/occupancy'
+import { newPlacementSummaryList } from '../../server/utils/match/newPlacement'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
@@ -499,7 +507,7 @@ export default class Page {
     cy.get(`[name="${name}"][value="${value}"]`).should('be.checked')
   }
 
-  verifyRadioByLabel(label: string, value: string, checked?: boolean): void {
+  verifyRadioByLabel(label: string, checked?: boolean): void {
     let should = 'exist'
 
     if (checked !== undefined) {
@@ -874,5 +882,13 @@ export default class Page {
         })
         cy.wrap(day).should('have.class', statusClasses[dayStatus])
       })
+  }
+
+  shouldShowNewPlacementDetails(searchState: SpaceSearchFormData) {
+    this.shouldContainSummaryListItems(newPlacementSummaryList(searchState).rows)
+  }
+
+  shouldNotShow(text: string, selector: string = 'body') {
+    cy.get(selector).contains(text).should('not.exist')
   }
 }

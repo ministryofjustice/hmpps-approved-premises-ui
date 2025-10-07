@@ -44,6 +44,9 @@ export default class ChangeRequestsController {
         this.placementRequestService.getChangeRequestRejectionReasons(req.user.token, 'placementAppeal'),
       ])
 
+      const placementSummary = placementRequest.spaceBookings.find(
+        placement => placement.id === changeRequest.spaceBookingId,
+      )
       const changeRequestSummary = changeRequestSummaryList(changeRequest)
       const rejectionOptions = mapChangeRequestReasonsToRadios(rejectionReasons, '', {})
 
@@ -57,7 +60,7 @@ export default class ChangeRequestsController {
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         pageHeading: 'Review appeal',
         backLink: paths.admin.placementRequests.show({ placementRequestId }),
-        bookingSummary: placementRequest.booking && placementSummaryList(placementRequest),
+        bookingSummary: placementSummary && placementSummaryList(placementSummary),
         changeRequestSummary,
         ...errorsAndUserInput,
         decisionOptions,

@@ -15,6 +15,7 @@ import {
   apTypeWithViewTimelineActionRow,
   characteristicsDetails,
   creationNotificationBody,
+  creationNotificationBodyNewPlacement,
   distanceRow,
   filterOutAPTypes,
   keyDetails,
@@ -252,6 +253,7 @@ describe('matchUtils', () => {
     const expectedArrivalDate = '2025-09-23'
     const expectedDepartureDate = '2025-11-18'
     const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
+    const newPlacementReason = 'Some reason'
 
     it('returns summary list items for the space booking confirmation screen', () => {
       expect(
@@ -323,6 +325,26 @@ describe('matchUtils', () => {
 
       expect(rows).toEqual(expect.not.arrayContaining([expect.objectContaining({ key: { text: 'AP area' } })]))
     })
+
+    it('returns summary list items with the reason for a new placement', () => {
+      const rows = spaceBookingConfirmationSummaryListRows({
+        premises,
+        expectedArrivalDate,
+        expectedDepartureDate,
+        criteria,
+        releaseType: placementRequest.releaseType,
+        newPlacementReason,
+      })
+
+      expect(rows).toEqual(
+        expect.arrayContaining([
+          {
+            key: { text: 'Reason for placement' },
+            value: { html: `<span class="govuk-summary-list__textblock">${newPlacementReason}</span>` },
+          },
+        ]),
+      )
+    })
   })
 
   describe('filterOutAPTypes', () => {
@@ -391,6 +413,22 @@ describe('matchUtils', () => {
         .toEqual(`<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>
 <li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequest.applicationDate, { format: 'short' })}</li></ul>
 <p>A confirmation email will be sent to the AP and probation practitioner.</p>`)
+    })
+  })
+
+  describe('creationNotificationBodyNewPlacement', () => {
+    it('should build the notification body for a new placement', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: personFactory.build({ type: 'FullPerson', name: 'Ben Johnson' }),
+        expectedArrivalDate: '2026-01-28',
+        expectedDepartureDate: '2026-02-13',
+        premises: { name: 'Someplace', id: 'some-id' },
+      })
+
+      expect(creationNotificationBodyNewPlacement(placement)).toMatchStringIgnoringWhitespace(`
+        <p>A placement has been created for Ben Johnson at Someplace from Wed 28 Jan 2026 to Fri 13 Feb 2026.</p>
+        <p>The original placement requires changes to the departure date.</p>
+      `)
     })
   })
 })
