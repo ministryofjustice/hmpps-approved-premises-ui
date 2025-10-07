@@ -1,4 +1,4 @@
-import { ProjectAllocationsDto, SessionDto } from '../@types/shared'
+import { SessionSummariesDto, SessionDto } from '../@types/shared'
 import SessionClient from '../data/sessionClient'
 import SessionService from './sessionService'
 
@@ -13,7 +13,7 @@ describe('ProviderService', () => {
   })
 
   it('should call getSessions on the api client and return its result', async () => {
-    const sessions: ProjectAllocationsDto = {
+    const sessions: SessionSummariesDto = {
       allocations: [
         {
           id: 1001,

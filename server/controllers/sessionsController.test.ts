@@ -4,7 +4,7 @@ import type { NextFunction, Request, Response } from 'express'
 import SessionsController from './sessionsController'
 import ProviderService from '../services/providerService'
 import SessionService from '../services/sessionService'
-import { ProjectAllocationsDto } from '../@types/shared'
+import { SessionSummariesDto } from '../@types/shared'
 import GovukFrontendDateInput from '../forms/GovukFrontendDateInput'
 import SessionUtils from '../utils/sessionUtils'
 
@@ -133,7 +133,7 @@ describe('SessionsController', () => {
 
       resultTableRowsSpy.mockReturnValue(formattedSessionRows)
 
-      const sessions: ProjectAllocationsDto = {
+      const sessions: SessionSummariesDto = {
         allocations: [allocation],
       }
 
@@ -165,7 +165,7 @@ describe('SessionsController', () => {
     })
 
     it('should return teamItems with selected team', async () => {
-      const sessions: ProjectAllocationsDto = {
+      const sessions: SessionSummariesDto = {
         allocations: [],
       }
 

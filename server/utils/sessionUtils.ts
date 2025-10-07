@@ -1,4 +1,4 @@
-import { AppointmentSummaryDto, ProjectAllocationsDto } from '../@types/shared'
+import { AppointmentSummaryDto, SessionSummariesDto } from '../@types/shared'
 import Offender from '../models/offender'
 import paths from '../paths'
 import DateTimeFormats from './dateTimeUtils'
@@ -7,7 +7,7 @@ import { createQueryString } from './utils'
 import { GovUKTableRow } from '../@types/user-defined'
 
 export default class SessionUtils {
-  static sessionResultTableRows(sessions: ProjectAllocationsDto) {
+  static sessionResultTableRows(sessions: SessionSummariesDto) {
     return sessions.allocations.map(session => {
       const showPath = `${paths.sessions.show({ id: session.projectId.toString() })}?${createQueryString({ date: session.date })}`
       const projectLink = HtmlUtils.getAnchor(session.projectName, showPath)

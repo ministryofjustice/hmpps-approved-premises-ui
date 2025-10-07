@@ -22,6 +22,8 @@ describe('find', () => {
       id: 1001,
       projectName: 'Community Garden Maintenance',
       projectCode: 'XCT12',
+      projectTypeName: 'Environmental Improvement',
+      projectTypeCode: 'ENV',
       supervisingTeam: 'Team Lincoln',
       date: '2025-01-02',
       startTime: '11:00',

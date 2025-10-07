@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ProjectAllocationDto } from './ProjectAllocationDto';
-export type ProjectAllocationsDto = {
+import type { SessionSummaryDto } from './SessionSummaryDto';
+export type SessionSummariesDto = {
     /**
      * List of project allocations
      */
-    allocations: Array<ProjectAllocationDto>;
+    allocations: Array<SessionSummaryDto>;
 };
 

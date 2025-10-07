@@ -41,6 +41,8 @@ describe('AppointmentsController', () => {
       const appointment: AppointmentDto = {
         id: 1001,
         projectName: 'Community Garden Maintenance',
+        projectTypeName: 'Environmental Improvement',
+        projectTypeCode: 'ENV',
         offender: offenderResponse,
         supervisingTeam: 'Team Lincoln',
         projectCode: 'XCT12',

@@ -3,7 +3,7 @@ import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients
 import config from '../config'
 import logger from '../../logger'
 import paths from '../paths/api'
-import { ProjectAllocationsDto, SessionDto } from '../@types/shared'
+import { SessionSummariesDto, SessionDto } from '../@types/shared'
 import { GetSessionsRequest } from '../@types/user-defined'
 import { createQueryString } from '../utils/utils'
 
@@ -12,11 +12,11 @@ export default class SessionClient extends RestClient {
     super('sessionClient', config.apis.communityPaybackApi, logger, authenticationClient)
   }
 
-  async getSessions({ username, teamCode, startDate, endDate }: GetSessionsRequest): Promise<ProjectAllocationsDto> {
+  async getSessions({ username, teamCode, startDate, endDate }: GetSessionsRequest): Promise<SessionSummariesDto> {
     return (await this.get(
       { path: paths.projects.sessions({}), query: createQueryString({ startDate, endDate, teamCode }) },
       asSystem(username),
-    )) as ProjectAllocationsDto
+    )) as SessionSummariesDto
   }
 
   async find(username: string, projectId: string, date: string): Promise<SessionDto> {

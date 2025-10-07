@@ -33,6 +33,8 @@ export const mockAppointment: AppointmentDto = {
   id: 1001,
   projectName: 'Park cleaning',
   projectCode: 'XCT12',
+  projectTypeName: 'MAINTENANCE',
+  projectTypeCode: 'MAINT',
   supervisingTeam: 'Team Lincoln',
   date: '2025-01-02',
   startTime: '11:00',

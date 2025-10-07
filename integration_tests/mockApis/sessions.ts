@@ -1,7 +1,7 @@
 import type { SuperAgentRequest } from 'superagent'
 import { stubFor } from './wiremock'
 import paths from '../../server/paths/api'
-import type { ProjectAllocationsDto, SessionDto } from '../../server/@types/shared'
+import type { SessionSummariesDto, SessionDto } from '../../server/@types/shared'
 import type { GetSessionsRequest } from '../../server/@types/user-defined'
 
 export default {
@@ -10,7 +10,7 @@ export default {
     sessions,
   }: {
     request: GetSessionsRequest
-    sessions: ProjectAllocationsDto
+    sessions: SessionSummariesDto
   }): SuperAgentRequest => {
     const queryParameters: Record<string, unknown> = {
       teamCode: {

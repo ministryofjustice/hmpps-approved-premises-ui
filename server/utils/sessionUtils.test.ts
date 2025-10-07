@@ -1,4 +1,4 @@
-import { AppointmentSummaryDto, OffenderDto, OffenderFullDto, ProjectAllocationsDto } from '../@types/shared'
+import { AppointmentSummaryDto, OffenderDto, OffenderFullDto, SessionSummariesDto } from '../@types/shared'
 import Offender from '../models/offender'
 import paths from '../paths'
 import DateTimeFormats from './dateTimeUtils'
@@ -41,7 +41,7 @@ describe('SessionUtils', () => {
         numberOfOffendersWithEA: 1,
       }
 
-      const sessions: ProjectAllocationsDto = {
+      const sessions: SessionSummariesDto = {
         allocations: [allocation],
       }
 
