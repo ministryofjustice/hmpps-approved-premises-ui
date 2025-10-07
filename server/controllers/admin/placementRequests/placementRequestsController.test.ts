@@ -82,11 +82,13 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('selectPlacement', () => {
-    it('renders the form to select a placement to change', async () => {
-      const placement1 = cas1SpaceBookingSummaryFactory.upcoming().build()
-      const placement2 = cas1SpaceBookingSummaryFactory.upcoming().build()
+    const departedPlacement = cas1SpaceBookingSummaryFactory.departed().build()
+    const currentPlacement = cas1SpaceBookingSummaryFactory.upcoming().build()
+    const upcomingPlacement = cas1SpaceBookingSummaryFactory.current().build()
+
+    it('renders the form to select a placement to change, only showing upcoming or current placements', async () => {
       const placementRequest = cas1PlacementRequestDetailFactory.matched().build({
-        spaceBookings: [placement1, placement2],
+        spaceBookings: [departedPlacement, currentPlacement, upcomingPlacement],
       })
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
       request.params.placementRequestId = placementRequest.id
@@ -97,14 +99,19 @@ describe('PlacementRequestsController', () => {
         backlink: adminPaths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),
         pageHeading: 'Which placement do you want to change?',
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
-        placementRadioItems: placementRadioItems(placementRequest.spaceBookings),
+        placementRadioItems: placementRadioItems([currentPlacement, upcomingPlacement]),
         errors: {},
         errorSummary: [] as Array<string>,
       })
     })
 
-    it('redirects to the change placement page if there is only one placement', async () => {
-      const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking().build()
+    it.each([
+      ['only one placement', [upcomingPlacement]],
+      ['only one placement that can be changed', [departedPlacement, upcomingPlacement]],
+    ])('redirects to the change placement page if there is %s', async (_, spaceBookings) => {
+      const placementRequest = cas1PlacementRequestDetailFactory.matched().build({
+        spaceBookings,
+      })
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
       request.params.placementRequestId = placementRequest.id
 
@@ -112,8 +119,8 @@ describe('PlacementRequestsController', () => {
 
       expect(response.redirect).toHaveBeenCalledWith(
         managePaths.premises.placements.changes.new({
-          premisesId: placementRequest.spaceBookings[0].premises.id,
-          placementId: placementRequest.spaceBookings[0].id,
+          premisesId: upcomingPlacement.premises.id,
+          placementId: upcomingPlacement.id,
         }),
       )
     })

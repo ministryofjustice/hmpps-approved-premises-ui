@@ -9,6 +9,7 @@ import paths from '../../../paths/admin'
 import managePaths from '../../../paths/manage'
 import { ValidationError } from '../../../utils/errors'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
+import { overallStatus } from '../../../utils/placements'
 
 export default class PlacementRequestsController {
   constructor(
@@ -54,10 +55,16 @@ export default class PlacementRequestsController {
         placementRequestId,
       )
 
-      if (placementRequest.spaceBookings.length === 1) {
-        const placement = placementRequest.spaceBookings[0]
+      const placementsToChange = placementRequest.spaceBookings.filter(placement =>
+        ['upcoming', 'arrived'].includes(overallStatus(placement)),
+      )
+
+      if (placementsToChange.length === 1) {
         res.redirect(
-          managePaths.premises.placements.changes.new({ premisesId: placement.premises.id, placementId: placement.id }),
+          managePaths.premises.placements.changes.new({
+            premisesId: placementsToChange[0].premises.id,
+            placementId: placementsToChange[0].id,
+          }),
         )
         return
       }
@@ -66,7 +73,7 @@ export default class PlacementRequestsController {
         backlink: paths.admin.placementRequests.show({ placementRequestId }),
         pageHeading: 'Which placement do you want to change?',
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
-        placementRadioItems: placementRadioItems(placementRequest.spaceBookings),
+        placementRadioItems: placementRadioItems(placementsToChange),
         errors,
         errorSummary,
       })
