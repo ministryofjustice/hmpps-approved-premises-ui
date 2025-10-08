@@ -7,7 +7,6 @@ import { placementSummaryList, placementTitle } from '../../../../server/utils/p
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'
 import applyPaths from '../../../../server/paths/apply'
-import managePaths from '../../../../server/paths/manage'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: Cas1PlacementRequestDetail) {
@@ -59,16 +58,13 @@ export default class ShowPage extends Page {
   shouldShowParoleNotification() {
     cy.get('.govuk-notification-banner').contains('Parole board directed release').should('exist')
 
-    if (this.placementRequest.booking) {
+    if (this.placementRequest.spaceBookings.length > 0) {
       cy.get('a')
         .contains('change the arrival date')
         .should(
           'have.attr',
           'href',
-          managePaths.premises.placements.changes.new({
-            premisesId: this.placementRequest.booking.premisesId,
-            placementId: this.placementRequest.booking.id,
-          }),
+          paths.admin.placementRequests.selectPlacement({ placementRequestId: this.placementRequest.id }),
         )
     }
   }

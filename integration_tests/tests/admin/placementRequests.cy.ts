@@ -60,9 +60,8 @@ context('Placement Requests', () => {
       .build()
 
     const spaceBooking = cas1SpaceBookingFactory.build({
+      ...matchedPlacementRequest.spaceBookings[0],
       applicationId: application.id,
-      premises: { id: matchedPlacementRequest.booking.premisesId },
-      id: matchedPlacementRequest.booking.id,
       placementRequestId: matchedPlacementRequest.id,
     })
 
@@ -223,11 +222,12 @@ context('Placement Requests', () => {
     it('allows me to cancel a placement', () => {
       const { matchedPlacementRequest, spaceBooking } = stubArtifacts()
       const cancellation = newCancellationFactory.build()
-      const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'space_booking' })
+      const booking = matchedPlacementRequest.spaceBookings[0]
+      const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'space_booking' })
       cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
       cy.task('stubCancellationCreate', {
-        premisesId: matchedPlacementRequest.booking.premisesId,
-        placementId: matchedPlacementRequest.booking.id,
+        premisesId: booking.premises.id,
+        placementId: booking.id,
         cancellation,
       })
       cy.task('stubCancellationReferenceData')
@@ -277,8 +277,8 @@ context('Placement Requests', () => {
       cy.task(
         'verifyApiPost',
         paths.premises.placements.cancel({
-          premisesId: matchedPlacementRequest.booking.premisesId,
-          placementId: matchedPlacementRequest.booking.id,
+          premisesId: matchedPlacementRequest.spaceBookings[0].premises.id,
+          placementId: matchedPlacementRequest.spaceBookings[0].id,
         }),
       ).then(({ reasonId }) => {
         expect(reasonId).equal(cancellation.reason)

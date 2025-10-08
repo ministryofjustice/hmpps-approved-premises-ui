@@ -31,10 +31,10 @@
                 as {{ formatDate(placementRequest.authorisedPlacementPeriod.arrival) }}.
                 This is 6 weeks after the parole board's date of decision.
             </p>
-            {% if placementRequest.booking %}
+            {% if placementRequest.spaceBookings | length %}
                 <p class="govuk-body">
                     If needed, you can <a
-                            href="{{ paths.premises.placements.changes.new({ premisesId: placementRequest.booking.premisesId, placementId: placementRequest.booking.id }) }}">change
+                            href="{{ paths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id }) }}">change
                         the arrival date</a> in the Approved Premises service.
                 </p>
             {% endif %}
