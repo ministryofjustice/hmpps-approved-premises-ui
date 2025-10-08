@@ -48,7 +48,7 @@ const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
 }
 
 export type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
-type SpaceBookingStatus = keyof typeof statusTextMap
+export type SpaceBookingStatus = keyof typeof statusTextMap
 
 const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
   Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)

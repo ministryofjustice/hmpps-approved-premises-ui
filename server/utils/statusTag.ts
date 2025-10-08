@@ -8,6 +8,7 @@ import {
 import { TaskStatus as TaskListStatus } from '../@types/ui'
 // eslint-disable-next-line import/no-cycle
 import { AssessmentStatusForUi } from './assessments/statusTag'
+import { SpaceBookingStatus } from './placements'
 
 export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean; taskListTag?: boolean; id?: string }
 type Status =
@@ -18,6 +19,7 @@ type Status =
   | AssessmentStatusForUi
   | TaskListStatus
   | RequestForPlacementStatus
+  | SpaceBookingStatus
 
 export class StatusTag<T extends Status> {
   status: T
@@ -61,7 +63,7 @@ export const createTag = <T extends Status>(
   }
 
   if (options?.addLeftMargin) {
-    classes += 'govuk-!-margin-5 '
+    classes += 'govuk-!-margin-left-5 '
   }
 
   if (options?.showOnOneLine) {
