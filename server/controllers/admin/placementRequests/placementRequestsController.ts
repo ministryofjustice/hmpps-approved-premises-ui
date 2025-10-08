@@ -10,6 +10,7 @@ import managePaths from '../../../paths/manage'
 import { ValidationError } from '../../../utils/errors'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { overallStatus } from '../../../utils/placements'
+import { changePlacementLink } from '../../../utils/placementRequests/adminIdentityBar'
 
 export default class PlacementRequestsController {
   constructor(
@@ -32,6 +33,7 @@ export default class PlacementRequestsController {
           paths.admin.cruDashboard.search.pattern,
         ]),
         adminIdentityBar: adminIdentityBar(placementRequest, res.locals.user),
+        changePlacementLink: changePlacementLink(placementRequest),
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
@@ -58,16 +60,6 @@ export default class PlacementRequestsController {
       const placementsToChange = placementRequest.spaceBookings.filter(placement =>
         ['upcoming', 'arrived'].includes(overallStatus(placement)),
       )
-
-      if (placementsToChange.length === 1) {
-        res.redirect(
-          managePaths.premises.placements.changes.new({
-            premisesId: placementsToChange[0].premises.id,
-            placementId: placementsToChange[0].id,
-          }),
-        )
-        return
-      }
 
       res.render('admin/placementRequests/select-placement', {
         backlink: paths.admin.placementRequests.show({ placementRequestId }),

@@ -19,6 +19,7 @@ import adminPaths from '../../../paths/admin'
 import managePaths from '../../../paths/manage'
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
+import { changePlacementLink } from '../../../utils/placementRequests/adminIdentityBar'
 
 jest.mock('../../../utils/applications/utils')
 jest.mock('../../../utils/applications/getResponses')
@@ -67,6 +68,7 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/show', {
         backlink: '/admin/cru-dashboard?status=unableToMatch&page=2',
         adminIdentityBar: adminIdentityBar(placementRequest, response.locals.user),
+        changePlacementLink: changePlacementLink(placementRequest),
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
@@ -103,26 +105,6 @@ describe('PlacementRequestsController', () => {
         errors: {},
         errorSummary: [] as Array<string>,
       })
-    })
-
-    it.each([
-      ['only one placement', [upcomingPlacement]],
-      ['only one placement that can be changed', [departedPlacement, upcomingPlacement]],
-    ])('redirects to the change placement page if there is %s', async (_, spaceBookings) => {
-      const placementRequest = cas1PlacementRequestDetailFactory.matched().build({
-        spaceBookings,
-      })
-      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
-      request.params.placementRequestId = placementRequest.id
-
-      await placementRequestsController.selectPlacement()(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith(
-        managePaths.premises.placements.changes.new({
-          premisesId: upcomingPlacement.premises.id,
-          placementId: upcomingPlacement.id,
-        }),
-      )
     })
   })
 

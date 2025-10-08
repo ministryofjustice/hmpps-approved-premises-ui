@@ -7,6 +7,7 @@ import { placementSummaryList, placementTitle } from '../../../../server/utils/p
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'
 import applyPaths from '../../../../server/paths/apply'
+import { changePlacementLink } from '../../../../server/utils/placementRequests/adminIdentityBar'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: Cas1PlacementRequestDetail) {
@@ -24,7 +25,7 @@ export default class ShowPage extends Page {
       'Create new placement': matchPaths.v2Match.placementRequests.newPlacement.new({
         placementRequestId: placementRequest.id,
       }),
-      'Change placement': paths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id }),
+      'Change placement': changePlacementLink(placementRequest),
     }
   }
 
@@ -61,11 +62,7 @@ export default class ShowPage extends Page {
     if (this.placementRequest.spaceBookings.length > 0) {
       cy.get('a')
         .contains('change the arrival date')
-        .should(
-          'have.attr',
-          'href',
-          paths.admin.placementRequests.selectPlacement({ placementRequestId: this.placementRequest.id }),
-        )
+        .should('have.attr', 'href', changePlacementLink(this.placementRequest))
     }
   }
 }

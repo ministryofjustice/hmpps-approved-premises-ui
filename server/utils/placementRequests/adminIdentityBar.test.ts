@@ -6,9 +6,10 @@ import {
   cas1PlacementRequestDetailFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
-import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
+import { adminActions, adminIdentityBar, changePlacementLink, title } from './adminIdentityBar'
 
 import adminPaths from '../../paths/admin'
+import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -29,7 +30,7 @@ const setup = ({
   }
 
   const actionChangePlacement = {
-    href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequestDetail.id }),
+    href: changePlacementLink(placementRequestDetail),
     text: 'Change placement',
   }
 
@@ -58,6 +59,57 @@ const setup = ({
   }
 }
 
+describe('changePlacementLink', () => {
+  const upcomingBooking = cas1SpaceBookingSummaryFactory.upcoming().build()
+  const currentBooking = cas1SpaceBookingSummaryFactory.current().build()
+  const notArrivedBooking = cas1SpaceBookingSummaryFactory.nonArrival().build()
+  const departedBooking = cas1SpaceBookingSummaryFactory.departed().build()
+
+  it.each([
+    ['the only placement is upcoming', [upcomingBooking]],
+    ['only one placement is upcoming', [departedBooking, upcomingBooking]],
+    ['the only placement is arrived', [currentBooking]],
+    ['only one placement is arrived', [departedBooking, notArrivedBooking, currentBooking]],
+  ])('should return a direct link to change the placement if %s', (_, spaceBookings) => {
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.matched().build({
+      spaceBookings,
+    })
+    const [changeableBooking] = spaceBookings.slice(-1)
+
+    expect(changePlacementLink(placementRequestDetail)).toEqual(
+      managePaths.premises.placements.changes.new({
+        premisesId: changeableBooking.premises.id,
+        placementId: changeableBooking.id,
+      }),
+    )
+  })
+
+  it.each([
+    ['several placements are upcoming', [upcomingBooking, upcomingBooking]],
+    ['several placements are arrived', [currentBooking, departedBooking, currentBooking]],
+    ['several placements are upcoming or arrived', [upcomingBooking, currentBooking, currentBooking]],
+  ])('it should return an action to select the placement if %s', (_, spaceBookings) => {
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.matched().build({
+      spaceBookings,
+    })
+
+    expect(changePlacementLink(placementRequestDetail)).toEqual(
+      adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequestDetail.id }),
+    )
+  })
+
+  it.each([
+    ['no arrived or upcoming placement', [departedBooking, notArrivedBooking]],
+    ['no linked placements', []],
+  ])('should return undefined if %s', (_, spaceBookings) => {
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.matched().build({
+      spaceBookings,
+    })
+
+    expect(changePlacementLink(placementRequestDetail)).toBeUndefined()
+  })
+})
+
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
     const OLD_ENV = process.env
@@ -79,18 +131,21 @@ describe('adminIdentityBar', () => {
 
       it.each([
         ['the only placement is upcoming', [upcomingBooking]],
-        ['at least one placement is upcoming', [departedBooking, upcomingBooking]],
+        ['only one placement is upcoming', [departedBooking, upcomingBooking]],
+        ['several placements are upcoming', [upcomingBooking, upcomingBooking]],
         ['the only placement is arrived', [currentBooking]],
-        ['at least one placement is arrived', [departedBooking, currentBooking]],
+        ['only one placement is arrived', [departedBooking, notArrivedBooking, currentBooking]],
+        ['several placements are arrived', [currentBooking, departedBooking, currentBooking]],
+        ['several placements are upcoming or arrived', [upcomingBooking, currentBooking, currentBooking]],
       ])('should return an action to change the placement if %s', (_, spaceBookings) => {
         const placementRequestDetail = cas1PlacementRequestDetailFactory.matched().build({
           spaceBookings,
         })
-
         const { adminActionsResult, actionChangePlacement } = setup({
           placementRequestDetail,
           permissions: [],
         })
+
         expect(adminActionsResult).toEqual([actionChangePlacement])
       })
 
@@ -107,6 +162,7 @@ describe('adminIdentityBar', () => {
           placementRequestDetail,
           permissions: [],
         })
+
         expect(adminActionsResult).not.toContainAction(actionChangePlacement)
       })
 

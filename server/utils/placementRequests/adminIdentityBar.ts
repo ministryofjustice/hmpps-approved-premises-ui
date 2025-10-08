@@ -2,6 +2,7 @@ import { Cas1PlacementRequestDetail } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 
 import adminPaths from '../../paths/admin'
+import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { hasPermission } from '../users'
@@ -20,6 +21,25 @@ export const adminIdentityBar = (placementRequest: Cas1PlacementRequestDetail, u
   return identityBar
 }
 
+export const changePlacementLink = (placementRequest: Cas1PlacementRequestDetail) => {
+  const changeablePlacements = placementRequest.spaceBookings.filter(placement =>
+    ['upcoming', 'arrived'].includes(overallStatus(placement)),
+  )
+
+  if (changeablePlacements.length > 1) {
+    return adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id })
+  }
+
+  if (changeablePlacements.length === 1) {
+    return managePaths.premises.placements.changes.new({
+      premisesId: changeablePlacements[0].premises.id,
+      placementId: changeablePlacements[0].id,
+    })
+  }
+
+  return undefined
+}
+
 export const adminActions = (
   placementRequest: Cas1PlacementRequestDetail,
   user: UserDetails,
@@ -27,9 +47,11 @@ export const adminActions = (
   if (placementRequest.status === 'matched' && placementRequest.spaceBookings.length > 0) {
     const matchedActions = []
 
-    if (placementRequest.spaceBookings.find(booking => ['upcoming', 'arrived'].includes(overallStatus(booking)))) {
+    const changeLink = changePlacementLink(placementRequest)
+
+    if (changeLink) {
       matchedActions.push({
-        href: adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id }),
+        href: changeLink,
         text: 'Change placement',
       })
     }
