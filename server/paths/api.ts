@@ -6,9 +6,6 @@ const cas1Namespace = path('/cas1')
 const cas1Premises = cas1Namespace.path('premises')
 const cas1PremisesSingle = cas1Premises.path(':premisesId')
 const cas1Beds = cas1PremisesSingle.path('beds')
-const cas1LostBeds = cas1PremisesSingle.path('lost-beds')
-const cas1LostBedsSingle = cas1LostBeds.path(':id')
-const cas1LostBedsCancellations = cas1LostBedsSingle.path('cancellations')
 const cas1OutOfServiceBeds = cas1PremisesSingle.path('out-of-service-beds')
 const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 const cas1LocalRestrictions = cas1PremisesSingle.path('local-restrictions')
@@ -43,10 +40,6 @@ const cas1ReferenceData = cas1Namespace.path('reference-data')
 const cas1Profile = cas1Namespace.path('/profile')
 
 // Non-namespaced
-const premises = path('/premises')
-const premisesSingle = premises.path(':premisesId')
-const rooms = premisesSingle.path('rooms')
-
 const people = path('/people')
 const person = people.path(':crn')
 
@@ -78,23 +71,10 @@ export default {
     capacity: cas1Capacity,
     nationalCapacity: cas1NationalCapacity,
     daySummary: cas1DaySummary,
-    summary: premisesSingle.path('summary'),
-    lostBeds: {
-      create: cas1LostBeds,
-      index: cas1LostBeds,
-      update: cas1LostBedsSingle,
-      show: cas1LostBedsSingle,
-      cancel: cas1LostBedsCancellations,
-    },
-    staffMembers: {
-      index: cas1PremisesSingle.path('staff'),
-    },
     beds: {
       index: cas1Beds,
       show: cas1Beds.path(':bedId'),
     },
-    rooms,
-    room: rooms.path(':roomId'),
     placements: {
       show: cas1SpaceBookingSingle,
       index: cas1PremisesSingle.path('space-bookings'),
@@ -107,16 +87,12 @@ export default {
       emergencyTransfer: cas1SpaceBookingSingle.path('emergency-transfer'),
       appeal: cas1SpaceBookingSingle.path('appeal'),
     },
-    calendar: premisesSingle.path('calendar'),
     occupancyReport: cas1Premises.path('occupancy-report'),
     localRestrictions: {
       create: cas1LocalRestrictions,
       delete: cas1LocalRestrictions.path(':restrictionId'),
     },
     currentKeyworkers: cas1PremisesSingle.path('current-key-workers'),
-  },
-  bookings: {
-    bookingWithoutPremisesPath: path('/bookings/:bookingId'),
   },
   placements: {
     placementWithoutPremises: cas1Namespace.path('space-bookings/:placementId'),
@@ -129,13 +105,10 @@ export default {
     new: cas1Applications,
     submission: cas1ApplicationsSingle.path('submission'),
     documents: cas1ApplicationsSingle.path('documents'),
-    assessment: cas1ApplicationsSingle.path('assessment'),
     withdrawal: cas1ApplicationsSingle.path('withdrawal'),
     timeline: cas1ApplicationsSingle.path('timeline'),
-    placementApplications: cas1ApplicationsSingle.path('placement-applications'),
     requestsForPlacement: cas1ApplicationsSingle.path('requests-for-placement'),
     addNote: cas1ApplicationsSingle.path('notes'),
-    withdrawables: cas1ApplicationsSingle.path('withdrawables'),
     withdrawablesWithNotes: cas1ApplicationsSingle.path('withdrawablesWithNotes'),
     appeals: {
       show: cas1Appeals.path(':appealId'),
@@ -158,9 +131,6 @@ export default {
   },
   tasks: {
     index: cas1Tasks,
-    type: {
-      index: cas1Tasks.path(':taskType'),
-    },
     show: cas1TasksSingle,
     allocations: {
       create: cas1TasksSingle.path('allocations'),
