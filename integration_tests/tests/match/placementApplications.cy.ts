@@ -85,6 +85,7 @@ context('Placement Applications', () => {
         'hdc',
         'pss',
         'reReleasedPostRecall',
+        'reReleasedFollowingFixedTermRecall',
       ])
       const helper = new Helper(completedApplication, placementApplication)
       const { checkSentenceTypePage, sentenceTypePage, releaseTypePage } = helper.startApplication({
@@ -95,7 +96,7 @@ context('Placement Applications', () => {
       THEN('I should be on the additional placements details page')
       const additionalPlacementDetailsPage = new AdditionalPlacementDetailsPage()
 
-      WHEN('I add addditional details and submit')
+      WHEN('I add additional details and submit')
       additionalPlacementDetailsPage.completeForm()
       additionalPlacementDetailsPage.clickSubmit()
       cy.task('stubPlacementApplicationFromLastUpdate', { placementApplication })

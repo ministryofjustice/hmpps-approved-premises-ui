@@ -53,7 +53,15 @@ describe('ReleaseType', () => {
       it('if the sentence type is "standardDeterminate" then all the items should be shown', () => {
         releaseType.sentenceType = 'standardDeterminate'
         expect(releaseType.getReleaseTypes()).toEqual(
-          getExpected(['licence', 'rotl', 'hdc', 'pss', 'paroleDirectedLicence', 'reReleasedPostRecall']),
+          getExpected([
+            'licence',
+            'rotl',
+            'hdc',
+            'pss',
+            'paroleDirectedLicence',
+            'reReleasedPostRecall',
+            'reReleasedFollowingFixedTermRecall',
+          ]),
         )
       })
 
