@@ -3,6 +3,7 @@ import { SummaryList } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
 import { detailedStatus, overallStatus, statusTextMap } from '../placements'
 import { DateFormats } from '../dateUtils'
+import { PlacementStatusTag } from '../placements/statusTag'
 
 export const placementSummaryList = (placement: Cas1SpaceBookingSummary): SummaryList => ({
   rows: [
@@ -22,7 +23,7 @@ type PlacementSummary = {
 }
 
 export const placementTitle = (placement: Cas1SpaceBookingSummary): string =>
-  `${placement.premises.name} - ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)} - ${statusTextMap[overallStatus(placement)]}`
+  `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)} ${new PlacementStatusTag(overallStatus(placement), { addLeftMargin: true }).html()}`
 
 export const placementsSummaries = (placementRequest: Cas1PlacementRequestDetail): Array<PlacementSummary> =>
   [...placementRequest.spaceBookings]

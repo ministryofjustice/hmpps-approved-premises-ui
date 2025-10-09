@@ -62,8 +62,16 @@
         <h2 class="govuk-heading-l">Booked placement{% if placements | length > 1 %}s{% endif %}</h2>
 
         {% for placement in placements %}
-            <h3 class="govuk-heading-m">{{ placement.title }}</h3>
-            {{ govukSummaryList(placement.summaryList) }}
+            <details class="govuk-summary-card govuk-details">
+                <summary class="govuk-summary-card__title-wrapper govuk-details__summary">
+                    <h3 class="govuk-summary-card__title govuk-details__summary-text">
+                        {{ placement.title | safe }}
+                    </h3>
+                </summary>
+                <div class="govuk-summary-card__content">
+                    {{ govukSummaryList(placement.summaryList) }}
+                </div>
+            </details>
         {% endfor %}
     {% endif %}
 {% endblock %}

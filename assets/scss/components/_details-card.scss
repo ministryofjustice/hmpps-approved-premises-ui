@@ -1,0 +1,16 @@
+@use "govuk-frontend/dist/govuk" as *;
+
+.govuk-summary-card.govuk-details {
+  .govuk-details__summary {
+    width: auto;
+
+    &::before {
+      left: 20px;
+    }
+  }
+
+  .govuk-details__summary-text {
+    padding-left: 20px;
+    color: inherit;
+  }
+}
