@@ -67,7 +67,13 @@ context('Premises', () => {
   describe('show', () => {
     const premises = cas1PremisesFactory.build()
     const placements = cas1SpaceBookingSummaryFactory.buildList(30)
-    const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
+    const currentKeyworkers = [
+      cas1CurrentKeyworkerFactory.build({
+        upcomingBookingCount: 6,
+        currentBookingCount: 1,
+      }),
+      ...cas1CurrentKeyworkerFactory.buildList(5),
+    ]
 
     beforeEach(() => {
       cy.task('reset')
@@ -150,8 +156,8 @@ context('Premises', () => {
     })
 
     it('should let the user filter by keyworker', () => {
-      const testKeyworker = currentKeyworkers[2].summary
-      const placementsWithKeyworker = cas1SpaceBookingSummaryFactory.buildList(6, {
+      const testKeyworker = currentKeyworkers[0].summary
+      const placementsWithKeyworker = cas1SpaceBookingSummaryFactory.upcoming().buildList(6, {
         keyWorkerAllocation: cas1KeyworkerAllocationFactory.build(testKeyworker),
       })
       cy.task('stubSpaceBookingSummaryList', {
