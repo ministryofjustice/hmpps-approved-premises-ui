@@ -14,6 +14,7 @@ import {
   premisesFactory,
   withdrawableFactory,
   cas1PlacementRequestSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { CancellationCreatePage, UnableToMatchPage } from '../../pages/manage'
@@ -47,7 +48,7 @@ context('Placement Requests', () => {
 
     const parolePlacementRequest = cas1PlacementRequestDetailFactory
       .params(unmatchedPlacementRequests[1])
-      .withSpaceBooking()
+      .withSpaceBooking(cas1SpaceBookingSummaryFactory.upcoming().build())
       .build()
 
     const matchedPlacementRequest = cas1PlacementRequestDetailFactory
@@ -56,7 +57,7 @@ context('Placement Requests', () => {
         applicationId: application.id,
         status: 'matched',
       })
-      .matched()
+      .withSpaceBooking(cas1SpaceBookingSummaryFactory.upcoming().build())
       .build()
 
     const spaceBooking = cas1SpaceBookingFactory.build({
