@@ -1,11 +1,14 @@
-import { Cas1PlacementRequestDetail } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import { RadioItemButton } from '@approved-premises/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { linkTo } from '../utils'
 
 import paths from '../../paths/match'
+import managePaths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
 import { personKeyDetails } from '../applications/helpers'
+import { placementTitle } from './placementSummaryList'
 
 export const formatReleaseType = (placementRequest: Cas1PlacementRequestDetail) =>
   allReleaseTypes[placementRequest.releaseType]
@@ -29,3 +32,21 @@ export const withdrawalMessage = (duration: number, expectedArrivalDate: string)
 
 export const placementRequestKeyDetails = (placementRequest: Cas1PlacementRequestDetail) =>
   personKeyDetails(placementRequest.person, placementRequest.risks?.tier?.value?.level)
+
+export const placementRadioItems = (
+  placements: Array<Cas1SpaceBookingSummary>,
+  selected?: Cas1SpaceBookingSummary['id'],
+): Array<RadioItemButton> =>
+  placements
+    .sort((a, b) => a.expectedArrivalDate.localeCompare(b.expectedArrivalDate))
+    .map(placement => ({
+      text: placementTitle(placement),
+      value: placement.id,
+      hint: {
+        html: linkTo(
+          managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id }),
+          { text: 'See placement details (opens in a new tab)', attributes: { target: '_blank' } },
+        ),
+      },
+      checked: placement.id === selected || undefined,
+    }))

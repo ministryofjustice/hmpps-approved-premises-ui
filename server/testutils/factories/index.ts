@@ -9,7 +9,6 @@ import cas1ApplicationSummaryFactory from './cas1ApplicationSummary'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
-import placementRequestBookingSummaryFactory from './placementRequestBookingSummary'
 import bookingNotMadeFactory from './bookingNotMade'
 import cancellationFactory from './cancellation'
 import clarificationNoteFactory from './clarificationNote'
@@ -113,7 +112,6 @@ export {
   assessmentTaskFactory,
   assessmentFactory,
   assessmentSummaryFactory,
-  placementRequestBookingSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
   cas1ApprovedPlacementAppealfactory,

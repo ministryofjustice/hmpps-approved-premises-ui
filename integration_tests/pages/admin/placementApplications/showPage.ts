@@ -7,7 +7,7 @@ import { placementSummaryList, placementTitle } from '../../../../server/utils/p
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'
 import applyPaths from '../../../../server/paths/apply'
-import managePaths from '../../../../server/paths/manage'
+import { changePlacementLink } from '../../../../server/utils/placementRequests/adminIdentityBar'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: Cas1PlacementRequestDetail) {
@@ -25,13 +25,7 @@ export default class ShowPage extends Page {
       'Create new placement': matchPaths.v2Match.placementRequests.newPlacement.new({
         placementRequestId: placementRequest.id,
       }),
-    }
-
-    if (placementRequest.booking) {
-      this.actions['Change placement'] = managePaths.premises.placements.changes.new({
-        premisesId: placementRequest.booking.premisesId,
-        placementId: placementRequest.booking.id,
-      })
+      'Change placement': changePlacementLink(placementRequest),
     }
   }
 
@@ -65,17 +59,10 @@ export default class ShowPage extends Page {
   shouldShowParoleNotification() {
     cy.get('.govuk-notification-banner').contains('Parole board directed release').should('exist')
 
-    if (this.placementRequest.booking) {
+    if (this.placementRequest.spaceBookings.length > 0) {
       cy.get('a')
         .contains('change the arrival date')
-        .should(
-          'have.attr',
-          'href',
-          managePaths.premises.placements.changes.new({
-            premisesId: this.placementRequest.booking.premisesId,
-            placementId: this.placementRequest.booking.id,
-          }),
-        )
+        .should('have.attr', 'href', changePlacementLink(this.placementRequest))
     }
   }
 }

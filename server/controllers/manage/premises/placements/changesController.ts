@@ -133,6 +133,7 @@ export default class ChangesController {
         backlink: this.sessionService.getPageBackLink(managePaths.premises.placements.changes.new.pattern, req, [
           managePaths.premises.placements.show.pattern,
           adminPaths.admin.placementRequests.show.pattern,
+          adminPaths.admin.placementRequests.selectPlacement.pattern,
         ]),
         contextKeyDetails: placementKeyDetails(placement),
         pageHeading,
