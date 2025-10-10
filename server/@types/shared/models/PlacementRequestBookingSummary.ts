@@ -12,6 +12,7 @@ export type PlacementRequestBookingSummary = {
     id: string;
     premisesId: string;
     premisesName: string;
+    reason?: string;
     type: Type;
 };
 
