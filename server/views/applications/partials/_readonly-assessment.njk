@@ -1,0 +1,16 @@
+{% from "../../partials/documentSections.njk" import documentSections %}
+
+{% macro assessmentReadonlyView(assessment) %}
+    {% if assessment.document %}
+        {{ documentSections(getDocumentSections(assessment)) }}
+    {% else %}
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-visually-hidden">Warning</span>
+                This application has not been assessed
+            </strong>
+        </div>
+    {% endif %}
+
+{% endmacro %}

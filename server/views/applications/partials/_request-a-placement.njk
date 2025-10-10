@@ -3,19 +3,6 @@
 
 {% macro requestAPlacement(requestsForPlacement, application, user, csrfToken) %}
 
-
-                {% if application.assessmentDecision === 'accepted' and application.status !== 'withdrawn' and application.status !== 'expired' %}
-                    <form action="{{ paths.placementApplications.create({}) }}" method="post">
-                        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                        <input type="hidden" name="applicationId" value="{{ application.id }}" />
-                        {{ govukButton({
-                            text: "Create request for placement",
-                            preventDoubleClick: true
-                        }) }}
-                    </form>
-                {% endif %}
-
-
     {% set requestsForPlacement = PlacementRequestUtils.mapRequestsForPlacementToSummaryCards(requestsForPlacement, application, user) %}
 
     {% if requestsForPlacement.length === 0 %}
