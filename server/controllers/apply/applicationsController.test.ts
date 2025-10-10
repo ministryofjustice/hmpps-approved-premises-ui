@@ -8,6 +8,8 @@ import type {
   PaginatedResponse,
 } from '@approved-premises/ui'
 import { Cas1ApplicationSummary } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
+import { addYears } from 'date-fns'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, AssessmentService, PersonService } from '../../services'
@@ -339,6 +341,8 @@ describe('applicationsController', () => {
       it('calls the findAssessment method on the assessment service', async () => {
         const assessment = assessmentFactory.build()
         application.status = 'awaitingPlacement'
+        application.assessmentId = assessment.id
+        application.assessmentDecisionDate = DateFormats.dateObjToIsoDate(faker.date.recent({ days: 50 }))
 
         applicationService.findApplication.mockResolvedValue(application)
         assessmentService.findAssessment.mockResolvedValue(assessment)
@@ -359,6 +363,7 @@ describe('applicationsController', () => {
           tabs: getApplicationShowPageTabs(application.id, 'assessment'),
           assessment,
           pageHeading: 'Approved Premises application',
+          applicationExpiryDate: DateFormats.dateObjtoUIDate(addYears(application.assessmentDecisionDate, 1)),
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)

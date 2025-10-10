@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { addYears } from 'date-fns'
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
 import { AssessmentService, PersonService } from '../../services'
@@ -121,7 +122,7 @@ export default class ApplicationsController {
             application.id,
           )
         }
-        if (tab === applicationShowPageTabs.assessment) {
+        if (tab === applicationShowPageTabs.assessment && application.assessmentId) {
           renderParams.assessment = await this.assessmentService.findAssessment(token, application.assessmentId)
         }
 
@@ -132,6 +133,9 @@ export default class ApplicationsController {
           ...renderParams,
           tab: tab || 'application',
           tabs: getApplicationShowPageTabs(application.id, tab as ApplicationShowPageTab),
+          applicationExpiryDate:
+            application.assessmentDecisionDate &&
+            DateFormats.dateObjtoUIDate(addYears(application.assessmentDecisionDate, 1)),
         })
       }
       return res.render('applications/tasklist', { application, taskList, errorSummary, errors })

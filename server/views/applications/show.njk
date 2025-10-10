@@ -28,20 +28,11 @@
                 {% if application.assessmentDecision %}
                     {% set html %}
                         <p class="govuk-body">Assessed
-                        as {{ decision }}: {{ formatDate(application.assessmentDecisionDate) }}
-
-
-                        {% if application.status === 'expired' %}
-                            <p class="govuk-body">Applications expire 12 months after being assessed as suitable. You
-                                cannot submit any new requests for placement.</p>
-                            <p class="govuk-body">You’ll need to submit a new application for this person to be
-                                assessed.</p>
-                        {% else %}
-                            <p class="govuk-body">Applications expire 12 months after being assessed as ‘suitable’.
-                                You’ll then need to submit a new application for this person to be assessed.</p>
-                            <p class="govuk-body">Booked placements are unaffected.</p>
+                            as {{ decision }}: {{ formatDate(application.assessmentDecisionDate) }}
+                        </p>
+                        {% if application.status !== 'expired' and application.assessmentDecision !== 'rejected' %}
+                            <p class="govuk-body">Application expires on: {{ applicationExpiryDate }}</p>
                         {% endif %}
-
                     {% endset %}
 
                     {{ govukInsetText({

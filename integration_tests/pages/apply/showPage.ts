@@ -4,8 +4,10 @@ import type {
   ApprovedPremisesApplicationStatus,
   FullPerson,
   RequestForPlacement,
+  ApprovedPremisesAssessment,
 } from '@approved-premises/api'
 import { fromPartial } from '@total-typescript/shoehorn'
+import { addYears } from 'date-fns'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
@@ -13,6 +15,7 @@ import { ApplicationShowPageTab, applicationShowPageTab } from '../../../server/
 import paths from '../../../server/paths/apply'
 import { displayName } from '../../../server/utils/personUtils'
 import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests'
+import { SubmittedDocumentRenderer } from '../../../server/utils/forms/submittedDocumentRenderer'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
@@ -63,33 +66,40 @@ export default class ShowPage extends Page {
     cy.get('.govuk-tag').contains('Offline application').should('exist')
   }
 
-  shouldShowAssessmentDetails(expired = false) {
+  shouldNotShowAssessmentDetails() {
     this.clickTab('Assessment')
+    cy.contains('This application has not been assessed')
+  }
 
-    cy.get('.govuk-inset-text')
-      .contains(
-        `Application was ${this.application.assessmentDecision} on ${DateFormats.isoDateToUIDate(
-          this.application.assessmentDecisionDate,
-        )}.`,
-      )
-      .should('exist')
+  shouldShowAssessmentDetails(assessment: ApprovedPremisesAssessment) {
+    this.clickTab('Assessment')
+    const sections = new SubmittedDocumentRenderer(assessment).response
 
-    if (expired) {
+    sections.forEach(section => {
+      cy.get('h2.govuk-heading-l').contains(section.title).should('exist')
+      section.tasks.forEach(task => {
+        cy.get(`[data-cy-section="${task.card.attributes['data-cy-section']}"]`).within(() => {
+          cy.get('.govuk-summary-card__title').contains(task.card.title.text).should('exist')
+          this.shouldContainSummaryListItems(task.rows)
+        })
+      })
+    })
+  }
+
+  shouldShowAssessedDate() {
+    const accepted = this.application.assessmentDecision === 'accepted'
+    const assessedDateText = `Assessed as ${accepted ? 'suitable' : 'not suitable'}: ${DateFormats.isoDateToUIDate(
+      this.application.assessmentDecisionDate,
+    )}`
+    const expiryDateText = `Application expires on: ${DateFormats.dateObjtoUIDate(
+      addYears(this.application.assessmentDecisionDate, 1),
+    )}`
+
+    cy.get('.govuk-inset-text').contains(assessedDateText).should('exist')
+    if (this.application.assessmentDecision === 'accepted') {
       cy.get('.govuk-inset-text')
-        .contains(
-          'Applications expire 12 months after being assessed as suitable. You cannot submit any new requests for placement.',
-        )
-        .should('exist')
-      cy.get('.govuk-inset-text')
-        .contains('You’ll need to submit a new application for this person to be assessed.')
-        .should('exist')
-    } else {
-      cy.get('.govuk-inset-text')
-        .contains(
-          'Applications expire 12 months after being assessed as ‘suitable’. You’ll then need to submit a new application for this person to be assessed.',
-        )
-        .should('exist')
-      cy.get('.govuk-inset-text').contains('Booked placements are unaffected.').should('exist')
+        .contains(expiryDateText)
+        .should(accepted ? 'exist' : 'not.exist')
     }
   }
 
@@ -97,12 +107,9 @@ export default class ShowPage extends Page {
     this.shouldShowPersonDetails(this.application.person as FullPerson, this.application.personStatusOnSubmission)
   }
 
-  shouldShowResponses() {
+  shouldShowApplication() {
+    this.clickTab('Application')
     this.shouldShowResponseFromSubmittedApplication(this.application)
-  }
-
-  shouldShowResponsesForUnsubmittedWithdrawnApplication() {
-    this.shouldShowCheckYourAnswersResponses(this.application)
   }
 
   clickTimelineTab() {
