@@ -33,6 +33,7 @@ import { DateFormats } from '../dateUtils'
 import paths from '../../paths/manage'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import * as applicationHelpers from '../applications/helpers'
+import { placementStatus } from '../placementRequests/placementSummaryList'
 
 describe('placementUtils', () => {
   describe('placement status', () => {
@@ -362,7 +363,7 @@ describe('placementUtils', () => {
         rows: [
           { key: { text: 'AP name' }, value: { text: placement.premises.name } },
           { key: { text: 'Date allocated' }, value: { text: DateFormats.isoDateToUIDate(placement.createdAt) } },
-          { key: { text: 'Status' }, value: { text: 'Departed' } },
+          { key: { text: 'Status' }, value: { html: placementStatus(placement) } },
           {
             key: { text: 'Actual length of stay' },
             value: { text: '29 weeks, 4 days' },

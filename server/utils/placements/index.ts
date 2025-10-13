@@ -20,6 +20,7 @@ import {
 } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
+import { placementStatus } from '../placementRequests/placementSummaryList'
 
 export const overallStatusTextMap = {
   upcoming: 'Upcoming',
@@ -191,7 +192,7 @@ export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
     rows: [
       summaryListItemNoBlankRows('AP name', placement.premises.name),
       summaryListItemNoBlankRows('Date allocated', createdAt, 'date'),
-      summaryListItemNoBlankRows('Status', statusTextMap[detailedStatus(placement)]),
+      summaryListItemNoBlankRows('Status', placementStatus(placement), 'html'),
       summaryListItemNoBlankRows(
         'Actual length of stay',
         actualArrivalDate &&
