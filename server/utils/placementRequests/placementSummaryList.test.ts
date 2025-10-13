@@ -1,6 +1,12 @@
 import { TextItem } from '@approved-premises/ui'
 import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
-import { placementsSummaries, placementSummaryList, placementName, placementStatus } from './placementSummaryList'
+import {
+  placementsSummaries,
+  placementSummaryList,
+  placementName,
+  placementStatus,
+  placementNameWithStatus,
+} from './placementSummaryList'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements'
 import cas1SpaceBookingSummaryFactory from '../../testutils/factories/cas1SpaceBookingSummary'
@@ -71,7 +77,15 @@ describe('placement summary list', () => {
       })
 
       expect(placementStatus(spaceBooking)).toEqual(
-        `<strong class="govuk-tag govuk-tag--${colour} govuk-!-margin-left-2 govuk-tag--nowrap " data-cy-status="${status}" >${label}</strong>`,
+        `<strong class="govuk-tag govuk-tag--${colour} govuk-tag--nowrap " data-cy-status="${status}" >${label}</strong>`,
+      )
+    })
+
+    it('accepts optional status tag options', () => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.departed().build()
+
+      expect(placementStatus(spaceBooking, { classes: 'some-class', id: 'some-id' })).toEqual(
+        `<strong class="govuk-tag govuk-tag--grey govuk-tag--nowrap some-class" data-cy-status="departed" id="some-id-status">Departed</strong>`,
       )
     })
   })
@@ -93,15 +107,15 @@ describe('placement summary list', () => {
 
       expect(placementsSummaries(placementRequestDetail)).toEqual([
         {
-          title: `${placementName(booking1)} ${placementStatus(booking1)}`,
+          title: placementNameWithStatus(booking1),
           summaryList: placementSummaryList(booking1),
         },
         {
-          title: `${placementName(booking2)} ${placementStatus(booking2)}`,
+          title: placementNameWithStatus(booking2),
           summaryList: placementSummaryList(booking2),
         },
         {
-          title: `${placementName(booking3)} ${placementStatus(booking3)}`,
+          title: placementNameWithStatus(booking3),
           summaryList: placementSummaryList(booking3),
         },
       ])

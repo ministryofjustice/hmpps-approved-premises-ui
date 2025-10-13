@@ -8,7 +8,7 @@ import managePaths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
 import { personKeyDetails } from '../applications/helpers'
-import { placementName } from './placementSummaryList'
+import { placementNameWithStatus } from './placementSummaryList'
 
 export const formatReleaseType = (placementRequest: Cas1PlacementRequestDetail) =>
   allReleaseTypes[placementRequest.releaseType]
@@ -40,7 +40,7 @@ export const placementRadioItems = (
   placements
     .sort((a, b) => a.expectedArrivalDate.localeCompare(b.expectedArrivalDate))
     .map(placement => ({
-      html: placementName(placement),
+      html: placementNameWithStatus(placement),
       value: placement.id,
       hint: {
         html: linkTo(
