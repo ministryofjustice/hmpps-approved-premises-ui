@@ -22,7 +22,7 @@ context('show applications', () => {
     WHEN('I visit the list page')
     const listPage = ListPage.visit([], [applicationSummary], [])
 
-    WHEN('I click on`the Submitted tab')
+    WHEN('I click on the Submitted tab')
     listPage.clickSubmittedTab()
 
     THEN('I should see my application')
@@ -47,6 +47,12 @@ context('show applications', () => {
 
     THEN('I should see timeline page')
     showPage.shouldShowApplicationTimeline(timeline)
+
+    WHEN('I click the back link')
+    showPage.clickBack()
+
+    THEN('I should be back on the list page')
+    listPage.checkOnPage()
   })
 
   it('shows an application assessed as suitable', function test() {

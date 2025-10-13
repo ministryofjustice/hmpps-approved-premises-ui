@@ -134,6 +134,7 @@ describe('withdrawalsController', () => {
           '/admin/placement-requests/:placementRequestId',
           '/applications/:id',
           '/applications',
+          '/applications/people/:crn/manage-applications',
         ])
       })
     })

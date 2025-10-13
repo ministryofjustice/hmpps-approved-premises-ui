@@ -172,10 +172,22 @@ export const verifyApiRequest = async (
   return lastRequest.body ? JSON.parse(lastRequest.body) : {}
 }
 
+type FoundRequest = {
+  queryParameters: Record<string, unknown>
+}
+
 export const verifyApiPost = (url: string) => verifyApiRequest(url, 'POST')
 export const verifyApiPatch = (url: string) => verifyApiRequest(url, 'PATCH')
 export const verifyApiPut = (url: string) => verifyApiRequest(url, 'PUT')
 export const verifyApiDelete = (url: string) => verifyApiRequest(url, 'DELETE')
+
+export const verifyApiGet = async (urlPattern: string): Promise<Array<FoundRequest>> => {
+  const result = await getMatchingRequests({
+    method: 'GET',
+    urlPathPattern: urlPattern,
+  })
+  return result.body.requests
+}
 
 export const stubJourney = (form: Application | Assessment): SuperAgentRequest => {
   const journeyType = isAssessment(form) ? 'assessment' : 'application'

@@ -399,7 +399,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.applications.all.pattern,
-          query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc' },
+          query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc', pageSize: '10' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -426,7 +426,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
       })
     })
 
-    it('should pass a page number', async () => {
+    it('should pass a page number and page size', async () => {
       const allApplications = cas1ApplicationSummaryFactory.buildList(5)
 
       await provider.addInteraction({
@@ -435,7 +435,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.applications.all.pattern,
-          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc' },
+          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc', pageSize: '20' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -446,19 +446,19 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
           headers: {
             'X-Pagination-TotalPages': '10',
             'X-Pagination-TotalResults': '100',
-            'X-Pagination-PageSize': '10',
+            'X-Pagination-PageSize': '20',
           },
         },
       })
 
-      const result = await applicationClient.all(2, 'createdAt', 'desc', {})
+      const result = await applicationClient.all(2, 'createdAt', 'desc', {}, 20)
 
       expect(result).toEqual({
         data: allApplications,
         pageNumber: '2',
         totalPages: '10',
         totalResults: '100',
-        pageSize: '10',
+        pageSize: '20',
       })
     })
 
@@ -477,6 +477,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
             sortDirection: 'desc',
             crnOrName: normaliseCrn('foo'),
             status: 'rejected',
+            pageSize: '10',
           },
           headers: {
             authorization: `Bearer ${token}`,

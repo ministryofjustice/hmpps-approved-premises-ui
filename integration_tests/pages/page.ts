@@ -562,7 +562,7 @@ export default class Page {
         .within(() => {
           row.forEach((column, i) => {
             if ('text' in column) {
-              cy.get('td,th').eq(i).contains(column.text)
+              cy.get('td,th').eq(i).should('contain.text', column.text)
             } else if ('html' in column) {
               cy.get('td,th')
                 .eq(i)

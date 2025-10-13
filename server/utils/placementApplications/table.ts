@@ -45,7 +45,7 @@ export const tableRows = (tasks: Array<PlacementApplicationTask>): Array<TableRo
     return [
       nameCell(task),
       crnCell(task),
-      tierCell(task),
+      tierCell(task.tier?.value?.level),
       arrivalDateCell(task),
       placementTypeCell(task),
       statusCell(task),

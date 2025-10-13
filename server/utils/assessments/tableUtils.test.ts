@@ -143,7 +143,7 @@ describe('tableUtils', () => {
         [
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
-          tierCell({ tier: assessment.risks.tier }),
+          tierCell(assessment.risks.tier?.value?.level),
           { text: formattedArrivalDate(assessment) },
           { text: person.prisonName },
           daysUntilDueCell(assessment, 'assessments--index__warning'),
@@ -186,7 +186,7 @@ describe('tableUtils', () => {
         [
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
-          tierCell({ tier: assessment.risks.tier }),
+          tierCell(assessment.risks.tier?.value?.level),
           { text: person.prisonName },
           { text: formattedArrivalDate(assessment) },
           { text: formatDays(daysSinceReceived(assessment)) },
@@ -226,7 +226,7 @@ describe('tableUtils', () => {
         [
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
-          tierCell({ tier: assessment.risks.tier }),
+          tierCell(assessment.risks.tier?.value?.level),
           { text: formattedArrivalDate(assessment) },
           { html: new AssessmentStatusTag(assessment.status, assessment.decision).html() },
         ],

@@ -60,12 +60,13 @@ export default class ApplicationClient {
     sortBy: ApplicationSortField,
     sortDirection: SortDirection,
     searchOptions: ApplicationDashboardSearchOptions,
+    pageSize: number = 10,
   ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     searchOptions.crnOrName = normaliseCrn(searchOptions.crnOrName)
     return this.restClient.getPaginatedResponse<Cas1ApplicationSummary>({
       path: paths.applications.all.pattern,
       page: page.toString(),
-      query: { ...searchOptions, sortBy, sortDirection },
+      query: { ...searchOptions, sortBy, sortDirection, pageSize },
     })
   }
 

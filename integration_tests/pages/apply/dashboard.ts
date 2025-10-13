@@ -32,8 +32,4 @@ export default class DashboardPage extends Page {
     this.getSelectInputByIdAndSelectAnEntry('status', status.toString())
     this.clickSubmit()
   }
-
-  shouldContainPlacementRequestTab() {
-    cy.get('a').contains('Placement requests')
-  }
 }

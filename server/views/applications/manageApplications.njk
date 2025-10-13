@@ -1,0 +1,104 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../partials/layout-with-details.njk" %}
+{% from "components/sortableTable/macro.njk" import sortableTable %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+{% set nomsNumber = nomsNumber if nomsNumber else
+    "" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.applications.new()
+    }) }}
+{% endblock %}
+
+{% set detailsHtml %}
+    <p>You may need to submit a new application if there has been a significant change in circumstances. This includes, but is not limited to:</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>The MAPPA level or overall risk level has changed</li>
+        <li>There has been a breach of orders, such as:
+            <ul>
+                <li>Sex Offender Registration</li>
+                <li>Sexual Harm Prevention Order</li>
+                <li>Restraining Order</li>
+            </ul>
+        </li>
+        <li>There are new or increased risks, including:
+            <ul>
+                <li>Risk to self (e.g. self-harm or suicide attempts)</li>
+                <li>Risk to others or staff</li>
+                <li>Links to extremism or organised crime</li>
+                <li>Substance misuse</li>
+                <li>Mental health deterioration</li>
+            </ul>
+        </li>
+        <li>The person is now at risk in the community (e.g. being “outed”)</li>
+        <li>There have been placement issues, such as:
+            <ul>
+                <li>Serious incidents or compliance concerns at an AP</li>
+                <li>Multiple failed placements (non-arrival, recall, bed withdrawal)</li>
+            </ul>
+        </li>
+        <li>The type of AP placement or support needs have changed</li>
+    </ul>
+
+{% endset %}
+
+{% block content %}
+    {% include "../_messages.njk" %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds---">
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {% if continuePath %}
+                <p class="govuk-body">To create an application for this person, select continue with application
+                    below.</p>
+                {{ govukButton({
+                    text: "Continue with application",
+                    href: continuePath,
+                    preventDoubleClick: true
+                }) }}
+            {% else %}
+                <p class="govuk-body">To provide dates for a RoTL placement or following a parole board hearing, or to
+                    ask
+                    for an additional placement, create a placement request.</p>
+                <p class="govuk-body">If there has been a significant change and you need to make a new application, you
+                    must first withdraw or expire all existing applications.</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Expire applications if the person has already arrived, left or non-arrived an AP.</li>
+                    <li>Withdraw applications if the person has not yet moved to an AP.</li>
+                </ul>
+                <p class="govuk-body">You can only make a new application once all previous applications have been withdrawn or expired.</p>
+
+                {{ govukDetails({
+                    summaryText: 'What counts as a significant change',
+                    html: detailsHtml
+                }) }}
+
+                {{ sortableTable({
+                    caption: 'Existing applications',
+                    captionClasses: "govuk-table__caption--m",
+                    attributes: {
+                        "data-module": "moj-sortable-table",
+                        "data-application-table": "true"
+                    },
+                    firstCellIsHeader: true,
+                    head: applicationsHeader,
+                    rows: applicationsRows
+                }) }}
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    <p class="govuk-body">
+        <a href="{{ paths.applications.new() }}">Back to application homepage</a>
+    </p>
+
+{% endblock %}

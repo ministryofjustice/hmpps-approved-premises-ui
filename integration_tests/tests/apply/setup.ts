@@ -38,6 +38,7 @@ export const setup = () => {
 
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplications', [application])
+    cy.task('stubAllApplications', { applications: [], anyQuery: true })
 
     cy.wrap(person).as('person')
     cy.wrap(offences).as('offences')
