@@ -10,8 +10,8 @@ describe('statusTag', () => {
     }
 
     it.each([
-      { option: 'addLeftMargin', cssClass: 'govuk-!-margin-5' },
-      { option: 'showOnOneLine', cssClass: 'govuk-tag--timeline-tag' },
+      { option: 'addLeftMargin', cssClass: 'govuk-!-margin-left-2' },
+      { option: 'showOnOneLine', cssClass: 'govuk-tag--nowrap' },
       { option: 'taskListTag', cssClass: 'app-task-list__tag' },
     ])(`when passed %s option it adds the %s class`, ({ option, cssClass }) => {
       expect(createTag('assesmentInProgress', statuses, colours, { [option]: true })).toBe(

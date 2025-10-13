@@ -5,13 +5,12 @@ import {
   Cas1SpaceBookingSummary,
   Cas1CurrentKeyWorker,
 } from '@approved-premises/api'
-import { RadioItem, SummaryList, UserDetails } from '@approved-premises/ui'
+import { RadioItem, SummaryList, TabItem, UserDetails } from '@approved-premises/ui'
 import { differenceInCalendarDays } from 'date-fns'
 import { DateFormats } from '../dateUtils'
 import { htmlValue, personKeyDetails, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
-import { TabItem } from '../tasks/listTable'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import {
   ApTypeCriteria,
@@ -48,7 +47,7 @@ const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
 }
 
 export type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
-type SpaceBookingStatus = keyof typeof statusTextMap
+export type SpaceBookingStatus = keyof typeof statusTextMap
 
 const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
   Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)

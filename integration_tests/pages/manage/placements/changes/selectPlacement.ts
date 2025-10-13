@@ -1,6 +1,6 @@
 import { Cas1SpaceBookingSummary } from '@approved-premises/api'
 import Page from '../../../page'
-import { placementTitle } from '../../../../../server/utils/placementRequests/placementSummaryList'
+import { placementName } from '../../../../../server/utils/placementRequests/placementSummaryList'
 
 export class SelectPlacementPage extends Page {
   constructor() {
@@ -9,7 +9,7 @@ export class SelectPlacementPage extends Page {
 
   shouldShowPlacementsAsRadios(placements: Array<Cas1SpaceBookingSummary>) {
     placements.forEach(placement => {
-      this.verifyRadioByLabel(placementTitle(placement))
+      this.verifyRadioByLabel(placementName(placement))
     })
   }
 }

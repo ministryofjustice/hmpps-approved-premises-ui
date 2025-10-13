@@ -1,8 +1,7 @@
-import { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
+import { IdentityBarMenu, TabItem, UserDetails } from '@approved-premises/ui'
 import { ParsedQs } from 'qs'
 import { hasPermission } from '../users'
 import paths from '../../paths/admin'
-import { TabItem } from '../tasks/listTable'
 import { createQueryString } from '../utils'
 
 export const cruDashboardActions = (user: UserDetails): Array<IdentityBarMenu> => {

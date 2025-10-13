@@ -1,6 +1,6 @@
 import { TextItem } from '@approved-premises/ui'
 import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
-import { placementsSummaries, placementSummaryList, placementTitle } from './placementSummaryList'
+import { placementsSummaries, placementSummaryList, placementName, placementStatus } from './placementSummaryList'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements'
 import cas1SpaceBookingSummaryFactory from '../../testutils/factories/cas1SpaceBookingSummary'
@@ -43,22 +43,36 @@ describe('placement summary list', () => {
     })
   })
 
-  describe('placementTitle', () => {
-    beforeEach(() => {
-      jest.useFakeTimers().setSystemTime(new Date('2026-02-10'))
-    })
-
-    it('renders the placement title with premises name, arrival date and overall status', () => {
+  describe('placementName', () => {
+    it('renders the placement title with premises name and arrival date', () => {
       const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
         premises: {
           name: "St John's House",
         },
         expectedArrivalDate: '2026-02-13',
-        isCancelled: false,
-        isNonArrival: false,
       })
 
-      expect(placementTitle(spaceBooking)).toEqual("St John's House - Fri 13 Feb 2026 - Upcoming")
+      expect(placementName(spaceBooking)).toEqual(`St John's House from Fri 13 Feb 2026`)
+    })
+  })
+
+  describe('placementStatus', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-02-10'))
+    })
+
+    it.each([
+      ['Arriving within 2 weeks', 'arrivingWithin2Weeks', '2026-02-13', 'blue'],
+      ['Arriving today', 'arrivingToday', '2026-02-10', 'blue'],
+      ['Overdue arrival', 'overdueArrival', '2026-02-07', 'red'],
+    ])('renders the detailed status for a placement %s', (label, status, date, colour) => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
+        expectedArrivalDate: date,
+      })
+
+      expect(placementStatus(spaceBooking)).toEqual(
+        `<strong class="govuk-tag govuk-tag--${colour} govuk-!-margin-left-2 govuk-tag--nowrap " data-cy-status="${status}" >${label}</strong>`,
+      )
     })
   })
 
@@ -78,9 +92,18 @@ describe('placement summary list', () => {
       })
 
       expect(placementsSummaries(placementRequestDetail)).toEqual([
-        { title: placementTitle(booking1), summaryList: placementSummaryList(booking1) },
-        { title: placementTitle(booking2), summaryList: placementSummaryList(booking2) },
-        { title: placementTitle(booking3), summaryList: placementSummaryList(booking3) },
+        {
+          title: `${placementName(booking1)} ${placementStatus(booking1)}`,
+          summaryList: placementSummaryList(booking1),
+        },
+        {
+          title: `${placementName(booking2)} ${placementStatus(booking2)}`,
+          summaryList: placementSummaryList(booking2),
+        },
+        {
+          title: `${placementName(booking3)} ${placementStatus(booking3)}`,
+          summaryList: placementSummaryList(booking3),
+        },
       ])
     })
   })

@@ -1,4 +1,11 @@
-import { GroupedAssessments, KeyDetailsArgs, SummaryListItem, TaskNames, UserDetails } from '@approved-premises/ui'
+import {
+  GroupedAssessments,
+  KeyDetailsArgs,
+  SummaryListItem,
+  TabItem,
+  TaskNames,
+  UserDetails,
+} from '@approved-premises/ui'
 
 import {
   ApprovedPremisesAssessmentStatus,
@@ -18,7 +25,6 @@ import { getResponseForPage } from '../applications/getResponseForPage'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
-import { TabItem } from '../tasks/listTable'
 import assessPaths from '../../paths/assess'
 import { hasPermission } from '../users'
 

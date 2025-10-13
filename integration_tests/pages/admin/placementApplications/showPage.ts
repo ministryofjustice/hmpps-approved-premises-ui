@@ -2,7 +2,7 @@ import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-p
 import Page from '../../page'
 
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
-import { placementSummaryList, placementTitle } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementSummaryList, placementName } from '../../../../server/utils/placementRequests/placementSummaryList'
 
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'
@@ -47,7 +47,7 @@ export default class ShowPage extends Page {
 
     bookings.forEach(booking => {
       cy.get('h3')
-        .contains(placementTitle(booking))
+        .contains(placementName(booking))
         .find('+ .govuk-summary-list')
         .within(() => {
           this.shouldContainSummaryListItems(placementSummaryList(booking).rows)

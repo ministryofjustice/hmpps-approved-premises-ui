@@ -1,8 +1,9 @@
 import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { SummaryList } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
-import { detailedStatus, overallStatus, statusTextMap } from '../placements'
+import { detailedStatus, statusTextMap } from '../placements'
 import { DateFormats } from '../dateUtils'
+import { PlacementStatusTag } from '../placements/statusTag'
 
 export const placementSummaryList = (placement: Cas1SpaceBookingSummary): SummaryList => ({
   rows: [
@@ -21,13 +22,16 @@ type PlacementSummary = {
   summaryList: SummaryList
 }
 
-export const placementTitle = (placement: Cas1SpaceBookingSummary): string =>
-  `${placement.premises.name} - ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)} - ${statusTextMap[overallStatus(placement)]}`
+export const placementName = (placement: Cas1SpaceBookingSummary): string =>
+  `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)}`
+
+export const placementStatus = (placement: Cas1SpaceBookingSummary): string =>
+  new PlacementStatusTag(detailedStatus(placement), { addLeftMargin: true, showOnOneLine: true }).html()
 
 export const placementsSummaries = (placementRequest: Cas1PlacementRequestDetail): Array<PlacementSummary> =>
   [...placementRequest.spaceBookings]
     .sort((a, b) => a.expectedArrivalDate.localeCompare(b.expectedArrivalDate))
     .map(placement => ({
-      title: placementTitle(placement),
+      title: `${placementName(placement)} ${placementStatus(placement)}`,
       summaryList: placementSummaryList(placement),
     }))
