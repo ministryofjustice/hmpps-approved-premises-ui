@@ -22,7 +22,7 @@ export const controllers = (services: Services) => {
     placementService,
     sessionService,
   } = services
-  const applicationsController = new ApplicationsController(applicationService, personService)
+  const applicationsController = new ApplicationsController(applicationService, personService,sessionService)
   const pagesController = new PagesController(applicationService, {
     personService,
     applicationService,

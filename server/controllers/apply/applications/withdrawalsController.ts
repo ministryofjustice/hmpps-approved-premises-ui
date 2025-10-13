@@ -48,6 +48,7 @@ export default class WithdrawalsController {
         adminPaths.admin.placementRequests.show.pattern,
         paths.applications.show.pattern,
         paths.applications.index.pattern,
+        paths.applications.people.checkApplications.pattern,
       ])
 
       if (!selectedWithdrawableType) {

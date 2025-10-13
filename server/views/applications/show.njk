@@ -13,6 +13,15 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body application--show" %}
 
+{% block beforeContent %}
+    {% if backLink %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-width-container">

@@ -18,6 +18,7 @@ const paths = {
     people: {
       find: peoplePath.path('find'),
       selectOffence: personPath.path('select-offence'),
+      checkApplications: personPath.path('check-applications'),
       documents: personPath.path('documents/:documentId'),
     },
     create: applicationsPath,

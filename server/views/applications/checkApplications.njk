@@ -1,0 +1,41 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+{% set nomsNumber = nomsNumber if nomsNumber else
+    "" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.applications.new()
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds---">
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {% if applicationCount > 1 %}
+            <p class="govuk-body">This CRN already has more than one application. You must withdraw or expire all but one of these before continuing.</p>
+            <p class="govuk-body">If one of these applications is still valid and reflects the current risk for the person, you may create a new placement request from it to book additional dates</p>
+            <p class="govuk-body">If none of these applications reflect the current situation, you should withdraw/expire them all and create a new application</p>
+            {% else %}
+                <p class="govuk-body">This CRN already has one application. If this application still reflects the current risk profile of the person, you should create new placement requests for any additional stays needed.</p>
+                <p class="govuk-body">If the person's risk profile has changed however, you must expire this application and create a new one.</p>
+            {% endif %}
+            {{ govukTable({
+                caption: 'Existing applications',
+                captionClasses: "govuk-table__caption--m",
+                firstCellIsHeader: false,
+                head: applicationsHeader,
+                rows: applicationsRows
+            }) }}
+
+        </div>
+    </div>
+{% endblock %}
