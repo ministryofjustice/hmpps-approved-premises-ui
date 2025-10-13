@@ -43,10 +43,10 @@ export class TaskListStatusTag extends StatusTag<TaskListStatus> {
     cannot_start: 'grey',
   }
 
-  constructor(status: TaskListStatus, taskId: UiTask['id'], options?: StatusTagOptions) {
+  constructor(status: TaskListStatus, taskId: UiTask['id']) {
     super(
       status,
-      { ...options, taskListTag: true, id: taskId },
+      { classes: `app-task-list__tag`, id: taskId },
       {
         statuses: TaskListStatusTag.statuses,
         colours: TaskListStatusTag.colours,

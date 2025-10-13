@@ -10,7 +10,10 @@ import { TaskStatus as TaskListStatus } from '@approved-premises/ui'
 import { AssessmentStatusForUi } from './assessments/statusTag'
 import { SpaceBookingStatus } from './placements'
 
-export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean; taskListTag?: boolean; id?: string }
+export type StatusTagOptions = {
+  classes?: string
+  id?: string
+}
 type Status =
   | ApplicationStatus
   | TaskStatus
@@ -62,16 +65,8 @@ export const createTag = <T extends Status>(
     classes += `govuk-tag--${colours[status as T]} `
   }
 
-  if (options?.addLeftMargin) {
-    classes += 'govuk-!-margin-left-2 '
-  }
-
-  if (options?.showOnOneLine) {
-    classes += 'govuk-tag--nowrap '
-  }
-
-  if (options?.taskListTag) {
-    classes += 'app-task-list__tag '
+  if (options?.classes) {
+    classes += options.classes
   }
 
   if (options?.id) {

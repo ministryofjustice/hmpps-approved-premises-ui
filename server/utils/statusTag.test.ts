@@ -9,13 +9,9 @@ describe('statusTag', () => {
       assesmentInProgress: 'bar',
     }
 
-    it.each([
-      { option: 'addLeftMargin', cssClass: 'govuk-!-margin-left-2' },
-      { option: 'showOnOneLine', cssClass: 'govuk-tag--nowrap' },
-      { option: 'taskListTag', cssClass: 'app-task-list__tag' },
-    ])(`when passed %s option it adds the %s class`, ({ option, cssClass }) => {
-      expect(createTag('assesmentInProgress', statuses, colours, { [option]: true })).toBe(
-        `<strong class="govuk-tag govuk-tag--bar ${cssClass} " data-cy-status="assesmentInProgress" >foo</strong>`,
+    it('adds classes when specified', () => {
+      expect(createTag('assesmentInProgress', statuses, colours, { classes: 'some classes' })).toBe(
+        `<strong class="govuk-tag govuk-tag--bar some classes" data-cy-status="assesmentInProgress" >foo</strong>`,
       )
     })
 

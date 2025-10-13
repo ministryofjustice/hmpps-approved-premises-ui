@@ -14,7 +14,7 @@ export class ShowPage extends Page {
   shouldShowTimeline() {
     this.timeline.applications.forEach((applicationTimeline, index) => {
       if (!applicationTimeline.isOfflineApplication) {
-        const statusTag = new ApplicationStatusTag(applicationTimeline.status, { showOnOneLine: true })
+        const statusTag = new ApplicationStatusTag(applicationTimeline.status)
         cy.get('h2').contains(applicationTimeline.createdBy.name)
         cy.get(`[data-cy-status="${statusTag.status}"]`).should('contain', statusTag.uiStatus)
       }

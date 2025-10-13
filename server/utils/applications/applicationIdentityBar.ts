@@ -13,7 +13,7 @@ export const applicationTitle = (application: Application, pageHeading: string):
   }
 
   if (application.status === 'withdrawn' || application.status === 'expired') {
-    heading += new ApplicationStatusTag(application.status, { addLeftMargin: true }).html()
+    heading += new ApplicationStatusTag(application.status, { classes: 'govuk-!-margin-5' }).html()
   }
 
   return `
