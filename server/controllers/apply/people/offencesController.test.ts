@@ -8,6 +8,10 @@ import { activeOffenceFactory, personFactory, restrictedPersonFactory } from '..
 import { isFullPerson } from '../../../utils/personUtils'
 import { RestrictedPersonError } from '../../../utils/errors'
 import { fetchErrorsAndUserInput } from '../../../utils/validation'
+import { ApplicationService } from '../../../services'
+import Cas1ApplicationSummary from '../../../testutils/factories/cas1ApplicationSummary'
+import config from '../../../config'
+import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
 
 jest.mock('../../../utils/personUtils')
 jest.mock('../../../utils/validation')
@@ -18,13 +22,15 @@ describe('OffencesController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const personService = createMock<PersonService>({})
+  const applicationService = createMock<ApplicationService>({})
 
   let offencesController: OffencesController
   let request: DeepMocked<Request>
 
   beforeEach(() => {
+    config.flags.oneApplication = false
     jest.resetAllMocks()
-    offencesController = new OffencesController(personService)
+    offencesController = new OffencesController(personService, applicationService)
     request = createMock<Request>({
       user: { token },
       params: { crn },
@@ -98,6 +104,72 @@ describe('OffencesController', () => {
       expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
       expect(isFullPerson).toHaveBeenCalledWith(person)
+    })
+
+    describe('interruption page redirection', () => {
+      beforeEach(async () => {
+        config.flags.oneApplication = true
+        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+        const applications = Cas1ApplicationSummary.buildList(2)
+        applicationService.getAll.mockResolvedValue({
+          pageNumber: '1',
+          totalPages: '1',
+          totalResults: '1',
+          pageSize: '10',
+          data: applications,
+        })
+        personService.findByCrn.mockResolvedValue(personFactory.build())
+        personService.getOffences.mockResolvedValue(activeOffenceFactory.buildList(5))
+      })
+      it('redirects to the interruption page if a search for applications in a live state, returns any', async () => {
+        await offencesController.selectOffence()(request, response, next)
+
+        expect(response.redirect).toHaveBeenCalledWith('/applications/people/some-crn/manage-applications')
+        expect(applicationService.getAll).toHaveBeenCalledWith(
+          token,
+          1,
+          undefined,
+          undefined,
+          { crnOrName: 'some-crn', status: statusesLimitedToOne },
+          1,
+        )
+      })
+
+      it(`doesn't redirect to the interruption page if the list is empty`, async () => {
+        applicationService.getAll.mockResolvedValue({
+          pageNumber: '1',
+          totalPages: '1',
+          totalResults: '0',
+          pageSize: '10',
+          data: [],
+        })
+
+        await offencesController.selectOffence()(request, response, next)
+
+        expect(response.redirect).not.toHaveBeenCalled()
+        expect(response.render).toHaveBeenCalled()
+        expect(applicationService.getAll).toHaveBeenCalled()
+      })
+
+      it(`doesn't redirect to the interruption page if the feature flag is not set`, async () => {
+        config.flags.oneApplication = false
+
+        await offencesController.selectOffence()(request, response, next)
+
+        expect(response.redirect).not.toHaveBeenCalled()
+        expect(response.render).toHaveBeenCalled()
+        expect(applicationService.getAll).not.toHaveBeenCalled()
+      })
+
+      it(`doesn't redirect to the interruption page if the test CRN is used`, async () => {
+        request.params = { crn: 'X371199' }
+
+        await offencesController.selectOffence()(request, response, next)
+
+        expect(response.redirect).not.toHaveBeenCalled()
+        expect(response.render).toHaveBeenCalled()
+        expect(applicationService.getAll).not.toHaveBeenCalled()
+      })
     })
   })
 })

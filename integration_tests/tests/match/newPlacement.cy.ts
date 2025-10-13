@@ -207,7 +207,6 @@ context('New Placement', () => {
       apCriteria: ['acceptsChildSexOffenders'],
       roomCriteria: ['isArsonSuitable'],
     }
-    cy.log('>>>> New search state:', expectedSearchFormDataAfterUpdate)
     searchPage.shouldShowNewPlacementDetails(expectedSearchFormDataAfterUpdate)
     searchPage.shouldShowSearchParametersInInputs(expectedSearchFormDataAfterUpdate)
 

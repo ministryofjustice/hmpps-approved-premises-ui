@@ -94,7 +94,7 @@ describe('table', () => {
             html: stubLink,
           },
           crnCell(tasks[0]),
-          tierCell(tasks[0]),
+          tierCell(tasks[0].tier?.value?.level),
           arrivalDateCell(tasks[0]),
           placementTypeCell(tasks[0]),
           statusCell(tasks[0]),

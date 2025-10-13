@@ -67,6 +67,7 @@ import TriggerPlanPage from './triggerPlanPage'
 import TypeOfAccommodationPage from './typeOfAccommodation'
 import VulnerabilityPage from './vulnerability'
 import NoOffencePage from './noOffence'
+import ManageApplicationsPage from './manageApplications'
 
 export {
   AccessNeedsAdditionalDetailsPage,
@@ -103,6 +104,7 @@ export {
   IsExceptionalCasePage,
   ListPage,
   MaleApPage,
+  ManageApplicationsPage,
   NationalSecurityDivision,
   NotesConfirmationPage,
   NoOffencePage,
