@@ -13,7 +13,7 @@ import paths from '../../paths/match'
 import managePaths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
-import { placementNameWithStatus } from './placementSummaryList'
+import { placementNameWithStatus } from '../placements'
 
 describe('utils', () => {
   describe('formatReleaseType', () => {

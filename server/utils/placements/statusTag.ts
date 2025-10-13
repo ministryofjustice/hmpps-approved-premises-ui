@@ -1,5 +1,5 @@
 import { StatusTag, StatusTagOptions } from '../statusTag'
-import { SpaceBookingStatus, statusTextMap } from './index'
+import { SpaceBookingStatus, statusTextMap } from './status'
 
 export class PlacementStatusTag extends StatusTag<SpaceBookingStatus> {
   static readonly colours: Record<SpaceBookingStatus, string> = {

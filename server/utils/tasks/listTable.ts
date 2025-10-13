@@ -1,12 +1,12 @@
-import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import {
   AssessmentDecision,
   PlacementApplicationDecision,
   SortDirection,
   Task,
   TaskSortField,
-} from '../../@types/shared'
-import { TabItem, TableCell, TableRow } from '../../@types/ui'
+} from '@approved-premises/api'
+import { TabItem, TableCell, TableRow } from '@approved-premises/ui'
+import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import paths from '../../paths/tasks'
 import { sortHeader } from '../sortHeader'
 import { kebabCase, linkTo } from '../utils'

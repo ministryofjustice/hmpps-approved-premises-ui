@@ -2,7 +2,8 @@ import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-p
 import Page from '../../page'
 
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
-import { placementSummaryList, placementName } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementSummaryList } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementName } from '../../../../server/utils/placements'
 
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'

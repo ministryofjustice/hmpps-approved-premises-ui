@@ -1,15 +1,10 @@
 import { TextItem } from '@approved-premises/ui'
 import { cas1PlacementRequestDetailFactory } from '../../testutils/factories'
-import {
-  placementsSummaries,
-  placementSummaryList,
-  placementName,
-  placementStatus,
-  placementNameWithStatus,
-} from './placementSummaryList'
+import { placementsSummaries, placementSummaryList } from './placementSummaryList'
 import { DateFormats } from '../dateUtils'
-import { detailedStatus, statusTextMap } from '../placements'
+import { placementNameWithStatus } from '../placements'
 import cas1SpaceBookingSummaryFactory from '../../testutils/factories/cas1SpaceBookingSummary'
+import { detailedStatus, statusTextMap } from '../placements/status'
 
 describe('placement summary list', () => {
   describe('placementSummaryList', () => {
@@ -46,47 +41,6 @@ describe('placement summary list', () => {
       expect(
         placementSummaryList(spaceBooking).rows.find(row => (row.key as TextItem)?.text === 'Delius event number'),
       ).toBeUndefined()
-    })
-  })
-
-  describe('placementName', () => {
-    it('renders the placement title with premises name and arrival date', () => {
-      const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
-        premises: {
-          name: "St John's House",
-        },
-        expectedArrivalDate: '2026-02-13',
-      })
-
-      expect(placementName(spaceBooking)).toEqual(`St John's House from Fri 13 Feb 2026`)
-    })
-  })
-
-  describe('placementStatus', () => {
-    beforeEach(() => {
-      jest.useFakeTimers().setSystemTime(new Date('2026-02-10'))
-    })
-
-    it.each([
-      ['Arriving within 2 weeks', 'arrivingWithin2Weeks', '2026-02-13', 'blue'],
-      ['Arriving today', 'arrivingToday', '2026-02-10', 'blue'],
-      ['Overdue arrival', 'overdueArrival', '2026-02-07', 'red'],
-    ])('renders the detailed status for a placement %s', (label, status, date, colour) => {
-      const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
-        expectedArrivalDate: date,
-      })
-
-      expect(placementStatus(spaceBooking)).toEqual(
-        `<strong class="govuk-tag govuk-tag--${colour} govuk-tag--nowrap " data-cy-status="${status}" >${label}</strong>`,
-      )
-    })
-
-    it('accepts optional status tag options', () => {
-      const spaceBooking = cas1SpaceBookingSummaryFactory.departed().build()
-
-      expect(placementStatus(spaceBooking, { classes: 'some-class', id: 'some-id' })).toEqual(
-        `<strong class="govuk-tag govuk-tag--grey govuk-tag--nowrap some-class" data-cy-status="departed" id="some-id-status">Departed</strong>`,
-      )
     })
   })
 

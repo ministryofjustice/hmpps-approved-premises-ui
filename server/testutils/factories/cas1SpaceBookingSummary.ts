@@ -11,7 +11,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import cas1PremisesFactory from './cas1Premises'
-import { statusTextMap } from '../../utils/placements'
+import { statusTextMap } from '../../utils/placements/status'
 
 const arrivedStatuses = ['arrived', 'departingWithin2Weeks', 'departed', 'departingToday', 'overdueDeparture']
 

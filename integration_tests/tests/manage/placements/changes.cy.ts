@@ -20,7 +20,7 @@ import { roomCharacteristicMap } from '../../../../server/utils/characteristicsU
 import { PlacementShowPage } from '../../../pages/manage'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import { SelectPlacementPage } from '../../../pages/manage/placements/changes/selectPlacement'
-import { placementName } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementName } from '../../../../server/utils/placements'
 
 context('Change Placement', () => {
   const setupPlacement = (status = 'upcoming', placementRequestId?: string) => {

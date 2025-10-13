@@ -3,7 +3,7 @@ import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment 
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import isAssessment from './assessments/isAssessment'
-import { StatusTag, StatusTagOptions } from './statusTag'
+import { StatusTag } from './statusTag'
 import { tierQualificationPage } from './applications/utils'
 
 export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Application | Assessment): string => {

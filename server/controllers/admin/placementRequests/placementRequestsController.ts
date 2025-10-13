@@ -9,7 +9,7 @@ import paths from '../../../paths/admin'
 import managePaths from '../../../paths/manage'
 import { ValidationError } from '../../../utils/errors'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
-import { overallStatus } from '../../../utils/placements'
+import { overallStatus } from '../../../utils/placements/status'
 import { changePlacementLink } from '../../../utils/placementRequests/adminIdentityBar'
 
 export default class PlacementRequestsController {

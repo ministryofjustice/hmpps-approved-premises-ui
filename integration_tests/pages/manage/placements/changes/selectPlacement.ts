@@ -1,6 +1,6 @@
 import { Cas1SpaceBookingSummary } from '@approved-premises/api'
 import Page from '../../../page'
-import { placementName } from '../../../../../server/utils/placementRequests/placementSummaryList'
+import { placementName } from '../../../../../server/utils/placements'
 
 export class SelectPlacementPage extends Page {
   constructor() {

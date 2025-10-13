@@ -1,10 +1,8 @@
-import { Cas1PlacementRequestDetail, Cas1SpaceBooking, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { SummaryList } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
-import { detailedStatus, statusTextMap } from '../placements'
-import { DateFormats } from '../dateUtils'
-import { PlacementStatusTag } from '../placements/statusTag'
-import { StatusTagOptions } from '../statusTag'
+import { placementNameWithStatus } from '../placements'
+import { detailedStatus, statusTextMap } from '../placements/status'
 
 export const placementSummaryList = (placement: Cas1SpaceBookingSummary): SummaryList => ({
   rows: [
@@ -22,21 +20,6 @@ type PlacementSummary = {
   title: string
   summaryList: SummaryList
 }
-
-export const placementName = (placement: Cas1SpaceBookingSummary): string =>
-  `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)}`
-
-export const placementStatus = (
-  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking,
-  options: StatusTagOptions = {},
-): string =>
-  new PlacementStatusTag(detailedStatus(placement), {
-    ...options,
-    classes: `govuk-tag--nowrap ${options.classes || ''}`,
-  }).html()
-
-export const placementNameWithStatus = (placement: Cas1SpaceBookingSummary): string =>
-  `${placementName(placement)} ${placementStatus(placement, { classes: 'govuk-!-margin-left-1' })}`
 
 export const placementsSummaries = (placementRequest: Cas1PlacementRequestDetail): Array<PlacementSummary> =>
   [...placementRequest.spaceBookings]

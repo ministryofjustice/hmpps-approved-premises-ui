@@ -8,7 +8,8 @@ import {
 import { TaskStatus as TaskListStatus } from '@approved-premises/ui'
 // eslint-disable-next-line import/no-cycle
 import { AssessmentStatusForUi } from './assessments/statusTag'
-import { SpaceBookingStatus } from './placements'
+
+import { SpaceBookingStatus } from './placements/status'
 
 export type StatusTagOptions = {
   classes?: string
