@@ -37,13 +37,15 @@ import { newPlacementSummaryList } from '../../server/utils/match/newPlacement'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
+const normaliseWhitespace = (input: string): string => input.trim().replace(/\s+/g, ' ')
+
 export const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
-  // Get rid of all whitespace in both the actual and expected text,
+  // Normalise whitespace in both the actual and expected text,
   // so we don't have to worry about small differences in whitespace
   const parser = new DOMParser()
   const doc = parser.parseFromString(expected, 'text/html')
 
-  return { actual: actual.text().replace(/\s+/g, ''), expected: doc.body.innerText.replace(/\s+/g, '') }
+  return { actual: normaliseWhitespace(actual.text()), expected: normaliseWhitespace(doc.body.innerText) }
 }
 
 export default class Page {
@@ -67,34 +69,35 @@ export default class Page {
     cy.checkA11y()
   }
 
-  assertDefinition(term: string, value: string): void {
-    cy.get('dt').contains(term).parents('.govuk-summary-list__row').get('dd').should('contain', value)
+  assertDefinition(term: string, value: string, valueType: 'text' | 'html' = 'text'): void {
+    cy.get('dt').contains(term).parents('.govuk-summary-list__row').find('> dd.govuk-summary-list__value').as('dd')
+
+    if (value) {
+      if (valueType === 'html') {
+        cy.get('@dd').then($dd => {
+          const { actual, expected } = parseHtml($dd, value)
+          expect(actual).to.equal(expected)
+        })
+      } else {
+        cy.get('@dd').should(`contain.text`, value.trim())
+      }
+    } else {
+      cy.get('@dd').invoke('text').should('match', /^\s*$/)
+    }
   }
 
   shouldContainSummaryListItems(items: Array<SummaryListItem>): void {
     items.forEach(item => {
-      const key = 'text' in item.key ? item.key.text : item.key.html
-      const value = 'text' in item.value ? item.value.text : item.value.html
-      if ('text' in item.key && 'text' in item.value) {
-        this.assertDefinition(key, value)
-      } else if ('text' in item.key && 'html' in item.value) {
-        cy.get('dt')
-          .contains(key)
-          .siblings('dd')
-          .then($dd => {
-            const { actual, expected } = parseHtml($dd, value)
-
-            expect(actual).to.equal(expected)
-          })
+      let key: string
+      if ('text' in item.key) {
+        key = item.key.text
       } else {
-        cy.get('dd')
-          .contains(value)
-          .siblings('dt')
-          .then($dt => {
-            const { actual, expected } = parseHtml($dt, key)
-            expect(actual).to.equal(expected)
-          })
+        const parser = new DOMParser()
+        key = parser.parseFromString(item.key.html, 'text/html').body.textContent
       }
+      const value = 'text' in item.value ? item.value.text : item.value.html
+
+      this.assertDefinition(key, value, 'text' in item.value ? 'text' : 'html')
     })
   }
 
