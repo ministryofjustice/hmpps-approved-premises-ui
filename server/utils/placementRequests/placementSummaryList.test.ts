@@ -4,7 +4,8 @@ import { placementsSummaries, placementSummaryList } from './placementSummaryLis
 import { DateFormats } from '../dateUtils'
 import { placementNameWithStatus } from '../placements'
 import cas1SpaceBookingSummaryFactory from '../../testutils/factories/cas1SpaceBookingSummary'
-import { detailedStatus, statusTextMap } from '../placements/status'
+import { characteristicsBulletList } from '../characteristicsUtils'
+import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 
 describe('placement summary list', () => {
   describe('placementSummaryList', () => {
@@ -14,11 +15,10 @@ describe('placement summary list', () => {
       expect(placementSummaryList(spaceBooking)).toEqual({
         rows: [
           { key: { text: 'Approved Premises' }, value: { text: spaceBooking.premises.name } },
-          // TODO: populate this from the spaceBookingSummary createdAt when available
-          // {
-          //   key: { text: 'Date of match' },
-          //   value: { text: DateFormats.isoDateToUIDate(spaceBooking.createdAt) },
-          // },
+          {
+            key: { text: 'Date of booking' },
+            value: { text: DateFormats.isoDateToUIDate(spaceBooking.createdAt) },
+          },
           {
             key: { text: 'Expected arrival date' },
             value: { text: DateFormats.isoDateToUIDate(spaceBooking.expectedArrivalDate) },
@@ -27,7 +27,18 @@ describe('placement summary list', () => {
             key: { text: 'Expected departure date' },
             value: { text: DateFormats.isoDateToUIDate(spaceBooking.expectedDepartureDate) },
           },
-          { key: { text: 'Status' }, value: { text: statusTextMap[detailedStatus(spaceBooking)] } },
+          {
+            key: { text: 'AP requirements' },
+            value: {
+              html: characteristicsBulletList(filterApLevelCriteria(spaceBooking.characteristics)),
+            },
+          },
+          {
+            key: { text: 'Room requirements' },
+            value: {
+              html: characteristicsBulletList(filterRoomLevelCriteria(spaceBooking.characteristics)),
+            },
+          },
           { key: { text: 'Delius event number' }, value: { text: spaceBooking.deliusEventNumber } },
         ],
       })
@@ -41,6 +52,40 @@ describe('placement summary list', () => {
       expect(
         placementSummaryList(spaceBooking).rows.find(row => (row.key as TextItem)?.text === 'Delius event number'),
       ).toBeUndefined()
+    })
+
+    it('renders the actual arrival date and expected departure date if the booking is current', () => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.current().build()
+
+      expect(placementSummaryList(spaceBooking).rows).toEqual(
+        expect.arrayContaining([
+          {
+            key: { text: 'Actual arrival date' },
+            value: { text: DateFormats.isoDateToUIDate(spaceBooking.actualArrivalDate) },
+          },
+          {
+            key: { text: 'Expected departure date' },
+            value: { text: DateFormats.isoDateToUIDate(spaceBooking.expectedDepartureDate) },
+          },
+        ]),
+      )
+    })
+
+    it('renders the actual arrival and departure date if the booking is departed', () => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.departed().build()
+
+      expect(placementSummaryList(spaceBooking).rows).toEqual(
+        expect.arrayContaining([
+          {
+            key: { text: 'Actual arrival date' },
+            value: { text: DateFormats.isoDateToUIDate(spaceBooking.actualArrivalDate) },
+          },
+          {
+            key: { text: 'Actual departure date' },
+            value: { text: DateFormats.isoDateToUIDate(spaceBooking.actualDepartureDate) },
+          },
+        ]),
+      )
     })
   })
 

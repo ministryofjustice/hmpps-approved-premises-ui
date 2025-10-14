@@ -2,16 +2,29 @@ import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-p
 import { SummaryList } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
 import { placementNameWithStatus } from '../placements'
-import { detailedStatus, statusTextMap } from '../placements/status'
+import { characteristicsBulletList } from '../characteristicsUtils'
+import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 
 export const placementSummaryList = (placement: Cas1SpaceBookingSummary): SummaryList => ({
   rows: [
     summaryListItem('Approved Premises', placement.premises.name),
-    // TODO: populate this from the spaceBookingSummary createdAt when available
-    // summaryListItem('Date of match', placement.createdAt, 'date'),
-    summaryListItem('Expected arrival date', placement.expectedArrivalDate, 'date'),
-    summaryListItem('Expected departure date', placement.expectedDepartureDate, 'date'),
-    summaryListItem('Status', statusTextMap[detailedStatus(placement)]),
+    summaryListItem('Date of booking', placement.createdAt, 'date'),
+    placement.actualArrivalDate
+      ? summaryListItem('Actual arrival date', placement.actualArrivalDate, 'date')
+      : summaryListItem('Expected arrival date', placement.expectedArrivalDate, 'date'),
+    placement.actualDepartureDate
+      ? summaryListItem('Actual departure date', placement.actualDepartureDate, 'date')
+      : summaryListItem('Expected departure date', placement.expectedDepartureDate, 'date'),
+    summaryListItem(
+      'AP requirements',
+      characteristicsBulletList(filterApLevelCriteria(placement.characteristics)),
+      'html',
+    ),
+    summaryListItem(
+      'Room requirements',
+      characteristicsBulletList(filterRoomLevelCriteria(placement.characteristics)),
+      'html',
+    ),
     placement.deliusEventNumber && summaryListItem('Delius event number', placement.deliusEventNumber),
   ].filter(Boolean),
 })
