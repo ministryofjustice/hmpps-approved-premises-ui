@@ -6,18 +6,20 @@
         {{ page.title }}
     </h1>
 
-    <p class="govuk-hint">You will be asked a series of questions to help inform what actions AP staff should take in the event of behaviour concerns or non compliance out of hours. The questions have short on screen guidance available.  </p>
+    <p class="govuk-hint">You will be asked a series of questions to help inform what actions AP staff should take in
+        the event of behaviour concerns or non compliance out of hours. The questions have short on screen guidance
+        available. </p>
 
-    {% if page.contingencyPlanPartnerNames.length > 0%}
+    {% if page.contingencyPlanPartnerNames.length > 0 %}
         <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Partner agencies added to application</h2>
         <dl class="govuk-summary-list">
             {% for contingencyPlanPartnerName in page.contingencyPlanPartnerNames %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Partner agency
+                        Partner agency {{ loop.index if page.contingencyPlanPartnerNames | length > 1 }}
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        {{contingencyPlanPartnerName}}
+                        {{ contingencyPlanPartnerName }}
                     </dd>
 
                 </div>
@@ -28,7 +30,7 @@
 
     {% for questionId, question in page.questions %}
         {% if question.hint %}
-            {{formPageTextarea({
+            {{ formPageTextarea({
                 fieldName: questionId,
                 label:{
                     text:  question.question,
@@ -37,17 +39,15 @@
                 hint: {
                     text: question.hint
                 }
-            }, fetchContext())
-            }}
+            }, fetchContext()) }}
         {% else %}
-            {{formPageTextarea({
+            {{ formPageTextarea({
                 fieldName: questionId,
                 label:{
                     text:  question.question,
                     classes: 'govuk-label--m'
                 }
-            }, fetchContext())
-            }}
-            {%endif%}
-        {% endfor %}
-    {% endblock %}
+            }, fetchContext()) }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}

@@ -119,7 +119,7 @@ context('New Placement', () => {
       postcode: placementRequest.location,
       startDate: DateFormats.dateObjToIsoDate(newArrivalDate),
       newPlacementArrivalDate: DateFormats.dateObjToIsoDate(newArrivalDate),
-      departureDate: DateFormats.dateObjToIsoDate(newDepartureDate),
+      newPlacementDepartureDate: DateFormats.dateObjToIsoDate(newDepartureDate),
       newPlacementReason,
       newPlacementCriteriaChanged: 'no',
       apType: 'normal',
@@ -207,6 +207,7 @@ context('New Placement', () => {
       apCriteria: ['acceptsChildSexOffenders'],
       roomCriteria: ['isArsonSuitable'],
     }
+    cy.log('>>>> New search state:', expectedSearchFormDataAfterUpdate)
     searchPage.shouldShowNewPlacementDetails(expectedSearchFormDataAfterUpdate)
     searchPage.shouldShowSearchParametersInInputs(expectedSearchFormDataAfterUpdate)
 

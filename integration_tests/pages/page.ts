@@ -888,7 +888,12 @@ export default class Page {
   }
 
   shouldShowNewPlacementDetails(searchState: SpaceSearchFormData) {
-    this.shouldContainSummaryListItems(newPlacementSummaryList(searchState).rows)
+    cy.get('summary')
+      .contains('New placement information')
+      .closest('details')
+      .within(() => {
+        this.shouldContainSummaryListItems(newPlacementSummaryList(searchState).rows)
+      })
   }
 
   shouldNotShow(text: string, selector: string = 'body') {

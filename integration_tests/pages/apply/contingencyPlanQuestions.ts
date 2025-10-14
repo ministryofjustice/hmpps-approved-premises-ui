@@ -21,8 +21,9 @@ export default class ContingencyPlanQuestionsPage extends ApplyPage {
   shouldShowPartnerAgencyNames(partnerAgencies: Array<PartnerAgencyDetails>) {
     cy.get('h2').contains('Partner agencies added to application').should('be.visible')
     cy.get('dl').within(() => {
-      partnerAgencies.forEach(partnerAgency => {
-        this.assertDefinition('Partner agency', partnerAgency.partnerAgencyName)
+      partnerAgencies.forEach((partnerAgency, index) => {
+        const key = `Partner agency${partnerAgencies.length > 1 ? ` ${index + 1}` : ''}`
+        this.assertDefinition(key, partnerAgency.partnerAgencyName)
       })
     })
   }
