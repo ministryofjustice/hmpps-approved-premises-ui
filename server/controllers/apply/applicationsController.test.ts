@@ -8,13 +8,16 @@ import type {
   PaginatedResponse,
 } from '@approved-premises/ui'
 import { Cas1ApplicationSummary } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
+import { addYears } from 'date-fns'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
-import { ApplicationService, PersonService } from '../../services'
+import { ApplicationService, AssessmentService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import {
   activeOffenceFactory,
   applicationFactory,
+  assessmentFactory,
   cas1TimelineEventFactory,
   paginatedResponseFactory,
   personFactory,
@@ -28,6 +31,7 @@ import * as applicationUtils from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
+import { getApplicationShowPageTabs } from '../../utils/applications/utils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/getResponses')
@@ -43,12 +47,13 @@ describe('applicationsController', () => {
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
+  const assessmentService = createMock<AssessmentService>({})
   const personService = createMock<PersonService>({})
 
   let applicationsController: ApplicationsController
 
   beforeEach(() => {
-    applicationsController = new ApplicationsController(applicationService, personService)
+    applicationsController = new ApplicationsController(applicationService, assessmentService, personService)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
@@ -230,16 +235,15 @@ describe('applicationsController', () => {
     it('renders the readonly view if the application has been submitted', async () => {
       application.status = 'awaitingAssesment'
 
-      const requestHandler = applicationsController.show()
-
       applicationService.findApplication.mockResolvedValue(application)
 
-      await requestHandler(request, response, next)
+      await applicationsController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/show', {
         application,
         referrer,
         tab: 'application',
+        tabs: getApplicationShowPageTabs(application.id, 'application'),
         pageHeading: 'Approved Premises application',
       })
     })
@@ -280,7 +284,7 @@ describe('applicationsController', () => {
         await requestHandler(
           {
             ...request,
-            query: { tab: applicationUtils.applicationShowPageTabs.timeline },
+            query: { tab: 'timeline' },
           },
           response,
           next,
@@ -289,7 +293,8 @@ describe('applicationsController', () => {
         expect(response.render).toHaveBeenCalledWith('applications/show', {
           application,
           referrer,
-          tab: applicationUtils.applicationShowPageTabs.timeline,
+          tab: 'timeline',
+          tabs: getApplicationShowPageTabs(application.id, 'timeline'),
           timelineEvents,
           pageHeading: 'Approved Premises application',
         })
@@ -312,7 +317,7 @@ describe('applicationsController', () => {
         await requestHandler(
           {
             ...request,
-            query: { tab: applicationUtils.applicationShowPageTabs.placementRequests },
+            query: { tab: 'placementRequests' },
           },
           response,
           next,
@@ -321,13 +326,48 @@ describe('applicationsController', () => {
         expect(response.render).toHaveBeenCalledWith('applications/show', {
           application,
           referrer,
-          tab: applicationUtils.applicationShowPageTabs.placementRequests,
+          tab: 'placementRequests',
+          tabs: getApplicationShowPageTabs(application.id, 'placementRequests'),
           requestsForPlacement,
           pageHeading: 'Approved Premises application',
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
         expect(applicationService.getRequestsForPlacement).toHaveBeenCalledWith(token, application.id)
+      })
+    })
+
+    describe('when the tab=assessment query param is present', () => {
+      it('calls the findAssessment method on the assessment service', async () => {
+        const assessment = assessmentFactory.build()
+        application.status = 'awaitingPlacement'
+        application.assessmentId = assessment.id
+        application.assessmentDecisionDate = DateFormats.dateObjToIsoDate(faker.date.recent({ days: 50 }))
+
+        applicationService.findApplication.mockResolvedValue(application)
+        assessmentService.findAssessment.mockResolvedValue(assessment)
+
+        await applicationsController.show()(
+          {
+            ...request,
+            query: { tab: 'assessment' },
+          },
+          response,
+          next,
+        )
+
+        expect(response.render).toHaveBeenCalledWith('applications/show', {
+          application,
+          referrer,
+          tab: 'assessment',
+          tabs: getApplicationShowPageTabs(application.id, 'assessment'),
+          assessment,
+          pageHeading: 'Approved Premises application',
+          applicationExpiryDate: DateFormats.dateObjtoUIDate(addYears(application.assessmentDecisionDate, 1)),
+        })
+
+        expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, application.assessmentId)
       })
     })
 

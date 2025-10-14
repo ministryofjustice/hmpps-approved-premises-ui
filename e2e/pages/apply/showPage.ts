@@ -6,14 +6,11 @@ import { AppealApplicationPage } from './appealApplicationPage'
 export class ShowPage extends BasePage {
   async createPlacementRequest(): Promise<void> {
     await this.clickPlacementRequestsTab()
-    await this.page.getByRole('button', { name: 'Create request for placement', exact: true }).click()
+    await this.page.getByRole('button', { name: 'Create placement request', exact: true }).click()
   }
 
   async clickPlacementRequestsTab(): Promise<void> {
-    await this.page
-      .getByLabel('Secondary navigation region')
-      .getByRole('link', { name: 'Request for placement' })
-      .click()
+    await this.page.getByLabel('Secondary navigation region').getByRole('link', { name: 'Placement request' }).click()
   }
 
   async appealApplication(decision: AppealDecision): Promise<void> {

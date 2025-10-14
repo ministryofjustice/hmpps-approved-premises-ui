@@ -23,7 +23,7 @@
       "Has the Complex Case Board taken place?": "Yes"
     },
     {
-      "Has the Complex Case Board determined that the person should be placed in a male AP?": "Yes"
+      "What type of AP has the complex case board agreed to?": "Men's AP"
     },
     {
       "Parole eligibility date": "Thu 14 Nov 2024",
@@ -34,17 +34,17 @@
       "Sentence expiry date": "Fri 14 Jun 2024"
     },
     {
-      "Which of the following best describes the sentence type the person is on?": "Community Order (CO) / Suspended Sentence Order (SSO)"
+      "Which sentence type does the person have?": "Community Order (CO) / Suspended Sentence Order (SSO)"
     },
     {
-      "Which of the following options best describes the situation?": "Application for risk management/public protection"
+      "What is the reason for placing this person in an AP?": "Application for risk management/public protection"
     },
     {
       "Do you know the person's release date?": "Yes",
-      "Release Date": "Sun 27 Oct 2024"
+      "Release Date": "Sat 14 Nov 2026"
     },
     {
-      "Is Sun 27 Oct 2024 the date you want the placement to start?": "Yes"
+      "Is Sat 14 Nov 2026 the date you want the placement to start?": "Yes"
     },
     {
       "What is the purpose of the AP placement?": "Provide drug or alcohol monitoring, Other",
