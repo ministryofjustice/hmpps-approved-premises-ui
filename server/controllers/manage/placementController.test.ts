@@ -107,6 +107,7 @@ describe('placementController', () => {
           '/manage/premises/:premisesId/occupancy/day/:date',
           '/applications/:id',
           '/people/timeline/show',
+          '/admin/placement-requests/:placementRequestId',
         ],
       )
     })
