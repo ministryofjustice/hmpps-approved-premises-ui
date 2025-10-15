@@ -8,15 +8,14 @@ import type {
   NamedId,
   SortDirection,
 } from '@approved-premises/api'
-import { SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
+import { SelectGroup, SelectOption, SummaryList, TabItem, TableCell, TableRow } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
-import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
-import { canonicalDates, placementStatusHtml } from '../placements'
+import { canonicalDates, placementStatusCell } from '../placements'
 import { htmlCell, textCell } from '../tableUtils'
 
 export { premisesActions } from './premisesActions'
@@ -202,7 +201,7 @@ export const placementTableRows = (
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
       keyWorkerName: textValue(keyWorkerAllocation?.name || 'Not assigned'),
-      status: placementStatusHtml(placement),
+      status: placementStatusCell(placement),
     }
 
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])

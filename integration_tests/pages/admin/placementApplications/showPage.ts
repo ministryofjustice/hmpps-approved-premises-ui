@@ -2,11 +2,13 @@ import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-p
 import Page from '../../page'
 
 import { placementRequestSummaryList } from '../../../../server/utils/placementRequests/placementRequestSummaryList'
-import { placementSummaryList, placementTitle } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementSummaryList } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementName } from '../../../../server/utils/placements'
 
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'
 import applyPaths from '../../../../server/paths/apply'
+import managePaths from '../../../../server/paths/manage'
 import { changePlacementLink } from '../../../../server/utils/placementRequests/adminIdentityBar'
 
 export default class ShowPage extends Page {
@@ -46,11 +48,15 @@ export default class ShowPage extends Page {
     cy.contains(bookings.length > 1 ? 'Booked placements' : 'Booked placement').should('exist')
 
     bookings.forEach(booking => {
-      cy.get('h3')
-        .contains(placementTitle(booking))
-        .find('+ .govuk-summary-list')
+      cy.get('summary')
+        .contains(placementName(booking))
+        .closest('details')
         .within(() => {
           this.shouldContainSummaryListItems(placementSummaryList(booking).rows)
+          this.shouldShowLink(
+            'View placement details',
+            managePaths.premises.placements.show({ premisesId: booking.premises.id, placementId: booking.id }),
+          )
         })
     })
   }

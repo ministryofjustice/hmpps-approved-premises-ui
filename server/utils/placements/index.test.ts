@@ -14,136 +14,37 @@ import {
   arrivalInformation,
   canonicalDates,
   departureInformation,
-  detailedStatus,
   injectRadioConditionalHtml,
   otherBookings,
-  overallStatus,
   placementKeyDetails,
   placementOverviewSummary,
-  placementStatusHtml,
+  placementStatusTag,
+  placementStatusCell,
   placementSummary,
   renderKeyworkersRadioOptions,
   requirementsInformation,
-  statusTextMap,
   withdrawalMessage,
   withdrawalSummaryList,
+  placementName,
 } from '.'
 import { DateFormats } from '../dateUtils'
 
 import paths from '../../paths/manage'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import * as applicationHelpers from '../applications/helpers'
+import { detailedStatus, statusTextMap } from './status'
 
 describe('placementUtils', () => {
-  describe('placement status', () => {
-    describe.each([
-      ['placement summary', cas1SpaceBookingSummaryFactory],
-      ['full placement', cas1SpaceBookingFactory],
-    ])('when passed a %s', (_, typeFactory) => {
-      const upcoming = typeFactory.upcoming()
-      const current = typeFactory.current()
-      const departed = typeFactory.departed()
-      const nonArrival = typeFactory.nonArrival()
-      const cancelled = typeFactory.cancelled()
-
-      beforeEach(() => {
-        jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
-      })
-
-      const testCases = [
-        {
-          label: 'an upcoming placement',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-05-01' },
-          expected: { overall: 'upcoming', detailed: 'upcoming' },
-        },
-        {
-          label: 'an upcoming placement starting within 6 weeks',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-04-11' },
-          expected: { overall: 'upcoming', detailed: 'arrivingWithin6Weeks' },
-        },
-        {
-          label: 'an upcoming placement starting within 2 weeks',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-03-14' },
-          expected: { overall: 'upcoming', detailed: 'arrivingWithin2Weeks' },
-        },
-        {
-          label: 'an upcoming placement starting today',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-03-01' },
-          expected: { overall: 'upcoming', detailed: 'arrivingToday' },
-        },
-        {
-          label: 'an upcoming placement overdue arrival',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-02-28' },
-          expected: { overall: 'upcoming', detailed: 'overdueArrival' },
-        },
-        {
-          label: 'a current placement departing in more than 6 weeks',
-          factory: current,
-          params: { expectedDepartureDate: '2025-05-01' },
-          expected: { overall: 'arrived', detailed: 'arrived' },
-        },
-        {
-          label: 'a current placement departing within 2 weeks',
-          factory: current,
-          params: { expectedDepartureDate: '2025-03-14' },
-          expected: { overall: 'arrived', detailed: 'departingWithin2Weeks' },
-        },
-        {
-          label: 'a current placement departing today',
-          factory: current,
-          params: { expectedDepartureDate: '2025-03-01' },
-          expected: { overall: 'arrived', detailed: 'departingToday' },
-        },
-        {
-          label: 'a current placement overdue departure',
-          factory: current,
-          params: { expectedDepartureDate: '2025-02-28' },
-          expected: { overall: 'arrived', detailed: 'overdueDeparture' },
-        },
-        {
-          label: 'a departed placement',
-          factory: departed,
-          params: {},
-          expected: { overall: 'departed', detailed: 'departed' },
-        },
-        {
-          label: 'a non-arrived placement',
-          factory: nonArrival,
-          params: {},
-          expected: { overall: 'notArrived', detailed: 'notArrived' },
-        },
-        {
-          label: 'a cancelled placement',
-          factory: cancelled,
-          params: { expectedArrivalDate: '2025-05-01' },
-          expected: { overall: 'cancelled', detailed: 'cancelled' },
-        },
-      ]
-
-      it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
-        const placement = factory.build(params)
-
-        expect(overallStatus(placement)).toEqual(expected.overall)
-        expect(detailedStatus(placement)).toEqual(expected.detailed)
-      })
-    })
-  })
-
   describe('placementStatusHtml', () => {
     it('should return an appealRequested status', () => {
       const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['placementAppeal'] })
       const expectedStatusText = statusTextMap[detailedStatus(placement)]
-      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Appeal requested` })
+      expect(placementStatusCell(placement)).toEqual({ html: `${expectedStatusText}<br/>Appeal requested` })
     })
     it('should return an transfer requested status', () => {
       const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['plannedTransfer'] })
       const expectedStatusText = statusTextMap[detailedStatus(placement)]
-      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Transfer requested` })
+      expect(placementStatusCell(placement)).toEqual({ html: `${expectedStatusText}<br/>Transfer requested` })
     })
   })
 
@@ -347,6 +248,47 @@ describe('placementUtils', () => {
     })
   })
 
+  describe('placementName', () => {
+    it('renders the placement title with premises name and arrival date', () => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
+        premises: {
+          name: "St John's House",
+        },
+        expectedArrivalDate: '2026-02-13',
+      })
+
+      expect(placementName(spaceBooking)).toEqual(`St John's House from Fri 13 Feb 2026`)
+    })
+  })
+
+  describe('placementStatusTag', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-02-10'))
+    })
+
+    it.each([
+      ['Arriving within 2 weeks', 'arrivingWithin2Weeks', '2026-02-13', 'blue'],
+      ['Arriving today', 'arrivingToday', '2026-02-10', 'blue'],
+      ['Overdue arrival', 'overdueArrival', '2026-02-07', 'red'],
+    ])('renders the detailed status for a placement %s', (label, status, date, colour) => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
+        expectedArrivalDate: date,
+      })
+
+      expect(placementStatusTag(spaceBooking)).toEqual(
+        `<strong class="govuk-tag govuk-tag--${colour} govuk-tag--nowrap " data-cy-status="${status}" >${label}</strong>`,
+      )
+    })
+
+    it('accepts optional status tag options', () => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.departed().build()
+
+      expect(placementStatusTag(spaceBooking, { classes: 'some-class', id: 'some-id' })).toEqual(
+        `<strong class="govuk-tag govuk-tag--grey govuk-tag--nowrap some-class" data-cy-status="departed" id="some-id-status">Departed</strong>`,
+      )
+    })
+  })
+
   describe('tabular information', () => {
     const placement = cas1SpaceBookingFactory.build({
       expectedArrivalDate: '2024-05-30',
@@ -362,7 +304,7 @@ describe('placementUtils', () => {
         rows: [
           { key: { text: 'AP name' }, value: { text: placement.premises.name } },
           { key: { text: 'Date allocated' }, value: { text: DateFormats.isoDateToUIDate(placement.createdAt) } },
-          { key: { text: 'Status' }, value: { text: 'Departed' } },
+          { key: { text: 'Status' }, value: { html: placementStatusTag(placement) } },
           {
             key: { text: 'Actual length of stay' },
             value: { text: '29 weeks, 4 days' },

@@ -123,8 +123,16 @@ export type TableCell = (TextItem | HtmlItem) & {
 
 export type TableRow = Array<TableCell>
 
-export type RadioItemButton = {
-  text: string
+export type RadioItemButton = (
+  | {
+      text: string
+      html?: never
+    }
+  | {
+      text?: never
+      html: string
+    }
+) & {
   value: string
   checked?: boolean
   conditional?: HtmlItem
@@ -154,6 +162,13 @@ export interface SelectOption {
 export interface SelectGroup {
   label: string
   items: Array<SelectOption>
+}
+
+export type TabItem = {
+  text: string
+  active: boolean
+  href: string
+  classes?: string
 }
 
 export interface SummaryList {

@@ -2,6 +2,7 @@
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% extends "partials/layout-with-details.njk" %}
 
@@ -62,8 +63,23 @@
         <h2 class="govuk-heading-l">Booked placement{% if placements | length > 1 %}s{% endif %}</h2>
 
         {% for placement in placements %}
-            <h3 class="govuk-heading-m">{{ placement.title }}</h3>
-            {{ govukSummaryList(placement.summaryList) }}
+            {% set html %}
+                {{ govukSummaryList({
+                    rows: placement.summaryList.rows,
+                    classes: 'govuk-summary-list--force-bottom-border'
+                }) }}
+
+                <p class="govuk-!-margin-top-6 govuk-!-margin-bottom-2">
+                    <a href="{{ placement.link }}">View placement details</a>
+                </p>
+            {% endset %}
+
+            {{ govukDetails({
+                summaryHtml: '<h3>' + placement.title + '</h3>',
+                html: html,
+                open: 'Departed' not in placement.title,
+                classes: 'govuk-details--card'
+            }) }}
         {% endfor %}
     {% endif %}
 {% endblock %}

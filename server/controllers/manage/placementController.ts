@@ -16,6 +16,7 @@ import { mapApplicationTimelineEventsForUi } from '../../utils/applications/util
 import paths from '../../paths/manage'
 import applicationPaths from '../../paths/apply'
 import peoplePaths from '../../paths/people'
+import adminPaths from '../../paths/admin'
 import { matchingInformationSummaryRows } from '../../utils/placementRequests/matchingInformationSummaryList'
 import { adminSummary } from '../../utils/placementRequests'
 
@@ -42,6 +43,7 @@ export default class PlacementController {
         paths.premises.occupancy.day.pattern,
         applicationPaths.applications.show.pattern,
         peoplePaths.timeline.show.pattern,
+        adminPaths.admin.placementRequests.show.pattern,
       ])
       const { arrivalDate, departureDate } = canonicalDates(placement)
       const pageHeading = `${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })}`

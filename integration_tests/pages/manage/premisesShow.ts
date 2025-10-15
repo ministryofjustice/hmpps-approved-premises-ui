@@ -4,7 +4,8 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { displayName } from '../../../server/utils/personUtils'
-import { canonicalDates, detailedStatus, statusTextMap } from '../../../server/utils/placements'
+import { canonicalDates } from '../../../server/utils/placements'
+import { detailedStatus, statusTextMap } from '../../../server/utils/placements/status'
 
 export default class PremisesShowPage extends Page {
   constructor(private readonly premises: Cas1Premises) {

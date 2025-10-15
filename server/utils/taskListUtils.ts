@@ -3,7 +3,7 @@ import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment 
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import isAssessment from './assessments/isAssessment'
-import { StatusTag, StatusTagOptions } from './statusTag'
+import { StatusTag } from './statusTag'
 import { tierQualificationPage } from './applications/utils'
 
 export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Application | Assessment): string => {
@@ -43,10 +43,10 @@ export class TaskListStatusTag extends StatusTag<TaskListStatus> {
     cannot_start: 'grey',
   }
 
-  constructor(status: TaskListStatus, taskId: UiTask['id'], options?: StatusTagOptions) {
+  constructor(status: TaskListStatus, taskId: UiTask['id']) {
     super(
       status,
-      { ...options, taskListTag: true, id: taskId },
+      { classes: `app-task-list__tag`, id: taskId },
       {
         statuses: TaskListStatusTag.statuses,
         colours: TaskListStatusTag.colours,

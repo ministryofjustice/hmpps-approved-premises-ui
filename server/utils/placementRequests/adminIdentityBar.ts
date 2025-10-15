@@ -1,12 +1,12 @@
-import { Cas1PlacementRequestDetail } from '../../@types/shared'
-import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
+import { IdentityBar, IdentityBarMenuItem, UserDetails } from '@approved-premises/ui'
 
 import adminPaths from '../../paths/admin'
 import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { hasPermission } from '../users'
-import { overallStatus } from '../placements'
+import { overallStatus } from '../placements/status'
 
 export const adminIdentityBar = (placementRequest: Cas1PlacementRequestDetail, user: UserDetails): IdentityBar => {
   const identityBar: IdentityBar = {

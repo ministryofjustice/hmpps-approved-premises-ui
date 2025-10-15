@@ -1,5 +1,5 @@
 import { Cas1PlacementRequestDetail, Cas1SpaceBookingSummary } from '@approved-premises/api'
-import { overallStatus, SpaceBookingOverallStatus } from '../placements'
+import { overallStatus, SpaceBookingOverallStatus } from '../placements/status'
 
 export const getPlacementOfStatus = (
   status: SpaceBookingOverallStatus,

@@ -1,17 +1,15 @@
 import {
   Cas1ChangeRequestType,
+  Cas1CurrentKeyWorker,
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
-  Cas1CurrentKeyWorker,
 } from '@approved-premises/api'
-import { RadioItem, SummaryList, UserDetails } from '@approved-premises/ui'
-import { differenceInCalendarDays } from 'date-fns'
+import { RadioItem, SummaryList, TabItem, TableCell, UserDetails } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { htmlValue, personKeyDetails, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
-import { TabItem } from '../tasks/listTable'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import {
   ApTypeCriteria,
@@ -21,25 +19,9 @@ import {
 } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
-
-export const overallStatusTextMap = {
-  upcoming: 'Upcoming',
-  arrived: 'Arrived',
-  notArrived: 'Not arrived',
-  departed: 'Departed',
-  cancelled: 'Cancelled',
-} as const
-
-export const statusTextMap = {
-  ...overallStatusTextMap,
-  arrivingWithin6Weeks: 'Arriving within 6 weeks',
-  arrivingWithin2Weeks: 'Arriving within 2 weeks',
-  arrivingToday: 'Arriving today',
-  overdueArrival: 'Overdue arrival',
-  departingWithin2Weeks: 'Departing within 2 weeks',
-  departingToday: 'Departing today',
-  overdueDeparture: 'Overdue departure',
-} as const
+import { StatusTagOptions } from '../statusTag'
+import { PlacementStatusTag } from './statusTag'
+import { detailedStatus, overallStatus, statusTextMap } from './status'
 
 const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
   placementAppeal: 'Appeal requested',
@@ -47,49 +29,7 @@ const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
   placementExtension: 'Extension requested',
 }
 
-export type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
-type SpaceBookingStatus = keyof typeof statusTextMap
-
-const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
-  Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
-
-export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingOverallStatus => {
-  const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
-  const isCancelled = isSpaceBooking(placement) ? placement.cancellation : placement.isCancelled
-
-  if (isCancelled) return 'cancelled'
-  if (isNonArrival) return 'notArrived'
-  if (placement.actualDepartureDate) return 'departed'
-  if (placement.actualArrivalDate) return 'arrived'
-  return 'upcoming'
-}
-
-export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
-  const status = overallStatus(placement)
-
-  if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
-
-  if (status === 'arrived') {
-    const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
-
-    if (daysFromDeparture < 0) return 'overdueDeparture'
-    if (daysFromDeparture === 0) return 'departingToday'
-    if (daysFromDeparture <= 2 * 7) return 'departingWithin2Weeks'
-
-    return 'arrived'
-  }
-
-  const daysFromArrival = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
-
-  if (daysFromArrival < 0) return 'overdueArrival'
-  if (daysFromArrival === 0) return 'arrivingToday'
-  if (daysFromArrival <= 2 * 7) return 'arrivingWithin2Weeks'
-  if (daysFromArrival <= 6 * 7) return 'arrivingWithin6Weeks'
-
-  return 'upcoming'
-}
-
-export const placementStatusHtml = (placement: Cas1SpaceBookingSummary): { html: string } => {
+export const placementStatusCell = (placement: Cas1SpaceBookingSummary): TableCell => {
   const statusElements: Array<string> = [
     statusTextMap[detailedStatus(placement)],
     ...placement.openChangeRequestTypes.map((requestType: Cas1ChangeRequestType) => changeRequestStatuses[requestType]),
@@ -186,13 +126,28 @@ const formatTime = (time: string) => {
   return time ? DateFormats.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
 }
 
+export const placementName = (placement: Cas1SpaceBookingSummary): string =>
+  `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)}`
+
+export const placementStatusTag = (
+  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking,
+  options: StatusTagOptions = {},
+): string =>
+  new PlacementStatusTag(detailedStatus(placement), {
+    ...options,
+    classes: `govuk-tag--nowrap ${options.classes || ''}`,
+  }).html()
+
+export const placementNameWithStatus = (placement: Cas1SpaceBookingSummary): string =>
+  `${placementName(placement)} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`
+
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   const { createdAt, actualArrivalDate, actualDepartureDate, keyWorkerAllocation, deliusEventNumber } = placement
   return {
     rows: [
       summaryListItemNoBlankRows('AP name', placement.premises.name),
       summaryListItemNoBlankRows('Date allocated', createdAt, 'date'),
-      summaryListItemNoBlankRows('Status', statusTextMap[detailedStatus(placement)]),
+      summaryListItemNoBlankRows('Status', placementStatusTag(placement), 'html'),
       summaryListItemNoBlankRows(
         'Actual length of stay',
         actualArrivalDate &&

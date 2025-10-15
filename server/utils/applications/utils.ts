@@ -351,7 +351,7 @@ const urlTypeForUi = (type: Cas1TimelineEventUrlType) => {
 export const withdrawnStatusTag = {
   key: { text: 'Status' },
   value: {
-    html: `<strong class="govuk-tag govuk-tag--timeline-tag govuk-tag--red">
+    html: `<strong class="govuk-tag govuk-tag--nowrap govuk-tag--red">
         Withdrawn
       </strong>`,
   },

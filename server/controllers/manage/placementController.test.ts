@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { TabItem } from 'server/utils/tasks/listTable'
+import { TabItem } from '@approved-premises/ui'
 import {
   applicationFactory,
   assessmentFactory,
@@ -107,6 +107,7 @@ describe('placementController', () => {
           '/manage/premises/:premisesId/occupancy/day/:date',
           '/applications/:id',
           '/people/timeline/show',
+          '/admin/placement-requests/:placementRequestId',
         ],
       )
     })

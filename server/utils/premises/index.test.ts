@@ -20,7 +20,7 @@ import {
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { canonicalDates, placementStatusHtml } from '../placements'
+import { canonicalDates, placementStatusCell } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -299,7 +299,7 @@ describe('premisesUtils', () => {
 
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
-          const statusColumn = placementStatusHtml(placement)
+          const statusColumn = placementStatusCell(placement)
           const { arrivalDate, departureDate } = canonicalDates(placement)
           const baseColumns = [
             {
@@ -323,12 +323,12 @@ describe('premisesUtils', () => {
       const placement = cas1SpaceBookingSummaryFactory
         .upcoming()
         .build({ expectedArrivalDate: DateFormats.dateObjToIsoDate(addDays(new Date(), 43)) })
-      expect(placementStatusHtml(placement)).toEqual({ html: 'Upcoming' })
-      expect(placementStatusHtml({ ...placement, openChangeRequestTypes: ['placementAppeal'] })).toEqual({
+      expect(placementStatusCell(placement)).toEqual({ html: 'Upcoming' })
+      expect(placementStatusCell({ ...placement, openChangeRequestTypes: ['placementAppeal'] })).toEqual({
         html: 'Upcoming<br/>Appeal requested',
       })
       expect(
-        placementStatusHtml({ ...placement, openChangeRequestTypes: ['placementAppeal', 'plannedTransfer'] }),
+        placementStatusCell({ ...placement, openChangeRequestTypes: ['placementAppeal', 'plannedTransfer'] }),
       ).toEqual({
         html: 'Upcoming<br/>Appeal requested<br/>Transfer requested',
       })

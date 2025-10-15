@@ -1,6 +1,6 @@
 import { Cas1SpaceBookingCharacteristic, Cas1SpaceCharacteristic, PlacementCriteria } from '@approved-premises/api'
 import { joinWithCommas } from './utils'
-import { UiPlacementCriteria, placementCriteriaLabels } from './placementCriteriaUtils'
+import { UiPlacementCriteria, placementCriteriaLabels, apTypeCriteriaLabels } from './placementCriteriaUtils'
 
 export const roomCharacteristicMap: Record<Cas1SpaceBookingCharacteristic, string> = {
   isWheelchairDesignated: 'Wheelchair accessible',
@@ -16,6 +16,12 @@ export const spaceSearchCriteriaApLevelLabels: Partial<Record<Cas1SpaceCharacter
   acceptsChildSexOffenders: 'Sexual offences against children',
   acceptsNonSexualChildOffenders: 'Non-sexual offences against children',
   isCatered: 'Catered',
+}
+
+export const allSpaceBookingCharacteristicMap: Partial<Record<Cas1SpaceCharacteristic, string>> = {
+  ...apTypeCriteriaLabels,
+  ...spaceSearchCriteriaApLevelLabels,
+  ...roomCharacteristicMap,
 }
 
 export const getRoomCharacteristicLabel = (characteristic: Cas1SpaceCharacteristic): string => {

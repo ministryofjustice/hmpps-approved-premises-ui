@@ -20,7 +20,7 @@ import { roomCharacteristicMap } from '../../../../server/utils/characteristicsU
 import { PlacementShowPage } from '../../../pages/manage'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import { SelectPlacementPage } from '../../../pages/manage/placements/changes/selectPlacement'
-import { placementTitle } from '../../../../server/utils/placementRequests/placementSummaryList'
+import { placementName } from '../../../../server/utils/placements'
 
 context('Change Placement', () => {
   const setupPlacement = (status = 'upcoming', placementRequestId?: string) => {
@@ -334,7 +334,7 @@ context('Change Placement', () => {
     })
 
     WHEN('I select the first placement')
-    selectPlacementPage.checkRadioByLabel(placementTitle(placementRequestDetail.spaceBookings[0]))
+    selectPlacementPage.checkRadioByLabel(placementName(placementRequestDetail.spaceBookings[0]))
     selectPlacementPage.clickButton('Continue')
 
     THEN('I should see the Change Placement page for the first placement')
@@ -348,7 +348,7 @@ context('Change Placement', () => {
     Page.verifyOnPage(SelectPlacementPage)
 
     WHEN('I select the second placement')
-    selectPlacementPage.checkRadioByLabel(placementTitle(placementRequestDetail.spaceBookings[1]))
+    selectPlacementPage.checkRadioByLabel(placementName(placementRequestDetail.spaceBookings[1]))
     selectPlacementPage.clickButton('Continue')
 
     THEN('I should see the Change Placement page for the second placement')

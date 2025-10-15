@@ -117,7 +117,7 @@ describe('placementRequestSummaryList', () => {
       summaryListItem('Preferred postcode', placementRequest.location),
       summaryListItem(
         'Status',
-        `<strong class="govuk-tag govuk-tag--timeline-tag govuk-tag--red">
+        `<strong class="govuk-tag govuk-tag--nowrap govuk-tag--red">
         Withdrawn
       </strong>`,
         'html',

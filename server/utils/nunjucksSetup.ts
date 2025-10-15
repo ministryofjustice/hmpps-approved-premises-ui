@@ -201,12 +201,9 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('taskStatusTag', function taskStatusTag(status: TaskStatus, options?: StatusTagOptions) {
     return new TaskStatusTag(status, options).html()
   })
-  njkEnv.addGlobal(
-    'taskListStatusTag',
-    function taskStatusTag(status: TaskListStatus, id: UiTask['id'], options?: StatusTagOptions) {
-      return new TasklistUtils.TaskListStatusTag(status, id, options).html()
-    },
-  )
+  njkEnv.addGlobal('taskListStatusTag', function taskStatusTag(status: TaskListStatus, id: UiTask['id']) {
+    return new TasklistUtils.TaskListStatusTag(status, id).html()
+  })
   njkEnv.addGlobal('personStatusTag', function personStatusTag(status: PersonStatus, options?: StatusTagOptions) {
     return new PersonStatusTag(status, options).html()
   })

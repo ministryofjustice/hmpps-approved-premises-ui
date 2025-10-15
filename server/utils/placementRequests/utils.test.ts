@@ -13,7 +13,7 @@ import paths from '../../paths/match'
 import managePaths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
-import { placementTitle } from './placementSummaryList'
+import { placementNameWithStatus } from '../placements'
 
 describe('utils', () => {
   describe('formatReleaseType', () => {
@@ -86,14 +86,14 @@ describe('utils', () => {
     it('renders a list of radio items for the given placements ordered by expected arrival date', () => {
       expect(placementRadioItems([placement2, placement1])).toEqual([
         {
-          text: placementTitle(placement1),
+          html: placementNameWithStatus(placement1),
           value: placement1.id,
           hint: {
             html: `<a href="${managePaths.premises.placements.show({ premisesId: placement1.premises.id, placementId: placement1.id })}" target="_blank">See placement details (opens in a new tab)</a>`,
           },
         },
         {
-          text: placementTitle(placement2),
+          html: placementNameWithStatus(placement2),
           value: placement2.id,
           hint: {
             html: `<a href="${managePaths.premises.placements.show({ premisesId: placement2.premises.id, placementId: placement2.id })}" target="_blank">See placement details (opens in a new tab)</a>`,

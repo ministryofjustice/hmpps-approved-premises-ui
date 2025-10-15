@@ -4,12 +4,17 @@ import {
   PersonStatus,
   RequestForPlacementStatus,
   TaskStatus,
-} from '../@types/shared'
-import { TaskStatus as TaskListStatus } from '../@types/ui'
+} from '@approved-premises/api'
+import { TaskStatus as TaskListStatus } from '@approved-premises/ui'
 // eslint-disable-next-line import/no-cycle
 import { AssessmentStatusForUi } from './assessments/statusTag'
 
-export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean; taskListTag?: boolean; id?: string }
+import { SpaceBookingStatus } from './placements/status'
+
+export type StatusTagOptions = {
+  classes?: string
+  id?: string
+}
 type Status =
   | ApplicationStatus
   | TaskStatus
@@ -18,6 +23,7 @@ type Status =
   | AssessmentStatusForUi
   | TaskListStatus
   | RequestForPlacementStatus
+  | SpaceBookingStatus
 
 export class StatusTag<T extends Status> {
   status: T
@@ -60,16 +66,8 @@ export const createTag = <T extends Status>(
     classes += `govuk-tag--${colours[status as T]} `
   }
 
-  if (options?.addLeftMargin) {
-    classes += 'govuk-!-margin-5 '
-  }
-
-  if (options?.showOnOneLine) {
-    classes += 'govuk-tag--timeline-tag '
-  }
-
-  if (options?.taskListTag) {
-    classes += 'app-task-list__tag '
+  if (options?.classes) {
+    classes += options.classes
   }
 
   if (options?.id) {

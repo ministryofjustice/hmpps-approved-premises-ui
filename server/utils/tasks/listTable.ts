@@ -1,12 +1,12 @@
-import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import {
   AssessmentDecision,
   PlacementApplicationDecision,
   SortDirection,
   Task,
   TaskSortField,
-} from '../../@types/shared'
-import { TableCell, TableRow } from '../../@types/ui'
+} from '@approved-premises/api'
+import { TabItem, TableCell, TableRow } from '@approved-premises/ui'
+import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import paths from '../../paths/tasks'
 import { sortHeader } from '../sortHeader'
 import { kebabCase, linkTo } from '../utils'
@@ -235,13 +235,6 @@ const tasksTableHeader = (
 }
 
 const taskParams = (task: Task) => ({ id: task.id, taskType: kebabCase(task.taskType) })
-
-export type TabItem = {
-  text: string
-  active: boolean
-  href: string
-  classes?: string
-}
 
 const tasksTabItems = (hrefPrefix: string, activeTab = 'allocated'): Array<TabItem> => {
   const [path, query] = hrefPrefix.split('?')
