@@ -899,4 +899,8 @@ export default class Page {
   shouldNotShow(text: string, selector: string = 'body') {
     cy.get(selector).contains(text).should('not.exist')
   }
+
+  shouldShowLink(text: string, href: string) {
+    cy.get('a').contains(text).should('have.attr', 'href', href)
+  }
 }

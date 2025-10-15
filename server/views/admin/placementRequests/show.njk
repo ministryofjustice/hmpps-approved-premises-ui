@@ -63,9 +63,17 @@
         <h2 class="govuk-heading-l">Booked placement{% if placements | length > 1 %}s{% endif %}</h2>
 
         {% for placement in placements %}
+            {% set html %}
+                {{ govukSummaryList(placement.summaryList) }}
+
+                <p class="govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+                    <a href="{{ placement.link }}">View placement details</a>
+                </p>
+            {% endset %}
+
             {{ govukDetails({
                 summaryHtml: '<h3>' + placement.title + '</h3>',
-                html: govukSummaryList(placement.summaryList),
+                html: html,
                 open: 'Departed' not in placement.title,
                 classes: 'govuk-details--card'
             }) }}

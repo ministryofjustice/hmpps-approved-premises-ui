@@ -4,6 +4,7 @@ import { summaryListItem } from '../formUtils'
 import { placementNameWithStatus } from '../placements'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
+import managePaths from '../../paths/manage'
 
 export const placementSummaryList = (placement: Cas1SpaceBookingSummary): SummaryList => ({
   rows: [
@@ -32,6 +33,7 @@ export const placementSummaryList = (placement: Cas1SpaceBookingSummary): Summar
 type PlacementSummary = {
   title: string
   summaryList: SummaryList
+  link: string
 }
 
 export const placementsSummaries = (placementRequest: Cas1PlacementRequestDetail): Array<PlacementSummary> =>
@@ -40,4 +42,5 @@ export const placementsSummaries = (placementRequest: Cas1PlacementRequestDetail
     .map(placement => ({
       title: placementNameWithStatus(placement),
       summaryList: placementSummaryList(placement),
+      link: managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id }),
     }))

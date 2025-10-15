@@ -8,6 +8,7 @@ import { placementName } from '../../../../server/utils/placements'
 import paths from '../../../../server/paths/admin'
 import matchPaths from '../../../../server/paths/match'
 import applyPaths from '../../../../server/paths/apply'
+import managePaths from '../../../../server/paths/manage'
 import { changePlacementLink } from '../../../../server/utils/placementRequests/adminIdentityBar'
 
 export default class ShowPage extends Page {
@@ -52,6 +53,10 @@ export default class ShowPage extends Page {
         .closest('details')
         .within(() => {
           this.shouldContainSummaryListItems(placementSummaryList(booking).rows)
+          this.shouldShowLink(
+            'View placement details',
+            managePaths.premises.placements.show({ premisesId: booking.premises.id, placementId: booking.id }),
+          )
         })
     })
   }

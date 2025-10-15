@@ -6,6 +6,7 @@ import { placementNameWithStatus } from '../placements'
 import cas1SpaceBookingSummaryFactory from '../../testutils/factories/cas1SpaceBookingSummary'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
+import managePaths from '../../paths/manage'
 
 describe('placement summary list', () => {
   describe('placementSummaryList', () => {
@@ -108,14 +109,17 @@ describe('placement summary list', () => {
         {
           title: placementNameWithStatus(booking1),
           summaryList: placementSummaryList(booking1),
+          link: managePaths.premises.placements.show({ premisesId: booking1.premises.id, placementId: booking1.id }),
         },
         {
           title: placementNameWithStatus(booking2),
           summaryList: placementSummaryList(booking2),
+          link: managePaths.premises.placements.show({ premisesId: booking2.premises.id, placementId: booking2.id }),
         },
         {
           title: placementNameWithStatus(booking3),
           summaryList: placementSummaryList(booking3),
+          link: managePaths.premises.placements.show({ premisesId: booking3.premises.id, placementId: booking3.id }),
         },
       ])
     })
