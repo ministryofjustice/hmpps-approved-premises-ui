@@ -271,13 +271,13 @@ describe('OccupancyViewController', () => {
       )
     })
 
-    it('should show the new placement summary if the user is booking a new placement', async () => {
+    it('should show the new placement summary and requested dates if the user is booking a new placement', async () => {
       const newPlacementArrivalDate = faker.date.future()
       const newPlacementDepartureDate = faker.date.future({ refDate: newPlacementArrivalDate })
       const searchStateWithNewPlacement: SpaceSearchFormData = {
         ...searchState,
-        arrivalDate: DateFormats.dateObjToIsoDate(newPlacementArrivalDate),
-        departureDate: DateFormats.dateObjToIsoDate(newPlacementDepartureDate),
+        newPlacementArrivalDate: DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'datePicker' }),
+        newPlacementDepartureDate: DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' }),
         newPlacementCriteriaChanged: 'no',
         newPlacementReason: 'Some reason',
       }
@@ -292,6 +292,8 @@ describe('OccupancyViewController', () => {
         'match/placementRequests/occupancyView/view',
         expect.objectContaining({
           newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
+          arrivalDateHint: `Requested arrival date: ${DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'dateFieldHint' })}`,
+          departureDateHint: `Requested departure date: ${DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'dateFieldHint' })}`,
         }),
       )
     })
