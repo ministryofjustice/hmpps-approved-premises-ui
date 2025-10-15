@@ -47,9 +47,9 @@ export default class ShowPage extends Page {
     cy.contains(bookings.length > 1 ? 'Booked placements' : 'Booked placement').should('exist')
 
     bookings.forEach(booking => {
-      cy.get('h3')
+      cy.get('summary')
         .contains(placementName(booking))
-        .find('+ .govuk-summary-list')
+        .closest('details')
         .within(() => {
           this.shouldContainSummaryListItems(placementSummaryList(booking).rows)
         })
