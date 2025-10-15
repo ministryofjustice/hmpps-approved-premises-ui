@@ -20,14 +20,18 @@
     }
 
     &:focus {
-      background-color: $govuk-focus-colour;
-      color: $govuk-focus-text-colour;
+      outline: none;
+      box-shadow: none;
+
+      .govuk-details__summary-text {
+        @include govuk-focused-text;
+      }
     }
   }
 
   .govuk-details__summary-text {
     @extend .govuk-summary-card__title;
-    
+
     display: block;
     padding-left: govuk-spacing(4);
     color: inherit;
