@@ -64,9 +64,12 @@
 
         {% for placement in placements %}
             {% set html %}
-                {{ govukSummaryList(placement.summaryList) }}
+                {{ govukSummaryList({
+                    rows: placement.summaryList.rows,
+                    classes: 'govuk-summary-list--force-bottom-border'
+                }) }}
 
-                <p class="govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+                <p class="govuk-!-margin-top-6 govuk-!-margin-bottom-2">
                     <a href="{{ placement.link }}">View placement details</a>
                 </p>
             {% endset %}
