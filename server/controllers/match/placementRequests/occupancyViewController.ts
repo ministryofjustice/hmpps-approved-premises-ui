@@ -102,10 +102,15 @@ export default class {
       }
 
       const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
-      const { startDate, endDate } = placementDates(
-        placementRequest.authorisedPlacementPeriod.arrival,
-        placementRequest.authorisedPlacementPeriod.duration,
-      )
+      const { startDate, endDate } = searchState.newPlacementArrivalDate
+        ? {
+            startDate: DateFormats.datepickerInputToIsoString(searchState.newPlacementArrivalDate),
+            endDate: DateFormats.datepickerInputToIsoString(searchState.newPlacementDepartureDate),
+          }
+        : placementDates(
+            placementRequest.authorisedPlacementPeriod.arrival,
+            placementRequest.authorisedPlacementPeriod.duration,
+          )
       const premises = await this.premisesService.find(token, premisesId)
       let summary: OccupancySummary
       let calendar: Calendar
