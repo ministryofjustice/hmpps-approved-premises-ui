@@ -211,8 +211,10 @@ context('Change Requests', () => {
 
         // Then I should see a ticket panel
         showPage.shouldShowTicketPanel(
-          `Change requested:appeal
-        This placement has been appealed`,
+          `
+            Change requested: appeal
+            This placement has been appealed
+          `,
           { exact: false },
         )
 
@@ -259,8 +261,10 @@ context('Change Requests', () => {
 
         // Then I should see a ticket panel
         showPage.shouldShowTicketPanel(
-          `Change requested:appeal
-        This placement has been appealed`,
+          `
+            Change requested: appeal
+            This placement has been appealed
+          `,
           { exact: false },
         )
 
