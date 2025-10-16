@@ -248,6 +248,31 @@ describeClient('ApplicationClient', provider => {
     })
   })
 
+  describe('expiry', () => {
+    it('calls the expiry endpoint with the application id and reason', async () => {
+      const applicationId = 'applicationId'
+      const body = { reason: 'some reason' }
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to withdraw an application',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.expire({ id: applicationId }),
+          body,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await applicationClient.expire(applicationId, body)
+    })
+  })
+
   describe('requestsForPlacment', () => {
     it('calls the requests for placement endpoint with the application ID', async () => {
       const applicationId = 'applicationId'

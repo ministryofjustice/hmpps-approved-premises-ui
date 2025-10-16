@@ -6,6 +6,7 @@ import OffencesController from './people/offencesController'
 import DocumentsController from './people/documentsController'
 import WithdrawalsController from './applications/withdrawalsController'
 import WithdrawablesController from './withdrawablesController'
+import ExpiryController from './applications/expiryController'
 import NotesController from './applications/notesController'
 
 import type { Services } from '../../services'
@@ -37,6 +38,7 @@ export const controllers = (services: Services) => {
   const notesController = new NotesController(applicationService)
   const withdrawablesController = new WithdrawablesController(applicationService, placementService)
   const appealsController = new AppealsController(appealService, applicationService)
+  const expiryController = new ExpiryController(applicationService, sessionService)
 
   return {
     appealsController,
@@ -47,6 +49,7 @@ export const controllers = (services: Services) => {
     withdrawalsController,
     notesController,
     withdrawablesController,
+    expiryController,
   }
 }
 

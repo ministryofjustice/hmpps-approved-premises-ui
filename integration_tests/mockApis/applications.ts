@@ -243,6 +243,18 @@ export default {
       },
     }),
 
+  stubApplicationExpiry: ({ applicationId }: { applicationId: string }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.applications.expire({ id: applicationId }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      },
+    }),
+
   stubAppeals: ({ applicationId, appeal }: { applicationId: string; appeal: Appeal }): SuperAgentRequest =>
     stubFor({
       request: {

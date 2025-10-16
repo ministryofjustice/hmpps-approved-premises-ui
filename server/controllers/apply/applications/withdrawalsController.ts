@@ -82,8 +82,9 @@ export default class WithdrawalsController {
 
         await this.applicationService.withdraw(req.user.token, req.params.id, body)
 
+        const returnUrl = this.sessionService.getPageBackLink(paths.applications.withdraw.new.pattern, req, [])
         req.flash('success', 'Application withdrawn')
-        return res.redirect(paths.applications.index({}))
+        return res.redirect(returnUrl)
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

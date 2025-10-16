@@ -199,7 +199,7 @@ describe('withdrawalsController', () => {
         reason: 'other',
         otherReason: 'Some other reason',
       })
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
+      expect(response.redirect).toHaveBeenCalledWith(referrer)
       expect(request.flash).toHaveBeenCalledWith('success', 'Application withdrawn')
     })
 
