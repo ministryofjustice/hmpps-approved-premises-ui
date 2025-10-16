@@ -405,6 +405,19 @@ describe('ApplicationService', () => {
     })
   })
 
+  describe('expire', () => {
+    it('calls the expire client with the ID and token', async () => {
+      const id = 'some-uuid'
+      const body = {
+        reason: 'Some freetext reason',
+      }
+      await service.expire(token, id, body)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.expire).toHaveBeenCalledWith(id, body)
+    })
+  })
+
   describe('timeline', () => {
     it('calls the client with the Id and token', async () => {
       const id = 'some-uuid'

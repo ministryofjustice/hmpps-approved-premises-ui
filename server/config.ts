@@ -51,6 +51,7 @@ export default {
     maintenanceMode: getFlag('IN_MAINTENANCE_MODE'),
     oasysDisabled: getFlag('OASYS_DISABLED'),
     pocEnabled: getFlag('ENABLE_POC'),
+    oneApplication: !production,
   },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {

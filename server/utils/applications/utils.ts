@@ -23,6 +23,7 @@ import type {
   Cas1TimelineEventUrlType,
   SortDirection,
   Cas1ApplicationSummary,
+  ApprovedPremisesApplication,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
@@ -43,8 +44,9 @@ import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
-import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
+import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
+import { summaryListItem } from '../formUtils'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -144,10 +146,11 @@ const dashboardTableRows = (
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
-export const applicationSuitableStatuses: ReadonlyArray<ApplicationStatus> = [
-  'awaitingPlacement',
-  'pendingPlacementRequest',
-  'placementAllocated',
+export const getApplicationSummary = (application: ApprovedPremisesApplication) => [
+  summaryListItem('Created on', application.createdAt, 'date'),
+  summaryListItem('Created by', application.applicantUserDetails.name),
+  summaryListItem('Requested arrival date', application.arrivalDate, 'date'),
+  summaryListItem('Status', new ApplicationStatusTag(application.status).html(), 'html'),
 ]
 
 export const actionsLink = (application: Cas1ApplicationSummary) => {
@@ -457,4 +460,5 @@ export {
   applicationStatusSelectOptions,
   appealDecisionRadioItems,
   tierQualificationPage,
+  applicationSuitableStatuses,
 }

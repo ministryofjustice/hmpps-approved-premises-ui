@@ -12,6 +12,7 @@ import type {
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
   Withdrawables,
+  Cas1ExpireApplicationReason,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -84,6 +85,13 @@ export default class ApplicationClient {
   async withdrawal(applicationId: string, body: NewWithdrawal): Promise<void> {
     await this.restClient.post({
       path: paths.applications.withdrawal({ id: applicationId }),
+      data: body,
+    })
+  }
+
+  async expire(applicationId: string, body: Cas1ExpireApplicationReason): Promise<void> {
+    await this.restClient.post({
+      path: paths.applications.expire({ id: applicationId }),
       data: body,
     })
   }
