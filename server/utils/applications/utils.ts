@@ -267,6 +267,7 @@ export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
   application_submitted: 'Application submitted',
   application_assessed: 'Application assessed',
   application_expired: 'Application expired',
+  application_manually_expired: 'Application manually expired',
   assessment_appealed: 'Application appealed',
   booking_made: 'Placement made',
   booking_keyworker_assigned: 'Key worker assigned',

@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { RequestForPlacement } from '@approved-premises/api'
 import placementDatesFactory from './placementDates'
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
+import cas1SpaceBookingShortSummaryFactory from './cas1SpaceBookingShortSummary'
 
 export default Factory.define<RequestForPlacement>(() => ({
   id: faker.string.uuid(),
@@ -72,4 +73,5 @@ export default Factory.define<RequestForPlacement>(() => ({
     'RelatedPlacementApplicationWithdrawn',
   ]),
   canBeDirectlyWithdrawn: faker.datatype.boolean(),
+  placements: cas1SpaceBookingShortSummaryFactory.buildList(faker.number.int({ min: 0, max: 3 })),
 }))
