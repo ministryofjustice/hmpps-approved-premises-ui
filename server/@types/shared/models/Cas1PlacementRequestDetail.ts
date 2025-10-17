@@ -28,7 +28,6 @@ export type Cas1PlacementRequestDetail = {
     assessmentId: string;
     assessor: ApprovedPremisesUser;
     authorisedPlacementPeriod: Cas1RequestedPlacementPeriod;
-    booking?: PlacementRequestBookingSummary;
     /**
      * Use Cas1RequestedPlacementPeriod instead
      * @deprecated
