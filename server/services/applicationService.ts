@@ -14,6 +14,7 @@ import type {
   NewWithdrawal,
   SortDirection,
   Cas1ApplicationSummary,
+  Cas1ExpireApplicationReason,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -149,6 +150,12 @@ export default class ApplicationService {
     const client = this.applicationClientFactory(token)
 
     await client.withdrawal(applicationId, body)
+  }
+
+  async expire(token: string, applicationId: string, body: Cas1ExpireApplicationReason) {
+    const client = this.applicationClientFactory(token)
+
+    await client.expire(applicationId, body)
   }
 
   async timeline(token: string, applicationId: string) {

@@ -39,6 +39,7 @@ import {
   dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
+  getApplicationSummary,
   getApplicationType,
   getSections,
   isInapplicable,
@@ -54,6 +55,7 @@ import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
+import { summaryListItem } from '../formUtils'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -655,6 +657,27 @@ describe('utils', () => {
     ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
       const application = applicationFactory.build({ apType: applicationApType })
       expect(getApplicationType(application)).toEqual(expectedOutput)
+    })
+  })
+
+  describe('getApplicationsSummary', () => {
+    it('generates the summary list for an application', () => {
+      const application = applicationFactory.build({
+        createdAt: '2025-11-05',
+        applicantUserDetails: { name: 'Anne Elk' },
+        arrivalDate: '2025-11-06',
+        status: 'started',
+      })
+      expect(getApplicationSummary(application)).toEqual([
+        summaryListItem('Created on', 'Wed 5 Nov 2025'),
+        summaryListItem('Created by', 'Anne Elk'),
+        summaryListItem('Requested arrival date', 'Thu 6 Nov 2025'),
+        summaryListItem(
+          'Status',
+          `<strong class="govuk-tag govuk-tag--blue " data-cy-status="started" >Not submitted</strong>`,
+          'html',
+        ),
+      ])
     })
   })
 

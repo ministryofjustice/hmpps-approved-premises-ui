@@ -8,6 +8,7 @@ const peoplePath = applicationsPath.path('people')
 const personPath = peoplePath.path(':crn')
 const withdrawalsPath = applicationPath.path('withdrawals')
 const withdrawablesPath = applicationPath.path('withdrawables')
+const expirePath = applicationPath.path('expire')
 const appealsPath = applicationPath.path('appeals')
 
 const paths = {
@@ -33,6 +34,10 @@ const paths = {
     withdraw: {
       new: withdrawalsPath.path('new'),
       create: withdrawalsPath,
+    },
+    expire: {
+      new: expirePath.path('new'),
+      create: expirePath.path('create'),
     },
     pages: {
       show: pagesPath,
