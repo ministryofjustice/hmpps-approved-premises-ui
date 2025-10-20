@@ -43,9 +43,6 @@ export const applicationMenuItems = (application: Application, user: UserDetails
       text: 'Expire application',
       href: paths.applications.expire({ id: application.id }),
       classes: 'govuk-button--secondary',
-      attributes: {
-        'data-cy-expire-application': application.id,
-      },
     })
   }
 

@@ -189,6 +189,7 @@ describe('withdrawalsController', () => {
       request.params.id = applicationId
       request.body.reason = 'other'
       request.body.otherReason = 'Some other reason'
+      config.flags.oneApplication = true
     })
 
     it('calls the service method, redirects to the originating screen and shows a confirmation message', async () => {

@@ -8,8 +8,6 @@ import { applicationKeyDetails } from '../../../utils/applications/helpers'
 import { ValidationError } from '../../../utils/errors'
 import { getApplicationSummary } from '../../../utils/applications/utils'
 
-export const tasklistPageHeading = 'Expire application'
-
 export default class ExpiryController {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -19,7 +17,7 @@ export default class ExpiryController {
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
-      const { id } = req.params as { id: string | undefined }
+      const { id } = req.params
 
       const application = await this.applicationService.findApplication(req.user.token, id)
 
@@ -45,7 +43,7 @@ export default class ExpiryController {
     return async (req: Request, res: Response) => {
       try {
         const body: Cas1ExpireApplicationReason = { reason: req.body.reason }
-        if (!body.reason?.trim()) {
+        if (!body.reason?.trim()?.length) {
           throw new ValidationError({ reason: 'Give the reason for expiring this application' })
         }
 

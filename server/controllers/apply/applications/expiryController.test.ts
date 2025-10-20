@@ -10,14 +10,15 @@ import { applicationKeyDetails } from '../../../utils/applications/helpers'
 import ExpiryController from './expiryController'
 import { getApplicationSummary } from '../../../utils/applications/utils'
 import paths from '../../../paths/apply'
+import { ValidationError } from '../../../utils/errors'
 
 describe('expiryController', () => {
   const token = 'SOME_TOKEN'
   const applicationId = 'some-id'
   const referrer = 'referrer/path'
 
-  let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  let response: DeepMocked<Response> = createMock<Response>({})
+  let request: DeepMocked<Request>
+  let response: DeepMocked<Response>
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
@@ -59,13 +60,22 @@ describe('expiryController', () => {
   })
 
   describe('create', () => {
-    it('redirects back to get if no reason supplied', async () => {
+    it.each([
+      ['whitespace', ' '],
+      ['undefined', undefined],
+    ])('redirects back to get if reason is %s', async (_, reason: string) => {
+      request.body = { reason }
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
+      const catchValidationErrorOrPropogate = jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
 
       await expiryController.create()(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.expire({ id: applicationId }))
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        paths.applications.expire({ id: applicationId }),
+      )
     })
 
     it('expires the application', async () => {
