@@ -14,6 +14,7 @@ import WithdrawalsController from './withdrawalsController'
 import { applicationFactory, withdrawableFactory } from '../../../testutils/factories'
 import withdrawablesFactory from '../../../testutils/factories/withdrawablesFactory'
 import { applicationKeyDetails } from '../../../utils/applications/helpers'
+import config from '../../../config'
 
 jest.mock('../../../utils/validation')
 
@@ -188,25 +189,29 @@ describe('withdrawalsController', () => {
       request.params.id = applicationId
       request.body.reason = 'other'
       request.body.otherReason = 'Some other reason'
+      config.flags.oneApplication = true
     })
 
-    it('calls the service method, redirects to the index screen and shows a confirmation message', async () => {
-      const requestHandler = withdrawalsController.create()
-
-      await requestHandler(request, response, next)
+    it('calls the service method, redirects to the originating screen and shows a confirmation message', async () => {
+      await withdrawalsController.create()(request, response, next)
 
       expect(applicationService.withdraw).toHaveBeenCalledWith(token, applicationId, {
         reason: 'other',
         otherReason: 'Some other reason',
       })
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
+      expect(response.redirect).toHaveBeenCalledWith(referrer)
       expect(request.flash).toHaveBeenCalledWith('success', 'Application withdrawn')
     })
 
-    it('redirects to the "new" method with an error if "other" is the selected reason but no "otherReason" is supplied', async () => {
-      const requestHandler = withdrawalsController.create()
+    it('redirects to the application index page if feature flag is not set', async () => {
+      config.flags.oneApplication = false
+      await withdrawalsController.create()(request, response, next)
 
-      await requestHandler(
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
+    })
+
+    it('redirects to the "new" method with an error if "other" is the selected reason but no "otherReason" is supplied', async () => {
+      await withdrawalsController.create()(
         { ...request, params: { id: applicationId }, body: { reason: 'other', otherReason: '' } },
         response,
         next,
@@ -229,15 +234,13 @@ describe('withdrawalsController', () => {
     })
 
     it('redirects with errors if the API returns an error', async () => {
-      const requestHandler = withdrawalsController.create()
-
       const err = new Error()
 
       applicationService.withdraw.mockImplementation(() => {
         throw err
       })
 
-      await requestHandler(request, response, next)
+      await withdrawalsController.create()(request, response, next)
 
       expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
         request,

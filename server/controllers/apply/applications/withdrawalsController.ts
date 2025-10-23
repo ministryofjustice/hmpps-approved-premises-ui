@@ -11,6 +11,7 @@ import { Cas1Application, NewWithdrawal, Withdrawables } from '../../../@types/s
 import { SelectedWithdrawableType } from '../../../utils/applications/withdrawables'
 import { ApplicationService, SessionService } from '../../../services'
 import { applicationKeyDetails } from '../../../utils/applications/helpers'
+import config from '../../../config'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -82,8 +83,13 @@ export default class WithdrawalsController {
 
         await this.applicationService.withdraw(req.user.token, req.params.id, body)
 
+        const returnUrl = config.flags.oneApplication
+          ? this.sessionService.getPageBackLink(paths.applications.withdraw.new.pattern, req, [])
+          : paths.applications.index({})
+
         req.flash('success', 'Application withdrawn')
-        return res.redirect(paths.applications.index({}))
+
+        return res.redirect(returnUrl)
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

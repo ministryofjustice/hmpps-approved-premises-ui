@@ -1,9 +1,10 @@
 import { ApprovedPremisesApplication as Application } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 import paths from '../../paths/apply'
-import { ApplicationStatusTag } from './statusTag'
+import { ApplicationStatusTag, expirableStatuses, withdrawableStatuses } from './statusTag'
 import { hasPermission } from '../users'
 import { displayName } from '../personUtils'
+import config from '../../config'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
   let heading = displayName(application.person)
@@ -26,7 +27,7 @@ export const applicationTitle = (application: Application, pageHeading: string):
 export const applicationMenuItems = (application: Application, user: UserDetails): Array<IdentityBarMenuItem> => {
   const items: Array<IdentityBarMenuItem> = []
 
-  if (application.status !== 'withdrawn') {
+  if (withdrawableStatuses.includes(application.status)) {
     items.push({
       text: 'Withdraw application or placement request',
       href: paths.applications.withdraw.new({ id: application.id }),
@@ -34,6 +35,14 @@ export const applicationMenuItems = (application: Application, user: UserDetails
       attributes: {
         'data-cy-withdraw-application': application.id,
       },
+    })
+  }
+
+  if (config.flags.oneApplication && expirableStatuses.includes(application.status)) {
+    items.push({
+      text: 'Expire application',
+      href: paths.applications.expire({ id: application.id }),
+      classes: 'govuk-button--secondary',
     })
   }
 

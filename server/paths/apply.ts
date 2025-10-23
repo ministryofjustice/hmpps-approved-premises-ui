@@ -34,6 +34,7 @@ const paths = {
       new: withdrawalsPath.path('new'),
       create: withdrawalsPath,
     },
+    expire: applicationPath.path('expire'),
     pages: {
       show: pagesPath,
       update: pagesPath,

@@ -106,6 +106,7 @@ export default {
     submission: cas1ApplicationsSingle.path('submission'),
     documents: cas1ApplicationsSingle.path('documents'),
     withdrawal: cas1ApplicationsSingle.path('withdrawal'),
+    expire: cas1ApplicationsSingle.path('expire'),
     timeline: cas1ApplicationsSingle.path('timeline'),
     requestsForPlacement: cas1ApplicationsSingle.path('requests-for-placement'),
     addNote: cas1ApplicationsSingle.path('notes'),

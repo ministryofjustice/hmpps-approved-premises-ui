@@ -3,6 +3,23 @@ import { StatusTag, StatusTagOptions } from '../statusTag'
 
 export const APPLICATION_SUITABLE = 'Application suitable' as const
 
+export const applicationSuitableStatuses: ReadonlyArray<ApplicationStatus> = [
+  'awaitingPlacement',
+  'pendingPlacementRequest',
+  'placementAllocated',
+]
+export const withdrawableStatuses: ReadonlyArray<ApplicationStatus> = [
+  'started',
+  'rejected',
+  'inapplicable',
+  'awaitingAssesment',
+  'unallocatedAssesment',
+  'assesmentInProgress',
+  'requestedFurtherInformation',
+  'pendingPlacementRequest',
+]
+export const expirableStatuses: ReadonlyArray<ApplicationStatus> = ['awaitingPlacement', 'placementAllocated']
+
 export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
   static readonly statuses: Record<ApplicationStatus, string> = {
     started: 'Not submitted',

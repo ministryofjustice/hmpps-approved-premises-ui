@@ -1,0 +1,64 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "partials/layout-with-details.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ showErrorSummary(errorSummary) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+            <form method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <p>You should mark an application as expired if the person’s circumstances have changed and the application now contains
+                    out of date information.</p>
+
+                <p>Marking an application as expired will:</p>
+                <ul>
+                    <li>change its status to ‘Expired’</li>
+                    <li>prevent the creation of further placement requests</li>
+                </ul>
+                <p>Booked placements will not be affected, nor will existing placement requests that are yet to be booked.</p>
+
+                {{ govukSummaryList({
+                    rows: summaryRows
+                }) }}
+
+                {{ govukTextarea({
+                    id: "reason",
+                    name: "reason",
+                    label: {
+                        text: "Reason for expiry",
+                        classes: "govuk-fieldset__legend--s"
+                    },
+                    hint: {
+                        text:"This will be added to the timeline"
+                    },
+                    errorMessage: errors.reason
+                }) }}
+
+                {{ govukButton({
+                    text: "Mark as expired",
+                    preventDoubleClick: true
+                }) }}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

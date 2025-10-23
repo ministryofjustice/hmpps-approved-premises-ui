@@ -1,4 +1,4 @@
-import { ApType, WithdrawalReason } from '@approved-premises/api'
+import { ApType, Cas1ExpireApplicationReason, WithdrawalReason } from '@approved-premises/api'
 import ApplicationClient from './applicationClient'
 import config from '../config'
 import {
@@ -245,6 +245,31 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.withdrawal(applicationId, newWithdrawal)
+    })
+  })
+
+  describe('expiry', () => {
+    it('calls the expiry endpoint with the application id and reason', async () => {
+      const applicationId = 'applicationId'
+      const body: Cas1ExpireApplicationReason = { reason: 'some reason' }
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to withdraw an application',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.expire({ id: applicationId }),
+          body,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await applicationClient.expire(applicationId, body)
     })
   })
 
