@@ -9,8 +9,6 @@ import { applicationFactory } from '../../../testutils/factories'
 import { applicationKeyDetails } from '../../../utils/applications/helpers'
 import ExpiryController from './expiryController'
 import { getApplicationSummary } from '../../../utils/applications/utils'
-import paths from '../../../paths/apply'
-import { ValidationError } from '../../../utils/errors'
 
 describe('expiryController', () => {
   const token = 'SOME_TOKEN'
@@ -61,21 +59,16 @@ describe('expiryController', () => {
 
   describe('create', () => {
     it.each([
-      ['whitespace', ' '],
+      ['whitespace', ' ', ''],
       ['undefined', undefined],
     ])('redirects back to get if reason is %s', async (_, reason: string) => {
       request.body = { reason }
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-      jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
-      const catchValidationErrorOrPropogate = jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
 
       await expiryController.create()(request, response, next)
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        new ValidationError({}),
-        paths.applications.expire({ id: applicationId }),
-      )
+
+      expect(request.flash).toHaveBeenCalledWith('errorSummary', [
+        { href: '#reason', text: 'Give the reason for expiring this application' },
+      ])
     })
 
     it('expires the application', async () => {

@@ -43,7 +43,7 @@ export default class ExpiryController {
     return async (req: Request, res: Response) => {
       try {
         const body: Cas1ExpireApplicationReason = { reason: req.body.reason }
-        if (!body.reason?.trim()?.length) {
+        if (!body.reason?.trim()) {
           throw new ValidationError({ reason: 'Give the reason for expiring this application' })
         }
 
