@@ -12,15 +12,9 @@ export type TemporaryAccommodationAssessment = (Assessment & {
     application?: TemporaryAccommodationApplication;
     releaseDate?: string;
     status?: TemporaryAccommodationAssessmentStatus;
-    /**
-     * Any object
-     */
     summaryData?: any;
 } & {
     application: TemporaryAccommodationApplication;
-    /**
-     * Any object
-     */
     summaryData: any;
 });
 
