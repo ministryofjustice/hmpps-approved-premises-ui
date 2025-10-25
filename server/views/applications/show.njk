@@ -9,10 +9,19 @@
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 {%- from "govuk/components/tag/macro.njk" import govukTag -%}
 
-{% extends "../partials/layout.njk" %}
+{% extends "../partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body application--show" %}
+
+{% block beforeContent %}
+    {% if backLink %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">

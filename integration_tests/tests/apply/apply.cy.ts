@@ -1,8 +1,10 @@
 import { addDays, addMonths, subDays } from 'date-fns'
+import { FullPerson } from '@approved-premises/api'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
   applicationFactory,
+  cas1ApplicationSummaryFactory,
   personFactory,
   restrictedPersonFactory,
   risksFactory,
@@ -410,5 +412,48 @@ context('Apply', () => {
 
     THEN('should display No documents have been imported from Delius message will be displayed')
     apply.verifyNoDocumentsDisplayed()
+  })
+
+  it('blocks the user from creating an application if there are already applications for the crn', function test() {
+    Cypress.env({
+      ONE_APP: 'yes',
+    })
+    GIVEN('There is an application for the crn')
+    const applications = cas1ApplicationSummaryFactory.buildList(2)
+    cy.task('stubAllApplications', { applications, anyQuery: true })
+
+    WHEN('I try to create an application')
+    const helper = new ApplyHelper(this.application, this.person, this.offences)
+    helper.setupApplicationStubs(mapApiPersonRisksForUi(this.application.risks))
+    helper.enterCrnDetails()
+
+    const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person as FullPerson)
+    confirmDetailsPage.shouldShowPersonDetails(this.person as FullPerson)
+    confirmDetailsPage.clickSaveAndContinue()
+
+    THEN('I should be redirected to the manage applications page')
+    const managePage = Page.verifyOnPage(ApplyPages.ManageApplicationsPage, applications)
+    managePage.verifyApplicationTable()
+  })
+
+  it('allows the user to create an application if there are no existing applications for the crn', function test() {
+    Cypress.env({
+      ONE_APP: 'yes',
+    })
+
+    GIVEN('There are no applications for the crn')
+    cy.task('stubAllApplications', { applications: [], anyQuery: true })
+
+    WHEN('I try to create an application')
+    const helper = new ApplyHelper(this.application, this.person, this.offences)
+    helper.setupApplicationStubs(mapApiPersonRisksForUi(this.application.risks))
+    helper.enterCrnDetails()
+
+    const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person as FullPerson)
+    confirmDetailsPage.shouldShowPersonDetails(this.person as FullPerson)
+    confirmDetailsPage.clickSaveAndContinue()
+
+    THEN('I should be on the first page of the application flow')
+    Page.verifyOnPage(ApplyPages.SelectOffencePage, this.person as FullPerson)
   })
 })

@@ -1,0 +1,127 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../partials/layout-with-details.njk" %}
+{% from "components/sortableTable/macro.njk" import sortableTable %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+{% set nomsNumber = nomsNumber if nomsNumber else
+    "" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.applications.new()
+    }) }}
+{% endblock %}
+
+{% set detailsHtml %}
+    <p>Use these examples to consider if a new application is required due to a significant change. This is not an
+        exhaustive list:</p>
+    <h3 class="govuk-heading-s">Change in MAPPA Category or Risk Level</h3>
+    <ul>
+        <li>Has the MAPPA level changed?</li>
+        <li>Has the overall risk level increased or decreased?</li>
+    </ul>
+    <h3 class="govuk-heading-s">Breach of Orders (Since Application Submission)</h3>
+    <ul>
+        <li>Indicate any breaches of the following: Sex Offender Registration, Sexual Harm Prevention Order, Restraining
+            Order
+        </li>
+    </ul>
+
+    <h3 class="govuk-heading-s">Change in Risk Factors</h3>
+    <p>Highlight any new or increased risks</p>
+    <ul>
+        <li>Re-offending where there are previously unidentified risks</li>
+        <li>Risk to self (including attempted suicide or self-harm)</li>
+        <li>Risk to identifiable person or group</li>
+        <li>Associations with extremism or serious organised crime.</li>
+        <li>Risk to staff.</li>
+        <li>Substance misuse.</li>
+        <li>Deterioration in mental health</li>
+    </ul>
+
+    <h3 class="govuk-heading-s">Risk from Others</h3>
+    <ul>
+        <li>At risk within the community (e.g. Registered Sex Offender being “outed” locally)</li>
+    </ul>
+    <h3 class="govuk-heading-s">Placement History and Suitability</h3>
+    <ul>
+        <li>Previous involvement in a serious incident within an AP since the application was submitted.</li>
+        <li>Significant management / compliance issues within an AP since the application was submitted.</li>
+        <li>Multiple placements made following the application which resulted in non-arrival, recall or bed
+            withdrawal.
+        </li>
+        <li>Include details of work undertaken / change in attitude towards compliance since the last placement.</li>
+    </ul>
+
+    <h3 class="govuk-heading-s">Change in Placement Type or Needs</h3>
+    <ul>
+        <li>Has the type of AP placement required changed?</li>
+        <li>Are there new support needs or risks that affect placement suitability?</li>
+    </ul>
+    <p>
+        Important Note: If a new offence or active event has been recorded on NDelius that the Probation Practitioner
+        wishes to link to the AP placement, a new application must be submitted.
+    </p>
+{% endset %}
+
+{% block content %}
+    {% include "../_messages.njk" %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds---">
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {% if continuePath %}
+                <p class="govuk-body">To create an application for this person, select continue with application
+                    below.</p>
+                {{ govukButton({
+                    text: "Continue with application",
+                    href: continuePath,
+                    preventDoubleClick: true
+                }) }}
+            {% else %}
+                <p class="govuk-body">To provide dates for a RoTL placement or following a parole board hearing, or to
+                    ask
+                    for an additional placement, create a placement request.</p>
+                <p class="govuk-body">If there has been a significant change and you need to make a new application, you
+                    must first withdraw or expire all existing applications.</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Expire applications if the person has already arrived, left or non-arrived an AP.</li>
+                    <li>Withdraw applications if the person has not yet moved to an AP.</li>
+
+                </ul>
+                <p class="govuk-body">Only make a new application once all previous suitable applications have been
+                    withdrawn or expired.</p>
+
+                <p class="govuk-body">You can expire or withdraw an application by selecting the actions menu on the
+                    person’s application.</p>
+
+                <p class="govuk-body">Read the guidance on what counts as a significant change before starting a new
+                    application.</p>
+
+                {{ govukDetails({
+                    summaryText: 'What counts as a significant change',
+                    html: detailsHtml
+                }) }}
+
+                {{ sortableTable({
+                    caption: 'Existing applications',
+                    captionClasses: "govuk-table__caption--m",
+                    attributes: {
+                        "data-module": "moj-sortable-table",
+                        "data-application-table": "true"
+                    },
+                    firstCellIsHeader: true,
+                    head: applicationsHeader,
+                    rows: applicationsRows
+                }) }}
+
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

@@ -36,32 +36,37 @@ export default {
     sortBy = 'createdAt',
     sortDirection = 'desc',
     searchOptions = {},
+    anyQuery = false,
   }: {
     applications: Array<Cas1ApplicationSummary>
     page: string
     sortBy: ApplicationSortField
     sortDirection: SortDirection
     searchOptions: Partial<ApplicationDashboardSearchOptions>
+    anyQuery: boolean
   }): SuperAgentRequest => {
-    const queryParameters = {
-      page: {
-        equalTo: page,
-      },
-      sortBy: {
-        equalTo: sortBy,
-      },
-      sortDirection: {
-        equalTo: sortDirection,
-      },
-    }
-
-    Object.keys(searchOptions).forEach(key => {
-      if (searchOptions[key]) {
-        queryParameters[key] = {
-          equalTo: searchOptions[key],
-        }
+    let queryParameters
+    if (!anyQuery) {
+      queryParameters = {
+        page: {
+          equalTo: page,
+        },
+        sortBy: {
+          equalTo: sortBy,
+        },
+        sortDirection: {
+          equalTo: sortDirection,
+        },
       }
-    })
+
+      Object.keys(searchOptions).forEach(key => {
+        if (searchOptions[key]) {
+          queryParameters[key] = {
+            equalTo: searchOptions[key],
+          }
+        }
+      })
+    }
 
     return stubFor({
       request: {

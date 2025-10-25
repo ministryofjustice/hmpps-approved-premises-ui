@@ -17,6 +17,7 @@ export default Factory.define<Cas1ApplicationSummary>(() => ({
   arrivalDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   risks: risksFactory.build(),
   createdByUserId: faker.string.uuid(),
+  createdByUserName: faker.person.fullName(),
   status: 'started',
   isWithdrawn: faker.datatype.boolean(),
   releaseType: 'in_community',

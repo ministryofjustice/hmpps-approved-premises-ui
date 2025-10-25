@@ -30,13 +30,9 @@ export const createNameAnchorElement = (
     : textValue(name)
 }
 
-export const textValue = (value: string) => {
-  return { text: value }
-}
+export const textValue = (value: string) => ({ text: value })
 
-export const htmlValue = (value: string) => {
-  return { html: value }
-}
+export const htmlValue = (value: string) => ({ html: value })
 
 export const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
 

@@ -46,7 +46,6 @@ export const adminActions = (
 ): Array<IdentityBarMenuItem> => {
   if (placementRequest.status === 'matched' && placementRequest.spaceBookings.length > 0) {
     const matchedActions = []
-
     const changeLink = changePlacementLink(placementRequest)
 
     if (changeLink) {
