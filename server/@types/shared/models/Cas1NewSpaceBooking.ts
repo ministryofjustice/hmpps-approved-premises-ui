@@ -4,10 +4,10 @@
 /* eslint-disable */
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 export type Cas1NewSpaceBooking = {
+    additionalInformation?: string;
     arrivalDate: string;
     characteristics?: Array<Cas1SpaceCharacteristic>;
     departureDate: string;
     premisesId: string;
-    reason?: string;
 };
 
