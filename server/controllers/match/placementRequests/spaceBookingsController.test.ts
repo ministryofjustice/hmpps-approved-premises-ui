@@ -227,7 +227,7 @@ describe('SpaceBookingsController', () => {
           arrivalDate: searchStateWithNewPlacement.arrivalDate,
           departureDate: searchStateWithNewPlacement.departureDate,
           characteristics: [...searchStateWithNewPlacement.apCriteria, ...searchStateWithNewPlacement.roomCriteria],
-          reason: searchStateWithNewPlacement.newPlacementReason,
+          additionalInformation: searchStateWithNewPlacement.newPlacementReason,
         }
 
         const spaceBooking = cas1SpaceBookingFactory.build()
