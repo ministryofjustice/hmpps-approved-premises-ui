@@ -23,6 +23,7 @@ export type Cas1SpaceBooking = {
     actualDepartureDate?: string;
     actualDepartureDateOnly?: string;
     actualDepartureTime?: string;
+    additionalInformation?: string;
     allowedActions: Array<Cas1SpaceBookingAction>;
     apArea: NamedId;
     applicationId: string;
@@ -45,7 +46,6 @@ export type Cas1SpaceBooking = {
     person: (FullPerson | RestrictedPerson | UnknownPerson);
     placementRequestId?: string;
     premises: NamedId;
-    reason?: string;
     requestForPlacementId?: string;
     tier?: string;
 };

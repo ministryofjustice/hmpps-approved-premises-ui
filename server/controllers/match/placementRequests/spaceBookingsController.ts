@@ -98,7 +98,7 @@ export default class {
         departureDate: searchState.departureDate,
         premisesId,
         characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        reason: searchState.newPlacementReason,
+        additionalInformation: searchState.newPlacementReason,
       }
 
       try {
