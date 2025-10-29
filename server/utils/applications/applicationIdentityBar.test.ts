@@ -5,10 +5,13 @@ import config from '../../config'
 import { displayName } from '../personUtils'
 
 describe('applicationIdentityBar', () => {
+  const { flags: originalFlags } = config
+
   describe('applicationTitle', () => {
     afterEach(() => {
-      config.flags.oneApplication = false
+      config.flags = originalFlags
     })
+
     it('should return the title of the application', () => {
       const person = personFactory.build()
       const application = applicationFactory.build({ person })

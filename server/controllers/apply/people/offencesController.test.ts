@@ -26,9 +26,9 @@ describe('OffencesController', () => {
 
   let offencesController: OffencesController
   let request: DeepMocked<Request>
+  const { flags: originalFlags } = config
 
   beforeEach(() => {
-    config.flags.oneApplication = false
     jest.resetAllMocks()
     offencesController = new OffencesController(personService, applicationService)
     request = createMock<Request>({
@@ -36,6 +36,10 @@ describe('OffencesController', () => {
       params: { crn },
     })
     ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
+  })
+
+  afterEach(() => {
+    config.flags = originalFlags
   })
 
   describe('selectOffence', () => {

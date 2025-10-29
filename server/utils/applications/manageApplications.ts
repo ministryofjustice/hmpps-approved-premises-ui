@@ -61,7 +61,7 @@ export const getApplicationTableHeader = () => [
   headerCell('Name'),
   headerCell('Tier', 'none'),
   headerCell('Created on', 'ascending'),
-  headerCell('Created by'),
+  headerCell('Created by', 'none'),
   headerCell('Requested arrival date', 'none'),
   headerCell('Application status', 'none'),
   headerCell('Actions'),

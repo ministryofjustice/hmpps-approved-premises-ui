@@ -8,8 +8,6 @@
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
-{% set nomsNumber = nomsNumber if nomsNumber else
-    "" %}
 
 {% block beforeContent %}
     {{ govukBackLink({
@@ -47,7 +45,6 @@
         </li>
         <li>The type of AP placement or support needs have changed</li>
     </ul>
-
 {% endset %}
 
 {% block content %}

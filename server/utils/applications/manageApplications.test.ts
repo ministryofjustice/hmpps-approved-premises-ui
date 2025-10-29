@@ -42,7 +42,7 @@ describe('manageApplications', () => {
         { text: 'Name' },
         { attributes: { 'aria-sort': 'none' }, text: 'Tier' },
         { attributes: { 'aria-sort': 'ascending' }, text: 'Created on' },
-        { text: 'Created by' },
+        { attributes: { 'aria-sort': 'none' }, text: 'Created by' },
         { attributes: { 'aria-sort': 'none' }, text: 'Requested arrival date' },
         { attributes: { 'aria-sort': 'none' }, text: 'Application status' },
         { text: 'Actions' },

@@ -36,6 +36,10 @@ import { RestrictedPersonError } from '../../utils/errors'
 import peoplePaths from '../../paths/people'
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 
+interface ShowRequest extends Request {
+  query: { tab: ApplicationShowPageTab }
+}
+
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
 export default class ApplicationsController {
@@ -105,7 +109,7 @@ export default class ApplicationsController {
   }
 
   show(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: ShowRequest, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
 
       const backLink = this.sessionService.getPageBackLink(paths.applications.show.pattern, req, [
@@ -124,11 +128,7 @@ export default class ApplicationsController {
           query: { tab = 'application' },
           user: { token },
           headers: { referer },
-        } = req as unknown as {
-          query: { tab: ApplicationShowPageTab }
-          user: { token: string }
-          headers: { referer: string }
-        }
+        } = req
 
         const renderParams: {
           timelineEvents?: Array<Cas1TimelineEvent>
