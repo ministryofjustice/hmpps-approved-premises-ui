@@ -23,7 +23,7 @@ export default class IsExceptionalCase implements TasklistPage {
   }
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

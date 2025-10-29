@@ -24,7 +24,13 @@ export const controllers = (services: Services) => {
     sessionService,
     assessmentService,
   } = services
-  const applicationsController = new ApplicationsController(applicationService, assessmentService, personService)
+
+  const applicationsController = new ApplicationsController(
+    applicationService,
+    assessmentService,
+    personService,
+    sessionService,
+  )
   const pagesController = new PagesController(applicationService, {
     personService,
     applicationService,
@@ -32,7 +38,7 @@ export const controllers = (services: Services) => {
     userService,
     apAreaService,
   })
-  const offencesController = new OffencesController(personService)
+  const offencesController = new OffencesController(personService, applicationService)
   const documentsController = new DocumentsController(personService)
   const withdrawalsController = new WithdrawalsController(applicationService, sessionService)
   const notesController = new NotesController(applicationService)

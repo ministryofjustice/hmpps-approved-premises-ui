@@ -7,7 +7,9 @@ import { displayName } from '../personUtils'
 import config from '../../config'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
-  let heading = displayName(application.person)
+  const { oneApplication } = config.flags
+
+  let heading = oneApplication ? pageHeading : displayName(application.person)
 
   if (application.type === 'Offline') {
     heading += '<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>'
@@ -17,11 +19,11 @@ export const applicationTitle = (application: Application, pageHeading: string):
     heading += new ApplicationStatusTag(application.status, { classes: 'govuk-!-margin-5' }).html()
   }
 
-  return `
-    <h1 class="govuk-caption-l">${pageHeading}</h1>
-    <h2 class="govuk-heading-l">${heading}</h2>
-    <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
-  `
+  return oneApplication
+    ? `<h1 class="govuk-heading-l">${heading}</h1>`
+    : ` <h1 class="govuk-caption-l">${pageHeading}</h1>
+  <h2 class="govuk-heading-l">${heading}</h2>
+  <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>`
 }
 
 export const applicationMenuItems = (application: Application, user: UserDetails): Array<IdentityBarMenuItem> => {

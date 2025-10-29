@@ -51,10 +51,11 @@ export default class ApplicationService {
     sortBy: ApplicationSortField = 'createdAt',
     sortDirection: SortDirection = 'asc',
     searchOptions: ApplicationDashboardSearchOptions = {},
+    pageSize: number = 10,
   ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     const applicationClient = this.applicationClientFactory(token)
 
-    return applicationClient.all(page, sortBy, sortDirection, searchOptions)
+    return applicationClient.all(page, sortBy, sortDirection, searchOptions, pageSize)
   }
 
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {

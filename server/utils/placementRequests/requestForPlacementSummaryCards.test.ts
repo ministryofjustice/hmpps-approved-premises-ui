@@ -62,7 +62,7 @@ describe('RequestForPlacementSummaryCards', () => {
         card: expect.objectContaining({
           title: {
             text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.submittedAt, { format: 'short' })}`,
-            headingLevel: '3',
+            headingLevel: '2',
           },
           attributes: {
             'data-cy-placement-application-id': requestForPlacement.id,
@@ -193,7 +193,7 @@ describe('RequestForPlacementSummaryCards', () => {
         card: expect.objectContaining({
           title: {
             text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.submittedAt, { format: 'short' })}`,
-            headingLevel: '3',
+            headingLevel: '2',
           },
           attributes: {
             'data-cy-placement-application-id': requestForPlacement.id,

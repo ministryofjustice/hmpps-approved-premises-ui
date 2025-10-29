@@ -42,6 +42,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'APPLY_FIND_PERSON',
     auditBodyParams: ['crn'],
   })
+
+  get(paths.applications.people.manageApplications.pattern, applicationsController.manageApplications(), {
+    auditEvent: 'MANAGE_APPLICATIONS',
+  })
   get(paths.applications.people.selectOffence.pattern, offencesController.selectOffence(), {
     auditEvent: 'SELECT_OFFENCE',
   })

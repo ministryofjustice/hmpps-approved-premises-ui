@@ -16,6 +16,7 @@ import CheckSentenceTypePage from '../../pages/match/placementRequestForm/checkS
 import Page from '../../pages/page'
 import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import { ShowPage } from '../../pages/apply'
 
 context('All applications', () => {
   beforeEach(() => {
@@ -235,6 +236,10 @@ context('All applications', () => {
   })
 
   it('navigate to request for placement tab for application with at least one request for placement', () => {
+    Cypress.env({
+      ONE_APPPLICATION: 'no',
+    })
+
     GIVEN('there is a page of applications')
     const applications = cas1ApplicationSummaryFactory.buildList(1, {
       status: 'awaitingPlacement',
@@ -262,8 +267,15 @@ context('All applications', () => {
     AND('I should be able to click on request for placement')
     page.clickLink('View placement request(s)')
 
-    AND('I should be on request for placement tab')
-    page.shouldContainPlacementRequestTab()
+    AND('I should be on the application view page on the placement request tab')
+    const showPage = Page.verifyOnPage(ShowPage, application)
+    showPage.shouldContainPlacementRequestTab()
+
+    WHEN('I click the back link')
+    showPage.clickBack()
+
+    THEN('I should be back on the dashboard page')
+    page.checkOnPage()
   })
 
   const shouldSortByField = (field: string) => {

@@ -13,14 +13,15 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 import { ApplicationShowPageTab, applicationShowPageTab } from '../../../server/utils/applications/utils'
 import paths from '../../../server/paths/apply'
-import { displayName } from '../../../server/utils/personUtils'
 import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests'
 import { SubmittedDocumentRenderer } from '../../../server/utils/forms/submittedDocumentRenderer'
+import { applicationKeyDetails } from '../../../server/utils/applications/helpers'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
     super('Approved Premises application')
-    cy.get('h2').contains(displayName(application.person))
+    cy.get('h1').contains('Approved Premises application')
+    this.shouldShowKeyDetails(applicationKeyDetails(application))
   }
 
   static visit(application: Application, tab?: ApplicationShowPageTab) {
@@ -146,5 +147,9 @@ export default class ShowPage extends Page {
 
   shouldShowStatusTag(status: ApprovedPremisesApplicationStatus) {
     cy.get(`.govuk-tag[data-cy-status="${status}"]`).should('exist')
+  }
+
+  shouldContainPlacementRequestTab() {
+    cy.get('a').contains('Placement requests')
   }
 }

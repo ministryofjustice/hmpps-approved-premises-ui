@@ -1,13 +1,9 @@
 import { when } from 'jest-when'
-import {
-  assessmentSummaryFactory,
-  placementApplicationTaskFactory,
-  taskFactory,
-  tierEnvelopeFactory,
-} from '../testutils/factories'
-import { tierBadge } from './personUtils'
-import { crnCell, dateCell, daysUntilDueCell, emailCell, tierCell } from './tableUtils'
+import { assessmentSummaryFactory, taskFactory } from '../testutils/factories'
+import { displayName, tierBadge } from './personUtils'
+import { crnCell, dateCell, daysUntilDueCell, emailCell, nameCellLink, tierCell } from './tableUtils'
 import { DateFormats } from './dateUtils'
+import { fullPersonFactory } from '../testutils/factories/person'
 
 describe('tableUtils', () => {
   describe('dateCell', () => {
@@ -24,11 +20,31 @@ describe('tableUtils', () => {
   })
 
   describe('tierCell', () => {
-    it('returns the tier badge for the service user associated with the task', () => {
-      const tier = tierEnvelopeFactory.build({ value: { level: 'A1' } })
-      const task = placementApplicationTaskFactory.build({ tier })
+    it.each([
+      ['A1', 'A8'],
+      ['B3S', 'B6S'],
+      ['BzS', 'BzS'],
+      ['Q', 'Q'],
+      ['', ''],
+      [undefined, ''],
+    ])('returns the tier badge and sort key for the tier %s', (tier, sortKey) => {
+      expect(tierCell(tier)).toEqual({ html: tierBadge(tier), attributes: { 'data-sort-value': sortKey } })
+    })
+  })
 
-      expect(tierCell(task)).toEqual({ html: tierBadge('A1') })
+  describe('nameCellLink', () => {
+    const person = fullPersonFactory.build()
+
+    it(`returns a person's display name`, () => {
+      expect(nameCellLink(person)).toEqual({
+        html: `<span>${displayName(person)}</span><br/><span>${person.crn}</span>`,
+      })
+    })
+
+    it(`returns a person's display name with link`, () => {
+      expect(nameCellLink(person, 'some-link')).toEqual({
+        html: `<a href="some-link">${displayName(person)}</a><br/><span>${person.crn}</span>`,
+      })
     })
   })
 

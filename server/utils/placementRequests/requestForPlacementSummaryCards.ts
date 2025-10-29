@@ -71,7 +71,7 @@ export class RequestForPlacementSummaryCards {
       card: {
         title: {
           text: `Request made on ${DateFormats.isoDateToUIDate(this.requestForPlacement.submittedAt, { format: 'short' })}`,
-          headingLevel: '3',
+          headingLevel: '2',
         },
         attributes: {
           'data-cy-placement-application-id': this.requestForPlacement.id,

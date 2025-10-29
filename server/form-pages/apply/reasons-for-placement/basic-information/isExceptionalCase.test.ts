@@ -14,7 +14,7 @@ describe('IsExceptionalCase', () => {
     })
   })
 
-  itShouldHavePreviousValue(new IsExceptionalCase({}, application), '')
+  itShouldHavePreviousValue(new IsExceptionalCase({}, application), 'dashboard')
 
   describe('when isExceptionalCase is yes', () => {
     itShouldHaveNextValue(new IsExceptionalCase({ isExceptionalCase: 'yes' }, application), 'exception-details')

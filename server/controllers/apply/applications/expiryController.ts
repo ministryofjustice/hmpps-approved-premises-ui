@@ -25,6 +25,7 @@ export default class ExpiryController {
         paths.applications.show.pattern,
         paths.applications.index.pattern,
         paths.applications.dashboard.pattern,
+        paths.applications.people.manageApplications.pattern,
       ])
 
       return res.render('applications/expiry/new', {
