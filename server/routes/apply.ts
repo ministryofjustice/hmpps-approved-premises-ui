@@ -9,6 +9,7 @@ import type { Controllers } from '../controllers'
 import paths from '../paths/apply'
 
 import actions from './utils'
+import { idValidator } from './validators'
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { pages } = Apply
@@ -32,11 +33,17 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'LIST_APPLICATIONS_DASHBOARD',
   })
   get(paths.applications.new.pattern, applicationsController.new(), { auditEvent: 'NEW_APPLICATION' })
-  get(paths.applications.show.pattern, applicationsController.show(), { auditEvent: 'VIEW_APPLICATION' })
+  get(paths.applications.show.pattern, applicationsController.show(), {
+    auditEvent: 'VIEW_APPLICATION',
+    ...idValidator,
+  })
   post(paths.applications.create.pattern, applicationsController.create(), {
     auditEvent: 'CREATE_APPLICATION',
   })
-  post(paths.applications.submission.pattern, applicationsController.submit(), { auditEvent: 'SUBMIT_APPLICATION' })
+  post(paths.applications.submission.pattern, applicationsController.submit(), {
+    auditEvent: 'SUBMIT_APPLICATION',
+    ...idValidator,
+  })
 
   post(paths.applications.people.find.pattern, peopleController.find(), {
     auditEvent: 'APPLY_FIND_PERSON',
@@ -54,48 +61,61 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.applications.people.documents.pattern, documentsController.show(), { auditEvent: 'SHOW_DOCUMENTS' })
   post(paths.applications.withdraw.new.pattern, withdrawalsController.new(), {
     auditEvent: 'SELECT_WITHDRAWABLE_TYPE',
+    ...idValidator,
   })
   get(paths.applications.withdrawables.show.pattern, withdrawablesController.show(), {
     auditEvent: 'SELECT_WITHDRAWABLE',
+    ...idValidator,
   })
   post(paths.applications.withdrawables.show.pattern, withdrawablesController.show(), {
     auditEvent: 'SELECT_WITHDRAWABLE',
+    ...idValidator,
   })
   post(paths.applications.withdrawables.create.pattern, withdrawablesController.create(), {
     auditEvent: 'VIEW_WITHDRAWABLE',
+    ...idValidator,
   })
   get(paths.applications.withdraw.new.pattern, withdrawalsController.new(), {
     auditEvent: 'NEW_WITHDRAWL',
+    ...idValidator,
   })
   post(paths.applications.withdraw.create.pattern, withdrawalsController.create(), {
     auditEvent: 'WITHDRAW_APPLICATION',
+    ...idValidator,
   })
 
   // Expiry
   get(paths.applications.expire.pattern, expiryController.new(), {
     auditEvent: 'NEW_APPLICATION_EXPIRY',
+    ...idValidator,
   })
   post(paths.applications.expire.pattern, expiryController.create(), {
     auditEvent: 'EXPIRE_APPLICATION',
+    ...idValidator,
   })
 
   // Notes
   post(paths.applications.notes.new.pattern, notesController.new(), {
     auditEvent: 'CONFIRM_NEW_NOTE',
+    ...idValidator,
   })
   post(paths.applications.notes.create.pattern, notesController.create(), {
     auditEvent: 'CREATE_NEW_NOTE',
+    ...idValidator,
   })
 
   // Appeals
   get(paths.applications.appeals.new.pattern, appealsController.new(), {
     auditEvent: 'NEW_APPEAL',
+    ...idValidator,
   })
   get(paths.applications.appeals.show.pattern, appealsController.show(), {
     auditEvent: 'VIEW_APPEAL',
+    ...idValidator,
   })
   post(paths.applications.appeals.create.pattern, appealsController.create(), {
     auditEvent: 'CREATE_APPEAL',
+    ...idValidator,
   })
 
   Object.keys(pages).forEach((taskKey: TaskNames) => {
@@ -104,6 +124,7 @@ export default function routes(controllers: Controllers, router: Router, service
       get(pattern, pagesController.show(taskKey, pageKey), {
         auditEvent: 'VIEW_APPLICATION',
         additionalMetadata: { task: taskKey, page: pageKey },
+        ...idValidator,
       })
       put(pattern, pagesController.update(taskKey, pageKey), {
         auditEvent: `UPDATE_APPLICATION_SUCCESS`,
@@ -115,6 +136,7 @@ export default function routes(controllers: Controllers, router: Router, service
             auditEvent: 'UPDATE_APPLICATION_FAILURE',
           },
         ],
+        ...idValidator,
       })
     })
   })

@@ -441,6 +441,7 @@ export type MiddlewareSpec = {
   additionalMetadata?: Record<string, string>
   allowedRoles?: Array<ApprovedPremisesUserRole>
   allowedPermissions?: Array<ApprovedPremisesUserPermission>
+  parameterValidators?: Record<string, RegExp>
 }
 
 export type PlacementRequestDashboardSearchOptions = {

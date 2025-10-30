@@ -6,6 +6,7 @@ import { auditMiddleware } from '../middleware/auditMiddleware'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import { MiddlewareSpec } from '../@types/ui'
 import applicationAuthMiddleware from '../middleware/applicationAuthMiddleware'
+import { validateMiddleware } from '../middleware/validateMiddleware'
 
 export default function actions(router: Router, auditService: AuditService) {
   return {
@@ -13,7 +14,10 @@ export default function actions(router: Router, auditService: AuditService) {
       router.get(
         path,
         asyncMiddleware(
-          applicationAuthMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
+          applicationAuthMiddleware(
+            validateMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
+            middlewareSpec,
+          ),
         ),
       ),
     post: (path: string | Array<string>, handler: RequestHandler, middlewareSpec?: MiddlewareSpec) =>
