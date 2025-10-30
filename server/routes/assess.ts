@@ -12,6 +12,7 @@ import paths from '../paths/assess'
 import actions from './utils'
 import { getPage } from '../utils/assessments/utils'
 import PagesController from '../controllers/placementApplications/pagesController'
+import { idValidator } from './validators'
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { pages } = Assess
@@ -25,16 +26,19 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.assessments.show.pattern, assessmentsController.show(), {
     auditEvent: 'SHOW_ASSESSMENT',
+    ...idValidator,
   })
 
   get(paths.assessments.supportingInformationPath.pattern, supportingInformationController.show(), {
     auditEvent: 'SHOW_SUPPORTING_INFORMATION',
     allowedPermissions: ['cas1_assess_application'],
+    ...idValidator,
   })
 
   post(paths.assessments.submission.pattern, assessmentsController.submit(), {
     auditEvent: 'SUBMIT_ASSESSMENT',
     allowedPermissions: ['cas1_assess_application'],
+    ...idValidator,
   })
 
   Object.keys(pages).forEach((taskKey: TaskNames) => {
@@ -48,6 +52,7 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'VIEW_ASSESSMENT',
         additionalMetadata: { task: taskKey, page: pageKey },
         allowedPermissions: ['cas1_assess_application'],
+        ...idValidator,
       })
 
       let controllerAction
@@ -70,6 +75,7 @@ export default function routes(controllers: Controllers, router: Router, service
             // If we redirect to the same page, the user has hit an error
             path: pattern,
             auditEvent: 'UPDATE_ASSESSMENT_FAILURE',
+            ...idValidator,
           },
         ],
         allowedPermissions: ['cas1_assess_application'],
