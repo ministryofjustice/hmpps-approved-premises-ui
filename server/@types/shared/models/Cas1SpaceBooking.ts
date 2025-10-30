@@ -15,6 +15,7 @@ import type { FullPerson } from './FullPerson';
 import type { NamedId } from './NamedId';
 import type { RestrictedPerson } from './RestrictedPerson';
 import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
+import type { TransferReason } from './TransferReason';
 import type { UnknownPerson } from './UnknownPerson';
 export type Cas1SpaceBooking = {
     actualArrivalDate?: string;
@@ -48,5 +49,6 @@ export type Cas1SpaceBooking = {
     premises: NamedId;
     requestForPlacementId?: string;
     tier?: string;
+    transferReason?: TransferReason;
 };
 
