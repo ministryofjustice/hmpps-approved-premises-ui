@@ -6,9 +6,6 @@ import type { Services } from '../services'
 
 import paths from '../paths/admin'
 import actions from './utils'
-import { idValidator, premisesIdValidator, validators } from './validators'
-
-export const placementRequestIdValidator = { parameterValidators: { placementRequestId: validators.uuid } }
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { get, post, put, delete: deleteAction } = actions(router, services.auditService)
@@ -51,12 +48,10 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.nationalOccupancy.premisesView.pattern, nationalOccupancyController.premisesView(), {
     auditEvent: 'NATIONAL_OCCUPANCY_PREMISES_VIEW',
     allowedPermissions: ['cas1_national_occupancy_view'],
-    ...premisesIdValidator,
   })
   get(paths.admin.nationalOccupancy.premisesDayView.pattern, occupancyViewController.viewDay(), {
     auditEvent: 'NATIONAL_OCCUPANCY_PREMISES__DAY_VIEW',
     allowedPermissions: ['cas1_national_occupancy_view'],
-    parameterValidators: { premisesId: validators.uuid, date: validators.isoDate },
   })
 
   // Change requests
@@ -84,24 +79,20 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.admin.placementRequests.show.pattern, adminPlacementRequestsController.show(), {
     auditEvent: 'ADMIN_SHOW_PLACEMENT_REQUEST',
-    ...placementRequestIdValidator,
   })
 
   get(paths.admin.placementRequests.selectPlacement.pattern, adminPlacementRequestsController.selectPlacement(), {
     auditEvent: 'ADMIN_CHANGE_PLACEMENT',
     allowedPermissions: ['cas1_space_booking_create'],
-    ...placementRequestIdValidator,
   })
   post(paths.admin.placementRequests.selectPlacement.pattern, adminPlacementRequestsController.saveSelectPlacement(), {
     auditEvent: 'ADMIN_CHANGE_PLACEMENT_SAVE',
     allowedPermissions: ['cas1_space_booking_create'],
-    ...placementRequestIdValidator,
   })
 
   // TODO: determine permissions required for placement request withdrawals
   get(paths.admin.placementRequests.withdrawal.new.pattern, placementRequestWithdrawalsController.new(), {
     auditEvent: 'ADMIN_NEW_PLACEMENT_REQUEST_WITHDRAWL',
-    ...placementRequestIdValidator,
   })
   post(paths.admin.placementRequests.withdrawal.create.pattern, placementRequestWithdrawalsController.create(), {
     redirectAuditEventSpecs: [
@@ -147,17 +138,14 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.userManagement.edit.pattern, userManagementController.edit(), {
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
     allowedPermissions: ['cas1_user_management'],
-    ...idValidator,
   })
   get(paths.admin.userManagement.confirmDelete.pattern, userManagementController.confirmDelete(), {
     auditEvent: 'ADMIN_USER_DELETION_CONFIRMATION_PAGE',
     allowedPermissions: ['cas1_user_management'],
-    ...idValidator,
   })
   deleteAction(paths.admin.userManagement.delete.pattern, userManagementController.delete(), {
     auditEvent: 'ADMIN_USER_DELETION',
     allowedPermissions: ['cas1_user_management'],
-    ...idValidator,
   })
 
   post(paths.admin.userManagement.searchDelius.pattern, deliusUserController.search(), {
@@ -167,7 +155,6 @@ export default function routes(controllers: Controllers, router: Router, service
   put(paths.admin.userManagement.edit.pattern, userManagementController.update(), {
     auditEvent: 'ADMIN_UPDATE_USER_PERMISSIONS_SUCCESS',
     allowedPermissions: ['cas1_user_management'],
-    ...idValidator,
   })
 
   return router

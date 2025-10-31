@@ -1,23 +1,18 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
-import { MiddlewareSpec } from '@approved-premises/ui'
+import { Validators } from 'server/routes/validators'
 import logger from '../../logger'
 
-export const validateMiddleware = (handler: RequestHandler, eventSpec?: MiddlewareSpec) => {
-  if (eventSpec?.parameterValidators) {
-    return wrapHandler(handler, eventSpec.parameterValidators)
-  }
-  return handler
-}
-
-const wrapHandler =
-  (handler: RequestHandler, parameterValidators: Record<string, RegExp>) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    const errors = Object.entries(parameterValidators).filter(([key, regExp]) => !regExp.test(req.params[key]))
+export const validateMiddleware =
+  (handler: RequestHandler, validators: Validators) => async (req: Request, res: Response, next: NextFunction) => {
+    const errors = Object.entries(req.params).filter(([key, value]) => {
+      const regExp = validators[key as keyof Validators]
+      return !regExp || !regExp.test(value)
+    })
     if (errors.length) {
       logger.error(
         `Path parameter validation error ${errors
-          .map(([key]) => {
-            return `${key}="${req.params[key]}"`
+          .map(([key, value]) => {
+            return `${key}="${value}"`
           })
           .join(', ')}`,
       )

@@ -1,15 +1,15 @@
-import { MiddlewareSpec } from '@approved-premises/ui'
 import { createMock } from '@golevelup/ts-jest'
 import { Request, Response } from 'express'
 import { validateMiddleware } from './validateMiddleware'
 import logger from '../../logger'
+import { Validators } from '../routes/validators'
 
 jest.mock('../../logger')
 
 describe('validateMiddleware', () => {
   const handler = jest.fn()
   const next = jest.fn()
-  const spec: MiddlewareSpec = { parameterValidators: { id: /^[A]$/ } }
+  const validators: Validators = { id: /^[A]$/ }
   const response = createMock<Response>({})
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('validateMiddleware', () => {
   it('calls handler if middleware validates parameters as OK', async () => {
     const request = createMock<Request>({ params: { id: 'A' } })
 
-    const validatedHandler = validateMiddleware(handler, spec)
+    const validatedHandler = validateMiddleware(handler, validators)
 
     await validatedHandler(request, response, next)
 
@@ -27,21 +27,22 @@ describe('validateMiddleware', () => {
     expect(next).not.toHaveBeenCalled()
   })
 
-  it('calls handler if there is no spec', async () => {
-    const request = createMock<Request>({ params: { id: 'B' } })
+  it('calls handler if there is no validator for a parameter', async () => {
+    const request = createMock<Request>({ params: { id: 'A', other: 'B' } })
 
-    const validatedHandler = validateMiddleware(handler, {})
+    const validatedHandler = validateMiddleware(handler, validators)
 
     await validatedHandler(request, response, next)
 
-    expect(handler).toHaveBeenCalled()
-    expect(next).not.toHaveBeenCalled()
+    expect(handler).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalled()
+    expect(logger.error).toHaveBeenCalledWith('Path parameter validation error other="B"')
   })
 
   it('calls next if there is a validation failure', async () => {
     const request = createMock<Request>({ params: { id: 'B' } })
 
-    const validatedHandler = validateMiddleware(handler, spec)
+    const validatedHandler = validateMiddleware(handler, validators)
 
     await validatedHandler(request, response, next)
 
