@@ -20,23 +20,23 @@ describe('new placement utils', () => {
         'fields are empty',
         { newPlacementArrivalDate: '', newPlacementDepartureDate: '', newPlacementReason: '' },
         {
-          newPlacementArrivalDate: 'Enter or select an arrival date',
-          newPlacementDepartureDate: 'Enter or select a departure date',
-          newPlacementReason: 'Enter a reason',
+          newPlacementArrivalDate: 'Enter or select an expected arrival date',
+          newPlacementDepartureDate: 'Enter or select an expected departure date',
+          newPlacementReason: 'Select a transfer reason',
         },
       ],
       [
         'the arrival and end dates are invalid',
         { newPlacementArrivalDate: '32/2/2026', newPlacementDepartureDate: 'not a date' },
         {
-          newPlacementArrivalDate: 'Enter a valid arrival date',
-          newPlacementDepartureDate: 'Enter a valid departure date',
+          newPlacementArrivalDate: 'Enter a valid expected arrival date',
+          newPlacementDepartureDate: 'Enter a valid expected departure date',
         },
       ],
       [
         'the departure date is before the start date',
         { newPlacementDepartureDate: '12/12/2025' },
-        { newPlacementDepartureDate: 'The departure date must be after the arrival date' },
+        { newPlacementDepartureDate: 'The expected departure date must be after the expected arrival date' },
       ],
     ])('throws an error when %s', (_, body, expectedErrors) => {
       const fullBody = { ...validBody, ...body }
@@ -96,7 +96,8 @@ describe('new placement utils', () => {
     const searchState: SpaceSearchFormData = {
       newPlacementArrivalDate: '14/4/2026',
       newPlacementDepartureDate: '7/5/2026',
-      newPlacementReason: 'Because',
+      newPlacementReason: 'public_protection',
+      notes: 'Some notes',
       apCriteria: ['acceptsSexOffenders'],
       roomCriteria: ['isArsonSuitable', 'isWheelchairDesignated'],
       apType: 'isESAP',
@@ -119,7 +120,14 @@ describe('new placement utils', () => {
               html: '<ul class="govuk-list govuk-list--bullet"><li>Wheelchair accessible</li><li>Suitable for active arson risk</li></ul>',
             },
           },
-          { key: { text: 'Reason' }, value: { html: '<span class="govuk-summary-list__textblock">Because</span>' } },
+          {
+            key: { text: 'Reason for placement' },
+            value: { html: '<span class="govuk-summary-list__textblock">Public protection</span>' },
+          },
+          {
+            key: { text: 'Additional information' },
+            value: { html: '<span class="govuk-summary-list__textblock">Some notes</span>' },
+          },
         ],
       })
     })
@@ -131,7 +139,7 @@ describe('new placement utils', () => {
         },
       })
       const summaryList = newPlacementSummaryList(searchState, currentPlacement)
-      expect(summaryList.rows).toHaveLength(8)
+      expect(summaryList.rows).toHaveLength(9)
       expect(summaryList.rows[0]).toEqual({
         key: { text: 'Current AP' },
         value: { text: 'The current premises name' },

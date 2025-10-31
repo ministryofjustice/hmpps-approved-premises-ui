@@ -9,6 +9,7 @@ import {
   ReleaseTypeOption,
   Cas1SpaceCharacteristic as SpaceCharacteristic,
   Cas1SpaceSearchResult as SpaceSearchResult,
+  TransferReason,
 } from '@approved-premises/api'
 import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
@@ -33,7 +34,18 @@ type SpaceBookingConfirmationData = {
   criteria: Array<Cas1SpaceBookingCharacteristic>
   releaseType?: ReleaseTypeOption
   isWomensApplication?: boolean
-  newPlacementReason?: string
+  newPlacementReason?: TransferReason
+  notes?: string
+}
+
+export const newPlacementReasons: Record<TransferReason, string> = {
+  conflict_with_staff: 'Conflict with staff',
+  extending_placement_no_capacity_at_current_ap: 'Extending the placement (no capacity at current AP)',
+  local_community_issue: 'Local community issue',
+  moving_person_closer_to_resettlement_area: 'Moving person closer to resettlement area',
+  placement_prioritisation: 'Placement prioritisation',
+  public_protection: 'Public protection',
+  risk_to_resident: 'Risk to resident',
 }
 
 export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfirmationData): Array<SummaryListItem> => {
@@ -46,6 +58,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     releaseType,
     isWomensApplication,
     newPlacementReason,
+    notes,
   } = data
 
   return [
@@ -59,7 +72,8 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     summaryListItem('Expected departure date', expectedDepartureDate, 'date'),
     summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
     releaseType && summaryListItem('Release type', allReleaseTypes[releaseType]),
-    newPlacementReason && summaryListItem('Reason for placement', newPlacementReason, 'textBlock'),
+    newPlacementReason && summaryListItem('Reason for placement', newPlacementReasons[newPlacementReason], 'textBlock'),
+    notes && summaryListItem('Additional information', notes, 'textBlock'),
   ].filter(Boolean)
 }
 

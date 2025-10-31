@@ -1,4 +1,4 @@
-import type {
+import {
   ApArea,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
@@ -31,6 +31,7 @@ import type {
   RiskTier,
   RiskTierLevel,
   RoshRisks,
+  TransferReason,
   UserQualification,
 } from '@approved-premises/api'
 import { ApTypeCriteria } from '../../utils/placementCriteriaUtils'
@@ -501,7 +502,8 @@ export type SpaceSearchFormData = SpaceSearchCommonFields & {
   apType?: ApTypeCriteria
   newPlacementArrivalDate?: string
   newPlacementDepartureDate?: string
-  newPlacementReason?: string
+  newPlacementReason?: TransferReason
+  notes?: string
   newPlacementCriteriaChanged?: YesOrNo
 }
 

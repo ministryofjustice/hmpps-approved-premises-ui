@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
 import { SpaceSearchFormData } from '@approved-premises/ui'
+import { TransferReason } from '@approved-premises/api'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { signIn } from '../signIn'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
@@ -21,6 +22,7 @@ import UpdateCriteriaPage from '../../pages/match/newPlacement/updateCriteriaPag
 import SearchPage from '../../pages/match/searchPage'
 import OccupancyViewPage from '../../pages/match/occupancyViewPage'
 import BookASpacePage from '../../pages/match/bookASpacePage'
+import { newPlacementReasons } from '../../../server/utils/match'
 
 context('New Placement', () => {
   const newArrivalDate = faker.date.future()
@@ -28,7 +30,8 @@ context('New Placement', () => {
 
   const newPlacementArrivalDate = DateFormats.dateObjtoUIDate(newArrivalDate, { format: 'datePicker' })
   const newPlacementDepartureDate = DateFormats.dateObjtoUIDate(newDepartureDate, { format: 'datePicker' })
-  const newPlacementReason = faker.word.words(10)
+  const newPlacementReason = faker.helpers.arrayElement(Object.keys(newPlacementReasons)) as TransferReason
+  const notes = faker.word.words(10)
 
   const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking().build({
     person: personFactory.build({ type: 'FullPerson', name: 'Dave Watts' }),
@@ -95,6 +98,7 @@ context('New Placement', () => {
       newPlacementArrivalDate,
       newPlacementDepartureDate,
       newPlacementReason,
+      notes,
     })
     newPlacementPage.clickButton('Save and continue')
 
@@ -149,6 +153,7 @@ context('New Placement', () => {
       newPlacementArrivalDate,
       newPlacementDepartureDate,
       newPlacementReason,
+      notes,
     })
 
     WHEN('I click the back link')
@@ -168,6 +173,7 @@ context('New Placement', () => {
       newPlacementArrivalDate,
       newPlacementDepartureDate,
       newPlacementReason,
+      notes,
     })
 
     WHEN('I submit the form')

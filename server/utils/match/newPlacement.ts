@@ -10,6 +10,7 @@ import {
   spaceSearchCriteriaApLevelLabels,
 } from '../characteristicsUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from './spaceSearch'
+import { newPlacementReasons } from '.'
 
 type NewPlacementForm = {
   newPlacementArrivalDate: string
@@ -42,7 +43,7 @@ export const validateNewPlacement = (body: Partial<NewPlacementForm>) => {
   }
 
   if (!body.newPlacementReason) {
-    errors.newPlacementReason = 'Enter a reason'
+    errors.newPlacementReason = 'Select a transfer reason'
   }
 
   if (Object.keys(errors).length) {
@@ -73,7 +74,6 @@ export const criteriaSummaryList = (placementRequest: Cas1PlacementRequestDetail
   ],
 })
 
-export const newPlacementReasons = 
 export const newPlacementSummaryList = (
   {
     apType,
@@ -82,6 +82,7 @@ export const newPlacementSummaryList = (
     newPlacementArrivalDate,
     newPlacementDepartureDate,
     newPlacementReason,
+    notes,
   }: SpaceSearchFormData,
   currentPlacement?: Cas1SpaceBookingSummary,
 ): SummaryList => {
@@ -110,7 +111,9 @@ export const newPlacementSummaryList = (
         characteristicsBulletList(roomCriteria, { labels: roomCharacteristicMap }),
         'html',
       ),
-      summaryListItem('Reason', newPlacementReason, 'textBlock'),
+      newPlacementReason &&
+        summaryListItem('Reason for placement', newPlacementReasons[newPlacementReason], 'textBlock'),
+      notes && summaryListItem('Additional information', notes, 'textBlock'),
     ].filter(Boolean),
   }
 }

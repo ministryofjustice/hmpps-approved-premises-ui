@@ -55,17 +55,14 @@
                 }) }}
 
                 {{ formPageRadios({
-                    fieldName: "reason",
-                    items: [
-                        {
-                            value: "yes",
-                            text: "Yes"
-                        },
-                        {
-                            value: "no",
-                            text: "No"
+                    fieldName: "newPlacementReason",
+                    fieldset: {
+                        legend: {
+                            text: 'Transfer reason',
+                            classes: "govuk-fieldset__legend--m"
                         }
-                    ]
+                    },
+                    items: reasonOptions
                 }, fetchContext()) }}
 
                 {{ govukTextarea({

@@ -1,4 +1,10 @@
-import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
+import type {
+  ApType,
+  Cas1SpaceBookingCharacteristic,
+  FullPerson,
+  PlacementCriteria,
+  TransferReason,
+} from '@approved-premises/api'
 import { HtmlItem } from '@approved-premises/ui'
 import applyPaths from '../../paths/apply'
 import {
@@ -19,6 +25,7 @@ import {
   distanceRow,
   filterOutAPTypes,
   keyDetails,
+  newPlacementReasons,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
   restrictionsRow,
@@ -253,7 +260,8 @@ describe('matchUtils', () => {
     const expectedArrivalDate = '2025-09-23'
     const expectedDepartureDate = '2025-11-18'
     const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
-    const newPlacementReason = 'Some reason'
+    const newPlacementReason: TransferReason = 'conflict_with_staff'
+    const notes = 'Some notes'
 
     it('returns summary list items for the space booking confirmation screen', () => {
       expect(
@@ -334,13 +342,20 @@ describe('matchUtils', () => {
         criteria,
         releaseType: placementRequest.releaseType,
         newPlacementReason,
+        notes,
       })
 
       expect(rows).toEqual(
         expect.arrayContaining([
           {
             key: { text: 'Reason for placement' },
-            value: { html: `<span class="govuk-summary-list__textblock">${newPlacementReason}</span>` },
+            value: {
+              html: `<span class="govuk-summary-list__textblock">${newPlacementReasons[newPlacementReason]}</span>`,
+            },
+          },
+          {
+            key: { text: 'Additional information' },
+            value: { html: `<span class="govuk-summary-list__textblock">${notes}</span>` },
           },
         ]),
       )
