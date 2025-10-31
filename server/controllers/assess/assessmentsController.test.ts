@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApprovedPremisesAssessmentSummary as AssessmentSummary, Task } from '@approved-premises/api'
+import { Cas1AssessmentSummary as AssessmentSummary, Task } from '@approved-premises/api'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'

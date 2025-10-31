@@ -1,6 +1,6 @@
 import {
   AssessmentSortField,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1AssessmentSummary as AssessmentSummary,
   FullPerson,
   RestrictedPerson,
   SortDirection,

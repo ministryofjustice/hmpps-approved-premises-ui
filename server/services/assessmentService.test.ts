@@ -1,10 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
-import {
-  AssessmentAcceptance,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
-  Cas1UpdatedClarificationNote,
-} from '@approved-premises/api'
+import { AssessmentAcceptance, Cas1AssessmentSummary, Cas1UpdatedClarificationNote } from '@approved-premises/api'
 
 import { fromPartial } from '@total-typescript/shoehorn'
 import { AssessmentClient } from '../data'
@@ -54,7 +50,7 @@ describe('AssessmentService', () => {
       const assessments = assessmentSummaryFactory.buildList(5)
       const paginatedResponse = paginatedResponseFactory.build({
         data: assessments,
-      }) as PaginatedResponse<AssessmentSummary>
+      }) as PaginatedResponse<Cas1AssessmentSummary>
 
       assessmentClient.all.mockResolvedValue(paginatedResponse)
       const result = await service.getAll('token', ['awaiting_response'], 'name', 'desc', 1)

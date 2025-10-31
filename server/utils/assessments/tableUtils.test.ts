@@ -13,7 +13,7 @@ import {
 } from './tableUtils'
 import paths from '../../paths/assess'
 import { crnCell, daysUntilDueCell, tierCell } from '../tableUtils'
-import { AssessmentSortField, ApprovedPremisesAssessmentSummary as AssessmentSummary } from '../../@types/shared'
+import { AssessmentSortField, Cas1AssessmentSummary as AssessmentSummary } from '../../@types/shared'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { displayName } from '../personUtils'
