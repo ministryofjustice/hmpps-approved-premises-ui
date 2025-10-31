@@ -1,7 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import { SpaceSearchFormData } from '@approved-premises/ui'
-import { newPlacementReasons } from 'server/utils/match'
+import { newPlacementReasons } from '../../../utils/match'
 import NewPlacementController from './newPlacementController'
 import { cas1PlacementRequestDetailFactory, spaceSearchStateFactory } from '../../../testutils/factories'
 

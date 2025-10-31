@@ -1,7 +1,7 @@
 import { Request, Response, RequestHandler } from 'express'
 
 import { SpaceSearchFormData } from '@approved-premises/ui'
-import { newPlacementReasons } from 'server/utils/match'
+import { newPlacementReasons } from '../../../utils/match'
 import adminPaths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
