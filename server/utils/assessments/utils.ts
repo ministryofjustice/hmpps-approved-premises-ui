@@ -10,7 +10,7 @@ import {
 import {
   ApprovedPremisesAssessmentStatus,
   ApprovedPremisesAssessment as Assessment,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1AssessmentSummary as AssessmentSummary,
   PersonAcctAlert,
 } from '@approved-premises/api'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'

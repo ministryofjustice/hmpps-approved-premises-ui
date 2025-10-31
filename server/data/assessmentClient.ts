@@ -1,8 +1,8 @@
 import type {
   ApprovedPremisesAssessment as Assessment,
   AssessmentAcceptance,
-  AssessmentStatus,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1AssessmentStatus,
+  Cas1AssessmentSummary,
   ClarificationNote,
   Cas1NewClarificationNote,
   Cas1UpdatedClarificationNote,
@@ -22,11 +22,11 @@ export default class AssessmentClient {
   }
 
   async all(
-    statuses: Array<AssessmentStatus>,
+    statuses: Array<Cas1AssessmentStatus>,
     page: number,
     sortBy: AssessmentSortField = 'name',
     sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<AssessmentSummary>> {
+  ): Promise<PaginatedResponse<Cas1AssessmentSummary>> {
     return this.restClient.getPaginatedResponse({
       path: paths.assessments.index.pattern,
       page: page.toString(),
