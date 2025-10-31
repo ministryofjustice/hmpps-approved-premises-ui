@@ -2,7 +2,7 @@ import { differenceInDays, format } from 'date-fns'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1AssessmentSummary as AssessmentSummary,
 } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'

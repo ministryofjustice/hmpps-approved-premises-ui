@@ -6,7 +6,12 @@ import { AssessmentService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
-import { ApprovedPremisesAssessment, AssessmentSortField, AssessmentStatus, TaskSortField } from '../../@types/shared'
+import {
+  ApprovedPremisesAssessment,
+  AssessmentSortField,
+  Cas1AssessmentStatus,
+  TaskSortField,
+} from '../../@types/shared'
 import { assessmentKeyDetails, awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { remapArsonAssessmentData } from '../../form-pages/utils/matchingInformationUtils'
@@ -29,7 +34,7 @@ export default class AssessmentsController {
       const statuses =
         activeTab === 'awaiting_assessment' || !activeTab
           ? awaitingAssessmentStatuses
-          : ([activeTab] as Array<AssessmentStatus>)
+          : ([activeTab] as Array<Cas1AssessmentStatus>)
 
       if (activeTab === 'requests_for_placement') {
         const placementApplications = await this.taskService.getAll({

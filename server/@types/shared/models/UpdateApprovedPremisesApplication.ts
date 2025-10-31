@@ -5,12 +5,14 @@
 import type { ApType } from './ApType';
 import type { Cas1ApplicationTimelinessCategory } from './Cas1ApplicationTimelinessCategory';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
-import type { UpdateApplication } from './UpdateApplication';
-export type UpdateApprovedPremisesApplication = (UpdateApplication & {
+import type { UpdateApplicationType } from './UpdateApplicationType';
+export type UpdateApprovedPremisesApplication = {
     apType?: ApType;
     arrivalDate?: string;
+    data: Record<string, any>;
     /**
      * noticeType should be used to indicate if an emergency application
+     * @deprecated
      */
     isEmergencyApplication?: boolean;
     isInapplicable?: boolean;
@@ -18,5 +20,6 @@ export type UpdateApprovedPremisesApplication = (UpdateApplication & {
     noticeType?: Cas1ApplicationTimelinessCategory;
     releaseType?: ReleaseTypeOption;
     targetLocation?: string;
-});
+    type: UpdateApplicationType;
+};
 

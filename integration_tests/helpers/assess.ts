@@ -1,7 +1,7 @@
 import {
   ApprovedPremisesAssessment as Assessment,
   ApprovedPremisesAssessmentStatus as AssessmentStatus,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1AssessmentSummary,
   ClarificationNote,
   Document,
   ApprovedPremisesUser as User,
@@ -32,7 +32,7 @@ import { awaitingAssessmentStatuses } from '../../server/utils/assessments/utils
 import SufficientInformationConfirmPage from '../pages/assess/sufficientInformationConfirmPage'
 
 export default class AseessHelper {
-  assessmentSummary: AssessmentSummary
+  assessmentSummary: Cas1AssessmentSummary
 
   pages = {
     reviewApplication: [] as Array<AssessPage>,
