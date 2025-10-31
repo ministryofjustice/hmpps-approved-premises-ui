@@ -28,17 +28,17 @@ export const validateNewPlacement = (body: Partial<NewPlacementForm>) => {
   const endDate = DateFormats.datepickerInputToIsoString(body.newPlacementDepartureDate)
 
   if (!startDate) {
-    errors.newPlacementArrivalDate = 'Enter or select an arrival date'
+    errors.newPlacementArrivalDate = 'Enter or select an expected arrival date'
   } else if (!isoDateIsValid(startDate)) {
-    errors.newPlacementArrivalDate = 'Enter a valid arrival date'
+    errors.newPlacementArrivalDate = 'Enter a valid expected arrival date'
   }
 
   if (!endDate) {
-    errors.newPlacementDepartureDate = 'Enter or select a departure date'
+    errors.newPlacementDepartureDate = 'Enter or select an expected departure date'
   } else if (!isoDateIsValid(endDate)) {
-    errors.newPlacementDepartureDate = 'Enter a valid departure date'
+    errors.newPlacementDepartureDate = 'Enter a valid expected departure date'
   } else if (!errors.newPlacementArrivalDate && endDate <= startDate) {
-    errors.newPlacementDepartureDate = 'The departure date must be after the arrival date'
+    errors.newPlacementDepartureDate = 'The expected departure date must be after the expected arrival date'
   }
 
   if (!body.newPlacementReason) {
@@ -73,6 +73,7 @@ export const criteriaSummaryList = (placementRequest: Cas1PlacementRequestDetail
   ],
 })
 
+export const newPlacementReasons = 
 export const newPlacementSummaryList = (
   {
     apType,
