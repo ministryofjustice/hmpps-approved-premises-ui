@@ -106,10 +106,11 @@ describe('spaceSearchController', () => {
     })
 
     describe('when the search is part of a new placement', () => {
-      const searchStateWithNewPlacement = {
+      const searchStateWithNewPlacement: SpaceSearchFormData = {
         ...searchState,
-        newPlacementReason: 'Reason for the new placement',
+        newPlacementReason: 'extending_placement_no_capacity_at_current_ap',
         newPlacementCriteriaChanged: 'no' as YesOrNo,
+        notes: 'Some notes',
       }
 
       beforeEach(() => {
@@ -130,7 +131,7 @@ describe('spaceSearchController', () => {
           'match/search',
           expect.objectContaining({
             newPlacementCriteriaChanged: 'no',
-            newPlacementReason: 'Reason for the new placement',
+            newPlacementReason: searchStateWithNewPlacement.newPlacementReason,
             newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
           }),
         )

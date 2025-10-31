@@ -279,7 +279,8 @@ describe('OccupancyViewController', () => {
         newPlacementArrivalDate: DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'datePicker' }),
         newPlacementDepartureDate: DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' }),
         newPlacementCriteriaChanged: 'no',
-        newPlacementReason: 'Some reason',
+        newPlacementReason: 'public_protection',
+        notes: 'Some notes',
       }
       request.session.multiPageFormData.spaceSearch = {
         [placementRequestDetail.id]: searchStateWithNewPlacement,

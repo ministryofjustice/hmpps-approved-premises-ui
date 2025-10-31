@@ -66,6 +66,7 @@ export default class {
         releaseType: placementRequest.releaseType,
         isWomensApplication: placementRequest.application.isWomensApplication,
         newPlacementReason: searchState.newPlacementReason,
+        notes: searchState.notes,
       })
 
       return res.render('match/placementRequests/spaceBookings/new', {
@@ -98,7 +99,8 @@ export default class {
         departureDate: searchState.departureDate,
         premisesId,
         characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        additionalInformation: searchState.newPlacementReason,
+        additionalInformation: searchState.notes,
+        transferReason: searchState.newPlacementReason,
       }
 
       try {
@@ -122,7 +124,7 @@ export default class {
           })
         }
 
-        this.formData.remove(placementRequestId, req.session)
+        await this.formData.remove(placementRequestId, req.session)
 
         return req.session.save(() => {
           res.redirect(redirect)

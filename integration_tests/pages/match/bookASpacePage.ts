@@ -3,11 +3,13 @@ import type {
   Cas1Premises,
   Cas1PremisesSearchResultSummary,
   Cas1SpaceBookingCharacteristic,
+  TransferReason,
 } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 import { characteristicsBulletList } from '../../../server/utils/characteristicsUtils'
+import { newPlacementReasons } from '../../../server/utils/match'
 
 export default class BookASpacePage extends Page {
   constructor() {
@@ -20,7 +22,8 @@ export default class BookASpacePage extends Page {
     arrivalDate: string,
     departureDate: string,
     criteria: Array<Cas1SpaceBookingCharacteristic>,
-    reason?: string,
+    reason?: TransferReason,
+    notes?: string,
   ): void {
     this.shouldContainSummaryListItems(
       [
@@ -39,7 +42,8 @@ export default class BookASpacePage extends Page {
           value: { text: DateFormats.durationBetweenDates(departureDate, arrivalDate).ui },
         },
         { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
-        reason ? { key: { text: 'Reason for placement' }, value: { text: reason } } : undefined,
+        reason ? { key: { text: 'Reason for placement' }, value: { text: newPlacementReasons[reason] } } : undefined,
+        notes ? { key: { text: 'Additional information' }, value: { text: notes } } : undefined,
       ].filter(Boolean),
     )
   }

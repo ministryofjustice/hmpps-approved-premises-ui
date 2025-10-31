@@ -1,6 +1,7 @@
 import { Request, Response, RequestHandler } from 'express'
 
 import { SpaceSearchFormData } from '@approved-premises/ui'
+import { newPlacementReasons } from '../../../utils/match'
 import adminPaths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
@@ -59,6 +60,7 @@ export default class NewPlacementController {
         contextKeyDetails,
         backlink: adminPaths.admin.placementRequests.show({ placementRequestId }),
         pageHeading: 'New placement details',
+        reasonOptions: convertKeyValuePairToRadioItems(newPlacementReasons),
         errors,
         errorSummary,
         ...formValues,
