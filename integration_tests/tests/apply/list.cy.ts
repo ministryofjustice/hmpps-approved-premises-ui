@@ -12,17 +12,18 @@ import { signIn } from '../signIn'
 import CheckSentenceTypePage from '../../pages/match/placementRequestForm/checkSentenceType'
 import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 context('Applications dashboard', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as an applicant
+    GIVEN('I am signed in as an applicant')
     signIn('applicant')
   })
 
   it('shows the dashboard ', () => {
-    // Given there are applications in the database
+    GIVEN('there are applications in the database')
     const inProgressApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'started' })
     const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingAssesment' })
     const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
@@ -45,7 +46,7 @@ context('Applications dashboard', () => {
       ].flat(),
     )
 
-    // When I visit the Previous Applications page
+    WHEN('I visit the Previous Applications page')
     const page = ListPage.visit(
       inProgressApplications,
       submittedApplications,
@@ -53,35 +54,35 @@ context('Applications dashboard', () => {
       inactiveApplications,
     )
 
-    // Then I should see all of the in progress applications
+    THEN('I should see all of the in progress applications')
     page.shouldShowInProgressApplications()
 
-    // And I click on the Further Information Requested tab
+    AND('I click on the Further Information Requested tab')
     page.clickFurtherInformationRequestedTab()
 
-    // Then I should see the applications where further information has been requested
+    THEN('I should see the applications where further information has been requested')
     page.shouldShowFurtherInformationRequestedApplications()
 
-    // And I click on the submitted tab
+    AND('I click on the submitted tab')
     page.clickSubmittedTab()
 
-    // Then I should see the applications that have been submitted
+    THEN('I should see the applications that have been submitted')
     page.shouldShowSubmittedApplications()
 
-    // And I click on the inactive tab
+    AND('I click on the inactive tab')
     page.clickInactiveTab()
 
-    // Then I should see the applications that are expired or withdrawn
+    THEN('I should see the applications that are expired or withdrawn')
     page.shouldShowInactiveApplications()
 
-    // And I the button should take me to the application start page
+    AND('I the button should take me to the application start page')
     page.clickSubmit()
 
     Page.verifyOnPage(StartPage)
   })
 
   it('shows the dashboard lao', () => {
-    // Given there are applications in the database
+    GIVEN('there are applications in the database')
     const inProgressApplications = cas1ApplicationSummaryFactory.buildList(1, {
       status: 'started',
       person: personFactory.build({ isRestricted: true }),
@@ -102,25 +103,25 @@ context('Applications dashboard', () => {
       ].flat(),
     )
 
-    // When I visit the Previous Applications page
+    WHEN('I visit the Previous Applications page')
     const page = ListPage.visit(inProgressApplications, submittedApplications, requestedFurtherInformationApplications)
 
-    // Then I should see all of the in progress applications
+    THEN('I should see all of the in progress applications')
     page.shouldShowInProgressApplications()
 
-    // And I click on the Further Information Requested tab
+    AND('I click on the Further Information Requested tab')
     page.clickFurtherInformationRequestedTab()
 
-    // Then I should see the applications where further information has been requested
+    THEN('I should see the applications where further information has been requested')
     page.shouldShowFurtherInformationRequestedApplications()
 
-    // And I click on the submitted tab
+    AND('I click on the submitted tab')
     page.clickSubmittedTab()
 
-    // Then I should see the applications that have been submitted
+    THEN('I should see the applications that have been submitted')
     page.shouldShowSubmittedApplications()
 
-    // And I the button should take me to the application start page
+    AND('I the button should take me to the application start page')
     page.clickSubmit()
 
     Page.verifyOnPage(StartPage)
@@ -128,7 +129,7 @@ context('Applications dashboard', () => {
 
   it('request for placement for my application status awaiting placement ', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
-      // Given there are applications in the database
+      GIVEN('there are applications in the database')
       const inProgressApplications = cas1ApplicationSummaryFactory.buildList(5, {
         status: 'started',
         hasRequestsForPlacement: false,
@@ -153,10 +154,8 @@ context('Applications dashboard', () => {
         document: applicationDocument,
       })
 
-      // And there is a placement application in the DB
-      const placementApplicationId = '123'
+      AND('there is a placement application in the DB')
       const placementApplication = placementApplicationFactory.build({
-        id: placementApplicationId,
         data: placementApplicationData,
         applicationId,
       })
@@ -164,21 +163,21 @@ context('Applications dashboard', () => {
       cy.task('stubPlacementApplication', placementApplication)
       cy.task('stubApplicationGet', { application: completedApplication })
 
-      // When I visit the Previous Applications page
+      WHEN('I visit the Previous Applications page')
       const page = ListPage.visit(
         inProgressApplications,
         awaitingPlacementApplications,
         requestedFurtherInformationApplications,
       )
 
-      // And I click on the submitted tab
+      AND('I click on the submitted tab')
       page.clickSubmittedTab()
 
-      // Then I should be able to create a placement
+      THEN('I should be able to create a placement')
       page.clickLink('Create placement request')
 
-      // And I should be on placement request
-      Page.verifyOnPage(CheckSentenceTypePage, placementApplicationId)
+      AND('I should be on placement request')
+      Page.verifyOnPage(CheckSentenceTypePage, placementApplication.id)
     })
   })
 })

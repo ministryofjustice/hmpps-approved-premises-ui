@@ -7,6 +7,7 @@ import asyncMiddleware from '../middleware/asyncMiddleware'
 import { MiddlewareSpec } from '../@types/ui'
 import applicationAuthMiddleware from '../middleware/applicationAuthMiddleware'
 import { validateMiddleware } from '../middleware/validateMiddleware'
+import { fieldValidators } from './validators'
 
 export default function actions(router: Router, auditService: AuditService) {
   return {
@@ -15,7 +16,7 @@ export default function actions(router: Router, auditService: AuditService) {
         path,
         asyncMiddleware(
           applicationAuthMiddleware(
-            validateMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
+            validateMiddleware(auditMiddleware(handler, auditService, middlewareSpec), fieldValidators),
             middlewareSpec,
           ),
         ),

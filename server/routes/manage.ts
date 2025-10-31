@@ -7,14 +7,6 @@ import type { Services } from '../services'
 import paths from '../paths/manage'
 
 import actions from './utils'
-import { validators } from './validators'
-
-const premisesIdValidator = { parameterValidators: { premisesId: validators.uuid } }
-const placementIdValidator = { parameterValidators: { premisesId: validators.uuid, placementId: validators.uuid } }
-const premisesBedIdValidator = { parameterValidators: { premisesId: validators.uuid, bedId: validators.uuid } }
-const oosbValidator = {
-  parameterValidators: { premisesId: validators.uuid, bedId: validators.uuid, id: validators.uuid },
-}
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { get, post } = actions(router, services.auditService)
@@ -47,16 +39,13 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.deprecated.premises.show.pattern, redirectController.redirect(paths.premises.show), {
     auditEvent: 'SHOW_PREMISES_REDIRECT',
-    ...premisesIdValidator,
   })
 
   get(paths.deprecated.premises.beds.index.pattern, redirectController.redirect(paths.premises.beds.index), {
     auditEvent: 'LIST_BEDS_REDIRECT',
-    ...premisesIdValidator,
   })
   get(paths.deprecated.premises.beds.show.pattern, redirectController.redirect(paths.premises.beds.show), {
     auditEvent: 'SHOW_BED_REDIRECT',
-    ...premisesBedIdValidator,
   })
 
   get(
@@ -64,28 +53,23 @@ export default function routes(controllers: Controllers, router: Router, service
     redirectController.redirect(paths.outOfServiceBeds.premisesIndex, { temporality: 'current' }),
     {
       auditEvent: 'LIST_LOST_BEDS_REDIRECT',
-      ...premisesIdValidator,
     },
   )
   get(paths.deprecated.lostBeds.new.pattern, redirectController.redirect(paths.outOfServiceBeds.new), {
     auditEvent: 'NEW_LOST_BED_REDIRECT',
-    ...premisesBedIdValidator,
   })
   post(paths.deprecated.lostBeds.create.pattern, redirectController.redirect(paths.outOfServiceBeds.new), {
     auditEvent: 'CREATE_LOST_BED_REDIRECT',
-    ...premisesBedIdValidator,
   })
   get(
     paths.deprecated.lostBeds.show.pattern,
     redirectController.redirect(paths.outOfServiceBeds.show, { tab: 'details' }),
     {
       auditEvent: 'SHOW_LOST_BED_REDIRECT',
-      ...oosbValidator,
     },
   )
   post(paths.deprecated.lostBeds.update.pattern, redirectController.redirect(paths.outOfServiceBeds.update), {
     auditEvent: 'UPDATE_LOST_BED_REDIRECT',
-    parameterValidators: { premisesId: validators.uuid, id: validators.uuid },
   })
 
   // The following two URLs may still be present in old confirmation emails. Legacy bookings have been moved to space
@@ -106,79 +90,64 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.show.pattern, premisesController.show(), {
     auditEvent: 'SHOW_PREMISES',
     allowedPermissions: ['cas1_premises_view'],
-    ...premisesIdValidator,
   })
 
   // Beds
   get(paths.premises.beds.index.pattern, bedsController.index(), {
     auditEvent: 'LIST_BEDS',
     allowedPermissions: ['cas1_premises_view'],
-    ...premisesIdValidator,
   })
   get(paths.premises.beds.show.pattern, bedsController.show(), {
     auditEvent: 'SHOW_BED',
     allowedPermissions: ['cas1_premises_view'],
-    parameterValidators: { premisesId: validators.uuid, bedId: validators.uuid },
   })
 
   // Local restrictions
   get(paths.premises.localRestrictions.index.pattern, localRestrictionsController.index(), {
     auditEvent: 'LOCAL_RESTRICTIONS_VIEW',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
-    ...premisesIdValidator,
   })
   get(paths.premises.localRestrictions.new.pattern, localRestrictionsController.new(), {
     auditEvent: 'LOCAL_RESTRICTIONS_NEW',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
-    ...premisesIdValidator,
   })
   post(paths.premises.localRestrictions.new.pattern, localRestrictionsController.create(), {
     auditEvent: 'LOCAL_RESTRICTIONS_CREATE',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
-    ...premisesIdValidator,
   })
   get(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.confirmRemove(), {
     auditEvent: 'LOCAL_RESTRICTIONS_DELETE_CONFIRM',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
-    parameterValidators: { premisesId: validators.uuid, restrictionId: validators.uuid },
   })
   post(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.remove(), {
     auditEvent: 'LOCAL_RESTRICTIONS_DELETE',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
-    parameterValidators: { premisesId: validators.uuid, restrictionId: validators.uuid },
   })
 
   // Placements
   get(paths.premises.placements.showTabApplication.pattern, placementController.show('application'), {
     auditEvent: 'SHOW_PLACEMENT',
-    ...placementIdValidator,
   })
   get(paths.premises.placements.showTabAssessment.pattern, placementController.show('assessment'), {
     auditEvent: 'SHOW_PLACEMENT',
-    ...placementIdValidator,
   })
   get(paths.premises.placements.showTabPlacementRequest.pattern, placementController.show('placementRequest'), {
     auditEvent: 'SHOW_PLACEMENT',
-    ...placementIdValidator,
   })
   get(paths.premises.placements.showTabTimeline.pattern, placementController.show('timeline'), {
     auditEvent: 'SHOW_PLACEMENT',
-    ...placementIdValidator,
   })
   get(paths.premises.placements.show.pattern, placementController.show(), {
     auditEvent: 'SHOW_PLACEMENT',
-    ...placementIdValidator,
   })
 
   get(paths.premises.placements.arrival.pattern, arrivalsController.new(), {
     auditEvent: 'NEW_ARRIVAL',
     allowedPermissions: ['cas1_space_booking_record_arrival'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.arrival.pattern, arrivalsController.create(), {
     auditEvent: 'CREATE_ARRIVAL_SUCCESS',
     allowedPermissions: ['cas1_space_booking_record_arrival'],
-    ...placementIdValidator,
     redirectAuditEventSpecs: [
       {
         path: paths.premises.placements.arrival.pattern,
@@ -189,12 +158,10 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.placements.keyworker.new.pattern, keyworkerController.new(), {
     auditEvent: 'ASSIGN_KEYWORKER',
     allowedPermissions: ['cas1_space_booking_record_keyworker'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.keyworker.new.pattern, keyworkerController.create(), {
     auditEvent: 'ASSIGN_KEYWORKER_SUCCESS',
     allowedPermissions: ['cas1_space_booking_record_keyworker'],
-    ...placementIdValidator,
     redirectAuditEventSpecs: [
       {
         path: paths.premises.placements.keyworker.new.pattern,
@@ -205,17 +172,14 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.placements.keyworker.find.pattern, keyworkerController.find(), {
     auditEvent: 'ASSIGN_KEYWORKER_FIND',
     allowedPermissions: ['cas1_space_booking_record_keyworker'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.nonArrival.pattern, nonArrivalsController.new(), {
     auditEvent: 'NON_ARRIVAL',
     allowedPermissions: ['cas1_space_booking_record_non_arrival'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.nonArrival.pattern, nonArrivalsController.create(), {
     auditEvent: 'NON_ARRIVAL_SUCCESS',
     allowedPermissions: ['cas1_space_booking_record_non_arrival'],
-    ...placementIdValidator,
     redirectAuditEventSpecs: [
       {
         path: paths.premises.placements.nonArrival.pattern,
@@ -223,22 +187,18 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
   })
-
   // Placement departures
   get(paths.premises.placements.departure.new.pattern, departuresController.new(), {
     auditEvent: 'NEW_DEPARTURE',
     allowedPermissions: ['cas1_space_booking_record_departure'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.departure.new.pattern, departuresController.saveNew(), {
     auditEvent: 'NEW_DEPARTURE_SAVE',
     allowedPermissions: ['cas1_space_booking_record_departure'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.departure.breachOrRecallReason.pattern, departuresController.breachOrRecallReason(), {
     auditEvent: 'NEW_DEPARTURE_BREACH_OR_RECALL',
     allowedPermissions: ['cas1_space_booking_record_departure'],
-    ...placementIdValidator,
   })
   post(
     paths.premises.placements.departure.breachOrRecallReason.pattern,
@@ -246,35 +206,28 @@ export default function routes(controllers: Controllers, router: Router, service
     {
       auditEvent: 'NEW_DEPARTURE_BREACH_OR_RECALL_SAVE',
       allowedPermissions: ['cas1_space_booking_record_departure'],
-      ...placementIdValidator,
     },
   )
   get(paths.premises.placements.departure.moveOnCategory.pattern, departuresController.moveOnCategory(), {
     auditEvent: 'NEW_DEPARTURE_MOVE_ON',
     allowedPermissions: ['cas1_space_booking_record_departure'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.departure.moveOnCategory.pattern, departuresController.saveMoveOnCategory(), {
     auditEvent: 'NEW_DEPARTURE_MOVE_ON_SAVE',
     allowedPermissions: ['cas1_space_booking_record_departure'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.departure.notes.pattern, departuresController.notes(), {
     auditEvent: 'NEW_DEPARTURE_NOTES',
     allowedPermissions: ['cas1_space_booking_record_departure'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.departure.notes.pattern, departuresController.create(), {
     auditEvent: 'NEW_DEPARTURE_CREATE',
     allowedPermissions: ['cas1_space_booking_record_departure'],
-    ...placementIdValidator,
   })
-
   // Placement cancellations
   get(paths.premises.placements.cancellations.new.pattern, cancellationsController.new(), {
     auditEvent: 'NEW_CANCELLATION',
     allowedPermissions: ['cas1_space_booking_withdraw'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.cancellations.create.pattern, cancellationsController.create(), {
     auditEvent: 'CREATE_CANCELLATION_SUCCESS',
@@ -285,132 +238,109 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
     allowedPermissions: ['cas1_space_booking_withdraw'],
-    ...placementIdValidator,
   })
 
   // Placement changes
   get(paths.premises.placements.changes.new.pattern, changesController.new(), {
     auditEvent: 'NEW_BOOKING_CHANGE',
     allowedPermissions: ['cas1_space_booking_create'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.changes.new.pattern, changesController.saveNew(), {
     auditEvent: 'SAVE_NEW_BOOKING_CHANGE',
     allowedPermissions: ['cas1_space_booking_create'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.changes.confirm.pattern, changesController.confirm(), {
     auditEvent: 'CONFIRM_BOOKING_CHANGE',
     allowedPermissions: ['cas1_space_booking_create'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.changes.confirm.pattern, changesController.create(), {
     auditEvent: 'CREATE_BOOKING_CHANGE',
     allowedPermissions: ['cas1_space_booking_create'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.changes.dayOccupancy.pattern, occupancyViewController.viewDay(), {
     auditEvent: 'CREATE_BOOKING_VIEW_DAY_OCCUPANCY',
     allowedPermissions: ['cas1_space_booking_create'],
-    parameterValidators: { premisesId: validators.uuid, placementId: validators.uuid, date: validators.isoDate },
   })
 
   // Placement transfers
   get(paths.premises.placements.transfers.new.pattern, transfersController.new(), {
     auditEvent: 'TRANSFER_REQUEST_NEW',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.transfers.new.pattern, transfersController.saveNew(), {
     auditEvent: 'TRANSFER_REQUEST_NEW_SAVE',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.details(), {
     auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.saveDetails(), {
     auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS_SAVE',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.transfers.emergencyConfirm.pattern, transfersController.confirm(), {
     auditEvent: 'TRANSFER_REQUEST_EMERGENCY_CONFIRM',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.transfers.emergencyConfirm.pattern, transfersController.create(), {
     auditEvent: 'TRANSFER_REQUEST_EMERGENCY_CREATE',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.transfers.plannedDetails.pattern, plannedTransferController.details(), {
     auditEvent: 'TRANSFER_REQUEST_PLANNED_DETAILS',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.transfers.plannedDetails.pattern, plannedTransferController.detailsSave(), {
     auditEvent: 'TRANSFER_REQUEST_PLANNED_DETAILS_SAVE',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   get(paths.premises.placements.transfers.plannedConfirm.pattern, plannedTransferController.confirm(), {
     auditEvent: 'TRANSFER_REQUEST_PLANNED_CONFIRM',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
   post(paths.premises.placements.transfers.plannedConfirm.pattern, plannedTransferController.create(), {
     auditEvent: 'TRANSFER_REQUEST_PLANNED_CREATE',
     allowedPermissions: ['cas1_transfer_create'],
-    ...placementIdValidator,
   })
 
   // Change requests - Appeals
   get(paths.premises.placements.appeal.new.pattern, placementAppealController.new(), {
     auditEvent: 'PLACEMENT_APPEAL_NEW',
     allowedPermissions: ['cas1_placement_appeal_create'],
-    ...placementIdValidator,
   })
 
   post(paths.premises.placements.appeal.new.pattern, placementAppealController.newSave(), {
     auditEvent: 'PLACEMENT_APPEAL_SAVE',
     allowedPermissions: ['cas1_placement_appeal_create'],
-    ...placementIdValidator,
   })
 
   get(paths.premises.placements.appeal.confirm.pattern, placementAppealController.confirm(), {
     auditEvent: 'PLACEMENT_APPEAL_CONFIRM',
     allowedPermissions: ['cas1_placement_appeal_create'],
-    ...placementIdValidator,
   })
 
   post(paths.premises.placements.appeal.confirm.pattern, placementAppealController.create(), {
     auditEvent: 'PLACEMENT_APPEAL_CREATE',
     allowedPermissions: ['cas1_placement_appeal_create'],
-    ...placementIdValidator,
   })
 
   // Occupancy
   get(paths.premises.occupancy.view.pattern, apOccupancyViewController.view(), {
     auditEvent: 'VIEW_OCCUPANCY',
     allowedPermissions: ['cas1_premises_view'],
-    ...premisesIdValidator,
   })
 
   // Occupancy for day
   get(paths.premises.occupancy.day.pattern, apOccupancyViewController.dayView(), {
     auditEvent: 'VIEW_DAY_SUMMARY',
     allowedPermissions: ['cas1_premises_view'],
-    parameterValidators: { premisesId: validators.uuid, date: validators.isoDate },
   })
 
   // Out of service beds
   get(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.new(), {
     auditEvent: 'NEW_OUT_OF_SERVICE_BED',
     allowedPermissions: ['cas1_out_of_service_bed_create'],
-    parameterValidators: { premisesId: validators.uuid, bedId: validators.uuid },
   })
   post(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.create(), {
     auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
@@ -421,17 +351,14 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
     allowedPermissions: ['cas1_out_of_service_bed_create'],
-    ...premisesBedIdValidator,
   })
   get(paths.outOfServiceBeds.premisesIndex.pattern, outOfServiceBedsController.premisesIndex(), {
     auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
     allowedPermissions: ['cas1_view_out_of_service_beds'],
-    ...premisesIdValidator,
   })
   get(paths.outOfServiceBeds.update.pattern, updateOutOfServiceBedsController.new(), {
     auditEvent: 'SHOW_UPDATE_OUT_OF_SERVICE_BED',
     allowedPermissions: ['cas1_out_of_service_bed_create'],
-    ...oosbValidator,
   })
   post(paths.outOfServiceBeds.update.pattern, updateOutOfServiceBedsController.create(), {
     auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED',
@@ -442,22 +369,18 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'CREATE_UPDATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
-    ...oosbValidator,
   })
   get(paths.outOfServiceBeds.cancel.pattern, outOfServiceBedCancellationController.new(), {
     auditEvent: 'SHOW_CANCEL_OUT_OF_SERVICE_BED',
     allowedPermissions: ['cas1_out_of_service_bed_cancel'],
-    ...oosbValidator,
   })
   post(paths.outOfServiceBeds.cancel.pattern, outOfServiceBedCancellationController.cancel(), {
     auditEvent: 'CANCEL_OUT_OF_SERVICE_BED',
     allowedPermissions: ['cas1_out_of_service_bed_cancel'],
-    ...oosbValidator,
   })
   get(paths.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
     allowedPermissions: ['cas1_view_out_of_service_beds'],
-    ...oosbValidator,
   })
   get(paths.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
     auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
