@@ -21,6 +21,8 @@ export default class WithdrawalsController {
 
       const withdrawables = await this.applicationService.getWithdrawablesWithNotes(req.user.token, id)
 
+      if (!withdrawables.withdrawables.length) return res.redirect(applyPaths.applications.show({ id }))
+
       if (selectedWithdrawableType === 'placement') {
         const placementWithdrawables = sortAndFilterWithdrawables(withdrawables.withdrawables, ['space_booking'])
 
@@ -37,7 +39,7 @@ export default class WithdrawalsController {
           allBookings: [...placements],
           withdrawableType: 'placement',
           notes: withdrawables.notes,
-          contextKeyDetails: placementKeyDetails(placements[0]),
+          contextKeyDetails: placements[0] && placementKeyDetails(placements[0]),
         })
       }
 
