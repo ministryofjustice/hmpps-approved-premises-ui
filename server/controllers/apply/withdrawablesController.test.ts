@@ -78,7 +78,7 @@ describe('withdrawablesController', () => {
       })
     })
 
-    describe('Bookings', () => {
+    describe('Placements', () => {
       it(`renders the view, calling the booking service to retrieve bookings`, async () => {
         const selectedWithdrawableType = 'placement'
         const spaceBookingWithdrawables = withdrawableFactory.buildList(2, { type: 'space_booking' })
@@ -117,6 +117,18 @@ describe('withdrawablesController', () => {
         expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[0].id)
         expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[1].id)
       })
+    })
+
+    it('Redirects to application show page if there are no withdrawables', async () => {
+      const withdrawables = withdrawablesFactory.build({ withdrawables: [] })
+      applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
+
+      await withdrawablesController.show()(
+        { ...request, params: { id: applicationId }, query: { selectedWithdrawableType: 'placement' } },
+        response,
+        next,
+      )
+      expect(response.redirect).toHaveBeenCalledWith(applyPaths.applications.show({ id: applicationId }))
     })
   })
 
