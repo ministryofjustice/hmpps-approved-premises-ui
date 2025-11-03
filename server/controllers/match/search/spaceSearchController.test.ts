@@ -110,7 +110,7 @@ describe('spaceSearchController', () => {
         ...searchState,
         newPlacementReason: 'extending_placement_no_capacity_at_current_ap',
         newPlacementCriteriaChanged: 'no' as YesOrNo,
-        notes: 'Some notes',
+        newPlacementNotes: 'Some notes',
       }
 
       beforeEach(() => {

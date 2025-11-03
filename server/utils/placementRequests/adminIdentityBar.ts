@@ -58,7 +58,7 @@ export const adminActions = (
     if (hasPermission(user, ['cas1_space_booking_create_additional'])) {
       matchedActions.push({
         href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequest.id }),
-        text: 'Create new placement',
+        text: 'Book placement transfer',
       })
     }
 

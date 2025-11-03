@@ -30,7 +30,7 @@
                     id: "newPlacementArrivalDate",
                     name: "newPlacementArrivalDate",
                     label: {
-                        text: "What is the expected arrival date?",
+                        text: "Expected arrival date",
                         classes: "govuk-label--m"
                     },
                     hint: {
@@ -44,7 +44,7 @@
                     id: "newPlacementDepartureDate",
                     name: "newPlacementDepartureDate",
                     label: {
-                        text: "What is the expected departure date?",
+                        text: "Expected departure date",
                         classes: "govuk-label--m"
                     },
                     hint: {
@@ -66,8 +66,8 @@
                 }, fetchContext()) }}
 
                 {{ govukTextarea({
-                    id: "notes",
-                    name: "notes",
+                    id: "newPlacementNotes",
+                    name: "newPlacementNotes",
                     label: {
                         text: "Additional information",
                         classes: "govuk-label--m"
@@ -75,8 +75,8 @@
                     hint: {
                         text: "Include the name of the person that requested the transfer and any additional information about the reason for the transfer"
                     },
-                    value: notes,
-                    errorMessage: errors.notes
+                    value: newPlacementNotes,
+                    errorMessage: errors.newPlacementNotes
                 }) }}
 
                 {{ govukButton({

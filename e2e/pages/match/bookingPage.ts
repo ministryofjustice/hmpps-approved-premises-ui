@@ -11,7 +11,7 @@ export class BookingPage extends BasePage {
   }
 
   async clickConfirm() {
-    await this.page.getByRole('button', { name: 'Confirm and book' }).click()
+    await this.page.getByRole('button', { name: 'Confirm booking' }).click()
   }
 
   async shouldShowDatesOfPlacement(datesOfPlacement: E2EDatesOfPlacement) {

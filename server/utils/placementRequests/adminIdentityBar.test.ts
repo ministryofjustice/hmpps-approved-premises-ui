@@ -36,7 +36,7 @@ const setup = ({
 
   const actionCreateNewPlacement = {
     href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequestDetail.id }),
-    text: 'Create new placement',
+    text: 'Book placement transfer',
   }
   const actionWithdrawPlacement = {
     href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),

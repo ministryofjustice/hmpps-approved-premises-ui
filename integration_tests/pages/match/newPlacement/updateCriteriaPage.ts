@@ -10,7 +10,7 @@ import { spaceSearchCriteriaApLevelLabels, roomCharacteristicMap } from '../../.
 
 export default class UpdateCriteriaPage extends Page {
   constructor(placementRequest: Cas1PlacementRequestDetail) {
-    super('Update placement criteria')
+    super('Update placement transfer criteria')
 
     this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson, placementRequest.risks.tier.value.level)
   }

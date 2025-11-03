@@ -82,7 +82,7 @@ export const newPlacementSummaryList = (
     newPlacementArrivalDate,
     newPlacementDepartureDate,
     newPlacementReason,
-    notes,
+    newPlacementNotes,
   }: SpaceSearchFormData,
   currentPlacement?: Cas1SpaceBookingSummary,
 ): SummaryList => {
@@ -93,7 +93,7 @@ export const newPlacementSummaryList = (
 
   return {
     rows: [
-      currentPlacement && summaryListItem('Current AP', currentPlacement.premises.name),
+      currentPlacement && summaryListItem('Current Approved Premises', currentPlacement.premises.name),
       summaryListItem('Expected arrival date', arrivalDateIso, 'date'),
       summaryListItem('Expected departure date', departureDateIso, 'date'),
       summaryListItem(
@@ -112,8 +112,8 @@ export const newPlacementSummaryList = (
         'html',
       ),
       newPlacementReason &&
-        summaryListItem('Reason for placement', newPlacementReasons[newPlacementReason], 'textBlock'),
-      notes && summaryListItem('Additional information', notes, 'textBlock'),
+        summaryListItem('Reason for transfer', newPlacementReasons[newPlacementReason], 'textBlock'),
+      newPlacementNotes && summaryListItem('Additional information', newPlacementNotes, 'textBlock'),
     ].filter(Boolean),
   }
 }

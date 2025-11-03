@@ -139,6 +139,7 @@ describe('OccupancyViewController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
+        bookingHeading: 'Book placement',
         contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
         placementRequest: placementRequestDetail,
         selectedCriteria: roomCharacteristicsInlineList(searchState.roomCriteria, 'no room criteria'),
@@ -280,7 +281,7 @@ describe('OccupancyViewController', () => {
         newPlacementDepartureDate: DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' }),
         newPlacementCriteriaChanged: 'no',
         newPlacementReason: 'public_protection',
-        notes: 'Some notes',
+        newPlacementNotes: faker.lorem.paragraph(3),
       }
       request.session.multiPageFormData.spaceSearch = {
         [placementRequestDetail.id]: searchStateWithNewPlacement,
@@ -295,6 +296,10 @@ describe('OccupancyViewController', () => {
           newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
           arrivalDateHint: `Requested arrival date: ${DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'dateFieldHint' })}`,
           departureDateHint: `Requested departure date: ${DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'dateFieldHint' })}`,
+          newPlacementReason: 'public_protection',
+          newPlacementNotes: searchStateWithNewPlacement.newPlacementNotes,
+          pageHeading: `View spaces in ${premises.name}`,
+          bookingHeading: 'Book placement transfer',
         }),
       )
     })

@@ -261,7 +261,7 @@ describe('matchUtils', () => {
     const expectedDepartureDate = '2025-11-18'
     const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
     const newPlacementReason: TransferReason = 'conflict_with_staff'
-    const notes = 'Some notes'
+    const newPlacementNotes = 'Some notes'
 
     it('returns summary list items for the space booking confirmation screen', () => {
       expect(
@@ -342,20 +342,20 @@ describe('matchUtils', () => {
         criteria,
         releaseType: placementRequest.releaseType,
         newPlacementReason,
-        notes,
+        newPlacementNotes,
       })
 
       expect(rows).toEqual(
         expect.arrayContaining([
           {
-            key: { text: 'Reason for placement' },
+            key: { text: 'Reason for transfer' },
             value: {
-              html: `<span class="govuk-summary-list__textblock">${newPlacementReasons[newPlacementReason]}</span>`,
+              text: newPlacementReasons[newPlacementReason],
             },
           },
           {
             key: { text: 'Additional information' },
-            value: { html: `<span class="govuk-summary-list__textblock">${notes}</span>` },
+            value: { html: `<span class="govuk-summary-list__textblock">${newPlacementNotes}</span>` },
           },
         ]),
       )
@@ -442,7 +442,7 @@ describe('matchUtils', () => {
 
       expect(creationNotificationBodyNewPlacement(placement)).toMatchStringIgnoringWhitespace(`
         <p>A placement has been created for Ben Johnson at Someplace from Wed 28 Jan 2026 to Fri 13 Feb 2026.</p>
-        <p>The original placement requires changes to the departure date.</p>
+        <p>You need to change the departure date for the original placement.</p>
       `)
     })
   })

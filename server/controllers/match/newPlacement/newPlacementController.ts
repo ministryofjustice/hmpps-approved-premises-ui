@@ -59,7 +59,7 @@ export default class NewPlacementController {
       return res.render('match/newPlacement/new', {
         contextKeyDetails,
         backlink: adminPaths.admin.placementRequests.show({ placementRequestId }),
-        pageHeading: 'New placement details',
+        pageHeading: 'Placement transfer details',
         reasonOptions: convertKeyValuePairToRadioItems(newPlacementReasons),
         errors,
         errorSummary,
@@ -109,7 +109,7 @@ export default class NewPlacementController {
       return res.render('match/newPlacement/check-criteria', {
         contextKeyDetails,
         backlink: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId }),
-        pageHeading: 'Check the placement criteria',
+        pageHeading: 'Check placement transfer criteria',
         criteriaSummary: criteriaSummaryList(placementRequest),
         criteriaChangedRadioItems: convertKeyValuePairToRadioItems(
           { yes: 'Yes', no: 'No' },
@@ -177,7 +177,7 @@ export default class NewPlacementController {
       return res.render('match/newPlacement/update-criteria', {
         contextKeyDetails,
         backlink: matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId }),
-        pageHeading: 'Update placement criteria',
+        pageHeading: 'Update placement transfer criteria',
         apTypeRadioItems: apTypeRadioItems(searchState.apType),
         criteriaCheckboxGroups: [
           checkBoxesForCriteria(

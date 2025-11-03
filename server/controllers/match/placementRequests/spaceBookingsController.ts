@@ -66,10 +66,11 @@ export default class {
         releaseType: placementRequest.releaseType,
         isWomensApplication: placementRequest.application.isWomensApplication,
         newPlacementReason: searchState.newPlacementReason,
-        notes: searchState.notes,
+        newPlacementNotes: searchState.newPlacementNotes,
       })
 
       return res.render('match/placementRequests/spaceBookings/new', {
+        pageHeading: searchState.newPlacementReason ? 'Confirm placement transfer' : 'Confirm booking',
         backLink,
         submitLink,
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
@@ -99,7 +100,7 @@ export default class {
         departureDate: searchState.departureDate,
         premisesId,
         characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
-        additionalInformation: searchState.notes,
+        additionalInformation: searchState.newPlacementNotes,
         transferReason: searchState.newPlacementReason,
       }
 
@@ -109,7 +110,7 @@ export default class {
 
         if (searchState.newPlacementReason) {
           req.flash('success', {
-            heading: 'Placement created',
+            heading: 'Placement transfer booked',
             body: creationNotificationBodyNewPlacement(placement),
           })
           redirect = paths.admin.placementRequests.show({ placementRequestId })

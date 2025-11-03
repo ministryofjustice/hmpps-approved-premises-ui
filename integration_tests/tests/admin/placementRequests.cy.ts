@@ -199,7 +199,7 @@ context('Placement Requests', () => {
       showPage.shouldShowSummary()
 
       AND('I should see available actions')
-      showPage.shouldHaveActions(['Change placement', 'Withdraw placement', 'Create new placement'])
+      showPage.shouldHaveActions(['Change placement', 'Withdraw placement', 'Book placement transfer'])
 
       AND('I should see the booking information')
       showPage.shouldShowBookingInformation(matchedPlacementRequest.spaceBookings)

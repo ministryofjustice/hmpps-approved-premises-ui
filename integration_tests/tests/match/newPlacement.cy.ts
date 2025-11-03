@@ -31,7 +31,7 @@ context('New Placement', () => {
   const newPlacementArrivalDate = DateFormats.dateObjtoUIDate(newArrivalDate, { format: 'datePicker' })
   const newPlacementDepartureDate = DateFormats.dateObjtoUIDate(newDepartureDate, { format: 'datePicker' })
   const newPlacementReason = faker.helpers.arrayElement(Object.keys(newPlacementReasons)) as TransferReason
-  const notes = faker.word.words(10)
+  const newPlacementNotes = faker.lorem.paragraph(3)
 
   const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking().build({
     person: personFactory.build({ type: 'FullPerson', name: 'Dave Watts' }),
@@ -74,8 +74,8 @@ context('New Placement', () => {
     WHEN('I view a placement request')
     const placementRequestPage = ShowPage.visit(placementRequest)
 
-    AND("I click on the 'Create New Placement' action")
-    placementRequestPage.clickAction('Create new placement')
+    AND("I click on the 'Book placement transfer' action")
+    placementRequestPage.clickAction('Book placement transfer')
 
     THEN('I should see the page to create a new placement')
     const newPlacementPage = Page.verifyOnPage(NewPlacementPage, placementRequest)
@@ -98,7 +98,7 @@ context('New Placement', () => {
       newPlacementArrivalDate,
       newPlacementDepartureDate,
       newPlacementReason,
-      notes,
+      newPlacementNotes,
     })
     newPlacementPage.clickButton('Save and continue')
 
@@ -125,7 +125,7 @@ context('New Placement', () => {
       newPlacementArrivalDate: DateFormats.dateObjToIsoDate(newArrivalDate),
       newPlacementDepartureDate: DateFormats.dateObjToIsoDate(newDepartureDate),
       newPlacementReason,
-      notes,
+      newPlacementNotes,
       newPlacementCriteriaChanged: 'no',
       apType: 'normal',
       apCriteria: ['isCatered'],
@@ -154,7 +154,7 @@ context('New Placement', () => {
       newPlacementArrivalDate,
       newPlacementDepartureDate,
       newPlacementReason,
-      notes,
+      newPlacementNotes,
     })
 
     WHEN('I click the back link')
@@ -163,8 +163,8 @@ context('New Placement', () => {
     THEN('I should see the placement request page')
     Page.verifyOnPage(ShowPage, placementRequest)
 
-    WHEN("I click on the 'Create New Placement' action")
-    placementRequestPage.clickAction('Create new placement')
+    WHEN("I click on the 'Book placement transfer' action")
+    placementRequestPage.clickAction('Book placement transfer')
 
     THEN('I should see the page to create a new placement')
     Page.verifyOnPage(NewPlacementPage, placementRequest)
@@ -174,7 +174,7 @@ context('New Placement', () => {
       newPlacementArrivalDate,
       newPlacementDepartureDate,
       newPlacementReason,
-      notes,
+      newPlacementNotes,
     })
 
     WHEN('I submit the form')
@@ -209,7 +209,7 @@ context('New Placement', () => {
       newPlacementArrivalDate,
       newPlacementDepartureDate,
       newPlacementReason,
-      notes,
+      newPlacementNotes,
       newPlacementCriteriaChanged: 'no',
       apType: 'isPIPE',
       apCriteria: ['acceptsChildSexOffenders'],
@@ -242,7 +242,7 @@ context('New Placement', () => {
     occupancyViewPage.clickButton('Continue')
 
     THEN('I should see the page to confirm the new placement with the new placement information')
-    const confirmBookingPage = Page.verifyOnPage(BookASpacePage)
+    const confirmBookingPage = Page.verifyOnPage(BookASpacePage, 'Confirm placement transfer')
     confirmBookingPage.shouldShowBookingDetails(
       placementRequest,
       chosenResult.premises,
@@ -258,16 +258,16 @@ context('New Placement', () => {
       ...placementRequest,
       spaceBookings: [...placementRequest.spaceBookings, newPlacementSummary],
     })
-    confirmBookingPage.clickButton('Confirm and book')
+    confirmBookingPage.clickButton('Confirm booking')
 
     THEN('I should see the placement request page')
     Page.verifyOnPage(ShowPage, placementRequest)
 
     AND('I should see a confirmation banner')
     placementRequestPage.shouldShowBanner(`
-      Placement created
+      Placement transfer booked
       A placement has been created for Dave Watts at Premises name from Sat 28 Feb 2026 to Fri 10 Apr 2026.
-      The original placement requires changes to the departure date.
+      You need to change the departure date for the original placement.
     `)
 
     AND('The new placement details should be shown')

@@ -97,7 +97,7 @@ describe('new placement utils', () => {
       newPlacementArrivalDate: '14/4/2026',
       newPlacementDepartureDate: '7/5/2026',
       newPlacementReason: 'public_protection',
-      notes: 'Some notes',
+      newPlacementNotes: 'Some notes',
       apCriteria: ['acceptsSexOffenders'],
       roomCriteria: ['isArsonSuitable', 'isWheelchairDesignated'],
       apType: 'isESAP',
@@ -121,7 +121,7 @@ describe('new placement utils', () => {
             },
           },
           {
-            key: { text: 'Reason for placement' },
+            key: { text: 'Reason for transfer' },
             value: { html: '<span class="govuk-summary-list__textblock">Public protection</span>' },
           },
           {
@@ -141,7 +141,7 @@ describe('new placement utils', () => {
       const summaryList = newPlacementSummaryList(searchState, currentPlacement)
       expect(summaryList.rows).toHaveLength(9)
       expect(summaryList.rows[0]).toEqual({
-        key: { text: 'Current AP' },
+        key: { text: 'Current Approved Premises' },
         value: { text: 'The current premises name' },
       })
     })

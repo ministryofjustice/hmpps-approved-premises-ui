@@ -35,7 +35,7 @@ type SpaceBookingConfirmationData = {
   releaseType?: ReleaseTypeOption
   isWomensApplication?: boolean
   newPlacementReason?: TransferReason
-  notes?: string
+  newPlacementNotes?: string
 }
 
 export const newPlacementReasons: Record<TransferReason, string> = {
@@ -58,7 +58,7 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     releaseType,
     isWomensApplication,
     newPlacementReason,
-    notes,
+    newPlacementNotes,
   } = data
 
   return [
@@ -72,8 +72,8 @@ export const spaceBookingConfirmationSummaryListRows = (data: SpaceBookingConfir
     summaryListItem('Expected departure date', expectedDepartureDate, 'date'),
     summaryListItem('Length of stay', DateFormats.durationBetweenDates(expectedDepartureDate, expectedArrivalDate).ui),
     releaseType && summaryListItem('Release type', allReleaseTypes[releaseType]),
-    newPlacementReason && summaryListItem('Reason for placement', newPlacementReasons[newPlacementReason], 'textBlock'),
-    notes && summaryListItem('Additional information', notes, 'textBlock'),
+    newPlacementReason && summaryListItem('Reason for transfer', newPlacementReasons[newPlacementReason]),
+    newPlacementNotes && summaryListItem('Additional information', newPlacementNotes, 'textBlock'),
   ].filter(Boolean)
 }
 
@@ -193,5 +193,5 @@ export const creationNotificationBody = (
 
 export const creationNotificationBodyNewPlacement = (placement: Cas1SpaceBooking) => `
   <p>A placement has been created for ${displayName(placement.person)} at ${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)} to ${DateFormats.isoDateToUIDate(placement.expectedDepartureDate)}.</p>
-  <p>The original placement requires changes to the departure date.</p>
+  <p>You need to change the departure date for the original placement.</p>
 `

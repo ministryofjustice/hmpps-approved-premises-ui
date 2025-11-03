@@ -6,32 +6,37 @@ type NewPlacementForm = {
   newPlacementArrivalDate: string
   newPlacementDepartureDate: string
   newPlacementReason: TransferReason
-  notes: string
+  newPlacementNotes: string
 }
 
 export default class NewPlacementPage extends Page {
   constructor(placementRequest: Cas1PlacementRequestDetail) {
-    super('New placement')
+    super('Placement transfer details')
 
     this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson, placementRequest.risks.tier.value.level)
   }
 
-  completeForm({ newPlacementArrivalDate, newPlacementDepartureDate, newPlacementReason, notes }: NewPlacementForm) {
+  completeForm({
+    newPlacementArrivalDate,
+    newPlacementDepartureDate,
+    newPlacementReason,
+    newPlacementNotes,
+  }: NewPlacementForm) {
     this.completeDatePicker('newPlacementArrivalDate', newPlacementArrivalDate)
     this.completeDatePicker('newPlacementDepartureDate', newPlacementDepartureDate)
     this.checkRadioByLabel(newPlacementReasons[newPlacementReason])
-    this.completeTextArea('notes', notes)
+    this.completeTextArea('newPlacementNotes', newPlacementNotes)
   }
 
   shouldBePopulated({
     newPlacementArrivalDate,
     newPlacementDepartureDate,
     newPlacementReason,
-    notes,
+    newPlacementNotes,
   }: NewPlacementForm) {
     this.datePickerShouldContainDate('newPlacementArrivalDate', newPlacementArrivalDate)
     this.datePickerShouldContainDate('newPlacementDepartureDate', newPlacementDepartureDate)
     this.verifyRadioByLabel(newPlacementReasons[newPlacementReason])
-    this.verifyTextInputContentsById('notes', notes)
+    this.verifyTextInputContentsById('newPlacementNotes', newPlacementNotes)
   }
 }

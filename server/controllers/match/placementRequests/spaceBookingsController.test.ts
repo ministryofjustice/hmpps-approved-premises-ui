@@ -68,6 +68,7 @@ describe('SpaceBookingsController', () => {
       expect(spaceBookingsController.formData.get).toHaveBeenCalledWith(params.placementRequestId, request.session)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
+        pageHeading: 'Confirm booking',
         backLink: matchPaths.v2Match.placementRequests.search.occupancy(params),
         submitLink: matchPaths.v2Match.placementRequests.spaceBookings.create(params),
         contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
@@ -111,7 +112,7 @@ describe('SpaceBookingsController', () => {
       const searchStateWithReason: SpaceSearchFormData = {
         ...searchState,
         newPlacementReason: 'risk_to_resident',
-        notes: 'Reason for the new placement',
+        newPlacementNotes: 'Reason for the new placement',
         newPlacementCriteriaChanged: 'no',
       }
       request.session.multiPageFormData.spaceSearch = {
@@ -123,7 +124,7 @@ describe('SpaceBookingsController', () => {
       expect(matchUtils.spaceBookingConfirmationSummaryListRows).toHaveBeenCalledWith(
         expect.objectContaining({
           newPlacementReason: 'risk_to_resident',
-          notes: 'Reason for the new placement',
+          newPlacementNotes: 'Reason for the new placement',
         }),
       )
     })
@@ -221,7 +222,7 @@ describe('SpaceBookingsController', () => {
         const searchStateWithNewPlacement: SpaceSearchFormData = {
           ...searchState,
           newPlacementReason: 'risk_to_resident',
-          notes: 'There was a need',
+          newPlacementNotes: 'There was a need',
           newPlacementCriteriaChanged: 'no',
         }
         request.session.multiPageFormData.spaceSearch = {
@@ -233,7 +234,7 @@ describe('SpaceBookingsController', () => {
           arrivalDate: searchStateWithNewPlacement.arrivalDate,
           departureDate: searchStateWithNewPlacement.departureDate,
           characteristics: [...searchStateWithNewPlacement.apCriteria, ...searchStateWithNewPlacement.roomCriteria],
-          additionalInformation: searchStateWithNewPlacement.notes,
+          additionalInformation: searchStateWithNewPlacement.newPlacementNotes,
           transferReason: searchStateWithNewPlacement.newPlacementReason,
         }
 
@@ -248,7 +249,7 @@ describe('SpaceBookingsController', () => {
           newSpaceBooking,
         )
         expect(mockFlash).toHaveBeenCalledWith('success', {
-          heading: 'Placement created',
+          heading: 'Placement transfer booked',
           body: matchUtils.creationNotificationBodyNewPlacement(spaceBooking),
         })
         expect(spaceBookingsController.formData.remove).toHaveBeenCalled()

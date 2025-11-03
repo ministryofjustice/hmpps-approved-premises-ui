@@ -503,7 +503,7 @@ export type SpaceSearchFormData = SpaceSearchCommonFields & {
   newPlacementArrivalDate?: string
   newPlacementDepartureDate?: string
   newPlacementReason?: TransferReason
-  notes?: string
+  newPlacementNotes?: string
   newPlacementCriteriaChanged?: YesOrNo
 }
 

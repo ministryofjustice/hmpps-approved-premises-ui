@@ -17,7 +17,7 @@
 {% block content %}
     {{ showErrorSummary(errorSummary, errorTitle) }}
 
-    <h1 class="govuk-heading-l">Confirm booking</h1>
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     {{ govukSummaryList({
         rows: summaryListRows
@@ -28,7 +28,7 @@
 
         <div class="govuk-button-group">
             {{ govukButton({
-                text: "Confirm and book",
+                text: "Confirm booking",
                 preventDoubleClick: true
             }) }}
 

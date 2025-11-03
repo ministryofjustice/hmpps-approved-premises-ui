@@ -65,7 +65,7 @@ describe('newPlacementController', () => {
     const defaultRenderParameters = {
       contextKeyDetails,
       backlink: adminPaths.admin.placementRequests.show(params),
-      pageHeading: 'New placement details',
+      pageHeading: 'Placement transfer details',
       errors: {},
       errorSummary: [] as Array<string>,
       reasonOptions: convertKeyValuePairToRadioItems(newPlacementReasons),
@@ -76,7 +76,7 @@ describe('newPlacementController', () => {
         newPlacementArrivalDate: '3/11/2025',
         newPlacementDepartureDate: '4/1/2026',
         newPlacementReason: 'placement_prioritisation',
-        notes: 'Reason for the new placement',
+        newPlacementNotes: 'Reason for the new placement',
       })
       request.session.multiPageFormData = {
         spaceSearch: { [placementRequestDetail.id]: searchState },
@@ -162,7 +162,7 @@ describe('newPlacementController', () => {
       backlink: matchPaths.v2Match.placementRequests.newPlacement.new({
         placementRequestId: placementRequestDetail.id,
       }),
-      pageHeading: 'Check the placement criteria',
+      pageHeading: 'Check placement transfer criteria',
       criteriaSummary: criteriaSummaryList(placementRequestDetail),
       criteriaChangedRadioItems: [
         { value: 'yes', text: 'Yes', checked: true },
@@ -248,7 +248,7 @@ describe('newPlacementController', () => {
       backlink: matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({
         placementRequestId: placementRequestDetail.id,
       }),
-      pageHeading: 'Update placement criteria',
+      pageHeading: 'Update placement transfer criteria',
       apTypeRadioItems: apTypeRadioItems(
         applyApTypeToAssessApType[placementRequestDetail.type as ApTypeSpecialist] || 'normal',
       ),
