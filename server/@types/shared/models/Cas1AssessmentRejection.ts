@@ -8,9 +8,6 @@
 export type Cas1AssessmentRejection = {
     agreeWithShortNoticeReason?: boolean;
     agreeWithShortNoticeReasonComments?: string;
-    /**
-     * Any object
-     */
     document: any;
     reasonForLateApplication?: string;
     rejectionRationale: string;
