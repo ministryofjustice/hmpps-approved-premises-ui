@@ -13,13 +13,7 @@ export type Cas2v2Application = (Application & {
     assessment?: Cas2v2Assessment;
     bailHearingDate?: string;
     createdBy?: Cas2v2User;
-    /**
-     * Any object
-     */
     data?: any;
-    /**
-     * Any object
-     */
     document?: any;
     status?: ApplicationStatus;
     submittedAt?: string;
