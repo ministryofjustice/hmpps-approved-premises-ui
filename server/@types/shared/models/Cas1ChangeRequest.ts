@@ -8,15 +8,9 @@ import type { NamedId } from './NamedId';
 export type Cas1ChangeRequest = {
     createdAt: string;
     decision?: Cas1ChangeRequestDecision;
-    /**
-     * Any object
-     */
     decisionJson?: any;
     id: string;
     rejectionReason?: NamedId;
-    /**
-     * Any object
-     */
     requestJson: any;
     requestReason: NamedId;
     spaceBookingId: string;

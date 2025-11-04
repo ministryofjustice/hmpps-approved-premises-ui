@@ -5,9 +5,6 @@
 import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
 export type Cas1NewChangeRequest = {
     reasonId: string;
-    /**
-     * Any object
-     */
     requestJson: any;
     spaceBookingId: string;
     type: Cas1ChangeRequestType;
