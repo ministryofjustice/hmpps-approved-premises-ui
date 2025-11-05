@@ -7,6 +7,7 @@ import cas1SpaceBookingSummaryFactory from '../../testutils/factories/cas1SpaceB
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import managePaths from '../../paths/manage'
+import { newPlacementReasons } from '../match'
 
 describe('placement summary list', () => {
   describe('placementSummaryList', () => {
@@ -41,6 +42,15 @@ describe('placement summary list', () => {
             },
           },
           { key: { text: 'Delius event number' }, value: { text: spaceBooking.deliusEventNumber } },
+          { key: { text: 'Reason for transfer' }, value: { text: newPlacementReasons[spaceBooking.transferReason] } },
+          {
+            key: {
+              text: 'Additional information',
+            },
+            value: {
+              html: `<span class="govuk-summary-list__textblock">${spaceBooking.additionalInformation}</span>`,
+            },
+          },
         ],
       })
     })

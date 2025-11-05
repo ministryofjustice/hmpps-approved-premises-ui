@@ -1,4 +1,4 @@
-import { Cas1TimelineEventContentPayload } from '@approved-premises/api'
+import { Cas1BookingMadeContentPayload, Cas1TimelineEventContentPayload } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { cas1PremisesFactory, cas1TimelineEventFactory } from '../testutils/factories'
 import { cas1TimelineEventContentPayloadFactory } from '../testutils/factories/cas1Timeline'
@@ -167,6 +167,51 @@ describe('timeline utilities', () => {
 
           expect(result).toContain('Room criteria changed from wheelchair accessible and single room to none')
         })
+      })
+    })
+
+    describe('when the event type is `booking_made`', () => {
+      const premises = cas1PremisesFactory.build()
+      const payload: Cas1BookingMadeContentPayload = {
+        type: 'booking_made',
+        booking: {
+          premises: {
+            name: premises.name,
+            id: premises.id,
+          },
+          arrivalDate: '2025-09-18',
+          departureDate: '2025-12-18',
+          bookingId: faker.string.uuid(),
+        },
+        eventNumber: '5',
+      }
+
+      it('Renders a standard placement creation event', () => {
+        const timelineEvent = cas1TimelineEventFactory.build({ payload })
+
+        const result = renderTimelineEventContent(timelineEvent)
+        expect(result).toMatchStringIgnoringWhitespace(`
+       <p class="govuk-body">A placement at ${payload.booking.premises.name} was booked for Thu 18 Sep 2025 to Thu 18 Dec 2025 
+       against Delius Event Number 5.</p>`)
+      })
+
+      it('Renders a transfer placement creation event with additional fields', () => {
+        const timelineEvent = cas1TimelineEventFactory.build({
+          payload: {
+            ...payload,
+            booking: {
+              ...payload.booking,
+              transferReason: 'placement_prioritisation',
+              additionalInformation: 'Some information',
+            },
+          },
+        })
+
+        const result = renderTimelineEventContent(timelineEvent)
+        expect(result).toMatchStringIgnoringWhitespace(`
+<p class="govuk-body">A placement at ${payload.booking.premises.name} was booked for Thu 18 Sep 2025 to Thu 18 Dec 2025 against Delius Event Number 5.</p>
+<dl><dt>Reason for transfer:</dt><dd>Placement prioritisation</dd></dl>
+<dl><dt>Additional information:</dt><dd>Some information</dd></dl>`)
       })
     })
   })

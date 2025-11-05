@@ -1,5 +1,6 @@
 import {
   Cas1BookingChangedContentPayload,
+  Cas1BookingMadeContentPayload,
   Cas1PlacementChangeRequestCreatedPayload,
   Cas1SpaceCharacteristic,
   Cas1TimelineEvent,
@@ -14,6 +15,7 @@ import { filterRoomLevelCriteria } from './match/spaceSearch'
 
 import { roomCharacteristicsInlineList } from './characteristicsUtils'
 import { getChangeRequestReasonText } from './placements/changeRequests'
+import { newPlacementReasons } from './match'
 
 const isoDateToUiDateOrUndefined = (isoDate: string) => (isoDate ? DateFormats.isoDateToUIDate(isoDate) : undefined)
 const templatePath = path.join(__dirname, '../views/partials/timelineEvents')
@@ -21,6 +23,23 @@ const templatePath = path.join(__dirname, '../views/partials/timelineEvents')
 export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => {
   if (event.payload) {
     const eventType = event.payload.type
+    if (eventType === 'booking_made') {
+      const {
+        booking: { arrivalDate, departureDate, transferReason, additionalInformation, premises },
+        eventNumber,
+      } = event.payload as Cas1BookingMadeContentPayload
+
+      const context = {
+        premises,
+        expectedArrival: isoDateToUiDateOrUndefined(arrivalDate),
+        expectedDeparture: isoDateToUiDateOrUndefined(departureDate),
+        eventNumber,
+        transferReason: newPlacementReasons[transferReason],
+        additionalInformation,
+      }
+      return nunjucks.render(`${templatePath}/booking_made.njk`, context)
+    }
+
     if (eventType === 'booking_changed') {
       const {
         premises,
