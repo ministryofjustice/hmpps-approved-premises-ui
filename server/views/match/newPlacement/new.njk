@@ -2,6 +2,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% extends "partials/layout-with-details.njk" %}
@@ -29,7 +30,7 @@
                     id: "newPlacementArrivalDate",
                     name: "newPlacementArrivalDate",
                     label: {
-                        text: "What is the expected arrival date?",
+                        text: "Expected arrival date",
                         classes: "govuk-label--m"
                     },
                     hint: {
@@ -43,7 +44,7 @@
                     id: "newPlacementDepartureDate",
                     name: "newPlacementDepartureDate",
                     label: {
-                        text: "What is the expected departure date?",
+                        text: "Expected departure date",
                         classes: "govuk-label--m"
                     },
                     hint: {
@@ -53,18 +54,29 @@
                     errorMessage: errors.newPlacementDepartureDate
                 }) }}
 
+                {{ formPageRadios({
+                    fieldName: "newPlacementReason",
+                    fieldset: {
+                        legend: {
+                            text: 'Transfer reason',
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: reasonOptions
+                }, fetchContext()) }}
+
                 {{ govukTextarea({
-                    id: "newPlacementReason",
-                    name: "newPlacementReason",
+                    id: "newPlacementNotes",
+                    name: "newPlacementNotes",
                     label: {
-                        text: "What is the reason for the new placement?",
+                        text: "Additional information",
                         classes: "govuk-label--m"
                     },
                     hint: {
-                        text: "If the person is being transferred to a new AP, include the name of the person that requested the transfer"
+                        text: "Include the name of the person that requested the transfer and any additional information about the reason for the transfer"
                     },
-                    value: newPlacementReason,
-                    errorMessage: errors.newPlacementReason
+                    value: newPlacementNotes,
+                    errorMessage: errors.newPlacementNotes
                 }) }}
 
                 {{ govukButton({

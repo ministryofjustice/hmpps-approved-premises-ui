@@ -1,6 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import { SpaceSearchFormData } from '@approved-premises/ui'
+import { newPlacementReasons } from '../../../utils/match'
 import NewPlacementController from './newPlacementController'
 import { cas1PlacementRequestDetailFactory, spaceSearchStateFactory } from '../../../testutils/factories'
 
@@ -21,6 +22,7 @@ import {
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import { applyApTypeToAssessApType, type ApTypeSpecialist } from '../../../utils/placementCriteriaUtils'
+import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
 
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
@@ -63,16 +65,18 @@ describe('newPlacementController', () => {
     const defaultRenderParameters = {
       contextKeyDetails,
       backlink: adminPaths.admin.placementRequests.show(params),
-      pageHeading: 'New placement details',
+      pageHeading: 'Placement transfer details',
       errors: {},
       errorSummary: [] as Array<string>,
+      reasonOptions: convertKeyValuePairToRadioItems(newPlacementReasons),
     }
 
     it('renders the new placement template with the session search state', async () => {
       const searchState = spaceSearchStateFactory.build({
         newPlacementArrivalDate: '3/11/2025',
         newPlacementDepartureDate: '4/1/2026',
-        newPlacementReason: 'Reason for the new placement',
+        newPlacementReason: 'placement_prioritisation',
+        newPlacementNotes: 'Reason for the new placement',
       })
       request.session.multiPageFormData = {
         spaceSearch: { [placementRequestDetail.id]: searchState },
@@ -144,9 +148,9 @@ describe('newPlacementController', () => {
       const errorData = (validationUtils.catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
-        newPlacementArrivalDate: 'Enter or select an arrival date',
-        newPlacementDepartureDate: 'Enter or select a departure date',
-        newPlacementReason: 'Enter a reason',
+        newPlacementArrivalDate: 'Enter or select an expected arrival date',
+        newPlacementDepartureDate: 'Enter or select an expected departure date',
+        newPlacementReason: 'Select a transfer reason',
       })
       expect(newPlacementController.formData.update).not.toHaveBeenCalled()
     })
@@ -158,7 +162,7 @@ describe('newPlacementController', () => {
       backlink: matchPaths.v2Match.placementRequests.newPlacement.new({
         placementRequestId: placementRequestDetail.id,
       }),
-      pageHeading: 'Check the placement criteria',
+      pageHeading: 'Check placement transfer criteria',
       criteriaSummary: criteriaSummaryList(placementRequestDetail),
       criteriaChangedRadioItems: [
         { value: 'yes', text: 'Yes', checked: true },
@@ -170,7 +174,7 @@ describe('newPlacementController', () => {
 
     it('renders the check placement criteria template with the session search state', async () => {
       const searchState = spaceSearchStateFactory.build({
-        newPlacementReason: 'Reason for the new placement',
+        newPlacementReason: 'placement_prioritisation',
         newPlacementCriteriaChanged: 'yes',
       })
       request.session.multiPageFormData = {
@@ -244,7 +248,7 @@ describe('newPlacementController', () => {
       backlink: matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({
         placementRequestId: placementRequestDetail.id,
       }),
-      pageHeading: 'Update placement criteria',
+      pageHeading: 'Update placement transfer criteria',
       apTypeRadioItems: apTypeRadioItems(
         applyApTypeToAssessApType[placementRequestDetail.type as ApTypeSpecialist] || 'normal',
       ),
@@ -268,7 +272,7 @@ describe('newPlacementController', () => {
 
     it('renders the form to update the new placement criteria with the search state data', async () => {
       const searchState = spaceSearchStateFactory.build({
-        newPlacementReason: 'Reason for the new placement',
+        newPlacementReason: 'local_community_issue',
         newPlacementCriteriaChanged: 'yes',
         apType: 'isPIPE',
         apCriteria: ['acceptsNonSexualChildOffenders'],

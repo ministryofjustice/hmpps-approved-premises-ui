@@ -144,6 +144,7 @@ export default class {
         selectedCriteria: roomCharacteristicsInlineList(searchState.roomCriteria, 'no room criteria'),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
         departureDateHint: `Requested departure date: ${DateFormats.isoDateToUIDate(endDate, { format: 'dateFieldHint' })}`,
+        bookingHeading: searchState.newPlacementReason ? 'Book placement transfer' : 'Book placement',
         premises,
         ...formValues,
         startDate: DateFormats.isoDateToUIDate(searchState.startDate, { format: 'datePicker' }),

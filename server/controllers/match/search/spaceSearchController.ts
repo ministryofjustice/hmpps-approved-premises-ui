@@ -68,7 +68,9 @@ export default class SpaceSearchController {
       res.render('match/search', {
         backlink,
         backlinkLabel,
-        pageHeading: 'Find a space in an Approved Premises',
+        pageHeading: searchState.newPlacementReason
+          ? 'Find a space in an Approved Premises to book a placement transfer'
+          : 'Find a space in an Approved Premises',
         contextKeyDetails: placementRequestKeyDetails(placementRequest),
         summaryCards: summaryCards(spaceSearchResults, formValues.postcode, placementRequest),
         placementRequest,

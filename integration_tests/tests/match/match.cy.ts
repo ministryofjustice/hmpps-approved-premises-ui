@@ -349,7 +349,7 @@ context('Placement Requests', () => {
     occupancyViewPage.completeForm(arrivalDate, departureDate)
     occupancyViewPage.clickContinue()
 
-    const page = Page.verifyOnPage(BookASpacePage)
+    const page = Page.verifyOnPage(BookASpacePage, 'Confirm booking')
 
     THEN('I should see the details of the case I am matching')
     page.shouldShowPersonHeader(placementRequest.person as FullPerson)

@@ -10,6 +10,7 @@ import {
   spaceSearchCriteriaApLevelLabels,
 } from '../characteristicsUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from './spaceSearch'
+import { newPlacementReasons } from '.'
 
 type NewPlacementForm = {
   newPlacementArrivalDate: string
@@ -28,21 +29,21 @@ export const validateNewPlacement = (body: Partial<NewPlacementForm>) => {
   const endDate = DateFormats.datepickerInputToIsoString(body.newPlacementDepartureDate)
 
   if (!startDate) {
-    errors.newPlacementArrivalDate = 'Enter or select an arrival date'
+    errors.newPlacementArrivalDate = 'Enter or select an expected arrival date'
   } else if (!isoDateIsValid(startDate)) {
-    errors.newPlacementArrivalDate = 'Enter a valid arrival date'
+    errors.newPlacementArrivalDate = 'Enter a valid expected arrival date'
   }
 
   if (!endDate) {
-    errors.newPlacementDepartureDate = 'Enter or select a departure date'
+    errors.newPlacementDepartureDate = 'Enter or select an expected departure date'
   } else if (!isoDateIsValid(endDate)) {
-    errors.newPlacementDepartureDate = 'Enter a valid departure date'
+    errors.newPlacementDepartureDate = 'Enter a valid expected departure date'
   } else if (!errors.newPlacementArrivalDate && endDate <= startDate) {
-    errors.newPlacementDepartureDate = 'The departure date must be after the arrival date'
+    errors.newPlacementDepartureDate = 'The expected departure date must be after the expected arrival date'
   }
 
   if (!body.newPlacementReason) {
-    errors.newPlacementReason = 'Enter a reason'
+    errors.newPlacementReason = 'Select a transfer reason'
   }
 
   if (Object.keys(errors).length) {
@@ -81,6 +82,7 @@ export const newPlacementSummaryList = (
     newPlacementArrivalDate,
     newPlacementDepartureDate,
     newPlacementReason,
+    newPlacementNotes,
   }: SpaceSearchFormData,
   currentPlacement?: Cas1SpaceBookingSummary,
 ): SummaryList => {
@@ -91,7 +93,7 @@ export const newPlacementSummaryList = (
 
   return {
     rows: [
-      currentPlacement && summaryListItem('Current AP', currentPlacement.premises.name),
+      currentPlacement && summaryListItem('Current Approved Premises', currentPlacement.premises.name),
       summaryListItem('Expected arrival date', arrivalDateIso, 'date'),
       summaryListItem('Expected departure date', departureDateIso, 'date'),
       summaryListItem(
@@ -109,7 +111,9 @@ export const newPlacementSummaryList = (
         characteristicsBulletList(roomCriteria, { labels: roomCharacteristicMap }),
         'html',
       ),
-      summaryListItem('Reason', newPlacementReason, 'textBlock'),
+      newPlacementReason &&
+        summaryListItem('Reason for transfer', newPlacementReasons[newPlacementReason], 'textBlock'),
+      newPlacementNotes && summaryListItem('Additional information', newPlacementNotes, 'textBlock'),
     ].filter(Boolean),
   }
 }

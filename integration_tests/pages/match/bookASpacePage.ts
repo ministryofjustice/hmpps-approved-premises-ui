@@ -3,15 +3,17 @@ import type {
   Cas1Premises,
   Cas1PremisesSearchResultSummary,
   Cas1SpaceBookingCharacteristic,
+  TransferReason,
 } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 import { characteristicsBulletList } from '../../../server/utils/characteristicsUtils'
+import { newPlacementReasons } from '../../../server/utils/match'
 
 export default class BookASpacePage extends Page {
-  constructor() {
-    super(`Confirm booking`)
+  constructor(pageHeading: string) {
+    super(pageHeading)
   }
 
   shouldShowBookingDetails(
@@ -20,7 +22,8 @@ export default class BookASpacePage extends Page {
     arrivalDate: string,
     departureDate: string,
     criteria: Array<Cas1SpaceBookingCharacteristic>,
-    reason?: string,
+    newPlacementReason?: TransferReason,
+    newPlacementNotes?: string,
   ): void {
     this.shouldContainSummaryListItems(
       [
@@ -39,7 +42,10 @@ export default class BookASpacePage extends Page {
           value: { text: DateFormats.durationBetweenDates(departureDate, arrivalDate).ui },
         },
         { key: { text: 'Release type' }, value: { text: allReleaseTypes[placementRequest.releaseType] } },
-        reason ? { key: { text: 'Reason for placement' }, value: { text: reason } } : undefined,
+        newPlacementReason
+          ? { key: { text: 'Reason for transfer' }, value: { text: newPlacementReasons[newPlacementReason] } }
+          : undefined,
+        newPlacementNotes ? { key: { text: 'Additional information' }, value: { text: newPlacementNotes } } : undefined,
       ].filter(Boolean),
     )
   }
