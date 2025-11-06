@@ -16,15 +16,16 @@ import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import { signIn } from '../signIn'
+import { AND, GIVEN, THEN } from '../../helpers'
 
 describe('Short notice assessments', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as an assessor
+    GIVEN('I am signed in as an assessor')
     signIn('assessor')
 
-    // And there is a short notice application awaiting assessment
+    AND('there is a short notice application awaiting assessment')
     cy.fixture('applicationData.json').then(applicationData => {
       cy.fixture('assessmentData.json').then(assessmentData => {
         const today = new Date()
@@ -93,16 +94,16 @@ describe('Short notice assessments', () => {
   })
 
   it('allows me to assess a short notice application', function test() {
-    // Given there is a short notice application awaiting assessment
+    GIVEN('there is a short notice application awaiting assessment')
     this.assessHelper.setupStubs()
 
-    // And I start an assessment
+    AND('I start an assessment')
     this.assessHelper.startAssessment()
 
-    // And I complete an assessment
+    AND('I complete an assessment')
     this.assessHelper.completeAssessment({ isShortNoticeApplication: true })
 
-    // Then the API should have received the correct data
+    THEN('the API should have received the correct data')
     cy.task('verifyAssessmentAcceptance', this.assessment).then(requests => {
       expect(requests).to.have.length(1)
 

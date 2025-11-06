@@ -1,8 +1,7 @@
 import { Cas1NewOutOfServiceBed, NamedId, UpdateCas1OutOfServiceBed } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import {
   cas1BedDetailFactory,
-  cas1PremisesBasicSummaryFactory,
-  cas1PremisesFactory,
   outOfServiceBedFactory,
   outOfServiceBedRevisionFactory,
   premisesFactory,
@@ -22,6 +21,9 @@ import BedShowPage from '../../pages/manage/bed/bedShow'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 describe('Out of service beds', () => {
+  const bed: NamedId = { name: 'abc', id: faker.string.uuid() }
+  const premises = premisesFactory.build({ name: 'Hope House' })
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubOutOfServiceBedReasons')
@@ -32,7 +34,6 @@ describe('Out of service beds', () => {
 
   it('allows me to view all out of service beds for a given premises', () => {
     const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
-    const premises = premisesFactory.build({ name: 'Hope House' })
     cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1, perPage: 50, premisesId: premises.id })
     cy.task('stubSinglePremises', premises)
 
@@ -50,8 +51,6 @@ describe('Out of service beds', () => {
     describe('for a new out of service bed with all nullable fields present in the initial OoS bed revision', () => {
       it('should show an out of service bed', () => {
         GIVEN('I have created a out of service bed')
-        const bed = { name: 'abc', id: '123' }
-        const premises = premisesFactory.build()
         const outOfServiceBed = outOfServiceBedFactory.build({ bed })
         outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
         const bedDetail = cas1BedDetailFactory.build({ id: bed.id })
@@ -82,8 +81,6 @@ describe('Out of service beds', () => {
     describe('for a legacy "lost bed" records migrated with all nullable fields not present in the initial OoS bed revision', () => {
       it('should show a out of service bed', () => {
         GIVEN('I have created a out of service bed')
-        const bed = { name: 'abc', id: '123' }
-        const premises = premisesFactory.build()
         const outOfServiceBedRevision = outOfServiceBedRevisionFactory.build({
           updatedBy: undefined,
           startDate: undefined,
@@ -116,7 +113,6 @@ describe('Out of service beds', () => {
   describe('creating an out of service bed record', () => {
     it('should allow me to create an out of service bed', () => {
       const bedName = '12 - 2'
-      const premises = cas1PremisesFactory.build()
       cy.task('stubSinglePremises', premises)
 
       const outOfServiceBed = outOfServiceBedFactory.build({
@@ -155,11 +151,8 @@ describe('Out of service beds', () => {
     })
 
     it('should show errors', () => {
-      AND('a out of service bed is available')
-      const premises = cas1PremisesFactory.build()
-
       WHEN('I navigate to the out of service bed form')
-      const page = OutOfServiceBedCreatePage.visit(premises.id, 'bedId')
+      const page = OutOfServiceBedCreatePage.visit(premises.id, bed.id)
 
       AND('I have errors on validated fields')
       cy.task('stubOutOfServiceBedErrors', {
@@ -174,8 +167,6 @@ describe('Out of service beds', () => {
     })
 
     it('should show an error when there are out of service bed conflicts', () => {
-      const bed = { name: 'abc', id: '123' }
-      const premises = cas1PremisesBasicSummaryFactory.build()
       const conflictingOutOfServiceBed = outOfServiceBedFactory.build({
         bed,
         startDate: '2022-02-11',
@@ -211,8 +202,6 @@ describe('Out of service beds', () => {
 
   describe('Updating an out of service bed', () => {
     it('should allow me to update an out of service bed', () => {
-      const bed: NamedId = { name: 'bed', id: '123' }
-      const premises = cas1PremisesBasicSummaryFactory.build()
       const outOfServiceBed = outOfServiceBedFactory.build({
         bed,
       })
@@ -270,8 +259,6 @@ describe('Out of service beds', () => {
     const dateFields = ['startDate', 'endDate']
     dateFields.forEach(dateField => {
       it(`shows when the ${dateField} field is empty`, () => {
-        const bed: NamedId = { name: 'bed', id: '123' }
-        const premises = cas1PremisesBasicSummaryFactory.build()
         const outOfServiceBed = outOfServiceBedFactory.build({
           bed,
         })
@@ -302,10 +289,9 @@ describe('Cancelling an out of service bed', () => {
   })
 
   it('should allow me to cancel an out of service bed', () => {
-    const bed: NamedId = { name: 'bed', id: '123' }
     const premises = premisesFactory.build()
     const premisesId = premises.id
-
+    const bed: NamedId = { name: 'abc', id: faker.string.uuid() }
     const outOfServiceBeds = outOfServiceBedFactory.buildList(5, {
       bed,
       premises: { name: premises.name, id: premises.id },
@@ -334,7 +320,7 @@ describe('Cancelling an out of service bed', () => {
     WHEN("I click 'Go back'")
     cancelPage.clickLink('Go back')
 
-    // I should be back on the OOB detail page
+    THEN('I should be back on the OOB detail page')
     Page.verifyOnPage(OutOfServiceBedShowPage, premisesId, outOfServiceBed)
 
     WHEN("I click the action 'Cancel out of service bed' again")

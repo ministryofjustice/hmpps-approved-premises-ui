@@ -273,13 +273,13 @@ context('Premises', () => {
   })
 
   describe('beds', () => {
-    const premisesId = 'premisesId'
     const bedSummaries = [
       ...cas1PremisesBedSummaryFactory.buildList(4),
       cas1PremisesBedSummaryFactory.build({ characteristics: [] }),
     ]
     const bedDetail = cas1BedDetailFactory.build({ ...bedSummaries[0], name: bedSummaries[1].bedName })
-    const premises = cas1PremisesFactory.build({ id: premisesId })
+    const premises = cas1PremisesFactory.build()
+    const premisesId = premises.id
 
     beforeEach(() => {
       cy.task('reset')

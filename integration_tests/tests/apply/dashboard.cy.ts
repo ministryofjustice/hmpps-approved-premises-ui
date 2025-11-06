@@ -204,9 +204,7 @@ context('All applications', () => {
       cy.task('stubAllApplications', { applications })
 
       AND('there is a placement application in the DB')
-      const placementApplicationId = '123'
       const placementApplication = placementApplicationFactory.build({
-        id: placementApplicationId,
         data: placementApplicationData,
         applicationId,
       })
@@ -231,7 +229,7 @@ context('All applications', () => {
       page.clickRequestForPlacementLink()
 
       AND('I should be on placement request')
-      Page.verifyOnPage(CheckSentenceTypePage, placementApplicationId)
+      Page.verifyOnPage(CheckSentenceTypePage, placementApplication.id)
     })
   })
 

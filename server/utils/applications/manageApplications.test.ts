@@ -99,7 +99,9 @@ describe('manageApplications', () => {
     const expireLink = { text: 'Expire application', href: paths.applications.expire({ id }) }
     const placementRequestLink = {
       text: 'Create placement request',
-      href: placementApplicationPaths.placementApplications.create({}) + createQueryString({ id }),
+      href:
+        placementApplicationPaths.placementApplications.create({}) +
+        createQueryString({ id }, { addQueryPrefix: true }),
     }
 
     it(`when unsubmitted, it should return withdraw and continue links if user's own application or expire if not`, () => {

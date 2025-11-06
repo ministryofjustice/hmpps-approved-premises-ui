@@ -40,15 +40,12 @@ context('Placement Applications', () => {
   describe('Create a placement application', () => {
     const person = personFactory.build()
     const completedApplication = applicationFactory.completed('accepted').build({
-      id: '123',
       createdByUserId: defaultUserId,
       person,
       document: applicationDocument,
     })
 
-    const placementApplicationId = '123'
     const placementApplication = placementApplicationFactory.build({
-      id: placementApplicationId,
       applicationId: completedApplication.id,
     })
 
@@ -445,7 +442,6 @@ context('Placement Applications', () => {
     it('does not allow me to create a placement application if I did not create the application', () => {
       GIVEN('there is an accepted application that I did not create')
       const application = applicationFactory.completed('accepted').build({
-        id: '123',
         person: personFactory.build(),
         document: applicationDocument,
       })
@@ -461,7 +457,6 @@ context('Placement Applications', () => {
     it('does not allow me to create a placement application if the assessment was rejected', () => {
       GIVEN('there is an rejected application that I created')
       const application = applicationFactory.completed('rejected').build({
-        id: '123',
         createdByUserId: defaultUserId,
         person: personFactory.build(),
         document: applicationDocument,
@@ -479,7 +474,6 @@ context('Placement Applications', () => {
       GIVEN('there is an unassesed application that I created')
       const application = applicationFactory.build({
         status: 'awaitingAssesment',
-        id: '123',
         createdByUserId: defaultUserId,
         assessmentDecision: undefined,
         person: personFactory.build(),

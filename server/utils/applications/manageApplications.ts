@@ -20,7 +20,9 @@ export const getActions = (
   return [
     placementRequestAllowed.includes(status) && {
       text: 'Create placement request',
-      href: placementApplicationPaths.placementApplications.create({}) + createQueryString({ id }),
+      href:
+        placementApplicationPaths.placementApplications.create({}) +
+        createQueryString({ id }, { addQueryPrefix: true }),
     },
 
     ownApplication &&
