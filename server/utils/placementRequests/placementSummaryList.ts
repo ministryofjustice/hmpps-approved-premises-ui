@@ -5,6 +5,7 @@ import { placementNameWithStatus } from '../placements'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import managePaths from '../../paths/manage'
+import { newPlacementReasons } from '../match'
 
 export const placementSummaryList = (placement: Cas1SpaceBookingSummary): SummaryList => ({
   rows: [
@@ -27,6 +28,9 @@ export const placementSummaryList = (placement: Cas1SpaceBookingSummary): Summar
       'html',
     ),
     placement.deliusEventNumber && summaryListItem('Delius event number', placement.deliusEventNumber),
+    placement.transferReason && summaryListItem('Reason for transfer', newPlacementReasons[placement.transferReason]),
+    placement.additionalInformation &&
+      summaryListItem('Additional information', placement.additionalInformation, 'textBlock'),
   ].filter(Boolean),
 })
 
