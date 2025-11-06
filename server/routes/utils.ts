@@ -25,21 +25,30 @@ export default function actions(router: Router, auditService: AuditService) {
       router.post(
         path,
         asyncMiddleware(
-          applicationAuthMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
+          applicationAuthMiddleware(
+            validateMiddleware(auditMiddleware(handler, auditService, middlewareSpec), fieldValidators),
+            middlewareSpec,
+          ),
         ),
       ),
     put: (path: string | Array<string>, handler: RequestHandler, middlewareSpec?: MiddlewareSpec) =>
       router.put(
         path,
         asyncMiddleware(
-          applicationAuthMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
+          applicationAuthMiddleware(
+            validateMiddleware(auditMiddleware(handler, auditService, middlewareSpec), fieldValidators),
+            middlewareSpec,
+          ),
         ),
       ),
     delete: (path: string | Array<string>, handler: RequestHandler, middlewareSpec?: MiddlewareSpec) =>
       router.delete(
         path,
         asyncMiddleware(
-          applicationAuthMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
+          applicationAuthMiddleware(
+            validateMiddleware(auditMiddleware(handler, auditService, middlewareSpec), fieldValidators),
+            middlewareSpec,
+          ),
         ),
       ),
   }
