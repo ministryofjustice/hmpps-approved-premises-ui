@@ -27,6 +27,7 @@ export type ApprovedPremisesApplication = (Application & {
     caseManagerIsNotApplicant?: boolean;
     caseManagerUserDetails?: Cas1ApplicationUserDetails;
     createdByUserId?: string;
+    createdByUserName?: string;
     cruManagementArea?: Cas1CruManagementArea;
     data?: any;
     document?: any;
