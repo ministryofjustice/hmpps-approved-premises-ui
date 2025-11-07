@@ -167,8 +167,14 @@ export default class placementApplicationHelper {
         expect(body).to.contain({ releaseType, sentenceType })
       }
       if (situation) {
-        expect(body).to.have.keys('requestedPlacementPeriods', 'translatedDocument', 'sentenceType', 'situationType')
-        expect(body).to.contain({ situationType: situation, sentenceType })
+        expect(body).to.have.keys(
+          'requestedPlacementPeriods',
+          'translatedDocument',
+          'sentenceType',
+          'releaseType',
+          'situationType',
+        )
+        expect(body).to.contain({ situationType: situation, sentenceType, releaseType: 'in_community' })
       }
     })
   }
