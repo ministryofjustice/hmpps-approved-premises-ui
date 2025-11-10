@@ -26,6 +26,7 @@ import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { isWomensApplication } from './isWomensApplication'
 import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplication'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
+import { substituteReleaseType } from '../placementApplications'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -100,17 +101,11 @@ const getSubmitFirstClassFields = (application: Application): FirstClassFields<S
   return firstClassFields(application, retrieveQuestionResponseFromFormArtifact)
 }
 
-const getReleaseType = (application: Application, sentenceType: SentenceTypeOption): ReleaseTypeOption => {
-  if (sentenceType === 'nonStatutory') {
-    return 'not_applicable'
-  }
-
-  if (sentenceType === 'communityOrder' || sentenceType === 'bailPlacement') {
-    return 'in_community'
-  }
-
-  return retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseType, 'releaseType')
-}
+const getReleaseType = (application: FormArtifact, sentenceType: SentenceTypeOption): ReleaseTypeOption =>
+  substituteReleaseType(
+    sentenceType,
+    retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseType, 'releaseType'),
+  )
 
 const getSentenceType = (
   application: Application,
