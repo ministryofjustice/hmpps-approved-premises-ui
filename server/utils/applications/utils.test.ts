@@ -664,7 +664,7 @@ describe('utils', () => {
     it('generates the summary list for an application', () => {
       const application = applicationFactory.build({
         createdAt: '2025-11-05',
-        applicantUserDetails: { name: 'Anne Elk' },
+        createdByUserName: 'Anne Elk',
         arrivalDate: '2025-11-06',
         status: 'started',
       })
