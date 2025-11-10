@@ -79,7 +79,7 @@ export default class OutOfServiceBedsController {
 
       try {
         const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
-        const outOfServiceBed = validateOutOfServiceBedInput(req.body, outOfServiceBedReasons, bedId)
+        const outOfServiceBed = validateOutOfServiceBedInput(req.body, req.session.user, outOfServiceBedReasons, bedId)
 
         await this.outOfServiceBedService.createOutOfServiceBed(req.user.token, premisesId, outOfServiceBed)
 

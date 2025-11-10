@@ -1,5 +1,6 @@
 import { Cas1NewOutOfServiceBed, NamedId, UpdateCas1OutOfServiceBed } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
+import { addDays } from 'date-fns'
 import {
   cas1BedDetailFactory,
   outOfServiceBedFactory,
@@ -19,6 +20,7 @@ import { sortOutOfServiceBedRevisionsByUpdatedAt } from '../../../server/utils/o
 import paths from '../../../server/paths/api'
 import BedShowPage from '../../pages/manage/bed/bedShow'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 describe('Out of service beds', () => {
   const bed: NamedId = { name: 'abc', id: faker.string.uuid() }
@@ -111,13 +113,15 @@ describe('Out of service beds', () => {
   })
 
   describe('creating an out of service bed record', () => {
+    const startDate = faker.date.soon({ days: 20 })
+    const endDate = faker.date.soon({ refDate: startDate, days: 20 })
+
     it('should allow me to create an out of service bed', () => {
       const bedName = '12 - 2'
       cy.task('stubSinglePremises', premises)
-
       const outOfServiceBed = outOfServiceBedFactory.build({
-        startDate: '2022-02-11',
-        endDate: '2022-03-11',
+        startDate: DateFormats.dateObjToIsoDate(startDate),
+        endDate: DateFormats.dateObjToIsoDate(endDate),
       })
       cy.task('stubOutOfServiceBedCreate', { premisesId: premises.id, outOfServiceBed })
 
@@ -169,8 +173,8 @@ describe('Out of service beds', () => {
     it('should show an error when there are out of service bed conflicts', () => {
       const conflictingOutOfServiceBed = outOfServiceBedFactory.build({
         bed,
-        startDate: '2022-02-11',
-        endDate: '2022-03-11',
+        startDate: DateFormats.dateObjToIsoDate(endDate),
+        endDate: DateFormats.dateObjToIsoDate(addDays(endDate, 2)),
       })
 
       cy.task('stubOutOfServiceBed', { premisesId: premises.id, outOfServiceBed: conflictingOutOfServiceBed })
@@ -180,9 +184,10 @@ describe('Out of service beds', () => {
       WHEN('I navigate to the out of service bed form')
       const outOfServiceBed = outOfServiceBedFactory.build({
         bed,
-        startDate: '2022-02-11',
-        endDate: '2022-03-11',
+        startDate: DateFormats.dateObjToIsoDate(startDate),
+        endDate: DateFormats.dateObjToIsoDate(endDate),
       })
+
       cy.task('stubOutOfServiceBedConflictError', {
         premisesId: premises.id,
         conflictingEntityId: conflictingOutOfServiceBed.id,
