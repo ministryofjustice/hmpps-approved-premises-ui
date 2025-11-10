@@ -148,7 +148,7 @@ const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
 
 export const getApplicationSummary = (application: ApprovedPremisesApplication) => [
   summaryListItem('Created on', application.createdAt, 'date'),
-  summaryListItem('Created by', application.applicantUserDetails?.name || ''),
+  summaryListItem('Created by', application.createdByUserName),
   summaryListItem('Requested arrival date', application.arrivalDate, 'date'),
   summaryListItem('Status', new ApplicationStatusTag(application.status).html(), 'html'),
 ]
