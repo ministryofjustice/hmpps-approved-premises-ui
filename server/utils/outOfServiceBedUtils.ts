@@ -19,7 +19,7 @@ import {
   UserDetails,
 } from '@approved-premises/ui'
 
-import { isBefore } from 'date-fns'
+import { isBefore, subDays } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { DateFormats, isoDateIsValid } from './dateUtils'
@@ -241,6 +241,7 @@ export type CreateOutOfServiceBedBody = ObjectWithDateParts<'startDate'> &
 
 export const validateOutOfServiceBedInput = (
   body: CreateOutOfServiceBedBody,
+  user: UserDetails,
   outOfServiceBedReasons: Array<Cas1OutOfServiceBedReason>,
   bedId?: string,
 ): Cas1NewOutOfServiceBed => {
@@ -254,6 +255,11 @@ export const validateOutOfServiceBedInput = (
     errors.startDate = 'You must enter a start date'
   } else if (!isoDateIsValid(startDate)) {
     errors.startDate = 'You must enter a valid start date'
+  } else if (
+    !hasPermission(user, ['cas1_out_of_service_bed_no_date_limit']) &&
+    isBefore(startDate, subDays(DateFormats.dateObjToIsoDate(new Date()), 7))
+  ) {
+    errors.startDate = 'You must enter a start date no earlier than 7 days ago'
   }
 
   if (!endDate) {

@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { subDays } from 'date-fns'
 import { outOfServiceBedFactory, outOfServiceBedRevisionFactory, userDetailsFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
@@ -283,23 +284,24 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('validateOutOfServiceBedInput', () => {
+    const startDate = faker.date.recent({ days: 7 })
+    const endDate = faker.date.soon({ refDate: startDate, days: 21 })
+
     const validBody: CreateOutOfServiceBedBody = {
-      'startDate-year': '2022',
-      'startDate-month': '8',
-      'startDate-day': '22',
-      'endDate-year': '2022',
-      'endDate-month': '9',
-      'endDate-day': '22',
+      ...DateFormats.dateObjectToDateInputs(startDate, 'startDate'),
+      ...DateFormats.dateObjectToDateInputs(endDate, 'endDate'),
       reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
       referenceNumber: '',
       notes: 'Some notes',
     }
     const oosbReasons = outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>
+    const user = userDetailsFactory.build()
+
     const expectErrors = (userInput: CreateOutOfServiceBedBody, expectedErrors: Record<string, string>) => {
       let error
 
       try {
-        validateOutOfServiceBedInput(userInput, oosbReasons)
+        validateOutOfServiceBedInput(userInput, user, oosbReasons)
       } catch (e) {
         error = e
       }
@@ -331,6 +333,33 @@ describe('outOfServiceBedUtils', () => {
       expectErrors(bodyInvalidDates, {
         startDate: 'You must enter a valid start date',
         endDate: 'You must enter a valid end date',
+      })
+    })
+
+    describe('date range check', () => {
+      const badStartDate = faker.date.recent({ refDate: subDays(new Date(), 8), days: 7 })
+      const badEndDate = faker.date.soon({ refDate: badStartDate, days: 21 })
+
+      const badBody: CreateOutOfServiceBedBody = {
+        ...validBody,
+        ...DateFormats.dateObjectToDateInputs(badStartDate, 'startDate'),
+        ...DateFormats.dateObjectToDateInputs(badEndDate, 'endDate'),
+      }
+
+      it('returns errors if start date is more than 1 week ago', async () => {
+        expectErrors(badBody, {
+          startDate: 'You must enter a start date no earlier than 7 days ago',
+        })
+      })
+
+      it('supresses the date range check if user has override permission', () => {
+        expect(
+          validateOutOfServiceBedInput(
+            badBody,
+            { ...user, permissions: ['cas1_out_of_service_bed_no_date_limit'] },
+            oosbReasons,
+          ),
+        ).toEqual(expect.objectContaining({ startDate: DateFormats.dateObjToIsoDate(badStartDate) }))
       })
     })
 

@@ -26,9 +26,9 @@ export const getSentenceType = (
   const { sentenceTypeCheck } = pageData?.['sentence-type-check'] || {}
 
   if (sentenceTypeCheck === 'yes') {
-    const { releaseType }: { releaseType: ReleaseTypeOption } = pageData?.['release-type'] || {}
-    const { sentenceType }: { sentenceType: SentenceTypeOption } = pageData?.['sentence-type'] || {}
-    const { situation }: { situation: SituationOption } = pageData?.situation || {}
+    const releaseType: ReleaseTypeOption = pageData?.['release-type']?.releaseType
+    const sentenceType: SentenceTypeOption = pageData?.['sentence-type']?.sentenceType
+    const situation: SituationOption = pageData?.situation?.situation
     return {
       sentenceTypeCheck,
       releaseType: substituteReleaseType(sentenceType, releaseType),

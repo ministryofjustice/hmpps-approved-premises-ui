@@ -3,8 +3,9 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { ErrorsAndUserInput } from '@approved-premises/ui'
 import { Cas1OutOfServiceBedReason } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import { OutOfServiceBedService } from '../../../services'
-import { outOfServiceBedFactory } from '../../../testutils/factories'
+import { outOfServiceBedFactory, userDetailsFactory } from '../../../testutils/factories'
 import UpdateOutOfServiceBedsController from './updateOutOfServiceBedsController'
 
 import { DateFormats } from '../../../utils/dateUtils'
@@ -36,6 +37,9 @@ describe('updateOutOfServiceBedController', () => {
     jest.restoreAllMocks()
     request = createMock<Request>({
       user: { token },
+      session: {
+        user: userDetailsFactory.build(),
+      },
       params: {
         premisesId,
         bedId: outOfServiceBed.bed.id,
@@ -104,13 +108,11 @@ describe('updateOutOfServiceBedController', () => {
   })
 
   describe('create', () => {
+    const startDate = faker.date.recent({ days: 7 })
+    const endDate = faker.date.soon({ refDate: startDate, days: 21 })
     const validBody = {
-      'startDate-year': 2026,
-      'startDate-month': 8,
-      'startDate-day': 22,
-      'endDate-year': 2026,
-      'endDate-month': 9,
-      'endDate-day': 22,
+      ...DateFormats.dateObjectToDateInputs(startDate, 'startDate'),
+      ...DateFormats.dateObjectToDateInputs(endDate, 'endDate'),
       reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
       referenceNumber: '',
       notes: 'Some notes',
@@ -122,8 +124,8 @@ describe('updateOutOfServiceBedController', () => {
       await updateOutOfServiceBedController.create()(request, response, next)
 
       expect(outOfServiceBedService.updateOutOfServiceBed).toHaveBeenCalledWith(token, outOfServiceBed.id, premisesId, {
-        startDate: '2026-08-22',
-        endDate: '2026-09-22',
+        startDate: DateFormats.dateObjToIsoDate(startDate),
+        endDate: DateFormats.dateObjToIsoDate(endDate),
         reason: request.body.reason,
         referenceNumber: request.body.referenceNumber,
         notes: request.body.notes,
