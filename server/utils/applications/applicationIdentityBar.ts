@@ -29,7 +29,26 @@ export const applicationTitle = (application: Application, pageHeading: string):
 export const applicationMenuItems = (application: Application, user: UserDetails): Array<IdentityBarMenuItem> => {
   const items: Array<IdentityBarMenuItem> = []
 
-  if (withdrawableStatuses.includes(application.status)) {
+  if (config.flags.oneApplication) {
+    if (withdrawableStatuses.includes(application.status)) {
+      items.push({
+        text: 'Withdraw application or placement request',
+        href: paths.applications.withdraw.new({ id: application.id }),
+        classes: 'govuk-button--secondary',
+        attributes: {
+          'data-cy-withdraw-application': application.id,
+        },
+      })
+    }
+
+    if (expirableStatuses.includes(application.status)) {
+      items.push({
+        text: 'Expire application',
+        href: paths.applications.expire({ id: application.id }),
+        classes: 'govuk-button--secondary',
+      })
+    }
+  } else if (application.status !== 'withdrawn') {
     items.push({
       text: 'Withdraw application or placement request',
       href: paths.applications.withdraw.new({ id: application.id }),
@@ -37,14 +56,6 @@ export const applicationMenuItems = (application: Application, user: UserDetails
       attributes: {
         'data-cy-withdraw-application': application.id,
       },
-    })
-  }
-
-  if (config.flags.oneApplication && expirableStatuses.includes(application.status)) {
-    items.push({
-      text: 'Expire application',
-      href: paths.applications.expire({ id: application.id }),
-      classes: 'govuk-button--secondary',
     })
   }
 
