@@ -1,8 +1,10 @@
+import { faker } from '@faker-js/faker'
 import { applicationFactory, personFactory, userDetailsFactory } from '../../testutils/factories'
 import { applicationIdentityBar, applicationMenuItems, applicationTitle } from './applicationIdentityBar'
 import paths from '../../paths/apply'
 import config from '../../config'
 import { displayName } from '../personUtils'
+import { expirableStatuses, withdrawableStatuses } from './statusTag'
 
 describe('applicationIdentityBar', () => {
   const { flags: originalFlags } = config
@@ -92,48 +94,33 @@ describe('applicationIdentityBar', () => {
 
   describe('applicationMenuItems', () => {
     const user = userDetailsFactory.build({ id: 'some-id' })
+    const applicationId = faker.string.uuid()
+
+    const withdrawButton = {
+      text: 'Withdraw application or placement request',
+      href: paths.applications.withdraw.new({ id: applicationId }),
+      classes: 'govuk-button--secondary',
+      attributes: {
+        'data-cy-withdraw-application': applicationId,
+      },
+    }
 
     it('should return the option to withdraw an application', () => {
-      const application = applicationFactory.build({ createdByUserId: user.id })
-      expect(applicationMenuItems(application, user)).toEqual([
-        {
-          text: 'Withdraw application or placement request',
-          href: paths.applications.withdraw.new({ id: application.id }),
-          classes: 'govuk-button--secondary',
-          attributes: {
-            'data-cy-withdraw-application': application.id,
-          },
-        },
-      ])
+      const application = applicationFactory.build({ createdByUserId: user.id, id: applicationId })
+      expect(applicationMenuItems(application, user)).toEqual([withdrawButton])
     })
 
     describe('if the application is withdrawn', () => {
       it('should return the Withdraw menu item', () => {
-        const application = applicationFactory.build({ createdByUserId: user.id })
-        expect(applicationMenuItems(application, user)).toEqual([
-          {
-            text: 'Withdraw application or placement request',
-            href: paths.applications.withdraw.new({ id: application.id }),
-            classes: 'govuk-button--secondary',
-            attributes: {
-              'data-cy-withdraw-application': application.id,
-            },
-          },
-        ])
+        const application = applicationFactory.build({ createdByUserId: user.id, id: applicationId })
+        expect(applicationMenuItems(application, user)).toEqual([withdrawButton])
       })
     })
 
     it('should return an appeals link when user has cas1 process an appeal permission and the application has been rejected', () => {
-      const application = applicationFactory.build({ status: 'rejected', createdByUserId: user.id })
+      const application = applicationFactory.build({ status: 'rejected', createdByUserId: user.id, id: applicationId })
       expect(applicationMenuItems(application, { ...user, permissions: ['cas1_process_an_appeal'] })).toEqual([
-        {
-          text: 'Withdraw application or placement request',
-          href: paths.applications.withdraw.new({ id: application.id }),
-          classes: 'govuk-button--secondary',
-          attributes: {
-            'data-cy-withdraw-application': application.id,
-          },
-        },
+        withdrawButton,
         {
           text: 'Process an appeal',
           href: paths.applications.appeals.new({ id: application.id }),
@@ -146,31 +133,49 @@ describe('applicationIdentityBar', () => {
     })
 
     it('should not return an appeals link when user has cas1 process an appeal permission and the application has not been rejected', () => {
-      const application = applicationFactory.build({ status: 'assesmentInProgress', createdByUserId: user.id })
+      const application = applicationFactory.build({
+        status: 'assesmentInProgress',
+        createdByUserId: user.id,
+        id: applicationId,
+      })
       expect(applicationMenuItems(application, { ...user, permissions: ['cas1_process_an_appeal'] })).toEqual([
-        {
-          text: 'Withdraw application or placement request',
-          href: paths.applications.withdraw.new({ id: application.id }),
-          classes: 'govuk-button--secondary',
-          attributes: {
-            'data-cy-withdraw-application': application.id,
-          },
-        },
+        withdrawButton,
       ])
     })
 
     it('should not return an appeals link when user does not have cas1 process an appeal permission and the application has been rejected', () => {
-      const application = applicationFactory.build({ status: 'rejected', createdByUserId: user.id })
-      expect(applicationMenuItems(application, { ...user, permissions: [] })).toEqual([
-        {
-          text: 'Withdraw application or placement request',
-          href: paths.applications.withdraw.new({ id: application.id }),
-          classes: 'govuk-button--secondary',
-          attributes: {
-            'data-cy-withdraw-application': application.id,
+      const application = applicationFactory.build({ status: 'rejected', createdByUserId: user.id, id: applicationId })
+      expect(applicationMenuItems(application, { ...user, permissions: [] })).toEqual([withdrawButton])
+    })
+
+    it('should return undefined if the application is withdrawn', () => {
+      const application = applicationFactory.build({ status: 'withdrawn', createdByUserId: user.id, id: applicationId })
+      expect(applicationMenuItems(application, { ...user, permissions: [] })).toEqual([])
+    })
+
+    describe('with singleApplication feature enabled', () => {
+      beforeEach(() => {
+        config.flags.oneApplication = true
+      })
+      afterEach(() => {
+        config.flags.oneApplication = false
+      })
+
+      it.each(expirableStatuses)('should return an expiry button for an application status of %s', status => {
+        const application = applicationFactory.build({ status, createdByUserId: user.id, id: applicationId })
+        expect(applicationMenuItems(application, { ...user, permissions: [] })).toEqual([
+          {
+            text: 'Expire application',
+            href: paths.applications.expire({ id: applicationId }),
+            classes: 'govuk-button--secondary',
           },
-        },
-      ])
+        ])
+      })
+
+      it.each(withdrawableStatuses)('should return a withdrawal button for an application status of %s', status => {
+        const application = applicationFactory.build({ status, createdByUserId: user.id, id: applicationId })
+        expect(applicationMenuItems(application, { ...user, permissions: [] })).toEqual([withdrawButton])
+      })
     })
   })
 
