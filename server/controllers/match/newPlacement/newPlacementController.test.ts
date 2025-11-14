@@ -342,5 +342,39 @@ describe('newPlacementController', () => {
       })
       expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.spaces(params))
     })
+
+    it('maps empty selections of room or AP criteria to empty arrays in the session', async () => {
+      const body = {
+        apType: 'normal',
+      }
+
+      await newPlacementController.saveUpdateCriteria()({ ...request, body }, response, next)
+
+      expect(request.session.multiPageFormData.spaceSearch[placementRequestDetail.id]).toEqual({
+        apType: 'normal',
+        apCriteria: [],
+        roomCriteria: [],
+      })
+
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.spaces(params))
+    })
+
+    it('maps singular selections of room or AP criteria to arrays in the session', async () => {
+      const body = {
+        apType: 'normal',
+        apCriteria: 'acceptsSexOffenders',
+        roomCriteria: 'hasEnSuite',
+      }
+
+      await newPlacementController.saveUpdateCriteria()({ ...request, body }, response, next)
+
+      expect(request.session.multiPageFormData.spaceSearch[placementRequestDetail.id]).toEqual({
+        apType: 'normal',
+        apCriteria: ['acceptsSexOffenders'],
+        roomCriteria: ['hasEnSuite'],
+      })
+
+      expect(response.redirect).toHaveBeenCalledWith(matchPaths.v2Match.placementRequests.search.spaces(params))
+    })
   })
 })
