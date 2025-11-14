@@ -1,6 +1,6 @@
 import { Request, Response, RequestHandler } from 'express'
 
-import { SpaceSearchFormData } from '@approved-premises/ui'
+import { SpaceSearchApCriteria, SpaceSearchFormData, SpaceSearchRoomCriteria } from '@approved-premises/ui'
 import { newPlacementReasons } from '../../../utils/match'
 import adminPaths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
@@ -15,6 +15,7 @@ import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { DateFormats } from '../../../utils/dateUtils'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
+import { makeArrayOfType } from '../../../utils/utils'
 
 export default class NewPlacementController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -209,8 +210,8 @@ export default class NewPlacementController {
 
         await this.formData.update(placementRequestId, req.session, {
           apType,
-          apCriteria,
-          roomCriteria,
+          apCriteria: makeArrayOfType<SpaceSearchApCriteria>(apCriteria || []),
+          roomCriteria: makeArrayOfType<SpaceSearchRoomCriteria>(roomCriteria || []),
         })
 
         res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))

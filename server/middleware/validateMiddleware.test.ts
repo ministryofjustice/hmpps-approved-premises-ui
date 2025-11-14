@@ -27,7 +27,7 @@ describe('validateMiddleware', () => {
     expect(next).not.toHaveBeenCalled()
   })
 
-  it('calls handler if there is no validator for a parameter', async () => {
+  it('calls next if there is no validator for a parameter', async () => {
     const request = createMock<Request>({ params: { id: 'A', other: 'B' } })
 
     const validatedHandler = validateMiddleware(handler, validators)
