@@ -400,5 +400,29 @@ describe('outOfServiceBedUtils', () => {
         })
       })
     })
+
+    describe('when the reason is not connected to a person', () => {
+      const bodyNonCrn = {
+        ...validBody,
+        reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType !== 'crn').id,
+      }
+
+      it('returns an error if the work order reference number is longer than 32 chars', () => {
+        expectErrors(
+          { ...bodyNonCrn, referenceNumber: faker.string.alpha({ length: 33 }) },
+          {
+            referenceNumber: 'A work order reference number must be less than 33 characters long',
+          },
+        )
+      })
+
+      it('returns does not return an error if the work order reference number is exactly 32 chars', () => {
+        validateOutOfServiceBedInput(
+          { ...bodyNonCrn, referenceNumber: faker.string.alpha({ length: 32 }) },
+          user,
+          oosbReasons,
+        )
+      })
+    })
   })
 })

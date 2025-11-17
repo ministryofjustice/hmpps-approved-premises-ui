@@ -280,6 +280,8 @@ export const validateOutOfServiceBedInput = (
     } else if (!isValidCrn(referenceNumber)) {
       errors.referenceNumber = 'You must enter a valid CRN'
     }
+  } else if (referenceNumber && referenceNumber.length > 32) {
+    errors.referenceNumber = 'A work order reference number must be less than 33 characters long'
   }
 
   if (!notes) {
