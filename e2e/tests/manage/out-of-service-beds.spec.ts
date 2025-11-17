@@ -116,7 +116,7 @@ test('Future manager updates an out of service bed', async ({ page, futureManage
   const updateOOSBedPage = await UpdateOutOfServiceBedPage.initialize(page)
 
   // When I update the out of service bed record
-  const uniqueReferenceNumber = faker.string.uuid()
+  const uniqueReferenceNumber = faker.string.alpha({ length: 32 })
   const update = {
     referenceNumber: uniqueReferenceNumber,
     additionalInformation: `Additional information about update ${uniqueReferenceNumber}`,
