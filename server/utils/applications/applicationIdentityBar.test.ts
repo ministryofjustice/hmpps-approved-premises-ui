@@ -105,15 +105,20 @@ describe('applicationIdentityBar', () => {
       },
     }
 
-    it('should return the option to withdraw an application', () => {
-      const application = applicationFactory.build({ createdByUserId: user.id, id: applicationId })
-      expect(applicationMenuItems(application, user)).toEqual([withdrawButton])
-    })
-
-    describe('if the application is withdrawn', () => {
-      it('should return the Withdraw menu item', () => {
-        const application = applicationFactory.build({ createdByUserId: user.id, id: applicationId })
+    describe('Withdrawal button', () => {
+      it('should return the option to withdraw an application', () => {
+        const status = faker.helpers.arrayElement(withdrawableStatuses)
+        const application = applicationFactory.build({ createdByUserId: user.id, id: applicationId, status })
         expect(applicationMenuItems(application, user)).toEqual([withdrawButton])
+      })
+
+      it('should not return the withdraw option if the application is already withdrawn', () => {
+        const application = applicationFactory.build({
+          createdByUserId: user.id,
+          id: applicationId,
+          status: 'withdrawn',
+        })
+        expect(applicationMenuItems(application, user)).toEqual([])
       })
     })
 
