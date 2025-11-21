@@ -31,6 +31,7 @@ export default function routes(controllers: Controllers, router: Router, service
     plannedTransferController,
     placementAppealController,
     occupancyViewController,
+    residentProfileController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -122,6 +123,36 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.premises.localRestrictions.remove.pattern, localRestrictionsController.remove(), {
     auditEvent: 'LOCAL_RESTRICTIONS_DELETE',
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
+  })
+
+  // Manage a resident
+  get(paths.resident.show.pattern, residentProfileController.show('personal'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_change_request_list'],
+  })
+  get(paths.resident.tabPersonal.pattern, residentProfileController.show('personal'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_change_request_list'],
+  })
+  get(paths.resident.tabHealth.pattern, residentProfileController.show('health'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_change_request_list'],
+  })
+  get(paths.resident.tabPlacement.pattern, residentProfileController.show('placement'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_change_request_list'],
+  })
+  get(paths.resident.tabRisk.pattern, residentProfileController.show('risk'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_change_request_list'],
+  })
+  get(paths.resident.tabSentence.pattern, residentProfileController.show('sentence'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_change_request_list'],
+  })
+  get(paths.resident.tabEnforcement.pattern, residentProfileController.show('enforcement'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_change_request_list'],
   })
 
   // Placements
