@@ -19,6 +19,7 @@ import TransfersController from './premises/placements/transfersController'
 import PlannedTransferController from './premises/changeRequests/plannedTransferController'
 import PlacementAppealController from './premises/changeRequests/placementAppealController'
 import LocalRestrictionsController from './premises/localRestrictionsController'
+import ResidentProfileController from './residentProfileController'
 
 export const controllers = (services: Services) => {
   const premisesController = new PremisesController(
@@ -71,6 +72,8 @@ export const controllers = (services: Services) => {
     services.placementRequestService,
   )
 
+  const residentProfileController = new ResidentProfileController(services.placementService, services.sessionService)
+
   return {
     premisesController,
     arrivalsController,
@@ -89,6 +92,7 @@ export const controllers = (services: Services) => {
     transfersController,
     placementAppealController,
     plannedTransferController,
+    residentProfileController,
   }
 }
 
@@ -109,4 +113,5 @@ export {
   TransfersController,
   PlacementAppealController,
   PlannedTransferController,
+  ResidentProfileController,
 }
