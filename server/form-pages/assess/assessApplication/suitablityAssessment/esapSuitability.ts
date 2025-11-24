@@ -1,5 +1,5 @@
 import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 

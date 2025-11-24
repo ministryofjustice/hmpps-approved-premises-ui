@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 
 export const arrivalDateFromApplication = (application: Application): string | null => {
   const basicInformation = application.data?.['basic-information']

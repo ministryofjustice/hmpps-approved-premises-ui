@@ -1,5 +1,5 @@
 import type { TaskStatus as TaskListStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment as Assessment } from '../@types/shared'
+import { Cas1Application as Application, Cas1Assessment as Assessment } from '../@types/shared'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import isAssessment from './assessments/isAssessment'
@@ -18,7 +18,7 @@ export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Applicat
         })
       : (task.id === 'basic-information' && tierQualificationPage(applicationOrAssessment)) ||
         applyPaths.applications.pages.show({
-          id: applicationOrAssessment.id,
+          id: (applicationOrAssessment as Application).id,
           task: task.id,
           page: firstPage,
         })

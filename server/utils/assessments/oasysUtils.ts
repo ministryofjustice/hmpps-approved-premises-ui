@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment, OASysQuestion, OASysSections } from '../../@types/shared'
+import { Cas1Assessment as Assessment, OASysQuestion, OASysSections } from '../../@types/shared'
 import { OasysImportArrays } from '../../@types/ui'
 
 const oasysInformationFromAssessment = (assessment: Assessment): OASysSections =>

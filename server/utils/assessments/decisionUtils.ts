@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { Cas1Assessment as Assessment } from '@approved-premises/api'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import MakeADecisionPage from '../../form-pages/assess/makeADecision/makeADecisionTask/makeADecision'
 import InformationReceived from '../../form-pages/assess/reviewApplication/sufficientInformation/informationReceived'

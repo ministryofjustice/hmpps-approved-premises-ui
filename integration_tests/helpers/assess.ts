@@ -1,8 +1,8 @@
 import {
-  ApprovedPremisesAssessment as Assessment,
-  ApprovedPremisesAssessmentStatus as AssessmentStatus,
+  Cas1Assessment as Assessment,
+  Cas1AssessmentStatus as AssessmentStatus,
   Cas1AssessmentSummary,
-  ClarificationNote,
+  Cas1ClarificationNote,
   Document,
   ApprovedPremisesUser as User,
 } from '@approved-premises/api'
@@ -47,7 +47,7 @@ export default class AseessHelper {
     private readonly assessment: Assessment,
     private readonly documents: Array<Document>,
     private readonly user: User,
-    private readonly clarificationNote?: ClarificationNote,
+    private readonly clarificationNote?: Cas1ClarificationNote,
   ) {
     this.assessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id, person: personFactory.build() })
   }

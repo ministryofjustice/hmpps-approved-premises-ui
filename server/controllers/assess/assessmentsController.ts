@@ -6,12 +6,7 @@ import { AssessmentService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
-import {
-  ApprovedPremisesAssessment,
-  AssessmentSortField,
-  Cas1AssessmentStatus,
-  TaskSortField,
-} from '../../@types/shared'
+import { Cas1Assessment, AssessmentSortField, Cas1AssessmentStatus, TaskSortField } from '../../@types/shared'
 import { assessmentKeyDetails, awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { remapArsonAssessmentData } from '../../form-pages/utils/matchingInformationUtils'
@@ -123,7 +118,7 @@ export default class AssessmentsController {
       const rawAssessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
       // TODO: remove once arson remapping (APS-1876) is completed
-      const assessment: ApprovedPremisesAssessment = {
+      const assessment: Cas1Assessment = {
         ...rawAssessment,
         data: remapArsonAssessmentData(rawAssessment.data),
       }

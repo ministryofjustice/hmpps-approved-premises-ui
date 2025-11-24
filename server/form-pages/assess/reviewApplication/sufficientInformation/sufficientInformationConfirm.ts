@@ -8,7 +8,7 @@ import {
   retrieveQuestionResponseFromFormArtifact,
 } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import SufficientInformation from './sufficientInformation'
-import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../../../@types/shared'
 
 @Page({
   name: 'sufficient-information-confirm',

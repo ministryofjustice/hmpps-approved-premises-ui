@@ -4,7 +4,7 @@ import type {
   ApprovedPremisesApplicationStatus,
   FullPerson,
   RequestForPlacement,
-  ApprovedPremisesAssessment,
+  Cas1Assessment,
 } from '@approved-premises/api'
 import { fromPartial } from '@total-typescript/shoehorn'
 import { addYears } from 'date-fns'
@@ -72,7 +72,7 @@ export default class ShowPage extends Page {
     cy.contains('This application has not been assessed')
   }
 
-  shouldShowAssessmentDetails(assessment: ApprovedPremisesAssessment) {
+  shouldShowAssessmentDetails(assessment: Cas1Assessment) {
     this.clickTab('Assessment')
     const sections = new SubmittedDocumentRenderer(assessment).response
 

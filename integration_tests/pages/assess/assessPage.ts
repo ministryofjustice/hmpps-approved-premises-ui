@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment } from '@approved-premises/api'
+import { Cas1Assessment } from '@approved-premises/api'
 
 import Assess from '../../../server/form-pages/assess'
 import TasklistPage, { TasklistPageInterface } from '../../../server/form-pages/tasklistPage'
@@ -8,13 +8,7 @@ import { assessmentKeyDetails } from '../../../server/utils/assessments/utils'
 export default class AssessPage extends FormPage {
   tasklistPage: TasklistPage
 
-  constructor(
-    title: string,
-    assessment: ApprovedPremisesAssessment,
-    taskName: string,
-    pageName: string,
-    backLink?: string,
-  ) {
+  constructor(title: string, assessment: Cas1Assessment, taskName: string, pageName: string, backLink?: string) {
     super(title, backLink, false)
 
     const Class = Assess.pages[taskName][pageName] as TasklistPageInterface

@@ -1,5 +1,5 @@
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesAssessment as Assessment, Document } from '@approved-premises/api'
+import { Cas1Assessment as Assessment, Document } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'

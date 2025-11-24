@@ -316,7 +316,7 @@ export type DataServices = Partial<{
     ) => Promise<Cas1OASysGroup>
   }
   applicationService: {
-    getDocuments: (token: string, application: ApprovedPremisesApplication) => Promise<Array<Document>>
+    getDocuments: (token: string, application: Cas1Application) => Promise<Array<Document>>
     findApplication: (token: string, id: string) => Promise<ApprovedPremisesApplication>
   }
   userService: {

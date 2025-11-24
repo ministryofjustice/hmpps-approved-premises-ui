@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment as Assessment, Cas1Application } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
 import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/match'
@@ -33,10 +33,7 @@ export interface TaskListPageField {
   optional?: boolean
 }
 
-const apType = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): MatchingInformationBody['apType'] => {
+const apType = (body: MatchingInformationBody, application: Application): MatchingInformationBody['apType'] => {
   if (body.apType) {
     return body.apType
   }
@@ -102,7 +99,7 @@ const getBodyValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequir
 const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequirement>(
   body: MatchingInformationBody,
   bodyField: T['bodyField'],
-  application: ApprovedPremisesApplication,
+  application: Application,
   fieldsToCheck: Array<TaskListPageField>,
   lookForValues: Array<YesNoCurrentPrevious>,
   matchedReturnValue: T['returnType'],
@@ -129,7 +126,7 @@ const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequiremen
 
 const defaultMatchingInformationValues = (
   body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
+  application: Cas1Application,
 ): Partial<MatchingInformationBody> => {
   return {
     acceptsChildSexOffenders: getValue<GetValueOffenceAndRisk>(
@@ -247,9 +244,7 @@ const defaultMatchingInformationValues = (
 }
 
 // TODO: remove once arson remapping (APS-1876) is completed
-export const remapArsonAssessmentData = (
-  assessmentData: ApprovedPremisesAssessment['data'],
-): ApprovedPremisesAssessment['data'] => {
+export const remapArsonAssessmentData = (assessmentData: Assessment['data']): Assessment['data'] => {
   if (assessmentData?.['matching-information']?.['matching-information']) {
     const matchingInformationBody: MatchingInformationBody = {
       ...assessmentData['matching-information']['matching-information'],
@@ -267,7 +262,7 @@ export const remapArsonAssessmentData = (
   return assessmentData
 }
 
-const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplication): SummaryList => {
+const suggestedStaySummaryListOptions = (application: Application): SummaryList => {
   const duration = placementDurationFromApplication(application)
   const formattedDuration = DateFormats.formatDuration(duration)
   const rows: SummaryList['rows'] = [

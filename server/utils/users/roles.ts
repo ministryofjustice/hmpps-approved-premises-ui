@@ -94,6 +94,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Change request development',
     hint: 'For digital team use only',
   },
+  manage_resident: {
+    label: 'Manage AP residents development',
+    hint: 'For digital team use only',
+  },
   janitor: {
     label: 'Janitor',
     hint: 'For digital team use only',

@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import PlacementDuration from '../../form-pages/apply/move-on/placementDuration'
 import { getDefaultPlacementDurationInDays } from './getDefaultPlacementDurationInDays'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'

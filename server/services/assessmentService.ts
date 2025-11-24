@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import {
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   AssessmentSortField,
   Cas1AssessmentStatus,
   Cas1AssessmentSummary,

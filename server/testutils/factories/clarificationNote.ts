@@ -2,11 +2,11 @@
 
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import type { ClarificationNote } from '@approved-premises/api'
+import type { Cas1ClarificationNote } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 
-class ClarificationNoteFactory extends Factory<ClarificationNote> {
+class ClarificationNoteFactory extends Factory<Cas1ClarificationNote> {
   createdXDaysAgo(days: number) {
     const today = new Date()
     return this.params({

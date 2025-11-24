@@ -8,7 +8,7 @@ import type { ErrorMessages, TaskStatus as TaskListStatus, UiTask } from '@appro
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   PersonStatus,
   TaskStatus,
 } from '@approved-premises/api'
