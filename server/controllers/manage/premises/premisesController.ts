@@ -12,7 +12,10 @@ import {
   premisesTableHead,
   premisesActions,
   keyworkersToSelectOptions,
+  placementTableRows,
+  placementTableHeader,
 } from '../../../utils/premises'
+import { hasPermission } from '../../../utils/users'
 
 type TabSettings = {
   pageSize: number
@@ -95,14 +98,22 @@ export default class PremisesController {
         activeTab,
         crnOrName,
         keyworker,
-        placements: paginatedPlacements?.data,
         keyworkersSelectOptions,
-        hrefPrefix,
-        sortBy: sortBy || tabSettings[activeTab].sortBy,
-        sortDirection: sortDirection || tabSettings[activeTab].sortDirection,
         pageNumber: Number(paginatedPlacements?.pageNumber) || undefined,
         totalPages: Number(paginatedPlacements?.totalPages) || undefined,
         viewSpacesLink: managePaths.premises.occupancy.view({ premisesId }),
+        placementTableHeader: placementTableHeader(
+          activeTab,
+          sortBy || tabSettings[activeTab].sortBy,
+          sortDirection || tabSettings[activeTab].sortDirection,
+          hrefPrefix,
+        ),
+        placementTableRows: placementTableRows(
+          activeTab,
+          premises.id,
+          paginatedPlacements?.data || [],
+          hasPermission(req.session.user, ['cas1_change_request_list']),
+        ),
       })
     }
   }
