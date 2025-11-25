@@ -88,15 +88,15 @@
             {% endif %}
 
 
-            {% if activeTab !== 'search' or placements | length > 0 %}
+            {% if activeTab !== 'search' or placementTableRows | length > 0 %}
                 {{ sortableTable({
                     firstCellIsHeader: false,
-                    head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
-                    rows: PremisesUtils.placementTableRows(activeTab, premises.id, placements)
+                    head: placementTableHeader,
+                    rows: placementTableRows
                 }) }}
 
                 {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
-            {% elseif crnOrName and placements | length === 0 %}
+            {% elseif crnOrName and placementTableRows | length === 0 %}
                 <p>There are no results for your search.</p>
             {% endif %}
 

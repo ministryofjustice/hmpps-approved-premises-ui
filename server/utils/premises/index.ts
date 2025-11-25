@@ -186,17 +186,19 @@ export const placementTableRows = (
   activeTab: PremisesTab,
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
+  residentLink = false,
 ): Array<TableRow> =>
   placements.map(placement => {
     const { id, person, tier, keyWorkerAllocation } = placement
     const { arrivalDate, departureDate } = canonicalDates(placement)
-    const fieldValues: Record<ColumnField, TableCell> = {
-      personName: htmlValue(
-        `<a href="${managePaths.premises.placements.show({
+    const link = residentLink
+      ? managePaths.resident.tabPersonal({ crn: person.crn, placementId: id })
+      : managePaths.premises.placements.show({
           premisesId,
           placementId: id,
-        })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
-      ),
+        })
+    const fieldValues: Record<ColumnField, TableCell> = {
+      personName: htmlValue(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
       tier: htmlValue(getTierOrBlank(tier)),
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),

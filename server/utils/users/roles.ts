@@ -19,6 +19,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'ap_area_manager',
   'user_manager',
   'change_request_dev',
+  'manage_resident',
   'janitor',
 ]
 

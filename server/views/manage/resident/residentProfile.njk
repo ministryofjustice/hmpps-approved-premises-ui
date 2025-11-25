@@ -1,0 +1,37 @@
+{% extends "partials/layout-with-details.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "moj/components/identity-bar/macro.njk" import mojIdentityBar %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block beforeContent %}
+    {% if backLink %}
+        {{ govukBackLink({
+            text: "Back to residents list",
+            href: backLink
+        }) }}
+    {% endif %}
+{% endblock %}
+
+{% set titleHtml %}
+    <span class="govuk-caption-xl">{{ placement.premises.name }}</span>
+    <h1>{{ pageHeading }}</h1>
+{% endset %}
+
+{% block content %}
+
+    {% include "_messages.njk" %}
+
+    {{ mojIdentityBar({
+        title: {
+            html: titleHtml
+        },
+        menus: PlacementUtils.actions(placement, user)
+    }) }}
+
+    {{ mojSubNavigation({
+        label: 'Sub navigation',
+        items: tabItems
+    }) }}
+{% endblock %}

@@ -16,6 +16,7 @@ import {
   UpdateOutOfServiceBedsController,
   PlacementAppealController,
   LocalRestrictionsController,
+  ResidentProfileController,
 } from '../controllers/manage'
 import manageRoutes from './manage'
 import { type Controllers } from '../controllers'
@@ -55,6 +56,7 @@ describe('manage routes', () => {
   const placementAppealController: DeepMocked<PlacementAppealController> = createMock<PlacementAppealController>({})
   const plannedTransferController: DeepMocked<PlannedTransfersController> = createMock<PlannedTransfersController>()
   const occupancyViewController: DeepMocked<OccupancyViewController> = createMock<OccupancyViewController>({})
+  const residentProfileController: DeepMocked<ResidentProfileController> = createMock<ResidentProfileController>()
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
     bedsController,
@@ -76,6 +78,7 @@ describe('manage routes', () => {
     placementAppealController,
     plannedTransferController,
     occupancyViewController,
+    residentProfileController,
   })
   const services: DeepMocked<Services> = createMock<Services>({})
 
