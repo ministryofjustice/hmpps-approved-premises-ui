@@ -239,12 +239,19 @@ export type CreateOutOfServiceBedBody = ObjectWithDateParts<'startDate'> &
     notes?: string
   }
 
-export const validateOutOfServiceBedInput = (
-  body: CreateOutOfServiceBedBody,
-  user: UserDetails,
-  outOfServiceBedReasons: Array<Cas1OutOfServiceBedReason>,
-  bedId?: string,
-): Cas1NewOutOfServiceBed => {
+export const validateOutOfServiceBedInput = ({
+  body,
+  user,
+  outOfServiceBedReasons,
+  bedId,
+  suppressDateRangeCheck = false,
+}: {
+  body: CreateOutOfServiceBedBody
+  user: UserDetails
+  outOfServiceBedReasons: Array<Cas1OutOfServiceBedReason>
+  bedId?: string
+  suppressDateRangeCheck?: boolean
+}): Cas1NewOutOfServiceBed => {
   const { startDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'startDate')
   const { endDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'endDate')
   const { reason, referenceNumber, notes } = body
@@ -257,6 +264,7 @@ export const validateOutOfServiceBedInput = (
     errors.startDate = 'You must enter a valid start date'
   } else if (
     !hasPermission(user, ['cas1_out_of_service_bed_no_date_limit']) &&
+    !suppressDateRangeCheck &&
     isBefore(startDate, subDays(DateFormats.dateObjToIsoDate(new Date()), 7))
   ) {
     errors.startDate = 'You must enter a start date no earlier than 7 days ago'

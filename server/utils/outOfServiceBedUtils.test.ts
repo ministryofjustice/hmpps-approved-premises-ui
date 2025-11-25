@@ -294,14 +294,14 @@ describe('outOfServiceBedUtils', () => {
       referenceNumber: '',
       notes: 'Some notes',
     }
-    const oosbReasons = outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>
+    const outOfServiceBedReasons = outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>
     const user = userDetailsFactory.build()
 
     const expectErrors = (userInput: CreateOutOfServiceBedBody, expectedErrors: Record<string, string>) => {
       let error
 
       try {
-        validateOutOfServiceBedInput(userInput, user, oosbReasons)
+        validateOutOfServiceBedInput({ body: userInput, user, outOfServiceBedReasons })
       } catch (e) {
         error = e
       }
@@ -352,13 +352,24 @@ describe('outOfServiceBedUtils', () => {
         })
       })
 
-      it('supresses the date range check if user has override permission', () => {
+      it('suppresses the date range check if user has override permission', () => {
         expect(
-          validateOutOfServiceBedInput(
-            badBody,
-            { ...user, permissions: ['cas1_out_of_service_bed_no_date_limit'] },
-            oosbReasons,
-          ),
+          validateOutOfServiceBedInput({
+            body: badBody,
+            user: { ...user, permissions: ['cas1_out_of_service_bed_no_date_limit'] },
+            outOfServiceBedReasons,
+          }),
+        ).toEqual(expect.objectContaining({ startDate: DateFormats.dateObjToIsoDate(badStartDate) }))
+      })
+
+      it(`suppresses the date range check if it's an update`, () => {
+        expect(
+          validateOutOfServiceBedInput({
+            body: badBody,
+            user,
+            outOfServiceBedReasons,
+            suppressDateRangeCheck: true,
+          }),
         ).toEqual(expect.objectContaining({ startDate: DateFormats.dateObjToIsoDate(badStartDate) }))
       })
     })
@@ -417,11 +428,11 @@ describe('outOfServiceBedUtils', () => {
       })
 
       it('returns does not return an error if the work order reference number is exactly 32 chars', () => {
-        validateOutOfServiceBedInput(
-          { ...bodyNonCrn, referenceNumber: faker.string.alpha({ length: 32 }) },
+        validateOutOfServiceBedInput({
+          body: { ...bodyNonCrn, referenceNumber: faker.string.alpha({ length: 32 }) },
           user,
-          oosbReasons,
-        )
+          outOfServiceBedReasons,
+        })
       })
     })
   })
