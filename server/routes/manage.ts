@@ -128,31 +128,31 @@ export default function routes(controllers: Controllers, router: Router, service
   // Manage a resident
   get(paths.resident.show.pattern, residentProfileController.show('personal'), {
     auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_change_request_list'],
+    allowedPermissions: ['cas1_ap_resident_profile'],
   })
   get(paths.resident.tabPersonal.pattern, residentProfileController.show('personal'), {
     auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_change_request_list'],
+    allowedPermissions: ['cas1_ap_resident_profile'],
   })
   get(paths.resident.tabHealth.pattern, residentProfileController.show('health'), {
     auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_change_request_list'],
+    allowedPermissions: ['cas1_ap_resident_profile'],
   })
   get(paths.resident.tabPlacement.pattern, residentProfileController.show('placement'), {
     auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_change_request_list'],
+    allowedPermissions: ['cas1_ap_resident_profile'],
   })
   get(paths.resident.tabRisk.pattern, residentProfileController.show('risk'), {
     auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_change_request_list'],
+    allowedPermissions: ['cas1_ap_resident_profile'],
   })
   get(paths.resident.tabSentence.pattern, residentProfileController.show('sentence'), {
     auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_change_request_list'],
+    allowedPermissions: ['cas1_ap_resident_profile'],
   })
   get(paths.resident.tabEnforcement.pattern, residentProfileController.show('enforcement'), {
     auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_change_request_list'],
+    allowedPermissions: ['cas1_ap_resident_profile'],
   })
 
   // Placements

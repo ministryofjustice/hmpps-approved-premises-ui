@@ -112,7 +112,7 @@ export default class PremisesController {
           activeTab,
           premises.id,
           paginatedPlacements?.data || [],
-          hasPermission(req.session.user, ['cas1_change_request_list']),
+          hasPermission(req.session.user, ['cas1_ap_resident_profile']),
         ),
       })
     }
