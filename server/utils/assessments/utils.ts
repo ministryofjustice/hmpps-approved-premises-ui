@@ -8,8 +8,8 @@ import {
 } from '@approved-premises/ui'
 
 import {
-  ApprovedPremisesAssessmentStatus,
-  ApprovedPremisesAssessment as Assessment,
+  Cas1AssessmentStatus,
+  Cas1Assessment as Assessment,
   Cas1AssessmentSummary as AssessmentSummary,
   PersonAcctAlert,
 } from '@approved-premises/api'
@@ -28,7 +28,7 @@ import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
 import { hasPermission } from '../users'
 
-const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<ApprovedPremisesAssessmentStatus>
+const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<Cas1AssessmentStatus>
 
 const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAssessments => {
   const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments

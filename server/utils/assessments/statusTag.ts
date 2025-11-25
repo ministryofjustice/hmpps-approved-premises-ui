@@ -1,4 +1,4 @@
-import { AssessmentDecision, ApprovedPremisesAssessmentStatus as AssessmentStatus } from '../../@types/shared'
+import { AssessmentDecision, Cas1AssessmentStatus as AssessmentStatus } from '../../@types/shared'
 import type { StatusTagOptions } from '../statusTag'
 // eslint-disable-next-line import/no-cycle
 import { StatusTag } from '../statusTag'

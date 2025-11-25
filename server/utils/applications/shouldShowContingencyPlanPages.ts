@@ -1,7 +1,7 @@
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
-import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
+import { Cas1Application as Application, ReleaseTypeOption } from '../../@types/shared'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import RelevantDates from '../../form-pages/apply/reasons-for-placement/basic-information/relevantDates'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'

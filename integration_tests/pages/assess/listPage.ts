@@ -1,5 +1,5 @@
 import type {
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   Cas1AssessmentStatus,
   Cas1AssessmentSummary,
   PlacementApplicationTask,

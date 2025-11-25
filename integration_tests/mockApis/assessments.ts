@@ -1,7 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   Cas1AssessmentStatus,
   Cas1AssessmentSummary as AssessmentSummary,
   Cas1NewClarificationNote,

@@ -1,9 +1,9 @@
 import { subMonths } from 'date-fns'
-import { ApprovedPremisesApplication } from '../../@types/shared'
+import { Cas1Application } from '../../@types/shared'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 
-export const startDateOutsideOfNationalStandardsTimescales = (application: ApprovedPremisesApplication) => {
+export const startDateOutsideOfNationalStandardsTimescales = (application: Cas1Application) => {
   const arrivalDateString = arrivalDateFromApplication(application)
 
   if (!arrivalDateString) {

@@ -1,7 +1,7 @@
 import {
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
-  ApprovedPremisesAssessment,
+  Cas1Assessment,
   Cas1ApplicationSummary,
 } from '@approved-premises/api'
 import { GIVEN } from '../../helpers'
@@ -24,7 +24,7 @@ import assessmentDocument from '../../fixtures/assessmentDocument.json'
 export const setup = (
   settings: {
     application?: Partial<ApprovedPremisesApplication>
-    assessment?: Partial<ApprovedPremisesAssessment>
+    assessment?: Partial<Cas1Assessment>
   } = {},
 ) => {
   cy.task('reset')

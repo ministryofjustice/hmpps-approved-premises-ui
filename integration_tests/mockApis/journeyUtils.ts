@@ -1,8 +1,5 @@
 import { SuperAgentRequest } from 'superagent'
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
-} from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment as Assessment } from '@approved-premises/api'
 
 import { UiTask } from '@approved-premises/ui'
 import { bulkStub, getMatchingRequests } from './setup'
@@ -94,24 +91,25 @@ export const generateStubsForPage = (
 
 const stubRequestBody = (form: Application | Assessment, formData: Record<string, unknown>): string => {
   if (!isAssessment(form)) {
+    const application = form as Application
     return `
       {
-        "id": "${form.id}",
-        "person": ${JSON.stringify(form.person)},
-        "createdByProbationOfficerId": "${form.createdByUserId}",
-        "createdAt": "${form.createdAt}",
-        "submittedAt": "${form.submittedAt}",
+        "id": "${application.id}",
+        "person": ${JSON.stringify(application.person)},
+        "createdByProbationOfficerId": "${application.createdByUserId}",
+        "createdAt": "${application.createdAt}",
+        "submittedAt": "${application.submittedAt}",
         "data": "${formData}"
       }
       `
   }
-
+  const assessment = form as Assessment
   return `
     {
-      "id": "${form.id}",
-      "createdAt": "${form.createdAt}",
-      "submittedAt": "${form.submittedAt}",
-      "application": "${form.application}",
+      "id": "${assessment.id}",
+      "createdAt": "${assessment.createdAt}",
+      "submittedAt": "${assessment.submittedAt}",
+      "application": "${assessment.application}",
       "data": "${formData}"
     }
     `
@@ -240,7 +238,7 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
           return [...taskList, ...section.tasks]
         }, [] as Array<UiTask>)
         .map(({ id }): string => id)
-    : Object.keys(form.data)
+    : Object.keys((form as Application).data)
 
   tasks.forEach((task, taskIndex) => {
     const previousTask = taskIndex > 0 ? tasks[taskIndex - 1] : undefined

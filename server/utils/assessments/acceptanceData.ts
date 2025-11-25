@@ -1,7 +1,7 @@
 import {
   ApType,
-  ApprovedPremisesAssessment as Assessment,
-  AssessmentAcceptance,
+  Cas1Assessment as Assessment,
+  Cas1AssessmentAcceptance,
   PlacementCriteria,
   PlacementDates,
   PlacementRequirements,
@@ -31,7 +31,7 @@ import ApplicationTimeliness from '../../form-pages/assess/assessApplication/sui
 import type { ApplicationTimelinessBody } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 import { lengthOfStay } from '../../form-pages/utils/matchingInformationUtils'
 
-export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
+export const acceptanceData = (assessment: Assessment): Cas1AssessmentAcceptance => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
 
   return {

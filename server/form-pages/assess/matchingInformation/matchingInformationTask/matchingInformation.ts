@@ -1,6 +1,6 @@
 import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { Cas1Assessment as Assessment } from '@approved-premises/api'
 import {
   defaultMatchingInformationValues,
   lengthOfStay,

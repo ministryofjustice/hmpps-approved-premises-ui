@@ -9,7 +9,7 @@ import {
 import {
   Adjudication,
   ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   Cas1TimelineEvent,
   Document,
   FullPerson,

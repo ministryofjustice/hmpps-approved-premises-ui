@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
-import { AssessmentAcceptance, Cas1AssessmentSummary, Cas1UpdatedClarificationNote } from '@approved-premises/api'
+import { Cas1AssessmentAcceptance, Cas1AssessmentSummary, Cas1UpdatedClarificationNote } from '@approved-premises/api'
 
 import { fromPartial } from '@total-typescript/shoehorn'
 import { AssessmentClient } from '../data'
@@ -177,7 +177,7 @@ describe('AssessmentService', () => {
   describe('submit', () => {
     const token = 'some-token'
     let document = { foo: [{ bar: 'baz' }] } as ApplicationOrAssessmentResponse
-    const assessmentAcceptance = createMock<AssessmentAcceptance>()
+    const assessmentAcceptance = createMock<Cas1AssessmentAcceptance>()
     const assessment = assessmentFactory.build()
 
     it('if the assessment is accepted the accept client method is called', async () => {

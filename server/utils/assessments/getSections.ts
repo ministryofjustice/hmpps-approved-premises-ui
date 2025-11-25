@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../@types/shared'
 import Assess from '../../form-pages/assess'
 import MatchingInformation from '../../form-pages/assess/matchingInformation'
 import AssessApplication from '../../form-pages/assess/assessApplication'

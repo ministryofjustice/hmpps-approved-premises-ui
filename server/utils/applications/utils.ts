@@ -13,9 +13,9 @@ import type {
 } from '@approved-premises/ui'
 import type {
   AppealDecision,
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   ApplicationSortField,
-  ApprovedPremisesApplicationStatus as ApplicationStatus,
+  Cas1ApplicationStatus as ApplicationStatus,
   Cas1PersonalTimeline,
   Cas1TimelineEvent,
   Cas1TimelineEventAssociatedUrl,

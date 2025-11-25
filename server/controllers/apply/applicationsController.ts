@@ -1,12 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { addYears } from 'date-fns'
-import {
-  ApplicationSortField,
-  ApprovedPremisesAssessment,
-  Cas1TimelineEvent,
-  RequestForPlacement,
-} from '@approved-premises/api'
+import { ApplicationSortField, Cas1Assessment, Cas1TimelineEvent, RequestForPlacement } from '@approved-premises/api'
 import { statusesLimitedToOne } from '../../utils/applications/statusTag'
 import {
   getApplicationsHeading,
@@ -133,7 +128,7 @@ export default class ApplicationsController {
         const renderParams: {
           timelineEvents?: Array<Cas1TimelineEvent>
           requestsForPlacement?: Array<RequestForPlacement>
-          assessment?: ApprovedPremisesAssessment
+          assessment?: Cas1Assessment
         } = {}
 
         if (tab === 'timeline') {

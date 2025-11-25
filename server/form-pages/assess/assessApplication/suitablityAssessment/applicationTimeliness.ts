@@ -4,7 +4,7 @@ import ReasonForShortNotice, {
   shortNoticeReasons,
 } from '../../../apply/reasons-for-placement/basic-information/reasonForShortNotice'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 

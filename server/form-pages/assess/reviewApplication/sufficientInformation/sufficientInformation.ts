@@ -4,7 +4,7 @@ import { Page } from '../../../utils/decorators'
 import { sentenceCase } from '../../../../utils/utils'
 
 import TasklistPage from '../../../tasklistPage'
-import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../../../@types/shared'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 export type Body = { sufficientInformation?: YesOrNo; query?: string }

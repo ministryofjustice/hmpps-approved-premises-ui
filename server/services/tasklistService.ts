@@ -1,7 +1,4 @@
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
-} from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment as Assessment } from '@approved-premises/api'
 import { FormSections, TaskNames, TaskStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
 import getSections from '../utils/assessments/getSections'
 import Apply from '../form-pages/apply'
