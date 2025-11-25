@@ -1,4 +1,4 @@
-.moj-timeline .moj-timeline__description {
+.moj-timeline .moj-timeline__description :not(.govuk-summary-list) {
   dl {
     display: flex;
     dt {
